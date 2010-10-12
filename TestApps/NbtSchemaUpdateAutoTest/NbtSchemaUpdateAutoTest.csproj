@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EE041BD8-EBAC-48DF-982F-53BC96C8AD46}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NbtSchemaUpdateAutoTest</RootNamespace>
+    <AssemblyName>NbtSchemaUpdateAutoTest</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="csw\CswScmUpdt_TstCse_Constraint_AddOnPendingDml.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_DataTable_PreserveBlobColumns.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_DataTable_UpdateFromSelectedColumns.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_DataTable_Transaction_NukeStaleCoumnlValue.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_DataTable_Transaction_NukeRolledBackUpdate.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_DataTable_Transaction_NukeRolledBackInsert.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_DataDictionary_AddTwoColumns.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_DataDictionary_ReadTableColIdAfterDdlOp.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_DataDictionary_ReadTableColId.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Node_KeepPropCollectionUpToDate.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_NodeType_PreserveUpdateAfterCommit.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Constraint_RollbackDrop.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Constraint_RollbackAdd.cs" />
+    <Compile Include="csw\CswScmUpdt_TestTools.cs" />
+    <Compile Include="csw\CswScmUpdtAutoTest.cs" />
+    <Compile Include="csw\CswScmUpdt_CollectionOfTestCases.cs" />
+    <Compile Include="csw\CswScmUpdt_Exception.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Column_AddMultiple.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Column_RollbackAdd.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Column_RollbackDrop.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Constraint_AddMultiple.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Constraint_AddSingle.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_NodetypeProp_RollbackAdd.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_NodetypeProp_RollbackDelete.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Nodetype_RollbackAdd.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Nodetype_RollbackDelete.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Table_Add.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Table_Drop.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Table_RollbackAdd.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_Table_RollbackDrop.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_UniqueSequence_RollbackCreate.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_UniqueSequence_RollbackDelete.cs" />
+    <Compile Include="csw\CswScmUpdt_TstCse_View_RollbackUpdate.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\CswCommon\CswCommon\CswCommon.csproj">
+      <Project>{7944CF43-5E22-4C47-A3C6-4C052FC7E916}</Project>
+      <Name>CswCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NbtConfig\NbtConfig.csproj">
+      <Project>{600062EA-970D-4D9E-B216-C767EA9DB0DB}</Project>
+      <Name>NbtConfig</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NbtLogic\NbtLogic.csproj">
+      <Project>{666C22F0-FBD7-44A7-8C2F-320C1C238BBB}</Project>
+      <Name>NbtLogic</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

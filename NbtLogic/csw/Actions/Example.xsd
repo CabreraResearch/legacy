@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+ <xsd:complexType name="ParamContainer">
+   <xsd:sequence>
+      <xsd:element name="Description" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+      <xsd:element name="Parameter" minOccurs="0" maxOccurs="unbounded">
+         <xsd:complexType>
+            <xsd:sequence>
+               <xsd:element name="DefaultValue" type="xsd:string"/>
+               <xsd:element name="Description" type="xsd:string"/>
+            </xsd:sequence>
+            <xsd:attribute name="name" type="xsd:string"/>
+         </xsd:complexType>
+      </xsd:element>
+   </xsd:sequence>
+   <xsd:attribute name="name" type="xsd:string"/>
+ </xsd:complexType>
+ 
+
+<xsd:element name="TestScenario">
+   <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="VersionInfo" minOccurs="1" maxOccurs="1">
+          <xsd:complexType>
+             <xsd:sequence>
+                <xsd:element name="TestClient" minOccurs="1" maxOccurs="1" type="xsd:string"/>
+                <xsd:element name="MainDotAsmx" minOccurs="1" maxOccurs="1" type="xsd:string"/>
+                <xsd:element name="CswOpsLogicDotDll" minOccurs="1" maxOccurs="1" type="xsd:string"/>
+                <xsd:element name="ThisScenarioFileVer" minOccurs="1" maxOccurs="1" type="xsd:string"/>
+                <xsd:element name="ThisScenarioFileComments" minOccurs="1" maxOccurs="1" type="xsd:string"/>
+             </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="GlobalParameters" type="ParamContainer"/>
+        <xsd:element name="Method" maxOccurs="unbounded">
+          <xsd:complexType>
+             <xsd:sequence>
+                  <xsd:element name="Description" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+                  <xsd:element name="ParameterSet" maxOccurs="unbounded" type="ParamContainer"/>    
+             </xsd:sequence>
+             <xsd:attribute name="name" type="xsd:string"/>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="scenarioid" type="xsd:string"/>
+   </xsd:complexType>
+</xsd:element>
+
+</xsd:schema>
+
+

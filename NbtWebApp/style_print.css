@@ -1,0 +1,581 @@
+﻿body
+{
+    background-color: #ffffff;
+    color: #000000;
+    font-family: verdana;
+    font-size:12px;
+    margin: 0px 0px 0px 0px;
+    padding: 5px 5px 5px 5px;
+
+    scrollbar-face-color:#ddeeff;
+    scrollbar-base-color:#ddeeff;
+    scrollbar-arrow-color:#003366;
+    scrollbar-track-color:#336699;
+    scrollbar-shadow-color:#336699;
+    scrollbar-highlight-color:#ffffff;
+    scrollbar-3dlight-color:#ffffff;
+    scrollbar-darkshadow-Color:#003366;
+
+}
+body a
+{
+    color: #000000;
+    font-family: verdana;
+    font-size:12px;
+}
+body a:hover
+{
+    color: #000000;
+    font-family: verdana;
+    font-size:12px;
+}
+.selectinput
+{
+    font-family: verdana;
+    font-size:12px;
+    background-color: #ffffff;
+    border-top: 2px solid #6699cc;
+    border-left: 2px solid #6699cc;
+    border-right: 2px solid #eeeeee;
+    border-bottom: 2px solid #eeeeee;
+    color: #000000;
+}
+.selectinput_invalid
+{
+    font-family: verdana;
+    font-size:12px;
+    background-color: #ffffff;
+    border-top: 2px solid #6699cc;
+    border-left: 2px solid #6699cc;
+    border-right: 2px solid #eeeeee;
+    border-bottom: 2px solid #eeeeee;
+    color: #000000;
+}
+.textinput
+{
+    font-family: verdana;
+    font-size:12px;
+    background-color: #ffffff;
+    border-top: 2px solid #6699cc;
+    border-left: 2px solid #6699cc;
+    border-right: 2px solid #eeeeee;
+    border-bottom: 2px solid #eeeeee;
+    color: #000000;
+}
+.textinput_invalid
+{
+    font-family: verdana;
+    font-size:12px;
+    background-color: #ffffff;
+    border-top: 2px solid #6699cc;
+    border-left: 2px solid #6699cc;
+    border-right: 2px solid #eeeeee;
+    border-bottom: 2px solid #eeeeee;
+    color: #000000;
+}
+.textinputdarkbg
+{
+    background-color: #ffffff;
+    border-top: 2px solid #003366;
+    border-left: 2px solid #003366;
+    border-right: 2px solid #6699cc;
+    border-bottom: 2px solid #6699cc;
+    color: #000000;
+}
+
+.ErrorContent
+{
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.ErrorMessage
+{
+    color: #000000;
+}
+
+.MasterContent
+{   
+    text-align: left;
+    width:100%;
+    color: #000000;
+}
+.MasterContent a
+{   
+    color: #000000;
+}
+.MasterContent a:hover
+{   
+    color: #000000;
+}
+.Title
+{
+    color: #000000;
+    font-weight: bold;
+}
+
+
+.Button
+{
+    color: #000000;
+    background-color: #ffffff;
+    border-top: 2px solid #6699cc;
+    border-left: 2px solid #6699cc;
+    border-right: 2px solid #003366;
+    border-bottom: 2px solid #003366;
+    font-size:12px;
+    font-family: verdana;
+    font-size:12px;
+    padding: 1px 0px 2px 0px;
+}
+
+.Login
+{
+    text-align: left;
+    color: #000000;
+    background-color: #ffffff;
+}
+
+
+.LoginFailure
+{
+    background-color:#ffffff;
+    color: #000000;
+    padding: 5px 5px 5px 5px;
+}
+
+
+.ContentPane
+{
+    position: relative;
+    z-index: 10;
+    text-align:left;
+    border-left: 1px solid #336699;
+}
+.ContentDiv
+{
+    padding: 2px 5px 2px 5px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+
+.NavPane
+{
+    border-right: 1px solid #336699;
+}
+
+.TreePane
+{
+    border-bottom: 1px solid #336699;
+    padding: 0px 0px 5px 0px;
+}
+.LocationPane
+{
+    border-bottom: 1px solid #336699;
+    padding: 0px 0px 5px 0px;
+}
+.LocationDiv
+{
+    width: 95%;
+    height: 95%;
+    overflow: auto;
+}
+.GridDiv
+{
+    width: 95%;
+    height: 95%;
+    overflow: auto;
+}
+
+.TreeDiv
+{
+    width: 100%;
+    height: 95%;
+    overflow: auto;
+}
+
+ 
+.VisibleTabDock
+{
+  height: 300px;
+  width: 200px;
+  border: 2px solid #6699cc;
+}
+.VisibleExtraTabDock
+{
+  height: 300px;
+  width: 200px;
+  border: 2px solid #ffff00;
+  margin: 0px 5px 0px 0px;
+}
+
+.MenuDiv
+{
+    background-color: #ffffff;
+}
+
+.MenuGroup
+{
+  color: #000000;
+  font-family:verdana;
+  font-size:12px;
+  font-weight: bold;
+  background-color:#ffffff;
+  border: 1px solid #336699;
+  cursor:hand;
+}
+.MenuGroupHover
+{
+  background-color:#ffffff;
+  border-left: 1px solid #99CCFF;
+  border-right: 1px solid #99CCFF;
+  border-top: 1px solid #336699;
+  border-bottom: 1px solid #336699;
+}
+
+.MenuItem
+{
+  background-color:#ffffff;
+  cursor:hand;
+}
+
+.MenuItemHover
+{
+  background-color:#ffffff;
+  cursor:hand;
+}
+
+.MenuItemDown
+{
+  background-color:#ffffff;
+  cursor:hand;
+}
+
+.Tree 
+{
+    padding: 8px 0px 0px 0px;
+}
+
+.TreeNode 
+{ 
+  cursor:hand;
+}
+
+.SelectedTreeNode 
+{ 
+  background-color: #ffffff;
+  border: 1px solid #336699;
+  cursor:hand;
+}     
+
+.HoverTreeNode 
+{ 
+  color: #000000;
+  cursor:hand;
+}
+
+
+.MultiPage
+{
+    position: relative;
+    top: -1px;
+    z-index: 40;
+    border: 1px solid #6699cc;
+    padding: 5px 5px 5px 5px;
+}
+
+.PageView
+{
+}
+
+.TabStrip
+{
+    z-index: 50;
+    position: relative;
+    margin: 0px 0px 0px 5px;
+
+}
+
+
+.transparent
+{
+  background:transparent;
+}
+
+
+
+
+
+.WizardStep
+{
+}
+.WizardSelectedStep
+{
+    background-color: #ffffff;
+}
+
+
+
+.DatePicker
+{
+    background-color: #ffffff;
+    color: #000000;
+    font-family: verdana;
+    font-size:12px;
+    cursor: pointer;
+    width: 140px;
+    border-top: 2px solid #6699cc;
+    border-left: 2px solid #6699cc;
+    border-right: 2px solid #eeeeee;
+    border-bottom: 2px solid #eeeeee;
+}
+.DatePickerInvalid
+{
+    background-color: #ffffff;
+    color: #000000;
+    font-family: verdana;
+    font-size:12px;
+    cursor: pointer;
+    width: 140px;
+    border-top: 2px solid #6699cc;
+    border-left: 2px solid #6699cc;
+    border-right: 2px solid #eeeeee;
+    border-bottom: 2px solid #eeeeee;
+}
+
+.DateCalendar
+{
+    background-color: #ffffff;
+    color: #000000;
+}
+.DateTitle
+{
+}
+.DateNextPrev
+{
+    cursor: pointer;
+}
+.DateMonth
+{
+}
+.DateDayHeader
+{
+    text-align:center;
+    cursor: default;
+}
+.DateDay
+{
+    background-color: #ffffff;
+    color: #000000;
+    cursor: pointer;
+}
+.DateSelectedDay
+{
+    background-color: #ffffff;
+    color: #000000;
+    cursor: pointer;
+}
+.DateOtherMonthDay
+{
+    background-color: #ffffff;
+    color: #000000;
+    cursor: pointer;
+}
+.DateDayHover
+{
+    background-color: #ffffff;
+    color: #000000;
+    cursor: pointer;
+}
+.DateSelectedDayHover
+{
+    background-color: #ffffff;
+    color: #000000;
+    cursor: pointer;
+}
+.DateOtherMonthDayHover
+{
+    background-color: #ffffff;
+    color: #000000;
+    cursor: pointer;
+}
+
+.OuterTable
+{
+    border-top: 1px solid #6699cc;
+    border-left: 1px solid #6699cc;
+    border-right: 1px solid #6699cc;
+    border-bottom: 1px solid #6699cc;
+}
+
+
+
+.Dialog
+{
+    border-top: 4px solid #6699cc;
+    border-left: 4px solid #6699cc;
+    border-right: 4px solid #003366;
+    border-bottom: 4px solid #003366;
+    padding: 5px 5px 5px 5px;
+    background-color: #ddeeff;
+    z-index: 1000;
+}
+.DialogTitle
+{
+    background-color: #ffffff;
+    color: #000000;
+    text-align: center;
+    padding: 2px 2px 2px 2px;
+}
+.DialogText
+{
+    padding: 5px 0px 0px 0px;
+    color: #000000;
+    text-align: center;
+}
+
+.ProgressDiv
+{
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    z-index: 1000;
+    padding: 20px 20px 20px 20px;
+}
+
+.ProgressTable
+{
+    border-top: 1px solid #6699cc;
+    border-left: 1px solid #6699cc;
+    border-right: 1px solid #6699cc;
+    border-bottom: 1px solid #6699cc;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+
+
+.Grid
+{
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    color: #000000;
+    cursor: default;
+    margin: 0px 0px 0px 5px;
+}
+.GridFooter
+{
+    background-color: #ffffff;
+    color: #000000;
+}
+.GridRowOdd
+{
+    background-color: #dddddd;
+}
+.GridRowEven
+{
+    background-color: #ffffff;
+}
+
+.GridIndentCell
+{
+}
+.GridHeaderText
+{
+    background-color: #ffffff;
+    color: #000000;
+    font-weight: bold;
+    width: 100%;
+}
+.GridCell
+{
+    border-right: 1px solid #000000;
+}
+.GridRowSelected
+{
+    background-color: #ffff00;
+    font-weight: bold;
+}
+
+
+.ImageOverlayDiv
+{
+    text-align: center;
+}
+.ImageOverlayDivButton
+{
+    text-align: center;
+    cursor: pointer;
+}
+.LocationText
+{
+    background-color: #ffffff;
+    color: #000000;
+}
+.LocationTextSelected
+{
+    background-color: #ffffff;
+    color: #000000;
+}
+.LocationTitleText
+{
+    color: #000000;
+    font-size: large;
+}
+.LocationTitleTextSelected
+{
+    background-color: #ffffff;
+    color: #000000;
+    font-size: large;
+}
+
+.LoginTitle
+{
+    color: #000000;
+    font-size: large;
+    font-weight: bold;
+}
+
+
+.NodeReport_TabTable
+{
+	padding: 2px 2px 2px 2px;
+	
+}
+
+.NodeReport_NodeName
+{
+	font-size: 1.5em;
+	font-weight: bold;
+}
+.NodeReport_TabName
+{
+	font-size: 1.2em;
+	font-weight: bold;
+	background-color: #dddddd;
+	border-top: 1px solid black;
+	padding: 1px;
+}
+.propertylabel
+{
+	font-weight: bold;
+}
+.propertylabelcell
+{
+	vertical-align: middle;
+	padding: 4px 4px 4px 10px;
+	text-align: right;
+}
+.propertyvaluecell
+{
+	vertical-align: middle;
+	padding: 4px 0px 4px 0px;
+}
+.divbutton
+{
+	width: 18px;
+	height: 18px;
+	cursor: pointer;
+}

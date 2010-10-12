@@ -1,0 +1,272 @@
+/* RadMenu ChemSWPrint skin */
+
+.RadMenu_ChemSWPrint 
+{
+	border: 1px solid #003366;
+	border-bottom-width: 0;
+	border-top-color: #6699cc;
+	background: #003366 url(Menu/MenuBackground.gif) repeat-x top left;
+	text-align: left;
+}
+
+.RadMenu_ChemSWPrint_rtl
+{
+	text-align: right;
+}
+
+.RadMenu_ChemSWPrint_Context
+{
+	background: none;
+	border: 0;
+}
+
+.RadMenu_ChemSWPrint a
+{
+	text-decoration: none;
+}
+
+.RadMenu_ChemSWPrint .rmLink
+{
+	line-height: 24px;
+	text-decoration: none;
+	color: #ddeeff;
+}
+
+.RadMenu_ChemSWPrint .rmLink:focus,
+.RadMenu_ChemSWPrint .rmFocused
+{
+	outline: 0;
+}
+
+.RadMenu_ChemSWPrint .rmExpanded
+{
+	z-index: 10000;
+}
+
+.RadMenu_ChemSWPrint .rmLink:hover,
+.RadMenu_ChemSWPrint .rmFocused,
+.RadMenu_ChemSWPrint .rmExpanded
+{
+	background-color: #ddeeff;
+	color: #336699;
+}
+
+.RadMenu_ChemSWPrint .rmLink .rmText
+{
+	font: normal 12px Arial, sans-serif;
+}
+
+.RadMenu_ChemSWPrint .rmGroup
+{
+	background: #ddeeff;
+}
+
+.RadMenu_ChemSWPrint .rmGroup .rmLink
+{
+	text-decoration: none;
+	color: #ddeeff;
+	background: #336699;
+}
+
+.RadMenu_ChemSWPrint_rtl .rmGroup .rmLink
+{
+	text-align: right;
+}
+
+.RadMenu_ChemSWPrint .rmGroup .rmLink:hover,
+.RadMenu_ChemSWPrint .rmGroup .rmFocused,
+.RadMenu_ChemSWPrint .rmGroup .rmExpanded
+{
+	color: #003366;
+	background: #ddeeff;
+}
+
+.RadMenu_ChemSWPrint .rmText
+{
+	padding: 3px 6px 5px 6px;
+}
+
+.RadMenu_ChemSWPrint .rmGroup .rmLink .rmText
+{
+	font-size: 11px;
+}
+
+/* <expand arrows styling> */
+
+.RadMenu_ChemSWPrint .rmGroup .rmLink .rmExpandRight
+{
+	background: transparent url(Menu/ArrowExpand.gif) no-repeat right -3px;
+}
+
+.RadMenu_ChemSWPrint .rmGroup .rmLink .rmExpandLeft
+{
+	background: transparent url(Menu/ArrowExpandRTL.gif) no-repeat left -3px;
+}
+
+.RadMenu_ChemSWPrint .rmGroup .rmLink:hover .rmExpandRight,
+.RadMenu_ChemSWPrint .rmGroup .rmFocused .rmExpandRight,
+.RadMenu_ChemSWPrint .rmGroup .rmExpanded .rmExpandRight
+{
+	background-image: url(Menu/ArrowExpandHovered.gif);
+}
+
+.RadMenu_ChemSWPrint .rmGroup .rmLink:hover .rmExpandLeft,
+.RadMenu_ChemSWPrint .rmGroup .rmFocused .rmExpandLeft,
+.RadMenu_ChemSWPrint .rmGroup .rmExpanded .rmExpandLeft
+{
+	background-image: url(Menu/ArrowExpandHoveredRTL.gif);
+}
+
+/* </expand arrows styling> */
+
+.RadMenu_ChemSWPrint .rmHorizontal .rmItem { border-right: 1px solid #003366; }
+.RadMenu_ChemSWPrint .rmHorizontal .rmLast { border-right: 0; }
+
+.RadMenu_ChemSWPrint .rmVertical .rmItem { border-bottom: 1px solid #003366; }
+.RadMenu_ChemSWPrint .rmVertical .rmLast { border-bottom: 0; }
+
+.RadMenu_ChemSWPrint_rtl .rmHorizontal .rmItem { border-left: 0; }
+
+.RadMenu_ChemSWPrint .rmRootGroup .rmGroup .rmItem,
+.RadMenu_ChemSWPrint_Context .rmGroup .rmItem
+{ border-right: 0; border-bottom: 0; }
+
+.RadMenu_ChemSWPrint .rmGroup
+{
+	border: 1px solid #003366;
+	background-color: #ddeeff;
+}
+
+.RadMenu_ChemSWPrint .rmGroup .rmExpanded
+{
+	z-index: 11;
+}
+
+.RadMenu_ChemSWPrint .rmTopArrowDisabled,
+.RadMenu_ChemSWPrint .rmBottomArrowDisabled,
+.RadMenu_ChemSWPrint .rmLeftArrowDisabled,
+.RadMenu_ChemSWPrint .rmRightArrowDisabled
+{
+	display: none;
+}
+
+.RadMenu_ChemSWPrint .rmTopArrow,
+.RadMenu_ChemSWPrint .rmBottomArrow,
+.RadMenu_ChemSWPrint .rmLeftArrow,
+.RadMenu_ChemSWPrint .rmRightArrow
+{
+	font-size: 0;
+	line-height: 0;
+	color: #ddeeff;
+}
+
+.RadMenu_ChemSWPrint .rmTopArrow,
+.RadMenu_ChemSWPrint .rmBottomArrow
+{
+	height: 10px;
+	width: 100%;
+	background: #ddeeff url(Menu/ArrowScrollUpDown.gif) no-repeat top center;
+}
+
+.RadMenu_ChemSWPrint .rmBottomArrow
+{
+	background-position: center -18px;
+}
+
+.RadMenu_ChemSWPrint .rmLeftArrow,
+.RadMenu_ChemSWPrint .rmRightArrow
+{
+	width: 10px;
+	height: 100%;
+	background: #ddeeff url(Menu/ArrowScrollLeftRight.gif) no-repeat left center;
+}
+
+.RadMenu_ChemSWPrint .rmRightArrow
+{
+	background-position: -18px center;
+}
+
+.RadMenu_ChemSWPrint .rmItem .rmDisabled .rmText
+{
+	color: #6699cc;
+}
+
+.RadMenu_ChemSWPrint .rmRootGroup .rmItem .rmDisabled
+{
+	background: none;
+}
+
+.RadMenu_ChemSWPrint .rmGroup .rmItem .rmDisabled
+{
+	background-color: #fff;
+}
+
+.RadMenu_ChemSWPrint .rmRootGroup .rmSeparator,
+.RadMenu_ChemSWPrint .rmGroup .rmSeparator
+{
+	background: #003366;
+	border-top: 1px solid #6699cc;
+	border-bottom: 0;
+}
+
+.RadMenu_ChemSWPrint .rmSeparator .rmText
+{
+	display: none;
+}
+
+.RadMenu_ChemSWPrint .rmHorizontal .rmSeparator
+{
+	height: 20px;
+	width: 1px;
+	line-height: 20px;
+	border: 0;
+}
+
+.RadMenu_ChemSWPrint .rmVertical .rmSeparator
+{
+	height: 1px;
+	margin: 3px 0;
+	border: 0;
+	line-height: 1px;
+}
+
+.RadMenu_ChemSWPrint .rmLeftImage
+{
+	margin: 2px;
+}
+
+.RadMenu_ChemSWPrint .rmSlide
+{
+	margin: -1px 0 0 -1px !important;
+}
+
+* html .RadMenu_ChemSWPrint .rmVertical .rmSlide
+{
+	margin-left: -2px !important;
+}
+
+* html .RadMenu_ChemSWPrint .rmHorizontal .rmSlide
+{
+	margin-top: -2px !important;
+}
+
+.RadMenu_ChemSWPrint_rtl .rmSlide
+{
+	margin: -1px 0 0 2px !important;
+}
+
+* html .RadMenu_ChemSWPrint_rtl .rmVertical .rmSlide
+{
+	margin-left: 3px !important;
+}
+
+* html .RadMenu_ChemSWPrint_rtl .rmHorizontal .rmSlide
+{
+	margin-top: -2px !important;
+	margin-left: 0 !important;
+}
+
+.RadMenu_ChemSWPrint .rmItem .rmDisabled:hover
+{
+	background: none;
+}

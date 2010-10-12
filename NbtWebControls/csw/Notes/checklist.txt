@@ -1,0 +1,7 @@
+DataTable this []: for the purpose of indexing the records in the current caddy, make this a property of Table
+CswTableCaddy this [] will causing the related tables to be filtered according to the value of 
+the relating column in the daddy's current row as per the index. 
+
+
+Distinguish twixt the column that relates one table to another and the indexed filter column
+A caddy needs to know his daddy so he can get the current value for filtering child records

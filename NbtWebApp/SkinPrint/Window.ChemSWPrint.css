@@ -1,0 +1,338 @@
+/* RADWINDOW ChemSWPrint SKIN */
+
+div.radwindow_ChemSWPrint table td.corner
+{
+	width:6px;
+	font-size:1px;
+	line-height:1px;
+}
+
+div.radwindow_ChemSWPrint table td.topleft
+{
+	height: 6px;
+	background:url('Window/WindowCornerSprites.gif') 0 -59px no-repeat;
+}
+
+div.radwindow_ChemSWPrint table td.titlebar
+{
+	background:url('Window/WindowCornerSprites.gif') 0 0 repeat-x;
+}
+
+div.radwindow_ChemSWPrint table td.topright
+{
+	height: 6px;
+	background:url('Window/WindowCornerSprites.gif') 100% -59px no-repeat;
+}
+
+div.radwindow_ChemSWPrint table td.bodyleft
+{
+	background:url('Window/WindowVerticalSprites.gif') 0 0 repeat-y;
+}
+
+div.radwindow_ChemSWPrint .windowcontent
+{
+	height: 100%;
+	border-bottom:0;
+	background:#fff;
+}
+
+div.radwindow_ChemSWPrint table td.bodyright
+{
+	background:url('Window/WindowVerticalSprites.gif') 100% 0 repeat-y;
+}
+
+div.radwindow_ChemSWPrint table td.footerleft
+{
+	height:6px;
+	background:url('Window/WindowCornerSprites.gif') 0 -106px no-repeat;
+}
+
+div.radwindow_ChemSWPrint table td.footercenter
+{
+	height:6px;
+	background:url('Window/WindowCornerSprites.gif') 0 100% repeat-x;
+}
+
+div.radwindow_ChemSWPrint table td.footerright
+{
+	height:6px;
+	background:url('Window/WindowCornerSprites.gif') 100% -106px no-repeat;
+}
+
+div.radwindow_ChemSWPrint td.statusbar
+{
+	height:20px;
+	line-height:18px;
+	background:#e4e4e4;
+}
+
+div.radwindow_ChemSWPrint td.statusbar td
+{
+	border-top:1px solid #cecece;
+}
+
+div.radwindow_ChemSWPrint td.statusbar input
+{
+	background:#e4e4e4;
+	font:normal 12px arial,sans-serif;
+	padding-left:4px;
+}
+
+div.radwindow_ChemSWPrint td.statusbar div
+{
+      background:url('Window/WindowCornerSprites.gif') -20px -92px no-repeat;
+}
+
+div.radwindow_ChemSWPrint td.statusbar .loading
+{	
+	background-image:url('Window/Loading.gif');	
+}
+
+div.radwindow_ChemSWPrint td.statusbar span.statustext
+{
+	font: normal 11px Verdana, Arial, Sans-serif;
+	color:#000;
+}
+
+div.radwindow_ChemSWPrint td.statusbar input
+{
+    background-repeat: no-repeat;
+}
+
+div.radwindow_ChemSWPrint table.titlebarcontrols ul.controlbuttons
+{
+	padding:0 2px 0 0 !important;
+}
+
+div.radwindow_ChemSWPrint table.titlebarcontrols ul.controlbuttons li a
+{
+	width: 30px; height: 26px; line-height: 26px; font-size: 1px;
+	cursor: default;
+	margin: 4px 0 0 2px;
+}
+
+/* reload button */
+div.radwindow_ChemSWPrint a.reloadbutton
+{
+	background: transparent url('Window/CommandSprites.gif') no-repeat -90px 0;
+}
+
+div.radwindow_ChemSWPrint a.reloadbutton:hover
+{
+	background-position: -90px -26px;
+}
+
+/* unpin button */
+div.radwindow_ChemSWPrint a.pinbutton
+{
+	background: transparent url('Window/CommandSprites.gif') no-repeat -150px 0;
+}
+
+div.radwindow_ChemSWPrint a.pinbutton:hover
+{
+	background-position: -150px -26px;
+}
+
+/* pinbutton */
+div.radwindow_ChemSWPrint a.pinbutton.on
+{
+	background: transparent url('Window/CommandSprites.gif') no-repeat -120px 0;
+}
+
+div.radwindow_ChemSWPrint a.pinbutton.on:hover
+{
+	background-position: -120px -26px;
+}
+
+/* minimize button */
+div.radwindow_ChemSWPrint a.minimizebutton
+{
+	background: transparent url('Window/CommandSprites.gif') no-repeat -60px 0;
+}
+
+div.radwindow_ChemSWPrint a.minimizebutton:hover
+{
+	background-position: -60px -26px;
+}
+
+/* maximize button */
+div.radwindow_ChemSWPrint a.maximizebutton
+{
+	background: transparent url('Window/CommandSprites.gif') no-repeat -30px 0;
+}
+
+div.radwindow_ChemSWPrint a.maximizebutton:hover
+{
+    background-position: -30px -26px;
+}
+
+/* close button */
+div.radwindow_ChemSWPrint a.closebutton
+{
+	background: transparent url('Window/CommandSprites.gif') no-repeat -180px 0;
+}
+
+div.radwindow_ChemSWPrint a.closebutton:hover
+{
+	background: transparent url('Window/CommandSprites.gif') no-repeat -180px -26px;
+}
+
+/* restore button */
+div.radwindow_ChemSWPrint.maximizedwindow a.maximizebutton,
+div.radwindow_ChemSWPrint.minimizedwindow a.minimizebutton
+{
+	background: transparent url('Window/CommandSprites.gif') 0 0 !important;
+}
+
+div.radwindow_ChemSWPrint.maximizedwindow a.maximizebutton:hover,
+div.radwindow_ChemSWPrint.minimizedwindow a.minimizebutton:hover
+{	
+	background: transparent url('Window/CommandSprites.gif') 0 -26px !important;
+}
+
+div.radwindow_ChemSWPrint table.titlebarcontrols a.windowicon
+{
+	background: transparent url('Window/WindowCornerSprites.gif') -21px -59px no-repeat;
+	width: 16px; height: 16px;
+	cursor: default;
+	margin: 8px 0 0 3px;
+}
+
+div.radwindow_ChemSWPrint table.titlebarcontrols em
+{
+	font: normal normal 16px Arial, Verdana, sans-serif;
+	color: white;	
+	margin: 7px 0 0 2px;
+}
+
+div.radwindow_ChemSWPrint.minimizedwindow
+{
+	width: 160px !important; height: 30px !important;
+	background: #4b4b4b;
+	border: solid 2px #232323;
+}
+
+div.radwindow_ChemSWPrint.minimizedwindow td
+{
+    background: none !important;
+}
+
+div.radwindow.radwindow_ChemSWPrint.minimizedwindow table.titlebarcontrols 
+{
+	width: 150px !important;
+	height: 40px !important;
+	margin-top: -3px;
+}
+
+div.radwindow.radwindow_ChemSWPrint.minimizedwindow table.titlebarcontrols ul
+{
+    position: relative;
+    top: -3px;
+}
+
+div.radwindow_ChemSWPrint.minimizedwindow em
+{
+	color: white !important;
+	width: 75px !important;
+}
+
+
+div.radwindow_ChemSWPrint.minimizedwindow td.corner
+{
+	cursor: default;
+}
+
+div.radwindow_ChemSWPrint.minimizedwindow td.corner.topleft,
+div.radwindow_ChemSWPrint.minimizedwindow td.corner.topright
+{
+	width: 10px !important;
+}
+
+div.radwindow_ChemSWPrint.minimizedwindow td.titlebar
+{
+	cursor: default;
+	background: #4b4b4b;
+}
+
+div.radwindow_ChemSWPrint .windowcontent .windowpopup
+{
+	margin:16px;
+	font:normal 11px Arial;
+	color:black;	
+	padding:0px 0px 16px 50px;
+}
+
+div.radwindow_ChemSWPrint .windowcontent .windowpopup.radalert
+{
+	background: transparent url('Window/ModalDialogAlert.gif') no-repeat 8px center;
+}
+
+div.radwindow_ChemSWPrint .windowcontent .windowpopup.radprompt
+{
+	padding: 0;
+	
+}
+
+div.radwindow_ChemSWPrint .windowcontent .windowpopup.radconfirm
+{
+	background: transparent url('Window/ModalDialogConfirm.gif') no-repeat 8px center;	
+}
+
+div.radwindow_ChemSWPrint .windowcontent .dialogtext
+{
+    text-align: left;
+}
+
+div.radwindow_ChemSWPrint .windowcontent input.dialoginput
+{
+	padding: 3px 4px 0 4px;
+	height: 17px;
+	width: 100%;
+	font: normal 11px Verdana, Arial, Sans-serif;
+	border: solid 1px black;
+	background: #d6d6d6;
+}
+
+div.radwindow_ChemSWPrint .windowcontent a,
+div.radwindow_ChemSWPrint .windowcontent a span
+{
+	text-decoration: none;
+	color: black;
+	line-height: 14px;
+	cursor: default;
+}
+
+div.radwindow_ChemSWPrint .windowcontent a.radwindowbutton
+{
+	margin: 8px 1px 0 0;
+	border: solid 1px black;
+	background: #4f4f4f;
+	font-weight: bold;
+}
+
+div.radwindow_ChemSWPrint .windowcontent a.radwindowbutton span.outerspan
+{
+	padding: 0 3px 0 0;
+	border: solid 1px white;
+}
+
+div.radwindow_ChemSWPrint .windowcontent a.radwindowbutton span.innerspan
+{
+	padding: 0 12px;
+	color: white;
+	line-height: 22px;
+}
+
+div.modaldialogbacgkround
+{
+	background: black;
+}
+
+/* set window transparency */
+div.radwindow.radwindow_ChemSWPrint.normalwindow.transparentwindow td.corner,
+div.radwindow.radwindow_ChemSWPrint.normalwindow.transparentwindow td.titlebar,
+div.radwindow.radwindow_ChemSWPrint.transparentwindow td.footercenter
+{
+	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=80);
+	opacity: .8; -moz-opacity: .8;
+}

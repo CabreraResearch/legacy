@@ -1,0 +1,24 @@
+ Volume in drive D has no label.
+ Volume Serial Number is 1860-A0DD
+
+ Directory of D:\Vault\Dn\Nbt\Nbt\TestApps\NbtSchemaUpdateAutoTest\csw
+
+05/22/2009  11:59 AM               983 CswScmUpdt_TstCse.cs
+05/22/2009  11:35 AM             3,969 CswScmUpdt_TstCse_Column_AddMultiple.cs
+05/22/2009  11:35 AM             3,366 CswScmUpdt_TstCse_Column_RollbackAdd.cs
+05/22/2009  11:35 AM             5,872 CswScmUpdt_TstCse_Column_RollbackDrop.cs
+05/22/2009  12:16 PM             4,572 CswScmUpdt_TstCse_Constraint_AddMultiple.cs
+05/22/2009  12:16 PM             5,142 CswScmUpdt_TstCse_Constraint_AddSingle.cs
+05/22/2009  11:37 AM             1,966 CswScmUpdt_TstCse_NodetypeProp_RollbackAdd.cs
+05/22/2009  11:37 AM             3,041 CswScmUpdt_TstCse_NodetypeProp_RollbackDelete.cs
+05/22/2009  11:37 AM             2,562 CswScmUpdt_TstCse_Nodetype_RollbackAdd.cs
+05/22/2009  11:37 AM             1,963 CswScmUpdt_TstCse_Nodetype_RollbackDelete.cs
+05/22/2009  11:37 AM             2,213 CswScmUpdt_TstCse_Table_Add.cs
+05/22/2009  11:37 AM             1,485 CswScmUpdt_TstCse_Table_Drop.cs
+05/22/2009  11:38 AM             1,543 CswScmUpdt_TstCse_Table_RollbackAdd.cs
+05/22/2009  11:38 AM             2,938 CswScmUpdt_TstCse_Table_RollbackDrop.cs
+05/22/2009  11:38 AM             1,335 CswScmUpdt_TstCse_UniqueSequence_RollbackCreate.cs
+05/22/2009  11:38 AM             2,797 CswScmUpdt_TstCse_UniqueSequence_RollbackDelete.cs
+05/22/2009  11:38 AM             2,180 CswScmUpdt_TstCse_View_RollbackUpdate.cs
+              17 File(s)         47,927 bytes
+               0 Dir(s)   6,093,770,752 bytes free

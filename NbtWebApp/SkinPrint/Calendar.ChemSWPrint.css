@@ -1,0 +1,291 @@
+/* RadCalendar ChemSWPrint skin */
+
+table.calendarWrapper_ChemSWPrint
+{
+	border: 1px solid #212121 !important;
+	border-collapse:separate !important;
+	background:#fff url(Calendar/headerBg.gif) repeat-x left top;
+	width:200px;
+}
+
+.calendarWrapper_ChemSWPrint .titlebar_ChemSWPrint,
+.calendarWrapper_ChemSWPrint .TableLayout_ChemSWPrint
+{
+	width: 100%;
+}
+
+.calendarWrapper_ChemSWPrint .titlebar_ChemSWPrint td
+{
+	padding: 9px 4px 8px;
+	background:#3d3d3d url(Calendar/headerBg.gif) repeat-x left bottom;
+	color:#fff;
+	font:16px arial,sans-serif;
+}
+
+.calendarWrapper_ChemSWPrint .TableLayout_ChemSWPrint
+{
+	border:solid #fff;
+	border-width:6px 13px 10px;
+	border-collapse:separate !important;
+	font:11px arial,sans-serif;
+	text-align:right;
+	cursor:default;
+}
+
+.calendarWrapper_ChemSWPrint .TableLayout_ChemSWPrint td
+{
+	border:0;
+	padding:0;
+	overflow:visible;
+}
+
+.calendarWrapper_ChemSWPrint .TableLayout_ChemSWPrint a,
+.calendarWrapper_ChemSWPrint .TableLayout_ChemSWPrint td span
+{
+	display:block;
+	height:13px;
+	border:1px solid #fff;
+	padding:3px 4px;
+	text-decoration:none;
+	text-align:center;
+}
+
+.calendarWrapper_ChemSWPrint .TableLayout_ChemSWPrint a
+{
+	color: #333;
+}
+
+.calendarWrapper_ChemSWPrint .TableLayout_ChemSWPrint .DaysOfWeek_ChemSWPrint
+{
+	padding-right:1px;
+	text-align:center;
+	font-weight:bold;
+	color:#333;
+}
+
+th.DaysOfWeek_ChemSWPrint
+{
+	padding:2px 0 3px;
+	background: transparent url(Calendar/weekdaysUnderline.gif) repeat-x left bottom;
+}
+
+.calendarWrapper_ChemSWPrint .TableLayout_ChemSWPrint .radCalHover_ChemSWPrint
+{
+	background:#d3d3d3;
+}
+
+.calendarWrapper_ChemSWPrint .TableLayout_ChemSWPrint .radCalHover_ChemSWPrint a
+{
+	border:1px solid #d3d3d3;
+}
+
+.calendarWrapper_ChemSWPrint .TableLayout_ChemSWPrint .radCalSelect_ChemSWPrint a
+{
+	border:1px solid #000;
+	background:#e0e0e0;
+}
+
+.calendarWrapper_ChemSWPrint .TableLayout_ChemSWPrint .radCalToday_ChemSWPrint a
+{
+	border:1px solid #363636;
+	background:#454545 url(Calendar/todayBg.gif) repeat-x 0 0;
+	color:#fff;
+}
+
+.calendarWrapper_ChemSWPrint .otherMonth_ChemSWPrint a,
+.calendarWrapper_ChemSWPrint .outOfRange_ChemSWPrint span
+{
+	color: #ccc;
+}
+
+/* fast navigation styles */
+.MonthYearFastNav_ChemSWPrint
+{
+	border:1px solid #000;
+	background:#fff;
+	font:11px arial,sans-serif;
+	color:#707070;
+	cursor:default;
+	border-collapse:collapse;
+}
+
+.MonthYearFastNav_ChemSWPrint #RadCalendar_FastNav_PrevYears,
+.MonthYearFastNav_ChemSWPrint #RadCalendar_FastNav_NextYears
+{
+	text-align:center;
+}
+
+.MonthYearFastNav_ChemSWPrint td
+{
+	padding:3px 5px 3px 0;
+	width:30px;
+	text-align:right;
+	background:url(Calendar/whitePixels.gif) repeat-y top left;
+}
+
+.MonthYearFastNav_ChemSWPrint td#RadCalendar_FastNav_Feb,
+.MonthYearFastNav_ChemSWPrint td#RadCalendar_FastNav_Apr,
+.MonthYearFastNav_ChemSWPrint td#RadCalendar_FastNav_Jun,
+.MonthYearFastNav_ChemSWPrint td#RadCalendar_FastNav_Aug,
+.MonthYearFastNav_ChemSWPrint td#RadCalendar_FastNav_Oct,
+.MonthYearFastNav_ChemSWPrint td#RadCalendar_FastNav_Dec
+{
+	background-position:-1px 0;
+}
+
+.MonthYearFastNav_ChemSWPrint .selected_ChemSWPrint
+{
+	background:#cdcdcd;	
+	color:#000;
+}
+
+.MonthYearFastNav_ChemSWPrint .bottom_ChemSWPrint
+{
+	background:#e3e3e3 none;
+	padding:6px 0;
+	text-align:center;
+}
+
+.MonthYearFastNav_ChemSWPrint .bottom_ChemSWPrint input
+{
+	height:18px;
+	background: #474747 url(Calendar/buttonBg.gif) repeat-x top left;
+	border:0;
+	margin:0 2px;
+	padding:0 2px;
+	font:10px arial,sans-serif;
+	color:#fff;
+	cursor:pointer;
+}
+
+#RadCalendar_FastNav_TodayButton
+{
+	margin-right: 0px;
+}
+
+#RadCalendar_FastNav_OkButton
+{
+	margin-right: 0px;
+}
+
+/* RadDate/TimePicker classes */
+
+.radTimeTableCss_ChemSWPrint caption
+{
+    display: none;
+}
+
+.radTimeTableCss_ChemSWPrint 
+{
+	cursor: default;
+	background: white;
+	font: normal 11px Arial, Verdana, Sans-serif;
+	border: solid 1px #000;
+	width: 192px;
+}
+
+.radTimeTableCss_ChemSWPrint td
+{
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.radTimeTableCss_ChemSWPrint td+td
+{
+	padding: 0;
+	border-left: 1px solid #b0b0b0;
+}
+
+.radHeaderCss_ChemSWPrint
+{
+	color: #000;
+	background: #e3e3e3;
+	text-align: center;
+	font-weight: normal;
+	padding: 5px 0;
+}
+
+.radTimeTableCss_ChemSWPrint a
+{
+	display: block;
+    text-align: right;
+    text-decoration: none;
+    cursor: hand;
+	cursor: pointer;
+	padding: 5px 8px 7px 2px
+}
+
+.radItemCss_ChemSWPrint a,
+.radAlternatingItemCss_ChemSWPrint a
+{
+	color:#666;
+}
+
+.radTimeOverCss_ChemSWPrint a
+{	
+	background-color: #cdcdcd;
+	color: #666;
+}
+
+.radFooterCss_ChemSWPrint
+{
+	color: #666;
+	background: white url(Calendar/calendarWrapperBg.gif) left bottom repeat-x;
+	padding-left: 8px !important;
+	height: 18px;
+}
+
+.radDisabled_ChemSWPrint img
+{
+	 filter: progid:DXImageTransform.Microsoft.Alpha(opacity=60);
+	-moz-opacity: 0.6;
+	opacity: 0.6;	
+}
+
+.pickerWrapper_ChemSWPrint
+{
+	vertical-align: middle;
+}
+
+.pickerWrapper_ChemSWPrint table
+{
+	vertical-align: bottom; 
+}
+
+.pickerWrapper_ChemSWPrint table,
+.pickerWrapper_ChemSWPrint td
+{
+	border:0;
+	padding:0;
+	margin:0;
+	overflow:visible;
+}
+
+.pickerWrapper_ChemSWPrint .radInput_ChemSWPrint
+{
+	vertical-align: baseline;
+}
+
+.pickerWrapper_ChemSWPrint td.inputCell
+{
+	padding:0 4px 0 0;
+}
+
+.radPopupImage_ChemSWPrint
+{	
+	position:relative;
+	outline:none;
+	_position:static;
+}
+*+html .radPopupImage_ChemSWPrint
+{
+	position:static;
+}
+
+.radPopupImage_ChemSWPrint img
+{
+	vertical-align:middle;
+	margin:0 2px;
+	border:0;
+}

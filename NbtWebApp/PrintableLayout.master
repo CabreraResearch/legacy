@@ -1,0 +1,24 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeFile="PrintableLayout.master.cs" Inherits="ChemSW.Nbt.WebPages.PrintableLayout" MasterPageFile="~/Standard.master" %>
+
+<%@ MasterType VirtualPath="~/Standard.master" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="HeaderContent" Runat="Server">
+    <title><asp:ContentPlaceHolder ID="TitleContent" runat="server"></asp:ContentPlaceHolder></title>
+    <% if( Request.UserAgent.Contains( "MSIE 6.0" ) )
+       { %>
+    <link rel="stylesheet" href="ie6style.css" />
+    <% } %>
+    <link rel="stylesheet" href="style_print.css" />
+
+    <link href="SkinPrint/Menu.ChemSWPrint.css" rel="stylesheet" type="text/css" />
+    <link href="SkinPrint/ComboBox.ChemSWPrint.css" rel="stylesheet" type="text/css" />
+    <link href="SkinPrint/TabStrip.ChemSWPrint.css" rel="stylesheet" type="text/css" />
+    <link href="SkinPrint/TreeView.ChemSWPrint.css" rel="stylesheet" type="text/css" />
+    <link href="SkinPrint/Grid.ChemSWPrint.css" rel="stylesheet" type="text/css" />
+    <link href="SkinPrint/Calendar.ChemSWPrint.css" rel="stylesheet" type="text/css" />
+    <link href="SkinPrint/Window.ChemSWPrint.css" rel="stylesheet" type="text/css" />
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="StandardContent" Runat="Server">
+    <asp:ContentPlaceHolder ID="MasterContent" runat="server"></asp:ContentPlaceHolder>
+</asp:Content>

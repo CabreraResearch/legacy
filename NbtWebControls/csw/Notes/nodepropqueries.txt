@@ -1,0 +1,39 @@
+querynodetypepropsinfo:
+
+select p.propname,
+       o.propname as objectclasspropname,
+       p.nodetypepropid,
+       f.fieldtype,
+       p.display_col,
+       p.display_row,
+       p.nodetypetabsetid
+   from nodetypes t
+   JOIN nodetype_props p ON (t.nodetypeid = p.nodetypeid)
+   JOIN field_types f ON (p.fieldtypeid = f.fieldtypeid)
+   LEFT OUTER JOIN object_class_props o on (p.objectclasspropid = o.objectclasspropid )
+where t.nodetypeid = :getnodetypeid
+ order by p.propname
+
+
+
+querynodepropertiessimple:
+
+select p.propname,
+       o.propname as objectclasspropname,
+       p.nodetypepropid,
+       f.fieldtype,
+       j.field1,
+       j.field1_fk,
+       j.jctnodepropid,
+       p.display_col,
+       p.display_row,
+       p.nodetypetabsetid
+  from nodes n
+  JOIN nodetypes t on (n.nodetypeid = t.nodetypeid )
+  JOIN nodetype_props p ON (t.nodetypeid = p.nodetypeid)
+  LEFT OUTER JOIN object_class_props o on (p.objectclasspropid = o.objectclasspropid )
+  LEFT OUTER JOIN jct_nodes_props j ON (j.nodeid = n.nodeid and j.nodetypepropid = p.nodetypepropid)
+  JOIN field_types f ON (p.fieldtypeid = f.fieldtypeid)
+ where n.nodeid = :getnodeid
+ order by lower(p.propname), p.nodetypepropid
+

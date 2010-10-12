@@ -1,0 +1,558 @@
+/*Telerik RadGrid ChemSW Skin*/
+
+/*global*/
+
+.RadGrid_ChemSWPrint
+{
+	background:#f8f8f8;
+	color:#666;
+}
+
+.RadGrid_ChemSWPrint,
+.MasterTable_ChemSWPrint,
+.DetailTable_ChemSWPrint,
+.GroupPanel_ChemSWPrint table,
+.GridEditForm_ChemSWPrint table
+{
+	font:11px verdana,arial,helvetica,sans-serif;
+}
+
+.RadGrid_ChemSWPrint,
+.DetailTable_ChemSWPrint
+{
+	border:1px solid #f0f0f0;
+	/*border-top-color:#666;*/
+}
+
+.MasterTable_ChemSWPrint,
+.DetailTable_ChemSWPrint
+{
+	border-collapse:separate !important;
+}
+
+.GridRow_ChemSWPrint td,
+.GridAltRow_ChemSWPrint td,
+.GridEditRow_ChemSWPrint td,
+.GridFooter_ChemSWPrint td,
+.GridGroupFooter_ChemSWPrint td,
+.GridFilterRow_ChemSWPrint td,
+.GridHeader_ChemSWPrint,
+.ResizeHeader_ChemSWPrint,
+.GroupHeader_ChemSWPrint td
+{
+	padding-left:4px;
+	padding-right:4px;
+}
+
+.RadGrid_ChemSWPrint .rgAdd,
+.RadGrid_ChemSWPrint .rgRefresh,
+.RadGrid_ChemSWPrint .rgEdit,
+.RadGrid_ChemSWPrint .rgDel,
+.RadGrid_ChemSWPrint .rgFilter,
+.RadGrid_ChemSWPrint .rgPagePrev,
+.RadGrid_ChemSWPrint .rgPageNext,
+.RadGrid_ChemSWPrint .rgExpand,
+.RadGrid_ChemSWPrint .rgCollapse,
+.RadGrid_ChemSWPrint .rgSortAsc,
+.RadGrid_ChemSWPrint .rgSortDesc,
+.RadGrid_ChemSWPrint .rgUpdate,
+.RadGrid_ChemSWPrint .rgCancel
+{
+	width:19px;
+	height:19px;
+	border:0;
+	padding:0;
+	background-color:transparent;
+	background-image:url('Grid/sprites.gif');
+	background-repeat:no-repeat;
+	cursor:pointer;
+}
+
+.GroupPanelItems_ChemSWPrint input,
+.GridCommandRow_ChemSWPrint img,
+.GridHeader_ChemSWPrint input,
+.GridFilterRow_ChemSWPrint img,
+.GridPager_ChemSWPrint img
+{
+	vertical-align:middle !Important;
+}
+
+/*header*/
+
+.GridHeaderDiv_ChemSWPrint
+{
+	background:url('Grid/sprites.gif') 0 -1397px repeat-x;
+}
+
+.GridHeader_ChemSWPrint,
+.ResizeHeader_ChemSWPrint
+{
+	border-bottom:1px solid #666;
+	padding-top:8px;
+	padding-bottom:8px;
+	background:url('Grid/sprites.gif') 0 0 repeat-x;
+	font-size:13px;
+	font-weight:bold;
+	text-align:left;
+}
+
+.GridHeader_ChemSWPrint,
+.GridHeader_ChemSWPrint a
+{
+	color:#000;
+	text-decoration:none;
+}
+
+/*rows*/
+
+.GridRow_ChemSWPrint
+{
+	background:#fff;
+}
+
+.GridRow_ChemSWPrint td,
+.GridAltRow_ChemSWPrint td,
+.GridEditRow_ChemSWPrint td,
+.GridFooter_ChemSWPrint td,
+.GridGroupFooter_ChemSWPrint td
+{
+	padding-top:4px;
+	padding-bottom:4px;
+}
+
+.GridRow_ChemSWPrint:hover,
+.GridAltRow_ChemSWPrint:hover 
+{ 
+    background: #eaeaea;
+}
+
+.GridRow_ChemSWPrint a,
+.GridAltRow_ChemSWPrint a,
+.GridEditRow_ChemSWPrint a,
+.GridFooter_ChemSWPrint a,
+.GridGroupFooter_ChemSWPrint a,
+.GridEditForm_ChemSWPrint a
+{
+	color:#666;
+}
+
+.GridRow_ChemSWPrint td
+{
+	border-top:1px solid #fff;
+	border-bottom:1px solid #f0f0f0;
+}
+
+.GridAltRow_ChemSWPrint td
+{
+	border-top:1px solid #fff;
+	border-bottom:1px solid #f0f0f0;
+}
+
+.SelectedRow_ChemSWPrint
+{
+	background:#d3d3d3 url('Grid/sprites.gif') 0 -200px repeat-x;
+}
+
+.SelectedRow_ChemSWPrint td
+{
+	border-top:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+
+.ActiveRow_ChemSWPrint,
+.GridRowOver_ChemSWPrint
+{
+	background:#fff;
+}
+
+.GridEditRow_ChemSWPrint
+{
+	background:#f0f0f0;
+}
+
+.GridEditRow_ChemSWPrint td
+{
+	border-top:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+
+/*footer*/
+
+.GridFooter_ChemSWPrint td,
+.GridGroupFooter_ChemSWPrint td
+{
+	border-top:1px solid #fff;
+}
+
+/*status*/
+
+.GridPager_ChemSWPrint span
+{
+	color:#666;
+}
+
+/*paging*/
+
+.GridPager_ChemSWPrint
+{
+	background:#e3e3e3;
+	line-height:20px;
+}
+
+.GridPager_ChemSWPrint td
+{
+	border-top:1px solid #e9e9e9;
+	border-bottom:1px solid #d8d8d8;
+	padding:0 5px;
+}
+
+.GridPager_ChemSWPrint div span,
+.GridPager_ChemSWPrint a,
+.GridPager_ChemSWPrint .sliderPagerLabel_ChemSWPrint
+{
+	color:#666;
+}
+
+.PagerLeft_ChemSWPrint
+{
+	float:left;
+}
+
+.PagerRight_ChemSWPrint
+{
+	float:right;
+}
+
+.PagerCenter_ChemSWPrint
+{
+	text-align:center;
+}
+
+.PagerCenter_ChemSWPrint span
+{
+	vertical-align:middle;
+}
+
+.RadGrid_ChemSWPrint .rgPagePrev
+{
+    vertical-align: middle;
+	background-position:0 -437px;
+}
+
+.RadGrid_ChemSWPrint .rgPageNext
+{
+    vertical-align: middle;
+}
+
+.RadGrid_ChemSWPrint .rgPagePrev:hover
+{
+	background-position:0 -418px;
+}
+
+.RadGrid_ChemSWPrint .rgPagePrev:active,
+.RadGrid_ChemSWPrint .rgPagePrev:focus
+{
+	background-position:0 -399px;
+}
+
+
+
+/*sorting, reordering*/
+
+.GridHeader_ChemSWPrint .rgSortAsc,
+.GroupPanel_ChemSWPrint .rgSortAsc
+{
+	background-position:0 -594px;
+	width: 19px !Important; height:19px !Important;
+}
+
+.GridHeader_ChemSWPrint .rgSortAsc:hover,
+.RadGrid_ChemSWPrint .rgCollapse:hover,
+.GroupPanel_ChemSWPrint .rgSortAsc:hover
+{
+	background-position:0 -553px;
+	width: 19px !Important; height:19px !Important;
+}
+
+.GridHeader_ChemSWPrint .rgSortAsc:active,
+.GridHeader_ChemSWPrint .rgSortAsc:focus,
+.RadGrid_ChemSWPrint .rgCollapse:active,
+.RadGrid_ChemSWPrint .rgCollapse:focus,
+.GroupPanel_ChemSWPrint .rgSortAsc:active,
+.GroupPanel_ChemSWPrint .rgSortAsc.focus
+{
+	background-position:0 -515px;
+	width: 19px !Important; height:19px !Important;
+}
+
+.GridHeader_ChemSWPrint .rgSortDesc,
+.GroupPanel_ChemSWPrint .rgSortDesc
+{
+	background-position:0 -573px;
+	width: 19px !Important; height:19px !Important;
+}
+
+.GridHeader_ChemSWPrint .rgSortDesc:hover,
+.GroupPanel_ChemSWPrint .rgSortDesc:hover
+{
+	background-position:0 -534px;
+	width: 19px !Important; height:19px !Important;
+}
+
+.GridHeader_ChemSWPrint .rgSortDesc:active,
+.GridHeader_ChemSWPrint .rgSortDesc:focus,
+.GroupPanel_ChemSWPrint .rgSortDesc:active,
+.GroupPanel_ChemSWPrint .rgSortDesc:focus
+{
+	background-position:0 -496px;
+	width: 19px !Important; height:19px !Important;
+}
+
+.TopReorderIndicator_ChemSWPrint,
+.BottomReorderIndicator_ChemSWPrint
+{
+	width:11px !important;
+	height:11px !important;
+	margin-left:-5px;
+	background:url('Grid/sprites.gif') 0 -751px no-repeat;
+}
+
+.BottomReorderIndicator_ChemSWPrint
+{
+	background-position:-21px -751px;
+}
+
+/*filtering*/
+
+.GridFilterRow_ChemSWPrint td
+{
+	padding-top:5px;
+	padding-bottom:5px;
+}
+
+.RadGrid_ChemSWPrint .rgFilter
+{
+	background-position:2px -656px;
+}
+
+.GridFilterRow_ChemSWPrint input[type="text"]
+{
+	border:1px solid #ccc;/**/
+	font:12px verdana,arial,helvetica,sans-serif;
+	color:#000;
+	vertical-align:middle;
+	background: url(grid/textboxbackground.gif) repeat-x
+}
+
+/*grouping*/
+
+.GroupPanel_ChemSWPrint
+{
+	background:#3b3b3b url('Grid/sprites.gif') 0 -997px repeat-x;
+	color:#fff;
+}
+
+.GroupPanel_ChemSWPrint td
+{
+	padding:6px 5px;
+}
+
+.GroupPanel_ChemSWPrint td td
+{
+	border:0;
+	padding:0;
+}
+
+.GroupHeader_ChemSWPrint
+{
+    border-top: solid 1px #ccc;
+    background-color: #fefefe;
+	background: url(grid/sprites.gif) 0 -1197px repeat-x;
+	color:#333;
+	font-size:13px;
+}
+
+.GroupHeader_ChemSWPrint td
+{
+	padding-top:3px;
+	padding-bottom:3px;
+}
+
+.RadGrid_ChemSWPrint .rgExpand,
+.RadGrid_ChemSWPrint .rgPageNext
+{
+	background-position:0 -629px;
+	width: 19px !Important; height: 19px !Important;
+}
+
+.RadGrid_ChemSWPrint .rgExpand:hover,
+.RadGrid_ChemSWPrint .rgPageNext:hover
+{
+	background-position:0 -477px;
+	width: 19px !Important; height: 19px !Important;
+}
+
+.RadGrid_ChemSWPrint .rgExpand:active,
+.RadGrid_ChemSWPrint .rgExpand:focus,
+.RadGrid_ChemSWPrint .rgPageNext:active,
+.RadGrid_ChemSWPrint .rgPageNext:focus
+{
+	background-position:0 -458px;
+	width: 19px !Important; height: 19px !Important;
+}
+
+
+.RadGrid_ChemSWPrint .rgCollapse
+{
+	background-position:0 -594px;
+	width: 19px !Important; height: 19px !Important;
+}
+
+.GroupHeader_ChemSWPrint td div
+{
+	top:-0.6em;
+}
+
+.GroupHeader_ChemSWPrint td div div
+{
+	top:0;
+}
+
+/*editing*/
+
+.GridEditForm_ChemSWPrint
+{
+	border-bottom:1px solid #cbbda9;
+}
+
+.GridEditForm_ChemSWPrint input[type="text"],
+.GridEditForm_ChemSWPrint input[type="password"],
+.GridEditForm_ChemSWPrint textarea
+{
+	border:1px solid #bbb894;/**/
+	font:12px arial,sans-serif;
+	color:#272522;
+}
+
+.RadGrid_ChemSWPrint .rgUpdate
+{
+	background-position:0px -930px;
+	width: 16px !Important; height: 16px !Important;
+}
+
+.RadGrid_ChemSWPrint .rgCancel
+{
+	background-position:3px -963px;
+	width: 16px !Important; height: 16px !Important;
+}
+
+/*hierarchy*/
+
+.DetailTable_ChemSWPrint
+{
+	border-right:0;
+}
+
+/*command row*/
+
+.GridCommandRow_ChemSWPrint
+{
+	background:#fff url('Grid/sprites.gif') 0 -1197px repeat-x;
+	color:#333;
+}
+
+.GridCommandRow_ChemSWPrint td
+{
+	border:0;
+	border-top:1px solid #f0f0f0;
+	border-bottom:1px solid #f0f0f0;
+	padding:0;
+}
+
+.GridCommandRow_ChemSWPrint td td
+{
+	border:0;
+	padding:3px 5px;
+}
+
+.GridCommandRow_ChemSWPrint td td td
+{
+	padding:1px;
+}
+
+.GridCommandRow_ChemSWPrint table
+{
+	border:0;
+	border-bottom:1px solid #f0f0f0;
+}
+
+.GridCommandRow_ChemSWPrint table table
+{
+	border:0;
+}
+
+.GridCommandRow_ChemSWPrint a
+{
+	color:#fff;
+	text-decoration:none;
+}
+
+.RadGrid_ChemSWPrint .rgAdd
+{
+	background-position:0 -841px;
+}
+
+.RadGrid_ChemSWPrint .rgRefresh
+{
+	background-position:0 -901px;
+}
+
+.RadGrid_ChemSWPrint .rgEdit
+{
+	background-position:0 -810px;
+}
+
+.RadGrid_ChemSWPrint .rgDel
+{
+	background-position:0 -871px;
+}
+
+/*loading*/
+
+.LoadingPanel_ChemSWPrint
+{
+	background:#f8f8f8 url(Grid/loading.gif) center center no-repeat;
+}
+
+/*multirow select*/
+
+.GridRowSelector_ChemSWPrint
+{
+	background:#ccc !important;
+}
+
+/*row drag n drop*/
+
+.GridItemDropIndicator_ChemSWPrint
+{
+    border-top:1px dashed #666;
+}
+
+/*rtl*/
+
+.RadGridRTL_ChemSWPrint .GridHeader_ChemSWPrint,
+.RadGridRTL_ChemSWPrint .ResizeHeader_ChemSWPrint
+{
+	text-align:right;
+}
+
+.RadGridRTL_ChemSWPrint .PagerLeft_ChemSWPrint,
+.RadGridRTL_ChemSWPrint .GridPager_ChemSWPrint .radslider
+{
+	float:right;
+}
+
+.RadGridRTL_ChemSWPrint .PagerRight_ChemSWPrint
+{
+	float:left;
+}

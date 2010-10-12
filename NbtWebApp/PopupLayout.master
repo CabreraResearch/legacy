@@ -1,0 +1,87 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeFile="PopupLayout.master.cs" Inherits="ChemSW.Nbt.WebPages.PopupLayout" MasterPageFile="~/Standard.master" %>
+
+<%@ MasterType VirtualPath="~/Standard.master" %>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="HeaderContent" Runat="Server">
+    <title><asp:Literal runat="server" ID="BrandTitle2" /><asp:Literal runat="server" ID="TitleSpacer2" Text="&nbsp;:&nbsp;" /><asp:ContentPlaceHolder ID="TitleContent" runat="server"></asp:ContentPlaceHolder></title>
+    
+    <% if( Request.UserAgent.Contains( "MSIE 6.0" ) )
+    { %>
+    <link rel="stylesheet" href="ie6style.css" />
+    <% } %>
+    <link rel="stylesheet" href="style.css" />
+</asp:Content>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="StandardContent" Runat="Server">
+
+    <script language="Javascript" type="text/javascript">
+        var starttime = new Date();
+    </script>    
+
+    <!-- Start: Progess Image for Postback -->
+    <div class="ProgressDiv" id="ProgressDiv" runat="server">
+        <asp:UpdateProgress runat="server" ID="Progress" DisplayAfter="0" DynamicLayout="true">
+            <ProgressTemplate>
+                <asp:Table runat="server" CssClass="ProgressTable">
+                    <asp:TableRow runat="server">
+                        <asp:TableCell runat="server">
+                            <asp:Image runat="server" ID="ProgressImage" ImageUrl="Images/ajax/progress.gif" />
+                        </asp:TableCell>
+                        <asp:TableCell runat="server">
+                            <asp:Label runat="server" ID="ProgressLabel" Text="Loading..." />
+                        </asp:TableCell>
+                    </asp:TableRow>
+                </asp:Table>
+            </ProgressTemplate>
+        </asp:UpdateProgress>
+    </div>
+    
+    <script type="text/javascript"> 
+        var postbackstarttime;
+        var postbackendtime;
+        Sys.WebForms.PageRequestManager.getInstance().add_beginRequest(function (sender, args) { 
+            postbackstarttime = new Date();
+        }); 
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function (sender, args) { 
+            postbackendtime = new Date();
+            document.getElementById('PostbackLoadTimeSpan').innerHTML = (postbackendtime.getTime() - postbackstarttime.getTime()) / 1000 + "s&nbsp;postback&nbsp;/&nbsp;";
+        }); 
+    </script>
+    <!-- End: Progess Image for Postback -->
+    
+    <!-- Start: NBT Header -->
+    <asp:Table runat="server" ID="HeaderInnerTable" Width="100%" CssClass="HeaderInnerTable">
+        <asp:TableRow ID="TableRow1" runat="server">
+            <asp:TableCell runat="server" ID="LeftHeaderCell" HorizontalAlign="left">
+            </asp:TableCell>
+            <asp:TableCell runat="server" ID="RightHeaderCell" HorizontalAlign="right">
+                <asp:Label ID="UserLabel" runat="server" Text="" CssClass=""/>
+            </asp:TableCell>
+        </asp:TableRow>
+        <asp:TableRow ID="TableRow2" runat="server">
+            <asp:TableCell ID="TableCell1" runat="server" ColumnSpan="2">
+                <Csw:CswMessageBox runat="server" ID="ErrorBox" />
+            </asp:TableCell>
+        </asp:TableRow>
+    </asp:Table>
+    <!-- End: NBT Header -->
+
+
+    <!-- Start: Page Content -->
+    <asp:ContentPlaceHolder ID="MasterContent" runat="server">
+    </asp:ContentPlaceHolder>
+    <!-- End: Page Content -->
+    
+
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="TimeReportContent" Runat="Server">
+
+    <span id="PostbackLoadTimeSpan"></span><span id="PageLoadTimeSpan"></span>&nbsp;client&nbsp;/&nbsp;
+
+    <script language="Javascript" type="text/javascript">
+        var endtime = new Date();
+        document.getElementById('PageLoadTimeSpan').innerHTML = (endtime.getTime() - starttime.getTime()) / 1000 + "s";
+    </script>    
+
+</asp:Content>

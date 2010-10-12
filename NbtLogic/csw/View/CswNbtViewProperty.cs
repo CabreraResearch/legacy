@@ -1,0 +1,458 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using System.Xml;
+using ChemSW.Exceptions;
+//using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.MetaData;
+
+namespace ChemSW.Nbt
+{
+
+    [Serializable()]
+    public class CswNbtViewProperty : CswNbtViewNode, IComparable, IEquatable<CswNbtViewProperty>
+    {
+        public override NbtViewNodeType ViewNodeType { get { return NbtViewNodeType.CswNbtViewProperty; } }
+
+        public enum CswNbtPropType { NodeTypePropId, ObjectClassPropId, Unknown };
+        public enum PropertySortMethod { Ascending, Descending };
+
+        private CswNbtViewRelationship _Parent;
+        public override CswNbtViewNode Parent
+        {
+            get
+            {
+                return _Parent;
+            }
+            set
+            {
+                if( value == null )
+                    _Parent = null;
+                else if( value is CswNbtViewRelationship )
+                    _Parent = (CswNbtViewRelationship) value;
+                else
+                    throw new CswDniException( "Illegal parent assignment on CswNbtViewPropertyFilter" );
+            }
+        }
+
+        private Int32 _NodeTypePropId = Int32.MinValue;
+        public Int32 NodeTypePropId
+        {
+            get
+            {
+                return _NodeTypePropId;
+            }
+            set
+            {
+                if( value != _NodeTypePropId )
+                {
+                    _NodeTypePropId = value;
+                    CswNbtMetaDataNodeTypeProp thisNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId );
+                    if( thisNodeTypeProp != null )
+                        FieldType = thisNodeTypeProp.FieldType;
+                }
+            }
+        }
+        public CswNbtMetaDataNodeTypeProp NodeTypeProp
+        {
+            get { return _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId ); }
+        }
+        public CswNbtMetaDataNodeTypeProp FirstVersionNodeTypeProp
+        {
+            get { return _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeProp.FirstPropVersionId ); }
+        }
+
+        private Int32 _ObjectClassPropId = Int32.MinValue;
+        public Int32 ObjectClassPropId
+        {
+            get
+            {
+                return _ObjectClassPropId;
+            }
+            set
+            {
+                if( value != _ObjectClassPropId )
+                {
+                    _ObjectClassPropId = value;
+                    FieldType = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).FieldType;
+                }
+            }
+        }
+        public CswNbtMetaDataObjectClassProp ObjectClassProp
+        {
+            get { return _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ); }
+        }
+
+        public CswNbtPropType Type = CswNbtPropType.Unknown;
+        public string Name = String.Empty;
+        public ArrayList Filters = new ArrayList();
+
+        public override string IconFileName
+        {
+            get { return "Images/view/property.gif"; }
+        }
+
+        //private string _ArbitraryId = "";
+        //public override string ArbitraryId
+        //{
+        //    get { return _ArbitraryId; }
+        //    set { _ArbitraryId = value; }
+        //}
+
+        public override string ArbitraryId
+        {
+            get
+            {
+                string ArbId = string.Empty;
+                if( Parent != null )
+                    ArbId += Parent.ArbitraryId + "_";
+                if( this.NodeTypePropId != Int32.MinValue )
+                    ArbId += "NTP_" + NodeTypePropId.ToString();
+                else if( this.ObjectClassPropId != Int32.MinValue )
+                    ArbId += "OCP_" + ObjectClassPropId.ToString();
+                return ArbId;
+            }
+        }
+
+        private bool _SortBy = false;
+        public bool SortBy
+        {
+            get { return _SortBy; }
+            set { _SortBy = value; }
+        }
+        private PropertySortMethod _SortMethod = PropertySortMethod.Ascending;
+        public PropertySortMethod SortMethod
+        {
+            get { return _SortMethod; }
+            set { _SortMethod = value; }
+        }
+
+        public CswNbtMetaDataFieldType FieldType = null;
+        public Int32 Order = Int32.MinValue;
+        public Int32 Width = Int32.MinValue;
+
+
+        /// <summary>
+        /// For adding a nodetype property
+        /// </summary>
+        public CswNbtViewProperty( CswNbtResources CswNbtResources, CswNbtView View, CswNbtMetaDataNodeTypeProp Prop )
+            : base( CswNbtResources, View )
+        {
+            this.Type = CswNbtPropType.NodeTypePropId;
+            this.NodeTypePropId = Prop.FirstPropVersionId;
+            _setProp( Prop );
+        }
+
+        /// <summary>
+        /// For adding an object class property
+        /// </summary>
+        public CswNbtViewProperty( CswNbtResources CswNbtResources, CswNbtView View, CswNbtMetaDataObjectClassProp Prop )
+            : base( CswNbtResources, View )
+        {
+            this.Type = CswNbtPropType.ObjectClassPropId;
+            this.ObjectClassPropId = Prop.PropId;
+            _setProp( Prop );
+        }
+
+        /// <summary>
+        /// For loading from a string (created by ToString())
+        /// </summary>
+        public CswNbtViewProperty( CswNbtResources CswNbtResources, CswNbtView View, string PropertyString )
+            : base( CswNbtResources, View )
+        {
+            string[] Values = PropertyString.Split( Delimiter );
+            if( Values[0] == NbtViewNodeType.CswNbtViewProperty.ToString() )
+            {
+                if( Values[1] != String.Empty )
+                    Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), Values[1], true );
+                if( Values[2] != String.Empty )
+                    NodeTypePropId = Convert.ToInt32( Values[2] );
+                if( Values[3] != String.Empty )
+                    Name = Values[3];
+                //if( Values[4] != String.Empty )
+                //    ArbitraryId = Values[4];
+                if( Values[5] != String.Empty )
+                    SortBy = Convert.ToBoolean( Values[5] );
+                if( Values[6] != String.Empty )
+                    SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), Values[6], true );
+                if( Values[7] != String.Empty )
+                    FieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( Values[7] ) );
+                if( Values[8] != String.Empty )
+                    Order = Convert.ToInt32( Values[8] );
+                if( Values[9] != String.Empty )
+                    Width = Convert.ToInt32( Values[9] );
+                if( Values[10] != String.Empty )
+                    ObjectClassPropId = Convert.ToInt32( Values[10] );
+            }
+        }
+
+        /// <summary>
+        /// For loading from XML
+        /// </summary>
+        public CswNbtViewProperty( CswNbtResources CswNbtResources, CswNbtView View, XmlNode PropNode )
+            : base( CswNbtResources, View )
+        {
+            try
+            {
+                if( PropNode.Attributes["type"] != null )
+                    Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropNode.Attributes["type"].Value, true );
+                if( PropNode.Attributes["value"] != null )   //backwards compatibility
+                {
+                    if( Type == CswNbtPropType.NodeTypePropId )
+                        NodeTypePropId = Convert.ToInt32( PropNode.Attributes["value"].Value );
+                    else
+                        ObjectClassPropId = Convert.ToInt32( PropNode.Attributes["value"].Value );
+                }
+                if( PropNode.Attributes["nodetypepropid"] != null )
+                    NodeTypePropId = Convert.ToInt32( PropNode.Attributes["nodetypepropid"].Value );
+                if( PropNode.Attributes["objectclasspropid"] != null )
+                    ObjectClassPropId = Convert.ToInt32( PropNode.Attributes["objectclasspropid"].Value );
+                if( PropNode.Attributes["name"] != null )
+                    Name = PropNode.Attributes["name"].Value;
+                //if( PropNode.Attributes["arbitraryid"] != null )
+                //    ArbitraryId = PropNode.Attributes["arbitraryid"].Value;
+                if( PropNode.Attributes["sortby"] != null )
+                    SortBy = Convert.ToBoolean( PropNode.Attributes["sortby"].Value );
+                if( PropNode.Attributes["sortmethod"] != null )
+                    SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropNode.Attributes["sortmethod"].Value, true );
+                if( PropNode.Attributes["fieldtype"] != null && PropNode.Attributes["fieldtype"].Value != string.Empty )
+                    FieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( PropNode.Attributes["fieldtype"].Value ) );
+                if( PropNode.Attributes["order"] != null && PropNode.Attributes["order"].Value != string.Empty )
+                    Order = Convert.ToInt32( PropNode.Attributes["order"].Value );
+                if( PropNode.Attributes["width"] != null && PropNode.Attributes["width"].Value != string.Empty )
+                    Width = Convert.ToInt32( PropNode.Attributes["width"].Value );
+
+                foreach( XmlNode ChildNode in PropNode.ChildNodes )
+                {
+                    if( ChildNode.Name == CswNbtViewXmlNodeName.Filter.ToString() )
+                    {
+                        CswNbtViewPropertyFilter Filter = new CswNbtViewPropertyFilter( CswNbtResources, _View, ChildNode );
+                        this.addFilter( Filter );
+                    }
+                }
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( "Misconfigured CswViewProperty",
+                                          "CswViewProperty.constructor(xmlnode) encountered an invalid attribute value",
+                                          ex );
+            }
+        }
+
+        public XmlNode ToXml( XmlDocument XmlDoc )
+        {
+            XmlNode NewPropNode = XmlDoc.CreateNode( XmlNodeType.Element, CswNbtViewXmlNodeName.Property.ToString(), "" );
+
+            XmlAttribute PropTypeAttribute = XmlDoc.CreateAttribute( "type" );
+            PropTypeAttribute.Value = Type.ToString();
+            NewPropNode.Attributes.Append( PropTypeAttribute );
+
+            XmlAttribute NodeTypePropIdAttribute = XmlDoc.CreateAttribute( "nodetypepropid" );
+            NodeTypePropIdAttribute.Value = NodeTypePropId.ToString();
+            NewPropNode.Attributes.Append( NodeTypePropIdAttribute );
+
+            XmlAttribute ObjectClassPropIdAttribute = XmlDoc.CreateAttribute( "objectclasspropid" );
+            ObjectClassPropIdAttribute.Value = ObjectClassPropId.ToString();
+            NewPropNode.Attributes.Append( ObjectClassPropIdAttribute );
+
+            XmlAttribute PropNameAttribute = XmlDoc.CreateAttribute( "name" );
+            PropNameAttribute.Value = Name;
+            NewPropNode.Attributes.Append( PropNameAttribute );
+
+            XmlAttribute ArbitraryIdAttribute = XmlDoc.CreateAttribute( "arbitraryid" );
+            ArbitraryIdAttribute.Value = ArbitraryId;
+            NewPropNode.Attributes.Append( ArbitraryIdAttribute );
+
+            XmlAttribute SortByAttribute = XmlDoc.CreateAttribute( "sortby" );
+            SortByAttribute.Value = SortBy.ToString();
+            NewPropNode.Attributes.Append( SortByAttribute );
+
+            XmlAttribute SortMethodAttribute = XmlDoc.CreateAttribute( "sortmethod" );
+            SortMethodAttribute.Value = SortMethod.ToString();
+            NewPropNode.Attributes.Append( SortMethodAttribute );
+
+            XmlAttribute FieldTypeAttribute = XmlDoc.CreateAttribute( "fieldtype" );
+            if( FieldType != null )
+                FieldTypeAttribute.Value = FieldType.FieldType.ToString();
+            else
+                FieldTypeAttribute.Value = string.Empty;
+            NewPropNode.Attributes.Append( FieldTypeAttribute );
+
+            XmlAttribute OrderAttribute = XmlDoc.CreateAttribute( "order" );
+            if( Order != Int32.MinValue )
+                OrderAttribute.Value = Order.ToString();
+            else
+                OrderAttribute.Value = string.Empty;
+            NewPropNode.Attributes.Append( OrderAttribute );
+
+            XmlAttribute WidthAttribute = XmlDoc.CreateAttribute( "width" );
+            if( Width != Int32.MinValue )
+                WidthAttribute.Value = Width.ToString();
+            else
+                WidthAttribute.Value = string.Empty;
+            NewPropNode.Attributes.Append( WidthAttribute );
+
+            foreach( CswNbtViewPropertyFilter Filter in this.Filters )
+            {
+                XmlNode FilterNode = Filter.ToXml( XmlDoc );
+                NewPropNode.AppendChild( FilterNode );
+            }
+
+            return NewPropNode;
+        }
+
+        public override string ToString()
+        {
+            string ret = NbtViewNodeType.CswNbtViewProperty.ToString();
+            ret += Delimiter.ToString() + Type.ToString();
+            ret += Delimiter.ToString() + NodeTypePropId.ToString();
+            ret += Delimiter.ToString() + Name.ToString();
+            ret += Delimiter.ToString() + ArbitraryId.ToString();
+            ret += Delimiter.ToString() + SortBy.ToString();
+            ret += Delimiter.ToString() + SortMethod.ToString();
+            if( FieldType != null )
+                ret += Delimiter.ToString() + FieldType.FieldType.ToString();
+            else
+                ret += Delimiter.ToString();
+            if( Order != Int32.MinValue )
+                ret += Delimiter.ToString() + Order.ToString();
+            else
+                ret += Delimiter.ToString();
+            if( Width != Int32.MinValue )
+                ret += Delimiter.ToString() + Width.ToString();
+            else
+                ret += Delimiter.ToString();
+            ret += Delimiter.ToString() + ObjectClassPropId.ToString();
+            return ret;
+        }
+
+
+        public void addFilter( CswNbtViewPropertyFilter Filter )
+        {
+            Filters.Add( Filter );
+            Filter.Parent = this;
+        }
+
+        public void removeFilter( CswNbtViewPropertyFilter Filter )
+        {
+            Filters.Remove( Filter );
+            Filter.Parent = null;
+        }
+
+
+        public override string TextLabel
+        {
+            get
+            {
+                return Name;
+            }
+        }
+
+        //public void setProp(CswNbtMetaDataNodeTypeProp Prop)
+        //{
+        //    this.Type = CswNbtPropType.NodeTypePropId;
+        //    this.NodeTypePropId = Prop.FirstPropVersionId;
+        //    _setProp( Prop );
+        //}
+        //public void setProp(CswNbtMetaDataObjectClassProp Prop)
+        //{
+        //    this.Type = CswNbtPropType.ObjectClassPropId;
+        //    this.ObjectClassPropId = Prop.PropId;
+        //    _setProp( Prop );
+        //}
+        private void _setProp( ICswNbtMetaDataProp Prop )
+        {
+            this.FieldType = Prop.FieldType;
+            this.Name = Prop.PropNameWithQuestionNo;
+        }
+
+        #region IComparable
+
+        public int CompareTo( object obj )
+        {
+            if( obj is CswNbtViewProperty )
+                return CompareTo( (CswNbtViewProperty) obj );
+            else
+                return this.Name.CompareTo( obj );
+        }
+
+        public int CompareTo( CswNbtViewProperty prop )
+        {
+            int ret = int.MinValue;
+            if( prop.Type == CswNbtPropType.NodeTypePropId )
+            {
+                if( prop.Type == this.Type && prop.NodeTypePropId == this.NodeTypePropId )
+                    ret = 0;
+            }
+            else
+            {
+                if( prop.Type == this.Type && prop.ObjectClassPropId == this.ObjectClassPropId )
+                    ret = 0;
+            }
+
+            if( ret != 0 )
+            {
+                ret = ( this.Name.CompareTo( prop.Name ) );
+            }
+            return ret;
+        }
+
+        #endregion IComparable
+
+        #region IEquatable
+
+        public static bool operator ==( CswNbtViewProperty p1, CswNbtViewProperty p2 )
+        {
+            // If both are null, or both are same instance, return true.
+            if( System.Object.ReferenceEquals( p1, p2 ) )
+            {
+                return true;
+            }
+
+            // If one is null, but not both, return false.
+            if( ( (object) p1 == null ) || ( (object) p2 == null ) )
+            {
+                return false;
+            }
+
+            // Now we know neither are null.  Compare values.
+            if( p1.Type == p2.Type &&
+                p1.Name == p2.Name &&
+                p1.View == p2.View &&
+                ( ( p1.Type == CswNbtPropType.NodeTypePropId && p1.NodeTypePropId == p2.NodeTypePropId ) ||
+                  ( p1.Type == CswNbtPropType.ObjectClassPropId && p1.ObjectClassPropId == p2.ObjectClassPropId ) ) )
+                return true;
+            else
+                return false;
+        }
+
+        public static bool operator !=( CswNbtViewProperty p1, CswNbtViewProperty p2 )
+        {
+            return !( p1 == p2 );
+        }
+
+        public override bool Equals( object obj )
+        {
+            if( !( obj is CswNbtViewProperty ) )
+                return false;
+            return this == (CswNbtViewProperty) obj;
+        }
+
+        public bool Equals( CswNbtViewProperty obj )
+        {
+            return this == (CswNbtViewProperty) obj;
+        }
+
+        public override int GetHashCode()
+        {
+            if( Type == CswNbtPropType.NodeTypePropId )
+                return NodeTypePropId;
+            else
+                return ObjectClassPropId;
+        }
+
+        #endregion IEquatable
+
+    } // class CswViewProperty
+}

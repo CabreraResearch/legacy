@@ -1,0 +1,336 @@
+<%@ Master Language="C#" 
+           AutoEventWireup="true" 
+           CodeFile="MainLayout.master.cs" 
+           Inherits="ChemSW.Nbt.WebPages.MainLayout" 
+           MasterPageFile="~/Standard.master" %>
+
+<%@ MasterType VirtualPath="~/Standard.master" %>
+
+
+<asp:Content ID="Content2" ContentPlaceHolderID="HeaderContent" Runat="Server">
+    <title>
+        <%--
+        <asp:Literal runat="server" ID="BrandTitle2" />
+        <asp:Literal runat="server" ID="TitleSpacer2" Text="&nbsp;:&nbsp;" />
+        --%>
+        <asp:ContentPlaceHolder ID="TitleContent" runat="server"></asp:ContentPlaceHolder>
+    </title>
+    
+    <% if( Request.UserAgent.Contains( "MSIE 6.0" ) )
+       { %>
+    <link rel="stylesheet" href="ie6style.css" />
+    <% } %>
+    <link rel="stylesheet" href="style.css" />
+</asp:Content>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="StandardContent" Runat="Server">
+
+    <script language="Javascript" type="text/javascript">
+        var starttime = new Date();
+    </script>    
+    
+    <!-- Start: Progess Image for Postback -->
+    <div class="ProgressDiv" id="ProgressDiv" runat="server">
+        <asp:UpdateProgress runat="server" ID="Progress" DisplayAfter="0" DynamicLayout="true">
+            <ProgressTemplate>
+                <asp:Table runat="server" CssClass="ProgressTable">
+                    <asp:TableRow runat="server">
+                        <asp:TableCell runat="server">
+                            <asp:Image runat="server" ID="ProgressImage" ImageUrl="Images/ajax/progress.gif" />
+                        </asp:TableCell>
+                        <asp:TableCell runat="server">
+                            <asp:Label runat="server" ID="ProgressLabel" Text="Loading..." />
+                        </asp:TableCell>
+                    </asp:TableRow>
+                </asp:Table>
+            </ProgressTemplate>
+        </asp:UpdateProgress>
+    </div>
+    
+    <script type="text/javascript"> 
+        var postbackstarttime;
+        var postbackendtime;
+        Sys.WebForms.PageRequestManager.getInstance().add_beginRequest(function (sender, args) { 
+            postbackstarttime = new Date();
+        }); 
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function (sender, args) { 
+            postbackendtime = new Date();
+            document.getElementById('PostbackLoadTimeSpan').innerHTML = (postbackendtime.getTime() - postbackstarttime.getTime()) / 1000 + "s&nbsp;postback&nbsp;/&nbsp;";
+        }); 
+    </script>
+    <!-- End: Progess Image for Postback -->
+    
+
+    <div id="OuterDiv" class="OuterDiv">
+
+        <asp:Table ID="PageTable" CssClass="PageTable" CellPadding="0" CellSpacing="0" runat="server">
+        
+          <asp:TableRow>
+            <asp:TableCell ID="HeaderTable_LeftBorder" CssClass="HeaderTable_LeftBorder" RowSpan="3">
+              <asp:Image runat="server" ID="headerblank1" ImageUrl="Images/pagelayout/blank.gif" Width="18" Height="1"/>
+            </asp:TableCell>
+            <asp:TableCell ID="HeaderTable_TopBorder" CssClass="HeaderTable_TopBorder" ColumnSpan="2"></asp:TableCell>
+            <asp:TableCell ID="HeaderTable_RightBorder" CssClass="HeaderTable_RightBorder" RowSpan="3">
+              <asp:Image runat="server" ID="headerblank2" ImageUrl="Images/pagelayout/blank.gif" Width="20" Height="1"/>
+            </asp:TableCell>
+          </asp:TableRow>
+          
+          <asp:TableRow>
+            <asp:TableCell ID="HeaderTable_LeftCell" CssClass="HeaderTable_LeftCell">
+              <asp:Image runat="server" ID="Image1" ImageUrl="Images/pagelayout/header_logo32.gif" Width="216" Height="32"/>
+            </asp:TableCell>
+<%--
+            <asp:TableCell ID="HeaderTable_MidTopCell" CssClass="HeaderTable_MidTopCell">
+              <asp:Image runat="server" ID="Image2" ImageUrl="Images/pagelayout/blank.gif" Width="1" Height="32"/>
+            </asp:TableCell>
+--%>
+            <asp:TableCell ID="HeaderTable_RightTopCell" CssClass="HeaderTable_RightTopCell">
+              
+              <!-- HEADER: TOP RIGHT -->
+              <asp:Table runat="server" ID="HeaderInnerTable" Width="100%" CssClass="HeaderInnerTable" CellPadding="0" CellSpacing="0">
+                  <asp:TableRow ID="TableRow1" runat="server">
+                      <asp:TableCell>
+                          <asp:Image runat="server" ID="blank4" ImageUrl="Images/pagelayout/blank.gif" Width="1" Height="26"/>
+                      </asp:TableCell>
+                      <asp:TableCell runat="server" ID="HeaderInnerTable_LeftHeaderCell" CssClass="HeaderInnerTable_LeftHeaderCell" HorizontalAlign="center">
+                          <%--<nobr>--%>
+                          <!-- Dashboard -->
+                          <asp:Table runat="server" ID="DashboardTable" CssClass="DashboardTable" CellPadding="0" CellSpacing="0">
+                              <asp:TableRow>
+                                  <asp:TableCell CssClass="DashboardCell">
+                                      <div runat="server" title="IMCS - Instrument Maintenance and Calibration" ID="dash_imcs" class="dash_imcs" />
+                                      <a target="_blank" href="http://www.chemswlive.com/19013.htm">
+                                        <div runat="server" title="IMCS - Instrument Maintenance and Calibration" ID="dash_imcs_off" class="dash_imcs_off" />
+                                      </a>
+                                  </asp:TableCell>
+                                  <asp:TableCell CssClass="DashboardCell">
+                                      <div runat="server" title="FE - Fire Extinguisher Inspection" ID="dash_fe" class="dash_fe" />
+                                      <a target="_blank" href="http://www.chemswlive.com/19002.htm">
+                                        <div runat="server" title="FE - Fire Extinguisher Inspection" ID="dash_fe_off" class="dash_fe_off" />
+                                      </a>
+                                  </asp:TableCell>
+                                  <asp:TableCell CssClass="DashboardCell">
+                                      <div runat="server" title="SI - Site Inspection" ID="dash_si" class="dash_si" />
+                                      <a target="_blank" href="http://www.chemswlive.com/19002.htm">
+                                        <div runat="server" title="SI - Site Inspection" ID="dash_si_off" class="dash_si_off" />
+                                      </a>
+                                  </asp:TableCell>
+                                  <asp:TableCell CssClass="DashboardCell">
+                                      <div runat="server" title="STIS - Sample Tracking and Inventory System" ID="dash_stis" class="dash_stis" />
+                                      <a target="_blank" href="http://www.chemswlive.com/19002.htm">
+                                        <div runat="server" title="STIS - Sample Tracking and Inventory System" ID="dash_stis_off" class="dash_stis_off" />
+                                      </a>
+                                  </asp:TableCell>
+                                  <asp:TableCell CssClass="DashboardCell">
+                                      <a target="_blank" href="http://www.cisprolive.com/">
+                                          <div runat="server" title="CISPro - Chemical Inventory System" ID="dash_cispro" class="dash_cispro" />
+                                      </a>
+                                      <a target="_blank" href="http://www.chemswlive.com/19002.htm">
+                                          <div runat="server" title="CISPro - Chemical Inventory System" ID="dash_cispro_off" class="dash_cispro_off" />
+                                      </a>
+                                  </asp:TableCell>
+                                  <asp:TableCell CssClass="DashboardCell">
+                                      <div runat="server" title="CCPro - Control Charts" ID="dash_ccpro" class="dash_ccpro" />
+                                      <a target="_blank" href="http://www.chemswlive.com/19002.htm">
+                                        <div runat="server" title="CCPro - Control Charts" ID="dash_ccpro_off" class="dash_ccpro_off" />
+                                      </a>
+                                  </asp:TableCell>
+                                  <asp:TableCell CssClass="DashboardCell">
+                                      <div runat="server" title="BioSafety" ID="dash_biosafety" class="dash_biosafety" />
+                                      <a target="_blank" href="http://www.chemswlive.com/19002.htm">
+                                        <div runat="server" title="BioSafety" ID="dash_biosafety_off" class="dash_biosafety_off" />
+                                      </a>
+                                  </asp:TableCell>
+                                  <asp:TableCell CssClass="DashboardCell">
+                                      <div runat="server" title="Mobile" ID="dash_hh" class="dash_hh" />
+                                      <a target="_blank" href="http://www.chemswlive.com/cis-pro-mobile.htm">
+                                          <div runat="server" title="Mobile" ID="dash_hh_off" class="dash_hh_off" />
+                                      </a>
+                                  </asp:TableCell>
+                                  <asp:TableCell CssClass="DashboardCell">
+                                      <div runat="server" title="NBTManager" ID="dash_nbtmgr" class="dash_nbtmgr" />
+                                      <div runat="server" title="NBTManager" ID="dash_nbtmgr_off" class="dash_nbtmgr_off" />
+                                  </asp:TableCell>
+                              </asp:TableRow>
+                          </asp:Table>
+                          <!-- End Dashboard -->
+                          </nobr>
+                      </asp:TableCell>
+                      <asp:TableCell runat="server" ID="HeaderInnerTable_RightHeaderCell" CssClass="HeaderInnerTable_RightHeaderCell" HorizontalAlign="right">
+                          <!-- Right Header Menu -->
+                          <nobr>
+                          <asp:Table ID="Table3" runat="server">
+                              <asp:TableRow>
+                                  <asp:TableCell>
+                                    <nobr>
+                                      <tel:RadMenu runat="server" ID="RightHeaderMenu" 
+                                                   OnItemClick="RightHeaderMenu_OnItemSelectedHandler"
+                                                   OnClientItemClicked="RightHeaderMenu_ItemSelected"
+                                                   EnableEmbeddedSkins="false"
+                                                   Skin="ChemSW"
+                                                   CssClass="Menu"
+                                                   Width="280px">
+                                          <Items>
+                                              <tel:RadMenuItem runat="server" Value="HomeMenuItem" Text="Home" />
+                                              <tel:RadMenuItem runat="server" Value="AdminMenuItem" Text="Admin" PostBack="false">
+                                                  <Items>
+                                                      <tel:RadMenuItem runat="server" Value="UserListMenuItem" Text="Current User List" />
+                                                      <tel:RadMenuItem runat="server" Value="LogMenuItem" Text="View Log" />
+                                                      <tel:RadMenuItem runat="server" Value="ConfigVarsMenuItem" Text="Edit Config Vars" />
+                                                      <tel:RadMenuItem runat="server" Value="StatisticsMenuItem" Text="Statistics" />
+                                                  </Items>
+                                              </tel:RadMenuItem>
+                                              <tel:RadMenuItem runat="server" Value="PrefsMenuItem" Text="Preferences" PostBack="false">
+                                                  <Items>
+                                                      <tel:RadMenuItem runat="server" Value="ProfileMenuItem" Text="Profile" />
+                                                      <tel:RadMenuItem runat="server" Value="SubscriptionsMenuItem" Text="Subscriptions" />
+                                                  </Items>
+                                              </tel:RadMenuItem>
+                                              <tel:RadMenuItem runat="server" Value="HelpTopMenuItem" Text="Help" PostBack="false">
+                                                  <Items>
+                                                      <tel:RadMenuItem runat="server" Value="HelpMenuItem" Text="Help" PostBack="false" />
+                                                      <tel:RadMenuItem runat="server" Value="AboutMenuItem" Text="About" PostBack="false" />
+                                                  </Items>
+                                              </tel:RadMenuItem>
+                                              <tel:RadMenuItem runat="server" Value="LogoutMenuItem" Text="Logout" />
+                                          </Items>
+                                      </tel:RadMenu>
+                                    </nobr>
+                                  </asp:TableCell>
+                                  <asp:TableCell>
+                                      <nobr>
+                                        <asp:Label ID="UserLabel" runat="server" Text="" />
+                                      </nobr>
+                                  </asp:TableCell>
+<%--
+                                  <asp:TableCell>
+                                      <asp:PlaceHolder runat="server" ID="StatusImagePH"></asp:PlaceHolder>
+                                  </asp:TableCell>
+--%>
+                              </asp:TableRow>
+                          </asp:Table>
+                          </nobr>
+                          <!-- End Right Header Menu -->
+                      </asp:TableCell>
+                  </asp:TableRow>
+              </asp:Table>
+              <!-- END HEADER: TOP RIGHT -->
+              
+            </asp:TableCell>
+          </asp:TableRow>
+          <%--
+          <asp:TableRow>
+            <asp:TableCell ID="HeaderTable_MidBottomCell" CssClass="HeaderTable_MidBottomCell">
+              <asp:Image runat="server" ID="headerblank3" ImageUrl="Images/pagelayout/blank.gif" Width="9" Height="1"/>
+            </asp:TableCell>
+            <asp:TableCell ID="HeaderTable_RightBottomCell" CssClass="HeaderTable_RightBottomCell">
+            
+              <!-- HEADER: SEARCH BAR -->
+              <asp:PlaceHolder ID="SearchPlaceHolder" runat="server" />
+              <!-- END HEADER: SEARCH BAR -->
+                
+            </asp:TableCell>
+          </asp:TableRow>
+
+          <asp:TableRow>
+            <asp:TableCell ID="HeaderTable_BottomBorder" CssClass="HeaderTable_BottomBorder" ColumnSpan="3">
+              <asp:Image runat="server" ID="headerblank4" ImageUrl="Images/pagelayout/blank.gif" Width="1" Height="3"/>
+            </asp:TableCell>
+          </asp:TableRow>
+          --%>
+          
+          <asp:TableRow>
+              <asp:TableCell ID="HeaderTable_BottomMenu" CssClass="HeaderTable_BottomMenu" ColumnSpan="2">
+                <table cellpadding="0" cellspacing="0">
+                <tr><td><asp:Image runat="server" ID="headerblank4" ImageUrl="Images/pagelayout/blank.gif" Width="1" Height="30"/>
+                </td>
+                <td><asp:PlaceHolder ID="MenuPlaceHolder" runat="server" /></td>
+                </tr></table>
+              </asp:TableCell>
+          </asp:TableRow>
+          
+          <asp:TableRow>
+            <asp:TableCell ID="Td5" CssClass="PageTable_LeftColumn"></asp:TableCell>
+            <asp:TableCell ColumnSpan="2">
+                <Csw:CswMessageBox runat="server" ID="_ErrorBox" />
+            </asp:TableCell>
+            <asp:TableCell ID="Td6" CssClass="PageTable_RightColumn"></asp:TableCell>
+          </asp:TableRow>
+          
+          <asp:TableRow>
+            <asp:TableCell ID="Td1" CssClass="PageTable_LeftColumn" RowSpan="2">
+                <asp:Image runat="server" ID="Image2" ImageUrl="Images/pagelayout/blank.gif" Width="1" Height="450"/>
+            </asp:TableCell>
+            <asp:TableCell ID="Td2" CssClass="PageTable_LeftCell" VerticalAlign="Top">
+
+                <%--<asp:PlaceHolder ID="MyLeftContent" runat="server"></asp:PlaceHolder>                --%>
+                
+                <asp:ContentPlaceHolder ID="MasterLeftContent" runat="server">
+                </asp:ContentPlaceHolder>
+                
+            </asp:TableCell>
+            <asp:TableCell ID="Td3" CssClass="PageTable_RightCell" VerticalAlign="Top" style="padding-left: 5px;">
+                <asp:ContentPlaceHolder ID="MasterRightContent" runat="server">
+                </asp:ContentPlaceHolder>
+            </asp:TableCell>
+            <asp:TableCell ID="Td4" CssClass="PageTable_RightColumn" RowSpan="2"></asp:TableCell>
+          </asp:TableRow>
+          
+          <asp:TableRow>
+            <asp:TableCell ColumnSpan="2" VerticalAlign="Top">
+                <asp:ContentPlaceHolder ID="MasterCenterContent" runat="server">
+                </asp:ContentPlaceHolder>
+            </asp:TableCell>
+          </asp:TableRow>
+
+          <asp:TableRow>
+            <asp:TableCell ID="TableCell5" CssClass="PageTable_LeftColumn"></asp:TableCell>
+            <asp:TableCell ID="TableCell6" ColumnSpan="1" CssClass="PageTable_LeftCellNoBg">
+                <asp:PlaceHolder ID="quicklaunchplaceholder" runat="server"></asp:PlaceHolder>
+            </asp:TableCell>
+            <asp:TableCell ID="TableCell7" CssClass="PageTable_RightCell"></asp:TableCell>
+            <asp:TableCell ID="TableCell8" CssClass="PageTable_RightColumn"></asp:TableCell>
+          </asp:TableRow>
+
+          <asp:TableRow>
+            <asp:TableCell ID="TableCell3" CssClass="PageTable_LeftColumn"></asp:TableCell>
+            <asp:TableCell ColumnSpan="2">
+                <%--
+                <div runat="server" id="ContextSensitiveOuterDiv" class="ContextSensitiveOuterDiv">
+                    <div runat="server" id="ContextSensitiveDiv" class="ContextSensitiveDiv">
+                --%>
+                        <asp:ContentPlaceHolder ID="ContextSensitiveContent" runat="server">
+                        </asp:ContentPlaceHolder>
+                <%--
+                    </div>
+                </div>
+                --%>
+            </asp:TableCell>
+            <asp:TableCell ID="TableCell4" CssClass="PageTable_RightColumn"></asp:TableCell>
+          </asp:TableRow>
+          
+          <asp:TableRow>
+            <asp:TableCell ID="PageTable_BottomLeftCorner" CssClass="PageTable_BottomLeftCorner"></asp:TableCell>
+            <asp:TableCell ColumnSpan="1" id="PageTable_BottomRowLeft" CssClass="PageTable_BottomRowLeft"></asp:TableCell>
+            <asp:TableCell ID="PageTable_BottomRowRight" CssClass="PageTable_BottomRowRight"></asp:TableCell>
+            <asp:TableCell ID="PageTable_BottomRightCorner" CssClass="PageTable_BottomRightCorner"></asp:TableCell>
+          </asp:TableRow>
+        </asp:Table>
+    </div> 
+
+    <div style="text-align: right">
+        Your use of this website implies your agreement with our <a target="_blank" href="TermsOfUse.aspx">Terms of Use</a>.&nbsp;&nbsp;&nbsp;
+    </div>
+
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="TimeReportContent" Runat="Server">
+
+    <span id="PostbackLoadTimeSpan"></span><span id="PageLoadTimeSpan"></span>&nbsp;client&nbsp;/&nbsp;
+
+    <script language="Javascript" type="text/javascript">
+        var endtime = new Date();
+        document.getElementById('PageLoadTimeSpan').innerHTML = (endtime.getTime() - starttime.getTime()) / 1000 + "s";
+    </script>    
+
+</asp:Content>

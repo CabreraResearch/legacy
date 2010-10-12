@@ -1,0 +1,164 @@
+﻿body
+{
+    color: #000000;
+    background-color: #ebebeb;
+
+    font-family: verdana;
+    font-size:1em;
+    margin: 0px 0px 0px 0px;
+}
+body a
+{
+    color: #000000;
+    font-family: verdana;
+    font-size:1em;
+}
+body a:hover
+{
+    color: #336699;
+    font-family: verdana;
+    font-size:1em;
+}
+
+.OuterDiv
+{
+}
+
+.selectinput
+{
+    font-family: verdana;
+    font-size:1em;
+}
+.selectinput_invalid
+{
+    font-family: verdana;
+    font-size:1em;
+    background-color: #ffcccc;
+    color: #000000;
+}
+.textinput
+{
+}
+.textinput_invalid
+{
+    font-family: verdana;
+    font-size:1em;
+    background-color: #ffcccc;
+    color: #000000;
+}
+
+.staticvalue
+{
+}
+
+.ErrorContent
+{
+    background-color: #ffff00;
+    color: #000000;
+}
+
+.ErrorMessage
+{
+    color: #000000;
+}
+
+.Button
+{
+    font-size:1em;
+    color: #000000;
+}
+
+.Login
+{
+    font-family: verdana;
+    font-size:1em;
+    color: #000000;
+}
+.Login a
+{
+    font-family: verdana;
+    font-size:1em;
+    color: #000000;
+}
+.Login a:hover
+{
+    font-family: verdana;
+    font-size:1em;
+    color: #003366;
+}
+
+.LoginControlDiv
+{
+    font-family: verdana;
+    font-size:1em;
+}
+
+.LoginFailure
+{
+    background-color:#ffff66;
+    color: #ff0000;
+}
+
+.fileupload
+{
+    font-family: verdana;
+    font-size:1em;
+    background-color: #ddeeff;
+    color: #003366;
+}
+
+.emphasize
+{
+    font-weight: bold;
+}
+
+.cbarraydiv
+{
+    border: 1px solid #336699;
+    overflow: auto;
+}
+
+.cbarraytable
+{
+    padding: 0px 5px 0px 5px;
+    margin: 0px 0px 0px 0px;
+}
+
+.warning
+{
+	color: #ff0000;
+}
+
+.cbarray_outertable
+{
+}
+
+.cbarray_outertable_checkallcell
+{
+}
+
+.relationship_outertable
+{
+}
+.relationshipdiv
+{
+    border: 1px solid #336699;
+    overflow: auto;
+}
+
+.NodesGridTable
+{
+	
+}
+.NodesGridTableCell
+{
+	border: 1px solid #000000;
+	padding: 3px;
+}
+
+.divbutton
+{
+	width: 18px;
+	height: 18px;
+	cursor: pointer;
+}

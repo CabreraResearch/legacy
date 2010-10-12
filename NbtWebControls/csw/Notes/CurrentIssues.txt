@@ -1,0 +1,2 @@
+1) Test UI doesn't list allowed child node types.
+2) Weirdness when you re-retrieve the tree

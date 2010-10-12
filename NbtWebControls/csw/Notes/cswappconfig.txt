@@ -1,0 +1,101 @@
+HCR\CLSID\{06601A8E-9195-3A3D-B826-3C84740F723A}\ChemSW.CswAppConfig.CswConfigVbls
+HCR\CLSID\{06601A8E-9195-3A3D-B826-3C84740F723A}\InprocServer32\   <= a bunch of wrong stuff
+
+{4A793E10-3DE9-3ACD-A23B-DB06D50F0812} <== same
+{B8D8C591-7C32-398A-A793-F45B131A5618}
+{C18EFC45-727F-36E1-A9E1-D85D20EE048C}
+{CE17DF1C-4E80-35C0-83CD-1FACFD037B61}
+{E22523A1-5E61-3302-846C-8858794DBC3F}
+{E7CCF42B-839C-3D4D-8A8F-540604FA4649}
+{EC973DAF-5713-37AC-8EC1-8E55107315B6}
+{EDC981ED-7E1E-397F-A045-68C245701B9B}
+
+
+
+
+HCR\CLSID\{152EE0C1-AB6B-3B1A-B236-6D49BD88E471}\ChemSW.CswAppConfig.CswEncryption  
+
+also has a bunch of wrong stuff in InprocServer32
+
+
+
+HCR\CLSDI\{29A8CA62-59B5-3228-A484-883441E14164} <== ENCRYPTION AGAIN
+
+HCR\CLSID\{325D1A66-E873-3A7A-AF1F-82CA7774BE59} <== same
+
+HCR\CLSID\{33A23F9A-91D4-34F7-A480-E84107DFD3CF} <== same
+
+HCR\CLSID\{4012C024-906F-3CC7-A2D5-6C4DEC38B442} <== same 
+
+HCR\CLSID\{515E6C49-C604-32CB-9228-9A6CA4935CEA} < == SAME
+
+HCR\CLSID\{5C9927AC-4EC2-3A5D-89AC-55C2175A7FAE}
+
+HCR\CLSID\{95AA25E3-E783-3012-9D25-FB897F861C50}
+
+HCR\CLSID\{9B5D0060-6067-3EB7-B357-099CB73BBA8C}
+
+HCR\CLSID\{B67B482B-6C77-3FFC-BFB3-8410C8C98E66}
+
+HCR\CLSID\{B77CD0E8-4B25-3947-B60B-41132753C408}
+
+
+
+Also entries for ChemSW.CswAppConfig.ConfigMode, which s not really a class
+{8B7A58F1-A41F-3581-B178-1F77A6C2E771}
+{A2435F13-D7A4-39FF-99ED-48280CA7613A}
+
+========================================================================
+Removed all of the CswAppConfig related entries above
+
+re-ran regasm /codebase /tlb
+
+Now the only one that's registering properly is CswEncryption and ConfigMode
+
+I also have an entry for CswAppConfig alone
+
+regasm /unregister removes these entries except for CswAppConfig.
+
+but bcb type library finds cswappconfig 3.8
+
+Removed CswAppConfig entry and now it doesn't show up in bcb type library
+
+
+Moved class interface attribute to only be on CswConfigVbls
+
+Now I have HCR\ReCord\{A2435F13-D7A4-39FF-99ED-48280CA7613A} and inside it entries only for 
+class ChemSW.CswAppConfig.ConfigMode
+This is the _only_ entry for CswAppConfig
+I have no other ChemSW registrations
+But this alone makes it show up in BCB type library list.
+
+Rolled back to previous version of CswAppConfig projec.t 
+This type ChemSW.CswEncryption registered even though the attribute is only on CswConfigVbls.
+
+Moved the class interface attribute to the assembly
+Same result
+
+An ASP page is quite able to Server.CreateObject( "ChemSW.CswAppConfig.CswEncryption" )
+
+
+
+========================================================
+RegAsComTest:
+ClassInterfaceAttribute only on CswTest_1
+But all three classes showed up. 
+And all three are accessible and loadable to the BCB test app.
+
+Removed ClassInterfaceAttribute altogether and everything still showed up!
+
+Removed ClassInterfaceAttribute and unchecked "Make COM visible" checkbox.
+Type library was registered but none of the interfaces were. 
+
+With "Make COM visible" checkbox unchecked, and ClassInterfaceAttribute on the first class, 
+again I get the type library but none of the interfaces.
+
+
+
+Rechecked "make com visible", got all the interfaces.
+
+
+Added new method to the first class, everything still works. 

@@ -1,0 +1,170 @@
+.RadTabStrip_ChemSWPrint .rtsLI,
+.RadTabStrip_ChemSWPrint .rtsLink
+{
+	color: #000;
+}
+
+.RadTabStripLeft_ChemSWPrint .rtsLI,
+.RadTabStripRight_ChemSWPrint .rtsLI
+{
+	width: 100%;
+}
+
+.RadTabStripLeft_ChemSWPrint .rtsLevel .rtsUL,
+.RadTabStripRight_ChemSWPrint .rtsLevel .rtsUL
+{
+	width: 150px; /* default width */
+}
+
+.RadTabStrip_ChemSWPrint .rtsLink
+{
+	text-decoration: none;
+}
+
+.RadTabStripTop_ChemSWPrint .rtsOut,
+.RadTabStripBottom_ChemSWPrint .rtsOut
+{
+	text-align:center;
+}
+
+.RadTabStrip_ChemSWPrint .rtsIn
+{
+	padding: 0 5px;
+}
+
+/* disabled tabs */
+.RadTabStrip_ChemSWPrint .rtsDisabled,
+.RadTabStripLeft_ChemSWPrint .rtsDisabled,
+.RadTabStripRight_ChemSWPrint .rtsDisabled,
+.RadTabStripBottom_ChemSWPrint .rtsDisabled,
+.RadTabStrip_ChemSWPrint_disabled .rtsDisabled
+{
+	color: #ccc;
+	cursor: default;
+}
+
+.RadTabStripLeft_ChemSWPrint .rtsLI .rtsIn,
+.RadTabStripRight_ChemSWPrint .rtsLI .rtsIn
+{
+	padding: 0 10px;
+	height: 17px;
+}
+
+.RadTabStripLeft_ChemSWPrint .rtsUL,
+.RadTabStripRight_ChemSWPrint .rtsUL
+{
+	width: 100%;
+}
+
+.RadTabStrip_ChemSWPrint .rtsImg
+{
+	border:0;
+	vertical-align:top;
+	width: 16px;
+	margin: 2px 0;
+}
+
+.RadTabStrip_ChemSWPrint .rtsTxt
+{
+	padding: 0 5px;
+	color: #ddeeff;
+}
+
+/* Scrolling */
+.RadTabStrip_ChemSWPrint .rtsNextArrow,
+.RadTabStrip_ChemSWPrint .rtsPrevArrow,
+.RadTabStrip_ChemSWPrint .rtsPrevArrowDisabled,
+.RadTabStrip_ChemSWPrint .rtsNextArrowDisabled
+{
+	height:17px;
+	width:17px;
+}
+
+.RadTabStripTop_ChemSWPrint .rtsNextArrow,
+.RadTabStripTop_ChemSWPrint .rtsPrevArrow,
+.RadTabStripTop_ChemSWPrint .rtsPrevArrowDisabled,
+.RadTabStripTop_ChemSWPrint .rtsNextArrowDisabled,
+.RadTabStripBottom_ChemSWPrint .rtsNextArrow,
+.RadTabStripBottom_ChemSWPrint .rtsPrevArrow,
+.RadTabStripBottom_ChemSWPrint .rtsPrevArrowDisabled,
+.RadTabStripBottom_ChemSWPrint .rtsNextArrowDisabled
+{
+	margin-top: -16px;
+}
+
+.RadTabStrip_ChemSWPrint .rtsNextArrow
+{
+	background:transparent url('TabStrip/ScrollRight.gif') no-repeat scroll 0pt;
+}
+
+.RadTabStrip_ChemSWPrint .rtsPrevArrow
+{
+	background:transparent url('TabStrip/ScrollLeft.gif') no-repeat scroll 0pt;
+}
+
+.RadTabStrip_ChemSWPrint .rtsNextArrowDisabled
+{
+	background:transparent url('TabStrip/ScrollRightDisabled.gif') no-repeat scroll 0pt;
+}
+
+.RadTabStrip_ChemSWPrint .rtsPrevArrowDisabled
+{
+	background:transparent url('TabStrip/ScrollLeftDisabled.gif') no-repeat scroll 0pt;
+}
+
+.RadTabStrip_ChemSWPrint .rtsLink
+{
+	font: bold 11px/17px Verdana,Arial,sans-serif;
+	color: #ddeeff;
+}
+
+.RadTabStripTop_ChemSWPrint .rtsSelected 
+{
+	color: #ffffff;
+}
+
+/* Orientation: Top */
+
+.RadTabStripTop_ChemSWPrint .rtsLink { padding-left: 10px; }
+.RadTabStripTop_ChemSWPrint .rtsLink .rtsOut { padding-right: 10px; }
+.RadTabStripTop_ChemSWPrint .rtsLink .rtsIn { padding: 4px; }
+
+.RadTabStripTop_ChemSWPrint .rtsLink { background: transparent url('TabStrip/TabStripStates.gif') no-repeat 0 0; }
+.RadTabStripTop_ChemSWPrint .rtsOut { background: transparent url('TabStrip/TabStripStates.gif') no-repeat 100% 0; }
+
+.RadTabStripTop_ChemSWPrint .rtsSelected { background: transparent url('TabStrip/TabStripStates.gif') no-repeat 0 -25px; }
+.RadTabStripTop_ChemSWPrint .rtsSelected .rtsOut { background: transparent url('TabStrip/TabStripStates.gif') no-repeat 100% -25px; }
+
+.RadTabStripTop_ChemSWPrint .rtsLevel { padding-bottom: 1px; }
+
+/* Orientation: Bottom */
+
+.RadTabStripBottom_ChemSWPrint .rtsLink { padding-left: 10px; }
+.RadTabStripBottom_ChemSWPrint .rtsLink .rtsOut { padding-right: 10px; }
+.RadTabStripBottom_ChemSWPrint .rtsLink .rtsIn { padding: 4px; }
+
+.RadTabStripBottom_ChemSWPrint .rtsLink { background: transparent url('TabStrip/TabStripStates.gif') no-repeat 0 -50px; }
+.RadTabStripBottom_ChemSWPrint .rtsOut { background: transparent url('TabStrip/TabStripStates.gif') no-repeat 100% -50px; }
+
+.RadTabStripBottom_ChemSWPrint .rtsSelected { background-position: 0 -25px; }
+.RadTabStripBottom_ChemSWPrint .rtsSelected .rtsOut { background-position: 100% -25px; }
+
+.RadTabStripBottom_ChemSWPrint .rtsLevel { padding-bottom: 1px; }
+
+
+/* Orientation: Left */
+
+.RadTabStripLeft_ChemSWPrint .rtsLink { padding: 3px 10px 1px; }
+
+.RadTabStripLeft_ChemSWPrint .rtsLink { background: transparent url('TabStrip/TabStripStates.gif') no-repeat 0 -107px; }
+
+.RadTabStripLeft_ChemSWPrint .rtsSelected { background-position: 0 -130px; }
+
+
+/* Orientation: Right */
+
+.RadTabStripRight_ChemSWPrint .rtsLink { padding: 3px 10px 1px; }
+
+.RadTabStripRight_ChemSWPrint .rtsLink { background: transparent url('TabStrip/TabStripStates.gif') no-repeat 100% -107px; }
+
+.RadTabStripRight_ChemSWPrint .rtsSelected { background-position: 100% -130px; }

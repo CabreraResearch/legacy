@@ -1,0 +1,161 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Text;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using ChemSW.Nbt;
+using ChemSW.Exceptions;
+using ChemSW.NbtWebControls;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using Telerik.Web.UI;
+using ChemSW.DB;
+using ChemSW.CswWebControls;
+
+namespace ChemSW.NbtWebControls.FieldTypes
+{
+    public class CswUserSelect : CswFieldTypeWebControl, INamingContainer//, IPostBackDataHandler
+    {
+        private bool _AllowEditValue = false;
+
+        public CswUserSelect( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+            : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
+        {
+            this.DataBinding += new EventHandler( CswUserSelect_DataBinding );
+        }
+
+
+        private void CswUserSelect_DataBinding( object sender, EventArgs e )
+        {
+            try
+            {
+                _AllowEditValue = ( _EditMode != NodeEditMode.Demo && _EditMode != NodeEditMode.PrintReport && !ReadOnly );
+
+                EnsureChildControls();
+                if( Prop != null )
+                {
+                    if( _AllowEditValue )
+                    {
+                        DataTable Data = new CswDataTable( "Userselectdatatable", "" );
+                        Data.Columns.Add( "User Name", typeof( string ) );
+                        Data.Columns.Add( "userid", typeof( int ) );
+                        Data.Columns.Add( "Include", typeof( bool ) );
+
+                        string searchstr = CswNbtNodePropUserSelect.delimiter.ToString() + Prop.AsUserSelect.SelectedUserIds + CswNbtNodePropUserSelect.delimiter.ToString();
+                        bool first = true;
+                        ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
+                        {
+                            UsersTree.goToNthChild( c );
+
+                            DataRow NTRow = Data.NewRow();
+                            NTRow["User Name"] = UsersTree.getNodeNameForCurrentPosition();
+                            NTRow["userid"] = UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
+                            NTRow["Include"] = ( ( searchstr.IndexOf( CswNbtNodePropUserSelect.delimiter.ToString() + UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() + CswNbtNodePropUserSelect.delimiter.ToString() ) >= 0 ) ||
+                                                 ( first && Required && Prop.AsUserSelect.SelectedUserIds == string.Empty ) );
+                            Data.Rows.Add( NTRow );
+                            first = false;
+
+                            UsersTree.goToParentNode();
+                        }
+
+                        _CBArray.UseRadios = false;
+                        _CBArray.CreateCheckBoxes( Data, "User Name", "userid" );
+                    }
+                }
+            }
+            catch( Exception ex )
+            {
+                HandleError( ex );
+            }
+        }
+
+
+        public override void Save()
+        {
+            if( _AllowEditValue && !ReadOnly )
+            {
+                Prop.AsUserSelect.SelectedUserIds = _CBArray.GetCheckedValues( "Include" );
+            }
+        }
+        public override void AfterSave()
+        {
+            DataBind();
+        }
+        public override void Clear()
+        {
+            _ValueLabel.Text = string.Empty;
+            _CBArray.Clear();
+        }
+
+        private Label _ValueLabel;
+        private CswImageButton _EditButton;
+        private CswCheckBoxArray _CBArray;
+        protected override void CreateChildControls()
+        {
+            try
+            {
+                CswAutoTable Table = new CswAutoTable();
+                this.Controls.Add( Table );
+
+                _ValueLabel = new Label();
+                _ValueLabel.ID = "value";
+                _ValueLabel.CssClass = CswFieldTypeWebControl.StaticTextCssClass;
+                Table.addControl( 0, 0, _ValueLabel );
+
+                if( _AllowEditValue )
+                {
+                    _CBArray = new CswCheckBoxArray( _CswNbtResources );
+                    _CBArray.ID = "cbarray";
+                    Table.addControl( 1, 0, _CBArray );
+                }
+                else
+                {
+                    _EditButton = new CswImageButton( CswImageButton.ButtonType.Edit );
+                    _EditButton.ID = "edit";
+                    Table.addControl( 0, 1, _EditButton );
+                }
+            }
+            catch( Exception ex )
+            {
+                HandleError( ex );
+            }
+
+            base.CreateChildControls();
+        }
+
+
+        protected override void OnPreRender( EventArgs e )
+        {
+            try
+            {
+                EnsureChildControls();
+                if( Prop != null )
+                {
+                    _ValueLabel.Text = Prop.AsUserSelect.SelectedUsersToString();
+                    if( !_AllowEditValue )
+                    {
+                        if( Prop.NodeId != null )
+                            _EditButton.OnClientClick = "EditPropertyInPopup('" + Prop.NodeId.ToString() + "', '" + PropId.ToString() + "');";
+                        if( ReadOnly )
+                            _EditButton.Visible = false;
+
+                        _ValueLabel.Text += "&nbsp;";
+                    }
+                }
+            }
+            catch( Exception ex )
+            {
+                HandleError( ex );
+            }
+            base.OnPreRender( e );
+        }
+
+    }
+}
