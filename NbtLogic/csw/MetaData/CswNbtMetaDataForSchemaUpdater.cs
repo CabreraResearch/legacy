@@ -71,12 +71,15 @@ namespace ChemSW.Nbt.MetaData
                     if( MatchingNodeTypeProp == null )
                     {
                         //CswNbtMetaDataNodeTypeTab Tab = NodeType.getFirstNodeTypeTab();
-                        MatchingNodeTypeProp = makeNewProp( NodeType, null, ObjectClassProp.FieldType.FieldTypeId, ObjectClassProp.PropName, Int32.MinValue, true );
-                        DoSynch = true;
+                        MatchingNodeTypeProp = makeNewProp(NodeType, null, ObjectClassProp.FieldType.FieldTypeId, ObjectClassProp.PropName, Int32.MinValue, true, ObjectClassProp);
+                        DoSynch = false;   // because makeNewProp does it for us
                     }
 
-                    if( DoSynch )
-                        CopyNodeTypePropFromObjectClassProp( ObjectClassProp, MatchingNodeTypeProp );
+                    if (DoSynch)
+                    {
+                        CopyNodeTypePropFromObjectClassProp(ObjectClassProp, MatchingNodeTypeProp._DataRow);
+                        CopyNodeTypePropDefaultValueFromObjectClassProp(ObjectClassProp, MatchingNodeTypeProp);
+                    }
 
                 } // foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in NodeType.ObjectClass.ObjectClassProps )
             } // foreach( CswNbtMetaDataNodeType NodeType in this.NodeTypes )

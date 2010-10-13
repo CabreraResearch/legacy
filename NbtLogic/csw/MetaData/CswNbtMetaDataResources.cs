@@ -12,6 +12,8 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataResources
     {
+        public bool _PreventVersioning = false;
+
         public CswNbtResources CswNbtResources;
         public CswNbtMetaData CswNbtMetaData;
         public CswNbtFieldResources CswNbtFieldResources;

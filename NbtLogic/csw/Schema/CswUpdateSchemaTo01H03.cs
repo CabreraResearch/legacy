@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.Schema
 
             //Last DT Op
             OCPUpdate.update( NewOCPTable );
-            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
             // Default values
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.StatusPropertyName ),
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, "Barcode", Int32.MinValue );
 
             //Update NT Relationships to Target NT
-            CswNbtMetaDataNodeTypeProp FEMountPointProp = FireExtinguisherNT.getNodeTypeProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
+            CswNbtMetaDataNodeTypeProp FEMountPointProp = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
             FEMountPointProp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointNT.NodeTypeId, string.Empty, Int32.MinValue );
 
             //New LG Node
@@ -197,17 +197,17 @@ namespace ChemSW.Nbt.Schema
             OwnerNTP.DefaultValue.AsRelationship.RelatedNodeId = LocationGroupNode.NodeId;
 
             //Build the default ParentView
-            CswNbtMetaDataNodeTypeProp LocationGroupNTP = LocationGroupNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationGroupPropertyName);
-            CswNbtMetaDataObjectClassProp LocationOCP = MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.LocationPropertyName);
-            CswNbtMetaDataNodeTypeProp MountPointNTP = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
+            CswNbtMetaDataObjectClassProp LocationLocationGroupOCP = LocationOC.getObjectClassProp(CswNbtObjClassLocation.LocationGroupPropertyName);
+            CswNbtMetaDataObjectClassProp MountPointLocationOCP = MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.LocationPropertyName);
+            CswNbtMetaDataNodeTypeProp FireExtinguisherMountPointNTP = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
 
             CswNbtView ParentView = _CswNbtSchemaModTrnsctn.makeView();
             ParentView.ViewName = "Physical Inspection Schedule ParentView";
             CswNbtViewRelationship ParentRelationship = ParentView.AddViewRelationship( PhysicalInspectionScheduleNT, true );
             CswNbtViewRelationship LocationGroupChild = ParentView.AddViewRelationship( ParentRelationship, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );
-            CswNbtViewRelationship LocationChild = ParentView.AddViewRelationship( LocationGroupChild, CswNbtViewRelationship.PropOwnerType.Second, LocationGroupNTP, true );
-            CswNbtViewRelationship MountPointChild = ParentView.AddViewRelationship( LocationChild, CswNbtViewRelationship.PropOwnerType.Second, LocationOCP, true );
-            CswNbtViewRelationship FireExtinguisherChild = ParentView.AddViewRelationship( MountPointChild, CswNbtViewRelationship.PropOwnerType.Second, LocationOCP, true );
+            CswNbtViewRelationship LocationChild = ParentView.AddViewRelationship(LocationGroupChild, CswNbtViewRelationship.PropOwnerType.Second, LocationLocationGroupOCP, true);
+            CswNbtViewRelationship MountPointChild = ParentView.AddViewRelationship(LocationChild, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationOCP, true);
+            CswNbtViewRelationship FireExtinguisherChild = ParentView.AddViewRelationship(MountPointChild, CswNbtViewRelationship.PropOwnerType.Second, FireExtinguisherMountPointNTP, true);
             ParentView.save();
 
             //  Ask Steve re: "The property or indexer 'ChemSW.Nbt.PropTypes.CswNbtNodePropViewReference.ViewId' cannot be used in this context 
