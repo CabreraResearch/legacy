@@ -84,12 +84,6 @@ namespace ChemSW.Nbt.ObjClasses
             return ( (CswNbtObjClassLocation) Node.ObjClass );
         }//AsLocation
 
-        public static CswNbtObjClassLocationGroup AsLocationGroup( CswNbtNode Node )
-        {
-            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.LocationGroupClass );
-            return ( (CswNbtObjClassLocationGroup) Node.ObjClass );
-        }//AsLocationGroup
-
         public static CswNbtObjClassMailReport AsMailReport( CswNbtNode Node )
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
