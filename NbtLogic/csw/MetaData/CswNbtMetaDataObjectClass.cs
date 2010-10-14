@@ -27,7 +27,6 @@ namespace ChemSW.Nbt.MetaData
             InspectionDesignClass,
             InspectionRouteClass,
             LocationClass,
-            LocationGroupClass,
             MailReportClass,
             MaterialClass,
             MaterialSubclassClass,

@@ -84,16 +84,8 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassInspectionRoute( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass:
-                    ReturnVal = new CswNbtObjClassInventoryGroup( CswNbtResources, Node );
-                    break;
-
                 case CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
-                    break;
-
-                case CswNbtMetaDataObjectClass.NbtObjectClass.LocationGroupClass:
-                    ReturnVal = new CswNbtObjClassLocationGroup( CswNbtResources, Node );
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass:
@@ -256,10 +248,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources );
-                    break;
-
-                case CswNbtMetaDataObjectClass.NbtObjectClass.LocationGroupClass:
-                    ReturnVal = new CswNbtObjClassLocationGroup( CswNbtResources );
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass:
