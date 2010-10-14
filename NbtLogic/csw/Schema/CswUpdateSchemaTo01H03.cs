@@ -201,20 +201,14 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp MountPointLocationOCP = MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.LocationPropertyName);
             CswNbtMetaDataNodeTypeProp FireExtinguisherMountPointNTP = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
 
-            CswNbtView ParentView = _CswNbtSchemaModTrnsctn.makeView();
-            ParentView.ViewName = "Physical Inspection Schedule ParentView";
+            CswNbtMetaDataNodeTypeProp ParentViewNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentViewPropertyName );
+            CswNbtView ParentView = _CswNbtSchemaModTrnsctn.restoreView(ParentViewNTP.DefaultValue.AsViewReference.ViewId);
             CswNbtViewRelationship ParentRelationship = ParentView.AddViewRelationship( PhysicalInspectionScheduleNT, true );
             CswNbtViewRelationship LocationGroupChild = ParentView.AddViewRelationship( ParentRelationship, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );
             CswNbtViewRelationship LocationChild = ParentView.AddViewRelationship(LocationGroupChild, CswNbtViewRelationship.PropOwnerType.Second, LocationLocationGroupOCP, true);
             CswNbtViewRelationship MountPointChild = ParentView.AddViewRelationship(LocationChild, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationOCP, true);
             CswNbtViewRelationship FireExtinguisherChild = ParentView.AddViewRelationship(MountPointChild, CswNbtViewRelationship.PropOwnerType.Second, FireExtinguisherMountPointNTP, true);
             ParentView.save();
-
-            //  Ask Steve re: "The property or indexer 'ChemSW.Nbt.PropTypes.CswNbtNodePropViewReference.ViewId' cannot be used in this context 
-            //                 because the set accessor is inaccessible	C:\Vault\Dn\Nbt\Nbt\NbtLogic\csw\Schema\CswUpdateSchemaTo01H03.cs"
-            //Generator ParentView = Generator NT > Location Group NT > Locations OC > Mount Point NT > Fire Extinguisher NT
-            //CswNbtMetaDataNodeTypeProp ParentViewNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentViewPropertyName );
-            //ParentViewNTP.DefaultValue.AsViewReference.ViewId = ParentView.ViewId;
 
             //FE Route NT
             CswNbtMetaDataObjectClass InspectionRouteOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass );
@@ -248,8 +242,8 @@ namespace ChemSW.Nbt.Schema
             InspectionGeneratorNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionScheduleNT.NodeTypeId, string.Empty, Int32.MinValue );
             
             //Inspection has FE Route
-            CswNbtMetaDataNodeTypeProp RouteNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
-            RouteNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionRouteNT.NodeTypeId, string.Empty, Int32.MinValue );
+            //CswNbtMetaDataNodeTypeProp RouteNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
+            //RouteNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionRouteNT.NodeTypeId, string.Empty, Int32.MinValue );
 
             //Grant admin user FE NT permissions
             CswNbtNode RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );

@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _ViewIdSubField.Column ) );
-                if( ret == Int32.MinValue && NodeId != null )
+                if( ret == Int32.MinValue ) //&& NodeId != null )
                 {
                     // make a new view
                     CswNbtView NewView = new CswNbtView( _CswNbtResources );
