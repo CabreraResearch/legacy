@@ -172,18 +172,13 @@ namespace ChemSW.Nbt.Schema
             CswNbtViewRelationship FireExtinguisherChild = ParentView.AddViewRelationship( MountPointChild, CswNbtViewRelationship.PropOwnerType.Second, MountPointNTP, true );
             ParentView.save();
 
-            //  Ask Steve re: "The property or indexer 'ChemSW.Nbt.PropTypes.CswNbtNodePropViewReference.ViewId' cannot be used in this context 
-            //                 because the set accessor is inaccessible	C:\Vault\Dn\Nbt\Nbt\NbtLogic\csw\Schema\CswUpdateSchemaTo01H03.cs"
-            //Generator ParentView = Generator NT > Location Group NT > Locations OC > Mount Point NT > Fire Extinguisher NT
-            //CswNbtMetaDataNodeTypeProp ParentViewNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentViewPropertyName );
-            //ParentViewNTP.DefaultValue.AsViewReference.ViewId = ParentView.ViewId;
-
             //FE Route NT
             CswNbtMetaDataObjectClass InspectionRouteOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass );
             CswNbtMetaDataNodeType PhysicalInspectionRouteNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( InspectionRouteOC.ObjectClassId, "Physical Inspection Route", "Fire Extinguisher" );
             PhysicalInspectionRouteNT.IconFileName = "arrows.gif";
 
             // <BZ 10405>
+
             //FE Physical Inspection NT
             CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
             CswNbtMetaDataNodeType OldFireExtinguisherInspectionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Fire Extinguisher Inspection" );
@@ -262,32 +257,6 @@ namespace ChemSW.Nbt.Schema
             //_CswNbtSchemaModTrnsctn.MetaData.refreshAll();
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
     
-            // <BZ 10408>
-            CswNbtNode AdminRoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
-            if ( AdminRoleNode != null )
-            {
-                //CswNbtView LocationGroupView = _CswNbtSchemaModTrnsctn.makeView();
-                //LocationGroupView.makeNew( "Location Groups", NbtViewVisibility.Role, AdminRoleNode.NodeId, null, null );
-                //LocationGroupView.Category = "System";
-                //LocationGroupView.AddViewRelationship( LocationGroupNT, false );
-                //LocationGroupView.save();
-
-                //CswNbtView SchedulesView = _CswNbtSchemaModTrnsctn.makeView();
-                //SchedulesView.makeNew( "Physical Inspection Schedule", NbtViewVisibility.Role, AdminRoleNode.NodeId, null, null );
-                //SchedulesView.Category = "Inspections";
-                //CswNbtViewRelationship LocationGroupRelationship = SchedulesView.AddViewRelationship( LocationGroupNT, false );
-                //CswNbtViewRelationship SchedulesRelationship = SchedulesView.AddViewRelationship( LocationGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, OwnerNTP, false ); 
-                //SchedulesView.save();
-
-                //CswNbtView FireExtinguishersView = _CswNbtSchemaModTrnsctn.makeView();
-                //FireExtinguishersView.makeNew( "Fire Extinguishers", NbtViewVisibility.Role, AdminRoleNode.NodeId, null, null );
-                //FireExtinguishersView.Category = "Inspections";
-                //FireExtinguishersView.AddViewRelationship( LocationGroupNT, false );
-                //FireExtinguishersView.AddViewRelationship( LocationGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, LocationGroupNTP, true );
-                //FireExtinguishersView.AddViewRelationship( LocationChild, CswNbtViewRelationship.PropOwnerType.Second, LocationOCP, true );
-                //FireExtinguishersView.AddViewRelationship( MountPointChild, CswNbtViewRelationship.PropOwnerType.Second, MountPointNTP, true );
-                //SchedulesView.save();
-            }
         }//Update()
 
     }//class CswUpdateSchemaTo01H03
