@@ -291,7 +291,7 @@ namespace ChemSW.Nbt.WebPages
                             DefaultGeneratorNodeType.NameTemplateText = "Inspection from [Initial Due Date] to [Final Due Date]";
                             CswNbtMetaDataNodeTypeProp OwnerProp = DefaultGeneratorNodeType.getNodeTypeProp( CswNbtObjClassGenerator.OwnerPropertyName );
                             // the owner of the generator is the target of the inspection
-                            OwnerProp.SetFK( TargetProp.FKType, TargetProp.FKValue, string.Empty, Int32.MinValue );
+                            OwnerProp.SetFK( TargetProp.IsFK, TargetProp.FKType, TargetProp.FKValue, string.Empty, Int32.MinValue );
                         }
 
                         CswNbtNode NewGeneratorNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( DefaultGeneratorNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.JustSetPk );
