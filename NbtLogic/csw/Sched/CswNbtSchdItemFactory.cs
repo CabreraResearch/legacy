@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Reflection;
 using ChemSW.Nbt;
@@ -11,13 +12,15 @@ using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Sched
 {
-
+    /// <summary>
+    /// Schedule items for node based tasks. For non-node based tasks, add to _AlwaysRunItems in SchdItemRunner
+    /// </summary>
     public class CswNbtSchdItemFactory
     {
 
         private CswNbtResources _CswNbtResources = null;
 
-        public CswNbtSchdItemFactory( CswNbtResources CswNbtResources  )
+        public CswNbtSchdItemFactory( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
         }//ctor

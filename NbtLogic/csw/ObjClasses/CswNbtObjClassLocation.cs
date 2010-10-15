@@ -19,7 +19,6 @@ namespace ChemSW.Nbt.ObjClasses
         public static string RowsPropertyName { get { return "Rows"; } }
         public static string ColumnsPropertyName { get { return "Columns"; } }
         public static string BarcodePropertyName { get { return "Barcode"; } }
-        public static string LocationGroupPropertyName { get { return "Location Group"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -152,13 +151,6 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[BarcodePropertyName].AsBarcode );
-            }
-        }
-        public CswNbtNodePropRelationship LocationGroup
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[LocationGroupPropertyName].AsRelationship );
             }
         }
 

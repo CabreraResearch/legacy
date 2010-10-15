@@ -302,7 +302,7 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         }
-        
+
         /// <summary>
         /// Set the FK for relationship props
         /// </summary>
@@ -312,6 +312,20 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="inValuePropId">Optional  (for Property Reference)</param>
         public void SetFK( string inFKType, Int32 inFKValue, string inValuePropType, Int32 inValuePropId )
         {
+            SetFK( true, inFKType, inFKValue, inValuePropType, inValuePropId );
+        }
+            
+        /// <summary>
+        /// Set the FK for relationship props
+        /// </summary>
+        /// <param name="inIsFk">True if this is an Fk</param>
+        /// <param name="inFKType">Either NodeTypeId or ObjectClassId</param>
+        /// <param name="inFKValue">FK Value</param>
+        /// <param name="inValuePropType">Optional (for Property Reference)</param>
+        /// <param name="inValuePropId">Optional  (for Property Reference)</param>
+        public void SetFK( bool inIsFk, string inFKType, Int32 inFKValue, string inValuePropType, Int32 inValuePropId )
+        {
+            IsFK = inIsFk;
             if( FKType != inFKType || FKValue != inFKValue )
             {
                 if( FKType != string.Empty && FKValue != Int32.MinValue )

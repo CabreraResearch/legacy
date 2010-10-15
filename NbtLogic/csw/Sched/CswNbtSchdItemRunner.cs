@@ -231,6 +231,7 @@ namespace ChemSW.Nbt.Sched
             //Add "run always" schedule items
             _AlwaysRunItems.Add( new CswNbtSchdItemUpdatePropertyValues( _CswNbtResources ) );
             _AlwaysRunItems.Add( new CswNbtSchdItemUpdateMTBF( _CswNbtResources ) );
+            _AlwaysRunItems.Add( new CswNbtSchdItemUpdateInspectionStatus( _CswNbtResources ) );
 
             string ConfigVarName_EmulateCatastrophicError = "EmulateCatastrophicError";
             if( _CswSetupVblsNbt.doesSettingExist( ConfigVarName_EmulateCatastrophicError ) )

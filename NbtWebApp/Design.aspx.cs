@@ -743,6 +743,7 @@ namespace ChemSW.Nbt.WebPages
                     }
 
                     // For Relationship and MultiRelationship properties:
+                    bool NewIsFk = false;
                     string NewFKType = CswNbtViewRelationship.RelatedIdType.Unknown.ToString();
                     Int32 NewFKValue = Int32.MinValue;
                     if( PropToSave.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
@@ -751,6 +752,7 @@ namespace ChemSW.Nbt.WebPages
                         if( TargetValue != String.Empty )
                         {
                             // Get settings from the form
+                            NewIsFk = true;
                             if( TargetValue.Substring( 0, "nt_".Length ) == "nt_" )
                             {
                                 NewFKType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
@@ -765,6 +767,7 @@ namespace ChemSW.Nbt.WebPages
                     }
                     else
                     {
+                        NewIsFk = false;
                         NewFKType = getPropAttributeValue( "EditProp_FkTypeValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                         NewFKValue = Convert.ToInt32( getPropAttributeValue( "EditProp_FkValueValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     }
@@ -794,7 +797,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.StaticText = getPropAttributeValue( "EditProp_TextValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.ReadOnly = Convert.ToBoolean( getPropAttributeValue( "EditProp_ReadOnlyValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.UseNumbering = Convert.ToBoolean( getPropAttributeValue( "EditProp_UseNumbering" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
-                    PropToSave.SetFK( NewFKType, NewFKValue,
+                    PropToSave.SetFK( NewIsFk, NewFKType, NewFKValue,
                                       getPropAttributeValue( "EditProp_RelatedPropType" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ),
                                       Convert.ToInt32( getPropAttributeValue( "EditProp_RelatedPropValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) ) );
                     PropToSave.Multi = (PropertySelectMode) Enum.Parse( typeof( PropertySelectMode ), MultiString );

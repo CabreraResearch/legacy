@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Data;
 using ChemSW.Nbt.PropTypes;
@@ -11,24 +12,105 @@ using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.ObjClasses
 {
+    /// <summary>
+    /// Inspection Design Object Class
+    /// </summary>
     public class CswNbtObjClassInspectionDesign : CswNbtObjClass, ICswNbtPropertySetGeneratorTarget
     {
-
+        /// <summary>
+        /// Inspection Route
+        /// </summary>
         public static string RoutePropertyName { get { return "Route"; } }
+        /// <summary>
+        /// Target == Owner == Parent
+        /// </summary>
         public static string TargetPropertyName { get { return "Target"; } }
+        /// <summary>
+        /// This Inspection's order within Route
+        /// </summary>
         public static string RouteOrderPropertyName { get { return "Route Order"; } }
+        /// <summary>
+        /// Inspection name
+        /// </summary>
         public static string NamePropertyName { get { return "Name"; } }
+        /// <summary>
+        /// Due date
+        /// </summary>
         public static string DatePropertyName { get { return "Due Date"; } }
+        /// <summary>
+        /// Is Future Inspection
+        /// </summary>
         public static string IsFuturePropertyName { get { return "IsFuture"; } }
+        /// <summary>
+        /// Schedule generating this inspection
+        /// </summary>
         public static string GeneratorPropertyName { get { return "Generator"; } }
+        /// <summary>
+        /// Owner == Target == Parent
+        /// </summary>
         public static string OwnerPropertyName { get { return "Target"; } }
+        /// <summary>
+        /// Inspection status as list should match InspectionStatus enum
+        /// </summary>
         public static string StatusPropertyName { get { return "Status"; } }
-        public static string ActionRequiredPropertyName { get { return "Action Required"; } }
+        /// <summary>
+        /// Finished or submitted
+        /// </summary>
+        public static string FinishedPropertyName { get { return "Finished"; } }
+        /// <summary>
+        /// Marked cancelled
+        /// </summary>
+        public static string CancelledPropertyName { get { return "Cancelled"; } }
+        /// <summary>
+        /// Reason for cancel
+        /// </summary>
+        public static string CancelReasonPropertyName { get { return "Cancel Reason"; } }
 
         /// <summary>
-        /// Enum of possible Inspection status values
+        /// Possible status values for Inspection. Should match List values on ID Status attribute.
         /// </summary>
-        public enum InspectionStatus { Pending, Completed, Overdue, Missed, Cancelled };
+        public enum InspectionStatus { 
+            /// <summary>
+            /// No action has been taken, not yet due
+            /// </summary>
+            Pending, 
+            /// <summary>
+            /// No action has been taken, past due
+            /// </summary>
+            Overdue, 
+            /// <summary>
+            /// Inspection finished, some answers OOC
+            /// </summary>
+            Action_Required, 
+            /// <summary>
+            /// Inspection was never finished, past missed date
+            /// </summary>
+            Missed, 
+            /// <summary>
+            /// Inspection complete, all answers OK
+            /// </summary>
+            Completed, 
+            /// <summary>
+            /// Inspection completed late, all answers OK
+            /// </summary>
+            Completed_Late, 
+            /// <summary>
+            /// Admin has cancelled the Inspection
+            /// </summary>
+            Cancelled 
+        };
+
+        /// <summary>
+        /// Replaces underscore with space in enum
+        /// </summary>
+        /// <param name="Status">InspectionStatus.Completed_Late</param>
+        /// <returns>Completed Late</returns>
+        public static string InspectionStatusAsString( InspectionStatus Status )
+        {
+            char StatusPad = '_';
+            char StatusSpace = ' ';
+            return Status.ToString().Replace( StatusPad, StatusSpace );
+        }
 
         /// <summary>
         /// This actually comes from OC Prop on Owner (Mount Point or Fire Extinguisher) == Last Inspection Date. 
@@ -37,19 +119,40 @@ namespace ChemSW.Nbt.ObjClasses
         private static string _LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
 
         //ICswNbtPropertySetRuleGeneratorTarget
+        /// <summary>
+        /// Due Date
+        /// </summary>
         public string GeneratorTargetGeneratedDatePropertyName { get { return DatePropertyName; } }
+        /// <summary>
+        /// Is Future
+        /// </summary>
         public string GeneratorTargetIsFuturePropertyName { get { return IsFuturePropertyName; } }
+        /// <summary>
+        /// Schedule generating Inspection
+        /// </summary>
         public string GeneratorTargetGeneratorPropertyName { get { return GeneratorPropertyName; } }
+        /// <summary>
+        /// Parent == Owner == Target
+        /// </summary>
         public string GeneratorTargetParentPropertyName { get { return OwnerPropertyName; } }
-       
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
+        /// <summary>
+        /// The constructor
+        /// </summary>
+        /// <param name="CswNbtResources"></param>
+        /// <param name="Node"></param>
         public CswNbtObjClassInspectionDesign( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
+        /// <summary>
+        /// Constructor overload
+        /// </summary>
+        /// <param name="CswNbtResources"></param>
         public CswNbtObjClassInspectionDesign( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
         {
@@ -62,11 +165,54 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
+        /// <summary>
+        /// Set any existing pending or overdue inspections on the same parent to missed
+        /// </summary>
         public override void beforeCreateNode()
         {
+            try
+            {
+                CswNbtNodePropList NodeStatus = null;
+                CswNbtNodePropRelationship NodeTarget = null;
+                CswNbtNodePropRelationship NodeGenerator = null;
+
+                foreach( CswNbtNode InspectionNode in this.Node.NodeType.getNodes( true, true ) )
+                {
+                    NodeStatus = InspectionNode.Properties[StatusPropertyName].AsList;
+                    //Inspection status is either Pending or Overdue
+                    if( InspectionStatusAsString( InspectionStatus.Overdue ) == NodeStatus.Value ||
+                        InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus.Value )
+                    {
+                        NodeGenerator = InspectionNode.Properties[GeneratorPropertyName].AsRelationship;
+                        //Generator exists
+                        if( null != NodeGenerator )
+                        {
+                            //Inspection is on the same generator
+                            if( this.Generator.RelatedNodeId == NodeGenerator.RelatedNodeId )
+                            {
+                                NodeTarget = InspectionNode.Properties[TargetPropertyName].AsRelationship;
+                                //Not this inspection, and Inspection has the same target
+                                if( this.Target.NodeId == NodeTarget.RelatedNodeId &&
+                                    this.Node != InspectionNode )
+                                {
+                                    NodeStatus.Value = InspectionStatus.Missed.ToString();
+                                }
+                            }
+                        }
+                    }
+                }
+            }//try
+            catch( Exception Exception )
+            {
+                _CswNbtResources.logError( new CswDniException( "Inspection Design create encountered the following exception: " + Exception.Message ) );
+            }
+
             _CswNbtObjClassDefault.beforeCreateNode();
         } // beforeCreateNode()
 
+        /// <summary>
+        /// Lock Node Type
+        /// </summary>
         public override void afterCreateNode()
         {
             _CswNbtObjClassDefault.afterCreateNode();
@@ -77,87 +223,138 @@ namespace ChemSW.Nbt.ObjClasses
         } // afterCreateNode()
 
         /// <summary>
-        /// OOC Status before update
+        /// True if user checks Finished
+        /// </summary>
+        private bool _Finished = false;
+        /// <summary>
+        /// True if user checks Cancelled
+        /// </summary>
+        private bool _Cancelled = false;
+        /// <summary>
+        /// True if user checks Finished and any answer is OOC
         /// </summary>
         private bool _OOC = false;
-        private bool _ActionRequired = false;
+        /// <summary>
+        /// True if user checks Finished and all questions have answers
+        /// </summary>
         private bool _allAnswered = true;
+        /// <summary>
+        /// True if user checks Finished, all questions are answered, and all answer dates are before Missed Date
+        /// </summary>
         private bool _allAnsweredinTime = true;
+        /// <summary>
+        /// Due Date + Grace Days
+        /// </summary>
         private DateTime _MissedDate = DateTime.MinValue;
 
         /// <summary>
-        /// Determine before/after OOC states and update Inspection status.
+        /// Determine Inspection Status and set read-only
         /// </summary>
         public override void beforeWriteNode()
         {
-            CswNbtMetaDataFieldType QuestionFT = _CswNbtResources.MetaData.getFieldType(CswNbtMetaDataFieldType.NbtFieldType.Question);
-            CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[QuestionFT]; 
-            CswNbtNode Schedule = _CswNbtResources.Nodes.GetNode(this.Generator.RelatedNodeId);
-            CswNbtNodePropWrapper GraceDaysPW = Schedule.Properties[CswNbtObjClassGenerator.GraceDaysPropertyName];
-            CswNbtNodePropNumber GraceDays = GraceDaysPW.AsNumber;
-            _MissedDate = this.Date.DateValue.AddDays( CswConvert.ToDouble( GraceDays.Value ) );
-
-            foreach (CswNbtNodePropWrapper Prop in QuestionsFlt)
+            try
             {
-                CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
-                _OOC = ( _OOC || !QuestionProp.IsCompliant );
-                _allAnswered = ( _allAnswered || QuestionProp.Answer != string.Empty );
-                _allAnsweredinTime = ( _allAnsweredinTime || QuestionProp.DateAnswered < _MissedDate );
-            }
-            //foreach ( CswNbtNodePropWrapper Prop in QuestionsFlt )
-            //{
-            //    if ( Prop.WasModified )
-            //    {
-            //        CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
-            //        _newOOC = ( _newOOC || QuestionProp.InCompliance != true );
-            //    }
-            //}
-            //if ( _oldOOC != _newOOC )
-            //{
+                CswNbtMetaDataFieldType QuestionFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Question );
+                CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[QuestionFT];
+                _Finished = ( Tristate.True == CswConvert.ToTristate( this.Finished.Checked ) );
+                _Cancelled = ( Tristate.True == CswConvert.ToTristate( this.Cancelled.Checked ) );
 
-//                else
-                    // Don't know yet.  this.Status.SelectedValue = InspectionStatus.ActionRequired.ToString();
-            //}
-            if ( _OOC )
-                _ActionRequired = true;
-            else
-            {
-                _ActionRequired = false;
-                if ( _allAnswered && _allAnsweredinTime )
+                if( _Cancelled )
                 {
-                    CswNbtNode Parent = _CswNbtResources.Nodes.GetNode( this.Target.RelatedNodeId );
-                    if ( null != Parent )
-                        Parent.Properties[_LastInspectionDatePropertyName].AsDate.DateValue = DateTime.Now;
-                    this.Status.Value = InspectionStatus.Completed.ToString();
+                    this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
                 }
-                //else if ( _allAnswered && !_allAnsweredinTime )
+                else if( _Finished )
+                {
+                    CswNbtNode Schedule = _CswNbtResources.Nodes.GetNode( this.Generator.RelatedNodeId );
+                    CswNbtNodePropWrapper GraceDaysPW = Schedule.Properties[CswNbtObjClassGenerator.GraceDaysPropertyName];
+                    CswNbtNodePropNumber GraceDays = GraceDaysPW.AsNumber;
+                    _MissedDate = this.Date.DateValue.AddDays( CswConvert.ToDouble( GraceDays.Value ) );
+
+                    foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+                    {
+                        CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
+                        _OOC = ( _OOC || !QuestionProp.IsCompliant );
+                        _allAnswered = ( _allAnswered || QuestionProp.Answer != string.Empty );
+                        _allAnsweredinTime = ( _allAnsweredinTime || QuestionProp.DateAnswered <= _MissedDate );
+                    }
+
+                    if( _allAnswered )
+                    {
+                        if( _OOC )
+                        {
+                            _Finished = false;
+                            this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
+                        }
+                        else
+                        {
+                            _Finished = true;
+                            CswNbtNode Parent = _CswNbtResources.Nodes.GetNode( this.Target.RelatedNodeId );
+                            if( null != Parent )
+                                Parent.Properties[_LastInspectionDatePropertyName].AsDate.DateValue = DateTime.Now;
+
+                            if( _allAnsweredinTime )
+                                this.Status.Value = InspectionStatusAsString( InspectionStatus.Completed );
+                            else
+                                this.Status.Value = InspectionStatusAsString( InspectionStatus.Completed_Late );
+
+                        }
+                    }
+                    //else: What is user checks Finished but unanswered questions remain?
+
+                    this.Finished.Checked = CswConvert.ToTristate( _Finished );
+
+                }//else if ( _Finished )
+
+                if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
+                   this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
+                   this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
+                   this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
+                {
+                    foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+                    {
+                        Prop.ReadOnly = true;
+                    }
+                }
+            }//try
+            catch( Exception Exception )
+            {
+                _CswNbtResources.logError( new CswDniException( "Inspection Design before save encountered the following exception: " + Exception.Message ) );
             }
 
-            this.ActionRequired.Checked = CswConvert.ToTristate( _ActionRequired);
             _CswNbtObjClassDefault.beforeWriteNode();
         }//beforeWriteNode()
 
         /// <summary>
-        /// Update Status on Owner nodes (Mount Point or Fire Extinguisher) if OOC status has changed.
+        /// Update Parent Status (OK,OOC) if Inspection is submitted
         /// </summary>
         public override void afterWriteNode()
         {
-            CswNbtNode ParentMountPoint = _CswNbtResources.Nodes.GetNode( this.Target.RelatedNodeId );
-            CswNbtNodePropWrapper ParentStatusPW = ParentMountPoint.Properties[CswNbtObjClassMountPoint.StatusPropertyName];
-            CswNbtNodePropList ParentStatus = ParentStatusPW.AsList;
-            string newStatus = ParentStatus.Value;
-            if ( !_OOC && _allAnswered )
+            try
             {
-                newStatus = "OK";
-            }
-            else if ( _OOC )
-            {
-                newStatus = "OOC";
-                ParentMountPoint.PendingUpdate = true;
-            }
-            //What to do with FireExtinguisher?
+                CswNbtNode ParentMountPoint = _CswNbtResources.Nodes.GetNode( this.Target.RelatedNodeId );
+                CswNbtNodePropWrapper ParentStatusPW = ParentMountPoint.Properties[CswNbtObjClassMountPoint.StatusPropertyName];
+                CswNbtNodePropList ParentStatus = ParentStatusPW.AsList;
+                string newStatus = ParentStatus.Value;
 
-            ParentStatus.Value = newStatus;
+                if( _allAnswered )
+                {
+                    if( _OOC )
+                    {
+                        newStatus = "OOC";
+                        ParentMountPoint.PendingUpdate = true;
+                    }
+                    else
+                    {
+                        newStatus = "OK";
+                    }
+                }
+
+                ParentStatus.Value = newStatus;
+            }//try
+            catch( Exception Exception )
+            {
+                _CswNbtResources.logError( new CswDniException( "Inspection Design save encountered the following exception: " + Exception.Message ) );
+            }
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
@@ -186,14 +383,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropLogical ActionRequired
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ActionRequiredPropertyName].AsLogical );
-            }
-        }
-
+        /// <summary>
+        /// Inspection route
+        /// </summary>
         public CswNbtNodePropRelationship Route
         {
             get
@@ -202,6 +394,10 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        /// <summary>
+        /// Inspection target == owner == parent. 
+        /// In FE, target == Mount Point
+        /// </summary>
         public CswNbtNodePropRelationship Target
         {
             get
@@ -210,6 +406,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        /// <summary>
+        /// Order on route
+        /// </summary>
         public CswNbtNodePropNumber RouteOrder
         {
             get
@@ -218,6 +417,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        /// <summary>
+        /// Inspection name
+        /// </summary>
         public CswNbtNodePropText Name
         {
             get
@@ -226,6 +428,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        /// <summary>
+        /// Due Date of inspection
+        /// </summary>
         public CswNbtNodePropDate Date
         {
             get
@@ -234,6 +439,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        /// <summary>
+        /// Date the inspection was generated
+        /// </summary>
         public CswNbtNodePropDate GeneratedDate
         {
             get
@@ -242,6 +450,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        /// <summary>
+        /// Inspection is preemptively generated for future date
+        /// </summary>
         public CswNbtNodePropLogical IsFuture
         {
             get
@@ -288,6 +499,40 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[StatusPropertyName].AsList );
+            }
+        }
+
+        /// <summary>
+        /// Temporary bool: if all questions have been answered, Finished == true
+        /// If any answer is OOC, Finished = false and Inspection status = Action_Required
+        /// </summary>
+        public CswNbtNodePropLogical Finished
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[FinishedPropertyName].AsLogical );
+            }
+        }
+
+        /// <summary>
+        /// True if user has cancelled the inspection
+        /// </summary>
+        public CswNbtNodePropLogical Cancelled
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[CancelledPropertyName].AsLogical );
+            }
+        }
+
+        /// <summary>
+        /// Optional reason for cancelling inspection.
+        /// </summary>
+        public CswNbtNodePropMemo CancelReason
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[CancelReasonPropertyName].AsMemo );
             }
         }
 

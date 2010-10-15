@@ -137,7 +137,6 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionRoute.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryGroup.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassLocation.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassLocationGroup.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMailReport.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterial.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialSubclass.cs" />
@@ -210,6 +209,7 @@
     <Compile Include="csw\Sched\CswNbtSchdItemGenerateEmailReport.cs" />
     <Compile Include="csw\Sched\CswNbtSchdItemGenerateNode.cs" />
     <Compile Include="csw\Sched\CswNbtSchdItemRunner.cs" />
+    <Compile Include="csw\Sched\CswNbtSchdItemUpdateInspectionStatus.cs" />
     <Compile Include="csw\Sched\CswNbtSchdItemUpdateMTBF.cs" />
     <Compile Include="csw\Sched\CswNbtSchdItemUpdatePropertyValues.cs" />
     <Compile Include="csw\Schema\CswConstraintDdlOps.cs" />
