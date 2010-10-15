@@ -205,8 +205,8 @@ namespace ChemSW.Nbt.Schema
             InspectionGeneratorNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionScheduleNT.NodeTypeId, string.Empty, Int32.MinValue );
             
             //Inspection has FE Route
-            CswNbtMetaDataNodeTypeProp RouteNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
-            RouteNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionRouteNT.NodeTypeId, string.Empty, Int32.MinValue );
+            //CswNbtMetaDataNodeTypeProp RouteNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
+            //RouteNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionRouteNT.NodeTypeId, string.Empty, Int32.MinValue );
 
             //Inspection Has Relationship to Fire Extinguisher
             CswNbtMetaDataNodeTypeProp FireExtinguisherNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( PhysicalInspectionNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Fire Extinguisher", string.Empty );
