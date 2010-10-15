@@ -112,12 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
             return Status.ToString().Replace( StatusPad, StatusSpace );
         }
 
-        /// <summary>
-        /// This actually comes from OC Prop on Owner (Mount Point or Fire Extinguisher) == Last Inspection Date. 
-        /// Eventually, this should be part of a PropertySet.
-        /// </summary>
-        private static string _LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
-
+        
         //ICswNbtPropertySetRuleGeneratorTarget
         /// <summary>
         /// Due Date
@@ -288,9 +283,10 @@ namespace ChemSW.Nbt.ObjClasses
                         else
                         {
                             _Finished = true;
-                            CswNbtNode Parent = _CswNbtResources.Nodes.GetNode( this.Target.RelatedNodeId );
+                            CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Target.RelatedNodeId );
+                            ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
                             if( null != Parent )
-                                Parent.Properties[_LastInspectionDatePropertyName].AsDate.DateValue = DateTime.Now;
+                                Parent.LastInspectionDate.DateValue = DateTime.Now;
 
                             if( _allAnsweredinTime )
                                 this.Status.Value = InspectionStatusAsString( InspectionStatus.Completed );
@@ -331,25 +327,20 @@ namespace ChemSW.Nbt.ObjClasses
         {
             try
             {
-                CswNbtNode ParentMountPoint = _CswNbtResources.Nodes.GetNode( this.Target.RelatedNodeId );
-                CswNbtNodePropWrapper ParentStatusPW = ParentMountPoint.Properties[CswNbtObjClassMountPoint.StatusPropertyName];
-                CswNbtNodePropList ParentStatus = ParentStatusPW.AsList;
-                string newStatus = ParentStatus.Value;
-
+                CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
+                ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
                 if( _allAnswered )
                 {
                     if( _OOC )
                     {
-                        newStatus = "OOC";
-                        ParentMountPoint.PendingUpdate = true;
+                        Parent.Status.Value = "OOC";
+                        ParentNode.PendingUpdate = true;
                     }
                     else
                     {
-                        newStatus = "OK";
+                        Parent.Status.Value = "OK";
                     }
                 }
-
-                ParentStatus.Value = newStatus;
             }//try
             catch( Exception Exception )
             {

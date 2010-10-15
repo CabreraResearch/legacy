@@ -6,15 +6,19 @@ using System.Data;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-
+using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassFireExtinguisher : CswNbtObjClass
+    public class CswNbtObjClassFireExtinguisher : CswNbtObjClass, ICswNbtPropertySetInspectionParent
     {
         public static string LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
         public static string StatusPropertyName { get { return "Status"; } }
         public static string MountPointPropertyName { get { return "Mount Point"; } }
+
+        //ICswNbtPropertySetInspectionParent
+        public string InspectionParentStatusPropertyName { get { return StatusPropertyName; } }
+        public string InspectionParentLastInspectionDatePropertyName { get { return LastInspectionDatePropertyName; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
