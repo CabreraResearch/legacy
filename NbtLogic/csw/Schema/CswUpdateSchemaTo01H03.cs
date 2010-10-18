@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Schema
             // Because of changes in previous script
             _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 
-            //BZ 10021
+            // Case 20002
             Int32 FEModuleId = _CswNbtSchemaModTrnsctn.createModule( "Fire Extinguisher", "FE", true );
             CswNbtMetaDataObjectClass MountPointOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MountPointClass );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( FEModuleId, MountPointOC.ObjectClassId );
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.Schema
 
             //Last DT Op
             OCPUpdate.update( NewOCPTable );
-            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
             // Default values
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.StatusPropertyName ),
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.StatusPropertyName ),
                                                                  CswNbtSubField.SubFieldName.Value,
-                                                                 "OK" );            
+                                                                 "OK" );
 
             //Mount Point Group NT
             CswNbtMetaDataObjectClass GenericOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass );
@@ -136,9 +136,9 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp FEMountPointProp = FireExtinguisherNT.getNodeTypeProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
             FEMountPointProp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointNT.NodeTypeId, string.Empty, Int32.MinValue );
 
-            // </BZ 10021>
+            // </ Case 20002 >
 
-            // <BZ 10343>
+            // < Case 20005 >
             //New FE Generator NT
             CswNbtMetaDataObjectClass GeneratorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
             CswNbtMetaDataNodeType PhysicalInspectionScheduleNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GeneratorOC.ObjectClassId, "Physical Inspection Schedule", "Fire Extinguisher" );
@@ -146,16 +146,14 @@ namespace ChemSW.Nbt.Schema
 
             //Generator Due Date Interval is Monthly on 1st
             CswNbtMetaDataNodeTypeProp DueDateIntervalNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.DueDateIntervalPropertyName );
-            CswRateInterval MonthlyRate = new CswRateInterval();
-            MonthlyRate.setMonthlyByDate(1,1,DateTime.Today.Month,DateTime.Today.Year);
-            DueDateIntervalNTP.DefaultValue.AsTimeInterval.RateInterval = MonthlyRate;
+            DueDateIntervalNTP.DefaultValue.AsTimeInterval.RateInterval.setMonthlyByDate( 1, 1, DateTime.Today.Month, DateTime.Today.Year );
 
             //Generator Parent type is Mount Point
             CswNbtMetaDataNodeTypeProp ParentTypeNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentTypePropertyName );
-            ParentTypeNTP.SetFK(CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointNT.NodeTypeId, string.Empty, Int32.MinValue);
+            ParentTypeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointNT.NodeTypeId, string.Empty, Int32.MinValue );
 
             //Generator Owner is Mount Point Group
-            CswNbtMetaDataNodeTypeProp OwnerNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName ); 
+            CswNbtMetaDataNodeTypeProp OwnerNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
             OwnerNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointGroupNT.NodeTypeId, string.Empty, Int32.MinValue );
             OwnerNTP.DefaultValue.AsRelationship.RelatedNodeId = MPGroupNode.NodeId;
 
@@ -177,7 +175,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType PhysicalInspectionRouteNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( InspectionRouteOC.ObjectClassId, "Physical Inspection Route", "Fire Extinguisher" );
             PhysicalInspectionRouteNT.IconFileName = "arrows.gif";
 
-            // <BZ 10405>
+            // < Case 20004 >
 
             //FE Physical Inspection NT
             CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
@@ -194,7 +192,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp GeneratorTargetTypeNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.TargetTypePropertyName );
             GeneratorTargetTypeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionNT.NodeTypeId, string.Empty, Int32.MinValue );
 
-            // </BZ 10343>
+            // </ Case 20005>
 
             //Inspection has MP Parent/Owner
             CswNbtMetaDataNodeTypeProp InspectionParentNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.OwnerPropertyName );
@@ -203,7 +201,7 @@ namespace ChemSW.Nbt.Schema
             //Inspection has FE Generator
             CswNbtMetaDataNodeTypeProp InspectionGeneratorNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
             InspectionGeneratorNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionScheduleNT.NodeTypeId, string.Empty, Int32.MinValue );
-            
+
             //Inspection has FE Route
             //CswNbtMetaDataNodeTypeProp RouteNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
             //RouteNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionRouteNT.NodeTypeId, string.Empty, Int32.MinValue );
@@ -212,13 +210,13 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp FireExtinguisherNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( PhysicalInspectionNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Fire Extinguisher", string.Empty );
             FireExtinguisherNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), FireExtinguisherNT.NodeTypeId, string.Empty, Int32.MinValue );
 
-            // </BZ 10405>
+            // </ Case 20004 >
 
             //Grant admin user FE NT permissions
             CswNbtNode RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
-            if ( RoleNode != null )
+            if( RoleNode != null )
             {
-                CswNbtNodePropLogicalSet Permissions = ( (CswNbtObjClassRole)CswNbtNodeCaster.AsRole( RoleNode ) ).NodeTypePermissions;
+                CswNbtNodePropLogicalSet Permissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).NodeTypePermissions;
 
                 Permissions.SetValue( NodeTypePermission.Create.ToString(), MountPointNT.NodeTypeId.ToString(), true );
                 Permissions.SetValue( NodeTypePermission.Delete.ToString(), MountPointNT.NodeTypeId.ToString(), true );
@@ -256,7 +254,7 @@ namespace ChemSW.Nbt.Schema
 
             //_CswNbtSchemaModTrnsctn.MetaData.refreshAll();
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-    
+
         }//Update()
 
     }//class CswUpdateSchemaTo01H03
