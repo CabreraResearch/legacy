@@ -170,8 +170,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void beforeCreateNode()
         {
-            try
-            {
                 CswNbtNodePropList NodeStatus = null;
                 CswNbtNodePropRelationship NodeTarget = null;
                 CswNbtNodePropRelationship NodeGenerator = null;
@@ -201,11 +199,6 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                     }
                 }
-            }//try
-            catch( Exception Exception )
-            {
-                _CswNbtResources.logError( new CswDniException( "Inspection Design create encountered the following exception: " + Exception.Message ) );
-            }
 
             _CswNbtObjClassDefault.beforeCreateNode();
         } // beforeCreateNode()
@@ -252,12 +245,10 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void beforeWriteNode()
         {
-            try
-            {
                 CswNbtMetaDataFieldType QuestionFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Question );
                 CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[QuestionFT];
-                _Finished = ( Tristate.True == CswConvert.ToTristate( this.Finished.Checked ) );
-                _Cancelled = ( Tristate.True == CswConvert.ToTristate( this.Cancelled.Checked ) );
+                _Finished = ( Tristate.True == this.Finished.Checked );
+                _Cancelled = ( Tristate.True == this.Cancelled.Checked );
 
                 if( _Cancelled )
                 {
@@ -266,16 +257,16 @@ namespace ChemSW.Nbt.ObjClasses
                 else if( _Finished )
                 {
                     CswNbtNode Schedule = _CswNbtResources.Nodes.GetNode( this.Generator.RelatedNodeId );
-                    CswNbtNodePropWrapper GraceDaysPW = Schedule.Properties[CswNbtObjClassGenerator.GraceDaysPropertyName];
-                    CswNbtNodePropNumber GraceDays = GraceDaysPW.AsNumber;
+                    CswNbtNodePropNumber GraceDays =  Schedule.Properties[CswNbtObjClassGenerator.GraceDaysPropertyName].AsNumber;
+                    
                     _MissedDate = this.Date.DateValue.AddDays( CswConvert.ToDouble( GraceDays.Value ) );
 
                     foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                     {
                         CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
                         _OOC = ( _OOC || !QuestionProp.IsCompliant );
-                        _allAnswered = ( _allAnswered || QuestionProp.Answer != string.Empty );
-                        _allAnsweredinTime = ( _allAnsweredinTime || QuestionProp.DateAnswered <= _MissedDate );
+                        _allAnswered = ( _allAnswered && QuestionProp.Answer != string.Empty );
+                        _allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered <= _MissedDate );
                     }
 
                     if( _allAnswered )
@@ -299,7 +290,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                         }
                     }
-                    //else: What is user checks Finished but unanswered questions remain?
+                    //else: (Finished=false) What else if user checks Finished but unanswered questions remain?
 
                     this.Finished.Checked = CswConvert.ToTristate( _Finished );
 
@@ -315,11 +306,6 @@ namespace ChemSW.Nbt.ObjClasses
                         Prop.ReadOnly = true;
                     }
                 }
-            }//try
-            catch( Exception Exception )
-            {
-                _CswNbtResources.logError( new CswDniException( "Inspection Design before save encountered the following exception: " + Exception.Message ) );
-            }
 
             _CswNbtObjClassDefault.beforeWriteNode();
         }//beforeWriteNode()
@@ -329,32 +315,23 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void afterWriteNode()
         {
-            try
-            {
                 CswNbtNode ParentMountPoint = _CswNbtResources.Nodes.GetNode( this.Target.RelatedNodeId );
                 CswNbtNodePropWrapper ParentStatusPW = ParentMountPoint.Properties[CswNbtObjClassMountPoint.StatusPropertyName];
                 CswNbtNodePropList ParentStatus = ParentStatusPW.AsList;
-                string newStatus = ParentStatus.Value;
-
+                
                 if( _allAnswered )
                 {
                     if( _OOC )
                     {
-                        newStatus = "OOC";
+                        ParentStatus.Value = "OOC";
                         ParentMountPoint.PendingUpdate = true;
                     }
                     else
                     {
-                        newStatus = "OK";
+                        ParentStatus.Value = "OK";
                     }
                 }
-
-                ParentStatus.Value = newStatus;
-            }//try
-            catch( Exception Exception )
-            {
-                _CswNbtResources.logError( new CswDniException( "Inspection Design save encountered the following exception: " + Exception.Message ) );
-            }
+                            
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
