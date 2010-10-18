@@ -95,7 +95,7 @@
                     } else {
                         $.ajax({
                             type: 'POST',
-                            url: 'wsNodesTree.asmx/ScrollerItems',
+                            url: 'wsView.asmx/Run',
                             dataType: "json",
                             contentType: 'application/json; charset=utf-8',
                             data: "{ ParentId: '" + ParentId + "' }",
