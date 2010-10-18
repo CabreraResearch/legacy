@@ -159,7 +159,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassUser.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassVendor.cs" />
     <Compile Include="csw\ObjClasses\ICswNbtObjClassFactory.cs" />
-    <Compile Include="csw\PropertySets\CswNbtPropertySetIdentifier.cs" />
+    <Compile Include="csw\PropertySets\ICswNbtPropertySetInspectionParent.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetSchedulerImpl.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetGeneratorTarget.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetScheduler.cs" />

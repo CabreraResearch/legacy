@@ -197,5 +197,19 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//AsPropertySetScheduler
 
+        public static ICswNbtPropertySetInspectionParent AsPropertySetInspectionParent( CswNbtNode Node )
+        {
+            if( Node != null )
+            {
+                if( !( Node.ObjClass is ICswNbtPropertySetInspectionParent ) )
+                    throw ( new CswDniException( "Invalid cast", "Can't cast current object class as ICswNbtPropertySetInspectionParent; Current object class is " + Node.ObjectClass.ObjectClass.ToString() ) );
+                return ( (ICswNbtPropertySetInspectionParent) Node.ObjClass );
+            }
+            else
+            {
+                return null;
+            }
+        }//AsPropertySetScheduler
+
     }
 }
