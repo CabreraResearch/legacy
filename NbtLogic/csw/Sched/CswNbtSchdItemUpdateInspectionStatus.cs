@@ -39,9 +39,6 @@ namespace ChemSW.Nbt.Sched
         public override void reset()
         {
             _Succeeded = true;
-            _StatusMessage = string.Empty;
-            _thisInspectionOverdue = false;
-            _anyInspectionOverdue = false;
         }//
 
         private bool _doesItemRunNow = true;
@@ -54,48 +51,38 @@ namespace ChemSW.Nbt.Sched
             return _doesItemRunNow;
         }//doesItemRunNow() 
 
-        private bool _thisInspectionOverdue = false;
-        private bool _anyInspectionOverdue = false;
         /// <summary>
         /// Mark Inspection status overdue if inspection status is pending and is past due date
         /// </summary>
         override public void run()
         {
-            try
+            bool _thisInspectionOverdue = false;
+            bool _anyInspectionOverdue = false;
+
+            DateTime DueDate = DateTime.MinValue;
+            string InspectionStatus = string.Empty;
+            string Pending = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending );
+            string Overdue = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Overdue );
+
+            CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+
+            foreach( CswNbtMetaDataNodeType NT in InspectionDesignOC.NodeTypes )
             {
-                DateTime DueDate = DateTime.MinValue;
-                string InspectionStatus = string.Empty;
-                string Pending = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending );
-                string Overdue = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Overdue );
+                _thisInspectionOverdue = false;
 
-                CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-
-                foreach( CswNbtMetaDataNodeType NT in InspectionDesignOC.NodeTypes )
+                foreach( CswNbtNode PINode in NT.getNodes( true, true ) )
                 {
-                    if( NT.NodeTypeName == "Physical Inspection" )
+                    InspectionStatus = PINode.Properties[CswNbtObjClassInspectionDesign.StatusPropertyName].AsList.Value;
+                    if( InspectionStatus == Pending )
                     {
-                        foreach( CswNbtNode PINode in NT.getNodes( true, true ) )
-                        {
-                            InspectionStatus = PINode.Properties[CswNbtObjClassInspectionDesign.StatusPropertyName].AsList.Value;
-                            if( InspectionStatus == Pending )
-                            {
-                                DueDate = PINode.Properties[CswNbtObjClassInspectionDesign.DatePropertyName].AsDate.DateValue;
-                                _thisInspectionOverdue = ( DueDate <= DateTime.Today );
-                                _anyInspectionOverdue = ( _anyInspectionOverdue || _thisInspectionOverdue );
-                            }
-                            if( _thisInspectionOverdue )
-                                InspectionStatus = Overdue;
-                        }
+                        DueDate = PINode.Properties[CswNbtObjClassInspectionDesign.DatePropertyName].AsDate.DateValue;
+                        _thisInspectionOverdue = ( DueDate <= DateTime.Today );
+                        _anyInspectionOverdue = ( _anyInspectionOverdue || _thisInspectionOverdue );
                     }
-                    //else: No else for now. Hard coding on Node Type.
+                    if( _thisInspectionOverdue )
+                        InspectionStatus = Overdue;
                 }
             }
-            catch( Exception Exception )
-            {
-                _CswNbtResources.logError( new CswDniException( "Schedule encountered the following exception: " + Exception.Message ) );
-            }
-
-
         }//run()
 
 
@@ -124,8 +111,6 @@ namespace ChemSW.Nbt.Sched
 
         }//Succeeded
 
-        private string _StatusMessage = string.Empty;
-        
         /// <summary>
         /// Schedule item status
         /// </summary>
@@ -133,11 +118,7 @@ namespace ChemSW.Nbt.Sched
         {
             get
             {
-                if( _anyInspectionOverdue )
-                    _StatusMessage = "Inspections were marked overdue.";
-                else
-                    _StatusMessage = "No inspections meeting criteria were found.";
-                return ( _StatusMessage );
+                return ( "Inspection Status Update" );
             }//
 
         }//StatusMessage
