@@ -20,7 +20,7 @@ using ChemSW.Nbt.PropTypes;
 [ScriptService]
 [WebService( Namespace = "http://localhost/NbtWebApp" )]
 [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
-public class wsNodesTree : System.Web.Services.WebService
+public class wsView : System.Web.Services.WebService
 {
     private CswNbtResources _CswNbtResources;
 
@@ -32,7 +32,7 @@ public class wsNodesTree : System.Web.Services.WebService
         }
     }
 
-    public wsNodesTree()
+    public wsView()
     {
         CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Session, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
         _CswNbtResources = CswInitialization.CswNbtResources;
@@ -49,7 +49,7 @@ public class wsNodesTree : System.Web.Services.WebService
 
 
     [WebMethod( EnableSession = true )]
-    public string ScrollerItems( string ParentId )
+    public string Run( string ParentId )
     {
         string ret = string.Empty;
         try
