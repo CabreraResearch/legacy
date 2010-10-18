@@ -926,10 +926,16 @@
 							<Item Name="Selected Text" Foreground="0x02000000" Background="0x00FF0000" BoldFont="No"/>
 							<Item Name="Inactive Selected Text" Foreground="0x02000000" Background="0x00808080" BoldFont="No"/>
 							<Item Name="Line Numbers" Foreground="0x00808080" Background="0x02000000" BoldFont="No"/>
-							<Item Name="Brace Matching (Rectangle)" Foreground="0x02000000" Background="0x00808080" BoldFont="No"/>
+							<Item Name="Brace Matching (Rectangle)" Foreground="0x02000000" Background="0x00FF0000" BoldFont="No"/>
 							<Item Name="Breakpoint (Enabled)" Foreground="0x00FFFFFF" Background="0x00000080" BoldFont="No"/>
 							<Item Name="outlining.collapsehintadornment" Foreground="0x00E8DDD7" Background="0x02000000" BoldFont="No"/>
 							<Item Name="Comment" Foreground="0x00C0C0C0" Background="0x02000000" BoldFont="No"/>
+							<Item Name="CSS Comment" Foreground="0x00C0C0C0" Background="0x02000000" BoldFont="No"/>
+							<Item Name="CSS Keyword" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
+							<Item Name="CSS Property Name" Foreground="0x02000000" Background="0x02000000" BoldFont="No"/>
+							<Item Name="CSS Property Value" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
+							<Item Name="CSS Selector" Foreground="0x02000000" Background="0x02000000" BoldFont="No"/>
+							<Item Name="CSS String Value" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
 							<Item Name="MarkerFormatDefinition/HighlightedReference" Foreground="0x02000000" Background="0x00800080" BoldFont="No"/>
 							<Item Name="HTML Attribute" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
 							<Item Name="HTML Attribute Value" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
@@ -942,11 +948,11 @@
 							<Item Name="Literal" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
 							<Item Name="Number" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
 							<Item Name="Script Comment" Foreground="0x00C0C0C0" Background="0x02000000" BoldFont="No"/>
-							<Item Name="Script Identifier" Foreground="0x02000000" Background="0x02000000" BoldFont="No"/>
 							<Item Name="Script Keyword" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
 							<Item Name="Script Number" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
 							<Item Name="Script String" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
 							<Item Name="String" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
+							<Item Name="String(C# @ Verbatim)" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
 							<Item Name="Text" Foreground="0x0000FF00" Background="0x02000000" BoldFont="No"/>
 							<Item Name="XML Attribute" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
 							<Item Name="XML Attribute Quotes" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
@@ -1380,7 +1386,7 @@
 			<PropertyValue name="ItemCount">8</PropertyValue>
 		</Category>
 		<Category name="Environment_UnifiedFind" Category="{DF00ADDF-C14C-4ffd-9325-634FD605850B}" Package="{DA9FB551-C724-11d0-AE1F-00A0C90FFFC3}" RegisteredName="Environment_UnifiedFind" PackageName="Visual Studio Environment Package">
-			<PropertyValue name="Options">MatchCase=0 WholeWord=0 Hidden=1 Up=0 Selection=0 Block=0 KeepCase=0 SubFolders=1 KeepOpen=0 NameOnly=0 Plain Files FindAll</PropertyValue>
+			<PropertyValue name="Options">MatchCase=0 WholeWord=0 Hidden=0 Up=0 Selection=0 Block=0 KeepCase=0 SubFolders=1 KeepOpen=0 NameOnly=0 Plain Document Find</PropertyValue>
 			<PropertyValue name="Document Options">MatchCase=0 WholeWord=0 Hidden=0 Up=0 Selection=0 Block=0 KeepCase=0 SubFolders=1 KeepOpen=0 NameOnly=0 Plain Document Find</PropertyValue>
 			<PropertyValue name="FiF Options">MatchCase=0 WholeWord=0 Hidden=1 Up=0 Selection=0 Block=0 KeepCase=0 SubFolders=1 KeepOpen=0 NameOnly=0 Plain Files FindAll</PropertyValue>
 			<PropertyValue name="Result list">1</PropertyValue>
