@@ -70,30 +70,20 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public string Answer
         {
-            get
-            {
-                string Value = _CswNbtNodePropData.GetPropRowValue( _AnswerSubField.Column );
-                return Value;
-            }
+            get { return _CswNbtNodePropData.GetPropRowValue( _AnswerSubField.Column ); }
             set
             {
                 string AnswerVal = value;
-                bool Compliant = false;
                 
                 DateTime UpdateDateAnswered = DateTime.MinValue;
                 if ( null != AnswerVal && string.Empty != AnswerVal )
                 {
                     UpdateDateAnswered = DateTime.Today;
-                    
-                    if ( CompliantAnswers.Contains(AnswerVal))
-                        Compliant = true;
-                    else
-                        Compliant = false;
-                        
                 }
+
                 _CswNbtNodePropData.SetPropRowValue( _AnswerSubField.Column, AnswerVal );
                 DateAnswered = UpdateDateAnswered;
-                IsCompliant = Compliant;
+                IsCompliant = _IsCompliant;
                 _SynchGestalt();
             }
         }
@@ -103,10 +93,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public String CorrectiveAction
         {
-            get 
-            {
-                return _CswNbtNodePropData.GetPropRowValue( _CorrectiveActionSubField.Column ); 
-            }
+            get { return _CswNbtNodePropData.GetPropRowValue( _CorrectiveActionSubField.Column ); }
             set 
             {
                 String val = value;
@@ -119,12 +106,20 @@ namespace ChemSW.Nbt.PropTypes
                 else
                 {
                     UpdateDateCorrected = DateTime.Today;
-                    IsCompliant = true;
                 }
 
                 DateCorrected = UpdateDateCorrected;
-                _CswNbtNodePropData.SetPropRowValue( _CorrectiveActionSubField.Column, val ); 
+                _CswNbtNodePropData.SetPropRowValue( _CorrectiveActionSubField.Column, val );
+                IsCompliant = _IsCompliant;
             }
+        }
+
+        /// <summary>
+        /// True if Answer is compliant or Corrective Action is not empty
+        /// </summary>
+        private bool _IsCompliant
+        {
+            get { return ( CompliantAnswers.Contains( Answer ) || string.Empty != CorrectiveAction ); }
         }
 
         /// <summary>
