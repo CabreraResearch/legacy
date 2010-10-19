@@ -251,10 +251,10 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 else if( _Finished )
                 {
-                    CswNbtNode Schedule = _CswNbtResources.Nodes.GetNode( this.Generator.RelatedNodeId );
-                    CswNbtNodePropNumber GraceDays =  Schedule.Properties[CswNbtObjClassGenerator.GraceDaysPropertyName].AsNumber;
+                    CswNbtNode ScheduleNode = _CswNbtResources.Nodes.GetNode( this.Generator.RelatedNodeId );
+                    CswNbtObjClassGenerator Schedule = CswNbtNodeCaster.AsGenerator( ScheduleNode );
                     
-                    _MissedDate = this.Date.DateValue.AddDays( CswConvert.ToDouble( GraceDays.Value ) );
+                    _MissedDate = this.Date.DateValue.AddDays( Schedule.GraceDays.Value );
 
                     foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                     {
@@ -268,12 +268,10 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         if( _OOC )
                         {
-                            _Finished = false;
                             this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
                         }
                         else
                         {
-                            _Finished = true;
                             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Target.RelatedNodeId );
                             ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
                             if( null != Parent )
@@ -283,10 +281,10 @@ namespace ChemSW.Nbt.ObjClasses
                                 this.Status.Value = InspectionStatusAsString( InspectionStatus.Completed );
                             else
                                 this.Status.Value = InspectionStatusAsString( InspectionStatus.Completed_Late );
-
                         }
                     }
-                    //else: (Finished=false) What else if user checks Finished but unanswered questions remain?
+                    //Finished only indicates whether a user has checked the finish box, once checked--uncheck
+                    _Finished = false;
 
                     this.Finished.Checked = CswConvert.ToTristate( _Finished );
 
