@@ -140,7 +140,14 @@ namespace ChemSW.NbtWebControls
 
         protected override void OnLoad( EventArgs e )
         {
-            _initWelcomeComponents();
+            try
+            {
+                _initWelcomeComponents();
+            }
+            catch( Exception ex )
+            {
+                HandleError( ex );
+            }
             base.OnLoad( e );
         }
 
@@ -166,7 +173,7 @@ namespace ChemSW.NbtWebControls
             CswAutoTable ButtonTable = new CswAutoTable();
             ButtonTable.Style.Add( HtmlTextWriterStyle.PaddingBottom, "5px" );
             TopTable.addControl( 0, 0, ButtonTable );
-            TopTable.getCell( 0, 0 ).HorizontalAlign = HorizontalAlign.Right; 
+            TopTable.getCell( 0, 0 ).HorizontalAlign = HorizontalAlign.Right;
             //TopTable.getCell( 0, 0 ).Style.Add( HtmlTextWriterStyle.TextAlign, "right" );
             TopTable.getCell( 0, 0 ).Style.Add( HtmlTextWriterStyle.Width, "100%" );
 
@@ -592,7 +599,7 @@ namespace ChemSW.NbtWebControls
                 _Reset( SelectedRoleId.PrimaryKey );
                 WelcomeTable = _getWelcomeTable( SelectedRoleId.PrimaryKey );
             }
-            
+
             foreach( DataRow WelcomeRow in WelcomeTable.Rows )
             {
                 WelcomeComponentType ThisComponentType = (WelcomeComponentType) Enum.Parse( typeof( WelcomeComponentType ), WelcomeRow["componenttype"].ToString() );
@@ -608,20 +615,26 @@ namespace ChemSW.NbtWebControls
                 if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
                 {
                     ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
-                    IDSuffix += CswViewListTree.ViewType.View.ToString() + "_" + ThisView.ViewId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
-                    if( WelcomeRow["displaytext"].ToString() != string.Empty )
-                        LinkText = WelcomeRow["displaytext"].ToString();
-                    else
-                        LinkText = ThisView.ViewName;
+                    if( ThisView.IsFullyEnabled() )
+                    {
+                        IDSuffix += CswViewListTree.ViewType.View.ToString() + "_" + ThisView.ViewId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
+                        if( WelcomeRow["displaytext"].ToString() != string.Empty )
+                            LinkText = WelcomeRow["displaytext"].ToString();
+                        else
+                            LinkText = ThisView.ViewName;
+                    }
                 }
                 if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
                 {
                     ThisAction = _CswNbtResources.Actions[CswConvert.ToInt32( WelcomeRow["actionid"] )];
-                    IDSuffix += CswViewListTree.ViewType.Action.ToString() + "_" + ThisAction.ActionId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
-                    if( WelcomeRow["displaytext"].ToString() != string.Empty )
-                        LinkText = WelcomeRow["displaytext"].ToString();
-                    else
-                        LinkText = ThisAction.Name.ToString();
+                    if( _CswNbtResources.CurrentNbtUser.CheckActionPermission( ThisAction.Name ) )
+                    {
+                        IDSuffix += CswViewListTree.ViewType.Action.ToString() + "_" + ThisAction.ActionId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
+                        if( WelcomeRow["displaytext"].ToString() != string.Empty )
+                            LinkText = WelcomeRow["displaytext"].ToString();
+                        else
+                            LinkText = ThisAction.Name.ToString();
+                    }
                 }
                 if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )
                 {
@@ -635,113 +648,116 @@ namespace ChemSW.NbtWebControls
                 if( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) != Int32.MinValue )
                 {
                     NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) );
-                    IDSuffix += NodeType.NodeTypeId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
+                    if( NodeType != null )
+                        IDSuffix += NodeType.NodeTypeId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
                 }
 
-                switch( ThisComponentType )
+                if( IDSuffix != string.Empty )
                 {
-                    case WelcomeComponentType.Link:
-                        if( WelcomeRow["buttonicon"].ToString() != string.Empty )
-                        {
-                            ImageButton ButtonLink = new ImageButton();
-                            ButtonLink.ID = ButtonLinkPrefix + IDSuffix;
-                            ButtonLink.ImageUrl = IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString();
-                            ButtonLink.CssClass = "WelcomeButton";
-                            ButtonLink.AlternateText = LinkText;
-                            ButtonLink.Click += new ImageClickEventHandler( ButtonLink_Click );
-                            ComponentTable.getCell( 0, 0 ).HorizontalAlign = HorizontalAlign.Center;
-                            ComponentTable.addControl( 0, 0, ButtonLink );
-                        }
+                    switch( ThisComponentType )
+                    {
+                        case WelcomeComponentType.Link:
+                            if( WelcomeRow["buttonicon"].ToString() != string.Empty )
+                            {
+                                ImageButton ButtonLink = new ImageButton();
+                                ButtonLink.ID = ButtonLinkPrefix + IDSuffix;
+                                ButtonLink.ImageUrl = IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString();
+                                ButtonLink.CssClass = "WelcomeButton";
+                                ButtonLink.AlternateText = LinkText;
+                                ButtonLink.Click += new ImageClickEventHandler( ButtonLink_Click );
+                                ComponentTable.getCell( 0, 0 ).HorizontalAlign = HorizontalAlign.Center;
+                                ComponentTable.addControl( 0, 0, ButtonLink );
+                            }
 
-                        LinkButton ViewLink = new LinkButton();
-                        ViewLink.ID = ViewLinkPrefix + IDSuffix;
-                        ViewLink.Text = LinkText;
-                        ViewLink.Click += new EventHandler( ViewLink_Click );
-                        ViewLink.CssClass = "WelcomeText";
-                        ComponentTable.getCell( 1, 0 ).HorizontalAlign = HorizontalAlign.Center;
-                        ComponentTable.addControl( 1, 0, ViewLink );
-                        break;
+                            LinkButton ViewLink = new LinkButton();
+                            ViewLink.ID = ViewLinkPrefix + IDSuffix;
+                            ViewLink.Text = LinkText;
+                            ViewLink.Click += new EventHandler( ViewLink_Click );
+                            ViewLink.CssClass = "WelcomeText";
+                            ComponentTable.getCell( 1, 0 ).HorizontalAlign = HorizontalAlign.Center;
+                            ComponentTable.addControl( 1, 0, ViewLink );
+                            break;
 
-                    case WelcomeComponentType.Search:
-                        if( WelcomeRow["buttonicon"].ToString() != string.Empty )
-                        {
-                            ImageButton ButtonLink = new ImageButton();
-                            ButtonLink.ID = SearchButtonPrefix + IDSuffix;
-                            ButtonLink.ImageUrl = IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString();
-                            ButtonLink.CssClass = "WelcomeButton";
-                            ButtonLink.AlternateText = LinkText;
-                            ButtonLink.Click += new ImageClickEventHandler( SearchButtonLink_Click );
-                            ComponentTable.getCell( 0, 0 ).HorizontalAlign = HorizontalAlign.Center;
-                            ComponentTable.addControl( 0, 0, ButtonLink );
-                        }
+                        case WelcomeComponentType.Search:
+                            if( WelcomeRow["buttonicon"].ToString() != string.Empty )
+                            {
+                                ImageButton ButtonLink = new ImageButton();
+                                ButtonLink.ID = SearchButtonPrefix + IDSuffix;
+                                ButtonLink.ImageUrl = IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString();
+                                ButtonLink.CssClass = "WelcomeButton";
+                                ButtonLink.AlternateText = LinkText;
+                                ButtonLink.Click += new ImageClickEventHandler( SearchButtonLink_Click );
+                                ComponentTable.getCell( 0, 0 ).HorizontalAlign = HorizontalAlign.Center;
+                                ComponentTable.addControl( 0, 0, ButtonLink );
+                            }
 
-                        LinkButton SearchLink = new LinkButton();
-                        SearchLink.ID = SearchLinkPrefix + IDSuffix;
-                        SearchLink.Text = LinkText;
-                        SearchLink.Click += new EventHandler( SearchLink_Click );
-                        SearchLink.CssClass = "WelcomeText";
-                        ComponentTable.getCell( 1, 0 ).HorizontalAlign = HorizontalAlign.Center;
-                        ComponentTable.addControl( 1, 0, SearchLink );
-                        break;
+                            LinkButton SearchLink = new LinkButton();
+                            SearchLink.ID = SearchLinkPrefix + IDSuffix;
+                            SearchLink.Text = LinkText;
+                            SearchLink.Click += new EventHandler( SearchLink_Click );
+                            SearchLink.CssClass = "WelcomeText";
+                            ComponentTable.getCell( 1, 0 ).HorizontalAlign = HorizontalAlign.Center;
+                            ComponentTable.addControl( 1, 0, SearchLink );
+                            break;
 
-                    //case WelcomeComponentType.Search:
-                    //    _setupSearchFormRecursive( ComponentTable.getCell( 0, 0 ), ThisView.Root, 1 );
+                        //case WelcomeComponentType.Search:
+                        //    _setupSearchFormRecursive( ComponentTable.getCell( 0, 0 ), ThisView.Root, 1 );
 
-                    //    Button SearchSubmitButton = new Button();
-                    //    SearchSubmitButton.ID = SearchButtonPrefix + IDSuffix;
-                    //    SearchSubmitButton.Text = "Search";
-                    //    SearchSubmitButton.CssClass = "Button";
-                    //    SearchSubmitButton.Click += new EventHandler( SearchSubmitButton_Click );
+                        //    Button SearchSubmitButton = new Button();
+                        //    SearchSubmitButton.ID = SearchButtonPrefix + IDSuffix;
+                        //    SearchSubmitButton.Text = "Search";
+                        //    SearchSubmitButton.CssClass = "Button";
+                        //    SearchSubmitButton.Click += new EventHandler( SearchSubmitButton_Click );
 
-                    //    TableCell SearchSubmitCell = ComponentTable.getCell( 0, 1 );
-                    //    SearchSubmitCell.Style.Add( HtmlTextWriterStyle.TextAlign, "right" );
-                    //    SearchSubmitCell.Style.Add( HtmlTextWriterStyle.VerticalAlign, "bottom" );
-                    //    SearchSubmitCell.Controls.Add( SearchSubmitButton );
-                    //    break;
+                        //    TableCell SearchSubmitCell = ComponentTable.getCell( 0, 1 );
+                        //    SearchSubmitCell.Style.Add( HtmlTextWriterStyle.TextAlign, "right" );
+                        //    SearchSubmitCell.Style.Add( HtmlTextWriterStyle.VerticalAlign, "bottom" );
+                        //    SearchSubmitCell.Controls.Add( SearchSubmitButton );
+                        //    break;
 
-                    case WelcomeComponentType.Add:
-                        if( WelcomeRow["buttonicon"].ToString() != string.Empty )
-                        {
-                            ImageButton AddButtonLink = new ImageButton();
-                            AddButtonLink.ID = AddButtonLinkPrefix + IDSuffix;
-                            AddButtonLink.ImageUrl = IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString();
-                            AddButtonLink.CssClass = "WelcomeButton";
-                            //AddButtonLink.Click += new ImageClickEventHandler( AddButtonLink_Click );
-                            AddButtonLink.OnClientClick = "return WelcomeAddNodeDialog_openPopup('" + NodeType.NodeTypeId.ToString() + "');";
-                            ComponentTable.getCell( 0, 0 ).HorizontalAlign = HorizontalAlign.Center;
-                            ComponentTable.addControl( 0, 0, AddButtonLink );
-                        }
+                        case WelcomeComponentType.Add:
+                            if( WelcomeRow["buttonicon"].ToString() != string.Empty )
+                            {
+                                ImageButton AddButtonLink = new ImageButton();
+                                AddButtonLink.ID = AddButtonLinkPrefix + IDSuffix;
+                                AddButtonLink.ImageUrl = IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString();
+                                AddButtonLink.CssClass = "WelcomeButton";
+                                //AddButtonLink.Click += new ImageClickEventHandler( AddButtonLink_Click );
+                                AddButtonLink.OnClientClick = "return WelcomeAddNodeDialog_openPopup('" + NodeType.NodeTypeId.ToString() + "');";
+                                ComponentTable.getCell( 0, 0 ).HorizontalAlign = HorizontalAlign.Center;
+                                ComponentTable.addControl( 0, 0, AddButtonLink );
+                            }
 
-                        LinkButton AddLink = new LinkButton();
-                        AddLink.ID = AddLinkPrefix + IDSuffix;
-                        if( WelcomeRow["displaytext"].ToString() != string.Empty )
-                            AddLink.Text = WelcomeRow["displaytext"].ToString();
-                        else
-                            AddLink.Text = "Add New " + NodeType.NodeTypeName;
-                        AddLink.CssClass = "WelcomeText";
-                        //AddLink.Click += new EventHandler( AddLink_Click );
-                        AddLink.OnClientClick = "return WelcomeAddNodeDialog_openPopup('" + NodeType.NodeTypeId.ToString() + "');";
-                        ComponentTable.getCell( 1, 0 ).HorizontalAlign = HorizontalAlign.Center;
-                        ComponentTable.addControl( 1, 0, AddLink );
-                        break;
+                            LinkButton AddLink = new LinkButton();
+                            AddLink.ID = AddLinkPrefix + IDSuffix;
+                            if( WelcomeRow["displaytext"].ToString() != string.Empty )
+                                AddLink.Text = WelcomeRow["displaytext"].ToString();
+                            else
+                                AddLink.Text = "Add New " + NodeType.NodeTypeName;
+                            AddLink.CssClass = "WelcomeText";
+                            //AddLink.Click += new EventHandler( AddLink_Click );
+                            AddLink.OnClientClick = "return WelcomeAddNodeDialog_openPopup('" + NodeType.NodeTypeId.ToString() + "');";
+                            ComponentTable.getCell( 1, 0 ).HorizontalAlign = HorizontalAlign.Center;
+                            ComponentTable.addControl( 1, 0, AddLink );
+                            break;
 
-                    case WelcomeComponentType.Text:
-                        Label TextLabel = new Label();
-                        TextLabel.Text = WelcomeRow["displaytext"].ToString();
-                        TextLabel.CssClass = "WelcomeText";
-                        ComponentTable.addControl( 0, 0, TextLabel );
-                        break;
-                } // switch( ThisComponentType )
+                        case WelcomeComponentType.Text:
+                            Label TextLabel = new Label();
+                            TextLabel.Text = WelcomeRow["displaytext"].ToString();
+                            TextLabel.CssClass = "WelcomeText";
+                            ComponentTable.addControl( 0, 0, TextLabel );
+                            break;
+                    } // switch( ThisComponentType )
 
-                CswLayoutTable.LayoutComponent ThisComponent = new CswLayoutTable.LayoutComponent(
-                                                                    CswConvert.ToInt32( WelcomeRow["welcomeid"] ),
-                                                                    CswConvert.ToInt32( WelcomeRow["display_row"] ),
-                                                                    CswConvert.ToInt32( WelcomeRow["display_col"] ),
-                                                                    null,
-                                                                    ComponentTable,
-                                                                    true );
-                _LayoutTable.Components.Add( CswConvert.ToInt32( WelcomeRow["welcomeid"] ), ThisComponent );
-
+                    CswLayoutTable.LayoutComponent ThisComponent = new CswLayoutTable.LayoutComponent(
+                                                                        CswConvert.ToInt32( WelcomeRow["welcomeid"] ),
+                                                                        CswConvert.ToInt32( WelcomeRow["display_row"] ),
+                                                                        CswConvert.ToInt32( WelcomeRow["display_col"] ),
+                                                                        null,
+                                                                        ComponentTable,
+                                                                        true );
+                    _LayoutTable.Components.Add( CswConvert.ToInt32( WelcomeRow["welcomeid"] ), ThisComponent );
+                } //  if( IDSuffix != string.Empty )
 
             } // foreach( DataRow WelcomeRow in WelcomeTable.Rows )
 
