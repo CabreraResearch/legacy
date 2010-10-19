@@ -63,7 +63,10 @@ public class wsView : System.Web.Services.WebService
                 //Session["SessionViewId"] = View.SessionViewId;
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
-                ret += _runTreeNodesRecursive( Tree );
+                if( Tree.getChildNodeCount() > 0 )
+                    ret += _runTreeNodesRecursive( Tree );
+                else
+                    ret = _makeNoResultsItem();
 
             }// if( ParentId.StartsWith( ViewIdPrefix ) )
             else
@@ -252,6 +255,14 @@ public class wsView : System.Web.Services.WebService
                                    " + SubItems + @"
                                </subitems>";
         }
+        ret += @"      </item>";
+        return ret;
+    }
+
+    private string _makeNoResultsItem()
+    {
+        string ret = @"<item id="""" arrow=""false"">
+                           <text>No results</text>";
         ret += @"      </item>";
         return ret;
     }

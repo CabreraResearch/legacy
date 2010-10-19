@@ -18,7 +18,7 @@
     <style>
         .offlineIndicator
         {
-    	}
+        }
         .offline
         {
             color: #ff0000;
@@ -79,6 +79,8 @@
 
         function _loadDivContents(level, $Div) {
             var ParentId = $Div.attr('id');
+            if (level == 1)
+                rootid = ParentId;
             if ($Div.children('ul').children('li').length == 0) {
                 if (level <= 1) {
                     if (amOffline()) {
@@ -102,7 +104,6 @@
                             success: function(data, textStatus, XMLHttpRequest) {
                                 if (level == 1) {
                                     _storeSubLevelXml(ParentId, $Div.children('div').children('h1').text(), '', data.d);
-                                    rootid = ParentId;
                                 }
                                 _processSubLevelXml($Div, $(data.d).children(), $Div.children('ul').first(), level, true);
                             },
@@ -154,7 +155,7 @@
                                   "  <div class=\"toolbar\">" +
                                   "    <a href=\"#\" class=\"back\">Back</a>" +
                                   "    <h1>" + text + "</h1>" +
-                                  "    <a href=\"#\" class=\"button offlineIndicator "+ getCurrentOfflineIndicatorCssClass() + "\" onclick=\"toggleOffline();\">Online</a>" + 
+                                  "    <a href=\"#\" class=\"button offlineIndicator " + getCurrentOfflineIndicatorCssClass() + "\" onclick=\"toggleOffline();\">Online</a>" +
                                   "  </div>" +
                                   "  <ul></ul>" +
                                   "</div>";
