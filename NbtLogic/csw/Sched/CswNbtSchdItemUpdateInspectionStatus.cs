@@ -69,18 +69,17 @@ namespace ChemSW.Nbt.Sched
             foreach( CswNbtMetaDataNodeType NT in InspectionDesignOC.NodeTypes )
             {
                 _thisInspectionOverdue = false;
-
+                CswNbtObjClassInspectionDesign PhysicalInspection = null;
                 foreach( CswNbtNode PINode in NT.getNodes( true, true ) )
                 {
-                    InspectionStatus = PINode.Properties[CswNbtObjClassInspectionDesign.StatusPropertyName].AsList.Value;
-                    if( InspectionStatus == Pending )
+                    PhysicalInspection = CswNbtNodeCaster.AsInspectionDesign( PINode );
+                    if( PhysicalInspection.Status.Value == Pending )
                     {
-                        DueDate = PINode.Properties[CswNbtObjClassInspectionDesign.DatePropertyName].AsDate.DateValue;
-                        _thisInspectionOverdue = ( DueDate <= DateTime.Today );
+                        _thisInspectionOverdue = ( PhysicalInspection.Date.DateValue <= DateTime.Today );
                         _anyInspectionOverdue = ( _anyInspectionOverdue || _thisInspectionOverdue );
                     }
                     if( _thisInspectionOverdue )
-                        InspectionStatus = Overdue;
+                        PhysicalInspection.Status.Value = Overdue;
                 }
             }
         }//run()

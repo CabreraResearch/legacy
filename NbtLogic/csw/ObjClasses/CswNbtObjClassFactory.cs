@@ -83,7 +83,11 @@ namespace ChemSW.Nbt.ObjClasses
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass:
                     ReturnVal = new CswNbtObjClassInspectionRoute( CswNbtResources, Node );
                     break;
-
+                
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass:
+                    ReturnVal = new CswNbtObjClassInventoryGroup( CswNbtResources, Node );
+                    break;
+                
                 case CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
                     break;
