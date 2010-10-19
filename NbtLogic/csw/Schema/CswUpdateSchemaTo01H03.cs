@@ -108,7 +108,6 @@ namespace ChemSW.Nbt.Schema
 
             //New Mount Point Group Node
             CswNbtNode MPGroupNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( MountPointGroupNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-            //CswNbtObjClassGeneric LGNode = CswNbtNodeCaster.AsLocationGroup( LocationGroupNode );
             MPGroupNode.Properties[MountPointGroupNameNTP].AsText.Text = "A";
             MPGroupNode.postChanges( true );
 
@@ -263,6 +262,35 @@ namespace ChemSW.Nbt.Schema
 
             //_CswNbtSchemaModTrnsctn.MetaData.refreshAll();
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+
+            // Case 20008
+            CswNbtNode AdminRoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
+            if( AdminRoleNode != null )
+            {
+                CswNbtView MountPointGroupView = _CswNbtSchemaModTrnsctn.makeView();
+                MountPointGroupView.makeNew( "Mount Point Groups", NbtViewVisibility.Role, AdminRoleNode.NodeId, null, null );
+                MountPointGroupView.Category = "System";
+                CswNbtViewRelationship GroupRelationship = MountPointGroupView.AddViewRelationship( MountPointGroupNT, false );
+                CswNbtViewRelationship MountPointRelationship = MountPointGroupView.AddViewRelationship( GroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, MountPointGroupNTP, false );
+                MountPointGroupView.save();
+
+                CswNbtView ScheduleView = _CswNbtSchemaModTrnsctn.makeView();
+                ScheduleView.makeNew( "Physical Inspection Schedule", NbtViewVisibility.Role, AdminRoleNode.NodeId, null, null );
+                ScheduleView.Category = "Inspections";
+                GroupRelationship = ScheduleView.AddViewRelationship( MountPointGroupNT, false );
+                CswNbtViewRelationship ScheduleRelationship = ScheduleView.AddViewRelationship( GroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, OwnerNTP, false );
+                ScheduleView.save();
+
+                CswNbtView FireExtinguisherView = _CswNbtSchemaModTrnsctn.makeView();
+                FireExtinguisherView.makeNew( "Fire Extinguishers", NbtViewVisibility.Role, AdminRoleNode.NodeId, null, null );
+                FireExtinguisherView.Category = "Inspections";
+                CswNbtViewRelationship LocationRelationship = FireExtinguisherView.AddViewRelationship( LocationOC, false );
+                CswNbtMetaDataNodeTypeProp LocationNTP = MountPointGroupNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );                
+                MountPointRelationship = FireExtinguisherView.AddViewRelationship( LocationRelationship, CswNbtViewRelationship.PropOwnerType.Second, LocationNTP, false );
+                CswNbtViewRelationship FireExtinguisherRelationship = FireExtinguisherView.AddViewRelationship( MountPointRelationship, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointProp, false );
+                CswNbtViewRelationship InspectionRelationship = FireExtinguisherView.AddViewRelationship( FireExtinguisherRelationship, CswNbtViewRelationship.PropOwnerType.Second, FEPhysicalInspectionNTP, false );
+                FireExtinguisherView.save();
+            }
 
         }//Update()
 
