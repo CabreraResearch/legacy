@@ -192,9 +192,9 @@ namespace ChemSW.Nbt.Schema
             PhysicalInspectionNT.IconFileName = "test.gif";
             PhysicalInspectionNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassInspectionDesign.NamePropertyName );
 
-            // Fire Extinguisher has Physical Inspection 
-            CswNbtMetaDataNodeTypeProp FEPhysicalInspectionNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Physical Inspection", Int32.MinValue );
-            FEPhysicalInspectionNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionNT.NodeTypeId, string.Empty, Int32.MinValue );
+            // Physical Inspection has a Fire Extinguisher Relationship
+            CswNbtMetaDataNodeTypeProp PIFireExtinguisherNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( PhysicalInspectionNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Fire Extinguisher", Int32.MinValue );
+            PIFireExtinguisherNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), FireExtinguisherNT.NodeTypeId, string.Empty, Int32.MinValue );
 
             //Generator Target NT is Inspection
             CswNbtMetaDataNodeTypeProp GeneratorTargetTypeNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.TargetTypePropertyName );
@@ -288,7 +288,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp LocationNTP = MountPointGroupNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );                
                 MountPointRelationship = FireExtinguisherView.AddViewRelationship( LocationRelationship, CswNbtViewRelationship.PropOwnerType.Second, LocationNTP, false );
                 CswNbtViewRelationship FireExtinguisherRelationship = FireExtinguisherView.AddViewRelationship( MountPointRelationship, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointProp, false );
-                CswNbtViewRelationship InspectionRelationship = FireExtinguisherView.AddViewRelationship( FireExtinguisherRelationship, CswNbtViewRelationship.PropOwnerType.Second, FEPhysicalInspectionNTP, false );
+                CswNbtViewRelationship InspectionRelationship = FireExtinguisherView.AddViewRelationship( FireExtinguisherRelationship, CswNbtViewRelationship.PropOwnerType.Second, PIFireExtinguisherNTP, false );
                 FireExtinguisherView.save();
             }
 
