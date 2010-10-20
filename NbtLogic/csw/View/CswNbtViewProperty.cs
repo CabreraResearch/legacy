@@ -75,7 +75,10 @@ namespace ChemSW.Nbt
                 if( value != _ObjectClassPropId )
                 {
                     _ObjectClassPropId = value;
-                    FieldType = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).FieldType;
+                    CswNbtMetaDataObjectClassProp ThisObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId );
+                    // case 20031
+                    if( ThisObjectClassProp != null )
+                        FieldType = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).FieldType;
                 }
             }
         }
@@ -222,7 +225,15 @@ namespace ChemSW.Nbt
                     Order = Convert.ToInt32( PropNode.Attributes["order"].Value );
                 if( PropNode.Attributes["width"] != null && PropNode.Attributes["width"].Value != string.Empty )
                     Width = Convert.ToInt32( PropNode.Attributes["width"].Value );
-
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( "Misconfigured CswViewProperty",
+                                          "CswViewProperty.constructor(xmlnode) encountered an invalid attribute value",
+                                          ex );
+            }
+            try
+            {
                 foreach( XmlNode ChildNode in PropNode.ChildNodes )
                 {
                     if( ChildNode.Name == CswNbtViewXmlNodeName.Filter.ToString() )
@@ -235,7 +246,7 @@ namespace ChemSW.Nbt
             catch( Exception ex )
             {
                 throw new CswDniException( "Misconfigured CswViewProperty",
-                                          "CswViewProperty.constructor(xmlnode) encountered an invalid attribute value",
+                                          "CswViewProperty.constructor(xmlnode) encountered an invalid filter definition",
                                           ex );
             }
         }

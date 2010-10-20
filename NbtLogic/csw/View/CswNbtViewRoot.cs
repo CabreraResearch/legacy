@@ -233,7 +233,15 @@ namespace ChemSW.Nbt
                 //    WelcomeText = Node.Attributes["welcometext"].Value;
                 //if( Node.Attributes["relatedviewids"] != null && Node.Attributes["relatedviewids"].Value != string.Empty )
                 //    RelatedViewIds = Node.Attributes["relatedviewids"].Value;
-
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( "Misconfigured CswNbtViewNodeRoot",
+                                          "CswNbtViewNodeRoot.constructor(xmlnode) encountered an invalid attribute value",
+                                          ex );
+            }
+            try
+            {
                 foreach( XmlNode ChildNode in Node.ChildNodes )
                 {
                     if( ChildNode.Name == CswNbtViewXmlNodeName.Relationship.ToString() )
@@ -246,7 +254,7 @@ namespace ChemSW.Nbt
             catch( Exception ex )
             {
                 throw new CswDniException( "Misconfigured CswNbtViewNodeRoot",
-                                          "CswNbtViewNodeRoot.constructor(xmlnode) encountered an invalid attribute value",
+                                          "CswNbtViewNodeRoot.constructor(xmlnode) encountered an invalid child definition",
                                           ex );
             }
         }
