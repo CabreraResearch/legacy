@@ -85,6 +85,8 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC, CswNbtObjClassFireExtinguisher.MountPointPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                                                            false, false, true, "ObjectClassId", MountPointOC.ObjectClassId, false, false, false, false, string.Empty,
                                                            Int32.MinValue, Int32.MinValue );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName ), "setvalonadd", true );
+
 
             //Last DT Op
             OCPUpdate.update( NewOCPTable );
