@@ -21,15 +21,19 @@ namespace ChemSW.Nbt.Sched
     {
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNode _CswNbtNodeGenerator;
+        private CswNbtObjClassInspectionDesign _InspectionNode;
+        private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending );
+        private string _Overdue = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Overdue );
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="CswNbtResources"></param>
-        /// <param name="CswNbtNodeGenerator"></param>
-        public CswNbtSchdItemUpdateInspectionStatus( CswNbtResources CswNbtResources )
-        {
+        /// <param name="CswNbtResources">CswNbtResources</param>
+        /// <param name="CswNbtNodeInspection">An InspectionDesign node</param>
+        public CswNbtSchdItemUpdateInspectionStatus( CswNbtResources CswNbtResources, CswNbtNode CswNbtNodeInspection )
+         {
             _CswNbtResources = CswNbtResources;
+            _InspectionNode = CswNbtNodeCaster.AsInspectionDesign( CswNbtNodeInspection );
             SchedItemName = "UpdateInspectionStatus";
         }//ctor
 
@@ -41,49 +45,34 @@ namespace ChemSW.Nbt.Sched
             _Succeeded = true;
         }//
 
-        private bool _doesItemRunNow = true;
         /// <summary>
-        /// Determines whether the Generator is due for running
+        /// Runs if Inspection status == Pending and is past the due date
         /// </summary>
-        /// <remarks>This always runs. Always true.</remarks>
         override public bool doesItemRunNow()
         {
-            return _doesItemRunNow;
+            bool ReturnVal = false;
+            DateTime DueDate = _InspectionNode.Date.DateValue;
+            if( null != _InspectionNode )
+            {
+                if( _Pending == _InspectionNode.Status.Value && DateTime.Today >= DueDate )
+                {
+                    ReturnVal = true;
+                }
+            }
+            return ( ReturnVal );
+
         }//doesItemRunNow() 
 
         /// <summary>
-        /// Mark Inspection status overdue if inspection status is pending and is past due date
+        /// Mark Inspection status overdue
         /// </summary>
         override public void run()
         {
-            bool _thisInspectionOverdue = false;
-            bool _anyInspectionOverdue = false;
-
-            DateTime DueDate = DateTime.MinValue;
-            string InspectionStatus = string.Empty;
-            string Pending = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending );
-            string Overdue = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Overdue );
-
-            CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-
-            foreach( CswNbtMetaDataNodeType NT in InspectionDesignOC.NodeTypes )
+            if( null != _InspectionNode )
             {
-                _thisInspectionOverdue = false;
-                CswNbtObjClassInspectionDesign PhysicalInspection = null;
-                foreach( CswNbtNode PINode in NT.getNodes( true, true ) )
-                {
-                    PhysicalInspection = CswNbtNodeCaster.AsInspectionDesign( PINode );
-                    if( PhysicalInspection.Status.Value == Pending )
-                    {
-                        _thisInspectionOverdue = ( PhysicalInspection.Date.DateValue <= DateTime.Today );
-                        _anyInspectionOverdue = ( _anyInspectionOverdue || _thisInspectionOverdue );
-                    }
-                    if( _thisInspectionOverdue )
-                        PhysicalInspection.Status.Value = Overdue;
-                }
+                _InspectionNode.Status.Value = _Overdue;
             }
         }//run()
-
 
         /// <summary>
         /// Name of the schedule
@@ -92,7 +81,13 @@ namespace ChemSW.Nbt.Sched
         {
             get
             {
-                return "Update Inspection Status";
+                string ReturnVal = "";
+                if( _InspectionNode != null )
+                    ReturnVal = "Inspection Status Update (for Node: " + _InspectionNode.Name + ")";
+                else
+                    ReturnVal = "Inspection Status Update (for Unknown)";
+
+                return ( ReturnVal );
             }//get
 
         }//Name

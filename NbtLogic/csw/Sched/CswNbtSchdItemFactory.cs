@@ -35,6 +35,9 @@ namespace ChemSW.Nbt.Sched
                 case CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass:
                     ReturnVal = new CswNbtSchdItemGenerateNode( _CswNbtResources, CswNbtNode );
                     break;
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
+                    ReturnVal = new CswNbtSchdItemUpdateInspectionStatus( _CswNbtResources, CswNbtNode );
+                    break;
                 case CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass:
                     ReturnVal = new CswNbtSchdItemGenerateEmailReport( _CswNbtResources, CswNbtNode );
                     break;
