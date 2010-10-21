@@ -220,12 +220,43 @@ public class wsView : System.Web.Services.WebService
 
                 break;
             case CswNbtMetaDataFieldType.NbtFieldType.Question:
-                Html += "Answer: <hr/><br/>";
-                Html += "<input type=\"text\" name=\"" + IdStr + "_ans\" value=\"" + PropWrapper.AsQuestion.Answer + "\" />";
-                Html += "Comments: <hr/><br/>";
-                Html += "<textarea name=\"" + IdStr + "_com\">" + PropWrapper.AsQuestion.Comments + "</textarea>";
-                Html += "Corrective Action: <hr/><br/>";
-                Html += "<textarea name=\"" + IdStr + "_cor\">" + PropWrapper.AsQuestion.CorrectiveAction + "</textarea>";
+                CswNbtNodePropQuestion QuestionProp = PropWrapper.AsQuestion;
+                Html += "<select name=\"" + IdStr + "_ans\"";
+                
+                string IfPhrase = "";
+                foreach( string CompliantAnswer in QuestionProp.CompliantAnswers )
+                {
+                    if( IfPhrase != string.Empty ) IfPhrase += " && ";
+                    IfPhrase += "this.value != '" + CompliantAnswer + "'";
+                }
+                if(IfPhrase != string.Empty)
+                    Html += " onchange=\"if(this.value != '' && " + IfPhrase + ") { $('#" + IdStr + "_cor').show(); } else { $('#" + IdStr + "_cor').hide(); } \">";
+
+                string SelectedAnswer = QuestionProp.Answer;
+                foreach( string PotentialAnswer in QuestionProp.AllowedAnswers )
+                {
+                    Html += "<option value=\"" + PotentialAnswer + "\"";
+                    if( PotentialAnswer == SelectedAnswer )
+                        Html += " selected";
+                    Html += ">";
+                    if( PotentialAnswer == "" )
+                        Html += "Answer";
+                    else
+                        Html += PotentialAnswer;
+                    Html += "</option>";
+                }
+                Html += "</select>";
+
+                Html += "<textarea name=\"" + IdStr + "_com\" placeholder=\"Comments\">";
+                Html += QuestionProp.Comments;
+                Html += "</textarea>";
+
+                Html += "<textarea id=\"" + IdStr + "_cor\" name=\"" + IdStr + "_cor\" placeholder=\"CorrectiveAction\"";
+                if( QuestionProp.Answer == string.Empty || QuestionProp.IsCompliant )
+                    Html += "style=\"display: none\"";
+                Html += ">";
+                Html += QuestionProp.CorrectiveAction;
+                Html += "</textarea>";
                 break;
 
             case CswNbtMetaDataFieldType.NbtFieldType.Static:
