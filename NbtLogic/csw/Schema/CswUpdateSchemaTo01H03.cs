@@ -290,6 +290,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtViewRelationship FEMountPointRelationship = FireExtinguisherView.AddViewRelationship( LocationRelationship, CswNbtViewRelationship.PropOwnerType.Second, LocationNTP, false );
                 CswNbtViewRelationship FireExtinguisherRelationship = FireExtinguisherView.AddViewRelationship( FEMountPointRelationship, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointProp, false );
                 CswNbtViewRelationship InspectionRelationship = FireExtinguisherView.AddViewRelationship( FireExtinguisherRelationship, CswNbtViewRelationship.PropOwnerType.Second, PIFireExtinguisherNTP, false );
+                CswNbtViewRelationship RouteRelationship = FireExtinguisherView.AddViewRelationship( InspectionRelationship, CswNbtViewRelationship.PropOwnerType.First, RouteNTP, false );
                 FireExtinguisherView.save();
             }
 
