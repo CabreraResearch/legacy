@@ -1,8 +1,8 @@
-echo exit | sqlplus nbt/nbt@orcl @C:\kiln\Dn\Dev\Nbt\Schema\nbt_nuke.sql
+echo exit | sqlplus nbt/nbt@orcl @nbt_nuke.sql
 
-imp.exe nbt/nbt@orcl FILE=C:\kiln\Dn\Dev\Nbt\Schema\Dumps\Nbt_Master_01G32.dmp FULL=Y TOUSER=nbt
+imp.exe nbt/nbt@orcl FILE=Dumps\Nbt_Master_01G32.dmp FULL=Y TOUSER=nbt
 
-echo exit | sqlplus nbt/nbt@orcl @C:\kiln\Dn\Dev\Nbt\Schema\nbt_finalize_01H06_ora.sql
+echo exit | sqlplus nbt/nbt@orcl @nbt_finalize_01H06_ora.sql
 
 
 
