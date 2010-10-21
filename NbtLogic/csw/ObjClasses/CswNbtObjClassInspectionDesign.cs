@@ -269,6 +269,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( _OOC )
                         {
                             this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
+                            _Finished = false;
                         }
                         else
                         {
@@ -283,8 +284,11 @@ namespace ChemSW.Nbt.ObjClasses
                                 this.Status.Value = InspectionStatusAsString( InspectionStatus.Completed_Late );
                         }
                     }
-                    //Finished only indicates whether a user has checked the finish box, once checked--uncheck
-                    _Finished = false;
+                    else
+                    {
+                        _Finished = false;
+                    }
+                    
 
                     this.Finished.Checked = CswConvert.ToTristate( _Finished );
 
