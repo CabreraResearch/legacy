@@ -46,8 +46,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 if ( Prop != null )
                 {
                     _AnswerList.Items.Clear();
-                    ListItem NoneItem = new ListItem( "", "" );
-                    _AnswerList.Items.Add( NoneItem );
+                    //ListItem NoneItem = new ListItem( "", "" );
+                    //_AnswerList.Items.Add( NoneItem );
 
                     StringCollection _AllowedAnswers = new StringCollection();
                     _AllowedAnswers = Prop.AsQuestion.AllowedAnswers;
@@ -79,9 +79,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
         private TextBox _CorrectiveActionText;
         private CswLiteralText _CorrectiveActionTextName;
         private CswLiteralText _CorrectedDateName;
-        private CswLiteralText _CorrectedDate;
+        private Literal _CorrectedDate;
         private CswLiteralText _AnsweredDateName;
-        private CswLiteralText _AnsweredDate;
+        private Literal _AnsweredDate;
 
         /// <summary>
         /// Field type Question Save event
@@ -166,20 +166,17 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 _CorrectiveActionText.Width = 200;
                 TopTable.addControl( 4, 1, _CorrectiveActionText );
 
-                if ( _EditMode == NodeEditMode.PrintReport )
-                {
-                    _CorrectedDateName = new CswLiteralText( "Date Corrected: " );
-                    TopTable.addControl( 5, 0, _CorrectedDateName );
+                _CorrectedDateName = new CswLiteralText( "Date Corrected: " );
+                TopTable.addControl( 5, 0, _CorrectedDateName );
 
-                    _CorrectedDate = new CswLiteralText( _CorrectedDate.Text );
-                    TopTable.addControl( 5, 1, _CorrectedDate );
+                _CorrectedDate = new Literal();
+                TopTable.addControl( 5, 1, _CorrectedDate );
 
-                    _AnsweredDateName = new CswLiteralText( "Date Answered: " );
-                    TopTable.addControl( 6, 0, _AnsweredDateName );
+                _AnsweredDateName = new CswLiteralText( "Date Answered: " );
+                TopTable.addControl( 6, 0, _AnsweredDateName );
 
-                    _AnsweredDate = new CswLiteralText( _AnsweredDate.Text );
-                    TopTable.addControl( 6, 1, _AnsweredDate );
-                }
+                _AnsweredDate = new Literal();
+                TopTable.addControl( 6, 1, _AnsweredDate );
             }
             catch ( Exception ex )
             {
@@ -238,6 +235,22 @@ namespace ChemSW.NbtWebControls.FieldTypes
                         _CorrectiveActionText.Visible = false;
                         _CorrectiveActionTextName.Visible = false;
                     }
+
+                    if( _EditMode == NodeEditMode.PrintReport )
+                    {
+                        _AnsweredDateName.Visible = true;
+                        _AnsweredDate.Visible = true;
+                        _CorrectedDateName.Visible = true;
+                        _CorrectedDate.Visible = true;
+                    }
+                    else
+                    {
+                        _AnsweredDateName.Visible = false;
+                        _AnsweredDate.Visible = false;
+                        _CorrectedDateName.Visible = false;
+                        _CorrectedDate.Visible = false;
+                    }
+
                 }//Prop != null
             }//try
             catch ( Exception ex )

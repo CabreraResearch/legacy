@@ -298,6 +298,9 @@ namespace ChemSW.Nbt.PropTypes
                 case CswNbtSubField.PropColumn.Field2:
                     ret = Field2;
                     break;
+                case CswNbtSubField.PropColumn.Field2_Date:
+                    ret = Field2_Date.ToString();
+                    break;
                 case CswNbtSubField.PropColumn.Field3:
                     ret = Field3;
                     break;
@@ -347,6 +350,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return ( _getRowStringVal( CswNbtSubField.PropColumn.Field2 ) ); }
             set { SetPropRowValue( CswNbtSubField.PropColumn.Field2, value ); }
+        }
+
+        public DateTime Field2_Date
+        {
+            get { return _getRowDateVal( CswNbtSubField.PropColumn.Field2_Date ); }
+            set { SetPropRowValue( CswNbtSubField.PropColumn.Field2_Date, value ); }
         }
 
         public string Field3
