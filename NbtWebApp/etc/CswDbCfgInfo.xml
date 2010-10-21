@@ -1,0 +1,12 @@
+<DbConfiguration docversion="1.0">
+  <DbInstance AccessId="1">
+    <ServerType>Oracle</ServerType>
+    <ServerName>inferno</ServerName>
+    <UserName>nbt</UserName>
+    <Password>tc1pDWf3Em1juQ+1F1CCHA==</Password>
+    <UserCount>99</UserCount>
+    <Deactivated>false</Deactivated>
+    <IPFilterRegex>
+    </IPFilterRegex>
+  </DbInstance>
+</DbConfiguration>
