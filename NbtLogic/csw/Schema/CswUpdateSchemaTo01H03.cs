@@ -197,7 +197,7 @@ namespace ChemSW.Nbt.Schema
             // Physical Inspection has a Fire Extinguisher Relationship
             CswNbtMetaDataNodeTypeProp PIFireExtinguisherNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( PhysicalInspectionNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Fire Extinguisher", Int32.MinValue );
             PIFireExtinguisherNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), FireExtinguisherNT.NodeTypeId, string.Empty, Int32.MinValue );
-            
+            PIFireExtinguisherNTP.UseNumbering = false;
 
             //Generator Target NT is Inspection
             CswNbtMetaDataNodeTypeProp GeneratorTargetTypeNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.TargetTypePropertyName );
