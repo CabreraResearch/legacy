@@ -846,7 +846,6 @@ namespace ChemSW.Nbt.WebPages
                         _RelationshipViewTree.reinitTreeFromView( View, null, null, CswViewStructureTree.ViewTreeSelectType.None );
                     }
 
-
                     //re-init the tree for changes
                     setSelected( CswNodeTypeTree.NodeTypeTreeSelectedType.Property, PropToSave.PropId.ToString(), true );
 
