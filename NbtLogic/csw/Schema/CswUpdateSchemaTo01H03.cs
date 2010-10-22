@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.Schema
 
             //Mount Point NT with Hydrostatic Inspection, Barcode and Mount Point Group Props
             CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( MountPointOC.ObjectClassId, "Mount Point", "Fire Extinguisher" );
-            MountPointNT.IconFileName = "room.gif";
+            MountPointNT.IconFileName = "safecab.gif";
             CswNbtMetaDataNodeTypeProp MPHydrostaticInspectionNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Date, "Hydrostatic Inspection", Int32.MinValue );
             CswNbtMetaDataNodeTypeProp MPBarcodeNTP =  _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, "Barcode", Int32.MinValue );
             MountPointNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Barcode" );

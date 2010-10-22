@@ -146,31 +146,58 @@ namespace ChemSW.Nbt.Schema
             //Modify Locations View
 
             CswNbtMetaDataNodeType RoomNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Room" );
+            CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Mount Point" );
+            CswNbtMetaDataNodeType FireExtinguisherNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Fire Extinguisher" );
+            
             CswNbtMetaDataNodeTypeProp RoomParent = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
             CswNbtMetaDataNodeTypeProp CabinetParent = CabinetNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
             CswNbtMetaDataNodeTypeProp ShelfParent = ShelfNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
             CswNbtMetaDataNodeTypeProp BoxParent = BoxNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
+            CswNbtMetaDataNodeTypeProp MountPointParent = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
+            CswNbtMetaDataNodeTypeProp FireExtinguisherParent = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
 
             _CswNbtSchemaModTrnsctn.deleteView( "Locations", true );
-            CswNbtView LocationsView = _CswNbtSchemaModTrnsctn.makeView();
-            LocationsView.makeNew( "Locations", NbtViewVisibility.Global, null, null, null );
-            LocationsView.Category = string.Empty;
-            CswNbtViewRelationship BuildingRelationship = LocationsView.AddViewRelationship( BuildingNT, false );
 
-            //Branch #1
-            CswNbtViewRelationship FloorRelationship = LocationsView.AddViewRelationship( BuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, FloorParent, false );
-            CswNbtViewRelationship RoomRelationship = LocationsView.AddViewRelationship( FloorRelationship, CswNbtViewRelationship.PropOwnerType.Second, RoomParent, false );
-            CswNbtViewRelationship CabinetRelationship = LocationsView.AddViewRelationship( RoomRelationship, CswNbtViewRelationship.PropOwnerType.Second, CabinetParent, false );
-            CswNbtViewRelationship ShelfRelationship = LocationsView.AddViewRelationship( CabinetRelationship, CswNbtViewRelationship.PropOwnerType.Second, ShelfParent, false );
-            CswNbtViewRelationship BoxRelationship = LocationsView.AddViewRelationship( ShelfRelationship, CswNbtViewRelationship.PropOwnerType.Second, BoxParent, false );
+            //FE Locations View
+            CswNbtView FELocationsView = _CswNbtSchemaModTrnsctn.makeView();
+            FELocationsView.makeNew( "Mount Points", NbtViewVisibility.Global, null, null, null );
+            FELocationsView.Category = string.Empty;
+            CswNbtViewRelationship BuildingRelationship = FELocationsView.AddViewRelationship( BuildingNT, false );
+            CswNbtViewRelationship MP1Relationship = FELocationsView.AddViewRelationship( BuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, MountPointParent, false );
+            CswNbtViewRelationship FE1Relationship = FELocationsView.AddViewRelationship( MP1Relationship, CswNbtViewRelationship.PropOwnerType.Second, FireExtinguisherParent, false );
+            
+            CswNbtViewRelationship FloorRelationship = FELocationsView.AddViewRelationship( BuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, FloorParent, false );
+            CswNbtViewRelationship MP2Relationship = FELocationsView.AddViewRelationship( FloorRelationship, CswNbtViewRelationship.PropOwnerType.Second, MountPointParent, false );
+            CswNbtViewRelationship FE2Relationship = FELocationsView.AddViewRelationship( MP2Relationship, CswNbtViewRelationship.PropOwnerType.Second, FireExtinguisherParent, false );
+            
+            CswNbtViewRelationship RoomRelationship = FELocationsView.AddViewRelationship( FloorRelationship, CswNbtViewRelationship.PropOwnerType.Second, RoomParent, false );
+            CswNbtViewRelationship MP3Relationship = FELocationsView.AddViewRelationship( RoomRelationship, CswNbtViewRelationship.PropOwnerType.Second, MountPointParent, false );
+            CswNbtViewRelationship FE3Relationship = FELocationsView.AddViewRelationship( MP3Relationship, CswNbtViewRelationship.PropOwnerType.Second, FireExtinguisherParent, false );
 
-            //Branch #2
-            CswNbtViewRelationship Room2Relationship = LocationsView.AddViewRelationship( BuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, RoomParent, false );
-            CswNbtViewRelationship Cabinet2Relationship = LocationsView.AddViewRelationship( Room2Relationship, CswNbtViewRelationship.PropOwnerType.Second, CabinetParent, false );
-            CswNbtViewRelationship Shelf2Relationship = LocationsView.AddViewRelationship( Cabinet2Relationship, CswNbtViewRelationship.PropOwnerType.Second, ShelfParent, false );
-            CswNbtViewRelationship Box2Relationship = LocationsView.AddViewRelationship( Shelf2Relationship, CswNbtViewRelationship.PropOwnerType.Second, BoxParent, false );
+            CswNbtViewRelationship Room2Relationship = FELocationsView.AddViewRelationship( BuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, RoomParent, false );
+            CswNbtViewRelationship MP4Relationship = FELocationsView.AddViewRelationship( Room2Relationship, CswNbtViewRelationship.PropOwnerType.Second, MountPointParent, false );
+            CswNbtViewRelationship FE4Relationship = FELocationsView.AddViewRelationship( MP4Relationship, CswNbtViewRelationship.PropOwnerType.Second, FireExtinguisherParent, false );
 
-            LocationsView.save();
+            FELocationsView.save();
+
+            //IMCS Locations View
+            CswNbtView IMCSLocationsView = _CswNbtSchemaModTrnsctn.makeView();
+            IMCSLocationsView.makeNew( "Locations", NbtViewVisibility.Global, null, null, null );
+            IMCSLocationsView.Category = string.Empty;
+
+            CswNbtViewRelationship IMCSBuildingRelationship = IMCSLocationsView.AddViewRelationship( BuildingNT, false );
+            CswNbtViewRelationship IMCSFloorRelationship = IMCSLocationsView.AddViewRelationship( IMCSBuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, FloorParent, false );
+            CswNbtViewRelationship IMCSRoomRelationship = IMCSLocationsView.AddViewRelationship( IMCSFloorRelationship, CswNbtViewRelationship.PropOwnerType.Second, RoomParent, false );
+            CswNbtViewRelationship IMCSCabinetRelationship = IMCSLocationsView.AddViewRelationship( IMCSRoomRelationship, CswNbtViewRelationship.PropOwnerType.Second, CabinetParent, false );
+            CswNbtViewRelationship IMCSShelfRelationship = IMCSLocationsView.AddViewRelationship( IMCSCabinetRelationship, CswNbtViewRelationship.PropOwnerType.Second, ShelfParent, false );
+            CswNbtViewRelationship IMCSBoxRelationship = IMCSLocationsView.AddViewRelationship( IMCSShelfRelationship, CswNbtViewRelationship.PropOwnerType.Second, BoxParent, false );
+
+            CswNbtViewRelationship IMCSRoom2Relationship = IMCSLocationsView.AddViewRelationship( IMCSBuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, RoomParent, false );
+            CswNbtViewRelationship IMCSCabinet2Relationship = IMCSLocationsView.AddViewRelationship( IMCSRoom2Relationship, CswNbtViewRelationship.PropOwnerType.Second, CabinetParent, false );
+            CswNbtViewRelationship IMCSShelf2Relationship = IMCSLocationsView.AddViewRelationship( IMCSCabinet2Relationship, CswNbtViewRelationship.PropOwnerType.Second, ShelfParent, false );
+            CswNbtViewRelationship IMCSBox2Relationship = IMCSLocationsView.AddViewRelationship( IMCSShelf2Relationship, CswNbtViewRelationship.PropOwnerType.Second, BoxParent, false );
+
+            IMCSLocationsView.save();
 
         }
 
