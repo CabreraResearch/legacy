@@ -435,9 +435,9 @@ namespace ChemSW.Nbt.WebPages
         }
         private void init_AddTabPage() { }
 
-        private Label Label1;
+        private CswLiteralText Label1;
         private DropDownList AddPropNewFieldTypeIdSelect;
-        private Label AddPropTabLabel;
+        private CswLiteralText AddPropTabLabel;
         private DropDownList AddPropTabSelect;
         private Label AddPropNameLabel;
         private TextBox AddPropName;
@@ -445,9 +445,9 @@ namespace ChemSW.Nbt.WebPages
         private void create_AddPropertyPage()
         {
 
-            Label1 = new Label();
-            Label1.ID = "Label1";
-            Label1.Text = "Field Type:";
+            Label1 = new CswLiteralText("Field Type: ");
+            if( _Mode == NbtDesignMode.Inspection )
+                Label1.Visible = false;
 
             AddPropNewFieldTypeIdSelect = new DropDownList();
             AddPropNewFieldTypeIdSelect.ID = "AddPropNewFieldTypeIdSelect";
@@ -456,9 +456,7 @@ namespace ChemSW.Nbt.WebPages
             if( _Mode == NbtDesignMode.Inspection )
                 AddPropNewFieldTypeIdSelect.Visible = false;
 
-            AddPropTabLabel = new Label();
-            AddPropTabLabel.ID = "AddPropTabLabel";
-            AddPropTabLabel.Text = "Display On " + LabelNodeTypeTab + ":";
+            AddPropTabLabel = new CswLiteralText("Display On " + LabelNodeTypeTab + ": ");
 
             AddPropTabSelect = new DropDownList();
             AddPropTabSelect.ID = "AddPropTabSelect";

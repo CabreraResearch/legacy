@@ -199,10 +199,10 @@ namespace ChemSW.Nbt.WebPages
 
             // Heading
             Literal HeadingPropNameLiteral = new Literal();
-            if( _Mode == LayoutMode.Inspection )
-                HeadingPropNameLiteral.Text = "<b>Question</b>";
-            else
-                HeadingPropNameLiteral.Text = "<b>Property Name</b>";
+            //if( _Mode == LayoutMode.Inspection )
+            //    HeadingPropNameLiteral.Text = "<b>Question</b>";
+            //else
+            HeadingPropNameLiteral.Text = "<b>Property Name</b>";
             PropDataTable.addControl( row, NameColumn, HeadingPropNameLiteral );
 
             if( _Mode == LayoutMode.Add )
