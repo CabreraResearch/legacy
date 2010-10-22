@@ -98,7 +98,8 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.StatusPropertyName ),
                                                                  CswNbtSubField.SubFieldName.Value,
                                                                  "OK" );
-
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName ), "setvalonadd", true );
+            
             //Mount Point Group NT
             CswNbtMetaDataObjectClass GenericOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass );
             CswNbtMetaDataNodeType MountPointGroupNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOC.ObjectClassId, "Mount Point Group", "Fire Extinguisher" );
@@ -113,10 +114,12 @@ namespace ChemSW.Nbt.Schema
 
             //Mount Point NT with Hydrostatic Inspection, Barcode and Mount Point Group Props
             CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( MountPointOC.ObjectClassId, "Mount Point", "Fire Extinguisher" );
-            MountPointNT.IconFileName = "room.gif";
-            _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Date, "Hydrostatic Inspection", Int32.MinValue );
-            _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, "Barcode", Int32.MinValue );
+            MountPointNT.IconFileName = "safecab.gif";
+            CswNbtMetaDataNodeTypeProp MPHydrostaticInspectionNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Date, "Hydrostatic Inspection", Int32.MinValue );
+            CswNbtMetaDataNodeTypeProp MPBarcodeNTP =  _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, "Barcode", Int32.MinValue );
+            MountPointNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Barcode" );
             CswNbtMetaDataNodeTypeProp MountPointGroupNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Mount Point Group", Int32.MinValue );
+            MountPointGroupNTP.SetValueOnAdd = true;
             MountPointGroupNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointGroupNT.NodeTypeId, string.Empty, Int32.MinValue );
             MountPointGroupNTP.DefaultValue.AsRelationship.RelatedNodeId = MPGroupNode.NodeId;
 
@@ -129,7 +132,7 @@ namespace ChemSW.Nbt.Schema
             FireExtinguisherNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( FireExtinguisherOC.ObjectClassId, "Fire Extinguisher", "Fire Extinguisher" );
             FireExtinguisherNT.IconFileName = "fireext.gif";
             _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Date, "Hydrostatic Inspection", Int32.MinValue );
-            _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, "Barcode", Int32.MinValue );
+            CswNbtMetaDataNodeTypeProp FEBarcodeNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, "Barcode", Int32.MinValue );
             FireExtinguisherNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Barcode" );
 
             //Update NT Relationships to Target NT
@@ -169,14 +172,15 @@ namespace ChemSW.Nbt.Schema
             CswNbtViewRelationship MountPointGroupChild = ParentView.AddViewRelationship( ParentRelationship, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );
             CswNbtViewRelationship MountPointChild = ParentView.AddViewRelationship( MountPointGroupChild, CswNbtViewRelationship.PropOwnerType.Second, MountPointGroupNTP, true );
             CswNbtViewRelationship FireExtinguisherChild = ParentView.AddViewRelationship( MountPointChild, CswNbtViewRelationship.PropOwnerType.Second, MountPointNTP, true );
-            ParentView.save();
-            ParentViewNTP._DataRow["nodeviewid"] = CswConvert.ToDbVal( ParentView.ViewId );
+            ParentView.save();            
 
             //FE Route NT
             CswNbtMetaDataObjectClass InspectionRouteOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass );
             CswNbtMetaDataNodeType PhysicalInspectionRouteNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( InspectionRouteOC.ObjectClassId, "Physical Inspection Route", "Fire Extinguisher" );
             PhysicalInspectionRouteNT.IconFileName = "arrows.gif";
-            //PhysicalInspectionRouteNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassInspectionRoute );
+            CswNbtMetaDataNodeTypeProp RouteNameNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( PhysicalInspectionRouteNT, CswNbtMetaDataFieldType.NbtFieldType.Text, "Name", Int32.MinValue );
+            RouteNameNTP.SetValueOnAdd = true;
+            PhysicalInspectionRouteNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Name" );
 
             // < Case 20004 >
 
@@ -195,6 +199,7 @@ namespace ChemSW.Nbt.Schema
             // Physical Inspection has a Fire Extinguisher Relationship
             CswNbtMetaDataNodeTypeProp PIFireExtinguisherNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( PhysicalInspectionNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Fire Extinguisher", Int32.MinValue );
             PIFireExtinguisherNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), FireExtinguisherNT.NodeTypeId, string.Empty, Int32.MinValue );
+            PIFireExtinguisherNTP.UseNumbering = false;
 
             //Generator Target NT is Inspection
             CswNbtMetaDataNodeTypeProp GeneratorTargetTypeNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.TargetTypePropertyName );
@@ -211,12 +216,8 @@ namespace ChemSW.Nbt.Schema
             InspectionGeneratorNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionScheduleNT.NodeTypeId, string.Empty, Int32.MinValue );
 
             //Inspection has FE Route
-            //CswNbtMetaDataNodeTypeProp RouteNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
-            //RouteNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionRouteNT.NodeTypeId, string.Empty, Int32.MinValue );
-
-            //Inspection Has Relationship to Fire Extinguisher
-            CswNbtMetaDataNodeTypeProp FireExtinguisherNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( PhysicalInspectionNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Fire Extinguisher", string.Empty );
-            FireExtinguisherNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), FireExtinguisherNT.NodeTypeId, string.Empty, Int32.MinValue );
+            CswNbtMetaDataNodeTypeProp RouteNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
+            RouteNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionRouteNT.NodeTypeId, string.Empty, Int32.MinValue );
 
             // </ Case 20004 >
 
@@ -277,18 +278,19 @@ namespace ChemSW.Nbt.Schema
                 CswNbtView ScheduleView = _CswNbtSchemaModTrnsctn.makeView();
                 ScheduleView.makeNew( "Physical Inspection Schedule", NbtViewVisibility.Role, AdminRoleNode.NodeId, null, null );
                 ScheduleView.Category = "Inspections";
-                GroupRelationship = ScheduleView.AddViewRelationship( MountPointGroupNT, false );
-                CswNbtViewRelationship ScheduleRelationship = ScheduleView.AddViewRelationship( GroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, OwnerNTP, false );
+                CswNbtViewRelationship SGroupRelationship = ScheduleView.AddViewRelationship( MountPointGroupNT, false );
+                CswNbtViewRelationship ScheduleRelationship = ScheduleView.AddViewRelationship( SGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, OwnerNTP, false );
                 ScheduleView.save();
 
                 CswNbtView FireExtinguisherView = _CswNbtSchemaModTrnsctn.makeView();
                 FireExtinguisherView.makeNew( "Fire Extinguishers", NbtViewVisibility.Role, AdminRoleNode.NodeId, null, null );
                 FireExtinguisherView.Category = "Inspections";
                 CswNbtViewRelationship LocationRelationship = FireExtinguisherView.AddViewRelationship( LocationOC, false );
-                CswNbtMetaDataNodeTypeProp LocationNTP = MountPointGroupNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );                
-                MountPointRelationship = FireExtinguisherView.AddViewRelationship( LocationRelationship, CswNbtViewRelationship.PropOwnerType.Second, LocationNTP, false );
-                CswNbtViewRelationship FireExtinguisherRelationship = FireExtinguisherView.AddViewRelationship( MountPointRelationship, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointProp, false );
+                CswNbtMetaDataNodeTypeProp LocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
+                CswNbtViewRelationship FEMountPointRelationship = FireExtinguisherView.AddViewRelationship( LocationRelationship, CswNbtViewRelationship.PropOwnerType.Second, LocationNTP, false );
+                CswNbtViewRelationship FireExtinguisherRelationship = FireExtinguisherView.AddViewRelationship( FEMountPointRelationship, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointProp, false );
                 CswNbtViewRelationship InspectionRelationship = FireExtinguisherView.AddViewRelationship( FireExtinguisherRelationship, CswNbtViewRelationship.PropOwnerType.Second, PIFireExtinguisherNTP, false );
+                CswNbtViewRelationship RouteRelationship = FireExtinguisherView.AddViewRelationship( InspectionRelationship, CswNbtViewRelationship.PropOwnerType.First, RouteNTP, false );
                 FireExtinguisherView.save();
             }
 

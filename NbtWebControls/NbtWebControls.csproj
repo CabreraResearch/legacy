@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Telerik.Web.UI">
-      <HintPath>..\..\ThirdParty\Telerik\RadControls for ASPNET AJAX Q3 2008 1314\bin35\Telerik.Web.UI.dll</HintPath>
+      <HintPath>..\..\..\Dn\ThirdParty\Telerik\RadControls for ASPNET AJAX Q3 2008 1314\bin35\Telerik.Web.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

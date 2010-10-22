@@ -231,7 +231,6 @@ namespace ChemSW.Nbt.Sched
             //Add "run always" schedule items
             _AlwaysRunItems.Add( new CswNbtSchdItemUpdatePropertyValues( _CswNbtResources ) );
             _AlwaysRunItems.Add( new CswNbtSchdItemUpdateMTBF( _CswNbtResources ) );
-            _AlwaysRunItems.Add( new CswNbtSchdItemUpdateInspectionStatus( _CswNbtResources ) );
 
             string ConfigVarName_EmulateCatastrophicError = "EmulateCatastrophicError";
             if( _CswSetupVblsNbt.doesSettingExist( ConfigVarName_EmulateCatastrophicError ) )
@@ -428,17 +427,17 @@ namespace ChemSW.Nbt.Sched
             //}// iterate object classes
 
             // BZ 10350 - Use an S4 to find due generators
-            CswStaticSelect GeneratorsDueSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtSchdItemRunner.loadSchedules()_select", "GeneratorsDue" );
-            DataTable GeneratorsDueTable = GeneratorsDueSelect.getTable( false, false, 0, 25 );
+            CswStaticSelect ScheduleItemsDueSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtSchdItemRunner.loadSchedules()_select", "GeneratorsDue" );
+            DataTable ScheduleItemsDueTable = ScheduleItemsDueSelect.getTable( false, false, 0, 25 );
 
             // BZ 10350 - Pick just one row at random
-            if( GeneratorsDueTable.Rows.Count > 0 )
+            if( ScheduleItemsDueTable.Rows.Count > 0 )
             {
                 System.Random r = new Random();
-                Int32 RowNum = r.Next( 0, GeneratorsDueTable.Rows.Count );
-                Int32 GeneratorNodeId = CswConvert.ToInt32( GeneratorsDueTable.Rows[RowNum]["nodeid"] );
-                CswNbtNode GeneratorNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", GeneratorNodeId )];
-                CswNbtSchdItem CurrentScheduleItem = _CswNbtSchdItemFactory.makeSchdItem( GeneratorNode );
+                Int32 RowNum = r.Next( 0, ScheduleItemsDueTable.Rows.Count );
+                Int32 ScheduleItemNodeId = CswConvert.ToInt32( ScheduleItemsDueTable.Rows[RowNum]["nodeid"] );
+                CswNbtNode ScheduleItemNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", ScheduleItemNodeId )];
+                CswNbtSchdItem CurrentScheduleItem = _CswNbtSchdItemFactory.makeSchdItem( ScheduleItemNode );
                 _ScheduleItems.Add( CurrentScheduleItem );
             }
 
