@@ -444,7 +444,7 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate JctModulesNTTable = makeCswTableUpdate( "SchemaModTrnsctn_ModuleJunctionUpdate", "jct_modules_nodetypes" );
             DataTable JctModulesNTDataTable = JctModulesNTTable.getEmptyTable();
             DataRow JctRow = JctModulesNTDataTable.NewRow();
-            JctRow["deleted"] = CswConvert.ToDbVal( false );
+            //JctRow["deleted"] = CswConvert.ToDbVal( false );
             JctRow["moduleid"] = ModuleId.ToString();
             JctRow["nodetypeid"] = NodeTypeId.ToString();
             JctModulesNTDataTable.Rows.Add( JctRow );
@@ -472,7 +472,6 @@ namespace ChemSW.Nbt.Schema
             ObjectClassTableUpdate.update( NewObjectClassTable );
             return NewObjectClassId;
         }
-
 
         /// <summary>
         /// Convenience function for making new Object Class Props

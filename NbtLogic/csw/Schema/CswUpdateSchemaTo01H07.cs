@@ -15,14 +15,14 @@ using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01H-08
+    /// Updates the schema to version 01H-07
     /// </summary>
-    public class CswUpdateSchemaTo01H08 : ICswUpdateSchemaTo
+    public class CswUpdateSchemaTo01H07 : ICswUpdateSchemaTo
     {
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'H', 08 ); } }
-        public CswUpdateSchemaTo01H08( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'H', 07 ); } }
+        public CswUpdateSchemaTo01H07( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
         }
@@ -103,13 +103,78 @@ namespace ChemSW.Nbt.Schema
             }
 
             // Case 20029
+            //Associate Cabinet, Shelf and Box with IMCS
+            CswTableSelect ModulesTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "modules_select", "modules" );
+            DataTable ModulesTable = ModulesTableSelect.getTable( "where name = 'IMCS'" );
+            Int32 IMCSModuleId = CswConvert.ToInt32( ModulesTable.Rows[0]["moduleid"] );
+
             CswNbtMetaDataNodeType CabinetNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Cabinet" );
             CswNbtMetaDataNodeType ShelfNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Shelf" );
             CswNbtMetaDataNodeType BoxNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Box" );
 
+            _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( IMCSModuleId, CabinetNT.NodeTypeId );
+            _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( IMCSModuleId, ShelfNT.NodeTypeId );
+            _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( IMCSModuleId, BoxNT.NodeTypeId );
+
+            //Create Floor
+            CswNbtMetaDataNodeType BuildingNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Building" );
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+            CswNbtMetaDataNodeType FloorNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( LocationOC.ObjectClassId, "Floor", "Locations" );
+            CswNbtMetaDataNodeTypeProp FloorNameNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FloorNT, CswNbtMetaDataFieldType.NbtFieldType.Text, "Name", Int32.MinValue );
+            FloorNameNTP.SetValueOnAdd = true;
+            FloorNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Name" );
+            FloorNT.IconFileName = "ball_blueS.gif";
+            CswNbtMetaDataNodeTypeProp FloorParent = FloorNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
+            FloorParent.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), BuildingNT.NodeTypeId, string.Empty, Int32.MinValue );
+            
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+
+            CswNbtNode RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
+            if( RoleNode != null )
+            {
+                CswNbtNodePropLogicalSet Permissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).NodeTypePermissions;
+
+                Permissions.SetValue( NodeTypePermission.Create.ToString(), FloorNT.NodeTypeId.ToString(), true );
+                Permissions.SetValue( NodeTypePermission.Delete.ToString(), FloorNT.NodeTypeId.ToString(), true );
+                Permissions.SetValue( NodeTypePermission.Edit.ToString(), FloorNT.NodeTypeId.ToString(), true );
+                Permissions.SetValue( NodeTypePermission.View.ToString(), FloorNT.NodeTypeId.ToString(), true );
+
+                Permissions.Save();
+                RoleNode.postChanges( true );
+            }
+
+            //Modify Locations View
+
+            CswNbtMetaDataNodeType RoomNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Room" );
+            CswNbtMetaDataNodeTypeProp RoomParent = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
+            CswNbtMetaDataNodeTypeProp CabinetParent = CabinetNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
+            CswNbtMetaDataNodeTypeProp ShelfParent = ShelfNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
+            CswNbtMetaDataNodeTypeProp BoxParent = BoxNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
+
+            _CswNbtSchemaModTrnsctn.deleteView( "Locations", true );
+            CswNbtView LocationsView = _CswNbtSchemaModTrnsctn.makeView();
+            LocationsView.makeNew( "Locations", NbtViewVisibility.Global, null, null, null );
+            LocationsView.Category = string.Empty;
+            CswNbtViewRelationship BuildingRelationship = LocationsView.AddViewRelationship( BuildingNT, false );
+
+            //Branch #1
+            CswNbtViewRelationship FloorRelationship = LocationsView.AddViewRelationship( BuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, FloorParent, false );
+            CswNbtViewRelationship RoomRelationship = LocationsView.AddViewRelationship( FloorRelationship, CswNbtViewRelationship.PropOwnerType.Second, RoomParent, false );
+            CswNbtViewRelationship CabinetRelationship = LocationsView.AddViewRelationship( RoomRelationship, CswNbtViewRelationship.PropOwnerType.Second, CabinetParent, false );
+            CswNbtViewRelationship ShelfRelationship = LocationsView.AddViewRelationship( CabinetRelationship, CswNbtViewRelationship.PropOwnerType.Second, ShelfParent, false );
+            CswNbtViewRelationship BoxRelationship = LocationsView.AddViewRelationship( ShelfRelationship, CswNbtViewRelationship.PropOwnerType.Second, BoxParent, false );
+
+            //Branch #2
+            CswNbtViewRelationship Room2Relationship = LocationsView.AddViewRelationship( BuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, RoomParent, false );
+            CswNbtViewRelationship Cabinet2Relationship = LocationsView.AddViewRelationship( Room2Relationship, CswNbtViewRelationship.PropOwnerType.Second, CabinetParent, false );
+            CswNbtViewRelationship Shelf2Relationship = LocationsView.AddViewRelationship( Cabinet2Relationship, CswNbtViewRelationship.PropOwnerType.Second, ShelfParent, false );
+            CswNbtViewRelationship Box2Relationship = LocationsView.AddViewRelationship( Shelf2Relationship, CswNbtViewRelationship.PropOwnerType.Second, BoxParent, false );
+
+            LocationsView.save();
+
         }
 
-    }//class CswUpdateSchemaTo01H08
+    }//class CswUpdateSchemaTo01H07
 
 }//namespace ChemSW.Nbt.Schema
 
