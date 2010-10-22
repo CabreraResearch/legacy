@@ -118,9 +118,9 @@ namespace ChemSW.Nbt.Schema
 
             // Case 20029
             //Associate Cabinet, Shelf and Box with IMCS
-            CswTableSelect ModulesTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "modules_select", "modules" );
-            DataTable ModulesTable = ModulesTableSelect.getTable( "where name = 'IMCS'" );
-            Int32 IMCSModuleId = CswConvert.ToInt32( ModulesTable.Rows[0]["moduleid"] );
+            CswTableSelect ModTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "modules_select", "modules" );
+            DataTable ModTable = ModTableSelect.getTable( "where name = 'IMCS'" );
+            Int32 IMCSModuleId = CswConvert.ToInt32( ModTable.Rows[0]["moduleid"] );
 
             CswNbtMetaDataNodeType CabinetNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Cabinet" );
             CswNbtMetaDataNodeType ShelfNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Shelf" );
