@@ -51,9 +51,9 @@ namespace ChemSW.Nbt.Sched
         override public bool doesItemRunNow()
         {
             bool ReturnVal = false;
-            DateTime DueDate = _InspectionNode.Date.DateValue;
             if( null != _InspectionNode )
             {
+                DateTime DueDate = _InspectionNode.Date.DateValue;
                 if( _Pending == _InspectionNode.Status.Value && DateTime.Today >= DueDate )
                 {
                     ReturnVal = true;
@@ -71,6 +71,7 @@ namespace ChemSW.Nbt.Sched
             if( null != _InspectionNode )
             {
                 _InspectionNode.Status.Value = _Overdue;
+                _InspectionNode.postChanges( false );
             }
         }//run()
 
