@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema
                                                            Int32.MinValue, Int32.MinValue );
             //MP: Status
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, MountPointOC, CswNbtObjClassMountPoint.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List,
-                                                           false, true, false, string.Empty, Int32.MinValue, false, false, false, true, "OK,OOC",
+                                                           false, true, false, string.Empty, Int32.MinValue, false, false, false, true, "Not Inspected,OK,OOC",
                                                            Int32.MinValue, Int32.MinValue );
             //MP: Location
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, MountPointOC, CswNbtObjClassMountPoint.LocationPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Location,
@@ -79,12 +79,22 @@ namespace ChemSW.Nbt.Schema
                                                            Int32.MinValue, Int32.MinValue );
             //FE: Status
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC, CswNbtObjClassFireExtinguisher.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List,
-                                                           false, true, false, string.Empty, Int32.MinValue, false, false, false, true, "OK,OOC",
+                                                           false, true, false, string.Empty, Int32.MinValue, false, false, false, true, "Not Inspected,OK,OOC",
                                                            Int32.MinValue, Int32.MinValue );
             //FE: Mount Point
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC, CswNbtObjClassFireExtinguisher.MountPointPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                                                            false, false, true, "ObjectClassId", MountPointOC.ObjectClassId, false, false, false, false, string.Empty,
                                                            Int32.MinValue, Int32.MinValue );
+
+            // Case 20058
+            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, MountPointOC, "Description", CswNbtMetaDataFieldType.NbtFieldType.Text, false, false, false,
+                                                            string.Empty, Int32.MinValue, true, false, false, false, string.Empty, Int32.MinValue, Int32.MinValue );
+            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC, "Description", CswNbtMetaDataFieldType.NbtFieldType.Text, false, false, false,
+                                                            string.Empty, Int32.MinValue, true, false, false, false, string.Empty, Int32.MinValue, Int32.MinValue );
+            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, MountPointOC, "Type", CswNbtMetaDataFieldType.NbtFieldType.List, false, false, false,
+                                                            string.Empty, Int32.MinValue, false, false, false, false, string.Empty, Int32.MinValue, Int32.MinValue );
+            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC, "Type", CswNbtMetaDataFieldType.NbtFieldType.List, false, false, false,
+                                                            string.Empty, Int32.MinValue, false, false, false, false, string.Empty, Int32.MinValue, Int32.MinValue );
 
             //Last DT Op
             OCPUpdate.update( NewOCPTable );
@@ -93,13 +103,15 @@ namespace ChemSW.Nbt.Schema
             // Default values
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.StatusPropertyName ),
                                                                  CswNbtSubField.SubFieldName.Value,
-                                                                 "OK" );
+                                                                 "Not Inspected" );
 
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.StatusPropertyName ),
                                                                  CswNbtSubField.SubFieldName.Value,
-                                                                 "OK" );
+                                                                 "Not Inspected" );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName ), "setvalonadd", true );
-            
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.TypePropertyName ), "setvalonadd", true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassMountPoint.TypePropertyName ), "setvalonadd", true );
+
             //Mount Point Group NT
             CswNbtMetaDataObjectClass GenericOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass );
             CswNbtMetaDataNodeType MountPointGroupNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOC.ObjectClassId, "Mount Point Group", "Fire Extinguisher" );
@@ -117,7 +129,7 @@ namespace ChemSW.Nbt.Schema
             MountPointNT.IconFileName = "safecab.gif";
             CswNbtMetaDataNodeTypeProp MPHydrostaticInspectionNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Date, "Hydrostatic Inspection", Int32.MinValue );
             CswNbtMetaDataNodeTypeProp MPBarcodeNTP =  _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, "Barcode", Int32.MinValue );
-            MountPointNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Barcode" );
+            MountPointNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMountPoint.DescriptionPropertyName );
             CswNbtMetaDataNodeTypeProp MountPointGroupNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Mount Point Group", Int32.MinValue );
             MountPointGroupNTP.SetValueOnAdd = true;
             MountPointGroupNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointGroupNT.NodeTypeId, string.Empty, Int32.MinValue );
@@ -133,7 +145,12 @@ namespace ChemSW.Nbt.Schema
             FireExtinguisherNT.IconFileName = "fireext.gif";
             _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Date, "Hydrostatic Inspection", Int32.MinValue );
             CswNbtMetaDataNodeTypeProp FEBarcodeNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, "Barcode", Int32.MinValue );
-            FireExtinguisherNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Barcode" );
+            FireExtinguisherNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassFireExtinguisher.DescriptionPropertyName );
+
+            // Case 20058
+            CswNbtMetaDataNodeTypeProp FEManufacturerNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Text, "Manufacturer", Int32.MinValue );
+            CswNbtMetaDataNodeTypeProp FEModelNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Text, "Model", Int32.MinValue );
+            CswNbtMetaDataNodeTypeProp FESizeNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Quantity, "Size", Int32.MinValue );
 
             //Update NT Relationships to Target NT
             CswNbtMetaDataNodeTypeProp FEMountPointProp = FireExtinguisherNT.getNodeTypeProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName );

@@ -15,6 +15,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static string LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
         public static string StatusPropertyName { get { return "Status"; } }
         public static string MountPointPropertyName { get { return "Mount Point"; } }
+        public static string DescriptionPropertyName { get { return "Description"; } }
+        public static string TypePropertyName { get { return "Type"; } }
 
         //ICswNbtPropertySetInspectionParent
         public string InspectionParentStatusPropertyName { get { return StatusPropertyName; } }
@@ -100,13 +102,29 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 return ( _CswNbtNode.Properties[StatusPropertyName].AsList );
             }
-
         }
+
         public CswNbtNodePropRelationship MountPoint
         {
             get
             {
                 return ( _CswNbtNode.Properties[MountPointPropertyName].AsRelationship );
+            }
+        }
+
+        public CswNbtNodePropList Type
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[TypePropertyName].AsList );
+            }
+        }
+
+        public CswNbtNodePropText Description
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[DescriptionPropertyName].AsText );
             }
         }
 

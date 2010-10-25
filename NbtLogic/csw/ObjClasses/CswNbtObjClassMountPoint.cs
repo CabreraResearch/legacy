@@ -15,6 +15,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static string LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
         public static string StatusPropertyName { get { return "Status"; } }
         public static string LocationPropertyName { get { return "Location"; } }
+        public static string DescriptionPropertyName { get { return "Description"; } }
+        public static string TypePropertyName { get { return "Type"; } }
 
         //ICswNbtPropertySetInspectionParent
         public string InspectionParentStatusPropertyName { get { return StatusPropertyName; } }
@@ -116,6 +118,22 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[LocationPropertyName].AsLocation );
+            }
+        }
+
+        public CswNbtNodePropList Type
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[TypePropertyName].AsList );
+            }
+        }
+
+        public CswNbtNodePropText Description
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[DescriptionPropertyName].AsText );
             }
         }
         #endregion
