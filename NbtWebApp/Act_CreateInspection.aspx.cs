@@ -17,6 +17,7 @@ using ChemSW.Exceptions;
 using FarPoint.Web.Spread;
 using ChemSW.CswWebControls;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -118,6 +119,8 @@ namespace ChemSW.Nbt.WebPages
             AllTargetDropDown.ID = "AllTargetDropDown";
             AllTargetDropDown.CssClass = "selectinput";
             AllTargetDropDown.Style.Add( HtmlTextWriterStyle.Display, "none" );
+            
+            //When implementing case 20051 or in general, consider adding property sets into metadata to improve the quality of this code
             foreach( CswNbtMetaDataNodeType NodeType in Master.CswNbtResources.MetaData.LatestVersionNodeTypes )
             {
                 AllTargetDropDown.Items.Add( new System.Web.UI.WebControls.ListItem( NodeType.NodeTypeName, "nt_" + NodeType.FirstVersionNodeTypeId.ToString() ) );
