@@ -200,9 +200,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _AllowedAnswers = new StringCollection();
                 string AnswerString = _CswNbtMetaDataNodeTypeProp.ListOptions;
-                
-                if ( null == AnswerString || string.Empty == AnswerString )
+
+                if( null == AnswerString || string.Empty == AnswerString )
                 {
+                    _AllowedAnswers.Add( "" );
                     _AllowedAnswers.Add( "Yes" );
                     _AllowedAnswers.Add( "No" );
                     _AllowedAnswers.Add( "N/A" );
@@ -210,6 +211,7 @@ namespace ChemSW.Nbt.PropTypes
                 else
                 {
                     _AllowedAnswers = CswTools.DelimitedStringToStringCollection( _CswNbtMetaDataNodeTypeProp.ListOptions, Delims );
+                    _AllowedAnswers.Insert( 0, "" );
                 }
 
                 return _AllowedAnswers;

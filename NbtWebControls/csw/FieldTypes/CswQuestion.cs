@@ -46,8 +46,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 if ( Prop != null )
                 {
                     _AnswerList.Items.Clear();
-                    ListItem NoneItem = new ListItem( "", "" );
-                    _AnswerList.Items.Add( NoneItem );
+                    //ListItem NoneItem = new ListItem( "", "" );
+                    //_AnswerList.Items.Add( NoneItem );
 
                     StringCollection _AllowedAnswers = new StringCollection();
                     _AllowedAnswers = Prop.AsQuestion.AllowedAnswers;
