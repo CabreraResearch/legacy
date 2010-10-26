@@ -127,7 +127,8 @@ namespace ChemSW.Nbt.Schema
             MountPointNT.IconFileName = "safecab.gif";
             CswNbtMetaDataNodeTypeProp MPHydrostaticInspectionNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Date, "Hydrostatic Inspection", Int32.MinValue );
             CswNbtMetaDataNodeTypeProp MPBarcodeNTP =  _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, "Barcode", Int32.MinValue );
-            MountPointNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMountPoint.DescriptionPropertyName );
+            MountPointNT.NameTemplateText = ( CswNbtMetaData.MakeTemplateEntry( "Barcode" ) + " " + 
+                                              CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMountPoint.DescriptionPropertyName ) );
             CswNbtMetaDataNodeTypeProp MountPointGroupNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Mount Point Group", Int32.MinValue );
             MountPointGroupNTP.SetValueOnAdd = true;
             MountPointGroupNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointGroupNT.NodeTypeId, string.Empty, Int32.MinValue );
@@ -143,8 +144,9 @@ namespace ChemSW.Nbt.Schema
             FireExtinguisherNT.IconFileName = "fireext.gif";
             _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Date, "Hydrostatic Inspection", Int32.MinValue );
             CswNbtMetaDataNodeTypeProp FEBarcodeNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, "Barcode", Int32.MinValue );
-            FireExtinguisherNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassFireExtinguisher.DescriptionPropertyName );
-
+            FireExtinguisherNT.NameTemplateText = ( CswNbtMetaData.MakeTemplateEntry( "Barcode" ) + " " +
+                                                    CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassFireExtinguisher.DescriptionPropertyName ) );
+            
             // Case 20058
             CswNbtMetaDataNodeType VendorNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Vendor" );
             CswNbtMetaDataNodeTypeProp FEManufacturerNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FireExtinguisherNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Manufacturer", Int32.MinValue );
