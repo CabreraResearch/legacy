@@ -79,9 +79,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
         private TextBox _CorrectiveActionText;
         private CswLiteralText _CorrectiveActionTextName;
         private CswLiteralText _CorrectedDateName;
-        private TextBox _CorrectedDate;
+        private Literal _CorrectedDate;
         private CswLiteralText _AnsweredDateName;
-        private TextBox _AnsweredDate;
+        private Literal _AnsweredDate;
 
         /// <summary>
         /// Field type Question Save event
@@ -169,17 +169,15 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 _CorrectedDateName = new CswLiteralText( "Date Corrected: " );
                 TopTable.addControl( 5, 0, _CorrectedDateName );
 
-                _CorrectedDate = new TextBox();
+                _CorrectedDate = new Literal();
                 _CorrectedDate.ID = "crctd";
-                _CorrectedDate.CssClass = CswFieldTypeWebControl.TextBoxCssClass;
                 TopTable.addControl( 5, 1, _CorrectedDate );
 
                 _AnsweredDateName = new CswLiteralText( "Date Answered: " );
                 TopTable.addControl( 6, 0, _AnsweredDateName );
 
-                _AnsweredDate = new TextBox();
+                _AnsweredDate = new Literal();
                 _AnsweredDate.ID = "answd";
-                _AnsweredDate.CssClass = CswFieldTypeWebControl.TextBoxCssClass;
                 TopTable.addControl( 6, 1, _AnsweredDate );
             }
             catch ( Exception ex )
