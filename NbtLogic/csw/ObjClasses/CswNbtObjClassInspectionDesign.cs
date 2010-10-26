@@ -125,11 +125,7 @@ namespace ChemSW.Nbt.ObjClasses
             char StatusSpace = ' ';
             return Status.ToString().Replace( StatusPad, StatusSpace );
         }
-        
-        /// <summary>
-        /// Replaces underscore with space in enum
-        /// </summary>
-        public static string TargetStatusAsString( TargetStatus Status )
+        public static string InspectionStatusAsString( TargetStatus Status )
         {
             char StatusPad = '_';
             char StatusSpace = ' ';
