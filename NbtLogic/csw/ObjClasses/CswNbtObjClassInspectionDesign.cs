@@ -119,8 +119,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Replaces underscore with space in enum
         /// </summary>
-        /// <param name="Status">InspectionStatus.Completed_Late</param>
-        /// <returns>Completed Late</returns>
         public static string InspectionStatusAsString( InspectionStatus Status )
         {
             char StatusPad = '_';
@@ -131,8 +129,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Replaces underscore with space in enum
         /// </summary>
-        /// <param name="Status">TargetStatus.Not_Inspected</param>
-        /// <returns>Not Inspected</returns>
         public static string TargetStatusAsString( TargetStatus Status )
         {
             char StatusPad = '_';
