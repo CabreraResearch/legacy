@@ -503,9 +503,8 @@ namespace ChemSW.Nbt.WebPages
                 {
                     // Temporarily skip unimplemented ones
                     // If Inspection, filter to allowed question field types
-                    if( _Mode == NbtDesignMode.Standard &&
-                          ( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.External &&
-                            FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MOL ) )
+                    if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.External &&
+                            FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MOL ) 
                     {
                         AddPropNewFieldTypeIdSelect.Items.Add( new ListItem( FieldType.FieldType.ToString(),
                                                                              FieldType.FieldTypeId.ToString() ) );
