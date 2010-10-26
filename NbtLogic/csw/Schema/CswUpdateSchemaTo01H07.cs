@@ -121,7 +121,6 @@ namespace ChemSW.Nbt.Schema
             CswTableSelect ModTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "modules_select", "modules" );
             DataTable ModTable = ModTableSelect.getTable( "where name = 'IMCS'" );
             Int32 IMCSModuleId = CswConvert.ToInt32( ModTable.Rows[0]["moduleid"] );
-            bool AllNodeTypesExistForView = true;
 
             CswNbtMetaDataNodeType CabinetNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Cabinet" );
             CswNbtMetaDataNodeType ShelfNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Shelf" );
@@ -172,8 +171,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp RoomParent = null;
 
             //FE Locations View
-            AllNodeTypesExistForView = ( null != BuildingNT && null != FloorNT && null != RoomNT && null != MountPointNT && null != FireExtinguisherNT );
-            if( AllNodeTypesExistForView )
+            if( null != BuildingNT && null != FloorNT && null != RoomNT && null != MountPointNT && null != FireExtinguisherNT )
             {
                 RoomParent = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
                 CswNbtMetaDataNodeTypeProp MountPointParent = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
@@ -202,9 +200,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             //IMCS Locations View
-            AllNodeTypesExistForView = ( null != BuildingNT && null != FloorNT && null != RoomNT && null != CabinetNT && null != ShelfNT && null != BoxNT );
-
-            if( AllNodeTypesExistForView )
+            if( null != BuildingNT && null != FloorNT && null != RoomNT && null != CabinetNT && null != ShelfNT && null != BoxNT )
             {
                 _CswNbtSchemaModTrnsctn.deleteView( "Locations", true );
 
