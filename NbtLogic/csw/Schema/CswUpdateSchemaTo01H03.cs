@@ -57,6 +57,9 @@ namespace ChemSW.Nbt.Schema
             DataTable NewOCPTable = OCPUpdate.getEmptyTable();
 
             //Mount Point (MP) OCPs
+            string Status = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
+            Status += "," + CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.OK );
+            Status += "," + CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.OOC );
 
             //MP: Last Inspection Date
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, MountPointOC, CswNbtObjClassMountPoint.LastInspectionDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Date,
@@ -64,7 +67,7 @@ namespace ChemSW.Nbt.Schema
                                                            Int32.MinValue, Int32.MinValue );
             //MP: Status
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, MountPointOC, CswNbtObjClassMountPoint.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List,
-                                                           false, true, false, string.Empty, Int32.MinValue, false, false, false, true, "Not Inspected,OK,OOC",
+                                                           false, true, false, string.Empty, Int32.MinValue, false, false, false, true, Status,
                                                            Int32.MinValue, Int32.MinValue );
             //MP: Location
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, MountPointOC, CswNbtObjClassMountPoint.LocationPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Location,
@@ -79,7 +82,7 @@ namespace ChemSW.Nbt.Schema
                                                            Int32.MinValue, Int32.MinValue );
             //FE: Status
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC, CswNbtObjClassFireExtinguisher.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List,
-                                                           false, true, false, string.Empty, Int32.MinValue, false, false, false, true, "Not Inspected,OK,OOC",
+                                                           false, true, false, string.Empty, Int32.MinValue, false, false, false, true, Status,
                                                            Int32.MinValue, Int32.MinValue );
             //FE: Mount Point
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC, CswNbtObjClassFireExtinguisher.MountPointPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship,

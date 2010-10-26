@@ -100,6 +100,22 @@ namespace ChemSW.Nbt.ObjClasses
             Cancelled 
         };
 
+        public enum TargetStatus
+        {
+            /// <summary>
+            /// Not yet inspected
+            /// </summary>
+            Not_Inspected,
+            /// <summary>
+            /// Last inspection complete and in compliance
+            /// </summary>
+            OK,
+            /// <summary>
+            /// Out of compliance
+            /// </summary>
+            OOC
+        }
+
         /// <summary>
         /// Replaces underscore with space in enum
         /// </summary>
@@ -111,7 +127,12 @@ namespace ChemSW.Nbt.ObjClasses
             char StatusSpace = ' ';
             return Status.ToString().Replace( StatusPad, StatusSpace );
         }
-
+        public static string InspectionStatusAsString( TargetStatus Status )
+        {
+            char StatusPad = '_';
+            char StatusSpace = ' ';
+            return Status.ToString().Replace( StatusPad, StatusSpace );
+        }
         
         //ICswNbtPropertySetRuleGeneratorTarget
         /// <summary>
