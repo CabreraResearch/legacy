@@ -57,9 +57,9 @@ namespace ChemSW.Nbt.Schema
             DataTable NewOCPTable = OCPUpdate.getEmptyTable();
 
             //Mount Point (MP) OCPs
-            string Status = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
-            Status += "," + CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.OK );
-            Status += "," + CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.OOC );
+            string Status = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
+            Status += "," + CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.OK );
+            Status += "," + CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.OOC );
 
             //MP: Last Inspection Date
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, MountPointOC, CswNbtObjClassMountPoint.LastInspectionDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Date,
