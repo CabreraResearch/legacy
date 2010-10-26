@@ -403,6 +403,24 @@ namespace ChemSW.Nbt.Schema
         }//getNodeTypePermissions
 
         /// <summary>
+        /// Convenience function for making new Action
+        /// </summary>
+        public Int32 createAction( string Name, bool ShowInList, string URL, string Category )
+        {
+            CswTableUpdate ActionsTable = makeCswTableUpdate( "SchemaModTrnsctn_ActionUpdate", "actions" );
+            DataTable ActionsDataTable = ActionsTable.getEmptyTable();
+            DataRow ActionRow = ActionsDataTable.NewRow();
+            ActionRow["name"] = Name;
+            ActionRow["showinlist"] = CswConvert.ToDbVal( ShowInList ); //Probably needs to be off by default.  Leaving on for development.
+            ActionRow["url"] = URL;
+            ActionRow["category"] = Category;
+            ActionsDataTable.Rows.Add( ActionRow );
+            Int32 NewActionId = CswConvert.ToInt32( ActionRow["actionid"] );
+            ActionsTable.update( ActionsDataTable );
+            return NewActionId;
+        }
+
+        /// <summary>
         /// Convenience function for making new Module
         /// </summary>
         public Int32 createModule( string Description, string Name, bool Enabled )
