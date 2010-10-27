@@ -11,6 +11,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -32,7 +33,7 @@ namespace ChemSW.Nbt.Schema
 
             // case 20033
             // Inspection Design and Inspection Route should be in FE as well as SI
-            
+
             CswTableSelect ModulesTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "modules_select", "modules" );
             DataTable FETable = ModulesTableSelect.getTable( "where name = 'FE'" );
             Int32 FEModuleId = CswConvert.ToInt32( FETable.Rows[0]["moduleid"] );
@@ -151,13 +152,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtNode RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
             if( RoleNode != null )
             {
-                CswNbtNodePropLogicalSet Permissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).NodeTypePermissions;
-
-                Permissions.SetValue( NodeTypePermission.Create.ToString(), FloorNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Delete.ToString(), FloorNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Edit.ToString(), FloorNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.View.ToString(), FloorNT.NodeTypeId.ToString(), true );
-
+                CswNbtNodeTypePermissions Permissions = _CswNbtSchemaModTrnsctn.getNodeTypePermissions( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ), FloorNT );
+                Permissions.Create = true;
+                Permissions.Edit = true;
+                Permissions.View = true;
+                Permissions.Delete = true;
                 Permissions.Save();
                 RoleNode.postChanges( true );
             }
@@ -228,7 +227,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             // Case 20062
-            _CswNbtSchemaModTrnsctn.createAction( "Import Fire Extinguisher Data", true, "Act_ImportFireExtinguisher.aspx", "System" );
+            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Import_Fire_Extinguisher_Data, true, "Act_ImportFireExtinguisher.aspx", "System" );
 
         } // update()
 
