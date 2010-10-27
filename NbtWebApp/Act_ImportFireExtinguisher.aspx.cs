@@ -142,23 +142,13 @@ namespace ChemSW.Nbt.WebPages
             Sheet1.Rows.Count = 200;
             Sheet1.PageSize = 500;
 
-            Sheet1.Columns[(Int32) ImportColumns.Building].Label = ImportColumnsToDisplayString( ImportColumns.Building );
-            Sheet1.Columns[(Int32) ImportColumns.Floor].Label = ImportColumnsToDisplayString( ImportColumns.Floor );
-            Sheet1.Columns[(Int32) ImportColumns.Room].Label = ImportColumnsToDisplayString( ImportColumns.Room );
-            Sheet1.Columns[(Int32) ImportColumns.Mount_Point_Description].Label = ImportColumnsToDisplayString( ImportColumns.Mount_Point_Description );
-            Sheet1.Columns[(Int32) ImportColumns.Mount_Point_Group].Label = ImportColumnsToDisplayString( ImportColumns.Mount_Point_Group );
-            Sheet1.Columns[(Int32) ImportColumns.Mount_Point_Barcode].Label = ImportColumnsToDisplayString( ImportColumns.Mount_Point_Barcode );
-            Sheet1.Columns[(Int32) ImportColumns.Type].Label = ImportColumnsToDisplayString( ImportColumns.Type );
-            Sheet1.Columns[(Int32) ImportColumns.Last_Inspection_Date].Label = ImportColumnsToDisplayString( ImportColumns.Last_Inspection_Date );
-            Sheet1.Columns[(Int32) ImportColumns.Last_Inspection_Status].Label = ImportColumnsToDisplayString( ImportColumns.Last_Inspection_Status );
-            Sheet1.Columns[(Int32) ImportColumns.Fire_Extinguisher_Description].Label = ImportColumnsToDisplayString( ImportColumns.Fire_Extinguisher_Description );
-            Sheet1.Columns[(Int32) ImportColumns.Fire_Extinguisher_Barcode].Label = ImportColumnsToDisplayString( ImportColumns.Fire_Extinguisher_Barcode );
-            Sheet1.Columns[(Int32) ImportColumns.Fire_Extinguisher_Manufacturer].Label = ImportColumnsToDisplayString( ImportColumns.Fire_Extinguisher_Manufacturer );
-            Sheet1.Columns[(Int32) ImportColumns.Fire_Extinguisher_Model].Label = ImportColumnsToDisplayString( ImportColumns.Fire_Extinguisher_Model );
-            Sheet1.Columns[(Int32) ImportColumns.Fire_Extinguisher_Size].Label = ImportColumnsToDisplayString( ImportColumns.Fire_Extinguisher_Size );
-            Sheet1.Columns[(Int32) ImportColumns.Fire_Extinguisher_Size_Unit].Label = ImportColumnsToDisplayString( ImportColumns.Fire_Extinguisher_Size_Unit );
-
-        }
+            Int32 ColNum = 0;
+            foreach( ImportColumns Col in Enum.GetValues( typeof( ImportColumns ) ) )
+            {
+                Sheet1.Columns[ColNum].Label = ImportColumnsToDisplayString( Col );
+                ColNum++;
+            }
+        } // LayoutImportSpreadsheet
 
         protected override void OnPreRender( EventArgs e )
         {
@@ -189,14 +179,14 @@ namespace ChemSW.Nbt.WebPages
             {
                 if( CswWizardEventArgs.NewPage == 2 )
                 {
-                    if( NewNameBox.Text == string.Empty || Master.CswNbtResources.MetaData.getNodeType( NewNameBox.Text ) != null )
-                    {
-                        Label WarningLabel = new Label();
-                        WarningLabel.CssClass = "ErrorContent";
-                        WarningLabel.Text = "You must supply a unique name for the inspection design";
-                        InspectionDetailsStep.Controls.Add( WarningLabel );
-                        _Wizard.CurrentStep = 1;
-                    }
+                    //if( NewNameBox.Text == string.Empty || Master.CswNbtResources.MetaData.getNodeType( NewNameBox.Text ) != null )
+                    //{
+                    //    Label WarningLabel = new Label();
+                    //    WarningLabel.CssClass = "ErrorContent";
+                    //    WarningLabel.Text = "You must supply a unique name for the inspection design";
+                    //    InspectionDetailsStep.Controls.Add( WarningLabel );
+                    //    _Wizard.CurrentStep = 1;
+                    //}
                 }
             }
             catch( Exception ex )
