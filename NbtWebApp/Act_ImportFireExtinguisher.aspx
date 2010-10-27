@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Act_ImportFireExtinguisher.aspx.cs"
-    Inherits="ChemSW.Nbt.WebPages.Act_CreateInspection" MasterPageFile="~/MainLayout.master"%>
+    Inherits="ChemSW.Nbt.WebPages.Act_ImportFireExtinguisher" MasterPageFile="~/MainLayout.master"%>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

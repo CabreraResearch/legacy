@@ -410,7 +410,7 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate ActionsTable = makeCswTableUpdate( "SchemaModTrnsctn_ActionUpdate", "actions" );
             DataTable ActionsDataTable = ActionsTable.getEmptyTable();
             DataRow ActionRow = ActionsDataTable.NewRow();
-            ActionRow["name"] = Name;
+            ActionRow["actionname"] = Name;
             ActionRow["showinlist"] = CswConvert.ToDbVal( ShowInList ); //Probably needs to be off by default.  Leaving on for development.
             ActionRow["url"] = URL;
             ActionRow["category"] = Category;

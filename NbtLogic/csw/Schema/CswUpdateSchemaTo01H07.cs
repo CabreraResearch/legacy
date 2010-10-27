@@ -34,8 +34,8 @@ namespace ChemSW.Nbt.Schema
             // Inspection Design and Inspection Route should be in FE as well as SI
             
             CswTableSelect ModulesTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "modules_select", "modules" );
-            DataTable ModulesTable = ModulesTableSelect.getTable( "where name = 'FE'" );
-            Int32 FEModuleId = CswConvert.ToInt32( ModulesTable.Rows[0]["moduleid"] );
+            DataTable FETable = ModulesTableSelect.getTable( "where name = 'FE'" );
+            Int32 FEModuleId = CswConvert.ToInt32( FETable.Rows[0]["moduleid"] );
 
             CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
             CswNbtMetaDataObjectClass InspectionRouteOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass );
@@ -118,9 +118,8 @@ namespace ChemSW.Nbt.Schema
 
             // Case 20029
             //Associate Cabinet, Shelf and Box with IMCS
-            CswTableSelect ModTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "modules_select", "modules" );
-            DataTable ModTable = ModTableSelect.getTable( "where name = 'IMCS'" );
-            Int32 IMCSModuleId = CswConvert.ToInt32( ModTable.Rows[0]["moduleid"] );
+            DataTable IMCSTable = ModulesTableSelect.getTable( "where name = 'IMCS'" );
+            Int32 IMCSModuleId = CswConvert.ToInt32( FETable.Rows[0]["moduleid"] );
 
             CswNbtMetaDataNodeType CabinetNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Cabinet" );
             CswNbtMetaDataNodeType ShelfNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Shelf" );
