@@ -17,6 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string LocationPropertyName { get { return "Location"; } }
         public static string DescriptionPropertyName { get { return "Description"; } }
         public static string TypePropertyName { get { return "Type"; } }
+        public static string BarcodePropertyName { get { return "Barcode"; } }
 
         //ICswNbtPropertySetInspectionParent
         public string InspectionParentStatusPropertyName { get { return StatusPropertyName; } }
@@ -136,6 +137,15 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[DescriptionPropertyName].AsText );
             }
         }
+
+        public CswNbtNodePropBarcode Barcode
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[BarcodePropertyName].AsBarcode );
+            }
+        }
+        
         #endregion
 
 
