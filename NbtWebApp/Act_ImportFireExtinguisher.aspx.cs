@@ -293,16 +293,23 @@ namespace ChemSW.Nbt.WebPages
 
                             // Mount Point Group
                             CswNbtNode MountPointGroupNode = null;
-                            foreach( CswNbtNode ExistingMountPointGroupNode in MountPointGroupNT.getNodes( true, true ) )  // force update to get new ones as we add them
+                            if( MountPointGroup != string.Empty )
                             {
-                                if( ExistingMountPointGroupNode.NodeName == MountPointGroup )
-                                    MountPointGroupNode = ExistingMountPointGroupNode;
+                                foreach( CswNbtNode ExistingMountPointGroupNode in MountPointGroupNT.getNodes( true, true ) )  // force update to get new ones as we add them
+                                {
+                                    if( ExistingMountPointGroupNode.NodeName == MountPointGroup )
+                                        MountPointGroupNode = ExistingMountPointGroupNode;
+                                }
+                                if( MountPointGroupNode != null )
+                                {
+                                    MountPointGroupNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( MountPointGroupNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                                    MountPointGroupNode.Properties[MountPointGroupNameNTP].AsText.Text = MountPointGroup;
+                                    MountPointGroupNode.postChanges( false );
+                                }
                             }
-                            if( MountPointGroupNode != null )
+                            else
                             {
-                                MountPointGroupNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( MountPointGroupNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                                MountPointGroupNode.Properties[MountPointGroupNameNTP].AsText.Text = MountPointGroup;
-                                MountPointGroupNode.postChanges( false );
+                                // will use the default value for mount point group on mount point creation
                             }
 
                             // Mount Point
@@ -315,12 +322,16 @@ namespace ChemSW.Nbt.WebPages
                             MountPointAsMP.Location.SelectedNodeId = RoomNode.NodeId;
                             MountPointAsMP.Location.CachedNodeName = RoomNode.NodeName;
                             MountPointAsMP.Type.Value = Type;
-                            if( LastInspectionStatus == CswNbtObjClassInspectionDesign.InspectionStatus.Action_Required )
+                            if( LastInspectionStatus == CswNbtObjClassInspectionDesign.InspectionStatus.Null )
+                            {
+                                MountPointAsMP.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
+                            }
+                            else if( LastInspectionStatus == CswNbtObjClassInspectionDesign.InspectionStatus.Action_Required )
                             {
                                 MountPointAsMP.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.OOC );
                             }
                             else if( LastInspectionStatus == CswNbtObjClassInspectionDesign.InspectionStatus.Completed ||
-                               LastInspectionStatus == CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late )
+                                     LastInspectionStatus == CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late )
                             {
                                 MountPointAsMP.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.OK );
                             }
