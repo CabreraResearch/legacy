@@ -118,36 +118,50 @@ namespace ChemSW.Nbt.ObjClasses
             /// <summary>
             /// Out of compliance
             /// </summary>
-            OOC
+            OOC,
+            /// <summary>
+            /// For unset values
+            /// </summary>
+            Null
         }
 
-        /// <summary>
+                /// <summary>
         /// Replaces underscore with space in enum
         /// </summary>
         public static string InspectionStatusAsString( InspectionStatus Status )
         {
-            return Status.ToString().Replace( '_', ' ' );
+            string ret = string.Empty;
+            if( Status != InspectionStatus.Null )
+                ret = Status.ToString().Replace( '_', ' ' );
+            return ret;
         }
         /// <summary>
         /// Replaces space with underscore in enum
         /// </summary>
         public static InspectionStatus InspectionStatusFromString( string Status )
         {
-            return (InspectionStatus) Enum.Parse( typeof( InspectionStatus ), Status.Replace( ' ', '_' ) );
+            InspectionStatus ret = InspectionStatus.Null;
+            if( Status != string.Empty )
+                ret = (InspectionStatus) Enum.Parse( typeof( InspectionStatus ), Status.Replace( ' ', '_' ) );
+            return ret;
         }
-        /// <summary>
-        /// Replaces underscore with space in enum
-        /// </summary>
+
         public static string TargetStatusAsString( TargetStatus Status )
         {
-            return Status.ToString().Replace( '_', ' ' );
+            string ret = string.Empty;
+            if( Status != TargetStatus.Null )
+                ret = Status.ToString().Replace( '_', ' ' );
+            return ret;
         }
         /// <summary>
         /// Replaces space with underscore in enum
         /// </summary>
         public static TargetStatus TargetStatusFromString( string Status )
         {
-            return (TargetStatus) Enum.Parse( typeof( TargetStatus ), Status.Replace( ' ', '_' ) );
+            TargetStatus ret = TargetStatus.Null;
+            if( Status != string.Empty )
+                ret = (TargetStatus) Enum.Parse( typeof( TargetStatus ), Status.Replace( ' ', '_' ) );
+            return ret;
         }
 
         //ICswNbtPropertySetRuleGeneratorTarget
