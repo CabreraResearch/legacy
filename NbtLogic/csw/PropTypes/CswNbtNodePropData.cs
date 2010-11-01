@@ -298,6 +298,9 @@ namespace ChemSW.Nbt.PropTypes
                 case CswNbtSubField.PropColumn.Field2:
                     ret = Field2;
                     break;
+                case CswNbtSubField.PropColumn.Field2_Date:
+                    ret = Field2_Date.ToString();
+                    break;
                 case CswNbtSubField.PropColumn.Field3:
                     ret = Field3;
                     break;
@@ -347,6 +350,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return ( _getRowStringVal( CswNbtSubField.PropColumn.Field2 ) ); }
             set { SetPropRowValue( CswNbtSubField.PropColumn.Field2, value ); }
+        }
+
+        public DateTime Field2_Date
+        {
+            get { return _getRowDateVal( CswNbtSubField.PropColumn.Field2_Date ); }
+            set { SetPropRowValue( CswNbtSubField.PropColumn.Field2_Date, value ); }
         }
 
         public string Field3
@@ -410,6 +419,7 @@ namespace ChemSW.Nbt.PropTypes
             this.Field5 = Source.Field5;
             this.Field1_Fk = Source.Field1_Fk;
             this.Field1_Date = Source.Field1_Date;
+            this.Field2_Date = Source.Field2_Date;
             this.Field1_Numeric = Source.Field1_Numeric;
             this.Gestalt = Source.Gestalt;
             this.ClobData = Source.ClobData;
@@ -426,6 +436,7 @@ namespace ChemSW.Nbt.PropTypes
             this.Field5 = string.Empty;
             this.Field1_Fk = Int32.MinValue;
             this.Field1_Date = DateTime.MinValue;
+            this.Field2_Date = DateTime.MinValue;
             this.Field1_Numeric = Double.NaN;
             this.Gestalt = string.Empty;
             this.ClobData = string.Empty;

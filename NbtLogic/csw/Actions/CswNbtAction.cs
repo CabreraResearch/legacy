@@ -17,7 +17,8 @@ namespace ChemSW.Nbt.Actions
         Split_Samples,
         View_By_Location,
         Assign_Inspection,
-        Receiving
+        Receiving,
+        Import_Fire_Extinguisher_Data
     }
 
     public class CswNbtAction

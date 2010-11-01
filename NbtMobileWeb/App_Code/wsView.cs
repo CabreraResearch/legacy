@@ -145,8 +145,6 @@ public class wsView : System.Web.Services.WebService
             if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password )
             {
                 ret += _makeItem( PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString(),
-                    //"<div style=\"float: left;\">" + Prop.PropName + ": </div>" +
-                    //"<div style=\"float: right;\">" + Node.Properties[Prop].Gestalt + "</div>",
                                   Prop.PropName + "<small class=\"\">" + Node.Properties[Prop].Gestalt + "</small>",
                                   _runPropertyEditors( Node, Prop ),
                                   false );
@@ -157,7 +155,7 @@ public class wsView : System.Web.Services.WebService
     }
     private string _runPropertyEditors( CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
     {
-        string Html = Prop.PropName + ": <hr/><br/>";
+        string Html = Prop.PropName + " <hr/><br/>";
         string IdStr = PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString();
         CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
         switch( Prop.FieldType.FieldType )
@@ -165,9 +163,11 @@ public class wsView : System.Web.Services.WebService
             case CswNbtMetaDataFieldType.NbtFieldType.Date:
                 Html += "<input type=\"date\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\" />";
                 break;
+
             case CswNbtMetaDataFieldType.NbtFieldType.Link:
                 Html += "<a href=\"" + PropWrapper.AsLink.Href + "\">" + PropWrapper.AsLink.Text + "</a>";
                 break;
+
             case CswNbtMetaDataFieldType.NbtFieldType.List:
                 Html += "<select name=\"" + IdStr + "\">";
                 foreach( CswNbtNodeTypePropListOption Option in PropWrapper.AsList.Options.Options )
@@ -179,6 +179,7 @@ public class wsView : System.Web.Services.WebService
                 }
                 Html += "</select>";
                 break;
+
             case CswNbtMetaDataFieldType.NbtFieldType.Logical:
                 Html += "<select name=\"" + IdStr + "\">";
                 foreach( Tristate state in Enum.GetValues( typeof( Tristate ) ) )
@@ -190,9 +191,11 @@ public class wsView : System.Web.Services.WebService
                 }
                 Html += "</select>";
                 break;
+
             case CswNbtMetaDataFieldType.NbtFieldType.Memo:
                 Html += "<textarea name=\"" + IdStr + "\">" + PropWrapper.AsMemo.Text + "</textarea>";
                 break;
+
             case CswNbtMetaDataFieldType.NbtFieldType.Number:
                 Html += "<input type=\"number\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\"";
                 Html += "/>";
@@ -201,9 +204,11 @@ public class wsView : System.Web.Services.WebService
                 if( Prop.MaxValue != Int32.MinValue )
                     Html += "max = \"" + Prop.MaxValue + "\"";
                 break;
+
             case CswNbtMetaDataFieldType.NbtFieldType.Password:
                 Html += string.Empty;
                 break;
+
             case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
                 Html += "<input type=\"text\" name=\"" + IdStr + "_qty\" value=\"" + PropWrapper.AsQuantity.Quantity.ToString() + "\" />";
                 Html += "<select name=\"" + IdStr + "_units\">";
@@ -219,24 +224,59 @@ public class wsView : System.Web.Services.WebService
                 Html += "</select>";
 
                 break;
+
             case CswNbtMetaDataFieldType.NbtFieldType.Question:
-                Html += "Answer: <hr/><br/>";
-                Html += "<input type=\"text\" name=\"" + IdStr + "_ans\" value=\"" + PropWrapper.AsQuestion.Answer + "\" />";
-                Html += "Comments: <hr/><br/>";
-                Html += "<textarea name=\"" + IdStr + "_com\">" + PropWrapper.AsQuestion.Comments + "</textarea>";
-                Html += "Corrective Action: <hr/><br/>";
-                Html += "<textarea name=\"" + IdStr + "_cor\">" + PropWrapper.AsQuestion.CorrectiveAction + "</textarea>";
+                CswNbtNodePropQuestion QuestionProp = PropWrapper.AsQuestion;
+                Html += "<select name=\"" + IdStr + "_ans\"";
+
+                string IfPhrase = "";
+                foreach( string CompliantAnswer in QuestionProp.CompliantAnswers )
+                {
+                    if( IfPhrase != string.Empty ) IfPhrase += " && ";
+                    IfPhrase += "this.value != '" + CompliantAnswer + "'";
+                }
+                if( IfPhrase != string.Empty )
+                    Html += " onchange=\"if(this.value != '' && " + IfPhrase + ") { $('#" + IdStr + "_cor').show(); } else { $('#" + IdStr + "_cor').hide(); } \">";
+
+                string SelectedAnswer = QuestionProp.Answer;
+                foreach( string PotentialAnswer in QuestionProp.AllowedAnswers )
+                {
+                    Html += "<option value=\"" + PotentialAnswer + "\"";
+                    if( PotentialAnswer == SelectedAnswer )
+                        Html += " selected";
+                    Html += ">";
+                    if( PotentialAnswer == "" )
+                        Html += "Answer";
+                    else
+                        Html += PotentialAnswer;
+                    Html += "</option>";
+                }
+                Html += "</select>";
+
+                Html += "<textarea name=\"" + IdStr + "_com\" placeholder=\"Comments\">";
+                Html += QuestionProp.Comments;
+                Html += "</textarea>";
+
+                Html += "<textarea id=\"" + IdStr + "_cor\" name=\"" + IdStr + "_cor\" placeholder=\"CorrectiveAction\"";
+                if( QuestionProp.Answer == string.Empty || QuestionProp.IsCompliant )
+                    Html += "style=\"display: none\"";
+                Html += ">";
+                Html += QuestionProp.CorrectiveAction;
+                Html += "</textarea>";
                 break;
 
             case CswNbtMetaDataFieldType.NbtFieldType.Static:
                 Html += Prop.StaticText;
                 break;
+
             case CswNbtMetaDataFieldType.NbtFieldType.Text:
                 Html += "<input type=\"text\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\" />";
                 break;
+
             case CswNbtMetaDataFieldType.NbtFieldType.Time:
                 Html += "<input type=\"time\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\" />";
                 break;
+
             default:
                 Html += PropWrapper.Gestalt;
                 break;

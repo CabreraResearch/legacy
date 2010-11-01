@@ -14,6 +14,7 @@ using ChemSW.RscAdo;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.DB;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -403,6 +404,46 @@ namespace ChemSW.Nbt.Schema
         }//getNodeTypePermissions
 
         /// <summary>
+        /// Convenience function for making new Action
+        /// </summary>
+        public Int32 createAction( CswNbtActionName Name, bool ShowInList, string URL, string Category )
+        {
+            // Create the Action
+            CswTableUpdate ActionsTable = makeCswTableUpdate( "SchemaModTrnsctn_ActionUpdate", "actions" );
+            DataTable ActionsDataTable = ActionsTable.getEmptyTable();
+            DataRow ActionRow = ActionsDataTable.NewRow();
+            ActionRow["actionname"] = CswNbtAction.ActionNameEnumToString( Name );
+            ActionRow["showinlist"] = CswConvert.ToDbVal( ShowInList ); //Probably needs to be off by default.  Leaving on for development.
+            ActionRow["url"] = URL;
+            ActionRow["category"] = Category;
+            ActionsDataTable.Rows.Add( ActionRow );
+            Int32 NewActionId = CswConvert.ToInt32( ActionRow["actionid"] );
+            ActionsTable.update( ActionsDataTable );
+
+            // Grant permission to Administrator
+            CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
+            GrantActionPermission( RoleNode, Name );
+
+            return NewActionId;
+        }
+
+        /// <summary>
+        /// Grants permission to an action to a role
+        /// </summary>
+        public void GrantActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName )
+        {
+            if( RoleNode != null )
+            {
+                CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).ActionPermissions;
+                ActionPermissions.SetValue( CswNbtObjClassRole.ActionPermissionsXValueName, 
+                                            CswNbtAction.ActionNameEnumToString( ActionName ), 
+                                            true );
+                ActionPermissions.Save();
+                RoleNode.postChanges( true );
+            }
+        }
+
+        /// <summary>
         /// Convenience function for making new Module
         /// </summary>
         public Int32 createModule( string Description, string Name, bool Enabled )
@@ -444,7 +485,7 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate JctModulesNTTable = makeCswTableUpdate( "SchemaModTrnsctn_ModuleJunctionUpdate", "jct_modules_nodetypes" );
             DataTable JctModulesNTDataTable = JctModulesNTTable.getEmptyTable();
             DataRow JctRow = JctModulesNTDataTable.NewRow();
-            JctRow["deleted"] = CswConvert.ToDbVal( false );
+            //JctRow["deleted"] = CswConvert.ToDbVal( false );
             JctRow["moduleid"] = ModuleId.ToString();
             JctRow["nodetypeid"] = NodeTypeId.ToString();
             JctModulesNTDataTable.Rows.Add( JctRow );
@@ -472,7 +513,6 @@ namespace ChemSW.Nbt.Schema
             ObjectClassTableUpdate.update( NewObjectClassTable );
             return NewObjectClassId;
         }
-
 
         /// <summary>
         /// Convenience function for making new Object Class Props

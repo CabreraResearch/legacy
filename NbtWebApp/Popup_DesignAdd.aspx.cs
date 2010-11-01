@@ -435,9 +435,9 @@ namespace ChemSW.Nbt.WebPages
         }
         private void init_AddTabPage() { }
 
-        private Label Label1;
+        private CswLiteralText Label1;
         private DropDownList AddPropNewFieldTypeIdSelect;
-        private Label AddPropTabLabel;
+        private CswLiteralText AddPropTabLabel;
         private DropDownList AddPropTabSelect;
         private Label AddPropNameLabel;
         private TextBox AddPropName;
@@ -445,18 +445,18 @@ namespace ChemSW.Nbt.WebPages
         private void create_AddPropertyPage()
         {
 
-            Label1 = new Label();
-            Label1.ID = "Label1";
-            Label1.Text = "Field Type:";
+            Label1 = new CswLiteralText("Field Type: ");
+            if( _Mode == NbtDesignMode.Inspection )
+                Label1.Visible = false;
 
             AddPropNewFieldTypeIdSelect = new DropDownList();
             AddPropNewFieldTypeIdSelect.ID = "AddPropNewFieldTypeIdSelect";
             AddPropNewFieldTypeIdSelect.CssClass = "selectinput";
             AddPropNewFieldTypeIdSelect.AutoPostBack = false;
+            if( _Mode == NbtDesignMode.Inspection )
+                AddPropNewFieldTypeIdSelect.Visible = false;
 
-            AddPropTabLabel = new Label();
-            AddPropTabLabel.ID = "AddPropTabLabel";
-            AddPropTabLabel.Text = "Display On " + LabelNodeTypeTab + ":";
+            AddPropTabLabel = new CswLiteralText("Display On " + LabelNodeTypeTab + ": ");
 
             AddPropTabSelect = new DropDownList();
             AddPropTabSelect.ID = "AddPropTabSelect";
@@ -489,19 +489,28 @@ namespace ChemSW.Nbt.WebPages
         {
             // Field Type select box
             AddPropNewFieldTypeIdSelect.Items.Clear();
-            foreach( CswNbtMetaDataFieldType FieldType in Master.CswNbtResources.MetaData.FieldTypes )
+            if( _Mode == NbtDesignMode.Inspection )
             {
-                // Temporarily skip unimplemented ones
-                // If Inspection, filter to allowed question field types
-                if( ( _Mode == NbtDesignMode.Inspection && FieldType.IsSimpleType() ) ||
-                    ( _Mode == NbtDesignMode.Standard &&
-                      ( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.External &&
-                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MOL ) ) ) 
+                CswNbtMetaDataFieldType QuestionFT = Master.CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Question );
+                AddPropNewFieldTypeIdSelect.Items.Add( new ListItem( QuestionFT.FieldType.ToString(),
+                                                                             QuestionFT.FieldTypeId.ToString() ) );
+                AddPropNewFieldTypeIdSelect.SelectedValue = QuestionFT.FieldTypeId.ToString();
+            }
+            else
+            {
+
+                foreach( CswNbtMetaDataFieldType FieldType in Master.CswNbtResources.MetaData.FieldTypes )
                 {
-                    AddPropNewFieldTypeIdSelect.Items.Add( new ListItem( FieldType.FieldType.ToString(),
-                                                                         FieldType.FieldTypeId.ToString() ) );
-                    if( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Text )
-                        AddPropNewFieldTypeIdSelect.SelectedValue = FieldType.FieldTypeId.ToString();
+                    // Temporarily skip unimplemented ones
+                    // If Inspection, filter to allowed question field types
+                    if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.External &&
+                            FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MOL ) 
+                    {
+                        AddPropNewFieldTypeIdSelect.Items.Add( new ListItem( FieldType.FieldType.ToString(),
+                                                                             FieldType.FieldTypeId.ToString() ) );
+                        if( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Text )
+                            AddPropNewFieldTypeIdSelect.SelectedValue = FieldType.FieldTypeId.ToString();
+                    }
                 }
             }
             // Tab Select

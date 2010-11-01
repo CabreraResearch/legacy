@@ -110,6 +110,10 @@ namespace ChemSW.Nbt.Schema
                                                                              CswNbtSubField.SubFieldName.Checked,
                                                                              Tristate.False );
 
+            // Case 20005: Make Owner prop required
+            CswNbtMetaDataObjectClassProp OwnerOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.OwnerPropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( OwnerOCP, "isrequired", true );
+
             // BZ 10343
             DataRow ParentTypeDR = _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, GeneratorOC.ObjectClassId, CswNbtObjClassGenerator.ParentTypePropertyName, CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect, Int32.MinValue, Int32.MinValue );
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, GeneratorOC.ObjectClassId, CswNbtObjClassGenerator.ParentViewPropertyName, CswNbtMetaDataFieldType.NbtFieldType.ViewReference, Int32.MinValue, Int32.MinValue );
