@@ -268,14 +268,35 @@
 
         function _initDB(doreset)
         {
-            db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DisplayName, opts.MaxSize);
-            if (doreset)
+           if (window.openDatabase) {
+
+//                console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DisplayName + "; MaxSize: " + opts.MaxSize ); 
+//                db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DisplayName, opts.MaxSize);
+
+                console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DBDisplayName + "; MaxSize: " + opts.DBMaxSize);
+                db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
+
+                console.log("got here");
+
+                if (null == db) {
+                    console.log("db is null");
+                }
+
+                if (doreset) {
+                    _DoSql('DROP TABLE IF EXISTS sublevels; ');
+                    _DoSql('DROP TABLE IF EXISTS changes; ');
+                }
+
+                _createDB();
+            } else 
             {
-                _DoSql('DROP TABLE IF EXISTS sublevels; ');
-                _DoSql('DROP TABLE IF EXISTS changes; ');
+                console.log("database is not opened"); 
             }
-            _createDB();
-        }
+            
+        }//_initDb()
+ 
+
+
 
         function _createDB()
         {
