@@ -13,6 +13,20 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Mobile;
+
+namespace ChemSW.Nbt.Mobile
+{
+    public enum PageType
+    {
+        Node,
+        Leaf,
+        Tab,
+        Property,
+        PropertyEditor
+    }
+}
+
 
 /// <summary>
 /// ViewListTree Webservice
@@ -78,7 +92,8 @@ public class wsView : System.Web.Services.WebService
                     ret += _makeItem( ViewIdPrefix + CswConvert.ToInt32( ViewRow["nodeviewid"] ),
                                       ViewRow["viewname"].ToString(),
                                       string.Empty,
-                                      true );
+                                      true,
+                                      PageType.Node );
                 }
             }
         }
@@ -99,15 +114,19 @@ public class wsView : System.Web.Services.WebService
             CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
             string ThisNodeName = Tree.getNodeNameForCurrentPosition();
             string ThisNodeId = ThisNode.NodeId.ToString();
-
+            
+            PageType PT = PageType.Node;
             string ThisSubItems = _runTreeNodesRecursive( Tree );
             if( ThisSubItems == string.Empty )
+            {
+                PT = PageType.Leaf;
                 ThisSubItems = _runTabs( Tree, ThisNode );
-
+            }
             ret += _makeItem( NodeIdPrefix + ThisNodeId,
                               ThisNodeName,
                               ThisSubItems,
-                              true );
+                              true,
+                              PT );
 
             Tree.goToParentNode();
         }
@@ -125,7 +144,7 @@ public class wsView : System.Web.Services.WebService
                 ret += _makeItem( TabIdPrefix + Tab.TabId + "_" + NodeIdPrefix + Node.NodeId.ToString(),
                                   Tab.TabName,
                                   _runProperties( Node, Tab ),
-                                  true );
+                                  true, PageType.Tab );
             }
         }
         else
@@ -147,7 +166,7 @@ public class wsView : System.Web.Services.WebService
                 ret += _makeItem( PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString(),
                                   Prop.PropName + "<small class=\"\">" + Node.Properties[Prop].Gestalt + "</small>",
                                   _runPropertyEditors( Node, Prop ),
-                                  false );
+                                  false, PageType.Property );
             }
         }
 
@@ -281,13 +300,13 @@ public class wsView : System.Web.Services.WebService
                 Html += PropWrapper.Gestalt;
                 break;
         }
-        return _makeItem( "", Html, string.Empty, false );
+        return _makeItem( "", Html, string.Empty, false, PageType.PropertyEditor );
     }
 
 
-    private string _makeItem( string ID, string Text, string SubItems, bool Arrow )
+    private string _makeItem( string ID, string Text, string SubItems, bool Arrow, PageType PT )
     {
-        string ret = @"<item id=""" + ID + @""" arrow=""" + Arrow.ToString().ToLower() + @""">
+        string ret = @"<item id=""" + ID + @""" arrow=""" + Arrow.ToString().ToLower() + @""" pagetype=""" + PT.ToString() + @""">
                            <text>" + Text + @"</text>";
         if( SubItems != null )
         {
