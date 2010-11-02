@@ -11,7 +11,8 @@
             DBDisplayName: 'main.html',
             DBMaxSize: 65536,
             WebServiceUrl: '/NbtMobileWeb/wsView.asmx/Run',
-            MainPageUrl: '/NbtMobileWeb/Main.html'
+            MainPageUrl: '/NbtMobileWeb/Main.html',
+            Theme: 'a'
         };
 
         if (options)
@@ -163,7 +164,7 @@
                 if (IsDiv)
                 {
                     var divhtml = '<div id="' + id + '" data-role="page">' +
-                                  '  <div data-role="header">' +
+                                  '  <div data-role="header" data-theme="'+ opts.Theme +'">' +
                     //            '    <a href="#" class="back">Back</a>' +
                                   '    <h1>' + text + ' (' + PageType + ')</h1>' +
                                   '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
@@ -172,10 +173,10 @@
                                   '      <a href="#' + parentid + '" data-back="true">Back</a>' +
                                   '    </div>' +
                                   '  </div>' +
-                                  '  <div data-role="content">' +
+                                  '  <div data-role="content" data-theme="'+ opts.Theme +'">' +
                                   '    <ul></ul>' +
                                   '  </div>' +
-                                  '  <div data-role="footer">' +
+                                  '  <div data-role="footer data-theme="'+ opts.Theme +'"">' +
                                   '  </div>' +
                                   '</div>';
 
@@ -196,7 +197,7 @@
                                 'iconpos': 'left',
                                 'inline': true,
                                 'shadow': false,
-                                'theme': 'a'
+                                'theme': opts.Theme
                             })
                                 .appendTo($cg);
                             //  if (previd == undefined)
@@ -213,7 +214,7 @@
                                 'iconpos': 'left',
                                 'inline': true,
                                 'shadow': false,
-                                'theme': 'a'
+                                'theme': opts.Theme
                             })
                                 .appendTo($cg);
                             //  if (nextid == undefined)
