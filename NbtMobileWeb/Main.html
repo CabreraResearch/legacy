@@ -3,6 +3,8 @@
     <meta name="viewport" content="user-scalable=no, width=device-width" />
     <title>Main</title>
 
+    <script src="Db.js"></script>
+    <script src="Synch.js"></script>
     <script src="Main.js"></script>
 
     <script src="jquery/jquery-1.4.2.min.js"></script>
@@ -42,17 +44,16 @@
     </div>
 
     <script language="javascript">
-        var opts = {
-            DBShortName: 'main.html',
-            DBVersion: '1.0',
-            DBDisplayName: 'main.html',
-            DBMaxSize: 65536
-        };
+
+
+
 
         $(document).ready(function () {
 
-            _initDB(true);
+            _initDB(false);
             _loadDivContents(0, $('#TopDiv'));
+            _waitForData();
+
         });
 
         var rootid;
@@ -184,57 +185,8 @@
         // Client-side Database Interaction
         var db;
 
-        function _DoSql(sql, params, onSuccess) {
-            db.transaction(
-                function(transaction) {
-                    transaction.executeSql(sql, params, onSuccess, _errorHandler);
-                }
-            );
-        }
 
-        function _initDB(doreset) {
 
-            if (window.openDatabase) {
-
-//                console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DisplayName + "; MaxSize: " + opts.MaxSize ); 
-//                db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DisplayName, opts.MaxSize);
-
-                console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DBDisplayName + "; MaxSize: " + opts.DBMaxSize);
-                db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
-
-                console.log("got here");
-
-                if (null == db) {
-                    console.log("db is null");
-                }
-
-                if (doreset) {
-                    _DoSql('DROP TABLE IF EXISTS sublevels; ');
-                    _DoSql('DROP TABLE IF EXISTS changes; ');
-                }
-
-                _createDB();
-            } else 
-            {
-                console.log("database is not opened"); 
-            }
-        }//_initDb()
-
-        function _createDB() {
-            _DoSql('CREATE TABLE IF NOT EXISTS sublevels ' +
-                   '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                   '   rootid TEXT NOT NULL, ' +
-                   '   rootname TEXT NOT NULL, ' +
-                   '   rootxml TEXT, ' +
-                   '   sublevelxml TEXT );'
-                  );
-            _DoSql('CREATE TABLE IF NOT EXISTS changes ' +
-                   '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                   '   propid TEXT NOT NULL, ' +
-                   '   newvalue TEXT, ' +
-                   '   applied CHAR ); '
-                  );
-        }
 
         function _storeSubLevelXml(rootid, rootname, rootxml, sublevelxml) {
             if (rootid != undefined && rootid != '') {
@@ -246,8 +198,8 @@
         }
         function _storeChange(propid, newvalue) {
             if (rootid != undefined && rootid != '') {
-                _DoSql('INSERT INTO changes (propid, newvalue) VALUES (?, ?);',
-                       [propid, newvalue],
+                _DoSql('INSERT INTO changes (propid, newvalue, applied) VALUES (?, ?, ?);',
+                       [propid, newvalue, '0'],
                        function() { }
                       );
             }
@@ -283,10 +235,6 @@
 
 
 
-        function _errorHandler(transaction, error) {
-            alert('Database Error: ' + error.message + ' (Code ' + error.code + ')');
-            return true;
-        }
 
 
         $.jQTouch({
