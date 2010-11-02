@@ -73,6 +73,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "NbtMobileWeb", "NbtMobileWe
 		VWDPort = "5645"
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "NbtSetup", "NbtSetup\NbtSetup.vdproj", "{1498EA88-9350-4DA7-B3AE-3723FC87D908}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -243,6 +245,12 @@ Global
 		{A2B3F1A4-9695-4FCE-98B7-7835B6FC4DB8}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{A2B3F1A4-9695-4FCE-98B7-7835B6FC4DB8}.Release|Mixed Platforms.Build.0 = Debug|Any CPU
 		{A2B3F1A4-9695-4FCE-98B7-7835B6FC4DB8}.Release|x86.ActiveCfg = Debug|Any CPU
+		{1498EA88-9350-4DA7-B3AE-3723FC87D908}.Debug|Any CPU.ActiveCfg = Debug
+		{1498EA88-9350-4DA7-B3AE-3723FC87D908}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{1498EA88-9350-4DA7-B3AE-3723FC87D908}.Debug|x86.ActiveCfg = Debug
+		{1498EA88-9350-4DA7-B3AE-3723FC87D908}.Release|Any CPU.ActiveCfg = Release
+		{1498EA88-9350-4DA7-B3AE-3723FC87D908}.Release|Mixed Platforms.ActiveCfg = Release
+		{1498EA88-9350-4DA7-B3AE-3723FC87D908}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
