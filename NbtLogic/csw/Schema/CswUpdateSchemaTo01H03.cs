@@ -315,9 +315,33 @@ namespace ChemSW.Nbt.Schema
                 FireExtinguisherView.Category = "Inspections";
                 CswNbtViewRelationship LocationRelationship = FireExtinguisherView.AddViewRelationship( LocationOC, false );
                 CswNbtMetaDataNodeTypeProp LocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
+                //Mount Point: Description, Status, Barcode and Type Searchable
                 CswNbtViewRelationship FEMountPointRelationship = FireExtinguisherView.AddViewRelationship( LocationRelationship, CswNbtViewRelationship.PropOwnerType.Second, LocationNTP, false );
+                CswNbtMetaDataNodeTypeProp MPDescriptionNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.DescriptionPropertyName );
+                CswNbtViewProperty MPDescriptionVP = FireExtinguisherView.AddViewProperty( FEMountPointRelationship, MPDescriptionNTP );
+                CswNbtViewProperty MPTypeVP = FireExtinguisherView.AddViewProperty( FEMountPointRelationship, MPTypeProp );
+                CswNbtMetaDataNodeTypeProp MPStatusNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.StatusPropertyName );
+                CswNbtViewProperty MPStatusVP = FireExtinguisherView.AddViewProperty( FEMountPointRelationship, MPStatusNTP );
+                CswNbtViewProperty MPBarcodeVP = FireExtinguisherView.AddViewProperty( FEMountPointRelationship, MPBarcodeNTP );
+                FireExtinguisherView.AddViewPropertyFilter( MPDescriptionVP, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+                FireExtinguisherView.AddViewPropertyFilter( MPTypeVP, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+                FireExtinguisherView.AddViewPropertyFilter( MPStatusVP, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+                FireExtinguisherView.AddViewPropertyFilter( MPBarcodeVP, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+                //Fire Extinguisher: Description, Status, Barcode and Type Searchable
                 CswNbtViewRelationship FireExtinguisherRelationship = FireExtinguisherView.AddViewRelationship( FEMountPointRelationship, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointProp, false );
+                CswNbtMetaDataNodeTypeProp FEDescriptionNTP = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.DescriptionPropertyName );
+                CswNbtViewProperty FEDescriptionVP = FireExtinguisherView.AddViewProperty( FireExtinguisherRelationship, FEDescriptionNTP );
+                CswNbtViewProperty FETypeVP = FireExtinguisherView.AddViewProperty( FireExtinguisherRelationship, FETypeProp );
+                CswNbtMetaDataNodeTypeProp FEStatusNTP = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.StatusPropertyName );
+                CswNbtViewProperty FEStatusVP = FireExtinguisherView.AddViewProperty( FireExtinguisherRelationship, FEStatusNTP );
+                CswNbtViewProperty FEBarcodeVP = FireExtinguisherView.AddViewProperty( FireExtinguisherRelationship, FEBarcodeNTP );
+                FireExtinguisherView.AddViewPropertyFilter( FEDescriptionVP, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+                FireExtinguisherView.AddViewPropertyFilter( FETypeVP, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+                FireExtinguisherView.AddViewPropertyFilter( FEStatusVP, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+                FireExtinguisherView.AddViewPropertyFilter( FEBarcodeVP, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+                //Inspection:
                 CswNbtViewRelationship InspectionRelationship = FireExtinguisherView.AddViewRelationship( FireExtinguisherRelationship, CswNbtViewRelationship.PropOwnerType.Second, PIFireExtinguisherNTP, false );
+                //Route:
                 CswNbtViewRelationship RouteRelationship = FireExtinguisherView.AddViewRelationship( InspectionRelationship, CswNbtViewRelationship.PropOwnerType.First, RouteNTP, false );
                 FireExtinguisherView.save();
             }
