@@ -49,11 +49,13 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "NbtWebApp", "NbtWebApp\", "
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "5288"
 	EndProjectSection
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "NbtMobileWeb", "NbtMobileWeb\", "{A2B3F1A4-9695-4FCE-98B7-7835B6FC4DB8}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		ProjectReferences = "{434091FB-F487-4787-8BDB-58C2336B73C2}|CswCommon.dll;{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}|CswWebControls.dll;{DABF9D08-70E8-4D42-AF7A-577335A7129F}|NbtConfig.dll;{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}|NbtLogic.dll;{987AE13B-8118-48E7-9A2A-7D52AB5C1ED3}|NbtWebControls.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/NbtMobileWeb"
 		Debug.AspNetCompiler.PhysicalPath = "NbtMobileWeb\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\NbtMobileWeb\"
