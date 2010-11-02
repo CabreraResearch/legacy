@@ -2,21 +2,12 @@
 <head>
     <meta name="viewport" content="user-scalable=no, width=device-width" />
     <title>Main</title>
-
+    <script src="jquery/jquery-1.4.3.min.js"></script>
+    <link rel="stylesheet" href="jquery/jquery.mobile-1.0a1/jquery.mobile-1.0a1.css" />
+    <script src="jquery/jquery.mobile-1.0a1/jquery.mobile-1.0a1.js"></script>
     <script src="Db.js"></script>
     <script src="Synch.js"></script>
     <script src="Main.js"></script>
-
-    <script src="jquery/jquery-1.4.2.min.js"></script>
-
-    <script src="jquery/jqtouch/jqtouch.js" type="application/x-javascript" charset="utf-8"></script>
-
-    <style type="text/css" media="screen">
-        @import "jquery/jqtouch/jqtouch.css";
-    </style>
-    <style type="text/css" media="screen">
-        @import "jquery/jqtouch/themes/apple/theme.css";
-    </style>
     <style>
         .offlineIndicator
         {
@@ -32,223 +23,27 @@
     </style>
 </head>
 <body>
-    <div id="TopDiv">
-        <div class="toolbar">
+    <div id="MainDiv" data-role="page">
+        <div data-role="header">
             <h1>
                 Top
             </h1>
             <a href="#" class="button offlineIndicator online" onclick="toggleOffline();">Online</a>
         </div>
-        <ul>
-        </ul>
+        <div data-role="content">
+            <ul>
+            </ul>
+        </div>
+        <div data-role="footer">
+        </div>
     </div>
+    <script>
 
-    <script language="javascript">
-
-
-
-
-        $(document).ready(function () {
-
-            _initDB(false);
-            _loadDivContents(0, $('#TopDiv'));
-            _waitForData();
-
+        $(function ()
+        {
+            $('#MainDiv').CswMobile();
         });
 
-        var rootid;
-
-        function toggleOffline() {
-            // Reset all indicators
-            $('.offlineIndicator').toggleClass('online')
-                                  .toggleClass('offline');
-            // Clear non-cached root contents
-            $('#TopDiv').children('ul').children().remove();
-            _loadDivContents(0, $('#TopDiv'));
-        }
-        
-        function getCurrentOfflineIndicatorCssClass() {
-            if ($('.offlineIndicator').hasClass('offline'))
-                return 'offline';
-            else
-                return 'online';
-            
-        }
-        function amOffline() {
-            return $('.offlineIndicator').hasClass('offline');
-        }
-
-
-        function _loadDivContents(level, $Div) {
-            var ParentId = $Div.attr('id');
-            if (level == 1)
-                rootid = ParentId;
-            if ($Div.children('ul').children('li').length == 0) {
-                if (level <= 1) {
-                    if (amOffline()) {
-                        if (level == 0) {
-                            _fetchCachedRootXml(function(xml) {
-                                _processSubLevelXml($Div, $(xml).children(), $Div.children('ul').first(), level, true);
-                            });
-                        } else {
-                            _fetchCachedSubLevelXml(ParentId, function(xmlstr) {
-                                var $thisxmlstr = $(xmlstr).find('#' + ParentId);
-                                _processSubLevelXml($Div, $thisxmlstr.children('subitems').first().children(), $Div.children('ul').first(), level);
-                            });
-                        }
-                    } else {
-                        $.ajax({
-                            type: 'POST',
-                            url: 'wsView.asmx/Run',
-                            dataType: "json",
-                            contentType: 'application/json; charset=utf-8',
-                            data: "{ ParentId: '" + ParentId + "' }",
-                            success: function(data, textStatus, XMLHttpRequest) {
-                                if (level == 1) {
-                                    _storeSubLevelXml(ParentId, $Div.children('div').children('h1').text(), '', data.d);
-                                }
-                                _processSubLevelXml($Div, $(data.d).children(), $Div.children('ul').first(), level, true);
-                            },
-                            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                                alert("An Error Occurred: " + errorThrown);
-                            }
-                        });
-                    }
-                } else {
-                    _fetchCachedSubLevelXml(rootid, function(xmlstr) {
-                        var $thisxmlstr = $(xmlstr).find('#' + ParentId);
-                        _processSubLevelXml($Div, $thisxmlstr.children('subitems').first().children(), $Div.children('ul').first(), level);
-                    });
-                }
-            }
-        }
-
-        function _processSubLevelXml($Div, $xml, $ParentUL, parentlevel) {
-            $xml.each(function() {
-                var $xmlitem = $(this);
-                var id = $xmlitem.attr('id');
-                var text = $xmlitem.children('text').first().contents().first().text();
-                var texthtml = $xmlitem.children('text').html();
-
-                var IsDiv = (id != undefined && id != '');
-
-                var lihtml = '<li';
-                if ($xmlitem.attr('arrow') == 'true')
-                    lihtml += ' class="arrow"';
-                lihtml += '>';
-                if (IsDiv)
-                    lihtml += '<a href="#' + id + '">' + texthtml + '</a>';
-                else
-                    lihtml += texthtml;
-                lihtml += '</li>';
-
-                $(lihtml).appendTo($ParentUL)
-                         .find('input')
-                         .change(onPropertyChange)
-                         .end()
-                         .find('textarea')
-                         .change(onPropertyChange)
-                         .end()
-                         .find('select')
-                         .change(onPropertyChange);
-
-                if (IsDiv) {
-                    var divhtml = "<div id=\"" + id + "\">" +
-                                  "  <div class=\"toolbar\">" +
-                                  "    <a href=\"#\" class=\"back\">Back</a>" +
-                                  "    <h1>" + text + "</h1>" +
-                                  "    <a href=\"#\" class=\"button offlineIndicator " + getCurrentOfflineIndicatorCssClass() + "\" onclick=\"toggleOffline();\">Online</a>" +
-                                  "  </div>" +
-                                  "  <ul></ul>" +
-                                  "</div>";
-
-                    $(divhtml).appendTo($('body'))
-                          .bind('pageAnimationStart', function() { _loadDivContents(parentlevel + 1, $(this)); });
-                }
-            });
-        }
-
-        function onPropertyChange(eventObj) {
-            var $elm = $(eventObj.srcElement);
-            var name = $elm.attr('name');
-            var value = $elm.attr('value');
-
-            // update the short summary value on the list item
-            $('a[href="#' + name + '"]')
-                .children('small')
-                .text(value);
-
-            // store the property value change in the database
-            _storeChange(name, value)
-        }
-
-        // Client-side Database Interaction
-        var db;
-
-
-
-
-        function _storeSubLevelXml(rootid, rootname, rootxml, sublevelxml) {
-            if (rootid != undefined && rootid != '') {
-                _DoSql('INSERT INTO sublevels (rootid, rootname, rootxml, sublevelxml) VALUES (?, ?, ?, ?);',
-                       [rootid, rootname, rootxml, sublevelxml],
-                       function() { }
-                      );
-            }
-        }
-        function _storeChange(propid, newvalue) {
-            if (rootid != undefined && rootid != '') {
-                _DoSql('INSERT INTO changes (propid, newvalue, applied) VALUES (?, ?, ?);',
-                       [propid, newvalue, '0'],
-                       function() { }
-                      );
-            }
-        }
-        function _fetchCachedSubLevelXml(rootid, onsuccess) {
-            if (rootid != undefined && rootid != '') {
-                _DoSql('SELECT sublevelxml FROM sublevels WHERE rootid = ? ORDER BY id DESC;',
-                       [rootid],
-                       function(transaction, result) {
-                           if (result.rows.length > 0) {
-                               var row = result.rows.item(0);
-                               onsuccess(row.sublevelxml);
-                           }
-                       }
-                      );
-            }
-        }
-        function _fetchCachedRootXml(onsuccess) {
-            _DoSql('SELECT rootid, rootname, rootxml FROM sublevels ORDER BY rootname;',
-                   [],
-                   function(transaction, result) {
-                       var xml = '';
-                       for (var i = 0; i < result.rows.length; i++) {
-                           var row = result.rows.item(i);
-                           xml += "<item id=\"" + row.rootid + "\" arrow=\"true\">" +
-                                  "  <text>" + row.rootname + "</text>" +
-                                  "</item>";
-                       }
-                       onsuccess("<root>" + xml + "</root>");
-                   }
-                  );
-        }
-
-
-
-
-
-        $.jQTouch({
-        //icon: 'jqtouch.png',
-        //statusBar: 'black-translucent',
-        //preloadImages: [
-        //                'jquery/jqtouch/themes/jqt/img/chevron_white.png',
-        //                'jquery/jqtouch/themes/jqt/img/bg_row_select.gif',
-        //                'jquery/jqtouch/themes/jqt/img/back_button_clicked.png',
-        //                'jquery/jqtouch/themes/jqt/img/button_clicked.png'
-        //]
-    });
-    
     </script>
-
 </body>
 </html>

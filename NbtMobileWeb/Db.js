@@ -35,7 +35,7 @@ function _initDB(doreset) {
 
         if (doreset) {
             _DoSql('DROP TABLE IF EXISTS sublevels; ');
-            _DoSql('DROP TABLE IF EXISTS changes; ');
+//            _DoSql('DROP TABLE IF EXISTS changes; ');
         }
 
         _createDB();
@@ -62,4 +62,8 @@ function _createDB() {
 }//_createDB()
 
 
+function _errorHandler(transaction, error) {
+    alert('Database Error: ' + error.message + ' (Code ' + error.code + ')');
+    return true;
+}
 
