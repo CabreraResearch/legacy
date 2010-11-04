@@ -13,19 +13,6 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Mobile;
-
-namespace ChemSW.Nbt.Mobile
-{
-    public enum PageType
-    {
-        Node,
-        Leaf,
-        Tab,
-        Property,
-        PropertyEditor
-    }
-}
 
 
 /// <summary>
@@ -78,10 +65,13 @@ public class wsView : System.Web.Services.WebService
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
                 if( Tree.getChildNodeCount() > 0 )
-                    ret += _runTreeNodesRecursive( Tree );
+                    ret = _runTreeNodesRecursive( Tree );
                 else
-                    ret = _makeNoResultsItem();
-
+                {
+                    ret = @"<node id="""">
+                              <text>No results</text>
+                            </node>";
+                }
             }// if( ParentId.StartsWith( ViewIdPrefix ) )
             else
             {
@@ -89,11 +79,9 @@ public class wsView : System.Web.Services.WebService
                 DataTable ViewDT = _CswNbtResources.ViewSelect.getVisibleViews( false );
                 foreach( DataRow ViewRow in ViewDT.Rows )
                 {
-                    ret += _makeItem( ViewIdPrefix + CswConvert.ToInt32( ViewRow["nodeviewid"] ),
-                                      ViewRow["viewname"].ToString(),
-                                      string.Empty,
-                                      true,
-                                      PageType.Node );
+                    ret += "<view id=\"" + ViewIdPrefix + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
+                    ret += " name=\""+ ViewRow["viewname"].ToString() +"\"";
+                    ret += "/>";
                 }
             }
         }
@@ -114,19 +102,18 @@ public class wsView : System.Web.Services.WebService
             CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
             string ThisNodeName = Tree.getNodeNameForCurrentPosition();
             string ThisNodeId = ThisNode.NodeId.ToString();
-            
-            PageType PT = PageType.Node;
+
             string ThisSubItems = _runTreeNodesRecursive( Tree );
             if( ThisSubItems == string.Empty )
             {
-                PT = PageType.Leaf;
-                ThisSubItems = _runTabs( Tree, ThisNode );
+                ThisSubItems = _runProperties( ThisNode );
             }
-            ret += _makeItem( NodeIdPrefix + ThisNodeId,
-                              ThisNodeName,
-                              ThisSubItems,
-                              true,
-                              PT );
+
+            ret += "<node id=\"" + NodeIdPrefix + ThisNodeId + "\"";
+            ret += " name=\"" + ThisNodeName + "\"";
+            ret += " nodetype=\"" + ThisNode.NodeType.NodeTypeName + "\"";
+            ret += "><subitems>" + ThisSubItems + "</subitems>";
+            ret += "</node>";
 
             Tree.goToParentNode();
         }
@@ -134,197 +121,28 @@ public class wsView : System.Web.Services.WebService
     }
 
 
-    private string _runTabs( ICswNbtTree Tree, CswNbtNode Node )
+    private string _runProperties( CswNbtNode Node )
     {
         string ret = string.Empty;
-        if( Node.NodeType.NodeTypeTabs.Count > 1 )
+        foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
         {
-            foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
+            foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypeProps )
             {
-                ret += _makeItem( TabIdPrefix + Tab.TabId + "_" + NodeIdPrefix + Node.NodeId.ToString(),
-                                  Tab.TabName,
-                                  _runProperties( Node, Tab ),
-                                  true, PageType.Tab );
-            }
-        }
-        else
-        {
-            ret = _runProperties( Node, Node.NodeType.getFirstNodeTypeTab() );
-        }
-
-        return ret;
-    }
-
-    private string _runProperties( CswNbtNode Node, CswNbtMetaDataNodeTypeTab Tab )
-    {
-        string ret = string.Empty;
-
-        foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypeProps )
-        {
-            if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password )
-            {
-                ret += _makeItem( PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString(),
-                                  Prop.PropName + "<small class=\"\">" + Node.Properties[Prop].Gestalt + "</small>",
-                                  _runPropertyEditors( Node, Prop ),
-                                  false, PageType.Property );
+                if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password )
+                {
+                    ret += "<prop id=\""+PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString()+"\"";
+                    ret += " name=\"" + Prop.PropName +"\"";
+                    ret += " tab=\"" + Tab.TabName + "\"";
+                    ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
+                    ret += "><subitems></subitems>";
+                    ret += "</prop>";
+                }
             }
         }
 
         return ret;
     }
-    private string _runPropertyEditors( CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
-    {
-        string Html = Prop.PropName + " <hr/><br/>";
-        string IdStr = PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString();
-        CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-        switch( Prop.FieldType.FieldType )
-        {
-            case CswNbtMetaDataFieldType.NbtFieldType.Date:
-                Html += "<input type=\"date\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\" />";
-                break;
-
-            case CswNbtMetaDataFieldType.NbtFieldType.Link:
-                Html += "<a href=\"" + PropWrapper.AsLink.Href + "\">" + PropWrapper.AsLink.Text + "</a>";
-                break;
-
-            case CswNbtMetaDataFieldType.NbtFieldType.List:
-                Html += "<select name=\"" + IdStr + "\">";
-                foreach( CswNbtNodeTypePropListOption Option in PropWrapper.AsList.Options.Options )
-                {
-                    Html += "<option value=\"" + Option.Value + "\"";
-                    if( PropWrapper.AsList.Value == Option.Value )
-                        Html += " selected";
-                    Html += ">" + Option.Text + "</option>";
-                }
-                Html += "</select>";
-                break;
-
-            case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-                Html += "<select name=\"" + IdStr + "\">";
-                foreach( Tristate state in Enum.GetValues( typeof( Tristate ) ) )
-                {
-                    Html += "<option value=\"" + state.ToString() + "\"";
-                    if( PropWrapper.AsLogical.Checked == state )
-                        Html += " selected";
-                    Html += ">" + state.ToString() + "</option>";
-                }
-                Html += "</select>";
-                break;
-
-            case CswNbtMetaDataFieldType.NbtFieldType.Memo:
-                Html += "<textarea name=\"" + IdStr + "\">" + PropWrapper.AsMemo.Text + "</textarea>";
-                break;
-
-            case CswNbtMetaDataFieldType.NbtFieldType.Number:
-                Html += "<input type=\"number\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\"";
-                Html += "/>";
-                if( Prop.MinValue != Int32.MinValue )
-                    Html += "min = \"" + Prop.MinValue + "\"";
-                if( Prop.MaxValue != Int32.MinValue )
-                    Html += "max = \"" + Prop.MaxValue + "\"";
-                break;
-
-            case CswNbtMetaDataFieldType.NbtFieldType.Password:
-                Html += string.Empty;
-                break;
-
-            case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
-                Html += "<input type=\"text\" name=\"" + IdStr + "_qty\" value=\"" + PropWrapper.AsQuantity.Quantity.ToString() + "\" />";
-                Html += "<select name=\"" + IdStr + "_units\">";
-                string SelectedUnit = PropWrapper.AsQuantity.Units;
-                foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
-                {
-                    string ThisUnitText = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
-                    Html += "<option value=\"" + UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text + "\"";
-                    if( ThisUnitText == SelectedUnit )
-                        Html += " selected";
-                    Html += ">" + ThisUnitText + "</option>";
-                }
-                Html += "</select>";
-
-                break;
-
-            case CswNbtMetaDataFieldType.NbtFieldType.Question:
-                CswNbtNodePropQuestion QuestionProp = PropWrapper.AsQuestion;
-                Html += "<select name=\"" + IdStr + "_ans\"";
-
-                string IfPhrase = "";
-                foreach( string CompliantAnswer in QuestionProp.CompliantAnswers )
-                {
-                    if( IfPhrase != string.Empty ) IfPhrase += " && ";
-                    IfPhrase += "this.value != '" + CompliantAnswer + "'";
-                }
-                if( IfPhrase != string.Empty )
-                    Html += " onchange=\"if(this.value != '' && " + IfPhrase + ") { $('#" + IdStr + "_cor').show(); } else { $('#" + IdStr + "_cor').hide(); } \">";
-
-                string SelectedAnswer = QuestionProp.Answer;
-                foreach( string PotentialAnswer in QuestionProp.AllowedAnswers )
-                {
-                    Html += "<option value=\"" + PotentialAnswer + "\"";
-                    if( PotentialAnswer == SelectedAnswer )
-                        Html += " selected";
-                    Html += ">";
-                    if( PotentialAnswer == "" )
-                        Html += "Answer";
-                    else
-                        Html += PotentialAnswer;
-                    Html += "</option>";
-                }
-                Html += "</select>";
-
-                Html += "<textarea name=\"" + IdStr + "_com\" placeholder=\"Comments\">";
-                Html += QuestionProp.Comments;
-                Html += "</textarea>";
-
-                Html += "<textarea id=\"" + IdStr + "_cor\" name=\"" + IdStr + "_cor\" placeholder=\"CorrectiveAction\"";
-                if( QuestionProp.Answer == string.Empty || QuestionProp.IsCompliant )
-                    Html += "style=\"display: none\"";
-                Html += ">";
-                Html += QuestionProp.CorrectiveAction;
-                Html += "</textarea>";
-                break;
-
-            case CswNbtMetaDataFieldType.NbtFieldType.Static:
-                Html += Prop.StaticText;
-                break;
-
-            case CswNbtMetaDataFieldType.NbtFieldType.Text:
-                Html += "<input type=\"text\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\" />";
-                break;
-
-            case CswNbtMetaDataFieldType.NbtFieldType.Time:
-                Html += "<input type=\"time\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\" />";
-                break;
-
-            default:
-                Html += PropWrapper.Gestalt;
-                break;
-        }
-        return _makeItem( "", Html, string.Empty, false, PageType.PropertyEditor );
-    }
 
 
-    private string _makeItem( string ID, string Text, string SubItems, bool Arrow, PageType PT )
-    {
-        string ret = @"<item id=""" + ID + @""" arrow=""" + Arrow.ToString().ToLower() + @""" pagetype=""" + PT.ToString() + @""">
-                           <text>" + Text + @"</text>";
-        if( SubItems != null )
-        {
-            ret += @"          <subitems>
-                                   " + SubItems + @"
-                               </subitems>";
-        }
-        ret += @"      </item>";
-        return ret;
-    }
-
-    private string _makeNoResultsItem()
-    {
-        string ret = @"<item id="""" arrow=""false"">
-                           <text>No results</text>";
-        ret += @"      </item>";
-        return ret;
-    }
-
-} // wsViewListTree
+} // wsView
 

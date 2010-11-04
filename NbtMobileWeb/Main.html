@@ -21,25 +21,23 @@
     </style>
 </head>
 <body>
-    <div id="MainDiv" data-role="page">
-        <div data-role="header" data-theme="a">
-            <h1>
-                Top
-            </h1>
-            <a href="#" class="button offlineIndicator online" onclick="toggleOffline();">Online</a>
-        </div>
-        <div data-role="content" data-theme="a">
-            <ul>
-            </ul>
-        </div>
-        <div data-role="footer" data-theme="a">
-        </div>
+   <div data-role="page">
+    <div data-role="header">
+        <h1>CswMobile</h1>
     </div>
+    <div data-role="content">
+        <ul data-role="listview">
+            <li>
+                <a href="#viewsdiv">Views</a>
+            </li>
+        </ul>
+    </div>
+   </div>
     <script>
 
         $(function ()
         {
-            $('#MainDiv').CswMobile({ 'Theme': 'a' });
+            $('body').CswMobile({ 'Theme': 'a' });
         });
 
     </script>
