@@ -183,7 +183,7 @@
 
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
-                    _addPageDivToBody(parentlevel, id, text, toolbar, _makeFieldTypeContent(fieldtype));
+                    _addPageDivToBody(parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem));
 
                 }
                 else
@@ -213,136 +213,131 @@
 
         } // _processSubLevelXml()
 
-        function _makeFieldTypeContent(fieldtype)
+        function _makeFieldTypeContent($xmlitem)
         {
-            return 'Fieldtype == ' + fieldtype;
+            var IdStr = $xmlitem.attr('id');
+            var FieldType = $xmlitem.attr('fieldtype');
 
-            //    string Html = Prop.PropName + " <hr/><br/>";
-            //    string IdStr = PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString();
-            //    CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-            //    switch( Prop.FieldType.FieldType )
-            //    {
-            //        case CswNbtMetaDataFieldType.NbtFieldType.Date:
-            //            Html += "<input type=\"date\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\" />";
-            //            break;
+            var Html = 'Fieldtype == ' + FieldType + '<br>';
+            switch (FieldType)
+            {
+                case "Date":
+                    Html += "<input type=\"date\" name=\"" + IdStr + "\" value=\"" + $xmlitem.attr('Gestalt') + "\" />";
+                    break;
 
-            //        case CswNbtMetaDataFieldType.NbtFieldType.Link:
-            //            Html += "<a href=\"" + PropWrapper.AsLink.Href + "\">" + PropWrapper.AsLink.Text + "</a>";
-            //            break;
+                case "Link":
+                    Html += "<a href=\"" + $xmlitem.attr('href') + "\">" + $xmlitem.attr('text') + "</a>";
+                    break;
 
-            //        case CswNbtMetaDataFieldType.NbtFieldType.List:
-            //            Html += "<select name=\"" + IdStr + "\">";
-            //            foreach( CswNbtNodeTypePropListOption Option in PropWrapper.AsList.Options.Options )
-            //            {
-            //                Html += "<option value=\"" + Option.Value + "\"";
-            //                if( PropWrapper.AsList.Value == Option.Value )
-            //                    Html += " selected";
-            //                Html += ">" + Option.Text + "</option>";
-            //            }
-            //            Html += "</select>";
-            //            break;
+                case "List":
+                    Html += "<select name=\"" + IdStr + "\">";
+                    //                    foreach( CswNbtNodeTypePropListOption Option in PropWrapper.AsList.Options.Options )
+                    //                    {
+                    //                        Html += "<option value=\"" + Option.Value + "\"";
+                    //                        if( PropWrapper.AsList.Value == Option.Value )
+                    //                            Html += " selected";
+                    //                        Html += ">" + Option.Text + "</option>";
+                    //                    }
+                    Html += "</select>";
+                    break;
 
-            //        case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-            //            Html += "<select name=\"" + IdStr + "\">";
-            //            foreach( Tristate state in Enum.GetValues( typeof( Tristate ) ) )
-            //            {
-            //                Html += "<option value=\"" + state.ToString() + "\"";
-            //                if( PropWrapper.AsLogical.Checked == state )
-            //                    Html += " selected";
-            //                Html += ">" + state.ToString() + "</option>";
-            //            }
-            //            Html += "</select>";
-            //            break;
+                case "Logical":
+                    Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+                    Html += '        <legend></legend>';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Blank" value="?" />';
+                    Html += '            <label for="' + IdStr + '_ans_Blank">?</label>';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" />';
+                    Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" />';
+                    Html += '            <label for="' + IdStr + '_ans_No">No</label>';
+                    Html += '    </fieldset>';
+                    break;
 
-            //        case CswNbtMetaDataFieldType.NbtFieldType.Memo:
-            //            Html += "<textarea name=\"" + IdStr + "\">" + PropWrapper.AsMemo.Text + "</textarea>";
-            //            break;
+                case "Memo":
+                    Html += "<textarea name=\"" + IdStr + "\">" + $xmlitem.attr('text') + "</textarea>";
+                    break;
 
-            //        case CswNbtMetaDataFieldType.NbtFieldType.Number:
-            //            Html += "<input type=\"number\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\"";
-            //            Html += "/>";
-            //            if( Prop.MinValue != Int32.MinValue )
-            //                Html += "min = \"" + Prop.MinValue + "\"";
-            //            if( Prop.MaxValue != Int32.MinValue )
-            //                Html += "max = \"" + Prop.MaxValue + "\"";
-            //            break;
+                case "Number":
+                    Html += "<input type=\"number\" name=\"" + IdStr + "\" value=\"" + $xmlitem.attr('gestalt') + "\"";
+                    //                    if (Prop.MinValue != Int32.MinValue)
+                    //                        Html += "min = \"" + Prop.MinValue + "\"";
+                    //                    if (Prop.MaxValue != Int32.MinValue)
+                    //                        Html += "max = \"" + Prop.MaxValue + "\"";
+                    Html += "/>";
+                    break;
 
-            //        case CswNbtMetaDataFieldType.NbtFieldType.Password:
-            //            Html += string.Empty;
-            //            break;
+                case "Password":
+                    Html += string.Empty;
+                    break;
 
-            //        case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
-            //            Html += "<input type=\"text\" name=\"" + IdStr + "_qty\" value=\"" + PropWrapper.AsQuantity.Quantity.ToString() + "\" />";
-            //            Html += "<select name=\"" + IdStr + "_units\">";
-            //            string SelectedUnit = PropWrapper.AsQuantity.Units;
-            //            foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
-            //            {
-            //                string ThisUnitText = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
-            //                Html += "<option value=\"" + UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text + "\"";
-            //                if( ThisUnitText == SelectedUnit )
-            //                    Html += " selected";
-            //                Html += ">" + ThisUnitText + "</option>";
-            //            }
-            //            Html += "</select>";
+                case "Quantity":
+                    Html += "<input type=\"text\" name=\"" + IdStr + "_qty\" value=\"" + $xmlitem.attr('gestalt') + "\" />";
+                    //                    Html += "<select name=\"" + IdStr + "_units\">";
+                    //                    string SelectedUnit = PropWrapper.AsQuantity.Units;
+                    //                    foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
+                    //                    {
+                    //                        string ThisUnitText = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
+                    //                        Html += "<option value=\"" + UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text + "\"";
+                    //                        if( ThisUnitText == SelectedUnit )
+                    //                            Html += " selected";
+                    //                        Html += ">" + ThisUnitText + "</option>";
+                    //                    }
+                    //                    Html += "</select>";
 
-            //            break;
+                    break;
 
-            //        case CswNbtMetaDataFieldType.NbtFieldType.Question:
-            //            CswNbtNodePropQuestion QuestionProp = PropWrapper.AsQuestion;
-            //            Html += "<select name=\"" + IdStr + "_ans\"";
+                case "Question":
+                    var answer = $xmlitem.attr('answer');
+                    var compliantanswer = $xmlitem.attr('compliantanswer');
+                    //                    Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+                    //                    Html += '        <legend></legend>';
+                    //                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
+                    //                    if (compliantanswer == 'Yes')
+                    //                        Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
+                    //                    else
+                    //                        Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
+                    //                    if (answer == 'Yes')
+                    //                        Html += 'checked';
+                    //                    Html += '/>';
+                    //                    Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
+                    //                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" ';
+                    //                    if (compliantanswer == 'No')
+                    //                        Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
+                    //                    else
+                    //                        Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
+                    //                    Html += '/>';
+                    //                    Html += '            <label for="' + IdStr + '_ans_No">No</label>';
+                    //                    Html += '    </fieldset>';
 
-            //            string IfPhrase = "";
-            //            foreach( string CompliantAnswer in QuestionProp.CompliantAnswers )
-            //            {
-            //                if( IfPhrase != string.Empty ) IfPhrase += " && ";
-            //                IfPhrase += "this.value != '" + CompliantAnswer + "'";
-            //            }
-            //            if( IfPhrase != string.Empty )
-            //                Html += " onchange=\"if(this.value != '' && " + IfPhrase + ") { $('#" + IdStr + "_cor').show(); } else { $('#" + IdStr + "_cor').hide(); } \">";
+                    Html += "<textarea name=\"" + IdStr + "_com\" placeholder=\"Comments\">";
+                    Html += $xmlitem.attr('comments');
+                    Html += "</textarea>";
 
-            //            string SelectedAnswer = QuestionProp.Answer;
-            //            foreach( string PotentialAnswer in QuestionProp.AllowedAnswers )
-            //            {
-            //                Html += "<option value=\"" + PotentialAnswer + "\"";
-            //                if( PotentialAnswer == SelectedAnswer )
-            //                    Html += " selected";
-            //                Html += ">";
-            //                if( PotentialAnswer == "" )
-            //                    Html += "Answer";
-            //                else
-            //                    Html += PotentialAnswer;
-            //                Html += "</option>";
-            //            }
-            //            Html += "</select>";
+                    Html += "<textarea id=\"" + IdStr + "_cor\" name=\"" + IdStr + "_cor\" placeholder=\"Corrective Action\"";
+                    if (answer == '' || answer == compliantanswer)
+                        Html += "style=\"display: none\"";
+                    Html += ">";
+                    Html += $xmlitem.attr('correctiveaction');
+                    Html += "</textarea>";
+                    break;
 
-            //            Html += "<textarea name=\"" + IdStr + "_com\" placeholder=\"Comments\">";
-            //            Html += QuestionProp.Comments;
-            //            Html += "</textarea>";
+                case "Static":
+                    Html += $xmlitem.attr('text');
+                    break;
 
-            //            Html += "<textarea id=\"" + IdStr + "_cor\" name=\"" + IdStr + "_cor\" placeholder=\"CorrectiveAction\"";
-            //            if( QuestionProp.Answer == string.Empty || QuestionProp.IsCompliant )
-            //                Html += "style=\"display: none\"";
-            //            Html += ">";
-            //            Html += QuestionProp.CorrectiveAction;
-            //            Html += "</textarea>";
-            //            break;
+                case "Text":
+                    Html += "<input type=\"text\" name=\"" + IdStr + "\" value=\"" + $xmlitem.attr('text') + "\" />";
+                    break;
 
-            //        case CswNbtMetaDataFieldType.NbtFieldType.Static:
-            //            Html += Prop.StaticText;
-            //            break;
+                case "Time":
+                    Html += "<input type=\"time\" name=\"" + IdStr + "\" value=\"" + $xmlitem.attr('gestalt') + "\" />";
+                    break;
 
-            //        case CswNbtMetaDataFieldType.NbtFieldType.Text:
-            //            Html += "<input type=\"text\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\" />";
-            //            break;
-
-            //        case CswNbtMetaDataFieldType.NbtFieldType.Time:
-            //            Html += "<input type=\"time\" name=\"" + IdStr + "\" value=\"" + PropWrapper.Gestalt + "\" />";
-            //            break;
-
-            //        default:
-            //            Html += PropWrapper.Gestalt;
-            //            break;
-            //    }
+                default:
+                    Html += $xmlitem.attr('gestalt');
+                    break;
+            }
+            return Html;
         }
 
         function _addPageDivToBody(level, DivId, HeaderText, toolbar, content)
