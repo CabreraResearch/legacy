@@ -80,7 +80,7 @@ public class wsView : System.Web.Services.WebService
                 foreach( DataRow ViewRow in ViewDT.Rows )
                 {
                     ret += "<view id=\"" + ViewIdPrefix + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
-                    ret += " name=\""+ ViewRow["viewname"].ToString() +"\"";
+                    ret += " name=\"" + ViewRow["viewname"].ToString() + "\"";
                     ret += "/>";
                 }
             }
@@ -130,11 +130,18 @@ public class wsView : System.Web.Services.WebService
             {
                 if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password )
                 {
-                    ret += "<prop id=\""+PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString()+"\"";
-                    ret += " name=\"" + Prop.PropName +"\"";
+                    CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
+                    ret += "<prop id=\"" + PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() + "\"";
+                    ret += " name=\"" + Prop.PropName + "\"";
                     ret += " tab=\"" + Tab.TabName + "\"";
                     ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
-                    ret += "><subitems></subitems>";
+                    ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";
+                    ret += ">";
+                    XmlDocument XmlDoc = new XmlDocument();
+                    CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
+                    PropWrapper.ToXml( XmlDoc.DocumentElement );
+                    ret += XmlDoc.DocumentElement.InnerXml;
+                    ret += "<subitems></subitems>";
                     ret += "</prop>";
                 }
             }

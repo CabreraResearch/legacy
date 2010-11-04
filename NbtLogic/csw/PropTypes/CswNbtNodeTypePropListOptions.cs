@@ -60,6 +60,17 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtNodeTypePropListOption[] _Options;
         public CswNbtNodeTypePropListOption[] Options { get { return ( _Options ); } }
 
+        public override string ToString()
+        {
+            string ret = string.Empty;
+            foreach( CswNbtNodeTypePropListOption Option in Options )
+            {
+                if( ret != string.Empty )
+                    ret += delimiter.ToString();
+                ret += Option.Text;
+            }
+            return ret;
+        } // ToString()
 
     }//CswNbtNodeTypePropListOptions
 

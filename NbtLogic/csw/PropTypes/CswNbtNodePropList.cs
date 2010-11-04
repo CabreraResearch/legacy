@@ -88,6 +88,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.Name.ToString(), Value );
+            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "Options", Options.ToString() );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

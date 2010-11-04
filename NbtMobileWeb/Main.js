@@ -218,52 +218,64 @@
             var IdStr = $xmlitem.attr('id');
             var FieldType = $xmlitem.attr('fieldtype');
 
-            var Html = 'Fieldtype == ' + FieldType + '<br>';
+            //var Html = 'Fieldtype == ' + FieldType + '<br>';
             switch (FieldType)
             {
                 case "Date":
-                    Html += "<input type=\"date\" name=\"" + IdStr + "\" value=\"" + $xmlitem.attr('Gestalt') + "\" />";
+                    Html += '<input type="date" name="' + IdStr + '" value="' + $xmlitem.children('Value').text() + '" />';
                     break;
 
                 case "Link":
-                    Html += "<a href=\"" + $xmlitem.attr('href') + "\">" + $xmlitem.attr('text') + "</a>";
+                    Html += '<a href="' + $xmlitem.children('Href').text() + '">' + $xmlitem.children('Text').text() + '</a>';
                     break;
 
                 case "List":
-                    Html += "<select name=\"" + IdStr + "\">";
-                    //                    foreach( CswNbtNodeTypePropListOption Option in PropWrapper.AsList.Options.Options )
-                    //                    {
-                    //                        Html += "<option value=\"" + Option.Value + "\"";
-                    //                        if( PropWrapper.AsList.Value == Option.Value )
-                    //                            Html += " selected";
-                    //                        Html += ">" + Option.Text + "</option>";
-                    //                    }
-                    Html += "</select>";
+                    Html += '<select name="' + IdStr + '">';
+                    var selectedvalue = $xmlitem.children('Value').text();
+                    var optionsstr = $xmlitem.children('Options').text();
+                    var options = optionsstr.split(',');
+                    for (var i = 0; i < options.length; i++)
+                    {
+                        Html += '<option value="' + options[i] + '"';
+                        if (selectedvalue == options[i])
+                            Html += ' selected';
+                        Html += '>' + options[i] + "</option>";
+                    }
+                    Html += '</select>';
                     break;
 
                 case "Logical":
                     Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
                     Html += '        <legend></legend>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Blank" value="?" />';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Blank" value="?" ';
+                    if ($xmlitem.children('Checked').text() == '')
+                        Html += 'checked';
+                    Html += '/>';
                     Html += '            <label for="' + IdStr + '_ans_Blank">?</label>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" />';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
+                    if ($xmlitem.children('Checked').text() == 'Yes')
+                        Html += 'checked';
+                    Html += '/>';
                     Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" />';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" ';
+                    if ($xmlitem.children('Checked').text() == 'No')
+                        Html += 'checked';
+                    Html += '/>';
                     Html += '            <label for="' + IdStr + '_ans_No">No</label>';
                     Html += '    </fieldset>';
                     break;
 
                 case "Memo":
-                    Html += "<textarea name=\"" + IdStr + "\">" + $xmlitem.attr('text') + "</textarea>";
+                    Html += '<textarea name="' + IdStr + '">' + $xmlitem.children('Text').text() + '</textarea>';
                     break;
 
                 case "Number":
-                    Html += "<input type=\"number\" name=\"" + IdStr + "\" value=\"" + $xmlitem.attr('gestalt') + "\"";
-                    //                    if (Prop.MinValue != Int32.MinValue)
-                    //                        Html += "min = \"" + Prop.MinValue + "\"";
-                    //                    if (Prop.MaxValue != Int32.MinValue)
-                    //                        Html += "max = \"" + Prop.MaxValue + "\"";
-                    Html += "/>";
+                    Html += '<input type="number" name="' + IdStr + '" value="' + $xmlitem.children('Value').text() + '"';
+                    // if (Prop.MinValue != Int32.MinValue)
+                    //     Html += "min = \"" + Prop.MinValue + "\"";
+                    // if (Prop.MaxValue != Int32.MinValue)
+                    //     Html += "max = \"" + Prop.MaxValue + "\"";
+                    Html += '/>';
                     break;
 
                 case "Password":
@@ -271,66 +283,67 @@
                     break;
 
                 case "Quantity":
-                    Html += "<input type=\"text\" name=\"" + IdStr + "_qty\" value=\"" + $xmlitem.attr('gestalt') + "\" />";
-                    //                    Html += "<select name=\"" + IdStr + "_units\">";
-                    //                    string SelectedUnit = PropWrapper.AsQuantity.Units;
-                    //                    foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
-                    //                    {
-                    //                        string ThisUnitText = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
-                    //                        Html += "<option value=\"" + UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text + "\"";
-                    //                        if( ThisUnitText == SelectedUnit )
-                    //                            Html += " selected";
-                    //                        Html += ">" + ThisUnitText + "</option>";
-                    //                    }
-                    //                    Html += "</select>";
+                    Html += '<input type="text" name="' + IdStr + '_qty" value="' + $xmlitem.children('Value').text() + '" />';
+                    Html += $xmlitem.children('Units').text()
+                    // Html += "<select name=\"" + IdStr + "_units\">";
+                    // string SelectedUnit = PropWrapper.AsQuantity.Units;
+                    // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
+                    // {
+                    //     string ThisUnitText = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
+                    //     Html += "<option value=\"" + UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text + "\"";
+                    //     if( ThisUnitText == SelectedUnit )
+                    //         Html += " selected";
+                    //     Html += ">" + ThisUnitText + "</option>";
+                    // }
+                    // Html += "</select>";
 
                     break;
 
                 case "Question":
                     var answer = $xmlitem.attr('answer');
                     var compliantanswer = $xmlitem.attr('compliantanswer');
-                    //                    Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-                    //                    Html += '        <legend></legend>';
-                    //                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
-                    //                    if (compliantanswer == 'Yes')
-                    //                        Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
-                    //                    else
-                    //                        Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
-                    //                    if (answer == 'Yes')
-                    //                        Html += 'checked';
-                    //                    Html += '/>';
-                    //                    Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
-                    //                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" ';
-                    //                    if (compliantanswer == 'No')
-                    //                        Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
-                    //                    else
-                    //                        Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
-                    //                    Html += '/>';
-                    //                    Html += '            <label for="' + IdStr + '_ans_No">No</label>';
-                    //                    Html += '    </fieldset>';
+                    // Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+                    // Html += '        <legend></legend>';
+                    // Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
+                    // if (compliantanswer == 'Yes')
+                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
+                    // else
+                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
+                    // if (answer == 'Yes')
+                    //     Html += 'checked';
+                    // Html += '/>';
+                    // Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
+                    // Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" ';
+                    // if (compliantanswer == 'No')
+                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
+                    // else
+                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
+                    // Html += '/>';
+                    // Html += '            <label for="' + IdStr + '_ans_No">No</label>';
+                    // Html += '    </fieldset>';
 
-                    Html += "<textarea name=\"" + IdStr + "_com\" placeholder=\"Comments\">";
+                    Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
                     Html += $xmlitem.attr('comments');
-                    Html += "</textarea>";
+                    Html += '</textarea>';
 
-                    Html += "<textarea id=\"" + IdStr + "_cor\" name=\"" + IdStr + "_cor\" placeholder=\"Corrective Action\"";
+                    Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
                     if (answer == '' || answer == compliantanswer)
-                        Html += "style=\"display: none\"";
-                    Html += ">";
+                        Html += 'style="display: none"';
+                    Html += '>';
                     Html += $xmlitem.attr('correctiveaction');
-                    Html += "</textarea>";
+                    Html += '</textarea>';
                     break;
 
                 case "Static":
-                    Html += $xmlitem.attr('text');
+                    Html += $xmlitem.children('Text').text();
                     break;
 
                 case "Text":
-                    Html += "<input type=\"text\" name=\"" + IdStr + "\" value=\"" + $xmlitem.attr('text') + "\" />";
+                    Html += '<input type="text" name="' + IdStr + '" value="' + $xmlitem.children('Text').text() + '" />';
                     break;
 
                 case "Time":
-                    Html += "<input type=\"time\" name=\"" + IdStr + "\" value=\"" + $xmlitem.attr('gestalt') + "\" />";
+                    Html += '<input type="time" name="' + IdStr + '" value="' + $xmlitem.children('Value').text() + '" />';
                     break;
 
                 default:
