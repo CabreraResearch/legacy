@@ -218,7 +218,7 @@
             var IdStr = $xmlitem.attr('id');
             var FieldType = $xmlitem.attr('fieldtype');
 
-            //var Html = 'Fieldtype == ' + FieldType + '<br>';
+            var Html = '';
             switch (FieldType)
             {
                 case "Date":
