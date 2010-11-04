@@ -24,7 +24,7 @@
         var db;
 
         _initDB(true);
-        _loadDivContents(0, 'viewsdiv', 'Views');
+        _loadDivContents(0, 'viewsdiv', 'Views', true);
 
 
         // ------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@
         // List items fetching
         // ------------------------------------------------------------------------------------
 
-        function _loadDivContents(level, DivId, HeaderText)
+        function _loadDivContents(level, DivId, HeaderText, IsFirst)
         {
             if (level == 1)
                 rootid = DivId;
@@ -74,16 +74,14 @@
                         {
                             _fetchCachedRootXml(function (xml)
                             {
-                                _processSubLevelXml(DivId, HeaderText, $(xml).children(), level, true);
-                                lock = false;
+                                _processSubLevelXml(DivId, HeaderText, $(xml).children(), level, IsFirst);
                             });
                         } else
                         {
                             _fetchCachedSubLevelXml(DivId, function (xmlstr)
                             {
                                 var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                                _processSubLevelXml(DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level);
-                                lock = false;
+                                _processSubLevelXml(DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                             });
                         }
                     } else
@@ -101,13 +99,11 @@
                                 {
                                     _storeSubLevelXml(DivId, HeaderText, '', data.d);
                                 }
-                                _processSubLevelXml(DivId, HeaderText, $(data.d).children(), level, true);
-                                lock = false;
+                                _processSubLevelXml(DivId, HeaderText, $(data.d).children(), level, IsFirst);
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
                             {
                                 alert("An Error Occurred: " + errorThrown);
-                                lock = false;
                             }
                         });
                     }
@@ -116,8 +112,7 @@
                     _fetchCachedSubLevelXml(rootid, function (xmlstr)
                     {
                         var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                        _processSubLevelXml(DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level);
-                        lock = false;
+                        _processSubLevelXml(DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                     });
                 }
             }
@@ -125,7 +120,7 @@
 
 
 
-        function _processSubLevelXml(DivId, HeaderText, $xml, parentlevel)
+        function _processSubLevelXml(DivId, HeaderText, $xml, parentlevel, IsFirst)
         {
             var currenttab;
             var content = '<ul data-role="listview">';
@@ -183,7 +178,7 @@
 
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
-                    _addPageDivToBody(parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem));
+                    _addPageDivToBody(parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst);
 
                 }
                 else
@@ -209,7 +204,7 @@
             }); // $xml.each(function () {
 
 
-            _addPageDivToBody(parentlevel, DivId, HeaderText, '', content);
+            _addPageDivToBody(parentlevel, DivId, HeaderText, '', content, IsFirst);
 
         } // _processSubLevelXml()
 
@@ -353,7 +348,7 @@
             return Html;
         }
 
-        function _addPageDivToBody(level, DivId, HeaderText, toolbar, content)
+        function _addPageDivToBody(level, DivId, HeaderText, toolbar, content, IsFirst)
         {
             var divhtml = '<div id="' + DivId + '" data-role="page">' +
                           '  <div data-role="header" data-theme="' + opts.Theme + '">' +
@@ -373,11 +368,15 @@
                           '  </div>' +
                           '</div>';
 
-            $(divhtml)
-                .appendTo($('body'))
-                .page()
+            var $divhtml = $(divhtml);
+            if (IsFirst)
+                $('body').prepend($divhtml);
+            else
+                $('body').append($divhtml);
+            
+            $divhtml.page()
                 .find('a')
-                .click(function (e) { _loadDivContents((level + 1), $(this).attr('href').substr(1), $(this).text()); })
+                .click(function (e) { _loadDivContents((level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
                 .end()
                 .find('input')
                 .change(onPropertyChange)
