@@ -428,6 +428,21 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
+        /// Convenience function for making new jct_module_actions records
+        /// </summary>
+        public void createModuleActionJunction( Int32 ModuleId, Int32 ActionId )
+        {
+            CswTableUpdate JctModulesATable = makeCswTableUpdate( "SchemaModTrnsctn_ModuleJunctionUpdate", "jct_modules_actions" );
+            DataTable JctModulesADataTable = JctModulesATable.getEmptyTable();
+            DataRow JctRow = JctModulesADataTable.NewRow();
+            JctRow["actionid"] = ActionId.ToString();
+            JctRow["moduleid"] = ModuleId.ToString();
+            JctModulesADataTable.Rows.Add( JctRow );
+            Int32 NewJctModuleActionClassId = CswConvert.ToInt32(JctRow["jctmoduleactionid"]);
+            JctModulesATable.update( JctModulesADataTable );
+        }
+
+        /// <summary>
         /// Grants permission to an action to a role
         /// </summary>
         public void GrantActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName )

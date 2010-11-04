@@ -249,9 +249,6 @@ namespace ChemSW.Nbt.Schema
                 IMCSLocationsView.save();
             }
 
-            // Case 20062
-            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Import_Fire_Extinguisher_Data, true, "Act_ImportFireExtinguisher.aspx", "System" );
-
         } // update()
 
     }//class CswUpdateSchemaTo01H07
