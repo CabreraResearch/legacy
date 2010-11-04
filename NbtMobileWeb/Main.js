@@ -7,8 +7,16 @@
 
 
             var opts = {
-            WebServiceUrl: '/NbtMobileWeb/wsView.asmx/Run',
+            WebServiceUrl:' /NbtMobileWeb/wsView.asmx/Run',
             MainPageUrl: '/NbtMobileWeb/Main.html'
+        };
+
+
+        var DbId = {
+            DBShortName: 'main.html',
+            DBVersion: '1.0',
+            DBDisplayName: 'main.html',
+            DBMaxSize: 65536
         };
 
 
@@ -21,7 +29,7 @@
         var rootid;
         var db;
 
-        _initDB(true);
+        _initDB( false );
         _loadDivContents(0, this);
         _waitForData();
 
@@ -253,33 +261,28 @@
 
 
         // ------------------------------------------------------------------------------------
-        // Client-side Database Interaction
+        // Core client-side Database Interaction
         // ------------------------------------------------------------------------------------
 
-        /*
-        function _DoSql(sql, params, onSuccess)
-        {
-            db.transaction(function (transaction)
-            {
-                transaction.executeSql(sql, params, onSuccess, _errorHandler);
-            });
-        }
+        function _DoSql(sql, params, onSuccess) {
 
-        function _initDB(doreset)
-        {
-           if (window.openDatabase) {
+            if (window.openDatabase) {
 
-//                console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DisplayName + "; MaxSize: " + opts.MaxSize ); 
-//                db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DisplayName, opts.MaxSize);
-
-                console.log("DbShortName: " + DbId.DBShortName + "; DBVersion: " + DbId.DBVersion + "; DisplayName: " + DbId.DBDisplayName + "; MaxSize: " + DbId.DBMaxSize);
                 db = openDatabase(DbId.DBShortName, DbId.DBVersion, DbId.DBDisplayName, DbId.DBMaxSize);
+                db.transaction(
+                        function (transaction) {
+                            transaction.executeSql(sql, params, onSuccess, _errorHandler);
+                        }
+                    );
+            } else 
+            {
+                console.log("database is not opened");
+            }
+        } //_DoSql
 
-                console.log("got here");
 
-                if (null == db) {
-                    console.log("db is null");
-                }
+
+        function _initDB(doreset) {
 
                 if (doreset) {
                     _DoSql('DROP TABLE IF EXISTS sublevels; ');
@@ -287,31 +290,40 @@
                 }
 
                 _createDB();
-            } else 
-            {
-                console.log("database is not opened"); 
-            }
-            
-        }//_initDb()
- 
- 
 
-        function _createDB()
-        {
+        } //_initDb()
+
+
+
+        function _createDB() {
             _DoSql('CREATE TABLE IF NOT EXISTS sublevels ' +
-                   '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                   '   rootid TEXT NOT NULL, ' +
-                   '   rootname TEXT NOT NULL, ' +
-                   '   rootxml TEXT, ' +
-                   '   sublevelxml TEXT );');
+                    '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
+                    '   rootid TEXT NOT NULL, ' +
+                    '   rootname TEXT NOT NULL, ' +
+                    '   rootxml TEXT, ' +
+                    '   sublevelxml TEXT );'
+                    );
 
             _DoSql('CREATE TABLE IF NOT EXISTS changes ' +
-                   '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                   '   propid TEXT NOT NULL, ' +
-                   '   newvalue TEXT, ' +
-                   '   applied CHAR ); ');
+                    '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
+                    '   propid TEXT NOT NULL, ' +
+                    '   newvalue TEXT, ' +
+                    '   applied CHAR ); '
+                    );
+        }//_createDB()
+
+
+        function _errorHandler(transaction, error) {
+            alert('Database Error: ' + error.message + ' (Code ' + error.code + ')');
+            return true;
         }
-        */
+
+
+
+        // ------------------------------------------------------------------------------------
+        // Persistance functions
+        // ------------------------------------------------------------------------------------
+
 
         function _storeSubLevelXml(rootid, rootname, rootxml, sublevelxml)
         {
@@ -323,6 +335,7 @@
                        );
             }
         }
+
         function _storeChange(propid, newvalue)
         {
             if (rootid != undefined && rootid != '')
@@ -368,11 +381,102 @@
         }
 
 
+        // ------------------------------------------------------------------------------------
+        // Synchronization
+        // ------------------------------------------------------------------------------------
 
+
+        function _waitForData() {
+
+            setTimeout(_handleDataCheckTimer, 5000 );
+
+        } //_waitForData() 
+
+        function _handleDataCheckTimer() {
+
+            $.ajax({
+                type: 'POST',
+                url: '/NbtMobileWeb/wsUpdate.asmx/ConnectTest',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                data: "{}",
+                success: function (data, textStatus, XMLHttpRequest) {
+                    _DoSql("select * from changes where applied='0'", null, _processChanges);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    ErrorMessage = "Error: " + textStatus;
+                    if (null != errorThrown) {
+                        ErrorMessage += "; Exception: " + errorThrown.toString()
+                    }
+
+                    console.log(ErrorMessage);
+
+                    _waitForData();
+                }
+            });
+
+        } //_handleDataCheckTimer()
+
+
+        function _processChanges(transaction, result) {
+
+                //console.log("totalrows: " + result.rows.length);
+
+            //console.log("Connection detected: beginning row processing ");
+
+            var Updates = "";
+            for (var rowidx = 0; rowidx < result.rows.length; rowidx++) {
+
+                Updates += result.rows.item(rowidx)["id"] + "," + result.rows.item(rowidx)["propid"] + "," + result.rows.item(rowidx)["newvalue"] + ";";
+                console.log( "Update string: " + Updates ); 
+                //console.log("iteration " + rowidx + ": change value: " + result.rows.item(rowidx)["newvalue"]);
+
+            } //iterate rows
+
+
+            $.ajax({
+                type: 'POST',
+                url: '/NbtMobileWeb/wsUpdate.asmx/UpdateProperties',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                data: "{Updates: '" + Updates + "'}",
+                success: function (data, textStatus, XMLHttpRequest) {
+
+                    console.log( "return from update: " + data.d ); 
+
+                    _DoSql("update changes set applied='1' where id in (?);",
+                           [data.d],
+                           function ( transaction, result ) {
+
+                               console.log("sql succeeded"); 
+                            } 
+                           );                    
+                  
+                     _waitForData();
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    ErrorMessage = "Error: " + textStatus;
+                    if (null != errorThrown) {
+                        ErrorMessage += "; Exception: " + errorThrown.toString()
+                    }
+
+                    console.log(ErrorMessage);
+
+                    _waitForData();
+                }
+            });
+
+
+        } //_processChanges()
 
         // For proper chaining support
         return this;
-    };
+
+    };//End of plugin code? 
+
 })(jQuery);
 
 
@@ -390,3 +494,4 @@ function iterate(obj)
     var popup = window.open("", "popup");
     popup.document.write(str);
 }
+
