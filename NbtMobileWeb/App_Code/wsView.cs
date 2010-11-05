@@ -68,9 +68,7 @@ public class wsView : System.Web.Services.WebService
                     ret = _runTreeNodesRecursive( Tree );
                 else
                 {
-                    ret = @"<node id="""">
-                              <text>No results</text>
-                            </node>";
+                    ret = @"<node id="""" name=""No results""></node>";
                 }
             }// if( ParentId.StartsWith( ViewIdPrefix ) )
             else
