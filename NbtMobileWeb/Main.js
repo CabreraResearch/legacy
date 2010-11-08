@@ -123,7 +123,7 @@
         function _processSubLevelXml(DivId, HeaderText, $xml, parentlevel, IsFirst)
         {
             var currenttab;
-            var content = '<ul data-role="listview">';
+            var content = _makeUL();
 
             $xml.each(function ()
             {
@@ -147,7 +147,7 @@
                     if (currenttab != tab)
                     {
                         if (currenttab != undefined)
-                            lihtml += '</ul><ul data-role="listview">';
+                            lihtml += '</ul>' + _makeUL();
                         lihtml += '<li data-role="list-divider">' + tab + '</li>'
                         currenttab = tab;
                     }
@@ -160,9 +160,9 @@
                         lihtml += '<li>';
                         lihtml += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
                         lihtml += '        <legend>Answer:</legend>';
-                        lihtml += '            <input type="radio" name="' + id + '_ans" id="' + id + '_ans_Yes" value="Yes" />';
+                        lihtml += '            <input type="radio" name="' + id + '_ans" id="' + id + '_ans_Yes" value="Yes" onclick="var $otheryesradio = $(\'#' + id + '_ans2_Yes\'); $otheryesradio.attr(\'checked\', true); $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + id + '_ans2_No\'); $othernoradio.attr(\'checked\', false); $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\');" />';
                         lihtml += '            <label for="' + id + '_ans_Yes">Yes</label>';
-                        lihtml += '            <input type="radio" name="' + id + '_ans" id="' + id + '_ans_No" value="No" />';
+                        lihtml += '            <input type="radio" name="' + id + '_ans" id="' + id + '_ans_No" value="No" onclick="var $otheryesradio = $(\'#' + id + '_ans2_Yes\'); $otheryesradio.attr(\'checked\', false); $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + id + '_ans2_No\'); $othernoradio.attr(\'checked\', true); $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\');" />';
                         lihtml += '            <label for="' + id + '_ans_No">No</label>';
                         lihtml += '    </fieldset>';
                         lihtml += '</li>';
@@ -208,26 +208,55 @@
 
         } // _processSubLevelXml()
 
+        function _makeUL()
+        {
+            return '<ul data-role="listview" data-inset="true">';
+        }
+
         function _makeFieldTypeContent($xmlitem)
         {
             var IdStr = $xmlitem.attr('id');
             var FieldType = $xmlitem.attr('fieldtype');
 
             var Html = '';
+
+            // Subfield values
+            var sf_text = $xmlitem.children('Text').text();
+            var sf_value = $xmlitem.children('Value').text();
+            var sf_href = $xmlitem.children('Href').text();
+            var sf_options = $xmlitem.children('Options').text();
+            var sf_checked = $xmlitem.children('Checked').text();
+            var sf_units = $xmlitem.children('Units').text();
+            var sf_answer = $xmlitem.children('Answer').text();
+            var sf_correctiveaction = $xmlitem.children('CorrectiveAction').text();
+            var sf_comments = $xmlitem.children('Comments').text();
+            var sf_compliantanswers = $xmlitem.children('CompliantAnswers').text();
+
+            if (sf_text == undefined) sf_text = '';
+            if (sf_value == undefined) sf_value = '';
+            if (sf_href == undefined) sf_href = '';
+            if (sf_options == undefined) sf_options = '';
+            if (sf_checked == undefined) sf_checked = '';
+            if (sf_units == undefined) sf_units = '';
+            if (sf_answer == undefined) sf_answer = '';
+            if (sf_correctiveaction == undefined) sf_correctiveaction = '';
+            if (sf_comments == undefined) sf_comments = '';
+            if (sf_compliantanswers == undefined) sf_compliantanswers = '';
+
             switch (FieldType)
             {
                 case "Date":
-                    Html += '<input type="date" name="' + IdStr + '" value="' + $xmlitem.children('Value').text() + '" />';
+                    Html += '<input type="date" name="' + IdStr + '" value="' + sf_value + '" />';
                     break;
 
                 case "Link":
-                    Html += '<a href="' + $xmlitem.children('Href').text() + '">' + $xmlitem.children('Text').text() + '</a>';
+                    Html += '<a href="' + sf_href + '">' + sf_text + '</a>';
                     break;
 
                 case "List":
                     Html += '<select name="' + IdStr + '">';
-                    var selectedvalue = $xmlitem.children('Value').text();
-                    var optionsstr = $xmlitem.children('Options').text();
+                    var selectedvalue = sf_value;
+                    var optionsstr = sf_options;
                     var options = optionsstr.split(',');
                     for (var i = 0; i < options.length; i++)
                     {
@@ -243,17 +272,17 @@
                     Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
                     Html += '        <legend></legend>';
                     Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Blank" value="?" ';
-                    if ($xmlitem.children('Checked').text() == '')
+                    if (sf_checked == '')
                         Html += 'checked';
                     Html += '/>';
                     Html += '            <label for="' + IdStr + '_ans_Blank">?</label>';
                     Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
-                    if ($xmlitem.children('Checked').text() == 'Yes')
+                    if (sf_checked == 'Yes')
                         Html += 'checked';
                     Html += '/>';
                     Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
                     Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" ';
-                    if ($xmlitem.children('Checked').text() == 'No')
+                    if (sf_checked == 'No')
                         Html += 'checked';
                     Html += '/>';
                     Html += '            <label for="' + IdStr + '_ans_No">No</label>';
@@ -261,11 +290,11 @@
                     break;
 
                 case "Memo":
-                    Html += '<textarea name="' + IdStr + '">' + $xmlitem.children('Text').text() + '</textarea>';
+                    Html += '<textarea name="' + IdStr + '">' + sf_text + '</textarea>';
                     break;
 
                 case "Number":
-                    Html += '<input type="number" name="' + IdStr + '" value="' + $xmlitem.children('Value').text() + '"';
+                    Html += '<input type="number" name="' + IdStr + '" value="' + sf_value + '"';
                     // if (Prop.MinValue != Int32.MinValue)
                     //     Html += "min = \"" + Prop.MinValue + "\"";
                     // if (Prop.MaxValue != Int32.MinValue)
@@ -278,8 +307,8 @@
                     break;
 
                 case "Quantity":
-                    Html += '<input type="text" name="' + IdStr + '_qty" value="' + $xmlitem.children('Value').text() + '" />';
-                    Html += $xmlitem.children('Units').text()
+                    Html += '<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />';
+                    Html += sf_units;
                     // Html += "<select name=\"" + IdStr + "_units\">";
                     // string SelectedUnit = PropWrapper.AsQuantity.Units;
                     // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
@@ -295,8 +324,8 @@
                     break;
 
                 case "Question":
-                    var answer = $xmlitem.attr('answer');
-                    var compliantanswer = $xmlitem.attr('compliantanswer');
+                    //var answer = $xmlitem.attr('answer');
+                    //var compliantanswer = $xmlitem.attr('compliantanswer');
                     // Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
                     // Html += '        <legend></legend>';
                     // Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
@@ -317,28 +346,38 @@
                     // Html += '            <label for="' + IdStr + '_ans_No">No</label>';
                     // Html += '    </fieldset>';
 
+                    Html += '<li>';
+                    Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+                    Html += '        <legend>Answer:</legend>';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans2" id="' + IdStr + '_ans2_Yes" value="Yes" onclick="var $otheryesradio = $(\'#' + IdStr + '_ans_Yes\'); $otheryesradio.attr(\'checked\', true); $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + IdStr + '_ans_No\'); $othernoradio.attr(\'checked\', false); $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\');" />';
+                    Html += '            <label for="' + IdStr + '_ans2_Yes">Yes</label>';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans2" id="' + IdStr + '_ans2_No" value="No" onclick="var $otheryesradio = $(\'#' + IdStr + '_ans_Yes\'); $otheryesradio.attr(\'checked\', false); $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + IdStr + '_ans_No\'); $othernoradio.attr(\'checked\', true); $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\');" />';
+                    Html += '            <label for="' + IdStr + '_ans2_No">No</label>';
+                    Html += '    </fieldset>';
+                    Html += '</li>';
+
                     Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
-                    Html += $xmlitem.attr('comments');
+                    Html += sf_comments
                     Html += '</textarea>';
 
                     Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
-                    if (answer == '' || answer == compliantanswer)
+                    if (sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
                         Html += 'style="display: none"';
                     Html += '>';
-                    Html += $xmlitem.attr('correctiveaction');
+                    Html += sf_correctiveaction;
                     Html += '</textarea>';
                     break;
 
                 case "Static":
-                    Html += $xmlitem.children('Text').text();
+                    Html += sf_text;
                     break;
 
                 case "Text":
-                    Html += '<input type="text" name="' + IdStr + '" value="' + $xmlitem.children('Text').text() + '" />';
+                    Html += '<input type="text" name="' + IdStr + '" value="' + sf_text + '" />';
                     break;
 
                 case "Time":
-                    Html += '<input type="time" name="' + IdStr + '" value="' + $xmlitem.children('Value').text() + '" />';
+                    Html += '<input type="time" name="' + IdStr + '" value="' + sf_value + '" />';
                     break;
 
                 default:
@@ -373,7 +412,7 @@
                 $('body').prepend($divhtml);
             else
                 $('body').append($divhtml);
-            
+
             $divhtml.page()
                 .find('a')
                 .click(function (e) { _loadDivContents((level + 1), $(this).attr('href').substr(1), $(this).text(), false); })

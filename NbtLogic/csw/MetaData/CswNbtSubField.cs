@@ -47,6 +47,7 @@ namespace ChemSW.Nbt.MetaData
             Checked,
             Column,
             Comments,
+            CompliantAnswers,
             ContentType,
             CorrectiveAction,
             DateAnswered,
