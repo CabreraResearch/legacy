@@ -1,0 +1,7 @@
+relre:/obj/
+relre:/bin/
+relre:/Bin/
+relre:\.exe$
+relre:\.msi$
+relre:\.suo$
+relre:.*\.csproj\.user$
