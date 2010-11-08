@@ -40,8 +40,12 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Telerik.Web.UI">
-      <HintPath>..\..\..\ThirdParty\Telerik\RadControls for ASPNET AJAX Q3 2008 1314\bin35\Telerik.Web.UI.dll</HintPath>
+    <Reference Include="Telerik.Charting">
+      <HintPath>..\..\..\ThirdParty\Telerik\RadControls for ASPNET AJAX Q2 2008 1001\bin35\Telerik.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Web.UI, Version=2008.2.1001.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ThirdParty\Telerik\RadControls for ASPNET AJAX Q2 2008 1001\bin35\Telerik.Web.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
