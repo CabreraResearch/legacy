@@ -5,3 +5,5 @@ relre:\.exe$
 relre:\.msi$
 relre:\.suo$
 relre:.*\.csproj\.user$
+glob:CswDbCfgInfo.xml
+glob:CswSetupVbls.xml
