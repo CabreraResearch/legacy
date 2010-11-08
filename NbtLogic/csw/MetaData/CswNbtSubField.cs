@@ -41,14 +41,21 @@ namespace ChemSW.Nbt.MetaData
         public enum SubFieldName
         {
             Unknown, // generates an exception when run
+            Answer,
             Barcode,
             Blob,
             Checked,
             Column,
+            Comments,
+            CompliantAnswers,
             ContentType,
+            CorrectiveAction,
+            DateAnswered,
+            DateCorrected,
             Href,
             Image,
             Interval,
+            IsCompliant,
             Mol,
             Name,
             NodeID,

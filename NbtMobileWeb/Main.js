@@ -11,7 +11,8 @@
             DBDisplayName: 'main.html',
             DBMaxSize: 65536,
             WebServiceUrl: '/NbtMobileWeb/wsView.asmx/Run',
-            MainPageUrl: '/NbtMobileWeb/Main.html'
+            MainPageUrl: '/NbtMobileWeb/Main.html',
+            Theme: 'a'
         };
 
         if (options)
@@ -19,12 +20,11 @@
             $.extend(opts, options);
         }
 
-        //    var $Div = this;
         var rootid;
         var db;
 
         _initDB(true);
-        _loadDivContents(0, this);
+        _loadDivContents(0, 'viewsdiv', 'Views', true);
 
 
         // ------------------------------------------------------------------------------------
@@ -59,13 +59,12 @@
         // List items fetching
         // ------------------------------------------------------------------------------------
 
-        function _loadDivContents(level, $Div)
+        function _loadDivContents(level, DivId, HeaderText, IsFirst)
         {
-            var ParentId = $Div.attr('id');
             if (level == 1)
-                rootid = ParentId;
-            var $Ul = $Div.children('div[data-role="content"]').children('ul').first();
-            if ($Ul.children('li').length == 0)
+                rootid = DivId;
+
+            if ($('#' + DivId).length == 0)
             {
                 if (level <= 1)
                 {
@@ -75,34 +74,32 @@
                         {
                             _fetchCachedRootXml(function (xml)
                             {
-                                _processSubLevelXml($Div, $(xml).children(), $Ul, level, true);
-                                $Ul.listview();
+                                _processSubLevelXml(DivId, HeaderText, $(xml).children(), level, IsFirst);
                             });
                         } else
                         {
-                            _fetchCachedSubLevelXml(ParentId, function (xmlstr)
+                            _fetchCachedSubLevelXml(DivId, function (xmlstr)
                             {
-                                var $thisxmlstr = $(xmlstr).find('#' + ParentId);
-                                _processSubLevelXml($Div, $thisxmlstr.children('subitems').first().children(), $Ul, level);
-                                $Ul.listview();
+                                var $thisxmlstr = $(xmlstr).find('#' + DivId);
+                                _processSubLevelXml(DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                             });
                         }
                     } else
                     {
                         $.ajax({
+                            async: false,   // required so that the link will wait for the content before navigating
                             type: 'POST',
                             url: opts.WebServiceUrl,
                             dataType: "json",
                             contentType: 'application/json; charset=utf-8',
-                            data: "{ ParentId: '" + ParentId + "' }",
+                            data: "{ ParentId: '" + DivId + "' }",
                             success: function (data, textStatus, XMLHttpRequest)
                             {
                                 if (level == 1)
                                 {
-                                    _storeSubLevelXml(ParentId, $Div.children('div[data-role="header"]').children('h1').text(), '', data.d);
+                                    _storeSubLevelXml(DivId, HeaderText, '', data.d);
                                 }
-                                _processSubLevelXml($Div, $(data.d).children(), $Ul, level, true);
-                                $Ul.listview();
+                                _processSubLevelXml(DivId, HeaderText, $(data.d).children(), level, IsFirst);
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
                             {
@@ -114,124 +111,322 @@
                 {
                     _fetchCachedSubLevelXml(rootid, function (xmlstr)
                     {
-                        var $thisxmlstr = $(xmlstr).find('#' + ParentId);
-                        _processSubLevelXml($Div, $thisxmlstr.children('subitems').first().children(), $Ul, level);
-                        $Ul.listview();
+                        var $thisxmlstr = $(xmlstr).find('#' + DivId);
+                        _processSubLevelXml(DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                     });
                 }
             }
         }
 
-        function _processSubLevelXml($Div, $xml, $ParentUL, parentlevel)
+
+
+        function _processSubLevelXml(DivId, HeaderText, $xml, parentlevel, IsFirst)
         {
+            var currenttab;
+            var content = _makeUL();
+
             $xml.each(function ()
             {
                 var $xmlitem = $(this);
                 var id = $xmlitem.attr('id');
-                var text = $xmlitem.children('text').first().contents().first().text();
-                var texthtml = $xmlitem.children('text').html();
+                var text = $xmlitem.attr('name');
                 var IsDiv = (id != undefined && id != '');
-                var PageType = $xmlitem.attr('pagetype');
+                var PageType = this.nodeName;
 
                 var nextid = $xmlitem.next().attr('id');
                 var previd = $xmlitem.prev().attr('id');
-                var parentid = $Div.attr('id');
-                
+
                 var currentcnt = $xmlitem.prevAll().andSelf().length;
                 var siblingcnt = $xmlitem.siblings().andSelf().length;
 
-                var lihtml = '<li';
-                // if ($xmlitem.attr('arrow') == 'true')
-                //     lihtml += ' class="arrow"';
-                lihtml += '>';
-                if (IsDiv)
-                    lihtml += '<a href="#' + id + '">' + texthtml + '</a>';
-                else
-                    lihtml += texthtml;
-                lihtml += '</li>';
-
-                $(lihtml).appendTo($ParentUL)
-                    .find('input')
-                    .change(onPropertyChange)
-                    .end()
-                    .find('textarea')
-                    .change(onPropertyChange)
-                    .end()
-                    .find('select')
-                    .change(onPropertyChange);
-
-                if (IsDiv)
+                var lihtml = '';
+                if (PageType == "PROP")
                 {
-                    var divhtml = '<div id="' + id + '" data-role="page">' +
-                                  '  <div data-role="header">' +
-                    //            '    <a href="#" class="back">Back</a>' +
-                                  '    <h1>' + text + ' (' + PageType + ')</h1>' +
-                                  '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
-                                  '    <div class="toolbar">' +
-                                  '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
-                                  '      <a href="#' + parentid + '" data-back="true">Back</a>' +
-                                  '    </div>' +
-                                  '  </div>' +
-                                  '  <div data-role="content">' +
-                                  '    <ul></ul>' +
-                                  '  </div>' +
-                                  '  <div data-role="footer">' +
-                                  '  </div>' +
-                                  '</div>';
-
-                    $(divhtml).appendTo($('body'))
-                        .bind('pageshow', function () { _loadDivContents(parentlevel + 1, $(this)); })
-                        .page();
-
-
-                    var $cg = $('div#' + id + ' div[data-role="header"] div.toolbar');
-
-                    if (PageType == "Property")
+                    var tab = $xmlitem.attr('tab');
+                    var fieldtype = $xmlitem.attr('fieldtype');
+                    if (currenttab != tab)
                     {
-                        if (previd != undefined)
-                        {
-                            var $prevbutton = $('<a href="#' + previd + '" data-transition="slideup" data-back="true">Previous</a>');
-                            $prevbutton.buttonMarkup({
-                                'icon': 'arrow-u',
-                                'iconpos': 'left',
-                                'inline': true,
-                                'shadow': false,
-                                'theme': 'a'
-                            })
-                                .appendTo($cg);
-                            //  if (previd == undefined)
-                            //  {
-                            //      $prevbutton.attr('disabled', 'true');
-                            //  }
-                        }
+                        if (currenttab != undefined)
+                            lihtml += '</ul>' + _makeUL();
+                        lihtml += '<li data-role="list-divider">' + tab + '</li>'
+                        currenttab = tab;
+                    }
 
-                        if (nextid != undefined)
-                        {
-                            var $nextbutton = $('<a href="#' + nextid + '" data-transition="slideup">Next</a>');
-                            $nextbutton.buttonMarkup({
-                                'icon': 'arrow-d',
-                                'iconpos': 'left',
-                                'inline': true,
-                                'shadow': false,
-                                'theme': 'a'
-                            })
-                                .appendTo($cg);
-                            //  if (nextid == undefined)
-                            //  {
-                            //      $nextbutton.attr('disabled', 'true');
-                            //  }
-                        }
-                        
-                        $cg.append('&nbsp;'+currentcnt+'&nbsp;of&nbsp;'+ siblingcnt);
+                    lihtml += '<li>';
+                    lihtml += '<a href="#' + id + '">' + text + '</a>';
+                    lihtml += '</li>';
+                    if (fieldtype == 'Question')
+                    {
+                        lihtml += '<li>';
+                        lihtml += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+                        lihtml += '        <legend>Answer:</legend>';
+                        lihtml += '            <input type="radio" name="' + id + '_ans" id="' + id + '_ans_Yes" value="Yes" onclick="var $otheryesradio = $(\'#' + id + '_ans2_Yes\'); $otheryesradio.attr(\'checked\', true); $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + id + '_ans2_No\'); $othernoradio.attr(\'checked\', false); $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\');" />';
+                        lihtml += '            <label for="' + id + '_ans_Yes">Yes</label>';
+                        lihtml += '            <input type="radio" name="' + id + '_ans" id="' + id + '_ans_No" value="No" onclick="var $otheryesradio = $(\'#' + id + '_ans2_Yes\'); $otheryesradio.attr(\'checked\', false); $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + id + '_ans2_No\'); $othernoradio.attr(\'checked\', true); $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\');" />';
+                        lihtml += '            <label for="' + id + '_ans_No">No</label>';
+                        lihtml += '    </fieldset>';
+                        lihtml += '</li>';
+                    }
 
-                    } // if (PageType == "Property")
-                    $cg.controlgroup({
-                        'direction': 'horizontal',
-                    });
-                } // if (IsDiv)
+                    // add a div for editing the property directly
+                    var toolbar = '';
+                    if (previd != undefined)
+                        toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-back="true">Previous</a>';
+
+                    if (nextid != undefined)
+                        toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
+
+                    toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
+
+                    _addPageDivToBody(parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst);
+
+                }
+                else
+                {
+                    lihtml += '<li>';
+                    if (IsDiv)
+                        lihtml += '<a href="#' + id + '">' + text + '</a>';
+                    else
+                        lihtml += text;
+                    lihtml += '</li>';
+
+                }
+                content += lihtml;
+
+                // to avoid race condition between link execution and callback from Sqlite,
+                // create content for subitems now too
+                $xmlchildren = $xmlitem.children('subitems').first().children();
+                if ($xmlchildren.length > 0)
+                {
+                    _processSubLevelXml(id, text, $xmlchildren, parentlevel + 1)
+                }
 
             }); // $xml.each(function () {
+
+
+            _addPageDivToBody(parentlevel, DivId, HeaderText, '', content, IsFirst);
+
         } // _processSubLevelXml()
+
+        function _makeUL()
+        {
+            return '<ul data-role="listview" data-inset="true">';
+        }
+
+        function _makeFieldTypeContent($xmlitem)
+        {
+            var IdStr = $xmlitem.attr('id');
+            var FieldType = $xmlitem.attr('fieldtype');
+
+            var Html = '';
+
+            // Subfield values
+            var sf_text = $xmlitem.children('Text').text();
+            var sf_value = $xmlitem.children('Value').text();
+            var sf_href = $xmlitem.children('Href').text();
+            var sf_options = $xmlitem.children('Options').text();
+            var sf_checked = $xmlitem.children('Checked').text();
+            var sf_units = $xmlitem.children('Units').text();
+            var sf_answer = $xmlitem.children('Answer').text();
+            var sf_correctiveaction = $xmlitem.children('CorrectiveAction').text();
+            var sf_comments = $xmlitem.children('Comments').text();
+            var sf_compliantanswers = $xmlitem.children('CompliantAnswers').text();
+
+            if (sf_text == undefined) sf_text = '';
+            if (sf_value == undefined) sf_value = '';
+            if (sf_href == undefined) sf_href = '';
+            if (sf_options == undefined) sf_options = '';
+            if (sf_checked == undefined) sf_checked = '';
+            if (sf_units == undefined) sf_units = '';
+            if (sf_answer == undefined) sf_answer = '';
+            if (sf_correctiveaction == undefined) sf_correctiveaction = '';
+            if (sf_comments == undefined) sf_comments = '';
+            if (sf_compliantanswers == undefined) sf_compliantanswers = '';
+
+            switch (FieldType)
+            {
+                case "Date":
+                    Html += '<input type="date" name="' + IdStr + '" value="' + sf_value + '" />';
+                    break;
+
+                case "Link":
+                    Html += '<a href="' + sf_href + '">' + sf_text + '</a>';
+                    break;
+
+                case "List":
+                    Html += '<select name="' + IdStr + '">';
+                    var selectedvalue = sf_value;
+                    var optionsstr = sf_options;
+                    var options = optionsstr.split(',');
+                    for (var i = 0; i < options.length; i++)
+                    {
+                        Html += '<option value="' + options[i] + '"';
+                        if (selectedvalue == options[i])
+                            Html += ' selected';
+                        Html += '>' + options[i] + "</option>";
+                    }
+                    Html += '</select>';
+                    break;
+
+                case "Logical":
+                    Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+                    Html += '        <legend></legend>';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Blank" value="?" ';
+                    if (sf_checked == '')
+                        Html += 'checked';
+                    Html += '/>';
+                    Html += '            <label for="' + IdStr + '_ans_Blank">?</label>';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
+                    if (sf_checked == 'Yes')
+                        Html += 'checked';
+                    Html += '/>';
+                    Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" ';
+                    if (sf_checked == 'No')
+                        Html += 'checked';
+                    Html += '/>';
+                    Html += '            <label for="' + IdStr + '_ans_No">No</label>';
+                    Html += '    </fieldset>';
+                    break;
+
+                case "Memo":
+                    Html += '<textarea name="' + IdStr + '">' + sf_text + '</textarea>';
+                    break;
+
+                case "Number":
+                    Html += '<input type="number" name="' + IdStr + '" value="' + sf_value + '"';
+                    // if (Prop.MinValue != Int32.MinValue)
+                    //     Html += "min = \"" + Prop.MinValue + "\"";
+                    // if (Prop.MaxValue != Int32.MinValue)
+                    //     Html += "max = \"" + Prop.MaxValue + "\"";
+                    Html += '/>';
+                    break;
+
+                case "Password":
+                    Html += string.Empty;
+                    break;
+
+                case "Quantity":
+                    Html += '<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />';
+                    Html += sf_units;
+                    // Html += "<select name=\"" + IdStr + "_units\">";
+                    // string SelectedUnit = PropWrapper.AsQuantity.Units;
+                    // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
+                    // {
+                    //     string ThisUnitText = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
+                    //     Html += "<option value=\"" + UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text + "\"";
+                    //     if( ThisUnitText == SelectedUnit )
+                    //         Html += " selected";
+                    //     Html += ">" + ThisUnitText + "</option>";
+                    // }
+                    // Html += "</select>";
+
+                    break;
+
+                case "Question":
+                    //var answer = $xmlitem.attr('answer');
+                    //var compliantanswer = $xmlitem.attr('compliantanswer');
+                    // Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+                    // Html += '        <legend></legend>';
+                    // Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
+                    // if (compliantanswer == 'Yes')
+                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
+                    // else
+                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
+                    // if (answer == 'Yes')
+                    //     Html += 'checked';
+                    // Html += '/>';
+                    // Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
+                    // Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" ';
+                    // if (compliantanswer == 'No')
+                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
+                    // else
+                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
+                    // Html += '/>';
+                    // Html += '            <label for="' + IdStr + '_ans_No">No</label>';
+                    // Html += '    </fieldset>';
+
+                    Html += '<li>';
+                    Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+                    Html += '        <legend>Answer:</legend>';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans2" id="' + IdStr + '_ans2_Yes" value="Yes" onclick="var $otheryesradio = $(\'#' + IdStr + '_ans_Yes\'); $otheryesradio.attr(\'checked\', true); $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + IdStr + '_ans_No\'); $othernoradio.attr(\'checked\', false); $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\');" />';
+                    Html += '            <label for="' + IdStr + '_ans2_Yes">Yes</label>';
+                    Html += '            <input type="radio" name="' + IdStr + '_ans2" id="' + IdStr + '_ans2_No" value="No" onclick="var $otheryesradio = $(\'#' + IdStr + '_ans_Yes\'); $otheryesradio.attr(\'checked\', false); $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + IdStr + '_ans_No\'); $othernoradio.attr(\'checked\', true); $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\');" />';
+                    Html += '            <label for="' + IdStr + '_ans2_No">No</label>';
+                    Html += '    </fieldset>';
+                    Html += '</li>';
+
+                    Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
+                    Html += sf_comments
+                    Html += '</textarea>';
+
+                    Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
+                    if (sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
+                        Html += 'style="display: none"';
+                    Html += '>';
+                    Html += sf_correctiveaction;
+                    Html += '</textarea>';
+                    break;
+
+                case "Static":
+                    Html += sf_text;
+                    break;
+
+                case "Text":
+                    Html += '<input type="text" name="' + IdStr + '" value="' + sf_text + '" />';
+                    break;
+
+                case "Time":
+                    Html += '<input type="time" name="' + IdStr + '" value="' + sf_value + '" />';
+                    break;
+
+                default:
+                    Html += $xmlitem.attr('gestalt');
+                    break;
+            }
+            return Html;
+        }
+
+        function _addPageDivToBody(level, DivId, HeaderText, toolbar, content, IsFirst)
+        {
+            var divhtml = '<div id="' + DivId + '" data-role="page">' +
+                          '  <div data-role="header" data-theme="' + opts.Theme + '">' +
+            //            '    <a href="#" class="back">Back</a>' +
+                          '    <h1>' + HeaderText + '</h1>' +
+                          '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
+                          '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
+                          '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
+            //            '      <a href="#' + ParentId + '" data-back="true">Back</a>' +
+                                 toolbar +
+                          '    </div>' +
+                          '  </div>' +
+                          '  <div data-role="content" data-theme="' + opts.Theme + '">' +
+                               content +
+                          '  </div>' +
+                          '  <div data-role="footer" data-theme="' + opts.Theme + '">' +
+                          '  </div>' +
+                          '</div>';
+
+            var $divhtml = $(divhtml);
+            if (IsFirst)
+                $('body').prepend($divhtml);
+            else
+                $('body').append($divhtml);
+
+            $divhtml.page()
+                .find('a')
+                .click(function (e) { _loadDivContents((level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
+                .end()
+                .find('input')
+                .change(onPropertyChange)
+                .end()
+                .find('textarea')
+                .change(onPropertyChange)
+                .end()
+                .find('select')
+                .change(onPropertyChange);
+        }
+
 
         // ------------------------------------------------------------------------------------
         // Events
@@ -394,5 +589,8 @@ function iterate(obj)
         str = str + x + "=" + obj[x] + "<br><br>";
     }
     var popup = window.open("", "popup");
-    popup.document.write(str);
+    if (popup != null)
+        popup.document.write(str);
+    else
+        alert("iterate() error: No popup!");
 }
