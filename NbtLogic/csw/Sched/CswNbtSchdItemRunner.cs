@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.Sched
             //}// iterate object classes
 
             // BZ 10350 - Use an S4 to find due generators
-            CswStaticSelect ScheduleItemsDueSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtSchdItemRunner.loadSchedules()_select", "GeneratorsDue" );
+            CswStaticSelect ScheduleItemsDueSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtSchdItemRunner.loadSchedules()_select", "ScheduleItemsDue" );
             DataTable ScheduleItemsDueTable = ScheduleItemsDueSelect.getTable( false, false, 0, 25 );
 
             // BZ 10350 - Pick just one row at random
