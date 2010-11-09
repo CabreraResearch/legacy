@@ -53,10 +53,11 @@ namespace ChemSW.Nbt.WebPages
             }
 
             ArrayList Assemblies = new ArrayList();
+            Assemblies.Add( "CrystalDecisions.Web, Version=14.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" );
             Assemblies.Add( "CswCommon" );
             Assemblies.Add( "CswWebControls" );
             Assemblies.Add( "FarPoint.Web.Spread" );
-            Assemblies.Add( "NbtBase" );
+            //Assemblies.Add( "NbtBase" );
             Assemblies.Add( "NbtConfig" );
             Assemblies.Add( "NbtLogic" );
             Assemblies.Add( "NbtWebControls" );
@@ -64,8 +65,11 @@ namespace ChemSW.Nbt.WebPages
 
             foreach (string AssemblyName in Assemblies)
             {
-                ret += "<tr><td>" + AssemblyName + "</td>";
-                Assembly AssemblyInfo = Assembly.Load(AssemblyName);
+                if(AssemblyName.Contains(","))
+                    ret += "<tr><td>" + AssemblyName.Substring( 0, AssemblyName.IndexOf( ',' ) ) + "</td>";
+                else
+                    ret += "<tr><td>" + AssemblyName + "</td>";
+                Assembly AssemblyInfo = Assembly.Load( AssemblyName );
                 object[] AssemblyAttributes = (object[])AssemblyInfo.GetCustomAttributes(true);
 
                 string Version = AssemblyInfo.GetName().Version.ToString();
