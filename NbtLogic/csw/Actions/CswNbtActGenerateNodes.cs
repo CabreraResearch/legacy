@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
             if ( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )
-                throw new CswDniException( "CswNbtActGenerateNodes got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
+                throw new CswDniException( "CswNbtActGenerateNodes got an invalid object class: " + TargetObjClass.ObjectClass.ToString() );
             ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget)TargetObjClass;
 
             CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
