@@ -438,7 +438,7 @@ namespace ChemSW.Nbt.Schema
             JctRow["actionid"] = ActionId.ToString();
             JctRow["moduleid"] = ModuleId.ToString();
             JctModulesADataTable.Rows.Add( JctRow );
-            Int32 NewJctModuleActionClassId = CswConvert.ToInt32(JctRow["jctmoduleactionid"]);
+            //Int32 NewJctModuleActionClassId = CswConvert.ToInt32(JctRow["jctmoduleactionid"]);
             JctModulesATable.update( JctModulesADataTable );
         }
 
