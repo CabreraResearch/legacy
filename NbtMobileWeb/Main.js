@@ -24,7 +24,7 @@
         var db;
 
         _initDB(true);
-        _loadDivContents(0, 'viewsdiv', 'Views', true);
+        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
 
 
         // ------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@
         // List items fetching
         // ------------------------------------------------------------------------------------
 
-        function _loadDivContents(level, DivId, HeaderText, IsFirst)
+        function _loadDivContents(ParentId, level, DivId, HeaderText, IsFirst)
         {
             if (level == 1)
                 rootid = DivId;
@@ -74,14 +74,14 @@
                         {
                             _fetchCachedRootXml(function (xml)
                             {
-                                _processSubLevelXml(DivId, HeaderText, $(xml).children(), level, IsFirst);
+                                _processSubLevelXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
                             });
                         } else
                         {
                             _fetchCachedSubLevelXml(DivId, function (xmlstr)
                             {
                                 var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                                _processSubLevelXml(DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                                _processSubLevelXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                             });
                         }
                     } else
@@ -99,7 +99,7 @@
                                 {
                                     _storeSubLevelXml(DivId, HeaderText, '', data.d);
                                 }
-                                _processSubLevelXml(DivId, HeaderText, $(data.d).children(), level, IsFirst);
+                                _processSubLevelXml(ParentId, DivId, HeaderText, $(data.d).children(), level, IsFirst);
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
                             {
@@ -112,7 +112,7 @@
                     _fetchCachedSubLevelXml(rootid, function (xmlstr)
                     {
                         var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                        _processSubLevelXml(DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                        _processSubLevelXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                     });
                 }
             }
@@ -120,7 +120,7 @@
 
 
 
-        function _processSubLevelXml(DivId, HeaderText, $xml, parentlevel, IsFirst)
+        function _processSubLevelXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst)
         {
             var currenttab;
             var content = _makeUL();
@@ -178,7 +178,7 @@
 
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
-                    _addPageDivToBody(parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst);
+                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst);
 
                 }
                 else
@@ -198,13 +198,13 @@
                 $xmlchildren = $xmlitem.children('subitems').first().children();
                 if ($xmlchildren.length > 0)
                 {
-                    _processSubLevelXml(id, text, $xmlchildren, parentlevel + 1)
+                    _processSubLevelXml(DivId, id, text, $xmlchildren, parentlevel + 1)
                 }
 
             }); // $xml.each(function () {
 
 
-            _addPageDivToBody(parentlevel, DivId, HeaderText, '', content, IsFirst);
+            _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst);
 
         } // _processSubLevelXml()
 
@@ -387,16 +387,18 @@
             return Html;
         }
 
-        function _addPageDivToBody(level, DivId, HeaderText, toolbar, content, IsFirst)
+        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst)
         {
             var divhtml = '<div id="' + DivId + '" data-role="page">' +
-                          '  <div data-role="header" data-theme="' + opts.Theme + '">' +
-            //            '    <a href="#" class="back">Back</a>' +
-                          '    <h1>' + HeaderText + '</h1>' +
+                          '  <div data-role="header" data-theme="' + opts.Theme + '">';
+            divhtml += '       <a href="#' + ParentId + '" data-back="true"';
+            if (ParentId == '' || ParentId == undefined)
+                divhtml += '    style="visibility: hidden"';
+            divhtml += '        >Back</a>';
+            divhtml += '       <h1>' + HeaderText + '</h1>' +
                           '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
                           '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
-                          '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
-            //            '      <a href="#' + ParentId + '" data-back="true">Back</a>' +
+            //            '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
                                  toolbar +
                           '    </div>' +
                           '  </div>' +
@@ -415,7 +417,7 @@
 
             $divhtml.page()
                 .find('a')
-                .click(function (e) { _loadDivContents((level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
+                .click(function (e) { _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
                 .end()
                 .find('input')
                 .change(onPropertyChange)
