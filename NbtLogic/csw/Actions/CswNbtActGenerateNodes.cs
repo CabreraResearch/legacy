@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
             if ( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )
                 throw new CswDniException( "CswNbtActGenerateNodes got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
-            ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget)TargetObjectClass;
+            ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget)TargetObjClass;
 
             CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
             CswNbtView.ViewName = "Nodes for Generator";
@@ -54,7 +54,6 @@ namespace ChemSW.Nbt.Actions
             CswNbtViewPropertyFilter GeneratorFilter = CswNbtView.AddViewPropertyFilter( GeneratorProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtNodeGenerator.NodeId.ToString(), false );
             CswNbtViewProperty DueDateProp = CswNbtView.AddViewProperty( ParentRelationship, GeneratorTarget.GeneratedDate.NodeTypeProp );
             CswNbtViewPropertyFilter DueDateFilter = CswNbtView.AddViewPropertyFilter( DueDateProp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDueDate.ToShortDateString(), false );
-
 
             ICswNbtTree TargetNodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
 
