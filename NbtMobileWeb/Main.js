@@ -324,28 +324,6 @@
                     break;
 
                 case "Question":
-                    //var answer = $xmlitem.attr('answer');
-                    //var compliantanswer = $xmlitem.attr('compliantanswer');
-                    // Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-                    // Html += '        <legend></legend>';
-                    // Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
-                    // if (compliantanswer == 'Yes')
-                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
-                    // else
-                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
-                    // if (answer == 'Yes')
-                    //     Html += 'checked';
-                    // Html += '/>';
-                    // Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
-                    // Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" ';
-                    // if (compliantanswer == 'No')
-                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
-                    // else
-                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
-                    // Html += '/>';
-                    // Html += '            <label for="' + IdStr + '_ans_No">No</label>';
-                    // Html += '    </fieldset>';
-
                     Html += '<li>';
                     Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
                     Html += '        <legend>Answer:</legend>';
