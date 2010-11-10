@@ -126,7 +126,8 @@ public class wsView : System.Web.Services.WebService
         {
             foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypeProps )
             {
-                if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password )
+                if( !Prop.HideInMobile &&
+                    Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password )
                 {
                     CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
                     ret += "<prop id=\"" + PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() + "\"";
