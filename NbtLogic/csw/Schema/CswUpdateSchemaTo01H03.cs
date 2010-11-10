@@ -136,6 +136,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType MountPointGroupNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOC.ObjectClassId, "Mount Point Group", "Fire Extinguisher" );
             MountPointGroupNT.IconFileName = "group.gif";
             CswNbtMetaDataNodeTypeProp MountPointGroupNameNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointGroupNT, CswNbtMetaDataFieldType.NbtFieldType.Text, "Name", Int32.MinValue );
+            MountPointGroupNameNTP.IsUnique = true;
             MountPointGroupNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Name" );
 
             //New Mount Point Group Node
