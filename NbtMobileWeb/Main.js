@@ -152,21 +152,34 @@
                         currenttab = tab;
                     }
 
-                    lihtml += '<li>';
+                    lihtml += '<li id="' + id + '_li">';
                     lihtml += '<a href="#' + id + '">' + text + '</a>';
                     lihtml += '</li>';
-                    if (fieldtype == 'Question')
+
+                    if (fieldtype == 'Logical')
                     {
+                        var sf_checked = $xmlitem.children('Checked').text();
+                        var sf_required = $xmlitem.children('Required').text();
+                        if (sf_checked == undefined) sf_checked = '';
+                        if (sf_required == undefined) sf_required = '';
+
                         lihtml += '<li>';
-                        lihtml += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-                        lihtml += '        <legend>Answer:</legend>';
-                        lihtml += '            <input type="radio" name="' + id + '_ans" id="' + id + '_ans_Yes" value="Yes" onclick="var $otheryesradio = $(\'#' + id + '_ans2_Yes\'); $otheryesradio.attr(\'checked\', true); $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + id + '_ans2_No\'); $othernoradio.attr(\'checked\', false); $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\');" />';
-                        lihtml += '            <label for="' + id + '_ans_Yes">Yes</label>';
-                        lihtml += '            <input type="radio" name="' + id + '_ans" id="' + id + '_ans_No" value="No" onclick="var $otheryesradio = $(\'#' + id + '_ans2_Yes\'); $otheryesradio.attr(\'checked\', false); $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + id + '_ans2_No\'); $othernoradio.attr(\'checked\', true); $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\');" />';
-                        lihtml += '            <label for="' + id + '_ans_No">No</label>';
-                        lihtml += '    </fieldset>';
+                        lihtml += _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required);
                         lihtml += '</li>';
                     }
+
+                    if (fieldtype == 'Question')
+                    {
+                        var sf_answer = $xmlitem.children('Answer').text();
+                        var sf_compliantanswers = $xmlitem.children('CompliantAnswers').text();
+                        if (sf_answer == undefined) sf_answer = '';
+                        if (sf_compliantanswers == undefined) sf_compliantanswers = '';
+
+                        lihtml += '<li>';
+                        lihtml += _makeQuestionAnswerFieldSet(id, 'ans', 'ans2', 'cor', 'li', sf_answer, sf_compliantanswers);
+                        lihtml += '</li>';
+                    }
+
 
                     // add a div for editing the property directly
                     var toolbar = '';
@@ -217,6 +230,7 @@
         {
             var IdStr = $xmlitem.attr('id');
             var FieldType = $xmlitem.attr('fieldtype');
+            var PropName = $xmlitem.attr('name');
 
             var Html = '';
 
@@ -226,6 +240,7 @@
             var sf_href = $xmlitem.children('Href').text();
             var sf_options = $xmlitem.children('Options').text();
             var sf_checked = $xmlitem.children('Checked').text();
+            var sf_required = $xmlitem.children('Required').text();
             var sf_units = $xmlitem.children('Units').text();
             var sf_answer = $xmlitem.children('Answer').text();
             var sf_correctiveaction = $xmlitem.children('CorrectiveAction').text();
@@ -237,6 +252,7 @@
             if (sf_href == undefined) sf_href = '';
             if (sf_options == undefined) sf_options = '';
             if (sf_checked == undefined) sf_checked = '';
+            if (sf_required == undefined) sf_required = '';
             if (sf_units == undefined) sf_units = '';
             if (sf_answer == undefined) sf_answer = '';
             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
@@ -269,24 +285,7 @@
                     break;
 
                 case "Logical":
-                    Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-                    Html += '        <legend></legend>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Blank" value="?" ';
-                    if (sf_checked == '')
-                        Html += 'checked';
-                    Html += '/>';
-                    Html += '            <label for="' + IdStr + '_ans_Blank">?</label>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
-                    if (sf_checked == 'Yes')
-                        Html += 'checked';
-                    Html += '/>';
-                    Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" ';
-                    if (sf_checked == 'No')
-                        Html += 'checked';
-                    Html += '/>';
-                    Html += '            <label for="' + IdStr + '_ans_No">No</label>';
-                    Html += '    </fieldset>';
+                    Html += _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required);
                     break;
 
                 case "Memo":
@@ -324,15 +323,8 @@
                     break;
 
                 case "Question":
-                    Html += '<li>';
-                    Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-                    Html += '        <legend>Answer:</legend>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans2" id="' + IdStr + '_ans2_Yes" value="Yes" onclick="var $otheryesradio = $(\'#' + IdStr + '_ans_Yes\'); $otheryesradio.attr(\'checked\', true); $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + IdStr + '_ans_No\'); $othernoradio.attr(\'checked\', false); $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\');" />';
-                    Html += '            <label for="' + IdStr + '_ans2_Yes">Yes</label>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans2" id="' + IdStr + '_ans2_No" value="No" onclick="var $otheryesradio = $(\'#' + IdStr + '_ans_Yes\'); $otheryesradio.attr(\'checked\', false); $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + IdStr + '_ans_No\'); $othernoradio.attr(\'checked\', true); $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\');" />';
-                    Html += '            <label for="' + IdStr + '_ans2_No">No</label>';
-                    Html += '    </fieldset>';
-                    Html += '</li>';
+                    Html += PropName + '<br/>';
+                    Html += _makeQuestionAnswerFieldSet(IdStr, 'ans2', 'ans', 'cor', 'li', sf_answer, sf_compliantanswers);
 
                     Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
                     Html += sf_comments
@@ -362,6 +354,122 @@
                     Html += $xmlitem.attr('gestalt');
                     break;
             }
+            return Html;
+        }
+
+        function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
+        {
+            var Html = '';
+            Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            Html += '        <legend></legend>';
+            if (Required != "true")
+            {
+                Html += '            <input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_Blank" value="?" ';
+                if (Checked == '')
+                    Html += 'checked';
+                Html += ' onclick="';
+                Html += ' var $otherblankradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Blank\'); ';
+                Html += ' $otherblankradio.attr(\'checked\', true); ';
+                Html += ' $otherblankradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
+                Html += ' var $otheryesradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Yes\'); ';
+                Html += ' $otheryesradio.attr(\'checked\', false); ';
+                Html += ' $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+                Html += ' var $othernoradio = $(\'#' + IdStr + '_' + OtherSuffix + '_No\'); ';
+                Html += ' $othernoradio.attr(\'checked\', false); ';
+                Html += ' $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+                Html += '" />';
+                Html += '            <label for="' + IdStr + '_' + Suffix + '_Blank">?</label>';
+            }
+            Html += '            <input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_Yes" value="Yes" ';
+            if (Checked == 'Yes')
+                Html += 'checked';
+            Html += ' onclick="';
+            if (Required != "true")
+            {
+                Html += ' var $otherblankradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Blank\'); ';
+                Html += ' $otherblankradio.attr(\'checked\', false); ';
+                Html += ' $otherblankradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+            }
+            Html += ' var $otheryesradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Yes\'); ';
+            Html += ' $otheryesradio.attr(\'checked\', true); ';
+            Html += ' $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
+            Html += ' var $othernoradio = $(\'#' + IdStr + '_' + OtherSuffix + '_No\'); ';
+            Html += ' $othernoradio.attr(\'checked\', false); ';
+            Html += ' $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+            Html += '" />';
+            Html += '            <label for="' + IdStr + '_' + Suffix + '_Yes">Yes</label>';
+            Html += '            <input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_No" value="No" ';
+            if (Checked == 'No')
+                Html += 'checked';
+            Html += ' onclick="';
+            if (Required != "true")
+            {
+                Html += ' var $otherblankradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Blank\'); ';
+                Html += ' $otherblankradio.attr(\'checked\', false); ';
+                Html += ' $otherblankradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+            }
+            Html += ' var $otheryesradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Yes\'); ';
+            Html += ' $otheryesradio.attr(\'checked\', false); ';
+            Html += ' $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+            Html += ' var $othernoradio = $(\'#' + IdStr + '_' + OtherSuffix + '_No\'); ';
+            Html += ' $othernoradio.attr(\'checked\', true); ';
+            Html += ' $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
+            Html += '" />';
+            Html += '            <label for="' + IdStr + '_' + Suffix + '_No">No</label>';
+            Html += '    </fieldset>';
+            return Html;
+        }
+
+        function _makeQuestionAnswerFieldSet(IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Answer, CompliantAnswers)
+        {
+            var Html = '';
+            Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            //Html += '        <legend>Answer:</legend>';
+            Html += '            <input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_Yes" value="Yes" ';
+            if (Answer == 'Yes')
+                Html += ' checked';
+            Html += ' onclick="';
+            Html += ' var $otheryesradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Yes\'); ';
+            Html += ' $otheryesradio.attr(\'checked\', true); ';
+            Html += ' $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
+            Html += ' var $othernoradio = $(\'#' + IdStr + '_' + OtherSuffix + '_No\'); ';
+            Html += ' $othernoradio.attr(\'checked\', false); ';
+            Html += ' $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+            if ((',' + CompliantAnswers + ',').indexOf(',Yes,') >= 0)
+            {
+                Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
+                Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); '
+            }
+            else
+            {
+                Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'\'); ';
+                Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); '
+            }
+            Html += ' " />';
+            Html += '            <label for="' + IdStr + '_' + Suffix + '_Yes">Yes</label>';
+            Html += '            <input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_No" value="No" ';
+            if (Answer == 'No')
+                Html += ' checked';
+            Html += ' onclick="';
+            Html += ' var $otheryesradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Yes\'); ';
+            Html += ' $otheryesradio.attr(\'checked\', false); ';
+            Html += ' $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+            Html += ' var $othernoradio = $(\'#' + IdStr + '_' + OtherSuffix + '_No\'); ';
+            Html += ' $othernoradio.attr(\'checked\', true); ';
+            Html += ' $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
+            if ((',' + CompliantAnswers + ',').indexOf(',No,') >= 0)
+            {
+                Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
+                Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); '
+            }
+            else
+            {
+                Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'\'); ';
+                Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); '
+            }
+            Html += ' " />';
+            Html += '            <label for="' + IdStr + '_' + Suffix + '_No">No</label>';
+            Html += '    </fieldset>';
             return Html;
         }
 

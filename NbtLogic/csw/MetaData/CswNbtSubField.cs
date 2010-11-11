@@ -62,6 +62,7 @@ namespace ChemSW.Nbt.MetaData
             NodeType,
             Password,
             Path,
+            Required,
             Row,
             Sequence,
             StartDateTime,
