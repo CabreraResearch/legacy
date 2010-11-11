@@ -378,7 +378,9 @@
                 if (answertext == 'Blank') answertext = '?';
 
                 Html += '<input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_' + answers[i] + '" value="' + answertext + '" ';
-                if (Checked == answers[i] || (Checked == '' && answers[i] == 'Blank'))
+                if ((Checked == "false" && answers[i] == "No") ||
+                    (Checked == "true" && answers[i] == "Yes") ||
+                    (Checked == '' && answers[i] == 'Blank'))
                     Html += 'checked';
                 Html += ' onclick="';
                 Html += ' var $otherradio; ';
