@@ -12,6 +12,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Session;
 
 /// <summary>
 /// Summary description for wsUpdate
@@ -20,19 +21,15 @@ using ChemSW.Nbt.PropTypes;
 [ScriptService]
 [WebService( Namespace = "http://localhost/NbtWebApp" )]
 [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
-public class wsUpdate : System.Web.Services.WebService {
+public class wsUpdate : System.Web.Services.WebService
+{
 
-    private CswNbtResources _CswNbtResources;
-    private CswSessionResourcesNbt _CswInitialization; //will need this for case 20095
+    private CswNbtWebServiceResources _CswNbtWebServiceResources;
     public wsUpdate()
     {
-        _CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Session, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
-        _CswNbtResources = _CswInitialization.CswNbtResources;
 
+        _CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application, Context.Session, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
 
-
-        //Uncomment the following line if using designed components 
-        //InitializeComponent(); 
     }
 
     private string _FilesPath
@@ -46,24 +43,37 @@ public class wsUpdate : System.Web.Services.WebService {
     [WebMethod( EnableSession = true )]
     public string ConnectTest()
     {
+
+        try
+        {
+            _CswNbtWebServiceResources.startSession();
+            return ( "Connected" );
+        }
+
+        finally
+        {
+            _CswNbtWebServiceResources.endSession();
+        }
+
         return ( "Connected" );
     }//
 
     [WebMethod( EnableSession = true )]
     public string UpdateProperties( string Updates )
     {
+
+
         string ReturnVal = string.Empty;
 
-        string UpdatedRowIds = string.Empty;
-        string [] UpdateItems = Updates.Split( ';' );
-        foreach( string CurrentUpdateItem in UpdateItems )
+        try
         {
-
-            try
+            string UpdatedRowIds = string.Empty;
+            string[] UpdateItems = Updates.Split( ';' );
+            foreach( string CurrentUpdateItem in UpdateItems )
             {
 
                 string[] ItemBreakdown = CurrentUpdateItem.Split( ',' );
-                string ClientRowId = ItemBreakdown[0] ;
+                string ClientRowId = ItemBreakdown[0];
                 string PropId = ItemBreakdown[1];
                 string Value = ItemBreakdown[2];
 
@@ -71,12 +81,12 @@ public class wsUpdate : System.Web.Services.WebService {
                 Int32 NodeTypePropId = Convert.ToInt32( ItemId[1] );
                 Int32 NodeId = Convert.ToInt32( ItemId[4] );
 
-                CswPrimaryKey CswPrimaryKey = new CswPrimaryKey(); 
-                CswPrimaryKey.FromString(  "nodes_" + NodeId  );
+                CswPrimaryKey CswPrimaryKey = new CswPrimaryKey();
+                CswPrimaryKey.FromString( "nodes_" + NodeId );
 
-                CswNbtNode CswNbtNode = _CswNbtResources.Nodes[CswPrimaryKey];
-                CswNbtMetaDataNodeTypeProp  CswNbtMetaDataNodeTypeProp  = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                CswNbtNodePropWrapper CswNbtNodePropWrapper = CswNbtNode.Properties[CswNbtMetaDataNodeTypeProp]; 
+                CswNbtNode CswNbtNode = _CswNbtWebServiceResources.CswNbtResources.Nodes[CswPrimaryKey];
+                CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+                CswNbtNodePropWrapper CswNbtNodePropWrapper = CswNbtNode.Properties[CswNbtMetaDataNodeTypeProp];
 
 
 
@@ -95,11 +105,11 @@ public class wsUpdate : System.Web.Services.WebService {
                         break;
 
                     case CswNbtMetaDataFieldType.NbtFieldType.Memo:
-                        CswNbtNodePropWrapper.AsMemo.Text = Value; 
+                        CswNbtNodePropWrapper.AsMemo.Text = Value;
                         break;
 
                     default:
-                        throw ( new CswDniException( "Unhandled field type " + CswNbtNodePropWrapper.FieldType.FieldType .ToString() ) ); 
+                        throw ( new CswDniException( "Unhandled field type " + CswNbtNodePropWrapper.FieldType.FieldType.ToString() ) );
 
                 }//switch on field type 
 
@@ -110,32 +120,28 @@ public class wsUpdate : System.Web.Services.WebService {
                     UpdatedRowIds += ",";
                 }
 
-                UpdatedRowIds += ClientRowId; 
+                UpdatedRowIds += ClientRowId;
 
-            }
 
-            catch( Exception Exception )
-            {
-                //not sure yet what to do with these exceptions; see bz # 20080
-            }
+            }//iterate update items
 
-        }//iterate update items
-
-        try
-        {
-
-            _CswNbtResources.finalize();
 
             ReturnVal = UpdatedRowIds;
-//            ReturnVal = UpdatedRowIds;
 
-        }
+            _CswNbtWebServiceResources.endSession(); 
 
-        catch( Exception Exception )
+
+        }//try
+
+
+        catch( Exception Exception ) 
         {
-        }//try-catch
+            _CswNbtWebServiceResources.CswNbtResources.CswLogger.reportError( Exception );
+        } //tach
 
-        return ( ReturnVal );
+
+
+       return ( ReturnVal );
     }//
 
 }//wsUpdate
