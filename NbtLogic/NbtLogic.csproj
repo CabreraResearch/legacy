@@ -212,6 +212,7 @@
     <Compile Include="csw\Sched\CswNbtSchdItemUpdateInspectionStatus.cs" />
     <Compile Include="csw\Sched\CswNbtSchdItemUpdateMTBF.cs" />
     <Compile Include="csw\Sched\CswNbtSchdItemUpdatePropertyValues.cs" />
+    <Compile Include="csw\Schema\CswUpdateSchemaTo01H09.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H08.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H07.cs" />
     <Compile Include="csw\Schema\CswConstraintDdlOps.cs" />

@@ -797,6 +797,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.StaticText = getPropAttributeValue( "EditProp_TextValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.ReadOnly = Convert.ToBoolean( getPropAttributeValue( "EditProp_ReadOnlyValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.UseNumbering = Convert.ToBoolean( getPropAttributeValue( "EditProp_UseNumbering" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
+                    PropToSave.HideInMobile = Convert.ToBoolean( getPropAttributeValue( "EditProp_HideInMobile" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.SetFK( NewIsFk, NewFKType, NewFKValue,
                                       getPropAttributeValue( "EditProp_RelatedPropType" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ),
                                       Convert.ToInt32( getPropAttributeValue( "EditProp_RelatedPropValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) ) );
@@ -2242,6 +2243,14 @@ namespace ChemSW.Nbt.WebPages
                         UseNumberingValue.Checked = SelectedNodeTypeProp.UseNumbering;
                         UseNumberingRow.Cells[1].Controls.Add( UseNumberingValue );
                     }
+
+                    TableRow HideInMobileRow = makeEditPropTableRow( EditPropPlaceHolder );
+                    ( (Literal) HideInMobileRow.Cells[0].Controls[0] ).Text = "";
+                    CheckBox HideInMobileValue = new CheckBox();
+                    HideInMobileValue.ID = "EditProp_HideInMobile" + SelectedNodeTypeProp.PropId.ToString();
+                    HideInMobileValue.Text = "Hide in Mobile";
+                    HideInMobileValue.Checked = SelectedNodeTypeProp.HideInMobile;
+                    HideInMobileRow.Cells[1].Controls.Add( HideInMobileValue );
 
                     // BZ 7957
                     if( FieldType.ShowLabel() )

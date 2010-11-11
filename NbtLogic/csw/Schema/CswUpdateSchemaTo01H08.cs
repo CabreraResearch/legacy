@@ -11,7 +11,6 @@ using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -42,8 +41,6 @@ namespace ChemSW.Nbt.Schema
             OCPUpdate.update( OCPTable );
 
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-
-
 
         } // update()
 
