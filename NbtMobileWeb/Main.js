@@ -25,7 +25,7 @@
 
         _initDB(true);
         _loadDivContents('', 0, 'viewsdiv', 'Views', true);
-
+        _makeSearchDiv();
 
         // ------------------------------------------------------------------------------------
         // Offline indicator
@@ -191,7 +191,7 @@
 
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
-                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst);
+                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst, true);
 
                 }
                 else
@@ -217,7 +217,7 @@
             }); // $xml.each(function () {
 
 
-            _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst);
+            _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst, true);
 
         } // _processSubLevelXml()
 
@@ -232,7 +232,7 @@
             var FieldType = $xmlitem.attr('fieldtype');
             var PropName = $xmlitem.attr('name');
 
-            var Html = '';
+            var Html = PropName + '<br/>';
 
             // Subfield values
             var sf_text = $xmlitem.children('Text').text();
@@ -323,7 +323,6 @@
                     break;
 
                 case "Question":
-                    Html += PropName + '<br/>';
                     Html += _makeQuestionAnswerFieldSet(IdStr, 'ans2', 'ans', 'cor', 'li', sf_answer, sf_compliantanswers);
 
                     Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
@@ -436,16 +435,16 @@
                 if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
                 {
                     Html += ' $(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
-                    Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); '
+                    Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); ';
                 }
                 else
                 {
                     Html += 'var $cor = $(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\'); ';
                     Html += '$cor.css(\'display\', \'\'); ';
                     Html += 'if($cor.attr(\'value\') == \'\') { ';
-                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); '
+                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); ';
                     Html += '} else {';
-                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); '
+                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); ';
                     Html += '}';
                 }
                 Html += ' " />';
@@ -455,16 +454,19 @@
             return Html;
         }
 
-        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst)
+        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, BindEvents, backtransition)
         {
             var divhtml = '<div id="' + DivId + '" data-role="page">' +
                           '  <div data-role="header" data-theme="' + opts.Theme + '">';
-            divhtml += '       <a href="#' + ParentId + '" data-back="true"';
+            divhtml += '       <a href="#' + ParentId + '" data-back="true" ';
+            if (backtransition != undefined)
+                divhtml += '       data-transition="' + backtransition + '" ';
             if (ParentId == '' || ParentId == undefined)
                 divhtml += '    style="visibility: hidden"';
             divhtml += '        >Back</a>';
             divhtml += '       <h1>' + HeaderText + '</h1>' +
-                          '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
+            //            '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
+                          '    <a href="#Search" data-transition="slideup">Search</a>' +
                           '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
             //            '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
                                  toolbar +
@@ -483,19 +485,31 @@
             else
                 $('body').append($divhtml);
 
-            $divhtml.page()
-                .find('a')
-                .click(function (e) { _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
-                .end()
-                .find('input')
-                .change(onPropertyChange)
-                .end()
-                .find('textarea')
-                .change(onPropertyChange)
-                .end()
-                .find('select')
-                .change(onPropertyChange);
+            $divhtml.page();
+            if (BindEvents)
+            {
+                $divhtml.find('a')
+                    .click(function (e) { _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
+                    .end()
+                    .find('input')
+                    .change(onPropertyChange)
+                    .end()
+                    .find('textarea')
+                    .change(onPropertyChange)
+                    .end()
+                    .find('select')
+                    .change(onPropertyChange);
+            }
         }
+
+
+        function _makeSearchDiv()
+        {
+            var toolbar = '';
+            var content = 'Search page placeholder...'
+            _addPageDivToBody('viewsdiv', 0, 'Search', 'Search', toolbar, content, false, false, 'slideup');
+        }
+
 
 
         // ------------------------------------------------------------------------------------
