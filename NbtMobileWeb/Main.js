@@ -333,7 +333,14 @@
                     Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
                     if (sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
                         Html += 'style="display: none"';
-                    Html += '>';
+                    Html += 'onchange="';
+                    Html += 'var $cor = $(this); ';
+                    Html += 'if($cor.attr(\'value\') == \'\') { ';
+                    Html += '  $(\'#' + IdStr + '_li div\').addClass(\'OOC\'); '
+                    Html += '} else {';
+                    Html += '  $(\'#' + IdStr + '_li div\').removeClass(\'OOC\'); '
+                    Html += '}';
+                    Html += '">';
                     Html += sf_correctiveaction;
                     Html += '</textarea>';
                     break;
@@ -428,13 +435,18 @@
 
                 if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
                 {
-                    Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
+                    Html += ' $(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
                     Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); '
                 }
                 else
                 {
-                    Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'\'); ';
-                    Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); '
+                    Html += 'var $cor = $(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\'); ';
+                    Html += '$cor.css(\'display\', \'\'); ';
+                    Html += 'if($cor.attr(\'value\') == \'\') { ';
+                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); '
+                    Html += '} else {';
+                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); '
+                    Html += '}';
                 }
                 Html += ' " />';
                 Html += '            <label for="' + IdStr + '_' + Suffix + '_' + answers[i] + '">' + answers[i] + '</label>';
