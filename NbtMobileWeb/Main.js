@@ -359,117 +359,87 @@
 
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
         {
-            var Html = '';
-            Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-            Html += '        <legend></legend>';
-            if (Required != "true")
+            var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            //Html += '        <legend></legend>';
+
+            var answers = ['Blank', 'Yes', 'No'];
+            if (Required == "true")
+                answers = ['Yes', 'No'];
+
+            for (var i = 0; i < answers.length; i++)
             {
-                Html += '            <input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_Blank" value="?" ';
-                if (Checked == '')
+                var answertext = answers[i];
+                if (answertext == 'Blank') answertext = '?';
+
+                Html += '<input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_' + answers[i] + '" value="' + answertext + '" ';
+                if (Checked == answers[i] || (Checked == '' && answers[i] == 'Blank'))
                     Html += 'checked';
                 Html += ' onclick="';
-                Html += ' var $otherblankradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Blank\'); ';
-                Html += ' $otherblankradio.attr(\'checked\', true); ';
-                Html += ' $otherblankradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
-                Html += ' var $otheryesradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Yes\'); ';
-                Html += ' $otheryesradio.attr(\'checked\', false); ';
-                Html += ' $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
-                Html += ' var $othernoradio = $(\'#' + IdStr + '_' + OtherSuffix + '_No\'); ';
-                Html += ' $othernoradio.attr(\'checked\', false); ';
-                Html += ' $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+                Html += ' var $otherradio; ';
+                for (var j = 0; j < answers.length; j++)
+                {
+                    Html += ' $otherradio = $(\'#' + IdStr + '_' + OtherSuffix + '_' + answers[j] + '\'); ';
+                    if (answers[j] == answers[i])
+                    {
+                        Html += ' $otherradio.attr(\'checked\', true); ';
+                        Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
+                    }
+                    else
+                    {
+                        Html += ' $otherradio.attr(\'checked\', false); ';
+                        Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+                    }
+                } // for (var j = 0; j < answers.length; j++)
                 Html += '" />';
-                Html += '            <label for="' + IdStr + '_' + Suffix + '_Blank">?</label>';
-            }
-            Html += '            <input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_Yes" value="Yes" ';
-            if (Checked == 'Yes')
-                Html += 'checked';
-            Html += ' onclick="';
-            if (Required != "true")
-            {
-                Html += ' var $otherblankradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Blank\'); ';
-                Html += ' $otherblankradio.attr(\'checked\', false); ';
-                Html += ' $otherblankradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
-            }
-            Html += ' var $otheryesradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Yes\'); ';
-            Html += ' $otheryesradio.attr(\'checked\', true); ';
-            Html += ' $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
-            Html += ' var $othernoradio = $(\'#' + IdStr + '_' + OtherSuffix + '_No\'); ';
-            Html += ' $othernoradio.attr(\'checked\', false); ';
-            Html += ' $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
-            Html += '" />';
-            Html += '            <label for="' + IdStr + '_' + Suffix + '_Yes">Yes</label>';
-            Html += '            <input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_No" value="No" ';
-            if (Checked == 'No')
-                Html += 'checked';
-            Html += ' onclick="';
-            if (Required != "true")
-            {
-                Html += ' var $otherblankradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Blank\'); ';
-                Html += ' $otherblankradio.attr(\'checked\', false); ';
-                Html += ' $otherblankradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
-            }
-            Html += ' var $otheryesradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Yes\'); ';
-            Html += ' $otheryesradio.attr(\'checked\', false); ';
-            Html += ' $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
-            Html += ' var $othernoradio = $(\'#' + IdStr + '_' + OtherSuffix + '_No\'); ';
-            Html += ' $othernoradio.attr(\'checked\', true); ';
-            Html += ' $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
-            Html += '" />';
-            Html += '            <label for="' + IdStr + '_' + Suffix + '_No">No</label>';
-            Html += '    </fieldset>';
+                Html += '<label for="' + IdStr + '_' + Suffix + '_' + answers[i] + '">' + answertext + '</label>';
+            } // for (var i = 0; i < answers.length; i++)
+
+            Html += '</fieldset>';
             return Html;
         }
 
         function _makeQuestionAnswerFieldSet(IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Answer, CompliantAnswers)
         {
-            var Html = '';
-            Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-            //Html += '        <legend>Answer:</legend>';
-            Html += '            <input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_Yes" value="Yes" ';
-            if (Answer == 'Yes')
-                Html += ' checked';
-            Html += ' onclick="';
-            Html += ' var $otheryesradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Yes\'); ';
-            Html += ' $otheryesradio.attr(\'checked\', true); ';
-            Html += ' $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
-            Html += ' var $othernoradio = $(\'#' + IdStr + '_' + OtherSuffix + '_No\'); ';
-            Html += ' $othernoradio.attr(\'checked\', false); ';
-            Html += ' $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
-            if ((',' + CompliantAnswers + ',').indexOf(',Yes,') >= 0)
+            var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            //Html += '<legend>Answer:</legend>';
+
+            var answers = ['Yes', 'No'];
+
+            for (var i = 0; i < answers.length; i++)
             {
-                Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
-                Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); '
-            }
-            else
-            {
-                Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'\'); ';
-                Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); '
-            }
-            Html += ' " />';
-            Html += '            <label for="' + IdStr + '_' + Suffix + '_Yes">Yes</label>';
-            Html += '            <input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_No" value="No" ';
-            if (Answer == 'No')
-                Html += ' checked';
-            Html += ' onclick="';
-            Html += ' var $otheryesradio = $(\'#' + IdStr + '_' + OtherSuffix + '_Yes\'); ';
-            Html += ' $otheryesradio.attr(\'checked\', false); ';
-            Html += ' $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
-            Html += ' var $othernoradio = $(\'#' + IdStr + '_' + OtherSuffix + '_No\'); ';
-            Html += ' $othernoradio.attr(\'checked\', true); ';
-            Html += ' $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
-            if ((',' + CompliantAnswers + ',').indexOf(',No,') >= 0)
-            {
-                Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
-                Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); '
-            }
-            else
-            {
-                Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'\'); ';
-                Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); '
-            }
-            Html += ' " />';
-            Html += '            <label for="' + IdStr + '_' + Suffix + '_No">No</label>';
-            Html += '    </fieldset>';
+                Html += '<input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
+                if (Answer == answers[i])
+                    Html += ' checked';
+                Html += ' onclick="';
+                Html += ' var $otherradio; ';
+                for (var j = 0; j < answers.length; j++)
+                {
+                    Html += ' $otherradio = $(\'#' + IdStr + '_' + OtherSuffix + '_' + answers[j] + '\'); ';
+                    if (answers[j] == answers[i])
+                    {
+                        Html += ' $otherradio.attr(\'checked\', true); ';
+                        Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
+                    } else
+                    {
+                        Html += ' $otherradio.attr(\'checked\', false); ';
+                        Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+                    }
+                } // for (var j = 0; i < answers.length; j++)
+
+                if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
+                {
+                    Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
+                    Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); '
+                }
+                else
+                {
+                    Html += '$(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'\'); ';
+                    Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); '
+                }
+                Html += ' " />';
+                Html += '            <label for="' + IdStr + '_' + Suffix + '_' + answers[i] + '">' + answers[i] + '</label>';
+            } // for (var i = 0; i < answers.length; i++)
+            Html += '</fieldset>';
             return Html;
         }
 
