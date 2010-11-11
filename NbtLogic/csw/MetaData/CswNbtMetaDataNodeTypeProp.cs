@@ -204,8 +204,8 @@ namespace ChemSW.Nbt.MetaData
                         // BZ 9203 - View starts with this property's nodetype at root
                         ThisView.AddViewRelationship( this.NodeType, true );
                         ThisView.SetViewMode( NbtViewRenderingMode.Grid );
-                        ThisView.save();
                     }
+                    ThisView.save();
                     _NodeTypePropRow["nodeviewid"] = CswConvert.ToDbVal( ThisView.ViewId );
                     ret = ThisView.ViewId;
                 }
