@@ -37,8 +37,13 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
             if ( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )
-                throw new CswDniException( "CswNbtActGenerateNodes got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
-            ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget)TargetObjectClass;
+                throw new CswDniException( "CswNbtActGenerateNodes got an invalid object class: " + TargetObjClass.ObjectClass.ToString() );
+            ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget)TargetObjClass;
+
+            CswNbtMetaDataNodeTypeProp TargetNTP = TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetParentPropertyName );
+            CswNbtMetaDataNodeTypeProp GeneratorNTP = TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratorPropertyName );
+            CswNbtMetaDataNodeTypeProp IsFutureNTP = TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
+            CswNbtMetaDataNodeTypeProp DueDateNTP = TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratedDatePropertyName );
 
             CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
             CswNbtView.ViewName = "Nodes for Generator";
@@ -48,13 +53,12 @@ namespace ChemSW.Nbt.Actions
             //CswNbtViewProperty GeneratedDateProperty = CswNbtView.AddViewProperty( ChildRelationship, TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratedDatePropertyName ) );
             //CswNbtViewPropertyFilter GeneratedDateFilter = CswNbtView.AddViewPropertyFilter( GeneratedDateProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDueDate.Date.ToShortDateString(), false );
             CswNbtViewRelationship ParentRelationship = CswNbtView.AddViewRelationship( TargetNodeType, false );
-            CswNbtViewProperty TargetParentProp = CswNbtView.AddViewProperty( ParentRelationship, GeneratorTarget.Parent.NodeTypeProp );
+            CswNbtViewProperty TargetParentProp = CswNbtView.AddViewProperty( ParentRelationship, TargetNTP );
             CswNbtViewPropertyFilter TargetParentFilter = CswNbtView.AddViewPropertyFilter( TargetParentProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, ParentPk.ToString(), false );
-            CswNbtViewProperty GeneratorProp = CswNbtView.AddViewProperty( ParentRelationship, GeneratorTarget.Generator.NodeTypeProp );
+            CswNbtViewProperty GeneratorProp = CswNbtView.AddViewProperty( ParentRelationship, GeneratorNTP );
             CswNbtViewPropertyFilter GeneratorFilter = CswNbtView.AddViewPropertyFilter( GeneratorProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtNodeGenerator.NodeId.ToString(), false );
-            CswNbtViewProperty DueDateProp = CswNbtView.AddViewProperty( ParentRelationship, GeneratorTarget.GeneratedDate.NodeTypeProp );
+            CswNbtViewProperty DueDateProp = CswNbtView.AddViewProperty( ParentRelationship, DueDateNTP );
             CswNbtViewPropertyFilter DueDateFilter = CswNbtView.AddViewPropertyFilter( DueDateProp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDueDate.ToShortDateString(), false );
-
 
             ICswNbtTree TargetNodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
 

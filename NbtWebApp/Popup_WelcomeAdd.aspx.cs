@@ -412,7 +412,7 @@ namespace ChemSW.Nbt.WebPages
             foreach( System.IO.FileInfo IconFile in IconFiles )
             {
                 if( IconFile.Name != "blank.gif" &&
-                    ( IconFile.Name.EndsWith( ".gif" ) || IconFile.Name.EndsWith( ".jpg" ) ) )
+                    ( IconFile.Name.EndsWith( ".gif" ) || IconFile.Name.EndsWith( ".jpg" ) || IconFile.Name.EndsWith( ".png" ) ) )
                 {
                     ListItem IconItem = new ListItem( IconFile.Name, IconFile.Name );
                     IconList.Items.Add( IconItem );
