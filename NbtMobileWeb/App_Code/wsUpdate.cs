@@ -47,7 +47,6 @@ public class wsUpdate : System.Web.Services.WebService
         try
         {
             _CswNbtWebServiceResources.startSession();
-            return ( "Connected" );
         }
 
         finally
