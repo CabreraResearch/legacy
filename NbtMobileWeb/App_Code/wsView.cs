@@ -23,8 +23,6 @@ using ChemSW.Nbt.PropTypes;
 [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
 public class wsView : System.Web.Services.WebService
 {
-    private CswNbtResources _CswNbtResources;
-
     private string _FilesPath
     {
         get
@@ -33,10 +31,10 @@ public class wsView : System.Web.Services.WebService
         }
     }
 
+    private CswNbtWebServiceResources _CswNbtWebServiceResources;
     public wsView()
     {
-        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Session, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
-        _CswNbtResources = CswInitialization.CswNbtResources;
+        _CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application, Context.Session, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
 
         //Uncomment the following line if using designed components 
         //InitializeComponent(); 
@@ -55,15 +53,17 @@ public class wsView : System.Web.Services.WebService
         string ret = string.Empty;
         try
         {
+            _CswNbtWebServiceResources.startSession(); 
+
             if( ParentId.StartsWith( ViewIdPrefix ) )
             {
                 // Get the full XML for the entire view
                 Int32 ViewId = CswConvert.ToInt32( ParentId.Substring( ViewIdPrefix.Length ) );
-                CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+                CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtWebServiceResources.CswNbtResources, ViewId );
                 //View.SaveToCache();
                 //Session["SessionViewId"] = View.SessionViewId;
 
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
+                ICswNbtTree Tree = _CswNbtWebServiceResources.CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
                 if( Tree.getChildNodeCount() > 0 )
                     ret = _runTreeNodesRecursive( Tree );
                 else
@@ -74,7 +74,7 @@ public class wsView : System.Web.Services.WebService
             else
             {
                 // All Views
-                DataTable ViewDT = _CswNbtResources.ViewSelect.getVisibleViews( false );
+                DataTable ViewDT = _CswNbtWebServiceResources.CswNbtResources.ViewSelect.getVisibleViews( false );
                 foreach( DataRow ViewRow in ViewDT.Rows )
                 {
                     ret += "<view id=\"" + ViewIdPrefix + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
@@ -82,9 +82,13 @@ public class wsView : System.Web.Services.WebService
                     ret += "/>";
                 }
             }
+
+            _CswNbtWebServiceResources.endSession( EndSessionMode.esmCommit ); 
+
         }
         catch( Exception ex )
         {
+            _CswNbtWebServiceResources.endSession( EndSessionMode.esmRollback );
             throw ex;
         }
         return "<root>" + ret + "</root>";

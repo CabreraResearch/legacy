@@ -25,10 +25,9 @@ using ChemSW.Nbt.Statistics;
 
 namespace ChemSW.Nbt
 {
+    public enum EndSessionMode { esmCommit, esmRollback, esmRelease };
     public class CswNbtWebServiceResources
     {
-
-
         private CswNbtResources _CswNbtResources;
         public CswNbtResources CswNbtResources { get { return ( _CswNbtResources ); } }
 
@@ -50,13 +49,27 @@ namespace ChemSW.Nbt
             ;//do nothing for now, but may want this hook someday
         }//startSession()
 
-        public void endSession()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="EndSessionMode">esmCommit and esmRollback also release; esmRelease is only when there were no changes to data</param>
+        public void endSession( EndSessionMode EndSessionMode )
         {
-            CswNbtResources.finalize();
+            if( EndSessionMode.esmCommit == EndSessionMode )
+            {
+                CswNbtResources.finalize();
+            }
+            else if( EndSessionMode.esmRollback == EndSessionMode )
+            {
+                CswNbtResources.Rollback();
+            }
+
             CswNbtResources.release();
             CswSessionManager.release();
 
         }//endSession()
+
+
 
 
     }//CswNbtWebServiceResources

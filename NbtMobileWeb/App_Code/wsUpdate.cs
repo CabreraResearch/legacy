@@ -23,7 +23,6 @@ using ChemSW.Session;
 [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
 public class wsUpdate : System.Web.Services.WebService
 {
-
     private CswNbtWebServiceResources _CswNbtWebServiceResources;
     public wsUpdate()
     {
@@ -51,7 +50,8 @@ public class wsUpdate : System.Web.Services.WebService
 
         finally
         {
-            _CswNbtWebServiceResources.endSession();
+            _CswNbtWebServiceResources.endSession( EndSessionMode.esmRelease );  
+                
         }
 
         return ( "Connected" );
@@ -127,7 +127,7 @@ public class wsUpdate : System.Web.Services.WebService
 
             ReturnVal = UpdatedRowIds;
 
-            _CswNbtWebServiceResources.endSession(); 
+            _CswNbtWebServiceResources.endSession( EndSessionMode.esmCommit ); 
 
 
         }//try
@@ -136,6 +136,7 @@ public class wsUpdate : System.Web.Services.WebService
         catch( Exception Exception ) 
         {
             _CswNbtWebServiceResources.CswNbtResources.CswLogger.reportError( Exception );
+            _CswNbtWebServiceResources.endSession( EndSessionMode.esmRollback );
         } //tach
 
 
