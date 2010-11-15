@@ -85,7 +85,7 @@ public class wsView : System.Web.Services.WebService
         }
         catch( Exception ex )
         {
-            throw ex;
+            ret = "<error>" + ex.Message + "</error>";
         }
         return "<root>" + ret + "</root>";
     }

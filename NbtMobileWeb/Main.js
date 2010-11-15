@@ -95,11 +95,19 @@
                             data: "{ ParentId: '" + DivId + "' }",
                             success: function (data, textStatus, XMLHttpRequest)
                             {
-                                if (level == 1)
+                                var $xml = $(data.d);
+                                var $firstchild = $xml.children().first();
+                                if ($firstchild.get(0).nodeName == "ERROR")
                                 {
-                                    _storeSubLevelXml(DivId, HeaderText, '', data.d);
+                                    alert("An Error Occurred: " + $firstchild.text());
+                                } else
+                                {
+                                    if (level == 1)
+                                    {
+                                        _storeSubLevelXml(DivId, HeaderText, '', data.d);
+                                    }
+                                    _processSubLevelXml(ParentId, DivId, HeaderText, $xml.children(), level, IsFirst);
                                 }
-                                _processSubLevelXml(ParentId, DivId, HeaderText, $(data.d).children(), level, IsFirst);
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
                             {
