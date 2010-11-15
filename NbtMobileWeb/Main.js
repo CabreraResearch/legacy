@@ -61,6 +61,8 @@
 
         function _loadDivContents(ParentId, level, DivId, HeaderText, IsFirst)
         {
+            var ret = true;
+
             if (level == 1)
                 rootid = DivId;
 
@@ -122,8 +124,13 @@
                         var $thisxmlstr = $(xmlstr).find('#' + DivId);
                         _processSubLevelXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                     });
+
+                    // prevent link navigation!
+                    // _processSubLevelXml() above will do the page transition for us when the div is ready
+                    ret = false;
                 }
             }
+            return ret;
         }
 
 
@@ -214,18 +221,13 @@
                 }
                 content += lihtml;
 
-                // to avoid race condition between link execution and callback from Sqlite,
-                // create content for subitems now too
-                $xmlchildren = $xmlitem.children('subitems').first().children();
-                if ($xmlchildren.length > 0)
-                {
-                    _processSubLevelXml(DivId, id, text, $xmlchildren, parentlevel + 1)
-                }
-
             }); // $xml.each(function () {
 
 
             _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst, true);
+
+            // this replaces the link navigation
+            $.mobile.changePage($('#' + DivId), "slide", false, true);
 
         } // _processSubLevelXml()
 
@@ -499,7 +501,7 @@
             if (BindEvents)
             {
                 $divhtml.find('a')
-                    .click(function (e) { _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
+                    .click(function (e) { return _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
                     .end()
                     .find('input')
                     .change(onPropertyChange)
