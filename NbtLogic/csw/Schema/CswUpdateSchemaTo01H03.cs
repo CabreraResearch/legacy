@@ -359,7 +359,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtViewRelationship FireExtinguisherRelationship = PhysicalInspectionView.AddViewRelationship( InspectionRelationship, CswNbtViewRelationship.PropOwnerType.First, PIFireExtinguisherNTP, false );
                 CswNbtMetaDataNodeTypeProp FEDateNTP = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.LastInspectionDatePropertyName );
                 CswNbtViewProperty FESDateVP = PhysicalInspectionView.AddViewProperty( FireExtinguisherRelationship, FEDateNTP );
-                PhysicalInspectionView.AddViewPropertyFilter( FESDateVP, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, DateTime.MinValue.ToString(), false );
+                PhysicalInspectionView.AddViewPropertyFilter( FESDateVP, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, DateTime.MinValue.ToString(), false );
                 CswNbtViewProperty FEBarcodeVP = PhysicalInspectionView.AddViewProperty( FireExtinguisherRelationship, FEBarcodeNTP );
                 PhysicalInspectionView.AddViewPropertyFilter( FEBarcodeVP, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Begins, string.Empty, false );
 
