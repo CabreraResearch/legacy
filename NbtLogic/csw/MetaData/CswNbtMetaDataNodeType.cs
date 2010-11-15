@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypeRow["nametemplate"].ToString() != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
+                    //_CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
                     _NodeTypeRow["nametemplate"] = value;
                     // Need to set all node records to pendingupdate if this changes
                     SetNodesToPendingUpdate();
