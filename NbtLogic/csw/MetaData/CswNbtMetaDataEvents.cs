@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.MetaData
                 // Set first tab to be "Setup"
                 CswNbtMetaDataNodeTypeTab FirstTab = NewNodeType.getFirstNodeTypeTab();
                 FirstTab.TabName = "Setup";
-                FirstTab.TabOrder = 0;
+                FirstTab.TabOrder = 10;
                 FirstTab.IncludeInNodeReport = false;
 
                 // Add a "Section 1" tab

@@ -242,9 +242,9 @@ namespace ChemSW.Nbt.MetaData
             get { return ( CswConvert.ToBoolean( _NodeTypePropRow["isunique"] ) || IsGlobalUnique ); }
             set { _setAttribute( "isunique", value, false ); }
         }
-        
+
         // BZ 9754
-        public bool IsGlobalUnique 
+        public bool IsGlobalUnique
         {
             get
             {
@@ -314,7 +314,7 @@ namespace ChemSW.Nbt.MetaData
         {
             SetFK( true, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
-            
+
         /// <summary>
         /// Set the FK for relationship props
         /// </summary>
@@ -561,7 +561,7 @@ namespace ChemSW.Nbt.MetaData
 
         public bool HasDefaultValue()
         {
-            _initDefaultValue( false ); 
+            _initDefaultValue( false );
             return !( _DefaultValue == null || _DefaultValue.Empty );
         }
 
@@ -737,6 +737,12 @@ namespace ChemSW.Nbt.MetaData
             }
         }//UseNumbering
 
+        // This should not trigger versioning
+        public bool HideInMobile
+        {
+            get { return CswConvert.ToBoolean( _NodeTypePropRow["hideinmobile"] ); }
+            set { _DataRow["hideinmobile"] = CswConvert.ToDbVal( value ); }
+        }
 
         public Int32 DisplayColAdd
         {

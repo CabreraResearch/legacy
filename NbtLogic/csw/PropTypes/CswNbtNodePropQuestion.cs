@@ -176,16 +176,26 @@ namespace ChemSW.Nbt.PropTypes
         private StringCollection _CompliantAnswers = null;
 
         /// <summary>
-        /// String value for compliant answer
+        /// StringCollection of compliant answers
         /// </summary>
         public StringCollection CompliantAnswers
         {
-            get 
-            { 
+            get
+            {
                 _CompliantAnswers = new StringCollection();
-                _CompliantAnswers = CswTools.DelimitedStringToStringCollection( _CswNbtMetaDataNodeTypeProp.ValueOptions, Delims);
-                
-                return _CompliantAnswers; 
+                _CompliantAnswers = CswTools.DelimitedStringToStringCollection( _CswNbtMetaDataNodeTypeProp.ValueOptions, Delims );
+
+                return _CompliantAnswers;
+            }
+        }
+        /// <summary>
+        /// String value for compliant answer
+        /// </summary>
+        public string CompliantAnswersString
+        {
+            get
+            {
+                return _CswNbtMetaDataNodeTypeProp.ValueOptions;
             }
         }
 
@@ -221,7 +231,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode AnswerNode = CswXmlDocument.AppendXmlNode( ParentNode, _AnswerSubField.Name.ToString(), Answer.ToString() );
-            XmlNode CompliantAnswersNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.CompliantAnswers.ToString(), CompliantAnswers.ToString() );
+            XmlNode CompliantAnswersNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.CompliantAnswers.ToString(), CompliantAnswersString );
             XmlNode CommentsNode = CswXmlDocument.AppendXmlNode( ParentNode, _CommentsSubField.Name.ToString(), Comments.ToString() );
             XmlNode CorrectiveActionNode = CswXmlDocument.AppendXmlNode( ParentNode, _CorrectiveActionSubField.Name.ToString(), CorrectiveAction.ToString() );
             XmlNode DateAnsweredNode = CswXmlDocument.AppendXmlNode( ParentNode, _DateAnsweredSubField.Name.ToString(), DateAnswered.ToString() );

@@ -64,6 +64,9 @@ namespace ChemSW.Nbt.Schema
             NewFieldTypeTable.Rows.Add( NewFTRow );
             FieldTypesUpdate.update( NewFieldTypeTable );
 
+            // BZ 20081
+            _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_props", "hideinmobile", "Exclude this property in Mobile", false, false );
+
         }//Update()
 
     }//class CswUpdateSchemaTo01H01

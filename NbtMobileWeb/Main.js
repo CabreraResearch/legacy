@@ -24,8 +24,8 @@
         var db;
 
         _initDB(true);
-        _loadDivContents(0, 'viewsdiv', 'Views', true);
-
+        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
+        _makeSearchDiv();
 
         // ------------------------------------------------------------------------------------
         // Offline indicator
@@ -59,7 +59,7 @@
         // List items fetching
         // ------------------------------------------------------------------------------------
 
-        function _loadDivContents(level, DivId, HeaderText, IsFirst)
+        function _loadDivContents(ParentId, level, DivId, HeaderText, IsFirst)
         {
             if (level == 1)
                 rootid = DivId;
@@ -74,14 +74,14 @@
                         {
                             _fetchCachedRootXml(function (xml)
                             {
-                                _processSubLevelXml(DivId, HeaderText, $(xml).children(), level, IsFirst);
+                                _processSubLevelXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
                             });
                         } else
                         {
                             _fetchCachedSubLevelXml(DivId, function (xmlstr)
                             {
                                 var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                                _processSubLevelXml(DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                                _processSubLevelXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                             });
                         }
                     } else
@@ -99,7 +99,7 @@
                                 {
                                     _storeSubLevelXml(DivId, HeaderText, '', data.d);
                                 }
-                                _processSubLevelXml(DivId, HeaderText, $(data.d).children(), level, IsFirst);
+                                _processSubLevelXml(ParentId, DivId, HeaderText, $(data.d).children(), level, IsFirst);
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
                             {
@@ -112,7 +112,7 @@
                     _fetchCachedSubLevelXml(rootid, function (xmlstr)
                     {
                         var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                        _processSubLevelXml(DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                        _processSubLevelXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                     });
                 }
             }
@@ -120,7 +120,7 @@
 
 
 
-        function _processSubLevelXml(DivId, HeaderText, $xml, parentlevel, IsFirst)
+        function _processSubLevelXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst)
         {
             var currenttab;
             var content = _makeUL();
@@ -152,21 +152,34 @@
                         currenttab = tab;
                     }
 
-                    lihtml += '<li>';
+                    lihtml += '<li id="' + id + '_li">';
                     lihtml += '<a href="#' + id + '">' + text + '</a>';
                     lihtml += '</li>';
-                    if (fieldtype == 'Question')
+
+                    if (fieldtype == 'Logical')
                     {
+                        var sf_checked = $xmlitem.children('Checked').text();
+                        var sf_required = $xmlitem.children('Required').text();
+                        if (sf_checked == undefined) sf_checked = '';
+                        if (sf_required == undefined) sf_required = '';
+
                         lihtml += '<li>';
-                        lihtml += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-                        lihtml += '        <legend>Answer:</legend>';
-                        lihtml += '            <input type="radio" name="' + id + '_ans" id="' + id + '_ans_Yes" value="Yes" onclick="var $otheryesradio = $(\'#' + id + '_ans2_Yes\'); $otheryesradio.attr(\'checked\', true); $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + id + '_ans2_No\'); $othernoradio.attr(\'checked\', false); $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\');" />';
-                        lihtml += '            <label for="' + id + '_ans_Yes">Yes</label>';
-                        lihtml += '            <input type="radio" name="' + id + '_ans" id="' + id + '_ans_No" value="No" onclick="var $otheryesradio = $(\'#' + id + '_ans2_Yes\'); $otheryesradio.attr(\'checked\', false); $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + id + '_ans2_No\'); $othernoradio.attr(\'checked\', true); $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\');" />';
-                        lihtml += '            <label for="' + id + '_ans_No">No</label>';
-                        lihtml += '    </fieldset>';
+                        lihtml += _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required);
                         lihtml += '</li>';
                     }
+
+                    if (fieldtype == 'Question')
+                    {
+                        var sf_answer = $xmlitem.children('Answer').text();
+                        var sf_compliantanswers = $xmlitem.children('CompliantAnswers').text();
+                        if (sf_answer == undefined) sf_answer = '';
+                        if (sf_compliantanswers == undefined) sf_compliantanswers = '';
+
+                        lihtml += '<li>';
+                        lihtml += _makeQuestionAnswerFieldSet(id, 'ans', 'ans2', 'cor', 'li', sf_answer, sf_compliantanswers);
+                        lihtml += '</li>';
+                    }
+
 
                     // add a div for editing the property directly
                     var toolbar = '';
@@ -178,7 +191,7 @@
 
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
-                    _addPageDivToBody(parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst);
+                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst, true);
 
                 }
                 else
@@ -198,13 +211,13 @@
                 $xmlchildren = $xmlitem.children('subitems').first().children();
                 if ($xmlchildren.length > 0)
                 {
-                    _processSubLevelXml(id, text, $xmlchildren, parentlevel + 1)
+                    _processSubLevelXml(DivId, id, text, $xmlchildren, parentlevel + 1)
                 }
 
             }); // $xml.each(function () {
 
 
-            _addPageDivToBody(parentlevel, DivId, HeaderText, '', content, IsFirst);
+            _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst, true);
 
         } // _processSubLevelXml()
 
@@ -217,8 +230,9 @@
         {
             var IdStr = $xmlitem.attr('id');
             var FieldType = $xmlitem.attr('fieldtype');
+            var PropName = $xmlitem.attr('name');
 
-            var Html = '';
+            var Html = PropName + '<br/>';
 
             // Subfield values
             var sf_text = $xmlitem.children('Text').text();
@@ -226,6 +240,7 @@
             var sf_href = $xmlitem.children('Href').text();
             var sf_options = $xmlitem.children('Options').text();
             var sf_checked = $xmlitem.children('Checked').text();
+            var sf_required = $xmlitem.children('Required').text();
             var sf_units = $xmlitem.children('Units').text();
             var sf_answer = $xmlitem.children('Answer').text();
             var sf_correctiveaction = $xmlitem.children('CorrectiveAction').text();
@@ -237,6 +252,7 @@
             if (sf_href == undefined) sf_href = '';
             if (sf_options == undefined) sf_options = '';
             if (sf_checked == undefined) sf_checked = '';
+            if (sf_required == undefined) sf_required = '';
             if (sf_units == undefined) sf_units = '';
             if (sf_answer == undefined) sf_answer = '';
             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
@@ -269,24 +285,7 @@
                     break;
 
                 case "Logical":
-                    Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-                    Html += '        <legend></legend>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Blank" value="?" ';
-                    if (sf_checked == '')
-                        Html += 'checked';
-                    Html += '/>';
-                    Html += '            <label for="' + IdStr + '_ans_Blank">?</label>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
-                    if (sf_checked == 'Yes')
-                        Html += 'checked';
-                    Html += '/>';
-                    Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" ';
-                    if (sf_checked == 'No')
-                        Html += 'checked';
-                    Html += '/>';
-                    Html += '            <label for="' + IdStr + '_ans_No">No</label>';
-                    Html += '    </fieldset>';
+                    Html += _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required);
                     break;
 
                 case "Memo":
@@ -324,37 +323,7 @@
                     break;
 
                 case "Question":
-                    //var answer = $xmlitem.attr('answer');
-                    //var compliantanswer = $xmlitem.attr('compliantanswer');
-                    // Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-                    // Html += '        <legend></legend>';
-                    // Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_Yes" value="Yes" ';
-                    // if (compliantanswer == 'Yes')
-                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
-                    // else
-                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
-                    // if (answer == 'Yes')
-                    //     Html += 'checked';
-                    // Html += '/>';
-                    // Html += '            <label for="' + IdStr + '_ans_Yes">Yes</label>';
-                    // Html += '            <input type="radio" name="' + IdStr + '_ans" id="' + IdStr + '_ans_No" value="No" ';
-                    // if (compliantanswer == 'No')
-                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').hide();"';
-                    // else
-                    //     Html += 'onclick="$(\'#' + IdStr + '_cor\').show();"';
-                    // Html += '/>';
-                    // Html += '            <label for="' + IdStr + '_ans_No">No</label>';
-                    // Html += '    </fieldset>';
-
-                    Html += '<li>';
-                    Html += '    <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-                    Html += '        <legend>Answer:</legend>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans2" id="' + IdStr + '_ans2_Yes" value="Yes" onclick="var $otheryesradio = $(\'#' + IdStr + '_ans_Yes\'); $otheryesradio.attr(\'checked\', true); $otheryesradio.siblings(\'label\').addClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + IdStr + '_ans_No\'); $othernoradio.attr(\'checked\', false); $othernoradio.siblings(\'label\').removeClass(\'ui-btn-active\');" />';
-                    Html += '            <label for="' + IdStr + '_ans2_Yes">Yes</label>';
-                    Html += '            <input type="radio" name="' + IdStr + '_ans2" id="' + IdStr + '_ans2_No" value="No" onclick="var $otheryesradio = $(\'#' + IdStr + '_ans_Yes\'); $otheryesradio.attr(\'checked\', false); $otheryesradio.siblings(\'label\').removeClass(\'ui-btn-active\'); var $othernoradio = $(\'#' + IdStr + '_ans_No\'); $othernoradio.attr(\'checked\', true); $othernoradio.siblings(\'label\').addClass(\'ui-btn-active\');" />';
-                    Html += '            <label for="' + IdStr + '_ans2_No">No</label>';
-                    Html += '    </fieldset>';
-                    Html += '</li>';
+                    Html += _makeQuestionAnswerFieldSet(IdStr, 'ans2', 'ans', 'cor', 'li', sf_answer, sf_compliantanswers);
 
                     Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
                     Html += sf_comments
@@ -363,7 +332,14 @@
                     Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
                     if (sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
                         Html += 'style="display: none"';
-                    Html += '>';
+                    Html += 'onchange="';
+                    Html += 'var $cor = $(this); ';
+                    Html += 'if($cor.attr(\'value\') == \'\') { ';
+                    Html += '  $(\'#' + IdStr + '_li div\').addClass(\'OOC\'); '
+                    Html += '} else {';
+                    Html += '  $(\'#' + IdStr + '_li div\').removeClass(\'OOC\'); '
+                    Html += '}';
+                    Html += '">';
                     Html += sf_correctiveaction;
                     Html += '</textarea>';
                     break;
@@ -387,16 +363,114 @@
             return Html;
         }
 
-        function _addPageDivToBody(level, DivId, HeaderText, toolbar, content, IsFirst)
+        function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
+        {
+            var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            //Html += '        <legend></legend>';
+
+            var answers = ['Blank', 'Yes', 'No'];
+            if (Required == "true")
+                answers = ['Yes', 'No'];
+
+            for (var i = 0; i < answers.length; i++)
+            {
+                var answertext = answers[i];
+                if (answertext == 'Blank') answertext = '?';
+
+                Html += '<input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_' + answers[i] + '" value="' + answertext + '" ';
+                if ((Checked == "false" && answers[i] == "No") ||
+                    (Checked == "true" && answers[i] == "Yes") ||
+                    (Checked == '' && answers[i] == 'Blank'))
+                    Html += 'checked';
+                Html += ' onclick="';
+                Html += ' var $otherradio; ';
+                for (var j = 0; j < answers.length; j++)
+                {
+                    Html += ' $otherradio = $(\'#' + IdStr + '_' + OtherSuffix + '_' + answers[j] + '\'); ';
+                    if (answers[j] == answers[i])
+                    {
+                        Html += ' $otherradio.attr(\'checked\', true); ';
+                        Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
+                    }
+                    else
+                    {
+                        Html += ' $otherradio.attr(\'checked\', false); ';
+                        Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+                    }
+                } // for (var j = 0; j < answers.length; j++)
+                Html += '" />';
+                Html += '<label for="' + IdStr + '_' + Suffix + '_' + answers[i] + '">' + answertext + '</label>';
+            } // for (var i = 0; i < answers.length; i++)
+
+            Html += '</fieldset>';
+            return Html;
+        }
+
+        function _makeQuestionAnswerFieldSet(IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Answer, CompliantAnswers)
+        {
+            var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            //Html += '<legend>Answer:</legend>';
+
+            var answers = ['Yes', 'No'];
+
+            for (var i = 0; i < answers.length; i++)
+            {
+                Html += '<input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
+                if (Answer == answers[i])
+                    Html += ' checked';
+                Html += ' onclick="';
+                Html += ' var $otherradio; ';
+                for (var j = 0; j < answers.length; j++)
+                {
+                    Html += ' $otherradio = $(\'#' + IdStr + '_' + OtherSuffix + '_' + answers[j] + '\'); ';
+                    if (answers[j] == answers[i])
+                    {
+                        Html += ' $otherradio.attr(\'checked\', true); ';
+                        Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
+                    } else
+                    {
+                        Html += ' $otherradio.attr(\'checked\', false); ';
+                        Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+                    }
+                } // for (var j = 0; i < answers.length; j++)
+
+                if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
+                {
+                    Html += ' $(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
+                    Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); ';
+                }
+                else
+                {
+                    Html += 'var $cor = $(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\'); ';
+                    Html += '$cor.css(\'display\', \'\'); ';
+                    Html += 'if($cor.attr(\'value\') == \'\') { ';
+                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); ';
+                    Html += '} else {';
+                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); ';
+                    Html += '}';
+                }
+                Html += ' " />';
+                Html += '            <label for="' + IdStr + '_' + Suffix + '_' + answers[i] + '">' + answers[i] + '</label>';
+            } // for (var i = 0; i < answers.length; i++)
+            Html += '</fieldset>';
+            return Html;
+        }
+
+        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, BindEvents, backtransition)
         {
             var divhtml = '<div id="' + DivId + '" data-role="page">' +
-                          '  <div data-role="header" data-theme="' + opts.Theme + '">' +
-            //            '    <a href="#" class="back">Back</a>' +
-                          '    <h1>' + HeaderText + '</h1>' +
-                          '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
+                          '  <div data-role="header" data-theme="' + opts.Theme + '">';
+            divhtml += '       <a href="#' + ParentId + '" data-back="true" ';
+            if (backtransition != undefined)
+                divhtml += '       data-transition="' + backtransition + '" ';
+            if (ParentId == '' || ParentId == undefined)
+                divhtml += '    style="visibility: hidden"';
+            divhtml += '        >Back</a>';
+            divhtml += '       <h1>' + HeaderText + '</h1>' +
+            //            '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
+                          '    <a href="#Search" data-transition="slideup">Search</a>' +
                           '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
-                          '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
-            //            '      <a href="#' + ParentId + '" data-back="true">Back</a>' +
+            //            '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
                                  toolbar +
                           '    </div>' +
                           '  </div>' +
@@ -413,19 +487,31 @@
             else
                 $('body').append($divhtml);
 
-            $divhtml.page()
-                .find('a')
-                .click(function (e) { _loadDivContents((level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
-                .end()
-                .find('input')
-                .change(onPropertyChange)
-                .end()
-                .find('textarea')
-                .change(onPropertyChange)
-                .end()
-                .find('select')
-                .change(onPropertyChange);
+            $divhtml.page();
+            if (BindEvents)
+            {
+                $divhtml.find('a')
+                    .click(function (e) { _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
+                    .end()
+                    .find('input')
+                    .change(onPropertyChange)
+                    .end()
+                    .find('textarea')
+                    .change(onPropertyChange)
+                    .end()
+                    .find('select')
+                    .change(onPropertyChange);
+            }
         }
+
+
+        function _makeSearchDiv()
+        {
+            var toolbar = '';
+            var content = 'Search page placeholder...'
+            _addPageDivToBody('viewsdiv', 0, 'Search', 'Search', toolbar, content, false, false, 'slideup');
+        }
+
 
 
         // ------------------------------------------------------------------------------------
