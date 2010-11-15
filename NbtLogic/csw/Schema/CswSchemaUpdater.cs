@@ -23,6 +23,22 @@ namespace ChemSW.Nbt.Schema
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
         private Hashtable _UpdateDrivers = new Hashtable();
 
+        public enum HamletNodeTypes
+        {
+            Fire_Extinguisher,
+            Mount_Point,
+            Mount_Point_Group,
+            Physical_Inspection,
+            Physical_Inspection_Schedule,
+            Physical_Inspection_Route,
+            Notification,
+            Floor
+        }
+        public static string HamletNodeTypesAsString( HamletNodeTypes NodeType )
+        {
+            return ( NodeType.ToString().Replace( '_', ' ' ) );
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -51,6 +67,8 @@ namespace ChemSW.Nbt.Schema
             _UpdateDrivers.Add( Schema01H07Driver.SchemaVersion, Schema01H07Driver );
             CswSchemaUpdateDriver Schema01H08Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H08( _CswNbtSchemaModTrnsctn ) );
             _UpdateDrivers.Add( Schema01H08Driver.SchemaVersion, Schema01H08Driver );
+            CswSchemaUpdateDriver Schema01H09Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H09( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H09Driver.SchemaVersion, Schema01H09Driver );
 
             // This automatically detects the latest version
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys )
