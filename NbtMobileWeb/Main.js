@@ -227,7 +227,8 @@
             _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst, true);
 
             // this replaces the link navigation
-            $.mobile.changePage($('#' + DivId), "slide", false, true);
+            if (!IsFirst)
+                $.mobile.changePage($('#' + DivId), "slide", false, true);
 
         } // _processSubLevelXml()
 
@@ -429,6 +430,16 @@
                 if (Answer == answers[i])
                     Html += ' checked';
                 Html += ' onclick="';
+
+                // case 20307: workaround for a bug with JQuery Mobile Alpha2
+                for (var j = 0; j < answers.length; j++)
+                {
+                    if (answers[j] == answers[i])
+                        Html += ' $(\'#' + IdStr + '_' + Suffix + '_' + answers[j] + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
+                    else
+                        Html += ' $(\'#' + IdStr + '_' + Suffix + '_' + answers[j] + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
+                }
+
                 Html += ' var $otherradio; ';
                 for (var j = 0; j < answers.length; j++)
                 {
