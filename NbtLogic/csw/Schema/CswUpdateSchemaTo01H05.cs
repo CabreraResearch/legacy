@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass NotificationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
 
             // Default nodetype
-            CswNbtMetaDataNodeType NotificationNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NotificationOC.ObjectClassId, "Notification", "" );
+            CswNbtMetaDataNodeType NotificationNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NotificationOC.ObjectClassId, CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Notification ), "" );
 
             CswNbtMetaDataNodeTypeProp EventNTP = NotificationNT.getNodeTypeProp( CswNbtObjClassNotification.EventPropertyName );
             CswNbtMetaDataNodeTypeProp TargetTypeNTP = NotificationNT.getNodeTypeProp( CswNbtObjClassNotification.TargetTypePropertyName );

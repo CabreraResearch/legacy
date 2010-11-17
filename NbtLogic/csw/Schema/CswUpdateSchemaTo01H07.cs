@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.Schema
             // Case 20029
             //Associate Cabinet, Shelf and Box with IMCS
             DataTable IMCSTable = ModulesTableSelect.getTable( "where name = 'IMCS'" );
-            Int32 IMCSModuleId = CswConvert.ToInt32( FETable.Rows[0]["moduleid"] );
+            Int32 IMCSModuleId = CswConvert.ToInt32( IMCSTable.Rows[0]["moduleid"] );
 
             CswNbtMetaDataNodeType CabinetNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Cabinet" );
             CswNbtMetaDataNodeType ShelfNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Shelf" );
@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.Schema
             //Create Floor
             CswNbtMetaDataNodeType BuildingNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Building" );
             CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-            CswNbtMetaDataNodeType FloorNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( LocationOC.ObjectClassId, "Floor", "Locations" );
+            CswNbtMetaDataNodeType FloorNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( LocationOC.ObjectClassId, CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Floor ), "Locations" );
             CswNbtMetaDataNodeTypeProp FloorNameNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( FloorNT, CswNbtMetaDataFieldType.NbtFieldType.Text, "Name", Int32.MinValue );
             FloorNameNTP.SetValueOnAdd = true;
             FloorNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Name" );
@@ -164,8 +164,8 @@ namespace ChemSW.Nbt.Schema
             //Modify Locations View
 
             CswNbtMetaDataNodeType RoomNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Room" );
-            CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Mount Point" );
-            CswNbtMetaDataNodeType FireExtinguisherNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Fire Extinguisher" );
+            CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point ) );
+            CswNbtMetaDataNodeType FireExtinguisherNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Fire_Extinguisher ) );
             CswNbtMetaDataNodeTypeProp RoomParent = null;
 
             //FE Locations View

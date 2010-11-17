@@ -23,6 +23,22 @@ namespace ChemSW.Nbt.Schema
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
         private Hashtable _UpdateDrivers = new Hashtable();
 
+        public enum HamletNodeTypes
+        {
+            Fire_Extinguisher,
+            Mount_Point,
+            Mount_Point_Group,
+            Physical_Inspection,
+            Physical_Inspection_Schedule,
+            Physical_Inspection_Route,
+            Notification,
+            Floor
+        }
+        public static string HamletNodeTypesAsString( HamletNodeTypes NodeType )
+        {
+            return ( NodeType.ToString().Replace( '_', ' ' ) );
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
