@@ -25,7 +25,6 @@
 
         _initDB(true);
         _loadDivContents('', 0, 'viewsdiv', 'Views', true);
-        _makeSearchDiv();
 
         // ------------------------------------------------------------------------------------
         // Offline indicator
@@ -155,7 +154,11 @@
                 var siblingcnt = $xmlitem.siblings().andSelf().length;
 
                 var lihtml = '';
-                if (PageType == "PROP")
+                if (PageType == "NODE")
+                {
+                    lihtml += _makeObjectClassContent($xmlitem);
+                }
+                else if (PageType == "PROP")
                 {
                     var tab = $xmlitem.attr('tab');
                     var fieldtype = $xmlitem.attr('fieldtype');
@@ -206,7 +209,7 @@
 
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
-                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst, true);
+                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst);
 
                 }
                 else
@@ -224,7 +227,7 @@
             }); // $xml.each(function () {
 
 
-            _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst, true);
+            _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst);
 
             // this replaces the link navigation
             if (!IsFirst)
@@ -235,6 +238,48 @@
         function _makeUL()
         {
             return '<ul data-role="listview" data-inset="true">';
+        }
+
+        function _makeObjectClassContent($xmlitem)
+        {
+            var Html = '';
+
+            var id = $xmlitem.attr('id');
+            var NodeName = $xmlitem.attr('name');
+            var icon = 'images/icons/' + $xmlitem.attr('iconfilename');
+            var ObjectClass = $xmlitem.attr('objectclass');
+
+            switch (ObjectClass)
+            {
+                case "InspectionDesignClass":
+                    var DueDate = $xmlitem.find('prop[ocpname="Due Date"]').attr('gestalt');
+                    var Target = $xmlitem.find('prop[ocpname="Target"]').attr('gestalt');
+                    var UnansweredCnt = 0;
+                    $xmlitem.find('prop[fieldtype="Question"]').each(function ()
+                    {
+                        if ($(this).children('Answer').text() == '')
+                        {
+                            UnansweredCnt++;
+                        }
+                    });
+
+                    Html += '<li>';
+                    Html += '<img src="' + icon + '" class="ui-li-icon"/>';
+                    Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
+                    Html += '<p>' + Target + '</p>';
+                    Html += '<p>Due: ' + DueDate + '</p>';
+                    Html += '<span class="ui-li-count">' + UnansweredCnt + '</span>';
+                    Html += '</li>';
+                    break;
+
+                default:
+                    Html += '<li>';
+                    Html += '<img src="' + icon + '" class="ui-li-icon"/>';
+                    Html += '<a href="#' + id + '">' + NodeName + '</a>';
+                    Html += '</li>';
+                    break;
+            }
+            return Html;
         }
 
         function _makeFieldTypeContent($xmlitem)
@@ -475,9 +520,9 @@
             } // for (var i = 0; i < answers.length; i++)
             Html += '</fieldset>';
             return Html;
-        }
+        } // _makeQuestionAnswerFieldSet()
 
-        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, BindEvents, backtransition)
+        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, backtransition)
         {
             var divhtml = '<div id="' + DivId + '" data-role="page">' +
                           '  <div data-role="header" data-theme="' + opts.Theme + '">';
@@ -486,21 +531,28 @@
                 divhtml += '       data-transition="' + backtransition + '" ';
             if (ParentId == '' || ParentId == undefined)
                 divhtml += '    style="visibility: hidden"';
-            divhtml += '        >Back</a>';
+            divhtml += '        data-icon="arrow-l">Back</a>';
             divhtml += '       <h1>' + HeaderText + '</h1>' +
-            //            '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
-                          '    <a href="#Search" data-transition="slideup">Search</a>' +
-                          '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
-            //            '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
-                                 toolbar +
-                          '    </div>' +
-                          '  </div>' +
-                          '  <div data-role="content" data-theme="' + opts.Theme + '">' +
-                               content +
-                          '  </div>' +
-                          '  <div data-role="footer" data-theme="' + opts.Theme + '">' +
-                          '  </div>' +
-                          '</div>';
+            //         '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
+                       '    <a href="#" data-role="button" onclick="$(\'#' + DivId + '_searchdiv\').show(300); return false;"';
+            if (IsFirst)
+                divhtml += '    style="visibility: hidden"';
+            divhtml += '>Search</a>';
+            divhtml += '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
+            //         '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
+                              toolbar +
+                       '    </div>' +
+                       '  </div>' +
+                       '  <div data-role="content" data-theme="' + opts.Theme + '">' +
+                       '    <div id="' + DivId + '_searchdiv" data-role="fieldcontain" style="display: none;">' +
+                       '      <input type="search" name="' + DivId + '_searchfor" id="' + DivId + '_searchfor" value="" placeholder="Search" />' +
+                       '      <input type="button" id="' + DivId + '_searchgo" data-inline="true" value="Go" /> ' +
+                       '    </div>' +
+                            content +
+                       '  </div>' +
+                       '  <div data-role="footer" data-theme="' + opts.Theme + '">' +
+                       '  </div>' +
+                       '</div>';
 
             var $divhtml = $(divhtml);
             if (IsFirst)
@@ -509,30 +561,23 @@
                 $('body').append($divhtml);
 
             $divhtml.page();
-            if (BindEvents)
-            {
-                $divhtml.find('a')
-                    .click(function (e) { return _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
-                    .end()
-                    .find('input')
-                    .change(onPropertyChange)
-                    .end()
-                    .find('textarea')
-                    .change(onPropertyChange)
-                    .end()
-                    .find('select')
-                    .change(onPropertyChange);
-            }
-        }
 
+            $divhtml.find('a')
+                .click(function (e) { return _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
+                .end()
+                .find('input')
+                .change(onPropertyChange)
+                .end()
+                .find('textarea')
+                .change(onPropertyChange)
+                .end()
+                .find('select')
+                .change(onPropertyChange);
 
-        function _makeSearchDiv()
-        {
-            var toolbar = '';
-            var content = 'Search page placeholder...'
-            _addPageDivToBody('viewsdiv', 0, 'Search', 'Search', toolbar, content, false, false, 'slideup');
-        }
+            $divhtml.find('#' + DivId + '_searchgo')
+                .click(function (eventObj) { onSearch(DivId, eventObj); });
 
+        } // _addPageDivToBody()
 
 
         // ------------------------------------------------------------------------------------
@@ -554,6 +599,22 @@
             _storeChange(name, value)
         }
 
+        function onSearch(DivId, eventObj)
+        {
+            // for now, we only search within the given view
+            var searchfor = $('#' + DivId + '_searchfor').attr('value');
+            _fetchCachedSubLevelXml(DivId, function (xmlstr)
+            {
+                var $xmlstr = $(xmlstr);
+                //                $xmlstr.find('node prop[gestalt*="' + searchfor + '"]').each(function ()
+                //                {
+                //                    
+                //                });
+
+                alert('found ' + $xmlstr.find('node prop[gestalt*="' + searchfor + '"]').length + ' matches');
+            });
+
+        }
 
         // ------------------------------------------------------------------------------------
         // Client-side Database Interaction
@@ -570,33 +631,36 @@
 
         function _initDB(doreset)
         {
-           if (window.openDatabase) {
+            if (window.openDatabase)
+            {
 
-//                console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DisplayName + "; MaxSize: " + opts.MaxSize ); 
-//                db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DisplayName, opts.MaxSize);
+                //                console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DisplayName + "; MaxSize: " + opts.MaxSize ); 
+                //                db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DisplayName, opts.MaxSize);
 
                 console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DBDisplayName + "; MaxSize: " + opts.DBMaxSize);
                 db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
 
                 console.log("got here");
 
-                if (null == db) {
+                if (null == db)
+                {
                     console.log("db is null");
                 }
 
-                if (doreset) {
+                if (doreset)
+                {
                     _DoSql('DROP TABLE IF EXISTS sublevels; ');
                     _DoSql('DROP TABLE IF EXISTS changes; ');
                 }
 
                 _createDB();
-            } else 
+            } else
             {
-                console.log("database is not opened"); 
+                console.log("database is not opened");
             }
-            
-        }//_initDb()
- 
+
+        } //_initDb()
+
 
 
 

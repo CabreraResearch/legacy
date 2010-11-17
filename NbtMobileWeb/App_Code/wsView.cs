@@ -110,6 +110,8 @@ public class wsView : System.Web.Services.WebService
             ret += "<node id=\"" + NodeIdPrefix + ThisNodeId + "\"";
             ret += " name=\"" + ThisNodeName + "\"";
             ret += " nodetype=\"" + ThisNode.NodeType.NodeTypeName + "\"";
+            ret += " objectclass=\"" + ThisNode.ObjectClass.ObjectClass.ToString() + "\"";
+            ret += " iconfilename=\"" + ThisNode.NodeType.IconFileName + "\"";
             ret += "><subitems>" + ThisSubItems + "</subitems>";
             ret += "</node>";
 
@@ -135,6 +137,7 @@ public class wsView : System.Web.Services.WebService
                     ret += " tab=\"" + Tab.TabName + "\"";
                     ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
                     ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";
+                    ret += " ocpname=\"" + PropWrapper.ObjectClassPropName + "\"";
                     ret += ">";
                     XmlDocument XmlDoc = new XmlDocument();
                     CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
