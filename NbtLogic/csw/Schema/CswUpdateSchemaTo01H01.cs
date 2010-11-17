@@ -53,8 +53,12 @@ namespace ChemSW.Nbt.Schema
                                                false, false, false, string.Empty, false, DataDictionaryPortableDataType.Long, false,
                                                false, "jct_nodes_props", DataDictionaryUniqueType.None, false, string.Empty );
 
-            // BZ 20081
-            _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_props", "hideinmobile", "Exclude this property in Mobile", false, false );
+            // Case 20081
+            _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_props", "hideinmobile", "Exclude this property from Mobile", false, false );
+            
+            // Case 20083
+            _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_props", "mobilesearch", "Include this property in Mobile Search", false, false );
+            
 
             // New UserSelect Fieldtype
             CswTableUpdate FieldTypesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H-05_FT_Update", "field_types" );
