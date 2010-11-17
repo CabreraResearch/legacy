@@ -133,33 +133,53 @@
         }
 
 
-
+        var currenttab;
         function _processSubLevelXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst)
         {
-            var currenttab;
             var content = _makeUL();
-
+            currenttab = '';
             $xml.each(function ()
             {
-                var $xmlitem = $(this);
-                var id = $xmlitem.attr('id');
-                var text = $xmlitem.attr('name');
-                var IsDiv = (id != undefined && id != '');
-                var PageType = this.nodeName;
+                content += _makeListItemFromXml($xml, this, DivId, parentlevel, IsFirst);
+            });
 
-                var nextid = $xmlitem.next().attr('id');
-                var previd = $xmlitem.prev().attr('id');
+            if (!IsFirst)
+                content = _makeSearchDiv(DivId, $xml) + content;
 
-                var currentcnt = $xmlitem.prevAll().andSelf().length;
-                var siblingcnt = $xmlitem.siblings().andSelf().length;
+            _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst);
 
-                var lihtml = '';
-                if (PageType == "NODE")
-                {
+            // this replaces the link navigation
+            if (!IsFirst)
+                $.mobile.changePage($('#' + DivId), "slide", false, true);
+
+        } // _processSubLevelXml()
+
+        function _makeListItemFromXml($xml, xmlitem, DivId, parentlevel, IsFirst)
+        {
+            var $xmlitem = $(xmlitem);
+            var id = $xmlitem.attr('id');
+            var text = $xmlitem.attr('name');
+            var IsDiv = (id != undefined && id != '');
+            var PageType = xmlitem.nodeName;
+
+            var nextid = $xmlitem.next().attr('id');
+            var previd = $xmlitem.prev().attr('id');
+
+            var currentcnt = $xmlitem.prevAll().andSelf().length;
+            var siblingcnt = $xmlitem.siblings().andSelf().length;
+
+            var lihtml = '';
+            switch (PageType)
+            {
+                case "SEARCHES":
+                    // ignore this
+                    break;
+
+                case "NODE":
                     lihtml += _makeObjectClassContent($xmlitem);
-                }
-                else if (PageType == "PROP")
-                {
+                    break;
+
+                case "PROP":
                     var tab = $xmlitem.attr('tab');
                     var fieldtype = $xmlitem.attr('fieldtype');
                     if (currenttab != tab)
@@ -209,35 +229,47 @@
 
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
-                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst);
+                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeSearchDiv(DivId, $xml) + _makeFieldTypeContent($xmlitem), IsFirst);
+                    break;
 
-                }
-                else
-                {
+                default:
                     lihtml += '<li>';
                     if (IsDiv)
                         lihtml += '<a href="#' + id + '">' + text + '</a>';
                     else
                         lihtml += text;
                     lihtml += '</li>';
-
-                }
-                content += lihtml;
-
-            }); // $xml.each(function () {
-
-
-            _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst);
-
-            // this replaces the link navigation
-            if (!IsFirst)
-                $.mobile.changePage($('#' + DivId), "slide", false, true);
-
-        } // _processSubLevelXml()
+                    break;
+            }
+            return lihtml;
+        } // _makeListItemFromXml()
 
         function _makeUL()
         {
             return '<ul data-role="listview" data-inset="true">';
+        }
+
+        function _makeSearchDiv(DivId, $xml)
+        {
+            var Html = '';
+            Html += '    <div id="' + DivId + '_searchdiv" data-role="fieldcontain" style="display: none;">' +
+                    '      <select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
+            Html += '<option value="">Search On...</option>';
+
+            $xml.closest('root')
+                .find('searches')
+                .children()
+                .each(function ()
+                {
+                    var $search = $(this);
+                    Html += '<option value="' + $search.attr('id') + '">' + $search.attr('name') + '</option>';
+                });
+
+            Html += '      </select>' +
+                    '      <input type="search" name="' + DivId + '_searchfor" id="' + DivId + '_searchfor" value="" placeholder="Search" />' +
+                    '      <input type="button" id="' + DivId + '_searchgo" data-inline="true" value="Go" /> ' +
+                    '    </div>';
+            return Html;
         }
 
         function _makeObjectClassContent($xmlitem)
@@ -544,10 +576,6 @@
                        '    </div>' +
                        '  </div>' +
                        '  <div data-role="content" data-theme="' + opts.Theme + '">' +
-                       '    <div id="' + DivId + '_searchdiv" data-role="fieldcontain" style="display: none;">' +
-                       '      <input type="search" name="' + DivId + '_searchfor" id="' + DivId + '_searchfor" value="" placeholder="Search" />' +
-                       '      <input type="button" id="' + DivId + '_searchgo" data-inline="true" value="Go" /> ' +
-                       '    </div>' +
                             content +
                        '  </div>' +
                        '  <div data-role="footer" data-theme="' + opts.Theme + '">' +
@@ -601,17 +629,20 @@
 
         function onSearch(DivId, eventObj)
         {
-            // for now, we only search within the given view
+            var searchprop = $('#' + DivId + '_searchprop').attr('value');
             var searchfor = $('#' + DivId + '_searchfor').attr('value');
             _fetchCachedSubLevelXml(DivId, function (xmlstr)
             {
                 var $xmlstr = $(xmlstr);
-                //                $xmlstr.find('node prop[gestalt*="' + searchfor + '"]').each(function ()
-                //                {
-                //                    
-                //                });
+                var content = _makeUL();
+                $xmlstr.find('node[' + searchprop + '*="' + searchfor + '"]').each(function ()
+                {
+                    content += _makeListItemFromXml($xmlstr, this, DivId, 0, false);
+                });
 
-                alert('found ' + $xmlstr.find('node prop[gestalt*="' + searchfor + '"]').length + ' matches');
+                $('#searchresults').remove();
+                _addPageDivToBody(DivId, 1, 'searchresults', 'Search Results', '', content, false);
+                $.mobile.changePage($('#searchresults'), "slideup", false, true);
             });
 
         }

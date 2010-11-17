@@ -31,8 +31,15 @@ namespace ChemSW.Nbt.Schema
         public void update()
         {
             // Case 20083 - set MobileSearch for nodetypeprops
-            //CswNbtMetaDataNodeTypeProp PhysicalInspectionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType(
-    
+            CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point ) );
+            CswNbtMetaDataNodeTypeProp MPBarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
+            MPBarcodeNTP.MobileSearch = true;
+            CswNbtMetaDataNodeTypeProp MPLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
+            MPLocationNTP.MobileSearch = true;
+            
+            CswNbtMetaDataNodeType PhysicalInspectionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Physical_Inspection ) );
+            CswNbtMetaDataNodeTypeProp PITargetNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+            PITargetNTP.MobileSearch = true;
 
         } // update()
 

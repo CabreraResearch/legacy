@@ -63,13 +63,17 @@ public class wsView : System.Web.Services.WebService
                 //View.SaveToCache();
                 //Session["SessionViewId"] = View.SessionViewId;
 
+                // case 20083
+                ret += "<searches>" + _getSearchNodes( View ) + "</searches>";
+
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
                 if( Tree.getChildNodeCount() > 0 )
-                    ret = _runTreeNodesRecursive( Tree );
+                    ret += _runTreeNodesRecursive( Tree );
                 else
                 {
-                    ret = @"<node id="""" name=""No results""></node>";
+                    ret += @"<node id="""" name=""No results""></node>";
                 }
+            
             }// if( ParentId.StartsWith( ViewIdPrefix ) )
             else
             {
@@ -89,6 +93,31 @@ public class wsView : System.Web.Services.WebService
         }
         return "<root>" + ret + "</root>";
     }
+
+    // case 20083 - search options
+    private string _getSearchNodes( CswNbtView View )
+    {
+        string ret = string.Empty;
+        foreach(CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes)
+        {
+            if( View.ContainsNodeType( NodeType ) )
+            {
+                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in NodeType.NodeTypeProps )
+                {
+                    if( MetaDataProp.MobileSearch )
+                    {
+                        ret += "<search name=\"" + MetaDataProp.PropName + "\" id=\"";
+                        if( MetaDataProp.ObjectClassProp != null )
+                            ret += "search_ocp_" + MetaDataProp.ObjectClassPropId.ToString();
+                        else
+                            ret += "search_ntp_" + MetaDataProp.PropId.ToString();
+                        ret += "\"/>";
+                    }
+                }
+            }
+        }
+        return ret;
+    } // _getSearchNodes
 
     private string _runTreeNodesRecursive( ICswNbtTree Tree )
     {
@@ -112,6 +141,19 @@ public class wsView : System.Web.Services.WebService
             ret += " nodetype=\"" + ThisNode.NodeType.NodeTypeName + "\"";
             ret += " objectclass=\"" + ThisNode.ObjectClass.ObjectClass.ToString() + "\"";
             ret += " iconfilename=\"" + ThisNode.NodeType.IconFileName + "\"";
+
+            // case 20083 - search values
+            foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps )
+            {
+                if( MetaDataProp.MobileSearch )
+                {
+                    if( MetaDataProp.ObjectClassProp != null )
+                        ret += " search_ocp_" + MetaDataProp.ObjectClassPropId.ToString() + "=\"" + ThisNode.Properties[MetaDataProp].Gestalt + "\"";
+                    else
+                        ret += " search_ntp_" + MetaDataProp.PropId.ToString() + "=\"" + ThisNode.Properties[MetaDataProp].Gestalt + "\"";
+                }
+            }
+
             ret += "><subitems>" + ThisSubItems + "</subitems>";
             ret += "</node>";
 
