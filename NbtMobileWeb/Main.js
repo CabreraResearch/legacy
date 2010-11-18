@@ -142,9 +142,7 @@
             {
                 content += _makeListItemFromXml($xml, this, DivId, parentlevel, IsFirst);
             });
-
-            if (!IsFirst)
-                content = _makeSearchDiv(DivId, $xml) + content;
+            content += _endUL();
 
             _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst);
 
@@ -185,7 +183,7 @@
                     if (currenttab != tab)
                     {
                         if (currenttab != undefined)
-                            lihtml += '</ul>' + _makeUL();
+                            lihtml += _endUL() + _makeUL();
                         lihtml += '<li data-role="list-divider">' + tab + '</li>'
                         currenttab = tab;
                     }
@@ -229,7 +227,7 @@
 
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
-                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeSearchDiv(DivId, $xml) + _makeFieldTypeContent($xmlitem), IsFirst);
+                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst);
                     break;
 
                 default:
@@ -244,32 +242,17 @@
             return lihtml;
         } // _makeListItemFromXml()
 
-        function _makeUL()
+        function _makeUL(id)
         {
-            return '<ul data-role="listview" data-inset="true">';
+            var ret = '<ul data-role="listview" data-inset="true" ';
+            if (id != undefined)
+                ret += 'id="' + id + '"';
+            ret += '>';
+            return ret;
         }
-
-        function _makeSearchDiv(DivId, $xml)
+        function _endUL()
         {
-            var Html = '';
-            Html += '    <div id="' + DivId + '_searchdiv" data-role="fieldcontain" style="display: none;">' +
-                    '      <select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
-            Html += '<option value="">Search On...</option>';
-
-            $xml.closest('root')
-                .find('searches')
-                .children()
-                .each(function ()
-                {
-                    var $search = $(this);
-                    Html += '<option value="' + $search.attr('id') + '">' + $search.attr('name') + '</option>';
-                });
-
-            Html += '      </select>' +
-                    '      <input type="search" name="' + DivId + '_searchfor" id="' + DivId + '_searchfor" value="" placeholder="Search" />' +
-                    '      <input type="button" id="' + DivId + '_searchgo" data-inline="true" value="Go" /> ' +
-                    '    </div>';
-            return Html;
+            return '</ul>';
         }
 
         function _makeObjectClassContent($xmlitem)
@@ -554,7 +537,7 @@
             return Html;
         } // _makeQuestionAnswerFieldSet()
 
-        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, backtransition)
+        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, HideSearchButton, backicon, backtransition)
         {
             var divhtml = '<div id="' + DivId + '" data-role="page">' +
                           '  <div data-role="header" data-theme="' + opts.Theme + '">';
@@ -563,13 +546,18 @@
                 divhtml += '       data-transition="' + backtransition + '" ';
             if (ParentId == '' || ParentId == undefined)
                 divhtml += '    style="visibility: hidden"';
-            divhtml += '        data-icon="arrow-l">Back</a>';
+            divhtml += '        data-icon="';
+            if (backicon != undefined)
+                divhtml += backicon;
+            else
+                divhtml += 'arrow-l';
+            divhtml += '        ">Back</a>';
             divhtml += '       <h1>' + HeaderText + '</h1>' +
             //         '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
-                       '    <a href="#" data-role="button" onclick="$(\'#' + DivId + '_searchdiv\').show(300); return false;"';
-            if (IsFirst)
+                       '    <a href="#" id="' + DivId + '_searchopen" ';
+            if (IsFirst || HideSearchButton)
                 divhtml += '    style="visibility: hidden"';
-            divhtml += '>Search</a>';
+            divhtml += '    >Search</a>';
             divhtml += '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
             //         '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
                               toolbar +
@@ -590,7 +578,16 @@
 
             $divhtml.page();
 
-            $divhtml.find('a')
+            _bindEvents(DivId, level, $divhtml);
+
+        } // _addPageDivToBody()
+
+        function _bindEvents(DivId, level, $div)
+        {
+            $div.find('#' + DivId + '_searchopen')
+                .click(function (eventObj) { onSearchOpen(DivId, eventObj); })
+                .end()
+                .find('li a')
                 .click(function (e) { return _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
                 .end()
                 .find('input')
@@ -600,13 +597,9 @@
                 .change(onPropertyChange)
                 .end()
                 .find('select')
-                .change(onPropertyChange);
-
-            $divhtml.find('#' + DivId + '_searchgo')
-                .click(function (eventObj) { onSearch(DivId, eventObj); });
-
-        } // _addPageDivToBody()
-
+                .change(onPropertyChange)
+                .end();
+        }
 
         // ------------------------------------------------------------------------------------
         // Events
@@ -627,25 +620,72 @@
             _storeChange(name, value)
         }
 
-        function onSearch(DivId, eventObj)
+        function onSearchOpen(DivId, eventObj)
         {
             var searchprop = $('#' + DivId + '_searchprop').attr('value');
             var searchfor = $('#' + DivId + '_searchfor').attr('value');
             _fetchCachedSubLevelXml(DivId, function (xmlstr)
             {
                 var $xmlstr = $(xmlstr);
-                var content = _makeUL();
-                $xmlstr.find('node[' + searchprop + '*="' + searchfor + '"]').each(function ()
-                {
-                    content += _makeListItemFromXml($xmlstr, this, DivId, 0, false);
-                });
+                var Html = '<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
 
-                $('#searchresults').remove();
-                _addPageDivToBody(DivId, 1, 'searchresults', 'Search Results', '', content, false);
-                $.mobile.changePage($('#searchresults'), "slideup", false, true);
+                $xmlstr.closest('root')
+                    .find('searches')
+                    .children()
+                    .each(function ()
+                    {
+                        var $search = $(this);
+                        Html += '<option value="' + $search.attr('id') + '">' + $search.attr('name') + '</option>';
+                    });
+
+                Html += '</select>' +
+                        '<input type="search" name="' + DivId + '_searchfor" id="' + DivId + '_searchfor" value="" placeholder="Search" />' +
+                        '<input type="button" id="' + DivId + '_searchgo" data-inline="true" value="Go" /> ' +
+                        '<div id="' + DivId + '_searchresults"></div>';
+
+
+                _addPageDivToBody(DivId, 1, DivId + '_searchdiv', 'Search', '', Html, false, true, 'arrow-u');
+
+                $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
+
+                $.mobile.changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
             });
 
         }
+
+        function onSearchSubmit(DivId, eventObj)
+        {
+            var searchprop = $('#' + DivId + '_searchprop').attr('value');
+            var searchfor = $('#' + DivId + '_searchfor').attr('value');
+            _fetchCachedSubLevelXml(DivId, function (xmlstr)
+            {
+                var $xmlstr = $(xmlstr);
+                var content = _makeUL(DivId + '_searchresultslist');
+
+                var $searchhits = $xmlstr.find('node[' + searchprop + '*="' + searchfor + '"]');
+                if ($searchhits.length == 0)
+                {
+                    content += "<li>No Results</li>";
+                } else
+                {
+                    $searchhits.each(function ()
+                    {
+                        content += _makeListItemFromXml($xmlstr, this, DivId, 1, false);
+                    });
+                }
+
+                content += _endUL();
+
+                var $srdiv = $('#' + DivId + '_searchresults');
+                $srdiv.children().remove();
+                $srdiv.append(content);
+                console.log($('#' + DivId + '_searchresultslist').length);
+                $('#' + DivId + '_searchresultslist').listview();
+
+                _bindEvents(DivId + '_searchdiv', 1, $srdiv);
+            });
+        }
+
 
         // ------------------------------------------------------------------------------------
         // Client-side Database Interaction
