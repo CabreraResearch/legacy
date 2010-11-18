@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( 0 == Gestalt.Length );
+                return ( null == RateInterval );
             }
         }
 
