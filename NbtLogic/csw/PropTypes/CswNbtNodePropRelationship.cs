@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( 0 == Gestalt.Length );
+                return ( Int32.MinValue == RelatedNodeId.PrimaryKey );
             }//
         }
 
