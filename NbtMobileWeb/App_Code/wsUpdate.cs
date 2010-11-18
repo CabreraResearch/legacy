@@ -81,7 +81,7 @@ public class wsUpdate : System.Web.Services.WebService
                 Int32 NodeId = Convert.ToInt32( ItemId[4] );
 
                 CswPrimaryKey CswPrimaryKey = new CswPrimaryKey();
-                CswPrimaryKey.FromString( ItemId[1] + "_"  + NodeId );
+                CswPrimaryKey.FromString( ItemId[3] + "_"  + NodeId );
 
                 CswNbtNode CswNbtNode = _CswNbtWebServiceResources.CswNbtResources.Nodes[CswPrimaryKey];
                 CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
