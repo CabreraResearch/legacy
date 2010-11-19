@@ -457,33 +457,40 @@
             var $sf_comments = $xmlitem.children('Comments');
             var $sf_compliantanswers = $xmlitem.children('CompliantAnswers');
 
+            var $sftomodify = null;
             switch (FieldType)
             {
-                case "Date": if (name == IdStr) $sf_value.text(value); break;
+                case "Date": if (name == IdStr) $sftomodify = $sf_value; break;
                 case "Link": break;
-                case "List": if (name == IdStr) $sf_value.text(value); break;
+                case "List": if (name == IdStr) $sftomodify = $sf_value; break;
                 case "Logical":
                     if (name == IdStr + '_ans' || name == IdStr + '_ans2')
-                        $sf_checked.text(value);
+                        $sftomodify = $sf_checked;
                     break;
-                case "Memo": if (name == IdStr) $sf_text.text(value); break;
-                case "Number": if (name == IdStr) $sf_value.text(value); break;
+                case "Memo": if (name == IdStr) $sftomodify = $sf_text; break;
+                case "Number": if (name == IdStr) $sftomodify = $sf_value; break;
                 case "Password": break;
-                case "Quantity": if (name == IdStr) $sf_value.text(value); break;
+                case "Quantity": if (name == IdStr) $sftomodify = $sf_value; break;
                 case "Question":
                     if (name == IdStr + '_com')
-                        $sf_comments.text(value);
+                        $sftomodify = $sf_comments;
                     else if (name == IdStr + '_ans' || name == IdStr + '_ans2')
-                        $sf_answer.text(value);
+                        $sftomodify = $sf_answer;
                     else if (name == IdStr + '_cor')
-                        $sf_correctiveaction.text(value);
+                        $sftomodify = $sf_correctiveaction;
                     break;
                 case "Static": break;
-                case "Text": if (name == IdStr) $sf_text.text(value); break;
-                case "Time": if (name == IdStr) $sf_value.text(value); break;
+                case "Text": if (name == IdStr) $sftomodify = $sf_text; break;
+                case "Time": if (name == IdStr) $sftomodify = $sf_value; break;
                 default: break;
             }
-        }
+            if ($sftomodify != null)
+            {
+                $sftomodify.text(value);
+                $xmlitem.attr('wasmodified', 'true');
+            }
+
+        } // _FieldTypeHtmlToXml()
 
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
         {
@@ -668,8 +675,6 @@
 
         function onPropertyChange(DivId, eventObj)
         {
-            alert('onPropertyChange');
-
             var $elm = $(eventObj.srcElement);
             var name = $elm.attr('name');
             var value = $elm.attr('value');
