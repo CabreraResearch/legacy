@@ -103,7 +103,7 @@ public class wsView : System.Web.Services.WebService
     private string _getSearchNodes( CswNbtView View )
     {
         string ret = string.Empty;
-        foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+        foreach( CswNbtMetaDataNodeType NodeType in _CswNbtWebServiceResources.CswNbtResources.MetaData.LatestVersionNodeTypes )
         {
             if( View.ContainsNodeType( NodeType ) )
             {
