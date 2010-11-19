@@ -73,13 +73,15 @@
                     {
                         if (level == 0)
                         {
+                            // Level 0
                             _fetchCachedRootXml(function (xml)
                             {
                                 _processSubLevelXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
                             });
                         } else
                         {
-                            _fetchCachedSubLevelXml(DivId, function (xmlstr)
+                            // Level 1
+                            _fetchCachedSubLevelXml(rootid, function (xmlstr)
                             {
                                 var $thisxmlstr = $(xmlstr).find('#' + DivId);
                                 _processSubLevelXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
@@ -118,6 +120,7 @@
                     }
                 } else
                 {
+                    // Level 2 and up
                     _fetchCachedSubLevelXml(rootid, function (xmlstr)
                     {
                         var $thisxmlstr = $(xmlstr).find('#' + DivId);
@@ -605,7 +608,7 @@
         // Events
         // ------------------------------------------------------------------------------------
 
-        function onPropertyChange(eventObj)
+        function onPropertyChange(DivId, eventObj)
         {
             var $elm = $(eventObj.srcElement);
             var name = $elm.attr('name');
@@ -616,15 +619,18 @@
                 .children('small')
                 .text(value);
 
-            // store the property value change in the database
-            _storeChange(name, value)
+            //// store the property value change in the database
+            //_storeChange(name, value)
+
+            // update the xml and store it
+
         }
 
         function onSearchOpen(DivId, eventObj)
         {
             var searchprop = $('#' + DivId + '_searchprop').attr('value');
             var searchfor = $('#' + DivId + '_searchfor').attr('value');
-            _fetchCachedSubLevelXml(DivId, function (xmlstr)
+            _fetchCachedSubLevelXml(rootid, function (xmlstr)
             {
                 var $xmlstr = $(xmlstr);
                 var Html = '<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
@@ -657,7 +663,7 @@
         {
             var searchprop = $('#' + DivId + '_searchprop').attr('value');
             var searchfor = $('#' + DivId + '_searchfor').attr('value');
-            _fetchCachedSubLevelXml(DivId, function (xmlstr)
+            _fetchCachedSubLevelXml(rootid, function (xmlstr)
             {
                 var $xmlstr = $(xmlstr);
                 var content = _makeUL(DivId + '_searchresultslist');
