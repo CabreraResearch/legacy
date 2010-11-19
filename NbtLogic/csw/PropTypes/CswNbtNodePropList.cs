@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( 0 == Gestalt.Length );
+                return ( 0 == Gestalt.Length && string.Empty == Value );
             }//
         }
 
