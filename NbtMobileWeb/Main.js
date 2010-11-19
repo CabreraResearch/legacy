@@ -202,9 +202,9 @@
                         if (sf_checked == undefined) sf_checked = '';
                         if (sf_required == undefined) sf_required = '';
 
-                        lihtml += '<li>';
-                        lihtml += _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required);
-                        lihtml += '</li>';
+                        //lihtml += '<li>';
+                        lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
+                        //lihtml += '</li>';
                     }
 
                     if (fieldtype == 'Question')
@@ -214,9 +214,9 @@
                         if (sf_answer == undefined) sf_answer = '';
                         if (sf_compliantanswers == undefined) sf_compliantanswers = '';
 
-                        lihtml += '<li>';
-                        lihtml += _makeQuestionAnswerFieldSet(id, 'ans', 'ans2', 'cor', 'li', sf_answer, sf_compliantanswers);
-                        lihtml += '</li>';
+                        //lihtml += '<li>';
+                        lihtml += _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_answer, sf_compliantanswers);
+                        //lihtml += '</li>';
                     }
 
 
@@ -230,7 +230,7 @@
 
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
-                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst);
+                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _FieldTypeXmlToHtml($xmlitem), IsFirst);
                     break;
 
                 default:
@@ -300,7 +300,7 @@
             return Html;
         }
 
-        function _makeFieldTypeContent($xmlitem)
+        function _FieldTypeXmlToHtml($xmlitem)
         {
             var IdStr = $xmlitem.attr('id');
             var FieldType = $xmlitem.attr('fieldtype');
@@ -359,7 +359,7 @@
                     break;
 
                 case "Logical":
-                    Html += _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required);
+                    Html += _makeLogicalFieldSet(IdStr, '_ans2', '_ans', sf_checked, sf_required);
                     break;
 
                 case "Memo":
@@ -397,7 +397,7 @@
                     break;
 
                 case "Question":
-                    Html += _makeQuestionAnswerFieldSet(IdStr, 'ans2', 'ans', 'cor', 'li', sf_answer, sf_compliantanswers);
+                    Html += _makeQuestionAnswerFieldSet(IdStr, '_ans2', '_ans', '_cor', '_li', sf_answer, sf_compliantanswers);
 
                     Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
                     Html += sf_comments
@@ -437,6 +437,54 @@
             return Html;
         }
 
+
+        function _FieldTypeHtmlToXml($xmlitem, name, value)
+        {
+            var IdStr = $xmlitem.attr('id');
+            var FieldType = $xmlitem.attr('fieldtype');
+            var PropName = $xmlitem.attr('name');
+
+            // Subfield nodes
+            var $sf_text = $xmlitem.children('Text');
+            var $sf_value = $xmlitem.children('Value');
+            var $sf_href = $xmlitem.children('Href');
+            var $sf_options = $xmlitem.children('Options');
+            var $sf_checked = $xmlitem.children('Checked');
+            var $sf_required = $xmlitem.children('Required');
+            var $sf_units = $xmlitem.children('Units');
+            var $sf_answer = $xmlitem.children('Answer');
+            var $sf_correctiveaction = $xmlitem.children('CorrectiveAction');
+            var $sf_comments = $xmlitem.children('Comments');
+            var $sf_compliantanswers = $xmlitem.children('CompliantAnswers');
+
+            switch (FieldType)
+            {
+                case "Date": if (name == IdStr) $sf_value.text(value); break;
+                case "Link": break;
+                case "List": if (name == IdStr) $sf_value.text(value); break;
+                case "Logical":
+                    if (name == IdStr + '_ans' || name == IdStr + '_ans2')
+                        $sf_checked.text(value);
+                    break;
+                case "Memo": if (name == IdStr) $sf_text.text(value); break;
+                case "Number": if (name == IdStr) $sf_value.text(value); break;
+                case "Password": break;
+                case "Quantity": if (name == IdStr) $sf_value.text(value); break;
+                case "Question":
+                    if (name == IdStr + '_com')
+                        $sf_comments.text(value);
+                    else if (name == IdStr + '_ans' || name == IdStr + '_ans2')
+                        $sf_answer.text(value);
+                    else if (name == IdStr + '_cor')
+                        $sf_correctiveaction.text(value);
+                    break;
+                case "Static": break;
+                case "Text": if (name == IdStr) $sf_text.text(value); break;
+                case "Time": if (name == IdStr) $sf_value.text(value); break;
+                default: break;
+            }
+        }
+
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
         {
             var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
@@ -451,16 +499,26 @@
                 var answertext = answers[i];
                 if (answertext == 'Blank') answertext = '?';
 
-                Html += '<input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_' + answers[i] + '" value="' + answertext + '" ';
+                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answertext + '" ';
                 if ((Checked == "false" && answers[i] == "No") ||
                     (Checked == "true" && answers[i] == "Yes") ||
                     (Checked == '' && answers[i] == 'Blank'))
                     Html += 'checked';
                 Html += ' onclick="';
+
+                // case 20307: workaround for a bug with JQuery Mobile Alpha2
+                for (var j = 0; j < answers.length; j++)
+                {
+                    if (answers[j] == answers[i])
+                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
+                    else
+                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
+                }
+
                 Html += ' var $otherradio; ';
                 for (var j = 0; j < answers.length; j++)
                 {
-                    Html += ' $otherradio = $(\'#' + IdStr + '_' + OtherSuffix + '_' + answers[j] + '\'); ';
+                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[j] + '\'); ';
                     if (answers[j] == answers[i])
                     {
                         Html += ' $otherradio.attr(\'checked\', true); ';
@@ -473,7 +531,7 @@
                     }
                 } // for (var j = 0; j < answers.length; j++)
                 Html += '" />';
-                Html += '<label for="' + IdStr + '_' + Suffix + '_' + answers[i] + '">' + answertext + '</label>';
+                Html += '<label for="' + IdStr + Suffix + '_' + answers[i] + '">' + answertext + '</label>';
             } // for (var i = 0; i < answers.length; i++)
 
             Html += '</fieldset>';
@@ -489,7 +547,7 @@
 
             for (var i = 0; i < answers.length; i++)
             {
-                Html += '<input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
+                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
                 if (Answer == answers[i])
                     Html += ' checked';
                 Html += ' onclick="';
@@ -498,15 +556,15 @@
                 for (var j = 0; j < answers.length; j++)
                 {
                     if (answers[j] == answers[i])
-                        Html += ' $(\'#' + IdStr + '_' + Suffix + '_' + answers[j] + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
                     else
-                        Html += ' $(\'#' + IdStr + '_' + Suffix + '_' + answers[j] + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
                 }
 
                 Html += ' var $otherradio; ';
                 for (var j = 0; j < answers.length; j++)
                 {
-                    Html += ' $otherradio = $(\'#' + IdStr + '_' + OtherSuffix + '_' + answers[j] + '\'); ';
+                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[j] + '\'); ';
                     if (answers[j] == answers[i])
                     {
                         Html += ' $otherradio.attr(\'checked\', true); ';
@@ -520,21 +578,21 @@
 
                 if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
                 {
-                    Html += ' $(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
-                    Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); ';
+                    Html += ' $(\'#' + IdStr + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
+                    Html += ' $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
                 }
                 else
                 {
-                    Html += 'var $cor = $(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\'); ';
+                    Html += 'var $cor = $(\'#' + IdStr + CorrectiveActionSuffix + '\'); ';
                     Html += '$cor.css(\'display\', \'\'); ';
                     Html += 'if($cor.attr(\'value\') == \'\') { ';
-                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); ';
+                    Html += '  $(\'#' + IdStr + LiSuffix + ' div\').addClass(\'OOC\'); ';
                     Html += '} else {';
-                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); ';
+                    Html += '  $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
                     Html += '}';
                 }
                 Html += ' " />';
-                Html += '            <label for="' + IdStr + '_' + Suffix + '_' + answers[i] + '">' + answers[i] + '</label>';
+                Html += '            <label for="' + IdStr + Suffix + '_' + answers[i] + '">' + answers[i] + '</label>';
             } // for (var i = 0; i < answers.length; i++)
             Html += '</fieldset>';
             return Html;
@@ -590,17 +648,17 @@
             $div.find('#' + DivId + '_searchopen')
                 .click(function (eventObj) { onSearchOpen(DivId, eventObj); })
                 .end()
-                .find('li a')
-                .click(function (e) { return _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
-                .end()
                 .find('input')
-                .change(onPropertyChange)
+                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
                 .find('textarea')
-                .change(onPropertyChange)
+                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
                 .find('select')
-                .change(onPropertyChange)
+                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .end()
+                .find('li a')
+                .click(function (e) { return _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
                 .end();
         }
 
@@ -610,21 +668,28 @@
 
         function onPropertyChange(DivId, eventObj)
         {
+            alert('onPropertyChange');
+
             var $elm = $(eventObj.srcElement);
             var name = $elm.attr('name');
             var value = $elm.attr('value');
 
-            // update the short summary value on the list item
-            $('a[href="#' + name + '"]')
-                .children('small')
-                .text(value);
-
-            //// store the property value change in the database
-            //_storeChange(name, value)
-
             // update the xml and store it
+            _fetchCachedSubLevelXml(rootid, function (xmlstr)
+            {
+                var $xmlstr = $(xmlstr);
+                var $divxml = $xmlstr.find('#' + DivId);
+                $divxml.andSelf().find('prop').each(function ()
+                {
+                    _FieldTypeHtmlToXml($(this), name, value);
+                });
 
-        }
+                // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
+                // However, it appears to work, for now.
+                _updateStoredSubLevelXml(rootid, $xmlstr.wrap('<wrapper />').parent().html());
+            });
+
+        } // onPropertyChange()
 
         function onSearchOpen(DivId, eventObj)
         {
@@ -734,7 +799,6 @@
                 if (doreset)
                 {
                     _DoSql('DROP TABLE IF EXISTS sublevels; ');
-                    _DoSql('DROP TABLE IF EXISTS changes; ');
                 }
 
                 _createDB();
@@ -756,12 +820,6 @@
                    '   rootname TEXT NOT NULL, ' +
                    '   rootxml TEXT, ' +
                    '   sublevelxml TEXT );');
-
-            _DoSql('CREATE TABLE IF NOT EXISTS changes ' +
-                   '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                   '   propid TEXT NOT NULL, ' +
-                   '   newvalue TEXT, ' +
-                   '   applied CHAR ); ');
         }
 
         function _storeSubLevelXml(rootid, rootname, rootxml, sublevelxml)
@@ -774,16 +832,18 @@
                        );
             }
         }
-        function _storeChange(propid, newvalue)
+
+        function _updateStoredSubLevelXml(rootid, sublevelxml)
         {
             if (rootid != undefined && rootid != '')
             {
-                _DoSql('INSERT INTO changes (propid, newvalue) VALUES (?, ?);',
-                       [propid, newvalue],
+                _DoSql('UPDATE sublevels SET sublevelxml = ? WHERE rootid = ?;',
+                       [sublevelxml, rootid],
                        function () { }
                        );
             }
         }
+
         function _fetchCachedSubLevelXml(rootid, onsuccess)
         {
             if (rootid != undefined && rootid != '')
