@@ -1,5 +1,4 @@
-﻿
-(function ($)
+﻿(function ($)
 {
 
     $.fn.CswMobile = function (options)
@@ -15,6 +14,13 @@
             Theme: 'a'
         };
 
+        var DbId = {
+            DBShortName: 'main.html',
+            DBVersion: '1.0',
+            DBDisplayName: 'main.html',
+            DBMaxSize: 65536
+        };
+
         if (options)
         {
             $.extend(opts, options);
@@ -23,8 +29,22 @@
         var rootid;
         var db;
 
-        _initDB(true);
+
+        _initDB(true, _waitForData);
         _loadDivContents('', 0, 'viewsdiv', 'Views', true);
+        //_waitForData();
+
+        /*
+        function initPage() {
+
+        console.log("entered init");
+
+        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
+        _makeSearchDiv();
+        _waitForData();
+
+        } ///initPage()
+        */
 
         // ------------------------------------------------------------------------------------
         // Offline indicator
@@ -726,7 +746,6 @@
 
                 $.mobile.changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
             });
-
         }
 
         function onSearchSubmit(DivId, eventObj)
@@ -768,8 +787,6 @@
                 _bindEvents(DivId + '_searchdiv', 1, $srdiv);
             });
         }
-
-
         // ------------------------------------------------------------------------------------
         // Client-side Database Interaction
         // ------------------------------------------------------------------------------------
@@ -777,55 +794,72 @@
 
         function _DoSql(sql, params, onSuccess)
         {
-            db.transaction(function (transaction)
-            {
-                transaction.executeSql(sql, params, onSuccess, _errorHandler);
-            });
-        }
-
-        function _initDB(doreset)
-        {
-            if (window.openDatabase)
-            {
-
-                //                console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DisplayName + "; MaxSize: " + opts.MaxSize ); 
-                //                db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DisplayName, opts.MaxSize);
-
-                console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DBDisplayName + "; MaxSize: " + opts.DBMaxSize);
-                db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
-
-                console.log("got here");
-
-                if (null == db)
-                {
-                    console.log("db is null");
-                }
-
-                if (doreset)
-                {
-                    _DoSql('DROP TABLE IF EXISTS sublevels; ');
-                }
-
-                _createDB();
+	    if (window.openDatabase)
+	    {
+     		db.transaction(function (transaction)
+            	{
+                	transaction.executeSql(sql, params, onSuccess, _errorHandler);
+ 		});
             } else
             {
                 console.log("database is not opened");
+	    }
+        } //_DoSql
+
+
+
+        function _initDB(doreset, OnSuccess)
+        {
+
+            db = openDatabase(DbId.DBShortName, DbId.DBVersion, DbId.DBDisplayName, DbId.DBMaxSize);
+
+
+
+            if (doreset)
+            {
+                _DoSql('DROP TABLE IF EXISTS sublevels; ', null, function () { _createDb(OnSuccess); });
+
+            } else
+            {
+                _createDb(OnSuccess);
             }
+
+
+
+            console.log("tables created");
+
 
         } //_initDb()
 
-
-
-
-        function _createDB()
+        function _createDb(OnSuccess)
         {
             _DoSql('CREATE TABLE IF NOT EXISTS sublevels ' +
-                   '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                   '   rootid TEXT NOT NULL, ' +
-                   '   rootname TEXT NOT NULL, ' +
-                   '   rootxml TEXT, ' +
-                   '   sublevelxml TEXT );');
+                    '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
+                    '   rootid TEXT NOT NULL, ' +
+                    '   rootname TEXT NOT NULL, ' +
+                    '   rootxml TEXT, ' +
+                    '   sublevelxml TEXT );',
+                    null,
+                    
+                    OnSuccess
+                    );
+
+        } //_createDb() 
+
+
+
+        function _errorHandler(transaction, error)
+        {
+            console.log('Database Error: ' + error.message + ' (Code ' + error.code + ')');
+            return true;
         }
+
+
+
+        // ------------------------------------------------------------------------------------
+        // Persistance functions
+        // ------------------------------------------------------------------------------------
+
 
         function _storeSubLevelXml(rootid, rootname, rootxml, sublevelxml)
         {
@@ -884,11 +918,124 @@
         }
 
 
-        function _errorHandler(transaction, error)
+        // ------------------------------------------------------------------------------------
+        // Synchronization
+        // ------------------------------------------------------------------------------------
+
+
+        function _waitForData()
         {
-            alert('Database Error: ' + error.message + ' (Code ' + error.code + ')');
-            return true;
-        }
+
+            setTimeout(_handleDataCheckTimer, 5000);
+            //            setInterval(_handleDataCheckTimer, 10000);
+            //            setInterval(_handleDataCheckTimer, 15000);
+            //            //setTimeout( null , 5000);
+            //_handleDataCheckTimer();
+
+        } //_waitForData() 
+
+        function _handleDataCheckTimer()
+        {
+
+            $.ajax({
+                type: 'POST',
+                url: '/NbtMobileWeb/wsUpdate.asmx/ConnectTest',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                data: "{}",
+                success: function (data, textStatus, XMLHttpRequest)
+                {
+                    _DoSql("select * from changes where applied='0'", null, _processChanges);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown)
+                {
+
+                    ErrorMessage = "Error: " + textStatus;
+                    if (null != errorThrown)
+                    {
+                        ErrorMessage += "; Exception: " + errorThrown.toString()
+                    }
+
+                    console.log(ErrorMessage);
+
+                    _waitForData();
+                }
+            });
+
+        } //_handleDataCheckTimer()
+
+
+        function _processChanges(transaction, result)
+        {
+
+            //console.log("totalrows: " + result.rows.length);
+
+            //console.log("Connection detected: beginning row processing ");
+
+            var Updates = "";
+            for (var rowidx = 0; rowidx < result.rows.length; rowidx++)
+            {
+
+                Updates += result.rows.item(rowidx)["id"] + "," + result.rows.item(rowidx)["propid"] + "," + result.rows.item(rowidx)["newvalue"] + ";";
+                console.log("Update string: " + Updates);
+                //console.log("iteration " + rowidx + ": change value: " + result.rows.item(rowidx)["newvalue"]);
+
+            } //iterate rows
+
+
+            $.ajax({
+                type: 'POST',
+                url: '/NbtMobileWeb/wsUpdate.asmx/UpdateProperties',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                data: "{Updates: '" + Updates + "'}",
+                success: function (data, textStatus, XMLHttpRequest)
+                {
+
+                    console.log("return from update: " + data.d);
+
+
+                    UpdateSql = "update changes set applied='1' where id in (" + data.d + ");";
+                    _DoSql(UpdateSql,
+                    [],
+                    function (transaction, result)
+                    {
+
+                        console.log("sql succeeded");
+                    }
+                    );
+
+
+                    /*
+                    _DoSql("update changes set applied='1' where id in (?);",
+                    [data.d],
+                    function ( transaction, result ) {
+
+                    console.log("sql succeeded"); 
+                    } 
+                    );                   
+                    */
+
+                    _waitForData();
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown)
+                {
+
+                    ErrorMessage = "Error: " + textStatus;
+                    if (null != errorThrown)
+                    {
+                        ErrorMessage += "; Exception: " + errorThrown.toString()
+                    }
+
+                    console.log(ErrorMessage);
+
+                    _waitForData();
+                }
+            });
+
+
+        } //_processChanges()
 
 
         // For proper chaining support
