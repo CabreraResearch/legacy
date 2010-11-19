@@ -71,15 +71,15 @@
                             // Level 0
                             _fetchCachedRootXml(function (xml)
                             {
-                                _processSubLevelXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
+                                _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
                             });
                         } else
                         {
                             // Level 1
-                            _fetchCachedSubLevelXml(rootid, function (xmlstr)
+                            _fetchCachedViewXml(rootid, function (xmlstr)
                             {
                                 var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                                _processSubLevelXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                                _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                             });
                         }
                     } else
@@ -102,28 +102,28 @@
                                 {
                                     if (level == 1)
                                     {
-                                        _storeSubLevelXml(DivId, HeaderText, '', data.d);
+                                        _storeViewXml(DivId, HeaderText, '', data.d);
                                     }
-                                    _processSubLevelXml(ParentId, DivId, HeaderText, $xml.children(), level, IsFirst);
+                                    _processViewXml(ParentId, DivId, HeaderText, $xml.children(), level, IsFirst);
                                 }
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
                             {
-                                console.log("An Error Occurred: " + errorThrown);
+                                _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
                             }
                         });
                     }
                 } else
                 {
                     // Level 2 and up
-                    _fetchCachedSubLevelXml(rootid, function (xmlstr)
+                    _fetchCachedViewXml(rootid, function (xmlstr)
                     {
                         var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                        _processSubLevelXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                        _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                     });
 
                     // prevent link navigation!
-                    // _processSubLevelXml() above will do the page transition for us when the div is ready
+                    // _processViewXml() above will do the page transition for us when the div is ready
                     ret = false;
                 }
             }
@@ -131,7 +131,7 @@
         }
 
         var currenttab;
-        function _processSubLevelXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst)
+        function _processViewXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst)
         {
             var content = _makeUL();
             currenttab = '';
@@ -147,7 +147,7 @@
             if (!IsFirst)
                 $.mobile.changePage($('#' + DivId), "slide", false, true);
 
-        } // _processSubLevelXml()
+        } // _processViewXml()
 
         function _makeListItemFromXml($xml, xmlitem, DivId, parentlevel, IsFirst)
         {
@@ -669,7 +669,7 @@
             var value = $elm.attr('value');
 
             // update the xml and store it
-            _fetchCachedSubLevelXml(rootid, function (xmlstr)
+            _fetchCachedViewXml(rootid, function (xmlstr)
             {
                 var $xmlstr = $(xmlstr);
                 var $divxml = $xmlstr.find('#' + DivId);
@@ -680,7 +680,7 @@
 
                 // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
                 // However, it appears to work, for now.
-                _updateStoredSubLevelXml(rootid, $xmlstr.wrap('<wrapper />').parent().html());
+                _updateStoredViewXml(rootid, $xmlstr.wrap('<wrapper />').parent().html());
             });
 
         } // onPropertyChange()
@@ -689,7 +689,7 @@
         {
             var searchprop = $('#' + DivId + '_searchprop').attr('value');
             var searchfor = $('#' + DivId + '_searchfor').attr('value');
-            _fetchCachedSubLevelXml(rootid, function (xmlstr)
+            _fetchCachedViewXml(rootid, function (xmlstr)
             {
                 var $xmlstr = $(xmlstr);
                 var Html = '<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
@@ -721,7 +721,7 @@
         {
             var searchprop = $('#' + DivId + '_searchprop').attr('value');
             var searchfor = $('#' + DivId + '_searchfor').attr('value');
-            _fetchCachedSubLevelXml(rootid, function (xmlstr)
+            _fetchCachedViewXml(rootid, function (xmlstr)
             {
                 var $xmlstr = $(xmlstr);
                 var content = _makeUL(DivId + '_searchresultslist');
@@ -779,7 +779,7 @@
             db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
             if (doreset)
             {
-                _DoSql('DROP TABLE IF EXISTS sublevels; ', null, function () { _createDb(OnSuccess); });
+                _DoSql('DROP TABLE IF EXISTS views; ', null, function () { _createDb(OnSuccess); });
             } else
             {
                 _createDb(OnSuccess);
@@ -789,12 +789,13 @@
 
         function _createDb(OnSuccess)
         {
-            _DoSql('CREATE TABLE IF NOT EXISTS sublevels ' +
+            _DoSql('CREATE TABLE IF NOT EXISTS views ' +
                     '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
                     '   rootid TEXT NOT NULL, ' +
                     '   rootname TEXT NOT NULL, ' +
                     '   rootxml TEXT, ' +
-                    '   sublevelxml TEXT );',
+                    '   viewxml TEXT, ' +
+                    '   wasmodified INTEGER );',
                     null,
                     OnSuccess
                     );
@@ -814,47 +815,72 @@
         // ------------------------------------------------------------------------------------
 
 
-        function _storeSubLevelXml(rootid, rootname, rootxml, sublevelxml)
+        function _storeViewXml(rootid, rootname, rootxml, viewxml)
         {
             if (rootid != undefined && rootid != '')
             {
-                _DoSql('INSERT INTO sublevels (rootid, rootname, rootxml, sublevelxml) VALUES (?, ?, ?, ?);',
-                       [rootid, rootname, rootxml, sublevelxml],
+                _DoSql('INSERT INTO views (rootid, rootname, rootxml, viewxml, wasmodified) VALUES (?, ?, ?, ?, 0);',
+                       [rootid, rootname, rootxml, viewxml],
                        function () { }
                        );
             }
         }
 
-        function _updateStoredSubLevelXml(rootid, sublevelxml)
+        function _updateStoredViewXml(rootid, viewxml)
         {
             if (rootid != undefined && rootid != '')
             {
-                _DoSql('UPDATE sublevels SET sublevelxml = ? WHERE rootid = ?;',
-                       [sublevelxml, rootid],
+                _DoSql('UPDATE views SET wasmodified = 1, viewxml = ? WHERE rootid = ?;',
+                       [viewxml, rootid],
                        function () { }
                        );
             }
         }
 
-        function _fetchCachedSubLevelXml(rootid, onsuccess)
+        function _getModifiedView(onSuccess)
+        {
+            _DoSql('SELECT rootid, viewxml FROM views WHERE wasmodified = 1 ORDER BY id DESC;',
+                   [],
+                   function (transaction, result)
+                   {
+                       if (result.rows.length > 0)
+                       {
+                           var row = result.rows.item(0);
+                           onSuccess(row.rootid, row.viewxml);
+                       }
+                   });
+        }
+
+        function _clearModifiedView(rootid)
         {
             if (rootid != undefined && rootid != '')
             {
-                _DoSql('SELECT sublevelxml FROM sublevels WHERE rootid = ? ORDER BY id DESC;',
+                _DoSql('UPDATE views SET wasmodified = 0 WHERE rootid = ?;',
+                       [rootid],
+                       function () { }
+                       );
+            }
+        }
+
+        function _fetchCachedViewXml(rootid, onsuccess)
+        {
+            if (rootid != undefined && rootid != '')
+            {
+                _DoSql('SELECT viewxml FROM views WHERE rootid = ? ORDER BY id DESC;',
                        [rootid],
                        function (transaction, result)
                        {
                            if (result.rows.length > 0)
                            {
                                var row = result.rows.item(0);
-                               onsuccess(row.sublevelxml);
+                               onsuccess(row.viewxml);
                            }
                        });
             }
         }
         function _fetchCachedRootXml(onsuccess)
         {
-            _DoSql('SELECT rootid, rootname, rootxml FROM sublevels ORDER BY rootname;',
+            _DoSql('SELECT rootid, rootname, rootxml FROM views ORDER BY rootname;',
                    [],
                    function (transaction, result)
                    {
@@ -896,93 +922,50 @@
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown)
                 {
-
-                    ErrorMessage = "Error: " + textStatus;
-                    if (null != errorThrown)
-                    {
-                        ErrorMessage += "; Exception: " + errorThrown.toString()
-                    }
-
-                    console.log(ErrorMessage);
-                    setOffline();
+                    _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
                     _waitForData();
                 }
             });
 
         } //_handleDataCheckTimer()
 
-
         function _processChanges(transaction, result)
         {
-            return false;
-            //console.log("totalrows: " + result.rows.length);
-
-            //console.log("Connection detected: beginning row processing ");
-
-            var Updates = "";
-            for (var rowidx = 0; rowidx < result.rows.length; rowidx++)
+            _getModifiedView(function (rootid, viewxml)
             {
-
-                Updates += result.rows.item(rowidx)["id"] + "," + result.rows.item(rowidx)["propid"] + "," + result.rows.item(rowidx)["newvalue"] + ";";
-                console.log("Update string: " + Updates);
-                //console.log("iteration " + rowidx + ": change value: " + result.rows.item(rowidx)["newvalue"]);
-
-            } //iterate rows
-
-
-            $.ajax({
-                type: 'POST',
-                url: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
-                dataType: "json",
-                contentType: 'application/json; charset=utf-8',
-                data: "{Updates: '" + Updates + "'}",
-                success: function (data, textStatus, XMLHttpRequest)
-                {
-
-                    console.log("return from update: " + data.d);
-
-
-                    UpdateSql = "update changes set applied='1' where id in (" + data.d + ");";
-                    _DoSql(UpdateSql,
-                    [],
-                    function (transaction, result)
+                $.ajax({
+                    type: 'POST',
+                    url: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    data: "{ViewXml: '" + viewxml + "'}",
+                    success: function (data, textStatus, XMLHttpRequest)
                     {
-
-                        console.log("sql succeeded");
-                    }
-                    );
-
-
-                    /*
-                    _DoSql("update changes set applied='1' where id in (?);",
-                    [data.d],
-                    function ( transaction, result ) {
-
-                    console.log("sql succeeded"); 
-                    } 
-                    );                   
-                    */
-
-                    _waitForData();
-
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown)
-                {
-
-                    ErrorMessage = "Error: " + textStatus;
-                    if (null != errorThrown)
+                        _clearModifiedView(rootid);
+                        _waitForData();
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown)
                     {
-                        ErrorMessage += "; Exception: " + errorThrown.toString()
+                        _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+                        _waitForData();
                     }
-
-                    console.log(ErrorMessage);
-
-                    _waitForData();
-                }
+                });
             });
 
-
         } //_processChanges()
+
+
+
+        function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
+        {
+            ErrorMessage = "Error: " + textStatus;
+            if (null != errorThrown)
+            {
+                ErrorMessage += "; Exception: " + errorThrown.toString()
+            }
+            console.log(ErrorMessage);
+            setOffline();
+        }
 
 
         // For proper chaining support
