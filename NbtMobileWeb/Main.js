@@ -8,7 +8,7 @@
             DBVersion: '1.0',
             DBDisplayName: 'main.html',
             DBMaxSize: 65536,
-            WebServiceUrl: '/NbtMobileWeb/wsView.asmx/Run',
+            WebServiceUrl: '/NbtMobileWeb/wsNBT.asmx/RunView',
             MainPageUrl: '/NbtMobileWeb/Main.html',
             Theme: 'a'
         };
@@ -97,7 +97,7 @@
                                 var $firstchild = $xml.children().first();
                                 if ($firstchild.get(0).nodeName == "ERROR")
                                 {
-                                    alert("An Error Occurred: " + $firstchild.text());
+                                    console.log("An Error Occurred: " + $firstchild.text());
                                 } else
                                 {
                                     if (level == 1)
@@ -109,7 +109,7 @@
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
                             {
-                                alert("An Error Occurred: " + errorThrown);
+                                console.log("An Error Occurred: " + errorThrown);
                             }
                         });
                     }
@@ -513,10 +513,10 @@
                 }
 
                 Html += ' var $otherradio; ';
-                for (var j = 0; j < answers.length; j++)
+                for (var k = 0; k < answers.length; k++)
                 {
-                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[j] + '\'); ';
-                    if (answers[j] == answers[i])
+                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[k] + '\'); ';
+                    if (answers[k] == answers[i])
                     {
                         Html += ' $otherradio.attr(\'checked\', true); ';
                         Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
@@ -526,7 +526,7 @@
                         Html += ' $otherradio.attr(\'checked\', false); ';
                         Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
                     }
-                } // for (var j = 0; j < answers.length; j++)
+                } // for (var k = 0; k < answers.length; k++)
                 Html += '" />';
                 Html += '<label for="' + IdStr + Suffix + '_' + answers[i] + '">' + answertext + '</label>';
             } // for (var i = 0; i < answers.length; i++)
@@ -556,10 +556,10 @@
                 }
 
                 Html += ' var $otherradio; ';
-                for (var j = 0; j < answers.length; j++)
+                for (var k = 0; k < answers.length; k++)
                 {
-                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[j] + '\'); ';
-                    if (answers[j] == answers[i])
+                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[k] + '\'); ';
+                    if (answers[k] == answers[i])
                     {
                         Html += ' $otherradio.attr(\'checked\', true); ';
                         Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
@@ -568,7 +568,7 @@
                         Html += ' $otherradio.attr(\'checked\', false); ';
                         Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
                     }
-                } // for (var j = 0; i < answers.length; j++)
+                } // for (var k = 0; k < answers.length; k++)
 
                 if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
                 {
@@ -885,7 +885,7 @@
         {
             $.ajax({
                 type: 'POST',
-                url: '/NbtMobileWeb/wsUpdate.asmx/ConnectTest',
+                url: '/NbtMobileWeb/wsNBT.asmx/ConnectTest',
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
                 data: "{}",
@@ -914,7 +914,7 @@
 
         function _processChanges(transaction, result)
         {
-
+            return false;
             //console.log("totalrows: " + result.rows.length);
 
             //console.log("Connection detected: beginning row processing ");
@@ -932,7 +932,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/NbtMobileWeb/wsUpdate.asmx/UpdateProperties',
+                url: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
                 data: "{Updates: '" + Updates + "'}",
@@ -1006,5 +1006,5 @@ function iterate(obj)
     if (popup != null)
         popup.document.write(str);
     else
-        alert("iterate() error: No popup!");
+        console.log("iterate() error: No popup!");
 }

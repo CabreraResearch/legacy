@@ -1,0 +1,120 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+using System.Web.Script.Services;   // supports ScriptService attribute
+using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.Nbt;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Config;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Session;
+
+namespace ChemSW.Nbt.WebServices
+{
+    /// <summary>
+    /// NBT Web service interface
+    /// </summary>
+    /// 
+    [ScriptService]
+    [WebService( Namespace = "http://localhost/NbtWebApp" )]
+    [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
+    public class wsNBT : System.Web.Services.WebService
+    {
+        #region Session and Resource Management
+
+        private CswNbtWebServiceResources _CswNbtWebServiceResources;
+
+        private void start()
+        {
+            _CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
+                                                                        Context.Session,
+                                                                        Context.Request,
+                                                                        Context.Response,
+                                                                        string.Empty,
+                                                                        System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
+                                                                        SetupMode.Web );
+            _CswNbtWebServiceResources.startSession();
+        }
+        private void end()
+        {
+            _CswNbtWebServiceResources.endSession( EndSessionMode.esmCommit );
+        }
+        private string error(Exception ex)
+        {
+            _CswNbtWebServiceResources.CswNbtResources.CswLogger.reportError( ex );
+            _CswNbtWebServiceResources.endSession( EndSessionMode.esmRollback );
+            return "<error>Error: " + ex.Message + "</error>";
+        }
+
+
+        #endregion Session and Resource Management
+
+        #region Web Methods
+
+        [WebMethod( EnableSession = true )]
+        public string ConnectTest()
+        {
+            // no session needed here
+            return ( "Connected" );
+        }
+
+
+        [WebMethod( EnableSession = true )]
+        public string ConnectTestFail()
+        {
+            // no session needed here
+            throw new Exception( "Emulated connection failure" );
+        }
+
+
+        [WebMethod( EnableSession = true )]
+        public string UpdateProperties( string Updates )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+
+                CswNbtWebServiceUpdateProperties wsUP = new CswNbtWebServiceUpdateProperties( _CswNbtWebServiceResources );
+                ReturnVal = wsUP.Run( Updates );
+
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error(ex);
+            }
+            return ( ReturnVal );
+        } // UpdateProperties()
+
+
+        [WebMethod( EnableSession = true )]
+        public string RunView( string ParentId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+
+                CswNbtWebServiceView wsView = new CswNbtWebServiceView( _CswNbtWebServiceResources );
+                ReturnVal = wsView.Run( ParentId );
+
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        } // RunView()
+
+        #endregion Web Methods
+
+    }//wsNBT
+
+} // namespace ChemSW.WebServices
