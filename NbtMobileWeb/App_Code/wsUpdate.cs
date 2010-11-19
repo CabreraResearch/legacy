@@ -50,12 +50,30 @@ public class wsUpdate : System.Web.Services.WebService
 
         finally
         {
-            _CswNbtWebServiceResources.endSession( EndSessionMode.esmRelease );  
-                
+            _CswNbtWebServiceResources.endSession( EndSessionMode.esmRelease );
+
         }
 
         return ( "Connected" );
-    }//
+    }
+
+    [WebMethod( EnableSession = true )]
+    public string ConnectTestFail()
+    {
+
+        try
+        {
+            _CswNbtWebServiceResources.startSession();
+            throw new Exception( "Emulated connection failure" );
+        }
+        finally
+        {
+            _CswNbtWebServiceResources.endSession( EndSessionMode.esmRelease );
+
+        }
+
+        return ( "Connected" );
+    }
 
     [WebMethod( EnableSession = true )]
     public string UpdateProperties( string Updates )

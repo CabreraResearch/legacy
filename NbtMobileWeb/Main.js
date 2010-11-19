@@ -26,13 +26,26 @@
 
 
         // ------------------------------------------------------------------------------------
-        // Offline indicator
+        // Online indicator
         // ------------------------------------------------------------------------------------
 
+        function setOffline()
+        {
+            $('.onlineStatus')
+                .removeClass('online')
+                .addClass('offline')
+                .text('Offline');
+        }
+        function setOnline()
+        {
+            $('.onlineStatus')
+                .removeClass('offline')
+                .addClass('online')
+                .text('Online');
+        }
         function amOffline()
         {
-            //return $('.offlineIndicator').hasClass('offline');
-            return false;
+            return $('.onlineStatus').hasClass('offline');
         }
 
 
@@ -606,8 +619,12 @@
                        '  <div data-role="content" data-theme="' + opts.Theme + '">' +
                             content +
                        '  </div>' +
-                       '  <div data-role="footer" data-theme="' + opts.Theme + '">' +
-                       '  </div>' +
+                       '  <div data-role="footer" data-theme="' + opts.Theme + '">';
+            if (amOffline())
+                divhtml += '    <div class="onlineStatus offline">Offline</div>';
+            else
+                divhtml += '    <div class="onlineStatus online">Online</div>';
+            divhtml += '  </div>' +
                        '</div>';
 
             var $divhtml = $(divhtml);
@@ -866,7 +883,6 @@
 
         function _handleDataCheckTimer()
         {
-
             $.ajax({
                 type: 'POST',
                 url: '/NbtMobileWeb/wsUpdate.asmx/ConnectTest',
@@ -876,6 +892,7 @@
                 success: function (data, textStatus, XMLHttpRequest)
                 {
                     _DoSql("select * from changes where applied='0'", null, _processChanges);
+                    setOnline();
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown)
                 {
@@ -887,7 +904,7 @@
                     }
 
                     console.log(ErrorMessage);
-
+                    setOffline();
                     _waitForData();
                 }
             });
