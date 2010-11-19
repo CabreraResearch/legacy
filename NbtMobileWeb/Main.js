@@ -28,23 +28,34 @@
 
         var rootid;
         var db;
+        var UserId;
+        var Password;
 
 
         _initDB(true, _waitForData);
-        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
-        //_waitForData();
 
-        /*
-        function initPage() {
 
-        console.log("entered init");
+        //var LoginContent = 'Login to ChemSW Mobile';
+        var LoginContent = '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
+        LoginContent += '<input type="password" id="login_password" placeholder="Password "/><br>';
+        LoginContent += '<a id="loginsubmit" data-role="button" href="#viewsdiv">Continue</a>';
+        _addPageDivToBody('', 0, 'logindiv', 'Login to ChemSW Fire Inspection', '', LoginContent, true, true);
+        $('#loginsubmit').click(onLoginSubmit);
 
-        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
-        _makeSearchDiv();
-        _waitForData();
+        //_loadDivContents('', 0, 'viewsdiv', 'Views', true);
 
-        } ///initPage()
-        */
+        function onLoginSubmit(eventObj)
+        {
+            // authenticate here
+            var UserId = $('#login_username').attr('value');
+            var Password = $('#login_password').attr('value');
+
+
+            // load views
+            _loadDivContents('', 0, 'viewsdiv', 'Views', false);
+            $.mobile.changePage('viewsdiv', "slideup", false, true);
+        }
+
 
         // ------------------------------------------------------------------------------------
         // Offline indicator
