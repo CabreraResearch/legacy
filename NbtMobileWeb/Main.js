@@ -794,41 +794,29 @@
 
         function _DoSql(sql, params, onSuccess)
         {
-	    if (window.openDatabase)
-	    {
-     		db.transaction(function (transaction)
-            	{
-                	transaction.executeSql(sql, params, onSuccess, _errorHandler);
- 		});
+            if (window.openDatabase)
+            {
+                db.transaction(function (transaction)
+                {
+                    transaction.executeSql(sql, params, onSuccess, _errorHandler);
+                });
             } else
             {
                 console.log("database is not opened");
-	    }
+            }
         } //_DoSql
-
-
 
         function _initDB(doreset, OnSuccess)
         {
-
             db = openDatabase(DbId.DBShortName, DbId.DBVersion, DbId.DBDisplayName, DbId.DBMaxSize);
-
-
-
             if (doreset)
             {
                 _DoSql('DROP TABLE IF EXISTS sublevels; ', null, function () { _createDb(OnSuccess); });
-
             } else
             {
                 _createDb(OnSuccess);
             }
-
-
-
             console.log("tables created");
-
-
         } //_initDb()
 
         function _createDb(OnSuccess)
@@ -840,13 +828,10 @@
                     '   rootxml TEXT, ' +
                     '   sublevelxml TEXT );',
                     null,
-                    
                     OnSuccess
                     );
 
         } //_createDb() 
-
-
 
         function _errorHandler(transaction, error)
         {
