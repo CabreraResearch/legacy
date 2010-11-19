@@ -662,16 +662,23 @@
                 var $xmlstr = $(xmlstr);
                 var content = _makeUL(DivId + '_searchresultslist');
 
-                var $searchhits = $xmlstr.find('node[' + searchprop + '*="' + searchfor + '"]');
-                if ($searchhits.length == 0)
+                //var $searchhits = $xmlstr.find('node[' + searchprop + '*="' + searchfor + '"]');
+                var hitcount = 0;
+                $xmlstr.find('node').each(function ()
+                {
+                    var $node = $(this);
+                    if ($node.attr(searchprop) != undefined)
+                    {
+                        if ($node.attr(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) > 0)
+                        {
+                            hitcount++;
+                            content += _makeListItemFromXml($xmlstr, this, DivId, 1, false);
+                        }
+                    }
+                });
+                if (hitcount.length == 0)
                 {
                     content += "<li>No Results</li>";
-                } else
-                {
-                    $searchhits.each(function ()
-                    {
-                        content += _makeListItemFromXml($xmlstr, this, DivId, 1, false);
-                    });
                 }
 
                 content += _endUL();
