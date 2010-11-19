@@ -1,6 +1,5 @@
 ﻿(function ($)
 {
-
     $.fn.CswMobile = function (options)
     {
 
@@ -9,16 +8,9 @@
             DBVersion: '1.0',
             DBDisplayName: 'main.html',
             DBMaxSize: 65536,
-            WebServiceUrl: '/NbtMobileWeb/wsView.asmx/Run',
+            WebServiceUrl: '/NbtMobileWeb/wsNBT.asmx/RunView',
             MainPageUrl: '/NbtMobileWeb/Main.html',
             Theme: 'a'
-        };
-
-        var DbId = {
-            DBShortName: 'main.html',
-            DBVersion: '1.0',
-            DBDisplayName: 'main.html',
-            DBMaxSize: 65536
         };
 
         if (options)
@@ -31,9 +23,7 @@
         var UserId;
         var Password;
 
-
         _initDB(true, _waitForData);
-
 
         //var LoginContent = 'Login to ChemSW Mobile';
         var LoginContent = '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
@@ -41,7 +31,6 @@
         LoginContent += '<a id="loginsubmit" data-role="button" href="#viewsdiv">Continue</a>';
         _addPageDivToBody('', 0, 'logindiv', 'Login to ChemSW Fire Inspection', '', LoginContent, true, true);
         $('#loginsubmit').click(onLoginSubmit);
-
         //_loadDivContents('', 0, 'viewsdiv', 'Views', true);
 
         function onLoginSubmit(eventObj)
@@ -56,32 +45,27 @@
             $.mobile.changePage('viewsdiv', "slideup", false, true);
         }
 
-
         // ------------------------------------------------------------------------------------
-        // Offline indicator
+        // Online indicator
         // ------------------------------------------------------------------------------------
 
-        function toggleOffline()
+        function setOffline()
         {
-            // Reset all indicators
-            $('.offlineIndicator').toggleClass('online')
-                .toggleClass('offline');
-            // Clear non-cached root contents
-            //        $('#TopDiv').children('div[data-role="content"]').children('ul').children().remove();
-            //        _loadDivContents(0, $('#TopDiv'));
+            $('.onlineStatus')
+                .removeClass('online')
+                .addClass('offline')
+                .text('Offline');
         }
-
-        function getCurrentOfflineIndicatorCssClass()
+        function setOnline()
         {
-            if ($('.offlineIndicator').hasClass('offline'))
-                return 'offline';
-            else
-                return 'online';
-
+            $('.onlineStatus')
+                .removeClass('offline')
+                .addClass('online')
+                .text('Online');
         }
         function amOffline()
         {
-            return $('.offlineIndicator').hasClass('offline');
+            return $('.onlineStatus').hasClass('offline');
         }
 
 
@@ -133,7 +117,7 @@
                                 var $firstchild = $xml.children().first();
                                 if ($firstchild.get(0).nodeName == "ERROR")
                                 {
-                                    alert("An Error Occurred: " + $firstchild.text());
+                                    console.log("An Error Occurred: " + $firstchild.text());
                                 } else
                                 {
                                     if (level == 1)
@@ -145,7 +129,7 @@
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
                             {
-                                alert("An Error Occurred: " + errorThrown);
+                                console.log("An Error Occurred: " + errorThrown);
                             }
                         });
                     }
@@ -165,7 +149,6 @@
             }
             return ret;
         }
-
 
         var currenttab;
         function _processSubLevelXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst)
@@ -233,9 +216,7 @@
                         if (sf_checked == undefined) sf_checked = '';
                         if (sf_required == undefined) sf_required = '';
 
-                        //lihtml += '<li>';
                         lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
-                        //lihtml += '</li>';
                     }
 
                     if (fieldtype == 'Question')
@@ -245,9 +226,7 @@
                         if (sf_answer == undefined) sf_answer = '';
                         if (sf_compliantanswers == undefined) sf_compliantanswers = '';
 
-                        //lihtml += '<li>';
                         lihtml += _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_answer, sf_compliantanswers);
-                        //lihtml += '</li>';
                     }
 
 
@@ -284,6 +263,7 @@
             ret += '>';
             return ret;
         }
+
         function _endUL()
         {
             return '</ul>';
@@ -526,7 +506,6 @@
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
         {
             var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-            //Html += '        <legend></legend>';
 
             var answers = ['Blank', 'Yes', 'No'];
             if (Required == "true")
@@ -554,10 +533,10 @@
                 }
 
                 Html += ' var $otherradio; ';
-                for (var j = 0; j < answers.length; j++)
+                for (var k = 0; k < answers.length; k++)
                 {
-                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[j] + '\'); ';
-                    if (answers[j] == answers[i])
+                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[k] + '\'); ';
+                    if (answers[k] == answers[i])
                     {
                         Html += ' $otherradio.attr(\'checked\', true); ';
                         Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
@@ -567,7 +546,7 @@
                         Html += ' $otherradio.attr(\'checked\', false); ';
                         Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
                     }
-                } // for (var j = 0; j < answers.length; j++)
+                } // for (var k = 0; k < answers.length; k++)
                 Html += '" />';
                 Html += '<label for="' + IdStr + Suffix + '_' + answers[i] + '">' + answertext + '</label>';
             } // for (var i = 0; i < answers.length; i++)
@@ -579,10 +558,7 @@
         function _makeQuestionAnswerFieldSet(IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Answer, CompliantAnswers)
         {
             var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-            //Html += '<legend>Answer:</legend>';
-
             var answers = ['Yes', 'No'];
-
             for (var i = 0; i < answers.length; i++)
             {
                 Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
@@ -600,10 +576,10 @@
                 }
 
                 Html += ' var $otherradio; ';
-                for (var j = 0; j < answers.length; j++)
+                for (var k = 0; k < answers.length; k++)
                 {
-                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[j] + '\'); ';
-                    if (answers[j] == answers[i])
+                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[k] + '\'); ';
+                    if (answers[k] == answers[i])
                     {
                         Html += ' $otherradio.attr(\'checked\', true); ';
                         Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
@@ -612,7 +588,7 @@
                         Html += ' $otherradio.attr(\'checked\', false); ';
                         Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
                     }
-                } // for (var j = 0; i < answers.length; j++)
+                } // for (var k = 0; k < answers.length; k++)
 
                 if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
                 {
@@ -652,21 +628,23 @@
                 divhtml += 'arrow-l';
             divhtml += '        ">Back</a>';
             divhtml += '       <h1>' + HeaderText + '</h1>' +
-            //         '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
                        '    <a href="#" id="' + DivId + '_searchopen" ';
             if (IsFirst || HideSearchButton)
                 divhtml += '    style="visibility: hidden"';
             divhtml += '    >Search</a>';
             divhtml += '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
-            //         '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
                               toolbar +
                        '    </div>' +
                        '  </div>' +
                        '  <div data-role="content" data-theme="' + opts.Theme + '">' +
                             content +
                        '  </div>' +
-                       '  <div data-role="footer" data-theme="' + opts.Theme + '">' +
-                       '  </div>' +
+                       '  <div data-role="footer" data-theme="' + opts.Theme + '">';
+            if (amOffline())
+                divhtml += '    <div class="onlineStatus offline">Offline</div>';
+            else
+                divhtml += '    <div class="onlineStatus online">Online</div>';
+            divhtml += '  </div>' +
                        '</div>';
 
             var $divhtml = $(divhtml);
@@ -768,7 +746,6 @@
                 var $xmlstr = $(xmlstr);
                 var content = _makeUL(DivId + '_searchresultslist');
 
-                //var $searchhits = $xmlstr.find('node[' + searchprop + '*="' + searchfor + '"]');
                 var hitcount = 0;
                 $xmlstr.find('node').each(function ()
                 {
@@ -819,7 +796,7 @@
 
         function _initDB(doreset, OnSuccess)
         {
-            db = openDatabase(DbId.DBShortName, DbId.DBVersion, DbId.DBDisplayName, DbId.DBMaxSize);
+            db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
             if (doreset)
             {
                 _DoSql('DROP TABLE IF EXISTS sublevels; ', null, function () { _createDb(OnSuccess); });
@@ -921,27 +898,21 @@
 
         function _waitForData()
         {
-
             setTimeout(_handleDataCheckTimer, 5000);
-            //            setInterval(_handleDataCheckTimer, 10000);
-            //            setInterval(_handleDataCheckTimer, 15000);
-            //            //setTimeout( null , 5000);
-            //_handleDataCheckTimer();
-
-        } //_waitForData() 
+        }
 
         function _handleDataCheckTimer()
         {
-
             $.ajax({
                 type: 'POST',
-                url: '/NbtMobileWeb/wsUpdate.asmx/ConnectTest',
+                url: '/NbtMobileWeb/wsNBT.asmx/ConnectTest',
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
                 data: "{}",
                 success: function (data, textStatus, XMLHttpRequest)
                 {
                     _DoSql("select * from changes where applied='0'", null, _processChanges);
+                    setOnline();
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown)
                 {
@@ -953,7 +924,7 @@
                     }
 
                     console.log(ErrorMessage);
-
+                    setOffline();
                     _waitForData();
                 }
             });
@@ -963,7 +934,7 @@
 
         function _processChanges(transaction, result)
         {
-
+            return false;
             //console.log("totalrows: " + result.rows.length);
 
             //console.log("Connection detected: beginning row processing ");
@@ -981,7 +952,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/NbtMobileWeb/wsUpdate.asmx/UpdateProperties',
+                url: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
                 data: "{Updates: '" + Updates + "'}",
@@ -1055,5 +1026,5 @@ function iterate(obj)
     if (popup != null)
         popup.document.write(str);
     else
-        alert("iterate() error: No popup!");
+        console.log("iterate() error: No popup!");
 }

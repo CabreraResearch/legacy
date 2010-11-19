@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Services;
-using System.Web.Script.Services;   // supports ScriptService attribute
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
@@ -14,57 +12,17 @@ using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Session;
 
-/// <summary>
-/// Summary description for wsUpdate
-/// </summary>
-/// 
-[ScriptService]
-[WebService( Namespace = "http://localhost/NbtWebApp" )]
-[WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
-public class wsUpdate : System.Web.Services.WebService
+namespace ChemSW.Nbt.WebServices
 {
-    private CswNbtWebServiceResources _CswNbtWebServiceResources;
-    public wsUpdate()
+    public class CswNbtWebServiceUpdateProperties
     {
-
-        _CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application, Context.Session, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
-
-    }
-
-    private string _FilesPath
-    {
-        get
+        private CswNbtWebServiceResources _CswNbtWebServiceResources;
+        public CswNbtWebServiceUpdateProperties( CswNbtWebServiceResources CswNbtWebServiceResources )
         {
-            return ( System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc" );
-        }
-    }
-
-    [WebMethod( EnableSession = true )]
-    public string ConnectTest()
-    {
-
-        try
-        {
-            _CswNbtWebServiceResources.startSession();
+            _CswNbtWebServiceResources = CswNbtWebServiceResources;
         }
 
-        finally
-        {
-            _CswNbtWebServiceResources.endSession( EndSessionMode.esmRelease );  
-                
-        }
-
-        return ( "Connected" );
-    }//
-
-    [WebMethod( EnableSession = true )]
-    public string UpdateProperties( string Updates )
-    {
-
-
-        string ReturnVal = string.Empty;
-
-        try
+        public string Run( string Updates )
         {
             string UpdatedRowIds = string.Empty;
             string[] UpdateItems = Updates.Split( ';' );
@@ -81,7 +39,7 @@ public class wsUpdate : System.Web.Services.WebService
                 Int32 NodeId = Convert.ToInt32( ItemId[4] );
 
                 CswPrimaryKey CswPrimaryKey = new CswPrimaryKey();
-                CswPrimaryKey.FromString( ItemId[3] + "_"  + NodeId );
+                CswPrimaryKey.FromString( ItemId[3] + "_" + NodeId );
 
                 CswNbtNode CswNbtNode = _CswNbtWebServiceResources.CswNbtResources.Nodes[CswPrimaryKey];
                 CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
@@ -124,24 +82,10 @@ public class wsUpdate : System.Web.Services.WebService
 
             }//iterate update items
 
+            return ( UpdatedRowIds );
+        } // Run()
 
-            ReturnVal = UpdatedRowIds;
+    } // class CswNbtWebServiceUpdateProperties
 
-            _CswNbtWebServiceResources.endSession( EndSessionMode.esmCommit ); 
+} // namespace ChemSW.WebServices
 
-
-        }//try
-
-
-        catch( Exception Exception ) 
-        {
-            _CswNbtWebServiceResources.CswNbtResources.CswLogger.reportError( Exception );
-            _CswNbtWebServiceResources.endSession( EndSessionMode.esmRollback );
-        } //tach
-
-
-
-       return ( ReturnVal );
-    }//
-
-}//wsUpdate
