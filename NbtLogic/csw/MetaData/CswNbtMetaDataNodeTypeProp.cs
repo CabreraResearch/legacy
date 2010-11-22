@@ -744,6 +744,13 @@ namespace ChemSW.Nbt.MetaData
             set { _DataRow["hideinmobile"] = CswConvert.ToDbVal( value ); }
         }
 
+        // This should not trigger versioning
+        public bool MobileSearch
+        {
+            get { return CswConvert.ToBoolean( _NodeTypePropRow["mobilesearch"] ); }
+            set { _DataRow["mobilesearch"] = CswConvert.ToDbVal( value ); }
+        }
+
         public Int32 DisplayColAdd
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["display_col_add"] ); }

@@ -1,7 +1,5 @@
-﻿
-(function ($)
+﻿(function ($)
 {
-
     $.fn.CswMobile = function (options)
     {
 
@@ -10,7 +8,7 @@
             DBVersion: '1.0',
             DBDisplayName: 'main.html',
             DBMaxSize: 65536,
-            WebServiceUrl: '/NbtMobileWeb/wsView.asmx/Run',
+            WebServiceUrl: '/NbtMobileWeb/wsNBT.asmx/RunView',
             MainPageUrl: '/NbtMobileWeb/Main.html',
             Theme: 'a'
         };
@@ -23,35 +21,31 @@
         var rootid;
         var db;
 
-        _initDB(true);
+        _initDB(true, _waitForData);
         _loadDivContents('', 0, 'viewsdiv', 'Views', true);
-        _makeSearchDiv();
+
 
         // ------------------------------------------------------------------------------------
-        // Offline indicator
+        // Online indicator
         // ------------------------------------------------------------------------------------
 
-        function toggleOffline()
+        function setOffline()
         {
-            // Reset all indicators
-            $('.offlineIndicator').toggleClass('online')
-                .toggleClass('offline');
-            // Clear non-cached root contents
-            //        $('#TopDiv').children('div[data-role="content"]').children('ul').children().remove();
-            //        _loadDivContents(0, $('#TopDiv'));
+            $('.onlineStatus')
+                .removeClass('online')
+                .addClass('offline')
+                .text('Offline');
         }
-
-        function getCurrentOfflineIndicatorCssClass()
+        function setOnline()
         {
-            if ($('.offlineIndicator').hasClass('offline'))
-                return 'offline';
-            else
-                return 'online';
-
+            $('.onlineStatus')
+                .removeClass('offline')
+                .addClass('online')
+                .text('Online');
         }
         function amOffline()
         {
-            return $('.offlineIndicator').hasClass('offline');
+            return $('.onlineStatus').hasClass('offline');
         }
 
 
@@ -61,6 +55,8 @@
 
         function _loadDivContents(ParentId, level, DivId, HeaderText, IsFirst)
         {
+            var ret = true;
+
             if (level == 1)
                 rootid = DivId;
 
@@ -72,13 +68,15 @@
                     {
                         if (level == 0)
                         {
+                            // Level 0
                             _fetchCachedRootXml(function (xml)
                             {
                                 _processSubLevelXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
                             });
                         } else
                         {
-                            _fetchCachedSubLevelXml(DivId, function (xmlstr)
+                            // Level 1
+                            _fetchCachedSubLevelXml(rootid, function (xmlstr)
                             {
                                 var $thisxmlstr = $(xmlstr).find('#' + DivId);
                                 _processSubLevelXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
@@ -95,59 +93,94 @@
                             data: "{ ParentId: '" + DivId + "' }",
                             success: function (data, textStatus, XMLHttpRequest)
                             {
-                                if (level == 1)
+                                var $xml = $(data.d);
+                                var $firstchild = $xml.children().first();
+                                if ($firstchild.get(0).nodeName == "ERROR")
                                 {
-                                    _storeSubLevelXml(DivId, HeaderText, '', data.d);
+                                    console.log("An Error Occurred: " + $firstchild.text());
+                                } else
+                                {
+                                    if (level == 1)
+                                    {
+                                        _storeSubLevelXml(DivId, HeaderText, '', data.d);
+                                    }
+                                    _processSubLevelXml(ParentId, DivId, HeaderText, $xml.children(), level, IsFirst);
                                 }
-                                _processSubLevelXml(ParentId, DivId, HeaderText, $(data.d).children(), level, IsFirst);
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
                             {
-                                alert("An Error Occurred: " + errorThrown);
+                                console.log("An Error Occurred: " + errorThrown);
                             }
                         });
                     }
                 } else
                 {
+                    // Level 2 and up
                     _fetchCachedSubLevelXml(rootid, function (xmlstr)
                     {
                         var $thisxmlstr = $(xmlstr).find('#' + DivId);
                         _processSubLevelXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
                     });
+
+                    // prevent link navigation!
+                    // _processSubLevelXml() above will do the page transition for us when the div is ready
+                    ret = false;
                 }
             }
+            return ret;
         }
 
-
-
+        var currenttab;
         function _processSubLevelXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst)
         {
-            var currenttab;
             var content = _makeUL();
-
+            currenttab = '';
             $xml.each(function ()
             {
-                var $xmlitem = $(this);
-                var id = $xmlitem.attr('id');
-                var text = $xmlitem.attr('name');
-                var IsDiv = (id != undefined && id != '');
-                var PageType = this.nodeName;
+                content += _makeListItemFromXml($xml, this, DivId, parentlevel, IsFirst);
+            });
+            content += _endUL();
 
-                var nextid = $xmlitem.next().attr('id');
-                var previd = $xmlitem.prev().attr('id');
+            _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst);
 
-                var currentcnt = $xmlitem.prevAll().andSelf().length;
-                var siblingcnt = $xmlitem.siblings().andSelf().length;
+            // this replaces the link navigation
+            if (!IsFirst)
+                $.mobile.changePage($('#' + DivId), "slide", false, true);
 
-                var lihtml = '';
-                if (PageType == "PROP")
-                {
+        } // _processSubLevelXml()
+
+        function _makeListItemFromXml($xml, xmlitem, DivId, parentlevel, IsFirst)
+        {
+            var $xmlitem = $(xmlitem);
+            var id = $xmlitem.attr('id');
+            var text = $xmlitem.attr('name');
+            var IsDiv = (id != undefined && id != '');
+            var PageType = xmlitem.nodeName;
+
+            var nextid = $xmlitem.next().attr('id');
+            var previd = $xmlitem.prev().attr('id');
+
+            var currentcnt = $xmlitem.prevAll().andSelf().length;
+            var siblingcnt = $xmlitem.siblings().andSelf().length;
+
+            var lihtml = '';
+            switch (PageType)
+            {
+                case "SEARCHES":
+                    // ignore this
+                    break;
+
+                case "NODE":
+                    lihtml += _makeObjectClassContent($xmlitem);
+                    break;
+
+                case "PROP":
                     var tab = $xmlitem.attr('tab');
                     var fieldtype = $xmlitem.attr('fieldtype');
                     if (currenttab != tab)
                     {
                         if (currenttab != undefined)
-                            lihtml += '</ul>' + _makeUL();
+                            lihtml += _endUL() + _makeUL();
                         lihtml += '<li data-role="list-divider">' + tab + '</li>'
                         currenttab = tab;
                     }
@@ -163,9 +196,7 @@
                         if (sf_checked == undefined) sf_checked = '';
                         if (sf_required == undefined) sf_required = '';
 
-                        lihtml += '<li>';
-                        lihtml += _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required);
-                        lihtml += '</li>';
+                        lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
                     }
 
                     if (fieldtype == 'Question')
@@ -175,9 +206,7 @@
                         if (sf_answer == undefined) sf_answer = '';
                         if (sf_compliantanswers == undefined) sf_compliantanswers = '';
 
-                        lihtml += '<li>';
-                        lihtml += _makeQuestionAnswerFieldSet(id, 'ans', 'ans2', 'cor', 'li', sf_answer, sf_compliantanswers);
-                        lihtml += '</li>';
+                        lihtml += _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_answer, sf_compliantanswers);
                     }
 
 
@@ -191,42 +220,78 @@
 
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
-                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _makeFieldTypeContent($xmlitem), IsFirst, true);
+                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _FieldTypeXmlToHtml($xmlitem), IsFirst);
+                    break;
 
-                }
-                else
-                {
+                default:
                     lihtml += '<li>';
                     if (IsDiv)
                         lihtml += '<a href="#' + id + '">' + text + '</a>';
                     else
                         lihtml += text;
                     lihtml += '</li>';
+                    break;
+            }
+            return lihtml;
+        } // _makeListItemFromXml()
 
-                }
-                content += lihtml;
-
-                // to avoid race condition between link execution and callback from Sqlite,
-                // create content for subitems now too
-                $xmlchildren = $xmlitem.children('subitems').first().children();
-                if ($xmlchildren.length > 0)
-                {
-                    _processSubLevelXml(DivId, id, text, $xmlchildren, parentlevel + 1)
-                }
-
-            }); // $xml.each(function () {
-
-
-            _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst, true);
-
-        } // _processSubLevelXml()
-
-        function _makeUL()
+        function _makeUL(id)
         {
-            return '<ul data-role="listview" data-inset="true">';
+            var ret = '<ul data-role="listview" data-inset="true" ';
+            if (id != undefined)
+                ret += 'id="' + id + '"';
+            ret += '>';
+            return ret;
         }
 
-        function _makeFieldTypeContent($xmlitem)
+        function _endUL()
+        {
+            return '</ul>';
+        }
+
+        function _makeObjectClassContent($xmlitem)
+        {
+            var Html = '';
+
+            var id = $xmlitem.attr('id');
+            var NodeName = $xmlitem.attr('name');
+            var icon = 'images/icons/' + $xmlitem.attr('iconfilename');
+            var ObjectClass = $xmlitem.attr('objectclass');
+
+            switch (ObjectClass)
+            {
+                case "InspectionDesignClass":
+                    var DueDate = $xmlitem.find('prop[ocpname="Due Date"]').attr('gestalt');
+                    var Target = $xmlitem.find('prop[ocpname="Target"]').attr('gestalt');
+                    var UnansweredCnt = 0;
+                    $xmlitem.find('prop[fieldtype="Question"]').each(function ()
+                    {
+                        if ($(this).children('Answer').text() == '')
+                        {
+                            UnansweredCnt++;
+                        }
+                    });
+
+                    Html += '<li>';
+                    Html += '<img src="' + icon + '" class="ui-li-icon"/>';
+                    Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
+                    Html += '<p>' + Target + '</p>';
+                    Html += '<p>Due: ' + DueDate + '</p>';
+                    Html += '<span class="ui-li-count">' + UnansweredCnt + '</span>';
+                    Html += '</li>';
+                    break;
+
+                default:
+                    Html += '<li>';
+                    Html += '<img src="' + icon + '" class="ui-li-icon"/>';
+                    Html += '<a href="#' + id + '">' + NodeName + '</a>';
+                    Html += '</li>';
+                    break;
+            }
+            return Html;
+        }
+
+        function _FieldTypeXmlToHtml($xmlitem)
         {
             var IdStr = $xmlitem.attr('id');
             var FieldType = $xmlitem.attr('fieldtype');
@@ -285,7 +350,7 @@
                     break;
 
                 case "Logical":
-                    Html += _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required);
+                    Html += _makeLogicalFieldSet(IdStr, '_ans2', '_ans', sf_checked, sf_required);
                     break;
 
                 case "Memo":
@@ -323,7 +388,7 @@
                     break;
 
                 case "Question":
-                    Html += _makeQuestionAnswerFieldSet(IdStr, 'ans2', 'ans', 'cor', 'li', sf_answer, sf_compliantanswers);
+                    Html += _makeQuestionAnswerFieldSet(IdStr, '_ans2', '_ans', '_cor', '_li', sf_answer, sf_compliantanswers);
 
                     Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
                     Html += sf_comments
@@ -363,10 +428,64 @@
             return Html;
         }
 
+
+        function _FieldTypeHtmlToXml($xmlitem, name, value)
+        {
+            var IdStr = $xmlitem.attr('id');
+            var FieldType = $xmlitem.attr('fieldtype');
+            var PropName = $xmlitem.attr('name');
+
+            // Subfield nodes
+            var $sf_text = $xmlitem.children('Text');
+            var $sf_value = $xmlitem.children('Value');
+            var $sf_href = $xmlitem.children('Href');
+            var $sf_options = $xmlitem.children('Options');
+            var $sf_checked = $xmlitem.children('Checked');
+            var $sf_required = $xmlitem.children('Required');
+            var $sf_units = $xmlitem.children('Units');
+            var $sf_answer = $xmlitem.children('Answer');
+            var $sf_correctiveaction = $xmlitem.children('CorrectiveAction');
+            var $sf_comments = $xmlitem.children('Comments');
+            var $sf_compliantanswers = $xmlitem.children('CompliantAnswers');
+
+            var $sftomodify = null;
+            switch (FieldType)
+            {
+                case "Date": if (name == IdStr) $sftomodify = $sf_value; break;
+                case "Link": break;
+                case "List": if (name == IdStr) $sftomodify = $sf_value; break;
+                case "Logical":
+                    if (name == IdStr + '_ans' || name == IdStr + '_ans2')
+                        $sftomodify = $sf_checked;
+                    break;
+                case "Memo": if (name == IdStr) $sftomodify = $sf_text; break;
+                case "Number": if (name == IdStr) $sftomodify = $sf_value; break;
+                case "Password": break;
+                case "Quantity": if (name == IdStr) $sftomodify = $sf_value; break;
+                case "Question":
+                    if (name == IdStr + '_com')
+                        $sftomodify = $sf_comments;
+                    else if (name == IdStr + '_ans' || name == IdStr + '_ans2')
+                        $sftomodify = $sf_answer;
+                    else if (name == IdStr + '_cor')
+                        $sftomodify = $sf_correctiveaction;
+                    break;
+                case "Static": break;
+                case "Text": if (name == IdStr) $sftomodify = $sf_text; break;
+                case "Time": if (name == IdStr) $sftomodify = $sf_value; break;
+                default: break;
+            }
+            if ($sftomodify != null)
+            {
+                $sftomodify.text(value);
+                $xmlitem.attr('wasmodified', 'true');
+            }
+
+        } // _FieldTypeHtmlToXml()
+
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
         {
             var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-            //Html += '        <legend></legend>';
 
             var answers = ['Blank', 'Yes', 'No'];
             if (Required == "true")
@@ -377,17 +496,27 @@
                 var answertext = answers[i];
                 if (answertext == 'Blank') answertext = '?';
 
-                Html += '<input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_' + answers[i] + '" value="' + answertext + '" ';
+                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answertext + '" ';
                 if ((Checked == "false" && answers[i] == "No") ||
                     (Checked == "true" && answers[i] == "Yes") ||
                     (Checked == '' && answers[i] == 'Blank'))
                     Html += 'checked';
                 Html += ' onclick="';
-                Html += ' var $otherradio; ';
+
+                // case 20307: workaround for a bug with JQuery Mobile Alpha2
                 for (var j = 0; j < answers.length; j++)
                 {
-                    Html += ' $otherradio = $(\'#' + IdStr + '_' + OtherSuffix + '_' + answers[j] + '\'); ';
                     if (answers[j] == answers[i])
+                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
+                    else
+                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
+                }
+
+                Html += ' var $otherradio; ';
+                for (var k = 0; k < answers.length; k++)
+                {
+                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[k] + '\'); ';
+                    if (answers[k] == answers[i])
                     {
                         Html += ' $otherradio.attr(\'checked\', true); ';
                         Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
@@ -397,9 +526,9 @@
                         Html += ' $otherradio.attr(\'checked\', false); ';
                         Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
                     }
-                } // for (var j = 0; j < answers.length; j++)
+                } // for (var k = 0; k < answers.length; k++)
                 Html += '" />';
-                Html += '<label for="' + IdStr + '_' + Suffix + '_' + answers[i] + '">' + answertext + '</label>';
+                Html += '<label for="' + IdStr + Suffix + '_' + answers[i] + '">' + answertext + '</label>';
             } // for (var i = 0; i < answers.length; i++)
 
             Html += '</fieldset>';
@@ -409,21 +538,28 @@
         function _makeQuestionAnswerFieldSet(IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Answer, CompliantAnswers)
         {
             var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-            //Html += '<legend>Answer:</legend>';
-
             var answers = ['Yes', 'No'];
-
             for (var i = 0; i < answers.length; i++)
             {
-                Html += '<input type="radio" name="' + IdStr + '_' + Suffix + '" id="' + IdStr + '_' + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
+                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
                 if (Answer == answers[i])
                     Html += ' checked';
                 Html += ' onclick="';
-                Html += ' var $otherradio; ';
+
+                // case 20307: workaround for a bug with JQuery Mobile Alpha2
                 for (var j = 0; j < answers.length; j++)
                 {
-                    Html += ' $otherradio = $(\'#' + IdStr + '_' + OtherSuffix + '_' + answers[j] + '\'); ';
                     if (answers[j] == answers[i])
+                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
+                    else
+                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
+                }
+
+                Html += ' var $otherradio; ';
+                for (var k = 0; k < answers.length; k++)
+                {
+                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[k] + '\'); ';
+                    if (answers[k] == answers[i])
                     {
                         Html += ' $otherradio.attr(\'checked\', true); ';
                         Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
@@ -432,31 +568,31 @@
                         Html += ' $otherradio.attr(\'checked\', false); ';
                         Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
                     }
-                } // for (var j = 0; i < answers.length; j++)
+                } // for (var k = 0; k < answers.length; k++)
 
                 if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
                 {
-                    Html += ' $(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
-                    Html += ' $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); ';
+                    Html += ' $(\'#' + IdStr + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
+                    Html += ' $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
                 }
                 else
                 {
-                    Html += 'var $cor = $(\'#' + IdStr + '_' + CorrectiveActionSuffix + '\'); ';
+                    Html += 'var $cor = $(\'#' + IdStr + CorrectiveActionSuffix + '\'); ';
                     Html += '$cor.css(\'display\', \'\'); ';
                     Html += 'if($cor.attr(\'value\') == \'\') { ';
-                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').addClass(\'OOC\'); ';
+                    Html += '  $(\'#' + IdStr + LiSuffix + ' div\').addClass(\'OOC\'); ';
                     Html += '} else {';
-                    Html += '  $(\'#' + IdStr + '_' + LiSuffix + ' div\').removeClass(\'OOC\'); ';
+                    Html += '  $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
                     Html += '}';
                 }
                 Html += ' " />';
-                Html += '            <label for="' + IdStr + '_' + Suffix + '_' + answers[i] + '">' + answers[i] + '</label>';
+                Html += '            <label for="' + IdStr + Suffix + '_' + answers[i] + '">' + answers[i] + '</label>';
             } // for (var i = 0; i < answers.length; i++)
             Html += '</fieldset>';
             return Html;
-        }
+        } // _makeQuestionAnswerFieldSet()
 
-        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, BindEvents, backtransition)
+        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, HideSearchButton, backicon, backtransition)
         {
             var divhtml = '<div id="' + DivId + '" data-role="page">' +
                           '  <div data-role="header" data-theme="' + opts.Theme + '">';
@@ -465,21 +601,31 @@
                 divhtml += '       data-transition="' + backtransition + '" ';
             if (ParentId == '' || ParentId == undefined)
                 divhtml += '    style="visibility: hidden"';
-            divhtml += '        >Back</a>';
+            divhtml += '        data-icon="';
+            if (backicon != undefined)
+                divhtml += backicon;
+            else
+                divhtml += 'arrow-l';
+            divhtml += '        ">Back</a>';
             divhtml += '       <h1>' + HeaderText + '</h1>' +
-            //            '    <a href="#" class="offlineIndicator ' + getCurrentOfflineIndicatorCssClass() + '" onclick="toggleOffline();">Online</a>' +
-                          '    <a href="#Search" data-transition="slideup">Search</a>' +
-                          '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
-            //            '      <a href="' + opts.MainPageUrl + '" data-transition="flip" rel="external">Top</a>' +
-                                 toolbar +
-                          '    </div>' +
-                          '  </div>' +
-                          '  <div data-role="content" data-theme="' + opts.Theme + '">' +
-                               content +
-                          '  </div>' +
-                          '  <div data-role="footer" data-theme="' + opts.Theme + '">' +
-                          '  </div>' +
-                          '</div>';
+                       '    <a href="#" id="' + DivId + '_searchopen" ';
+            if (IsFirst || HideSearchButton)
+                divhtml += '    style="visibility: hidden"';
+            divhtml += '    >Search</a>';
+            divhtml += '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
+                              toolbar +
+                       '    </div>' +
+                       '  </div>' +
+                       '  <div data-role="content" data-theme="' + opts.Theme + '">' +
+                            content +
+                       '  </div>' +
+                       '  <div data-role="footer" data-theme="' + opts.Theme + '">';
+            if (amOffline())
+                divhtml += '    <div class="onlineStatus offline">Offline</div>';
+            else
+                divhtml += '    <div class="onlineStatus online">Online</div>';
+            divhtml += '  </div>' +
+                       '</div>';
 
             var $divhtml = $(divhtml);
             if (IsFirst)
@@ -488,52 +634,127 @@
                 $('body').append($divhtml);
 
             $divhtml.page();
-            if (BindEvents)
-            {
-                $divhtml.find('a')
-                    .click(function (e) { _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
-                    .end()
-                    .find('input')
-                    .change(onPropertyChange)
-                    .end()
-                    .find('textarea')
-                    .change(onPropertyChange)
-                    .end()
-                    .find('select')
-                    .change(onPropertyChange);
-            }
-        }
 
+            _bindEvents(DivId, level, $divhtml);
 
-        function _makeSearchDiv()
+        } // _addPageDivToBody()
+
+        function _bindEvents(DivId, level, $div)
         {
-            var toolbar = '';
-            var content = 'Search page placeholder...'
-            _addPageDivToBody('viewsdiv', 0, 'Search', 'Search', toolbar, content, false, false, 'slideup');
+            $div.find('#' + DivId + '_searchopen')
+                .click(function (eventObj) { onSearchOpen(DivId, eventObj); })
+                .end()
+                .find('input')
+                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .end()
+                .find('textarea')
+                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .end()
+                .find('select')
+                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .end()
+                .find('li a')
+                .click(function (e) { return _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
+                .end();
         }
-
-
 
         // ------------------------------------------------------------------------------------
         // Events
         // ------------------------------------------------------------------------------------
 
-        function onPropertyChange(eventObj)
+        function onPropertyChange(DivId, eventObj)
         {
             var $elm = $(eventObj.srcElement);
             var name = $elm.attr('name');
             var value = $elm.attr('value');
 
-            // update the short summary value on the list item
-            $('a[href="#' + name + '"]')
-                .children('small')
-                .text(value);
+            // update the xml and store it
+            _fetchCachedSubLevelXml(rootid, function (xmlstr)
+            {
+                var $xmlstr = $(xmlstr);
+                var $divxml = $xmlstr.find('#' + DivId);
+                $divxml.andSelf().find('prop').each(function ()
+                {
+                    _FieldTypeHtmlToXml($(this), name, value);
+                });
 
-            // store the property value change in the database
-            _storeChange(name, value)
+                // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
+                // However, it appears to work, for now.
+                _updateStoredSubLevelXml(rootid, $xmlstr.wrap('<wrapper />').parent().html());
+            });
+
+        } // onPropertyChange()
+
+        function onSearchOpen(DivId, eventObj)
+        {
+            var searchprop = $('#' + DivId + '_searchprop').attr('value');
+            var searchfor = $('#' + DivId + '_searchfor').attr('value');
+            _fetchCachedSubLevelXml(rootid, function (xmlstr)
+            {
+                var $xmlstr = $(xmlstr);
+                var Html = '<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
+
+                $xmlstr.closest('root')
+                    .find('searches')
+                    .children()
+                    .each(function ()
+                    {
+                        var $search = $(this);
+                        Html += '<option value="' + $search.attr('id') + '">' + $search.attr('name') + '</option>';
+                    });
+
+                Html += '</select>' +
+                        '<input type="search" name="' + DivId + '_searchfor" id="' + DivId + '_searchfor" value="" placeholder="Search" />' +
+                        '<input type="button" id="' + DivId + '_searchgo" data-inline="true" value="Go" /> ' +
+                        '<div id="' + DivId + '_searchresults"></div>';
+
+
+                _addPageDivToBody(DivId, 1, DivId + '_searchdiv', 'Search', '', Html, false, true, 'arrow-u');
+
+                $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
+
+                $.mobile.changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
+            });
         }
 
+        function onSearchSubmit(DivId, eventObj)
+        {
+            var searchprop = $('#' + DivId + '_searchprop').attr('value');
+            var searchfor = $('#' + DivId + '_searchfor').attr('value');
+            _fetchCachedSubLevelXml(rootid, function (xmlstr)
+            {
+                var $xmlstr = $(xmlstr);
+                var content = _makeUL(DivId + '_searchresultslist');
 
+                var hitcount = 0;
+                $xmlstr.find('node').each(function ()
+                {
+                    var $node = $(this);
+                    if ($node.attr(searchprop) != undefined)
+                    {
+                        if ($node.attr(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) > 0)
+                        {
+                            hitcount++;
+                            content += _makeListItemFromXml($xmlstr, this, DivId, 1, false);
+                        }
+                    }
+                });
+                if (hitcount.length == 0)
+                {
+                    content += "<li>No Results</li>";
+                }
+
+                content += _endUL();
+
+                var $srdiv = $('#' + DivId + '_searchresults');
+                $srdiv.children().remove();
+                $srdiv.append(content);
+                console.log($('#' + DivId + '_searchresultslist').length);
+                $('#' + DivId + '_searchresultslist').listview();
+
+                _bindEvents(DivId + '_searchdiv', 1, $srdiv);
+            });
+        }
         // ------------------------------------------------------------------------------------
         // Client-side Database Interaction
         // ------------------------------------------------------------------------------------
@@ -541,59 +762,57 @@
 
         function _DoSql(sql, params, onSuccess)
         {
-            db.transaction(function (transaction)
+            if (window.openDatabase)
             {
-                transaction.executeSql(sql, params, onSuccess, _errorHandler);
-            });
-        }
-
-        function _initDB(doreset)
-        {
-           if (window.openDatabase) {
-
-//                console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DisplayName + "; MaxSize: " + opts.MaxSize ); 
-//                db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DisplayName, opts.MaxSize);
-
-                console.log("DbShortName: " + opts.DBShortName + "; DBVersion: " + opts.DBVersion + "; DisplayName: " + opts.DBDisplayName + "; MaxSize: " + opts.DBMaxSize);
-                db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
-
-                console.log("got here");
-
-                if (null == db) {
-                    console.log("db is null");
-                }
-
-                if (doreset) {
-                    _DoSql('DROP TABLE IF EXISTS sublevels; ');
-                    _DoSql('DROP TABLE IF EXISTS changes; ');
-                }
-
-                _createDB();
-            } else 
+                db.transaction(function (transaction)
+                {
+                    transaction.executeSql(sql, params, onSuccess, _errorHandler);
+                });
+            } else
             {
-                console.log("database is not opened"); 
+                console.log("database is not opened");
             }
-            
-        }//_initDb()
- 
+        } //_DoSql
 
+        function _initDB(doreset, OnSuccess)
+        {
+            db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
+            if (doreset)
+            {
+                _DoSql('DROP TABLE IF EXISTS sublevels; ', null, function () { _createDb(OnSuccess); });
+            } else
+            {
+                _createDb(OnSuccess);
+            }
+            console.log("tables created");
+        } //_initDb()
 
-
-        function _createDB()
+        function _createDb(OnSuccess)
         {
             _DoSql('CREATE TABLE IF NOT EXISTS sublevels ' +
-                   '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                   '   rootid TEXT NOT NULL, ' +
-                   '   rootname TEXT NOT NULL, ' +
-                   '   rootxml TEXT, ' +
-                   '   sublevelxml TEXT );');
+                    '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
+                    '   rootid TEXT NOT NULL, ' +
+                    '   rootname TEXT NOT NULL, ' +
+                    '   rootxml TEXT, ' +
+                    '   sublevelxml TEXT );',
+                    null,
+                    OnSuccess
+                    );
 
-            _DoSql('CREATE TABLE IF NOT EXISTS changes ' +
-                   '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                   '   propid TEXT NOT NULL, ' +
-                   '   newvalue TEXT, ' +
-                   '   applied CHAR ); ');
+        } //_createDb() 
+
+        function _errorHandler(transaction, error)
+        {
+            console.log('Database Error: ' + error.message + ' (Code ' + error.code + ')');
+            return true;
         }
+
+
+
+        // ------------------------------------------------------------------------------------
+        // Persistance functions
+        // ------------------------------------------------------------------------------------
+
 
         function _storeSubLevelXml(rootid, rootname, rootxml, sublevelxml)
         {
@@ -605,16 +824,18 @@
                        );
             }
         }
-        function _storeChange(propid, newvalue)
+
+        function _updateStoredSubLevelXml(rootid, sublevelxml)
         {
             if (rootid != undefined && rootid != '')
             {
-                _DoSql('INSERT INTO changes (propid, newvalue) VALUES (?, ?);',
-                       [propid, newvalue],
+                _DoSql('UPDATE sublevels SET sublevelxml = ? WHERE rootid = ?;',
+                       [sublevelxml, rootid],
                        function () { }
                        );
             }
         }
+
         function _fetchCachedSubLevelXml(rootid, onsuccess)
         {
             if (rootid != undefined && rootid != '')
@@ -650,11 +871,118 @@
         }
 
 
-        function _errorHandler(transaction, error)
+        // ------------------------------------------------------------------------------------
+        // Synchronization
+        // ------------------------------------------------------------------------------------
+
+
+        function _waitForData()
         {
-            alert('Database Error: ' + error.message + ' (Code ' + error.code + ')');
-            return true;
+            setTimeout(_handleDataCheckTimer, 5000);
         }
+
+        function _handleDataCheckTimer()
+        {
+            $.ajax({
+                type: 'POST',
+                url: '/NbtMobileWeb/wsNBT.asmx/ConnectTest',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                data: "{}",
+                success: function (data, textStatus, XMLHttpRequest)
+                {
+                    _DoSql("select * from changes where applied='0'", null, _processChanges);
+                    setOnline();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown)
+                {
+
+                    ErrorMessage = "Error: " + textStatus;
+                    if (null != errorThrown)
+                    {
+                        ErrorMessage += "; Exception: " + errorThrown.toString()
+                    }
+
+                    console.log(ErrorMessage);
+                    setOffline();
+                    _waitForData();
+                }
+            });
+
+        } //_handleDataCheckTimer()
+
+
+        function _processChanges(transaction, result)
+        {
+            return false;
+            //console.log("totalrows: " + result.rows.length);
+
+            //console.log("Connection detected: beginning row processing ");
+
+            var Updates = "";
+            for (var rowidx = 0; rowidx < result.rows.length; rowidx++)
+            {
+
+                Updates += result.rows.item(rowidx)["id"] + "," + result.rows.item(rowidx)["propid"] + "," + result.rows.item(rowidx)["newvalue"] + ";";
+                console.log("Update string: " + Updates);
+                //console.log("iteration " + rowidx + ": change value: " + result.rows.item(rowidx)["newvalue"]);
+
+            } //iterate rows
+
+
+            $.ajax({
+                type: 'POST',
+                url: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                data: "{Updates: '" + Updates + "'}",
+                success: function (data, textStatus, XMLHttpRequest)
+                {
+
+                    console.log("return from update: " + data.d);
+
+
+                    UpdateSql = "update changes set applied='1' where id in (" + data.d + ");";
+                    _DoSql(UpdateSql,
+                    [],
+                    function (transaction, result)
+                    {
+
+                        console.log("sql succeeded");
+                    }
+                    );
+
+
+                    /*
+                    _DoSql("update changes set applied='1' where id in (?);",
+                    [data.d],
+                    function ( transaction, result ) {
+
+                    console.log("sql succeeded"); 
+                    } 
+                    );                   
+                    */
+
+                    _waitForData();
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown)
+                {
+
+                    ErrorMessage = "Error: " + textStatus;
+                    if (null != errorThrown)
+                    {
+                        ErrorMessage += "; Exception: " + errorThrown.toString()
+                    }
+
+                    console.log(ErrorMessage);
+
+                    _waitForData();
+                }
+            });
+
+
+        } //_processChanges()
 
 
         // For proper chaining support
@@ -678,5 +1006,5 @@ function iterate(obj)
     if (popup != null)
         popup.document.write(str);
     else
-        alert("iterate() error: No popup!");
+        console.log("iterate() error: No popup!");
 }
