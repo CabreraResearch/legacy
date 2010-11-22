@@ -696,9 +696,28 @@
             content += '<p>Pending Unsynched Changes: <span id="ss_pendingchangecnt">No</span></p>';
             content += '<p>Last synch: <span id="ss_lastsynch"></span></p>';
             content += '<a id="ss_forcesynch" href="#" data-role="button">Force Synch Now</a>';
+            content += '<a id="ss_gooffline" href="#" data-role="button">Go Offline</a>';
             $divhtml = _addPageDivToBody('', 1, 'synchstatus', 'Synch Status', '', content, false, true);
             $divhtml.find('#ss_forcesynch')
-                    .click(function (eventObj) { _processChanges(false); });
+                    .click(function (eventObj) { _processChanges(false); return false; })
+                    .end()
+                    .find('#ss_gooffline')
+                    .click(function (eventObj) { _toggleOffline(); return false; });
+        }
+
+        function _toggleOffline()
+        {
+            if (amOffline())
+            {
+                _waitForData();
+                setOnline();
+                $('#ss_gooffline span').text('Go Offline');
+            } else
+            {
+                _clearWaitForData();
+                setOffline();
+                $('#ss_gooffline span').text('Go Online');
+            }
         }
 
         function _resetPendingChanges(val, setlastsynchnow)
@@ -951,9 +970,14 @@
         // ------------------------------------------------------------------------------------
 
 
+        var _waitForData_TimeoutId;
         function _waitForData()
         {
-            setTimeout(_handleDataCheckTimer, opts.PollingInterval);
+            _waitForData_TimeoutId = setTimeout(_handleDataCheckTimer, opts.PollingInterval);
+        }
+        function _clearWaitForData()
+        {
+            clearTimeout(_waitForData_TimeoutId);
         }
 
         function _handleDataCheckTimer()
