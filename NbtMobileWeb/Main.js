@@ -8,7 +8,9 @@
             DBVersion: '1.0',
             DBDisplayName: 'main.html',
             DBMaxSize: 65536,
-            WebServiceUrl: '/NbtMobileWeb/wsNBT.asmx/RunView',
+            ViewUrl: '/NbtMobileWeb/wsNBT.asmx/RunView',
+            ConnectTestUrl: '/NbtMobileWeb/wsNBT.asmx/ConnectTest',
+            UpdateUrl: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
             MainPageUrl: '/NbtMobileWeb/Main.html',
             Theme: 'a',
             PollingInterval: 5000
@@ -88,7 +90,7 @@
                         $.ajax({
                             async: false,   // required so that the link will wait for the content before navigating
                             type: 'POST',
-                            url: opts.WebServiceUrl,
+                            url: opts.ViewUrl,
                             dataType: "json",
                             contentType: 'application/json; charset=utf-8',
                             data: "{ ParentId: '" + DivId + "' }",
@@ -924,7 +926,7 @@
         {
             $.ajax({
                 type: 'POST',
-                url: '/NbtMobileWeb/wsNBT.asmx/ConnectTest',
+                url: opts.ConnectTestUrl,
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
                 data: "{}",
@@ -958,7 +960,7 @@
                 {
                     $.ajax({
                         type: 'POST',
-                        url: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
+                        url: opts.UpdateUrl,
                         dataType: "json",
                         contentType: 'application/json; charset=utf-8',
                         data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
