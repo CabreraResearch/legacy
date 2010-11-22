@@ -26,6 +26,7 @@
 
         _initDB(true, _waitForData);
         _loadDivContents('', 0, 'viewsdiv', 'Views', true);
+        _makeSynchStatusDiv();
 
 
         // ------------------------------------------------------------------------------------
@@ -133,11 +134,14 @@
         }
 
         var currenttab;
-        var onAfterAddDiv = function ($divhtml) { };
+        var onAfterAddDiv;
         function _processViewXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst)
         {
             var content = _makeUL();
             currenttab = '';
+
+            onAfterAddDiv = function ($divhtml) { };
+
             $xml.each(function ()
             {
                 content += _makeListItemFromXml($xml, this, DivId, parentlevel, IsFirst);
@@ -145,6 +149,7 @@
             content += _endUL();
 
             $divhtml = _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst);
+
             onAfterAddDiv($divhtml);
 
             // this replaces the link navigation
@@ -224,9 +229,7 @@
                                             .addClass('OOC');
                                     old_onAfterAddDiv($divhtml);
                                 }
-                                break;
                             }
-
                             break;
 
                         default:
@@ -618,22 +621,23 @@
         {
             var divhtml = '<div id="' + DivId + '" data-role="page">' +
                           '  <div data-role="header" data-theme="' + opts.Theme + '">';
-            divhtml += '       <a href="#' + ParentId + '" data-back="true" ';
-            if (backtransition != undefined)
-                divhtml += '       data-transition="' + backtransition + '" ';
-            if (ParentId == '' || ParentId == undefined)
-                divhtml += '    style="visibility: hidden"';
-            divhtml += '        data-icon="';
-            if (backicon != undefined)
-                divhtml += backicon;
-            else
-                divhtml += 'arrow-l';
-            divhtml += '        ">Back</a>';
-            divhtml += '       <h1>' + HeaderText + '</h1>' +
-                       '    <a href="#" id="' + DivId + '_searchopen" ';
-            if (IsFirst || HideSearchButton)
-                divhtml += '    style="visibility: hidden"';
-            divhtml += '    >Search</a>';
+            if (ParentId != '' && ParentId != undefined)
+            {
+                divhtml += '       <a href="#' + ParentId + '" data-back="true" ';
+                if (backtransition != undefined)
+                    divhtml += '       data-transition="' + backtransition + '" ';
+                divhtml += '        data-icon="';
+                if (backicon != undefined)
+                    divhtml += backicon;
+                else
+                    divhtml += 'arrow-l';
+                divhtml += '        ">Back</a>';
+            }
+            divhtml += '       <h1>' + HeaderText + '</h1>';
+            if (!IsFirst && !HideSearchButton)
+            {
+                divhtml += '    <a href="#" id="' + DivId + '_searchopen">Search</a>';
+            }
             divhtml += '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
                               toolbar +
                        '    </div>' +
@@ -641,12 +645,12 @@
                        '  <div data-role="content" data-theme="' + opts.Theme + '">' +
                             content +
                        '  </div>' +
-                       '  <div data-role="footer" data-theme="' + opts.Theme + '">';
+                       '  <div data-role="footer" data-theme="' + opts.Theme + '"><a href="#synchstatus" data-transition="slideup">';
             if (amOffline())
                 divhtml += '    <div class="onlineStatus offline">Offline</div>';
             else
                 divhtml += '    <div class="onlineStatus online">Online</div>';
-            divhtml += '  </div>' +
+            divhtml += '  </a></div>' +
                        '</div>';
 
             var $divhtml = $(divhtml);
@@ -683,6 +687,32 @@
         }
 
         // ------------------------------------------------------------------------------------
+        // Synch Status Div
+        // ------------------------------------------------------------------------------------
+
+        function _makeSynchStatusDiv()
+        {
+            var content = '';
+            content += '<p>Pending Unsynched Changes: <span id="ss_pendingchangecnt">No</span></p>';
+            content += '<p>Last synch: <span id="ss_lastsynch"></span></p>';
+            content += '<a id="ss_forcesynch" href="#" data-role="button">Force Synch Now</a>';
+            $divhtml = _addPageDivToBody('', 1, 'synchstatus', 'Synch Status', '', content, false, true);
+            $divhtml.find('#ss_forcesynch')
+                    .click(function (eventObj) { _processChanges(false); });
+        }
+
+        function _resetPendingChanges(val, setlastsynchnow)
+        {
+            $('#ss_pendingchangecnt').text(val);
+            if (setlastsynchnow)
+            {
+                var d = new Date();
+                $('#ss_lastsynch').text(d.toLocaleDateString() + ' ' + d.toLocaleTimeString());
+            }
+        }
+
+
+        // ------------------------------------------------------------------------------------
         // Events
         // ------------------------------------------------------------------------------------
 
@@ -705,6 +735,8 @@
                 // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
                 // However, it appears to work, for now.
                 _updateStoredViewXml(rootid, $xmlstr.wrap('<wrapper />').parent().html(), '1');
+
+                _resetPendingChanges('Yes', false);
             });
 
         } // onPropertyChange()
@@ -868,10 +900,12 @@
                    {
                        if (result.rows.length > 0)
                        {
+                           _resetPendingChanges('Yes', true);
                            var row = result.rows.item(0);
                            onSuccess(row.rootid, row.viewxml);
                        } else
                        {
+                           _resetPendingChanges('No', true);
                            onSuccess('', '');
                        }
                    });
@@ -940,7 +974,7 @@
                     } else
                     {
                         setOnline();
-                        _processChanges();
+                        _processChanges(true);
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -952,7 +986,7 @@
 
         } //_handleDataCheckTimer()
 
-        function _processChanges()
+        function _processChanges(perpetuateTimer)
         {
             _getModifiedView(function (rootid, viewxml)
             {
@@ -970,24 +1004,28 @@
                             if ($xml.get(0).nodeName == "ERROR")
                             {
                                 _handleAjaxError(XMLHttpRequest, $xml.text(), '');
-                                _waitForData();
+                                if (perpetuateTimer)
+                                    _waitForData();
                             } else
                             {
                                 _updateStoredViewXml(rootid, data.d, '0');
                                 //console.log("UpdateProperties succeeded");
-                                _waitForData();
+                                if (perpetuateTimer)
+                                    _waitForData();
                             }
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown)
                         {
                             _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-                            _waitForData();
+                            if (perpetuateTimer)
+                                _waitForData();
                         }
                     });
                 }
                 else
                 {
-                    _waitForData();
+                    if (perpetuateTimer)
+                        _waitForData();
                 }
             });
 
