@@ -73,16 +73,16 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode TimeNode = CswXmlDocument.AppendXmlNode( ParentNode, _TimeValueSubField.Name.ToString(), TimeValue.ToString() );
+            XmlNode TimeNode = CswXmlDocument.AppendXmlNode( ParentNode, _TimeValueSubField.ToXmlNodeName(), TimeValue.ToString() );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            TimeValue = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _TimeValueSubField.Name.ToString() );
+            TimeValue = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _TimeValueSubField.ToXmlNodeName() );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            string Val = CswTools.XmlRealAttributeName( PropRow[_TimeValueSubField.Name.ToString()].ToString() );
+            string Val = CswTools.XmlRealAttributeName( PropRow[_TimeValueSubField.ToXmlNodeName()].ToString() );
             if( Val != string.Empty )
                 TimeValue = Convert.ToDateTime( Val );
         }

@@ -95,20 +95,20 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.Name.ToString(), Value.ToString() );
+            XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName(), Value.ToString() );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Value = CswXmlDocument.ChildXmlNodeValueAsDouble( XmlNode, _ValueSubField.Name.ToString() );
+            Value = CswXmlDocument.ChildXmlNodeValueAsDouble( XmlNode, _ValueSubField.ToXmlNodeName() );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( PropRow.Table.Columns.Contains( _ValueSubField.Name.ToString() ) )
+            if( PropRow.Table.Columns.Contains( _ValueSubField.ToXmlNodeName() ) )
             {
-                string Val = CswTools.XmlRealAttributeName( PropRow[_ValueSubField.Name.ToString()].ToString() );
+                string Val = CswTools.XmlRealAttributeName( PropRow[_ValueSubField.ToXmlNodeName()].ToString() );
                 if( Val != string.Empty )
-                    Value = Convert.ToDouble( PropRow[_ValueSubField.Name.ToString()].ToString() );
+                    Value = Convert.ToDouble( PropRow[_ValueSubField.ToXmlNodeName()].ToString() );
             }
         }
 

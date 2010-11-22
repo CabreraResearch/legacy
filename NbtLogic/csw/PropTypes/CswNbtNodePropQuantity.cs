@@ -154,21 +154,21 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode QtyNode = CswXmlDocument.AppendXmlNode( ParentNode, _QuantitySubField.Name.ToString(), Quantity.ToString() );
-            XmlNode UnitsNode = CswXmlDocument.AppendXmlNode( ParentNode, _UnitsSubField.Name.ToString(), Units );
+            XmlNode QtyNode = CswXmlDocument.AppendXmlNode( ParentNode, _QuantitySubField.ToXmlNodeName(), Quantity.ToString() );
+            XmlNode UnitsNode = CswXmlDocument.AppendXmlNode( ParentNode, _UnitsSubField.ToXmlNodeName(), Units );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Quantity = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _QuantitySubField.Name.ToString() );
-            Units = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _UnitsSubField.Name.ToString() );
+            Quantity = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _QuantitySubField.ToXmlNodeName() );
+            Units = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _UnitsSubField.ToXmlNodeName() );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            string StringVal = CswTools.XmlRealAttributeName( PropRow[_QuantitySubField.Name.ToString()].ToString() );
+            string StringVal = CswTools.XmlRealAttributeName( PropRow[_QuantitySubField.ToXmlNodeName()].ToString() );
             if( CswTools.IsFloat( StringVal ) )
                 Quantity = Convert.ToDouble( StringVal );
-            Units = CswTools.XmlRealAttributeName( PropRow[_UnitsSubField.Name.ToString()].ToString() );
+            Units = CswTools.XmlRealAttributeName( PropRow[_UnitsSubField.ToXmlNodeName()].ToString() );
         }
 
 

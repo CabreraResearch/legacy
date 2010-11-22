@@ -114,18 +114,18 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode BarcodeNode = CswXmlDocument.AppendXmlNode( ParentNode, _BarcodeSubField.Name.ToString(), Barcode );
+            XmlNode BarcodeNode = CswXmlDocument.AppendXmlNode( ParentNode, _BarcodeSubField.ToXmlNodeName(), Barcode );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            string ProspectiveBarcode = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.Name.ToString() );
+            string ProspectiveBarcode = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() );
             if( ProspectiveBarcode != string.Empty )
                 SetBarcodeValueOverride( ProspectiveBarcode, false );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            string ProspectiveBarcode = CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.Name.ToString()].ToString() );
+            string ProspectiveBarcode = CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.ToXmlNodeName()].ToString() );
             if( ProspectiveBarcode != string.Empty )
                 SetBarcodeValueOverride( ProspectiveBarcode, false );
         }

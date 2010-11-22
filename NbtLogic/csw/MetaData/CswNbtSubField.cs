@@ -132,6 +132,11 @@ namespace ChemSW.Nbt.MetaData
 
         }//FilterModes
 
+        public string ToXmlNodeName()
+        {
+            return this.Name.ToString().ToLower();
+        }
+
     }//CswNbtSubField
 
 }//namespace ChemSW.Nbt.MetaData

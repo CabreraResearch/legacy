@@ -230,37 +230,37 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode AnswerNode = CswXmlDocument.AppendXmlNode( ParentNode, _AnswerSubField.Name.ToString(), Answer.ToString() );
-            XmlNode CompliantAnswersNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.CompliantAnswers.ToString(), CompliantAnswersString );
-            XmlNode CommentsNode = CswXmlDocument.AppendXmlNode( ParentNode, _CommentsSubField.Name.ToString(), Comments.ToString() );
-            XmlNode CorrectiveActionNode = CswXmlDocument.AppendXmlNode( ParentNode, _CorrectiveActionSubField.Name.ToString(), CorrectiveAction.ToString() );
-            XmlNode DateAnsweredNode = CswXmlDocument.AppendXmlNode( ParentNode, _DateAnsweredSubField.Name.ToString(), DateAnswered.ToString() );
-            XmlNode DateCorrectedNode = CswXmlDocument.AppendXmlNode( ParentNode, _DateCorrectedSubField.Name.ToString(), DateCorrected.ToString() );
-            XmlNode IsCompliantNode = CswXmlDocument.AppendXmlNode( ParentNode, _IsCompliantSubField.Name.ToString(), IsCompliant.ToString() );
+            XmlNode AnswerNode = CswXmlDocument.AppendXmlNode( ParentNode, _AnswerSubField.ToXmlNodeName(), Answer.ToString() );
+            XmlNode CompliantAnswersNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.CompliantAnswers.ToString().ToLower(), CompliantAnswersString );
+            XmlNode CommentsNode = CswXmlDocument.AppendXmlNode( ParentNode, _CommentsSubField.ToXmlNodeName(), Comments.ToString() );
+            XmlNode CorrectiveActionNode = CswXmlDocument.AppendXmlNode( ParentNode, _CorrectiveActionSubField.ToXmlNodeName(), CorrectiveAction.ToString() );
+            XmlNode DateAnsweredNode = CswXmlDocument.AppendXmlNode( ParentNode, _DateAnsweredSubField.ToXmlNodeName(), DateAnswered.ToString() );
+            XmlNode DateCorrectedNode = CswXmlDocument.AppendXmlNode( ParentNode, _DateCorrectedSubField.ToXmlNodeName(), DateCorrected.ToString() );
+            XmlNode IsCompliantNode = CswXmlDocument.AppendXmlNode( ParentNode, _IsCompliantSubField.ToXmlNodeName(), IsCompliant.ToString() );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Answer = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _AnswerSubField.Name.ToString() );
-            Comments = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CommentsSubField.Name.ToString() );
-            CorrectiveAction = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CorrectiveActionSubField.Name.ToString() );
-            DateAnswered = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateAnsweredSubField.Name.ToString() );
-            DateCorrected = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateCorrectedSubField.Name.ToString() );
-            IsCompliant = CswConvert.ToBoolean( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _IsCompliantSubField.Name.ToString() ) );
+            Answer = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _AnswerSubField.ToXmlNodeName() );
+            Comments = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CommentsSubField.ToXmlNodeName() );
+            CorrectiveAction = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CorrectiveActionSubField.ToXmlNodeName() );
+            DateAnswered = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateAnsweredSubField.ToXmlNodeName() );
+            DateCorrected = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateCorrectedSubField.ToXmlNodeName() );
+            IsCompliant = CswConvert.ToBoolean( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _IsCompliantSubField.ToXmlNodeName() ) );
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Answer = CswTools.XmlRealAttributeName( PropRow[_AnswerSubField.Name.ToString()].ToString() );
-            Comments = CswTools.XmlRealAttributeName( PropRow[_CommentsSubField.Name.ToString()].ToString() );
-            CorrectiveAction = CswTools.XmlRealAttributeName( PropRow[_CorrectiveActionSubField.Name.ToString()].ToString() );
-            String DateAnsweredString = CswTools.XmlRealAttributeName( PropRow[_DateAnsweredSubField.Name.ToString()].ToString() );
+            Answer = CswTools.XmlRealAttributeName( PropRow[_AnswerSubField.ToXmlNodeName()].ToString() );
+            Comments = CswTools.XmlRealAttributeName( PropRow[_CommentsSubField.ToXmlNodeName()].ToString() );
+            CorrectiveAction = CswTools.XmlRealAttributeName( PropRow[_CorrectiveActionSubField.ToXmlNodeName()].ToString() );
+            String DateAnsweredString = CswTools.XmlRealAttributeName( PropRow[_DateAnsweredSubField.ToXmlNodeName()].ToString() );
             if ( DateAnsweredString != String.Empty )
                 DateAnswered = Convert.ToDateTime( DateAnsweredString );
-            String DateCorrectedString = CswTools.XmlRealAttributeName( PropRow[_DateCorrectedSubField.Name.ToString()].ToString() );
+            String DateCorrectedString = CswTools.XmlRealAttributeName( PropRow[_DateCorrectedSubField.ToXmlNodeName()].ToString() );
             if ( DateCorrectedString != String.Empty )
                 DateCorrected = Convert.ToDateTime( DateCorrectedString );
-            IsCompliant = CswConvert.ToBoolean( PropRow[_IsCompliantSubField.Name.ToString()].ToString() );
+            IsCompliant = CswConvert.ToBoolean( PropRow[_IsCompliantSubField.ToXmlNodeName()].ToString() );
         }
 
     }//CswNbtNodePropQuestion

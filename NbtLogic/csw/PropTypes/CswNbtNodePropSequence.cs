@@ -113,18 +113,18 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode SequenceNode = CswXmlDocument.AppendXmlNode( ParentNode, _SequenceSubField.Name.ToString(), Sequence );
+            XmlNode SequenceNode = CswXmlDocument.AppendXmlNode( ParentNode, _SequenceSubField.ToXmlNodeName(), Sequence );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            string ProspectiveSequence = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SequenceSubField.Name.ToString() );
+            string ProspectiveSequence = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SequenceSubField.ToXmlNodeName() );
             if( ProspectiveSequence != string.Empty )
                 SetSequenceValueOverride( ProspectiveSequence, false );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            string ProspectiveSequence = CswTools.XmlRealAttributeName( PropRow[_SequenceSubField.Name.ToString()].ToString() );
+            string ProspectiveSequence = CswTools.XmlRealAttributeName( PropRow[_SequenceSubField.ToXmlNodeName()].ToString() );
             if( ProspectiveSequence != string.Empty )
                 SetSequenceValueOverride( ProspectiveSequence, false );
         }

@@ -66,17 +66,17 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode CheckedNode = CswXmlDocument.AppendXmlNode( ParentNode, _CheckedSubField.Name.ToString(), Checked.ToString().ToLower() );
+            XmlNode CheckedNode = CswXmlDocument.AppendXmlNode( ParentNode, _CheckedSubField.ToXmlNodeName(), Checked.ToString().ToLower() );
             XmlNode RequiredNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.Required.ToString(), Required.ToString().ToLower() );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Checked = CswConvert.ToTristate( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CheckedSubField.Name.ToString() ) );
+            Checked = CswConvert.ToTristate( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CheckedSubField.ToXmlNodeName() ) );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Checked = CswConvert.ToTristate( PropRow[_CheckedSubField.Name.ToString()] );
+            Checked = CswConvert.ToTristate( PropRow[_CheckedSubField.ToXmlNodeName()] );
         }
 
     }//CswNbtNodeProp

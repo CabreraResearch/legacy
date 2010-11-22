@@ -1198,7 +1198,7 @@ namespace ChemSW.Nbt.MetaData
                     PropNode.AppendChild( SubFieldMapNode );
 
                     XmlAttribute SubFieldNameAttr = XmlDoc.CreateAttribute( _Attribute_SubFieldName );
-                    SubFieldNameAttr.Value = SubField.Name.ToString();
+                    SubFieldNameAttr.Value = SubField.ToXmlNodeName();
                     SubFieldMapNode.Attributes.Append( SubFieldNameAttr );
 
                     XmlAttribute RTableAttr = XmlDoc.CreateAttribute( _Attribute_RelationalTable );

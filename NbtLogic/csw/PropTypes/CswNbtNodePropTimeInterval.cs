@@ -86,17 +86,17 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode RateIntervalNode = CswXmlDocument.AppendXmlNode( ParentNode, _IntervalSubField.Name.ToString() );
+            XmlNode RateIntervalNode = CswXmlDocument.AppendXmlNode( ParentNode, _IntervalSubField.ToXmlNodeName() );
             CswXmlDocument.SetInnerTextAsCData( RateIntervalNode, RateInterval.ToXmlString() );
             //RateInterval.ToXml( RateIntervalNode );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            //RateInterval = new CswRateInterval( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _IntervalSubField.Name.ToString() ) );
-            string IntervalXmlAsString = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _IntervalSubField.Name.ToString() );
+            //RateInterval = new CswRateInterval( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _IntervalSubField.ToXmlNodeName() ) );
+            string IntervalXmlAsString = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _IntervalSubField.ToXmlNodeName() );
             XmlDocument Doc = new XmlDocument();
-            XmlNode IntervalNode = CswXmlDocument.SetDocumentElement( Doc, _IntervalSubField.Name.ToString() );
+            XmlNode IntervalNode = CswXmlDocument.SetDocumentElement( Doc, _IntervalSubField.ToXmlNodeName() );
             IntervalNode.InnerXml = IntervalXmlAsString;
             
             CswRateInterval NewRateInterval = new CswRateInterval();
@@ -106,12 +106,12 @@ namespace ChemSW.Nbt.PropTypes
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            //RateInterval = new CswRateInterval( PropRow[_IntervalSubField.Name.ToString()].ToString() );
-            if( PropRow.Table.Columns.Contains( _IntervalSubField.Name.ToString() ) )
+            //RateInterval = new CswRateInterval( PropRow[_IntervalSubField.ToXmlNodeName()].ToString() );
+            if( PropRow.Table.Columns.Contains( _IntervalSubField.ToXmlNodeName() ) )
             {
-                string IntervalXmlAsString = CswTools.XmlRealAttributeName( PropRow[_IntervalSubField.Name.ToString()].ToString() );
+                string IntervalXmlAsString = CswTools.XmlRealAttributeName( PropRow[_IntervalSubField.ToXmlNodeName()].ToString() );
                 XmlDocument Doc = new XmlDocument();
-                XmlNode IntervalNode = CswXmlDocument.SetDocumentElement( Doc, _IntervalSubField.Name.ToString() );
+                XmlNode IntervalNode = CswXmlDocument.SetDocumentElement( Doc, _IntervalSubField.ToXmlNodeName() );
                 IntervalNode.InnerXml = IntervalXmlAsString.Trim();
                 
                 CswRateInterval NewRateInterval = new CswRateInterval();

@@ -68,19 +68,19 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.Name.ToString(), Text );
-            XmlNode HrefNode = CswXmlDocument.AppendXmlNode( ParentNode, _HrefSubField.Name.ToString(), Href );
+            XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.ToXmlNodeName(), Text );
+            XmlNode HrefNode = CswXmlDocument.AppendXmlNode( ParentNode, _HrefSubField.ToXmlNodeName(), Href );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Text = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _TextSubField.Name.ToString() );
-            Href = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _HrefSubField.Name.ToString() );
+            Text = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _TextSubField.ToXmlNodeName() );
+            Href = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _HrefSubField.ToXmlNodeName() );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Text = CswTools.XmlRealAttributeName( PropRow[_TextSubField.Name.ToString()].ToString() );
-            Href = CswTools.XmlRealAttributeName( PropRow[_HrefSubField.Name.ToString()].ToString() );
+            Text = CswTools.XmlRealAttributeName( PropRow[_TextSubField.ToXmlNodeName()].ToString() );
+            Href = CswTools.XmlRealAttributeName( PropRow[_HrefSubField.ToXmlNodeName()].ToString() );
         }
 
 
