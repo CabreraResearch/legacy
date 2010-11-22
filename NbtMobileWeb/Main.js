@@ -97,7 +97,7 @@
                                 var $firstchild = $xml.children().first();
                                 if ($firstchild.get(0).nodeName == "ERROR")
                                 {
-                                    console.log("An Error Occurred: " + $firstchild.text());
+                                    _handleAjaxError(XMLHttpRequest, $firstchild.text(), '');
                                 } else
                                 {
                                     if (level == 1)
@@ -694,7 +694,7 @@
                 var $xmlstr = $(xmlstr);
                 var Html = '<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
 
-                $xmlstr.closest('root')
+                $xmlstr.closest('result')
                     .find('searches')
                     .children()
                     .each(function ()
@@ -917,8 +917,16 @@
                 data: "{}",
                 success: function (data, textStatus, XMLHttpRequest)
                 {
-                    _DoSql("select * from changes where applied='0'", null, _processChanges);
-                    setOnline();
+                    var $xml = $(data.d);
+                    var $firstchild = $xml.children().first();
+                    if ($firstchild.get(0).nodeName == "ERROR")
+                    {
+                        _handleAjaxError(XMLHttpRequest, $firstchild.text(), '');
+                    } else
+                    {
+                        _DoSql("select * from changes where applied='0'", null, _processChanges);
+                        setOnline();
+                    }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown)
                 {

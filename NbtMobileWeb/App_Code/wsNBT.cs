@@ -44,13 +44,18 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtWebServiceResources.endSession( EndSessionMode.esmCommit );
         }
-        private string error(Exception ex)
+
+        private string error( Exception ex )
         {
             _CswNbtWebServiceResources.CswNbtResources.CswLogger.reportError( ex );
             _CswNbtWebServiceResources.endSession( EndSessionMode.esmRollback );
             return "<error>Error: " + ex.Message + "</error>";
         }
 
+        private string result( string ReturnVal )
+        {
+            return "<result>" + ReturnVal + "</result>";
+        }
 
         #endregion Session and Resource Management
 
@@ -60,7 +65,7 @@ namespace ChemSW.Nbt.WebServices
         public string ConnectTest()
         {
             // no session needed here
-            return ( "Connected" );
+            return ( result( "Connected" ) );
         }
 
 
@@ -68,12 +73,14 @@ namespace ChemSW.Nbt.WebServices
         public string ConnectTestFail()
         {
             // no session needed here
+
+            // this exception needs to be UNCAUGHT
             throw new Exception( "Emulated connection failure" );
         }
 
 
         [WebMethod( EnableSession = true )]
-        public string UpdateProperties( string Updates )
+        public string UpdateProperties( string UpdatedViewXml )
         {
             string ReturnVal = string.Empty;
             try
@@ -81,13 +88,13 @@ namespace ChemSW.Nbt.WebServices
                 start();
 
                 CswNbtWebServiceUpdateProperties wsUP = new CswNbtWebServiceUpdateProperties( _CswNbtWebServiceResources );
-                ReturnVal = wsUP.Run( Updates );
+                ReturnVal = result( wsUP.Run( UpdatedViewXml ) );
 
                 end();
             }
             catch( Exception ex )
             {
-                ReturnVal = error(ex);
+                ReturnVal = error( ex );
             }
             return ( ReturnVal );
         } // UpdateProperties()
@@ -102,7 +109,7 @@ namespace ChemSW.Nbt.WebServices
                 start();
 
                 CswNbtWebServiceView wsView = new CswNbtWebServiceView( _CswNbtWebServiceResources );
-                ReturnVal = wsView.Run( ParentId );
+                ReturnVal = result( wsView.Run( ParentId ) );
 
                 end();
             }
