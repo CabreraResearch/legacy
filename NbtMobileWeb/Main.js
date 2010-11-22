@@ -25,9 +25,15 @@
         var db;
 
         _initDB(true, _waitForData);
-        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
+        reloadViews();
         _makeSynchStatusDiv();
 
+
+        function reloadViews()
+        {
+            $('#viewsdiv').remove();
+            _loadDivContents('', 0, 'viewsdiv', 'Views', true);
+        }
 
         // ------------------------------------------------------------------------------------
         // Online indicator
@@ -35,17 +41,27 @@
 
         function setOffline()
         {
-            $('.onlineStatus')
-                .removeClass('online')
-                .addClass('offline')
-                .text('Offline');
+            var $onlineStatus = $('.onlineStatus');
+            if ($onlineStatus.hasClass('online'))
+            {
+                $onlineStatus.removeClass('online')
+                             .addClass('offline')
+                             .text('Offline');
+
+                reloadViews();
+            }
         }
         function setOnline()
         {
-            $('.onlineStatus')
-                .removeClass('offline')
-                .addClass('online')
-                .text('Online');
+            var $onlineStatus = $('.onlineStatus');
+            if ($onlineStatus.hasClass('offline'))
+            {
+                $onlineStatus.removeClass('offline')
+                             .addClass('online')
+                             .text('Online');
+
+                reloadViews();
+            }
         }
         function amOffline()
         {
@@ -66,71 +82,90 @@
 
             if ($('#' + DivId).length == 0)
             {
-                if (level <= 1)
+                if (level == 0)
                 {
                     if (amOffline())
                     {
-                        if (level == 0)
+                        _fetchCachedRootXml(function (xml)
                         {
-                            // Level 0
-                            _fetchCachedRootXml(function (xml)
-                            {
-                                _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
-                            });
-                        } else
-                        {
-                            // Level 1
-                            _fetchCachedViewXml(rootid, function (xmlstr)
-                            {
-                                var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                                _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
-                            });
-                        }
+                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
+                        });
                     } else
                     {
-                        $.ajax({
-                            async: false,   // required so that the link will wait for the content before navigating
-                            type: 'POST',
-                            url: opts.ViewUrl,
-                            dataType: "json",
-                            contentType: 'application/json; charset=utf-8',
-                            data: "{ ParentId: '" + DivId + "' }",
-                            success: function (data, textStatus, XMLHttpRequest)
+                        _ajaxViewXml(DivId, function (xml)
+                        {
+                            if (level == 1)
                             {
-                                var $xml = $(data.d);
-                                if ($xml.get(0).nodeName == "ERROR")
-                                {
-                                    _handleAjaxError(XMLHttpRequest, $xml.text(), '');
-                                } else
-                                {
-                                    if (level == 1)
-                                    {
-                                        _storeViewXml(DivId, HeaderText, '', data.d);
-                                    }
-                                    _processViewXml(ParentId, DivId, HeaderText, $xml.children(), level, IsFirst);
-                                }
-                            },
-                            error: function (XMLHttpRequest, textStatus, errorThrown)
-                            {
-                                _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+                                _storeViewXml(DivId, HeaderText, xml);
                             }
+                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
                         });
                     }
-                } else
+                } else if (level == 1)
                 {
-                    // Level 2 and up
+                    // case 20354 - try cached first
                     _fetchCachedViewXml(rootid, function (xmlstr)
                     {
-                        var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                        _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                        if (xmlstr != '')
+                        {
+                            var $thisxmlstr = $(xmlstr).find('#' + DivId);
+                            _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                        } else if (!amOffline())
+                        {
+                            _ajaxViewXml(DivId, function (xml)
+                            {
+                                if (level == 1)
+                                {
+                                    _storeViewXml(DivId, HeaderText, xml);
+                                }
+                                _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
+                            });
+                        }
                     });
-
-                    // prevent link navigation!
-                    // _processViewXml() above will do the page transition for us when the div is ready
-                    ret = false;
+                } else  // Level 2 and up
+                {
+                    _fetchCachedViewXml(rootid, function (xmlstr)
+                    {
+                        if (xmlstr != '')
+                        {
+                            var $thisxmlstr = $(xmlstr).find('#' + DivId);
+                            _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                        }
+                    });
                 }
+
+                // prevent link navigation!
+                // _processViewXml() above will do the page transition for us when the div is ready
+                ret = false;
             }
             return ret;
+        }
+
+        function _ajaxViewXml(DivId, onsuccess)
+        {
+            $.ajax({
+                async: false,   // required so that the link will wait for the content before navigating
+                type: 'POST',
+                url: opts.ViewUrl,
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                data: "{ ParentId: '" + DivId + "' }",
+                success: function (data, textStatus, XMLHttpRequest)
+                {
+                    var $xml = $(data.d);
+                    if ($xml.get(0).nodeName == "ERROR")
+                    {
+                        _handleAjaxError(XMLHttpRequest, $xml.text(), '');
+                    } else
+                    {
+                        onsuccess(data.d);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown)
+                {
+                    _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+                }
+            });
         }
 
         var currenttab;
@@ -744,18 +779,21 @@
             // update the xml and store it
             _fetchCachedViewXml(rootid, function (xmlstr)
             {
-                var $xmlstr = $(xmlstr);
-                var $divxml = $xmlstr.find('#' + DivId);
-                $divxml.andSelf().find('prop').each(function ()
+                if (xmlstr != '')
                 {
-                    _FieldTypeHtmlToXml($(this), name, value);
-                });
+                    var $xmlstr = $(xmlstr);
+                    var $divxml = $xmlstr.find('#' + DivId);
+                    $divxml.andSelf().find('prop').each(function ()
+                    {
+                        _FieldTypeHtmlToXml($(this), name, value);
+                    });
 
-                // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
-                // However, it appears to work, for now.
-                _updateStoredViewXml(rootid, $xmlstr.wrap('<wrapper />').parent().html(), '1');
+                    // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
+                    // However, it appears to work, for now.
+                    _updateStoredViewXml(rootid, $xmlstr.wrap('<wrapper />').parent().html(), '1');
 
-                _resetPendingChanges('Yes', false);
+                    _resetPendingChanges('Yes', false);
+                }
             });
 
         } // onPropertyChange()
@@ -766,10 +804,12 @@
             var searchfor = $('#' + DivId + '_searchfor').attr('value');
             _fetchCachedViewXml(rootid, function (xmlstr)
             {
-                var $xmlstr = $(xmlstr);
-                var Html = '<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
+                if (xmlstr != '')
+                {
+                    var $xmlstr = $(xmlstr);
+                    var Html = '<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
 
-                $xmlstr.closest('result')
+                    $xmlstr.closest('result')
                     .find('searches')
                     .children()
                     .each(function ()
@@ -778,17 +818,18 @@
                         Html += '<option value="' + $search.attr('id') + '">' + $search.attr('name') + '</option>';
                     });
 
-                Html += '</select>' +
+                    Html += '</select>' +
                         '<input type="search" name="' + DivId + '_searchfor" id="' + DivId + '_searchfor" value="" placeholder="Search" />' +
                         '<input type="button" id="' + DivId + '_searchgo" data-inline="true" value="Go" /> ' +
                         '<div id="' + DivId + '_searchresults"></div>';
 
 
-                _addPageDivToBody(DivId, 1, DivId + '_searchdiv', 'Search', '', Html, false, true, 'arrow-u');
+                    _addPageDivToBody(DivId, 1, DivId + '_searchdiv', 'Search', '', Html, false, true, 'arrow-u');
 
-                $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
+                    $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
 
-                $.mobile.changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
+                    $.mobile.changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
+                }
             });
         }
 
@@ -798,37 +839,41 @@
             var searchfor = $('#' + DivId + '_searchfor').attr('value');
             _fetchCachedViewXml(rootid, function (xmlstr)
             {
-                var $xmlstr = $(xmlstr);
-                var content = _makeUL(DivId + '_searchresultslist');
-
-                var hitcount = 0;
-                $xmlstr.find('node').each(function ()
+                if (xmlstr != '')
                 {
-                    var $node = $(this);
-                    if ($node.attr(searchprop) != undefined)
+                    var $xmlstr = $(xmlstr);
+                    var content = _makeUL(DivId + '_searchresultslist');
+
+                    var hitcount = 0;
+                    $xmlstr.find('node').each(function ()
                     {
-                        if ($node.attr(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) > 0)
+                        var $node = $(this);
+                        if ($node.attr(searchprop) != undefined)
                         {
-                            hitcount++;
-                            content += _makeListItemFromXml($xmlstr, this, DivId, 1, false);
+                            if ($node.attr(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) > 0)
+                            {
+                                hitcount++;
+                                content += _makeListItemFromXml($xmlstr, this, DivId, 1, false);
+                            }
                         }
+                    });
+                    if (hitcount.length == 0)
+                    {
+                        content += "<li>No Results</li>";
                     }
-                });
-                if (hitcount.length == 0)
-                {
-                    content += "<li>No Results</li>";
+
+                    content += _endUL();
+
+                    var $srdiv = $('#' + DivId + '_searchresults');
+                    $srdiv.children().remove();
+                    $srdiv.append(content);
+                    $('#' + DivId + '_searchresultslist').listview();
+
+                    _bindEvents(DivId + '_searchdiv', 1, $srdiv);
                 }
-
-                content += _endUL();
-
-                var $srdiv = $('#' + DivId + '_searchresults');
-                $srdiv.children().remove();
-                $srdiv.append(content);
-                $('#' + DivId + '_searchresultslist').listview();
-
-                _bindEvents(DivId + '_searchdiv', 1, $srdiv);
             });
         }
+
         // ------------------------------------------------------------------------------------
         // Client-side Database Interaction
         // ------------------------------------------------------------------------------------
@@ -867,7 +912,6 @@
                     '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
                     '   rootid TEXT NOT NULL, ' +
                     '   rootname TEXT NOT NULL, ' +
-                    '   rootxml TEXT, ' +
                     '   viewxml TEXT, ' +
                     '   wasmodified INTEGER );',
                     null,
@@ -889,12 +933,12 @@
         // ------------------------------------------------------------------------------------
 
 
-        function _storeViewXml(rootid, rootname, rootxml, viewxml)
+        function _storeViewXml(rootid, rootname, viewxml)
         {
             if (rootid != undefined && rootid != '')
             {
-                _DoSql('INSERT INTO views (rootid, rootname, rootxml, viewxml, wasmodified) VALUES (?, ?, ?, ?, 0);',
-                       [rootid, rootname, rootxml, viewxml],
+                _DoSql('INSERT INTO views (rootid, rootname, viewxml, wasmodified) VALUES (?, ?, ?, 0);',
+                       [rootid, rootname, viewxml],
                        function () { }
                        );
             }
@@ -942,25 +986,27 @@
                            {
                                var row = result.rows.item(0);
                                onsuccess(row.viewxml);
+                           } else
+                           {
+                               onsuccess('');
                            }
                        });
             }
         }
         function _fetchCachedRootXml(onsuccess)
         {
-            _DoSql('SELECT rootid, rootname, rootxml FROM views ORDER BY rootname;',
+            _DoSql('SELECT rootid, rootname FROM views ORDER BY rootname;',
                    [],
                    function (transaction, result)
                    {
-                       var xml = '';
+                       var ret = '';
                        for (var i = 0; i < result.rows.length; i++)
                        {
                            var row = result.rows.item(i);
-                           xml += "<item id=\"" + row.rootid + "\" arrow=\"true\">" +
-                                  "  <text>" + row.rootname + "</text>" +
-                                  "</item>";
+                           ret += "<view id=\"" + row.rootid + "\"" +
+                                  " name=\"" + row.rootname + "\" />";
                        }
-                       onsuccess("<root>" + xml + "</root>");
+                       onsuccess("<result>" + ret + "</result>");
                    });
         }
 
