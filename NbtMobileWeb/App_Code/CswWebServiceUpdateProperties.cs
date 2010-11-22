@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml;
 using System.Collections.Generic;
 using System.Web;
 using System.Web.Services;
@@ -22,67 +23,29 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtWebServiceResources = CswNbtWebServiceResources;
         }
 
-        public string Run( string Updates )
+        public string Run( string ParentId, string UpdatedViewXml )
         {
-            string UpdatedRowIds = string.Empty;
-            string[] UpdateItems = Updates.Split( ';' );
-            foreach( string CurrentUpdateItem in UpdateItems )
+            XmlDocument XmlDoc = new XmlDocument();
+            XmlDoc.LoadXml( UpdatedViewXml );
+
+            XmlNodeList PropNodes = XmlDoc.SelectNodes( "result/node/subitems/prop[@wasmodified='1']" );
+            foreach( XmlNode PropNode in PropNodes )
             {
+                string NodePropId = PropNode.Attributes["id"].Value;
+                string[] SplitNodePropId = NodePropId.Split( '_' );
+                Int32 NodeTypePropId = Convert.ToInt32( SplitNodePropId[1] );
+                CswPrimaryKey NodePk = new CswPrimaryKey( SplitNodePropId[3], Convert.ToInt32( SplitNodePropId[4] ) );
 
-                string[] ItemBreakdown = CurrentUpdateItem.Split( ',' );
-                string ClientRowId = ItemBreakdown[0];
-                string PropId = ItemBreakdown[1];
-                string Value = ItemBreakdown[2];
+                CswNbtNode Node = _CswNbtWebServiceResources.CswNbtResources.Nodes[NodePk];
+                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+                Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
+                Node.postChanges( false );
+            }
 
-                string[] ItemId = PropId.Split( '_' );
-                Int32 NodeTypePropId = Convert.ToInt32( ItemId[1] );
-                Int32 NodeId = Convert.ToInt32( ItemId[4] );
+            // return the refreshed view
+            CswNbtWebServiceView ViewService = new CswNbtWebServiceView(_CswNbtWebServiceResources);
+            return ViewService.Run( ParentId );
 
-                CswPrimaryKey CswPrimaryKey = new CswPrimaryKey();
-                CswPrimaryKey.FromString( ItemId[3] + "_" + NodeId );
-
-                CswNbtNode CswNbtNode = _CswNbtWebServiceResources.CswNbtResources.Nodes[CswPrimaryKey];
-                CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                CswNbtNodePropWrapper CswNbtNodePropWrapper = CswNbtNode.Properties[CswNbtMetaDataNodeTypeProp];
-
-
-
-                switch( CswNbtNodePropWrapper.FieldType.FieldType )
-                {
-                    case CswNbtMetaDataFieldType.NbtFieldType.Text:
-                        CswNbtNodePropWrapper.AsText.Text = Value;
-                        break;
-
-                    case CswNbtMetaDataFieldType.NbtFieldType.Question:
-                        CswNbtNodePropWrapper.AsQuestion.Answer = Value;
-                        break;
-
-                    case CswNbtMetaDataFieldType.NbtFieldType.Date:
-                        CswNbtNodePropWrapper.AsDate.DateValue = Convert.ToDateTime( Value );
-                        break;
-
-                    case CswNbtMetaDataFieldType.NbtFieldType.Memo:
-                        CswNbtNodePropWrapper.AsMemo.Text = Value;
-                        break;
-
-                    default:
-                        throw ( new CswDniException( "Unhandled field type " + CswNbtNodePropWrapper.FieldType.FieldType.ToString() ) );
-
-                }//switch on field type 
-
-                CswNbtNode.postChanges( false );
-
-                if( UpdatedRowIds.Length > 0 )
-                {
-                    UpdatedRowIds += ",";
-                }
-
-                UpdatedRowIds += ClientRowId;
-
-
-            }//iterate update items
-
-            return ( UpdatedRowIds );
         } // Run()
 
     } // class CswNbtWebServiceUpdateProperties

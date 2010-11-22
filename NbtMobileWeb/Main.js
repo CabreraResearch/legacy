@@ -10,7 +10,8 @@
             DBMaxSize: 65536,
             WebServiceUrl: '/NbtMobileWeb/wsNBT.asmx/RunView',
             MainPageUrl: '/NbtMobileWeb/Main.html',
-            Theme: 'a'
+            Theme: 'a',
+            PollingInterval: 5000
         };
 
         if (options)
@@ -94,10 +95,9 @@
                             success: function (data, textStatus, XMLHttpRequest)
                             {
                                 var $xml = $(data.d);
-                                var $firstchild = $xml.children().first();
-                                if ($firstchild.get(0).nodeName == "ERROR")
+                                if ($xml.get(0).nodeName == "ERROR")
                                 {
-                                    _handleAjaxError(XMLHttpRequest, $firstchild.text(), '');
+                                    _handleAjaxError(XMLHttpRequest, $xml.text(), '');
                                 } else
                                 {
                                     if (level == 1)
@@ -131,6 +131,7 @@
         }
 
         var currenttab;
+        var onAfterAddDiv = function ($divhtml) { };
         function _processViewXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst)
         {
             var content = _makeUL();
@@ -141,7 +142,8 @@
             });
             content += _endUL();
 
-            _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst);
+            $divhtml = _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst);
+            onAfterAddDiv($divhtml);
 
             // this replaces the link navigation
             if (!IsFirst)
@@ -189,24 +191,44 @@
                     lihtml += '<a href="#' + id + '">' + text + '</a>';
                     lihtml += '</li>';
 
-                    if (fieldtype == 'Logical')
+                    switch (fieldtype)
                     {
-                        var sf_checked = $xmlitem.children('Checked').text();
-                        var sf_required = $xmlitem.children('Required').text();
-                        if (sf_checked == undefined) sf_checked = '';
-                        if (sf_required == undefined) sf_required = '';
+                        case 'Logical':
+                            var sf_checked = $xmlitem.children('Checked').text();
+                            var sf_required = $xmlitem.children('Required').text();
+                            if (sf_checked == undefined) sf_checked = '';
+                            if (sf_required == undefined) sf_required = '';
 
-                        lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
-                    }
+                            lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
+                            break;
 
-                    if (fieldtype == 'Question')
-                    {
-                        var sf_answer = $xmlitem.children('Answer').text();
-                        var sf_compliantanswers = $xmlitem.children('CompliantAnswers').text();
-                        if (sf_answer == undefined) sf_answer = '';
-                        if (sf_compliantanswers == undefined) sf_compliantanswers = '';
+                        case 'Question':
+                            var sf_answer = $xmlitem.children('Answer').text();
+                            var sf_compliantanswers = $xmlitem.children('CompliantAnswers').text();
+                            var sf_correctiveaction = $xmlitem.children('CorrectiveAction').text();
+                            if (sf_answer == undefined) sf_answer = '';
+                            if (sf_compliantanswers == undefined) sf_compliantanswers = '';
+                            if (sf_correctiveaction == undefined) sf_correctiveaction = '';
 
-                        lihtml += _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_answer, sf_compliantanswers);
+                            lihtml += _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_answer, sf_compliantanswers);
+
+                            if (sf_answer != '' && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && sf_correctiveaction == '')
+                            {
+                                // mark the li div OOC after it is created
+                                var old_onAfterAddDiv = onAfterAddDiv;
+                                onAfterAddDiv = function ($divhtml)
+                                {
+                                    $divhtml.find('#' + id + '_li div')
+                                            .addClass('OOC');
+                                    old_onAfterAddDiv($divhtml);
+                                }
+                                break;
+                            }
+
+                            break;
+
+                        default:
+                            break;
                     }
 
 
@@ -214,13 +236,11 @@
                     var toolbar = '';
                     if (previd != undefined)
                         toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-back="true">Previous</a>';
-
                     if (nextid != undefined)
                         toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
-
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
-
                     _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _FieldTypeXmlToHtml($xmlitem), IsFirst);
+
                     break;
 
                 default:
@@ -478,7 +498,7 @@
             if ($sftomodify != null)
             {
                 $sftomodify.text(value);
-                $xmlitem.attr('wasmodified', 'true');
+                $xmlitem.attr('wasmodified', '1');
             }
 
         } // _FieldTypeHtmlToXml()
@@ -637,6 +657,8 @@
 
             _bindEvents(DivId, level, $divhtml);
 
+            return $divhtml;
+
         } // _addPageDivToBody()
 
         function _bindEvents(DivId, level, $div)
@@ -680,7 +702,7 @@
 
                 // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
                 // However, it appears to work, for now.
-                _updateStoredViewXml(rootid, $xmlstr.wrap('<wrapper />').parent().html());
+                _updateStoredViewXml(rootid, $xmlstr.wrap('<wrapper />').parent().html(), '1');
             });
 
         } // onPropertyChange()
@@ -749,7 +771,6 @@
                 var $srdiv = $('#' + DivId + '_searchresults');
                 $srdiv.children().remove();
                 $srdiv.append(content);
-                console.log($('#' + DivId + '_searchresultslist').length);
                 $('#' + DivId + '_searchresultslist').listview();
 
                 _bindEvents(DivId + '_searchdiv', 1, $srdiv);
@@ -784,7 +805,7 @@
             {
                 _createDb(OnSuccess);
             }
-            console.log("tables created");
+            //console.log("tables created");
         } //_initDb()
 
         function _createDb(OnSuccess)
@@ -826,12 +847,12 @@
             }
         }
 
-        function _updateStoredViewXml(rootid, viewxml)
+        function _updateStoredViewXml(rootid, viewxml, wasmodified)
         {
             if (rootid != undefined && rootid != '')
             {
-                _DoSql('UPDATE views SET wasmodified = 1, viewxml = ? WHERE rootid = ?;',
-                       [viewxml, rootid],
+                _DoSql('UPDATE views SET wasmodified = ?, viewxml = ? WHERE rootid = ?;',
+                       [wasmodified, viewxml, rootid],
                        function () { }
                        );
             }
@@ -847,19 +868,11 @@
                        {
                            var row = result.rows.item(0);
                            onSuccess(row.rootid, row.viewxml);
+                       } else
+                       {
+                           onSuccess('', '');
                        }
                    });
-        }
-
-        function _clearModifiedView(rootid)
-        {
-            if (rootid != undefined && rootid != '')
-            {
-                _DoSql('UPDATE views SET wasmodified = 0 WHERE rootid = ?;',
-                       [rootid],
-                       function () { }
-                       );
-            }
         }
 
         function _fetchCachedViewXml(rootid, onsuccess)
@@ -904,7 +917,7 @@
 
         function _waitForData()
         {
-            setTimeout(_handleDataCheckTimer, 5000);
+            setTimeout(_handleDataCheckTimer, opts.PollingInterval);
         }
 
         function _handleDataCheckTimer()
@@ -918,14 +931,14 @@
                 success: function (data, textStatus, XMLHttpRequest)
                 {
                     var $xml = $(data.d);
-                    var $firstchild = $xml.children().first();
-                    if ($firstchild.get(0).nodeName == "ERROR")
+                    if ($xml.get(0).nodeName == "ERROR")
                     {
-                        _handleAjaxError(XMLHttpRequest, $firstchild.text(), '');
+                        _handleAjaxError(XMLHttpRequest, $xml.text(), '');
+                        _waitForData();
                     } else
                     {
-                        _DoSql("select * from changes where applied='0'", null, _processChanges);
                         setOnline();
+                        _processChanges();
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -937,27 +950,43 @@
 
         } //_handleDataCheckTimer()
 
-        function _processChanges(transaction, result)
+        function _processChanges()
         {
             _getModifiedView(function (rootid, viewxml)
             {
-                $.ajax({
-                    type: 'POST',
-                    url: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
-                    dataType: "json",
-                    contentType: 'application/json; charset=utf-8',
-                    data: "{ViewXml: '" + viewxml + "'}",
-                    success: function (data, textStatus, XMLHttpRequest)
-                    {
-                        _clearModifiedView(rootid);
-                        _waitForData();
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown)
-                    {
-                        _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-                        _waitForData();
-                    }
-                });
+                if (rootid != '' && viewxml != '')
+                {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
+                        dataType: "json",
+                        contentType: 'application/json; charset=utf-8',
+                        data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
+                        success: function (data, textStatus, XMLHttpRequest)
+                        {
+                            var $xml = $(data.d);
+                            if ($xml.get(0).nodeName == "ERROR")
+                            {
+                                _handleAjaxError(XMLHttpRequest, $xml.text(), '');
+                                _waitForData();
+                            } else
+                            {
+                                _updateStoredViewXml(rootid, data.d, '0');
+                                //console.log("UpdateProperties succeeded");
+                                _waitForData();
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+                            _waitForData();
+                        }
+                    });
+                }
+                else
+                {
+                    _waitForData();
+                }
             });
 
         } //_processChanges()

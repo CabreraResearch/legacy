@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod( EnableSession = true )]
-        public string UpdateProperties( string UpdatedViewXml )
+        public string UpdateProperties( string ParentId, string UpdatedViewXml )
         {
             string ReturnVal = string.Empty;
             try
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.WebServices
                 start();
 
                 CswNbtWebServiceUpdateProperties wsUP = new CswNbtWebServiceUpdateProperties( _CswNbtWebServiceResources );
-                ReturnVal = result( wsUP.Run( UpdatedViewXml ) );
+                ReturnVal = result( wsUP.Run( ParentId, UpdatedViewXml ) );
 
                 end();
             }
