@@ -700,19 +700,22 @@
 
             $divhtml.page();
 
-            _bindEvents(DivId, level, $divhtml);
+            _bindEvents(DivId, ParentId, level, $divhtml);
 
             return $divhtml;
 
         } // _addPageDivToBody()
 
-        function _bindEvents(DivId, level, $div)
+        function _bindEvents(DivId, ParentId, level, $div)
         {
             $div.find('#' + DivId + '_searchopen')
                 .click(function (eventObj) { onSearchOpen(DivId, eventObj); })
                 .end()
                 .find('#' + DivId + '_gosynchstatus')
                 .click(function (eventObj) { onSynchStatusOpen(DivId, eventObj); })
+                .end()
+                .find('#' + DivId + '_back')
+                .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
                 .end()
                 .find('input')
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
@@ -776,6 +779,17 @@
         // ------------------------------------------------------------------------------------
         // Events
         // ------------------------------------------------------------------------------------
+
+        function onBack(DivId, DestinationId, eventObj)
+        {
+            // case 20367 - remove DivId.  Doing it immediately causes bugs.
+            if (DivId != 'synchstatus')
+            {
+                setTimeout("$('#" + DivId + "').remove();", 1000);
+            }
+            return true;
+        }
+
 
         function onSynchStatusOpen(DivId, eventObj)
         {
@@ -883,7 +897,7 @@
                     $srdiv.append(content);
                     $('#' + DivId + '_searchresultslist').listview();
 
-                    _bindEvents(DivId + '_searchdiv', 1, $srdiv);
+                    _bindEvents(DivId + '_searchdiv', DivId, 1, $srdiv);
                 }
             });
         }
