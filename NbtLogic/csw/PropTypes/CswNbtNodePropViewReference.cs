@@ -70,6 +70,11 @@ namespace ChemSW.Nbt.PropTypes
                     NewView.save();
                     _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, CswConvert.ToDbVal( NewView.ViewId ) );
                     _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, PropName );
+                    
+                    // Case 20194. KLUGE Alert!!!
+                    CswNbtNode node = _CswNbtResources.Nodes.GetNode( _CswNbtNodePropData.NodeId );
+                    if( null != node )
+                        node.postChanges( false );
                 }
 
                 return CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _ViewIdSubField.Column ) );
