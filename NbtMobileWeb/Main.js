@@ -10,6 +10,7 @@
             DBMaxSize: 65536,
             WebServiceUrl: '/NbtMobileWeb/wsNBT.asmx/RunView',
             MainPageUrl: '/NbtMobileWeb/Main.html',
+            AuthenticateUrl: '/NbtMobileWeb/wsNBT.asmx/Authenticate',
             Theme: 'a'
         };
 
@@ -23,6 +24,7 @@
         var AccessId;
         var UserName;
         var Password;
+        var Timeout;
 
         _initDB(true, _waitForData);
 
@@ -33,7 +35,7 @@
         LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
         _addPageDivToBody('', 0, 'logindiv', 'Login to ChemSW Fire Inspection', '', LoginContent, true, true);
         $('#loginsubmit').click(onLoginSubmit);
-//        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
+        //        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
 
         function onLoginSubmit(eventObj)
         {
@@ -44,7 +46,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/NbtMobileWeb/wsNBT.asmx/Authenticate',
+                url: opts.AuthenticateUrl,
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
                 data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
@@ -52,6 +54,8 @@
                 {
 
                     console.log("return from authentication snot bar: " + data.d);
+
+                    Timeout = data.d;
 
                     _loadDivContents('', 0, 'viewsdiv', 'Views', false);
                     //$.mobile.changePage('viewsdiv', "slideup", false, true);
@@ -147,15 +151,15 @@
                                 var $firstchild = $xml.children().first();
                                 if ($firstchild.get(0).nodeName == "ERROR")
                                 {
-                                    console.log("An Error Occurred: " + $firstchild.text());
+                                console.log("An Error Occurred: " + $firstchild.text());
                                 } else
                                 { 
                                 */
-                                    if (level == 1)
-                                    {
-                                        _storeSubLevelXml(DivId, HeaderText, '', data.d);
-                                    }
-                                    _processSubLevelXml(ParentId, DivId, HeaderText, $xml.children(), level, IsFirst);
+                                if (level == 1)
+                                {
+                                    _storeSubLevelXml(DivId, HeaderText, '', data.d);
+                                }
+                                _processSubLevelXml(ParentId, DivId, HeaderText, $xml.children(), level, IsFirst);
                                 //}
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
