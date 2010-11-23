@@ -22,6 +22,7 @@ using ChemSW.Config;
 using ChemSW.DB;
 using ChemSW.CswWebControls;
 using ChemSW.Nbt.Statistics;
+using ChemSW.Nbt.Config;
 
 namespace ChemSW.Nbt
 {
@@ -37,16 +38,41 @@ namespace ChemSW.Nbt
         private CswSessionManager _CswSessionManager;
         public CswSessionManager CswSessionManager { get { return ( _CswSessionManager ); } }
 
+        private CswAuthenticator _CswAuthenticator;
+
         public CswNbtWebServiceResources( HttpApplicationState HttpApplicationState, HttpSessionState HttpSessionState, HttpRequest HttpRequest, HttpResponse HttpResponse, string LoginAccessId, string FilesPath, SetupMode SetupMode )
         {
-            _CswInitialization = new CswSessionResourcesNbt( HttpApplicationState, HttpSessionState, HttpRequest, HttpResponse, string.Empty, FilesPath, SetupMode );
-            _CswNbtResources = _CswInitialization.CswNbtResources;
-            _CswSessionManager = _CswInitialization.CswSessionManager;
+            //_CswInitialization = new CswSessionResourcesNbt( HttpApplicationState, HttpSessionState, HttpRequest, HttpResponse, string.Empty, FilesPath, SetupMode );
+
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( new CswSetupVblsNbt( SetupMode.Web ), new CswDbCfgInfoNbt( SetupMode.Web ), CswTools.getConfigurationFilePath( SetupMode.Web ) );
+            _CswAuthenticator = new CswAuthenticator( _CswNbtResources, new CswNbtAuthenticator( _CswNbtResources ), _CswNbtResources.MD5Seed );
+
+            //_CswSessionManager = _CswInitialization.CswSessionManager;
         }//ctor
 
-        public void startSession()
+        public AuthenticationStatus startSession( string AccessId, string UserName, string Password )
         {
-            ;//do nothing for now, but may want this hook someday
+            AuthenticationStatus ReturnVal = AuthenticationStatus.Unknown;
+
+            Int32 RoleTimeout = Int32.MinValue;
+            CswPrimaryKey UserId = null;
+            _CswNbtResources.AccessId = AccessId;
+
+
+            ReturnVal = _CswAuthenticator.Authenticate( AccessId, UserName, Password, CswNbtWebTools.getIpAddress(), 0, ref RoleTimeout, ref UserId );
+
+            if( AuthenticationStatus.Authenticated == ReturnVal )
+            {
+                _CswNbtResources.CurrentUser = _CswAuthenticator.makeUser( UserName );
+            }
+
+
+            return ( ReturnVal );
+        }//startSession()
+
+        public AuthenticationStatus startSession()
+        {
+            return ( AuthenticationStatus.Unknown );
         }//startSession()
 
         /// <summary>
@@ -65,7 +91,8 @@ namespace ChemSW.Nbt
             }
 
             CswNbtResources.release();
-            CswSessionManager.release();
+//            CswSessionManager.release();
+//            CswSessionManager.DeAuthenticate();
 
         }//endSession()
 

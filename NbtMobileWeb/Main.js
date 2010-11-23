@@ -12,6 +12,7 @@
             ConnectTestUrl: '/NbtMobileWeb/wsNBT.asmx/ConnectTest',
             UpdateUrl: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
             MainPageUrl: '/NbtMobileWeb/Main.html',
+            AuthenticateUrl: '/NbtMobileWeb/wsNBT.asmx/Authenticate',
             Theme: 'a',
             PollingInterval: 5000,
             DivRemovalDelay: 1000
@@ -24,9 +25,12 @@
 
         var rootid;
         var db;
+        var AccessId;
+        var UserName;
+        var Password;
+        var Timeout;
 
         _initDB(true, _waitForData);
-        reloadViews();
         _makeSynchStatusDiv();
 
         // case 20355 - error on refresh
@@ -34,12 +38,62 @@
         {
             var tempdivid = window.location.hash.substr(1);
             if ($('#' + tempdivid).length == 0)
-            {
+		  {
                 _addPageDivToBody('viewsdiv', 1, tempdivid, 'Please wait', '', 'Loading...', false, true);
                 setTimeout('$(\'#' + tempdivid + '_back\').click();', opts.DivRemovalDelay);
                 // force removal of div, redundant but necessary for 'prop_' divs.
                 setTimeout('$(\'div[id*="' + tempdivid + '"]\').remove();', opts.DivRemovalDelay);
-            }
+   		  }
+        }
+     
+        
+        
+
+        //var LoginContent = 'Login to ChemSW Mobile';
+        var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
+        LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
+        LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
+        LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
+        _addPageDivToBody('', 0, 'logindiv', 'Login to ChemSW Fire Inspection', '', LoginContent, true, true);
+        $('#loginsubmit').click(onLoginSubmit);
+        //        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
+
+        function onLoginSubmit(eventObj)
+        {
+            // authenticate here
+            UserName = $('#login_username').attr('value');
+            Password = $('#login_password').attr('value');
+            AccessId = $('#login_accessid').attr('value');
+
+            $.ajax({
+                type: 'POST',
+                url: opts.AuthenticateUrl,
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
+                success: function (data, textStatus, XMLHttpRequest)
+                {
+
+                    console.log("return from authentication snot bar: " + data.d);
+
+                    Timeout = data.d;
+
+                    reloadViews();
+                    //$.mobile.changePage('viewsdiv', "slideup", false, true);
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown)
+                {
+
+                    ErrorMessage = "Error: " + textStatus;
+                    if (null != errorThrown)
+                    {
+                        ErrorMessage += "; Exception: " + errorThrown.toString()
+                    }
+
+                    console.log(ErrorMessage);
+                }
+            });
         }
 
         function reloadViews()
@@ -200,7 +254,9 @@
 
             // this replaces the link navigation
             if (!IsFirst)
+            {
                 $.mobile.changePage($('#' + DivId), "slide", false, true);
+            }
 
         } // _processViewXml()
 
