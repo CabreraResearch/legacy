@@ -13,7 +13,8 @@
             UpdateUrl: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
             MainPageUrl: '/NbtMobileWeb/Main.html',
             Theme: 'a',
-            PollingInterval: 5000
+            PollingInterval: 5000,
+            DivRemovalTime: 2000
         };
 
         if (options)
@@ -781,10 +782,10 @@
 
         function onBack(DivId, DestinationId, eventObj)
         {
-            // case 20367 - remove DivId.  Doing it immediately causes bugs.
-            if (DivId != 'synchstatus')
+            if (DivId != 'synchstatus' && DivId.indexOf('prop_') != 0)
             {
-                setTimeout("$('#" + DivId + "').remove();", 1000);
+                // case 20367 - remove DivId.  Doing it immediately causes bugs.
+                setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalTime);
             }
             return true;
         }
