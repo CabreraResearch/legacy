@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
         /// <summary>
-        /// String value for compliant answer
+        /// String value for compliant answers
         /// </summary>
         public string CompliantAnswersString
         {
@@ -227,10 +227,24 @@ namespace ChemSW.Nbt.PropTypes
                 return _AllowedAnswers;
             }
         }
+        /// <summary>
+        /// String value for allowed answers
+        /// </summary>
+        public string AllowedAnswersString
+        {
+            get
+            {
+                string AnswerString = _CswNbtMetaDataNodeTypeProp.ListOptions;
+                if( null == AnswerString || string.Empty == AnswerString )
+                    AnswerString = "Yes,No,N/A";
+                return AnswerString;
+            }
+        }
 
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode AnswerNode = CswXmlDocument.AppendXmlNode( ParentNode, _AnswerSubField.ToXmlNodeName(), Answer.ToString() );
+            XmlNode AllowedAnswersNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.AllowedAnswers.ToString().ToLower(), AllowedAnswersString );
             XmlNode CompliantAnswersNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.CompliantAnswers.ToString().ToLower(), CompliantAnswersString );
             XmlNode CommentsNode = CswXmlDocument.AppendXmlNode( ParentNode, _CommentsSubField.ToXmlNodeName(), Comments.ToString() );
             XmlNode CorrectiveActionNode = CswXmlDocument.AppendXmlNode( ParentNode, _CorrectiveActionSubField.ToXmlNodeName(), CorrectiveAction.ToString() );

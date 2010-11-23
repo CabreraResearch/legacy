@@ -236,8 +236,8 @@
                     switch (fieldtype)
                     {
                         case 'Logical':
-                            var sf_checked = $xmlitem.children('Checked').text();
-                            var sf_required = $xmlitem.children('Required').text();
+                            var sf_checked = $xmlitem.children('checked').text();
+                            var sf_required = $xmlitem.children('required').text();
                             if (sf_checked == undefined) sf_checked = '';
                             if (sf_required == undefined) sf_required = '';
 
@@ -245,14 +245,16 @@
                             break;
 
                         case 'Question':
-                            var sf_answer = $xmlitem.children('Answer').text();
-                            var sf_compliantanswers = $xmlitem.children('CompliantAnswers').text();
-                            var sf_correctiveaction = $xmlitem.children('CorrectiveAction').text();
+                            var sf_answer = $xmlitem.children('answer').text();
+                            var sf_options = $xmlitem.children('allowedanswers').text();
+                            var sf_compliantanswers = $xmlitem.children('compliantanswers').text();
+                            var sf_correctiveaction = $xmlitem.children('correctiveaction').text();
                             if (sf_answer == undefined) sf_answer = '';
+                            if (sf_options == undefined) sf_options = '';
                             if (sf_compliantanswers == undefined) sf_compliantanswers = '';
                             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
 
-                            lihtml += _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_answer, sf_compliantanswers);
+                            lihtml += _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers);
 
                             if (sf_answer != '' && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && sf_correctiveaction == '')
                             {
@@ -360,17 +362,18 @@
             var Html = PropName + '<br/>';
 
             // Subfield values
-            var sf_text = $xmlitem.children('Text').text();
-            var sf_value = $xmlitem.children('Value').text();
-            var sf_href = $xmlitem.children('Href').text();
-            var sf_options = $xmlitem.children('Options').text();
-            var sf_checked = $xmlitem.children('Checked').text();
-            var sf_required = $xmlitem.children('Required').text();
-            var sf_units = $xmlitem.children('Units').text();
-            var sf_answer = $xmlitem.children('Answer').text();
-            var sf_correctiveaction = $xmlitem.children('CorrectiveAction').text();
-            var sf_comments = $xmlitem.children('Comments').text();
-            var sf_compliantanswers = $xmlitem.children('CompliantAnswers').text();
+            var sf_text = $xmlitem.children('text').text();
+            var sf_value = $xmlitem.children('value').text();
+            var sf_href = $xmlitem.children('href').text();
+            var sf_options = $xmlitem.children('options').text();
+            var sf_checked = $xmlitem.children('checked').text();
+            var sf_required = $xmlitem.children('required').text();
+            var sf_units = $xmlitem.children('units').text();
+            var sf_answer = $xmlitem.children('answer').text();
+            var sf_options = $xmlitem.children('allowedanswers').text();
+            var sf_correctiveaction = $xmlitem.children('correctiveaction').text();
+            var sf_comments = $xmlitem.children('comments').text();
+            var sf_compliantanswers = $xmlitem.children('compliantanswers').text();
 
             if (sf_text == undefined) sf_text = '';
             if (sf_value == undefined) sf_value = '';
@@ -380,6 +383,7 @@
             if (sf_required == undefined) sf_required = '';
             if (sf_units == undefined) sf_units = '';
             if (sf_answer == undefined) sf_answer = '';
+            if (sf_options == undefined) sf_options = '';
             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
             if (sf_comments == undefined) sf_comments = '';
             if (sf_compliantanswers == undefined) sf_compliantanswers = '';
@@ -448,7 +452,7 @@
                     break;
 
                 case "Question":
-                    Html += _makeQuestionAnswerFieldSet(IdStr, '_ans2', '_ans', '_cor', '_li', sf_answer, sf_compliantanswers);
+                    Html += _makeQuestionAnswerFieldSet(IdStr, '_ans2', '_ans', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers);
 
                     Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
                     Html += sf_comments
@@ -492,24 +496,24 @@
         function _FieldTypeHtmlToXml($xmlitem, name, value)
         {
             var IdStr = $xmlitem.attr('id');
-            var FieldType = $xmlitem.attr('fieldtype');
-            var PropName = $xmlitem.attr('name');
+            var fieldtype = $xmlitem.attr('fieldtype');
+            var propname = $xmlitem.attr('name');
 
-            // Subfield nodes
-            var $sf_text = $xmlitem.children('Text');
-            var $sf_value = $xmlitem.children('Value');
-            var $sf_href = $xmlitem.children('Href');
-            var $sf_options = $xmlitem.children('Options');
-            var $sf_checked = $xmlitem.children('Checked');
-            var $sf_required = $xmlitem.children('Required');
-            var $sf_units = $xmlitem.children('Units');
-            var $sf_answer = $xmlitem.children('Answer');
-            var $sf_correctiveaction = $xmlitem.children('CorrectiveAction');
-            var $sf_comments = $xmlitem.children('Comments');
-            var $sf_compliantanswers = $xmlitem.children('CompliantAnswers');
+            // subfield nodes
+            var $sf_text = $xmlitem.children('text');
+            var $sf_value = $xmlitem.children('value');
+            var $sf_href = $xmlitem.children('href');
+            var $sf_options = $xmlitem.children('options');
+            var $sf_checked = $xmlitem.children('checked');
+            var $sf_required = $xmlitem.children('required');
+            var $sf_units = $xmlitem.children('units');
+            var $sf_answer = $xmlitem.children('answer');
+            var $sf_correctiveaction = $xmlitem.children('correctiveaction');
+            var $sf_comments = $xmlitem.children('comments');
+            var $sf_compliantanswers = $xmlitem.children('compliantanswers');
 
             var $sftomodify = null;
-            switch (FieldType)
+            switch (fieldtype)
             {
                 case "Date": if (name == IdStr) $sftomodify = $sf_value; break;
                 case "Link": break;
@@ -557,8 +561,8 @@
                 if (answertext == 'Blank') answertext = '?';
 
                 Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answertext + '" ';
-                if ((Checked == "false" && answers[i] == "No") ||
-                    (Checked == "true" && answers[i] == "Yes") ||
+                if ((Checked == 'false' && answers[i] == 'No') ||
+                    (Checked == 'true' && answers[i] == 'Yes') ||
                     (Checked == '' && answers[i] == 'Blank'))
                     Html += 'checked';
                 Html += ' onclick="';
@@ -595,10 +599,10 @@
             return Html;
         }
 
-        function _makeQuestionAnswerFieldSet(IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Answer, CompliantAnswers)
+        function _makeQuestionAnswerFieldSet(IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Options, Answer, CompliantAnswers)
         {
             var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-            var answers = ['Yes', 'No'];
+            var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
                 Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
