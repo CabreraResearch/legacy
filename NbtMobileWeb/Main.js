@@ -20,29 +20,58 @@
 
         var rootid;
         var db;
-        var UserId;
+        var AccessId;
+        var UserName;
         var Password;
 
         _initDB(true, _waitForData);
 
         //var LoginContent = 'Login to ChemSW Mobile';
-        var LoginContent = '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
-        LoginContent += '<input type="password" id="login_password" placeholder="Password "/><br>';
-        LoginContent += '<a id="loginsubmit" data-role="button" href="#viewsdiv">Continue</a>';
+        var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
+        LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
+        LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
+        LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
         _addPageDivToBody('', 0, 'logindiv', 'Login to ChemSW Fire Inspection', '', LoginContent, true, true);
         $('#loginsubmit').click(onLoginSubmit);
-        //_loadDivContents('', 0, 'viewsdiv', 'Views', true);
+//        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
 
         function onLoginSubmit(eventObj)
         {
             // authenticate here
-            var UserId = $('#login_username').attr('value');
-            var Password = $('#login_password').attr('value');
+            UserName = $('#login_username').attr('value');
+            Password = $('#login_password').attr('value');
+            AccessId = $('#login_accessid').attr('value');
+
+            $.ajax({
+                type: 'POST',
+                url: '/NbtMobileWeb/wsNBT.asmx/Authenticate',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
+                success: function (data, textStatus, XMLHttpRequest)
+                {
+
+                    console.log("return from authentication snot bar: " + data.d);
+
+                    _loadDivContents('', 0, 'viewsdiv', 'Views', false);
+                    //$.mobile.changePage('viewsdiv', "slideup", false, true);
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown)
+                {
+
+                    ErrorMessage = "Error: " + textStatus;
+                    if (null != errorThrown)
+                    {
+                        ErrorMessage += "; Exception: " + errorThrown.toString()
+                    }
+
+                    console.log(ErrorMessage);
+                }
+            });
 
 
             // load views
-            _loadDivContents('', 0, 'viewsdiv', 'Views', false);
-            $.mobile.changePage('viewsdiv', "slideup", false, true);
         }
 
         // ------------------------------------------------------------------------------------
@@ -114,18 +143,20 @@
                             success: function (data, textStatus, XMLHttpRequest)
                             {
                                 var $xml = $(data.d);
+                                /*
                                 var $firstchild = $xml.children().first();
                                 if ($firstchild.get(0).nodeName == "ERROR")
                                 {
                                     console.log("An Error Occurred: " + $firstchild.text());
                                 } else
-                                {
+                                { 
+                                */
                                     if (level == 1)
                                     {
                                         _storeSubLevelXml(DivId, HeaderText, '', data.d);
                                     }
                                     _processSubLevelXml(ParentId, DivId, HeaderText, $xml.children(), level, IsFirst);
-                                }
+                                //}
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
                             {
@@ -165,7 +196,9 @@
 
             // this replaces the link navigation
             if (!IsFirst)
+            {
                 $.mobile.changePage($('#' + DivId), "slide", false, true);
+            }
 
         } // _processSubLevelXml()
 

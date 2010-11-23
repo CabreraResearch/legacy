@@ -13,6 +13,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Session;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -29,6 +30,23 @@ namespace ChemSW.Nbt.WebServices
 
         private CswNbtWebServiceResources _CswNbtWebServiceResources;
 
+        private AuthenticationStatus start( string AccessId, string UserName, string Password )
+        {
+            _CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
+                                                                        Context.Session,
+                                                                        Context.Request,
+                                                                        Context.Response,
+                                                                        string.Empty,
+                                                                        System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
+                                                                        SetupMode.Web );
+
+            _CswNbtWebServiceResources.startSession( AccessId, UserName, Password );
+
+
+            return ( AuthenticationStatus.Authenticated );
+        }
+
+
         private void start()
         {
             _CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
@@ -40,11 +58,13 @@ namespace ChemSW.Nbt.WebServices
                                                                         SetupMode.Web );
             _CswNbtWebServiceResources.startSession();
         }
+
+
         private void end()
         {
             _CswNbtWebServiceResources.endSession( EndSessionMode.esmCommit );
         }
-        private string error(Exception ex)
+        private string error( Exception ex )
         {
             _CswNbtWebServiceResources.CswNbtResources.CswLogger.reportError( ex );
             _CswNbtWebServiceResources.endSession( EndSessionMode.esmRollback );
@@ -55,6 +75,51 @@ namespace ChemSW.Nbt.WebServices
         #endregion Session and Resource Management
 
         #region Web Methods
+
+        [WebMethod]
+        public string Authenticate( string AccessId, string UserName, string Password )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                AuthenticationStatus AuthenticationStatus = start( AccessId, UserName, Password );
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    ReturnVal = _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser.RoleTimeout.ToString();
+                }
+                else
+                {
+                    switch( AuthenticationStatus )
+                    {
+                        case ChemSW.Security.AuthenticationStatus.Locked:
+                            ReturnVal = "Account Locked";
+                            break;
+
+                        case ChemSW.Security.AuthenticationStatus.TooManyUsers:
+                            ReturnVal = "Too many users; try again later";
+                            break;
+
+                        default:
+                            ReturnVal = "Login failed";
+                            break;
+                    }
+
+
+                }//if-else we authenticated
+
+
+                end();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+
+            return ( ReturnVal );
+
+        }//Authenticate()
+
 
         [WebMethod( EnableSession = true )]
         public string ConnectTest()
@@ -87,7 +152,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = error(ex);
+                ReturnVal = error( ex );
             }
             return ( ReturnVal );
         } // UpdateProperties()
@@ -106,10 +171,12 @@ namespace ChemSW.Nbt.WebServices
 
                 end();
             }
+
             catch( Exception ex )
             {
                 ReturnVal = error( ex );
             }
+
             return ( ReturnVal );
         } // RunView()
 
