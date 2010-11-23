@@ -14,7 +14,7 @@
             MainPageUrl: '/NbtMobileWeb/Main.html',
             Theme: 'a',
             PollingInterval: 5000,
-            DivRemovalTime: 2000
+            DivRemovalDelay: 1000
         };
 
         if (options)
@@ -29,6 +29,18 @@
         reloadViews();
         _makeSynchStatusDiv();
 
+        // case 20355 - error on refresh
+        if (window.location.hash.length > 0)
+        {
+            var tempdivid = window.location.hash.substr(1);
+            if ($('#' + tempdivid).length == 0)
+            {
+                _addPageDivToBody('viewsdiv', 1, tempdivid, 'Please wait', '', 'Loading...', false, true);
+                setTimeout('$(\'#' + tempdivid + '_back\').click();', opts.DivRemovalDelay);
+                // force removal of div, redundant but necessary for 'prop_' divs.
+                setTimeout('$(\'div[id*="' + tempdivid + '"]\').remove();', opts.DivRemovalDelay);
+            }
+        }
 
         function reloadViews()
         {
@@ -785,7 +797,7 @@
             if (DivId != 'synchstatus' && DivId.indexOf('prop_') != 0)
             {
                 // case 20367 - remove DivId.  Doing it immediately causes bugs.
-                setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalTime);
+                setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
             }
             return true;
         }
