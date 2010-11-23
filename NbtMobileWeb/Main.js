@@ -265,7 +265,7 @@
                             if (sf_compliantanswers == undefined) sf_compliantanswers = '';
                             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
 
-                            lihtml += _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers);
+                            lihtml += _makeQuestionAnswerFieldSet(DivId, id, '_ans', '_ans2', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers);
 
                             if (sf_answer != '' && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && sf_correctiveaction == '')
                             {
@@ -297,7 +297,7 @@
                     if (nextid != undefined)
                         toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
-                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _FieldTypeXmlToHtml($xmlitem), IsFirst);
+                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _FieldTypeXmlToHtml($xmlitem, DivId), IsFirst);
 
                     break;
 
@@ -355,7 +355,7 @@
                     Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
                     Html += '<p>' + Target + '</p>';
                     Html += '<p>Due: ' + DueDate + '</p>';
-                    Html += '<span class="ui-li-count">' + UnansweredCnt + '</span>';
+                    Html += '<span id="' + id + '_unansweredcnt" class="ui-li-count">' + UnansweredCnt + '</span>';
                     Html += '</li>';
                     break;
 
@@ -369,7 +369,7 @@
             return Html;
         }
 
-        function _FieldTypeXmlToHtml($xmlitem)
+        function _FieldTypeXmlToHtml($xmlitem, ParentId)
         {
             var IdStr = $xmlitem.attr('id');
             var FieldType = $xmlitem.attr('fieldtype');
@@ -468,7 +468,7 @@
                     break;
 
                 case "Question":
-                    Html += _makeQuestionAnswerFieldSet(IdStr, '_ans2', '_ans', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers);
+                    Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers);
 
                     Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
                     Html += sf_comments
@@ -621,7 +621,7 @@
         }
 
 
-        function _makeQuestionAnswerFieldSet(IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Options, Answer, CompliantAnswers)
+        function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Options, Answer, CompliantAnswers)
         {
             var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
             var answers = Options.split(',');
@@ -673,6 +673,12 @@
                     Html += '} else {';
                     Html += '  $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
                     Html += '}';
+                }
+                if (Answer == '')
+                {
+                    // update unanswered count when this question is answered
+                    Html += 'var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
+                    Html += '$cntspan.text(parseInt($cntspan.text()) - 1); ';
                 }
                 Html += ' " />';
                 Html += '            <label for="' + IdStr + Suffix + '_' + answerid + '">' + answers[i] + '</label>';
