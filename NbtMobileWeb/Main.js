@@ -145,13 +145,12 @@
                         }
                     });
                 }
-
-                // prevent link navigation!
-                // _processViewXml() above will do the page transition for us when the div is ready
+            } else
+            {
                 ret = false;
             }
             return ret;
-        }
+        } // _loadDivContents()
 
         function _ajaxViewXml(DivId, onsuccess)
         {
@@ -178,7 +177,7 @@
                     _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
                 }
             });
-        }
+        } // _ajaxViewXml()
 
         var currenttab;
         var onAfterAddDiv;
@@ -241,22 +240,22 @@
                         currenttab = tab;
                     }
 
-                    lihtml += '<li id="' + id + '_li">';
-                    lihtml += '<a href="#' + id + '">' + text + '</a>';
-                    lihtml += '</li>';
-
                     switch (fieldtype)
                     {
                         case 'Logical':
+                            lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
+
                             var sf_checked = $xmlitem.children('checked').text();
                             var sf_required = $xmlitem.children('required').text();
                             if (sf_checked == undefined) sf_checked = '';
                             if (sf_required == undefined) sf_required = '';
 
-                            lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
+                            lihtml += '<li>' + _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required) + '</li>';
                             break;
 
                         case 'Question':
+                            lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
+
                             var sf_answer = $xmlitem.children('answer').text();
                             var sf_options = $xmlitem.children('allowedanswers').text();
                             var sf_compliantanswers = $xmlitem.children('compliantanswers').text();
@@ -266,7 +265,7 @@
                             if (sf_compliantanswers == undefined) sf_compliantanswers = '';
                             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
 
-                            lihtml += _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers);
+                            lihtml += '<li>' + _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers) + '</li>';
 
                             if (sf_answer != '' && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && sf_correctiveaction == '')
                             {
@@ -282,6 +281,11 @@
                             break;
 
                         default:
+                            lihtml += '<li id="' + id + '_li">';
+                            lihtml += ' <a href="#' + id + '">' + text + '</a>';
+                            lihtml += ' <p class="ui-li-aside">' + $xmlitem.attr('gestalt') + '</p>';
+                            lihtml += '</li>';
+
                             break;
                     }
 
@@ -561,7 +565,7 @@
 
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
         {
-            var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
 
             var answers = ['Blank', 'Yes', 'No'];
             if (Required == "true")
@@ -613,8 +617,9 @@
 
         function _makeQuestionAnswerFieldSet(IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Options, Answer, CompliantAnswers)
         {
-            var Html = '<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-            var answers = Options.split(',');
+            var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            var myOptions = Options.replace('/', '');
+            var answers = myOptions.split(',');
             for (var i = 0; i < answers.length; i++)
             {
                 Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
@@ -739,7 +744,7 @@
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
                 .find('li a')
-                .click(function (e) { return _loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false); })
+                .click(function (e) { if (_loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false)) { e.stopPropagation(); e.preventDefault(); } })
                 .end();
         }
 
@@ -756,14 +761,15 @@
             content += '<a id="ss_gooffline" href="#" data-role="button">Go Offline</a>';
             $divhtml = _addPageDivToBody('', 1, 'synchstatus', 'Synch Status', '', content, false, true);
             $divhtml.find('#ss_forcesynch')
-                    .click(function (eventObj) { _processChanges(false); return false; })
+                    .click(function (eventObj) { _processChanges(false); eventObj.preventDefault(); })
                     .end()
                     .find('#ss_gooffline')
-                    .click(function (eventObj) { _toggleOffline(); return false; });
+                    .click(function (eventObj) { _toggleOffline(eventObj); });
         }
 
-        function _toggleOffline()
+        function _toggleOffline(eventObj)
         {
+            eventObj.preventDefault();
             if (amOffline())
             {
                 _waitForData();
