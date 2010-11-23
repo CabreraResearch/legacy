@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            return "<root>" + ret + "</root>";
+            return ret;
         } // Run()
 
         // case 20083 - search options

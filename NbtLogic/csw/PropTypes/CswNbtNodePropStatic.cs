@@ -94,16 +94,16 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.Name.ToString(), StaticText );
+            XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.ToXmlNodeName(), StaticText );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            StaticText = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _TextSubField.Name.ToString() );
+            StaticText = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _TextSubField.ToXmlNodeName() );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            StaticText = CswTools.XmlRealAttributeName( PropRow[_TextSubField.Name.ToString()].ToString() );
+            StaticText = CswTools.XmlRealAttributeName( PropRow[_TextSubField.ToXmlNodeName()].ToString() );
         }
 
     }//CswNbtNodePropStatic

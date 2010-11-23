@@ -189,17 +189,17 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode RelatedNodeIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _NodeIDSubField.Name.ToString() );
+            XmlNode RelatedNodeIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _NodeIDSubField.ToXmlNodeName() );
             if( RelatedNodeId != null )
                 RelatedNodeIdNode.InnerText = RelatedNodeId.PrimaryKey.ToString();
-            XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.Name.ToString(), CachedNodeName );
+            XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
         }
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // Getting the value as a string is on purpose.
-            //RelatedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIDSubField.Name.ToString() ), NodeMap ) );
+            //RelatedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIDSubField.ToXmlNodeName() ), NodeMap ) );
 
-            Int32 NodeId = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIDSubField.Name.ToString() );
+            Int32 NodeId = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIDSubField.ToXmlNodeName() );
             if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
                 NodeId = NodeMap[NodeId];
             RelatedNodeId = new CswPrimaryKey( "nodes", NodeId );
@@ -210,9 +210,9 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // Getting the value as a string is on purpose.
-            //RelatedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswConvert.ToInt32( PropRow[_NodeIDSubField.Name.ToString()] ), NodeMap ) );
+            //RelatedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswConvert.ToInt32( PropRow[_NodeIDSubField.ToXmlNodeName()] ), NodeMap ) );
 
-            string NodeId = CswTools.XmlRealAttributeName( PropRow[_NodeIDSubField.Name.ToString()].ToString() );
+            string NodeId = CswTools.XmlRealAttributeName( PropRow[_NodeIDSubField.ToXmlNodeName()].ToString() );
             if( NodeMap != null && NodeMap.ContainsKey( NodeId.ToLower() ) )
                 RelatedNodeId = new CswPrimaryKey( "nodes", NodeMap[NodeId.ToLower()] );
             else if( CswTools.IsInteger( NodeId ) )

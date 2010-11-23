@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.MetaData
         public enum SubFieldName
         {
             Unknown, // generates an exception when run
+            AllowedAnswers,
             Answer,
             Barcode,
             Blob,
@@ -131,6 +132,11 @@ namespace ChemSW.Nbt.MetaData
             }//get
 
         }//FilterModes
+
+        public string ToXmlNodeName()
+        {
+            return this.Name.ToString().ToLower();
+        }
 
     }//CswNbtSubField
 

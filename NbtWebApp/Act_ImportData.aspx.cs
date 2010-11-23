@@ -342,7 +342,7 @@ namespace ChemSW.Nbt.WebPages
                                     if( value != string.Empty )
                                     {
                                         CswNbtMetaDataNodeTypeProp Prop = ColumnReference[currentcolumn] as CswNbtMetaDataNodeTypeProp;
-                                        string SubFieldName = Prop.FieldTypeRule.SubFields.Default.Name.ToString();
+                                        string SubFieldName = Prop.FieldTypeRule.SubFields.Default.ToXmlNodeName();
                                         XmlString += "<PropValue nodetypepropid=\"" + Prop.PropId.ToString() + "\">";
                                         XmlString += "<" + SubFieldName + ">";
                                         XmlString += value;
@@ -388,7 +388,7 @@ namespace ChemSW.Nbt.WebPages
                             foreach( DataColumn PropColumn in FirstSheet.Columns )
                             {
                                 CswNbtMetaDataNodeTypeProp ThisProp = DemoNodeType.getNodeTypeProp( PropColumn.ColumnName );
-                                string SubFieldName = ThisProp.FieldTypeRule.SubFields.Default.Name.ToString();
+                                string SubFieldName = ThisProp.FieldTypeRule.SubFields.Default.ToXmlNodeName();
                                 XmlString += "<PropValue nodetypepropid=\"" + ThisProp.PropId.ToString() + "\">";
                                 XmlString += "<" + SubFieldName + ">";
                                 XmlString += ExcelRow[PropColumn].ToString();

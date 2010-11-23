@@ -197,23 +197,23 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode StartDateNode = CswXmlDocument.AppendXmlNode( ParentNode, _StartDateTimeSubField.Name.ToString(), StartDateTime.ToString() );
-            XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.Name.ToString(), CachedValue.ToString() );
-            XmlNode UnitsNode = CswXmlDocument.AppendXmlNode( ParentNode, _UnitsSubField.Name.ToString(), Units );
+            XmlNode StartDateNode = CswXmlDocument.AppendXmlNode( ParentNode, _StartDateTimeSubField.ToXmlNodeName(), StartDateTime.ToString() );
+            XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName(), CachedValue.ToString() );
+            XmlNode UnitsNode = CswXmlDocument.AppendXmlNode( ParentNode, _UnitsSubField.ToXmlNodeName(), Units );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            StartDateTime = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _StartDateTimeSubField.Name.ToString() );
-            Units = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _UnitsSubField.Name.ToString() );
+            StartDateTime = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _StartDateTimeSubField.ToXmlNodeName() );
+            Units = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _UnitsSubField.ToXmlNodeName() );
             PendingUpdate = true;
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            string StringStartDateTime = CswTools.XmlRealAttributeName( PropRow[_StartDateTimeSubField.Name.ToString()].ToString() );
+            string StringStartDateTime = CswTools.XmlRealAttributeName( PropRow[_StartDateTimeSubField.ToXmlNodeName()].ToString() );
             if( StringStartDateTime != string.Empty )
                 StartDateTime = Convert.ToDateTime( StringStartDateTime );
-            Units = CswTools.XmlRealAttributeName( PropRow[_UnitsSubField.Name.ToString()].ToString() );
+            Units = CswTools.XmlRealAttributeName( PropRow[_UnitsSubField.ToXmlNodeName()].ToString() );
             PendingUpdate = true;
         }
 

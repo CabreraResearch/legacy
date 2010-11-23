@@ -87,8 +87,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode ContentTypeNode = CswXmlDocument.AppendXmlNode( ParentNode, _ContentTypeSubField.Name.ToString(), ContentType );
-            XmlNode FileNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _FileNameSubField.Name.ToString(), FileName );
+            XmlNode ContentTypeNode = CswXmlDocument.AppendXmlNode( ParentNode, _ContentTypeSubField.ToXmlNodeName(), ContentType );
+            XmlNode FileNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _FileNameSubField.ToXmlNodeName(), FileName );
 
             // TODO: We need to figure out how we want to do this, for binary data
             // Handle blob data
@@ -113,13 +113,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            ContentType = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ContentTypeSubField.Name.ToString() );
-            FileName = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _FileNameSubField.Name.ToString() );
+            ContentType = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ContentTypeSubField.ToXmlNodeName() );
+            FileName = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _FileNameSubField.ToXmlNodeName() );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            ContentType = CswTools.XmlRealAttributeName( PropRow[_ContentTypeSubField.Name.ToString()].ToString() );
-            FileName = CswTools.XmlRealAttributeName( PropRow[_FileNameSubField.Name.ToString()].ToString() );
+            ContentType = CswTools.XmlRealAttributeName( PropRow[_ContentTypeSubField.ToXmlNodeName()].ToString() );
+            FileName = CswTools.XmlRealAttributeName( PropRow[_FileNameSubField.ToXmlNodeName()].ToString() );
         }
 
     }

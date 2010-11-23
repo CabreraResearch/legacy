@@ -219,12 +219,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode SelectedNodeNode = CswXmlDocument.AppendXmlNode( ParentNode, _NodeIdSubField.Name.ToString() );
-            XmlNode SelectedColumnNode = CswXmlDocument.AppendXmlNode( ParentNode, _ColumnSubField.Name.ToString() );
-            XmlNode SelectedRowNode = CswXmlDocument.AppendXmlNode( ParentNode, _RowSubField.Name.ToString() );
-            XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.Name.ToString(), CachedNodeName );
-            XmlNode CachedPathNode = CswXmlDocument.AppendXmlNode( ParentNode, _PathSubField.Name.ToString(), CachedPath );
-            XmlNode CachedBarcodeNode = CswXmlDocument.AppendXmlNode( ParentNode, _BarcodeSubField.Name.ToString(), CachedBarcode );
+            XmlNode SelectedNodeNode = CswXmlDocument.AppendXmlNode( ParentNode, _NodeIdSubField.ToXmlNodeName() );
+            XmlNode SelectedColumnNode = CswXmlDocument.AppendXmlNode( ParentNode, _ColumnSubField.ToXmlNodeName() );
+            XmlNode SelectedRowNode = CswXmlDocument.AppendXmlNode( ParentNode, _RowSubField.ToXmlNodeName() );
+            XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
+            XmlNode CachedPathNode = CswXmlDocument.AppendXmlNode( ParentNode, _PathSubField.ToXmlNodeName(), CachedPath );
+            XmlNode CachedBarcodeNode = CswXmlDocument.AppendXmlNode( ParentNode, _BarcodeSubField.ToXmlNodeName(), CachedBarcode );
 
             if( SelectedNodeId != null )
                 SelectedNodeNode.InnerText = SelectedNodeId.PrimaryKey.ToString();
@@ -237,31 +237,31 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // Getting the value as a string is on purpose.
-            //SelectedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIdSubField.Name.ToString() ), CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.Name.ToString() ), NodeMap ) );
-            Int32 LocationNodeId = _HandleReference( CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIdSubField.Name.ToString() ), CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.Name.ToString() ) );
+            //SelectedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIdSubField.ToXmlNodeName() ), CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() ), NodeMap ) );
+            Int32 LocationNodeId = _HandleReference( CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIdSubField.ToXmlNodeName() ), CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() ) );
             if( NodeMap != null && NodeMap.ContainsKey( LocationNodeId ) )
                 LocationNodeId = NodeMap[LocationNodeId];
             SelectedNodeId = new CswPrimaryKey( "nodes", LocationNodeId );
 
             CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", SelectedNodeId.PrimaryKey.ToString() );
-            SelectedRow = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _RowSubField.Name.ToString() );
-            SelectedColumn = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ColumnSubField.Name.ToString() );
+            SelectedRow = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _RowSubField.ToXmlNodeName() );
+            SelectedColumn = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ColumnSubField.ToXmlNodeName() );
             PendingUpdate = true;
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // Getting the value as a string is on purpose.
-            //SelectedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswConvert.ToInt32(PropRow[_NodeIdSubField.Name.ToString()]), PropRow[_BarcodeSubField.Name.ToString()].ToString(), NodeMap ) );
+            //SelectedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswConvert.ToInt32(PropRow[_NodeIdSubField.ToXmlNodeName()]), PropRow[_BarcodeSubField.ToXmlNodeName()].ToString(), NodeMap ) );
 
-            string NodeId = CswTools.XmlRealAttributeName( PropRow[_NodeIdSubField.Name.ToString()].ToString() );
+            string NodeId = CswTools.XmlRealAttributeName( PropRow[_NodeIdSubField.ToXmlNodeName()].ToString() );
             if( NodeMap != null && NodeMap.ContainsKey( NodeId.ToLower() ) )
                 SelectedNodeId = new CswPrimaryKey( "nodes", NodeMap[NodeId.ToLower()] );
             else if( CswTools.IsInteger( NodeId ) )
             {
                 //RelatedNodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( NodeId ) );
                 Int32 LocationNodeId = Int32.MinValue;
-                if( PropRow.Table.Columns.Contains( _BarcodeSubField.Name.ToString() ) )
-                    LocationNodeId = _HandleReference( Convert.ToInt32( NodeId ), CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.Name.ToString()].ToString() ) );
+                if( PropRow.Table.Columns.Contains( _BarcodeSubField.ToXmlNodeName() ) )
+                    LocationNodeId = _HandleReference( Convert.ToInt32( NodeId ), CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.ToXmlNodeName()].ToString() ) );
                 else
                     LocationNodeId = _HandleReference( Convert.ToInt32( NodeId ), string.Empty );
                 SelectedNodeId = new CswPrimaryKey( "nodes", LocationNodeId );
@@ -275,16 +275,16 @@ namespace ChemSW.Nbt.PropTypes
                 PendingUpdate = true;
             }
 
-            if( PropRow.Table.Columns.Contains( _RowSubField.Name.ToString() ) )
+            if( PropRow.Table.Columns.Contains( _RowSubField.ToXmlNodeName() ) )
             {
-                string StringVal = PropRow[_RowSubField.Name.ToString()].ToString();
+                string StringVal = PropRow[_RowSubField.ToXmlNodeName()].ToString();
                 if( CswTools.IsInteger( StringVal ) )
                     SelectedRow = Convert.ToInt32( StringVal );
             }
 
-            if( PropRow.Table.Columns.Contains( _ColumnSubField.Name.ToString() ) )
+            if( PropRow.Table.Columns.Contains( _ColumnSubField.ToXmlNodeName() ) )
             {
-                string StringVal = PropRow[_ColumnSubField.Name.ToString()].ToString();
+                string StringVal = PropRow[_ColumnSubField.ToXmlNodeName()].ToString();
                 if( CswTools.IsInteger( StringVal ) )
                     SelectedColumn = Convert.ToInt32( StringVal );
             }

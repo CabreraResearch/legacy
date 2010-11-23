@@ -108,12 +108,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode SelectedUsersNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedUserIdsSubField.Name.ToString(), SelectedUserIds );
+            XmlNode SelectedUsersNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedUserIdsSubField.ToXmlNodeName(), SelectedUserIds );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            string UserIds = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedUserIdsSubField.Name.ToString() );
+            string UserIds = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedUserIdsSubField.ToXmlNodeName() );
             string[] UserIdsArray = UserIds.Split( delimiter );
             string NewSelectedUserIds = string.Empty;
             foreach( string UserIdString in UserIdsArray )
@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.PropTypes
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            string UserIds = CswTools.XmlRealAttributeName( PropRow[_SelectedUserIdsSubField.Name.ToString()].ToString() );
+            string UserIds = CswTools.XmlRealAttributeName( PropRow[_SelectedUserIdsSubField.ToXmlNodeName()].ToString() );
             string[] UserIdsArray = UserIds.Split( delimiter );
             string NewSelectedUserIds = string.Empty;
             foreach( string UserIdString in UserIdsArray )

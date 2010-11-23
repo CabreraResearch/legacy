@@ -72,16 +72,16 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.Name.ToString(), Text );
+            XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.ToXmlNodeName(), Text );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Text = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _TextSubField.Name.ToString() );
+            Text = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _TextSubField.ToXmlNodeName() );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Text = CswTools.XmlRealAttributeName( PropRow[_TextSubField.Name.ToString()].ToString() );
+            Text = CswTools.XmlRealAttributeName( PropRow[_TextSubField.ToXmlNodeName()].ToString() );
         }
 
     }//CswNbtNodePropText

@@ -53,17 +53,17 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode MolNode = CswXmlDocument.AppendXmlNode( ParentNode, _MolSubField.Name.ToString() );
+            XmlNode MolNode = CswXmlDocument.AppendXmlNode( ParentNode, _MolSubField.ToXmlNodeName() );
             CswXmlDocument.SetInnerTextAsCData( MolNode, Mol );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Mol = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _MolSubField.Name.ToString() );
+            Mol = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _MolSubField.ToXmlNodeName() );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Mol = CswTools.XmlRealAttributeName( PropRow[_MolSubField.Name.ToString()].ToString() );
+            Mol = CswTools.XmlRealAttributeName( PropRow[_MolSubField.ToXmlNodeName()].ToString() );
         }
 
 
