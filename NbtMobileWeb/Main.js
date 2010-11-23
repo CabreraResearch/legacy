@@ -615,14 +615,20 @@
             return Html;
         }
 
+        function _makeSafeId(val)
+        {
+            return val.replace('/', '');
+        }
+
+
         function _makeQuestionAnswerFieldSet(IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Options, Answer, CompliantAnswers)
         {
             var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-            var myOptions = Options.replace('/', '');
-            var answers = myOptions.split(',');
+            var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
-                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
+                var answerid = _makeSafeId(answers[i]);
+                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answerid + '" value="' + answers[i] + '" ';
                 if (Answer == answers[i])
                     Html += ' checked';
                 Html += ' onclick="';
@@ -630,16 +636,18 @@
                 // case 20307: workaround for a bug with JQuery Mobile Alpha2
                 for (var j = 0; j < answers.length; j++)
                 {
+                    var otheranswerid = _makeSafeId(answers[j]);
                     if (answers[j] == answers[i])
-                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + IdStr + Suffix + '_' + otheranswerid + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
                     else
-                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + IdStr + Suffix + '_' + otheranswerid + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
                 }
 
                 Html += ' var $otherradio; ';
                 for (var k = 0; k < answers.length; k++)
                 {
-                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[k] + '\'); ';
+                    var yetanotheranswerid = _makeSafeId(answers[k]);
+                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + yetanotheranswerid + '\'); ';
                     if (answers[k] == answers[i])
                     {
                         Html += ' $otherradio.attr(\'checked\', true); ';
@@ -667,7 +675,7 @@
                     Html += '}';
                 }
                 Html += ' " />';
-                Html += '            <label for="' + IdStr + Suffix + '_' + answers[i] + '">' + answers[i] + '</label>';
+                Html += '            <label for="' + IdStr + Suffix + '_' + answerid + '">' + answers[i] + '</label>';
             } // for (var i = 0; i < answers.length; i++)
             Html += '</fieldset>';
             return Html;
