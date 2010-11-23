@@ -108,8 +108,7 @@
                     {
                         if (xmlstr != '')
                         {
-                            var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                            _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                            _processViewXml(ParentId, DivId, HeaderText, $(xmlstr).children(), level, IsFirst);
                         } else if (!amOffline())
                         {
                             _ajaxViewXml(DivId, function (xml)
