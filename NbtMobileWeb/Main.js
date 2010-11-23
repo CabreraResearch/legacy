@@ -250,7 +250,7 @@
                             if (sf_checked == undefined) sf_checked = '';
                             if (sf_required == undefined) sf_required = '';
 
-                            lihtml += '<li>' + _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required) + '</li>';
+                            lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
                             break;
 
                         case 'Question':
@@ -265,7 +265,7 @@
                             if (sf_compliantanswers == undefined) sf_compliantanswers = '';
                             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
 
-                            lihtml += '<li>' + _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers) + '</li>';
+                            lihtml += _makeQuestionAnswerFieldSet(id, '_ans', '_ans2', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers);
 
                             if (sf_answer != '' && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && sf_correctiveaction == '')
                             {
