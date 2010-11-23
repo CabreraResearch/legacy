@@ -659,20 +659,20 @@
         function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, HideSearchButton, backicon, backtransition)
         {
             var divhtml = '<div id="' + DivId + '" data-role="page">' +
-                          '  <div data-role="header" data-theme="' + opts.Theme + '">';
-            if (ParentId != '' && ParentId != undefined)
-            {
-                divhtml += '       <a href="#' + ParentId + '" data-back="true" ';
-                if (backtransition != undefined)
-                    divhtml += '       data-transition="' + backtransition + '" ';
-                divhtml += '        data-icon="';
-                if (backicon != undefined)
-                    divhtml += backicon;
-                else
-                    divhtml += 'arrow-l';
-                divhtml += '        ">Back</a>';
-            }
-            divhtml += '       <h1>' + HeaderText + '</h1>';
+                          '<div data-role="header" data-theme="' + opts.Theme + '">';
+            divhtml += '<a href="#' + ParentId + '" id="' + DivId + '_back" data-back="true" ';
+            if (backtransition != undefined)
+                divhtml += ' data-transition="' + backtransition + '" ';
+            if (ParentId == '' || ParentId == undefined)
+                divhtml += ' style="visibility: hidden;" ';
+            divhtml += ' data-icon="';
+            if (backicon != undefined)
+                divhtml += backicon;
+            else
+                divhtml += 'arrow-l';
+            divhtml += '">Back</a>';
+
+            divhtml += '<h1>' + HeaderText + '</h1>';
             if (!IsFirst && !HideSearchButton)
             {
                 divhtml += '    <a href="#" id="' + DivId + '_searchopen">Search</a>';
@@ -684,7 +684,7 @@
                        '  <div data-role="content" data-theme="' + opts.Theme + '">' +
                             content +
                        '  </div>' +
-                       '  <div data-role="footer" data-theme="' + opts.Theme + '"><a href="#synchstatus" data-transition="slideup">';
+                       '  <div data-role="footer" data-theme="' + opts.Theme + '"><a href="#" id="' + DivId + '_gosynchstatus" data-transition="slideup">';
             if (amOffline())
                 divhtml += '    <div class="onlineStatus offline">Offline</div>';
             else
@@ -710,6 +710,9 @@
         {
             $div.find('#' + DivId + '_searchopen')
                 .click(function (eventObj) { onSearchOpen(DivId, eventObj); })
+                .end()
+                .find('#' + DivId + '_gosynchstatus')
+                .click(function (eventObj) { onSynchStatusOpen(DivId, eventObj); })
                 .end()
                 .find('input')
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
@@ -773,6 +776,13 @@
         // ------------------------------------------------------------------------------------
         // Events
         // ------------------------------------------------------------------------------------
+
+        function onSynchStatusOpen(DivId, eventObj)
+        {
+            $('#synchstatus_back').attr('href', '#' + DivId);
+            $('#synchstatus_back').css('visibility', '');
+            $.mobile.changePage($('#synchstatus'), 'slideup');
+        }
 
         function onPropertyChange(DivId, eventObj)
         {
