@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
 
         private CswNbtWebServiceResources _CswNbtWebServiceResources;
 
-        private AuthenticationStatus start( string AccessId, string UserName, string Password )
+        private AuthenticationStatus start( string AccessId, string UserName, string Password, ref string ExotericAuthenticationResult )
         {
             _CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
                                                                         Context.Session,
@@ -40,11 +40,14 @@ namespace ChemSW.Nbt.WebServices
                                                                         System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
                                                                         SetupMode.Web );
 
-            _CswNbtWebServiceResources.startSession( AccessId, UserName, Password );
+            string EuphemisticAuthenticationStatus = string.Empty;
+            AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.startSession( AccessId, UserName, Password, ref ExotericAuthenticationResult );
+            ExotericAuthenticationResult = "<AuthenticationStatus>" + EuphemisticAuthenticationStatus + "</AuthenticationStatus>";
 
 
-            return ( AuthenticationStatus.Authenticated );
-        }
+            return ( AuthenticationStatus );
+
+        }//start() 
 
 
         private void start()
@@ -81,37 +84,23 @@ namespace ChemSW.Nbt.WebServices
 
         #region Web Methods
 
+
         [WebMethod]
         public string Authenticate( string AccessId, string UserName, string Password )
         {
             string ReturnVal = string.Empty;
             try
             {
-                AuthenticationStatus AuthenticationStatus = start( AccessId, UserName, Password );
+                string ExotericAuthenticationResult = string.Empty;
+                AuthenticationStatus AuthenticationStatus = start( AccessId, UserName, Password, ref ExotericAuthenticationResult );
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    ReturnVal = _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser.RoleTimeout.ToString();
+                    ReturnVal = "<RoleTimeout>" + _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser.RoleTimeout.ToString() + "</RoleTimeout>";
                 }
-                else
-                {
-                    switch( AuthenticationStatus )
-                    {
-                        case ChemSW.Security.AuthenticationStatus.Locked:
-                            ReturnVal = "Account Locked";
-                            break;
 
-                        case ChemSW.Security.AuthenticationStatus.TooManyUsers:
-                            ReturnVal = "Too many users; try again later";
-                            break;
+                ReturnVal += ExotericAuthenticationResult;
 
-                        default:
-                            ReturnVal = "Login failed";
-                            break;
-                    }
-
-
-                }//if-else we authenticated
-
+                ReturnVal = result( ReturnVal );
 
                 end();
             }
@@ -166,17 +155,24 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod( EnableSession = true )]
-        public string RunView( string ParentId )
+        public string RunView( string AccessId, string UserName, string Password, string ParentId )
         {
             string ReturnVal = string.Empty;
             try
             {
-                start();
+                string EuphemisticAuthenticationStatus = string.Empty;
+                if( AuthenticationStatus.Authenticated == start( AccessId, UserName, Password, ref EuphemisticAuthenticationStatus ) )
+                {
 
-                CswNbtWebServiceView wsView = new CswNbtWebServiceView( _CswNbtWebServiceResources );
-                ReturnVal = result( wsView.Run( ParentId ) );
+                    CswNbtWebServiceView wsView = new CswNbtWebServiceView( _CswNbtWebServiceResources );
+                    ReturnVal = result( wsView.Run( ParentId ) );
 
-                end();
+                    end();
+                }
+                else
+                {
+                    ReturnVal = result( EuphemisticAuthenticationStatus );
+                }
             }
 
             catch( Exception ex )

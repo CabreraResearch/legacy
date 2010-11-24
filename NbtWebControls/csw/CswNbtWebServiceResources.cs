@@ -50,7 +50,7 @@ namespace ChemSW.Nbt
             //_CswSessionManager = _CswInitialization.CswSessionManager;
         }//ctor
 
-        public AuthenticationStatus startSession( string AccessId, string UserName, string Password )
+        public AuthenticationStatus startSession( string AccessId, string UserName, string Password , ref string EuphemisticStatus )
         {
             AuthenticationStatus ReturnVal = AuthenticationStatus.Unknown;
 
@@ -60,6 +60,7 @@ namespace ChemSW.Nbt
 
 
             ReturnVal = _CswAuthenticator.Authenticate( AccessId, UserName, Password, CswNbtWebTools.getIpAddress(), 0, ref RoleTimeout, ref UserId );
+            EuphemisticStatus = _CswAuthenticator.euphemizeAuthenticationStatus( ReturnVal ); 
 
             if( AuthenticationStatus.Authenticated == ReturnVal )
             {

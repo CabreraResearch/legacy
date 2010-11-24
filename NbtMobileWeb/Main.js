@@ -38,16 +38,16 @@
         {
             var tempdivid = window.location.hash.substr(1);
             if ($('#' + tempdivid).length == 0)
-		  {
+            {
                 _addPageDivToBody('viewsdiv', 1, tempdivid, 'Please wait', '', 'Loading...', false, true);
                 setTimeout('$(\'#' + tempdivid + '_back\').click();', opts.DivRemovalDelay);
                 // force removal of div, redundant but necessary for 'prop_' divs.
                 setTimeout('$(\'div[id*="' + tempdivid + '"]\').remove();', opts.DivRemovalDelay);
-   		  }
+            }
         }
-     
-        
-        
+
+
+
 
         //var LoginContent = 'Login to ChemSW Mobile';
         var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
@@ -99,7 +99,9 @@
         function reloadViews()
         {
             $('#viewsdiv').remove();
-            _loadDivContents('', 0, 'viewsdiv', 'Views', true);
+            _loadDivContents('', 0, 'viewsdiv', 'Views', false);
+            console.log("post loaded div");
+
         }
 
         // ------------------------------------------------------------------------------------
@@ -212,9 +214,11 @@
                 async: false,   // required so that the link will wait for the content before navigating
                 type: 'POST',
                 url: opts.ViewUrl,
+                //                data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
+                //ParentId: '" + DivId + ",
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
-                data: "{ ParentId: '" + DivId + "' }",
+                data: "{ AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "', ParentId: '" + DivId + "'}",
                 success: function (data, textStatus, XMLHttpRequest)
                 {
                     var $xml = $(data.d);
@@ -224,6 +228,7 @@
                     } else
                     {
                         onsuccess(data.d);
+                        console.log("ViewData: " + data.d);
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -252,10 +257,12 @@
 
             onAfterAddDiv($divhtml);
 
+            console.log("IsFirst = " + IsFirst ); 
             // this replaces the link navigation
             if (!IsFirst)
             {
                 $.mobile.changePage($('#' + DivId), "slide", false, true);
+
             }
 
         } // _processViewXml()
