@@ -31,7 +31,6 @@ namespace ChemSW.Nbt.Schema
 		public void update()
 		{
 
-            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
             // BZ 20081 - Set setup tab to be last.
 			// This implementation updates the locked ones.
             CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
