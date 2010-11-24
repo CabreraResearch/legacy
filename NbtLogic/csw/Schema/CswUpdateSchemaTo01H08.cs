@@ -41,24 +41,7 @@ namespace ChemSW.Nbt.Schema
             OCPUpdate.update( OCPTable );
 
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-
-            // Case 20328
-            CswNbtMetaDataNodeType WasteAreaInspectionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Waste Area Inspection" );
-            if( null != WasteAreaInspectionNT )
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeType( WasteAreaInspectionNT );
-
-            CswNbtMetaDataNodeType WasteAreaRouteNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Waste Area Route" );
-            if( null != WasteAreaRouteNT )
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeType( WasteAreaRouteNT );
-
-            CswNbtMetaDataNodeType WasteInspectionScheduleNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Waste Inspection Schedule" );
-            if( null != WasteInspectionScheduleNT )
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeType( WasteInspectionScheduleNT );
-
-            CswNbtView WasteAreaInspectionsV = _CswNbtSchemaModTrnsctn.restoreView( "Waste Area Inspections" );
-            if( null != WasteAreaInspectionsV )
-                WasteAreaInspectionsV.Delete();
-            
+           
         } // update()
 
     }//class CswUpdateSchemaTo01H08
