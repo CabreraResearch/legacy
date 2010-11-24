@@ -134,17 +134,24 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod( EnableSession = true )]
-        public string UpdateProperties( string ParentId, string UpdatedViewXml )
+        public string UpdateProperties( string AccessId, string UserName, string Password, string ParentId, string UpdatedViewXml )
         {
             string ReturnVal = string.Empty;
             try
             {
-                start();
+                string EuphemisticAuthenticationStatus = string.Empty;
+                if( AuthenticationStatus.Authenticated == start( AccessId, UserName, Password, ref EuphemisticAuthenticationStatus ) )
+                {
 
-                CswNbtWebServiceUpdateProperties wsUP = new CswNbtWebServiceUpdateProperties( _CswNbtWebServiceResources );
-                ReturnVal = result( wsUP.Run( ParentId, UpdatedViewXml ) );
+                    CswNbtWebServiceUpdateProperties wsUP = new CswNbtWebServiceUpdateProperties( _CswNbtWebServiceResources );
+                    ReturnVal = result( wsUP.Run( ParentId, UpdatedViewXml ) );
 
-                end();
+                    end();
+                }
+                else
+                {
+                    ReturnVal = result( EuphemisticAuthenticationStatus );
+                }
             }
             catch( Exception ex )
             {

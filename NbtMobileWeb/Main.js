@@ -214,8 +214,6 @@
                 async: false,   // required so that the link will wait for the content before navigating
                 type: 'POST',
                 url: opts.ViewUrl,
-                //                data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
-                //ParentId: '" + DivId + ",
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
                 data: "{ AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "', ParentId: '" + DivId + "'}",
@@ -1190,7 +1188,8 @@
                         url: opts.UpdateUrl,
                         dataType: "json",
                         contentType: 'application/json; charset=utf-8',
-                        data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
+                        //data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
+                        data: "{ AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
                         success: function (data, textStatus, XMLHttpRequest)
                         {
                             var $xml = $(data.d);
