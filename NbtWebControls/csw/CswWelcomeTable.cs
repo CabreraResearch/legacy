@@ -521,7 +521,10 @@ namespace ChemSW.NbtWebControls
                 DataTable WelcomeSelectTable = WelcomeSelect.getTable();
                 Int32 MaxRow = 0;
                 if( WelcomeSelectTable.Rows.Count > 0 )
+                {
                     MaxRow = CswConvert.ToInt32( WelcomeSelectTable.Rows[0]["maxcol"] );
+                    if( MaxRow < 0 ) MaxRow = 0;
+                }
                 Row = MaxRow + 1;
                 Column = 1;
             }
