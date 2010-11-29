@@ -652,7 +652,7 @@ namespace ChemSW.NbtWebControls
                         IDSuffix += NodeType.NodeTypeId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
                 }
 
-                if( IDSuffix != string.Empty )
+                if( IDSuffix != string.Empty || ThisComponentType == WelcomeComponentType.Text )
                 {
                     switch( ThisComponentType )
                     {
