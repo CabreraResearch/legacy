@@ -42,6 +42,20 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
            
+
+            // case 20328
+            // Remove the Waste Area Inspection nodetype from master data
+            CswNbtMetaDataNodeType WasteAreaRouteNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Waste Area Route" );
+            CswNbtMetaDataNodeType WasteAreaInspectionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Waste Area Inspection" );
+            CswNbtMetaDataNodeType WasteInspectionScheduleNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Waste Inspection Schedule" );
+
+            if( WasteAreaInspectionNT != null )
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeAllVersions( WasteAreaInspectionNT );
+            if( WasteInspectionScheduleNT != null )
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeAllVersions( WasteInspectionScheduleNT );
+            if( WasteAreaRouteNT != null )
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeAllVersions( WasteAreaRouteNT );
+
         } // update()
 
     }//class CswUpdateSchemaTo01H08
