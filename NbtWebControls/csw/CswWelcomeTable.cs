@@ -197,7 +197,6 @@ namespace ChemSW.NbtWebControls
             _ResetButton.ID = "ResetButton";
             _ResetButton.Text = "Reset to Default";
             _ResetButton.CssClass = "ResetButton";
-            _ResetButton.OnClientClick = "return confirm(\"Are you sure you want to reset the content of this page?\");";
             _ResetButton.Click += new EventHandler( ResetButton_Click );
             ButtonTable.addControl( 0, 2, _ResetButton );
 
@@ -208,7 +207,6 @@ namespace ChemSW.NbtWebControls
             ButtonTable.addControl( 0, 4, _ConfigButton );
 
             _AddButton = new CswImageButton( CswImageButton.ButtonType.Add );
-            _AddButton.OnClientClick = "WelcomeAddComponentDialog_openPopup(); return false;";
             ButtonTable.addControl( 0, 5, _AddButton );
 
             _LayoutTable = new CswLayoutTable( _CswNbtResources, _AjaxManager );
@@ -261,6 +259,10 @@ namespace ChemSW.NbtWebControls
                 _ConfigButton.Visible = false;
                 _AddButton.Visible = false;
             }
+
+            _ResetButton.OnClientClick = "return confirm(\"Are you sure you want to reset the content of this page?\");";
+            _AddButton.OnClientClick = "WelcomeAddComponentDialog_openPopup(document.getElementById('" + _RoleSelect.ClientID + "')); return false;";
+
 
             base.OnPreRender( e );
 
