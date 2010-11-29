@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.WebServices
                                                                         SetupMode.Web );
 
             string EuphemisticAuthenticationStatus = string.Empty;
-            AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.startSession( AccessId, UserName, Password, ref ExotericAuthenticationResult );
+            AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.startSession( AccessId, UserName, Password, ref EuphemisticAuthenticationStatus );
             ExotericAuthenticationResult = "<AuthenticationStatus>" + EuphemisticAuthenticationStatus + "</AuthenticationStatus>";
 
 
@@ -49,18 +49,6 @@ namespace ChemSW.Nbt.WebServices
 
         }//start() 
 
-
-        private void start()
-        {
-            _CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
-                                                                        Context.Session,
-                                                                        Context.Request,
-                                                                        Context.Response,
-                                                                        string.Empty,
-                                                                        System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
-                                                                        SetupMode.Web );
-            _CswNbtWebServiceResources.startSession();
-        }
 
 
         private void end()

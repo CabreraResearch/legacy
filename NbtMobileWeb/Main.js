@@ -74,11 +74,40 @@
                 success: function (data, textStatus, XMLHttpRequest)
                 {
 
-                    console.log("return from authentication snot bar: " + data.d);
+
+                    var $xml = $(data.d);
+                    // console.log("data.d: " + data.d);
+
+
+                    var RoleTimeout = $xml.find('RoleTimeout').text();
+                    if (RoleTimeout != "")
+                    {
+                        Timeout = RoleTimeout;
+
+                        _updateSession(AccessId, UserName, Password, Timeout);
+
+                        reloadViews();
+                        console.log("timeout: " + Timeout);
+
+                    } else
+                    {
+                        //Sergei: Where should we write this on the UI? 
+                        console.log($xml.find('AuthenticationStatus').text());
+
+                    }
+                    /*
+                    if ($xml.get(0).nodeName == "ERROR")
+                    {
+                    _handleAjaxError(XMLHttpRequest, $xml.text(), '');
+                    } else
+                    {
+                    onsuccess(data.d);
+                    console.log("ViewData: " + data.d);
+                    }
 
                     Timeout = data.d;
+                    */
 
-                    reloadViews();
                     //$.mobile.changePage('viewsdiv', "slideup", false, true);
 
                 },
@@ -100,7 +129,6 @@
         {
             $('#viewsdiv').remove();
             _loadDivContents('', 0, 'viewsdiv', 'Views', false);
-            console.log("post loaded div");
 
         }
 
@@ -226,7 +254,6 @@
                     } else
                     {
                         onsuccess(data.d);
-                        console.log("ViewData: " + data.d);
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -255,7 +282,6 @@
 
             onAfterAddDiv($divhtml);
 
-            console.log("IsFirst = " + IsFirst ); 
             // this replaces the link navigation
             if (!IsFirst)
             {
@@ -1019,6 +1045,7 @@
             db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
             if (doreset)
             {
+                _DoSql('DROP TABLE IF EXISTS views; ', null, null);
                 _DoSql('DROP TABLE IF EXISTS views; ', null, function () { _createDb(OnSuccess); });
             } else
             {
@@ -1029,6 +1056,20 @@
 
         function _createDb(OnSuccess)
         {
+            _DoSql('CREATE TABLE IF NOT EXISTS sessions ' +
+                    '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
+                    '   accessid TEXT NOT NULL, ' +
+                    '   username TEXT NOT NULL, ' +
+                    '   password TEXT, ' +
+                    '   lastaccess datetime, ' +
+                    '   lastviewid datetime, ' +
+                    '   timeout INTEGER );',
+                    null,
+                    null
+                    );
+
+
+
             _DoSql('CREATE TABLE IF NOT EXISTS views ' +
                     '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
                     '   rootid TEXT NOT NULL, ' +
@@ -1054,13 +1095,40 @@
         // ------------------------------------------------------------------------------------
 
 
+        function _updateSession(accessid, username, password, timeout)
+        {
+
+            _DoSql('SELECT username FROM sessions where accessid = ? and username=? ;',
+                   [accessid, username],
+                   function (transaction, result)
+                   {
+                       if (result.rows.length > 0)
+                       {
+                           _DoSql('update sessions set lastaccess=? where accessid=? and username=?', [new Date(), accessid, username], null);
+                       } else
+                       {
+                           _DoSql('insert into sessions (accessid, username, password,timeout,lastaccess) values ( ?, ? , ? , ? , ?) ', [accessid, username, password, timeout, new Date()]);
+                       }
+                   });
+
+        } //_updateSession()
+
+
         function _storeViewXml(rootid, rootname, viewxml)
         {
             if (rootid != undefined && rootid != '')
             {
                 _DoSql('INSERT INTO views (rootid, rootname, viewxml, wasmodified) VALUES (?, ?, ?, 0);',
                        [rootid, rootname, viewxml],
-                       function () { }
+                       function (transaction, result)
+                       {
+                           _DoSql('UPDATE sessions SET lastviewid = ? WHERE accessid = ? and username = ?;',
+                                  [result.insertId, AccessId, UserName],
+                                  null
+                              );
+
+                           //console.log("insert id: " + result.insertId);
+                       }
                        );
             }
         }
