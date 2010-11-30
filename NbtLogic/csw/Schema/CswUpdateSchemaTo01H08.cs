@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.Schema
             OCPUpdate.update( OCPTable );
 
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-
+           
 
             // case 20328
             // Remove the Waste Area Inspection nodetype from master data

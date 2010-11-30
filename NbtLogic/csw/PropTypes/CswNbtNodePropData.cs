@@ -412,18 +412,30 @@ namespace ChemSW.Nbt.PropTypes
 
         public void copy( CswNbtNodePropData Source )
         {
+            //Implementing FieldType specific behavior here. Blame Steve.
+            if( null != Source.NodeTypeProp && Source.NodeTypeProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.ViewReference )
+            {
+                CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId ) );
+                CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
+                ViewCopy.makeNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
+                ViewCopy.save();
+                this.Field1_Fk = ViewCopy.ViewId;
+            }
+            else
+            {
+                this.Field1_Fk = Source.Field1_Fk;
+            }
+
             this.Field1 = Source.Field1;
             this.Field2 = Source.Field2;
             this.Field3 = Source.Field3;
             this.Field4 = Source.Field4;
             this.Field5 = Source.Field5;
-            this.Field1_Fk = Source.Field1_Fk;
             this.Field1_Date = Source.Field1_Date;
             this.Field2_Date = Source.Field2_Date;
             this.Field1_Numeric = Source.Field1_Numeric;
             this.Gestalt = Source.Gestalt;
             this.ClobData = Source.ClobData;
-
             WasModified = true;
         }
 

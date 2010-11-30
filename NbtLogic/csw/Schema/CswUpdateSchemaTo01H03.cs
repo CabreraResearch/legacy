@@ -197,11 +197,14 @@ namespace ChemSW.Nbt.Schema
 
             //Generator Due Date Interval is Monthly on 1st
             CswNbtMetaDataNodeTypeProp DueDateIntervalNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.DueDateIntervalPropertyName );
-            DueDateIntervalNTP.DefaultValue.AsTimeInterval.RateInterval.setMonthlyByDate( 1, 1, DateTime.Today.Month, DateTime.Today.Year );
+            CswRateInterval MonthlyOnFirst = new CswRateInterval();
+            MonthlyOnFirst.setMonthlyByDate( 1, 1, DateTime.Today.Month, DateTime.Today.Year );
+            DueDateIntervalNTP.DefaultValue.AsTimeInterval.RateInterval = MonthlyOnFirst;
 
             //Generator Parent type is Mount Point
             CswNbtMetaDataNodeTypeProp ParentTypeNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentTypePropertyName );
             ParentTypeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointNT.NodeTypeId, string.Empty, Int32.MinValue );
+            ParentTypeNTP.DefaultValue.AsNodeTypeSelect.SelectedNodeTypeIds = MountPointNT.NodeTypeId.ToString();
 
             //Generator Owner is Mount Point Group
             CswNbtMetaDataNodeTypeProp OwnerNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
@@ -213,13 +216,13 @@ namespace ChemSW.Nbt.Schema
 
             //CswNbtView ParentView = _CswNbtSchemaModTrnsctn.makeView();
             CswNbtMetaDataNodeTypeProp ParentViewNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentViewPropertyName );
-            CswNbtView ParentView = CswNbtViewFactory.restoreView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources, ParentViewNTP.ViewId );
+            CswNbtView ParentView = CswNbtViewFactory.restoreView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources, ParentViewNTP.DefaultValue.AsViewReference.ViewId );
             ParentView.ViewName = "PI Schedule ParentView";
             CswNbtViewRelationship ParentRelationship = ParentView.AddViewRelationship( PhysicalInspectionScheduleNT, true );
             CswNbtViewRelationship MountPointGroupChild = ParentView.AddViewRelationship( ParentRelationship, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );
             CswNbtViewRelationship MountPointChild = ParentView.AddViewRelationship( MountPointGroupChild, CswNbtViewRelationship.PropOwnerType.Second, MountPointGroupNTP, true );
             CswNbtViewRelationship FireExtinguisherChild = ParentView.AddViewRelationship( MountPointChild, CswNbtViewRelationship.PropOwnerType.Second, MountPointNTP, true );
-            ParentView.save();            
+            ParentView.save();
 
             //FE Route NT
             CswNbtMetaDataObjectClass InspectionRouteOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass );
@@ -251,6 +254,7 @@ namespace ChemSW.Nbt.Schema
             //Generator Target NT is Inspection
             CswNbtMetaDataNodeTypeProp GeneratorTargetTypeNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.TargetTypePropertyName );
             GeneratorTargetTypeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionNT.NodeTypeId, string.Empty, Int32.MinValue );
+            GeneratorTargetTypeNTP.DefaultValue.AsNodeTypeSelect.SelectedNodeTypeIds = PhysicalInspectionNT.NodeTypeId.ToString();
 
             // </ Case 20005>
 
