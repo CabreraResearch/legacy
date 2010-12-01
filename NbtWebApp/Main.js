@@ -594,8 +594,10 @@ function CswQuickLaunch_CallBack(radWindow, returnValue)
 {
 }
 
-function WelcomeAddComponentDialog_openPopup() {
+function WelcomeAddComponentDialog_openPopup(rolesel) {
     var url = 'Popup_WelcomeAdd.Aspx';
+    if (rolesel != null)
+        url += '?roleid=' + rolesel.value;
     var oWnd = window.radopen(null, 'WelcomeAddComponentDialog');
     oWnd.setUrl(url);
     //return false;
