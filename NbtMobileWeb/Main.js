@@ -822,9 +822,18 @@
             }
         }
 
+        function _checkPendingChanges()
+        {
+            return ($('#ss_pendingchangecnt').text() == 'Yes');
+        }
+
         function _resetPendingChanges(val, setlastsynchnow)
         {
-            $('#ss_pendingchangecnt').text(val);
+            if (val)
+                $('#ss_pendingchangecnt').text('Yes');
+            else
+                $('#ss_pendingchangecnt').text('No');
+
             if (setlastsynchnow)
             {
                 var d = new Date();
@@ -841,9 +850,12 @@
         {
             if (!amOffline())
             {
-                _addPageDivToBody('', 1, 'loadingdiv', 'Please wait', '', 'Loading...', false, true, true, true);
-                $.mobile.changePage($('#loadingdiv'), "fade", false, true);
-                setTimeout(function () { continueRefresh(DivId); }, opts.DivRemovalDelay);
+                if (!_checkPendingChanges() || confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'))
+                {
+                    _addPageDivToBody('', 1, 'loadingdiv', 'Please wait', '', 'Loading...', false, true, true, true);
+                    $.mobile.changePage($('#loadingdiv'), "fade", false, true);
+                    setTimeout(function () { continueRefresh(DivId); }, opts.DivRemovalDelay);
+                }
             }
             return false;
         }
@@ -918,7 +930,7 @@
                     // However, it appears to work, for now.
                     _updateStoredViewXml(rootid, $xmlstr.wrap('<wrapper />').parent().html(), '1');
 
-                    _resetPendingChanges('Yes', false);
+                    _resetPendingChanges(true, false);
                 }
             });
 
@@ -1089,12 +1101,12 @@
                    {
                        if (result.rows.length > 0)
                        {
-                           _resetPendingChanges('Yes', true);
+                           _resetPendingChanges(true, true);
                            var row = result.rows.item(0);
                            onSuccess(row.rootid, row.viewxml);
                        } else
                        {
-                           _resetPendingChanges('No', true);
+                           _resetPendingChanges(false, true);
                            onSuccess('', '');
                        }
                    });
