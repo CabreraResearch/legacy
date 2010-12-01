@@ -29,7 +29,7 @@
         reloadViews();
         _makeSynchStatusDiv();
 
-        // case 20355 - error on refresh
+        // case 20355 - error on browser refresh
         if (window.location.hash.length > 0)
         {
             var tempdivid = window.location.hash.substr(1);
@@ -45,7 +45,7 @@
         function reloadViews()
         {
             $('#viewsdiv').remove();
-            _loadDivContents('', 0, 'viewsdiv', 'Views', true);
+            _loadDivContents('', 0, 'viewsdiv', 'Views', true, true);
         }
 
         // ------------------------------------------------------------------------------------
@@ -60,6 +60,7 @@
                 $onlineStatus.removeClass('online')
                              .addClass('offline')
                              .text('Offline');
+                $('.refresh').css('visibility', 'hidden');
 
                 reloadViews();
             }
@@ -73,6 +74,7 @@
                              .addClass('online')
                              .text('Online');
 
+                $('.refresh').css('visibility', '');
                 reloadViews();
             }
         }
@@ -86,7 +88,7 @@
         // List items fetching
         // ------------------------------------------------------------------------------------
 
-        function _loadDivContents(ParentId, level, DivId, HeaderText, IsFirst)
+        function _loadDivContents(ParentId, level, DivId, HeaderText, IsFirst, HideRefreshButton)
         {
             var ret = true;
 
@@ -101,7 +103,7 @@
                     {
                         _fetchCachedRootXml(function (xml)
                         {
-                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
+                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst, HideRefreshButton);
                         });
                     } else
                     {
@@ -111,7 +113,7 @@
                             {
                                 _storeViewXml(DivId, HeaderText, xml);
                             }
-                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
+                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst, HideRefreshButton);
                         });
                     }
                 } else if (level == 1)
@@ -121,7 +123,7 @@
                     {
                         if (xmlstr != '')
                         {
-                            _processViewXml(ParentId, DivId, HeaderText, $(xmlstr).children(), level, IsFirst);
+                            _processViewXml(ParentId, DivId, HeaderText, $(xmlstr).children(), level, IsFirst, HideRefreshButton);
                         } else if (!amOffline())
                         {
                             _ajaxViewXml(DivId, function (xml)
@@ -130,7 +132,7 @@
                                 {
                                     _storeViewXml(DivId, HeaderText, xml);
                                 }
-                                _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
+                                _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst, HideRefreshButton);
                             });
                         }
                     });
@@ -141,7 +143,7 @@
                         if (xmlstr != '')
                         {
                             var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                            _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                            _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst, HideRefreshButton);
                         }
                     });
                 }
@@ -181,7 +183,7 @@
 
         var currenttab;
         var onAfterAddDiv;
-        function _processViewXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst)
+        function _processViewXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst, HideRefreshButton)
         {
             var content = _makeUL();
             currenttab = '';
@@ -194,7 +196,7 @@
             });
             content += _endUL();
 
-            $divhtml = _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst, false, false, false);
+            $divhtml = _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst, false, false, HideRefreshButton);
 
             onAfterAddDiv($divhtml);
 
@@ -713,8 +715,6 @@
                             content +
                        '  </div>' +
                        '  <div data-role="footer" data-theme="' + opts.Theme + '">';
-            if (!HideRefreshButton)
-                divhtml += '    <a href="#" id="' + DivId + '_refresh">Refresh</a>';
             if (!HideOnlineButton)
             {
                 divhtml += '    <a href="#" id="' + DivId + '_gosynchstatus" data-transition="slideup">';
@@ -724,6 +724,8 @@
                     divhtml += '    <div class="onlineStatus online">Online</div>';
                 divhtml += '    </a>';
             }
+            if (!HideRefreshButton)
+                divhtml += '    <a href="#" id="' + DivId + '_refresh" class="refresh">Refresh</a>';
             divhtml += '  </div>' +
                        '</div>';
 
@@ -796,7 +798,7 @@
             content += '<p>Last synch: <span id="ss_lastsynch"></span></p>';
             content += '<a id="ss_forcesynch" href="#" data-role="button">Force Synch Now</a>';
             content += '<a id="ss_gooffline" href="#" data-role="button">Go Offline</a>';
-            $divhtml = _addPageDivToBody('', 1, 'synchstatus', 'Synch Status', '', content, false, true, false, false);
+            $divhtml = _addPageDivToBody('', 1, 'synchstatus', 'Synch Status', '', content, false, true, false, true);
             $divhtml.find('#ss_forcesynch')
                     .click(function (eventObj) { _processChanges(false); eventObj.preventDefault(); })
                     .end()
