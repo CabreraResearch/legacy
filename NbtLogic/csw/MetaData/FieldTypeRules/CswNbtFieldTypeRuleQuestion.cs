@@ -216,8 +216,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public void afterCreateNodeTypeProp(  CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
-            //_CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
             NodeTypeProp.ListOptions = "Yes,No,N/A";
+            NodeTypeProp.ValueOptions = "Yes";        // case 20297
+
+            _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }
 
     }//ICswNbtFieldTypeRule

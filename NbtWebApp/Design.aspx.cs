@@ -336,6 +336,7 @@ namespace ChemSW.Nbt.WebPages
                 _SaveButton.Text = "Save";
                 _SaveButton.OnClientClick = "if(!CswPropertyTable_SaveButton_PreClick()) return false;";
                 _SaveButton.Click += new EventHandler( _SaveButton_Click );
+                _SaveButton.ValidationGroup = "Design";
                 HiddenButtonDiv.Controls.Add( _SaveButton );  // this is necessary for Ajax, but overridden below
 
                 _ChangeObjectClassButton = new Button();
@@ -1849,10 +1850,10 @@ namespace ChemSW.Nbt.WebPages
                             break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.Question:
-                            
+
                             //Textbox: Possible Answers List
                             TableRow QstnPossibleAnswersRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal)QstnPossibleAnswersRow.Cells[0].Controls[0] ).Text = "Possible Answers:";
+                            ( (Literal) QstnPossibleAnswersRow.Cells[0].Controls[0] ).Text = "Possible Answers:";
                             TextBox QstnPossibleAnswersText = new TextBox();
                             QstnPossibleAnswersText.CssClass = "textinput";
                             QstnPossibleAnswersText.ID = "EditProp_OptionsValue" + SelectedNodeTypeProp.PropId.ToString();
@@ -1867,7 +1868,17 @@ namespace ChemSW.Nbt.WebPages
                             QstnCompliantAnswerList.ID = "EditProp_ValueOptionsValue" + SelectedNodeTypeProp.PropId.ToString();
                             QstnCompliantAnswerList.Text = SelectedNodeTypeProp.ValueOptions;
                             QstnCompliantAnswerRow.Cells[1].Controls.Add( QstnCompliantAnswerList );
+
+                            RequiredFieldValidator QstnCompliantAnswerRFV = new RequiredFieldValidator();
+                            QstnCompliantAnswerRFV.ControlToValidate = QstnCompliantAnswerList.ID;
+                            QstnCompliantAnswerRFV.ID = "EditProp_ValueOptionsValue_RFV" + SelectedNodeTypeProp.PropId.ToString();
+                            QstnCompliantAnswerRFV.Display = ValidatorDisplay.Dynamic;
+                            QstnCompliantAnswerRFV.EnableClientScript = true;
+                            QstnCompliantAnswerRFV.Text = "&nbsp;<img src=\"Images/vld/bad.gif\" alt=\"Value is required\" />";
+                            QstnCompliantAnswerRFV.ValidationGroup = "Design";
+                            QstnCompliantAnswerRow.Cells[1].Controls.Add( QstnCompliantAnswerRFV );
                             break;
+
 
                         case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
                             TableRow TargetRow = makeEditPropTableRow( EditPropPlaceHolder );
@@ -2339,9 +2350,9 @@ namespace ChemSW.Nbt.WebPages
                 {
                     ret = ( (DropDownList) Control ).SelectedValue;
                 }
-                else if ( Control is CswTriStateCheckBox )
+                else if( Control is CswTriStateCheckBox )
                 {
-                    ret = ( (CswTriStateCheckBox)Control ).Checked.ToString().ToLower();
+                    ret = ( (CswTriStateCheckBox) Control ).Checked.ToString().ToLower();
                 }
             }
             if( ret == "" )
