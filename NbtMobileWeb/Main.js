@@ -45,6 +45,18 @@
         }
 
 
+        //Sergei: 
+        //we need logic here that does the following : 
+        //if I have a SessionId value (meaning, the browser was not just reloaded)
+        //  proceed as usual refrewshing the current view;
+        //else 
+        //  if I have a sessions record where lastviewid is not null 
+        //     reload the view at lastviewid
+        //  else
+        //    if I have connectivity
+        //       present the login form
+        //    else 
+        //       say "sorry charlie"
 
 
         var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
@@ -53,6 +65,8 @@
         LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
         _addPageDivToBody('', 0, 'logindiv', 'Login to ChemSW Fire Inspection', '', LoginContent, true, true);
         $('#loginsubmit').click(onLoginSubmit);
+
+
         //        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
 
         function onLoginSubmit(eventObj)
@@ -82,7 +96,7 @@
                         SessionId = $xml.find('SessionId').text();
                         if (SessionId != "")
                         {
-                            _cacheSession(SessionId, UserName );
+                            _cacheSession(SessionId, UserName);
 
                             reloadViews();
 
@@ -105,26 +119,25 @@
                         console.log("Foo: " + ErrorMessage);
                     }
                 });
-            } else
-            {
+            }// else
+//            {
 
-                _DoSql('SELECT lastviewid FROM sessions where sessionid = ? ;',
-                   [SessionId],
-                   function (transaction, result)
-                   {
-                       if (result.rows.length > 0)
-                       {
+//                _DoSql('SELECT lastviewid FROM sessions where sessionid = ? ;',
+//                   [SessionId],
+//                   function (transaction, result)
+//                   {
+//                       if (result.rows.length > 0)
+//                       {
 
-                           var LastViewId = result.rows.item(i)["lastviewid"];
-                           _loadDivContents('', 0, 'viewsdiv', 'Views', false);
-                       } else
-                       {
-                           //Sergei:
-                           //In this case, he has no cached session, and so we say "Sorry Charlie, you need to be online to get your session established" 
-                       }
-                   });
+//                           var LastViewId = result.rows.item(i)["lastviewid"];
+//                           _loadDivContents('', 0, 'viewsdiv', 'Views', false);
+//                       } else
+//                       {
+//                           
+//                       }
+//                   });
 
-            } //if-else we are offline
+//            } //if-else we are offline
 
 
         } //onLoginSubmit() 
@@ -1096,7 +1109,7 @@
         // ------------------------------------------------------------------------------------
 
 
-        function _cacheSession(sessionid, username )
+        function _cacheSession(sessionid, username)
         {
 
             _DoSql('insert into sessions (sessionid, username ) values ( ?, ? ) ', [sessionid, username]);
@@ -1114,7 +1127,7 @@
                        {
 
                            _DoSql('UPDATE sessions SET lastviewid = ? WHERE sessionid = ? ;',
-                                  [result.insertId, SessionId ],
+                                  [result.insertId, SessionId],
                                   null
                               );
 

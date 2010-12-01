@@ -118,6 +118,28 @@ namespace ChemSW.Nbt.WebServices
         }//Authenticate()
 
 
+        [WebMethod]
+        public string deAuthenticate( string SessionId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                __CswNbtWebServiceResources.deAuthenticate( SessionId ); 
+                ReturnVal = result( "SessionId " + SessionId + " removed"  );
+
+                end();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+
+            return ( ReturnVal );
+
+        }//Authenticate()
+
+
         [WebMethod( EnableSession = true )]
         public string ConnectTest()
         {
@@ -136,7 +158,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
 
-        [WebMethod( EnableSession = true )]
+        [WebMethod]
         public string UpdateProperties( string SessionId , string ParentId, string UpdatedViewXml )
         {
             string ReturnVal = string.Empty;
@@ -166,7 +188,7 @@ namespace ChemSW.Nbt.WebServices
         } // UpdateProperties()
 
 
-        [WebMethod( EnableSession = true )]
+        [WebMethod]
         public string RunView( string SessionId, string ParentId )
         {
             string ReturnVal = string.Empty;
