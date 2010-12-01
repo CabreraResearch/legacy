@@ -28,22 +28,32 @@ namespace ChemSW.Nbt.WebServices
     {
         #region Session and Resource Management
 
-        private CswNbtWebServiceResources _CswNbtWebServiceResources;
-
-        private AuthenticationStatus start( string AccessId, string UserName, string Password, ref string ExotericAuthenticationResult )
+        private CswNbtWebServiceResources __CswNbtWebServiceResources;
+        private CswNbtWebServiceResources _CswNbtWebServiceResources
         {
-            _CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
-                                                                        Context.Session,
-                                                                        Context.Request,
-                                                                        Context.Response,
-                                                                        string.Empty,
-                                                                        System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
-                                                                        SetupMode.Web );
+            get
+            {
+                if( null == __CswNbtWebServiceResources )
+                {
+                    __CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
+                                                                                Context.Session,
+                                                                                Context.Request,
+                                                                                Context.Response,
+                                                                                string.Empty,
+                                                                                System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
+                                                                                SetupMode.Web );
+                }//if not created yet
 
+                return ( __CswNbtWebServiceResources ); 
+            }//get
+        }//_CswNbtWebServiceResources
+
+        private AuthenticationStatus start( string SessionId, ref string ExotericAuthenticationResult )
+        {
             string EuphemisticAuthenticationStatus = string.Empty;
-            AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.startSession( AccessId, UserName, Password, ref EuphemisticAuthenticationStatus );
-            ExotericAuthenticationResult = "<AuthenticationStatus>" + EuphemisticAuthenticationStatus + "</AuthenticationStatus>";
+            AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.startSession( SessionId, ref EuphemisticAuthenticationStatus );
 
+            ExotericAuthenticationResult = "<AuthenticationStatus>" + EuphemisticAuthenticationStatus + "</AuthenticationStatus>";
 
             return ( AuthenticationStatus );
 
@@ -80,10 +90,15 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 string ExotericAuthenticationResult = string.Empty;
-                AuthenticationStatus AuthenticationStatus = start( AccessId, UserName, Password, ref ExotericAuthenticationResult );
+
+                string EuphemisticAuthenticationStatus = string.Empty;
+                string SessionId = string.Empty;
+                AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.authenticate( AccessId, UserName, Password, ref EuphemisticAuthenticationStatus, ref SessionId );
+                ExotericAuthenticationResult = "<AuthenticationStatus>" + EuphemisticAuthenticationStatus + "</AuthenticationStatus>";
+
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    ReturnVal = "<RoleTimeout>" + _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser.RoleTimeout.ToString() + "</RoleTimeout>";
+                    ReturnVal = "<SessionId>" + SessionId + "</SessionId>";
                 }
 
                 ReturnVal += ExotericAuthenticationResult;
@@ -122,13 +137,13 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod( EnableSession = true )]
-        public string UpdateProperties( string AccessId, string UserName, string Password, string ParentId, string UpdatedViewXml )
+        public string UpdateProperties( string SessionId , string ParentId, string UpdatedViewXml )
         {
             string ReturnVal = string.Empty;
             try
             {
                 string EuphemisticAuthenticationStatus = string.Empty;
-                if( AuthenticationStatus.Authenticated == start( AccessId, UserName, Password, ref EuphemisticAuthenticationStatus ) )
+                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
                 {
 
                     CswNbtWebServiceUpdateProperties wsUP = new CswNbtWebServiceUpdateProperties( _CswNbtWebServiceResources );
@@ -141,22 +156,24 @@ namespace ChemSW.Nbt.WebServices
                     ReturnVal = result( EuphemisticAuthenticationStatus );
                 }
             }
+
             catch( Exception ex )
             {
                 ReturnVal = error( ex );
             }
+
             return ( ReturnVal );
         } // UpdateProperties()
 
 
         [WebMethod( EnableSession = true )]
-        public string RunView( string AccessId, string UserName, string Password, string ParentId )
+        public string RunView( string SessionId, string ParentId )
         {
             string ReturnVal = string.Empty;
             try
             {
                 string EuphemisticAuthenticationStatus = string.Empty;
-                if( AuthenticationStatus.Authenticated == start( AccessId, UserName, Password, ref EuphemisticAuthenticationStatus ) )
+                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
                 {
 
                     CswNbtWebServiceView wsView = new CswNbtWebServiceView( _CswNbtWebServiceResources );

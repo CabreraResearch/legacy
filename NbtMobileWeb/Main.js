@@ -25,10 +25,8 @@
 
         var rootid;
         var db;
-        var AccessId;
         var UserName;
-        var Password;
-        var Timeout;
+        var SessionId;
 
         _initDB(true, _waitForData);
         _makeSynchStatusDiv();
@@ -49,7 +47,6 @@
 
 
 
-        //var LoginContent = 'Login to ChemSW Mobile';
         var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
         LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
         LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
@@ -62,68 +59,75 @@
         {
             // authenticate here
             UserName = $('#login_username').attr('value');
-            Password = $('#login_password').attr('value');
-            AccessId = $('#login_accessid').attr('value');
+            var Password = $('#login_password').attr('value');
+            var AccessId = $('#login_accessid').attr('value');
 
-            $.ajax({
-                type: 'POST',
-                url: opts.AuthenticateUrl,
-                dataType: "json",
-                contentType: 'application/json; charset=utf-8',
-                data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
-                success: function (data, textStatus, XMLHttpRequest)
-                {
+            if (false == amOffline())
+            {
 
-
-                    var $xml = $(data.d);
-                    // console.log("data.d: " + data.d);
-
-
-                    var RoleTimeout = $xml.find('RoleTimeout').text();
-                    if (RoleTimeout != "")
+                $.ajax({
+                    type: 'POST',
+                    url: opts.AuthenticateUrl,
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
+                    success: function (data, textStatus, XMLHttpRequest)
                     {
-                        Timeout = RoleTimeout;
 
-                        _updateSession(AccessId, UserName, Password, Timeout);
 
-                        reloadViews();
-                        console.log("timeout: " + Timeout);
+                        var $xml = $(data.d);
+                        console.log("data.d: " + data.d);
 
-                    } else
+
+                        SessionId = $xml.find('SessionId').text();
+                        if (SessionId != "")
+                        {
+                            _cacheSession(SessionId, UserName );
+
+                            reloadViews();
+
+                        } else
+                        {
+                            //Sergei: Where should we write this on the UI? 
+                            console.log($xml.find('AuthenticationStatus').text());
+
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown)
                     {
-                        //Sergei: Where should we write this on the UI? 
-                        console.log($xml.find('AuthenticationStatus').text());
 
+                        ErrorMessage = "Error: " + textStatus;
+                        if (null != errorThrown)
+                        {
+                            ErrorMessage += "; Exception: " + errorThrown.toString()
+                        }
+
+                        console.log("Foo: " + ErrorMessage);
                     }
-                    /*
-                    if ($xml.get(0).nodeName == "ERROR")
-                    {
-                    _handleAjaxError(XMLHttpRequest, $xml.text(), '');
-                    } else
-                    {
-                    onsuccess(data.d);
-                    console.log("ViewData: " + data.d);
-                    }
+                });
+            } else
+            {
 
-                    Timeout = data.d;
-                    */
+                _DoSql('SELECT lastviewid FROM sessions where sessionid = ? ;',
+                   [SessionId],
+                   function (transaction, result)
+                   {
+                       if (result.rows.length > 0)
+                       {
 
-                    //$.mobile.changePage('viewsdiv', "slideup", false, true);
+                           var LastViewId = result.rows.item(i)["lastviewid"];
+                           _loadDivContents('', 0, 'viewsdiv', 'Views', false);
+                       } else
+                       {
+                           //Sergei:
+                           //In this case, he has no cached session, and so we say "Sorry Charlie, you need to be online to get your session established" 
+                       }
+                   });
 
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown)
-                {
+            } //if-else we are offline
 
-                    ErrorMessage = "Error: " + textStatus;
-                    if (null != errorThrown)
-                    {
-                        ErrorMessage += "; Exception: " + errorThrown.toString()
-                    }
 
-                    console.log(ErrorMessage);
-                }
-            });
-        }
+        } //onLoginSubmit() 
 
         function reloadViews()
         {
@@ -244,7 +248,7 @@
                 url: opts.ViewUrl,
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
-                data: "{ AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "', ParentId: '" + DivId + "'}",
+                data: "{ SessionId: '" + SessionId + "', ParentId: '" + DivId + "'}",
                 success: function (data, textStatus, XMLHttpRequest)
                 {
                     var $xml = $(data.d);
@@ -1058,12 +1062,9 @@
         {
             _DoSql('CREATE TABLE IF NOT EXISTS sessions ' +
                     '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                    '   accessid TEXT NOT NULL, ' +
                     '   username TEXT NOT NULL, ' +
-                    '   password TEXT, ' +
-                    '   lastaccess datetime, ' +
-                    '   lastviewid datetime, ' +
-                    '   timeout INTEGER );',
+                    '   sessionid TEXT NOT NULL, ' +
+                    '   lastviewid INTEGER);',
                     null,
                     null
                     );
@@ -1095,23 +1096,12 @@
         // ------------------------------------------------------------------------------------
 
 
-        function _updateSession(accessid, username, password, timeout)
+        function _cacheSession(sessionid, username )
         {
 
-            _DoSql('SELECT username FROM sessions where accessid = ? and username=? ;',
-                   [accessid, username],
-                   function (transaction, result)
-                   {
-                       if (result.rows.length > 0)
-                       {
-                           _DoSql('update sessions set lastaccess=? where accessid=? and username=?', [new Date(), accessid, username], null);
-                       } else
-                       {
-                           _DoSql('insert into sessions (accessid, username, password,timeout,lastaccess) values ( ?, ? , ? , ? , ?) ', [accessid, username, password, timeout, new Date()]);
-                       }
-                   });
+            _DoSql('insert into sessions (sessionid, username ) values ( ?, ? ) ', [sessionid, username]);
 
-        } //_updateSession()
+        } //_cacheSession()
 
 
         function _storeViewXml(rootid, rootname, viewxml)
@@ -1122,12 +1112,12 @@
                        [rootid, rootname, viewxml],
                        function (transaction, result)
                        {
-                           _DoSql('UPDATE sessions SET lastviewid = ? WHERE accessid = ? and username = ?;',
-                                  [result.insertId, AccessId, UserName],
+
+                           _DoSql('UPDATE sessions SET lastviewid = ? WHERE sessionid = ? ;',
+                                  [result.insertId, SessionId ],
                                   null
                               );
 
-                           //console.log("insert id: " + result.insertId);
                        }
                        );
             }
@@ -1257,7 +1247,7 @@
                         dataType: "json",
                         contentType: 'application/json; charset=utf-8',
                         //data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
-                        data: "{ AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
+                        data: "{ SessionId: '" + SessionId + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
                         success: function (data, textStatus, XMLHttpRequest)
                         {
                             var $xml = $(data.d);
