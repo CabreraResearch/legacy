@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.WebPages
         //    Global
         //}
 
+        private CswPrimaryKey _RoleId;
 
         #endregion Private Variables
 
@@ -51,6 +52,12 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
+                _RoleId = Master.CswNbtResources.CurrentNbtUser.RoleId;
+                if( Request.QueryString["roleid"] != null && Request.QueryString["roleid"] != string.Empty )
+                {
+                    _RoleId = new CswPrimaryKey();
+                    _RoleId.FromString( Request.QueryString["roleid"] );
+                }
                 EnsureChildControls();
             }
             catch( Exception ex )
@@ -186,19 +193,26 @@ namespace ChemSW.Nbt.WebPages
 
         protected override void OnLoad( EventArgs e )
         {
-            if( _SelectedComponentType == CswWelcomeTable.WelcomeComponentType.Link )
+            try
             {
-                _ViewTree.IncludeActions = true;
-                _ViewTree.IncludeReports = true;
-                _ViewTree.SearchableViewsOnly = false;
+                if( _SelectedComponentType == CswWelcomeTable.WelcomeComponentType.Link )
+                {
+                    _ViewTree.IncludeActions = true;
+                    _ViewTree.IncludeReports = true;
+                    _ViewTree.SearchableViewsOnly = false;
+                }
+                else if( _SelectedComponentType == CswWelcomeTable.WelcomeComponentType.Search )
+                {
+                    _ViewTree.IncludeActions = false;
+                    _ViewTree.IncludeReports = false;
+                    _ViewTree.SearchableViewsOnly = true;
+                }
+                _ViewTree.DataBind();
             }
-            else if( _SelectedComponentType == CswWelcomeTable.WelcomeComponentType.Search )
+            catch( Exception ex )
             {
-                _ViewTree.IncludeActions = false;
-                _ViewTree.IncludeReports = false;
-                _ViewTree.SearchableViewsOnly = true;
+                Master.HandleError( ex );
             }
-            _ViewTree.DataBind();
 
             base.OnLoad( e );
         }
@@ -213,60 +227,68 @@ namespace ChemSW.Nbt.WebPages
 
         protected override void OnPreRender( EventArgs e )
         {
-            switch( _SelectedComponentType )
+            try
             {
-                case CswWelcomeTable.WelcomeComponentType.Add:
-                    //_ViewList.Visible = false;
-                    _ViewTree.Visible = false;
-                    _ViewLiteral.Visible = false;
-                    _NodeTypeList.Visible = true;
-                    _NodeTypeLiteral.Visible = true;
-                    _Text.Visible = true;
-                    _TextLiteral.Visible = true;
-                    _ButtonIconLiteral.Visible = true;
-                    _ButtonIconList.Visible = true;
-                    _ButtonIconImage.Visible = true;
-                    break;
-                case CswWelcomeTable.WelcomeComponentType.Link:
-                    //_ViewList.Visible = true;
-                    _ViewTree.Visible = true;
-                    _ViewLiteral.Visible = true;
-                    _NodeTypeList.Visible = false;
-                    _NodeTypeLiteral.Visible = false;
-                    _Text.Visible = true;
-                    _TextLiteral.Visible = true;
-                    _ButtonIconLiteral.Visible = true;
-                    _ButtonIconList.Visible = true;
-                    _ButtonIconImage.Visible = true;
-                    break;
-                case CswWelcomeTable.WelcomeComponentType.Search:
-                    //_ViewList.Visible = true;
-                    _ViewTree.Visible = true;
-                    _ViewLiteral.Visible = true;
-                    _NodeTypeList.Visible = false;
-                    _NodeTypeLiteral.Visible = false;
-                    _Text.Visible = false;
-                    _TextLiteral.Visible = false;
-                    _ButtonIconLiteral.Visible = false;
-                    _ButtonIconList.Visible = false;
-                    _ButtonIconImage.Visible = false;
-                    break;
-                case CswWelcomeTable.WelcomeComponentType.Text:
-                    _ViewTree.Visible = false;
-                    //_ViewList.Visible = false;
-                    _ViewLiteral.Visible = false;
-                    _NodeTypeList.Visible = false;
-                    _NodeTypeLiteral.Visible = false;
-                    _Text.Visible = true;
-                    _TextLiteral.Visible = true;
-                    _ButtonIconLiteral.Visible = false;
-                    _ButtonIconList.Visible = false;
-                    _ButtonIconImage.Visible = false;
-                    break;
-            }
 
-            _ButtonIconImage.ImageUrl = CswWelcomeTable.IconImageRoot + "/" + "blank.gif";
-            _ButtonIconList.Attributes.Add( "onchange", _ButtonIconImage.ClientID + ".src = '" + CswWelcomeTable.IconImageRoot + "/'+ this.value;" );
+                switch( _SelectedComponentType )
+                {
+                    case CswWelcomeTable.WelcomeComponentType.Add:
+                        //_ViewList.Visible = false;
+                        _ViewTree.Visible = false;
+                        _ViewLiteral.Visible = false;
+                        _NodeTypeList.Visible = true;
+                        _NodeTypeLiteral.Visible = true;
+                        _Text.Visible = true;
+                        _TextLiteral.Visible = true;
+                        _ButtonIconLiteral.Visible = true;
+                        _ButtonIconList.Visible = true;
+                        _ButtonIconImage.Visible = true;
+                        break;
+                    case CswWelcomeTable.WelcomeComponentType.Link:
+                        //_ViewList.Visible = true;
+                        _ViewTree.Visible = true;
+                        _ViewLiteral.Visible = true;
+                        _NodeTypeList.Visible = false;
+                        _NodeTypeLiteral.Visible = false;
+                        _Text.Visible = true;
+                        _TextLiteral.Visible = true;
+                        _ButtonIconLiteral.Visible = true;
+                        _ButtonIconList.Visible = true;
+                        _ButtonIconImage.Visible = true;
+                        break;
+                    case CswWelcomeTable.WelcomeComponentType.Search:
+                        //_ViewList.Visible = true;
+                        _ViewTree.Visible = true;
+                        _ViewLiteral.Visible = true;
+                        _NodeTypeList.Visible = false;
+                        _NodeTypeLiteral.Visible = false;
+                        _Text.Visible = false;
+                        _TextLiteral.Visible = false;
+                        _ButtonIconLiteral.Visible = false;
+                        _ButtonIconList.Visible = false;
+                        _ButtonIconImage.Visible = false;
+                        break;
+                    case CswWelcomeTable.WelcomeComponentType.Text:
+                        _ViewTree.Visible = false;
+                        //_ViewList.Visible = false;
+                        _ViewLiteral.Visible = false;
+                        _NodeTypeList.Visible = false;
+                        _NodeTypeLiteral.Visible = false;
+                        _Text.Visible = true;
+                        _TextLiteral.Visible = true;
+                        _ButtonIconLiteral.Visible = false;
+                        _ButtonIconList.Visible = false;
+                        _ButtonIconImage.Visible = false;
+                        break;
+                }
+
+                _ButtonIconImage.ImageUrl = CswWelcomeTable.IconImageRoot + "/" + "blank.gif";
+                _ButtonIconList.Attributes.Add( "onchange", _ButtonIconImage.ClientID + ".src = '" + CswWelcomeTable.IconImageRoot + "/'+ this.value;" );
+            }
+            catch( Exception ex )
+            {
+                Master.HandleError( ex );
+            }
 
             base.OnPreRender( e );
         }
@@ -301,7 +323,7 @@ namespace ChemSW.Nbt.WebPages
                                                      _ViewTree.SelectedType, _ViewTree.SelectedValue,
                                                      Convert.ToInt32( _NodeTypeList.SelectedValue ), _Text.Text,
                                                      Int32.MinValue, Int32.MinValue, SelectedButtonIcon,
-                                                     Master.CswNbtResources.CurrentNbtUser.RoleId.PrimaryKey );
+                                                     _RoleId.PrimaryKey );
 
                 //DataRow NewWelcomeRow = WelcomeTable.NewRow();
                 //if( SelectedButtonIcon == "blank.gif" )

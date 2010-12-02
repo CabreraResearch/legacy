@@ -76,20 +76,6 @@ namespace ChemSW.Nbt
 
             }
 
-            //clean up user's old entries
-            SortedList<string, CswSessionsListEntry> AllSessions  = new SortedList<string, Session.CswSessionsListEntry>( _CswSessionStorageDb.getSessions( AccessId ) );
-            foreach( CswSessionsListEntry CurrentEntry in AllSessions.Values )
-            {
-                if( ( CurrentEntry.UserName == UserName ) && ( CurrentEntry.SessionId != SessionId ) )
-                {
-                    _CswSessionStorageDb.remove( CurrentEntry.SessionId ); 
-                }
-
-
-            }//iterate sessionlist entries 
-
-                
-
             return ( ReturnVal );
 
         }//authenticate()

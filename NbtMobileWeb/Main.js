@@ -28,16 +28,19 @@
         var UserName;
         var SessionId;
 
+
+
         _initDB(true, _waitForData);
         _makeSynchStatusDiv();
 
-        // case 20355 - error on refresh
+
+        // case 20355 - error on browser refresh
         if (window.location.hash.length > 0)
         {
             var tempdivid = window.location.hash.substr(1);
             if ($('#' + tempdivid).length == 0)
             {
-                _addPageDivToBody('viewsdiv', 1, tempdivid, 'Please wait', '', 'Loading...', false, true);
+                _addPageDivToBody('viewsdiv', 1, tempdivid, 'Please wait', '', 'Loading...', false, true, true, true);
                 setTimeout('$(\'#' + tempdivid + '_back\').click();', opts.DivRemovalDelay);
                 // force removal of div, redundant but necessary for 'prop_' divs.
                 setTimeout('$(\'div[id*="' + tempdivid + '"]\').remove();', opts.DivRemovalDelay);
@@ -63,7 +66,7 @@
         LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
         LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
         LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
-        _addPageDivToBody('', 0, 'logindiv', 'Login to ChemSW Fire Inspection', '', LoginContent, true, true);
+        _addPageDivToBody('', 0, 'logindiv', 'Login to ChemSW Fire Inspection', '', LoginContent, true, true, false, true);
         $('#loginsubmit').click(onLoginSubmit);
 
 
@@ -90,7 +93,6 @@
 
 
                         var $xml = $(data.d);
-                        console.log("data.d: " + data.d);
 
 
                         SessionId = $xml.find('SessionId').text();
@@ -98,6 +100,7 @@
                         {
                             _cacheSession(SessionId, UserName);
 
+                            console.log("Reloading views session id " + SessionId);
                             reloadViews();
 
                         } else
@@ -119,25 +122,25 @@
                         console.log("Foo: " + ErrorMessage);
                     }
                 });
-            }// else
-//            {
+            } // else
+            //            {
 
-//                _DoSql('SELECT lastviewid FROM sessions where sessionid = ? ;',
-//                   [SessionId],
-//                   function (transaction, result)
-//                   {
-//                       if (result.rows.length > 0)
-//                       {
+            //                _DoSql('SELECT lastviewid FROM sessions where sessionid = ? ;',
+            //                   [SessionId],
+            //                   function (transaction, result)
+            //                   {
+            //                       if (result.rows.length > 0)
+            //                       {
 
-//                           var LastViewId = result.rows.item(i)["lastviewid"];
-//                           _loadDivContents('', 0, 'viewsdiv', 'Views', false);
-//                       } else
-//                       {
-//                           
-//                       }
-//                   });
+            //                           var LastViewId = result.rows.item(i)["lastviewid"];
+            //                           _loadDivContents('', 0, 'viewsdiv', 'Views', false);
+            //                       } else
+            //                       {
+            //                           
+            //                       }
+            //                   });
 
-//            } //if-else we are offline
+            //            } //if-else we are offline
 
 
         } //onLoginSubmit() 
@@ -145,7 +148,7 @@
         function reloadViews()
         {
             $('#viewsdiv').remove();
-            _loadDivContents('', 0, 'viewsdiv', 'Views', false);
+            _loadDivContents('', 0, 'viewsdiv', 'Views', false, true);
 
         }
 
@@ -161,6 +164,7 @@
                 $onlineStatus.removeClass('online')
                              .addClass('offline')
                              .text('Offline');
+                $('.refresh').css('visibility', 'hidden');
 
                 reloadViews();
             }
@@ -174,6 +178,7 @@
                              .addClass('online')
                              .text('Online');
 
+                $('.refresh').css('visibility', '');
                 reloadViews();
             }
         }
@@ -187,7 +192,7 @@
         // List items fetching
         // ------------------------------------------------------------------------------------
 
-        function _loadDivContents(ParentId, level, DivId, HeaderText, IsFirst)
+        function _loadDivContents(ParentId, level, DivId, HeaderText, IsFirst, HideRefreshButton)
         {
             var ret = true;
 
@@ -202,17 +207,18 @@
                     {
                         _fetchCachedRootXml(function (xml)
                         {
-                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
+                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst, HideRefreshButton);
                         });
                     } else
                     {
+                        console.log("got here 1");
                         _ajaxViewXml(DivId, function (xml)
                         {
                             if (level == 1)
                             {
                                 _storeViewXml(DivId, HeaderText, xml);
                             }
-                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
+                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst, HideRefreshButton);
                         });
                     }
                 } else if (level == 1)
@@ -222,7 +228,7 @@
                     {
                         if (xmlstr != '')
                         {
-                            _processViewXml(ParentId, DivId, HeaderText, $(xmlstr).children(), level, IsFirst);
+                            _processViewXml(ParentId, DivId, HeaderText, $(xmlstr).children(), level, IsFirst, HideRefreshButton);
                         } else if (!amOffline())
                         {
                             _ajaxViewXml(DivId, function (xml)
@@ -231,7 +237,7 @@
                                 {
                                     _storeViewXml(DivId, HeaderText, xml);
                                 }
-                                _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst);
+                                _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst, HideRefreshButton);
                             });
                         }
                     });
@@ -242,7 +248,7 @@
                         if (xmlstr != '')
                         {
                             var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                            _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst);
+                            _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst, HideRefreshButton);
                         }
                     });
                 }
@@ -282,8 +288,10 @@
 
         var currenttab;
         var onAfterAddDiv;
-        function _processViewXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst)
+        function _processViewXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst, HideRefreshButton)
         {
+
+
             var content = _makeUL();
             currenttab = '';
 
@@ -295,13 +303,13 @@
             });
             content += _endUL();
 
-            $divhtml = _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst);
-
+            $divhtml = _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst, false, false, HideRefreshButton);
             onAfterAddDiv($divhtml);
 
             // this replaces the link navigation
             if (!IsFirst)
             {
+                console.log("got here 2");
                 $.mobile.changePage($('#' + DivId), "slide", false, true);
 
             }
@@ -401,7 +409,7 @@
                     if (nextid != undefined)
                         toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
-                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _FieldTypeXmlToHtml($xmlitem, DivId), IsFirst);
+                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _FieldTypeXmlToHtml($xmlitem, DivId), IsFirst, false, false, false);
 
                     break;
 
@@ -485,7 +493,6 @@
             var sf_text = $xmlitem.children('text').text();
             var sf_value = $xmlitem.children('value').text();
             var sf_href = $xmlitem.children('href').text();
-            var sf_options = $xmlitem.children('options').text();
             var sf_checked = $xmlitem.children('checked').text();
             var sf_required = $xmlitem.children('required').text();
             var sf_units = $xmlitem.children('units').text();
@@ -498,7 +505,6 @@
             if (sf_text == undefined) sf_text = '';
             if (sf_value == undefined) sf_value = '';
             if (sf_href == undefined) sf_href = '';
-            if (sf_options == undefined) sf_options = '';
             if (sf_checked == undefined) sf_checked = '';
             if (sf_required == undefined) sf_required = '';
             if (sf_units == undefined) sf_units = '';
@@ -791,7 +797,8 @@
             return Html;
         } // _makeQuestionAnswerFieldSet()
 
-        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, HideSearchButton, backicon, backtransition)
+
+        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, HideSearchButton, HideOnlineButton, HideRefreshButton, backicon, backtransition)
         {
             var divhtml = '<div id="' + DivId + '" data-role="page">' +
                           '<div data-role="header" data-theme="' + opts.Theme + '">';
@@ -809,9 +816,7 @@
 
             divhtml += '<h1>' + HeaderText + '</h1>';
             if (!IsFirst && !HideSearchButton)
-            {
                 divhtml += '    <a href="#" id="' + DivId + '_searchopen">Search</a>';
-            }
             divhtml += '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
                               toolbar +
                        '    </div>' +
@@ -819,12 +824,19 @@
                        '  <div data-role="content" data-theme="' + opts.Theme + '">' +
                             content +
                        '  </div>' +
-                       '  <div data-role="footer" data-theme="' + opts.Theme + '"><a href="#" id="' + DivId + '_gosynchstatus" data-transition="slideup">';
-            if (amOffline())
-                divhtml += '    <div class="onlineStatus offline">Offline</div>';
-            else
-                divhtml += '    <div class="onlineStatus online">Online</div>';
-            divhtml += '  </a></div>' +
+                       '  <div data-role="footer" data-theme="' + opts.Theme + '">';
+            if (!HideOnlineButton)
+            {
+                divhtml += '    <a href="#" id="' + DivId + '_gosynchstatus" data-transition="slideup">';
+                if (amOffline())
+                    divhtml += '    <div class="onlineStatus offline">Offline</div>';
+                else
+                    divhtml += '    <div class="onlineStatus online">Online</div>';
+                divhtml += '    </a>';
+            }
+            if (!HideRefreshButton)
+                divhtml += '    <a href="#" id="' + DivId + '_refresh" class="refresh">Refresh</a>';
+            divhtml += '  </div>' +
                        '</div>';
 
             var $divhtml = $(divhtml);
@@ -841,6 +853,22 @@
 
         } // _addPageDivToBody()
 
+
+        function _getDivHeaderText(DivId)
+        {
+            return $('#' + DivId).find('div[data-role="header"] h1').text();
+        }
+
+        function _getDivParentId(DivId)
+        {
+            var ret = '';
+            var $back = $('#' + DivId).find('div[data-role="header"] #' + DivId + '_back');
+            if ($back.length > 0)
+                ret = $back.attr('href').substr(1);
+            return ret;
+        }
+
+
         function _bindEvents(DivId, ParentId, level, $div)
         {
             $div.find('#' + DivId + '_searchopen')
@@ -848,6 +876,9 @@
                 .end()
                 .find('#' + DivId + '_gosynchstatus')
                 .click(function (eventObj) { onSynchStatusOpen(DivId, eventObj); })
+                .end()
+                .find('#' + DivId + '_refresh')
+                .click(function (e) { e.stopPropagation(); e.preventDefault(); return onRefresh(DivId, e); })
                 .end()
                 .find('#' + DivId + '_back')
                 .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
@@ -877,7 +908,7 @@
             content += '<p>Last synch: <span id="ss_lastsynch"></span></p>';
             content += '<a id="ss_forcesynch" href="#" data-role="button">Force Synch Now</a>';
             content += '<a id="ss_gooffline" href="#" data-role="button">Go Offline</a>';
-            $divhtml = _addPageDivToBody('', 1, 'synchstatus', 'Synch Status', '', content, false, true);
+            $divhtml = _addPageDivToBody('', 1, 'synchstatus', 'Synch Status', '', content, false, true, false, true);
             $divhtml.find('#ss_forcesynch')
                     .click(function (eventObj) { _processChanges(false); eventObj.preventDefault(); })
                     .end()
@@ -901,9 +932,18 @@
             }
         }
 
+        function _checkPendingChanges()
+        {
+            return ($('#ss_pendingchangecnt').text() == 'Yes');
+        }
+
         function _resetPendingChanges(val, setlastsynchnow)
         {
-            $('#ss_pendingchangecnt').text(val);
+            if (val)
+                $('#ss_pendingchangecnt').text('Yes');
+            else
+                $('#ss_pendingchangecnt').text('No');
+
             if (setlastsynchnow)
             {
                 var d = new Date();
@@ -915,6 +955,50 @@
         // ------------------------------------------------------------------------------------
         // Events
         // ------------------------------------------------------------------------------------
+
+        function onRefresh(DivId, eventObj)
+        {
+            if (!amOffline())
+            {
+                if (!_checkPendingChanges() || confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'))
+                {
+                    _addPageDivToBody('', 1, 'loadingdiv', 'Please wait', '', 'Loading...', false, true, true, true);
+                    $.mobile.changePage($('#loadingdiv'), "fade", false, true);
+                    setTimeout(function () { continueRefresh(DivId); }, opts.DivRemovalDelay);
+                }
+            }
+            return false;
+        }
+
+        function continueRefresh(DivId)
+        {
+            // remove existing divs
+            var NextParentId = '';
+            var ThisParentId = DivId;
+            while (ThisParentId != '' && ThisParentId.substr(0, 'viewid_'.length) != 'viewid_')
+            {
+                NextParentId = _getDivParentId(ThisParentId);
+                $('div[id*="' + ThisParentId + '"]').remove();
+                ThisParentId = NextParentId;
+            }
+
+            if (ThisParentId != '')
+            {
+                var RealDivId = ThisParentId;
+                var HeaderText = _getDivHeaderText(RealDivId);
+
+                $('div[id*="' + RealDivId + '"]').remove();
+
+                // fetch new content
+                _ajaxViewXml(RealDivId, function (xml)
+                {
+                    _updateStoredViewXml(RealDivId, xml, '0');
+                    _processViewXml('viewsdiv', RealDivId, HeaderText, $(xml).children(), 1, false);
+                    $.mobile.changePage($('#' + RealDivId), "slide", false, true);
+                    setTimeout(function () { $('#loadingdiv').remove(); }, opts.DivRemovalDelay);
+                });
+            }
+        }
 
         function onBack(DivId, DestinationId, eventObj)
         {
@@ -956,7 +1040,7 @@
                     // However, it appears to work, for now.
                     _updateStoredViewXml(rootid, $xmlstr.wrap('<wrapper />').parent().html(), '1');
 
-                    _resetPendingChanges('Yes', false);
+                    _resetPendingChanges(true, false);
                 }
             });
 
@@ -988,7 +1072,7 @@
                         '<div id="' + DivId + '_searchresults"></div>';
 
 
-                    _addPageDivToBody(DivId, 1, DivId + '_searchdiv', 'Search', '', Html, false, true, 'arrow-u');
+                    _addPageDivToBody(DivId, 1, DivId + '_searchdiv', 'Search', '', Html, false, true, false, false, 'arrow-u');
 
                     $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
 
@@ -1073,16 +1157,13 @@
 
         function _createDb(OnSuccess)
         {
-            _DoSql('CREATE TABLE IF NOT EXISTS sessions ' +
+            _DoSql('CREATE TABLE IF NOT EXISTS configvars ' +
                     '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                    '   username TEXT NOT NULL, ' +
-                    '   sessionid TEXT NOT NULL, ' +
-                    '   lastviewid INTEGER);',
+                    '   varname TEXT NOT NULL, ' +
+                    '   varval TEXT);',
                     null,
                     null
                     );
-
-
 
             _DoSql('CREATE TABLE IF NOT EXISTS views ' +
                     '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
@@ -1102,7 +1183,40 @@
             return true;
         }
 
+        function writeConfigVar(varname, varval)
+        {
+            _DoSql("select varval from configvars where varname=?;",
+                   [varname],
+                   function (transaction, result)
+                   {
+                       if (0 == result.rows.length)
+                       {
+                           _DoSql("insert into configvars (varname) values (  ? );",
+                           [varname],
+                           function () { _DoSql("update configvars set varval = ? where varname = ?", [varval, varname]); });
 
+                       } else
+                       {
+                           _DoSql("update configvars set varval = ? where varname = ?", [varval, varname]);
+                       } //if-else the configvar row already exists
+
+                   });
+        } //writeConfigVar() 
+
+        function readConfigVar_____NOT()
+        {
+
+            /*
+            This is the place where any rational developer would write a "readConfigVar()" fucntion. 
+            But you can't do that in Javascript: the call back in which you get the result of sql 
+            query is in a completely different scope from the one in which you want to capture the 
+            return value. Thus you have to do the sql to read the config vars table by hand 
+            in every case. 
+
+            So much for enapsulation. Jesus. 
+            */
+
+        } //readConfigVar_____NOT()
 
         // ------------------------------------------------------------------------------------
         // Persistance functions
@@ -1112,7 +1226,8 @@
         function _cacheSession(sessionid, username)
         {
 
-            _DoSql('insert into sessions (sessionid, username ) values ( ?, ? ) ', [sessionid, username]);
+            writeConfigVar("username", username);
+            writeConfigVar("sessionid", sessionid);
 
         } //_cacheSession()
 
@@ -1125,11 +1240,7 @@
                        [rootid, rootname, viewxml],
                        function (transaction, result)
                        {
-
-                           _DoSql('UPDATE sessions SET lastviewid = ? WHERE sessionid = ? ;',
-                                  [result.insertId, SessionId],
-                                  null
-                              );
+                           writeConfigVar("lastviewid", [result.insertId]); 
 
                        }
                        );
@@ -1155,12 +1266,12 @@
                    {
                        if (result.rows.length > 0)
                        {
-                           _resetPendingChanges('Yes', true);
+                           _resetPendingChanges(true, true);
                            var row = result.rows.item(0);
                            onSuccess(row.rootid, row.viewxml);
                        } else
                        {
-                           _resetPendingChanges('No', true);
+                           _resetPendingChanges(false, true);
                            onSuccess('', '');
                        }
                    });
