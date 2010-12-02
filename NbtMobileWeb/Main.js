@@ -28,136 +28,95 @@
         var UserName;
         var SessionId;
 
-
-
-        _initDB(true, _waitForData);
-        _makeSynchStatusDiv();
-
-
         // case 20355 - error on browser refresh
+        // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
+        var tempdivid = 'initialloadingdiv';
         if (window.location.hash.length > 0)
         {
-            var tempdivid = window.location.hash.substr(1);
-            if ($('#' + tempdivid).length == 0)
+            var potentialtempdivid = window.location.hash.substr(1);
+            if ($('#' + potentialtempdivid).length == 0 && potentialtempdivid != 'viewsdiv')
             {
-                _addPageDivToBody({
-                    ParentId: 'viewsdiv',
-                    DivId: tempdivid,
-                    HeaderText: 'Please wait',
-                    content: 'Loading...',
-                    HideSearchButton: true,
-                    HideOnlineButton: true,
-                    HideRefreshButton: true
-                });
-
-                setTimeout('$(\'#' + tempdivid + '_back\').click();', opts.DivRemovalDelay);
-                // force removal of div, redundant but necessary for 'prop_' divs.
-                setTimeout('$(\'div[id*="' + tempdivid + '"]\').remove();', opts.DivRemovalDelay);
+                tempdivid = potentialtempdivid;
             }
         }
 
+        // Make loading div first
+        _addPageDivToBody({
+            DivId: tempdivid,
+            HeaderText: 'Please wait',
+            content: 'Loading...',
+            HideSearchButton: true,
+            HideOnlineButton: true,
+            HideRefreshButton: true
+        });
 
-        //Sergei: 
-        //we need logic here that does the following : 
-        //if I have a SessionId value (meaning, the browser was not just reloaded)
-        //  proceed as usual refrewshing the current view;
-        //else 
-        //  if I have a sessions record where lastviewid is not null 
-        //     reload the view at lastviewid
-        //  else
-        //    if I have connectivity
-        //       present the login form
-        //    else 
-        //       say "sorry charlie"
+        _makeSynchStatusDiv();
 
-
-        var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
-        LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
-        LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
-        LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
-        _addPageDivToBody('', 0, 'logindiv', 'Login to ChemSW Fire Inspection', '', LoginContent, true, true, false, true);
-        $('#loginsubmit').click(onLoginSubmit);
-
-
-        //        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
-
-        function onLoginSubmit(eventObj)
+        _initDB(false, function ()
         {
-            // authenticate here
-            UserName = $('#login_username').attr('value');
-            var Password = $('#login_password').attr('value');
-            var AccessId = $('#login_accessid').attr('value');
+            //_waitForData();
 
-            if (false == amOffline())
+            readConfigVar('sessionid', function (configvar_sessionid)
             {
-
-                $.ajax({
-                    type: 'POST',
-                    url: opts.AuthenticateUrl,
-                    dataType: "json",
-                    contentType: 'application/json; charset=utf-8',
-                    data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
-                    success: function (data, textStatus, XMLHttpRequest)
-                    {
-
-
-                        var $xml = $(data.d);
-
-
-                        SessionId = $xml.find('SessionId').text();
-                        if (SessionId != "")
+                if (configvar_sessionid != '' && configvar_sessionid != undefined)
+                {
+                    SessionId = configvar_sessionid;
+                    reloadViews(true);
+                    setTimeout('$(\'#' + tempdivid + '\').remove();', opts.DivRemovalDelay);
+                    _waitForData();
+                }
+                else
+                {
+                    // this will trigger _waitForData(), but we don't want to wait here
+                    _handleDataCheckTimer(
+                        function ()
                         {
-                            _cacheSession(SessionId, UserName);
-
-                            console.log("Reloading views session id " + SessionId);
-                            reloadViews();
-
-                        } else
+                            // online
+                            var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
+                            LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
+                            LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
+                            LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
+                            _addPageDivToBody({
+                                DivId: 'logindiv',
+                                HeaderText: 'Login to ChemSW Fire Inspection',
+                                content: LoginContent,
+                                HideSearchButton: true,
+                                HideRefreshButton: true
+                            });
+                            $('#loginsubmit').click(onLoginSubmit);
+                            $.mobile.changePage($('#logindiv'), 'fade', false, true);
+                            setTimeout('$(\'#' + tempdivid + '\').remove();', opts.DivRemovalDelay);
+                        },
+                        function ()
                         {
-                            //Sergei: Where should we write this on the UI? 
-                            console.log($xml.find('AuthenticationStatus').text());
-
+                            // offline
+                            _addPageDivToBody({
+                                DivId: 'faildiv',
+                                HeaderText: 'Sorry Charlie!',
+                                content: 'You must have internet connectivity to login.',
+                                HideSearchButton: true,
+                                HideRefreshButton: true
+                            });
+                            $.mobile.changePage($('#faildiv'), 'fade', false, true);
+                            setTimeout('$(\'#' + tempdivid + '\').remove();', opts.DivRemovalDelay);
                         }
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown)
-                    {
-
-                        ErrorMessage = "Error: " + textStatus;
-                        if (null != errorThrown)
-                        {
-                            ErrorMessage += "; Exception: " + errorThrown.toString()
-                        }
-
-                        console.log("Foo: " + ErrorMessage);
-                    }
-                });
-            } // else
-            //            {
-
-            //                _DoSql('SELECT lastviewid FROM sessions where sessionid = ? ;',
-            //                   [SessionId],
-            //                   function (transaction, result)
-            //                   {
-            //                       if (result.rows.length > 0)
-            //                       {
-
-            //                           var LastViewId = result.rows.item(i)["lastviewid"];
-            //                           _loadDivContents('', 0, 'viewsdiv', 'Views', false);
-            //                       } else
-            //                       {
-            //                           
-            //                       }
-            //                   });
-
-            //            } //if-else we are offline
+                    ); // _handleDataCheckTimer();
+                } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
+            }); // readConfigVar();
+        }); // _initDB();
 
 
-        } //onLoginSubmit() 
 
-        function reloadViews()
+        function reloadViews(ChangePage)
         {
             $('#viewsdiv').remove();
-            _loadDivContents('', 0, 'viewsdiv', 'Views', false, true);
+            _loadDivContents({ 
+                level: 0, 
+                DivId: 'viewsdiv', 
+                HeaderText: 'Views', 
+                HideRefreshButton: true,
+                ChangePage: ChangePage
+            });
 
         }
 
@@ -175,7 +134,7 @@
                              .text('Offline');
                 $('.refresh').css('visibility', 'hidden');
 
-                reloadViews();
+                reloadViews(false);
             }
         }
         function setOnline()
@@ -188,7 +147,7 @@
                              .text('Online');
 
                 $('.refresh').css('visibility', '');
-                reloadViews();
+                reloadViews(false);
             }
         }
         function amOffline()
@@ -201,52 +160,98 @@
         // List items fetching
         // ------------------------------------------------------------------------------------
 
-        function _loadDivContents(ParentId, level, DivId, HeaderText, IsFirst, HideRefreshButton)
+        function _loadDivContents(params)
         {
+            var p = {
+                ParentId: '',
+                level: 1,
+                DivId: '', 
+                HeaderText: '', 
+                HideRefreshButton: false,
+                ChangePage: false
+            };
+                
+            if (params)
+            {
+                $.extend(p, params);
+            }
+
+
             var ret = true;
 
-            if (level == 1)
-                rootid = DivId;
+            if (p.level == 1)
+                rootid = p.DivId;
 
-            if ($('#' + DivId).length == 0)
+            if ($('#' + p.DivId).length == 0)
             {
-                if (level == 0)
+                if (p.level == 0)
                 {
                     if (amOffline())
                     {
                         _fetchCachedRootXml(function (xml)
                         {
-                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst, HideRefreshButton);
+                            _processViewXml({
+                                ParentId: p.ParentId, 
+                                DivId: p.DivId, 
+                                HeaderText: p.HeaderText, 
+                                $xml: $(xml).children(), 
+                                parentlevel: p.level, 
+                                HideRefreshButton: p.HideRefreshButton,
+                                ChangePage: p.ChangePage
+                            });
                         });
                     } else
                     {
-                        console.log("got here 1");
-                        _ajaxViewXml(DivId, function (xml)
+                        _ajaxViewXml(p.DivId, function (xml)
                         {
-                            if (level == 1)
+                            if (p.level == 1)
                             {
-                                _storeViewXml(DivId, HeaderText, xml);
+                                _storeViewXml(p.DivId, p.HeaderText, xml);
                             }
-                            _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst, HideRefreshButton);
+                            _processViewXml({
+                                ParentId: p.ParentId, 
+                                DivId: p.DivId, 
+                                HeaderText: p.HeaderText, 
+                                $xml: $(xml).children(), 
+                                parentlevel: p.level, 
+                                HideRefreshButton: p.HideRefreshButton,
+                                ChangePage: p.ChangePage
+                            });
                         });
                     }
-                } else if (level == 1)
+                } else if (p.level == 1)
                 {
                     // case 20354 - try cached first
                     _fetchCachedViewXml(rootid, function (xmlstr)
                     {
                         if (xmlstr != '')
                         {
-                            _processViewXml(ParentId, DivId, HeaderText, $(xmlstr).children(), level, IsFirst, HideRefreshButton);
+                            _processViewXml({
+                                ParentId: p.ParentId, 
+                                DivId: p.DivId, 
+                                HeaderText: p.HeaderText, 
+                                $xml: $(xmlstr).children(), 
+                                parentlevel: p.level, 
+                                HideRefreshButton: p.HideRefreshButton,
+                                ChangePage: p.ChangePage
+                            });
                         } else if (!amOffline())
                         {
-                            _ajaxViewXml(DivId, function (xml)
+                            _ajaxViewXml(p.DivId, function (xml)
                             {
-                                if (level == 1)
+                                if (p.level == 1)
                                 {
-                                    _storeViewXml(DivId, HeaderText, xml);
+                                    _storeViewXml(p.DivId, p.HeaderText, xml);
                                 }
-                                _processViewXml(ParentId, DivId, HeaderText, $(xml).children(), level, IsFirst, HideRefreshButton);
+                                _processViewXml({
+                                    ParentId: p.ParentId, 
+                                    DivId: p.DivId, 
+                                    HeaderText: p.HeaderText, 
+                                    $xml: $(xml).children(), 
+                                    parentlevel: p.level, 
+                                    HideRefreshButton: p.HideRefreshButton,
+                                    ChangePage: p.ChangePage
+                                });
                             });
                         }
                     });
@@ -256,8 +261,16 @@
                     {
                         if (xmlstr != '')
                         {
-                            var $thisxmlstr = $(xmlstr).find('#' + DivId);
-                            _processViewXml(ParentId, DivId, HeaderText, $thisxmlstr.children('subitems').first().children(), level, IsFirst, HideRefreshButton);
+                            var $thisxmlstr = $(xmlstr).find('#' + p.DivId);
+                            _processViewXml({
+                                ParentId: p.ParentId, 
+                                DivId: p.DivId, 
+                                HeaderText: p.HeaderText, 
+                                $xml: $thisxmlstr.children('subitems').first().children(), 
+                                parentlevel: p.level, 
+                                HideRefreshButton: p.HideRefreshButton,
+                                ChangePage: p.ChangePage
+                            });
                         }
                     });
                 }
@@ -297,43 +310,50 @@
 
         var currenttab;
         var onAfterAddDiv;
-        function _processViewXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst, HideRefreshButton)
+        function _processViewXml(params)
         {
-
+            var p = {
+                ParentId: '',
+                DivId: '', 
+                HeaderText: '', 
+                $xml: '',
+                parentlevel: '',
+                HideRefreshButton: false,
+                ChangePage: false
+            };
+            if (params)
+            {
+                $.extend(p, params);
+            }
 
             var content = _makeUL();
             currenttab = '';
 
             onAfterAddDiv = function ($divhtml) { };
 
-            $xml.each(function ()
+            p.$xml.each(function ()
             {
-                content += _makeListItemFromXml($xml, this, DivId, parentlevel, IsFirst);
+                content += _makeListItemFromXml(p.$xml, this, p.DivId, p.parentlevel);
             });
             content += _endUL();
 
             $divhtml = _addPageDivToBody({
-                ParentId: ParentId,
-                level: parentlevel,
-                DivId: DivId,
-                HeaderText: HeaderText,
+                ParentId: p.ParentId,
+                level: p.parentlevel,
+                DivId: p.DivId,
+                HeaderText: p.HeaderText,
                 content: content,
-                IsFirst: IsFirst,
-                HideRefreshButton: HideRefreshButton
+                HideRefreshButton: p.HideRefreshButton
             });
             onAfterAddDiv($divhtml);
 
             // this replaces the link navigation
-            if (!IsFirst)
-            {
-                console.log("got here 2");
-                $.mobile.changePage($('#' + DivId), "slide", false, true);
-
-            }
+            if(p.ChangePage) 
+                $.mobile.changePage($('#' + p.DivId), "slide", false, true);
 
         } // _processViewXml()
 
-        function _makeListItemFromXml($xml, xmlitem, DivId, parentlevel, IsFirst)
+        function _makeListItemFromXml($xml, xmlitem, DivId, parentlevel)
         {
             var $xmlitem = $(xmlitem);
             var id = $xmlitem.attr('id');
@@ -434,7 +454,6 @@
                         HeaderText: text,
                         toolbar: toolbar,
                         content: _FieldTypeXmlToHtml($xmlitem, DivId),
-                        IsFirst: IsFirst
                     });
 
                     break;
@@ -833,7 +852,6 @@
                 HeaderText: '',
                 toolbar: '',
                 content: '',
-                IsFirst: false,
                 HideSearchButton: false,
                 HideOnlineButton: false,
                 HideRefreshButton: false,
@@ -841,7 +859,7 @@
                 backtransition: undefined
             };
 
-            if (options)
+            if (params)
             {
                 $.extend(p, params);
             }
@@ -862,7 +880,7 @@
             divhtml += '">Back</a>';
 
             divhtml += '<h1>' + p.HeaderText + '</h1>';
-            if (!p.IsFirst && !p.HideSearchButton)
+            if (!p.HideSearchButton)
                 divhtml += '    <a href="#" id="' + p.DivId + '_searchopen">Search</a>';
             divhtml += '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
                               p.toolbar +
@@ -887,10 +905,7 @@
                        '</div>';
 
             var $divhtml = $(divhtml);
-            if (p.IsFirst)
-                $('body').prepend($divhtml);
-            else
-                $('body').append($divhtml);
+            $('body').append($divhtml);
 
             $divhtml.page();
 
@@ -940,7 +955,13 @@
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
                 .find('li a')
-                .click(function (e) { if (_loadDivContents(DivId, (level + 1), $(this).attr('href').substr(1), $(this).text(), false)) { e.stopPropagation(); e.preventDefault(); } })
+                .click(function (e) { if (_loadDivContents({
+                    ParentId: DivId, 
+                    level: (level + 1), 
+                    DivId: $(this).attr('href').substr(1), 
+                    HeaderText: $(this).text(),
+                    ChangePage: true
+                    })) { e.stopPropagation(); e.preventDefault(); } })
                 .end();
         }
 
@@ -1011,6 +1032,47 @@
         // Events
         // ------------------------------------------------------------------------------------
 
+        function onLoginSubmit(eventObj)
+        {
+            // authenticate here
+            UserName = $('#login_username').attr('value');
+            var Password = $('#login_password').attr('value');
+            var AccessId = $('#login_accessid').attr('value');
+
+            if (!amOffline())
+            {
+                $.ajax({
+                    type: 'POST',
+                    url: opts.AuthenticateUrl,
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
+                    success: function (data, textStatus, XMLHttpRequest)
+                    {
+                        var $xml = $(data.d);
+
+                        SessionId = $xml.find('SessionId').text();
+                        if (SessionId != "")
+                        {
+                            _cacheSession(SessionId, UserName);
+
+                            console.log("Reloading views session id " + SessionId);
+                            reloadViews(true);
+                        } else
+                        {
+                            //Sergei: Where should we write this on the UI? 
+                            console.log($xml.find('AuthenticationStatus').text());
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown)
+                    {
+                        _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+                    }
+                });
+            }
+
+        } //onLoginSubmit() 
+
         function onRefresh(DivId, eventObj)
         {
             if (!amOffline())
@@ -1055,8 +1117,15 @@
                 _ajaxViewXml(RealDivId, function (xml)
                 {
                     _updateStoredViewXml(RealDivId, xml, '0');
-                    _processViewXml('viewsdiv', RealDivId, HeaderText, $(xml).children(), 1, false);
-                    $.mobile.changePage($('#' + RealDivId), "slide", false, true);
+                    _processViewXml({
+                        ParentId: 'viewsdiv',
+                        DivId: RealDivId, 
+                        HeaderText: HeaderText, 
+                        $xml: $(xml).children(),
+                        parentlevel: 1,
+                        HideRefreshButton: false,
+                        ChangePage: true 
+                    });
                     setTimeout(function () { $('#loadingdiv').remove(); }, opts.DivRemovalDelay);
                 });
             }
@@ -1215,7 +1284,7 @@
             db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
             if (doreset)
             {
-                _DoSql('DROP TABLE IF EXISTS views; ', null, null);
+                _DoSql('DROP TABLE IF EXISTS configvars; ', null, null);
                 _DoSql('DROP TABLE IF EXISTS views; ', null, function () { _createDb(OnSuccess); });
             } else
             {
@@ -1260,10 +1329,7 @@
                    {
                        if (0 == result.rows.length)
                        {
-                           _DoSql("insert into configvars (varname) values (  ? );",
-                           [varname],
-                           function () { _DoSql("update configvars set varval = ? where varname = ?", [varval, varname]); });
-
+                           _DoSql("insert into configvars (varname, varval) values ( ?, ? );", [varname, varval]);
                        } else
                        {
                            _DoSql("update configvars set varval = ? where varname = ?", [varval, varname]);
@@ -1272,20 +1338,23 @@
                    });
         } //writeConfigVar() 
 
-        function readConfigVar_____NOT()
+        function readConfigVar(varname, onSuccess)
         {
+            _DoSql("select varval from configvars where varname=?;",
+                   [varname],
+                   function (transaction, result)
+                   {
+                       if (result.rows.length > 0)
+                       {
+                           var row = result.rows.item(0);
+                           onSuccess(row.varval);
+                       } else
+                       {
+                           onSuccess('');
+                       }
+                   });
 
-            /*
-            This is the place where any rational developer would write a "readConfigVar()" fucntion. 
-            But you can't do that in Javascript: the call back in which you get the result of sql 
-            query is in a completely different scope from the one in which you want to capture the 
-            return value. Thus you have to do the sql to read the config vars table by hand 
-            in every case. 
-
-            So much for enapsulation. Jesus. 
-            */
-
-        } //readConfigVar_____NOT()
+        } //readConfigVar()
 
         // ------------------------------------------------------------------------------------
         // Persistance functions
@@ -1306,13 +1375,7 @@
             if (rootid != undefined && rootid != '')
             {
                 _DoSql('INSERT INTO views (rootid, rootname, viewxml, wasmodified) VALUES (?, ?, ?, 0);',
-                       [rootid, rootname, viewxml],
-                       function (transaction, result)
-                       {
-                           writeConfigVar("lastviewid", [result.insertId]); 
-
-                       }
-                       );
+                       [rootid, rootname, viewxml]);
             }
         }
 
@@ -1321,9 +1384,7 @@
             if (rootid != undefined && rootid != '')
             {
                 _DoSql('UPDATE views SET wasmodified = ?, viewxml = ? WHERE rootid = ?;',
-                       [wasmodified, viewxml, rootid],
-                       function () { }
-                       );
+                       [wasmodified, viewxml, rootid]);
             }
         }
 
@@ -1398,7 +1459,7 @@
             clearTimeout(_waitForData_TimeoutId);
         }
 
-        function _handleDataCheckTimer()
+        function _handleDataCheckTimer(onSuccess, onFailure)
         {
             $.ajax({
                 type: 'POST',
@@ -1412,16 +1473,22 @@
                     if ($xml.get(0).nodeName == "ERROR")
                     {
                         _handleAjaxError(XMLHttpRequest, $xml.text(), '');
+                        if (onFailure != undefined)
+                            onFailure();
                         _waitForData();
                     } else
                     {
                         setOnline();
                         _processChanges(true);
+                        if (onSuccess != undefined)
+                            onSuccess();
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown)
                 {
                     _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+                    if (onFailure != undefined)
+                        onFailure();
                     _waitForData();
                 }
             });
@@ -1452,7 +1519,6 @@
                             } else
                             {
                                 _updateStoredViewXml(rootid, data.d, '0');
-                                //console.log("UpdateProperties succeeded");
                                 if (perpetuateTimer)
                                     _waitForData();
                             }
