@@ -34,7 +34,7 @@
         if (window.location.hash.length > 0)
         {
             var potentialtempdivid = window.location.hash.substr(1);
-            if ($('#' + potentialtempdivid).length == 0 && potentialtempdivid != 'viewsdiv')
+            if ($('#' + potentialtempdivid).length == 0 && potentialtempdivid != 'viewsdiv' && potentialtempdivid != 'logindiv')
             {
                 tempdivid = potentialtempdivid;
             }
@@ -52,7 +52,7 @@
 
         _makeSynchStatusDiv();
 
-        _initDB(false, function ()
+        _initDB(true, function ()
         {
             //_waitForData();
 
@@ -62,7 +62,7 @@
                 {
                     SessionId = configvar_sessionid;
                     reloadViews(true);
-                    setTimeout('$(\'#' + tempdivid + '\').remove();', opts.DivRemovalDelay);
+                    removeDiv(tempdivid);
                     _waitForData();
                 }
                 else
@@ -72,40 +72,55 @@
                         function ()
                         {
                             // online
-                            var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
-                            LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
-                            LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
-                            LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
-                            _addPageDivToBody({
-                                DivId: 'logindiv',
-                                HeaderText: 'Login to ChemSW Fire Inspection',
-                                content: LoginContent,
-                                HideSearchButton: true,
-                                HideRefreshButton: true
-                            });
-                            $('#loginsubmit').click(onLoginSubmit);
-                            $.mobile.changePage($('#logindiv'), 'fade', false, true);
-                            setTimeout('$(\'#' + tempdivid + '\').remove();', opts.DivRemovalDelay);
+                            _loadLoginDiv(true);
+                            removeDiv(tempdivid);
                         },
                         function ()
                         {
                             // offline
-                            _addPageDivToBody({
-                                DivId: 'faildiv',
-                                HeaderText: 'Sorry Charlie!',
-                                content: 'You must have internet connectivity to login.',
-                                HideSearchButton: true,
-                                HideRefreshButton: true
-                            });
-                            $.mobile.changePage($('#faildiv'), 'fade', false, true);
-                            setTimeout('$(\'#' + tempdivid + '\').remove();', opts.DivRemovalDelay);
+                            _loadSorryCharlieDiv(true);
+                            removeDiv(tempdivid);
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
             }); // readConfigVar();
         }); // _initDB();
 
+        function _loadLoginDiv(ChangePage)
+        {
+            var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
+            LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
+            LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
+            LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
+            _addPageDivToBody({
+                DivId: 'logindiv',
+                HeaderText: 'Login to ChemSW Fire Inspection',
+                content: LoginContent,
+                HideSearchButton: true,
+                HideRefreshButton: true
+            });
+            $('#loginsubmit').click(onLoginSubmit);
+            if(ChangePage)
+                $.mobile.changePage($('#logindiv'), 'fade', false, true);
+        }
 
+        function _loadSorryCharlieDiv(ChangePage)
+        {
+            _addPageDivToBody({
+                DivId: 'sorrycharliediv',
+                HeaderText: 'Sorry Charlie!',
+                content: 'You must have internet connectivity to login.',
+                HideSearchButton: true,
+                HideRefreshButton: true
+            });
+            if(ChangePage)
+                $.mobile.changePage($('#sorrycharliediv'), 'fade', false, true);
+        }
+
+        function removeDiv(DivId)
+        {
+            setTimeout('$(\'#' + DivId + '\').remove();', opts.DivRemovalDelay);
+        }
 
         function reloadViews(ChangePage)
         {
@@ -136,6 +151,11 @@
 
                 reloadViews(false);
             }
+            if($('#logindiv').length > 0)
+            {
+                _loadSorryCharlieDiv(true);
+                removeDiv('logindiv');
+            }
         }
         function setOnline()
         {
@@ -148,6 +168,11 @@
 
                 $('.refresh').css('visibility', '');
                 reloadViews(false);
+            }
+            if($('#sorrycharliediv').length > 0)
+            {
+                _loadLoginDiv(true);
+                removeDiv('sorrycharliediv');
             }
         }
         function amOffline()
@@ -1050,18 +1075,15 @@
                     success: function (data, textStatus, XMLHttpRequest)
                     {
                         var $xml = $(data.d);
-
                         SessionId = $xml.find('SessionId').text();
                         if (SessionId != "")
                         {
                             _cacheSession(SessionId, UserName);
-
-                            console.log("Reloading views session id " + SessionId);
                             reloadViews(true);
+                            removeDiv('logindiv');
                         } else
                         {
-                            //Sergei: Where should we write this on the UI? 
-                            console.log($xml.find('AuthenticationStatus').text());
+                            alert($xml.find('AuthenticationStatus').text());
                         }
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -1126,7 +1148,7 @@
                         HideRefreshButton: false,
                         ChangePage: true 
                     });
-                    setTimeout(function () { $('#loadingdiv').remove(); }, opts.DivRemovalDelay);
+                    removeDiv('loadingdiv');
                 });
             }
         }
@@ -1135,7 +1157,7 @@
         {
             if (DivId != 'synchstatus' && DivId.indexOf('prop_') != 0)
             {
-                // case 20367 - remove DivId.  Doing it immediately causes bugs.
+                // case 20367 - remove all matching DivId.  Doing it immediately causes bugs.
                 setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
             }
             return true;
