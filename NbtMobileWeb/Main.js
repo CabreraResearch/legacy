@@ -35,7 +35,16 @@
             var tempdivid = window.location.hash.substr(1);
             if ($('#' + tempdivid).length == 0)
             {
-                _addPageDivToBody('viewsdiv', 1, tempdivid, 'Please wait', '', 'Loading...', false, true, true, true);
+                _addPageDivToBody({
+                    ParentId: 'viewsdiv',
+                    DivId: tempdivid,
+                    HeaderText: 'Please wait',
+                    content: 'Loading...',
+                    HideSearchButton: true,
+                    HideOnlineButton: true,
+                    HideRefreshButton: true
+                });
+
                 setTimeout('$(\'#' + tempdivid + '_back\').click();', opts.DivRemovalDelay);
                 // force removal of div, redundant but necessary for 'prop_' divs.
                 setTimeout('$(\'div[id*="' + tempdivid + '"]\').remove();', opts.DivRemovalDelay);
@@ -196,7 +205,15 @@
             });
             content += _endUL();
 
-            $divhtml = _addPageDivToBody(ParentId, parentlevel, DivId, HeaderText, '', content, IsFirst, false, false, HideRefreshButton);
+            $divhtml = _addPageDivToBody({
+                ParentId: ParentId,
+                level: parentlevel,
+                DivId: DivId,
+                HeaderText: HeaderText,
+                content: content,
+                IsFirst: IsFirst,
+                HideRefreshButton: HideRefreshButton
+            });
 
             onAfterAddDiv($divhtml);
 
@@ -299,7 +316,16 @@
                     if (nextid != undefined)
                         toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
                     toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
-                    _addPageDivToBody(DivId, parentlevel, id, text, toolbar, _FieldTypeXmlToHtml($xmlitem, DivId), IsFirst, false, false, false);
+
+                    _addPageDivToBody({
+                        ParentId: DivId,
+                        level: parentlevel,
+                        DivId: id,
+                        HeaderText: text,
+                        toolbar: toolbar,
+                        content: _FieldTypeXmlToHtml($xmlitem, DivId),
+                        IsFirst: IsFirst
+                    });
 
                     break;
 
@@ -688,56 +714,77 @@
         } // _makeQuestionAnswerFieldSet()
 
 
-        function _addPageDivToBody(ParentId, level, DivId, HeaderText, toolbar, content, IsFirst, HideSearchButton, HideOnlineButton, HideRefreshButton, backicon, backtransition)
+        function _addPageDivToBody(params)
         {
-            var divhtml = '<div id="' + DivId + '" data-role="page">' +
+            var p = {
+                ParentId: undefined,
+                level: 1,
+                DivId: '',       // required
+                HeaderText: '',
+                toolbar: '',
+                content: '',
+                IsFirst: false,
+                HideSearchButton: false,
+                HideOnlineButton: false,
+                HideRefreshButton: false,
+                backicon: undefined,
+                backtransition: undefined
+            };
+
+            if (options)
+            {
+                $.extend(p, params);
+            }
+
+
+            var divhtml = '<div id="' + p.DivId + '" data-role="page">' +
                           '<div data-role="header" data-theme="' + opts.Theme + '">';
-            divhtml += '<a href="#' + ParentId + '" id="' + DivId + '_back" data-back="true" ';
-            if (backtransition != undefined)
-                divhtml += ' data-transition="' + backtransition + '" ';
-            if (ParentId == '' || ParentId == undefined)
+            divhtml += '<a href="#' + p.ParentId + '" id="' + p.DivId + '_back" data-back="true" ';
+            if (p.backtransition != undefined)
+                divhtml += ' data-transition="' + p.backtransition + '" ';
+            if (p.ParentId == '' || p.ParentId == undefined)
                 divhtml += ' style="visibility: hidden;" ';
             divhtml += ' data-icon="';
-            if (backicon != undefined)
-                divhtml += backicon;
+            if (p.backicon != undefined)
+                divhtml += p.backicon;
             else
                 divhtml += 'arrow-l';
             divhtml += '">Back</a>';
 
-            divhtml += '<h1>' + HeaderText + '</h1>';
-            if (!IsFirst && !HideSearchButton)
-                divhtml += '    <a href="#" id="' + DivId + '_searchopen">Search</a>';
+            divhtml += '<h1>' + p.HeaderText + '</h1>';
+            if (!p.IsFirst && !p.HideSearchButton)
+                divhtml += '    <a href="#" id="' + p.DivId + '_searchopen">Search</a>';
             divhtml += '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
-                              toolbar +
+                              p.toolbar +
                        '    </div>' +
                        '  </div>' +
                        '  <div data-role="content" data-theme="' + opts.Theme + '">' +
-                            content +
+                            p.content +
                        '  </div>' +
                        '  <div data-role="footer" data-theme="' + opts.Theme + '">';
-            if (!HideOnlineButton)
+            if (!p.HideOnlineButton)
             {
-                divhtml += '    <a href="#" id="' + DivId + '_gosynchstatus" data-transition="slideup">';
+                divhtml += '    <a href="#" id="' + p.DivId + '_gosynchstatus" data-transition="slideup">';
                 if (amOffline())
                     divhtml += '    <div class="onlineStatus offline">Offline</div>';
                 else
                     divhtml += '    <div class="onlineStatus online">Online</div>';
                 divhtml += '    </a>';
             }
-            if (!HideRefreshButton)
-                divhtml += '    <a href="#" id="' + DivId + '_refresh" class="refresh">Refresh</a>';
+            if (!p.HideRefreshButton)
+                divhtml += '    <a href="#" id="' + p.DivId + '_refresh" class="refresh">Refresh</a>';
             divhtml += '  </div>' +
                        '</div>';
 
             var $divhtml = $(divhtml);
-            if (IsFirst)
+            if (p.IsFirst)
                 $('body').prepend($divhtml);
             else
                 $('body').append($divhtml);
 
             $divhtml.page();
 
-            _bindEvents(DivId, ParentId, level, $divhtml);
+            _bindEvents(p.DivId, p.ParentId, p.level, $divhtml);
 
             return $divhtml;
 
@@ -798,7 +845,15 @@
             content += '<p>Last synch: <span id="ss_lastsynch"></span></p>';
             content += '<a id="ss_forcesynch" href="#" data-role="button">Force Synch Now</a>';
             content += '<a id="ss_gooffline" href="#" data-role="button">Go Offline</a>';
-            $divhtml = _addPageDivToBody('', 1, 'synchstatus', 'Synch Status', '', content, false, true, false, true);
+
+            $divhtml = _addPageDivToBody({
+                DivId: 'synchstatus',
+                HeaderText: 'Synch Status',
+                content: content,
+                HideSearchButton: true,
+                HideRefreshButton: true
+            });
+
             $divhtml.find('#ss_forcesynch')
                     .click(function (eventObj) { _processChanges(false); eventObj.preventDefault(); })
                     .end()
@@ -852,7 +907,14 @@
             {
                 if (!_checkPendingChanges() || confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'))
                 {
-                    _addPageDivToBody('', 1, 'loadingdiv', 'Please wait', '', 'Loading...', false, true, true, true);
+                    _addPageDivToBody({
+                        DivId: 'loadingdiv',
+                        HeaderText: 'Please wait',
+                        content: 'Loading...',
+                        HideSearchButton: true,
+                        HideOnlineButton: true,
+                        HideRefreshButton: true
+                    });
                     $.mobile.changePage($('#loadingdiv'), "fade", false, true);
                     setTimeout(function () { continueRefresh(DivId); }, opts.DivRemovalDelay);
                 }
@@ -962,7 +1024,14 @@
                         '<div id="' + DivId + '_searchresults"></div>';
 
 
-                    _addPageDivToBody(DivId, 1, DivId + '_searchdiv', 'Search', '', Html, false, true, false, false, 'arrow-u');
+                    _addPageDivToBody({
+                        ParentId: DivId,
+                        DivId: DivId + '_searchdiv',
+                        HeaderText: 'Search',
+                        content: Html,
+                        HideSearchButton: true,
+                        backicon: 'arrow-u'
+                    });
 
                     $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
 
