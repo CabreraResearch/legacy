@@ -12,6 +12,7 @@
             ConnectTestUrl: '/NbtMobileWeb/wsNBT.asmx/ConnectTest',
             UpdateUrl: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
             MainPageUrl: '/NbtMobileWeb/Main.html',
+            AuthenticateUrl: '/NbtMobileWeb/wsNBT.asmx/Authenticate',
             Theme: 'a',
             PollingInterval: 5000,
             DivRemovalDelay: 1000
@@ -24,10 +25,14 @@
 
         var rootid;
         var db;
+        var UserName;
+        var SessionId;
+
+
 
         _initDB(true, _waitForData);
-        reloadViews();
         _makeSynchStatusDiv();
+
 
         // case 20355 - error on browser refresh
         if (window.location.hash.length > 0)
@@ -51,10 +56,109 @@
             }
         }
 
+
+        //Sergei: 
+        //we need logic here that does the following : 
+        //if I have a SessionId value (meaning, the browser was not just reloaded)
+        //  proceed as usual refrewshing the current view;
+        //else 
+        //  if I have a sessions record where lastviewid is not null 
+        //     reload the view at lastviewid
+        //  else
+        //    if I have connectivity
+        //       present the login form
+        //    else 
+        //       say "sorry charlie"
+
+
+        var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
+        LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
+        LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
+        LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
+        _addPageDivToBody('', 0, 'logindiv', 'Login to ChemSW Fire Inspection', '', LoginContent, true, true, false, true);
+        $('#loginsubmit').click(onLoginSubmit);
+
+
+        //        _loadDivContents('', 0, 'viewsdiv', 'Views', true);
+
+        function onLoginSubmit(eventObj)
+        {
+            // authenticate here
+            UserName = $('#login_username').attr('value');
+            var Password = $('#login_password').attr('value');
+            var AccessId = $('#login_accessid').attr('value');
+
+            if (false == amOffline())
+            {
+
+                $.ajax({
+                    type: 'POST',
+                    url: opts.AuthenticateUrl,
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
+                    success: function (data, textStatus, XMLHttpRequest)
+                    {
+
+
+                        var $xml = $(data.d);
+
+
+                        SessionId = $xml.find('SessionId').text();
+                        if (SessionId != "")
+                        {
+                            _cacheSession(SessionId, UserName);
+
+                            console.log("Reloading views session id " + SessionId);
+                            reloadViews();
+
+                        } else
+                        {
+                            //Sergei: Where should we write this on the UI? 
+                            console.log($xml.find('AuthenticationStatus').text());
+
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown)
+                    {
+
+                        ErrorMessage = "Error: " + textStatus;
+                        if (null != errorThrown)
+                        {
+                            ErrorMessage += "; Exception: " + errorThrown.toString()
+                        }
+
+                        console.log("Foo: " + ErrorMessage);
+                    }
+                });
+            } // else
+            //            {
+
+            //                _DoSql('SELECT lastviewid FROM sessions where sessionid = ? ;',
+            //                   [SessionId],
+            //                   function (transaction, result)
+            //                   {
+            //                       if (result.rows.length > 0)
+            //                       {
+
+            //                           var LastViewId = result.rows.item(i)["lastviewid"];
+            //                           _loadDivContents('', 0, 'viewsdiv', 'Views', false);
+            //                       } else
+            //                       {
+            //                           
+            //                       }
+            //                   });
+
+            //            } //if-else we are offline
+
+
+        } //onLoginSubmit() 
+
         function reloadViews()
         {
             $('#viewsdiv').remove();
-            _loadDivContents('', 0, 'viewsdiv', 'Views', true, true);
+            _loadDivContents('', 0, 'viewsdiv', 'Views', false, true);
+
         }
 
         // ------------------------------------------------------------------------------------
@@ -116,6 +220,7 @@
                         });
                     } else
                     {
+                        console.log("got here 1");
                         _ajaxViewXml(DivId, function (xml)
                         {
                             if (level == 1)
@@ -171,7 +276,7 @@
                 url: opts.ViewUrl,
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
-                data: "{ ParentId: '" + DivId + "' }",
+                data: "{ SessionId: '" + SessionId + "', ParentId: '" + DivId + "'}",
                 success: function (data, textStatus, XMLHttpRequest)
                 {
                     var $xml = $(data.d);
@@ -194,6 +299,8 @@
         var onAfterAddDiv;
         function _processViewXml(ParentId, DivId, HeaderText, $xml, parentlevel, IsFirst, HideRefreshButton)
         {
+
+
             var content = _makeUL();
             currenttab = '';
 
@@ -214,12 +321,15 @@
                 IsFirst: IsFirst,
                 HideRefreshButton: HideRefreshButton
             });
-
             onAfterAddDiv($divhtml);
 
             // this replaces the link navigation
             if (!IsFirst)
+            {
+                console.log("got here 2");
                 $.mobile.changePage($('#' + DivId), "slide", false, true);
+
+            }
 
         } // _processViewXml()
 
@@ -1105,6 +1215,7 @@
             db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
             if (doreset)
             {
+                _DoSql('DROP TABLE IF EXISTS views; ', null, null);
                 _DoSql('DROP TABLE IF EXISTS views; ', null, function () { _createDb(OnSuccess); });
             } else
             {
@@ -1115,6 +1226,14 @@
 
         function _createDb(OnSuccess)
         {
+            _DoSql('CREATE TABLE IF NOT EXISTS configvars ' +
+                    '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
+                    '   varname TEXT NOT NULL, ' +
+                    '   varval TEXT);',
+                    null,
+                    null
+                    );
+
             _DoSql('CREATE TABLE IF NOT EXISTS views ' +
                     '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
                     '   rootid TEXT NOT NULL, ' +
@@ -1133,11 +1252,53 @@
             return true;
         }
 
+        function writeConfigVar(varname, varval)
+        {
+            _DoSql("select varval from configvars where varname=?;",
+                   [varname],
+                   function (transaction, result)
+                   {
+                       if (0 == result.rows.length)
+                       {
+                           _DoSql("insert into configvars (varname) values (  ? );",
+                           [varname],
+                           function () { _DoSql("update configvars set varval = ? where varname = ?", [varval, varname]); });
 
+                       } else
+                       {
+                           _DoSql("update configvars set varval = ? where varname = ?", [varval, varname]);
+                       } //if-else the configvar row already exists
+
+                   });
+        } //writeConfigVar() 
+
+        function readConfigVar_____NOT()
+        {
+
+            /*
+            This is the place where any rational developer would write a "readConfigVar()" fucntion. 
+            But you can't do that in Javascript: the call back in which you get the result of sql 
+            query is in a completely different scope from the one in which you want to capture the 
+            return value. Thus you have to do the sql to read the config vars table by hand 
+            in every case. 
+
+            So much for enapsulation. Jesus. 
+            */
+
+        } //readConfigVar_____NOT()
 
         // ------------------------------------------------------------------------------------
         // Persistance functions
         // ------------------------------------------------------------------------------------
+
+
+        function _cacheSession(sessionid, username)
+        {
+
+            writeConfigVar("username", username);
+            writeConfigVar("sessionid", sessionid);
+
+        } //_cacheSession()
 
 
         function _storeViewXml(rootid, rootname, viewxml)
@@ -1146,7 +1307,11 @@
             {
                 _DoSql('INSERT INTO views (rootid, rootname, viewxml, wasmodified) VALUES (?, ?, ?, 0);',
                        [rootid, rootname, viewxml],
-                       function () { }
+                       function (transaction, result)
+                       {
+                           writeConfigVar("lastviewid", [result.insertId]); 
+
+                       }
                        );
             }
         }
@@ -1274,7 +1439,8 @@
                         url: opts.UpdateUrl,
                         dataType: "json",
                         contentType: 'application/json; charset=utf-8',
-                        data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
+                        //data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
+                        data: "{ SessionId: '" + SessionId + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
                         success: function (data, textStatus, XMLHttpRequest)
                         {
                             var $xml = $(data.d);
