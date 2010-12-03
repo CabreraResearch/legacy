@@ -47,7 +47,8 @@
             content: 'Loading...',
             HideSearchButton: true,
             HideOnlineButton: true,
-            HideRefreshButton: true
+            HideRefreshButton: true,
+            HideLogoutButton: true
         });
 
         _makeSynchStatusDiv();
@@ -894,7 +895,7 @@
 
 
             var divhtml = '<div id="' + p.DivId + '" data-role="page">' +
-                          '<div data-role="header" data-theme="' + opts.Theme + '">';
+                          '<div data-role="header" data-theme="' + opts.Theme + '" data-position="fixed">';
             divhtml += '<a href="#' + p.ParentId + '" id="' + p.DivId + '_back" data-back="true" ';
             if (p.backtransition != undefined)
                 divhtml += ' data-transition="' + p.backtransition + '" ';
@@ -917,7 +918,7 @@
                        '  <div data-role="content" data-theme="' + opts.Theme + '">' +
                             p.content +
                        '  </div>' +
-                       '  <div data-role="footer" data-theme="' + opts.Theme + '">';
+                       '  <div data-role="footer" data-theme="' + opts.Theme + '" data-position="fixed">';
             if (!p.HideOnlineButton)
             {
                 divhtml += '    <a href="#" id="' + p.DivId + '_gosynchstatus" data-transition="slideup">';
@@ -1107,7 +1108,7 @@
         {
             _clearSession(function () { 
                 // reloading browser window is the easiest way to reset
-                window.location.href = window.location.href;
+                window.location.href = window.location.pathname;
             });
         }
 
@@ -1123,7 +1124,8 @@
                         content: 'Loading...',
                         HideSearchButton: true,
                         HideOnlineButton: true,
-                        HideRefreshButton: true
+                        HideRefreshButton: true,
+                        HideLogoutButton: true
                     });
                     $.mobile.changePage($('#loadingdiv'), "fade", false, true);
                     setTimeout(function () { continueRefresh(DivId); }, opts.DivRemovalDelay);
