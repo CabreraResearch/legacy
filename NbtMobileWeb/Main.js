@@ -52,7 +52,7 @@
 
         _makeSynchStatusDiv();
 
-        _initDB(true, function ()
+        _initDB(false, function ()
         {
             //_waitForData();
 
@@ -97,7 +97,8 @@
                 HeaderText: 'Login to ChemSW Fire Inspection',
                 content: LoginContent,
                 HideSearchButton: true,
-                HideRefreshButton: true
+                HideRefreshButton: true,
+                HideLogoutButton: true
             });
             $('#loginsubmit').click(onLoginSubmit);
             if(ChangePage)
@@ -111,7 +112,8 @@
                 HeaderText: 'Sorry Charlie!',
                 content: 'You must have internet connectivity to login.',
                 HideSearchButton: true,
-                HideRefreshButton: true
+                HideRefreshButton: true,
+                HideLogoutButton: true
             });
             if(ChangePage)
                 $.mobile.changePage($('#sorrycharliediv'), 'fade', false, true);
@@ -880,6 +882,7 @@
                 HideSearchButton: false,
                 HideOnlineButton: false,
                 HideRefreshButton: false,
+                HideLogoutButton: false,
                 backicon: undefined,
                 backtransition: undefined
             };
@@ -926,6 +929,8 @@
             }
             if (!p.HideRefreshButton)
                 divhtml += '    <a href="#" id="' + p.DivId + '_refresh" class="refresh">Refresh</a>';
+            if (!p.HideLogoutButton)
+                divhtml += '    <a href="#" id="' + p.DivId + '_logout">Logout</a>';
             divhtml += '  </div>' +
                        '</div>';
 
@@ -966,6 +971,9 @@
                 .end()
                 .find('#' + DivId + '_refresh')
                 .click(function (e) { e.stopPropagation(); e.preventDefault(); return onRefresh(DivId, e); })
+                .end()
+                .find('#' + DivId + '_logout')
+                .click(function (e) { e.stopPropagation(); e.preventDefault(); return onLogout(DivId, e); })
                 .end()
                 .find('#' + DivId + '_back')
                 .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
@@ -1094,6 +1102,14 @@
             }
 
         } //onLoginSubmit() 
+
+        function onLogout(DivId, eventObj)
+        {
+            _clearSession(function () { 
+                // reloading browser window is the easiest way to reset
+                window.location.href = window.location.href;
+            });
+        }
 
         function onRefresh(DivId, eventObj)
         {
@@ -1343,7 +1359,7 @@
             return true;
         }
 
-        function writeConfigVar(varname, varval)
+        function writeConfigVar(varname, varval, onsuccess)
         {
             _DoSql("select varval from configvars where varname=?;",
                    [varname],
@@ -1351,12 +1367,21 @@
                    {
                        if (0 == result.rows.length)
                        {
-                           _DoSql("insert into configvars (varname, varval) values ( ?, ? );", [varname, varval]);
+                           _DoSql("insert into configvars (varname, varval) values ( ?, ? );", 
+                                  [varname, varval], 
+                                  function(){ 
+                                    if(onsuccess != undefined) 
+                                      onsuccess(); 
+                                  });
                        } else
                        {
-                           _DoSql("update configvars set varval = ? where varname = ?", [varval, varname]);
+                           _DoSql("update configvars set varval = ? where varname = ?",
+                                  [varval, varname], 
+                                  function(){ 
+                                    if(onsuccess != undefined) 
+                                      onsuccess(); 
+                                  });
                        } //if-else the configvar row already exists
-
                    });
         } //writeConfigVar() 
 
@@ -1383,13 +1408,25 @@
         // ------------------------------------------------------------------------------------
 
 
-        function _cacheSession(sessionid, username)
+        function _cacheSession(sessionid, username, onsuccess)
         {
-
-            writeConfigVar("username", username);
-            writeConfigVar("sessionid", sessionid);
-
+            writeConfigVar('username', username, function() { 
+                writeConfigVar('sessionid', sessionid, function () { 
+                    if(onsuccess != undefined) 
+                        onsuccess(); 
+                });
+            });
         } //_cacheSession()
+
+        function _clearSession(onsuccess)
+        {
+            writeConfigVar('username', '', function() { 
+                writeConfigVar('sessionid', '', function () { 
+                    if(onsuccess != undefined) 
+                        onsuccess(); 
+                });
+            });
+        } //_clearSession()
 
 
         function _storeViewXml(rootid, rootname, viewxml)
