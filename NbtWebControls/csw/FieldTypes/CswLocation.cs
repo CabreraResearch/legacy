@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Data;
 using ChemSW.Nbt;
@@ -162,6 +163,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         private CswImageButton _ClearButton;
         private CswImageButton _EditButton;
         private RadTreeView _TreeView;
+        private HtmlGenericControl _Div;
 
         protected override void CreateChildControls()
         {
@@ -189,11 +191,16 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 {
                     if( _RelationshipMode )
                     {
+                        _Div = new HtmlGenericControl( "div" );
+                        _Div.ID = "loctreediv";
+                        _Div.Attributes.Add("class", "loctreediv");
+                        this.Controls.Add( _Div );
+
                         _TreeView = new RadTreeView();
                         _TreeView.ID = "relationshiptree";
                         _TreeView.EnableEmbeddedSkins = false;
                         _TreeView.Skin = "ChemSW";
-                        this.Controls.Add( _TreeView );
+                        _Div.Controls.Add( _TreeView );
                     }
                     else
                     {
@@ -245,6 +252,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     if( _RelationshipMode )
                     {
                         _TreeView.Visible = true;
+                        _Div.Visible = true;
                         _TreeView.ExpandAllNodes();   // BZ 7745
                     }
                     else

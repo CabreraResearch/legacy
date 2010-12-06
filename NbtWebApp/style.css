@@ -1018,6 +1018,12 @@ body a
     border: 1px solid #336699;
     overflow: auto;
 }
+.loctreediv
+{
+    border: 1px solid #336699;
+    overflow: auto;
+    height: 100px;
+}
 
 
 .StatisticsTable
