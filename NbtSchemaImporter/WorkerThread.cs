@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
 {
     class WorkerThread
     {
-        private ICswDbCfgInfo _CswDbCfgInfoNbt = null;
+        private CswDbCfgInfoNbt _CswDbCfgInfoNbt = null;
         private CswSetupVblsNbt _CswSetupVblsNbt = null;
         private ICswLogger _CswLogger = null;
         private CswNbtResources _CswNbtResources = null;
@@ -73,17 +73,17 @@ namespace ChemSW.Nbt.Schema
         {
             //_CswNbtObjClassFactory = new CswNbtObjClassFactory();
 
-            _CswNbtResources = new CswNbtResources( AppType.SchemInit, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactory, 
-                                                    false, false );
-            _CswNbtResources.SetDbResources( new CswNbtTreeFactory( _ConfigurationPath ) );
+            //_CswNbtResources = new CswNbtResources( AppType.SchemInit, _CswSetupVblsNbt, _CswDbCfgInfoNbt, false, false );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ) );
+            //_CswNbtResources.SetDbResources( new CswNbtTreeFactory( _ConfigurationPath ) );
 
-            _CswNbtMetaDataEvents = new CswNbtMetaDataEvents( _CswNbtResources );
-            _CswNbtResources.OnMakeNewNodeType += new CswNbtResources.NewNodeTypeEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeType );
-            _CswNbtResources.OnCopyNodeType += new CswNbtResources.CopyNodeTypeEventHandler( _CswNbtMetaDataEvents.OnCopyNodeType );
-            _CswNbtResources.OnMakeNewNodeTypeProp += new CswNbtResources.NewNodeTypePropEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeTypeProp );
-            _CswNbtResources.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypePropName );
-            _CswNbtResources.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( _CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
-            _CswNbtResources.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypeName );
+            //_CswNbtMetaDataEvents = new CswNbtMetaDataEvents( _CswNbtResources );
+            //_CswNbtResources.OnMakeNewNodeType += new CswNbtResources.NewNodeTypeEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeType );
+            //_CswNbtResources.OnCopyNodeType += new CswNbtResources.CopyNodeTypeEventHandler( _CswNbtMetaDataEvents.OnCopyNodeType );
+            //_CswNbtResources.OnMakeNewNodeTypeProp += new CswNbtResources.NewNodeTypePropEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeTypeProp );
+            //_CswNbtResources.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypePropName );
+            //_CswNbtResources.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( _CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
+            //_CswNbtResources.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypeName );
 
             _CswLogger = _CswNbtResources.CswLogger;
 
@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtImportExport Exporter = new CswNbtImportExport( _CswNbtResources );
                 Exporter.OnStatusUpdate += new CswNbtImportExport.StatusUpdateHandler( SetStatus );
-                
+
                 XmlDocument ExportXml = Exporter.ExportAll( SelectedNodeTypes, ExportViews, ExportNodes );
 
                 FileInfo DestinationFile = new FileInfo( FilePath );

@@ -42,7 +42,7 @@ namespace ChemSW.Nbt
             CswSetupVblsNbt CswSetupVbls = new CswSetupVblsNbt( SetupMode.Web );
             CswDbCfgInfoNbt CswDbCfgInfo = new CswDbCfgInfoNbt( SetupMode.Web );
             string ConfigurationFilePath = CswTools.getConfigurationFilePath( SetupMode.Web );
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswSetupVbls, CswDbCfgInfo, ConfigurationFilePath );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, CswSetupVbls, CswDbCfgInfo, ConfigurationFilePath );
             _CswAuthenticator = new CswAuthenticator( _CswNbtResources, new CswNbtAuthenticator( _CswNbtResources ), _CswNbtResources.MD5Seed );
             _CswSessionStorageDb = new Session.CswSessionStorageDb( AppType.Nbt, CswSetupVbls, CswDbCfgInfo, false );
         }//ctor

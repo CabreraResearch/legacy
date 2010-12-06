@@ -62,7 +62,7 @@ namespace ChemSW.Nbt
             }
             else
             {
-                CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswSetupVblsNbt, CswDbCfgInfoNbt, FilesPath );
+                CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, FilesPath );
 
                 /*
                 CswNbtResources = new CswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, //CswNbtObjClassFactory, 

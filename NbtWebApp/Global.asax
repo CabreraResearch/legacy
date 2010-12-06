@@ -6,13 +6,13 @@
 <%@ Import Namespace="ChemSW.Session" %>
 <%@ Import Namespace="ChemSW.Nbt" %>
 <%@ Import Namespace="ChemSW.Nbt.Config" %>
+<%@ Import Namespace="ChemSW.Core" %>
 <%@ Import Namespace="ChemSW.Nbt.ObjClasses" %>
 <%@ Import Namespace="ChemSW.Nbt.TreeEvents" %>
 <%@ Import Namespace="ChemSW.Nbt.Statistics" %>
 <%@ Import Namespace="System.Collections.Specialized" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <%@ Import Namespace="ChemSW.Exceptions" %>
-
 <script RunAt="server">
 
     void Application_Start( object sender, EventArgs e )
@@ -74,10 +74,10 @@
             //FilesPath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc";
             CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Web );
             CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Web );
-            CswNbtResources = new CswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt,// new CswNbtObjClassFactory(), 
-                                                   true, false );
+            //CswNbtResources = new CswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, true, false );
+            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ) ); 
         }
-        catch ( Exception Exception )
+        catch( Exception Exception )
         {
             //This should show up in the event viewer
             throw ( new Exception( "ChemSW, Inc., NBT could not set set up resources in the global Session_End event: " + Exception.Message ) );
@@ -98,15 +98,15 @@
 
             //If the user hits any page, he'll have a session, but he won't necessarily have authenticated 
             CswSessionStorageDb CswSessionStorageDb = new CswSessionStorageDb( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, false );
-            if ( null != CswSessionsListEntry )
+            if( null != CswSessionsListEntry )
             {
-                if ( CswSessionsListEntry.TimedOut ) //bz # 9940
+                if( CswSessionsListEntry.TimedOut ) //bz # 9940
                 {
 
                     CswSessionStorageDb.remove( CswSessionsListEntry.SessionId );
 
                     CswNbtStatisticsStorageStateServer CswNbtStatisticsStorageStateServer = new CswNbtStatisticsStorageStateServer( Session );
-                    if ( null != CswNbtStatisticsStorageStateServer.CswNbtStatisticsEntry )
+                    if( null != CswNbtStatisticsStorageStateServer.CswNbtStatisticsEntry )
                     {
                         CswNbtResources.AccessId = CswNbtStatisticsStorageStateServer.CswNbtStatisticsEntry.AccessId;
                         CswNbtStatisticsStorageDb CswNbtStatisticsStorageDb = new CswNbtStatisticsStorageDb( CswNbtResources );
@@ -122,19 +122,19 @@
                 }//if else-sesson timed out
 
                 //bz # 10001: purge expired sessions
-                if ( ( false == CswSetupVblsNbt.doesSettingExist( "PurgeExpiredSessionsOnEndSession" ) ) || ( "1" == CswSetupVblsNbt.readSetting( "PurgeExpiredSessionsOnEndSession" ) ) )
+                if( ( false == CswSetupVblsNbt.doesSettingExist( "PurgeExpiredSessionsOnEndSession" ) ) || ( "1" == CswSetupVblsNbt.readSetting( "PurgeExpiredSessionsOnEndSession" ) ) )
                 {
                     ArrayList SessionIdsToRemove = new ArrayList();
                     SortedList<string, CswSessionsListEntry> CurrentSessions = CswSessionStorageDb.AllSessions;
-                    foreach ( CswSessionsListEntry Entry in CurrentSessions.Values )
+                    foreach( CswSessionsListEntry Entry in CurrentSessions.Values )
                     {
-                        if ( Entry.TimeoutDate < DateTime.Now )
+                        if( Entry.TimeoutDate < DateTime.Now )
                         {
                             SessionIdsToRemove.Add( Entry.SessionId );
                         }
                     }
 
-                    foreach ( string SessionId in SessionIdsToRemove )
+                    foreach( string SessionId in SessionIdsToRemove )
                     {
                         CswSessionStorageDb.remove( SessionId );
                     }
@@ -145,11 +145,10 @@
 
         }//try
 
-        catch ( Exception Excepton )
+        catch( Exception Excepton )
         {
             CswNbtResources.logError( Excepton );
         }//catch
     }
        
 </script>
-
