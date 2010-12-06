@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Schema
             //_CswNbtObjClassFactory = new CswNbtObjClassFactory();
 
             //_CswNbtResources = new CswNbtResources( AppType.SchemInit, _CswSetupVblsNbt, _CswDbCfgInfoNbt, false, false );
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ) );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ), false, false  );
             //_CswNbtResources.SetDbResources( new CswNbtTreeFactory( _ConfigurationPath ) );
 
             //_CswNbtMetaDataEvents = new CswNbtMetaDataEvents( _CswNbtResources );

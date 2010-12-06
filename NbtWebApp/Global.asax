@@ -75,7 +75,7 @@
             CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Web );
             CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Web );
             //CswNbtResources = new CswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, true, false );
-            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ) ); 
+            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ), true, false );
         }
         catch( Exception Exception )
         {

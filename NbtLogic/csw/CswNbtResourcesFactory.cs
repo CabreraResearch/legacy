@@ -28,9 +28,9 @@ namespace ChemSW.Nbt
     /// </summary>
     public class CswNbtResourcesFactory
     {
-        public static CswNbtResources makeCswNbtResources( AppType AppType, CswSetupVblsNbt CswSetupVblsNbt, CswDbCfgInfoNbt CswDbCfgInfoNbt, string FilesPath )
+        public static CswNbtResources makeCswNbtResources( AppType AppType, CswSetupVblsNbt CswSetupVblsNbt, CswDbCfgInfoNbt CswDbCfgInfoNbt, string FilesPath, bool ExcludeDisabledModules, bool IsDeleteModeLogical )
         {
-            CswNbtResources ReturnVal = new CswNbtResources( AppType, CswSetupVblsNbt, CswDbCfgInfoNbt, true, false );
+            CswNbtResources ReturnVal = new CswNbtResources( AppType, CswSetupVblsNbt, CswDbCfgInfoNbt, ExcludeDisabledModules, IsDeleteModeLogical );
             ReturnVal.SetDbResources( new CswNbtTreeFactory( FilesPath ) );
 
             //bz # 9896: This events must only be assigned when we first instance the class;

@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
             _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Executable );
 
 
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ) );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ) , false, false );
 
             //_CswNbtObjClassFactory = new CswNbtObjClassFactory();
 

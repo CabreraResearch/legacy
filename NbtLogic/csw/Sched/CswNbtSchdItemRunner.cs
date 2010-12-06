@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.Sched
 
             //_CswNbtObjClassFactory = new CswNbtObjClassFactory();
             //_CswNbtResources = new CswNbtResources( AppType.Sched, _CswSetupVblsNbt, _CswDbCfgInfoNbt, true, false );
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Sched, _CswSetupVblsNbt, _CswDbCfgInfoNbt , CswTools.getConfigurationFilePath( SetupMode.Executable ) ); 
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Sched, _CswSetupVblsNbt, _CswDbCfgInfoNbt , CswTools.getConfigurationFilePath( SetupMode.Executable ), true, false ); 
 
             _CswNbtResources.SetDbResources( new CswNbtTreeFactory( _Path ) );
 
