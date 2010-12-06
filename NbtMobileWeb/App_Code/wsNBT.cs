@@ -13,6 +13,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Session;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -27,19 +28,39 @@ namespace ChemSW.Nbt.WebServices
     {
         #region Session and Resource Management
 
-        private CswNbtWebServiceResources _CswNbtWebServiceResources;
-
-        private void start()
+        private CswNbtWebServiceResources __CswNbtWebServiceResources;
+        private CswNbtWebServiceResources _CswNbtWebServiceResources
         {
-            _CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
-                                                                        Context.Session,
-                                                                        Context.Request,
-                                                                        Context.Response,
-                                                                        string.Empty,
-                                                                        System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
-                                                                        SetupMode.Web );
-            _CswNbtWebServiceResources.startSession();
-        }
+            get
+            {
+                if( null == __CswNbtWebServiceResources )
+                {
+                    __CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
+                                                                                Context.Session,
+                                                                                Context.Request,
+                                                                                Context.Response,
+                                                                                string.Empty,
+                                                                                System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
+                                                                                SetupMode.Web );
+                }//if not created yet
+
+                return ( __CswNbtWebServiceResources ); 
+            }//get
+        }//_CswNbtWebServiceResources
+
+        private AuthenticationStatus start( string SessionId, ref string ExotericAuthenticationResult )
+        {
+            string EuphemisticAuthenticationStatus = string.Empty;
+            AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.startSession( SessionId, ref EuphemisticAuthenticationStatus );
+
+            ExotericAuthenticationResult = "<AuthenticationStatus>" + EuphemisticAuthenticationStatus + "</AuthenticationStatus>";
+
+            return ( AuthenticationStatus );
+
+        }//start() 
+
+
+
         private void end()
         {
             _CswNbtWebServiceResources.endSession( EndSessionMode.esmCommit );
@@ -61,6 +82,64 @@ namespace ChemSW.Nbt.WebServices
 
         #region Web Methods
 
+
+        [WebMethod]
+        public string Authenticate( string AccessId, string UserName, string Password )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                string ExotericAuthenticationResult = string.Empty;
+
+                string EuphemisticAuthenticationStatus = string.Empty;
+                string SessionId = string.Empty;
+                AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.authenticate( AccessId, UserName, Password, ref EuphemisticAuthenticationStatus, ref SessionId );
+                ExotericAuthenticationResult = "<AuthenticationStatus>" + EuphemisticAuthenticationStatus + "</AuthenticationStatus>";
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    ReturnVal = "<SessionId>" + SessionId + "</SessionId>";
+                }
+
+                ReturnVal += ExotericAuthenticationResult;
+
+                ReturnVal = result( ReturnVal );
+
+                end();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+
+            return ( ReturnVal );
+
+        }//Authenticate()
+
+
+        [WebMethod]
+        public string deAuthenticate( string SessionId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                __CswNbtWebServiceResources.deAuthenticate( SessionId ); 
+                ReturnVal = result( "SessionId " + SessionId + " removed"  );
+
+                end();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+
+            return ( ReturnVal );
+
+        }//Authenticate()
+
+
         [WebMethod( EnableSession = true )]
         public string ConnectTest()
         {
@@ -79,44 +158,62 @@ namespace ChemSW.Nbt.WebServices
         }
 
 
-        [WebMethod( EnableSession = true )]
-        public string UpdateProperties( string ParentId, string UpdatedViewXml )
+        [WebMethod]
+        public string UpdateProperties( string SessionId , string ParentId, string UpdatedViewXml )
         {
             string ReturnVal = string.Empty;
             try
             {
-                start();
+                string EuphemisticAuthenticationStatus = string.Empty;
+                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
+                {
 
-                CswNbtWebServiceUpdateProperties wsUP = new CswNbtWebServiceUpdateProperties( _CswNbtWebServiceResources );
-                ReturnVal = result( wsUP.Run( ParentId, UpdatedViewXml ) );
+                    CswNbtWebServiceUpdateProperties wsUP = new CswNbtWebServiceUpdateProperties( _CswNbtWebServiceResources );
+                    ReturnVal = result( wsUP.Run( ParentId, UpdatedViewXml ) );
 
-                end();
+                    end();
+                }
+                else
+                {
+                    ReturnVal = result( EuphemisticAuthenticationStatus );
+                }
             }
+
             catch( Exception ex )
             {
                 ReturnVal = error( ex );
             }
+
             return ( ReturnVal );
         } // UpdateProperties()
 
 
-        [WebMethod( EnableSession = true )]
-        public string RunView( string ParentId )
+        [WebMethod]
+        public string RunView( string SessionId, string ParentId )
         {
             string ReturnVal = string.Empty;
             try
             {
-                start();
+                string EuphemisticAuthenticationStatus = string.Empty;
+                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
+                {
 
-                CswNbtWebServiceView wsView = new CswNbtWebServiceView( _CswNbtWebServiceResources );
-                ReturnVal = result( wsView.Run( ParentId ) );
+                    CswNbtWebServiceView wsView = new CswNbtWebServiceView( _CswNbtWebServiceResources );
+                    ReturnVal = result( wsView.Run( ParentId ) );
 
-                end();
+                    end();
+                }
+                else
+                {
+                    ReturnVal = result( EuphemisticAuthenticationStatus );
+                }
             }
+
             catch( Exception ex )
             {
                 ReturnVal = error( ex );
             }
+
             return ( ReturnVal );
         } // RunView()
 

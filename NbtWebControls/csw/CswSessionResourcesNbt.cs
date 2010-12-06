@@ -62,6 +62,9 @@ namespace ChemSW.Nbt
             }
             else
             {
+                CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, FilesPath, true, false );
+
+                /*
                 CswNbtResources = new CswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, //CswNbtObjClassFactory, 
                                                        true, false );
                 CswNbtResources.SetDbResources( new CswNbtTreeFactory( FilesPath ) );
@@ -75,6 +78,7 @@ namespace ChemSW.Nbt
                 CswNbtResources.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypePropName );
                 CswNbtResources.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( _CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
                 CswNbtResources.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypeName );
+                 * */
 
                 _UsedCachedResources = false;
             }
@@ -156,7 +160,7 @@ namespace ChemSW.Nbt
             get
             {
                 ICswResources ret = null;
-                if ( _HttpSessionState["CswNbtResources"] != null )
+                if( ( null != _HttpSessionState ) && ( _HttpSessionState["CswNbtResources"] != null ) )
                     ret = _HttpSessionState["CswNbtResources"] as ICswResources;
                 return ret;
             }

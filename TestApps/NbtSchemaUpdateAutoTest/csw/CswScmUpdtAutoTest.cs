@@ -30,9 +30,9 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
         private CswNbtResources _CswNbtResources = null;
         private CswDbCfgInfoNbt _CswDbCfgInfoNbt = null;
         private CswSetupVblsNbt _CswSetupVblsNbt = null;
-        private CswNbtObjClassFactory _CswNbtObjClassFactory = null; 
-        private CswNbtMetaDataEvents _CswNbtMetaDataEvents = null; 
-        private ICswLogger _CswLogger = null; 
+        private CswNbtObjClassFactory _CswNbtObjClassFactory = null;
+        private CswNbtMetaDataEvents _CswNbtMetaDataEvents = null;
+        private ICswLogger _CswLogger = null;
         CswScmUpdt_CollectionOfTestCases _CswSchemaUpdaterTestCaseCollection = null;
 
         public delegate void UpdateTestWriteMessage( string Message );
@@ -49,19 +49,21 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
             _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Executable );
             _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Executable );
 
+
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ) , false, false );
+
             //_CswNbtObjClassFactory = new CswNbtObjClassFactory();
 
-            _CswNbtResources = new CswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactory, 
-                                                    false, false );
-            _CswNbtResources.SetDbResources( new CswNbtTreeFactory( ConfigurationPath ) );
+            //_CswNbtResources = new CswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, false, false );
+            //_CswNbtResources.SetDbResources( new CswNbtTreeFactory( ConfigurationPath ) );
 
-            _CswNbtMetaDataEvents = new CswNbtMetaDataEvents( _CswNbtResources );
-            _CswNbtResources.OnMakeNewNodeType += new CswNbtResources.NewNodeTypeEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeType );
-            _CswNbtResources.OnCopyNodeType += new CswNbtResources.CopyNodeTypeEventHandler( _CswNbtMetaDataEvents.OnCopyNodeType );
-            _CswNbtResources.OnMakeNewNodeTypeProp += new CswNbtResources.NewNodeTypePropEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeTypeProp );
-            _CswNbtResources.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypePropName );
-            _CswNbtResources.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( _CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
-            _CswNbtResources.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypeName );
+            //_CswNbtMetaDataEvents = new CswNbtMetaDataEvents( _CswNbtResources );
+            //_CswNbtResources.OnMakeNewNodeType += new CswNbtResources.NewNodeTypeEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeType );
+            //_CswNbtResources.OnCopyNodeType += new CswNbtResources.CopyNodeTypeEventHandler( _CswNbtMetaDataEvents.OnCopyNodeType );
+            //_CswNbtResources.OnMakeNewNodeTypeProp += new CswNbtResources.NewNodeTypePropEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeTypeProp );
+            //_CswNbtResources.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypePropName );
+            //_CswNbtResources.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( _CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
+            //_CswNbtResources.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypeName );
 
             _CswLogger = _CswNbtResources.CswLogger;
 
@@ -87,7 +89,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
         {
 
             ArrayList AccessIds = new ArrayList( _CswDbCfgInfoNbt.AccessIds );
-            foreach ( string CurrentAccessId in AccessIds )
+            foreach( string CurrentAccessId in AccessIds )
             {
                 _CswNbtResources.AccessId = CurrentAccessId;
                 _CswNbtResources.refreshDataDictionary();
@@ -98,9 +100,9 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
                 Int32 FailedTests = 0;
 
                 List<CswScmUpdt_TstCse> TestCasesToRun = new List<CswScmUpdt_TstCse>();
-                foreach ( CswScmUpdt_TstCse CurrentTest in _CswSchemaUpdaterTestCaseCollection )
+                foreach( CswScmUpdt_TstCse CurrentTest in _CswSchemaUpdaterTestCaseCollection )
                 {
-                    if ( NamesOfTestsToRun.Contains( CurrentTest.Name ) )
+                    if( NamesOfTestsToRun.Contains( CurrentTest.Name ) )
                     {
                         TestCaseCount++;
                         TestCasesToRun.Add( CurrentTest );
@@ -110,7 +112,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
                 WriteMessage( "***Initiating execution of " + TestCaseCount.ToString() + " test cases on AccessId " + CurrentAccessId.ToString() );
                 Int32 Counter = 0;
                 double TotalSeconds = 0;
-                foreach ( CswScmUpdt_TstCse CurrentTest in TestCasesToRun )
+                foreach( CswScmUpdt_TstCse CurrentTest in TestCasesToRun )
                 {
                     try
                     {
@@ -132,13 +134,13 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
                         SuccededTests++;
                     }
 
-                    catch ( CswScmUpdt_Exception CswSchemaUpdaterTestException )
+                    catch( CswScmUpdt_Exception CswSchemaUpdaterTestException )
                     {
                         WriteMessage( "Test Case Failed -- Test " + CurrentTest.Name + " threw " + CswSchemaUpdaterTestException.Message );
                         FailedTests++;
                     }//
 
-                    catch ( Exception Exception )
+                    catch( Exception Exception )
                     {
                         WriteMessage( "Test Process Failed: " + CurrentTest.Name + " -- " + Exception.Message );
                         FailedTests++;
