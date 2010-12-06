@@ -28,23 +28,23 @@ namespace ChemSW.Nbt
     /// </summary>
     public class CswNbtResourcesFactory
     {
-        public static CswNbtResources makeCswNbtResources( CswSetupVblsNbt CswSetupVblsNbt, CswDbCfgInfoNbt CswDbCfgInfoNbt , string FilesPath  )
+        public static CswNbtResources makeCswNbtResources( AppType AppType, CswSetupVblsNbt CswSetupVblsNbt, CswDbCfgInfoNbt CswDbCfgInfoNbt, string FilesPath, bool ExcludeDisabledModules, bool IsDeleteModeLogical )
         {
-                CswNbtResources ReturnVal = new CswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt,  true, false );
-                ReturnVal.SetDbResources( new CswNbtTreeFactory( FilesPath ) );
+            CswNbtResources ReturnVal = new CswNbtResources( AppType, CswSetupVblsNbt, CswDbCfgInfoNbt, ExcludeDisabledModules, IsDeleteModeLogical );
+            ReturnVal.SetDbResources( new CswNbtTreeFactory( FilesPath ) );
 
-                //bz # 9896: This events must only be assigned when we first instance the class;
-                //if we also assign them to cached resources, we get duplicate events occuring :-(
-                CswNbtMetaDataEvents CswNbtMetaDataEvents = new CswNbtMetaDataEvents( ReturnVal );
-                ReturnVal.OnMakeNewNodeType += new CswNbtResources.NewNodeTypeEventHandler( CswNbtMetaDataEvents.OnMakeNewNodeType );
-                ReturnVal.OnCopyNodeType += new CswNbtResources.CopyNodeTypeEventHandler( CswNbtMetaDataEvents.OnCopyNodeType );
-                ReturnVal.OnMakeNewNodeTypeProp += new CswNbtResources.NewNodeTypePropEventHandler( CswNbtMetaDataEvents.OnMakeNewNodeTypeProp );
-                ReturnVal.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( CswNbtMetaDataEvents.OnEditNodeTypePropName );
-                ReturnVal.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
-                ReturnVal.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( CswNbtMetaDataEvents.OnEditNodeTypeName );
+            //bz # 9896: This events must only be assigned when we first instance the class;
+            //if we also assign them to cached resources, we get duplicate events occuring :-(
+            CswNbtMetaDataEvents CswNbtMetaDataEvents = new CswNbtMetaDataEvents( ReturnVal );
+            ReturnVal.OnMakeNewNodeType += new CswNbtResources.NewNodeTypeEventHandler( CswNbtMetaDataEvents.OnMakeNewNodeType );
+            ReturnVal.OnCopyNodeType += new CswNbtResources.CopyNodeTypeEventHandler( CswNbtMetaDataEvents.OnCopyNodeType );
+            ReturnVal.OnMakeNewNodeTypeProp += new CswNbtResources.NewNodeTypePropEventHandler( CswNbtMetaDataEvents.OnMakeNewNodeTypeProp );
+            ReturnVal.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( CswNbtMetaDataEvents.OnEditNodeTypePropName );
+            ReturnVal.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
+            ReturnVal.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( CswNbtMetaDataEvents.OnEditNodeTypeName );
 
 
-                return ( ReturnVal ); 
+            return ( ReturnVal );
         }
     } // CswNbtResourcesFactory
 
