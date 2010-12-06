@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.PropTypes
                 _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
                 _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
 
-                if( _PropRow[column.ToString()] != CswConvert.ToDbVal( value ) )
+                if( !( _PropRow[column.ToString()].Equals( CswConvert.ToDbVal( value ) ) ) )
                 {
                     WasModified = true;
                     _PropRow[column.ToString()] = CswConvert.ToDbVal( value );
