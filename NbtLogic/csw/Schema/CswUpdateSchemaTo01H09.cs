@@ -54,10 +54,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp FinishedOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( FinishedOCP, CswNbtSubField.SubFieldName.Checked, false );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FinishedOCP, "isrequired", CswConvert.ToDbVal( true ) );
-            
+
             CswNbtMetaDataObjectClassProp CancelledOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CancelledOCP, "isrequired", CswConvert.ToDbVal( true ) );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CancelledOCP, CswNbtSubField.SubFieldName.Checked, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CancelledOCP, "hideinmobile", CswConvert.ToDbVal( true ) );
 
             // Update existing values
             foreach( CswNbtMetaDataNodeType InspectionDesignNT in InspectionDesignOC.NodeTypes )
