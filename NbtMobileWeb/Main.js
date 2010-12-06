@@ -564,8 +564,6 @@
             var FieldType = $xmlitem.attr('fieldtype');
             var PropName = $xmlitem.attr('name');
 
-            var Html = '<span id="' + IdStr + '_propname">' + PropName + '</span><br/>';
-
             // Subfield values
             var sf_text = $xmlitem.children('text').text();
             var sf_value = $xmlitem.children('value').text();
@@ -590,6 +588,11 @@
             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
             if (sf_comments == undefined) sf_comments = '';
             if (sf_compliantanswers == undefined) sf_compliantanswers = '';
+
+            var Html = '<div id="' + IdStr + '_propname"';
+            if (FieldType == "Question" && !(sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
+                Html += ' class="OOC"'
+            Html += '>' + PropName + '</div><br/>';
 
             switch (FieldType)
             {
