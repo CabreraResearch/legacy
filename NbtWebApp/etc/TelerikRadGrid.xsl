@@ -54,27 +54,23 @@
         </xsl:element>
         <xsl:text>
         </xsl:text>
-        <xsl:element name="Action">
-          <![CDATA[<table border="0" cellpadding="0" cellspacing="0" style="border: 0px solid black; margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px;">
-                     <tr>
-                       <td style="border: 0px solid black; margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px;">
-                         <div title="Edit" class="divbutton" style="background: url('Images/buttons/buttons18.gif') 0px -54px no-repeat;" 
+        <xsl:element name="Edit">
+          <![CDATA[<div title="Edit" class="divbutton" style="background: url('Images/buttons/buttons18.gif') 0px -54px no-repeat;" 
                               onmouseover="this.style.backgroundPosition = '-18px -54px';"
                               onmouseout="this.style.backgroundPosition = '0px -54px';"
                               onclick="openEditNodePopup(']]><xsl:call-template name="makejavascriptsafe">
                                                                <xsl:with-param name="string" select="@key"/>
-                                                             </xsl:call-template><![CDATA[');" />&nbsp;
-                      </td>
-                      <td style="border: 0px solid black; margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px;">
-                        <div title="Delete" class="divbutton" style="background: url('Images/buttons/buttons18.gif') 0px -72px no-repeat;" 
+                                                             </xsl:call-template><![CDATA[');" />]]>
+        </xsl:element>
+        <xsl:text>
+        </xsl:text>
+        <xsl:element name="Delete">
+          <![CDATA[<div title="Delete" class="divbutton" style="background: url('Images/buttons/buttons18.gif') 0px -72px no-repeat;" 
                              onmouseover="this.style.backgroundPosition = '-18px -72px';"
                              onmouseout="this.style.backgroundPosition = '0px -72px';"
                              onclick="openDeleteNodePopup(']]><xsl:call-template name="makejavascriptsafe">
                                                                 <xsl:with-param name="string" select="@key"/>
-                                                              </xsl:call-template><![CDATA[');" />
-                      </td>
-                     </tr>
-                   </table>]]>
+                                                              </xsl:call-template><![CDATA[');" />]]>
         </xsl:element>
         <xsl:text>
         </xsl:text>
