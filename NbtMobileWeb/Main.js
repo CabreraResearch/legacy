@@ -411,7 +411,7 @@
                     var fieldtype = $xmlitem.attr('fieldtype');
                     if (currenttab != tab)
                     {
-                        if (currenttab != undefined)
+                        if (currenttab != '')
                             lihtml += _endUL() + _makeUL();
                         lihtml += '<li data-role="list-divider">' + tab + '</li>'
                         currenttab = tab;
@@ -427,7 +427,9 @@
                             if (sf_checked == undefined) sf_checked = '';
                             if (sf_required == undefined) sf_required = '';
 
+                            lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
                             lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
+                            lihtml += '</div>';
                             break;
 
                         case 'Question':
@@ -442,7 +444,9 @@
                             if (sf_compliantanswers == undefined) sf_compliantanswers = '';
                             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
 
+                            lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
                             lihtml += _makeQuestionAnswerFieldSet(DivId, id, '_ans', '_ans2', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers);
+                            lihtml += '</div>';
 
                             if (sf_answer != '' && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && sf_correctiveaction == '')
                             {
