@@ -445,7 +445,7 @@
                             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
 
                             lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                            lihtml += _makeQuestionAnswerFieldSet(DivId, id, '_ans', '_ans2', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers);
+                            lihtml += _makeQuestionAnswerFieldSet(DivId, id, '_ans', '_ans2', '_cor', '_li', '_propname', sf_options, sf_answer, sf_compliantanswers);
                             lihtml += '</div>';
 
                             if (sf_answer != '' && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && sf_correctiveaction == '')
@@ -564,7 +564,7 @@
             var FieldType = $xmlitem.attr('fieldtype');
             var PropName = $xmlitem.attr('name');
 
-            var Html = PropName + '<br/>';
+            var Html = '<span id="' + IdStr + '_propname">' + PropName + '</span><br/>';
 
             // Subfield values
             var sf_text = $xmlitem.children('text').text();
@@ -655,7 +655,7 @@
                     break;
 
                 case "Question":
-                    Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', sf_options, sf_answer, sf_compliantanswers);
+                    Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', '_propname', sf_options, sf_answer, sf_compliantanswers);
 
                     Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
                     Html += sf_comments
@@ -668,8 +668,10 @@
                     Html += 'var $cor = $(this); ';
                     Html += 'if($cor.attr(\'value\') == \'\') { ';
                     Html += '  $(\'#' + IdStr + '_li div\').addClass(\'OOC\'); '
+                    Html += '  $(\'#' + IdStr + '_propname\').addClass(\'OOC\'); '
                     Html += '} else {';
                     Html += '  $(\'#' + IdStr + '_li div\').removeClass(\'OOC\'); '
+                    Html += '  $(\'#' + IdStr + '_propname\').removeClass(\'OOC\'); '
                     Html += '}';
                     Html += '">';
                     Html += sf_correctiveaction;
@@ -808,7 +810,7 @@
         }
 
 
-        function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, Options, Answer, CompliantAnswers)
+        function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
             var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
             var answers = Options.split(',');
@@ -850,6 +852,7 @@
                 {
                     Html += ' $(\'#' + IdStr + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
                     Html += ' $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
+                    Html += ' $(\'#' + IdStr + PropNameSuffix + '\').removeClass(\'OOC\'); ';
                 }
                 else
                 {
@@ -857,8 +860,10 @@
                     Html += '$cor.css(\'display\', \'\'); ';
                     Html += 'if($cor.attr(\'value\') == \'\') { ';
                     Html += '  $(\'#' + IdStr + LiSuffix + ' div\').addClass(\'OOC\'); ';
+                    Html += '  $(\'#' + IdStr + PropNameSuffix + '\').addClass(\'OOC\'); ';
                     Html += '} else {';
                     Html += '  $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
+                    Html += '  $(\'#' + IdStr + PropNameSuffix + '\').removeClass(\'OOC\'); ';
                     Html += '}';
                 }
                 if (Answer == '')
