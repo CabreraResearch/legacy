@@ -326,7 +326,13 @@
                         _handleAjaxError(XMLHttpRequest, $xml.text(), '');
                     } else
                     {
-                        onsuccess(data.d);
+                        $auth = $xml.find('AuthenticationStatus');
+                        if($auth.length > 0)
+                        {
+                            _handleAuthenticationStatus($auth.text());
+                        } else {
+                            onsuccess(data.d);
+                        }
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -1104,7 +1110,7 @@
                             removeDiv('logindiv');
                         } else
                         {
-                            alert($xml.find('AuthenticationStatus').text());
+                            _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
                         }
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -1117,6 +1123,10 @@
         } //onLoginSubmit() 
 
         function onLogout(DivId, eventObj)
+        {
+            Logout();
+        }
+        function Logout()
         {
             _clearSession(function () { 
                 // reloading browser window is the easiest way to reset
@@ -1591,9 +1601,17 @@
                                     _waitForData();
                             } else
                             {
-                                _updateStoredViewXml(rootid, data.d, '0');
-                                if (perpetuateTimer)
-                                    _waitForData();
+                                $auth = $xml.find('AuthenticationStatus');
+                                if($auth.length > 0)
+                                {
+                                    _handleAuthenticationStatus($auth.text());
+                                    if (perpetuateTimer)
+                                        _waitForData();
+                                } else {
+                                    _updateStoredViewXml(rootid, data.d, '0');
+                                    if (perpetuateTimer)
+                                        _waitForData();
+                                }
                             }
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -1614,6 +1632,11 @@
         } //_processChanges()
 
 
+        function _handleAuthenticationStatus(status)
+        {
+            alert(status);
+            Logout();
+        }
 
         function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
         {
