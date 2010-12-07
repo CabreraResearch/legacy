@@ -223,9 +223,10 @@ namespace ChemSW.Nbt.ObjClasses
             foreach( CswNbtNode InspectionNode in this.Node.NodeType.getNodes( true, true ) )
             {
                 NodeStatus = InspectionNode.Properties[StatusPropertyName].AsList;
-                //Inspection status is either Pending or Overdue
+                //Inspection status is Pending, Overdue or not set
                 if( InspectionStatusAsString( InspectionStatus.Overdue ) == NodeStatus.Value ||
-                    InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus.Value )
+                    InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus.Value ||
+                    String.Empty == NodeStatus.Value )
                 {
                     NodeGenerator = InspectionNode.Properties[GeneratorPropertyName].AsRelationship;
                     //Generator exists
@@ -246,7 +247,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-            _CswNbtObjClassDefault.beforeCreateNode();
+             _CswNbtObjClassDefault.beforeCreateNode();
         } // beforeCreateNode()
 
         /// <summary>
