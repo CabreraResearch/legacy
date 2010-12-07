@@ -822,7 +822,7 @@
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
-            var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            var Html = '<fieldset class="csw_fieldset" id="'+ IdStr +'_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
@@ -866,21 +866,24 @@
                 }
                 else
                 {
-                    Html += 'var $cor = $(\'#' + IdStr + CorrectiveActionSuffix + '\'); ';
-                    Html += '$cor.css(\'display\', \'\'); ';
-                    Html += 'if($cor.attr(\'value\') == \'\') { ';
-                    Html += '  $(\'#' + IdStr + LiSuffix + ' div\').addClass(\'OOC\'); ';
-                    Html += '  $(\'#' + IdStr + PropNameSuffix + '\').addClass(\'OOC\'); ';
-                    Html += '} else {';
-                    Html += '  $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
-                    Html += '  $(\'#' + IdStr + PropNameSuffix + '\').removeClass(\'OOC\'); ';
-                    Html += '}';
+                    Html += ' var $cor = $(\'#' + IdStr + CorrectiveActionSuffix + '\'); ';
+                    Html += ' $cor.css(\'display\', \'\'); ';
+                    Html += ' if($cor.attr(\'value\') == \'\') { ';
+                    Html += '   $(\'#' + IdStr + LiSuffix + ' div\').addClass(\'OOC\'); ';
+                    Html += '   $(\'#' + IdStr + PropNameSuffix + '\').addClass(\'OOC\'); ';
+                    Html += ' } else {';
+                    Html += '   $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
+                    Html += '   $(\'#' + IdStr + PropNameSuffix + '\').removeClass(\'OOC\'); ';
+                    Html += ' } ';
                 }
                 if (Answer == '')
                 {
                     // update unanswered count when this question is answered
-                    Html += 'var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
-                    Html += '$cntspan.text(parseInt($cntspan.text()) - 1); ';
+                    Html += ' if(! $(\'#'+ IdStr + '_fieldset\').attr(\'answered\')) { ';
+                    Html += '   console.log(\'decrement\'); var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
+                    Html += '   $cntspan.text(parseInt($cntspan.text()) - 1); ';
+                    Html += '   $(\'#'+ IdStr + '_fieldset\').attr(\'answered\', \'true\'); ';
+                    Html += ' }';
                 }
                 Html += ' " />';
                 Html += '            <label for="' + IdStr + Suffix + '_' + answerid + '">' + answers[i] + '</label>';
