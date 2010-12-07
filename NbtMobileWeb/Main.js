@@ -491,7 +491,7 @@
                         DivId: id,
                         HeaderText: text,
                         toolbar: toolbar,
-                        content: _FieldTypeXmlToHtml($xmlitem, DivId),
+                        content: _FieldTypeXmlToHtml($xmlitem, DivId)
                     });
 
                     break;
