@@ -1594,56 +1594,58 @@
 
         function _processChanges(perpetuateTimer)
         {
-            _getModifiedView(function (rootid, viewxml)
+            if(SessionId != '' && SessionId != undefined) 
             {
-                if (rootid != '' && viewxml != '')
+                _getModifiedView(function (rootid, viewxml)
                 {
-                    $.ajax({
-                        type: 'POST',
-                        url: opts.UpdateUrl,
-                        dataType: "json",
-                        contentType: 'application/json; charset=utf-8',
-                        //data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
-                        data: "{ SessionId: '" + SessionId + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
-                        success: function (data, textStatus, XMLHttpRequest)
-                        {
-                            var $xml = $(data.d);
-                            if ($xml.get(0).nodeName == "ERROR")
+                    if (rootid != '' && viewxml != '')
+                    {
+                        $.ajax({
+                            type: 'POST',
+                            url: opts.UpdateUrl,
+                            dataType: "json",
+                            contentType: 'application/json; charset=utf-8',
+                            //data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
+                            data: "{ SessionId: '" + SessionId + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
+                            success: function (data, textStatus, XMLHttpRequest)
                             {
-                                _handleAjaxError(XMLHttpRequest, $xml.text(), '');
-                                if (perpetuateTimer)
-                                    _waitForData();
-                            } else
-                            {
-                                $auth = $xml.find('AuthenticationStatus');
-                                if ($auth.length > 0)
+                                var $xml = $(data.d);
+                                if ($xml.get(0).nodeName == "ERROR")
                                 {
-                                    _handleAuthenticationStatus($auth.text());
+                                    _handleAjaxError(XMLHttpRequest, $xml.text(), '');
                                     if (perpetuateTimer)
                                         _waitForData();
                                 } else
                                 {
-                                    _updateStoredViewXml(rootid, data.d, '0');
-                                    if (perpetuateTimer)
-                                        _waitForData();
+                                    $auth = $xml.find('AuthenticationStatus');
+                                    if ($auth.length > 0)
+                                    {
+                                        _handleAuthenticationStatus($auth.text());
+                                        if (perpetuateTimer)
+                                            _waitForData();
+                                    } else
+                                    {
+                                        _updateStoredViewXml(rootid, data.d, '0');
+                                        if (perpetuateTimer)
+                                            _waitForData();
+                                    }
                                 }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+                                if (perpetuateTimer)
+                                    _waitForData();
                             }
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-                            if (perpetuateTimer)
-                                _waitForData();
-                        }
-                    });
-                }
-                else
-                {
-                    if (perpetuateTimer)
-                        _waitForData();
-                }
-            });
-
+                        });
+                    }
+                    else
+                    {
+                        if (perpetuateTimer)
+                            _waitForData();
+                    }
+                }); // _getModifiedView();
+            } // if(SessionId != '') 
         } //_processChanges()
 
 
