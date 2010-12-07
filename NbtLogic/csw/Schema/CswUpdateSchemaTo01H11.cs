@@ -50,7 +50,17 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp EmailOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.EmailPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( EmailOCP, "isrequired", CswConvert.ToDbVal( true ) );
 
+            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 
+            // Case 20429
+            CswNbtMetaDataNodeType MountPointGroupNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point_Group ) );
+            MountPointGroupNT.IconFileName = "ball_blueS.gif";
+
+            CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point ) );
+            MountPointGroupNT.IconFileName = "mountpoint.png";
+
+            CswNbtMetaDataNodeType FloorNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Floor ) );
+            MountPointGroupNT.IconFileName = "building.png";
 
         } // update()
 
