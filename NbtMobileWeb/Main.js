@@ -1016,7 +1016,7 @@
                         DivId: $(this).attr('href').substr(1),
                         HeaderText: $(this).text(),
                         ChangePage: true
-                    })) { e.stopPropagation(); e.preventDefault(); } 
+                    })) { e.stopPropagation(); e.preventDefault(); }
                 })
                 .end();
         }
@@ -1303,14 +1303,14 @@
                         var $node = $(this);
                         if ($node.attr(searchprop) != undefined)
                         {
-                            if ($node.attr(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) > 0)
+                            if ($node.attr(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
                                 hitcount++;
                                 content += _makeListItemFromXml($xmlstr, this, DivId, 1, false);
                             }
                         }
                     });
-                    if (hitcount.length == 0)
+                    if (hitcount == 0)
                     {
                         content += "<li>No Results</li>";
                     }
