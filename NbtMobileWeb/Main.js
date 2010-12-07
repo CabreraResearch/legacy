@@ -1056,6 +1056,7 @@
             eventObj.preventDefault();
             if (amOffline())
             {
+                _clearWaitForData();
                 _waitForData();
                 setOnline();
                 $('#ss_gooffline span').text('Go Offline');
