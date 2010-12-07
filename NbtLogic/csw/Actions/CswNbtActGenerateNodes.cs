@@ -86,6 +86,7 @@ namespace ChemSW.Nbt.Actions
             bool ret = false;
 
             CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
+            CswNbtMetaDataObjectClass InspectionOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
 
             if ( string.Empty == GeneratorNode.TargetType.SelectedNodeTypeIds ||
                 "0" == GeneratorNode.TargetType.SelectedNodeTypeIds ||
@@ -125,6 +126,12 @@ namespace ChemSW.Nbt.Actions
                     NewNodeAsGeneratorTarget.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
                     NewNodeAsGeneratorTarget.Parent.RelatedNodeId = NewParentPK;
                     //NewTaskNodeAsTask.Completed.Checked = Tristate.False;
+
+                    CswNbtMetaDataNodeType TargetNT = NewNode.NodeType;
+                    if( TargetNT.ObjectClass == InspectionOC )
+                    {
+                        NewNode.Properties[CswNbtObjClassInspectionDesign.StatusPropertyName].AsList.Value = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending );
+                    }
 
                     if ( MarkFuture )
                         NewNodeAsGeneratorTarget.IsFuture.Checked = Tristate.True;
