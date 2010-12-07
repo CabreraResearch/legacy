@@ -114,8 +114,10 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPK, DueDate );
                 if ( null == ExistingNode )
                 {
-                    Int32 NodeTypeId = Convert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds );
-                    CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                    Int32 refNodeTypeId = Convert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds );
+                    CswNbtMetaDataNodeType LatestVersionNT = _CswNbtResources.MetaData.getNodeType( refNodeTypeId ).LatestVersionNodeType;
+
+                    CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                     NewNode.copyPropertyValues( CswNbtNodeGenerator );
 
                     ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( NewNode );
