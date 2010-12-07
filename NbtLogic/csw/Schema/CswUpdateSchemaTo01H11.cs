@@ -67,6 +67,21 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( StatusOCP, "servermanaged", CswConvert.ToDbVal( true ) );
             _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 
+            // Case 20437
+            CswNbtMetaDataNodeTypeTab InspectionTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( MountPointNT, "Inspections", 2 );
+            CswNbtMetaDataNodeTypeProp PhysicalInspectNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Physical Inspections", InspectionTab.TabId );
+
+            CswNbtView PhysicalInspectionVP = _CswNbtSchemaModTrnsctn.restoreView( PhysicalInspectNTP.ViewId );
+            PhysicalInspectionVP.makeNew( "Physical Inspections", NbtViewVisibility.Property, null, null, null );
+            CswNbtViewRelationship MountPointR = PhysicalInspectionVP.AddViewRelationship( MountPointNT, false );
+            CswNbtMetaDataNodeType PhysicalInspectionsNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Physical_Inspection ) );
+            CswNbtMetaDataNodeTypeProp PITargetNTP = PhysicalInspectionsNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+            CswNbtViewRelationship InspectionsR = PhysicalInspectionVP.AddViewRelationship( MountPointR, CswNbtViewRelationship.PropOwnerType.Second, PITargetNTP, false );
+            CswNbtViewProperty StatusVP = PhysicalInspectionVP.AddViewProperty( InspectionsR, PhysicalInspectionsNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.StatusPropertyName ) );
+            CswNbtViewProperty DueDateVP = PhysicalInspectionVP.AddViewProperty( InspectionsR, PhysicalInspectionsNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.DatePropertyName ) );
+            CswNbtViewProperty TargetVP = PhysicalInspectionVP.AddViewProperty( InspectionsR, PhysicalInspectionsNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName ) );
+            PhysicalInspectionVP.save();
+
         } // update()
 
     }//class CswUpdateSchemaTo01H11
