@@ -50,8 +50,6 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp EmailOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.EmailPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( EmailOCP, "isrequired", CswConvert.ToDbVal( true ) );
 
-            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
-
             // Case 20429
             CswNbtMetaDataNodeType MountPointGroupNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point_Group ) );
             MountPointGroupNT.IconFileName = "ball_blueS.gif";
@@ -61,6 +59,13 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataNodeType FloorNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Floor ) );
             MountPointGroupNT.IconFileName = "building.png";
+
+            // Case 20025
+            CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            CswNbtMetaDataObjectClassProp StatusOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.StatusPropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( StatusOCP, CswNbtSubField.SubFieldName.Value, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending ) );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( StatusOCP, "servermanaged", CswConvert.ToDbVal( true ) );
+            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 
         } // update()
 
