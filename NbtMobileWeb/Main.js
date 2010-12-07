@@ -102,7 +102,7 @@
                 HideLogoutButton: true
             });
             $('#loginsubmit').click(onLoginSubmit);
-            if(ChangePage)
+            if (ChangePage)
                 $.mobile.changePage($('#logindiv'), 'fade', false, true);
         }
 
@@ -116,7 +116,7 @@
                 HideRefreshButton: true,
                 HideLogoutButton: true
             });
-            if(ChangePage)
+            if (ChangePage)
                 $.mobile.changePage($('#sorrycharliediv'), 'fade', false, true);
         }
 
@@ -128,10 +128,10 @@
         function reloadViews(ChangePage)
         {
             $('#viewsdiv').remove();
-            _loadDivContents({ 
-                level: 0, 
-                DivId: 'viewsdiv', 
-                HeaderText: 'Views', 
+            _loadDivContents({
+                level: 0,
+                DivId: 'viewsdiv',
+                HeaderText: 'Views',
                 HideRefreshButton: true,
                 ChangePage: ChangePage
             });
@@ -154,7 +154,7 @@
 
                 reloadViews(false);
             }
-            if($('#logindiv').length > 0)
+            if ($('#logindiv').length > 0)
             {
                 _loadSorryCharlieDiv(true);
                 removeDiv('logindiv');
@@ -172,7 +172,7 @@
                 $('.refresh').css('visibility', '');
                 reloadViews(false);
             }
-            if($('#sorrycharliediv').length > 0)
+            if ($('#sorrycharliediv').length > 0)
             {
                 _loadLoginDiv(true);
                 removeDiv('sorrycharliediv');
@@ -193,12 +193,12 @@
             var p = {
                 ParentId: '',
                 level: 1,
-                DivId: '', 
-                HeaderText: '', 
+                DivId: '',
+                HeaderText: '',
                 HideRefreshButton: false,
                 ChangePage: false
             };
-                
+
             if (params)
             {
                 $.extend(p, params);
@@ -219,11 +219,11 @@
                         _fetchCachedRootXml(function (xml)
                         {
                             _processViewXml({
-                                ParentId: p.ParentId, 
-                                DivId: p.DivId, 
-                                HeaderText: p.HeaderText, 
-                                $xml: $(xml).children(), 
-                                parentlevel: p.level, 
+                                ParentId: p.ParentId,
+                                DivId: p.DivId,
+                                HeaderText: p.HeaderText,
+                                $xml: $(xml).children(),
+                                parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 ChangePage: p.ChangePage
                             });
@@ -237,11 +237,11 @@
                                 _storeViewXml(p.DivId, p.HeaderText, xml);
                             }
                             _processViewXml({
-                                ParentId: p.ParentId, 
-                                DivId: p.DivId, 
-                                HeaderText: p.HeaderText, 
-                                $xml: $(xml).children(), 
-                                parentlevel: p.level, 
+                                ParentId: p.ParentId,
+                                DivId: p.DivId,
+                                HeaderText: p.HeaderText,
+                                $xml: $(xml).children(),
+                                parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 ChangePage: p.ChangePage
                             });
@@ -255,11 +255,11 @@
                         if (xmlstr != '')
                         {
                             _processViewXml({
-                                ParentId: p.ParentId, 
-                                DivId: p.DivId, 
-                                HeaderText: p.HeaderText, 
-                                $xml: $(xmlstr).children(), 
-                                parentlevel: p.level, 
+                                ParentId: p.ParentId,
+                                DivId: p.DivId,
+                                HeaderText: p.HeaderText,
+                                $xml: $(xmlstr).children(),
+                                parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 ChangePage: p.ChangePage
                             });
@@ -272,11 +272,11 @@
                                     _storeViewXml(p.DivId, p.HeaderText, xml);
                                 }
                                 _processViewXml({
-                                    ParentId: p.ParentId, 
-                                    DivId: p.DivId, 
-                                    HeaderText: p.HeaderText, 
-                                    $xml: $(xml).children(), 
-                                    parentlevel: p.level, 
+                                    ParentId: p.ParentId,
+                                    DivId: p.DivId,
+                                    HeaderText: p.HeaderText,
+                                    $xml: $(xml).children(),
+                                    parentlevel: p.level,
                                     HideRefreshButton: p.HideRefreshButton,
                                     ChangePage: p.ChangePage
                                 });
@@ -291,11 +291,11 @@
                         {
                             var $thisxmlstr = $(xmlstr).find('#' + p.DivId);
                             _processViewXml({
-                                ParentId: p.ParentId, 
-                                DivId: p.DivId, 
-                                HeaderText: p.HeaderText, 
-                                $xml: $thisxmlstr.children('subitems').first().children(), 
-                                parentlevel: p.level, 
+                                ParentId: p.ParentId,
+                                DivId: p.DivId,
+                                HeaderText: p.HeaderText,
+                                $xml: $thisxmlstr.children('subitems').first().children(),
+                                parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 ChangePage: p.ChangePage
                             });
@@ -327,10 +327,11 @@
                     } else
                     {
                         $auth = $xml.find('AuthenticationStatus');
-                        if($auth.length > 0)
+                        if ($auth.length > 0)
                         {
                             _handleAuthenticationStatus($auth.text());
-                        } else {
+                        } else
+                        {
                             onsuccess(data.d);
                         }
                     }
@@ -348,8 +349,8 @@
         {
             var p = {
                 ParentId: '',
-                DivId: '', 
-                HeaderText: '', 
+                DivId: '',
+                HeaderText: '',
                 $xml: '',
                 parentlevel: '',
                 HideRefreshButton: false,
@@ -382,7 +383,7 @@
             onAfterAddDiv($divhtml);
 
             // this replaces the link navigation
-            if(p.ChangePage) 
+            if (p.ChangePage)
                 $.mobile.changePage($('#' + p.DivId), "slide", false, true);
 
         } // _processViewXml()
@@ -1007,13 +1008,16 @@
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
                 .find('li a')
-                .click(function (e) { if (_loadDivContents({
-                    ParentId: DivId, 
-                    level: (level + 1), 
-                    DivId: $(this).attr('href').substr(1), 
-                    HeaderText: $(this).text(),
-                    ChangePage: true
-                    })) { e.stopPropagation(); e.preventDefault(); } })
+                .click(function (e)
+                {
+                    if (_loadDivContents({
+                        ParentId: DivId,
+                        level: (level + 1),
+                        DivId: $(this).attr('href').substr(1),
+                        HeaderText: $(this).text(),
+                        ChangePage: true
+                    })) { e.stopPropagation(); e.preventDefault(); } 
+                })
                 .end();
         }
 
@@ -1128,7 +1132,8 @@
         }
         function Logout()
         {
-            _clearSession(function () { 
+            _clearSession(function ()
+            {
                 // reloading browser window is the easiest way to reset
                 window.location.href = window.location.pathname;
             });
@@ -1181,12 +1186,12 @@
                     _updateStoredViewXml(RealDivId, xml, '0');
                     _processViewXml({
                         ParentId: 'viewsdiv',
-                        DivId: RealDivId, 
-                        HeaderText: HeaderText, 
+                        DivId: RealDivId,
+                        HeaderText: HeaderText,
                         $xml: $(xml).children(),
                         parentlevel: 1,
                         HideRefreshButton: false,
-                        ChangePage: true 
+                        ChangePage: true
                     });
                     removeDiv('loadingdiv');
                 });
@@ -1391,19 +1396,21 @@
                    {
                        if (0 == result.rows.length)
                        {
-                           _DoSql("insert into configvars (varname, varval) values ( ?, ? );", 
-                                  [varname, varval], 
-                                  function(){ 
-                                    if(onsuccess != undefined) 
-                                      onsuccess(); 
+                           _DoSql("insert into configvars (varname, varval) values ( ?, ? );",
+                                  [varname, varval],
+                                  function ()
+                                  {
+                                      if (onsuccess != undefined)
+                                          onsuccess();
                                   });
                        } else
                        {
                            _DoSql("update configvars set varval = ? where varname = ?",
-                                  [varval, varname], 
-                                  function(){ 
-                                    if(onsuccess != undefined) 
-                                      onsuccess(); 
+                                  [varval, varname],
+                                  function ()
+                                  {
+                                      if (onsuccess != undefined)
+                                          onsuccess();
                                   });
                        } //if-else the configvar row already exists
                    });
@@ -1434,20 +1441,24 @@
 
         function _cacheSession(sessionid, username, onsuccess)
         {
-            writeConfigVar('username', username, function() { 
-                writeConfigVar('sessionid', sessionid, function () { 
-                    if(onsuccess != undefined) 
-                        onsuccess(); 
+            writeConfigVar('username', username, function ()
+            {
+                writeConfigVar('sessionid', sessionid, function ()
+                {
+                    if (onsuccess != undefined)
+                        onsuccess();
                 });
             });
         } //_cacheSession()
 
         function _clearSession(onsuccess)
         {
-            writeConfigVar('username', '', function() { 
-                writeConfigVar('sessionid', '', function () { 
-                    if(onsuccess != undefined) 
-                        onsuccess(); 
+            writeConfigVar('username', '', function ()
+            {
+                writeConfigVar('sessionid', '', function ()
+                {
+                    if (onsuccess != undefined)
+                        onsuccess();
                 });
             });
         } //_clearSession()
@@ -1602,12 +1613,13 @@
                             } else
                             {
                                 $auth = $xml.find('AuthenticationStatus');
-                                if($auth.length > 0)
+                                if ($auth.length > 0)
                                 {
                                     _handleAuthenticationStatus($auth.text());
                                     if (perpetuateTimer)
                                         _waitForData();
-                                } else {
+                                } else
+                                {
                                     _updateStoredViewXml(rootid, data.d, '0');
                                     if (perpetuateTimer)
                                         _waitForData();
