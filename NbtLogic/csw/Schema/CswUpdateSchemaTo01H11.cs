@@ -55,10 +55,10 @@ namespace ChemSW.Nbt.Schema
             MountPointGroupNT.IconFileName = "ball_blueS.gif";
 
             CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point ) );
-            MountPointGroupNT.IconFileName = "mountpoint.png";
+            MountPointNT.IconFileName = "mountpoint.png";
 
             CswNbtMetaDataNodeType FloorNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Floor ) );
-            MountPointGroupNT.IconFileName = "building.png";
+            FloorNT.IconFileName = "buildings.png";
 
             // Case 20025
             CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
