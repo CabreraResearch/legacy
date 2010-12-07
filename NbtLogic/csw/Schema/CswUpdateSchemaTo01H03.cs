@@ -354,14 +354,6 @@ namespace ChemSW.Nbt.Schema
                 CswNbtViewProperty PIStatusVP = PhysicalInspectionView.AddViewProperty( InspectionRelationship, PIStatusNTP );
                 PhysicalInspectionView.AddViewPropertyFilter( PIStatusVP, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
 
-                //Fire Extinguisher: Barcode and Last Inspection Date
-                CswNbtViewRelationship FireExtinguisherRelationship = PhysicalInspectionView.AddViewRelationship( InspectionRelationship, CswNbtViewRelationship.PropOwnerType.First, PIFireExtinguisherNTP, false );
-                CswNbtMetaDataNodeTypeProp FEDateNTP = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.LastInspectionDatePropertyName );
-                CswNbtViewProperty FESDateVP = PhysicalInspectionView.AddViewProperty( FireExtinguisherRelationship, FEDateNTP );
-                PhysicalInspectionView.AddViewPropertyFilter( FESDateVP, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, DateTime.MinValue.ToString(), false );
-                CswNbtViewProperty FEBarcodeVP = PhysicalInspectionView.AddViewProperty( FireExtinguisherRelationship, FEBarcodeNTP );
-                PhysicalInspectionView.AddViewPropertyFilter( FEBarcodeVP, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Begins, string.Empty, false );
-
                 //Mount Point: Description
                 CswNbtMetaDataNodeTypeProp PITargetNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
                 CswNbtViewRelationship FEMountPointRelationship = PhysicalInspectionView.AddViewRelationship( InspectionRelationship, CswNbtViewRelationship.PropOwnerType.First, PITargetNTP, false );
