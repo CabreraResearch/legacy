@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
                 foreach( CswNbtNode Node in NodeType.getNodes( true, false ) )
                 {
                     Username = Node.Properties[UsernameNTP].AsText.Text;
-                    if( null == Node.Properties[EmailNTP].AsText.Text )
+                    if( String.Empty == Node.Properties[EmailNTP].AsText.Text )
                         Node.Properties[EmailNTP].AsText.Text = Username + "@local";
                 }
             }
