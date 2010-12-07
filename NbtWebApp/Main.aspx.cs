@@ -258,7 +258,7 @@ namespace ChemSW.Nbt.WebPages
                 _MainGrid.OnError += new CswErrorHandler( Master.HandleError );
                 //_MainGrid.Grid.ClientSettings.Selecting.AllowRowSelect = true;
                 //_MainGrid.Grid.ClientSettings.ClientEvents.OnRowClick = "MainGrid_RowClick";
-                _MainGrid.ShowActionColumn = true;
+                _MainGrid.ShowActionColumns = true;
                 NavDiv.Controls.Add( _MainGrid );
 
                 NavDiv.Controls.Add( new CswLiteralBr() );

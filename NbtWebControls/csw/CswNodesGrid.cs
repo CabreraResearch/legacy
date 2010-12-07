@@ -52,7 +52,7 @@ namespace ChemSW.NbtWebControls
         public DataSet DataSet { get { return _DataSet; } }
 
         public bool DisplayMenu = false;
-        public bool ShowActionColumn = false;
+        public bool ShowActionColumns = false;
         public bool ShowAsHtmlTable = false;
 
         public CswNodesGrid( CswNbtResources CswNbtResources )
@@ -307,6 +307,14 @@ namespace ChemSW.NbtWebControls
         {
             _Grid.Columns.Clear();
 
+            // Edit column
+            GridBoundColumn EditColumn = new GridBoundColumn();
+            EditColumn.UniqueName = "EditColumn";
+            EditColumn.HeaderText = "Edit";
+            EditColumn.DataField = "Edit";
+            EditColumn.Display = ShowActionColumns;
+            _Grid.Columns.Add( EditColumn );
+
             // Node column
             GridBoundColumn NodeNameColumn = new GridBoundColumn();
             NodeNameColumn.UniqueName = "NodeName";
@@ -398,13 +406,13 @@ namespace ChemSW.NbtWebControls
                 }
             }
 
-            // Action column
-            GridBoundColumn ActionColumn = new GridBoundColumn();
-            ActionColumn.UniqueName = "ActionColumn";
-            ActionColumn.HeaderText = "Action";
-            ActionColumn.DataField = "Action";
-            ActionColumn.Display = ShowActionColumn;
-            _Grid.Columns.Add( ActionColumn );
+            // Delete column
+            GridBoundColumn DeleteColumn = new GridBoundColumn();
+            DeleteColumn.UniqueName = "DeleteColumn";
+            DeleteColumn.HeaderText = "Delete";
+            DeleteColumn.DataField = "Delete";
+            DeleteColumn.Display = ShowActionColumns;
+            _Grid.Columns.Add( DeleteColumn );
 
         } // setupGridColumns()
 

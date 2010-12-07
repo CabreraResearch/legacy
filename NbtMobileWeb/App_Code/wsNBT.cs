@@ -157,6 +157,20 @@ namespace ChemSW.Nbt.WebServices
             throw new Exception( "Emulated connection failure" );
         }
 
+        [WebMethod( EnableSession = true )]
+        public string ConnectTestRandomFail()
+        {
+            // no session needed here
+
+            // this exception needs to be UNCAUGHT
+            Random r = new Random();
+            Int32 rand = r.Next( 0, 3 );
+            if(rand == 0)
+                throw new Exception( "Emulated connection failure" );
+            else
+                return ( result( "Connected" ) );
+        }
+
 
         [WebMethod]
         public string UpdateProperties( string SessionId , string ParentId, string UpdatedViewXml )

@@ -366,17 +366,20 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterWriteNode()
         {
             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-            ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
-            if( _allAnswered )
+            if( ParentNode != null )
             {
-                if( _OOC )
+                ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
+                if( _allAnswered )
                 {
-                    Parent.Status.Value = "OOC";
-                    ParentNode.PendingUpdate = true;
-                }
-                else
-                {
-                    Parent.Status.Value = "OK";
+                    if( _OOC )
+                    {
+                        Parent.Status.Value = "OOC";
+                        ParentNode.PendingUpdate = true;
+                    }
+                    else
+                    {
+                        Parent.Status.Value = "OK";
+                    }
                 }
             }
             _CswNbtObjClassDefault.afterWriteNode();

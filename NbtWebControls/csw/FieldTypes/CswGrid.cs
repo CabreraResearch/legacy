@@ -83,7 +83,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 {
                     if( _EditMode != NodeEditMode.PrintReport )   // BZ 8668
                     {
-                        _Grid.ShowActionColumn = true;
+                        _Grid.ShowActionColumns = true;
                         _Grid.DisplayMenu = true;
                         _Grid.Menu.AllowAdd = true;
                         _Grid.Menu.AllowDelete = true;
@@ -100,7 +100,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 }
                 else
                 {
-                    _Grid.ShowActionColumn = false;
+                    _Grid.ShowActionColumns = false;
                     _Grid.DisplayMenu = false;
                     _Grid.DisplayViewName = false;
                     _Grid.ShowAsHtmlTable = true;
