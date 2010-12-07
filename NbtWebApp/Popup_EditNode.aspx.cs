@@ -80,6 +80,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
+                String TitleBar = "Edit ";
                 PropTable = new CswPropertyTable( Master.CswNbtResources, Master.AjaxManager );
                 PropTable.EnableViewState = false;
                 PropTable.OnError += new CswErrorHandler( Master.HandleError );
@@ -101,6 +102,7 @@ namespace ChemSW.Nbt.WebPages
                     PropTable.EditMode = NodeEditMode.EditInPopup;
                     PropTable.SelectedNode = _Node;
                     PropTable.TabStrip.TabClick += new RadTabStripEventHandler( TabStrip_TabClick );
+                    TitleBar += _Node.NodeType.NodeTypeName.ToString();
                 }
                 else if( Request.QueryString["nodeid"] != null && Request.QueryString["nodeid"] != string.Empty )
                 {
@@ -113,6 +115,7 @@ namespace ChemSW.Nbt.WebPages
                     PropTable.EditMode = NodeEditMode.EditInPopup;
                     PropTable.SelectedNode = _Node;
                     PropTable.TabStrip.TabClick += new RadTabStripEventHandler( TabStrip_TabClick );
+                    TitleBar += _Node.NodeType.NodeTypeName.ToString();
                 }
                 else if( Request.QueryString["nodetypeid"] != null && Request.QueryString["nodetypeid"] != string.Empty )
                 {
@@ -139,7 +142,7 @@ namespace ChemSW.Nbt.WebPages
                     CswNbtMetaDataNodeType MetaDataNodeType = Master.CswNbtResources.MetaData.getNodeType( NodeTypeId );
 
                     //BZ 10181
-                    TitleContentLiteral.Text = "Add " + MetaDataNodeType.NodeTypeName.ToString();
+                    TitleBar = "Add " + MetaDataNodeType.NodeTypeName.ToString();
                     
                     string MultiEditErrorPropName = string.Empty;
                     if( CheckedNodeIds == string.Empty || !MetaDataNodeType.IsUniqueAndRequired( ref MultiEditErrorPropName ) )
@@ -175,7 +178,6 @@ namespace ChemSW.Nbt.WebPages
                         throw new CswDniException( Errormsg, Errormsg );
                     }
 
-
                     // BZ 8338
                     if( CheckedNodeIds != string.Empty )
                     {
@@ -197,7 +199,8 @@ namespace ChemSW.Nbt.WebPages
                 {
                     throw new CswDniException( "NodeId, NodeKey, or NodeTypeId is required", "Popup_EditNode.aspx requires a valid NodeKey, NodeId, or NodeTypeId" );
                 }
-
+                
+                TitleContentLiteral.Text = TitleBar;
                 PropGridPlaceHolder.Controls.Add( PropTable );
 
                 PropTable.ShowCancelButton = true;
