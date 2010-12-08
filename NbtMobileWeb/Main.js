@@ -773,7 +773,7 @@
             for (var i = 0; i < answers.length; i++)
             {
                 var answertext;
-                switch(answers[i])
+                switch (answers[i])
                 {
                     case 'Null': answertext = '?'; break;
                     case 'True': answertext = 'Yes'; break;
@@ -1073,25 +1073,35 @@
             }
         }
 
-        // returns true if no pending changes or user is willing to lose them
-        function _checkNoPendingChanges()
-        {
-            return ($('#ss_pendingchangecnt').text() != 'Yes' ||
-                    confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
-        }
-
         function _resetPendingChanges(val, setlastsynchnow)
         {
             if (val)
+            {
                 $('#ss_pendingchangecnt').text('Yes');
+                $('.onlineStatus').addClass('pendingchanges');
+            }
             else
+            {
                 $('#ss_pendingchangecnt').text('No');
-
+                $('.onlineStatus').removeClass('pendingchanges');
+            }
             if (setlastsynchnow)
             {
                 var d = new Date();
                 $('#ss_lastsynch').text(d.toLocaleDateString() + ' ' + d.toLocaleTimeString());
             }
+        }
+
+        // returns true if no pending changes or user is willing to lose them
+        function _checkNoPendingChanges()
+        {
+            return (!_pendingChanges() ||
+                    confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
+        }
+
+        function _pendingChanges()
+        {
+            return ($('#ss_pendingchangecnt').text() == 'Yes');
         }
 
 
