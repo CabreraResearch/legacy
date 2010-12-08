@@ -766,19 +766,24 @@
         {
             var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
 
-            var answers = ['Blank', 'Yes', 'No'];
+            var answers = ['Null', 'True', 'False'];
             if (Required == "true")
-                answers = ['Yes', 'No'];
+                answers = ['True', 'False'];
 
             for (var i = 0; i < answers.length; i++)
             {
-                var answertext = answers[i];
-                if (answertext == 'Blank') answertext = '?';
+                var answertext;
+                switch(answers[i])
+                {
+                    case 'Null': answertext = '?'; break;
+                    case 'True': answertext = 'Yes'; break;
+                    case 'False': answertext = 'No'; break;
+                }
 
-                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answertext + '" ';
-                if ((Checked == 'false' && answers[i] == 'No') ||
-                    (Checked == 'true' && answers[i] == 'Yes') ||
-                    (Checked == '' && answers[i] == 'Blank'))
+                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
+                if ((Checked == 'false' && answers[i] == 'False') ||
+                    (Checked == 'true' && answers[i] == 'True') ||
+                    (Checked == '' && answers[i] == 'Null'))
                     Html += 'checked';
                 Html += ' onclick="';
 
