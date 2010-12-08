@@ -822,7 +822,7 @@
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
-            var Html = '<fieldset class="csw_fieldset" id="'+ IdStr +'_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            var Html = '<fieldset class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
@@ -879,10 +879,10 @@
                 if (Answer == '')
                 {
                     // update unanswered count when this question is answered
-                    Html += ' if(! $(\'#'+ IdStr + '_fieldset\').attr(\'answered\')) { ';
+                    Html += ' if(! $(\'#' + IdStr + '_fieldset\').attr(\'answered\')) { ';
                     Html += '   console.log(\'decrement\'); var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
                     Html += '   $cntspan.text(parseInt($cntspan.text()) - 1); ';
-                    Html += '   $(\'#'+ IdStr + '_fieldset\').attr(\'answered\', \'true\'); ';
+                    Html += '   $(\'#' + IdStr + '_fieldset\').attr(\'answered\', \'true\'); ';
                     Html += ' }';
                 }
                 Html += ' " />';
@@ -1070,7 +1070,8 @@
 
         function _checkPendingChanges()
         {
-            return ($('#ss_pendingchangecnt').text() == 'Yes');
+            return ($('#ss_pendingchangecnt').text() == 'Yes' ||
+                    confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
         }
 
         function _resetPendingChanges(val, setlastsynchnow)
@@ -1134,20 +1135,24 @@
         {
             Logout();
         }
+
         function Logout()
         {
-            _clearSession(function ()
+            if (!_checkPendingChanges())
             {
-                // reloading browser window is the easiest way to reset
-                window.location.href = window.location.pathname;
-            });
+                _dropDb(function ()
+                {
+                    // reloading browser window is the easiest way to reset
+                    window.location.href = window.location.pathname;
+                });
+            }
         }
 
         function onRefresh(DivId, eventObj)
         {
             if (!amOffline())
             {
-                if (!_checkPendingChanges() || confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'))
+                if (!_checkPendingChanges())
                 {
                     _addPageDivToBody({
                         DivId: 'loadingdiv',
@@ -1355,14 +1360,26 @@
             db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
             if (doreset)
             {
-                _DoSql('DROP TABLE IF EXISTS configvars; ', null, null);
-                _DoSql('DROP TABLE IF EXISTS views; ', null, function () { _createDb(OnSuccess); });
+                _dropDb(function () { _createDb(OnSuccess); });
             } else
             {
                 _createDb(OnSuccess);
             }
-            //console.log("tables created");
         } //_initDb()
+
+        function _dropDb(OnSuccess)
+        {
+            _DoSql('DROP TABLE IF EXISTS configvars; ', null, function ()
+            {
+                _DoSql('DROP TABLE IF EXISTS views; ', null, function ()
+                {
+                    if (OnSuccess != null)
+                    {
+                        OnSuccess();
+                    }
+                });
+            });
+        } // _dropDB()
 
         function _createDb(OnSuccess)
         {
@@ -1455,17 +1472,17 @@
             });
         } //_cacheSession()
 
-        function _clearSession(onsuccess)
-        {
-            writeConfigVar('username', '', function ()
-            {
-                writeConfigVar('sessionid', '', function ()
-                {
-                    if (onsuccess != undefined)
-                        onsuccess();
-                });
-            });
-        } //_clearSession()
+        //        function _clearSession(onsuccess)
+        //        {
+        //            writeConfigVar('username', '', function ()
+        //            {
+        //                writeConfigVar('sessionid', '', function ()
+        //                {
+        //                    if (onsuccess != undefined)
+        //                        onsuccess();
+        //                });
+        //            });
+        //        } //_clearSession()
 
 
         function _storeViewXml(rootid, rootname, viewxml)
@@ -1595,7 +1612,7 @@
 
         function _processChanges(perpetuateTimer)
         {
-            if(SessionId != '' && SessionId != undefined) 
+            if (SessionId != '' && SessionId != undefined)
             {
                 _getModifiedView(function (rootid, viewxml)
                 {
@@ -1646,6 +1663,10 @@
                             _waitForData();
                     }
                 }); // _getModifiedView();
+            } else
+            {
+                if (perpetuateTimer)
+                    _waitForData();
             } // if(SessionId != '') 
         } //_processChanges()
 
