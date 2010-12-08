@@ -822,7 +822,7 @@
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
-            var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            var Html = '<fieldset class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
@@ -866,21 +866,24 @@
                 }
                 else
                 {
-                    Html += 'var $cor = $(\'#' + IdStr + CorrectiveActionSuffix + '\'); ';
-                    Html += '$cor.css(\'display\', \'\'); ';
-                    Html += 'if($cor.attr(\'value\') == \'\') { ';
-                    Html += '  $(\'#' + IdStr + LiSuffix + ' div\').addClass(\'OOC\'); ';
-                    Html += '  $(\'#' + IdStr + PropNameSuffix + '\').addClass(\'OOC\'); ';
-                    Html += '} else {';
-                    Html += '  $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
-                    Html += '  $(\'#' + IdStr + PropNameSuffix + '\').removeClass(\'OOC\'); ';
-                    Html += '}';
+                    Html += ' var $cor = $(\'#' + IdStr + CorrectiveActionSuffix + '\'); ';
+                    Html += ' $cor.css(\'display\', \'\'); ';
+                    Html += ' if($cor.attr(\'value\') == \'\') { ';
+                    Html += '   $(\'#' + IdStr + LiSuffix + ' div\').addClass(\'OOC\'); ';
+                    Html += '   $(\'#' + IdStr + PropNameSuffix + '\').addClass(\'OOC\'); ';
+                    Html += ' } else {';
+                    Html += '   $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
+                    Html += '   $(\'#' + IdStr + PropNameSuffix + '\').removeClass(\'OOC\'); ';
+                    Html += ' } ';
                 }
                 if (Answer == '')
                 {
                     // update unanswered count when this question is answered
-                    Html += 'var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
-                    Html += '$cntspan.text(parseInt($cntspan.text()) - 1); ';
+                    Html += ' if(! $(\'#' + IdStr + '_fieldset\').attr(\'answered\')) { ';
+                    Html += '   console.log(\'decrement\'); var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
+                    Html += '   $cntspan.text(parseInt($cntspan.text()) - 1); ';
+                    Html += '   $(\'#' + IdStr + '_fieldset\').attr(\'answered\', \'true\'); ';
+                    Html += ' }';
                 }
                 Html += ' " />';
                 Html += '            <label for="' + IdStr + Suffix + '_' + answerid + '">' + answers[i] + '</label>';
@@ -1016,7 +1019,7 @@
                         DivId: $(this).attr('href').substr(1),
                         HeaderText: $(this).text(),
                         ChangePage: true
-                    })) { e.stopPropagation(); e.preventDefault(); } 
+                    })) { e.stopPropagation(); e.preventDefault(); }
                 })
                 .end();
         }
@@ -1053,6 +1056,7 @@
             eventObj.preventDefault();
             if (amOffline())
             {
+                _clearWaitForData();
                 _waitForData();
                 setOnline();
                 $('#ss_gooffline span').text('Go Offline');
@@ -1066,7 +1070,8 @@
 
         function _checkPendingChanges()
         {
-            return ($('#ss_pendingchangecnt').text() == 'Yes');
+            return ($('#ss_pendingchangecnt').text() == 'Yes' ||
+                    confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
         }
 
         function _resetPendingChanges(val, setlastsynchnow)
@@ -1130,20 +1135,24 @@
         {
             Logout();
         }
+
         function Logout()
         {
-            _clearSession(function ()
+            if (!_checkPendingChanges())
             {
-                // reloading browser window is the easiest way to reset
-                window.location.href = window.location.pathname;
-            });
+                _dropDb(function ()
+                {
+                    // reloading browser window is the easiest way to reset
+                    window.location.href = window.location.pathname;
+                });
+            }
         }
 
         function onRefresh(DivId, eventObj)
         {
             if (!amOffline())
             {
-                if (!_checkPendingChanges() || confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'))
+                if (!_checkPendingChanges())
                 {
                     _addPageDivToBody({
                         DivId: 'loadingdiv',
@@ -1303,14 +1312,14 @@
                         var $node = $(this);
                         if ($node.attr(searchprop) != undefined)
                         {
-                            if ($node.attr(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) > 0)
+                            if ($node.attr(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
                                 hitcount++;
                                 content += _makeListItemFromXml($xmlstr, this, DivId, 1, false);
                             }
                         }
                     });
-                    if (hitcount.length == 0)
+                    if (hitcount == 0)
                     {
                         content += "<li>No Results</li>";
                     }
@@ -1351,14 +1360,26 @@
             db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
             if (doreset)
             {
-                _DoSql('DROP TABLE IF EXISTS configvars; ', null, null);
-                _DoSql('DROP TABLE IF EXISTS views; ', null, function () { _createDb(OnSuccess); });
+                _dropDb(function () { _createDb(OnSuccess); });
             } else
             {
                 _createDb(OnSuccess);
             }
-            //console.log("tables created");
         } //_initDb()
+
+        function _dropDb(OnSuccess)
+        {
+            _DoSql('DROP TABLE IF EXISTS configvars; ', null, function ()
+            {
+                _DoSql('DROP TABLE IF EXISTS views; ', null, function ()
+                {
+                    if (OnSuccess != null)
+                    {
+                        OnSuccess();
+                    }
+                });
+            });
+        } // _dropDB()
 
         function _createDb(OnSuccess)
         {
@@ -1451,17 +1472,17 @@
             });
         } //_cacheSession()
 
-        function _clearSession(onsuccess)
-        {
-            writeConfigVar('username', '', function ()
-            {
-                writeConfigVar('sessionid', '', function ()
-                {
-                    if (onsuccess != undefined)
-                        onsuccess();
-                });
-            });
-        } //_clearSession()
+        //        function _clearSession(onsuccess)
+        //        {
+        //            writeConfigVar('username', '', function ()
+        //            {
+        //                writeConfigVar('sessionid', '', function ()
+        //                {
+        //                    if (onsuccess != undefined)
+        //                        onsuccess();
+        //                });
+        //            });
+        //        } //_clearSession()
 
 
         function _storeViewXml(rootid, rootname, viewxml)
@@ -1591,56 +1612,62 @@
 
         function _processChanges(perpetuateTimer)
         {
-            _getModifiedView(function (rootid, viewxml)
+            if (SessionId != '' && SessionId != undefined)
             {
-                if (rootid != '' && viewxml != '')
+                _getModifiedView(function (rootid, viewxml)
                 {
-                    $.ajax({
-                        type: 'POST',
-                        url: opts.UpdateUrl,
-                        dataType: "json",
-                        contentType: 'application/json; charset=utf-8',
-                        //data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
-                        data: "{ SessionId: '" + SessionId + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
-                        success: function (data, textStatus, XMLHttpRequest)
-                        {
-                            var $xml = $(data.d);
-                            if ($xml.get(0).nodeName == "ERROR")
+                    if (rootid != '' && viewxml != '')
+                    {
+                        $.ajax({
+                            type: 'POST',
+                            url: opts.UpdateUrl,
+                            dataType: "json",
+                            contentType: 'application/json; charset=utf-8',
+                            //data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
+                            data: "{ SessionId: '" + SessionId + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
+                            success: function (data, textStatus, XMLHttpRequest)
                             {
-                                _handleAjaxError(XMLHttpRequest, $xml.text(), '');
-                                if (perpetuateTimer)
-                                    _waitForData();
-                            } else
-                            {
-                                $auth = $xml.find('AuthenticationStatus');
-                                if ($auth.length > 0)
+                                var $xml = $(data.d);
+                                if ($xml.get(0).nodeName == "ERROR")
                                 {
-                                    _handleAuthenticationStatus($auth.text());
+                                    _handleAjaxError(XMLHttpRequest, $xml.text(), '');
                                     if (perpetuateTimer)
                                         _waitForData();
                                 } else
                                 {
-                                    _updateStoredViewXml(rootid, data.d, '0');
-                                    if (perpetuateTimer)
-                                        _waitForData();
+                                    $auth = $xml.find('AuthenticationStatus');
+                                    if ($auth.length > 0)
+                                    {
+                                        _handleAuthenticationStatus($auth.text());
+                                        if (perpetuateTimer)
+                                            _waitForData();
+                                    } else
+                                    {
+                                        _updateStoredViewXml(rootid, data.d, '0');
+                                        if (perpetuateTimer)
+                                            _waitForData();
+                                    }
                                 }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+                                if (perpetuateTimer)
+                                    _waitForData();
                             }
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-                            if (perpetuateTimer)
-                                _waitForData();
-                        }
-                    });
-                }
-                else
-                {
-                    if (perpetuateTimer)
-                        _waitForData();
-                }
-            });
-
+                        });
+                    }
+                    else
+                    {
+                        if (perpetuateTimer)
+                            _waitForData();
+                    }
+                }); // _getModifiedView();
+            } else
+            {
+                if (perpetuateTimer)
+                    _waitForData();
+            } // if(SessionId != '') 
         } //_processChanges()
 
 
