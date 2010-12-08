@@ -30,26 +30,6 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            // Case 20432
-            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            CswNbtMetaDataNodeTypeProp EmailNTP;
-            CswNbtMetaDataNodeTypeProp UsernameNTP;
-            String Username = "";
-            foreach( CswNbtMetaDataNodeType NodeType in UserOC.NodeTypes )
-            {
-                EmailNTP = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassUser.EmailPropertyName );
-                UsernameNTP = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassUser.UsernamePropertyName );
-                foreach( CswNbtNode Node in NodeType.getNodes( true, false ) )
-                {
-                    Username = Node.Properties[UsernameNTP].AsText.Text;
-                    if( String.Empty == Node.Properties[EmailNTP].AsText.Text )
-                        Node.Properties[EmailNTP].AsText.Text = Username + "@local";
-                }
-            }
-
-            CswNbtMetaDataObjectClassProp EmailOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.EmailPropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( EmailOCP, "isrequired", CswConvert.ToDbVal( true ) );
-
             // Case 20429
             CswNbtMetaDataNodeType MountPointGroupNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point_Group ) );
             MountPointGroupNT.IconFileName = "ball_blueS.gif";
