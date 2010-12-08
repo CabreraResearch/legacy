@@ -45,7 +45,6 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp StatusOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.StatusPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( StatusOCP, CswNbtSubField.SubFieldName.Value, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending ) );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( StatusOCP, "servermanaged", CswConvert.ToDbVal( true ) );
-            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 
             // Case 20437
             CswNbtMetaDataNodeTypeTab InspectionTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( MountPointNT, "Inspections", 2 );
