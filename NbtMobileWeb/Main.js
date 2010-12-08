@@ -1068,9 +1068,10 @@
             }
         }
 
-        function _checkPendingChanges()
+        // returns true if no pending changes or user is willing to lose them
+        function _checkNoPendingChanges()
         {
-            return ($('#ss_pendingchangecnt').text() == 'Yes' ||
+            return ($('#ss_pendingchangecnt').text() != 'Yes' ||
                     confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
         }
 
@@ -1138,7 +1139,7 @@
 
         function Logout()
         {
-            if (!_checkPendingChanges())
+            if (_checkNoPendingChanges())
             {
                 _dropDb(function ()
                 {
@@ -1152,7 +1153,7 @@
         {
             if (!amOffline())
             {
-                if (!_checkPendingChanges())
+                if (_checkNoPendingChanges())
                 {
                     _addPageDivToBody({
                         DivId: 'loadingdiv',
