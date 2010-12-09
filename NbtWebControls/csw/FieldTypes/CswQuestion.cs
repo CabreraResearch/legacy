@@ -226,7 +226,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                         _CorrectiveActionText.Enabled = false;
                     }
                     
-                    if ( !Prop.AsQuestion.IsCompliant )
+                    if ( !Prop.AsQuestion.IsCompliant && !(String.Empty == Prop.AsQuestion.Answer) )
                     {
                         _CorrectiveActionText.Visible = true;
                         _CorrectiveActionTextName.Visible = true;

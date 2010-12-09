@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         private bool _IsCompliant
         {
-            get { return ( CompliantAnswers.Contains( Answer ) || string.Empty == CorrectiveAction ); }
+            get { return ( CompliantAnswers.Contains( Answer ) || string.Empty != CorrectiveAction ); }
         }
 
         /// <summary>
