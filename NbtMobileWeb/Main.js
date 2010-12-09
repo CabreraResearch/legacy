@@ -529,7 +529,9 @@
 
             var id = $xmlitem.attr('id');
             var NodeName = $xmlitem.attr('name');
-            var icon = 'images/icons/' + $xmlitem.attr('iconfilename');
+            var icon = '';
+            if($xmlitem.attr('iconfilename') != '' && $xmlitem.attr('iconfilename') != undefined)
+                icon = 'images/icons/' + $xmlitem.attr('iconfilename');
             var ObjectClass = $xmlitem.attr('objectclass');
 
             switch (ObjectClass)
@@ -547,7 +549,8 @@
                     });
 
                     Html += '<li>';
-                    Html += '<img src="' + icon + '" class="ui-li-icon"/>';
+                    if(icon != '')
+                        Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
                     Html += '<p>' + Target + '</p>';
                     Html += '<p>Due: ' + DueDate + '</p>';
@@ -557,7 +560,8 @@
 
                 default:
                     Html += '<li>';
-                    Html += '<img src="' + icon + '" class="ui-li-icon"/>';
+                    if(icon != '')
+                        Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<a href="#' + id + '">' + NodeName + '</a>';
                     Html += '</li>';
                     break;
