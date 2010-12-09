@@ -138,6 +138,7 @@ namespace ChemSW.Nbt.Actions
                         onBeforeInsertNode( NewNode );
                     }
                     ret = true;
+                    NewNode.PendingUpdate = true;
                     NewNode.postChanges( true );
                 }//if ( null == ExistingNode )
 
@@ -158,7 +159,7 @@ namespace ChemSW.Nbt.Actions
                             ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
                         }
                     }
-
+                    ExistingNode.PendingUpdate = true;
                     ExistingNode.postChanges( false ); //BZ # 6961
 
                 }//if-else ( null == ExistingNode )
