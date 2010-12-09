@@ -113,8 +113,17 @@ namespace ChemSW.Nbt.Schema
                                                                             and dd.nodeid = n.nodeid 
                                                                             and dd.nodetypeid = t.nodetypeid)
 
+                           join (select op.objectclassid, p.nodetypeid, j.nodeid, p.propname, j.field1 status
+                                  from object_class_props op 
+                                  join nodetype_props p on op.objectclasspropid = p.objectclasspropid
+                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                 where op.propname like 'Status' ) s on (s.objectclassid = o.objectclassid 
+                                                                            and s.nodeid = n.nodeid 
+                                                                            and s.nodetypeid = t.nodetypeid)                                                                            
+
                            where o.objectclass = 'InspectionDesignClass' 
-                           and sysdate >= ( dd.duedate ) ";
+                           and sysdate >= ( dd.duedate )
+                           and s.status = 'Pending' ";
 
             CswTableUpdate ScheduleItemsS4 = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "ScheduleItemsS4", "static_sql_selects" );
             DataTable S4Table = ScheduleItemsS4.getTable( " where lower(queryid)='generatorsdue'" );
