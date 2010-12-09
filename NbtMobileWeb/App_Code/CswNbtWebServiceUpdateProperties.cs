@@ -12,6 +12,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Session;
+using ChemSW.NbtWebControls;
 
 namespace ChemSW.Nbt.WebServices
 {
