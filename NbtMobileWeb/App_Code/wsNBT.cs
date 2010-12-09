@@ -14,6 +14,7 @@ using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Session;
 using ChemSW.Security;
+using ChemSW.NbtWebControls;
 
 namespace ChemSW.Nbt.WebServices
 {

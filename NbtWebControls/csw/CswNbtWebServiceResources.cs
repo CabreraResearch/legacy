@@ -22,10 +22,8 @@ using ChemSW.Config;
 using ChemSW.DB;
 using ChemSW.CswWebControls;
 using ChemSW.Nbt.Statistics;
-using ChemSW.Nbt.Config;
-using ChemSW.Session; 
 
-namespace ChemSW.Nbt
+namespace ChemSW.NbtWebControls
 {
     public enum EndSessionMode { esmCommit, esmRollback, esmRelease };
     public class CswNbtWebServiceResources
