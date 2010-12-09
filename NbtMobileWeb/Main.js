@@ -511,7 +511,7 @@
 
         function _makeUL(id)
         {
-            var ret = '<ul data-role="listview" data-inset="true" ';
+            var ret = '<ul data-role="listview" ';
             if (id != undefined)
                 ret += 'id="' + id + '"';
             ret += '>';
