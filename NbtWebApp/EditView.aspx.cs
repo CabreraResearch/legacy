@@ -2336,6 +2336,8 @@ namespace ChemSW.NbtWebControls
                         ////}
                         //ViewProp.FieldType = ThisProp.FieldType;
                         PropRow["Property Name"] = ViewProp.Name;
+                        if( !ThisProp.NodeType.IsLatestVersion )
+                            PropRow["Property Name"] += "&nbsp;(v" + ThisProp.NodeType.VersionNo + ")";
                         PropRow["ViewProp"] = ViewProp.ToString();
                         PropRow["Include"] = ( CurrentRelationship.Properties.Contains( ViewProp ) );
                         _PropDataTable.Rows.Add( PropRow );
