@@ -4,15 +4,15 @@
     {
 
         var opts = {
-            DBShortName: 'main.html',
+            DBShortName: 'Mobile.html',
             DBVersion: '1.0',
-            DBDisplayName: 'main.html',
+            DBDisplayName: 'Mobile.html',
             DBMaxSize: 65536,
-            ViewUrl: '/NbtMobileWeb/wsNBT.asmx/RunView',
-            ConnectTestUrl: '/NbtMobileWeb/wsNBT.asmx/ConnectTest',
-            UpdateUrl: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
-            MainPageUrl: '/NbtMobileWeb/Main.html',
-            AuthenticateUrl: '/NbtMobileWeb/wsNBT.asmx/Authenticate',
+            ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
+            ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
+            UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
+            MainPageUrl: '/NbtWebApp/Mobile.html',
+            AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             Theme: 'a',
             PollingInterval: 5000,
             DivRemovalDelay: 1000
