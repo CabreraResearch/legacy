@@ -530,7 +530,7 @@
             var id = $xmlitem.attr('id');
             var NodeName = $xmlitem.attr('name');
             var icon = '';
-            if($xmlitem.attr('iconfilename') != '' && $xmlitem.attr('iconfilename') != undefined)
+            if ($xmlitem.attr('iconfilename') != '' && $xmlitem.attr('iconfilename') != undefined)
                 icon = 'images/icons/' + $xmlitem.attr('iconfilename');
             var ObjectClass = $xmlitem.attr('objectclass');
 
@@ -549,7 +549,7 @@
                     });
 
                     Html += '<li>';
-                    if(icon != '')
+                    if (icon != '')
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
                     Html += '<p>' + Target + '</p>';
@@ -560,7 +560,7 @@
 
                 default:
                     Html += '<li>';
-                    if(icon != '')
+                    if (icon != '')
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<a href="#' + id + '">' + NodeName + '</a>';
                     Html += '</li>';
@@ -569,6 +569,28 @@
             return Html;
         }
 
+        function _extractCDataValue($node)
+        {
+            // default
+            ret = $node.text();
+
+            // for some reason, CDATA fields come through from the webservice like this:
+            // <node><!--[CDATA[some text]]--></node>
+            var cdataval = $node.html();
+            if (cdataval != undefined && cdataval != '')
+            {
+                var prefix = '<!--[CDATA[';
+                var suffix = ']]-->';
+
+                if (cdataval.substr(0, prefix.length) == prefix)
+                {
+                    ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
+                }
+            }
+            return ret;
+        }
+
+
         function _FieldTypeXmlToHtml($xmlitem, ParentId)
         {
             var IdStr = $xmlitem.attr('id');
@@ -576,7 +598,7 @@
             var PropName = $xmlitem.attr('name');
 
             // Subfield values
-            var sf_text = $xmlitem.children('text').text();
+            var sf_text = _extractCDataValue($xmlitem.children('text'));
             var sf_value = $xmlitem.children('value').text();
             var sf_href = $xmlitem.children('href').text();
             var sf_checked = $xmlitem.children('checked').text();
@@ -889,7 +911,7 @@
                 {
                     // update unanswered count when this question is answered
                     Html += ' if(! $(\'#' + IdStr + '_fieldset\').attr(\'answered\')) { ';
-                    Html += '   console.log(\'decrement\'); var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
+                    Html += '   var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
                     Html += '   $cntspan.text(parseInt($cntspan.text()) - 1); ';
                     Html += '   $(\'#' + IdStr + '_fieldset\').attr(\'answered\', \'true\'); ';
                     Html += ' }';
