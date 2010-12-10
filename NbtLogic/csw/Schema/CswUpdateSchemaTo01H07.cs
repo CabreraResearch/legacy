@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( FEModuleId, InspectionRouteOC.ObjectClassId );
 
             // Case 20025
-            String newSQL = @"select n.nodeid 
+            String newSQL = @"select n.nodeid
                           from nodes n
                           join nodetypes t on n.nodetypeid = t.nodetypeid
                           join object_class o on t.objectclassid = o.objectclassid
@@ -91,22 +91,39 @@ namespace ChemSW.Nbt.Schema
                                                                                and ddi.nodeid = n.nodeid 
                                                                                and ddi.nodetypeid = t.nodetypeid)
 
-                          left outer join (select op.objectclassid, p.nodetypeid, j.nodeid, p.propname, j.field1_date duedate
-                                  from object_class_props op 
-                                  join nodetype_props p on op.objectclasspropid = p.objectclasspropid
-                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
-                                 where op.propname = 'Due Date' ) dd on (dd.objectclassid = o.objectclassid 
-                                                                            and dd.nodeid = n.nodeid 
-                                                                            and dd.nodetypeid = t.nodetypeid)
-
                           where (((o.objectclass = 'GeneratorClass'
                               or o.objectclass = 'MailReportClass')
                           and e.enabled = '1'
                           and (sysdate >= (ddi.initialduedate - wd.warningdays)
                            and sysdate >= (ndd.nextduedate - wd.warningdays))
-                           and (fdd.finalduedate is null or sysdate <= fdd.finalduedate))
-                           or (o.objectclass = 'InspectionDesignClass' 
-                           and sysdate >= dd.duedate)) ";
+                           and (fdd.finalduedate is null or sysdate <= fdd.finalduedate)))
+
+                        union
+
+                        select n.nodeid
+                          from nodes n
+                          join nodetypes t on n.nodetypeid = t.nodetypeid
+                          join object_class o on t.objectclassid = o.objectclassid
+
+                          join (select op.objectclassid, p.nodetypeid, j.nodeid, p.propname, j.field1_date duedate, j.field1_numeric warningdays
+                                  from object_class_props op 
+                                  join nodetype_props p on op.objectclasspropid = p.objectclasspropid
+                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                 where op.propname like 'Due Date' ) dd on (dd.objectclassid = o.objectclassid 
+                                                                            and dd.nodeid = n.nodeid 
+                                                                            and dd.nodetypeid = t.nodetypeid)
+
+                           join (select op.objectclassid, p.nodetypeid, j.nodeid, p.propname, j.field1 status
+                                  from object_class_props op 
+                                  join nodetype_props p on op.objectclasspropid = p.objectclasspropid
+                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                 where op.propname like 'Status' ) s on (s.objectclassid = o.objectclassid 
+                                                                            and s.nodeid = n.nodeid 
+                                                                            and s.nodetypeid = t.nodetypeid)                                                                            
+
+                           where o.objectclass = 'InspectionDesignClass' 
+                           and sysdate >= ( dd.duedate )
+                           and s.status = 'Pending' ";
 
             CswTableUpdate ScheduleItemsS4 = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "ScheduleItemsS4", "static_sql_selects" );
             DataTable S4Table = ScheduleItemsS4.getTable( " where lower(queryid)='generatorsdue'" );
