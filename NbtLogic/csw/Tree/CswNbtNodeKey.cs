@@ -48,7 +48,7 @@ namespace ChemSW.Nbt
             //_ParentKey = ParentKey;
         }
 
-        private static char delimiter = '♠';
+        private static char delimiter = '^';
         /// <summary>
         /// Convert the NodeKey information into a delimited string
         /// </summary>
