@@ -61,6 +61,20 @@ namespace ChemSW.Nbt.Schema
             CswNbtViewProperty TargetVP = PhysicalInspectionVP.AddViewProperty( InspectionsR, PhysicalInspectionsNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName ) );
             PhysicalInspectionVP.save();
 
+            // Case 20506
+            Int32 SetupTabId = Int32.MinValue;
+            CswNbtMetaDataNodeTypeTab SetupTab = PhysicalInspectionsNT.getNodeTypeTab( "Setup" );
+            if( null != SetupTab )
+                SetupTabId = SetupTab.TabId;
+            CswNbtMetaDataNodeTypeProp MPBarcodeNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( PhysicalInspectionsNT, 
+                                                                                                    CswNbtMetaDataFieldType.NbtFieldType.PropertyReference, 
+                                                                                                    "Barcode",
+                                                                                                    SetupTabId );
+            CswNbtMetaDataNodeTypeProp TargetNTP = PhysicalInspectionsNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+            CswNbtMetaDataNodeTypeProp BarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
+            MPBarcodeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, string.Empty, Int32.MinValue );
+            MPBarcodeNTP._DataRow["valuepropid"] = CswConvert.ToDbVal( BarcodeNTP.PropId );
+
         } // update()
 
     }//class CswUpdateSchemaTo01H11
