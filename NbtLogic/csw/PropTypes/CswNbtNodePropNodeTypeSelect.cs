@@ -64,6 +64,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( _SelectedNodeTypeIds == null )
                 {
                     _SelectedNodeTypeIds = new CswCommaDelimitedString();
+                    _SelectedNodeTypeIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedNodeTypeIds_OnChange );
                     _SelectedNodeTypeIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedNodeTypeIdsSubField.Column ) );
                 }
                 return _SelectedNodeTypeIds;
@@ -71,12 +72,18 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _SelectedNodeTypeIds = value;
-                if( _CswNbtNodePropData.SetPropRowValue( _SelectedNodeTypeIdsSubField.Column, value ) )
-                {
-                    // BZ 10094 - this caused Notification names to populate in the background, which was confusing
-                    // PendingUpdate = true;
-                    RefreshSelectedNodeTypeNames();
-                }
+                _SelectedNodeTypeIds_OnChange();
+            }
+        }
+
+        // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
+        private void _SelectedNodeTypeIds_OnChange()
+        {
+            if( _CswNbtNodePropData.SetPropRowValue( _SelectedNodeTypeIdsSubField.Column, _SelectedNodeTypeIds.ToString() ) )
+            {
+                // BZ 10094 - this caused Notification names to populate in the background, which was confusing
+                // PendingUpdate = true;
+                RefreshSelectedNodeTypeNames();
             }
         }
 
@@ -138,9 +145,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public CswCommaDelimitedString SelectedNodeTypeNames()
         {
-            //string[] NodeTypeIdArray = SelectedNodeTypeIds.Split( delimiter );
-            string[] SelectedNodeTypeNames = new string[SelectedNodeTypeIds.Count];
-            Int32 n = 0;
+            CswCommaDelimitedString NodeTypeNames = new CswCommaDelimitedString();
             foreach(string NodeTypeId in SelectedNodeTypeIds)
             {
                 if( NodeTypeId.ToString() != string.Empty )
@@ -149,22 +154,17 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         if( NodeType.NodeTypeId.ToString() == NodeTypeId.ToString() )
                         {
-                            SelectedNodeTypeNames[n] = NodeType.LatestVersionNodeType.NodeTypeName;
-                            n++;
+                            NodeTypeNames.Add( NodeType.LatestVersionNodeType.NodeTypeName );
                         }
                     }
                 }
-            }
+            } // foreach(string NodeTypeId in SelectedNodeTypeIds)
 
             // Sort alphabetically
-            Array.Sort( SelectedNodeTypeNames );
-            CswCommaDelimitedString NodeTypeNames = new CswCommaDelimitedString();
-            for( int i = 0; i < SelectedNodeTypeNames.Length; i++ )
-            {
-                NodeTypeNames.Add(SelectedNodeTypeNames[i]);
-            }
+            NodeTypeNames.Sort();
+
             return NodeTypeNames;
-        }
+        } // SelectedNodeTypeNames()
 
     }//CswNbtNodePropNodeTypeSelect
 }//namespace ChemSW.Nbt.PropTypes

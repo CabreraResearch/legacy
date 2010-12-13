@@ -67,6 +67,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( _SelectedViewIds == null )
                 {
                     _SelectedViewIds = new CswCommaDelimitedString();
+                    _SelectedViewIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedViewIds_OnChange );
                     _SelectedViewIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedViewIdsSubField.Column ) );
                 }
                 return _SelectedViewIds;
@@ -74,9 +75,15 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _SelectedViewIds = value;
-                if( _CswNbtNodePropData.SetPropRowValue( _SelectedViewIdsSubField.Column, value ) )
-                    PendingUpdate = true;
+                _SelectedViewIds_OnChange();
             }
+        }
+
+        // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
+        void _SelectedViewIds_OnChange()
+        {
+            if( _CswNbtNodePropData.SetPropRowValue( _SelectedViewIdsSubField.Column, _SelectedViewIds.ToString() ) )
+                PendingUpdate = true;
         }
 
         /// <summary>
@@ -114,6 +121,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( _CachedViewNames == null )
                 {
                     _CachedViewNames = new CswCommaDelimitedString();
+                    _CachedViewNames.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _CachedViewNames_OnChange );
                     _CachedViewNames.FromString( _CswNbtNodePropData.GetPropRowValue( _CachedViewNameSubField.Column ) );
                 }
                 return _CachedViewNames;
@@ -121,8 +129,14 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CachedViewNames = value;
-                _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, value );
+                _CachedViewNames_OnChange();
             }
+        }
+
+        // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
+        void _CachedViewNames_OnChange()
+        {
+            _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, _CachedViewNames.ToString() );
         }
 
         public void RefreshViewName()

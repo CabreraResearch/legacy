@@ -72,7 +72,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 //    Views = ViewsCaddy.Table;
                 ////}
 
-                _ViewsForCBA = new CswDataTable("viewpicklistdatatable","");
+                _ViewsForCBA = new CswDataTable( "viewpicklistdatatable", "" );
                 _ViewsForCBA.Columns.Add( "nodeviewid", typeof( Int32 ) );
                 _ViewsForCBA.Columns.Add( "View Name", typeof( string ) );
                 _ViewsForCBA.Columns.Add( "Include", typeof( bool ) );
@@ -82,7 +82,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     DataRow NoneRow = _ViewsForCBA.NewRow();
                     NoneRow["View Name"] = "[none]";
                     NoneRow["nodeviewid"] = CswConvert.ToDbVal( Int32.MinValue );
-                    NoneRow["Include"] = ( Prop.AsViewPickList.SelectedViewIds.Count == 0);
+                    NoneRow["Include"] = ( Prop.AsViewPickList.SelectedViewIds.Count == 0 );
                     _ViewsForCBA.Rows.Add( NoneRow );
                 }
 
@@ -132,7 +132,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         public override void Clear()
         {
             _ValueLabel.Text = string.Empty;
-            if(_CBArray != null)
+            if( _CBArray != null )
                 _CBArray.Clear();
         }
 
@@ -187,8 +187,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         private CswCommaDelimitedString SelectedViewNames()
         {
-            string[] SelectedViewNames = new string[Prop.AsViewPickList.SelectedViewIds.Count];
-            Int32 v = 0;
+            CswCommaDelimitedString ViewNames = new CswCommaDelimitedString();
             foreach( string ViewId in Prop.AsViewPickList.SelectedViewIds )
             {
                 if( ViewId != string.Empty )
@@ -197,22 +196,16 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     {
                         if( ViewRow["nodeviewid"].ToString() == ViewId )
                         {
-                            SelectedViewNames[v] = ViewRow["View Name"].ToString();
-                            v++;
+                            ViewNames.Add( ViewRow["View Name"].ToString() );
                         }
                     }
                 }
             }
 
             // Sort alphabetically
-            Array.Sort( SelectedViewNames );
-
-            CswCommaDelimitedString ViewNames = new CswCommaDelimitedString();
-            for( int i = 0; i < SelectedViewNames.Length; i++ )
-            {
-                ViewNames.Add( SelectedViewNames[i] );
-            }
+            ViewNames.Sort();
+            
             return ViewNames;
-        }
+        } // SelectedViewNames()
     }
 }
