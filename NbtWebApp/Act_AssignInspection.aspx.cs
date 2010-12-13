@@ -301,7 +301,7 @@ namespace ChemSW.Nbt.WebPages
                         //NewGeneratorObjClass.InitialDueDate.DateValue = StartDatePicker.SelectedDate;
                         NewGeneratorObjClass.Owner.RelatedNodeId = TargetNodeKey.NodeId;
                         NewGeneratorObjClass.Owner.RefreshNodeName();
-                        NewGeneratorObjClass.TargetType.SelectedNodeTypeIds = InspectionNodeType.FirstVersionNodeTypeId.ToString();
+                        NewGeneratorObjClass.TargetType.SelectedNodeTypeIds[0] = InspectionNodeType.FirstVersionNodeTypeId.ToString();
                         NewGeneratorObjClass.Enabled.Checked = Tristate.True;
                         NewGeneratorNode.postChanges( true );
 

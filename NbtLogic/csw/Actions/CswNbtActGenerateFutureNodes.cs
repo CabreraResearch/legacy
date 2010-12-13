@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.Actions
                     bool taskgenerated = _CswNbtActGenerateNodes.makeNode( CswNbtNodeGenerator, DateOfNextOccurance );
                     if( taskgenerated )
                         ReturnVal++;
-                    
+
                     PreviousDateOfNextOccurance = DateOfNextOccurance;
                     DateOfNextOccurance = NextDueDateTimeInterval.getNextOccuranceAfter( DateOfNextOccurance );
                     if( DateOfNextOccurance == PreviousDateOfNextOccurance )
@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.Actions
             {
                 GeneratorRelationship.NodeIdsToFilterIn.Add( CurrentGeneratorNode.NodeId );
                 CswNbtObjClassGenerator Generator = CswNbtNodeCaster.AsGenerator( CurrentGeneratorNode );
-                if( Generator.TargetType.SelectedNodeTypeIds != string.Empty )   // BZ 8544
+                if( Generator.TargetType.SelectedNodeTypeIds.Count != 0 )   // BZ 8544
                 {
                     Int32 CurrentTargetNodeTypeId = Convert.ToInt32( Generator.TargetType.SelectedNodeTypeIds );
                     if( !( TargetNodeTypeIds.Contains( CurrentTargetNodeTypeId ) ) )

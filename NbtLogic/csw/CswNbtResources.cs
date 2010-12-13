@@ -549,7 +549,7 @@ namespace ChemSW.Nbt
                 Collection<CswMailMessage> MailMessages = new Collection<CswMailMessage>();
                 CswNbtObjClassNotification NotifNode = _Notifs[NKey];
 
-                CswDelimitedString SubscribedUserIdsString = NotifNode.SubscribedUsers.SelectedUserIds;
+                CswCommaDelimitedString SubscribedUserIdsString = NotifNode.SubscribedUsers.SelectedUserIds;
                 Collection<Int32> SubscribedUserIds = SubscribedUserIdsString.ToIntCollection();
                 string Subject = NotifNode.Subject.Text;
                 string Message = NotifNode.Message.Text;

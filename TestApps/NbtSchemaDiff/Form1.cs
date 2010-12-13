@@ -61,7 +61,7 @@ namespace ChemSW.NbtSchemaDiff
             InitializeComponent();
 
             _ConfigurationPath = Application.StartupPath + "\\..\\etc";
-            if ( !FileSystem.DirectoryExists( _ConfigurationPath ) )
+            if( !FileSystem.DirectoryExists( _ConfigurationPath ) )
             {
                 FileSystem.CreateDirectory( _ConfigurationPath );
             }
@@ -77,7 +77,7 @@ namespace ChemSW.NbtSchemaDiff
             _LeftDbInstances.Columns.Add( _ColName_Deactivated, typeof( bool ) );
             _LeftDbInstances.Columns.Add( _ColName_Display, typeof( string ) );
             _LeftDbInstances.Rows.Clear();
-            foreach ( string CurrentAccessId in _CswDbCfgInfoNbt.AccessIds )
+            foreach( string CurrentAccessId in _CswDbCfgInfoNbt.AccessIds )
             {
                 _CswDbCfgInfoNbt.makeConfigurationCurrent( CurrentAccessId );
                 DataRow CurrentRow = _LeftDbInstances.NewRow();
@@ -193,7 +193,7 @@ namespace ChemSW.NbtSchemaDiff
 
         private void CompareButton_Click( object sender, EventArgs e )
         {
-            if ( _LeftAccessId != _RightAccessId )
+            if( _LeftAccessId != _RightAccessId )
             {
                 CompareButton.Enabled = false;
                 CompareButton.Text = "Comparing...";
@@ -207,7 +207,7 @@ namespace ChemSW.NbtSchemaDiff
                 CswTableSelect LeftNodesSelect = _CswNbtResourcesLeft.makeCswTableSelect( "NbtSchemaDiff_Left_nodes_select", "nodes" );
                 DataTable LeftNodesTable = LeftNodesSelect.getTable();
                 Collection<CswNbtNode> LeftNodes = new Collection<CswNbtNode>();
-                foreach ( DataRow NodeRow in LeftNodesTable.Rows )
+                foreach( DataRow NodeRow in LeftNodesTable.Rows )
                 {
                     CswPrimaryKey ThisNodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
                     CswNbtNode ThisNode = _CswNbtResourcesLeft.Nodes[ThisNodePk];
@@ -221,7 +221,7 @@ namespace ChemSW.NbtSchemaDiff
                 DataTable RightNodesTable = RightNodesSelect.getTable();
                 Collection<CswNbtNode> RightNodes = new Collection<CswNbtNode>();
                 Collection<CswNbtNode> AllRightNodes = new Collection<CswNbtNode>();
-                foreach ( DataRow NodeRow in RightNodesTable.Rows )
+                foreach( DataRow NodeRow in RightNodesTable.Rows )
                 {
                     CswPrimaryKey ThisNodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
                     CswNbtNode ThisNode = _CswNbtResourcesRight.Nodes[ThisNodePk];
@@ -235,12 +235,12 @@ namespace ChemSW.NbtSchemaDiff
                 // First Pass
                 // Match nodes by name and nodetype name
                 Collection<CswNbtNode> UnmatchedLeftNodes = new Collection<CswNbtNode>();
-                foreach ( CswNbtNode LeftNode in LeftNodes )
+                foreach( CswNbtNode LeftNode in LeftNodes )
                 {
                     CswNbtNode MatchingRightNode = null;
-                    foreach ( CswNbtNode RightNode in RightNodes )
+                    foreach( CswNbtNode RightNode in RightNodes )
                     {
-                        if ( LeftNode.NodeName == RightNode.NodeName &&
+                        if( LeftNode.NodeName == RightNode.NodeName &&
                             LeftNode.NodeType.NodeTypeName == RightNode.NodeType.NodeTypeName )
                         {
                             MatchingRightNode = RightNode;
@@ -250,7 +250,7 @@ namespace ChemSW.NbtSchemaDiff
                         } // if( LeftNode.NodeName == RightNode.NodeName )
                     } // foreach( CswNbtNode RightNode in RightNodes )
 
-                    if ( MatchingRightNode != null )
+                    if( MatchingRightNode != null )
                         RightNodes.Remove( MatchingRightNode );
                     else
                         UnmatchedLeftNodes.Add( LeftNode );
@@ -263,25 +263,25 @@ namespace ChemSW.NbtSchemaDiff
                 // This ensures that we get the closest match from what's left.
                 Double CurrentTolerance = 0.90;
                 Double MinimumTolerance = Convert.ToDouble( ToleranceBox.Text ) / 100;
-                while ( UnmatchedLeftNodes.Count > 0 && CurrentTolerance > 0 && CurrentTolerance > MinimumTolerance )
+                while( UnmatchedLeftNodes.Count > 0 && CurrentTolerance > 0 && CurrentTolerance > MinimumTolerance )
                 {
                     Collection<CswNbtNode> NextUnmatchedLeftNodes = new Collection<CswNbtNode>();
-                    foreach ( CswNbtNode LeftNode in UnmatchedLeftNodes )
+                    foreach( CswNbtNode LeftNode in UnmatchedLeftNodes )
                     {
                         CswNbtNode MatchingRightNode = null;
-                        foreach ( CswNbtNode RightNode in RightNodes )
+                        foreach( CswNbtNode RightNode in RightNodes )
                         {
-                            if ( LeftNode.NodeType.NodeTypeName == RightNode.NodeType.NodeTypeName )
+                            if( LeftNode.NodeType.NodeTypeName == RightNode.NodeType.NodeTypeName )
                             {
                                 Int32 PropCount = 0;
                                 Int32 MatchCount = 0;
-                                foreach ( CswNbtMetaDataNodeTypeProp MetaDataProp in LeftNode.NodeType.NodeTypeProps )
+                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in LeftNode.NodeType.NodeTypeProps )
                                 {
                                     PropCount++;
-                                    if ( LeftNode.Properties[MetaDataProp].Field1 == RightNode.Properties[RightNode.NodeType.getNodeTypeProp( MetaDataProp.PropName )].Field1 )
+                                    if( LeftNode.Properties[MetaDataProp].Field1 == RightNode.Properties[RightNode.NodeType.getNodeTypeProp( MetaDataProp.PropName )].Field1 )
                                         MatchCount++;
                                 } // foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in LeftNode.NodeType.NodeTypeProps )
-                                if ( PropCount > 0 &&
+                                if( PropCount > 0 &&
                                     ( Convert.ToDouble( MatchCount ) / Convert.ToDouble( PropCount ) ) >= CurrentTolerance )
                                 {
                                     MatchingRightNode = RightNode;
@@ -290,7 +290,7 @@ namespace ChemSW.NbtSchemaDiff
                                 }
                             }
                         } // foreach( CswNbtNode RightNode in RightNodes )
-                        if ( MatchingRightNode != null )
+                        if( MatchingRightNode != null )
                             RightNodes.Remove( MatchingRightNode );
                         else
                             NextUnmatchedLeftNodes.Add( LeftNode );
@@ -307,14 +307,14 @@ namespace ChemSW.NbtSchemaDiff
                 // If minimumtolerance is set to 0,
                 // for the last ones, just try matching on nodetype
                 Collection<CswNbtNode> LastUnmatchedLeftNodes = new Collection<CswNbtNode>();
-                if ( MinimumTolerance <= 0 )
+                if( MinimumTolerance <= 0 )
                 {
-                    foreach ( CswNbtNode LeftNode in UnmatchedLeftNodes )
+                    foreach( CswNbtNode LeftNode in UnmatchedLeftNodes )
                     {
                         CswNbtNode MatchingRightNode = null;
-                        foreach ( CswNbtNode RightNode in RightNodes )
+                        foreach( CswNbtNode RightNode in RightNodes )
                         {
-                            if ( LeftNode.NodeType.NodeTypeName == RightNode.NodeType.NodeTypeName )
+                            if( LeftNode.NodeType.NodeTypeName == RightNode.NodeType.NodeTypeName )
                             {
 
                                 MatchingRightNode = RightNode;
@@ -323,7 +323,7 @@ namespace ChemSW.NbtSchemaDiff
                             }
                         } // foreach( CswNbtNode RightNode in RightNodes )
 
-                        if ( MatchingRightNode != null )
+                        if( MatchingRightNode != null )
                             RightNodes.Remove( MatchingRightNode );
                         else
                             LastUnmatchedLeftNodes.Add( LeftNode );
@@ -335,16 +335,16 @@ namespace ChemSW.NbtSchemaDiff
                 }
 
                 // Now process the matches
-                foreach ( CswNbtNode LeftNode in NodeMatches.Keys )
+                foreach( CswNbtNode LeftNode in NodeMatches.Keys )
                 {
                     _CompareNodes( LeftNode, NodeMatches[LeftNode], NodeMatches );
                 }
 
                 // Now process the non-matches
-                if ( ShowUnmatchedCheckBox.Checked )
+                if( ShowUnmatchedCheckBox.Checked )
                 {
                     // Leftover non-matched Left nodes
-                    foreach ( CswNbtNode LeftNode in LastUnmatchedLeftNodes )
+                    foreach( CswNbtNode LeftNode in LastUnmatchedLeftNodes )
                     {
                         Int32 r = dataGridView1.Rows.Add();
                         dataGridView1.Rows[r].Cells["LeftNodeId"].Value = LeftNode.NodeId.PrimaryKey.ToString();
@@ -355,7 +355,7 @@ namespace ChemSW.NbtSchemaDiff
                     }
 
                     // Leftover non-matched Right nodes
-                    foreach ( CswNbtNode RightNode in RightNodes )
+                    foreach( CswNbtNode RightNode in RightNodes )
                     {
                         Int32 r = dataGridView1.Rows.Add();
                         dataGridView1.Rows[r].Cells["LeftNodeName"].Value = "no match";
@@ -402,7 +402,7 @@ namespace ChemSW.NbtSchemaDiff
 
         private void _addGridEntry( string Source, string TableName, string PkValue, string Message )
         {
-            if ( _currentGridRow >= dataGridView1.Rows.Count )
+            if( _currentGridRow >= dataGridView1.Rows.Count )
                 dataGridView1.Rows.Add( 10 );
 
             dataGridView1.Rows[_currentGridRow].Cells["source"].Value = Source;
@@ -416,15 +416,15 @@ namespace ChemSW.NbtSchemaDiff
         private void _CompareNodes( CswNbtNode LeftNode, CswNbtNode RightNode, Dictionary<CswNbtNode, CswNbtNode> NodeMatches )
         {
             Collection<CswNbtNodePropWrapper> RightProps = new Collection<CswNbtNodePropWrapper>();
-            foreach ( CswNbtNodePropWrapper RightPropWrapper in RightNode.Properties )
+            foreach( CswNbtNodePropWrapper RightPropWrapper in RightNode.Properties )
                 RightProps.Add( RightPropWrapper );
 
-            foreach ( CswNbtNodePropWrapper LeftPropWrapper in LeftNode.Properties )
+            foreach( CswNbtNodePropWrapper LeftPropWrapper in LeftNode.Properties )
             {
                 CswNbtNodePropWrapper MatchingRightProp = null;
-                foreach ( CswNbtNodePropWrapper RightPropWrapper in RightProps )
+                foreach( CswNbtNodePropWrapper RightPropWrapper in RightProps )
                 {
-                    if ( LeftPropWrapper.PropName == RightPropWrapper.PropName &&
+                    if( LeftPropWrapper.PropName == RightPropWrapper.PropName &&
                         LeftPropWrapper.FieldType.FieldType == RightPropWrapper.FieldType.FieldType )
                     {
                         MatchingRightProp = RightPropWrapper;
@@ -432,14 +432,14 @@ namespace ChemSW.NbtSchemaDiff
                         //bool SpecialCase = _CompareValue( Subfield.Name, LeftPropWrapper, RightPropWrapper, NodeMatches );
                         CompareValueMatchCase SpecialCase = _CompareValue( LeftPropWrapper.NodeTypeProp.FieldType.FieldType, LeftPropWrapper, RightPropWrapper, NodeMatches );
 
-                        foreach ( CswNbtSubField Subfield in RightPropWrapper.NodeTypeProp.FieldTypeRule.SubFields )
+                        foreach( CswNbtSubField Subfield in RightPropWrapper.NodeTypeProp.FieldTypeRule.SubFields )
                         {
                             //string LeftValue = LeftPropWrapper.GetPropRowValue( ( (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), Subfield.Column ) ) );
                             //string RightValue = RightPropWrapper.GetPropRowValue( ( (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), Subfield.Column ) ) );
                             string LeftValue = LeftPropWrapper.GetPropRowValue( Subfield.Column );
                             string RightValue = RightPropWrapper.GetPropRowValue( Subfield.Column );
 
-                            if ( !ShowDiffsOnlyCheckBox.Checked || LeftValue != RightValue )
+                            if( !ShowDiffsOnlyCheckBox.Checked || LeftValue != RightValue )
                             {
                                 Int32 r = dataGridView1.Rows.Add();
                                 dataGridView1.Rows[r].Cells["LeftNodeId"].Value = LeftNode.NodeId.PrimaryKey.ToString();
@@ -455,14 +455,14 @@ namespace ChemSW.NbtSchemaDiff
                                 dataGridView1.Rows[r].Cells["RightSubFieldName"].Value = Subfield.Name.ToString();
                                 dataGridView1.Rows[r].Cells["RightValue"].Value = RightValue;
 
-                                if ( LeftNode.NodeName != RightNode.NodeName )
+                                if( LeftNode.NodeName != RightNode.NodeName )
                                 {
                                     _makeDifferentValueCell( dataGridView1.Rows[r].Cells["LeftNodeName"] );
                                     _makeDifferentValueCell( dataGridView1.Rows[r].Cells["RightNodeName"] );
                                 }
 
                                 //bool SpecialCase = _CompareValue( Subfield.Name, LeftValue, RightValue, r, NodeMatches );
-                                switch ( SpecialCase )
+                                switch( SpecialCase )
                                 {
                                     case CompareValueMatchCase.Equal:
                                         // nuttin' honey
@@ -482,14 +482,14 @@ namespace ChemSW.NbtSchemaDiff
                                         _makeOrphanCell( dataGridView1.Rows[r].Cells["RightValue"] );
                                         break;
                                     case CompareValueMatchCase.BothOrphan:
-                                        if ( ShowAllOrphans.Checked )
+                                        if( ShowAllOrphans.Checked )
                                         {
                                             _makeOrphanCell( dataGridView1.Rows[r].Cells["LeftValue"] );
                                             _makeOrphanCell( dataGridView1.Rows[r].Cells["RightValue"] );
                                         }
                                         break;
                                     case CompareValueMatchCase.Unknown:
-                                        if ( LeftValue != RightValue )
+                                        if( LeftValue != RightValue )
                                         {
                                             _makeDifferentValueCell( dataGridView1.Rows[r].Cells["LeftValue"] );
                                             _makeDifferentValueCell( dataGridView1.Rows[r].Cells["RightValue"] );
@@ -503,7 +503,7 @@ namespace ChemSW.NbtSchemaDiff
                     } // if( LeftPropWrapper.PropName == RightPropWrapper.PropName )
                 } // foreach( CswNbtNodePropWrapper RightPropWrapper in RightNode.Properties )
 
-                if ( MatchingRightProp != null )
+                if( MatchingRightProp != null )
                 {
                     RightProps.Remove( MatchingRightProp );
                 }
@@ -522,7 +522,7 @@ namespace ChemSW.NbtSchemaDiff
                     _makeNoMatchPropertyCell( dataGridView1.Rows[r].Cells["RightPropertyName"] );
                     _makeNoMatchPropertyCell( dataGridView1.Rows[r].Cells["RightSubFieldName"] );
                     _makeNoMatchPropertyCell( dataGridView1.Rows[r].Cells["RightValue"] );
-                    if ( LeftNode.NodeName != RightNode.NodeName )
+                    if( LeftNode.NodeName != RightNode.NodeName )
                     {
                         _makeDifferentValueCell( dataGridView1.Rows[r].Cells["LeftNodeName"] );
                         _makeDifferentValueCell( dataGridView1.Rows[r].Cells["RightNodeName"] );
@@ -531,7 +531,7 @@ namespace ChemSW.NbtSchemaDiff
             } // foreach( CswNbtNodePropWrapper LeftPropWrapper in LeftNode.Properties )
 
             // Leftover non-matched Right props
-            foreach ( CswNbtNodePropWrapper RightPropWrapper in RightProps )
+            foreach( CswNbtNodePropWrapper RightPropWrapper in RightProps )
             {
                 Int32 r = dataGridView1.Rows.Add();
                 dataGridView1.Rows[r].Cells["LeftNodeId"].Value = LeftNode.NodeId.PrimaryKey.ToString();
@@ -545,7 +545,7 @@ namespace ChemSW.NbtSchemaDiff
                 dataGridView1.Rows[r].Cells["RightNodeName"].Value = RightNode.NodeName;
                 dataGridView1.Rows[r].Cells["RightPropertyId"].Value = RightPropWrapper.NodeTypePropId.ToString();
                 dataGridView1.Rows[r].Cells["RightPropertyName"].Value = RightPropWrapper.PropName;
-                if ( LeftNode.NodeName != RightNode.NodeName )
+                if( LeftNode.NodeName != RightNode.NodeName )
                 {
                     _makeDifferentValueCell( dataGridView1.Rows[r].Cells["LeftNodeName"] );
                     _makeDifferentValueCell( dataGridView1.Rows[r].Cells["RightNodeName"] );
@@ -565,83 +565,84 @@ namespace ChemSW.NbtSchemaDiff
             string RightValue = string.Empty;
             bool Condition = false;
             bool Applies = false;
-            switch ( FieldType )
+            switch( FieldType )
             {
                 case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
                     Applies = true;
-                    if ( LeftWrapper.AsRelationship.RelatedNodeId != null && LeftWrapper.AsRelationship.RelatedNodeId.PrimaryKey != Int32.MinValue )
+                    if( LeftWrapper.AsRelationship.RelatedNodeId != null && LeftWrapper.AsRelationship.RelatedNodeId.PrimaryKey != Int32.MinValue )
                     {
                         LeftValue = LeftWrapper.AsRelationship.RelatedNodeId.PrimaryKey.ToString();
                         LeftObj = _CswNbtResourcesLeft.Nodes[LeftWrapper.AsRelationship.RelatedNodeId];
                     }
-                    if ( RightWrapper.AsRelationship.RelatedNodeId != null && RightWrapper.AsRelationship.RelatedNodeId.PrimaryKey != Int32.MinValue )
+                    if( RightWrapper.AsRelationship.RelatedNodeId != null && RightWrapper.AsRelationship.RelatedNodeId.PrimaryKey != Int32.MinValue )
                     {
                         RightValue = RightWrapper.AsRelationship.RelatedNodeId.PrimaryKey.ToString();
                         RightObj = _CswNbtResourcesRight.Nodes[RightWrapper.AsRelationship.RelatedNodeId];
                     }
                     Condition = ( LeftObj != null && RightObj != null &&
-                                  ( NodeMatches.ContainsKey( ( CswNbtNode )LeftObj ) &&
-                                    NodeMatches[( CswNbtNode )LeftObj] == ( CswNbtNode )RightObj ) );
+                                  ( NodeMatches.ContainsKey( (CswNbtNode) LeftObj ) &&
+                                    NodeMatches[(CswNbtNode) LeftObj] == (CswNbtNode) RightObj ) );
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Location:
                     Applies = true;
-                    if ( LeftWrapper.AsLocation.SelectedNodeId != null && LeftWrapper.AsLocation.SelectedNodeId.PrimaryKey != Int32.MinValue )
+                    if( LeftWrapper.AsLocation.SelectedNodeId != null && LeftWrapper.AsLocation.SelectedNodeId.PrimaryKey != Int32.MinValue )
                     {
                         LeftValue = LeftWrapper.AsLocation.SelectedNodeId.PrimaryKey.ToString();
                         LeftObj = _CswNbtResourcesLeft.Nodes[LeftWrapper.AsLocation.SelectedNodeId];
                     }
-                    if ( RightWrapper.AsLocation.SelectedNodeId != null && RightWrapper.AsLocation.SelectedNodeId.PrimaryKey != Int32.MinValue )
+                    if( RightWrapper.AsLocation.SelectedNodeId != null && RightWrapper.AsLocation.SelectedNodeId.PrimaryKey != Int32.MinValue )
                     {
                         RightValue = RightWrapper.AsLocation.SelectedNodeId.PrimaryKey.ToString();
                         RightObj = _CswNbtResourcesRight.Nodes[RightWrapper.AsLocation.SelectedNodeId];
                     }
                     Condition = ( LeftObj != null && RightObj != null &&
-                                  ( NodeMatches.ContainsKey( ( CswNbtNode )LeftObj ) &&
-                                    NodeMatches[( CswNbtNode )LeftObj] == ( CswNbtNode )RightObj ) );
+                                  ( NodeMatches.ContainsKey( (CswNbtNode) LeftObj ) &&
+                                    NodeMatches[(CswNbtNode) LeftObj] == (CswNbtNode) RightObj ) );
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
                     Applies = true;
-                    if ( LeftWrapper.AsNodeTypeSelect.SelectMode == PropertySelectMode.Single && LeftWrapper.AsNodeTypeSelect.SelectedNodeTypeIds != string.Empty )
+                    if( LeftWrapper.AsNodeTypeSelect.SelectMode == PropertySelectMode.Single &&
+                        LeftWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.Count != 0 )
                     {
-                        LeftValue = LeftWrapper.AsNodeTypeSelect.SelectedNodeTypeIds;
+                        LeftValue = LeftWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.ToString();
                         LeftObj = _CswNbtResourcesLeft.MetaData.getNodeType( Convert.ToInt32( LeftWrapper.AsNodeTypeSelect.SelectedNodeTypeIds ) );
                     }
-                    if ( RightWrapper.AsNodeTypeSelect.SelectMode == PropertySelectMode.Single && RightWrapper.AsNodeTypeSelect.SelectedNodeTypeIds != string.Empty )
+                    if( RightWrapper.AsNodeTypeSelect.SelectMode == PropertySelectMode.Single && RightWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.Count != 0 )
                     {
-                        RightValue = RightWrapper.AsNodeTypeSelect.SelectedNodeTypeIds;
+                        RightValue = RightWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.ToString();
                         RightObj = _CswNbtResourcesRight.MetaData.getNodeType( Convert.ToInt32( RightWrapper.AsNodeTypeSelect.SelectedNodeTypeIds ) );
                     }
                     Condition = ( LeftObj != null && RightObj != null &&
-                                  ( ( CswNbtMetaDataNodeType )LeftObj ).NodeTypeName == ( ( CswNbtMetaDataNodeType )RightObj ).NodeTypeName &&
-                                  ( ( CswNbtMetaDataNodeType )LeftObj ).ObjectClass.ObjectClass == ( ( CswNbtMetaDataNodeType )RightObj ).ObjectClass.ObjectClass );
+                                  ( (CswNbtMetaDataNodeType) LeftObj ).NodeTypeName == ( (CswNbtMetaDataNodeType) RightObj ).NodeTypeName &&
+                                  ( (CswNbtMetaDataNodeType) LeftObj ).ObjectClass.ObjectClass == ( (CswNbtMetaDataNodeType) RightObj ).ObjectClass.ObjectClass );
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
                     Applies = true;
-                    if ( LeftWrapper.AsViewPickList.SelectMode == PropertySelectMode.Single && LeftWrapper.AsViewPickList.SelectedViewIds != string.Empty )
+                    if( LeftWrapper.AsViewPickList.SelectMode == PropertySelectMode.Single && LeftWrapper.AsViewPickList.SelectedViewIds.Count != 0 )
                     {
-                        LeftValue = LeftWrapper.AsViewPickList.SelectedViewIds;
+                        LeftValue = LeftWrapper.AsViewPickList.SelectedViewIds.ToString();
                         LeftObj = CswNbtViewFactory.restoreView( _CswNbtResourcesLeft, Convert.ToInt32( LeftWrapper.AsViewPickList.SelectedViewIds ) );
                     }
-                    if ( RightWrapper.AsViewPickList.SelectMode == PropertySelectMode.Single && RightWrapper.AsViewPickList.SelectedViewIds != string.Empty )
+                    if( RightWrapper.AsViewPickList.SelectMode == PropertySelectMode.Single && RightWrapper.AsViewPickList.SelectedViewIds.Count != 0 )
                     {
-                        RightValue = RightWrapper.AsViewPickList.SelectedViewIds;
+                        RightValue = RightWrapper.AsViewPickList.SelectedViewIds.ToString();
                         RightObj = CswNbtViewFactory.restoreView( _CswNbtResourcesRight, Convert.ToInt32( RightWrapper.AsViewPickList.SelectedViewIds ) );
                     }
                     Condition = ( LeftObj != null && RightObj != null &&
-                                  ( ( CswNbtView )LeftObj ).ViewName == ( ( CswNbtView )RightObj ).ViewName &&
-                                  ( ( CswNbtView )LeftObj ).Visibility == ( ( CswNbtView )RightObj ).Visibility );
+                                  ( (CswNbtView) LeftObj ).ViewName == ( (CswNbtView) RightObj ).ViewName &&
+                                  ( (CswNbtView) LeftObj ).Visibility == ( (CswNbtView) RightObj ).Visibility );
                     break;
             } // switch( SubFieldName )
 
             CompareValueMatchCase ret = CompareValueMatchCase.Unknown;
-            if ( Applies )
+            if( Applies )
             {
-                if ( LeftObj != null && RightObj != null )
+                if( LeftObj != null && RightObj != null )
                 {
-                    if ( Condition )
+                    if( Condition )
                     {
                         // No need to mark if the value and the reference both match
-                        if ( LeftValue != RightValue )
+                        if( LeftValue != RightValue )
                             ret = CompareValueMatchCase.EquivalentValue;
                         else
                             ret = CompareValueMatchCase.Equal;
@@ -654,11 +655,11 @@ namespace ChemSW.NbtSchemaDiff
                 }
                 else
                 {
-                    if ( LeftObj == null && RightObj == null )
+                    if( LeftObj == null && RightObj == null )
                         ret = CompareValueMatchCase.BothOrphan;
-                    else if ( LeftObj == null )
+                    else if( LeftObj == null )
                         ret = CompareValueMatchCase.LeftOrphan;
-                    else if ( RightObj == null )
+                    else if( RightObj == null )
                         ret = CompareValueMatchCase.RightOrphan;
                 }
             } // if( Applies )

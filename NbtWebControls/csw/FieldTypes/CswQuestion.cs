@@ -49,8 +49,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     //ListItem NoneItem = new ListItem( "", "" );
                     //_AnswerList.Items.Add( NoneItem );
 
-                    StringCollection _AllowedAnswers = new StringCollection();
-                    _AllowedAnswers = Prop.AsQuestion.AllowedAnswers;
+                    CswCommaDelimitedString _AllowedAnswers = Prop.AsQuestion.AllowedAnswers;
 
                     for ( int i = 0; i < _AllowedAnswers.Count; i++ )
                     {

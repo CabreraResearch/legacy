@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     if( EquipmentOrAssemblyNode.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
                     {
-                        StringCollection NewYValues = new StringCollection();
+                        CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
                         CswNbtObjClassEquipment EquipmentNodeAsEquipment = CswNbtNodeCaster.AsEquipment( EquipmentOrAssemblyNode );
                         //CswNbtObjClassEquipment Equipment = CswNbtObjClassFactory.Make( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass ) as CswNbtObjClassEquipment;
                         foreach( string YValue in EquipmentNodeAsEquipment.Parts.YValues )
@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     else if( EquipmentOrAssemblyNode.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass )
                     {
-                        StringCollection NewYValues = new StringCollection();
+                        CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
                         CswNbtObjClassEquipmentAssembly AssemblyNodeAsAssembly = CswNbtNodeCaster.AsEquipmentAssembly( EquipmentOrAssemblyNode );
                         foreach( string YValue in AssemblyNodeAsAssembly.Parts.YValues )
                         {

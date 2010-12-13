@@ -155,8 +155,7 @@ namespace ChemSW.Nbt.WebPages
                 if( Page.IsValid && ph.HasControls() )
                 {
                     // Save Notifications
-                    string CheckedNotifs = _NotifCBArray.GetCheckedValues( "Subscribe" );
-                    Collection<Int32> CheckedNotifIds = CswTools.DelimitedStringToIntCollection( CheckedNotifs, ',' );
+                    Collection<Int32> CheckedNotifIds = _NotifCBArray.GetCheckedValues( "Subscribe" ).ToIntCollection();
 
                     for( Int32 n = 0; n < _NotifTree.getChildNodeCount(); n++ )
                     {
@@ -179,8 +178,7 @@ namespace ChemSW.Nbt.WebPages
                     }
 
                     // Save Mail Reports
-                    string CheckedMailReports = _MailReportCBArray.GetCheckedValues( "Subscribe" );
-                    Collection<Int32> CheckedMailReportIds = CswTools.DelimitedStringToIntCollection( CheckedMailReports, ',' );
+                    Collection<Int32> CheckedMailReportIds = _MailReportCBArray.GetCheckedValues( "Subscribe" ).ToIntCollection();
 
                     for( Int32 n = 0; n < _MailReportTree.getChildNodeCount(); n++ )
                     {

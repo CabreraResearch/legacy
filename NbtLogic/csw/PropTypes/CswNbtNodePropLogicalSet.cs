@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.PropTypes
         /// Represents the data of a set of checkboxes
         /// </summary>
         public CswNbtNodePropLogicalSet( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
-            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp  )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
             if( Empty )
             {
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.PropTypes
                 ResetXml();
             Save();
         }
-        
+
 
         /// <summary>
         /// Saves the value of this property
@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 foreach( DataRow Row in Data.Rows )
                 {
-                    if( CswConvert.ToBoolean( Row[XValues[0].ToString()] ) )
+                    if( CswConvert.ToBoolean( Row[XValues[0]] ) )
                     {
                         if( CheckedNames != string.Empty ) CheckedNames += ",";
                         CheckedNames += Row["Name"].ToString();
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.PropTypes
                     string ThisCheckedNames = string.Empty;
                     foreach( DataRow Row in Data.Rows )
                     {
-                        if( CswConvert.ToBoolean( Row[XValues[0].ToString()] ) )
+                        if( CswConvert.ToBoolean( Row[XValues[0]] ) )
                         {
                             if( ThisCheckedNames != string.Empty ) ThisCheckedNames += ",";
                             ThisCheckedNames += Row["Name"].ToString();
@@ -138,12 +138,12 @@ namespace ChemSW.Nbt.PropTypes
             PendingUpdate = false;
         }
 
-        public DataTable GetDataAsTable(string NameColumn, string KeyColumn)
+        public DataTable GetDataAsTable( string NameColumn, string KeyColumn )
         {
-            DataTable Data = new CswDataTable("GetDataAsTable_DataTable", "");
+            DataTable Data = new CswDataTable( "GetDataAsTable_DataTable", "" );
             Data.Columns.Add( NameColumn );
             Data.Columns.Add( KeyColumn );
-            
+
             foreach( string XValue in XValues )
                 Data.Columns.Add( XValue, typeof( bool ) );
 
@@ -162,7 +162,7 @@ namespace ChemSW.Nbt.PropTypes
                     foreach( string XValue in XValues )
                     {
                         Row[XValue] = CheckValue( XValue, Row[KeyColumn].ToString() );
-                    } 
+                    }
                     Data.Rows.Add( Row );
                 }
             }
@@ -189,13 +189,16 @@ namespace ChemSW.Nbt.PropTypes
             _YValues = null;
         }
 
-        private StringCollection _XValues = null;
-        public StringCollection XValues
+        private CswCommaDelimitedString _XValues = null;
+        public CswCommaDelimitedString XValues
         {
             get
             {
                 if( _XValues == null )
-                    _XValues = CswTools.DelimitedStringToStringCollection( _CswNbtMetaDataNodeTypeProp.ValueOptions, ',' );
+                {
+                    _XValues = new CswCommaDelimitedString();
+                    _XValues.FromString( _CswNbtMetaDataNodeTypeProp.ValueOptions );
+                }
                 return _XValues;
             }
             set
@@ -205,21 +208,23 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        private StringCollection _YValues = null;
-        public StringCollection YValues
+        // This does not return a CswCommaDelimitedString in order to allow business logic to override YValues 
+        // with other kinds of delimited strings
+        private CswDelimitedString _YValues = null;
+        public CswDelimitedString YValues
         {
             get
             {
                 if( _YValues == null )
                 {
+                    _YValues = new CswCommaDelimitedString();
                     if( _CswNbtMetaDataNodeTypeProp.IsFK && _CswNbtMetaDataNodeTypeProp.FKType == "fkeydefid" )
                     {
-                        _YValues = new StringCollection();
                         CswTableSelect FkeyDefsSelect = _CswNbtResources.makeCswTableSelect( "LogicalSet_fkeydef_select", "fkey_definitions" );
                         DataTable FkeyDefsTable = FkeyDefsSelect.getTable( "fkeydefid", _CswNbtMetaDataNodeTypeProp.FKValue );
                         string Sql = FkeyDefsTable.Rows[0]["sql"].ToString();
 
-                        CswArbitrarySelect YValuesSelect = _CswNbtResources.makeCswArbitrarySelect("LogicalSet_YValues_select", Sql);
+                        CswArbitrarySelect YValuesSelect = _CswNbtResources.makeCswArbitrarySelect( "LogicalSet_YValues_select", Sql );
                         DataTable YValuesTable = YValuesSelect.getTable();
                         foreach( DataRow CurrentRow in YValuesTable.Rows )
                         {
@@ -228,7 +233,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                     else
                     {
-                        _YValues = CswTools.DelimitedStringToStringCollection( _CswNbtMetaDataNodeTypeProp.ListOptions, ',' );
+                        _YValues.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
                     }
                 }
                 return _YValues;

@@ -47,7 +47,6 @@ namespace ChemSW.NbtWebControls.FieldTypes
                         Data.Columns.Add( "userid", typeof( int ) );
                         Data.Columns.Add( "Include", typeof( bool ) );
 
-                        string searchstr = CswNbtNodePropUserSelect.delimiter.ToString() + Prop.AsUserSelect.SelectedUserIds + CswNbtNodePropUserSelect.delimiter.ToString();
                         bool first = true;
                         ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                         for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
@@ -57,8 +56,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
                             DataRow NTRow = Data.NewRow();
                             NTRow["User Name"] = UsersTree.getNodeNameForCurrentPosition();
                             NTRow["userid"] = UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
-                            NTRow["Include"] = ( ( searchstr.IndexOf( CswNbtNodePropUserSelect.delimiter.ToString() + UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() + CswNbtNodePropUserSelect.delimiter.ToString() ) >= 0 ) ||
-                                                 ( first && Required && Prop.AsUserSelect.SelectedUserIds == string.Empty ) );
+                            NTRow["Include"] = ( ( Prop.AsUserSelect.SelectedUserIds.Contains( UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() ) ) ||
+                                                 ( first && Required && Prop.AsUserSelect.SelectedUserIds.Count == 0 ) );
                             Data.Rows.Add( NTRow );
                             first = false;
 
@@ -138,7 +137,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 EnsureChildControls();
                 if( Prop != null )
                 {
-                    _ValueLabel.Text = Prop.AsUserSelect.SelectedUsersToString();
+                    _ValueLabel.Text = Prop.AsUserSelect.SelectedUserNames().ToString();
                     if( !_AllowEditValue )
                     {
                         if( Prop.NodeId != null )

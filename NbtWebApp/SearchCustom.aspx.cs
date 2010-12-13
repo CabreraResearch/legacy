@@ -145,11 +145,10 @@ namespace ChemSW.Nbt.WebPages
                 else
                     TopRel = View.AddViewRelationship( Master.CswNbtResources.MetaData.getObjectClass( _SelectedValue ), true );
 
-                string CheckedProps = _PropCheckBoxArray.GetCheckedValues( "Search" );
-                string[] SplitCheckedProps = CheckedProps.Split( new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
-                if( SplitCheckedProps.Length > 0 )
+                CswCommaDelimitedString CheckedProps = _PropCheckBoxArray.GetCheckedValues( "Search" );
+                if( CheckedProps.Count > 0 )
                 {
-                    foreach( string PropId in SplitCheckedProps )
+                    foreach( string PropId in CheckedProps )
                     {
                         CswNbtMetaDataNodeTypeProp ThisProp = Master.CswNbtResources.MetaData.getNodeTypeProp( Convert.ToInt32( PropId ) );
                         CswNbtViewProperty ViewProp = View.AddViewProperty( TopRel, ThisProp );

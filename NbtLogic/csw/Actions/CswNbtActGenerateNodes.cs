@@ -87,9 +87,9 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
 
-            if ( string.Empty == GeneratorNode.TargetType.SelectedNodeTypeIds ||
-                "0" == GeneratorNode.TargetType.SelectedNodeTypeIds ||
-                null == _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds ) ) )
+            if ( 0 == GeneratorNode.TargetType.SelectedNodeTypeIds.Count ||
+                "0" == GeneratorNode.TargetType.SelectedNodeTypeIds[0] ||
+                null == _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds[0] ) ) )
             {
                 throw ( new CswDniException( "Generator node " + CswNbtNodeGenerator.NodeName + " (" + CswNbtNodeGenerator.NodeId.ToString() + ") does not have a valid nodetypeid" ) );
             }

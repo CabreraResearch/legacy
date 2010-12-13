@@ -501,7 +501,7 @@ namespace ChemSW.Nbt.ImportExport
                                                 if( SplitRelatedNodeID[1].ToLower() == "user" )
                                                 {
                                                     RelatedNode.Properties["Username"].AsText.Text = SplitRelatedNodeID[2].ToLower();
-                                                    if(GeneralUserRole != null)
+                                                    if( GeneralUserRole != null )
                                                         RelatedNode.Properties["Role"].AsRelationship.RelatedNodeId = GeneralUserRole.NodeId;
                                                     RelatedNode.Properties["AccountLocked"].AsLogical.Checked = Tristate.True;
                                                 }
@@ -662,13 +662,12 @@ namespace ChemSW.Nbt.ImportExport
                 CswNbtMetaDataFieldType ViewPickListFieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewPickList );
                 foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[ViewPickListFieldType] )
                 {
-                    string NewSelectedViewIds = string.Empty;
-                    Collection<int> SelectedViewIds = CswTools.DelimitedStringToIntCollection( ViewProp.AsViewPickList.SelectedViewIds, ',' );
+                    CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
+                    Collection<int> SelectedViewIds = ViewProp.AsViewPickList.SelectedViewIds.ToIntCollection();
                     foreach( Int32 ViewId in SelectedViewIds )
                     {
-                        if( NewSelectedViewIds != string.Empty ) NewSelectedViewIds += ",";
                         if( ViewMap.ContainsKey( ViewId ) )
-                            NewSelectedViewIds += ViewMap[ViewId];
+                            NewSelectedViewIds.Add( ViewMap[ViewId].ToString() );
                     }
                     ViewProp.AsViewPickList.SelectedViewIds = NewSelectedViewIds;
                     ViewProp.AsViewPickList.PendingUpdate = true;
