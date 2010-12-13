@@ -30,20 +30,22 @@ namespace ChemSW.Nbt.Actions
             CswNbtNode ReturnVal = null;
 
             CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
-
             CswNbtMetaDataObjectClass GeneratorClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-            CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds ) ).LatestVersionNodeType;
-            CswNbtMetaDataObjectClass TargetObjectClass = TargetNodeType.ObjectClass;
 
-            CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
-            if ( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )
-                throw new CswDniException( "CswNbtActGenerateNodes got an invalid object class: " + TargetObjClass.ObjectClass.ToString() );
-            ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget)TargetObjClass;
+            // CreatedNodeType will be of InspectionDesign, Task, etc.
+            CswNbtMetaDataNodeType CreatedNodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds ) ).LatestVersionNodeType;
+            CswNbtMetaDataObjectClass CreatedMetaDataObjectClass = CreatedNodeType.ObjectClass;
 
-            CswNbtMetaDataNodeTypeProp TargetNTP = TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetParentPropertyName );
-            CswNbtMetaDataNodeTypeProp GeneratorNTP = TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratorPropertyName );
-            CswNbtMetaDataNodeTypeProp IsFutureNTP = TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
-            CswNbtMetaDataNodeTypeProp DueDateNTP = TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratedDatePropertyName );
+            CswNbtObjClass CreatedObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, CreatedMetaDataObjectClass );
+            if( !( CreatedObjClass is ICswNbtPropertySetGeneratorTarget ) )
+                throw new CswDniException( "CswNbtActGenerateNodes got an invalid object class: " + CreatedObjClass.ObjectClass.ToString() );
+            ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget) CreatedObjClass;
+
+            // CreatedForNTP is the parent or owner of the new node. Inspections created for Mount Points, Tasks for Equipment, etc.
+            CswNbtMetaDataNodeTypeProp CreatedForNTP = CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetParentPropertyName );
+            CswNbtMetaDataNodeTypeProp GeneratorNTP = CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratorPropertyName );
+            CswNbtMetaDataNodeTypeProp IsFutureNTP = CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
+            CswNbtMetaDataNodeTypeProp DueDateNTP = CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratedDatePropertyName );
 
             CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
             CswNbtView.ViewName = "Nodes for Generator";
@@ -52,20 +54,20 @@ namespace ChemSW.Nbt.Actions
             //CswNbtViewRelationship ChildRelationship = CswNbtView.AddViewRelationship( GeneratorRelationship, CswNbtViewRelationship.PropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratorPropertyName ), false );
             //CswNbtViewProperty GeneratedDateProperty = CswNbtView.AddViewProperty( ChildRelationship, TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratedDatePropertyName ) );
             //CswNbtViewPropertyFilter GeneratedDateFilter = CswNbtView.AddViewPropertyFilter( GeneratedDateProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDueDate.Date.ToShortDateString(), false );
-            CswNbtViewRelationship ParentRelationship = CswNbtView.AddViewRelationship( TargetNodeType, false );
-            CswNbtViewProperty TargetParentProp = CswNbtView.AddViewProperty( ParentRelationship, TargetNTP );
-            CswNbtViewPropertyFilter TargetParentFilter = CswNbtView.AddViewPropertyFilter( TargetParentProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, ParentPk.PrimaryKey.ToString(), false );
-            CswNbtViewProperty GeneratorProp = CswNbtView.AddViewProperty( ParentRelationship, GeneratorNTP );
+            CswNbtViewRelationship RootRelationship = CswNbtView.AddViewRelationship( CreatedNodeType, false );
+            CswNbtViewProperty CreatedForParentProp = CswNbtView.AddViewProperty( RootRelationship, CreatedForNTP );
+            CswNbtViewPropertyFilter CreatedForFilter = CswNbtView.AddViewPropertyFilter( CreatedForParentProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, ParentPk.PrimaryKey.ToString(), false );
+            CswNbtViewProperty GeneratorProp = CswNbtView.AddViewProperty( RootRelationship, GeneratorNTP );
             CswNbtViewPropertyFilter GeneratorFilter = CswNbtView.AddViewPropertyFilter( GeneratorProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtNodeGenerator.NodeId.PrimaryKey.ToString(), false );
-            CswNbtViewProperty DueDateProp = CswNbtView.AddViewProperty( ParentRelationship, DueDateNTP );
+            CswNbtViewProperty DueDateProp = CswNbtView.AddViewProperty( RootRelationship, DueDateNTP );
             CswNbtViewPropertyFilter DueDateFilter = CswNbtView.AddViewPropertyFilter( DueDateProp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDueDate.ToShortDateString(), false );
 
-            ICswNbtTree TargetNodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
+            ICswNbtTree ExistingNodesTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
 
-            if ( TargetNodeTree.getChildNodeCount() > 0 )
+            if( ExistingNodesTree.getChildNodeCount() > 0 )
             {
-                TargetNodeTree.goToNthChild( 0 );
-                ReturnVal = TargetNodeTree.getNodeForCurrentPosition();
+                ExistingNodesTree.goToNthChild( 0 );
+                ReturnVal = ExistingNodesTree.getNodeForCurrentPosition();
             }
 
             return ( ReturnVal );
