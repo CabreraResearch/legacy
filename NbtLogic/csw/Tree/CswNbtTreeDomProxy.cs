@@ -502,7 +502,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets a given node to be the currently indexed node in the tree, by path
         /// </summary>
-        public void makeNodeCurrent( string TreePath )
+        public void makeNodeCurrent( CswDelimitedString TreePath )
         {
             _CswNbtTreeNodes.makeNodeCurrent( TreePath );
         }//makeNodeCurrent() 

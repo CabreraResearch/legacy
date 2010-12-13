@@ -294,7 +294,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets a given node to be the currently indexed node in the tree, by path
         /// </summary>
-        void makeNodeCurrent( string TreePath );
+        void makeNodeCurrent( CswDelimitedString TreePath );
 
 
         /// <summary>
