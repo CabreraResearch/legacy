@@ -142,10 +142,13 @@ namespace ChemSW.Nbt.MetaData
         {
             object DBValue = CswConvert.ToDbVal( Value );
             ObjectClassProp.DefaultValue.SetPropRowValue( ObjectClassProp.FieldTypeRule.SubFields[SubFieldName].Column, DBValue );
+            // We're going to regret this day
+            ObjectClassProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, DBValue );
 
             foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.NodeTypeProps )
             {
                 NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.FieldTypeRule.SubFields[SubFieldName].Column, DBValue );
+                NodeTypeProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, DBValue );
             }
         }
 
