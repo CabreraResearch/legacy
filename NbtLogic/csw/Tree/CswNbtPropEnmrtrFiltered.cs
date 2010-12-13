@@ -34,7 +34,7 @@ namespace ChemSW.Nbt
             {
                 _Position++;
 
-                if( _Position == _PropList.Count  )
+                if( _Position == ( _PropList.Count - 1 )  )
                 {
                     ReachedEnd = true;
                 }
