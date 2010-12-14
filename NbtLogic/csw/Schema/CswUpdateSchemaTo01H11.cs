@@ -62,16 +62,20 @@ namespace ChemSW.Nbt.Schema
             PhysicalInspectionVP.save();
 
             // Case 20506
-            Int32 SetupTabId = Int32.MinValue;
+            Int32 SetupTabId;
             CswNbtMetaDataNodeTypeTab SetupTab = PhysicalInspectionsNT.getNodeTypeTab( "Setup" );
             if( null != SetupTab )
                 SetupTabId = SetupTab.TabId;
+            else
+                SetupTabId = PhysicalInspectionsNT.getFirstNodeTypeTab().TabId;
+
             CswNbtMetaDataNodeTypeProp MPBarcodeNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( PhysicalInspectionsNT, 
                                                                                                     CswNbtMetaDataFieldType.NbtFieldType.PropertyReference, 
                                                                                                     "Barcode",
                                                                                                     SetupTabId );
             CswNbtMetaDataNodeTypeProp TargetNTP = PhysicalInspectionsNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
             CswNbtMetaDataNodeTypeProp BarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
+            MPBarcodeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, string.Empty, Int32.MinValue );
             MPBarcodeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, string.Empty, Int32.MinValue );
             MPBarcodeNTP._DataRow["valuepropid"] = CswConvert.ToDbVal( BarcodeNTP.PropId );
 
