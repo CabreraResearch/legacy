@@ -52,7 +52,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass FireExtinguisherOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.FireExtinguisherClass );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( FEModuleId, FireExtinguisherOC.ObjectClassId );
             CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-
+            CswNbtMetaDataObjectClass MountPointGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MountPointGroupClass );
+            
             // Case 20062
             Int32 FEImportActionid = _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Import_Fire_Extinguisher_Data, true, "Act_ImportFireExtinguisher.aspx", "System" );
 
@@ -132,8 +133,6 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.DescriptionPropertyName ), "setvalonadd", true );
 
             // Case 20536 Mount Point Group NT
-            CswNbtMetaDataObjectClass MountPointGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MountPointGroupClass );
-            MountPointGroupOC._DataRow["iconfilename"] = "ball_blueS.gif";
             CswNbtMetaDataNodeType MountPointGroupNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( MountPointGroupOC.ObjectClassId, CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point_Group ), "Fire Extinguisher" );
             CswNbtMetaDataNodeTypeProp MountPointGroupNameNTP = MountPointGroupNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPointGroup.NamePropertyName );
             MountPointGroupNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Name" );
