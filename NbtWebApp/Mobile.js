@@ -725,7 +725,7 @@
                     break;
 
                 case "Time":
-                    Html += '<input type="time" name="' + IdStr + '" value="' + sf_value + '" />';
+                    Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
                     break;
 
                 default:
