@@ -74,7 +74,7 @@ namespace ChemSW.NbtWebControls
                 CswNbtNodePropLogicalSet UsersActions = ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser.UserNode ).QuickLaunchActions;
 
                 // First user specified ones
-                Collection<Int32> SelectedViewIds = CswTools.DelimitedStringToIntCollection( UsersViews.SelectedViewIds, ',' );
+                Collection<Int32> SelectedViewIds = UsersViews.SelectedViewIds.ToIntCollection();
                 foreach( Int32 ViewId in SelectedViewIds )
                 {
                     if( ViewId > 0 )

@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( 0 == SelectedNodeTypeIds.Length );
+                return ( 0 == SelectedNodeTypeIds.Count );
             }
         }
 
@@ -53,23 +53,37 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
+        private CswCommaDelimitedString _SelectedNodeTypeIds = null;
         /// <summary>
         /// Comma-separated list of Selected NodeTypeIds
         /// </summary>
-        public string SelectedNodeTypeIds
+        public CswCommaDelimitedString SelectedNodeTypeIds
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _SelectedNodeTypeIdsSubField.Column );
+                if( _SelectedNodeTypeIds == null )
+                {
+                    _SelectedNodeTypeIds = new CswCommaDelimitedString();
+                    _SelectedNodeTypeIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedNodeTypeIds_OnChange );
+                    _SelectedNodeTypeIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedNodeTypeIdsSubField.Column ) );
+                }
+                return _SelectedNodeTypeIds;
             }
             set
             {
-                if( _CswNbtNodePropData.SetPropRowValue( _SelectedNodeTypeIdsSubField.Column, value ) )
-                {
-                    // BZ 10094 - this caused Notification names to populate in the background, which was confusing
-                    // PendingUpdate = true;
-                    RefreshSelectedNodeTypeNames();
-                }
+                _SelectedNodeTypeIds = value;
+                _SelectedNodeTypeIds_OnChange();
+            }
+        }
+
+        // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
+        private void _SelectedNodeTypeIds_OnChange()
+        {
+            if( _CswNbtNodePropData.SetPropRowValue( _SelectedNodeTypeIdsSubField.Column, _SelectedNodeTypeIds.ToString() ) )
+            {
+                // BZ 10094 - this caused Notification names to populate in the background, which was confusing
+                // PendingUpdate = true;
+                RefreshSelectedNodeTypeNames();
             }
         }
 
@@ -78,7 +92,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void RefreshSelectedNodeTypeNames()
         {
-            _CswNbtNodePropData.Gestalt = SelectedNodeTypesToString();
+            _CswNbtNodePropData.Gestalt = SelectedNodeTypeNames().ToString();
             PendingUpdate = false;
         }
 
@@ -95,16 +109,16 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode SelectedNTsNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName(), SelectedNodeTypeIds );
+            XmlNode SelectedNTsNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName(), SelectedNodeTypeIds.ToString() );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            SelectedNodeTypeIds = _HandleReferences( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName() ), NodeTypeMap );
+            SelectedNodeTypeIds.FromString( _HandleReferences( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName() ), NodeTypeMap ) );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            SelectedNodeTypeIds = _HandleReferences( CswTools.XmlRealAttributeName( PropRow[_SelectedNodeTypeIdsSubField.ToXmlNodeName()].ToString() ), NodeTypeMap );
+            SelectedNodeTypeIds.FromString( _HandleReferences( CswTools.XmlRealAttributeName( PropRow[_SelectedNodeTypeIdsSubField.ToXmlNodeName()].ToString() ), NodeTypeMap ) );
         }
 
         private string _HandleReferences( string NodeTypeIds, Dictionary<Int32, Int32> NodeTypeMap )
@@ -129,36 +143,28 @@ namespace ChemSW.Nbt.PropTypes
         }
 
 
-        public string SelectedNodeTypesToString()
+        public CswCommaDelimitedString SelectedNodeTypeNames()
         {
-            string[] NodeTypeIdArray = SelectedNodeTypeIds.Split( delimiter );
-            string[] SelectedNodeTypeNames = new string[NodeTypeIdArray.Length];
-            for( int i = 0; i < NodeTypeIdArray.Length; i++ )
+            CswCommaDelimitedString NodeTypeNames = new CswCommaDelimitedString();
+            foreach(string NodeTypeId in SelectedNodeTypeIds)
             {
-                if( NodeTypeIdArray[i].ToString() != string.Empty )
+                if( NodeTypeId.ToString() != string.Empty )
                 {
                     foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
                     {
-                        if( NodeType.NodeTypeId.ToString() == NodeTypeIdArray[i].ToString() )
+                        if( NodeType.NodeTypeId.ToString() == NodeTypeId.ToString() )
                         {
-                            SelectedNodeTypeNames[i] = NodeType.LatestVersionNodeType.NodeTypeName;
+                            NodeTypeNames.Add( NodeType.LatestVersionNodeType.NodeTypeName );
                         }
                     }
                 }
-            }
+            } // foreach(string NodeTypeId in SelectedNodeTypeIds)
 
             // Sort alphabetically
-            Array.Sort( SelectedNodeTypeNames );
+            NodeTypeNames.Sort();
 
-            string SelectedNodeTypesString = string.Empty;
-            for( int i = 0; i < SelectedNodeTypeNames.Length; i++ )
-            {
-                if( SelectedNodeTypesString != string.Empty )
-                    SelectedNodeTypesString += ", ";
-                SelectedNodeTypesString += SelectedNodeTypeNames[i];
-            }
-            return SelectedNodeTypesString;
-        }
+            return NodeTypeNames;
+        } // SelectedNodeTypeNames()
 
     }//CswNbtNodePropNodeTypeSelect
 }//namespace ChemSW.Nbt.PropTypes

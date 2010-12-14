@@ -17,11 +17,6 @@ namespace ChemSW.Nbt.PropTypes
     public class CswNbtNodePropQuestion : CswNbtNodeProp
     {
         /// <summary>
-        /// Delimiting character for answer list.
-        /// </summary>
-        public static char Delims = ',';
-        
-        /// <summary>
         /// Constructor
         /// </summary>
         public CswNbtNodePropQuestion( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
@@ -173,18 +168,20 @@ namespace ChemSW.Nbt.PropTypes
             get { return _CswNbtMetaDataNodeTypeProp.PropName; }
         }
 
-        private StringCollection _CompliantAnswers = null;
+        private CswCommaDelimitedString _CompliantAnswers = null;
 
         /// <summary>
         /// StringCollection of compliant answers
         /// </summary>
-        public StringCollection CompliantAnswers
+        public CswCommaDelimitedString CompliantAnswers
         {
             get
             {
-                _CompliantAnswers = new StringCollection();
-                _CompliantAnswers = CswTools.DelimitedStringToStringCollection( _CswNbtMetaDataNodeTypeProp.ValueOptions, Delims );
-
+                if( _CompliantAnswers == null )
+                {
+                    _CompliantAnswers = new CswCommaDelimitedString();
+                    _CompliantAnswers.FromString( _CswNbtMetaDataNodeTypeProp.ValueOptions );
+                }
                 return _CompliantAnswers;
             }
         }
@@ -199,34 +196,36 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        private StringCollection _AllowedAnswers = null;
+        private CswCommaDelimitedString _AllowedAnswers = null;
 
         /// <summary>
         /// List of answers used to populate Answer picklist
         /// </summary>
-        public StringCollection AllowedAnswers
+        public CswCommaDelimitedString AllowedAnswers
         {
             get
             {
-                _AllowedAnswers = new StringCollection();
-                string AnswerString = _CswNbtMetaDataNodeTypeProp.ListOptions;
-
-                if( null == AnswerString || string.Empty == AnswerString )
+                if( _AllowedAnswers == null )
                 {
-                    _AllowedAnswers.Add( "" );
-                    _AllowedAnswers.Add( "Yes" );
-                    _AllowedAnswers.Add( "No" );
-                    _AllowedAnswers.Add( "N/A" );
-                }
-                else
-                {
-                    _AllowedAnswers = CswTools.DelimitedStringToStringCollection( _CswNbtMetaDataNodeTypeProp.ListOptions, Delims );
-                    _AllowedAnswers.Insert( 0, "" );
-                }
+                    _AllowedAnswers = new CswCommaDelimitedString();
+                    _AllowedAnswers.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
 
+                    if( _AllowedAnswers.Count == 0 )
+                    {
+                        _AllowedAnswers.Add( "" );
+                        _AllowedAnswers.Add( "Yes" );
+                        _AllowedAnswers.Add( "No" );
+                        _AllowedAnswers.Add( "N/A" );
+                    }
+                    else
+                    {
+                        _AllowedAnswers.Insert( 0, "" );
+                    }
+                } // if( _AllowedAnswers == null )
                 return _AllowedAnswers;
-            }
-        }
+            } // get
+        } // AllowedAnswers
+
         /// <summary>
         /// String value for allowed answers
         /// </summary>

@@ -54,7 +54,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                         DataRow NTRow = Data.NewRow();
                         NTRow["NodeType Name"] = "[none]";
                         NTRow["nodetypeid"] = CswConvert.ToDbVal( Int32.MinValue );
-                        NTRow["Include"] = ( Prop.AsNodeTypeSelect.SelectedNodeTypeIds == string.Empty );
+                        NTRow["Include"] = ( Prop.AsNodeTypeSelect.SelectedNodeTypeIds.Count == 0 );
                         Data.Rows.Add( NTRow );
                     }
 
@@ -66,7 +66,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                         NTRow["NodeType Name"] = NodeType.NodeTypeName;          // latest name
                         NTRow["nodetypeid"] = NodeType.FirstVersionNodeTypeId;   // first nodetypeid
                         NTRow["Include"] = ( ( searchstr.IndexOf( CswNbtNodePropNodeTypeSelect.delimiter.ToString() + NodeType.FirstVersionNodeTypeId + CswNbtNodePropNodeTypeSelect.delimiter.ToString() ) >= 0 ) ||
-                                             ( first && Required && Prop.AsNodeTypeSelect.SelectedNodeTypeIds == string.Empty ) );
+                                             ( first && Required && Prop.AsNodeTypeSelect.SelectedNodeTypeIds.Count == 0 ) );
                         Data.Rows.Add( NTRow );
                         first = false;
                     }
@@ -130,7 +130,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
             if( Prop != null )
             {
-                _ValueLabel.Text = Prop.AsNodeTypeSelect.SelectedNodeTypesToString();
+                _ValueLabel.Text = Prop.AsNodeTypeSelect.SelectedNodeTypeNames().ToString();
                 if( !_AllowEditValue )
                 {
                     if(Prop.NodeId != null)

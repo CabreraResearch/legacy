@@ -72,7 +72,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 //    Views = ViewsCaddy.Table;
                 ////}
 
-                _ViewsForCBA = new CswDataTable("viewpicklistdatatable","");
+                _ViewsForCBA = new CswDataTable( "viewpicklistdatatable", "" );
                 _ViewsForCBA.Columns.Add( "nodeviewid", typeof( Int32 ) );
                 _ViewsForCBA.Columns.Add( "View Name", typeof( string ) );
                 _ViewsForCBA.Columns.Add( "Include", typeof( bool ) );
@@ -82,7 +82,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     DataRow NoneRow = _ViewsForCBA.NewRow();
                     NoneRow["View Name"] = "[none]";
                     NoneRow["nodeviewid"] = CswConvert.ToDbVal( Int32.MinValue );
-                    NoneRow["Include"] = ( Prop.AsViewPickList.SelectedViewIds == string.Empty );
+                    NoneRow["Include"] = ( Prop.AsViewPickList.SelectedViewIds.Count == 0 );
                     _ViewsForCBA.Rows.Add( NoneRow );
                 }
 
@@ -95,7 +95,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     NewViewRow["nodeviewid"] = ViewRow["nodeviewid"].ToString();
                     NewViewRow["Include"] = ( searchstr.IndexOf( CswNbtNodePropViewPickList.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropViewPickList.delimiter.ToString() ) >= 0 );
                     NewViewRow["Include"] = ( ( searchstr.IndexOf( CswNbtNodePropNodeTypeSelect.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropNodeTypeSelect.delimiter.ToString() ) >= 0 ) ||
-                                              ( first && Required && Prop.AsViewPickList.SelectedViewIds == string.Empty ) );
+                                              ( first && Required && Prop.AsViewPickList.SelectedViewIds.Count == 0 ) );
                     first = false;
                     _ViewsForCBA.Rows.Add( NewViewRow );
                 }
@@ -119,8 +119,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 {
                     foreach( DataRow ViewRow in _ViewsForCBA.Rows )
                     {
-                        if( ViewRow["nodeviewid"].ToString() == Prop.AsViewPickList.SelectedViewIds )
-                            Prop.AsViewPickList.CachedViewNames = ViewRow["View Name"].ToString();
+                        if( ViewRow["nodeviewid"].ToString() == Prop.AsViewPickList.SelectedViewIds[0] )
+                            Prop.AsViewPickList.CachedViewNames[0] = ViewRow["View Name"].ToString();
                     }
                 }
             }
@@ -132,7 +132,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         public override void Clear()
         {
             _ValueLabel.Text = string.Empty;
-            if(_CBArray != null)
+            if( _CBArray != null )
                 _CBArray.Clear();
         }
 
@@ -170,7 +170,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             EnsureChildControls();
 
-            _ValueLabel.Text = SelectedViewsToString();
+            _ValueLabel.Text = SelectedViewNames().ToString();
 
             if( Prop != null && !_AllowEditValue )
             {
@@ -185,35 +185,27 @@ namespace ChemSW.NbtWebControls.FieldTypes
             base.OnPreRender( e );
         }
 
-        private string SelectedViewsToString()
+        private CswCommaDelimitedString SelectedViewNames()
         {
-            string[] ViewIdArray = Prop.AsViewPickList.SelectedViewIds.Split( CswNbtNodePropViewPickList.delimiter );
-            string[] SelectedViewNames = new string[ViewIdArray.Length];
-            for( int i = 0; i < ViewIdArray.Length; i++ )
+            CswCommaDelimitedString ViewNames = new CswCommaDelimitedString();
+            foreach( string ViewId in Prop.AsViewPickList.SelectedViewIds )
             {
-                if( ViewIdArray[i].ToString() != string.Empty )
+                if( ViewId != string.Empty )
                 {
                     foreach( DataRow ViewRow in _ViewsForCBA.Rows )
                     {
-                        if( ViewRow["nodeviewid"].ToString() == ViewIdArray[i].ToString() )
+                        if( ViewRow["nodeviewid"].ToString() == ViewId )
                         {
-                            SelectedViewNames[i] = ViewRow["View Name"].ToString();
+                            ViewNames.Add( ViewRow["View Name"].ToString() );
+                        }
                     }
-                }
                 }
             }
 
             // Sort alphabetically
-            Array.Sort( SelectedViewNames );
-
-            string SelectedViewsString = string.Empty;
-            for( int i = 0; i < SelectedViewNames.Length; i++ )
-        {
-                if( SelectedViewsString != string.Empty )
-                    SelectedViewsString += ", ";
-                SelectedViewsString += SelectedViewNames[i];
-            }
-            return SelectedViewsString;
-        }
+            ViewNames.Sort();
+            
+            return ViewNames;
+        } // SelectedViewNames()
     }
 }

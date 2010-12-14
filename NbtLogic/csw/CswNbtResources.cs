@@ -549,14 +549,13 @@ namespace ChemSW.Nbt
                 Collection<CswMailMessage> MailMessages = new Collection<CswMailMessage>();
                 CswNbtObjClassNotification NotifNode = _Notifs[NKey];
 
-                string SubscribedUserIdsString = NotifNode.SubscribedUsers.SelectedUserIds;
+                CswCommaDelimitedString SubscribedUserIdsString = NotifNode.SubscribedUsers.SelectedUserIds;
+                Collection<Int32> SubscribedUserIds = SubscribedUserIdsString.ToIntCollection();
                 string Subject = NotifNode.Subject.Text;
                 string Message = NotifNode.Message.Text;
 
                 CswNbtMetaDataNodeType TargetNodeType = this.MetaData.getNodeType( NodeTypeId );
                 CswNbtMetaDataNodeTypeProp TargetProp = TargetNodeType.getNodeTypeProp( PropName );
-
-                Collection<Int32> SubscribedUserIds = CswTools.DelimitedStringToIntCollection( SubscribedUserIdsString, CswNbtNodePropUserSelect.delimiter );
 
                 Message = Message.Replace( CswNbtObjClassNotification.MessageNodeNameReplacement, TargetNode.NodeName );
                 if( TargetProp != null )

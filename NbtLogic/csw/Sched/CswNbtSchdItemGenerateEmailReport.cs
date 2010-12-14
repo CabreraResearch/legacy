@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.Sched
                             // BZ 10094 - Run report in context of recipient 
                             if( !MailReportObjClass.Recipients.Empty )
                             {
-                                Collection<Int32> RecipientUserIds = CswTools.DelimitedStringToIntCollection( MailReportObjClass.Recipients.SelectedUserIds, CswNbtNodePropUserSelect.delimiter );
+                                Collection<Int32> RecipientUserIds = MailReportObjClass.Recipients.SelectedUserIds.ToIntCollection();
                                 foreach( Int32 UserId in RecipientUserIds )
                                 {
                                     CswNbtNode UserNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", UserId )];

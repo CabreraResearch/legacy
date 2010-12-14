@@ -108,8 +108,9 @@ namespace ChemSW.Nbt.ObjClasses
                 if( TypeNode != null )
                 {
                     CswNbtObjClassEquipmentType TypeNodeAsType = CswNbtNodeCaster.AsEquipmentType( TypeNode );
-                    StringCollection NewYValues = CswTools.DelimitedStringToStringCollection( TypeNodeAsType.Parts.Text, '\n' );
-                    this.Parts.YValues = NewYValues;
+                    CswDelimitedString PartsString = new CswDelimitedString( '\n' );
+                    PartsString.FromString( TypeNodeAsType.Parts.Text );
+                    this.Parts.YValues = PartsString;
                 }
             }
             _CswNbtObjClassDefault.afterPopulateProps();

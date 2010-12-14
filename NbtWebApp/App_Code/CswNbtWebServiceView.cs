@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         if( MetaDataProp.MobileSearch )
                         {
-                            ret += "<search name=\"" + MetaDataProp.PropName + "\" id=\"";
+                            ret += "<search name=\"" + MetaDataProp.PropNameWithQuestionNo + "\" id=\"";
                             if( MetaDataProp.ObjectClassProp != null )
                                 ret += "search_ocp_" + MetaDataProp.ObjectClassPropId.ToString();
                             else
@@ -143,14 +143,14 @@ namespace ChemSW.Nbt.WebServices
             string ret = string.Empty;
             foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
             {
-                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
                 {
                     if( !Prop.HideInMobile &&
                         Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password )
                     {
                         CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
                         ret += "<prop id=\"" + PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() + "\"";
-                        ret += " name=\"" + Prop.PropName + "\"";
+                        ret += " name=\"" + Prop.PropNameWithQuestionNo + "\"";
                         ret += " tab=\"" + Tab.TabName + "\"";
                         ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
                         ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";

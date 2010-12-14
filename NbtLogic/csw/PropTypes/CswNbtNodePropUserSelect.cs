@@ -18,8 +18,6 @@ namespace ChemSW.Nbt.PropTypes
     /// </summary>
     public class CswNbtNodePropUserSelect : CswNbtNodeProp
     {
-        public static char delimiter = ',';
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -38,7 +36,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( 0 == SelectedUserIds.Length );
+                return ( 0 == SelectedUserIds.Count );
             }
         }
 
@@ -54,20 +52,36 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
+        public static char delimiter = ',';
+
         /// <summary>
         /// Comma-separated list of Selected UserIds
         /// </summary>
-        public string SelectedUserIds
+        private CswCommaDelimitedString _SelectedUserIds = null;
+        public CswCommaDelimitedString SelectedUserIds
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _SelectedUserIdsSubField.Column );
+                if( _SelectedUserIds == null )
+                {
+                    _SelectedUserIds = new CswCommaDelimitedString();
+                    _SelectedUserIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedUserIds_OnChange );
+                    _SelectedUserIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedUserIdsSubField.Column ) );
+                }
+                return _SelectedUserIds;
             }
             set
             {
-                if( _CswNbtNodePropData.SetPropRowValue( _SelectedUserIdsSubField.Column, value ) )
-                    PendingUpdate = true;
+                _SelectedUserIds = value;
+                _SelectedUserIds_OnChange();
             }
+        }
+
+        // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
+        private void _SelectedUserIds_OnChange()
+        {
+            if( _CswNbtNodePropData.SetPropRowValue( _SelectedUserIdsSubField.Column, _SelectedUserIds.ToString() ) )
+                PendingUpdate = true;
         }
 
         /// <summary>
@@ -75,11 +89,8 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void AddUser( CswPrimaryKey UserId )
         {
-            string SearchStr = delimiter.ToString() + SelectedUserIds + delimiter.ToString();
-            if( !SearchStr.Contains( delimiter.ToString() + UserId.PrimaryKey.ToString() + delimiter.ToString() ) )
-            {
-                SelectedUserIds = SelectedUserIds + delimiter + UserId.PrimaryKey.ToString();
-            }
+            if( !SelectedUserIds.Contains( UserId.PrimaryKey.ToString() ) )
+                SelectedUserIds.Add( UserId.PrimaryKey.ToString() );
         }
 
         /// <summary>
@@ -87,44 +98,35 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void RemoveUser( CswPrimaryKey UserId )
         {
-            string SearchStr = delimiter.ToString() + SelectedUserIds + delimiter.ToString();
-            if( SearchStr.Contains( delimiter.ToString() + UserId.PrimaryKey.ToString() + delimiter.ToString() ) )
-            {
-                Collection<Int32> SelectedIds = CswTools.DelimitedStringToIntCollection( SelectedUserIds, delimiter );
-                SelectedIds.Remove( UserId.PrimaryKey );
-                SelectedUserIds = CswTools.IntCollectionToDelimitedString( SelectedIds, delimiter, false );
-            }
+            SelectedUserIds.Remove( UserId.PrimaryKey.ToString() );
         }
-
 
         /// <summary>
         /// Refresh the names of the selected users
         /// </summary>
         public void RefreshSelectedUserNames()
         {
-            _CswNbtNodePropData.Gestalt = SelectedUsersToString();
+            _CswNbtNodePropData.Gestalt = SelectedUserNames().ToString();
             PendingUpdate = false;
         }
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode SelectedUsersNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedUserIdsSubField.ToXmlNodeName(), SelectedUserIds );
+            XmlNode SelectedUsersNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedUserIdsSubField.ToXmlNodeName(), SelectedUserIds.ToString() );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             string UserIds = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedUserIdsSubField.ToXmlNodeName() );
-            string[] UserIdsArray = UserIds.Split( delimiter );
-            string NewSelectedUserIds = string.Empty;
-            foreach( string UserIdString in UserIdsArray )
+            SelectedUserIds.FromString( UserIds );
+
+            foreach( string UserIdString in SelectedUserIds )
             {
                 if( CswTools.IsInteger( UserIdString ) )
                 {
                     Int32 UserId = Convert.ToInt32( UserIdString );
                     if( NodeMap != null && NodeMap.ContainsKey( UserId ) )
-                        UserId = NodeMap[UserId];
-                    if( NewSelectedUserIds != string.Empty ) NewSelectedUserIds += delimiter.ToString();
-                    NewSelectedUserIds += UserId.ToString();
+                        SelectedUserIds.Replace( UserIdString, NodeMap[UserId].ToString() );
                 }
             }
             PendingUpdate = true;
@@ -132,9 +134,9 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             string UserIds = CswTools.XmlRealAttributeName( PropRow[_SelectedUserIdsSubField.ToXmlNodeName()].ToString() );
-            string[] UserIdsArray = UserIds.Split( delimiter );
-            string NewSelectedUserIds = string.Empty;
-            foreach( string UserIdString in UserIdsArray )
+            SelectedUserIds.FromString( UserIds );
+
+            foreach( string UserIdString in SelectedUserIds )
             {
                 Int32 UserId = Int32.MinValue;
                 if( NodeMap != null && NodeMap.ContainsKey( UserIdString.ToLower() ) )
@@ -143,51 +145,41 @@ namespace ChemSW.Nbt.PropTypes
                     UserId = Convert.ToInt32( UserIdString );
                 if( UserId != Int32.MinValue )
                 {
-                    if( NewSelectedUserIds != string.Empty ) NewSelectedUserIds += delimiter.ToString();
-                    NewSelectedUserIds += UserId.ToString();
+                    SelectedUserIds.Replace( UserIdString, UserId.ToString() );
                 }
             }
             PendingUpdate = true;
         }
 
-        public string SelectedUsersToString()
+        public CswCommaDelimitedString SelectedUserNames()
         {
-            string[] UserIdArray = SelectedUserIds.Split( delimiter );
-            string[] SelectedUserNames = new string[UserIdArray.Length];
+            CswCommaDelimitedString SelectedUserNames = new CswCommaDelimitedString();
             ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
             {
                 UsersTree.goToNthChild( c );
-
                 CswPrimaryKey ThisUserId = UsersTree.getNodeIdForCurrentPosition();
                 string ThisUserName = UsersTree.getNodeNameForCurrentPosition();
 
-                for( int i = 0; i < UserIdArray.Length; i++ )
+                foreach( Int32 UserId in SelectedUserIds.ToIntCollection() )
                 {
-                    if( UserIdArray[i].ToString() != string.Empty )
+                    if( UserId != Int32.MinValue )
                     {
-                        if( ThisUserId.PrimaryKey.ToString() == UserIdArray[i].ToString() )
+                        if( ThisUserId.PrimaryKey == UserId )
                         {
-                            SelectedUserNames[i] = ThisUserName;
+                            SelectedUserNames.Add( ThisUserName );
                         }
                     }
-                }
+                } // foreach( Int32 UserId in SelectedUserIds.ToIntCollection() )
 
                 UsersTree.goToParentNode();
-            }
+            } // for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
 
             // Sort alphabetically
-            Array.Sort( SelectedUserNames );
+            SelectedUserNames.Sort();
 
-            string SelectedUsersString = string.Empty;
-            for( int i = 0; i < SelectedUserNames.Length; i++ )
-            {
-                if( SelectedUsersString != string.Empty )
-                    SelectedUsersString += ", ";
-                SelectedUsersString += SelectedUserNames[i];
-            }
-            return SelectedUsersString;
-        }
+            return SelectedUserNames;
+        } // SelectedUserNames()
 
     }//CswNbtNodePropUserSelect
 }//namespace ChemSW.Nbt.PropTypes

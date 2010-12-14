@@ -193,8 +193,8 @@ namespace ChemSW.Nbt.Schema
                     char[] delimiters = { ';', ',', '\n' };
                     string OldRecipientsString = MailReportNode.Properties[OldRecipientsNTP].AsMemo.Text.Replace( "\r", "" );
                     string[] OldRecipientsArray = OldRecipientsString.Split( delimiters, StringSplitOptions.RemoveEmptyEntries );
-                    
-                    string NewRecipientsUserIds = string.Empty;
+
+                    CswCommaDelimitedString NewRecipientsUserIds = new CswCommaDelimitedString();
                     for( Int32 u = 0; u < UsersTree.getChildNodeCount(); u++ )
                     {
                         UsersTree.goToNthChild( r );
@@ -204,8 +204,7 @@ namespace ChemSW.Nbt.Schema
                         {
                             if( UserNodeAsUser.Email.Trim() == OldRecipientAddress.Trim() )
                             {
-                                if( NewRecipientsUserIds != string.Empty ) NewRecipientsUserIds += CswNbtNodePropUserSelect.delimiter.ToString();
-                                NewRecipientsUserIds += UserNode.NodeId.PrimaryKey.ToString();
+                                NewRecipientsUserIds.Add( UserNode.NodeId.PrimaryKey.ToString() );
                             }
                         }
                         UsersTree.goToParentNode();

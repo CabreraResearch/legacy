@@ -16,6 +16,11 @@ namespace ChemSW.Nbt
     public class CswNbtNodeKey : System.IEquatable<CswNbtNodeKey>
     {
         private CswNbtResources _CswNbtResources;
+        public static char delimiter = ':';
+        public static char NodeCountDelimiter = '/';
+        public static char TreePathDelimiter = '/';
+        private CswDelimitedString _DelimitedString = new CswDelimitedString( delimiter );
+
         /// <summary>
         /// Use this constructor to get a blank Key
         /// </summary>
@@ -24,52 +29,28 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }
 
-        //private CswNbtNodeKey _ParentKey = null;
-        //public CswNbtNodeKey ParentKey { get { return _ParentKey; } set { _ParentKey = value; } }
-        
-
-
-        //public CswNbtNodeKey( NodeSource NodeSource, CswNbtTreeKey CswNbtTreeKey, string TreePath, Int32 NodeId, Int32 NodeTypeId, NodeSpecies NodeSpecies )
-        //public CswNbtNodeKey(CswNbtResources CswNbtResources, CswNbtTreeKey CswNbtTreeKey, string TreePath, Int32 NodeId, Int32 NodeTypeId, Int32 ObjectClassId, NodeSpecies NodeSpecies, CswNbtViewNode ViewNode )
         /// <summary>
         /// Use this constructor to initialize the tree at creation
         /// </summary>
-        public CswNbtNodeKey( CswNbtResources CswNbtResources, CswNbtTreeKey CswNbtTreeKey, string TreePath, CswPrimaryKey NodeId, NodeSpecies NodeSpecies, Int32 NodeTypeId, Int32 ObjectClassId, string ViewNodeUniqueId, string NodeCountPath ) //, CswNbtNodeKey ParentKey )
+        public CswNbtNodeKey( CswNbtResources CswNbtResources, CswNbtTreeKey inCswNbtTreeKey, string inTreePath, CswPrimaryKey inNodeId, NodeSpecies inNodeSpecies, Int32 inNodeTypeId, Int32 inObjectClassId, string inViewNodeUniqueId, string inNodeCountPath )
         {
             _CswNbtResources = CswNbtResources;
-            _TreePath = TreePath;
-            _CswNbtTreeKey = CswNbtTreeKey;
-            _NodeId = NodeId;
-            _NodeSpecies = NodeSpecies;
-            _NodeTypeId = NodeTypeId;
-            _ObjectClassId = ObjectClassId;
-            _ViewNodeUniqueId = ViewNodeUniqueId;
-            _NodeCountPath = NodeCountPath;
-            //_ParentKey = ParentKey;
+            TreePath.FromString( inTreePath );
+            TreeKey = inCswNbtTreeKey;
+            NodeId = inNodeId;
+            NodeSpecies = inNodeSpecies;
+            NodeTypeId = inNodeTypeId;
+            ObjectClassId = inObjectClassId;
+            ViewNodeUniqueId = inViewNodeUniqueId;
+            NodeCountPath.FromString( inNodeCountPath );
         }
 
-        private static char delimiter = ':';
         /// <summary>
         /// Convert the NodeKey information into a delimited string
         /// </summary>
         public override string ToString()
         {
-            string ret = "";
-            ret += TreePath + delimiter;
-            if(NodeId != null)
-                ret += NodeId.ToString() + delimiter;
-            else
-                ret += delimiter;
-            ret += NodeSpecies.ToString() + delimiter;
-            ret += NodeTypeId.ToString() + delimiter;
-            ret += ObjectClassId.ToString() + delimiter;
-            if (TreeKey != null)
-                ret += TreeKey.ToString() + delimiter;
-            else
-                ret += delimiter;
-            ret += ViewNodeUniqueId.ToString() + delimiter;
-            ret += NodeCountPath.ToString();
-            return ret;
+            return _DelimitedString.ToString();
         }
 
         /// <summary>
@@ -83,11 +64,10 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Returns the TreePath to the parent node
         /// </summary>
-        public string getParentTreePath()
+        public CswDelimitedString getParentTreePath()
         {
-            return TreePath.Substring( 0, TreePath.LastIndexOf( '/' ) );
+            return TreePath.SubString( 0, TreePath.Count - 2 );
         }
-
 
         /// <summary>
         /// Use this constructor to convert the key from the string representation of a key
@@ -98,53 +78,36 @@ namespace ChemSW.Nbt
 
             if( StringKey == string.Empty )
                 throw new CswDniException( "Misconfigured Tree", "CswNbtNodeKey.constructor(string) encountered a null StringKey" );
-            else
-            {
-                string[] Values = StringKey.Split( delimiter );
 
-                //if( 5 > Values.Length )
-                //    throw ( new CswDniException( "The specified node key does not subdivide into five segments: " + StringKey ) );
-
-
-                _TreePath = Values[0].ToString();
-                _NodeId = new CswPrimaryKey();
-                if (Values[1] != string.Empty)
-                    _NodeId.FromString( Values[1].ToString() );
-
-                string NodeSpeciesString = Values[2].ToString();
-                try
-                {
-                    _NodeSpecies = (NodeSpecies) Enum.Parse( typeof( NodeSpecies ), NodeSpeciesString, true );
-                }
-                catch( ArgumentException ex )
-                {
-                    throw new CswDniException( "Misconfigured Tree",
-                                              "CswNbtNodeKey.constructor(string) encountered an invalid NodeSpecies: " + NodeSpeciesString,
-                                              ex );
-                }
-                _NodeTypeId = Convert.ToInt32( Values[3] );
-                _ObjectClassId = Convert.ToInt32( Values[4] );
-                if( Values[5].ToString() != string.Empty )
-                    _CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, Convert.ToInt32( Values[5].ToString() ) );
-                else
-                    _CswNbtTreeKey = null;
-                _ViewNodeUniqueId = Values[6].ToString();
-                _NodeCountPath = Values[7].ToString();
-            }
+            _DelimitedString.FromString( StringKey );
         }//CswNbtNodeKey()
 
-        private string _TreePath = "";
+        private CswDelimitedString _TreePath = null;
         /// <summary>
         /// Path from root of tree to this NodeKey
         /// </summary>
-        public string TreePath
+        public CswDelimitedString TreePath
         {
-            get { return ( _TreePath ); }
+            get
+            {
+                if( _TreePath == null )
+                {
+                    _TreePath = new CswDelimitedString( TreePathDelimiter );
+                    _TreePath.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _TreePath_OnChange );
+                    _TreePath.FromString( _DelimitedString[0] );
+                }
+                return _TreePath;
+            }
             set
             {
                 _TreePath = value;
-                _TreeDepth = Int32.MinValue;
+                _TreePath_OnChange();
             }
+        }
+
+        void _TreePath_OnChange()
+        {
+            _DelimitedString[0] = _TreePath.ToString();
         }
 
         /// <summary>
@@ -155,10 +118,9 @@ namespace ChemSW.Nbt
             NodeSpecies ret = NodeSpecies.UnKnown;
             if( Depth >= 0 )
             {
-                string[] Path = TreePath.Split( '/' );
-                if( Path[Depth + 2].Substring( 0, CswNbtTreeNodes._ElemName_NodeGroup.Length ) == CswNbtTreeNodes._ElemName_NodeGroup )
+                if( TreePath[Depth + 1].Substring( 0, CswNbtTreeNodes._ElemName_NodeGroup.Length ) == CswNbtTreeNodes._ElemName_NodeGroup )
                     ret = NodeSpecies.Group;
-                else if( Path[Depth + 2].Substring( 0, CswNbtTreeNodes._ElemName_Node.Length ) == CswNbtTreeNodes._ElemName_Node )
+                else if( TreePath[Depth + 1].Substring( 0, CswNbtTreeNodes._ElemName_Node.Length ) == CswNbtTreeNodes._ElemName_Node )
                     ret = NodeSpecies.Plain;
             }
             return ret;
@@ -172,10 +134,9 @@ namespace ChemSW.Nbt
             CswPrimaryKey ret = null;
             if( Depth >= 0 )
             {
-                string[] Path = TreePath.Split( '/' );
-                string NodeStr = Path[Depth + 2];
+                string NodeStr = TreePath[Depth + 1];
                 string IdStr1 = NodeStr.Substring( NodeStr.IndexOf( "@tablename='" ) + "@tablename='".Length );
-                IdStr1 = IdStr1.Substring( 0, IdStr1.IndexOf("'") );
+                IdStr1 = IdStr1.Substring( 0, IdStr1.IndexOf( "'" ) );
                 string IdStr2 = NodeStr.Substring( NodeStr.IndexOf( "@nodeid=" ) + "@nodeid=".Length );
                 IdStr2 = IdStr2.Substring( 0, IdStr2.Length - "]".Length );
                 if( CswTools.IsInteger( IdStr2 ) )
@@ -183,7 +144,7 @@ namespace ChemSW.Nbt
             }
             return ret;
         }
-        
+
         /// <summary>
         /// Returns the name of the group of the node at a given depth in the path of parents
         /// </summary>
@@ -192,8 +153,7 @@ namespace ChemSW.Nbt
             string ret = string.Empty;
             if( Depth >= 0 )
             {
-                string[] Path = TreePath.Split( '/' );
-                string NameStr = Path[Depth + 2].Split( '=' )[1];
+                string NameStr = TreePath[Depth + 1].Split( '=' )[1];
                 ret = NameStr.Substring( 1, NameStr.Length - 2 );
             }
             return ret;
@@ -202,37 +162,31 @@ namespace ChemSW.Nbt
         /// <summary>
         /// The depth of this node on the tree
         /// </summary>
-        private Int32 _TreeDepth = Int32.MinValue;
         public Int32 TreeDepth
         {
             get
             {
-                if (_TreeDepth == Int32.MinValue)
-                {
-                    if( TreePath != string.Empty )
-                    {
-                        _TreeDepth = -2;
-                        Int32 pos = 0;
-                        while( pos >= 0 )
-                        {
-                            _TreeDepth++;
-                            pos = TreePath.IndexOf( "/", pos + 1 );
-                            if( _TreeDepth > 50 ) break;   // runaway loop guard
-                        }
-                    }
-                }
-                return _TreeDepth;
+                return TreePath.Count - 2;
             }
         }
 
-        private CswNbtTreeKey _CswNbtTreeKey;
+        private CswNbtTreeKey _CswNbtTreeKey = null;
         /// <summary>
         /// Identifier for Tree in which this NodeKey is valid
         /// </summary>
         public CswNbtTreeKey TreeKey
         {
-            set { _CswNbtTreeKey = value; }
-            get { return _CswNbtTreeKey; }
+            get
+            {
+                if( _CswNbtTreeKey == null )
+                    _CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, Convert.ToInt32( _DelimitedString[5] ) );
+                return _CswNbtTreeKey;
+            }
+            set
+            {
+                _CswNbtTreeKey = value;
+                _DelimitedString[5] = value.ToString();
+            }
         }
 
         private CswPrimaryKey _NodeId = null;
@@ -241,52 +195,65 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswPrimaryKey NodeId
         {
-            get { return ( _NodeId ); }
-            set { _NodeId = value; }
+            get
+            {
+                if( _NodeId == null )
+                {
+                    _NodeId = new CswPrimaryKey();
+                    if( _DelimitedString[1] != string.Empty )
+                        _NodeId.FromString( _DelimitedString[1] );
+                }
+                return ( _NodeId );
+            }
+            set
+            {
+                _NodeId = value;
+                _DelimitedString[1] = value.ToString();
+            }
         }
 
-        private Int32 _NodeTypeId = Int32.MinValue;
         /// <summary>
         /// NodeType Primary Key of Node
         /// </summary>
         public Int32 NodeTypeId
         {
-            get { return ( _NodeTypeId ); }
-            set { _NodeTypeId = value; }
+            get { return ( Convert.ToInt32( _DelimitedString[3] ) ); }
+            set { _DelimitedString[3] = value.ToString(); }
         }
 
-        private Int32 _ObjectClassId = Int32.MinValue;
         /// <summary>
         /// ObjectClass Primary Key of Node
         /// </summary>
         public Int32 ObjectClassId
         {
-            get { return ( _ObjectClassId ); }
-            set { _ObjectClassId = value; }
+            get { return ( Convert.ToInt32( _DelimitedString[4] ) ); }
+            set { _DelimitedString[4] = value.ToString(); }
         }
 
-        private NodeSpecies _NodeSpecies = NodeSpecies.Plain;
         /// <summary>
         /// <see cref="NodeSpecies"/> of Node
         /// </summary>
         public NodeSpecies NodeSpecies
         {
-            get { return ( _NodeSpecies ); }
-            set { _NodeSpecies = value; }
+            get
+            {
+                NodeSpecies ret;
+                if( !Enum.TryParse<NodeSpecies>( _DelimitedString[2], out ret ) )
+                    ret = ObjClasses.NodeSpecies.Plain;
+                return ret;
+            }
+            set { _DelimitedString[2] = value.ToString(); }
         }
 
-
-        private string _ViewNodeUniqueId = string.Empty;
         /// <summary>
         /// UniqueId of ViewNode that created this node
         /// </summary>
         public string ViewNodeUniqueId
         {
-            get { return _ViewNodeUniqueId; }
-            set { _ViewNodeUniqueId = value; }
+            get { return _DelimitedString[6]; }
+            set { _DelimitedString[6] = value; }
         }
 
-        private Int32 _NodeCount = Int32.MinValue;
         /// <summary>
         /// Sibling count of this node
         /// </summary>
@@ -294,38 +261,45 @@ namespace ChemSW.Nbt
         {
             get
             {
-                if(_NodeCount == Int32.MinValue)
-                    _NodeCount = getNodeCountAtDepth(TreeDepth);
-                return _NodeCount;
+                return getNodeCountAtDepth( TreeDepth );
             }
         }
 
-
-        private string _NodeCountPath = string.Empty;
+        private CswDelimitedString _NodeCountPath = null;
         /// <summary>
         /// Sibling count of this node
         /// </summary>
-        public string NodeCountPath
+        public CswDelimitedString NodeCountPath
         {
-            get { return _NodeCountPath; }
-            set { _NodeCountPath = value; }
+            get
+            {
+                if( _NodeCountPath == null )
+                {
+                    _NodeCountPath = new CswDelimitedString( NodeCountDelimiter );
+                    _NodeCountPath.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _NodeCountPath_OnChange );
+                    _NodeCountPath.FromString( _DelimitedString[7] );
+                }
+                return _NodeCountPath;
+            }
+            set
+            {
+                _NodeCountPath = value;
+                _NodeCountPath_OnChange();
+            }
+        }
+
+        void _NodeCountPath_OnChange()
+        {
+            _DelimitedString[7] = _NodeCountPath.ToString();
         }
 
         /// <summary>
         /// Get the sibling count at a particular depth
         /// </summary>
         /// <param name="TreeDepth">Depth for count (1 is top level)</param>
-        public Int32 getNodeCountAtDepth(Int32 TreeDepth)
+        public Int32 getNodeCountAtDepth( Int32 TreeDepth )
         {
-            if (_NodeCountPath != string.Empty)
-            {
-                string[] SplitPath = _NodeCountPath.Split('/');
-                return Convert.ToInt32(SplitPath[TreeDepth]);
-            }
-            else
-            {
-                return Int32.MinValue;
-            }
+            return Convert.ToInt32( NodeCountPath[TreeDepth] );
         }
 
         #region IEquatable
@@ -341,7 +315,7 @@ namespace ChemSW.Nbt
             }
 
             // If one is null, but not both, return false.
-            if( ( ( object ) key1 == null ) || ( ( object ) key2 == null ) )
+            if( ( (object) key1 == null ) || ( (object) key2 == null ) )
             {
                 return false;
             }
@@ -371,7 +345,7 @@ namespace ChemSW.Nbt
         {
             if( !( obj is CswNbtNodeKey ) )
                 return false;
-            return this == ( CswNbtNodeKey ) obj;
+            return this == (CswNbtNodeKey) obj;
         }
 
         /// <summary>
@@ -379,7 +353,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public bool Equals( CswNbtNodeKey obj )
         {
-            return this == ( CswNbtNodeKey ) obj;
+            return this == (CswNbtNodeKey) obj;
         }
 
         /// <summary>

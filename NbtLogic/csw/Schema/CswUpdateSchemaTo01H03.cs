@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.Schema
             //Generator Parent type is Mount Point
             CswNbtMetaDataNodeTypeProp ParentTypeNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentTypePropertyName );
             ParentTypeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointNT.NodeTypeId, string.Empty, Int32.MinValue );
-            ParentTypeNTP.DefaultValue.AsNodeTypeSelect.SelectedNodeTypeIds = MountPointNT.NodeTypeId.ToString();
+            ParentTypeNTP.DefaultValue.AsNodeTypeSelect.SelectedNodeTypeIds.Add( MountPointNT.NodeTypeId.ToString() );
 
             //Generator Owner is Mount Point Group
             CswNbtMetaDataNodeTypeProp OwnerNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
@@ -247,7 +247,7 @@ namespace ChemSW.Nbt.Schema
             //Generator Target NT is Inspection
             CswNbtMetaDataNodeTypeProp GeneratorTargetTypeNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.TargetTypePropertyName );
             GeneratorTargetTypeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionNT.NodeTypeId, string.Empty, Int32.MinValue );
-            GeneratorTargetTypeNTP.DefaultValue.AsNodeTypeSelect.SelectedNodeTypeIds = PhysicalInspectionNT.NodeTypeId.ToString();
+            GeneratorTargetTypeNTP.DefaultValue.AsNodeTypeSelect.SelectedNodeTypeIds.Add( PhysicalInspectionNT.NodeTypeId.ToString() );
 
             // </ Case 20005>
 

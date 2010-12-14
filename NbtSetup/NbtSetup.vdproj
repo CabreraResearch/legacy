@@ -34,12 +34,6 @@
         "Entry"
         {
         "MsmKey" = "8:_20BB9FC10B641F2C6976CEBC40D6A6DD"
-        "OwnerKey" = "8:_ED1EF0A5156B0F9D138F48F2FA511E58"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_20BB9FC10B641F2C6976CEBC40D6A6DD"
         "OwnerKey" = "8:_351AD2E7B2A1487CBD10EAFFCB697C41"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -52,7 +46,7 @@
         "Entry"
         {
         "MsmKey" = "8:_34B93EB7B33B2CFBE6221D85CA3627C9"
-        "OwnerKey" = "8:_EA332C2761CFD7406885FC276CA99516"
+        "OwnerKey" = "8:_0BF74868252E4B9695D358D61AEC5A82"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -77,12 +71,6 @@
         {
         "MsmKey" = "8:_34B93EB7B33B2CFBE6221D85CA3627C9"
         "OwnerKey" = "8:_34114616F6BA4E82B58D800E5AB7C567"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_34B93EB7B33B2CFBE6221D85CA3627C9"
-        "OwnerKey" = "8:_0BF74868252E4B9695D358D61AEC5A82"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -118,31 +106,13 @@
         "Entry"
         {
         "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
-        "OwnerKey" = "8:_D2ED3C2F47E72A0E6384F47038C4D94C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
         "OwnerKey" = "8:_8B93D772E0A5462EB62BE32EF295CF72"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
-        "OwnerKey" = "8:_ED1EF0A5156B0F9D138F48F2FA511E58"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
         "OwnerKey" = "8:_351AD2E7B2A1487CBD10EAFFCB697C41"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
-        "OwnerKey" = "8:_20BB9FC10B641F2C6976CEBC40D6A6DD"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -196,43 +166,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_D2ED3C2F47E72A0E6384F47038C4D94C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_351AD2E7B2A1487CBD10EAFFCB697C41"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_ED1EF0A5156B0F9D138F48F2FA511E58"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_34114616F6BA4E82B58D800E5AB7C567"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_20BB9FC10B641F2C6976CEBC40D6A6DD"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_EA332C2761CFD7406885FC276CA99516"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_34B93EB7B33B2CFBE6221D85CA3627C9"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -355,161 +295,6 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_20BB9FC10B641F2C6976CEBC40D6A6DD"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:NbtConfig, Version=4.1.1.2, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_20BB9FC10B641F2C6976CEBC40D6A6DD"
-                    {
-                    "Name" = "8:NbtConfig.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:NbtConfig.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_B0D8DBAFAE034FA1ADFCC6886520E9AB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_34B93EB7B33B2CFBE6221D85CA3627C9"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SMTP.Net, Version=3.0.0.3, Culture=neutral, PublicKeyToken=986a9aa31056680b"
-                "ScatterAssemblies"
-                {
-                    "_34B93EB7B33B2CFBE6221D85CA3627C9"
-                    {
-                    "Name" = "8:SMTP.Net.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:SMTP.Net.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_B0D8DBAFAE034FA1ADFCC6886520E9AB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D2ED3C2F47E72A0E6384F47038C4D94C"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:NbtConfig, Version=4.1.1.2, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_D2ED3C2F47E72A0E6384F47038C4D94C"
-                    {
-                    "Name" = "8:NbtConfig.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:NbtConfig.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_B0D8DBAFAE034FA1ADFCC6886520E9AB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_EA332C2761CFD7406885FC276CA99516"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CswCommon, Version=4.5.1.7, Culture=neutral, PublicKeyToken=aec8acbd345583cc, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_EA332C2761CFD7406885FC276CA99516"
-                    {
-                    "Name" = "8:CswCommon.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:CswCommon.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_B0D8DBAFAE034FA1ADFCC6886520E9AB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_ED1EF0A5156B0F9D138F48F2FA511E58"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:NbtLogic, Version=4.1.1.2, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_ED1EF0A5156B0F9D138F48F2FA511E58"
-                    {
-                    "Name" = "8:NbtLogic.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:NbtLogic.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_B0D8DBAFAE034FA1ADFCC6886520E9AB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
         }
         "FileType"
         {
@@ -1232,34 +1017,6 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{BEB21D68-DED7-43B7-8BAB-70F95B98F58A}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B05B58C266104189A1A93AD20387626B"
-            {
-            "SourcePath" = "8:"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_897F9798FAE945C49CFC43904210C84C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:ContentFiles"
-            "OutputProjectGuid" = "8:{A2B3F1A4-9695-4FCE-98B7-7835B6FC4DB8}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {

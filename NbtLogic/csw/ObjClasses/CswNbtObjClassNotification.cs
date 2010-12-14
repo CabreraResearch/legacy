@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.ObjClasses
             string PropertyOptions = string.Empty;
             if( CswTools.IsInteger( TargetType.SelectedNodeTypeIds ) )
             {
-                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( TargetType.SelectedNodeTypeIds ) );
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
                 if( NodeType != null )
                 {
                     foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( TargetType.SelectedNodeTypeIds ) ) );
+                return ( _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) ) );
             }
         }
         public CswNbtNodePropText Value

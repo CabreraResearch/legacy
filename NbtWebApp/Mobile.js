@@ -4,15 +4,15 @@
     {
 
         var opts = {
-            DBShortName: 'main.html',
+            DBShortName: 'Mobile.html',
             DBVersion: '1.0',
-            DBDisplayName: 'main.html',
+            DBDisplayName: 'Mobile.html',
             DBMaxSize: 65536,
-            ViewUrl: '/NbtMobileWeb/wsNBT.asmx/RunView',
-            ConnectTestUrl: '/NbtMobileWeb/wsNBT.asmx/ConnectTest',
-            UpdateUrl: '/NbtMobileWeb/wsNBT.asmx/UpdateProperties',
-            MainPageUrl: '/NbtMobileWeb/Main.html',
-            AuthenticateUrl: '/NbtMobileWeb/wsNBT.asmx/Authenticate',
+            ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
+            ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
+            UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
+            MainPageUrl: '/NbtWebApp/Mobile.html',
+            AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             Theme: 'a',
             PollingInterval: 5000,
             DivRemovalDelay: 1000
@@ -511,7 +511,7 @@
 
         function _makeUL(id)
         {
-            var ret = '<ul data-role="listview" data-inset="true" ';
+            var ret = '<ul data-role="listview" ';
             if (id != undefined)
                 ret += 'id="' + id + '"';
             ret += '>';
@@ -529,7 +529,9 @@
 
             var id = $xmlitem.attr('id');
             var NodeName = $xmlitem.attr('name');
-            var icon = 'images/icons/' + $xmlitem.attr('iconfilename');
+            var icon = '';
+            if ($xmlitem.attr('iconfilename') != '' && $xmlitem.attr('iconfilename') != undefined)
+                icon = 'images/icons/' + $xmlitem.attr('iconfilename');
             var ObjectClass = $xmlitem.attr('objectclass');
 
             switch (ObjectClass)
@@ -547,7 +549,8 @@
                     });
 
                     Html += '<li>';
-                    Html += '<img src="' + icon + '" class="ui-li-icon"/>';
+                    if (icon != '')
+                        Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
                     Html += '<p>' + Target + '</p>';
                     Html += '<p>Due: ' + DueDate + '</p>';
@@ -557,13 +560,36 @@
 
                 default:
                     Html += '<li>';
-                    Html += '<img src="' + icon + '" class="ui-li-icon"/>';
+                    if (icon != '')
+                        Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<a href="#' + id + '">' + NodeName + '</a>';
                     Html += '</li>';
                     break;
             }
             return Html;
         }
+
+        function _extractCDataValue($node)
+        {
+            // default
+            ret = $node.text();
+
+            // for some reason, CDATA fields come through from the webservice like this:
+            // <node><!--[CDATA[some text]]--></node>
+            var cdataval = $node.html();
+            if (cdataval != undefined && cdataval != '')
+            {
+                var prefix = '<!--[CDATA[';
+                var suffix = ']]-->';
+
+                if (cdataval.substr(0, prefix.length) == prefix)
+                {
+                    ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
+                }
+            }
+            return ret;
+        }
+
 
         function _FieldTypeXmlToHtml($xmlitem, ParentId)
         {
@@ -572,7 +598,7 @@
             var PropName = $xmlitem.attr('name');
 
             // Subfield values
-            var sf_text = $xmlitem.children('text').text();
+            var sf_text = _extractCDataValue($xmlitem.children('text'));
             var sf_value = $xmlitem.children('value').text();
             var sf_href = $xmlitem.children('href').text();
             var sf_checked = $xmlitem.children('checked').text();
@@ -885,7 +911,7 @@
                 {
                     // update unanswered count when this question is answered
                     Html += ' if(! $(\'#' + IdStr + '_fieldset\').attr(\'answered\')) { ';
-                    Html += '   console.log(\'decrement\'); var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
+                    Html += '   var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
                     Html += '   $cntspan.text(parseInt($cntspan.text()) - 1); ';
                     Html += '   $(\'#' + IdStr + '_fieldset\').attr(\'answered\', \'true\'); ';
                     Html += ' }';

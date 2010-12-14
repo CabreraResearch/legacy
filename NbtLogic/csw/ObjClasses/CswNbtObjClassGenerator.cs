@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             // BZ 6754 - Delete all future nodes
             CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-            CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( TargetType.SelectedNodeTypeIds ) );
+            CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
             CswNbtMetaDataObjectClass TargetObjectClass = TargetNodeType.ObjectClass;
 
             CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );

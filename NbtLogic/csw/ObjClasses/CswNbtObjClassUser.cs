@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.ObjClasses
             // Quick Launch Actions options should derive from Role's Action Permissions
             if( _RoleNode != null )
             {
-                StringCollection NewYValues = new StringCollection();
+                CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
 
                 foreach( string YValue in _RoleNodeObjClass.ActionPermissions.YValues )
                 {

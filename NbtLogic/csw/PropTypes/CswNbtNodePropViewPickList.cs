@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( 0 == SelectedViewIds.Length );
+                return ( 0 == SelectedViewIds.Count );
             }
         }//Empty
 
@@ -55,20 +55,35 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Gestalt
 
+
+        private CswCommaDelimitedString _SelectedViewIds = null;
         /// <summary>
         /// Comma-separated list of Selected ViewIds
         /// </summary>
-        public string SelectedViewIds
+        public CswCommaDelimitedString SelectedViewIds
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _SelectedViewIdsSubField.Column );
+                if( _SelectedViewIds == null )
+                {
+                    _SelectedViewIds = new CswCommaDelimitedString();
+                    _SelectedViewIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedViewIds_OnChange );
+                    _SelectedViewIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedViewIdsSubField.Column ) );
+                }
+                return _SelectedViewIds;
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _SelectedViewIdsSubField.Column, value );
-                PendingUpdate = true;
+                _SelectedViewIds = value;
+                _SelectedViewIds_OnChange();
             }
+        }
+
+        // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
+        void _SelectedViewIds_OnChange()
+        {
+            if( _CswNbtNodePropData.SetPropRowValue( _SelectedViewIdsSubField.Column, _SelectedViewIds.ToString() ) )
+                PendingUpdate = true;
         }
 
         /// <summary>
@@ -84,14 +99,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void RemoveViewId( Int32 ViewIdToRemove )
         {
-            string ret = string.Empty;
-            int index1 = ( "," + SelectedViewIds + "," ).IndexOf( "," + ViewIdToRemove.ToString() + "," );
-            int index2 = index1 + ViewIdToRemove.ToString().Length + ",".Length;
-            if( index1 > 0 )
-                ret = SelectedViewIds.Substring( 0, index1 );
-            if( index2 > 0 && index2 < SelectedViewIds.Length )
-                ret += SelectedViewIds.Substring( index2 );
-            SelectedViewIds = ret;
+            SelectedViewIds.Remove( ViewIdToRemove.ToString() );
         }
 
         /// <summary>
@@ -105,42 +113,53 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public string CachedViewNames
+        private CswCommaDelimitedString _CachedViewNames = null;
+        public CswCommaDelimitedString CachedViewNames
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue(_CachedViewNameSubField.Column);
+                if( _CachedViewNames == null )
+                {
+                    _CachedViewNames = new CswCommaDelimitedString();
+                    _CachedViewNames.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _CachedViewNames_OnChange );
+                    _CachedViewNames.FromString( _CswNbtNodePropData.GetPropRowValue( _CachedViewNameSubField.Column ) );
+                }
+                return _CachedViewNames;
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, value );
+                _CachedViewNames = value;
+                _CachedViewNames_OnChange();
             }
+        }
+
+        // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
+        void _CachedViewNames_OnChange()
+        {
+            _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, _CachedViewNames.ToString() );
         }
 
         public void RefreshViewName()
         {
             //bz # 8758
-            if( string.Empty != SelectedViewIds )
+            CachedViewNames.Clear();
+            if( SelectedViewIds.Count > 0 )
             {
-                if( SelectMode != PropertySelectMode.Multiple && Convert.ToInt32( SelectedViewIds ) > 0 )
+                if( SelectMode != PropertySelectMode.Multiple && Convert.ToInt32( SelectedViewIds[0] ) > 0 )
                 {
-                    CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, Convert.ToInt32( SelectedViewIds ) );
+                    CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, Convert.ToInt32( SelectedViewIds[0] ) );
                     if( View != null )
-                        CachedViewNames = View.ViewName;
-                    else
-                        CachedViewNames = string.Empty;
+                        CachedViewNames.Add( View.ViewName );
                 }
                 else
                 {
-                    Collection<Int32> SelectedViewIdCollection = CswTools.DelimitedStringToIntCollection( SelectedViewIds, ',' );
-                    CachedViewNames = string.Empty;
+                    Collection<Int32> SelectedViewIdCollection = SelectedViewIds.ToIntCollection();
                     foreach( Int32 ViewId in SelectedViewIdCollection )
                     {
                         CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
                         if( View != null )
                         {
-                            if( CachedViewNames != string.Empty ) CachedViewNames += ",";
-                            CachedViewNames += View.ViewName;
+                            CachedViewNames.Add( View.ViewName );
                         }
                     }
                 }
@@ -181,7 +200,7 @@ namespace ChemSW.Nbt.PropTypes
                 else
                 {
                     // Creating a new user, don't pick a default view (BZ 7055)
-                    Views = new CswDataTable("emptyviewtable","node_views");
+                    Views = new CswDataTable( "emptyviewtable", "node_views" );
                 }
                 return Views;
             }
@@ -189,18 +208,18 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode SelectedViewIdsNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedViewIdsSubField.ToXmlNodeName(), SelectedViewIds );
+            XmlNode SelectedViewIdsNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedViewIdsSubField.ToXmlNodeName(), SelectedViewIds.ToString() );
             XmlNode CachedViewNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedViewNameSubField.ToXmlNodeName(), CachedViewNames.ToString() );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            SelectedViewIds = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedViewIdsSubField.ToXmlNodeName() );
+            SelectedViewIds.FromString( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedViewIdsSubField.ToXmlNodeName() ) );
             PendingUpdate = true;
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            SelectedViewIds = CswTools.XmlRealAttributeName( PropRow[_SelectedViewIdsSubField.ToXmlNodeName()].ToString() );
+            SelectedViewIds.FromString( CswTools.XmlRealAttributeName( PropRow[_SelectedViewIdsSubField.ToXmlNodeName()].ToString() ) );
             PendingUpdate = true;
         }
 
