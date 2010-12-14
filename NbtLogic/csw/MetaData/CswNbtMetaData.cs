@@ -748,7 +748,7 @@ namespace ChemSW.Nbt.MetaData
 
                 NodeType._DataRow["objectclassid"] = CswConvert.ToDbVal(NewObjectClass.ObjectClassId);
                 NodeType.IconFileName = NewObjectClass.IconFileName;
-
+                Collection<CswNbtMetaDataNodeTypeProp> MatchingProps = new Collection<CswNbtMetaDataNodeTypeProp>();
                 // Synchronize Object Class Props from the new object class
                 foreach (CswNbtMetaDataObjectClassProp ObjectClassProp in NodeType.ObjectClass.ObjectClassProps)
                 {
@@ -757,14 +757,18 @@ namespace ChemSW.Nbt.MetaData
                     {
                         if (Prop.PropName == ObjectClassProp.PropName && Prop.FieldType == ObjectClassProp.FieldType)
                         {
-                            //Cannot modify a collection while iterating it. Discovered on Case 20536
-                            //_CswNbtMetaDataResources.NodeTypePropsCollection.Deregister(Prop);
-
-                            Prop._DataRow["objectclasspropid"] = ObjectClassProp.PropId;
-                            FoundMatch = true;
-
-                            //_CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting(Prop);
+                            MatchingProps.Add( Prop );
                         }
+                    }
+
+                    foreach( CswNbtMetaDataNodeTypeProp Match in MatchingProps )
+                    {
+                        _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( Match );
+
+                        Match._DataRow["objectclasspropid"] = ObjectClassProp.PropId;
+                        FoundMatch = true;
+
+                        _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting( Match );
                     }
 
                     if (!FoundMatch)
