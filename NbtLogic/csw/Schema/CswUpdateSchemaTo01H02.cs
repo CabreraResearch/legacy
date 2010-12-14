@@ -75,8 +75,6 @@ namespace ChemSW.Nbt.Schema
             DataRow MpgNameDataRow = _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, MountPointGroupClassObjectID, CswNbtObjClassMountPointGroup.NamePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Text, Int32.MinValue, Int32.MinValue );
             MpgNameDataRow["isrequired"] = CswConvert.ToDbVal( true );
             MpgNameDataRow["isunique"] = CswConvert.ToDbVal( true );
-            CswNbtMetaDataObjectClass MountPointGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( MountPointGroupClassObjectID );
-            MountPointGroupOC._DataRow["iconfilename"] = "ball_blueS.gif";
 
             // BZ 5073
             // Add entries for old existing default values
