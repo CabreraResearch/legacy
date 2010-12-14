@@ -96,6 +96,12 @@ namespace ChemSW.Nbt.ObjClasses
             return ( (CswNbtObjClassMountPoint) Node.ObjClass );
         }//AsMountPoint
 
+        public static CswNbtObjClassMountPointGroup AsMountPointGroup( CswNbtNode Node )
+        {
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MountPointGroupClass );
+            return ( (CswNbtObjClassMountPointGroup) Node.ObjClass );
+        }//AsMountPoint
+        
         public static CswNbtObjClassNotification AsNotification( CswNbtNode Node )
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );

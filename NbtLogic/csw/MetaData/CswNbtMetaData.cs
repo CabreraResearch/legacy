@@ -757,12 +757,13 @@ namespace ChemSW.Nbt.MetaData
                     {
                         if (Prop.PropName == ObjectClassProp.PropName && Prop.FieldType == ObjectClassProp.FieldType)
                         {
-                            _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister(Prop);
+                            //Cannot modify a collection while iterating it. Discovered on Case 20536
+                            //_CswNbtMetaDataResources.NodeTypePropsCollection.Deregister(Prop);
 
                             Prop._DataRow["objectclasspropid"] = ObjectClassProp.PropId;
                             FoundMatch = true;
 
-                            _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting(Prop);
+                            //_CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting(Prop);
                         }
                     }
 

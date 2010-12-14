@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.MetaData
             MaterialSubclassClass,
             MaterialSynonymClass,
             MountPointClass,
+            MountPointGroupClass,
             NotificationClass,
             PackageClass,
             PackDetailClass,

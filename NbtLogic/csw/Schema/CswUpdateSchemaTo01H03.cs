@@ -131,14 +131,13 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.DescriptionPropertyName ), "setvalonadd", true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.DescriptionPropertyName ), "setvalonadd", true );
 
-            //Mount Point Group NT
-            CswNbtMetaDataObjectClass GenericOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass );
-            CswNbtMetaDataNodeType MountPointGroupNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOC.ObjectClassId, CswSchemaUpdater.HamletNodeTypesAsString(CswSchemaUpdater.HamletNodeTypes.Mount_Point_Group), "Fire Extinguisher" );
-            MountPointGroupNT.IconFileName = "group.gif";
-            CswNbtMetaDataNodeTypeProp MountPointGroupNameNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointGroupNT, CswNbtMetaDataFieldType.NbtFieldType.Text, "Name", Int32.MinValue );
-            MountPointGroupNameNTP.IsUnique = true;
+            // Case 20536 Mount Point Group NT
+            CswNbtMetaDataObjectClass MountPointGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MountPointGroupClass );
+            MountPointGroupOC._DataRow["iconfilename"] = "ball_blueS.gif";
+            CswNbtMetaDataNodeType MountPointGroupNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( MountPointGroupOC.ObjectClassId, CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point_Group ), "Fire Extinguisher" );
+            CswNbtMetaDataNodeTypeProp MountPointGroupNameNTP = MountPointGroupNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPointGroup.NamePropertyName );
             MountPointGroupNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Name" );
-
+            
             //New Mount Point Group Node
             CswNbtNode MPGroupNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( MountPointGroupNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             MPGroupNode.Properties[MountPointGroupNameNTP].AsText.Text = "A";
