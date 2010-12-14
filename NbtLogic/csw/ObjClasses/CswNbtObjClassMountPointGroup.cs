@@ -46,23 +46,28 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp OwnerOCP = GeneratorOC.getObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName );
             CswNbtMetaDataNodeTypeProp OwnerNTP;
             CswNbtMetaDataNodeType OwnerNT;
+            //CswNbtMetaDataObjectClass OwnerOC;
             CswNbtNode GeneratorNode;
             CswNbtObjClassGenerator NewGenerator;
 
             foreach( CswNbtMetaDataNodeType NodeType in GeneratorOC.NodeTypes )
             {
                 OwnerNTP = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
-                OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );
-                if( null != OwnerNT && OwnerNT == Node.NodeType )
-                {
-                    GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                    if( null != GeneratorNode )
+                if( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
+                { 
+                    OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );
+                    if( null != OwnerNT && OwnerNT == Node.NodeType )
                     {
-                        NewGenerator = CswNbtNodeCaster.AsGenerator( GeneratorNode );
-                        NewGenerator.Owner.RelatedNodeId = this.NodeId;
-                        GeneratorNode.postChanges( true );
+                        GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                        if( null != GeneratorNode )
+                        {
+                            NewGenerator = CswNbtNodeCaster.AsGenerator( GeneratorNode );
+                            NewGenerator.Owner.RelatedNodeId = this.NodeId;
+                            GeneratorNode.postChanges( true );
+                        }
                     }
-                }
+                } //CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType
+                //else if( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() == OwnerNTP.FKType )
             }
 
             _CswNbtObjClassDefault.afterCreateNode();
