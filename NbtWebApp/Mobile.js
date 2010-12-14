@@ -630,7 +630,7 @@
             switch (FieldType)
             {
                 case "Date":
-                    Html += '<input type="date" name="' + IdStr + '" value="' + sf_value + '" />';
+                    Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
                     break;
 
                 case "Link":
