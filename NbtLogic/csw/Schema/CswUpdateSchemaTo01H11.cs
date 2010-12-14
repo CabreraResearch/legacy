@@ -75,9 +75,8 @@ namespace ChemSW.Nbt.Schema
                                                                                                     SetupTabId );
             CswNbtMetaDataNodeTypeProp TargetNTP = PhysicalInspectionsNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
             CswNbtMetaDataNodeTypeProp BarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
-            MPBarcodeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, string.Empty, Int32.MinValue );
-            MPBarcodeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, string.Empty, Int32.MinValue );
-            MPBarcodeNTP._DataRow["valuepropid"] = CswConvert.ToDbVal( BarcodeNTP.PropId );
+            MPBarcodeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString(), BarcodeNTP.PropId );
+            MPBarcodeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString(), BarcodeNTP.PropId );
 
             // Case 20515
             CswNbtMetaDataObjectClassProp CancelledOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
