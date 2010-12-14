@@ -118,9 +118,9 @@ namespace ChemSW.Nbt
             NodeSpecies ret = NodeSpecies.UnKnown;
             if( Depth >= 0 )
             {
-                if( TreePath[Depth + 2].Substring( 0, CswNbtTreeNodes._ElemName_NodeGroup.Length ) == CswNbtTreeNodes._ElemName_NodeGroup )
+                if( TreePath[Depth + 1].Substring( 0, CswNbtTreeNodes._ElemName_NodeGroup.Length ) == CswNbtTreeNodes._ElemName_NodeGroup )
                     ret = NodeSpecies.Group;
-                else if( TreePath[Depth + 2].Substring( 0, CswNbtTreeNodes._ElemName_Node.Length ) == CswNbtTreeNodes._ElemName_Node )
+                else if( TreePath[Depth + 1].Substring( 0, CswNbtTreeNodes._ElemName_Node.Length ) == CswNbtTreeNodes._ElemName_Node )
                     ret = NodeSpecies.Plain;
             }
             return ret;
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt
             CswPrimaryKey ret = null;
             if( Depth >= 0 )
             {
-                string NodeStr = TreePath[Depth + 2];
+                string NodeStr = TreePath[Depth + 1];
                 string IdStr1 = NodeStr.Substring( NodeStr.IndexOf( "@tablename='" ) + "@tablename='".Length );
                 IdStr1 = IdStr1.Substring( 0, IdStr1.IndexOf( "'" ) );
                 string IdStr2 = NodeStr.Substring( NodeStr.IndexOf( "@nodeid=" ) + "@nodeid=".Length );
@@ -153,7 +153,7 @@ namespace ChemSW.Nbt
             string ret = string.Empty;
             if( Depth >= 0 )
             {
-                string NameStr = TreePath[Depth + 2].Split( '=' )[1];
+                string NameStr = TreePath[Depth + 1].Split( '=' )[1];
                 ret = NameStr.Substring( 1, NameStr.Length - 2 );
             }
             return ret;
