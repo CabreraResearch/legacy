@@ -278,6 +278,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassMountPoint( CswNbtResources );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.MountPointGroupClass:
+                    ReturnVal = new CswNbtObjClassMountPointGroup( CswNbtResources );
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass:
                     ReturnVal = new CswNbtObjClassNotification( CswNbtResources );
                     break;
