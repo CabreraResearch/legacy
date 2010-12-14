@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.Schema
             Int32 FireExtinguisherClassObjectID = _CswNbtSchemaModTrnsctn.createObjectClass( "FireExtinguisherClass", "", false, false );
 
             // Case 20536
-            Int32 MountPointGroupClassObjectID = _CswNbtSchemaModTrnsctn.createObjectClass( "MountPointGroupClass", "", false, false );
+            Int32 MountPointGroupClassObjectID = _CswNbtSchemaModTrnsctn.createObjectClass( "MountPointGroupClass", "ball_blueS.gif", false, false );
             DataRow MpgNameDataRow = _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, MountPointGroupClassObjectID, CswNbtObjClassMountPointGroup.NamePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Text, Int32.MinValue, Int32.MinValue );
             MpgNameDataRow["isrequired"] = CswConvert.ToDbVal( true );
             MpgNameDataRow["isunique"] = CswConvert.ToDbVal( true );
