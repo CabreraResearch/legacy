@@ -200,7 +200,8 @@ namespace ChemSW.Nbt
                 if( _NodeId == null )
                 {
                     _NodeId = new CswPrimaryKey();
-                    _NodeId.FromString( _DelimitedString[1] );
+                    if( _DelimitedString[1] != string.Empty )
+                        _NodeId.FromString( _DelimitedString[1] );
                 }
                 return ( _NodeId );
             }
