@@ -83,18 +83,22 @@ namespace ChemSW.Nbt.ObjClasses
                     //For each target node type on the generator
                     foreach( String NtId in NodeTypeIds )
                     {
-                        CswNbtMetaDataNodeType InspectionNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NtId ) ).LatestVersionNodeType;
+                        CswNbtMetaDataNodeType InspectionNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NtId ) );
                         if( null != InspectionNT )
                         {
-                            CswNbtNode NewInspectionNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( InspectionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                            if( null != NewInspectionNode )
+                            //For the past interval. Scheduler will handle current interval.
+                            CswNbtNode PastInspectionNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( InspectionNT.LatestVersionNodeType.NodeTypeId,
+                                                                                                          CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                            if( null != PastInspectionNode )
                             {
-                                CswNbtObjClassInspectionDesign InspectionOC = CswNbtNodeCaster.AsInspectionDesign( NewInspectionNode );
+                                CswNbtObjClassInspectionDesign InspectionOC = CswNbtNodeCaster.AsInspectionDesign( PastInspectionNode );
                                 InspectionOC.Owner.RelatedNodeId = this.NodeId;
                                 InspectionOC.Generator.RelatedNodeId = ScheduleNode.NodeId;
-                                InspectionOC.Date.DateValue = ScheduleOC.NextDueDate.DateValue;
-                                NewInspectionNode.postChanges( true );
+                                CswRateInterval ScheduleInterval = ScheduleOC.DueDateInterval.RateInterval;
+                                InspectionOC.Date.DateValue = ScheduleInterval.getLast( ScheduleOC.NextDueDate.DateValue );
+                                PastInspectionNode.postChanges( true );
                             }
+
                         }
                     }// for( Int32 n = 0; n < NodeTypeIds.Count; n++ )
 
