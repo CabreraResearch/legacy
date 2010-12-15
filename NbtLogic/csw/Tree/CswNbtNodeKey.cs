@@ -220,7 +220,6 @@ namespace ChemSW.Nbt
             }
         }
 
-        private Int32 _NodeTypeId = Int32.MinValue;
         /// <summary>
         /// NodeType Primary Key of Node
         /// </summary>
@@ -228,21 +227,14 @@ namespace ChemSW.Nbt
         {
             get 
             {
-                if( null != _DelimitedString[3] )
-                    _NodeTypeId = CswConvert.ToInt32( _DelimitedString[3] );
-                return ( _NodeTypeId ); 
+                return ( CswConvert.ToInt32( _DelimitedString[3] ) ); 
             }
             set 
             {
-                _NodeTypeId = value;
-                if( null != _NodeTypeId )
-                    _DelimitedString[3] = _NodeTypeId.ToString();
-                else
-                    _DelimitedString[3] = String.Empty;
+                _DelimitedString[3] = value.ToString();
             }
         }
 
-        private Int32 _ObjectClassid = Int32.MinValue;
         /// <summary>
         /// ObjectClass Primary Key of Node
         /// </summary>
@@ -250,21 +242,14 @@ namespace ChemSW.Nbt
         {
             get 
             {
-                if( null != _DelimitedString[4] )
-                    _ObjectClassid = CswConvert.ToInt32( _DelimitedString[4] );
-                return ( _ObjectClassid ); 
+                return ( CswConvert.ToInt32( _DelimitedString[4] ) ); 
             }
             set 
             {
-                _ObjectClassid = value;
-                if( null != _ObjectClassid )
-                    _DelimitedString[4] = _ObjectClassid.ToString(); 
-                else
-                    _DelimitedString[4] = String.Empty; 
+                _DelimitedString[4] = value.ToString(); 
             }
         }
 
-        private NodeSpecies _NodeSpecies = NodeSpecies.Plain;
         /// <summary>
         /// <see cref="NodeSpecies"/> of Node
         /// </summary>
@@ -272,16 +257,14 @@ namespace ChemSW.Nbt
         {
             get
             {
-                if( !Enum.TryParse<NodeSpecies>( _DelimitedString[2], out _NodeSpecies ) )
-                    _NodeSpecies = ObjClasses.NodeSpecies.Plain;
-                return _NodeSpecies;
+                NodeSpecies ret;
+                if( !Enum.TryParse<NodeSpecies>( _DelimitedString[2], out ret ) )
+                    ret = ObjClasses.NodeSpecies.Plain;
+                return ret;
             }
             set 
             {
-                if( null != value )
-                    _DelimitedString[2] = value.ToString();
-                else
-                    _DelimitedString[2] = _NodeSpecies.ToString();
+                _DelimitedString[2] = value.ToString();
             }
         }
 
