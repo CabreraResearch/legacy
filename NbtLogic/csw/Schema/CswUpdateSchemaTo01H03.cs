@@ -93,6 +93,11 @@ namespace ChemSW.Nbt.Schema
                                                            false, false, true, "ObjectClassId", LocationOC.ObjectClassId, true, false, false, false, string.Empty,
                                                            Int32.MinValue, Int32.MinValue );
 
+            //MP: Mount Point Group
+            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, MountPointOC, CswNbtObjClassMountPoint.MountPointGroupPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                                                           false, false, true, "ObjectClassId", MountPointGroupOC.ObjectClassId, true, false, false, false, string.Empty,
+                                                           Int32.MinValue, Int32.MinValue );
+
             //FE OC Props
 
             //FE: Last Inspection Date
@@ -149,7 +154,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp MPBarcodeNTP =  _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, "Barcode", Int32.MinValue );
             MountPointNT.NameTemplateText = ( CswNbtMetaData.MakeTemplateEntry( "Barcode" ) + " " + 
                                               CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMountPoint.DescriptionPropertyName ) );
-            CswNbtMetaDataNodeTypeProp MountPointGroupNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Mount Point Group", Int32.MinValue );
+            CswNbtMetaDataNodeTypeProp MountPointGroupNTP = MountPointGroupNT.getNodeTypeProp( CswNbtObjClassMountPoint.MountPointGroupPropertyName );
             MountPointGroupNTP.SetValueOnAdd = true;
             MountPointGroupNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointGroupNT.NodeTypeId, string.Empty, Int32.MinValue );
             MountPointGroupNTP.DefaultValue.AsRelationship.RelatedNodeId = MPGroupNode.NodeId;

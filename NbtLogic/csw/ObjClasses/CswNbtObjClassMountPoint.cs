@@ -1,12 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Data;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -18,6 +20,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string DescriptionPropertyName { get { return "Description"; } }
         public static string TypePropertyName { get { return "Type"; } }
         public static string BarcodePropertyName { get { return "Barcode"; } }
+        public static string MountPointGroupPropertyName { get { return "Mount Point Group"; } }
 
         //ICswNbtPropertySetInspectionParent
         public string InspectionParentStatusPropertyName { get { return StatusPropertyName; } }
@@ -51,6 +54,60 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
+            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            CswNbtNode MountPointGroupNode = _CswNbtResources.Nodes.GetNode( this.MountPointGroup.RelatedNodeId );
+
+            if( null != MountPointGroupNode )
+            {
+                CswNbtView SchedulesView = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship GeneratorRelationship = SchedulesView.AddViewRelationship( GeneratorOC, false );
+                CswNbtViewProperty OwnerProperty = SchedulesView.AddViewProperty( GeneratorRelationship, GeneratorOC.getObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName ) );
+                CswNbtViewPropertyFilter OwnerPropFilter = SchedulesView.AddViewPropertyFilter( OwnerProperty, 
+                                                                                                CswNbtSubField.SubFieldName.NodeID, 
+                                                                                                CswNbtPropFilterSql.PropertyFilterMode.Equals, 
+                                                                                                MountPointGroupNode.NodeId.PrimaryKey.ToString(), 
+                                                                                                false );
+                ICswNbtTree SchedulesTree = _CswNbtResources.Trees.getTreeFromView( SchedulesView, true, true, false, false );
+                SchedulesTree.goToRoot();
+
+                CswNbtNode ScheduleNode;
+                CswNbtNode NewInspectionNode;
+                CswNbtObjClassGenerator ScheduleOC;
+                CswNbtMetaDataNodeType InspectionNT;
+                CswNbtObjClassInspectionDesign InspectionOC;
+                CswDelimitedString NodeTypeIds = new CswDelimitedString(',');
+
+                //For each generator with this Mount Point's MPG
+                for( Int32 i = 0; i < SchedulesTree.getChildNodeCount(); i++ )
+                {
+                    SchedulesTree.goToNthChild( i );
+                    ScheduleNode = SchedulesTree.getNodeForCurrentPosition();
+                    ScheduleOC = CswNbtNodeCaster.AsGenerator( ScheduleNode );
+
+                    NodeTypeIds = ScheduleOC.TargetType.SelectedNodeTypeIds;
+                    //For each target node type on the generator
+                    foreach( String NtId in NodeTypeIds )
+                    {
+                        InspectionNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NtId ) ).LatestVersionNodeType;
+                        if( null != InspectionNT )
+                        {
+                            NewInspectionNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( InspectionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                            if( null != NewInspectionNode )
+                            {
+                                InspectionOC = CswNbtNodeCaster.AsInspectionDesign( NewInspectionNode );
+                                InspectionOC.Owner.RelatedNodeId = this.NodeId;
+                                InspectionOC.Generator.RelatedNodeId = ScheduleNode.NodeId;
+                                InspectionOC.Date.DateValue = ScheduleOC.NextDueDate.DateValue;
+                                NewInspectionNode.postChanges( true );
+                            }
+                        }
+                    }// for( Int32 n = 0; n < NodeTypeIds.Count; n++ )
+
+                    SchedulesTree.goToParentNode();
+
+                } // for( Int32 i = 0; i < SchedulesTree.getChildNodeCount(); i++ )
+            } // if( null != MountPointGroupNode )
+
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
@@ -143,6 +200,14 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[BarcodePropertyName].AsBarcode );
+            }
+        }
+
+        public CswNbtNodePropRelationship MountPointGroup
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[MountPointGroupPropertyName].AsRelationship );
             }
         }
         
