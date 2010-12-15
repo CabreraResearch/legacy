@@ -70,31 +70,26 @@ namespace ChemSW.Nbt.ObjClasses
                 ICswNbtTree SchedulesTree = _CswNbtResources.Trees.getTreeFromView( SchedulesView, true, true, false, false );
                 SchedulesTree.goToRoot();
 
-                CswNbtNode ScheduleNode;
-                CswNbtNode NewInspectionNode;
-                CswNbtObjClassGenerator ScheduleOC;
-                CswNbtMetaDataNodeType InspectionNT;
-                CswNbtObjClassInspectionDesign InspectionOC;
                 CswDelimitedString NodeTypeIds = new CswDelimitedString(',');
 
                 //For each generator with this Mount Point's MPG
                 for( Int32 i = 0; i < SchedulesTree.getChildNodeCount(); i++ )
                 {
                     SchedulesTree.goToNthChild( i );
-                    ScheduleNode = SchedulesTree.getNodeForCurrentPosition();
-                    ScheduleOC = CswNbtNodeCaster.AsGenerator( ScheduleNode );
+                    CswNbtNode ScheduleNode = SchedulesTree.getNodeForCurrentPosition();
+                    CswNbtObjClassGenerator ScheduleOC = CswNbtNodeCaster.AsGenerator( ScheduleNode );
 
                     NodeTypeIds = ScheduleOC.TargetType.SelectedNodeTypeIds;
                     //For each target node type on the generator
                     foreach( String NtId in NodeTypeIds )
                     {
-                        InspectionNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NtId ) ).LatestVersionNodeType;
+                        CswNbtMetaDataNodeType InspectionNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NtId ) ).LatestVersionNodeType;
                         if( null != InspectionNT )
                         {
-                            NewInspectionNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( InspectionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                            CswNbtNode NewInspectionNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( InspectionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                             if( null != NewInspectionNode )
                             {
-                                InspectionOC = CswNbtNodeCaster.AsInspectionDesign( NewInspectionNode );
+                                CswNbtObjClassInspectionDesign InspectionOC = CswNbtNodeCaster.AsInspectionDesign( NewInspectionNode );
                                 InspectionOC.Owner.RelatedNodeId = this.NodeId;
                                 InspectionOC.Generator.RelatedNodeId = ScheduleNode.NodeId;
                                 InspectionOC.Date.DateValue = ScheduleOC.NextDueDate.DateValue;
