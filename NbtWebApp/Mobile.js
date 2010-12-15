@@ -10,12 +10,14 @@
             DBMaxSize: 65536,
             ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
             ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
+            ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
             UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
             MainPageUrl: '/NbtWebApp/Mobile.html',
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             Theme: 'a',
             PollingInterval: 5000,
-            DivRemovalDelay: 1000
+            DivRemovalDelay: 1000,
+            RandomConnectionFailure: false
         };
 
         if (options)
@@ -1621,9 +1623,13 @@
 
         function _handleDataCheckTimer(onSuccess, onFailure)
         {
+            var url = opts.ConnectTestUrl;
+            if(opts.RandomConnectionFailure)
+                url = opts.ConnectTestRandomFailUrl;
+    
             $.ajax({
                 type: 'POST',
-                url: opts.ConnectTestUrl,
+                url: url,
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
                 data: "{}",
