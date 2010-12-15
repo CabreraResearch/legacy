@@ -164,10 +164,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public Int32 TreeDepth
         {
-            get
-            {
-                return TreePath.Count - 2;
-            }
+            get {  return TreePath.Count - 2;   }
         }
 
         private CswNbtTreeKey _CswNbtTreeKey = null;
@@ -179,13 +176,19 @@ namespace ChemSW.Nbt
             get
             {
                 if( _CswNbtTreeKey == null )
-                    _CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, Convert.ToInt32( _DelimitedString[5] ) );
+                {
+                    if( String.Empty != _DelimitedString[5] )
+                        _CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, CswConvert.ToInt32( _DelimitedString[5] ) );
+                }
                 return _CswNbtTreeKey;
             }
             set
             {
                 _CswNbtTreeKey = value;
-                _DelimitedString[5] = value.ToString();
+                if( null != _CswNbtTreeKey )
+                    _DelimitedString[5] = value.ToString();
+                else
+                    _DelimitedString[5] = String.Empty;
             }
         }
 
@@ -199,37 +202,69 @@ namespace ChemSW.Nbt
             {
                 if( _NodeId == null )
                 {
-                    _NodeId = new CswPrimaryKey();
                     if( _DelimitedString[1] != string.Empty )
+                    {
+                        _NodeId = new CswPrimaryKey();
                         _NodeId.FromString( _DelimitedString[1] );
+                    }
                 }
                 return ( _NodeId );
             }
             set
             {
                 _NodeId = value;
-                _DelimitedString[1] = value.ToString();
+                if( null != _NodeId )
+                    _DelimitedString[1] = _NodeId.ToString();
+                else
+                    _DelimitedString[1] = String.Empty;
             }
         }
 
+        private Int32 _NodeTypeId = Int32.MinValue;
         /// <summary>
         /// NodeType Primary Key of Node
         /// </summary>
         public Int32 NodeTypeId
         {
-            get { return ( Convert.ToInt32( _DelimitedString[3] ) ); }
-            set { _DelimitedString[3] = value.ToString(); }
+            get 
+            {
+                if( null != _DelimitedString[3] )
+                    _NodeTypeId = CswConvert.ToInt32( _DelimitedString[3] );
+                return ( _NodeTypeId ); 
+            }
+            set 
+            {
+                _NodeTypeId = value;
+                if( null != _NodeTypeId )
+                    _DelimitedString[3] = _NodeTypeId.ToString();
+                else
+                    _DelimitedString[3] = String.Empty;
+            }
         }
 
+        private Int32 _ObjectClassid = Int32.MinValue;
         /// <summary>
         /// ObjectClass Primary Key of Node
         /// </summary>
         public Int32 ObjectClassId
         {
-            get { return ( Convert.ToInt32( _DelimitedString[4] ) ); }
-            set { _DelimitedString[4] = value.ToString(); }
+            get 
+            {
+                if( null != _DelimitedString[4] )
+                    _ObjectClassid = CswConvert.ToInt32( _DelimitedString[4] );
+                return ( _ObjectClassid ); 
+            }
+            set 
+            {
+                _ObjectClassid = value;
+                if( null != _ObjectClassid )
+                    _DelimitedString[4] = _ObjectClassid.ToString(); 
+                else
+                    _DelimitedString[4] = String.Empty; 
+            }
         }
 
+        private NodeSpecies _NodeSpecies = NodeSpecies.Plain;
         /// <summary>
         /// <see cref="NodeSpecies"/> of Node
         /// </summary>
@@ -237,12 +272,17 @@ namespace ChemSW.Nbt
         {
             get
             {
-                NodeSpecies ret;
-                if( !Enum.TryParse<NodeSpecies>( _DelimitedString[2], out ret ) )
-                    ret = ObjClasses.NodeSpecies.Plain;
-                return ret;
+                if( !Enum.TryParse<NodeSpecies>( _DelimitedString[2], out _NodeSpecies ) )
+                    _NodeSpecies = ObjClasses.NodeSpecies.Plain;
+                return _NodeSpecies;
             }
-            set { _DelimitedString[2] = value.ToString(); }
+            set 
+            {
+                if( null != value )
+                    _DelimitedString[2] = value.ToString();
+                else
+                    _DelimitedString[2] = _NodeSpecies.ToString();
+            }
         }
 
         /// <summary>
@@ -290,7 +330,10 @@ namespace ChemSW.Nbt
 
         void _NodeCountPath_OnChange()
         {
-            _DelimitedString[7] = _NodeCountPath.ToString();
+            if( null != _NodeCountPath )
+                _DelimitedString[7] = _NodeCountPath.ToString();
+            else
+                _DelimitedString[7] = String.Empty;
         }
 
         /// <summary>
@@ -299,7 +342,7 @@ namespace ChemSW.Nbt
         /// <param name="TreeDepth">Depth for count (1 is top level)</param>
         public Int32 getNodeCountAtDepth( Int32 TreeDepth )
         {
-            return Convert.ToInt32( NodeCountPath[TreeDepth] );
+            return CswConvert.ToInt32( NodeCountPath[TreeDepth] );
         }
 
         #region IEquatable
