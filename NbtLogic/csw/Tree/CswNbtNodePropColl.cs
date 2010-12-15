@@ -339,8 +339,9 @@ namespace ChemSW.Nbt
                         throw ( new CswDniException( "A node prop row is missing its nodetypepropid" ) );
                     //bz # 6542
                     CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Convert.ToInt32( CurrentRow["nodetypepropid"] ) );
-
-                    this[CswNbtMetaDataNodeTypeProp].onBeforeUpdateNodePropRow( IsCopy );
+                    
+                    if( null != CswNbtMetaDataNodeTypeProp )
+                        this[CswNbtMetaDataNodeTypeProp].onBeforeUpdateNodePropRow( IsCopy );
                 }
 
                 // Do the Update
