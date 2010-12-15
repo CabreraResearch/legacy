@@ -129,6 +129,26 @@
 
         function reloadViews(ChangePage)
         {
+            if($('#viewsdiv').hasClass('ui-page-active'))
+            {
+                _addPageDivToBody({
+                    DivId: 'loadingdiv',
+                    HeaderText: 'Please wait',
+                    content: 'Loading...',
+                    HideSearchButton: true,
+                    HideOnlineButton: true,
+                    HideRefreshButton: true,
+                    HideLogoutButton: true
+                });
+                $.mobile.changePage($('#loadingdiv'), "fade", false, true);
+                setTimeout(function () { continueReloadViews(true); removeDiv('loadingdiv') }, opts.DivRemovalDelay);
+            } else {
+                continueReloadViews(ChangePage)
+            }
+        }
+
+        function continueReloadViews(ChangePage)
+        {
             $('#viewsdiv').remove();
             _loadDivContents({
                 level: 0,
