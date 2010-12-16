@@ -84,6 +84,15 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Use view in Mobile
+        /// </summary>
+        public bool ForMobile
+        {
+            get { return Root.ForMobile; }
+            set { Root.ForMobile = value; }
+        }
+
+        /// <summary>
         /// Category name (arbitrary string) 
         /// </summary>
         public string Category

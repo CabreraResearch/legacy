@@ -55,9 +55,12 @@ namespace ChemSW.Nbt.Schema
 
             // Case 20081
             _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_props", "hideinmobile", "Exclude this property from Mobile", false, false );
-            
+
             // Case 20083
             _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_props", "mobilesearch", "Include this property in Mobile Search", false, false );
+
+            // Case 20509
+            _CswNbtSchemaModTrnsctn.addBooleanColumn( "node_views", "formobile", "Include this view in Mobile", false, false );
             
 
             // New UserSelect Fieldtype

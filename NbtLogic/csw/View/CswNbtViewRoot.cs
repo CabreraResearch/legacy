@@ -63,6 +63,7 @@ namespace ChemSW.Nbt
         public NbtViewVisibility Visibility = NbtViewVisibility.Unknown;
         public CswPrimaryKey VisibilityRoleId = null;
         public CswPrimaryKey VisibilityUserId = null;
+        public bool ForMobile = false;
         public string Category = String.Empty;
         //private NbtViewAddChildrenSetting _AddChildren = NbtViewAddChildrenSetting.InView;
         //public NbtViewAddChildrenSetting AddChildren
