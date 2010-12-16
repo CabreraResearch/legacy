@@ -10,12 +10,14 @@
             DBMaxSize: 65536,
             ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
             ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
+            ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
             UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
             MainPageUrl: '/NbtWebApp/Mobile.html',
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             Theme: 'a',
             PollingInterval: 5000,
-            DivRemovalDelay: 1000
+            DivRemovalDelay: 1000,
+            RandomConnectionFailure: false
         };
 
         if (options)
@@ -126,6 +128,26 @@
         }
 
         function reloadViews(ChangePage)
+        {
+            if($('#viewsdiv').hasClass('ui-page-active'))
+            {
+                _addPageDivToBody({
+                    DivId: 'loadingdiv',
+                    HeaderText: 'Please wait',
+                    content: 'Loading...',
+                    HideSearchButton: true,
+                    HideOnlineButton: true,
+                    HideRefreshButton: true,
+                    HideLogoutButton: true
+                });
+                $.mobile.changePage($('#loadingdiv'), "fade", false, true);
+                setTimeout(function () { continueReloadViews(true); removeDiv('loadingdiv') }, opts.DivRemovalDelay);
+            } else {
+                continueReloadViews(ChangePage)
+            }
+        }
+
+        function continueReloadViews(ChangePage)
         {
             $('#viewsdiv').remove();
             _loadDivContents({
@@ -443,16 +465,16 @@
                             lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
 
                             var sf_answer = $xmlitem.children('answer').text();
-                            var sf_options = $xmlitem.children('allowedanswers').text();
+                            var sf_allowedanswers = $xmlitem.children('allowedanswers').text();
                             var sf_compliantanswers = $xmlitem.children('compliantanswers').text();
                             var sf_correctiveaction = $xmlitem.children('correctiveaction').text();
                             if (sf_answer == undefined) sf_answer = '';
-                            if (sf_options == undefined) sf_options = '';
+                            if (sf_allowedanswers == undefined) sf_allowedanswers = '';
                             if (sf_compliantanswers == undefined) sf_compliantanswers = '';
                             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
 
                             lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                            lihtml += _makeQuestionAnswerFieldSet(DivId, id, '_ans', '_ans2', '_cor', '_li', '_propname', sf_options, sf_answer, sf_compliantanswers);
+                            lihtml += _makeQuestionAnswerFieldSet(DivId, id, '_ans', '_ans2', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
                             lihtml += '</div>';
 
                             if (sf_answer != '' && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && sf_correctiveaction == '')
@@ -605,10 +627,11 @@
             var sf_required = $xmlitem.children('required').text();
             var sf_units = $xmlitem.children('units').text();
             var sf_answer = $xmlitem.children('answer').text();
-            var sf_options = $xmlitem.children('allowedanswers').text();
+            var sf_allowedanswers = $xmlitem.children('allowedanswers').text();
             var sf_correctiveaction = $xmlitem.children('correctiveaction').text();
             var sf_comments = $xmlitem.children('comments').text();
             var sf_compliantanswers = $xmlitem.children('compliantanswers').text();
+            var sf_options = $xmlitem.children('options').text();
 
             if (sf_text == undefined) sf_text = '';
             if (sf_value == undefined) sf_value = '';
@@ -618,6 +641,7 @@
             if (sf_units == undefined) sf_units = '';
             if (sf_answer == undefined) sf_answer = '';
             if (sf_options == undefined) sf_options = '';
+            if (sf_allowedanswers == undefined) sf_allowedanswers = '';
             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
             if (sf_comments == undefined) sf_comments = '';
             if (sf_compliantanswers == undefined) sf_compliantanswers = '';
@@ -630,7 +654,7 @@
             switch (FieldType)
             {
                 case "Date":
-                    Html += '<input type="date" name="' + IdStr + '" value="' + sf_value + '" />';
+                    Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
                     break;
 
                 case "Link":
@@ -691,7 +715,7 @@
                     break;
 
                 case "Question":
-                    Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', '_propname', sf_options, sf_answer, sf_compliantanswers);
+                    Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
 
                     Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
                     Html += sf_comments
@@ -723,7 +747,7 @@
                     break;
 
                 case "Time":
-                    Html += '<input type="time" name="' + IdStr + '" value="' + sf_value + '" />';
+                    Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
                     break;
 
                 default:
@@ -749,6 +773,7 @@
             var $sf_required = $xmlitem.children('required');
             var $sf_units = $xmlitem.children('units');
             var $sf_answer = $xmlitem.children('answer');
+            var $sf_allowedanswers = $xmlitem.children('allowedanswers');
             var $sf_correctiveaction = $xmlitem.children('correctiveaction');
             var $sf_comments = $xmlitem.children('comments');
             var $sf_compliantanswers = $xmlitem.children('compliantanswers');
@@ -1618,9 +1643,13 @@
 
         function _handleDataCheckTimer(onSuccess, onFailure)
         {
+            var url = opts.ConnectTestUrl;
+            if(opts.RandomConnectionFailure)
+                url = opts.ConnectTestRandomFailUrl;
+    
             $.ajax({
                 type: 'POST',
-                url: opts.ConnectTestUrl,
+                url: url,
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
                 data: "{}",

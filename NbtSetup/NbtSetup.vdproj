@@ -28,13 +28,13 @@
         "Entry"
         {
         "MsmKey" = "8:_20BB9FC10B641F2C6976CEBC40D6A6DD"
-        "OwnerKey" = "8:_F30BCB6F76024243A331788525C384E5"
+        "OwnerKey" = "8:_351AD2E7B2A1487CBD10EAFFCB697C41"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_20BB9FC10B641F2C6976CEBC40D6A6DD"
-        "OwnerKey" = "8:_351AD2E7B2A1487CBD10EAFFCB697C41"
+        "OwnerKey" = "8:_F30BCB6F76024243A331788525C384E5"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -52,13 +52,7 @@
         "Entry"
         {
         "MsmKey" = "8:_34B93EB7B33B2CFBE6221D85CA3627C9"
-        "OwnerKey" = "8:_F30BCB6F76024243A331788525C384E5"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_34B93EB7B33B2CFBE6221D85CA3627C9"
-        "OwnerKey" = "8:_8B93D772E0A5462EB62BE32EF295CF72"
+        "OwnerKey" = "8:_34114616F6BA4E82B58D800E5AB7C567"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -70,7 +64,13 @@
         "Entry"
         {
         "MsmKey" = "8:_34B93EB7B33B2CFBE6221D85CA3627C9"
-        "OwnerKey" = "8:_34114616F6BA4E82B58D800E5AB7C567"
+        "OwnerKey" = "8:_8B93D772E0A5462EB62BE32EF295CF72"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_34B93EB7B33B2CFBE6221D85CA3627C9"
+        "OwnerKey" = "8:_F30BCB6F76024243A331788525C384E5"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -100,29 +100,29 @@
         "Entry"
         {
         "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
-        "OwnerKey" = "8:_F30BCB6F76024243A331788525C384E5"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
-        "OwnerKey" = "8:_8B93D772E0A5462EB62BE32EF295CF72"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
-        "OwnerKey" = "8:_351AD2E7B2A1487CBD10EAFFCB697C41"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
         "OwnerKey" = "8:_34114616F6BA4E82B58D800E5AB7C567"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
+        "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
+        "OwnerKey" = "8:_351AD2E7B2A1487CBD10EAFFCB697C41"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
+        "OwnerKey" = "8:_8B93D772E0A5462EB62BE32EF295CF72"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EA332C2761CFD7406885FC276CA99516"
+        "OwnerKey" = "8:_F30BCB6F76024243A331788525C384E5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_ED1EF0A5156B0F9D138F48F2FA511E58"
         "OwnerKey" = "8:_351AD2E7B2A1487CBD10EAFFCB697C41"
         "MsmSig" = "8:_UNDEFINED"
@@ -130,13 +130,13 @@
         "Entry"
         {
         "MsmKey" = "8:_ED1EF0A5156B0F9D138F48F2FA511E58"
-        "OwnerKey" = "8:_F30BCB6F76024243A331788525C384E5"
+        "OwnerKey" = "8:_8B93D772E0A5462EB62BE32EF295CF72"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_ED1EF0A5156B0F9D138F48F2FA511E58"
-        "OwnerKey" = "8:_8B93D772E0A5462EB62BE32EF295CF72"
+        "OwnerKey" = "8:_F30BCB6F76024243A331788525C384E5"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -154,13 +154,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F30BCB6F76024243A331788525C384E5"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8B93D772E0A5462EB62BE32EF295CF72"
+        "OwnerKey" = "8:_34114616F6BA4E82B58D800E5AB7C567"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -172,7 +166,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_34114616F6BA4E82B58D800E5AB7C567"
+        "OwnerKey" = "8:_8B93D772E0A5462EB62BE32EF295CF72"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_F30BCB6F76024243A331788525C384E5"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -301,50 +301,6 @@
         }
         "Folder"
         {
-            "{B217119D-EFCE-4DB2-B977-4E6C310987BC}:_897F9798FAE945C49CFC43904210C84C"
-            {
-            "VirtualDirectory" = "8:NbtMobileWeb"
-            "Port" = "3:80"
-            "IsApplication" = "11:TRUE"
-            "AllowScriptSourceAccess" = "11:FALSE"
-            "AllowReadAccess" = "11:TRUE"
-            "AllowWriteAccess" = "11:FALSE"
-            "AllowDirectoryBrowse" = "11:FALSE"
-            "LogVisits" = "11:TRUE"
-            "Index" = "11:TRUE"
-            "ExecutePermissions" = "3:2"
-            "DefaultDocument" = "8:default.aspx"
-            "ApplicationProtection" = "3:2"
-                "ApplicationMappings"
-                {
-                }
-            "Name" = "8:NbtMobileWeb"
-            "AlwaysCreate" = "11:TRUE"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Property" = "8:NBTMOBILEWEB"
-                "Folders"
-                {
-                    "{4C6F2762-250E-4E7D-82DC-65B304135C98}:_82D3B9C0CDAB451093CE4672C5C32F51"
-                    {
-                    "AllowScriptSourceAccess" = "11:FALSE"
-                    "AllowReadAccess" = "11:FALSE"
-                    "AllowWriteAccess" = "11:FALSE"
-                    "AllowDirectoryBrowse" = "11:FALSE"
-                    "LogVisits" = "11:TRUE"
-                    "Index" = "11:TRUE"
-                    "ExecutePermissions" = "3:2"
-                    "Name" = "8:bin"
-                    "AlwaysCreate" = "11:TRUE"
-                    "Condition" = "8:"
-                    "Transitive" = "11:FALSE"
-                    "Property" = "8:_59977C3F72054A88B6E278278B1544D2"
-                        "Folders"
-                        {
-                        }
-                    }
-                }
-            }
             "{80453C8E-1031-40EC-8E7A-9762B297303A}:_AFA046E4095D410180553C54153653F2"
             {
             "VirtualDirectory" = "8:NbtWebApp"

@@ -4,7 +4,7 @@
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 
 <asp:Content ID="Content4" ContentPlaceHolderID="TitleContent" runat="Server">
-    Edit Inspection
+    Import Fire Extinguisher Data
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="MasterCenterContent" runat="Server">

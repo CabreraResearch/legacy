@@ -1,12 +1,5 @@
 echo exit | sqlplus nbt/nbt@orcl @nbt_nuke.sql
 
-imp.exe nbt/nbt@orcl FILE=Dumps\Nbt_Master_01G32.dmp FULL=Y TOUSER=nbt
+impdp.exe nbt/nbt@orcl DUMPFILE=FE_Sales_Demo.dmp DIRECTORY=NBTDUMPS
 
 echo exit | sqlplus nbt/nbt@orcl @nbt_finalize_01H11_ora.sql
-
-
-
-
-
-
-
