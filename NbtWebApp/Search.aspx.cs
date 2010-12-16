@@ -73,10 +73,6 @@ namespace ChemSW.Nbt.WebPages
                     {
                         SearchOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
                     }
-                    else
-                    {
-                        _FilterEditor.LoadSearch( null, null );
-                    }
 
                     if( null != SearchOC )
                     {
@@ -85,6 +81,11 @@ namespace ChemSW.Nbt.WebPages
                             _FilterEditor.LoadSearch( NodeType, null );
                         }
                     }
+                    else
+                    {
+                        _FilterEditor.LoadSearch( null, null );
+                    }
+
                     _SearchLabel.Text = "Search";
                 }
                 else
