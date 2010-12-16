@@ -29,217 +29,211 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            CswNbtMetaDataObjectClass EquipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
-            CswNbtMetaDataObjectClassProp EquipmentStatusOCP = EquipmentOC.getObjectClassProp( CswNbtObjClassEquipment.StatusPropertyName );
+            //<BZ 10319>
+            CswTableUpdate FieldTypeUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate("Question_FieldType_Update", "field_types");
+            DataTable NewFieldTypeTable = FieldTypeUpdate.getEmptyTable();
+            DataRow NewFieldTypeRow = NewFieldTypeTable.NewRow();
+            NewFieldTypeRow["auditflag"] = CswConvert.ToDbVal(false);
+            NewFieldTypeRow["datatype"] = "xml";
+            NewFieldTypeRow["deleted"] = CswConvert.ToDbVal(false);
+            NewFieldTypeRow["fieldtype"] = CswNbtMetaDataFieldType.NbtFieldType.Question.ToString();
+            NewFieldTypeTable.Rows.Add(NewFieldTypeRow);
+            FieldTypeUpdate.update(NewFieldTypeTable);
 
-            // BZ 10454
-            // Add retired filter to existing views
-            DataTable ViewsTable = _CswNbtSchemaModTrnsctn.getAllViews();
-            foreach( DataRow ViewRow in ViewsTable.Rows )
+            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
+            //</BZ 10319>
+        
+            // BZ 10094
+            // New Notification Object Class
+            CswNbtMetaDataObjectClass NotificationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+
+            // Default nodetype
+            CswNbtMetaDataNodeType NotificationNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NotificationOC.ObjectClassId, CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Notification ), "" );
+
+            CswNbtMetaDataNodeTypeProp EventNTP = NotificationNT.getNodeTypeProp( CswNbtObjClassNotification.EventPropertyName );
+            CswNbtMetaDataNodeTypeProp TargetTypeNTP = NotificationNT.getNodeTypeProp( CswNbtObjClassNotification.TargetTypePropertyName );
+            CswNbtMetaDataNodeTypeProp PropertyNTP = NotificationNT.getNodeTypeProp( CswNbtObjClassNotification.PropertyPropertyName );
+            CswNbtMetaDataNodeTypeProp ValueNTP = NotificationNT.getNodeTypeProp( CswNbtObjClassNotification.ValuePropertyName );
+            CswNbtMetaDataNodeTypeProp SubscribedUsersNTP = NotificationNT.getNodeTypeProp( CswNbtObjClassNotification.SubscribedUsersPropertyName );
+            CswNbtMetaDataNodeTypeProp SubjectNTP = NotificationNT.getNodeTypeProp( CswNbtObjClassNotification.SubjectPropertyName );
+            CswNbtMetaDataNodeTypeProp MessageNTP = NotificationNT.getNodeTypeProp( CswNbtObjClassNotification.MessagePropertyName );
+
+            SubjectNTP.DefaultValue.AsText.Text = "ChemSW Live Notification";
+            EventNTP.SetValueOnAdd = true;
+            TargetTypeNTP.SetValueOnAdd = true;
+
+            TargetTypeNTP.DisplayColumn = 1;
+            TargetTypeNTP.DisplayRow = 1;
+            TargetTypeNTP.DisplayColAdd = 1;
+            TargetTypeNTP.DisplayRowAdd = 1;
+
+            EventNTP.DisplayColumn = 1;
+            EventNTP.DisplayRow = 2;
+            EventNTP.DisplayColAdd = 1;
+            EventNTP.DisplayRowAdd = 2;
+
+            PropertyNTP.DisplayColumn = 1;
+            PropertyNTP.DisplayRow = 3;
+            PropertyNTP.DisplayColAdd = 1;
+            PropertyNTP.DisplayRowAdd = 3;
+
+            ValueNTP.DisplayColumn = 1;
+            ValueNTP.DisplayRow = 4;
+            ValueNTP.DisplayColAdd = 1;
+            ValueNTP.DisplayRowAdd = 4;
+
+            SubscribedUsersNTP.DisplayColumn = 1;
+            SubscribedUsersNTP.DisplayRow = 5;
+            SubscribedUsersNTP.DisplayColAdd = 1;
+            SubscribedUsersNTP.DisplayRowAdd = 5;
+
+            SubjectNTP.DisplayColumn = 1;
+            SubjectNTP.DisplayRow = 6;
+            SubjectNTP.DisplayColAdd = 1;
+            SubjectNTP.DisplayRowAdd = 6;
+
+            MessageNTP.DisplayColumn = 1;
+            MessageNTP.DisplayRow = 7;
+            MessageNTP.DisplayColAdd = 1;
+            MessageNTP.DisplayRowAdd = 7;
+
+            // e.g. Equipment, On Create
+            // e.g. Equipment, On Edit
+            // e.g. Equipment, On Edit Status
+            // e.g. Equipment, On Edit Status Retired
+            NotificationNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( TargetTypeNTP.PropName ) +
+                                              ", On " + CswNbtMetaData.MakeTemplateEntry( EventNTP.PropName ) +
+                                              " " + CswNbtMetaData.MakeTemplateEntry( PropertyNTP.PropName ) +
+                                              " " + CswNbtMetaData.MakeTemplateEntry( ValueNTP.PropName );
+
+            // make Property and Value dependent on Event
+            PropertyNTP.setFilter( EventNTP.PropId, EventNTP.FieldTypeRule.SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassNotification.EventOption.Edit.ToString() );
+            ValueNTP.setFilter( EventNTP.PropId, EventNTP.FieldTypeRule.SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassNotification.EventOption.Edit.ToString() );
+
+            CswNbtNode AdminRoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
+            if( AdminRoleNode != null )
             {
-                CswNbtView ThisView = _CswNbtSchemaModTrnsctn.restoreView( CswConvert.ToInt32( ViewRow["nodeviewid"] ) );
-                _SetDefaultEquipmentFilter( ThisView, ThisView.Root );
+                //Grant admin user permissions
+                CswNbtNodePropLogicalSet Permissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( AdminRoleNode ) ).NodeTypePermissions;
+                Permissions.SetValue( NodeTypePermission.Create.ToString(), NotificationNT.NodeTypeId.ToString(), true );
+                Permissions.SetValue( NodeTypePermission.Delete.ToString(), NotificationNT.NodeTypeId.ToString(), true );
+                Permissions.SetValue( NodeTypePermission.Edit.ToString(), NotificationNT.NodeTypeId.ToString(), true );
+                Permissions.SetValue( NodeTypePermission.View.ToString(), NotificationNT.NodeTypeId.ToString(), true );
+                Permissions.Save();
+                AdminRoleNode.postChanges( true );
+
+                // Default view
+                CswNbtView NotificationView = _CswNbtSchemaModTrnsctn.makeView();
+                NotificationView.makeNew( "Notifications", NbtViewVisibility.Role, AdminRoleNode.NodeId, null, null );
+                NotificationView.Category = "System";
+                NotificationView.AddViewRelationship( NotificationOC, true );
+                NotificationView.save();
             }
 
-            // Make view of retired equipment
-            CswNbtView RetiredEquipView = _CswNbtSchemaModTrnsctn.makeView();
-            RetiredEquipView.makeNew( "Retired Equipment", NbtViewVisibility.Global, null, null, null );
-            RetiredEquipView.ViewMode = NbtViewRenderingMode.List;
-            RetiredEquipView.Category = "Equipment";
-            CswNbtViewRelationship EquipmentRel = RetiredEquipView.AddViewRelationship( EquipmentOC, false );   // false is important here
-            CswNbtViewProperty StatusViewProp = RetiredEquipView.AddViewProperty( EquipmentRel, EquipmentStatusOCP );
-            CswNbtViewPropertyFilter StatusRetiredFilter = RetiredEquipView.AddViewPropertyFilter( StatusViewProp,
-                                                                    EquipmentStatusOCP.FieldTypeRule.SubFields.Default.Name,
-                                                                    CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                                    CswNbtObjClassEquipment.StatusOptionToDisplayString( CswNbtObjClassEquipment.StatusOption.Retired ),
-                                                                    false );
-            RetiredEquipView.save();
 
+            // Email address is now an object class prop on User
+            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswTableUpdate OCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H-06_OCP_Update", "object_class_props" );
+            DataTable UserOCPTable = OCPUpdate.getEmptyTable();
+            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( UserOCPTable, UserOC.ObjectClassId, CswNbtObjClassUser.EmailPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Text, Int32.MinValue, Int32.MinValue );
+            OCPUpdate.update( UserOCPTable );
 
-
-            // BZ 10425
-            CswNbtMetaDataNodeType DefaultMailReportNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Mail Report" );
-            if( DefaultMailReportNT != null )
+            // first, for proper placement of new properties
+            foreach( CswNbtMetaDataNodeType UserNT in UserOC.NodeTypes )
             {
-                CswNbtMetaDataNodeTypeProp StatusNTP = DefaultMailReportNT.getNodeTypeProp( "Status" );
-                if( StatusNTP != null )
-                    _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( StatusNTP );
+                if( UserNT.getNodeTypeProp( CswNbtObjClassUser.EmailPropertyName ) == null )
+                {
+                    CswNbtMetaDataNodeTypeProp LastNameProp = UserNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassUser.LastNamePropertyName );
+                    _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( UserNT, LastNameProp, CswNbtMetaDataFieldType.NbtFieldType.Text, CswNbtObjClassUser.EmailPropertyName );
+                }
+            }
 
-                CswNbtMetaDataNodeTypeProp RecipientsNTP = DefaultMailReportNT.getNodeTypeProp( "Recipients" );
-                CswNbtMetaDataNodeTypeProp DueDateIntervalNTP = DefaultMailReportNT.getNodeTypeProp( "Due Date Interval" );
-                CswNbtMetaDataNodeTypeProp TypeNTP = DefaultMailReportNT.getNodeTypeProp( "Type" );
-                CswNbtMetaDataNodeTypeProp WarningDaysNTP = DefaultMailReportNT.getNodeTypeProp( "Warning Days" );
-                CswNbtMetaDataNodeTypeProp ReportNTP = DefaultMailReportNT.getNodeTypeProp( "Report" );
-                CswNbtMetaDataNodeTypeProp ReportViewNTP = DefaultMailReportNT.getNodeTypeProp( "Report View" );
-                CswNbtMetaDataNodeTypeProp MessageNTP = DefaultMailReportNT.getNodeTypeProp( "Message" );
-                CswNbtMetaDataNodeTypeProp RunTimeNTP = DefaultMailReportNT.getNodeTypeProp( "Run Time" );
-                CswNbtMetaDataNodeTypeProp NoDataNotificationNTP = DefaultMailReportNT.getNodeTypeProp( "No Data Notification" );
-                CswNbtMetaDataNodeTypeProp FinalDueDateNTP = DefaultMailReportNT.getNodeTypeProp( "Final Due Date" );
-                CswNbtMetaDataNodeTypeProp EnabledNTP = DefaultMailReportNT.getNodeTypeProp( "Enabled" );
-                CswNbtMetaDataNodeTypeProp NextDueDateNTP = DefaultMailReportNT.getNodeTypeProp( "Next Due Date" );
-                CswNbtMetaDataNodeTypeProp LastProcessedNTP = DefaultMailReportNT.getNodeTypeProp( "Last Processed" );
-                CswNbtMetaDataNodeTypeProp RunStatusNTP = DefaultMailReportNT.getNodeTypeProp( "Run Status" );
-
-                //Recipients                  Due Date Interval
-                //Type                        Warning Days
-                //    Report
-                //    Report View
-                //Message                     Run Time
-                //No Data Notification        Final Due Date
-                //Enabled                     Next Due Date
-                //                            Last Processed
-                //                            Run Status
-
-                if( RecipientsNTP != null )
-                {
-                    RecipientsNTP.DisplayRow = 1;
-                    RecipientsNTP.DisplayColumn = 1;
-                    RecipientsNTP.DisplayRowAdd = 1;
-                    RecipientsNTP.DisplayColAdd = 1;
-                }
-                if( DueDateIntervalNTP != null )
-                {
-                    DueDateIntervalNTP.DisplayRow = 1;
-                    DueDateIntervalNTP.DisplayColumn = 2;
-                    DueDateIntervalNTP.DisplayRowAdd = 1;
-                    DueDateIntervalNTP.DisplayColAdd = 2;
-                }
-                if( TypeNTP != null )
-                {
-                    TypeNTP.DisplayRow = 2;
-                    TypeNTP.DisplayColumn = 1;
-                    TypeNTP.DisplayRowAdd = 2;
-                    TypeNTP.DisplayColAdd = 1;
-                }
-                if( WarningDaysNTP != null )
-                {
-                    WarningDaysNTP.DisplayRow = 2;
-                    WarningDaysNTP.DisplayColumn = 2;
-                    WarningDaysNTP.DisplayRowAdd = 2;
-                    WarningDaysNTP.DisplayColAdd = 2;
-                }
-                if( MessageNTP != null )
-                {
-                    MessageNTP.DisplayRow = 3;
-                    MessageNTP.DisplayColumn = 1;
-                    MessageNTP.DisplayRowAdd = 3;
-                    MessageNTP.DisplayColAdd = 1;
-                }
-                if( RunTimeNTP != null )
-                {
-                    RunTimeNTP.DisplayRow = 3;
-                    RunTimeNTP.DisplayColumn = 2;
-                    RunTimeNTP.DisplayRowAdd = 3;
-                    RunTimeNTP.DisplayColAdd = 2;
-                }
-                if( NoDataNotificationNTP != null )
-                {
-                    NoDataNotificationNTP.DisplayRow = 4;
-                    NoDataNotificationNTP.DisplayColumn = 1;
-                    NoDataNotificationNTP.DisplayRowAdd = 4;
-                    NoDataNotificationNTP.DisplayColAdd = 1;
-                }
-                if( FinalDueDateNTP != null )
-                {
-                    FinalDueDateNTP.DisplayRow = 4;
-                    FinalDueDateNTP.DisplayColumn = 2;
-                    FinalDueDateNTP.DisplayRowAdd = 4;
-                    FinalDueDateNTP.DisplayColAdd = 2;
-                }
-                if( EnabledNTP != null )
-                {
-                    EnabledNTP.DisplayRow = 5;
-                    EnabledNTP.DisplayColumn = 1;
-                    EnabledNTP.DisplayRowAdd = 5;
-                    EnabledNTP.DisplayColAdd = 1;
-                }
-                if( NextDueDateNTP != null )
-                {
-                    NextDueDateNTP.DisplayRow = 5;
-                    NextDueDateNTP.DisplayColumn = 2;
-                    NextDueDateNTP.DisplayRowAdd = 5;
-                    NextDueDateNTP.DisplayColAdd = 2;
-                }
-                if( LastProcessedNTP != null )
-                {
-                    LastProcessedNTP.DisplayRow = 6;
-                    LastProcessedNTP.DisplayColumn = 2;
-                    LastProcessedNTP.DisplayRowAdd = 6;
-                    LastProcessedNTP.DisplayColAdd = 2;
-                }
-                if( RunStatusNTP != null )
-                {
-                    RunStatusNTP.DisplayRow = 7;
-                    RunStatusNTP.DisplayColumn = 2;
-                    RunStatusNTP.DisplayRowAdd = 7;
-                    RunStatusNTP.DisplayColAdd = 2;
-                }
-
-                // conditionals have their own layouttable                
-                if( ReportNTP != null )
-                {
-                    ReportNTP.DisplayRow = 1;
-                    ReportNTP.DisplayColumn = 1;
-                    ReportNTP.DisplayRowAdd = 1;
-                    ReportNTP.DisplayColAdd = 1;
-                }
-                if( ReportViewNTP != null )
-                {
-                    ReportViewNTP.DisplayRow = 2;
-                    ReportViewNTP.DisplayColumn = 1;
-                    ReportViewNTP.DisplayRowAdd = 2;
-                    ReportViewNTP.DisplayColAdd = 1;
-                }
-            } // if( DefaultMailReportNT != null)
-
-        }//Update()
+            // after, for synchronization of existing properties
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
 
-        public void _SetDefaultEquipmentFilter( CswNbtView View, CswNbtViewNode ParentViewNode )
-        {
-            CswNbtMetaDataObjectClass EquipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
-            CswNbtMetaDataObjectClassProp EquipmentStatusOCP = EquipmentOC.getObjectClassProp( CswNbtObjClassEquipment.StatusPropertyName );
+            // BZ 10094 still
+            // Changes to Mail Reports:
 
-            foreach( CswNbtViewRelationship ChildRelationship in ParentViewNode.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+            CswNbtMetaDataFieldType UserSelectFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.UserSelect );
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+
+            // Recipients OCP is now a UserSelect
+            DataTable RecipientsOCPTable = OCPUpdate.getTable( "where propname = '" + CswNbtObjClassMailReport.RecipientsPropertyName + "' and objectclassid = '" + MailReportOC.ObjectClassId.ToString() + "'" );
+            Int32 RecipientsOCPId = CswConvert.ToInt32( RecipientsOCPTable.Rows[0]["objectclasspropid"] );
+            RecipientsOCPTable.Rows[0]["fieldtypeid"] = CswConvert.ToDbVal( UserSelectFT.FieldTypeId );
+            OCPUpdate.update( RecipientsOCPTable );
+
+            // Update nodetype props
+            CswTableUpdate NTPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H-06_NTP_Update", "nodetype_props" );
+            foreach( CswNbtMetaDataNodeType MailReportNT in MailReportOC.NodeTypes )
             {
-                bool IsEquipmentRelationship = false;
-                if( ChildRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
-                {
-                    CswNbtMetaDataNodeType NT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( ChildRelationship.SecondId );
-                    IsEquipmentRelationship = ( NT.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
-                }
-                else if( ChildRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
-                {
-                    IsEquipmentRelationship = ( ChildRelationship.SecondId == EquipmentOC.ObjectClassId );
-                }
+                // 1. Create new Recipients UserSelect property
+                CswNbtMetaDataNodeTypeProp OldRecipientsNTP = MailReportNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMailReport.RecipientsPropertyName );
+                CswNbtMetaDataNodeTypeProp NewRecipientsNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MailReportNT, OldRecipientsNTP, CswNbtMetaDataFieldType.NbtFieldType.UserSelect, CswNbtObjClassMailReport.RecipientsPropertyName + "_TMP" );
 
-                if( IsEquipmentRelationship )
+                // 2. Reassign the objectclasspropid from the old Recipients Property to the new Recipients Property
+                NewRecipientsNTP._DataRow["objectclasspropid"] = CswConvert.ToDbVal( RecipientsOCPId );
+                OldRecipientsNTP._DataRow["objectclasspropid"] = DBNull.Value;
+                _CswNbtSchemaModTrnsctn.MetaData.refreshAll();  // this will post these changes and refresh
+
+                // 3. Attempt to adapt existing mail report recipients to user accounts for every existing mail report
+                //         NOTE: Since we just added the email property above, in order for this to do anything meaningful,
+                //         the user would have to have added their own Email property to their User nodetype.
+                //         However, if they do this, subscriptions do convey from the old to the new Recipients property.
+
+                ICswNbtTree UsersTree = _CswNbtSchemaModTrnsctn.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                ICswNbtTree MailReportTree = _CswNbtSchemaModTrnsctn.Trees.getTreeFromNodeTypeId( MailReportNT.NodeTypeId );
+
+                for( Int32 r = 0; r < MailReportTree.getChildNodeCount(); r++ )
                 {
-                    bool AlreadyHasRetiredFilter = false;
-                    foreach( CswNbtViewProperty ViewProp in ChildRelationship.Properties )
+                    MailReportTree.goToNthChild( r );
+                    CswNbtNode MailReportNode = MailReportTree.getNodeForCurrentPosition();
+
+                    char[] delimiters = { ';', ',', '\n' };
+                    string OldRecipientsString = MailReportNode.Properties[OldRecipientsNTP].AsMemo.Text.Replace( "\r", "" );
+                    string[] OldRecipientsArray = OldRecipientsString.Split( delimiters, StringSplitOptions.RemoveEmptyEntries );
+
+                    CswCommaDelimitedString NewRecipientsUserIds = new CswCommaDelimitedString();
+                    for( Int32 u = 0; u < UsersTree.getChildNodeCount(); u++ )
                     {
-                        if( ( ViewProp.NodeTypeProp != null && ViewProp.NodeTypeProp.ObjectClassPropId == EquipmentStatusOCP.PropId ) ||
-                            ( ViewProp.ObjectClassProp != null && ViewProp.ObjectClassProp.PropId == EquipmentStatusOCP.PropId ) )
+                        UsersTree.goToNthChild( r );
+                        CswNbtNode UserNode = UsersTree.getNodeForCurrentPosition();
+                        CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) CswNbtNodeCaster.AsUser( UserNode );
+                        foreach( string OldRecipientAddress in OldRecipientsArray )
                         {
-                            foreach( CswNbtViewPropertyFilter Filter in ViewProp.Filters )
+                            if( UserNodeAsUser.Email.Trim() == OldRecipientAddress.Trim() )
                             {
-                                AlreadyHasRetiredFilter = ( Filter.SubfieldName == EquipmentStatusOCP.FieldTypeRule.SubFields.Default.Name &&
-                                                            Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals &&
-                                                            Filter.Value == CswNbtObjClassEquipment.StatusOptionToDisplayString( CswNbtObjClassEquipment.StatusOption.Retired ) );
+                                NewRecipientsUserIds.Add( UserNode.NodeId.PrimaryKey.ToString() );
                             }
                         }
+                        UsersTree.goToParentNode();
                     }
+                    MailReportNode.Properties[NewRecipientsNTP].AsUserSelect.SelectedUserIds = NewRecipientsUserIds;
+                    MailReportNode.postChanges( false );
 
-                    if( !AlreadyHasRetiredFilter )
-                    {
-                        CswNbtObjClassEquipment ObjClassEquipment = (CswNbtObjClassEquipment) _CswNbtSchemaModTrnsctn.makeObjClass( EquipmentOC );
-                        ObjClassEquipment.addDefaultViewFilters( ChildRelationship );
-                        View.save();
-                    }
-                } // if( IsEquipmentRelationship )
-            } // foreach( CswNbtViewRelationship ChildRelationship in ParentViewNode.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
-        } // _SetDefaultEquipmentFilter()
+                    MailReportTree.goToParentNode();
+                }
 
+                // 4. Delete the old Property
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( OldRecipientsNTP );
+
+                // 5. Rename the new Property
+                NewRecipientsNTP.PropName = CswNbtObjClassMailReport.RecipientsPropertyName;
+            }
+            
+            //Fix null values to prevent int32.MinVal madness
+            String UpdateDisplayRowAdd = "update nodetype_props set display_row_add=display_row where display_row_add is null";
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( UpdateDisplayRowAdd );
+
+            String UpdateDisplayColAdd = "update nodetype_props set display_col_add=display_col where display_col_add is null";
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( UpdateDisplayColAdd );
+
+            // for synchronization
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+
+
+        }//Update()
 
     }//class CswUpdateSchemaTo01H06
 

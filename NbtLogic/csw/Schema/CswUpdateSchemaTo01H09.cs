@@ -11,114 +11,54 @@ using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
-	/// <summary>
-	/// Updates the schema to version 01H-09
-	/// </summary>
-	public class CswUpdateSchemaTo01H09 : ICswUpdateSchemaTo
-	{
-		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+    /// <summary>
+    /// Updates the schema to version 01H-09
+    /// </summary>
+    public class CswUpdateSchemaTo01H09 : ICswUpdateSchemaTo
+    {
+        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-		public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'H', 09 ); } }
-		public CswUpdateSchemaTo01H09( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-		{
-			_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-		}
+        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'H', 09 ); } }
+        public CswUpdateSchemaTo01H09( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        {
+            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+        }
 
-		public void update()
-		{
+        public void update()
+        {
+            // case 20062
+            // promote Location 'Name' and Mount Point 'Barcode' to object class props
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass MountPointOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MountPointClass );
 
-            // BZ 20081 - Set setup tab to be last.
-			// This implementation updates the locked ones.
-            CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-            string InspectionNTIds = string.Empty;
-            foreach( CswNbtMetaDataNodeType InspectionDesignNT in InspectionDesignOC.NodeTypes )
-            {
-                if( InspectionNTIds != string.Empty )
-                    InspectionNTIds += ",";
-                InspectionNTIds += InspectionDesignNT.NodeTypeId;
-            }
+            CswTableUpdate OCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H09_ocp_update", "object_class_props" );
+            DataTable OCPTable = OCPUpdate.getEmptyTable();
+            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, LocationOC.ObjectClassId, CswNbtObjClassLocation.NamePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Text, Int32.MinValue, Int32.MinValue );
+            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, MountPointOC.ObjectClassId, CswNbtObjClassMountPoint.BarcodePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Barcode, Int32.MinValue, Int32.MinValue );
+            OCPUpdate.update( OCPTable );
 
-            CswTableUpdate TabsUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H-09_Tabs_Update", "nodetype_tabset" );
-            DataTable TabsTable = TabsUpdate.getTable( "where tabname = 'Setup' and nodetypeid in (" + InspectionNTIds + ")" );
-            foreach( DataRow TabRow in TabsTable.Rows )
-            {
-                TabRow["taborder"] = CswConvert.ToDbVal( 10 );
-            }
-            TabsUpdate.update( TabsTable );
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+           
 
-			// BZ 20081 - Make Finished and Cancelled 'required' to remove the blank option
-            CswNbtMetaDataObjectClassProp FinishedOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( FinishedOCP, CswNbtSubField.SubFieldName.Checked, false );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FinishedOCP, "isrequired", CswConvert.ToDbVal( true ) );
+            // case 20329
+            // Remove the Waste Area Inspection nodetype from master data
+            CswNbtMetaDataNodeType WasteAreaRouteNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Waste Area Route" );
+            CswNbtMetaDataNodeType WasteAreaInspectionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Waste Area Inspection" );
+            CswNbtMetaDataNodeType WasteInspectionScheduleNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Waste Inspection Schedule" );
 
-            CswNbtMetaDataObjectClassProp CancelledOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CancelledOCP, "isrequired", CswConvert.ToDbVal( true ) );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CancelledOCP, CswNbtSubField.SubFieldName.Checked, false );
+            if( WasteAreaInspectionNT != null )
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeAllVersions( WasteAreaInspectionNT );
+            if( WasteInspectionScheduleNT != null )
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeAllVersions( WasteInspectionScheduleNT );
+            if( WasteAreaRouteNT != null )
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeAllVersions( WasteAreaRouteNT );
 
-            // Update existing values
-            foreach( CswNbtMetaDataNodeType InspectionDesignNT in InspectionDesignOC.NodeTypes )
-            {
-                foreach( CswNbtNode IDNode in InspectionDesignNT.getNodes( false, true ) )
-                {
-                    CswNbtObjClassInspectionDesign IDNodeAsID = (CswNbtObjClassInspectionDesign) CswNbtNodeCaster.AsInspectionDesign( IDNode );
-                    IDNodeAsID.Finished.Checked = Tristate.False;
-                    IDNodeAsID.Cancelled.Checked = Tristate.False;
-                    IDNode.postChanges( false );
-                }
-            }
+        } // update()
 
-            // Update existing values
-            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
-	   
-			// case 20094
-			CswNbtMetaDataNodeType FireExtinguisherNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Fire_Extinguisher ) );
-			CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point ) );
-			CswNbtView FireExtinguisherView = _CswNbtSchemaModTrnsctn.makeView();
-			FireExtinguisherView.makeNew( "All Fire Extinguishers", NbtViewVisibility.Global, null, null, null );
-			FireExtinguisherView.Category = "Search";
-			FireExtinguisherView.SetViewMode(NbtViewRenderingMode.Grid);
-			
-			CswNbtViewRelationship FExtinguisherRelationship = FireExtinguisherView.AddViewRelationship( FireExtinguisherNT, false );
-			CswNbtMetaDataNodeTypeProp FEBarcodeNTP = FireExtinguisherNT.getNodeTypeProp( "Barcode" );
-			CswNbtMetaDataNodeTypeProp FEDescriptionNTP = FireExtinguisherNT.getNodeTypeProp( CswNbtObjClassFireExtinguisher.DescriptionPropertyName );
-			CswNbtMetaDataNodeTypeProp FEMountPointNTP = FireExtinguisherNT.getNodeTypeProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
-			CswNbtMetaDataNodeTypeProp FEStatusNTP = FireExtinguisherNT.getNodeTypeProp( CswNbtObjClassFireExtinguisher.StatusPropertyName );
-			CswNbtViewProperty FEBarcodeVP = FireExtinguisherView.AddViewProperty( FExtinguisherRelationship, FEBarcodeNTP );
-			FEBarcodeVP.Order = 1;
-			CswNbtViewPropertyFilter FEBarcodeVPF = FireExtinguisherView.AddViewPropertyFilter( FEBarcodeVP, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Begins, string.Empty, false );
-
-			CswNbtViewProperty FEStatusVP = FireExtinguisherView.AddViewProperty( FExtinguisherRelationship, FEStatusNTP );
-			FEStatusVP.Order = 2;
-			CswNbtViewPropertyFilter FEStatusVPF = FireExtinguisherView.AddViewPropertyFilter( FEStatusVP, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
-			
-			CswNbtViewProperty FEMountPointVP = FireExtinguisherView.AddViewProperty( FExtinguisherRelationship, FEMountPointNTP );
-			FEMountPointVP.Order = 3;
-			CswNbtViewPropertyFilter FEMountPointVPF = FireExtinguisherView.AddViewPropertyFilter( FEMountPointVP, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Begins, string.Empty, false );
-
-			CswNbtViewProperty FEDescriptionVP = FireExtinguisherView.AddViewProperty( FExtinguisherRelationship, FEDescriptionNTP );
-			FEDescriptionVP.Order = 4;
-			CswNbtViewPropertyFilter FEDescriptionVPF = FireExtinguisherView.AddViewPropertyFilter( FEDescriptionVP, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Begins, string.Empty, false );
-
-			CswNbtViewRelationship MPointRelationship = FireExtinguisherView.AddViewRelationship( FExtinguisherRelationship, CswNbtViewRelationship.PropOwnerType.First, FEMountPointNTP, false );
-			CswNbtMetaDataNodeTypeProp MPLocationNTP = MountPointNT.getNodeTypeProp( CswNbtObjClassMountPoint.LocationPropertyName );
-			CswNbtMetaDataNodeTypeProp MPDescriptionNTP = MountPointNT.getNodeTypeProp( CswNbtObjClassMountPoint.DescriptionPropertyName );
-			CswNbtViewProperty MPLocationVP = FireExtinguisherView.AddViewProperty( MPointRelationship, MPLocationNTP );
-			FEBarcodeVP.Order = 5;
-			CswNbtViewPropertyFilter MPLocationVPF = FireExtinguisherView.AddViewPropertyFilter( MPLocationVP, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Begins, string.Empty, false );
-
-			CswNbtViewProperty MPDescriptionVP = FireExtinguisherView.AddViewProperty( FExtinguisherRelationship, MPDescriptionNTP );
-			FEBarcodeVP.Order = 6;
-			CswNbtViewPropertyFilter MPDescriptionVPF = FireExtinguisherView.AddViewPropertyFilter( MPDescriptionVP, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Begins, string.Empty, false );
-			
-			FireExtinguisherView.save();
-
-		} // update()
-
-	}//class CswUpdateSchemaTo01H09
+    }//class CswUpdateSchemaTo01H09
 
 }//namespace ChemSW.Nbt.Schema
 
