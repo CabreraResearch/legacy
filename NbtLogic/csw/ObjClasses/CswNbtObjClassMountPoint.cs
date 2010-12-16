@@ -70,7 +70,8 @@ namespace ChemSW.Nbt.ObjClasses
                 ICswNbtTree SchedulesTree = _CswNbtResources.Trees.getTreeFromView( SchedulesView, true, true, false, false );
                 SchedulesTree.goToRoot();
 
-                CswDelimitedString NodeTypeIds = new CswDelimitedString(',');
+                
+                //CswDelimitedString NodeTypeIds = new CswDelimitedString(',');
 
                 //For each generator with this Mount Point's MPG
                 for( Int32 i = 0; i < SchedulesTree.getChildNodeCount(); i++ )
@@ -79,7 +80,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtNode ScheduleNode = SchedulesTree.getNodeForCurrentPosition();
                     CswNbtObjClassGenerator ScheduleOC = CswNbtNodeCaster.AsGenerator( ScheduleNode );
 
-                    NodeTypeIds = ScheduleOC.TargetType.SelectedNodeTypeIds;
+                    CswCommaDelimitedString NodeTypeIds = ScheduleOC.TargetType.SelectedNodeTypeIds;
                     //For each target node type on the generator
                     foreach( String NtId in NodeTypeIds )
                     {
@@ -95,7 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 InspectionOC.Owner.RelatedNodeId = this.NodeId;
                                 InspectionOC.Generator.RelatedNodeId = ScheduleNode.NodeId;
                                 CswRateInterval ScheduleInterval = ScheduleOC.DueDateInterval.RateInterval;
-                                InspectionOC.Date.DateValue = ScheduleInterval.getLast( ScheduleOC.NextDueDate.DateValue );
+                                InspectionOC.Date.DateValue = ScheduleInterval.getPrevious( ScheduleOC.NextDueDate.DateValue );
                                 PastInspectionNode.postChanges( true );
                             }
 
