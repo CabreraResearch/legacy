@@ -51,12 +51,40 @@ namespace ChemSW.Nbt.WebPages
                     //_SearchButton.Visible = false;
                     //_FilterEditor.Visible = true;
                     //_SearchLabel.Visible = true;
-
-                    CswNbtMetaDataNodeType EquipmentNodeType = Master.CswNbtResources.MetaData.getNodeType( "Equipment" );
-                    if( EquipmentNodeType != null && EquipmentNodeType.BarcodeProperty != null )
-                        _FilterEditor.LoadSearch( EquipmentNodeType, EquipmentNodeType.BarcodeProperty );
+                    CswNbtMetaDataObjectClass SearchOC = null;
+                                    
+                    if( Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.IMCS ) )
+                    {
+                        SearchOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
+                    }
+                    else if( Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.FE ) )
+                    {
+                        SearchOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MountPointClass );
+                    }
+                    else if( Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
+                    {
+                        SearchOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+                    }
+                    else if( Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.BioSafety ) )
+                    {
+                        SearchOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.BiologicalClass );
+                    }
+                    else if( Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.SI ) )
+                    {
+                        SearchOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                    }
                     else
+                    {
                         _FilterEditor.LoadSearch( null, null );
+                    }
+
+                    if( null != SearchOC )
+                    {
+                        foreach( CswNbtMetaDataNodeType NodeType in SearchOC.NodeTypes )
+                        {
+                            _FilterEditor.LoadSearch( NodeType, null );
+                        }
+                    }
                     _SearchLabel.Text = "Search";
                 }
                 else
