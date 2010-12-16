@@ -21,6 +21,9 @@ using ChemSW.CswWebControls;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
+using System.Text;
+using System.Data.OleDb;
+using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -45,7 +48,6 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                Master.AjaxManager.AjaxSettings.AddAjaxSetting( ImportSpread, Master.ErrorBox );
             }
             catch( Exception ex )
             {
@@ -56,6 +58,13 @@ namespace ChemSW.Nbt.WebPages
         }
 
         private CswWizard _Wizard;
+        private CswWizardStep _UploadStep;
+        private FileUpload _ExcelUpload;
+        private CswWizardStep _VerifyStep;
+        private Button _DownloadButton;
+        private RadGrid _Grid;
+        private HiddenField _TempFileNameField;
+
         protected override void CreateChildControls()
         {
             _Wizard = new CswWizard();
@@ -66,14 +75,47 @@ namespace ChemSW.Nbt.WebPages
             _Wizard.onPageChange += new CswWizard.CswWizardEventHandler( _Wizard_onPageChange );
             _Wizard.onFinish += new CswWizard.CswWizardEventHandler( _Wizard_onFinish );
 
-            LayoutImportSpreadsheet();
+            // Page 1
+            _UploadStep = new CswWizardStep();
+            _UploadStep.ID = "ImportFEDataWizard_UploadStep";
+            _UploadStep.Step = 1;
+            _UploadStep.Title = "Upload Excel Spreadsheet";
+            _UploadStep.ShowFinish = false;
+            _Wizard.WizardSteps.Add( _UploadStep );
+
+            _UploadStep.Controls.Add( new CswLiteralText( "Download: " ) );
+
+            _DownloadButton = new Button();
+            _DownloadButton.ID = "DownloadButton";
+            _DownloadButton.Text = "Download Template";
+            _DownloadButton.Click += new EventHandler( _DownloadButton_Click );
+            _UploadStep.Controls.Add( _DownloadButton );
+
+            _UploadStep.Controls.Add( new CswLiteralBr() );
+            _UploadStep.Controls.Add( new CswLiteralBr() );
+            _UploadStep.Controls.Add( new CswLiteralText( "Upload: " ) );
+
+            _ExcelUpload = new FileUpload();
+            _ExcelUpload.ID = "ExcelUpload";
+            _UploadStep.Controls.Add( _ExcelUpload );
+
+            // Page 2
+            _VerifyStep = new CswWizardStep();
+            _VerifyStep.ID = "ImportFEDataWizard_VerifyStep";
+            _VerifyStep.Step = 2;
+            _VerifyStep.Title = "Verify Uploaded Data";
+            _Wizard.WizardSteps.Add( _VerifyStep );
+
+            _Grid = new RadGrid();
+            _Grid.ID = "VerifyGrid";
+            _VerifyStep.Controls.Add( _Grid );
+
+            _TempFileNameField = new HiddenField();
+            _TempFileNameField.ID = "TempFileNameField";
+            ph.Controls.Add( _TempFileNameField );
 
             ph.Controls.Add( _Wizard );
         }
-
-        private FpSpread ImportSpread;
-        private SheetView Sheet1;
-        private CheckBox AssignNextCheckBox;
 
         private enum ImportColumns
         {
@@ -93,6 +135,7 @@ namespace ChemSW.Nbt.WebPages
             Fire_Extinguisher_Size,
             Fire_Extinguisher_Size_Unit
         }
+
         private static string ImportColumnsToDisplayString( ImportColumns Column )
         {
             return Column.ToString().Replace( '_', ' ' );
@@ -102,99 +145,8 @@ namespace ChemSW.Nbt.WebPages
             return (ImportColumns) Enum.Parse( typeof( ImportColumns ), Column.Replace( ' ', '_' ), true );
         }
 
-        private Int32 numColumns = 15;
-
-        private void LayoutImportSpreadsheet()
-        {
-            CswWizardStep ImportDataStep = new CswWizardStep();
-            ImportDataStep.ID = "ImportFEDataWizard_ImportDataStep";
-            ImportDataStep.Step = 1;
-            ImportDataStep.Title = "Import";
-            _Wizard.WizardSteps.Add( ImportDataStep );
-
-            CswAutoTable ImportDataStepTable = new CswAutoTable();
-            ImportDataStepTable.ID = "ImportDataStepTable";
-            ImportDataStep.Controls.Add( ImportDataStepTable );
-
-            ImportSpread = new FpSpread();
-            ImportSpread.ID = "ImportSpread";
-            ImportSpread.Height = 320;
-            ImportSpread.Width = 600;
-            ImportSpread.EditModeReplace = true;
-            ImportSpread.ActiveSheetViewIndex = 0;
-            ImportSpread.EnableAjaxCall = true;
-            ImportSpread.UpdateCommand += new SpreadCommandEventHandler( QuestionSpread_UpdateCommand );
-            ImportDataStepTable.addControl( 0, 0, ImportSpread );
-
-            Sheet1 = new SheetView();
-            Sheet1.SheetName = "Sheet1";
-            Sheet1.AllowInsert = true;
-            Sheet1.AllowDelete = true;
-            Sheet1.AutoGenerateColumns = false;
-            ImportSpread.Sheets.Add( Sheet1 );
-
-            // clear the sheet
-            Sheet1.RemoveRows( 0, Sheet1.Rows.Count );
-            Sheet1.RemoveColumns( 0, Sheet1.Columns.Count );
-
-            Sheet1.SelectionBackColor = System.Drawing.Color.FromArgb( 255, 255, 0 );
-            Sheet1.LockBackColor = System.Drawing.Color.FromArgb( 200, 200, 200 );
-
-            Sheet1.Columns.Add( 0, numColumns );
-            Sheet1.Rows.Count = 200;
-            Sheet1.PageSize = 500;
-
-            Int32 ColNum = 0;
-            _Columns = new Dictionary<ImportColumns, Int32>();
-
-            foreach( ImportColumns Col in Enum.GetValues( typeof( ImportColumns ) ) )
-            {
-                _Columns.Add( Col, ColNum );
-                Sheet1.Columns[ColNum].Label = ImportColumnsToDisplayString( Col );
-                if( Col == ImportColumns.Building || Col == ImportColumns.Room || Col == ImportColumns.Mount_Point_Description )
-                    Sheet1.Columns[ColNum].Label += "*";
-                ColNum++;
-            }
-
-            // Last Inspection Status options
-            string InspStatuses = string.Empty;
-            foreach( CswNbtObjClassInspectionDesign.InspectionStatus InspStatus in Enum.GetValues( typeof( CswNbtObjClassInspectionDesign.InspectionStatus ) ) )
-            {
-                if( InspStatuses != string.Empty ) InspStatuses += ",";
-                InspStatuses += CswNbtObjClassInspectionDesign.InspectionStatusAsString( InspStatus );
-            }
-            string[] InspStatusesArray = CswTools.SplitAndTrim( InspStatuses, ',' );
-            FarPoint.Web.Spread.ComboBoxCellType LastInspStatusCell = new FarPoint.Web.Spread.ComboBoxCellType();
-            LastInspStatusCell.Items = InspStatusesArray;
-            LastInspStatusCell.Values = InspStatusesArray;
-            Sheet1.Columns[_Columns[ImportColumns.Last_Inspection_Status]].CellType = LastInspStatusCell;
-
-            // Type options
-            CswNbtMetaDataNodeType FireExtNT = Master.CswNbtResources.MetaData.getNodeType( "Fire Extinguisher" );
-            if( FireExtNT != null )
-            {
-                CswNbtMetaDataNodeTypeProp FETypeNTP = FireExtNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.TypePropertyName );
-                string[] TypesArray = CswTools.SplitAndTrim( FETypeNTP.ListOptions, ',' );
-                FarPoint.Web.Spread.ComboBoxCellType TypeCell = new FarPoint.Web.Spread.ComboBoxCellType();
-                TypeCell.Items = TypesArray;
-                TypeCell.Values = TypesArray;
-                Sheet1.Columns[_Columns[ImportColumns.Type]].CellType = TypeCell;
-            }
-
-            // Date
-            FarPoint.Web.Spread.DateTimeCellType DateCell = new DateTimeCellType();
-            Sheet1.Columns[_Columns[ImportColumns.Last_Inspection_Date]].CellType = DateCell;
-
-            ImportDataStep.Controls.Add( new CswLiteralText( "*required" ) );
-        } // LayoutImportSpreadsheet
-
-        private Dictionary<ImportColumns, Int32> _Columns;
-
         protected override void OnPreRender( EventArgs e )
         {
-            if( _Wizard.CurrentStep == 2 )
-                _Wizard.NextButton.OnClientClick = "return Spread_Update_Click('" + ImportSpread.ClientID + "_Update');";
-
             base.OnPreRender( e );
         }
 
@@ -202,21 +154,40 @@ namespace ChemSW.Nbt.WebPages
 
         #region Events
 
-        protected void QuestionSpread_UpdateCommand( object sender, SpreadCommandEventArgs e )
+        void _DownloadButton_Click( object sender, EventArgs e )
         {
             try
             {
+                CswDelimitedString CSVTemplate = new CswDelimitedString( '\t' );
+                foreach( ImportColumns Col in Enum.GetValues( typeof( ImportColumns ) ) )
+                {
+                    CSVTemplate.Add( ImportColumnsToDisplayString( Col ) );
+                }
+
+                Response.ClearContent();
+                Response.AddHeader( "content-disposition", "attachment;filename=fe_import.xls" );
+                Response.ContentType = "application/vnd.ms-excel";
+                Response.Write( CSVTemplate.ToString() );
+                Response.End();
             }
             catch( Exception ex )
             {
                 Master.HandleError( ex );
             }
+
         }
 
         void _Wizard_onPageChange( object CswWizard, CswWizardEventArgs CswWizardEventArgs )
         {
             try
             {
+                if( _Wizard.CurrentStep == 2 )
+                {
+                    DataTable ExcelData = _getUploadedData();
+                    _Grid.DataSource = ExcelData;
+                    _Grid.DataBind();
+
+                } //  if( _Wizard.CurrentStep == 2 )
             }
             catch( Exception ex )
             {
@@ -224,6 +195,57 @@ namespace ChemSW.Nbt.WebPages
             }
 
         }
+
+        private DataTable _getUploadedData()
+        {
+            DataTable ret = null;
+            OleDbConnection ExcelConn = null;
+
+            string TempFileFullName;
+            if( _ExcelUpload.HasFile )
+            {
+                string TempFileName = "temp/excelupload_" + Master.CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.Ticks.ToString();
+                TempFileFullName = Server.MapPath( "" ) + "/" + TempFileName;
+                _ExcelUpload.SaveAs( TempFileFullName );
+
+                _TempFileNameField.Value = TempFileFullName;
+            }
+            else
+            {
+                TempFileFullName = _TempFileNameField.Value;
+            }
+
+            if( TempFileFullName != string.Empty )
+            {
+                try
+                {
+                    string ConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + TempFileFullName + ";Extended Properties=Excel 8.0;";
+                    ExcelConn = new OleDbConnection( ConnStr );
+                    ExcelConn.Open();
+
+                    DataTable ExcelSchemaDT = ExcelConn.GetOleDbSchemaTable( OleDbSchemaGuid.Tables, null );
+                    string FirstSheetName = ExcelSchemaDT.Rows[0]["TABLE_NAME"].ToString();
+
+                    OleDbDataAdapter DataAdapter = new OleDbDataAdapter();
+                    OleDbCommand Command1 = new OleDbCommand( "SELECT * FROM [" + FirstSheetName + "]", ExcelConn );
+                    DataAdapter.SelectCommand = Command1;
+
+                    DataSet ExcelDS = new DataSet();
+                    DataAdapter.Fill( ExcelDS );
+                    ret = ExcelDS.Tables[0];
+                }
+                finally
+                {
+                    if( ExcelConn != null )
+                    {
+                        ExcelConn.Close();
+                        ExcelConn.Dispose();
+                    }
+                }
+            }
+            return ret;
+        } // _getUploadedData()
+
 
         void _Wizard_onCancel( object CswWizard, CswWizardEventArgs CswWizardEventArgs )
         {
@@ -261,35 +283,39 @@ namespace ChemSW.Nbt.WebPages
                     CswNbtMetaDataNodeTypeProp RoomLocationNTP = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
                     CswNbtMetaDataNodeTypeProp MountPointLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
                     CswNbtMetaDataNodeTypeProp FEMountPointNTP = FireExtNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
-                    CswNbtMetaDataNodeTypeProp MountPointGroupNameNTP = MountPointGroupNT.getNodeTypeProp( "Name" );    // BEWARE
+                    CswNbtMetaDataNodeTypeProp MountPointGroupNameNTP = MountPointGroupNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPointGroup.NamePropertyName );
 
+                    DataTable ExcelData = _getUploadedData();
                     Collection<CswPrimaryKey> NodeKeysToInclude = new Collection<CswPrimaryKey>();
-                    for( Int32 r = 0; r < Sheet1.Rows.Count; r++ )
+
+                    foreach( DataRow Row in ExcelData.Rows )
                     {
-                        string BuildingName = Sheet1.Cells[r, _Columns[ImportColumns.Building]].Text;
-                        string FloorName = Sheet1.Cells[r, _Columns[ImportColumns.Floor]].Text;
-                        string RoomName = Sheet1.Cells[r, _Columns[ImportColumns.Room]].Text;
-                        string MountPointGroup = Sheet1.Cells[r, _Columns[ImportColumns.Mount_Point_Group]].Text;
-                        string MountPointBarcode = Sheet1.Cells[r, _Columns[ImportColumns.Mount_Point_Barcode]].Text;
-                        string MountPointDescription = Sheet1.Cells[r, _Columns[ImportColumns.Mount_Point_Description]].Text;
-                        string Type = Sheet1.Cells[r, _Columns[ImportColumns.Type]].Text;
+                        string BuildingName = Row[ImportColumnsToDisplayString( ImportColumns.Building )].ToString();
+                        string FloorName = Row[ImportColumnsToDisplayString(ImportColumns.Floor)].ToString();
+                        string RoomName = Row[ImportColumnsToDisplayString(ImportColumns.Room)].ToString();
+                        string MountPointGroup = Row[ImportColumnsToDisplayString(ImportColumns.Mount_Point_Group)].ToString();
+                        string MountPointBarcode = Row[ImportColumnsToDisplayString(ImportColumns.Mount_Point_Barcode)].ToString();
+                        string MountPointDescription = Row[ImportColumnsToDisplayString(ImportColumns.Mount_Point_Description)].ToString();
+                        string Type = Row[ImportColumnsToDisplayString(ImportColumns.Type)].ToString();
 
-                        string FEBarcode = Sheet1.Cells[r, _Columns[ImportColumns.Fire_Extinguisher_Barcode]].Text;
-                        string FEDescription = Sheet1.Cells[r, _Columns[ImportColumns.Fire_Extinguisher_Description]].Text;
-                        string FEManufacturer = Sheet1.Cells[r, _Columns[ImportColumns.Fire_Extinguisher_Manufacturer]].Text;
-                        string FEModel = Sheet1.Cells[r, _Columns[ImportColumns.Fire_Extinguisher_Model]].Text;
-                        string FESize = Sheet1.Cells[r, _Columns[ImportColumns.Fire_Extinguisher_Size]].Text;
-                        string FESizeUnit = Sheet1.Cells[r, _Columns[ImportColumns.Fire_Extinguisher_Size_Unit]].Text;
+                        string FEBarcode = Row[ImportColumnsToDisplayString(ImportColumns.Fire_Extinguisher_Barcode)].ToString();
+                        string FEDescription = Row[ImportColumnsToDisplayString(ImportColumns.Fire_Extinguisher_Description)].ToString();
+                        string FEManufacturer = Row[ImportColumnsToDisplayString(ImportColumns.Fire_Extinguisher_Manufacturer)].ToString();
+                        string FEModel = Row[ImportColumnsToDisplayString(ImportColumns.Fire_Extinguisher_Model)].ToString();
+                        string FESize = Row[ImportColumnsToDisplayString(ImportColumns.Fire_Extinguisher_Size)].ToString();
+                        string FESizeUnit = Row[ImportColumnsToDisplayString(ImportColumns.Fire_Extinguisher_Size_Unit)].ToString();
 
-                        if( BuildingName != string.Empty && RoomName != string.Empty && MountPointDescription != string.Empty )  // ignore blank rows
+                        if( BuildingName != string.Empty &&
+                            RoomName != string.Empty &&
+                            MountPointDescription != string.Empty )  // ignore blank rows
                         {
                             // Parse values
-                            string LastInspectionStatusString = Sheet1.Cells[r, _Columns[ImportColumns.Last_Inspection_Status]].Text;
+                            string LastInspectionStatusString = Row[ImportColumnsToDisplayString(ImportColumns.Last_Inspection_Status)].ToString();
                             CswNbtObjClassInspectionDesign.InspectionStatus LastInspectionStatus = CswNbtObjClassInspectionDesign.InspectionStatus.Null;
                             if( LastInspectionStatusString != string.Empty )
                                 LastInspectionStatus = CswNbtObjClassInspectionDesign.InspectionStatusFromString( LastInspectionStatusString );
 
-                            string LastInspectionDateString = Sheet1.Cells[r, _Columns[ImportColumns.Last_Inspection_Date]].Text;
+                            string LastInspectionDateString = Row[ImportColumnsToDisplayString(ImportColumns.Last_Inspection_Date)].ToString();
                             DateTime LastInspectionDate = DateTime.MinValue;
                             DateTime.TryParse( LastInspectionDateString, out LastInspectionDate );
 
@@ -363,7 +389,7 @@ namespace ChemSW.Nbt.WebPages
                             MountPointAsMP.Description.Text = MountPointDescription;
                             MountPointAsMP.LastInspectionDate.DateValue = LastInspectionDate;
                             MountPointAsMP.Location.SelectedNodeId = RoomNode.NodeId;
-                            MountPointAsMP.Location.CachedNodeName = RoomNode.NodeName;
+                            MountPointAsMP.Location.RefreshNodeName();
                             MountPointAsMP.Type.Value = Type;
                             MountPointAsMP.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( TargetStatus );
                             MountPointNode.postChanges( false );
@@ -420,7 +446,7 @@ namespace ChemSW.Nbt.WebPages
                                 NodeKeysToInclude.Add( FENode.NodeId );
 
                         } // if( BuildingName != string.Empty )
-                    } // for( Int32 r = 0; r < Sheet1.Rows.Count; r++ )
+                    } // foreach(DataRow Row in ExcelData.Rows)
 
                     CswNbtView NewNodesView = new CswNbtView( Master.CswNbtResources );
                     NewNodesView.ViewName = "New Locations";
@@ -498,7 +524,7 @@ namespace ChemSW.Nbt.WebPages
                 if( ParentNode != null )
                 {
                     ThisNodeAsLocation.Location.SelectedNodeId = ParentNode.NodeId;
-                    ThisNodeAsLocation.Location.CachedNodeName = ParentNode.NodeName;
+                    ThisNodeAsLocation.Location.RefreshNodeName();
                 }
                 ThisNode.postChanges( false );
             }
