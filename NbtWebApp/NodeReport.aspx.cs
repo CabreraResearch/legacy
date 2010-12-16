@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.WebPages
         private CswNbtNodeKey _NodeKey;
         private CswAutoTable _Table;
 
-        protected override void OnInit(EventArgs e)
+        protected override void OnInit( EventArgs e )
         {
             try
             {
@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.WebPages
                 if( Request.QueryString["nodeid"] != string.Empty )
                 {
                     CswPrimaryKey NodeId = new CswPrimaryKey();
-                    NodeId.FromString( Request.QueryString["nodeid"] ); 
+                    NodeId.FromString( Request.QueryString["nodeid"] );
                     _Node = Master.CswNbtResources.Nodes[NodeId];
                     _NodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, "", NodeId, _Node.NodeSpecies, _Node.NodeTypeId, _Node.ObjectClassId, "", "" );
 
@@ -45,14 +45,14 @@ namespace ChemSW.Nbt.WebPages
                 if( bGetOut )
                 {
                     //Master.Redirect( "Main.aspx" );
-                    Master.GoHome(); 
+                    Master.GoHome();
                 }
             }
             catch( Exception ex )
             {
                 Master.HandleError( ex );
             }
-            base.OnInit(e);
+            base.OnInit( e );
         }
 
         protected override void OnLoad( EventArgs e )
@@ -66,9 +66,9 @@ namespace ChemSW.Nbt.WebPages
 
                 Int32 row = 0;
 
-                TableCell NodeNameCell = _Table.getCell(row,0);
+                TableCell NodeNameCell = _Table.getCell( row, 0 );
                 NodeNameCell.ColumnSpan = 2;
-                    
+
                 Label NodeNameLabel = new Label();
                 NodeNameLabel.Text = _Node.NodeName;
                 NodeNameLabel.CssClass = "NodeReport_NodeName";
@@ -91,20 +91,21 @@ namespace ChemSW.Nbt.WebPages
                         TabNameCell.Controls.Add( TabNameLabel );
                         row++;
 
-                        CswAutoTable TabTable = new CswAutoTable();
-                        //TabTable.Attributes.Add( "border", "1" );
+                        CswLayoutTable TabTable = new CswLayoutTable( Master.CswNbtResources, Master.AjaxManager );
                         TabTable.ID = "TabTable_" + Tab.TabId;
                         TabTable.CssClass = "NodeReport_TabTable";
-                        //TabTable.Width = Unit.Parse( "800px" );
-                        //TabTable.OddCellRightAlign = true;
+                        TabTable.CssClassLabelCell = "NodeReport_LabelCell";
+                        TabTable.CssClassValueCell = "NodeReport_ValueCell";
+                        TabTable.CssClassEmptyCell = "NodeReport_EmptyCell";
                         _Table.addControl( row, 1, TabTable );
                         foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
                         {
                             if( !Prop.hasFilter() || Prop.CheckFilter( _Node ) )
                             {
-                                //CswPropertyTable.addPropertyToTable( Master.CswNbtResources, TabTable, Prop, _Node, false, false, NodeEditMode.PrintReport, new CswErrorHandler( Master.HandleError ) );
+                                CswPropertyTable.addPropertyToTable( Master.CswNbtResources, TabTable, Prop, _Node, false, false, NodeEditMode.PrintReport, new CswErrorHandler( Master.HandleError ) );
                             }
                         }
+                        TabTable.ReinitComponents();
                         row++;
                     }
                 }
