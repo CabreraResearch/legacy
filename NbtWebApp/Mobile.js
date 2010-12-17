@@ -155,6 +155,7 @@
                 DivId: 'viewsdiv',
                 HeaderText: 'Views',
                 HideRefreshButton: true,
+                HideSearchButton: true,
                 ChangePage: ChangePage
             });
 
@@ -218,6 +219,7 @@
                 DivId: '',
                 HeaderText: '',
                 HideRefreshButton: false,
+                HideSearchButton: false,
                 ChangePage: false
             };
 
@@ -247,6 +249,7 @@
                                 $xml: $(xml).children(),
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
+                                HideSearchButton: p.HideSearchButton,
                                 ChangePage: p.ChangePage
                             });
                         });
@@ -265,6 +268,7 @@
                                 $xml: $(xml).children(),
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
+                                HideSearchButton: p.HideSearchButton,
                                 ChangePage: p.ChangePage
                             });
                         });
@@ -283,6 +287,7 @@
                                 $xml: $(xmlstr).children(),
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
+                                HideSearchButton: p.HideSearchButton,
                                 ChangePage: p.ChangePage
                             });
                         } else if (!amOffline())
@@ -300,6 +305,7 @@
                                     $xml: $(xml).children(),
                                     parentlevel: p.level,
                                     HideRefreshButton: p.HideRefreshButton,
+                                    HideSearchButton: p.HideSearchButton,
                                     ChangePage: p.ChangePage
                                 });
                             });
@@ -319,6 +325,7 @@
                                 $xml: $thisxmlstr.children('subitems').first().children(),
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
+                                HideSearchButton: p.HideSearchButton,
                                 ChangePage: p.ChangePage
                             });
                         }
@@ -376,6 +383,7 @@
                 $xml: '',
                 parentlevel: '',
                 HideRefreshButton: false,
+                HideSearchButton: false,
                 ChangePage: false
             };
             if (params)
@@ -400,7 +408,8 @@
                 DivId: p.DivId,
                 HeaderText: p.HeaderText,
                 content: content,
-                HideRefreshButton: p.HideRefreshButton
+                HideRefreshButton: p.HideRefreshButton,
+                HideSearchButton: p.HideSearchButton
             });
             onAfterAddDiv($divhtml);
 
@@ -1267,6 +1276,7 @@
                         $xml: $(xml).children(),
                         parentlevel: 1,
                         HideRefreshButton: false,
+                        HideSearchButton: true,
                         ChangePage: true
                     });
                     removeDiv('loadingdiv');
