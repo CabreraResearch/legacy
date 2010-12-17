@@ -217,6 +217,8 @@ namespace ChemSW.Nbt
             }
         } // ForMobile
 
+        private Int32 _PropCount = 16;
+
         #endregion Properties in _RootString
 
         #region Properties not in _RootString
@@ -262,7 +264,8 @@ namespace ChemSW.Nbt
         public CswNbtViewRoot( CswNbtResources CswNbtResources, CswNbtView View )
             : base( CswNbtResources, View )
         {
-            _RootString = new CswDelimitedString( CswNbtView.delimiter );
+            _RootString = new CswDelimitedString( CswNbtView.delimiter, _PropCount );
+            _RootString.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _RootString_OnChange );
         }
 
         public CswNbtViewRoot( CswNbtResources CswNbtResources, CswNbtView View, CswDelimitedString RootString )
@@ -280,7 +283,8 @@ namespace ChemSW.Nbt
         {
             try
             {
-                _RootString = new CswDelimitedString( CswNbtView.delimiter );
+                _RootString = new CswDelimitedString( CswNbtView.delimiter, _PropCount );
+                _RootString.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _RootString_OnChange );
 
                 if( Node.Attributes["viewname"] != null )
                     _RootString[1] = Node.Attributes["viewname"].Value;    // set _RootString[1], not ViewName, because we're not *changing* the name of the view
