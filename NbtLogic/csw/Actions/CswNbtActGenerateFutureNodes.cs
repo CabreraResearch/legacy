@@ -129,9 +129,11 @@ namespace ChemSW.Nbt.Actions
             {
                 GeneratorRelationship.NodeIdsToFilterIn.Add( CurrentGeneratorNode.NodeId );
                 CswNbtObjClassGenerator Generator = CswNbtNodeCaster.AsGenerator( CurrentGeneratorNode );
-                if( Generator.TargetType.SelectedNodeTypeIds.Count != 0 )   // BZ 8544
+                //if( Generator.TargetType.SelectedNodeTypeIds.Count != 0 )   // BZ 8544
+                foreach( String nodeTypeId in Generator.TargetType.SelectedNodeTypeIds )
                 {
-                    Int32 CurrentTargetNodeTypeId = Convert.ToInt32( Generator.TargetType.SelectedNodeTypeIds );
+                    
+                    Int32 CurrentTargetNodeTypeId = Convert.ToInt32( nodeTypeId );
                     if( !( TargetNodeTypeIds.Contains( CurrentTargetNodeTypeId ) ) )
                         TargetNodeTypeIds.Add( CurrentTargetNodeTypeId );
                 }

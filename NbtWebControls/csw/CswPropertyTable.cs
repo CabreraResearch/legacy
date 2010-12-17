@@ -313,7 +313,9 @@ namespace ChemSW.NbtWebControls
                             {
                                 if( !_CheckFilter( MetaDataProp ) )
                                 {
-                                    PropertyControlSet PropCS = _PropertyControlSetHash[MetaDataProp.FirstPropVersionId];
+                                    PropertyControlSet PropCS = null;
+                                    if( _PropertyControlSetHash.ContainsKey( MetaDataProp.FirstPropVersionId ) )
+                                        PropCS = _PropertyControlSetHash[MetaDataProp.FirstPropVersionId];
                                     if( PropCS != null )
                                     {
                                         if( !_LayoutTable.EditMode && PropCS.Label != null )
@@ -405,7 +407,7 @@ namespace ChemSW.NbtWebControls
             string FilterValue = null;
             MetaDataProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
 
-            if( _PropertyControlSetHash[FilterMetaDataProp.FirstPropVersionId] != null )
+            if( _PropertyControlSetHash.ContainsKey(FilterMetaDataProp.FirstPropVersionId) )
             {
                 CswFieldTypeWebControl FilterControl = _PropertyControlSetHash[FilterMetaDataProp.FirstPropVersionId].Control;
                 CswNbtNode Node = _CswNbtResources.Nodes[FilterControl.Prop.NodeId];
@@ -615,18 +617,20 @@ namespace ChemSW.NbtWebControls
                             // BZ 7939 - FilterNodeTypePropId is a property FirstVersionId, so we have to fetch it
                             CswNbtMetaDataNodeTypeProp ParentProp = _CswNbtResources.MetaData.getNodeTypeProp( Prop.FilterNodeTypePropId );
 
-                            // The parent needs to use postback
-                            switch( ParentProp.FieldType.FieldType )
-                            {
-                                case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-                                    ( (CswLogical) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;
-                                    break;
-                                case CswNbtMetaDataFieldType.NbtFieldType.List:
-                                    ( (CswList) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;
-                                    break;
-                                case CswNbtMetaDataFieldType.NbtFieldType.Text:
-                                    ( (CswText) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;
-                                    break;
+                            if( _PropertyControlSetHash.ContainsKey( ParentProp.FirstPropVersionId ) )
+                            {// The parent needs to use postback
+                                switch( ParentProp.FieldType.FieldType )
+                                {
+                                    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                                        ( (CswLogical) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;
+                                        break;
+                                    case CswNbtMetaDataFieldType.NbtFieldType.List:
+                                        ( (CswList) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;
+                                        break;
+                                    case CswNbtMetaDataFieldType.NbtFieldType.Text:
+                                        ( (CswText) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;
+                                        break;
+                                }
                             }
 
                             if( !PropTables.ContainsKey( ParentProp ) )
@@ -638,8 +642,11 @@ namespace ChemSW.NbtWebControls
                                 SubLayoutTable.OnDeleteComponent += new CswLayoutTable.DeleteComponentEventHandler( _LayoutTable_OnDeleteComponent );
                                 SubLayoutTable.LabelCellRightAlign = OddCellRightAlign;
                                 SubLayoutTable.EditMode = _LayoutTable.EditMode;
-                                PropertyControlSet ParentPCS = _PropertyControlSetHash[ParentProp.FirstPropVersionId];
-                                ParentPCS.Control.Controls.Add( SubLayoutTable );
+                                if( _PropertyControlSetHash.ContainsKey( ParentProp.FirstPropVersionId ) )
+                                {
+                                    PropertyControlSet ParentPCS = _PropertyControlSetHash[ParentProp.FirstPropVersionId];
+                                    ParentPCS.Control.Controls.Add( SubLayoutTable );
+                                }
                                 PropTables.Add( ParentProp, SubLayoutTable );
                             }
 
