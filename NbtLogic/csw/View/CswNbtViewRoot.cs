@@ -201,8 +201,21 @@ namespace ChemSW.Nbt
         // 13 - WelcomeText (defunct)
         // 14 - RelatedViewIds (defunct)
 
-        // 15 - ForMobile (soon)
-        public bool ForMobile = false;
+        // 15 - ForMobile
+        public bool ForMobile
+        {
+            get
+            {
+                bool ret = false;
+                if( _RootString[15] != string.Empty )
+                    ret = CswConvert.ToBoolean( _RootString[15] );
+                return ret;
+            }
+            set
+            {
+                _RootString[15] = value.ToString();
+            }
+        } // ForMobile
 
         #endregion Properties in _RootString
 
@@ -297,6 +310,8 @@ namespace ChemSW.Nbt
                 //    WelcomeText = Node.Attributes["welcometext"].Value;
                 //if( Node.Attributes["relatedviewids"] != null && Node.Attributes["relatedviewids"].Value != string.Empty )
                 //    RelatedViewIds = Node.Attributes["relatedviewids"].Value;
+                if( Node.Attributes["formobile"] != null )
+                    ForMobile = Convert.ToBoolean( Node.Attributes["formobile"].Value );
             }
             catch( Exception ex )
             {
@@ -408,6 +423,10 @@ namespace ChemSW.Nbt
             //XmlAttribute RelatedViewIdsAttribute = XmlDoc.CreateAttribute( "relatedviewids" );
             //RelatedViewIdsAttribute.Value = RelatedViewIds;
             //RootXmlNode.Attributes.Append( RelatedViewIdsAttribute );
+
+            XmlAttribute ForMobileAttribute = XmlDoc.CreateAttribute( "formobile" );
+            ForMobileAttribute.Value = ForMobile.ToString().ToLower();
+            RootXmlNode.Attributes.Append( ForMobileAttribute );
 
             // Recurse on child ViewNodes
             foreach( CswNbtViewRelationship ChildRelationship in this.ChildRelationships )
