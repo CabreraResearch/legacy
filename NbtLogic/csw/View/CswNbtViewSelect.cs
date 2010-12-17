@@ -76,7 +76,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public DataTable getVisibleViews( bool IncludeEmptyViews )
         {
-            return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews );
+            return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false );
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public DataTable getVisibleViews( ICswNbtUser User, bool IncludeEmptyViews )
         {
-            return getVisibleViews( string.Empty, User, IncludeEmptyViews );
+            return getVisibleViews( string.Empty, User, IncludeEmptyViews, false );
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public DataTable getVisibleViews( string OrderBy, bool IncludeEmptyViews )
         {
-            return getVisibleViews( OrderBy, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews );
+            return getVisibleViews( OrderBy, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false );
         }
 
 
@@ -112,7 +112,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
-        public DataTable getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews )
+        public DataTable getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly )
         {
             DataTable ViewsTable = null;
             if( _LastVisibleViews != null &&
@@ -129,7 +129,10 @@ namespace ChemSW.Nbt
                 CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
                 ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
                 ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
-                //ViewsCaddy.S4Parameters.Add( "orderbyclause", "lower(NVL(v.category, v.viewname)), lower(v.viewname)" );
+                if( MobileOnly )
+                    ViewsSelect.S4Parameters.Add( "addclause", "and formobile = '" + CswConvert.ToDbVal( true ) + "'" );
+                else
+                    ViewsSelect.S4Parameters.Add( "addclause", " " );
                 if( OrderBy != string.Empty )
                     ViewsSelect.S4Parameters.Add( "orderbyclause", OrderBy );
                 else

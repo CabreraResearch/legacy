@@ -30,7 +30,19 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-
+            // case 20509 - add #addclause to S4
+            _CswNbtSchemaModTrnsctn.UpdateS4( "getVisibleViewInfo",
+@"select v.nodeviewid, v.viewname, v.visibility, v.roleid, v.userid,
+v.category, r.nodename rolename, u.nodename username, v.viewxml
+,lower(NVL(v.category, v.viewname)) mssqlorder
+from node_views v
+left outer join nodes r on v.roleid = r.nodeid
+left outer join nodes u on v.userid = u.nodeid
+where ((visibility = 'Global') or
+       (visibility = 'Role' and roleid = :getroleid) or
+       (visibility = 'User' and userid = :getuserid))
+       #addclause
+order by #orderbyclause" );
 
         } // update()
 

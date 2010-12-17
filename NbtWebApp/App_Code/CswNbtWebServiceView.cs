@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 // All Views
-                DataTable ViewDT = _CswNbtWebServiceResources.CswNbtResources.ViewSelect.getVisibleViews( false );
+                DataTable ViewDT = _CswNbtWebServiceResources.CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser, false, true ); 
                 foreach( DataRow ViewRow in ViewDT.Rows )
                 {
                     ret += "<view id=\"" + ViewIdPrefix + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
