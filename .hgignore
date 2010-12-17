@@ -8,3 +8,4 @@ relre:.*\.csproj\.user$
 glob:CswDbCfgInfo.xml
 glob:CswSetupVbls.xml
 relre:\.log$
+glob:NbtWebApp/temp/*
