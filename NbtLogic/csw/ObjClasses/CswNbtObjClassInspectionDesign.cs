@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static InspectionStatus InspectionStatusFromString( string Status )
         {
             InspectionStatus ret = InspectionStatus.Null;
-            if( Status != string.Empty )
+            if( Status != string.Empty && Enum.IsDefined( typeof(InspectionStatus), Status ) )
                 ret = (InspectionStatus) Enum.Parse( typeof( InspectionStatus ), Status.Replace( ' ', '_' ) );
             return ret;
         }
@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static TargetStatus TargetStatusFromString( string Status )
         {
             TargetStatus ret = TargetStatus.Null;
-            if( Status != string.Empty )
+            if( Status != string.Empty && Enum.IsDefined( typeof(TargetStatus), Status ) )
                 ret = (TargetStatus) Enum.Parse( typeof( TargetStatus ), Status.Replace( ' ', '_' ) );
             return ret;
         }
