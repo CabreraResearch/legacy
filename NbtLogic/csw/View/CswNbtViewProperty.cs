@@ -6,6 +6,7 @@ using System.Xml;
 using ChemSW.Exceptions;
 //using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -161,32 +162,31 @@ namespace ChemSW.Nbt
         /// <summary>
         /// For loading from a string (created by ToString())
         /// </summary>
-        public CswNbtViewProperty( CswNbtResources CswNbtResources, CswNbtView View, string PropertyString )
+        public CswNbtViewProperty( CswNbtResources CswNbtResources, CswNbtView View, CswDelimitedString PropertyString )
             : base( CswNbtResources, View )
         {
-            string[] Values = PropertyString.Split( Delimiter );
-            if( Values[0] == NbtViewNodeType.CswNbtViewProperty.ToString() )
+            if( PropertyString[0] == NbtViewNodeType.CswNbtViewProperty.ToString() )
             {
-                if( Values[1] != String.Empty )
-                    Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), Values[1], true );
-                if( Values[2] != String.Empty )
-                    NodeTypePropId = Convert.ToInt32( Values[2] );
-                if( Values[3] != String.Empty )
-                    Name = Values[3];
+                if( PropertyString[1] != String.Empty )
+                    Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropertyString[1], true );
+                if( PropertyString[2] != String.Empty )
+                    NodeTypePropId = Convert.ToInt32( PropertyString[2] );
+                if( PropertyString[3] != String.Empty )
+                    Name = PropertyString[3];
                 //if( Values[4] != String.Empty )
                 //    ArbitraryId = Values[4];
-                if( Values[5] != String.Empty )
-                    SortBy = Convert.ToBoolean( Values[5] );
-                if( Values[6] != String.Empty )
-                    SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), Values[6], true );
-                if( Values[7] != String.Empty )
-                    FieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( Values[7] ) );
-                if( Values[8] != String.Empty )
-                    Order = Convert.ToInt32( Values[8] );
-                if( Values[9] != String.Empty )
-                    Width = Convert.ToInt32( Values[9] );
-                if( Values[10] != String.Empty )
-                    ObjectClassPropId = Convert.ToInt32( Values[10] );
+                if( PropertyString[5] != String.Empty )
+                    SortBy = Convert.ToBoolean( PropertyString[5] );
+                if( PropertyString[6] != String.Empty )
+                    SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropertyString[6], true );
+                if( PropertyString[7] != String.Empty )
+                    FieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( PropertyString[7] ) );
+                if( PropertyString[8] != String.Empty )
+                    Order = Convert.ToInt32( PropertyString[8] );
+                if( PropertyString[9] != String.Empty )
+                    Width = Convert.ToInt32( PropertyString[9] );
+                if( PropertyString[10] != String.Empty )
+                    ObjectClassPropId = Convert.ToInt32( PropertyString[10] );
             }
         }
 
@@ -315,26 +315,36 @@ namespace ChemSW.Nbt
 
         public override string ToString()
         {
-            string ret = NbtViewNodeType.CswNbtViewProperty.ToString();
-            ret += Delimiter.ToString() + Type.ToString();
-            ret += Delimiter.ToString() + NodeTypePropId.ToString();
-            ret += Delimiter.ToString() + Name.ToString();
-            ret += Delimiter.ToString() + ArbitraryId.ToString();
-            ret += Delimiter.ToString() + SortBy.ToString();
-            ret += Delimiter.ToString() + SortMethod.ToString();
+            return ToDelimitedString().ToString();
+        }
+
+        public CswDelimitedString ToDelimitedString()
+        {
+            CswDelimitedString ret = new CswDelimitedString( CswNbtView.delimiter );
+            ret.Add( NbtViewNodeType.CswNbtViewProperty.ToString() );
+            ret.Add( Type.ToString() );
+            ret.Add( NodeTypePropId.ToString() );
+            ret.Add( Name.ToString() );
+            ret.Add( ArbitraryId.ToString() );
+            ret.Add( SortBy.ToString() );
+            ret.Add( SortMethod.ToString() );
+
             if( FieldType != null )
-                ret += Delimiter.ToString() + FieldType.FieldType.ToString();
+                ret.Add( FieldType.FieldType.ToString() );
             else
-                ret += Delimiter.ToString();
+                ret.Add( "" );
+
             if( Order != Int32.MinValue )
-                ret += Delimiter.ToString() + Order.ToString();
+                ret.Add( Order.ToString() );
             else
-                ret += Delimiter.ToString();
+                ret.Add( "" );
+
             if( Width != Int32.MinValue )
-                ret += Delimiter.ToString() + Width.ToString();
+                ret.Add( Width.ToString() );
             else
-                ret += Delimiter.ToString();
-            ret += Delimiter.ToString() + ObjectClassPropId.ToString();
+                ret.Add( "" );
+
+            ret.Add( ObjectClassPropId.ToString() );
             return ret;
         }
 

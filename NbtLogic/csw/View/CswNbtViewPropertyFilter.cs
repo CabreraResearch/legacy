@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -31,25 +32,23 @@ namespace ChemSW.Nbt
         /// <summary>
         /// For loading from a string (created by ToString())
         /// </summary>
-        public CswNbtViewPropertyFilter( CswNbtResources CswNbtResources, CswNbtView View, string FilterString )
+        public CswNbtViewPropertyFilter( CswNbtResources CswNbtResources, CswNbtView View, CswDelimitedString FilterString )
             : base( CswNbtResources, View )
         {
-            string[] Values = FilterString.Split( Delimiter );
-
-            if( Values[ 0 ] == NbtViewNodeType.CswNbtViewPropertyFilter.ToString() )
+            if( FilterString[0] == NbtViewNodeType.CswNbtViewPropertyFilter.ToString() )
             {
-                if( Values[ 1 ] != String.Empty )
-                    Conjunction = ( CswNbtPropFilterSql.PropertyFilterConjunction ) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterConjunction ), Values[ 1 ].ToString(), true );
-                if( Values[ 2 ] != String.Empty )
-                    Value = Values[ 2 ].ToString();
-                if( Values[ 3 ] != String.Empty )
-                    FilterMode = ( CswNbtPropFilterSql.PropertyFilterMode ) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), Values[ 3 ].ToString(), true );
-                if( Values[ 4 ] != String.Empty )
-                    CaseSensitive = Convert.ToBoolean( Values[ 4 ].ToString() );
+                if( FilterString[1] != String.Empty )
+                    Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterConjunction ), FilterString[1].ToString(), true );
+                if( FilterString[2] != String.Empty )
+                    Value = FilterString[2].ToString();
+                if( FilterString[3] != String.Empty )
+                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), FilterString[3].ToString(), true );
+                if( FilterString[4] != String.Empty )
+                    CaseSensitive = Convert.ToBoolean( FilterString[4].ToString() );
                 //if( Values[ 5 ] != String.Empty )
                 //    ArbitraryId = Values[ 5 ].ToString();
-                if( Values[ 6 ] != String.Empty )
-                    SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), Values[6].ToString() );
+                if( FilterString[6] != String.Empty )
+                    SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterString[6].ToString() );
 
                 _validate();
             }
@@ -64,17 +63,17 @@ namespace ChemSW.Nbt
         {
             try
             {
-                if( FilterNode.Attributes[ "value" ] != null )
-                    Value = FilterNode.Attributes[ "value" ].Value;
-                if( FilterNode.Attributes[ "filtermode" ] != null )
-                    FilterMode = ( CswNbtPropFilterSql.PropertyFilterMode ) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), FilterNode.Attributes[ "filtermode" ].Value, true );
-                if( FilterNode.Attributes[ "casesensitive" ] != null )
-                    CaseSensitive = Convert.ToBoolean( FilterNode.Attributes[ "casesensitive" ].Value );
+                if( FilterNode.Attributes["value"] != null )
+                    Value = FilterNode.Attributes["value"].Value;
+                if( FilterNode.Attributes["filtermode"] != null )
+                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), FilterNode.Attributes["filtermode"].Value, true );
+                if( FilterNode.Attributes["casesensitive"] != null )
+                    CaseSensitive = Convert.ToBoolean( FilterNode.Attributes["casesensitive"].Value );
                 //if( FilterNode.Attributes[ "arbitraryid" ] != null )
                 //    ArbitraryId = FilterNode.Attributes[ "arbitraryid" ].Value;
                 if( FilterNode.Attributes["subfieldname"] != null )
                     SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterNode.Attributes["subfieldname"].Value );
-                
+
                 _validate();
 
             }//try
@@ -100,7 +99,7 @@ namespace ChemSW.Nbt
                 if( value == null )
                     _Parent = null;
                 else if( value is CswNbtViewProperty )
-                    _Parent = ( CswNbtViewProperty ) value;
+                    _Parent = (CswNbtViewProperty) value;
                 else
                     throw new CswDniException( "Illegal parent assignment on CswNbtViewPropertyFilter" );
 
@@ -201,13 +200,19 @@ namespace ChemSW.Nbt
 
         public override string ToString()
         {
-            string ret = NbtViewNodeType.CswNbtViewPropertyFilter.ToString();
-            ret += Delimiter.ToString() + Conjunction.ToString();
-            ret += Delimiter.ToString() + Value;
-            ret += Delimiter.ToString() + FilterMode.ToString();
-            ret += Delimiter.ToString() + CaseSensitive.ToString();
-            ret += Delimiter.ToString() + ArbitraryId.ToString();
-            ret += Delimiter.ToString() + SubfieldName;
+            return ToDelimitedString().ToString();
+        }
+
+        public CswDelimitedString ToDelimitedString()
+        {
+            CswDelimitedString ret = new CswDelimitedString( CswNbtView.delimiter );
+            ret.Add( NbtViewNodeType.CswNbtViewPropertyFilter.ToString() );
+            ret.Add( Conjunction.ToString() );
+            ret.Add( Value );
+            ret.Add( FilterMode.ToString() );
+            ret.Add( CaseSensitive.ToString() );
+            ret.Add( ArbitraryId.ToString() );
+            ret.Add( SubfieldName.ToString() );
 
             return ret;
         }

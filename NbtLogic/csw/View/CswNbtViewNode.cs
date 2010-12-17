@@ -6,6 +6,7 @@ using System.Text;
 using System.Xml;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -13,7 +14,6 @@ namespace ChemSW.Nbt
     {
         public abstract NbtViewNodeType ViewNodeType { get; }
 
-        protected static char Delimiter = '|';
         protected CswNbtResources _CswNbtResources;
         protected CswNbtView _View;
         public string UniqueId;
@@ -30,18 +30,30 @@ namespace ChemSW.Nbt
             UniqueId = View.GenerateUniqueId();
         }
 
-        public static CswNbtViewNode makeViewNode( CswNbtResources CswNbtResources, CswNbtView View, string ViewNodeString )
+        public static CswNbtViewNode makeViewNode( CswNbtResources CswNbtResources, CswNbtView View, CswDelimitedString ViewNodeString )
         {
             CswNbtViewNode newNode = null;
-            string[] Values = ViewNodeString.Split( Delimiter );
-            if( Values[0] == NbtViewNodeType.CswNbtViewRelationship.ToString() )
-                newNode = new CswNbtViewRelationship( CswNbtResources, View, ViewNodeString );
-            else if( Values[0] == NbtViewNodeType.CswNbtViewProperty.ToString() )
-                newNode = new CswNbtViewProperty( CswNbtResources, View, ViewNodeString );
-            else if( Values[0] == NbtViewNodeType.CswNbtViewPropertyFilter.ToString() )
-                newNode = new CswNbtViewPropertyFilter( CswNbtResources, View, ViewNodeString );
-            else if( Values[0] == NbtViewNodeType.CswNbtViewRoot.ToString() )
-                newNode = new CswNbtViewRoot( CswNbtResources, View, ViewNodeString );
+            NbtViewNodeType type;
+            if( Enum.TryParse<NbtViewNodeType>( ViewNodeString[0], out type ) )
+            {
+                switch( type )
+                {
+                    case NbtViewNodeType.CswNbtViewRelationship:
+                        newNode = new CswNbtViewRelationship( CswNbtResources, View, ViewNodeString );
+                        break;
+                    case NbtViewNodeType.CswNbtViewProperty:
+                        newNode = new CswNbtViewProperty( CswNbtResources, View, ViewNodeString );
+                        break;
+                    case NbtViewNodeType.CswNbtViewPropertyFilter:
+                        newNode = new CswNbtViewPropertyFilter( CswNbtResources, View, ViewNodeString );
+                        break;
+                    case NbtViewNodeType.CswNbtViewRoot:
+                        newNode = new CswNbtViewRoot( CswNbtResources, View, ViewNodeString );
+                        break;
+                }
+            }
+            else
+                throw new CswDniException( "Invalid ViewNode", "CswNbtViewNode.makeViewNode() got an invalid ViewNodeString: " + ViewNodeString.ToString() );
 
             return newNode;
         }

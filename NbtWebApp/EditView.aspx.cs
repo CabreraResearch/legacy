@@ -1858,7 +1858,10 @@ namespace ChemSW.NbtWebControls
                                 CswNbtViewRelationship RelationshipViewNode = (CswNbtViewRelationship) PropertiesSelectedViewNode;
                                 foreach( DataRow PropRow in _PropDataTable.Rows )
                                 {
-                                    CswNbtViewProperty NewProp = new CswNbtViewProperty( _CswNbtResources, _View, PropRow["ViewProp"].ToString() );
+                                    CswDelimitedString ViewPropString = new CswDelimitedString( CswNbtView.delimiter );
+                                    ViewPropString.FromString( PropRow["ViewProp"].ToString() );
+
+                                    CswNbtViewProperty NewProp = new CswNbtViewProperty( _CswNbtResources, _View, ViewPropString );
                                     bool Checked = _PropCheckBoxArray.GetValue( PropRow["Value"].ToString(), "Include" );
                                     bool Contains = RelationshipViewNode.Properties.Contains( NewProp );
                                     if( Checked && !Contains )
@@ -1945,7 +1948,10 @@ namespace ChemSW.NbtWebControls
                 if( _NextOptions.SelectedValue != String.Empty &&
                      _RelationshipsViewTree.SelectedNode != null )
                 {
-                    CswNbtViewRelationship SourceRelationship = new CswNbtViewRelationship( _CswNbtResources, _View, _NextOptions.SelectedValue );
+                    CswDelimitedString NextOptsSelVal = new CswDelimitedString( CswNbtView.delimiter );
+                    NextOptsSelVal.FromString( _NextOptions.SelectedValue );
+
+                    CswNbtViewRelationship SourceRelationship = new CswNbtViewRelationship( _CswNbtResources, _View, NextOptsSelVal );
                     CswNbtViewNode RelationshipsSelectedViewNode = _View.FindViewNodeByArbitraryId( _RelationshipsViewTree.SelectedNode.Value.ToString() );
                     CswNbtViewRelationship NewRelationship = _View.CopyViewRelationship( RelationshipsSelectedViewNode, SourceRelationship, true );
                     _RelationshipsViewTree.reinitTreeFromView( _View, NewRelationship, _View.Root, CswViewStructureTree.ViewTreeSelectType.Relationship );

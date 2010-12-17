@@ -363,61 +363,60 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Construct from string (made by ToString())
         /// </summary>
-        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, string StringRelationship )
+        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, CswDelimitedString StringRelationship )
             : base( CswNbtResources, View )
         {
             try
             {
-                string[] Values = StringRelationship.Split( Delimiter );
-                if( Values[0] == NbtViewNodeType.CswNbtViewRelationship.ToString() )
+                if( StringRelationship[0] == NbtViewNodeType.CswNbtViewRelationship.ToString() )
                 {
-                    if( Values[1] != String.Empty )
+                    if( StringRelationship[1] != String.Empty )
                     {
-                        setPropValue( (PropOwnerType) Enum.Parse( typeof( PropOwnerType ), Values[4], true ),
-                                      (PropIdType) Enum.Parse( typeof( PropIdType ), Values[2], true ),
-                                      Convert.ToInt32( Values[1] ),
-                                      Values[3] );
+                        setPropValue( (PropOwnerType) Enum.Parse( typeof( PropOwnerType ), StringRelationship[4], true ),
+                                      (PropIdType) Enum.Parse( typeof( PropIdType ), StringRelationship[2], true ),
+                                      Convert.ToInt32( StringRelationship[1] ),
+                                      StringRelationship[3] );
                     }
-                    if( Values[5] != String.Empty )
+                    if( StringRelationship[5] != String.Empty )
                     {
-                        setFirst( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), Values[6], true ),
-                                  Convert.ToInt32( Values[5] ),
-                                  Values[7] );
+                        setFirst( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), StringRelationship[6], true ),
+                                  Convert.ToInt32( StringRelationship[5] ),
+                                  StringRelationship[7] );
                     }
-                    if( Values[8] != String.Empty )
+                    if( StringRelationship[8] != String.Empty )
                     {
-                        setSecond( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), Values[9], true ),
-                                   Convert.ToInt32( Values[8] ),
-                                   Values[10],
-                                   Values[11] );
+                        setSecond( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), StringRelationship[9], true ),
+                                   Convert.ToInt32( StringRelationship[8] ),
+                                   StringRelationship[10],
+                                   StringRelationship[11] );
                     }
-                    if( Values[12] != String.Empty )
-                        Selectable = Convert.ToBoolean( Values[12] );
-                    //if( Values[13] != String.Empty )
-                    //    ArbitraryId = Values[13];
-                    //if( Values[14] != String.Empty )
-                    //    ShowInGrid = Convert.ToBoolean( Values[14] );
-                    if( Values[15] != String.Empty )
-                        AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), Values[15] );
-                    if( Values[16] != String.Empty )
-                        AllowDelete = Convert.ToBoolean( Values[16] );
-                    if( Values[17] != String.Empty )
+                    if( StringRelationship[12] != String.Empty )
+                        Selectable = Convert.ToBoolean( StringRelationship[12] );
+                    //if( StringRelationship[13] != String.Empty )
+                    //    ArbitraryId = StringRelationship[13];
+                    //if( StringRelationship[14] != String.Empty )
+                    //    ShowInGrid = Convert.ToBoolean( StringRelationship[14] );
+                    if( StringRelationship[15] != String.Empty )
+                        AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), StringRelationship[15] );
+                    if( StringRelationship[16] != String.Empty )
+                        AllowDelete = Convert.ToBoolean( StringRelationship[16] );
+                    if( StringRelationship[17] != String.Empty )
                     {
-                        string FilterInAttr = Values[17].ToString();
+                        string FilterInAttr = StringRelationship[17].ToString();
                         NodeIdsToFilterIn = _commaDelimitedToFilterAttribute( FilterInAttr );
                     }
-                    if( Values[18] != String.Empty )
+                    if( StringRelationship[18] != String.Empty )
                     {
-                        string FilterOutAttr = Values[18].ToString();
+                        string FilterOutAttr = StringRelationship[18].ToString();
                         NodeIdsToFilterOut = _commaDelimitedToFilterAttribute( FilterOutAttr );
                     }
-                    if( Values[19] != string.Empty )
-                        ShowInTree = Convert.ToBoolean( Values[19] );
-                    if( Values[20] != string.Empty )
+                    if( StringRelationship[19] != string.Empty )
+                        ShowInTree = Convert.ToBoolean( StringRelationship[19] );
+                    if( StringRelationship[20] != string.Empty )
                     {
-                        setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), Values[20], true ),
-                                        Convert.ToInt32( Values[21] ),
-                                        Values[22] );
+                        setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), StringRelationship[20], true ),
+                                        Convert.ToInt32( StringRelationship[21] ),
+                                        StringRelationship[22] );
                     }
                 }
             }
@@ -550,79 +549,82 @@ namespace ChemSW.Nbt
 
         public override string ToString()
         {
-            string ret = NbtViewNodeType.CswNbtViewRelationship.ToString();
+            return ToDelimitedString().ToString();
+        }
+
+        public CswDelimitedString ToDelimitedString()
+        {
+            CswDelimitedString ret = new CswDelimitedString( CswNbtView.delimiter );
+            ret.Add( NbtViewNodeType.CswNbtViewRelationship.ToString() );
             if( PropId != Int32.MinValue )
             {
-                ret += Delimiter.ToString() + PropId.ToString();
-                ret += Delimiter.ToString() + PropType.ToString();
-                ret += Delimiter.ToString() + PropName.ToString();
-                ret += Delimiter.ToString() + PropOwner.ToString();
+                ret.Add( PropId.ToString() );
+                ret.Add( PropType.ToString() );
+                ret.Add( PropName.ToString() );
+                ret.Add( PropOwner.ToString() );
             }
             else
             {
-                ret += Delimiter.ToString() + Delimiter.ToString() + Delimiter.ToString() + Delimiter.ToString();
+                ret.Add( "" );
+                ret.Add( "" );
+                ret.Add( "" );
+                ret.Add( "" );
             }
             if( FirstId != Int32.MinValue )
             {
-                ret += Delimiter.ToString() + FirstId.ToString();
-                ret += Delimiter.ToString() + FirstType.ToString();
-                ret += Delimiter.ToString() + FirstName.ToString();
+                ret.Add( FirstId.ToString() );
+                ret.Add( FirstType.ToString() );
+                ret.Add( FirstName.ToString() );
             }
             else
             {
-                ret += Delimiter.ToString() + Delimiter.ToString() + Delimiter.ToString();
+                ret.Add( "" );
+                ret.Add( "" );
+                ret.Add( "" );
             }
             if( SecondId != Int32.MinValue )
             {
-                ret += Delimiter.ToString() + SecondId.ToString();
-                ret += Delimiter.ToString() + SecondType.ToString();
-                ret += Delimiter.ToString() + SecondName.ToString();
-                ret += Delimiter.ToString() + SecondIconFileName.ToString();
+                ret.Add( SecondId.ToString() );
+                ret.Add( SecondType.ToString() );
+                ret.Add( SecondName.ToString() );
+                ret.Add( SecondIconFileName.ToString() );
             }
             else
             {
-                ret += Delimiter.ToString() + Delimiter.ToString() + Delimiter.ToString() + Delimiter.ToString();
+                ret.Add( "" );
+                ret.Add( "" );
+                ret.Add( "" );
+                ret.Add( "" );
             }
-            ret += Delimiter.ToString() + Selectable.ToString().ToLower();
-            ret += Delimiter.ToString() + ArbitraryId.ToString();
-            ret += Delimiter.ToString();// +ShowInGrid.ToString().ToLower();
-            ret += Delimiter.ToString() + AddChildren.ToString();
-            ret += Delimiter.ToString() + AllowDelete.ToString();
+            ret.Add( Selectable.ToString().ToLower() );
+            ret.Add( ArbitraryId.ToString() );
+            ret.Add( "" ); // ArbitraryId.ToString();
+            ret.Add( "" ); // ShowInGrid.ToString().ToLower();
+            ret.Add( AddChildren.ToString() );
+            ret.Add( AllowDelete.ToString() );
 
-            //ret += Delimiter.ToString() + CswTools.IntCollectionToDelimitedString( NodeIdsToFilterIn, ',', false );
-            string FilterInString = "";
-            bool bFirst = true;
+            CswCommaDelimitedString FilterInString = new CswCommaDelimitedString();
             foreach( CswPrimaryKey child in NodeIdsToFilterIn )
-            {
-                if( !bFirst ) FilterInString += ','.ToString();
-                FilterInString += child.ToString();
-                bFirst = false;
-            }
-            ret += Delimiter.ToString() + FilterInString;
+                FilterInString.Add( child.ToString() );
+            ret.Add( FilterInString.ToString() );
 
-            //ret += Delimiter.ToString() + CswTools.IntCollectionToDelimitedString( NodeIdsToFilterOut, ',', false );
-            string FilterOutString = "";
-            bFirst = true;
+            CswCommaDelimitedString FilterOutString = new CswCommaDelimitedString();
             foreach( CswPrimaryKey child in NodeIdsToFilterOut )
-            {
-                if( !bFirst ) FilterOutString += ','.ToString();
-                FilterOutString += child.ToString();
-                bFirst = false;
-            }
-            ret += Delimiter.ToString() + FilterOutString;
+                FilterOutString.Add( child.ToString() );
+            ret.Add( FilterOutString.ToString() );
 
-
-
-            ret += Delimiter.ToString() + ShowInTree.ToString().ToLower();
+            ret.Add( ShowInTree.ToString().ToLower() );
             if( GroupByPropId != Int32.MinValue )
             {
-                ret += Delimiter.ToString() + GroupByPropType.ToString();
-                ret += Delimiter.ToString() + GroupByPropId.ToString();
-                ret += Delimiter.ToString() + GroupByPropName;
+                ret.Add( GroupByPropType.ToString() );
+                ret.Add( GroupByPropId.ToString() );
+                ret.Add( GroupByPropName );
             }
             else
             {
-                ret += Delimiter.ToString() + Delimiter.ToString() + Delimiter.ToString();
+                ret.Add( "" );
+                ret.Add( "" );
+                ret.Add( "" );
             }
             return ret;
         }

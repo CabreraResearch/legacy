@@ -11,24 +11,33 @@ using System.Data;
 
 namespace ChemSW.Nbt
 {
-    ///// <summary>
-    ///// Editing setting which constrains which nodes can be edited
-    ///// </summary>
-    //public enum GridEditMode { Quick, Full, None };
-
     public class CswNbtViewRoot : CswNbtViewNode
     {
-        public override NbtViewNodeType ViewNodeType { get { return NbtViewNodeType.CswNbtViewRoot; } }
+        private CswDelimitedString _RootString;
 
-        private string _ViewName = string.Empty;
+        #region Properties in _RootString
+
+        // 0 - ViewNodeType
+        public override NbtViewNodeType ViewNodeType
+        {
+            get
+            {
+                NbtViewNodeType ret;
+                if( !Enum.TryParse<NbtViewNodeType>( _RootString[0], out ret ) )
+                    ret = NbtViewNodeType.CswNbtViewRoot;
+                return ret;
+            }
+        }
+
+        // 1 - ViewName
         public string ViewName
         {
-            get { return _ViewName; }
+            get { return _RootString[1]; }
             set
             {
-                if( _ViewName != value )
+                if( _RootString[1] != value )
                 {
-                    _ViewName = value;
+                    _RootString[1] = value;
 
                     if( ViewId != Int32.MinValue )
                     {
@@ -54,74 +63,150 @@ namespace ChemSW.Nbt
                             }
                             JctNodesPropsUpdate.update( JctNodesPropsTable );
                         }
-                    }
+                    } // if( ViewId != Int32.MinValue )
+                } // if( _RootString[1] != value )
+            } // set
+        } // ViewName
 
-
-                }
+        // 2 - Selectable
+        public bool Selectable
+        {
+            get
+            {
+                bool ret = true;
+                if( _RootString[2] != string.Empty )
+                    ret = CswConvert.ToBoolean( _RootString[2] );
+                return ret;
             }
-        }
-        public NbtViewVisibility Visibility = NbtViewVisibility.Unknown;
-        public CswPrimaryKey VisibilityRoleId = null;
-        public CswPrimaryKey VisibilityUserId = null;
-        public bool ForMobile = false;
-        public string Category = String.Empty;
-        //private NbtViewAddChildrenSetting _AddChildren = NbtViewAddChildrenSetting.InView;
-        //public NbtViewAddChildrenSetting AddChildren
-        //{
-        //    get { return _AddChildren; }
-        //    set
-        //    {
-        //        // Backwards compatibility
-        //        if( value == NbtViewAddChildrenSetting.True )
-        //            _AddChildren = NbtViewAddChildrenSetting.InView;
-        //        else if( value == NbtViewAddChildrenSetting.False )
-        //            _AddChildren = NbtViewAddChildrenSetting.None;
-        //        else
-        //            _AddChildren = value;
-        //    }
-        //}
+            set
+            {
+                _RootString[2] = value.ToString();
+            }
+        } // Selectable
 
-        private NbtViewRenderingMode _ViewMode = NbtViewRenderingMode.Tree;
+        // 3 - NodeIdsToFilterOut (defunct)
+
+        // 4 - ViewMode
         public NbtViewRenderingMode ViewMode
         {
-            get { return _ViewMode; }
-            set { _ViewMode = value; }
+            get
+            {
+                NbtViewRenderingMode ret;
+                if( !Enum.TryParse<NbtViewRenderingMode>( _RootString[4], out ret ) )
+                    ret = NbtViewRenderingMode.Tree;
+                return ret;
+            }
+            set
+            {
+                _RootString[4] = value.ToString();
+            }
         }
-        private Int32 _ViewId = Int32.MinValue;
-        public Int32 ViewId
-        {
-            get { return _ViewId; }
-            set { _ViewId = value; }
-        }
-        private Int32 _Width = 100;
+
+        // 5 - Width
         public Int32 Width
         {
-            get { return _Width; }
-            set { _Width = value; }
+            get
+            {
+                Int32 ret = 100;
+                if( CswTools.IsInteger( _RootString[5] ) )
+                    ret = CswConvert.ToInt32( _RootString[5] );
+                if( ret <= 0 )
+                    ret = 100;
+                return ret;
+            }
+            set
+            {
+                _RootString[5] = value.ToString();
+            }
         }
-        //private GridEditMode _EditMode = GridEditMode.Full;
-        //public GridEditMode EditMode
-        //{
-        //    get { return _EditMode; }
-        //    set { _EditMode = value; }
-        //}
 
-        //private string _WelcomeText = string.Empty;
-        //public string WelcomeText
-        //{
-        //    get { return _WelcomeText; }
-        //    set { _WelcomeText = value; }
-        //}
+        // 6 - EditMode (defunct)
 
-        //private string _RelatedViewIds = string.Empty;
-        //public string RelatedViewIds
-        //{
-        //    get { return _RelatedViewIds; }
-        //    set { _RelatedViewIds = value; }
-        //}
+        // 7 - ViewId
+        public Int32 ViewId
+        {
+            get { return CswConvert.ToInt32( _RootString[7] ); }
+            set { _RootString[7] = value.ToString(); }
+        }
 
+        // 8 - Category
+        public string Category
+        {
+            get { return _RootString[8]; }
+            set { _RootString[8] = value; }
+        }
 
-        public bool Selectable = true;
+        // 9 - Visibility
+        public NbtViewVisibility Visibility
+        {
+            get
+            {
+                NbtViewVisibility ret;
+                if( !Enum.TryParse<NbtViewVisibility>( _RootString[9], out ret ) )
+                    ret = NbtViewVisibility.Unknown;
+                return ret;
+            }
+            set
+            {
+                _RootString[9] = value.ToString();
+            }
+        }
+
+        // 10 - AddChildren (defunct)
+
+        // 11 - VisibilityRoleId
+        public CswPrimaryKey VisibilityRoleId
+        {
+            get
+            {
+                CswPrimaryKey ret = null;
+                if( _RootString[11] != string.Empty )
+                {
+                    ret = new CswPrimaryKey();
+                    ret.FromString( _RootString[11] );
+                }
+                return ret;
+            }
+            set
+            {
+                if( value != null )
+                    _RootString[11] = value.ToString();
+                else
+                    _RootString[11] = string.Empty;
+            }
+        } // VisibilityRoleId
+
+        // 12 - VisibilityUserId
+        public CswPrimaryKey VisibilityUserId
+        {
+            get
+            {
+                CswPrimaryKey ret = null;
+                if( _RootString[12] != string.Empty )
+                {
+                    ret = new CswPrimaryKey();
+                    ret.FromString( _RootString[12] );
+                }
+                return ret;
+            }
+            set
+            {
+                if( value != null )
+                    _RootString[12] = value.ToString();
+                else
+                    _RootString[12] = string.Empty;
+            }
+        } // VisibilityUserId
+
+        // 13 - WelcomeText (defunct)
+        // 14 - RelatedViewIds (defunct)
+
+        // 15 - ForMobile (soon)
+        public bool ForMobile = false;
+
+        #endregion Properties in _RootString
+
+        #region Properties not in _RootString
 
         public override string IconFileName
         {
@@ -137,13 +222,6 @@ namespace ChemSW.Nbt
             set { }
         }
 
-        //private string _ArbitraryId = "";
-        //public override string ArbitraryId
-        //{
-        //    get { return _ArbitraryId; }
-        //    set { _ArbitraryId = value; }
-        //}
-
         public override string ArbitraryId
         {
             get { return "root"; }
@@ -156,48 +234,31 @@ namespace ChemSW.Nbt
             set { _ChildRelationships = value; }
         }
 
+        public override string TextLabel
+        {
+            get
+            {
+                return ViewName;
+            }
+        }
+
+        #endregion Properties not in _RootString
+
+        #region Constructors
+
         public CswNbtViewRoot( CswNbtResources CswNbtResources, CswNbtView View )
             : base( CswNbtResources, View )
         {
+            _RootString = new CswDelimitedString( CswNbtView.delimiter );
         }
 
-        public CswNbtViewRoot( CswNbtResources CswNbtResources, CswNbtView View, string RootString )
+        public CswNbtViewRoot( CswNbtResources CswNbtResources, CswNbtView View, CswDelimitedString RootString )
             : base( CswNbtResources, View )
         {
-            string[] Values = RootString.Split( Delimiter );
-            if( Values[0] == NbtViewNodeType.CswNbtViewRoot.ToString() )
-            {
-                if( Values[1] != String.Empty )
-                    _ViewName = Values[1];      // set _ViewName, not ViewName, because we're not *changing* the name of the view
-                if( Values[2] != String.Empty )
-                    Selectable = Convert.ToBoolean( Values[2].ToString() );
-                //if( Values[ 3 ] != String.Empty )
-                //    NodeIdsToFilterOut = CswTools.CommaSeparatedStringToArrayList( Values[ 3 ] );
-                if( Values[4] != String.Empty )
-                    ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), Values[4], true );
-                if( Values[5] != String.Empty )
-                    Width = Convert.ToInt32( Values[5] );
-                //if( Values[6] != String.Empty )
-                //    EditMode = (GridEditMode) Enum.Parse( typeof( GridEditMode ), Values[6], true );
-                if( Values[7] != String.Empty )
-                    ViewId = Convert.ToInt32( Values[7] );
-                if( Values[8] != String.Empty )
-                    Category = Values[8];
-                if( Values[9] != String.Empty )
-                    Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), Values[9], true );
-                //if( Values[10] != String.Empty )
-                //    AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), Values[10], true );
-                if( Values[11] != String.Empty )
-                    VisibilityRoleId = new CswPrimaryKey( "nodes", Convert.ToInt32( Values[11] ) );
-                if( Values[12] != String.Empty )
-                    VisibilityUserId = new CswPrimaryKey( "nodes", Convert.ToInt32( Values[12] ) );
-                //if( Values[13] != String.Empty )
-                //    WelcomeText = Values[13];
-                //if( Values[14] != String.Empty )
-                //    RelatedViewIds = Values[14];
-            }
-            else
-                throw new CswDniException( "Invalid View Root", "CswNbtViewRoot was given an invalid RootString: " + RootString );
+            _RootString = RootString;
+            _RootString.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _RootString_OnChange );
+            if(ViewNodeType != NbtViewNodeType.CswNbtViewRoot)
+                throw new CswDniException( "Invalid View Root", "CswNbtViewRoot was given an invalid RootString: " + RootString.ToString() );
         }
 
 
@@ -206,8 +267,10 @@ namespace ChemSW.Nbt
         {
             try
             {
+                _RootString = new CswDelimitedString( CswNbtView.delimiter );
+
                 if( Node.Attributes["viewname"] != null )
-                    _ViewName = Node.Attributes["viewname"].Value;    // set _ViewName, not ViewName, because we're not *changing* the name of the view
+                    _RootString[1] = Node.Attributes["viewname"].Value;    // set _RootString[1], not ViewName, because we're not *changing* the name of the view
                 //if( Node.Attributes[ "version" ] != null )
                 //    _ReadVersion = Node.Attributes[ "version" ].Value;
                 if( Node.Attributes["selectable"] != null )
@@ -260,6 +323,18 @@ namespace ChemSW.Nbt
             }
         }
 
+        #endregion Constructors
+
+        #region Events
+
+        void _RootString_OnChange()
+        {
+
+        }
+
+        #endregion Events
+
+        #region Exporters
 
         public XmlNode ToXml( XmlDocument XmlDoc )
         {
@@ -344,6 +419,13 @@ namespace ChemSW.Nbt
             return RootXmlNode;
         }//ToXml()
 
+        public override string ToString()
+        {
+            return _RootString.ToString();
+        }
+
+        #endregion Exporters
+
 
         public void addChildRelationship( CswNbtViewRelationship ChildRelationship )
         {
@@ -354,41 +436,6 @@ namespace ChemSW.Nbt
         {
             ChildRelationships.Remove( ChildRelationship );
             ChildRelationship.Parent = null;
-        }
-
-        public override string ToString()
-        {
-            string ret = NbtViewNodeType.CswNbtViewRoot.ToString();
-            ret += Delimiter.ToString() + ViewName;
-            ret += Delimiter.ToString() + Selectable.ToString();
-            ret += Delimiter.ToString();// +CswTools.ArrayListToCommaSeparatedString(NodeIdsToFilterOut);
-            ret += Delimiter.ToString() + ViewMode.ToString();
-            if( Width > 0 )
-                ret += Delimiter.ToString() + Width.ToString();
-            else
-                ret += Delimiter.ToString();
-            ret += Delimiter.ToString();// +EditMode.ToString();
-            if( ViewId > 0 )
-                ret += Delimiter.ToString() + ViewId.ToString();
-            else
-                ret += Delimiter.ToString();
-            ret += Delimiter.ToString() + Category;
-            ret += Delimiter.ToString() + Visibility.ToString();
-            ret += Delimiter.ToString(); // + AddChildren.ToString();
-            ret += Delimiter.ToString() + VisibilityRoleId.ToString();
-            ret += Delimiter.ToString() + VisibilityUserId.ToString();
-            ret += Delimiter.ToString(); // + WelcomeText;
-            ret += Delimiter.ToString(); // + RelatedViewIds;
-            ret += Delimiter.ToString();
-            return ret;
-        }
-
-        public override string TextLabel
-        {
-            get
-            {
-                return ViewName;
-            }
         }
 
 

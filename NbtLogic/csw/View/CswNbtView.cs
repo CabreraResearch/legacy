@@ -816,7 +816,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Returns true if the ViewNode is present in the View
         /// </summary>
-        public CswNbtViewNode FindViewNode( string ViewNodeToFindAsString )
+        public CswNbtViewNode FindViewNode( CswDelimitedString ViewNodeToFindAsString )
         {
             CswNbtViewNode ViewNodeToFind = CswNbtViewNode.makeViewNode( _CswNbtResources, this, ViewNodeToFindAsString );
             return FindViewNode( ViewNodeToFind );
