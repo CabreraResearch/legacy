@@ -982,6 +982,11 @@ body a
     margin: 0px 0px 0px 0px;
 }
 
+.cbarraycell
+{
+    padding: 0px 5px 0px 5px;
+}
+
 .treediv
 {
 	padding: 5px 0px 5px 0px;
