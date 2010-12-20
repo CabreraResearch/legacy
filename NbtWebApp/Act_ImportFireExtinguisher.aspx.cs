@@ -259,9 +259,6 @@ namespace ChemSW.Nbt.WebPages
             }
         }
 
-        private bool _mpBarcodeExists = false;
-        private bool _feBarcodeExists = false;
-
         void _Wizard_onFinish( object CswWizard, CswWizardEventArgs CswWizardEventArgs )
         {
             try
@@ -292,6 +289,7 @@ namespace ChemSW.Nbt.WebPages
                     String MpLegacyBarcodeName = "Legacy Barcode";
                     String FeLegacyBarcodeName = "Extinguisher Legacy Barcode";
                     String FeBarcodeName = "Barcode";
+                    bool hasLegacyBarcode = false;
 
                     foreach( DataRow Row in ExcelData.Rows )
                     {
@@ -400,19 +398,24 @@ namespace ChemSW.Nbt.WebPages
                             // Mount Point
                             CswNbtMetaDataNodeTypeProp MPLegacyBarcodeNTP = null;
                             Int32 MpBarcodeVal = Int32.MinValue;
+                            bool mpBarcodeExists = false;
+
+
                             if( MountPointBarcode != string.Empty )
                             {
                                 foreach( CswNbtNode MPNode in MountPointNT.getNodes( true, false ) )
                                 {
-                                    if( !_mpBarcodeExists && CswNbtNodeCaster.AsMountPoint( MPNode ).Barcode.Barcode.ToLower().Trim() == MountPointBarcode.ToLower().Trim() )
+                                    if( !mpBarcodeExists && CswNbtNodeCaster.AsMountPoint( MPNode ).Barcode.Barcode.ToLower().Trim() == MountPointBarcode.ToLower().Trim() )
                                     {
-                                        _mpBarcodeExists = true;
+                                        mpBarcodeExists = true;
+                                        hasLegacyBarcode = ( hasLegacyBarcode || mpBarcodeExists );
+                                        break;
                                     }
-                                    Int32 ExistingBarcode = CswConvert.ToInt32( CswNbtNodeCaster.AsMountPoint( MPNode ).Barcode.Barcode );
-                                    if( ExistingBarcode >= MpBarcodeVal )
-                                        MpBarcodeVal = ExistingBarcode + 1;
+                                    //Int32 ExistingBarcode = CswConvert.ToInt32( CswNbtNodeCaster.AsMountPoint( MPNode ).Barcode.Barcode );
+                                    //if( ExistingBarcode >= MpBarcodeVal )
+                                    //    MpBarcodeVal = ExistingBarcode + 1;
                                 }
-                                if( _mpBarcodeExists )
+                                if( mpBarcodeExists )
                                 {
                                     MPLegacyBarcodeNTP = MountPointNT.getNodeTypeProp( MpLegacyBarcodeName );
                                     if( null == MPLegacyBarcodeNTP )
@@ -423,9 +426,9 @@ namespace ChemSW.Nbt.WebPages
                             CswNbtNode MountPointNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( MountPointNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                             CswNbtObjClassMountPoint MountPointAsMP = CswNbtNodeCaster.AsMountPoint( MountPointNode );
 
-                            if( _mpBarcodeExists )
+                            if( mpBarcodeExists )
                             {
-                                MountPointAsMP.Barcode.SetBarcodeValueOverride( MpBarcodeVal.ToString(), true );
+                                MountPointAsMP.Barcode.SetBarcodeValue();
                                 MountPointNode.Properties[MPLegacyBarcodeNTP].AsText.Text = MountPointBarcode;
                             }
                             else
@@ -452,37 +455,29 @@ namespace ChemSW.Nbt.WebPages
                                   FEModel != string.Empty ||
                                   FESize != string.Empty ) )
                             {
-                                CswNbtMetaDataNodeTypeProp BarcodeNTP = FireExtNT.getNodeTypeProp( FeBarcodeName );
+                                CswNbtMetaDataNodeTypeProp BarcodeNTP = FireExtNT.BarcodeProperty;
                                 CswNbtMetaDataNodeTypeProp FELegacyBarcodeNTP = null;
                                 Int32 FeBarcodeVal = Int32.MinValue;
+                                bool feBarcodeExists = false;
+
                                 if( FEBarcode != string.Empty )
                                 {
                                     if( null == BarcodeNTP )
-                                    {
-                                        foreach( CswNbtMetaDataNodeTypeProp ntp in FireExtNT.NodeTypeProps )
-                                        {
-                                            if( ntp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
-                                            {
-                                                BarcodeNTP = ntp;
-                                                FeBarcodeName = ntp.PropName;
-                                                break;
-                                            }
+                                        BarcodeNTP = Master.CswNbtResources.MetaData.makeNewProp( FireExtNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, FeBarcodeName, Int32.MinValue );
 
-                                        }
-                                        if( null == BarcodeNTP )
-                                            BarcodeNTP = Master.CswNbtResources.MetaData.makeNewProp( FireExtNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, FeBarcodeName, Int32.MinValue );
-                                    }
                                     foreach( CswNbtNode ExistingNode in FireExtNT.getNodes( true, false ) )
                                     {
-                                        if( !_feBarcodeExists && ExistingNode.Properties[BarcodeNTP].AsBarcode.Barcode.ToLower().Trim() == FEBarcode.ToLower().Trim() )
+                                        if( !feBarcodeExists && ExistingNode.Properties[BarcodeNTP].AsBarcode.Barcode.ToLower().Trim() == FEBarcode.ToLower().Trim() )
                                         {
-                                            _feBarcodeExists = true;
+                                            feBarcodeExists = true;
+                                            hasLegacyBarcode = ( hasLegacyBarcode || feBarcodeExists );
+                                            break;
                                         }
-                                        Int32 ExistingBarcode = CswConvert.ToInt32( ExistingNode.Properties[BarcodeNTP].AsBarcode.Barcode );
-                                        if( ExistingBarcode >= FeBarcodeVal )
-                                            FeBarcodeVal = ExistingBarcode + 1;
+                                        //Int32 ExistingBarcode = CswConvert.ToInt32( ExistingNode.Properties[BarcodeNTP].AsBarcode.Barcode );
+                                        //if( ExistingBarcode >= FeBarcodeVal )
+                                        //    FeBarcodeVal = ExistingBarcode + 1;
                                     }
-                                    if( _feBarcodeExists )
+                                    if( feBarcodeExists )
                                     {
                                         FELegacyBarcodeNTP = FireExtNT.getNodeTypeProp( FeLegacyBarcodeName );
                                         if( null == FELegacyBarcodeNTP )
@@ -493,10 +488,10 @@ namespace ChemSW.Nbt.WebPages
                                 FENode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( FireExtNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                                 CswNbtObjClassFireExtinguisher FENodeAsFE = CswNbtNodeCaster.AsFireExtinguisher( FENode );
 
-                                if( _feBarcodeExists )
+                                if( feBarcodeExists )
                                 {    
                                     FENode.Properties[FELegacyBarcodeNTP].AsText.Text = FEBarcode;
-                                    FENode.Properties[BarcodeNTP].AsBarcode.SetBarcodeValueOverride( FeBarcodeVal.ToString(), true );
+                                    FENode.Properties[BarcodeNTP].AsBarcode.SetBarcodeValue();
                                 }
                                 else
                                     FENode.Properties[BarcodeNTP].AsBarcode.SetBarcodeValueOverride( FEBarcode, true );
@@ -545,10 +540,11 @@ namespace ChemSW.Nbt.WebPages
                                 NodeKeysToInclude.Add( FENode.NodeId );
 
                         } // if( BuildingName != string.Empty )
+                        
                     } // foreach(DataRow Row in ExcelData.Rows)
 
                     CswNbtView NewNodesView = new CswNbtView( Master.CswNbtResources );
-                    if( !_feBarcodeExists && !_mpBarcodeExists )
+                    if( !hasLegacyBarcode )
                     {
                         NewNodesView.ViewName = "New Locations";
                         CswNbtViewRelationship BuildingRel = NewNodesView.AddViewRelationship( BuildingNT, false );
