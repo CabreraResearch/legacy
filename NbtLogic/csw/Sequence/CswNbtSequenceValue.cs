@@ -154,12 +154,12 @@ namespace ChemSW.Nbt
 
                 if (null != _CurrentSequenceRow)
                 {
-                    string DBSequenceName = CswNbtSequenceManager.getDBSequenceName(_CurrentSequenceRow["sequencename"].ToString());
+                    CswSequenceName SequenceName = new CswSequenceName( _CurrentSequenceRow["sequencename"].ToString() );
 
-                    if (!_CswNbtResources.doesUniqueSequenceExist(DBSequenceName))
-                        _CswNbtResources.makeUniqueSequence(DBSequenceName, 1);
+                    if (!_CswNbtResources.doesUniqueSequenceExist(SequenceName.DBName))
+                        _CswNbtResources.makeUniqueSequence(SequenceName.DBName, 1);
 
-                    string RawSequenceVal = _CswNbtResources.getNextUniqueSequenceVal(DBSequenceName).ToString();
+                    string RawSequenceVal = _CswNbtResources.getNextUniqueSequenceVal(SequenceName.DBName).ToString();
 
                     ReturnVal = _formatSequence(RawSequenceVal);
                 }
@@ -176,12 +176,12 @@ namespace ChemSW.Nbt
 
                 if (null != _CurrentSequenceRow)
                 {
-                    string DBSequenceName = CswNbtSequenceManager.getDBSequenceName(_CurrentSequenceRow["sequencename"].ToString());
+                    CswSequenceName SequenceName = new CswSequenceName( _CurrentSequenceRow["sequencename"].ToString() );
 
-                    if (!_CswNbtResources.doesUniqueSequenceExist(DBSequenceName))
-                        _CswNbtResources.makeUniqueSequence(DBSequenceName, 1);
+                    if (!_CswNbtResources.doesUniqueSequenceExist(SequenceName.DBName))
+                        _CswNbtResources.makeUniqueSequence(SequenceName.DBName, 1);
 
-                    string RawSequenceVal = _CswNbtResources.getCurrentUniqueSequenceVal(DBSequenceName).ToString();
+                    string RawSequenceVal = _CswNbtResources.getCurrentUniqueSequenceVal(SequenceName.DBName).ToString();
 
                     ReturnVal = _formatSequence(RawSequenceVal);
                 }
@@ -198,15 +198,15 @@ namespace ChemSW.Nbt
             Int32 RealValue = _deformatSequence(CurrentFormattedValue) + 1;
             if (null != _CurrentSequenceRow)
             {
-                string DBSequenceName = CswNbtSequenceManager.getDBSequenceName(_CurrentSequenceRow["sequencename"].ToString());
+                CswSequenceName SequenceName = new CswSequenceName( _CurrentSequenceRow["sequencename"].ToString() );
 
-                if (!_CswNbtResources.doesUniqueSequenceExist(DBSequenceName))
+                if( !_CswNbtResources.doesUniqueSequenceExist( SequenceName.DBName ) )
                 {
-                    _CswNbtResources.makeUniqueSequence(DBSequenceName, RealValue);
+                    _CswNbtResources.makeUniqueSequence( SequenceName.DBName, RealValue );
                 }
                 else
                 {
-                    _CswNbtResources.resetUniqueSequenceVal(DBSequenceName, RealValue);
+                    _CswNbtResources.resetUniqueSequenceVal( SequenceName.DBName, RealValue );
                 }
             }
         }

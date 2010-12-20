@@ -171,12 +171,12 @@ namespace ChemSW.Nbt.Schema
 
 
 
-        public Int32 makeSequence( string SequenceName, string Prepend, string Postpend, string Pad, Int32 InitialValue )
+        public Int32 makeSequence( CswSequenceName SequenceName, string Prepend, string Postpend, Int32 Pad, Int32 InitialValue )
         {
 
             return _CswDdl.makeSequence( SequenceName, Prepend, Postpend, Pad, InitialValue );
         }
-        public DataTable getSequence( string SequenceName )
+        public DataTable getSequence( CswSequenceName SequenceName )
         {
             return _CswDdl.getSequence( SequenceName );
         }
@@ -185,17 +185,17 @@ namespace ChemSW.Nbt.Schema
             return _CswDdl.getAllSequences();
         }
 
-        public bool doesSequenceExist( string SequenceName )
+        public bool doesSequenceExist( CswSequenceName SequenceName )
         {
             return ( _CswDdl.doesSequenceExist( SequenceName ) );
         }
 
-        public Int32 getSequenceValue( string SequenceName )
+        public Int32 getSequenceValue( CswSequenceName SequenceName )
         {
             return ( _CswDdl.getSequenceValue( SequenceName ) );
         }
 
-        public void removeSequence( string SequenceName )
+        public void removeSequence( CswSequenceName SequenceName )
         {
             _CswDdl.removeSequence( SequenceName );
         }

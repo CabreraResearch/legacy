@@ -161,7 +161,7 @@ namespace ChemSW.Nbt.Schema
 
         }//addColumn()
 
-        public Int32 makeSequence( string SequenceName, string Prepend, string Postpend, string Pad, Int32 InitialValue )
+        public Int32 makeSequence( CswSequenceName SequenceName, string Prepend, string Postpend, Int32 Pad, Int32 InitialValue )
         {
 
             CswSequenceDdlOp CswSequenceDdlOp = new CswSequenceDdlOp( SequenceName, Prepend, Postpend, Pad, InitialValue );
@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.Schema
             return _CswNbtSequenceManager.makeSequence( SequenceName, Prepend, Postpend, Pad, InitialValue );
         }
 
-        public DataTable getSequence( string SequenceName )
+        public DataTable getSequence( CswSequenceName SequenceName )
         {
             return _CswNbtSequenceManager.getSequence( SequenceName );
         }
@@ -180,18 +180,18 @@ namespace ChemSW.Nbt.Schema
             return _CswNbtSequenceManager.getAllSequences();
         }
 
-        public bool doesSequenceExist( string SequenceName )
+        public bool doesSequenceExist( CswSequenceName SequenceName )
         {
             return ( _CswNbtSequenceManager.doesSequenceExist( SequenceName ) );
         }
 
-        public void removeSequence( string SequenceName )
+        public void removeSequence( CswSequenceName SequenceName )
         {
             DataTable SequenceTable = _CswNbtSequenceManager.getSequence( SequenceName );
 
-            string Prepend = ( DBNull.Value != SequenceTable.Rows[ 0 ][ "prep" ] ) ? SequenceTable.Rows[ 0 ][ "prep" ].ToString() : string.Empty;
-            string Postpend = ( DBNull.Value != SequenceTable.Rows[ 0 ][ "post" ] ) ? SequenceTable.Rows[ 0 ][ "post" ].ToString() : string.Empty;
-            string Pad = ( DBNull.Value != SequenceTable.Rows[ 0 ][ "pad" ] ) ? SequenceTable.Rows[ 0 ][ "pad" ].ToString() : string.Empty;
+            string Prepend = SequenceTable.Rows[0]["prep"].ToString();
+            string Postpend = SequenceTable.Rows[0]["post"].ToString();
+            Int32 Pad = CswConvert.ToInt32( SequenceTable.Rows[0]["pad"] );
             Int32 InitialValue = _CswNbtSequenceManager.getSequenceValue( SequenceName );
             CswSequenceDdlOp CswSequenceDdlOp = new CswSequenceDdlOp( SequenceName, Prepend, Postpend, Pad, InitialValue );
             CswSequenceDdlOp.DdlSequenceOpType = DdlSequenceOpType.Remove;
@@ -200,7 +200,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSequenceManager.removeSequence( SequenceName );
         }
 
-        public Int32 getSequenceValue( string SequenceName )
+        public Int32 getSequenceValue( CswSequenceName SequenceName )
         {
             return ( _CswNbtSequenceManager.getSequenceValue( SequenceName ) );
         }

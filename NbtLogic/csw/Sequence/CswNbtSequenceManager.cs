@@ -65,9 +65,9 @@ namespace ChemSW.Nbt
         /// Returns a DataTable with a single row for a given sequence name
         /// </summary>
         /// <param name="SequenceName">Name of sequence</param>
-        public DataTable getSequence( string SequenceName )
+        public DataTable getSequence( CswSequenceName SequenceName )
         {
-            return SequenceTableUpdate.getTable( " where lower(sequencename)= '" + SequenceName.ToLower() + "'" );
+            return SequenceTableUpdate.getTable( " where lower(sequencename)= '" + SequenceName.DisplayName.ToLower() + "'" );
         }//getSequence(string)
 
         /// <summary>
@@ -80,15 +80,6 @@ namespace ChemSW.Nbt
 
 
         /// <summary>
-        /// Returns a DB-safe version of the sequence name, for use in creating the actual sequence object
-        /// </summary>
-        /// <param name="SequenceName">Name of sequence</param>
-        public static string getDBSequenceName( string SequenceName )
-        {
-            return SequenceName.Replace( " ", string.Empty );
-        }
-
-        /// <summary>
         /// Creates a new sequence entry and sequence object in the DB
         /// </summary>
         /// <param name="SequenceName">Name of new sequence</param>
@@ -96,34 +87,58 @@ namespace ChemSW.Nbt
         /// <param name="Append">String to append after all sequence values</param>
         /// <param name="Pad">Pad the numeric portion of the sequence value to this many characters</param>
         /// <returns>Primary key of new sequence entry</returns>
-        public Int32 makeSequence( string SequenceName, string Prepend, string Append, string Pad , Int32 InitialValueIn )
+        public Int32 makeSequence( CswSequenceName SequenceName, string Prepend, string Append, Int32 Pad, Int32 InitialValueIn )
         {
-            if( doesSequenceExist( SequenceName ) )
-                throw( new CswDniException( "A sequence named " + SequenceName + " is already defined"  ) );
+            if(SequenceName.DisplayName == string.Empty)
+                throw ( new CswDniException( "Sequence Name is Required", "To create a new Sequence, the Sequence Name is Required" ) );
 
-            string SafeSequenceName = getDBSequenceName( SequenceName );
+            if( doesSequenceExist( SequenceName ) )
+                throw ( new CswDniException( "Sequence Error", "A sequence named " + SequenceName.DisplayName + " is already defined" ) );
 
             Int32 InitialValue = ( Int32.MinValue != InitialValueIn ) ? InitialValueIn : 1;
-            makeDbSequence( SafeSequenceName, InitialValue );
+            makeDbSequence( SequenceName, InitialValue );
 
             DataTable SequencesTable = getSequence( SequenceName );
             DataRow NewSequencesRow = SequencesTable.NewRow();
-            NewSequencesRow[ "sequencename" ] = SequenceName;
-            if ( Prepend.Length > 0 )
-                NewSequencesRow[ "prep" ] = Prepend;
-            if ( Append.Length > 0 )
-                NewSequencesRow[ "post" ] = Append;
-            if ( Pad.Length > 0 )
-                NewSequencesRow[ "pad" ] = Pad;
+            NewSequencesRow["sequencename"] = SequenceName.DisplayName;
+            NewSequencesRow["prep"] = Prepend;
+            NewSequencesRow["post"] = Append;
+            NewSequencesRow["pad"] = CswConvert.ToDbVal( Pad );
             SequencesTable.Rows.Add( NewSequencesRow );
             SequenceTableUpdate.update( SequencesTable );
 
-            return CswConvert.ToInt32( NewSequencesRow[ "sequenceid" ] );
+            return CswConvert.ToInt32( NewSequencesRow["sequenceid"] );
         }//makeSequence()
 
-        public void makeDbSequence( string SequenceName , Int32 InitialValue )
+        public void editSequence( Int32 SequenceId, CswSequenceName NewSequenceName, string Prepend, string Append, Int32 Pad )
         {
-            _CswNbtResources.makeUniqueSequence( SequenceName , InitialValue );
+            DataTable SequencesTable = getSequence( SequenceId );
+            if( SequencesTable.Rows.Count > 0 )
+            {
+                // Update Sequence
+                DataRow EditSequenceRow = SequencesTable.Rows[0];
+                CswSequenceName OldSequenceName = new CswSequenceName( EditSequenceRow["sequencename"].ToString() );
+                EditSequenceRow["sequencename"] = NewSequenceName.DisplayName;
+                EditSequenceRow["prep"] = Prepend;
+                EditSequenceRow["post"] = Append;
+                EditSequenceRow["pad"] = CswConvert.ToDbVal( Pad );
+                SequenceTableUpdate.update( SequencesTable );
+
+                // Fix DB Sequence
+                Int32 InitialValue = _CswNbtResources.getCurrentUniqueSequenceVal( OldSequenceName.DBName );
+                removeDbSequence( OldSequenceName );
+                makeDbSequence( NewSequenceName, InitialValue );
+            }
+            else
+            {
+                throw ( new CswDniException( "Sequence Error", "Sequence with SequenceId " + SequenceId.ToString() + " is not defined" ) );
+            }
+
+        } // editSequence()
+
+        public void makeDbSequence( CswSequenceName SequenceName, Int32 InitialValue )
+        {
+            _CswNbtResources.makeUniqueSequence( SequenceName.DBName, InitialValue );
 
         }//makeSequenceInDb
 
@@ -132,18 +147,18 @@ namespace ChemSW.Nbt
         /// </summary>
         /// <param name="SequenceName">Name of sequence</param>
         /// <param name="NodeTypePropId">Primary Key of Property</param>
-        public void assignSequence( string SequenceName, Int32 NodeTypePropId )
+        public void assignSequence( CswSequenceName SequenceName, Int32 NodeTypePropId )
         {
             DataTable SequenceTable = getSequence( SequenceName );
-            if ( SequenceTable.Rows.Count > 0 )
+            if( SequenceTable.Rows.Count > 0 )
             {
-                Int32 SequenceId = CswConvert.ToInt32( SequenceTable.Rows[ 0 ][ "sequenceid" ] );
+                Int32 SequenceId = CswConvert.ToInt32( SequenceTable.Rows[0]["sequenceid"] );
                 // We're ignoring property versioning here -- this might be a problem
                 _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId ).setSequence( SequenceId );
             }
             else
             {
-                throw new CswDniException( "Invalid Sequence", "User attempted to assign a non-existant sequence name: " + SequenceName );
+                throw new CswDniException( "Invalid Sequence", "User attempted to assign a non-existant sequence name: " + SequenceName.DisplayName );
             }
         }//assignSequence()
 
@@ -161,62 +176,60 @@ namespace ChemSW.Nbt
         /// Removes a sequence entry and deletes the sequence DB object
         /// </summary>
         /// <param name="SequenceName">Name of Sequence</param>
-        public void removeSequence( string SequenceName )
+        public void removeSequence( CswSequenceName SequenceName )
         {
             DataTable SequencesTable = getSequence( SequenceName );
-            if ( 0 == SequencesTable.Rows.Count )
-                throw ( new CswDniException( "There is no sequence table record named " + SequenceName ) );
+            if( 0 == SequencesTable.Rows.Count )
+                throw ( new CswDniException( "There is no sequence table record named " + SequenceName.DisplayName ) );
 
-            Int32 SequencesId = CswConvert.ToInt32( SequencesTable.Rows[ 0 ][ "sequenceid" ] );
+            Int32 SequencesId = CswConvert.ToInt32( SequencesTable.Rows[0]["sequenceid"] );
 
             CswTableSelect NodeTypePropsSelect = _CswNbtResources.makeCswTableSelect( "removeSequence_nodetypeprops_select", "nodetype_props" );
             DataTable NodeTypePropsTable = NodeTypePropsSelect.getTable( "sequenceid", SequencesId );
 
-            if ( NodeTypePropsTable.Rows.Count > 0 )
-                throw ( new CswDniException( "Sequence " + SequenceName + " cannot be removed bacause there are " + NodeTypePropsTable.Rows.Count.ToString() + " NodeType_Props records referencing it" ) );
+            if( NodeTypePropsTable.Rows.Count > 0 )
+                throw ( new CswDniException( "Sequence " + SequenceName.DisplayName + " cannot be removed bacause there are " + NodeTypePropsTable.Rows.Count.ToString() + " NodeType_Props records referencing it" ) );
 
-            SequencesTable.Rows[ 0 ].Delete();
+            SequencesTable.Rows[0].Delete();
             SequenceTableUpdate.update( SequencesTable );
 
             removeDbSequence( SequenceName );
         }//removeSequence()
 
-        public void removeDbSequence( string SequenceName )
+        public void removeDbSequence( CswSequenceName SequenceName )
         {
-            _CswNbtResources.removeUniqueSequence( getDBSequenceName( SequenceName ) );
+            _CswNbtResources.removeUniqueSequence( SequenceName.DBName );
         }//removeSequenceFromDb()
 
-        public bool doesSequenceExist( string SequenceName )
+        public bool doesSequenceExist( CswSequenceName SequenceName )
         {
             bool ReturnVal = false;
             DataTable SequencesTable = getSequence( SequenceName );
-            if ( false == ( ReturnVal = SequencesTable.Rows.Count > 0 ) )
+            if( false == ( ReturnVal = SequencesTable.Rows.Count > 0 ) )
             {
-                string SafeSequenceName = getDBSequenceName( SequenceName );
-                ReturnVal = _CswNbtResources.doesUniqueSequenceExist( SafeSequenceName );
+                ReturnVal = _CswNbtResources.doesUniqueSequenceExist( SequenceName.DBName );
             }
 
-            return( ReturnVal );
-
-            //if ( SequencesTable.Rows.Count > 0 )
-            //    throw ( new CswDniException( "There is already a sequence table record named " + SequenceName ) );
-
-            //string SafeSequenceName = getDBSequenceName( SequenceName );
-            //if ( _CswNbtResources.CswDbResources.doesuniqueSequenceExist( SafeSequenceName ) )
-            //    throw ( new CswDniException( "There is already a unique sequence object in the database named " + SafeSequenceName ) );
+            return ( ReturnVal );
 
         }//doesSequenceExist
 
-        public Int32 getSequenceValue( string SequenceName )
+        public bool doesSequenceExist( Int32 SequenceId )
+        {
+            DataTable SequencesTable = getSequence( SequenceId );
+            return ( SequencesTable.Rows.Count > 0 );
+        }//doesSequenceExist
+
+        public Int32 getSequenceValue( CswSequenceName SequenceName )
         {
             Int32 ReturnVal = Int32.MinValue;
 
-            if( ! doesSequenceExist( SequenceName ) )
-                throw( new CswDniException("No such sequence: " + SequenceName ) );
+            if( !doesSequenceExist( SequenceName ) )
+                throw ( new CswDniException( "No such sequence: " + SequenceName ) );
 
-            ReturnVal = _CswNbtResources.getCurrentUniqueSequenceVal( getDBSequenceName( SequenceName ) );
+            ReturnVal = _CswNbtResources.getCurrentUniqueSequenceVal( SequenceName.DBName );
 
-            return( ReturnVal );
+            return ( ReturnVal );
         }//getSequenceValue()
 
     }//class CswNbtSequenceManager
