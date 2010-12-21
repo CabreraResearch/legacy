@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
         {
         }//ctor
 
-        private string _UniqueSequenceName = "testsequence";
+        private CswSequenceName _UniqueSequenceName = new CswSequenceName( "testsequence" );
 
         public override void runTest()
         {
@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
 
             _CswNbtSchemaModTrnsctn.beginTransaction();
 
-            _CswNbtSchemaModTrnsctn.makeSequence( _UniqueSequenceName, string.Empty, string.Empty, string.Empty, 1 );
+            _CswNbtSchemaModTrnsctn.makeSequence( _UniqueSequenceName, string.Empty, string.Empty, Int32.MinValue, 1 );
 
             _CswNbtSchemaModTrnsctn.rollbackTransaction();
 

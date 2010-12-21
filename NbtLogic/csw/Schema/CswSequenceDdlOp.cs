@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswSequenceDdlOp( string SequenceNameIn, string PrependIn, string PostpendIn, string PadIn, Int32 InitialValueIn )
+        public CswSequenceDdlOp( CswSequenceName SequenceNameIn, string PrependIn, string PostpendIn, Int32 PadIn, Int32 InitialValueIn )
         {
             SequenceName = SequenceNameIn;
             Prepend = PrependIn;
@@ -31,10 +31,10 @@ namespace ChemSW.Nbt.Schema
             InitialValue = InitialValueIn;
         }//ctor
 
-        public string SequenceName;
+        public CswSequenceName SequenceName;
         public string Prepend;
         public string Postpend;
-        public string Pad;
+        public Int32 Pad;
         public Int32 InitialValue = Int32.MinValue;
         public DdlProcessStatus DdlProcessStatus;
 

@@ -128,7 +128,7 @@
                     SortedList<string, CswSessionsListEntry> CurrentSessions = CswSessionStorageDb.AllSessions;
                     foreach( CswSessionsListEntry Entry in CurrentSessions.Values )
                     {
-                        if( Entry.TimeoutDate < DateTime.Now )
+                        if( false == Entry.IsMobile &&  Entry.TimeoutDate < DateTime.Now )
                         {
                             SessionIdsToRemove.Add( Entry.SessionId );
                         }

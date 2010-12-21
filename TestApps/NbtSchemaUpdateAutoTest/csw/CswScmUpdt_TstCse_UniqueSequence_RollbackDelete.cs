@@ -20,10 +20,10 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
         {
         }//ctor
 
-        private string _SequenceName = "testsequence";
+        private CswSequenceName _SequenceName = new CswSequenceName( "testsequence" );
         private string _Prepend = "foo";
         private string _Postpend = "bar";
-        private string _Pad = "5";
+        private Int32 _Pad = 5;
         private Int32 _InitialVal = 42;
 
         public override void runTest()
@@ -55,8 +55,8 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
 
             DataTable SequenceTable = _CswNbtSchemaModTrnsctn.getSequence( _SequenceName );
             if ( SequenceTable.Rows[ 0 ][ "prep" ].ToString() != _Prepend ||
-                SequenceTable.Rows[ 0 ][ "post" ].ToString() != _Postpend ||
-                SequenceTable.Rows[ 0 ][ "pad" ].ToString() != _Pad )
+                 SequenceTable.Rows[ 0 ][ "post" ].ToString() != _Postpend ||
+                 CswConvert.ToInt32(SequenceTable.Rows[ 0 ][ "pad" ]) != _Pad )
             {
                 throw ( new CswDniException( "A sequence configuration parameter did not match in " + TestPhase ) );
             }

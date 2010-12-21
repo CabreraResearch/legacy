@@ -57,12 +57,19 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 // All Views
-                DataTable ViewDT = _CswNbtWebServiceResources.CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser, false, true ); 
-                foreach( DataRow ViewRow in ViewDT.Rows )
+                DataTable ViewDT = _CswNbtWebServiceResources.CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser, false, true );
+                if( ViewDT.Rows.Count > 0 )
                 {
-                    ret += "<view id=\"" + ViewIdPrefix + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
-                    ret += " name=\"" + ViewRow["viewname"].ToString() + "\"";
-                    ret += "/>";
+                    foreach( DataRow ViewRow in ViewDT.Rows )
+                    {
+                        ret += "<view id=\"" + ViewIdPrefix + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
+                        ret += " name=\"" + ViewRow["viewname"].ToString() + "\"";
+                        ret += "/>";
+                    }
+                }
+                else
+                {
+                    ret += @"<node id="""" name=""No results""></node>";
                 }
             }
 

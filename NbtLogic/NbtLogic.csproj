@@ -243,6 +243,7 @@
     <Compile Include="csw\Security\ICswNbtUser.cs" />
     <Compile Include="csw\Sequence\CswNbtSequenceManager.cs" />
     <Compile Include="csw\Sequence\CswNbtSequenceValue.cs" />
+    <Compile Include="csw\Sequence\CswSequenceName.cs" />
     <Compile Include="csw\Statistics\CswNbtStatisticsEntry.cs" />
     <Compile Include="csw\Statistics\CswNbtStatisticsEvents.cs" />
     <Compile Include="csw\Statistics\CswNbtStatisticsStorageDb.cs" />
