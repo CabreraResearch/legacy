@@ -13,6 +13,54 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataObjectClassProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataObjectClassProp>
     {
+        public enum ObjectClassPropAttributes
+        {
+            auditlevel,
+            fieldtypeid,
+            isbatchentry,
+            isrequired,
+            isunique,
+            servermanaged,
+            valuefieldid,
+            numberprecision,
+            listoptions,
+            viewxml,
+            fktype,
+            multi,
+            readOnly,
+            display_col_add,
+            display_row_add,
+            setvalonadd,
+            numberminvalue,
+            numbermaxvalue,
+            statictext,
+            filter,
+            filterpropid,
+            valueoptions,
+            propname,
+            isglobalunique,
+            extended,
+            Unknown
+        }
+
+        public static ObjectClassPropAttributes getObjectClassPropAttributesFromString( string AttributeName )
+        {
+            ObjectClassPropAttributes ReturnVal = ObjectClassPropAttributes.Unknown;
+            if( Enum.IsDefined( typeof( ObjectClassPropAttributes ), AttributeName ) )
+            {
+                ReturnVal = (ObjectClassPropAttributes) Enum.Parse( typeof( ObjectClassPropAttributes ), AttributeName, true );
+            }
+            return ( ReturnVal );
+        }
+
+        public static String getObjectClassPropAttributesAsString( ObjectClassPropAttributes Attribute )
+        {
+            String ReturnVal = String.Empty;
+            if( Attribute != ObjectClassPropAttributes.Unknown )
+                ReturnVal = Attribute.ToString();
+            return ( ReturnVal );
+        }
+        
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _ObjectClassPropRow;
 

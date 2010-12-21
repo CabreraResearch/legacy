@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
+            
             // case 20509 - add #addclause to S4
             _CswNbtSchemaModTrnsctn.UpdateS4( "getVisibleViewInfo",
 @"select v.nodeviewid, v.viewname, v.visibility, v.roleid, v.userid,
@@ -43,6 +44,11 @@ where ((visibility = 'Global') or
        (visibility = 'User' and userid = :getuserid))
        #addclause
 order by #orderbyclause" );
+
+            // Case 20502
+            CswNbtMetaDataObjectClass MountPointOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MountPointClass );
+            CswNbtMetaDataObjectClassProp MountPointGroupOCP = MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.MountPointGroupPropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MountPointGroupOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
 
         } // update()
 
