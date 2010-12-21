@@ -397,29 +397,30 @@ namespace ChemSW.Nbt.WebPages
 
                             // Mount Point
                             CswNbtMetaDataNodeTypeProp MPLegacyBarcodeNTP = null;
-                            Int32 MpBarcodeVal = Int32.MinValue;
                             bool mpBarcodeExists = false;
-
 
                             if( MountPointBarcode != string.Empty )
                             {
-                                foreach( CswNbtNode MPNode in MountPointNT.getNodes( true, false ) )
+                                CswNbtView ExistingBarcodes = new CswNbtView( Master.CswNbtResources );
+                                ExistingBarcodes.ViewName = "Barcode Already Exists";
+                                CswNbtViewRelationship MountPointViewRel = ExistingBarcodes.AddViewRelationship( MountPointNT, false );
+                                CswNbtMetaDataNodeTypeProp MountPointBarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
+                                CswNbtViewProperty BarcodeViewProp = ExistingBarcodes.AddViewProperty( MountPointViewRel, MountPointBarcodeNTP );
+                                CswNbtViewPropertyFilter BarcodeViewFilt = ExistingBarcodes.AddViewPropertyFilter( BarcodeViewProp, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Equals, MountPointBarcode, false );
+                                ICswNbtTree MpTree = Master.CswNbtResources.Trees.getTreeFromView( ExistingBarcodes, true, true, true, false );
+
+                                MpTree.goToRoot();
+                                if( MpTree.getChildNodeCount() > 0 ) // A matching barcode already exists
                                 {
-                                    if( !mpBarcodeExists && CswNbtNodeCaster.AsMountPoint( MPNode ).Barcode.Barcode.ToLower().Trim() == MountPointBarcode.ToLower().Trim() )
-                                    {
-                                        mpBarcodeExists = true;
-                                        hasLegacyBarcode = ( hasLegacyBarcode || mpBarcodeExists );
-                                        break;
-                                    }
-                                    //Int32 ExistingBarcode = CswConvert.ToInt32( CswNbtNodeCaster.AsMountPoint( MPNode ).Barcode.Barcode );
-                                    //if( ExistingBarcode >= MpBarcodeVal )
-                                    //    MpBarcodeVal = ExistingBarcode + 1;
-                                }
-                                if( mpBarcodeExists )
-                                {
+                                    mpBarcodeExists = true;
+                                    hasLegacyBarcode = true;
                                     MPLegacyBarcodeNTP = MountPointNT.getNodeTypeProp( MpLegacyBarcodeName );
                                     if( null == MPLegacyBarcodeNTP )
                                         MPLegacyBarcodeNTP = Master.CswNbtResources.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Text, MpLegacyBarcodeName, Int32.MinValue );
+
+                                    //Int32 ExistingBarcode = CswConvert.ToInt32( CswNbtNodeCaster.AsMountPoint( MPNode ).Barcode.Barcode );
+                                    //if( ExistingBarcode >= MpBarcodeVal )
+                                    //    MpBarcodeVal = ExistingBarcode + 1;
                                 }
                             }
 
@@ -457,7 +458,6 @@ namespace ChemSW.Nbt.WebPages
                             {
                                 CswNbtMetaDataNodeTypeProp BarcodeNTP = FireExtNT.BarcodeProperty;
                                 CswNbtMetaDataNodeTypeProp FELegacyBarcodeNTP = null;
-                                Int32 FeBarcodeVal = Int32.MinValue;
                                 bool feBarcodeExists = false;
 
                                 if( FEBarcode != string.Empty )
@@ -465,23 +465,25 @@ namespace ChemSW.Nbt.WebPages
                                     if( null == BarcodeNTP )
                                         BarcodeNTP = Master.CswNbtResources.MetaData.makeNewProp( FireExtNT, CswNbtMetaDataFieldType.NbtFieldType.Barcode, FeBarcodeName, Int32.MinValue );
 
-                                    foreach( CswNbtNode ExistingNode in FireExtNT.getNodes( true, false ) )
+                                    CswNbtView ExistingBarcodes = new CswNbtView( Master.CswNbtResources );
+                                    ExistingBarcodes.ViewName = "Barcode Already Exists";
+                                    CswNbtViewRelationship FireExtViewRel = ExistingBarcodes.AddViewRelationship( FireExtNT, false );
+                                    CswNbtViewProperty BarcodeViewProp = ExistingBarcodes.AddViewProperty( FireExtViewRel, BarcodeNTP );
+                                    CswNbtViewPropertyFilter BarcodeViewFilt = ExistingBarcodes.AddViewPropertyFilter( BarcodeViewProp, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Equals, FEBarcode, false );
+                                    ICswNbtTree FeTree = Master.CswNbtResources.Trees.getTreeFromView( ExistingBarcodes, true, true, true, false );
+
+                                    FeTree.goToRoot();
+                                    if( FeTree.getChildNodeCount() > 0 ) // A matching barcode already exists
                                     {
-                                        if( !feBarcodeExists && ExistingNode.Properties[BarcodeNTP].AsBarcode.Barcode.ToLower().Trim() == FEBarcode.ToLower().Trim() )
-                                        {
-                                            feBarcodeExists = true;
-                                            hasLegacyBarcode = ( hasLegacyBarcode || feBarcodeExists );
-                                            break;
-                                        }
-                                        //Int32 ExistingBarcode = CswConvert.ToInt32( ExistingNode.Properties[BarcodeNTP].AsBarcode.Barcode );
-                                        //if( ExistingBarcode >= FeBarcodeVal )
-                                        //    FeBarcodeVal = ExistingBarcode + 1;
-                                    }
-                                    if( feBarcodeExists )
-                                    {
+                                        feBarcodeExists = true;
+                                        hasLegacyBarcode = true;
                                         FELegacyBarcodeNTP = FireExtNT.getNodeTypeProp( FeLegacyBarcodeName );
                                         if( null == FELegacyBarcodeNTP )
                                             FELegacyBarcodeNTP = Master.CswNbtResources.MetaData.makeNewProp( FireExtNT, CswNbtMetaDataFieldType.NbtFieldType.Text, FeLegacyBarcodeName, Int32.MinValue );
+
+                                        //Int32 ExistingBarcode = CswConvert.ToInt32( ExistingNode.Properties[BarcodeNTP].AsBarcode.Barcode );
+                                        //if( ExistingBarcode >= FeBarcodeVal )
+                                        //    FeBarcodeVal = ExistingBarcode + 1;
                                     }
                                 } 
                                 
