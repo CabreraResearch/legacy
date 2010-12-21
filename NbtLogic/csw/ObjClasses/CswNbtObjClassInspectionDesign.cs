@@ -140,9 +140,9 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public static InspectionStatus InspectionStatusFromString( string Status )
         {
-            InspectionStatus ret = InspectionStatus.Null;
-            if( Status != string.Empty )
-                ret = (InspectionStatus) Enum.Parse( typeof( InspectionStatus ), Status.Replace( ' ', '_' ) );
+            InspectionStatus ret;
+            if( !Enum.TryParse<InspectionStatus>( Status.Replace( ' ', '_' ), out ret ) )
+                ret = InspectionStatus.Null;
             return ret;
         }
 
@@ -158,9 +158,9 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public static TargetStatus TargetStatusFromString( string Status )
         {
-            TargetStatus ret = TargetStatus.Null;
-            if( Status != string.Empty )
-                ret = (TargetStatus) Enum.Parse( typeof( TargetStatus ), Status.Replace( ' ', '_' ) );
+            TargetStatus ret;
+            if( !Enum.TryParse<TargetStatus>( Status.Replace( ' ', '_' ), out ret ) )
+                ret = TargetStatus.Null;
             return ret;
         }
 

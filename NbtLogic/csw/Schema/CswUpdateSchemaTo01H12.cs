@@ -87,7 +87,12 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NameNTP = PhysicalInspectionsNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
             PhysicalInspectionsNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( NameNTP.PropName );
 
-
+            // Case 20093
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClassProp LocNameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.NamePropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocNameOCP, "setvalonadd", true );
+            
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
         } // update()
 
