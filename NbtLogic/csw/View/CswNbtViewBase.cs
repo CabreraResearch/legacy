@@ -14,25 +14,6 @@ namespace ChemSW.Nbt
 {
     #region Enums
 
-    ///// <summary>
-    ///// Type of View
-    ///// </summary>
-    //public enum NbtViewType
-    //{
-    //    /// <summary>
-    //    /// "Typical" view built on relationships and properties
-    //    /// </summary>
-    //    RelationshipView,
-    //    /// <summary>
-    //    /// Quick Search
-    //    /// </summary>
-    //    QuickSearch,
-    //    /// <summary>
-    //    /// Action Placeholder
-    //    /// </summary>
-    //    Action
-    //};
-
     /// <summary>
     /// View Rendering Mode
     /// </summary>
@@ -61,26 +42,26 @@ namespace ChemSW.Nbt
     /// </summary>
     public enum NbtViewAddChildrenSetting
     {
-    /// <summary>
-    /// No children can be added
-    /// </summary>
-    None,
-    /// <summary>
-    /// Only nodetypes defined in this view can be added as children
-    /// </summary>
-    InView, 
-    /// <summary>
-    /// DEPRECATED Any child nodetype can be added to any nodetype
-    /// </summary>
-    All, 
-    /// <summary>
-    /// DEPRECATED For backwards-compatibility, this means InView
-    /// </summary>
-    True,
-    /// <summary>
-    /// DEPRECATED For backwards-compatibility, this means None
-    /// </summary>
-    False
+        /// <summary>
+        /// No children can be added
+        /// </summary>
+        None,
+        /// <summary>
+        /// Only nodetypes defined in this view can be added as children
+        /// </summary>
+        InView,
+        /// <summary>
+        /// DEPRECATED Any child nodetype can be added to any nodetype
+        /// </summary>
+        All,
+        /// <summary>
+        /// DEPRECATED For backwards-compatibility, this means InView
+        /// </summary>
+        True,
+        /// <summary>
+        /// DEPRECATED For backwards-compatibility, this means None
+        /// </summary>
+        False
     };
 
     /// <summary>
@@ -133,28 +114,28 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Visibility permission setting on a View
     /// </summary>
-    public enum NbtViewVisibility 
-    { 
+    public enum NbtViewVisibility
+    {
         /// <summary>
         /// Only one User can use this View
         /// </summary>
-        User, 
+        User,
         /// <summary>
         /// All Users of a given Role can use this View
         /// </summary>
-        Role, 
+        Role,
         /// <summary>
         /// All Users can use this View
         /// </summary>
-        Global, 
+        Global,
         /// <summary>
         /// The View is used by a Property (relationship or grid)
         /// </summary>
-        Property, 
+        Property,
         /// <summary>
         /// Unknown
         /// </summary>
-        Unknown 
+        Unknown
     };
 
 
@@ -183,85 +164,4 @@ namespace ChemSW.Nbt
 
     #endregion Enums
 
-    ///// <summary>
-    ///// Represents an NBT View (RelationshipView, QuickSearch, or Action)
-    ///// </summary>
-    //public abstract class CswNbtViewBase
-    //{
-    //    /// <summary>
-    //    /// Character delimiter used for saving the view as a string
-    //    /// </summary>
-    //    public static char delimiter = '|';
-
-    //    /// <summary>
-    //    /// Type of View
-    //    /// </summary>
-    //    public abstract NbtViewType ViewType { get; }
-    //    /// <summary>
-    //    /// Name of View
-    //    /// </summary>
-    //    public abstract string ViewName { get; set; }
-    //    /// <summary>
-    //    /// Category for View
-    //    /// </summary>
-    //    public abstract string Category { get; }
-    //    /// <summary>
-    //    /// Rendering Mode for View
-    //    /// </summary>
-    //    public abstract NbtViewRenderingMode ViewMode { get; }
-
-    //    private Int32 _SessionViewId = Int32.MinValue;
-    //    /// <summary>
-    //    /// Key for retrieving the view from the Session's View Cache
-    //    /// </summary>
-    //    public Int32 SessionViewId
-    //    {
-    //        get { return _SessionViewId; }
-    //        //set { _SessionViewId = value; }
-    //    }
-
-    //    /// <summary>
-    //    /// Save this view as a string
-    //    /// </summary>
-    //    public abstract override string ToString();
-    //    /// <summary>
-    //    /// Clear all settings from View and restore to default
-    //    /// </summary>
-    //    public abstract void Clear();
-
-    //    /// <summary>
-    //    /// CswNbtResources reference
-    //    /// </summary>
-    //    protected CswNbtResources _CswNbtResources;
-
-    //    /// <summary>
-    //    /// Creator
-    //    /// </summary>
-    //    public CswNbtViewBase(CswNbtResources CswNbtResources, NbtViewType ViewType)
-    //    {
-    //        _CswNbtResources = CswNbtResources;
-    //        //SessionViewId = _CswNbtResources.ViewCache.putView(this);
-    //    }
-
-    //    /// <summary>
-    //    /// Save this View to Session's ViewCache
-    //    /// </summary>
-    //    public void SaveToCache()
-    //    {
-    //        _SessionViewId = _CswNbtResources.ViewCache.putView(this);
-    //    }
-    //    //public void UpdateCache()
-    //    //{
-    //    //    _CswNbtResources.ViewCache.updateCachedView(_SessionViewId, this);
-    //    //}
-
-    //    /// <summary>
-    //    /// Clears the view from the cache.  Useful for saving changes to views.
-    //    /// </summary>
-    //    public void ClearFromCache()
-    //    {
-    //        _CswNbtResources.ViewCache.clearFromCache(this);
-    //    }
-
-    //} // interface ICswNbtView
 } // namespace ChemSW.Nbt

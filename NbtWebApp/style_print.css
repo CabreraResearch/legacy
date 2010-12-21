@@ -542,7 +542,16 @@ body a:hover
 .NodeReport_TabTable
 {
 	padding: 2px 2px 2px 2px;
-	
+}
+.NodeReport_LabelCell
+{
+	padding: 0px 5px 0px 0px;
+}
+.NodeReport_ValueCell
+{
+}
+.NodeReport_EmptyCell
+{
 }
 
 .NodeReport_NodeName

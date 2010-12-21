@@ -84,6 +84,15 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Use view in Mobile
+        /// </summary>
+        public bool ForMobile
+        {
+            get { return Root.ForMobile; }
+            set { Root.ForMobile = value; }
+        }
+
+        /// <summary>
         /// Category name (arbitrary string) 
         /// </summary>
         public string Category
@@ -360,6 +369,7 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["viewname"] = ViewName;
             ViewTable.Rows[0]["category"] = Category;
             ViewTable.Rows[0]["viewxml"] = this.ToString();
+            ViewTable.Rows[0]["formobile"] = CswConvert.ToDbVal( ForMobile );
             ViewTable.Rows[0]["visibility"] = Visibility.ToString();
             if( Visibility == NbtViewVisibility.Role )
                 ViewTable.Rows[0]["roleid"] = CswConvert.ToDbVal( VisibilityRoleId.PrimaryKey );
@@ -442,6 +452,7 @@ namespace ChemSW.Nbt
 
             DataRow NewRow = ViewTable.NewRow();
             NewRow["viewname"] = ViewName;
+            NewRow["formobile"] = CswConvert.ToDbVal( ForMobile );
             NewRow["visibility"] = Visibility.ToString();
 
             NewRow["userid"] = CswConvert.ToDbVal( Int32.MinValue );
@@ -464,6 +475,7 @@ namespace ChemSW.Nbt
             this.Visibility = Visibility;
             this.VisibilityRoleId = RoleId;
             this.VisibilityUserId = UserId;
+            this.ForMobile = ForMobile;
 
             // The XML includes the viewid and viewname, so it has to be updated before it can be saved
             NewRow["viewxml"] = this.ToString();
@@ -807,7 +819,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Returns true if the ViewNode is present in the View
         /// </summary>
-        public CswNbtViewNode FindViewNode( string ViewNodeToFindAsString )
+        public CswNbtViewNode FindViewNode( CswDelimitedString ViewNodeToFindAsString )
         {
             CswNbtViewNode ViewNodeToFind = CswNbtViewNode.makeViewNode( _CswNbtResources, this, ViewNodeToFindAsString );
             return FindViewNode( ViewNodeToFind );

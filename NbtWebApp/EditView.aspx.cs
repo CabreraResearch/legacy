@@ -182,7 +182,9 @@ namespace ChemSW.NbtWebControls
         private CswViewVisibilityEditor _ViewVisibilityEditor;
         //private Literal _IncludeInQuickLaunchLiteral;
         //private CheckBox _IncludeInQuickLaunch;
-
+        private CheckBox _ForMobileCheckBox;
+        private Label _ForMobileLabel;
+        
         // SetRelationshipsStep
         private CswWizardStep _SetRelationshipsStep;
         private CswAutoTable _SetRelationshipsStepTable;
@@ -457,6 +459,8 @@ namespace ChemSW.NbtWebControls
                 //}
                 if( values[_GridWidthBox.UniqueID] != null )
                     _GridWidthBox.Text = values[_GridWidthBox.UniqueID].ToString();
+                if( values[_ForMobileCheckBox.UniqueID] != null )
+                    _ForMobileCheckBox.Checked = CswConvert.ToBoolean( values[_ForMobileCheckBox.UniqueID] );
                 //if( values[_GridEditModeDropDown.UniqueID] != null )
                 //{
                 //    foreach( ListItem Item in _GridEditModeDropDown.Items )
@@ -600,22 +604,21 @@ namespace ChemSW.NbtWebControls
                     _CreateNewViewButton.OnClientClick = "openNewViewPopup(''); return false;";
                 _DeleteViewButton.OnClientClick = "openDeleteViewPopup(document.getElementById('" + _LoadViewList.ClientID + "').value, '" + _RealDeleteViewButton.ClientID + "'); return false;";
 
-                //if( _ModeDropDown.SelectedValue == "Tree" )
                 if( _ModeValueLabel.Text != "Grid" )
                 {
-                    _GridWidthLabel.Style.Add( HtmlTextWriterStyle.Display, "none" );
-                    _GridWidthBox.Style.Add( HtmlTextWriterStyle.Display, "none" );
-                    //_GridEditModeLabel.Style.Add( HtmlTextWriterStyle.Display, "none" );
-                    //_GridEditModeDropDown.Style.Add( HtmlTextWriterStyle.Display, "none" );
+                    _GridWidthLabel.Visible = false;
+                    _GridWidthBox.Visible = false;
+                    _ForMobileLabel.Visible = true;
+                    _ForMobileCheckBox.Visible = true;
                 }
                 else
                 {
-                    _GridWidthLabel.Style.Add( HtmlTextWriterStyle.Display, "" );
-                    _GridWidthBox.Style.Add( HtmlTextWriterStyle.Display, "" );
-                    //_GridEditModeLabel.Style.Add( HtmlTextWriterStyle.Display, "" );
-                    //_GridEditModeDropDown.Style.Add( HtmlTextWriterStyle.Display, "" );
+                    _GridWidthLabel.Visible = true;
+                    _GridWidthBox.Visible = true;
+                    _ForMobileLabel.Visible = false;
+                    _ForMobileCheckBox.Visible = false;
+                    _ForMobileCheckBox.Checked = false;
                 }
-                //_ModeDropDown.Attributes.Add( "onchange", "ViewEditor_ModeDropDown_OnChange('" + _ModeDropDown.ClientID + "', '" + _GridWidthLabel.ClientID + "', '" + _GridWidthBox.ClientID + "')" );
 
                 if( _View != null )
                     _Hidden_CurrentViewXml.Value = _View.ToString();
@@ -820,6 +823,11 @@ namespace ChemSW.NbtWebControls
 
             _ModeValueLabel = new Label();
 
+            _ForMobileLabel = new Label();
+            _ForMobileLabel.Text = "For Mobile:";
+
+            _ForMobileCheckBox = new CheckBox();
+
             //_ModeDropDown = new DropDownList();
             //_ModeDropDown.ID = "mode";
             //_ModeDropDown.CssClass = "selectinput";
@@ -884,6 +892,8 @@ namespace ChemSW.NbtWebControls
             //_ViewAttributesStepTable.addControl( 5, 1, _GridEditModeDropDown );
             //_ViewAttributesStepTable.addControl( 6, 0, _IncludeInQuickLaunchLiteral );
             //_ViewAttributesStepTable.addControl( 6, 1, _IncludeInQuickLaunch );
+            _ViewAttributesStepTable.addControl( 4, 0, _ForMobileLabel );
+            _ViewAttributesStepTable.addControl( 4, 1, _ForMobileCheckBox );
         }
 
         protected void _ViewAttributesStep_SetValuesFromView()
@@ -921,6 +931,8 @@ namespace ChemSW.NbtWebControls
                 //{
                 //    _IncludeInQuickLaunch.Checked = false;
                 //}
+
+                _ForMobileCheckBox.Checked = _View.ForMobile;
             }
         }
 
@@ -1795,7 +1807,12 @@ namespace ChemSW.NbtWebControls
                                 if( CswTools.IsInteger( _GridWidthBox.Text ) )
                                     _View.Width = Convert.ToInt32( _GridWidthBox.Text );
                             }
+                            _View.ForMobile = false;
                             //_View.EditMode = (ChemSW.Nbt.GridEditMode) Enum.Parse( typeof( ChemSW.Nbt.GridEditMode ), _GridEditModeDropDown.SelectedValue.ToString() );
+                        }
+                        else
+                        {
+                            _View.ForMobile = _ForMobileCheckBox.Checked;
                         }
 
                         break;
@@ -1858,7 +1875,10 @@ namespace ChemSW.NbtWebControls
                                 CswNbtViewRelationship RelationshipViewNode = (CswNbtViewRelationship) PropertiesSelectedViewNode;
                                 foreach( DataRow PropRow in _PropDataTable.Rows )
                                 {
-                                    CswNbtViewProperty NewProp = new CswNbtViewProperty( _CswNbtResources, _View, PropRow["ViewProp"].ToString() );
+                                    CswDelimitedString ViewPropString = new CswDelimitedString( CswNbtView.delimiter );
+                                    ViewPropString.FromString( PropRow["ViewProp"].ToString() );
+
+                                    CswNbtViewProperty NewProp = new CswNbtViewProperty( _CswNbtResources, _View, ViewPropString );
                                     bool Checked = _PropCheckBoxArray.GetValue( PropRow["Value"].ToString(), "Include" );
                                     bool Contains = RelationshipViewNode.Properties.Contains( NewProp );
                                     if( Checked && !Contains )
@@ -1892,7 +1912,7 @@ namespace ChemSW.NbtWebControls
             {
                 HandleError( ex );
             }
-        }
+        } // SaveChanges()
 
 
         public event CswErrorHandler OnError;
@@ -1945,7 +1965,10 @@ namespace ChemSW.NbtWebControls
                 if( _NextOptions.SelectedValue != String.Empty &&
                      _RelationshipsViewTree.SelectedNode != null )
                 {
-                    CswNbtViewRelationship SourceRelationship = new CswNbtViewRelationship( _CswNbtResources, _View, _NextOptions.SelectedValue );
+                    CswDelimitedString NextOptsSelVal = new CswDelimitedString( CswNbtView.delimiter );
+                    NextOptsSelVal.FromString( _NextOptions.SelectedValue );
+
+                    CswNbtViewRelationship SourceRelationship = new CswNbtViewRelationship( _CswNbtResources, _View, NextOptsSelVal );
                     CswNbtViewNode RelationshipsSelectedViewNode = _View.FindViewNodeByArbitraryId( _RelationshipsViewTree.SelectedNode.Value.ToString() );
                     CswNbtViewRelationship NewRelationship = _View.CopyViewRelationship( RelationshipsSelectedViewNode, SourceRelationship, true );
                     _RelationshipsViewTree.reinitTreeFromView( _View, NewRelationship, _View.Root, CswViewStructureTree.ViewTreeSelectType.Relationship );

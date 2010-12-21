@@ -12,6 +12,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Security;
 using ChemSW.NbtWebControls;
+using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -36,6 +37,10 @@ namespace ChemSW.Nbt.WebPages
         {
             get { return Master.LogoutPath; }
             set { Master.LogoutPath = value; }
+        }
+        public RadAjaxManager AjaxManager
+        {
+            get { return Master.AjaxManager; }
         }
 
         //public CswAuthenticator CswAuthenticator
