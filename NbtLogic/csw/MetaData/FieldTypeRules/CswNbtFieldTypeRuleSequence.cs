@@ -14,6 +14,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleSequence: ICswNbtFieldTypeRule
     {
+        public static CswNbtSubField.PropColumn SequenceColumn = CswNbtSubField.PropColumn.Field1;
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
 
@@ -24,7 +25,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources, MetaDataProp );
 
-            SequenceSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Sequence );
+            SequenceSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, SequenceColumn, CswNbtSubField.SubFieldName.Sequence );
             SequenceSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
                                            CswNbtPropFilterSql.PropertyFilterMode.Contains |
                                            CswNbtPropFilterSql.PropertyFilterMode.Ends |
