@@ -67,6 +67,8 @@ namespace ChemSW.NbtWebControls
                 CswSessionsListEntry.IPAddress = CswNbtWebTools.getIpAddress();
                 CswSessionsListEntry.LoginDate = DateTime.Now;
                 CswSessionsListEntry.UserName = UserName;
+                CswSessionsListEntry.IsMobile = true;
+                
                 
                 _CswSessionStorageDb.save( CswSessionsListEntry ); 
 
