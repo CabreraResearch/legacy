@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Schema
             // BZ 10319
             _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props", "extended", "Generic Multi-purpose column", false, false, 10 );
             _CswNbtSchemaModTrnsctn.addStringColumn( "object_class_props", "extended", "Generic Multi-purpose column", false, false, 10 );
-            _CswNbtSchemaModTrnsctn.addDateColumn( "jct_nodes_props", "field2_date", "Second Date Field", false, false);
+            _CswNbtSchemaModTrnsctn.addDateColumn( "jct_nodes_props", "field2_date", "Second Date Field", false, false );
 
             // BZ 5073
             _CswNbtSchemaModTrnsctn.dropColumn( "object_class_props", "defaultvalue" );
@@ -55,10 +55,10 @@ namespace ChemSW.Nbt.Schema
 
             // Case 20081
             _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_props", "hideinmobile", "Exclude this property from Mobile", false, false );
-            
+
             // Case 20083
             _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_props", "mobilesearch", "Include this property in Mobile Search", false, false );
-            
+
 
             // New UserSelect Fieldtype
             CswTableUpdate FieldTypesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H-05_FT_Update", "field_types" );
@@ -69,6 +69,11 @@ namespace ChemSW.Nbt.Schema
             NewFTRow["deleted"] = "0";
             NewFieldTypeTable.Rows.Add( NewFTRow );
             FieldTypesUpdate.update( NewFieldTypeTable );
+
+
+            //20533
+            _CswNbtSchemaModTrnsctn.addBooleanColumn( "sessionlist", "ismobile", "Identifies whether the sesssion record is for a mobile column or a regular web app column", false, false );
+
 
         }//Update()
 

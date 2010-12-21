@@ -214,7 +214,6 @@
     <Compile Include="csw\Sched\CswNbtSchdItemUpdateInspectionStatus.cs" />
     <Compile Include="csw\Sched\CswNbtSchdItemUpdateMTBF.cs" />
     <Compile Include="csw\Sched\CswNbtSchdItemUpdatePropertyValues.cs" />
-    <Compile Include="csw\Schema\CswUpdateSchemaTo01H13.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H04.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H12.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H11.cs" />
