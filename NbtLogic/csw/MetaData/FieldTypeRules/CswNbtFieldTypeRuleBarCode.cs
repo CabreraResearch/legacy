@@ -15,6 +15,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleBarCode : ICswNbtFieldTypeRule
     {
+        public static CswNbtSubField.PropColumn SequenceColumn = CswNbtSubField.PropColumn.Field1;
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -24,7 +25,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources, MetaDataProp );
 
-            BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Barcode );
+            BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, SequenceColumn, CswNbtSubField.SubFieldName.Barcode );
             BarcodeSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
                                           CswNbtPropFilterSql.PropertyFilterMode.Contains |
                                           CswNbtPropFilterSql.PropertyFilterMode.Ends |
