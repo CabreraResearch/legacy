@@ -30,7 +30,6 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            /*
             // Case 20429
             CswNbtMetaDataNodeType MountPointGroupNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point_Group ) );
             MountPointGroupNT.IconFileName = "ball_blueS.gif";
@@ -87,7 +86,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataNodeTypeProp NameNTP = PhysicalInspectionsNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
             PhysicalInspectionsNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( NameNTP.PropName );
-            */
+
             // Case 20093
             CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClassProp LocNameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.NamePropertyName );
