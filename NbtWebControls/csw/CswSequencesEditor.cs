@@ -125,6 +125,7 @@ namespace ChemSW.NbtWebControls
             _NameRequiredValidator.EnableClientScript = true;
             _NameRequiredValidator.Text = "&nbsp;<img src=\"Images/vld/bad.gif\" alt=\"Value is required\" />";
             _NameRequiredValidator.ValidationGroup = "SequenceEditor";
+            _NameRequiredValidator.ControlToValidate = _tbxSequenceToAdd.ID;
 
             _btnAddSequence = new Button();
             _btnAddSequence.ID = "btnAddSequence";
@@ -180,8 +181,6 @@ namespace ChemSW.NbtWebControls
 
         protected override void OnPreRender( EventArgs e )
         {
-            _NameRequiredValidator.ControlToValidate = _tbxSequenceToAdd.ID;
-
             // BZ 8516
             setSequenceFields();
 
