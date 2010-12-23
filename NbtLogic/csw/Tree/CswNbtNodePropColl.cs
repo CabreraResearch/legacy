@@ -317,8 +317,8 @@ namespace ChemSW.Nbt
 
             foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
             {
-                CswNbtMetaDataNodeTypeProp CurrentMetaDataProp = MetaDataNodeType.getNodeTypeProp( Convert.ToInt32( CurrentRow["nodetypepropid"] ) );
-                Int32 PropsIdx = Convert.ToInt32( _PropsIndexByFirstVersionPropId[CurrentMetaDataProp.FirstPropVersionId] );
+                CswNbtMetaDataNodeTypeProp CurrentMetaDataProp = MetaDataNodeType.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
+                Int32 PropsIdx = CswConvert.ToInt32( _PropsIndexByFirstVersionPropId[CurrentMetaDataProp.FirstPropVersionId] );
                 CswNbtNodePropWrapper CurrentPropWrapper = (CswNbtNodePropWrapper) _Props[PropsIdx];
                 CurrentPropWrapper.refresh( CurrentRow );
 
@@ -338,7 +338,7 @@ namespace ChemSW.Nbt
                     if( CurrentRow.IsNull( "nodetypepropid" ) )
                         throw ( new CswDniException( "A node prop row is missing its nodetypepropid" ) );
                     //bz # 6542
-                    CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Convert.ToInt32( CurrentRow["nodetypepropid"] ) );
+                    CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
                     
                     if( null != CswNbtMetaDataNodeTypeProp )
                         this[CswNbtMetaDataNodeTypeProp].onBeforeUpdateNodePropRow( IsCopy );
@@ -390,7 +390,7 @@ namespace ChemSW.Nbt
                 if( !_PropsIndexByFirstVersionPropId.Contains( NodeTypeProp.FirstPropVersionId ) )
                     throw new CswDniException( "Invalid Property", "There is no property with this firstpropversionid " + NodeTypeProp.FirstPropVersionId.ToString() + " on nodetypeid " + _NodeTypeId.ToString() );
 
-                return ( _Props[Convert.ToInt32( _PropsIndexByFirstVersionPropId[NodeTypeProp.FirstPropVersionId] )] as CswNbtNodePropWrapper );
+                return ( _Props[CswConvert.ToInt32( _PropsIndexByFirstVersionPropId[NodeTypeProp.FirstPropVersionId] )] as CswNbtNodePropWrapper );
             }//get
 
         }//this[NodeTypeProp]

@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.MetaData
 
         public Int32 FieldTypeId
         {
-            get { return Convert.ToInt32( _FieldTypeRow[ "fieldtypeid" ].ToString() ); }
+            get { return CswConvert.ToInt32( _FieldTypeRow[ "fieldtypeid" ].ToString() ); }
         }
 
         public NbtFieldType FieldType

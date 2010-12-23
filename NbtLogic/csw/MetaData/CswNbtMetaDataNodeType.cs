@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.MetaData
 
         public Int32 NodeTypeId
         {
-            get { return Convert.ToInt32( _NodeTypeRow["nodetypeid"].ToString() ); }
+            get { return CswConvert.ToInt32( _NodeTypeRow["nodetypeid"].ToString() ); }
         }
         public string NodeTypeName
         {
@@ -269,7 +269,7 @@ namespace ChemSW.Nbt.MetaData
 
         public CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( Convert.ToInt32( _NodeTypeRow["objectclassid"].ToString() ) ); }
+            get { return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswConvert.ToInt32( _NodeTypeRow["objectclassid"].ToString() ) ); }
         }
 
 

@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.WebPages
                     _Mode = (LayoutMode) Enum.Parse( typeof( LayoutMode ), Request.QueryString["mode"] );
 
                 if( Request.QueryString["nodetypeid"] != string.Empty )
-                    NodeType = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( Request.QueryString["nodetypeid"] ) );
+                    NodeType = Master.CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( Request.QueryString["nodetypeid"] ) );
 
                 if( NodeType == null )
                     Master.Redirect( "Design.aspx" );
@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.WebPages
             CswNbtMetaDataNodeTypeTab Tab = null;
             if( _Mode != LayoutMode.Add )
             {
-                Tab = Master.CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( SelectedTabId ) );
+                Tab = Master.CswNbtResources.MetaData.getNodeTypeTab( CswConvert.ToInt32( SelectedTabId ) );
 
                 // Tab data
                 Literal TabNameLiteral = new Literal();
@@ -347,8 +347,8 @@ namespace ChemSW.Nbt.WebPages
                 {
                     if( CswTools.IsInteger( TabOrderTextBox.Text ) )
                     {
-                        CswNbtMetaDataNodeTypeTab Tab = Master.CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( SelectedTabId ) );
-                        Tab.TabOrder = Convert.ToInt32( TabOrderTextBox.Text );
+                        CswNbtMetaDataNodeTypeTab Tab = Master.CswNbtResources.MetaData.getNodeTypeTab( CswConvert.ToInt32( SelectedTabId ) );
+                        Tab.TabOrder = CswConvert.ToInt32( TabOrderTextBox.Text );
                     }
                 }
 
@@ -367,23 +367,23 @@ namespace ChemSW.Nbt.WebPages
                     {
                         if( CswTools.IsInteger( LCS.DisplayRowTextBox.Text ) )
                         {
-                            DisplayRow = Convert.ToInt32( LCS.DisplayRowTextBox.Text );
+                            DisplayRow = CswConvert.ToInt32( LCS.DisplayRowTextBox.Text );
                         }
                     }
                     else if( _Mode == LayoutMode.Add )
                     {
                         SetValOnAdd = LCS.SetValOnAddCheckBox.Checked;
                         if( CswTools.IsInteger( LCS.DisplayRowTextBox.Text ) )
-                            DisplayRowAdd = Convert.ToInt32( LCS.DisplayRowTextBox.Text );
+                            DisplayRowAdd = CswConvert.ToInt32( LCS.DisplayRowTextBox.Text );
                         if( CswTools.IsInteger( LCS.DisplayColTextBox.Text ) )
-                            DisplayColAdd = Convert.ToInt32( LCS.DisplayColTextBox.Text );
+                            DisplayColAdd = CswConvert.ToInt32( LCS.DisplayColTextBox.Text );
                     }
                     else
                     {
                         if( CswTools.IsInteger( LCS.DisplayRowTextBox.Text ) )
-                            DisplayRow = Convert.ToInt32( LCS.DisplayRowTextBox.Text );
+                            DisplayRow = CswConvert.ToInt32( LCS.DisplayRowTextBox.Text );
                         if( CswTools.IsInteger( LCS.DisplayColTextBox.Text ) )
-                            DisplayColumn = Convert.ToInt32( LCS.DisplayColTextBox.Text );
+                            DisplayColumn = CswConvert.ToInt32( LCS.DisplayColTextBox.Text );
                     }
 
                     Prop.DisplayRow = DisplayRow;

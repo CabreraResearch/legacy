@@ -30,16 +30,16 @@
 //                {
 //                    if( -1 == NodeTypeId ) 
 //                    { 
-//                        NodeTypeId = Convert.ToInt32( InsertedRow["nodetypeid"] );
+//                        NodeTypeId = CswConvert.ToInt32( InsertedRow["nodetypeid"] );
 
-//                    } else if( Convert.ToInt32( InsertedRow["nodetypeid"] ) != NodeTypeId ) 
+//                    } else if( CswConvert.ToInt32( InsertedRow["nodetypeid"] ) != NodeTypeId ) 
 //                    {
 //                        throw( new CswDniException( "Current nodetype_props table contains records for more than one nodetype id; this validation routine would need to be redsigned to handle this contingency; IINS?" ) );
 //                    }//
 
 //                    if( !InsertedRow.IsNull( "fieldtypeid" ) )
 //                    {
-//                        int FieldTypeId = Convert.ToInt32( InsertedRow[ "fieldtypeid" ] );
+//                        int FieldTypeId = CswConvert.ToInt32( InsertedRow[ "fieldtypeid" ] );
 //                        CswTableCaddy FieldTypesCaddy = _CswTableCaddyFactory.makeCswTableCaddy( "field_types" );
 //                        FieldTypesCaddy.FilterColumn = "fieldtypeid";
 //                        FieldTypesCaddy.RequireOneRow = true;
@@ -97,7 +97,7 @@
 //            {
 //                if( ! InsertedRow.IsNull( "nodetypeid" ) )
 //                {
-//                    int NodeTypeId = Convert.ToInt32( InsertedRow[ "nodetypeid" ] );
+//                    int NodeTypeId = CswConvert.ToInt32( InsertedRow[ "nodetypeid" ] );
 //                    // Add the prop to the first open slot in the first column on the tab.
 //                    CswTableCaddy TabCaddy = _CswTableCaddyFactory.makeCswTableCaddy( "nodetype_tabset" );
 //                    DataTable NodeTypeTabs = null;
@@ -111,11 +111,11 @@
 //                    {
 //                        TabCaddy.FilterColumn = "nodetypetabsetid";
 //                        TabCaddy.addOrderByColumn("taborder");
-//                        NodeTypeTabs = TabCaddy[Convert.ToInt32(InsertedRow["nodetypetabsetid"].ToString())].Table;
+//                        NodeTypeTabs = TabCaddy[CswConvert.ToInt32(InsertedRow["nodetypetabsetid"].ToString())].Table;
 //                    }
 //                    if( NodeTypeTabs.Rows.Count > 0 )
 //                    {
-//                        int TabId = Convert.ToInt32( NodeTypeTabs.Rows[ 0 ][ "nodetypetabsetid" ].ToString() );
+//                        int TabId = CswConvert.ToInt32( NodeTypeTabs.Rows[ 0 ][ "nodetypetabsetid" ].ToString() );
 //                        InsertedRow[ "nodetypetabsetid" ] = TabId;
 //                        InsertedRow[ "display_col" ] = 1;
 
@@ -129,10 +129,10 @@
 //                        {
 //                            if( PropRow[ "display_col" ].ToString() != "" &&
 //                                PropRow[ "display_row" ].ToString() != "" &&
-//                                1 == Convert.ToInt32( PropRow[ "display_col" ].ToString() ) &&
-//                                maxrow < Convert.ToInt32( PropRow[ "display_row" ].ToString() ) )
+//                                1 == CswConvert.ToInt32( PropRow[ "display_col" ].ToString() ) &&
+//                                maxrow < CswConvert.ToInt32( PropRow[ "display_row" ].ToString() ) )
 //                            {
-//                                maxrow = Convert.ToInt32( PropRow[ "display_row" ].ToString() );
+//                                maxrow = CswConvert.ToInt32( PropRow[ "display_row" ].ToString() );
 //                            }
 //                        }
 //                        InsertedRow[ "display_row" ] = maxrow + 1;

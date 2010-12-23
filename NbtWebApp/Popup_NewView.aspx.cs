@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.WebPages
                 SessionViewId = Int32.MinValue;
                 if( Request.QueryString["sessionviewid"] != null && CswTools.IsInteger( Request.QueryString["sessionviewid"] ) )
                 {
-                    SessionViewId = Convert.ToInt32( Request.QueryString["sessionviewid"] );
+                    SessionViewId = CswConvert.ToInt32( Request.QueryString["sessionviewid"] );
                 }
 
                 _CopyList.Visible = false;
@@ -215,7 +215,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     Int32 CopyViewId = Int32.MinValue;
                     if( CswTools.IsInteger( _CopyList.SelectedValue ) )
-                        CopyViewId = Convert.ToInt32( _CopyList.SelectedValue );
+                        CopyViewId = CswConvert.ToInt32( _CopyList.SelectedValue );
                     View.makeNew( _NewViewNameBox.Text,
                                   ViewVisibilityEditor.SelectedVisibility,
                                   ViewVisibilityEditor.SelectedRoleId,

@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.WebPages
             Double QuantityPerChild = Double.NaN;
             try
             {
-                NumberOfChildren = Convert.ToInt32( NumberOfChildSamplesTextBox.Text );
+                NumberOfChildren = CswConvert.ToInt32( NumberOfChildSamplesTextBox.Text );
                 QuantityPerChild = Convert.ToDouble( QuantityPerChildSampleTextBox.Text );
             }
             catch( Exception ex )

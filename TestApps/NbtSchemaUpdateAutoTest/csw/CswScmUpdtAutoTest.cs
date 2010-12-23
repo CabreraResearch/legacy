@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
 
         //private Int32 CurrentVersion
         //{
-        //    get { return Convert.ToInt32( _CswNbtResources.getConfigVariableValue( "schemaversion" ) ); }
+        //    get { return CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "schemaversion" ) ); }
         //}
 
         ///// <summary>

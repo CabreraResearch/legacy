@@ -59,7 +59,7 @@ namespace ChemSW.NbtWebControls
             get
             {
                 if( HF_ParentNodeId.Value != string.Empty )
-                    return new CswPrimaryKey( "nodes", Convert.ToInt32( HF_ParentNodeId.Value ) );
+                    return new CswPrimaryKey( "nodes", CswConvert.ToInt32( HF_ParentNodeId.Value ) );
                 else
                     return null;   // Top
             }
@@ -93,7 +93,7 @@ namespace ChemSW.NbtWebControls
             get
             {
                 if( HF_SelectedNodeId.Value != string.Empty )
-                    return new CswPrimaryKey( "nodes", Convert.ToInt32( HF_SelectedNodeId.Value ) );
+                    return new CswPrimaryKey( "nodes", CswConvert.ToInt32( HF_SelectedNodeId.Value ) );
                 else
                     return null;
             }
@@ -108,7 +108,7 @@ namespace ChemSW.NbtWebControls
             get
             {
                 if (HF_SelectedColumn.Value != string.Empty)
-                    return Convert.ToInt32(HF_SelectedColumn.Value);
+                    return CswConvert.ToInt32(HF_SelectedColumn.Value);
                 else
                     return Int32.MinValue;
             }
@@ -122,7 +122,7 @@ namespace ChemSW.NbtWebControls
             get
             {
                 if (HF_SelectedRow.Value != string.Empty)
-                    return Convert.ToInt32(HF_SelectedRow.Value);
+                    return CswConvert.ToInt32(HF_SelectedRow.Value);
                 else
                     return Int32.MinValue;
             }
@@ -317,7 +317,7 @@ namespace ChemSW.NbtWebControls
             {
                 if (e.ClickedKey.Substring(0, CswLocationImage.KeyPrefix.Length) == CswLocationImage.KeyPrefix)
                 {
-                    CswPrimaryKey NewNodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( e.ClickedKey.Substring( CswLocationImage.KeyPrefix.Length ) ) );
+                    CswPrimaryKey NewNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( e.ClickedKey.Substring( CswLocationImage.KeyPrefix.Length ) ) );
                     ParentNodeId = NewNodeId;
                     ParentNodeName = e.ClickedText;
                     if (!MoveMode)
@@ -348,7 +348,7 @@ namespace ChemSW.NbtWebControls
                     e.ClickedId.Substring(0, CswLocationImage.KeyPrefix.Length) == CswLocationImage.KeyPrefix)
                 {
                     // Clicked a location node
-                    CswPrimaryKey NewNodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( e.ClickedId.Substring( CswLocationImage.KeyPrefix.Length ) ) );
+                    CswPrimaryKey NewNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( e.ClickedId.Substring( CswLocationImage.KeyPrefix.Length ) ) );
 
                     if (!MoveMode || ParentNodeId == NewNodeId)
                     {
@@ -368,14 +368,14 @@ namespace ChemSW.NbtWebControls
                     // Clicked a Grid cell
                     SelectedNodeId = ParentNodeId;
                     string GridCell = e.ClickedId.Substring(CswLocationImage.GridKeyPrefix.Length);
-                    SelectedRow = Convert.ToInt32(GridCell.Substring(0, GridCell.LastIndexOf('_')));
-                    SelectedColumn = Convert.ToInt32(GridCell.Substring(GridCell.LastIndexOf('_') + 1));
+                    SelectedRow = CswConvert.ToInt32(GridCell.Substring(0, GridCell.LastIndexOf('_')));
+                    SelectedColumn = CswConvert.ToInt32(GridCell.Substring(GridCell.LastIndexOf('_') + 1));
                 }
                 else if (e.ClickedId.Length > CswLocationImage.NodePrefix.Length &&
                          e.ClickedId.Substring(0, CswLocationImage.NodePrefix.Length) == CswLocationImage.NodePrefix)
                 {
                     // Clicked a non-location node
-                    SelectedNodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( e.ClickedId.Substring( CswLocationImage.NodePrefix.Length ) ) );
+                    SelectedNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( e.ClickedId.Substring( CswLocationImage.NodePrefix.Length ) ) );
                 }
 
                 initImage();
@@ -497,7 +497,7 @@ namespace ChemSW.NbtWebControls
         {
             CswPrimaryKey NodeId = null;
             if( Node.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText != string.Empty )
-                NodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( Node.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText ) );
+                NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Node.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText ) );
 
             if (Node.ParentNode != null && Node.ParentNode.ParentNode != null)
             {

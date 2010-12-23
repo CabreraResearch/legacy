@@ -147,7 +147,7 @@ namespace ChemSW.Nbt
 
         public void makeMoreNodeFromRow( CswNbtNodeKey ParentNodeKey, DataRow Row, Int32 NodeCount, CswNbtViewNode ViewNode )
         {
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( Row[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ) );
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( Row[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ) );
             string TableName = NodeType.TableName;
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
 
@@ -284,13 +284,13 @@ namespace ChemSW.Nbt
 
             CswNbtNodeKey NodeKey = _makeNodeKeyFromString( XmlNode.Attributes[_AttrName_Key].Value );
 
-            //CswNbtNode ReturnVal = _CswNbtNodeCollection.makeEmptyNode(Convert.ToInt32( XmlNode.Attributes[ _AttrName_NodeId ].Value ), 
-            //                                                           Convert.ToInt32( XmlNode.Attributes[ _AttrName_NodeTypeId ].Value ),
+            //CswNbtNode ReturnVal = _CswNbtNodeCollection.makeEmptyNode(CswConvert.ToInt32( XmlNode.Attributes[ _AttrName_NodeId ].Value ), 
+            //                                                           CswConvert.ToInt32( XmlNode.Attributes[ _AttrName_NodeTypeId ].Value ),
             //                                                           CswNbtNodeKey.NodeSpecies);
 
-            CswNbtNode ReturnVal = _CswNbtNodeCollection.GetNode( new CswPrimaryKey( XmlNode.Attributes[_AttrName_TableName].Value, Convert.ToInt32( XmlNode.Attributes[_AttrName_NodeId].Value ) ) );
+            CswNbtNode ReturnVal = _CswNbtNodeCollection.GetNode( new CswPrimaryKey( XmlNode.Attributes[_AttrName_TableName].Value, CswConvert.ToInt32( XmlNode.Attributes[_AttrName_NodeId].Value ) ) );
 
-            //ReturnVal.NodeId = Convert.ToInt32( XmlNode.Attributes[ _AttrName_NodeId ].Value );
+            //ReturnVal.NodeId = CswConvert.ToInt32( XmlNode.Attributes[ _AttrName_NodeId ].Value );
             //ReturnVal.NodeKey = CswNbtNodeKey;
             //ReturnVal.NodeKey.TreeKey = _CswNbtTreeKey;
 
@@ -299,10 +299,10 @@ namespace ChemSW.Nbt
                 ReturnVal.IconFileName = "Images/icons/" + XmlNode.Attributes[_AttrName_IconFileName].Value;
                 //ReturnVal.NameTemplate = XmlNode.Attributes[ _AttrName_NameTemplate ].Value;
                 ReturnVal.NodeName = XmlNode.Attributes[_AttrName_NodeName].Value;
-                ReturnVal.NodeTypeId = Convert.ToInt32( XmlNode.Attributes[_AttrName_NodeTypeId].Value );
+                ReturnVal.NodeTypeId = CswConvert.ToInt32( XmlNode.Attributes[_AttrName_NodeTypeId].Value );
                 //ReturnVal.NodeTypeName = XmlNode.Attributes[ _AttrName_NodeTypeName ].Value;
                 //ReturnVal.ObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.getObjectClassFromString(XmlNode.Attributes[_AttrName_ObjectClass].Value));
-                ReturnVal.ObjectClassId = Convert.ToInt32( XmlNode.Attributes[_AttrName_ObjectClassId].Value );
+                ReturnVal.ObjectClassId = CswConvert.ToInt32( XmlNode.Attributes[_AttrName_ObjectClassId].Value );
                 //ReturnVal.Modified = false; //bz #5943
             }
             if( XmlNode.Attributes[_AttrName_Selectable] != null )
@@ -534,11 +534,11 @@ namespace ChemSW.Nbt
                 //    NewNodeKey.NodeSpecies = NodeSpecies.Placeholder;
 
                 if( XmlNode.Attributes[_AttrName_TableName] != null )
-                    NewNodeKey.NodeId = new CswPrimaryKey( XmlNode.Attributes[_AttrName_TableName].Value, Convert.ToInt32( XmlNode.Attributes[_AttrName_NodeId].Value ) );
+                    NewNodeKey.NodeId = new CswPrimaryKey( XmlNode.Attributes[_AttrName_TableName].Value, CswConvert.ToInt32( XmlNode.Attributes[_AttrName_NodeId].Value ) );
                 else
-                    NewNodeKey.NodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( XmlNode.Attributes[_AttrName_NodeId].Value ) );
-                NewNodeKey.NodeTypeId = Convert.ToInt32( XmlNode.Attributes[_AttrName_NodeTypeId].Value );
-                NewNodeKey.ObjectClassId = Convert.ToInt32( XmlNode.Attributes[_AttrName_ObjectClassId].Value );
+                    NewNodeKey.NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( XmlNode.Attributes[_AttrName_NodeId].Value ) );
+                NewNodeKey.NodeTypeId = CswConvert.ToInt32( XmlNode.Attributes[_AttrName_NodeTypeId].Value );
+                NewNodeKey.ObjectClassId = CswConvert.ToInt32( XmlNode.Attributes[_AttrName_ObjectClassId].Value );
                 if( ViewNode != null )
                     NewNodeKey.ViewNodeUniqueId = ViewNode.UniqueId;
             }
@@ -551,7 +551,8 @@ namespace ChemSW.Nbt
             //CswNbtNodeContext NewNodeContext = _makeNodeContext(NewNodeKey, ViewNode, NodeCount);
 
             //            NodeEntries.Add(NewNodeKey, NewNodeContext);
-            NodesAndParents.Add( NewNodeKey, ParentNodeKey );
+            if( !NodesAndParents.ContainsKey( NewNodeKey ) )
+                NodesAndParents.Add( NewNodeKey, ParentNodeKey );
 
             return ( NewNodeKey );
         }
@@ -571,9 +572,9 @@ namespace ChemSW.Nbt
         //                    ReturnVal.NodeSpecies = NodeSpecies.Placeholder;
         //                }
 
-        //                ReturnVal.NodeId = Convert.ToInt32( XmlNode.Attributes[ _AttrName_NodeId ].Value );
-        //                ReturnVal.NodeTypeId = Convert.ToInt32(XmlNode.Attributes[_AttrName_NodeTypeId].Value);
-        //                ReturnVal.ObjectClassId = Convert.ToInt32( XmlNode.Attributes[ _AttrName_ObjectClassId ].Value );
+        //                ReturnVal.NodeId = CswConvert.ToInt32( XmlNode.Attributes[ _AttrName_NodeId ].Value );
+        //                ReturnVal.NodeTypeId = CswConvert.ToInt32(XmlNode.Attributes[_AttrName_NodeTypeId].Value);
+        //                ReturnVal.ObjectClassId = CswConvert.ToInt32( XmlNode.Attributes[ _AttrName_ObjectClassId ].Value );
         //            }
         //            else if( _ElemName_Tree == XmlNode.Name )
         //            {
@@ -634,7 +635,7 @@ namespace ChemSW.Nbt
 
         private Collection<CswNbtNodeKey> _loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount )
         {
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ) );
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ) );
             string TableName = NodeType.TableName;
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
 
@@ -643,9 +644,9 @@ namespace ChemSW.Nbt
                                      DataRowToAdd[_CswNbtColumnNames.NameTemplate.ToLower()].ToString(),
                                      new CswPrimaryKey( TableName, CswConvert.ToInt32( DataRowToAdd[PkColumnName] ) ),
                                      DataRowToAdd[_CswNbtColumnNames.NodeName.ToLower()].ToString(),
-                                     Convert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ),
+                                     CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ),
                                      DataRowToAdd[_CswNbtColumnNames.NodeTypeName.ToLower()].ToString(),
-                                     Convert.ToInt32( DataRowToAdd[_CswNbtColumnNames.ObjectClassId.ToLower()].ToString() ),
+                                     CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.ObjectClassId.ToLower()].ToString() ),
                                      DataRowToAdd[_CswNbtColumnNames.ObjectClassName.ToLower()].ToString()
                                    );
         }
@@ -886,7 +887,7 @@ namespace ChemSW.Nbt
             if( _CurrentNode.Name != _ElemName_Node )
                 throw ( new CswDniException( "The current node (" + _CurrentNode.Name + ") is not a CswNbtNode" ) );
 
-            return new CswPrimaryKey( _CurrentNode.Attributes[_AttrName_TableName].Value, Convert.ToInt32( _CurrentNode.Attributes[_AttrName_NodeId].Value ) );
+            return new CswPrimaryKey( _CurrentNode.Attributes[_AttrName_TableName].Value, CswConvert.ToInt32( _CurrentNode.Attributes[_AttrName_NodeId].Value ) );
 
         }//getIdForCurrentNode()
 

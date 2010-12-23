@@ -374,19 +374,19 @@ namespace ChemSW.Nbt
                     {
                         setPropValue( (PropOwnerType) Enum.Parse( typeof( PropOwnerType ), StringRelationship[4], true ),
                                       (PropIdType) Enum.Parse( typeof( PropIdType ), StringRelationship[2], true ),
-                                      Convert.ToInt32( StringRelationship[1] ),
+                                      CswConvert.ToInt32( StringRelationship[1] ),
                                       StringRelationship[3] );
                     }
                     if( StringRelationship[5] != String.Empty )
                     {
                         setFirst( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), StringRelationship[6], true ),
-                                  Convert.ToInt32( StringRelationship[5] ),
+                                  CswConvert.ToInt32( StringRelationship[5] ),
                                   StringRelationship[7] );
                     }
                     if( StringRelationship[8] != String.Empty )
                     {
                         setSecond( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), StringRelationship[9], true ),
-                                   Convert.ToInt32( StringRelationship[8] ),
+                                   CswConvert.ToInt32( StringRelationship[8] ),
                                    StringRelationship[10],
                                    StringRelationship[11] );
                     }
@@ -415,7 +415,7 @@ namespace ChemSW.Nbt
                     if( StringRelationship[20] != string.Empty )
                     {
                         setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), StringRelationship[20], true ),
-                                        Convert.ToInt32( StringRelationship[21] ),
+                                        CswConvert.ToInt32( StringRelationship[21] ),
                                         StringRelationship[22] );
                     }
                 }
@@ -440,13 +440,13 @@ namespace ChemSW.Nbt
                 {
                     setPropValue( (PropOwnerType) Enum.Parse( typeof( PropOwnerType ), RelationshipNode.Attributes[PropOwnerAttrName].Value, true ),
                                   (PropIdType) Enum.Parse( typeof( PropIdType ), RelationshipNode.Attributes[PropTypeAttrName].Value, true ),
-                                  Convert.ToInt32( RelationshipNode.Attributes[PropIdAttrName].Value ),
+                                  CswConvert.ToInt32( RelationshipNode.Attributes[PropIdAttrName].Value ),
                                   RelationshipNode.Attributes[PropNameAttrName].Value );
                 }
                 if( RelationshipNode.Attributes[FirstIdAttrName] != null )
                 {
                     setFirst( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), RelationshipNode.Attributes[FirstTypeAttrName].Value, true ),
-                              Convert.ToInt32( RelationshipNode.Attributes[FirstIdAttrName].Value ),
+                              CswConvert.ToInt32( RelationshipNode.Attributes[FirstIdAttrName].Value ),
                               RelationshipNode.Attributes[FirstNameAttrName].Value );
                 }
                 if( RelationshipNode.Attributes[SecondIdAttrName] != null )
@@ -456,14 +456,14 @@ namespace ChemSW.Nbt
                         icon = RelationshipNode.Attributes[SecondIconFileNameAttrName].Value;
 
                     setSecond( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), RelationshipNode.Attributes[SecondTypeAttrName].Value, true ),
-                               Convert.ToInt32( RelationshipNode.Attributes[SecondIdAttrName].Value ),
+                               CswConvert.ToInt32( RelationshipNode.Attributes[SecondIdAttrName].Value ),
                                RelationshipNode.Attributes[SecondNameAttrName].Value,
                                icon );
                 }
                 if( RelationshipNode.Attributes[GroupByPropIdAttrName] != null )
                 {
                     setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), RelationshipNode.Attributes[GroupByPropTypeAttrName].Value, true ),
-                                    Convert.ToInt32( RelationshipNode.Attributes[GroupByPropIdAttrName].Value ),
+                                    CswConvert.ToInt32( RelationshipNode.Attributes[GroupByPropIdAttrName].Value ),
                                     RelationshipNode.Attributes[GroupByPropNameAttrName].Value );
                 }
 

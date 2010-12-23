@@ -505,7 +505,7 @@ namespace ChemSW.Nbt.WebPages
                 string SelectedNodeValue = ( (HiddenField) HiddenChangeViewId ).Value;
                 string[] SplitValue = SelectedNodeValue.Split( '_' );
                 CswViewListTree.ViewType SelectedViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), SplitValue[0] );
-                ChangeMainView( SelectedViewType, Convert.ToInt32( SplitValue[1] ) );
+                ChangeMainView( SelectedViewType, CswConvert.ToInt32( SplitValue[1] ) );
             }
             catch( Exception ex )
             {

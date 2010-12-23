@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.WebPages
                 case 1:
                     break;
                 case 2:
-                    if( !_initTree( Convert.ToInt32( _LoadAliquotsViewList.SelectedValue ), _AliquotsTreeView, CswNbtMetaDataObjectClass.NbtObjectClass.AliquotClass ) )
+                    if( !_initTree( CswConvert.ToInt32( _LoadAliquotsViewList.SelectedValue ), _AliquotsTreeView, CswNbtMetaDataObjectClass.NbtObjectClass.AliquotClass ) )
                     {
                         Literal ErrorMsg = new Literal();
                         ErrorMsg.Text = "Please select a valid view";
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.WebPages
                     }
                     break;
                 case 4:
-                    if( !_initTree( Convert.ToInt32( _LoadTestsViewList.SelectedValue ), _TestsTreeView, CswNbtMetaDataObjectClass.NbtObjectClass.TestClass ) )
+                    if( !_initTree( CswConvert.ToInt32( _LoadTestsViewList.SelectedValue ), _TestsTreeView, CswNbtMetaDataObjectClass.NbtObjectClass.TestClass ) )
                     {
                         Literal ErrorMsg = new Literal();
                         ErrorMsg.Text = "Please select a valid view";
@@ -247,13 +247,13 @@ namespace ChemSW.Nbt.WebPages
         //{
         //    if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
         //    {
-        //        CswNbtMetaDataObjectClass ObjectClass = Master.CswNbtResources.MetaData.getObjectClass( Convert.ToInt32( Relationship.SecondId ) );
+        //        CswNbtMetaDataObjectClass ObjectClass = Master.CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( Relationship.SecondId ) );
         //        if( ObjectClass.ObjectClass != FilterToObjectClass )
         //            Relationship.ShowInTree = false;
         //    }
         //    else
         //    {
-        //        CswNbtMetaDataNodeType NodeType = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( Relationship.SecondId ) );
+        //        CswNbtMetaDataNodeType NodeType = Master.CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( Relationship.SecondId ) );
         //        CswNbtMetaDataObjectClass ObjectClass = NodeType.ObjectClass;
         //        if( ObjectClass.ObjectClass != FilterToObjectClass )
         //            Relationship.ShowInTree = false;

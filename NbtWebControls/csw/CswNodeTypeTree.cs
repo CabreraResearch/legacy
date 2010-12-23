@@ -154,7 +154,7 @@ namespace ChemSW.NbtWebControls
                         NodeTypeXmlNode = _makeNodeTypes( XmlDoc, null, SelectedCategory, CategoryXmlNode );
                     break;
                 case NodeTypeTreeSelectedType.NodeTypeBaseVersion:
-                    SelectedBaseVersion = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( PriorSelectedValue ) );
+                    SelectedBaseVersion = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PriorSelectedValue ) );
                     if(SelectedBaseVersion != null)
                         SelectedCategory = SelectedBaseVersion.LatestVersionNodeType.Category;
                     CategoryXmlNode = _makeCategories( XmlDoc, SelectedCategory, Root );
@@ -162,7 +162,7 @@ namespace ChemSW.NbtWebControls
                         NodeTypeXmlNode = _makeNodeTypes( XmlDoc, SelectedBaseVersion, SelectedCategory, CategoryXmlNode );
                     break;
                 case NodeTypeTreeSelectedType.NodeType:
-                    SelectedNodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( PriorSelectedValue ) );
+                    SelectedNodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PriorSelectedValue ) );
                     if( SelectedNodeType != null )
                     {
                         SelectedBaseVersion = SelectedNodeType.FirstVersionNodeType;
@@ -175,7 +175,7 @@ namespace ChemSW.NbtWebControls
                         TabXmlNode = _makeTabs( XmlDoc, null, SelectedNodeType, NodeTypeXmlNode );
                     break;
                 case NodeTypeTreeSelectedType.Tab:
-                    SelectedTab = _CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( PriorSelectedValue ) );
+                    SelectedTab = _CswNbtResources.MetaData.getNodeTypeTab( CswConvert.ToInt32( PriorSelectedValue ) );
                     if( SelectedTab != null )
                     {
                         SelectedNodeType = SelectedTab.NodeType;
@@ -192,7 +192,7 @@ namespace ChemSW.NbtWebControls
                     break; 
                 case NodeTypeTreeSelectedType.Property:
                     string SelectedPropFilter = string.Empty; 
-                    SelectedProperty = _CswNbtResources.MetaData.getNodeTypeProp( Convert.ToInt32( PriorSelectedValue ) );
+                    SelectedProperty = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PriorSelectedValue ) );
                     if( SelectedProperty != null )
                     {
                         SelectedTab = SelectedProperty.NodeTypeTab;
@@ -211,7 +211,7 @@ namespace ChemSW.NbtWebControls
                         _makeProperties( XmlDoc, SelectedPropFilter, SelectedProperty, SelectedTab, TabXmlNode );
                     break;
                 case NodeTypeTreeSelectedType.PropertyFilter:
-                    SelectedProperty = _CswNbtResources.MetaData.getNodeTypeProp( Convert.ToInt32( PriorSelectedValue.Substring( 0, PriorSelectedValue.IndexOf( "_" ) ) ) );
+                    SelectedProperty = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PriorSelectedValue.Substring( 0, PriorSelectedValue.IndexOf( "_" ) ) ) );
                     if( SelectedProperty != null )
                     {
                         SelectedTab = SelectedProperty.NodeTypeTab;
@@ -416,7 +416,7 @@ namespace ChemSW.NbtWebControls
                             {
                                 if( OtherPropNode.Attributes["Value"].Value.Substring( 0, NodeTypePropPrefix.Length ) == NodeTypePropPrefix )
                                 {
-                                    Int32 OtherPropId = Convert.ToInt32( OtherPropNode.Attributes["Value"].Value.Substring( NodeTypePropPrefix.Length ) );
+                                    Int32 OtherPropId = CswConvert.ToInt32( OtherPropNode.Attributes["Value"].Value.Substring( NodeTypePropPrefix.Length ) );
                                     CswNbtMetaDataNodeTypeProp OtherProp = ConditionalProp.NodeType.getNodeTypeProp( OtherPropId );
                                     if( SelectedProp != null &&
                                         ConditionalProp.FilterNodeTypePropId == OtherProp.FirstPropVersionId &&
@@ -548,7 +548,7 @@ namespace ChemSW.NbtWebControls
         //    get
         //    {
         //        if (SelectedNode != null)
-        //            return Convert.ToInt32(SelectedNode.Value);
+        //            return CswConvert.ToInt32(SelectedNode.Value);
         //        else
         //            return Int32.MinValue;
         //    }
@@ -564,7 +564,7 @@ namespace ChemSW.NbtWebControls
             if (TreeView.Nodes.Count >= 1)                             //root
                 if (TreeView.Nodes[0].Nodes.Count >= 1)                //first cat
                     if (TreeView.Nodes[0].Nodes[0].Nodes.Count >= 1)   //nodetypes
-                        FirstNodeTypeId = Convert.ToInt32(getValueOfNode(TreeView.Nodes[0].Nodes[0].Nodes[0]));
+                        FirstNodeTypeId = CswConvert.ToInt32(getValueOfNode(TreeView.Nodes[0].Nodes[0].Nodes[0]));
             return FirstNodeTypeId;
         }
 
@@ -575,7 +575,7 @@ namespace ChemSW.NbtWebControls
         //private Int32 getFirstNodeTypeIdRecursive(TreeViewNode Node)
         //{
         //    if (Node.ID.Substring(0, NodeTypePrefix.Length) == NodeTypePrefix)
-        //        return Convert.ToInt32(Node.Value);
+        //        return CswConvert.ToInt32(Node.Value);
         //    else if (Node.Nodes.Count > 0)
         //        return getFirstNodeTypeIdRecursive(Node.Nodes[0]);
         //    else
@@ -588,10 +588,10 @@ namespace ChemSW.NbtWebControls
             if (TreeView.Nodes.Count >= 1)                                   //root
                 if (TreeView.Nodes[0].Nodes.Count >= 1)                      //first cat
                     if (TreeView.Nodes[0].Nodes[0].Nodes.Count > 1)          //nodetypes
-                        SecondNodeTypeId = Convert.ToInt32(getValueOfNode(TreeView.Nodes[0].Nodes[0].Nodes[1]));
+                        SecondNodeTypeId = CswConvert.ToInt32(getValueOfNode(TreeView.Nodes[0].Nodes[0].Nodes[1]));
                     else if (TreeView.Nodes[0].Nodes.Count > 1)              // second cat
                         if (TreeView.Nodes[0].Nodes[1].Nodes.Count >= 1)     // nodetypes
-                            SecondNodeTypeId = Convert.ToInt32(getValueOfNode(TreeView.Nodes[0].Nodes[1].Nodes[0]));
+                            SecondNodeTypeId = CswConvert.ToInt32(getValueOfNode(TreeView.Nodes[0].Nodes[1].Nodes[0]));
 
             return SecondNodeTypeId;
         }
@@ -671,7 +671,7 @@ namespace ChemSW.NbtWebControls
         protected override void OnPreRender(EventArgs e)
         {
             //if (TreeView.SelectedNode != null)
-            //    synchControls(Convert.ToInt32(TreeView.SelectedNode.ID));
+            //    synchControls(CswConvert.ToInt32(TreeView.SelectedNode.ID));
             //else
             //    synchControls(Int32.MinValue);
 
@@ -781,15 +781,15 @@ namespace ChemSW.NbtWebControls
                 //        break;
                 //    case NodeTypeTreeSelectedType.NodeType:
                 //        if (NodeTypeSelected != null)
-                //            NodeTypeSelected(sender, new NodeTypeSelectedEventArgs(Convert.ToInt32(Value)));
+                //            NodeTypeSelected(sender, new NodeTypeSelectedEventArgs(CswConvert.ToInt32(Value)));
                 //        break;
                 //    case NodeTypeTreeSelectedType.Tab:
                 //        if (NodeTypeTabSelected != null)
-                //            NodeTypeTabSelected(sender, new NodeTypeTabSelectedEventArgs(Convert.ToInt32(Value)));
+                //            NodeTypeTabSelected(sender, new NodeTypeTabSelectedEventArgs(CswConvert.ToInt32(Value)));
                 //        break;
                 //    case NodeTypeTreeSelectedType.Property:
                 //        if (NodeTypePropSelected != null)
-                //            NodeTypePropSelected(sender, new NodeTypePropSelectedEventArgs(Convert.ToInt32(Value)));
+                //            NodeTypePropSelected(sender, new NodeTypePropSelectedEventArgs(CswConvert.ToInt32(Value)));
                 //        break;
                 //    case NodeTypeTreeSelectedType.Root:
                 //        if (RootSelected != null)
@@ -941,27 +941,27 @@ namespace ChemSW.NbtWebControls
                     case NodeTypeTreeSelectedType.NodeTypeBaseVersion:
                         NodeToSelect = TreeView.FindNodeByValue( NodeTypeBaseVersionPrefix + Value );
                         //if( NodeTypeBaseVersionSelected != null )
-                        //    NodeTypeBaseVersionSelected( this, new NodeTypeBaseVersionSelectedEventArgs( Convert.ToInt32( Value ) ) );
+                        //    NodeTypeBaseVersionSelected( this, new NodeTypeBaseVersionSelectedEventArgs( CswConvert.ToInt32( Value ) ) );
                         break;
                     case NodeTypeTreeSelectedType.NodeType:
                         NodeToSelect = TreeView.FindNodeByValue( NodeTypePrefix + Value );
                         //if( NodeTypeSelected != null )
-                        //    NodeTypeSelected( this, new NodeTypeSelectedEventArgs( Convert.ToInt32( Value ) ) );
+                        //    NodeTypeSelected( this, new NodeTypeSelectedEventArgs( CswConvert.ToInt32( Value ) ) );
                         break;
                     case NodeTypeTreeSelectedType.Tab:
                         NodeToSelect = TreeView.FindNodeByValue( NodeTypeTabPrefix + Value );
                         //if( NodeTypeTabSelected != null )
-                        //    NodeTypeTabSelected( this, new NodeTypeTabSelectedEventArgs( Convert.ToInt32( Value ) ) );
+                        //    NodeTypeTabSelected( this, new NodeTypeTabSelectedEventArgs( CswConvert.ToInt32( Value ) ) );
                         break;
                     case NodeTypeTreeSelectedType.Property:
                         NodeToSelect = TreeView.FindNodeByValue( NodeTypePropPrefix + Value );
                         //if( NodeTypePropSelected != null )
-                        //    NodeTypePropSelected( this, new NodeTypePropSelectedEventArgs( Convert.ToInt32( Value ) ) );
+                        //    NodeTypePropSelected( this, new NodeTypePropSelectedEventArgs( CswConvert.ToInt32( Value ) ) );
                         break;
                     case NodeTypeTreeSelectedType.PropertyFilter:
                         NodeToSelect = TreeView.FindNodeByValue( NodeTypePropFilterPrefix + Value );
                         //if( NodeTypePropFilterSelected != null )
-                        //    NodeTypePropFilterSelected( this, new NodeTypePropFilterSelectedEventArgs( Convert.ToInt32( Value ) ) );
+                        //    NodeTypePropFilterSelected( this, new NodeTypePropFilterSelectedEventArgs( CswConvert.ToInt32( Value ) ) );
                         break;
                     case NodeTypeTreeSelectedType.Root:
                         NodeToSelect = TreeView.FindNodeByValue( RootNodeId );

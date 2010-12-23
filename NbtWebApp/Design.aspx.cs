@@ -117,9 +117,9 @@ namespace ChemSW.Nbt.WebPages
                     break;
 
                 case CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType:
-                    if( Convert.ToInt32( _SelectedValue ) > 0 )
+                    if( CswConvert.ToInt32( _SelectedValue ) > 0 )
                     {
-                        _SelectedNodeType = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( _SelectedValue ) );
+                        _SelectedNodeType = Master.CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( _SelectedValue ) );
                     }
                     else
                     {
@@ -130,9 +130,9 @@ namespace ChemSW.Nbt.WebPages
                     break;
 
                 case CswNodeTypeTree.NodeTypeTreeSelectedType.Property:
-                    if( Convert.ToInt32( _SelectedValue ) > 0 )
+                    if( CswConvert.ToInt32( _SelectedValue ) > 0 )
                     {
-                        _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp( Convert.ToInt32( _SelectedValue ) );
+                        _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( _SelectedValue ) );
                         _SelectedNodeType = _SelectedNodeTypeProp.NodeType;
                         _SelectedNodeTypeTab = _SelectedNodeTypeProp.NodeTypeTab;
                     }
@@ -151,9 +151,9 @@ namespace ChemSW.Nbt.WebPages
                     break;
 
                 case CswNodeTypeTree.NodeTypeTreeSelectedType.Tab:
-                    if( Convert.ToInt32( _SelectedValue ) > 0 )
+                    if( CswConvert.ToInt32( _SelectedValue ) > 0 )
                     {
-                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( _SelectedValue ) );
+                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( CswConvert.ToInt32( _SelectedValue ) );
                         _SelectedNodeType = _SelectedNodeTypeTab.NodeType;
                     }
                     else
@@ -619,7 +619,7 @@ namespace ChemSW.Nbt.WebPages
                     throw ( new CswDniException( "Only " + LabelNodeType + "s of the GenericObject class can be changed to other " + LabelNodeType + "s; the object class of the current " + LabelNodeType + " (" + NodeTypeName + ") is " + ObjectClass ) );
                 }
 
-                Int32 DestinationObjectClassID = Convert.ToInt32( ChangeObjectClassSelect.SelectedItem.Value );
+                Int32 DestinationObjectClassID = CswConvert.ToInt32( ChangeObjectClassSelect.SelectedItem.Value );
                 // BZ 7543 - This syntax is a little strange, but it's because CswNbtMetaData might decide to version the nodetype
                 CswNbtMetaDataNodeType PossiblyNewNodeType = Master.CswNbtResources.MetaData.ConvertObjectClass( SelectedNodeType, Master.CswNbtResources.MetaData.getObjectClass( DestinationObjectClassID ) );
 
@@ -708,7 +708,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 Int32 NewTabOrder = SelectedNodeTypeTab.TabOrder;
                 if( CswTools.IsInteger( EditTabOrderTextBox.Text ) )
-                    NewTabOrder = Convert.ToInt32( EditTabOrderTextBox.Text );
+                    NewTabOrder = CswConvert.ToInt32( EditTabOrderTextBox.Text );
 
                 SelectedNodeTypeTab.IncludeInNodeReport = EditTabIncludeInNodeReport.Checked;
                 SelectedNodeTypeTab.TabName = EditTabNameTextBox.Text;
@@ -729,7 +729,7 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 CswNbtMetaDataNodeTypeProp PropToSave = SelectedNodeTypeProp;
-                Int32 OldSelectedNodeTypePropId = Convert.ToInt32( _SelectedValue );
+                Int32 OldSelectedNodeTypePropId = CswConvert.ToInt32( _SelectedValue );
                 if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property )
                 {
                     CswNbtMetaDataNodeTypeTab OriginalTab = SelectedNodeTypeProp.NodeTypeTab;
@@ -757,12 +757,12 @@ namespace ChemSW.Nbt.WebPages
                             if( TargetValue.Substring( 0, "nt_".Length ) == "nt_" )
                             {
                                 NewFKType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
-                                NewFKValue = Convert.ToInt32( TargetValue.Substring( "nt_".Length ) );
+                                NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "nt_".Length ) );
                             }
                             else
                             {
                                 NewFKType = CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString();
-                                NewFKValue = Convert.ToInt32( TargetValue.Substring( "oc_".Length ) );
+                                NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "oc_".Length ) );
                             }
                         }
                     }
@@ -770,7 +770,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         NewIsFk = false;
                         NewFKType = getPropAttributeValue( "EditProp_FkTypeValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-                        NewFKValue = Convert.ToInt32( getPropAttributeValue( "EditProp_FkValueValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                        NewFKValue = CswConvert.ToInt32( getPropAttributeValue( "EditProp_FkValueValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     }
 
 
@@ -779,17 +779,17 @@ namespace ChemSW.Nbt.WebPages
 
                     PropToSave.PropName = getPropAttributeValue( "EditProp_NameValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.NodeTypeTab = SelectedNodeType.getNodeTypeTab( EditPropTabSelect.SelectedValue.ToString() );   // BZ 8014 - need to use tabname, not tabid, for versioning
-                    PropToSave.DisplayRow = Convert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    PropToSave.DisplayColumn = Convert.ToInt32( getPropAttributeValue( "EditProp_DisplayColValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    PropToSave.DisplayRowAdd = Convert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    PropToSave.DisplayColAdd = Convert.ToInt32( getPropAttributeValue( "EditProp_DisplayColAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    PropToSave.DisplayRow = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    PropToSave.DisplayColumn = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    PropToSave.DisplayRowAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    PropToSave.DisplayColAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.DateToday = Convert.ToBoolean( getPropAttributeValue( "EditProp_DateTodayValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
-                    PropToSave.Length = Convert.ToInt32( getPropAttributeValue( "EditProp_LengthValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    PropToSave.TextAreaRows = Convert.ToInt32( getPropAttributeValue( "EditProp_RowsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    PropToSave.TextAreaColumns = Convert.ToInt32( getPropAttributeValue( "EditProp_ColsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    PropToSave.Length = CswConvert.ToInt32( getPropAttributeValue( "EditProp_LengthValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    PropToSave.TextAreaRows = CswConvert.ToInt32( getPropAttributeValue( "EditProp_RowsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    PropToSave.TextAreaColumns = CswConvert.ToInt32( getPropAttributeValue( "EditProp_ColsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.CompositeTemplateText = getPropAttributeValue( "EditProp_TemplateValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-                    PropToSave.NumberPrecision = Convert.ToInt32( getPropAttributeValue( "EditProp_PrecisionValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    PropToSave.NumberPrecision = CswConvert.ToInt32( getPropAttributeValue( "EditProp_PrecisionValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.MinValue = Convert.ToDouble( getPropAttributeValue( "EditProp_MinValue" + OldSelectedNodeTypePropId.ToString(), typeof( Double ), EditPropPlaceHolder ) );
                     PropToSave.MaxValue = Convert.ToDouble( getPropAttributeValue( "EditProp_MaxValue" + OldSelectedNodeTypePropId.ToString(), typeof( Double ), EditPropPlaceHolder ) );
                     PropToSave.IsUnique = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsUnique" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
@@ -802,7 +802,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.MobileSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_MobileSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.SetFK( NewIsFk, NewFKType, NewFKValue,
                                       getPropAttributeValue( "EditProp_RelatedPropType" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ),
-                                      Convert.ToInt32( getPropAttributeValue( "EditProp_RelatedPropValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) ) );
+                                      CswConvert.ToInt32( getPropAttributeValue( "EditProp_RelatedPropValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) ) );
                     PropToSave.Multi = (PropertySelectMode) Enum.Parse( typeof( PropertySelectMode ), MultiString );
                     PropToSave.HelpText = getPropAttributeValue( "EditProp_HelpText" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.IsQuickSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsQuickSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
@@ -1123,7 +1123,7 @@ namespace ChemSW.Nbt.WebPages
             ChangeObjectClassLabel.Visible = false;
             ChangeObjectClassSelect.Visible = false;
             _ChangeObjectClassButton.Visible = false;
-            if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType && Convert.ToInt32( _SelectedValue ) > 0 )
+            if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType && CswConvert.ToInt32( _SelectedValue ) > 0 )
             {
                 CswNbtMetaDataObjectClass ObjectClass = SelectedNodeType.ObjectClass;
                 if( ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass )
@@ -1242,7 +1242,7 @@ namespace ChemSW.Nbt.WebPages
         private void init_EditTabPage()
         {
             if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Tab &&
-                Convert.ToInt32( _SelectedValue ) > 0 )
+                CswConvert.ToInt32( _SelectedValue ) > 0 )
             {
                 EditTabNameTextBox.Text = SelectedNodeTypeTab.TabName;
                 if( SelectedNodeTypeTab.TabOrder != Int32.MinValue )
@@ -1283,7 +1283,7 @@ namespace ChemSW.Nbt.WebPages
             _SaveButton.Visible = false;
             if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property )
             {
-                if( Convert.ToInt32( _SelectedValue ) > 0 )
+                if( CswConvert.ToInt32( _SelectedValue ) > 0 )
                 {
                     // Tab Select
                     EditPropTabSelect.Items.Clear();
@@ -1292,7 +1292,7 @@ namespace ChemSW.Nbt.WebPages
                         EditPropTabSelect.Items.Add( new ListItem( Tab.TabName, Tab.TabName ) );
                     }
 
-                    if( Convert.ToInt32( _SelectedValue ) > 0 )
+                    if( CswConvert.ToInt32( _SelectedValue ) > 0 )
                     {
                         // Edit Property Select box
                         if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.NodeTypeTab != null )
@@ -1497,7 +1497,7 @@ namespace ChemSW.Nbt.WebPages
                             //{
                             //    // This property is missing a view -- make a new one
                             //    GridView.makeNew( SelectedNodeTypeProp.PropName, NbtViewVisibility.Property, Int32.MinValue, Int32.MinValue, Int32.MinValue );
-                            //    setPropertyViewId( Convert.ToInt32( SelectedNodeTypeProp.PropId.ToString() ), GridView.ViewId );
+                            //    setPropertyViewId( CswConvert.ToInt32( SelectedNodeTypeProp.PropId.ToString() ), GridView.ViewId );
                             //}
 
                             CswViewStructureTree GridViewTree = new CswViewStructureTree( Master.CswNbtResources );

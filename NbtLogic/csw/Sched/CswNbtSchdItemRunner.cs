@@ -164,15 +164,15 @@ namespace ChemSW.Nbt.Sched
                     LoopDelay = Math.Round( LoopDelay, 0 );
                 }
 
-                _MainLoopSleepCycleMs = Convert.ToInt32( LoopDelay ); //bz # 8255
-                //                _MainLoopSleepCycleMs = Convert.ToInt32( LoopDelay ) * 60000;
+                _MainLoopSleepCycleMs = CswConvert.ToInt32( LoopDelay ); //bz # 8255
+                //                _MainLoopSleepCycleMs = CswConvert.ToInt32( LoopDelay ) * 60000;
             }
             else
             {
-                Int32 CandidateValue = Convert.ToInt32( _CswSetupVblsNbt["SchedulerTestModeMsecs"] );
+                Int32 CandidateValue = CswConvert.ToInt32( _CswSetupVblsNbt["SchedulerTestModeMsecs"] );
                 if( CandidateValue > 0 )
                 {
-                    _MainLoopSleepCycleMs = Convert.ToInt32( _CswSetupVblsNbt["SchedulerTestModeMsecs"] );
+                    _MainLoopSleepCycleMs = CswConvert.ToInt32( _CswSetupVblsNbt["SchedulerTestModeMsecs"] );
                 }//
             }//
 

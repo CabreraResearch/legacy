@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             DateTime FilterValue = DateTime.MinValue;
             if( CswNbtViewPropertyFilterIn.Value.Substring( 0, "today".Length ) == "today" )
             {
-                Int32 PlusDays = Convert.ToInt32( CswNbtViewPropertyFilterIn.Value.Substring( "today+".Length ) );
+                Int32 PlusDays = CswConvert.ToInt32( CswNbtViewPropertyFilterIn.Value.Substring( "today+".Length ) );
                 FilterValue = DateTime.Now.AddDays( PlusDays );
             }
             else

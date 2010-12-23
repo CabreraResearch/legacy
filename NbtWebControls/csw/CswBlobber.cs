@@ -91,7 +91,7 @@ namespace ChemSW.NbtWebControls
                     JRow["field1"] = _FileUpload.FileName;
                     JRow["field2"] = _FileUpload.PostedFile.ContentType;
                     JctTable.Rows.Add( JRow );
-                    JctNodePropId = Convert.ToInt32( JRow["jctnodepropid"].ToString() );
+                    JctNodePropId = CswConvert.ToInt32( JRow["jctnodepropid"].ToString() );
                     JctUpdate.update( JctTable );
                 }
 

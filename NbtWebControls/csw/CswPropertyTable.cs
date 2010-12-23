@@ -922,7 +922,7 @@ namespace ChemSW.NbtWebControls
                 if( thisControl is CswPropertyTableLabel && ( (CswPropertyTableLabel) thisControl ).Checked )
                 {
                     // Apply checked property value to checked nodes
-                    Int32 ThisPropId = Convert.ToInt32( thisControl.ID.Substring( PropLabelPrefix.Length ) );
+                    Int32 ThisPropId = CswConvert.ToInt32( thisControl.ID.Substring( PropLabelPrefix.Length ) );
                     CswNbtMetaDataNodeTypeProp ThisProp = _CswNbtResources.MetaData.getNodeTypeProp( ThisPropId );
                     foreach( CswNbtNodeKey CheckedNodeKey in CheckedKeys )
                     {

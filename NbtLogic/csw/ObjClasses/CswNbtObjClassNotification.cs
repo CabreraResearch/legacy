@@ -131,9 +131,9 @@ namespace ChemSW.Nbt.ObjClasses
 
             // List options for 'Property' depend on TargetType
             string PropertyOptions = string.Empty;
-            if( CswTools.IsInteger( TargetType.SelectedNodeTypeIds ) )
+            if( CswTools.IsInteger( TargetType.SelectedNodeTypeIds[0] ) )
             {
-                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
                 if( NodeType != null )
                 {
                     foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) ) );
+                return ( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) ) );
             }
         }
         public CswNbtNodePropText Value

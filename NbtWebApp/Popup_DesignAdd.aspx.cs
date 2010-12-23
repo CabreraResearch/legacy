@@ -75,9 +75,9 @@ namespace ChemSW.Nbt.WebPages
                     break;
 
                 case CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType:
-                    if (Convert.ToInt32(_SelectedValue) > 0)
+                    if (CswConvert.ToInt32(_SelectedValue) > 0)
                     {
-                        _SelectedNodeType = Master.CswNbtResources.MetaData.getNodeType(Convert.ToInt32(_SelectedValue));
+                        _SelectedNodeType = Master.CswNbtResources.MetaData.getNodeType(CswConvert.ToInt32(_SelectedValue));
                     }
                     else
                     {
@@ -88,9 +88,9 @@ namespace ChemSW.Nbt.WebPages
                     break;
 
                 case CswNodeTypeTree.NodeTypeTreeSelectedType.Property:
-                    if (Convert.ToInt32(_SelectedValue) > 0)
+                    if (CswConvert.ToInt32(_SelectedValue) > 0)
                     {
-                        _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp(Convert.ToInt32(_SelectedValue));
+                        _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp(CswConvert.ToInt32(_SelectedValue));
                         _SelectedNodeType = _SelectedNodeTypeProp.NodeType;
                         _SelectedNodeTypeTab = _SelectedNodeTypeProp.NodeTypeTab;
                     }
@@ -109,9 +109,9 @@ namespace ChemSW.Nbt.WebPages
                     break;
 
                 case CswNodeTypeTree.NodeTypeTreeSelectedType.Tab:
-                    if (Convert.ToInt32(_SelectedValue) > 0)
+                    if (CswConvert.ToInt32(_SelectedValue) > 0)
                     {
-                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab(Convert.ToInt32(_SelectedValue));
+                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab(CswConvert.ToInt32(_SelectedValue));
                         _SelectedNodeType = _SelectedNodeTypeTab.NodeType;
                     }
                     else
@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 // Don't have to worry about versioning here
-                CswNbtMetaDataNodeType NewNodeType = Master.CswNbtResources.MetaData.makeNewNodeType(Convert.ToInt32(ObjectClassSelect.SelectedValue.ToString()), NewNodeTypeName.Text, NewNodeTypeCategory.Text);
+                CswNbtMetaDataNodeType NewNodeType = Master.CswNbtResources.MetaData.makeNewNodeType(CswConvert.ToInt32(ObjectClassSelect.SelectedValue.ToString()), NewNodeTypeName.Text, NewNodeTypeCategory.Text);
                 Session["Design_SelectedType"] = CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType.ToString();
                 Session["Design_SelectedValue"] = NewNodeType.NodeTypeId.ToString();
                 Session["Design_ForceReselect"] = "true";
@@ -292,7 +292,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 Int32 NewTabOrder = Int32.MinValue;
                 if (CswTools.IsInteger(AddTabOrderTextBox.Text))
-                    NewTabOrder = Convert.ToInt32( AddTabOrderTextBox.Text );
+                    NewTabOrder = CswConvert.ToInt32( AddTabOrderTextBox.Text );
 
                 CswNbtMetaDataNodeTypeTab NewTab = Master.CswNbtResources.MetaData.makeNewTab( SelectedNodeType, AddTabNameTextBox.Text, NewTabOrder );
                 // BZ 7543 - We might have just versioned the nodetype, but we don't care, since the tabid is correct and we're closing the popup
@@ -313,9 +313,9 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 CswNbtMetaDataNodeTypeProp NewProp = Master.CswNbtResources.MetaData.makeNewProp( SelectedNodeType, 
-                                                                                                  Convert.ToInt32( AddPropNewFieldTypeIdSelect.SelectedValue ),
+                                                                                                  CswConvert.ToInt32( AddPropNewFieldTypeIdSelect.SelectedValue ),
                                                                                                   AddPropName.Text,
-                                                                                                  Convert.ToInt32( AddPropTabSelect.SelectedValue ) );
+                                                                                                  CswConvert.ToInt32( AddPropTabSelect.SelectedValue ) );
 
                 // BZ 7543 - We might have just versioned the nodetype, but we don't care, since the propid is correct and we're closing the popup
 

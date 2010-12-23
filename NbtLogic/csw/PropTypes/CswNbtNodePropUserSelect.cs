@@ -124,7 +124,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( CswTools.IsInteger( UserIdString ) )
                 {
-                    Int32 UserId = Convert.ToInt32( UserIdString );
+                    Int32 UserId = CswConvert.ToInt32( UserIdString );
                     if( NodeMap != null && NodeMap.ContainsKey( UserId ) )
                         SelectedUserIds.Replace( UserIdString, NodeMap[UserId].ToString() );
                 }
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( NodeMap != null && NodeMap.ContainsKey( UserIdString.ToLower() ) )
                     UserId = NodeMap[UserIdString.ToLower()];
                 else if( CswTools.IsInteger( UserIdString ) )
-                    UserId = Convert.ToInt32( UserIdString );
+                    UserId = CswConvert.ToInt32( UserIdString );
                 if( UserId != Int32.MinValue )
                 {
                     SelectedUserIds.Replace( UserIdString, UserId.ToString() );

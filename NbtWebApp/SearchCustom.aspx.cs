@@ -150,7 +150,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     foreach( string PropId in CheckedProps )
                     {
-                        CswNbtMetaDataNodeTypeProp ThisProp = Master.CswNbtResources.MetaData.getNodeTypeProp( Convert.ToInt32( PropId ) );
+                        CswNbtMetaDataNodeTypeProp ThisProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
                         CswNbtViewProperty ViewProp = View.AddViewProperty( TopRel, ThisProp );
                         View.AddViewPropertyFilter( ViewProp, ThisProp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Begins, "", false );
                     }
@@ -189,9 +189,9 @@ namespace ChemSW.Nbt.WebPages
                 if( _NodeTypeDropDown.SelectedValue != string.Empty )
                 {
                     if( _IsNodeTypeSelected() )
-                        ret = Convert.ToInt32( _NodeTypeDropDown.SelectedValue.Substring( _NodeTypePrefix.Length ) );
+                        ret = CswConvert.ToInt32( _NodeTypeDropDown.SelectedValue.Substring( _NodeTypePrefix.Length ) );
                     else
-                        ret = Convert.ToInt32( _NodeTypeDropDown.SelectedValue.Substring( _ObjectClassPrefix.Length ) );
+                        ret = CswConvert.ToInt32( _NodeTypeDropDown.SelectedValue.Substring( _ObjectClassPrefix.Length ) );
                 }
                 return ret;
             }

@@ -321,7 +321,7 @@ namespace ChemSW.Nbt.WebPages
 
                 CswWelcomeTable.AddWelcomeComponent( Master.CswNbtResources, WelcomeTable, _SelectedComponentType,
                                                      _ViewTree.SelectedType, _ViewTree.SelectedValue,
-                                                     Convert.ToInt32( _NodeTypeList.SelectedValue ), _Text.Text,
+                                                     CswConvert.ToInt32( _NodeTypeList.SelectedValue ), _Text.Text,
                                                      Int32.MinValue, Int32.MinValue, SelectedButtonIcon,
                                                      _RoleId.PrimaryKey );
 
@@ -330,18 +330,18 @@ namespace ChemSW.Nbt.WebPages
                 //    SelectedButtonIcon = string.Empty;
 
                 //NewWelcomeRow["componenttype"] = SelectedComponentType.ToString();
-                //NewWelcomeRow["display_row"] = CswConvert.ToDbVal( Convert.ToInt32( _ComponentRow.Text ) );
-                //NewWelcomeRow["display_col"] = CswConvert.ToDbVal( Convert.ToInt32( _ComponentCol.Text ) );
+                //NewWelcomeRow["display_row"] = CswConvert.ToDbVal( CswConvert.ToInt32( _ComponentRow.Text ) );
+                //NewWelcomeRow["display_col"] = CswConvert.ToDbVal( CswConvert.ToInt32( _ComponentCol.Text ) );
                 //NewWelcomeRow["display_col"] = "1";
                 //NewWelcomeRow["display_row"] = MaxRow + 1;
                 //switch( SelectedComponentType )
                 //{
                 //    case CswWelcomeTable.WelcomeComponentType.Add:
-                //        NewWelcomeRow["nodetypeid"] = CswConvert.ToDbVal( Convert.ToInt32( _NodeTypeList.SelectedValue ) );
+                //        NewWelcomeRow["nodetypeid"] = CswConvert.ToDbVal( CswConvert.ToInt32( _NodeTypeList.SelectedValue ) );
                 //        NewWelcomeRow["buttonicon"] = SelectedButtonIcon;
                 //        break;
                 //    case CswWelcomeTable.WelcomeComponentType.Link:
-                //        //NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( Convert.ToInt32( _ViewList.SelectedValue ) );
+                //        //NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( CswConvert.ToInt32( _ViewList.SelectedValue ) );
                 //        switch( _ViewTree.SelectedType )
                 //        {
                 //            case CswViewListTree.ViewType.View:
@@ -359,7 +359,7 @@ namespace ChemSW.Nbt.WebPages
                 //        NewWelcomeRow["buttonicon"] = SelectedButtonIcon;
                 //        break;
                 //    case CswWelcomeTable.WelcomeComponentType.Search:
-                //        //NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( Convert.ToInt32( _ViewList.SelectedValue ) );
+                //        //NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( CswConvert.ToInt32( _ViewList.SelectedValue ) );
                 //        if( _ViewTree.SelectedType == CswViewListTree.ViewType.View )
                 //            NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( _ViewTree.SelectedValue );
                 //        else

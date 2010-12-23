@@ -319,7 +319,7 @@ namespace ChemSW.Nbt.WebPages
                 if( Request.QueryString["viewid"] != null && Request.QueryString["viewid"] != string.Empty )
                 {
                     ViewIdFromQueryParam = CswTools.QueryStringParamToUrl( Request.QueryString["viewid"].ToString() );
-                    Int32 TargetViewId = Convert.ToInt32( ViewIdFromQueryParam );
+                    Int32 TargetViewId = CswConvert.ToInt32( ViewIdFromQueryParam );
                     if( Session["ViewId"] != null && Session["ViewId"].ToString() != TargetViewId.ToString() )  // BZ 10125
                     {
                         ViewLoaded = ( null != ( _CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, TargetViewId ) ) );
@@ -331,7 +331,7 @@ namespace ChemSW.Nbt.WebPages
                     if( Session["ActionId"] != null )
                     {
                         // Action
-                        _ActionId = Convert.ToInt32( Session["ActionId"].ToString() );
+                        _ActionId = CswConvert.ToInt32( Session["ActionId"].ToString() );
                         // BZ 9934 - No need for 'default view' anymore
                         //// this is for when we come back
                         //_CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, CswNbtResources.CurrentNbtUser.DefaultViewId );
@@ -345,10 +345,10 @@ namespace ChemSW.Nbt.WebPages
                         _CswNbtView = new CswNbtView( CswNbtResources );
 
                         if( Session["SessionViewId"] != null )
-                            ViewLoaded = ( null != ( _CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, CswNbtResources.ViewCache.getView( Convert.ToInt32( Session["SessionViewId"] ) ).ToString() ) ) );
+                            ViewLoaded = ( null != ( _CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, CswNbtResources.ViewCache.getView( CswConvert.ToInt32( Session["SessionViewId"] ) ).ToString() ) ) );
 
                         if( Session["ViewId"] != null )
-                            ViewLoaded = ( null != ( _CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, Convert.ToInt32( Session["ViewId"] ) ) ) );
+                            ViewLoaded = ( null != ( _CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, CswConvert.ToInt32( Session["ViewId"] ) ) ) );
 
                         if( !ViewLoaded && Session["ViewXml"] != null )
                             ViewLoaded = ( null != ( _CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, Session["ViewXml"].ToString() ) ) );
@@ -445,11 +445,11 @@ namespace ChemSW.Nbt.WebPages
             //else 
             if( ActionId > 0 )
             {
-                if( ( !( PreviousView1 is Int32 ) || PreviousView1 == null || ActionId != Convert.ToInt32( PreviousView1.ToString() ) ) &&
-                    ( !( PreviousView2 is Int32 ) || PreviousView2 == null || ActionId != Convert.ToInt32( PreviousView2.ToString() ) ) &&
-                    ( !( PreviousView3 is Int32 ) || PreviousView3 == null || ActionId != Convert.ToInt32( PreviousView3.ToString() ) ) &&
-                    ( !( PreviousView4 is Int32 ) || PreviousView4 == null || ActionId != Convert.ToInt32( PreviousView4.ToString() ) ) &&
-                    ( !( PreviousView5 is Int32 ) || PreviousView5 == null || ActionId != Convert.ToInt32( PreviousView5.ToString() ) ) )
+                if( ( !( PreviousView1 is Int32 ) || PreviousView1 == null || ActionId != CswConvert.ToInt32( PreviousView1.ToString() ) ) &&
+                    ( !( PreviousView2 is Int32 ) || PreviousView2 == null || ActionId != CswConvert.ToInt32( PreviousView2.ToString() ) ) &&
+                    ( !( PreviousView3 is Int32 ) || PreviousView3 == null || ActionId != CswConvert.ToInt32( PreviousView3.ToString() ) ) &&
+                    ( !( PreviousView4 is Int32 ) || PreviousView4 == null || ActionId != CswConvert.ToInt32( PreviousView4.ToString() ) ) &&
+                    ( !( PreviousView5 is Int32 ) || PreviousView5 == null || ActionId != CswConvert.ToInt32( PreviousView5.ToString() ) ) )
                 {
                     ViewToKeep = ActionId;
                 }

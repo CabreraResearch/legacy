@@ -321,7 +321,7 @@ namespace ChemSW.Nbt.ImportExport
                             CswNbtMetaDataNodeTypeTab DestNodeTypeTab = null;
                             string StringNodeTypeTabId = NodeTypeTabRow[CswNbtMetaDataNodeTypeTab._Attribute_TabId].ToString();
                             if( CswTools.IsInteger( StringNodeTypeTabId ) )
-                                DestNodeTypeTab = DestNodeType.getNodeTypeTab( Convert.ToInt32( StringNodeTypeTabId ) );
+                                DestNodeTypeTab = DestNodeType.getNodeTypeTab( CswConvert.ToInt32( StringNodeTypeTabId ) );
                             if( DestNodeTypeTab == null )
                                 DestNodeTypeTab = DestNodeType.getNodeTypeTab( NodeTypeTabRow[CswNbtMetaDataNodeTypeTab._Attribute_TabName].ToString() );
 
@@ -333,7 +333,7 @@ namespace ChemSW.Nbt.ImportExport
                                 CswNbtMetaDataNodeTypeProp DestNodeTypeProp = null;
                                 Int32 SourceNodeTypePropId = CswConvert.ToInt32( NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropId] );
                                 //if( CswTools.IsInteger( StringNodeTypePropId ) )
-                                //    DestNodeTypeProp = DestNodeType.getNodeTypeProp( Convert.ToInt32( StringNodeTypePropId ) );
+                                //    DestNodeTypeProp = DestNodeType.getNodeTypeProp( CswConvert.ToInt32( StringNodeTypePropId ) );
                                 //if( DestNodeTypeProp == null )
                                 DestNodeTypeProp = DestNodeType.getNodeTypeProp( NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName].ToString() );
 
@@ -454,13 +454,13 @@ namespace ChemSW.Nbt.ImportExport
                     CswPrimaryKey NodeId = null;
                     if( NodeRow["destnodeid"] != null && CswTools.IsInteger( NodeRow["destnodeid"].ToString() ) )   // skip nodes skipped above
                     {
-                        //Node = _CswNbtResources.Nodes.GetNode( Convert.ToInt32( NodeRow["destnodeid"].ToString() ) );
-                        NodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( NodeRow["destnodeid"].ToString() ) );
+                        //Node = _CswNbtResources.Nodes.GetNode( CswConvert.ToInt32( NodeRow["destnodeid"].ToString() ) );
+                        NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["destnodeid"].ToString() ) );
                     }
                     else if( IMode == ImportMode.Update )
                     {
-                        //Node = _CswNbtResources.Nodes.GetNode( Convert.ToInt32( NodeRow[_Attribute_NodeId].ToString() ) );
-                        NodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString() ) );
+                        //Node = _CswNbtResources.Nodes.GetNode( CswConvert.ToInt32( NodeRow[_Attribute_NodeId].ToString() ) );
+                        NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString() ) );
                     }
 
                     if( NodeId != null )
@@ -703,13 +703,13 @@ namespace ChemSW.Nbt.ImportExport
             if( NodeTypesTable != null )
             {
                 DataRow NodeTypeRow = NodeRow.GetParentRow( NodeTypeToNodeRelation );
-                NodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( NodeTypeRow["destnodetypeid"].ToString() ) );
+                NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeRow["destnodetypeid"].ToString() ) );
             }
             else if( NodeRow.Table.Columns.Contains( CswNbtImportExportFrame._Attribute_NodeTypeId ) &&
                      NodeRow[CswNbtImportExportFrame._Attribute_NodeTypeId] != null &&
                      NodeRow[CswNbtImportExportFrame._Attribute_NodeTypeId].ToString() != string.Empty )
             {
-                NodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( NodeRow[CswNbtImportExportFrame._Attribute_NodeTypeId].ToString() ) );
+                NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeRow[CswNbtImportExportFrame._Attribute_NodeTypeId].ToString() ) );
             }
             else if( NodeRow.Table.Columns.Contains( CswNbtImportExportFrame._Attribute_NodeTypeName ) &&
                      NodeRow[CswNbtImportExportFrame._Attribute_NodeTypeName] != null &&
@@ -731,13 +731,13 @@ namespace ChemSW.Nbt.ImportExport
             if( NodeTypePropsTable != null )
             {
                 DataRow NodeTypePropRow = PropValueRow.GetParentRow( NodeTypePropToPropValueRelation );
-                NodeTypeProp = NodeType.getNodeTypeProp( Convert.ToInt32( NodeTypePropRow["destnodetypepropid"].ToString() ) );
+                NodeTypeProp = NodeType.getNodeTypeProp( CswConvert.ToInt32( NodeTypePropRow["destnodetypepropid"].ToString() ) );
             }
             else if( PropValueRow.Table.Columns.Contains( CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropId ) &&
                      PropValueRow[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropId] != null &&
                      PropValueRow[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropId].ToString() != string.Empty )
             {
-                NodeTypeProp = NodeType.getNodeTypeProp( Convert.ToInt32( PropValueRow[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropId].ToString() ) );
+                NodeTypeProp = NodeType.getNodeTypeProp( CswConvert.ToInt32( PropValueRow[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropId].ToString() ) );
             }
             else if( PropValueRow.Table.Columns.Contains( CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName ) &&
                      PropValueRow[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName] != null &&

@@ -27,7 +27,7 @@ namespace ChemSW.NbtWebControls
             get
             {
                 if( _ParentNode.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ) != null )
-                    return new CswPrimaryKey( "nodes", Convert.ToInt32( _ParentNode.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText ) );
+                    return new CswPrimaryKey( "nodes", CswConvert.ToInt32( _ParentNode.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText ) );
                 else
                     return null;
             }
@@ -213,7 +213,7 @@ namespace ChemSW.NbtWebControls
                     XmlNodeList ChildNodes = CellNode.SelectNodes(CswNbtLocationTree.XmlNodeName_Child);
                     foreach (XmlNode Child in ChildNodes)
                     {
-                        CswPrimaryKey ChildNodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( Child.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText ) );
+                        CswPrimaryKey ChildNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Child.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText ) );
 
                         string ThisPropString = string.Empty;
                         if( CswNbtTree != null )

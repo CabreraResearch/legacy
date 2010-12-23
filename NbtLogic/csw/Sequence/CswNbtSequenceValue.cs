@@ -107,7 +107,7 @@ namespace ChemSW.Nbt
             {
                 Int32 ret= Int32.MinValue;
                 if (!_CurrentSequenceRow.IsNull("Pad"))
-                    ret = Convert.ToInt32(_CurrentSequenceRow["Pad"].ToString());
+                    ret = CswConvert.ToInt32(_CurrentSequenceRow["Pad"].ToString());
                 return ret;
             }
         }
@@ -131,7 +131,7 @@ namespace ChemSW.Nbt
             string RawSequenceVal = FormattedSequenceVal.Substring(_Prep.Length, (FormattedSequenceVal.Length - _Prep.Length - _Post.Length));
             if (!CswTools.IsInteger(RawSequenceVal))
                 throw new CswDniException("Invalid sequence value", "CswNbtSequenceValue got an invalid sequence value: " + FormattedSequenceVal);
-            return Convert.ToInt32(RawSequenceVal);
+            return CswConvert.ToInt32(RawSequenceVal);
         }
 
         public string makeExample( Int32 ExampleValue )

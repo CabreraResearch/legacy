@@ -218,7 +218,7 @@ namespace ChemSW.NbtWebControls
         protected void SequenceSelect_Change( object sender, EventArgs e )
         {
             // BZ 8516 - we do this in prerender now
-            // setSequenceFields( Convert.ToInt32( _SequenceList.SelectedItem.Value ) );
+            // setSequenceFields( CswConvert.ToInt32( _SequenceList.SelectedItem.Value ) );
         }
 
         #endregion Events

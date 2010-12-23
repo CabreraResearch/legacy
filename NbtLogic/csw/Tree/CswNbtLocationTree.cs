@@ -141,17 +141,17 @@ namespace ChemSW.Nbt
                         if( PropRow["propname"].ToString() == "Order" )
                         {
                             if( PropRow["field1"] != null && PropRow["field1"].ToString() != String.Empty )
-                                Order = Convert.ToInt32( PropRow["field1"].ToString() );
+                                Order = CswConvert.ToInt32( PropRow["field1"].ToString() );
                         }
                         if( PropRow["propname"].ToString() == "Rows" )
                         {
                             if( PropRow["field1"] != null && PropRow["field1"].ToString() != String.Empty )
-                                Rows = Convert.ToInt32( PropRow["field1"].ToString() );
+                                Rows = CswConvert.ToInt32( PropRow["field1"].ToString() );
                         }
                         if( PropRow["propname"].ToString() == "Columns" )
                         {
                             if( PropRow["field1"] != null && PropRow["field1"].ToString() != String.Empty )
-                                Columns = Convert.ToInt32( PropRow["field1"].ToString() );
+                                Columns = CswConvert.ToInt32( PropRow["field1"].ToString() );
                         }
                     }
                 }
@@ -166,7 +166,7 @@ namespace ChemSW.Nbt
                     {
                         if( Sibling.SelectSingleNode( XmlNodeName_Order ) != null &&
                             Sibling.SelectSingleNode( XmlNodeName_Order ).InnerText != String.Empty &&
-                            Order < Convert.ToInt32( Sibling.SelectSingleNode( XmlNodeName_Order ).InnerText ) )
+                            Order < CswConvert.ToInt32( Sibling.SelectSingleNode( XmlNodeName_Order ).InnerText ) )
                         {
                             ParentNode.InsertBefore( ThisNode, Sibling );
                             bDidInsert = true;
@@ -183,7 +183,7 @@ namespace ChemSW.Nbt
                     {
                         if( Sibling.SelectSingleNode( XmlNodeName_Order ) != null &&
                             Sibling.SelectSingleNode( XmlNodeName_Order ).InnerText != String.Empty &&
-                            Order < Convert.ToInt32( Sibling.SelectSingleNode( XmlNodeName_Order ).InnerText ) )
+                            Order < CswConvert.ToInt32( Sibling.SelectSingleNode( XmlNodeName_Order ).InnerText ) )
                         {
                             LocationTreeXml.InsertBefore( ThisNode, Sibling );
                             bDidInsert = true;

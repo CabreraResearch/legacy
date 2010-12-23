@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
                 DataTableForSeup.Rows[ 1 ][ ArbitraryValueColumn ] = "valtwo";
                 DataTableForSeup.Rows[ 2 ][ ArbitraryValueColumn ] = "valthree";
 
-                PkOfInsertedRow = Convert.ToInt32( DataTableForSeup.Rows[ 0 ][ ArbitraryTablePkColumn ] );
+                PkOfInsertedRow = CswConvert.ToInt32( DataTableForSeup.Rows[ 0 ][ ArbitraryTablePkColumn ] );
 
                 CswArbitraryTableUpdateForSetup.update( DataTableForSeup );
 

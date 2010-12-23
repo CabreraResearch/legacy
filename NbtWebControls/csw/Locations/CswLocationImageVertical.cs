@@ -51,7 +51,7 @@ namespace ChemSW.NbtWebControls
             Label TitleLabel = new Label();
             TitleLabel.ID = this.ID + "_label";
             TitleLabel.Text = _ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Display).InnerText;
-            if (_SelectedNodeId.PrimaryKey == Convert.ToInt32(_ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText))
+            if (_SelectedNodeId.PrimaryKey == CswConvert.ToInt32(_ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText))
                 TitleLabel.CssClass = "LocationTitleTextSelected";
             else
                 TitleLabel.CssClass = "LocationTitleText";
@@ -62,7 +62,7 @@ namespace ChemSW.NbtWebControls
             if (_MoveMode)
             {
                 _Table.addControl((ImagesMade * 2) + 1, 0, makeSpacer());
-                _Table.addControl((ImagesMade * 2) + 2, 0, makeImage(KeyPrefix, new CswPrimaryKey("nodes", Convert.ToInt32(_ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText)),
+                _Table.addControl((ImagesMade * 2) + 2, 0, makeImage(KeyPrefix, new CswPrimaryKey("nodes", CswConvert.ToInt32(_ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText)),
                                                             "", "", CswNbtLocationTree.VerticalLocationTemplate.Slot, true));
                 ImagesMade++;
             }
@@ -76,7 +76,7 @@ namespace ChemSW.NbtWebControls
                 {
                     //Locations
                     _Table.addControl((ImagesMade * 2) + 1, 0, makeImage(KeyPrefix,
-                                                                          new CswPrimaryKey("nodes", Convert.ToInt32(_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText)),
+                                                                          new CswPrimaryKey("nodes", CswConvert.ToInt32(_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText)),
                                                                          _ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Display).InnerText,
                                                                          //_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_IconFileName).InnerText,
                                                                          string.Empty,
@@ -90,7 +90,7 @@ namespace ChemSW.NbtWebControls
                 {
                     //Non-Locations
                     _Table.addControl((ImagesMade * 2) + 1, 0, makeImage(NodePrefix, 
-                                                                         new CswPrimaryKey("nodes", Convert.ToInt32(_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText)),
+                                                                         new CswPrimaryKey("nodes", CswConvert.ToInt32(_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText)),
                                                                          _ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Display).InnerText,
                                                                          _ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_IconFileName).InnerText,
                                                                          CswNbtLocationTree.VerticalLocationTemplate.Empty,

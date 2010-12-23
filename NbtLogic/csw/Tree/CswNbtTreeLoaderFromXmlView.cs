@@ -36,7 +36,7 @@ namespace ChemSW.Nbt
             _IncludeSystemNodes = IncludeSystemNodes;
             string ResultLimitString = CswNbtResources.getConfigVariableValue( "treeview_resultlimit" );
             if( CswTools.IsInteger( ResultLimitString ) )
-                ResultLimit = Convert.ToInt32( ResultLimitString );
+                ResultLimit = CswConvert.ToInt32( ResultLimitString );
         }
 
         public override void load( ref CswNbtNodeKey ParentNodeKey, CswNbtViewRelationship ChildRelationshipToStartWith, Int32 PageSize, bool FetchAllPrior, bool SingleLevelOnly, CswNbtNodeKey IncludedKey )
@@ -203,7 +203,7 @@ namespace ChemSW.Nbt
                             Collection<CswNbtNodeKey> ChildKeys = null;
                             if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
                             {
-                                if( _RunAsUser.CheckPermission( NodeTypePermission.View, Convert.ToInt32( CurrentRow["nodetypeid"] ), null, null ) )
+                                if( _RunAsUser.CheckPermission( NodeTypePermission.View, CswConvert.ToInt32( CurrentRow["nodetypeid"] ), null, null ) )
                                     NodeIsAllowed = true;
                             }
                             else
@@ -302,7 +302,7 @@ namespace ChemSW.Nbt
 
             //    foreach( DataRow CurrentRow in ResultTable.Rows )
             //    {
-            //        _CswNbtTree.addProperty( Convert.ToInt32( CurrentRow["nodetypepropid"].ToString() ),
+            //        _CswNbtTree.addProperty( CswConvert.ToInt32( CurrentRow["nodetypepropid"].ToString() ),
             //                                CurrentRow["propname"].ToString(),
             //                                CurrentRow["gestalt"].ToString(),
             //                                _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( CurrentRow["fieldtype"].ToString() ) ) );
@@ -332,7 +332,7 @@ namespace ChemSW.Nbt
 
                 foreach( DataRow CurrentRow in ResultTable.Rows )
                 {
-                    _CswNbtTree.addProperty( Convert.ToInt32( CurrentRow["nodetypepropid"].ToString() ),
+                    _CswNbtTree.addProperty( CswConvert.ToInt32( CurrentRow["nodetypepropid"].ToString() ),
                                             CurrentRow["propname"].ToString(),
                                             CurrentRow["gestalt"].ToString(),
                                             _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( CurrentRow["fieldtype"].ToString() ) ) );

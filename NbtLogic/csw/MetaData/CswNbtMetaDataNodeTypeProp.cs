@@ -218,7 +218,7 @@ namespace ChemSW.Nbt.MetaData
 
         public Int32 PropId
         {
-            get { return Convert.ToInt32( _NodeTypePropRow["nodetypepropid"].ToString() ); }
+            get { return CswConvert.ToInt32( _NodeTypePropRow["nodetypepropid"].ToString() ); }
         }
         public string PropName
         {
@@ -680,12 +680,12 @@ namespace ChemSW.Nbt.MetaData
 
         public CswNbtMetaDataFieldType FieldType
         {
-            get { return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( Convert.ToInt32( _NodeTypePropRow["fieldtypeid"].ToString() ) ); }
+            get { return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( CswConvert.ToInt32( _NodeTypePropRow["fieldtypeid"].ToString() ) ); }
         }
 
         public CswNbtMetaDataNodeType NodeType
         {
-            get { return _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( Convert.ToInt32( _NodeTypePropRow["nodetypeid"].ToString() ) ); }
+            get { return _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( CswConvert.ToInt32( _NodeTypePropRow["nodetypeid"].ToString() ) ); }
         }
         public Int32 ObjectClassPropId
         {
@@ -707,7 +707,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 CswNbtMetaDataNodeTypeTab ret = null;
                 if( _NodeTypePropRow["nodetypetabsetid"].ToString() != string.Empty )
-                    ret = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( Convert.ToInt32( _NodeTypePropRow["nodetypetabsetid"].ToString() ) );
+                    ret = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( CswConvert.ToInt32( _NodeTypePropRow["nodetypetabsetid"].ToString() ) );
                 return ret;
             }
             set
