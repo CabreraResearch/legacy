@@ -17,6 +17,84 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
+        public enum NodeTypePropAttributes
+        {
+            append, 
+            auditlevel, 
+            datetoday, 
+            display_col, 
+            display_row, 
+            //fieldtypeid, 
+            //fkvalue, 
+            isbatchentry, 
+            //isfk, 
+            isrequired, 
+            isunique, 
+            length, 
+            //nodetypeid, 
+            //nodetypepropid, 
+            //nodetypetabsetid, 
+            //objectclasspropid, 
+            servermanaged, 
+            textareacols, 
+            textarearows, 
+            textlength, 
+            url, 
+            valuepropid, 
+            width, 
+            sequenceid, 
+            numberprecision, 
+            listoptions, 
+            compositetemplate, 
+            //fktype, 
+            valueproptype, 
+            statictext, 
+            multi, 
+            nodeviewid, 
+            read_only, 
+            display_col_add, 
+            display_row_add, 
+            setvalonadd, 
+            numberminvalue, 
+            numbermaxvalue, 
+            usenumbering, 
+            questionno, 
+            subquestionno, 
+            filter, 
+            filterpropid, 
+            //firstpropversionid, 
+            //priorpropversionid, 
+            valueoptions, 
+            //defaultvalue, 
+            helptext, 
+            propname, 
+            //defaultvalueid, 
+            isquicksearch, 
+            extended, 
+            hideinmobile, 
+            mobilesearch,
+            Unknown
+        }
+
+        public static NodeTypePropAttributes getNodeTypePropAttributesFromString( string AttributeName )
+        {
+            NodeTypePropAttributes ReturnVal = NodeTypePropAttributes.Unknown;
+            AttributeName = AttributeName.Replace( "_", "" );
+            if( Enum.IsDefined( typeof( NodeTypePropAttributes ), AttributeName ) )
+            {
+                ReturnVal = (NodeTypePropAttributes) Enum.Parse( typeof( NodeTypePropAttributes ), AttributeName, true );
+            }
+            return ( ReturnVal );
+        }
+
+        public static String getNodeTypePropAttributesAsString( NodeTypePropAttributes Attribute )
+        {
+            String ReturnVal = String.Empty;
+            if( Attribute != NodeTypePropAttributes.Unknown )
+                ReturnVal = Attribute.ToString().Replace( "_", "" );
+            return ( ReturnVal );
+        }
+        
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _NodeTypePropRow;
         public CswNbtMetaDataNodeTypeProp( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row )
