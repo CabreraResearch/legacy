@@ -33,14 +33,14 @@ namespace ChemSW.NbtWebControls
 
         private CswAuthenticator _CswAuthenticator = null;
 
-        private CswSessionStorageDb _CswSessionStorageDb = null; 
+        private CswSessionStorageDb _CswSessionStorageDb = null;
 
         public CswNbtWebServiceResources( HttpApplicationState HttpApplicationState, HttpSessionState HttpSessionState, HttpRequest HttpRequest, HttpResponse HttpResponse, string LoginAccessId, string FilesPath, SetupMode SetupMode )
         {
             CswSetupVblsNbt CswSetupVbls = new CswSetupVblsNbt( SetupMode.Web );
             CswDbCfgInfoNbt CswDbCfgInfo = new CswDbCfgInfoNbt( SetupMode.Web );
             string ConfigurationFilePath = CswTools.getConfigurationFilePath( SetupMode.Web );
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, CswSetupVbls, CswDbCfgInfo, ConfigurationFilePath , true, false );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, CswSetupVbls, CswDbCfgInfo, ConfigurationFilePath, true, false );
             _CswAuthenticator = new CswAuthenticator( _CswNbtResources, new CswNbtAuthenticator( _CswNbtResources ), _CswNbtResources.MD5Seed );
             _CswSessionStorageDb = new Session.CswSessionStorageDb( AppType.Nbt, CswSetupVbls, CswDbCfgInfo, false );
         }//ctor
@@ -56,6 +56,11 @@ namespace ChemSW.NbtWebControls
             CswPrimaryKey UserId = null;
             _CswNbtResources.AccessId = AccessId;
 
+            string PreviousSessionId = string.Empty;
+            if( string.Empty != ( PreviousSessionId = _CswSessionStorageDb.getSessionId( UserName ) ) )
+            {
+                _CswSessionStorageDb.remove( PreviousSessionId ); 
+            }
 
             ReturnVal = _CswAuthenticator.Authenticate( AccessId, UserName, Password, CswNbtWebTools.getIpAddress(), 0, ref RoleTimeout, ref UserId );
             EuphemisticStatus = _CswAuthenticator.euphemizeAuthenticationStatus( ReturnVal );
@@ -68,9 +73,9 @@ namespace ChemSW.NbtWebControls
                 CswSessionsListEntry.LoginDate = DateTime.Now;
                 CswSessionsListEntry.UserName = UserName;
                 CswSessionsListEntry.IsMobile = true;
-                
-                
-                _CswSessionStorageDb.save( CswSessionsListEntry ); 
+
+
+                _CswSessionStorageDb.save( CswSessionsListEntry );
 
                 _CswNbtResources.CurrentUser = _CswAuthenticator.makeUser( UserName );
 
@@ -83,29 +88,29 @@ namespace ChemSW.NbtWebControls
         public void deAuthenticate( string SessionId )
         {
 
-            _CswSessionStorageDb.remove( SessionId ); 
+            _CswSessionStorageDb.remove( SessionId );
 
         }//deAuthenticate()
 
-        public AuthenticationStatus startSession( string SessionId , ref string EuphemisticAuthenticationStatus )
+        public AuthenticationStatus startSession( string SessionId, ref string EuphemisticAuthenticationStatus )
         {
 
             AuthenticationStatus ReturnVal = AuthenticationStatus.Unknown;
 
-            CswSessionsListEntry CswSessionsListEntry  = null; 
+            CswSessionsListEntry CswSessionsListEntry = null;
             if( null != ( CswSessionsListEntry = _CswSessionStorageDb.get( SessionId ) ) )
             {
                 ReturnVal = AuthenticationStatus.Authenticated;
                 _CswNbtResources.AccessId = CswSessionsListEntry.AccessId;
-                _CswNbtResources.CurrentUser = _CswAuthenticator.makeUser( CswSessionsListEntry.UserName);
+                _CswNbtResources.CurrentUser = _CswAuthenticator.makeUser( CswSessionsListEntry.UserName );
             }
             else
             {
-                ReturnVal = AuthenticationStatus.NonExistentSession; 
+                ReturnVal = AuthenticationStatus.NonExistentSession;
             }//if-else
 
 
-            EuphemisticAuthenticationStatus = _CswAuthenticator.euphemizeAuthenticationStatus( ReturnVal ); 
+            EuphemisticAuthenticationStatus = _CswAuthenticator.euphemizeAuthenticationStatus( ReturnVal );
 
             return ( ReturnVal );
 
