@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleSequence: ICswNbtFieldTypeRule
     {
-        public static CswNbtSubField.PropColumn SequenceColumn = CswNbtSubField.PropColumn.Field1;
+        public static CswNbtSubField.PropColumn SequenceNumberColumn = CswNbtSubField.PropColumn.Field1_Numeric;
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
 
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources, MetaDataProp );
 
-            SequenceSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, SequenceColumn, CswNbtSubField.SubFieldName.Sequence );
+            SequenceSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Sequence );
             SequenceSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
                                            CswNbtPropFilterSql.PropertyFilterMode.Contains |
                                            CswNbtPropFilterSql.PropertyFilterMode.Ends |
@@ -37,9 +37,22 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                            CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( SequenceSubField );
 
+            SequenceNumberSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, SequenceNumberColumn, CswNbtSubField.SubFieldName.Number );
+            SequenceNumberSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
+                                          CswNbtPropFilterSql.PropertyFilterMode.Contains |
+                                          CswNbtPropFilterSql.PropertyFilterMode.Ends |
+                                          CswNbtPropFilterSql.PropertyFilterMode.Equals |
+                                          CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
+                                          CswNbtPropFilterSql.PropertyFilterMode.LessThan |
+                                          CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
+                                          CswNbtPropFilterSql.PropertyFilterMode.NotNull |
+                                          CswNbtPropFilterSql.PropertyFilterMode.Null;
+            SubFields.add( SequenceNumberSubField );
+
         }//ctor
 
         public CswNbtSubField SequenceSubField;
+        public CswNbtSubField SequenceNumberSubField;
 
         public CswNbtSubFieldColl SubFields
         {

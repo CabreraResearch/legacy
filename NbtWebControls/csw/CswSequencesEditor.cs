@@ -226,8 +226,7 @@ namespace ChemSW.NbtWebControls
 
         public string formatNextValueSequence( Int32 SequenceId, CswSequenceName SequenceName )
         {
-            CswNbtSequenceValue CswNbtSequenceValue = new CswNbtSequenceValue( _CswNbtResources );
-            CswNbtSequenceValue.SequenceId = SequenceId;
+            CswNbtSequenceValue CswNbtSequenceValue = new CswNbtSequenceValue( _CswNbtResources , SequenceId);
             return ( CswNbtSequenceValue.makeExample( _CswNbtSequenceManager.getSequenceValue( SequenceName ) ) );
         }
 

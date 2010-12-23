@@ -1014,9 +1014,16 @@ namespace ChemSW.Nbt.MetaData
                                 CurrentNode.Properties[this].AsBarcode.SetBarcodeValue();
                             }
 
-                        }//iterate nodes
+                        } // for( int idx = 0; idx < TotalNodes; idx++ )
 
-                    }//if there are nodes
+                        // need to post this change immediately for resync to work
+                        _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( _NodeTypePropRow.Table );
+
+                        // Resync Sequence to next new value
+                        CswNbtSequenceValue SeqValue = new CswNbtSequenceValue( _CswNbtMetaDataResources.CswNbtResources, SequenceId );
+                        SeqValue.Resync();
+
+                    } // if( TotalNodes > 0 )
                 } // if prop is sequence or barcode
             } // if( CswConvert.ToInt32( _NodeTypePropRow[SequenceIdColumn] ) != SequenceId )
         } // setSequence()
