@@ -152,6 +152,15 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        public void UpdateObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes Attribute, object Value )
+        {
+            if( Attribute != CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.Unknown )
+            {
+                String AttributeName = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( Attribute );
+                UpdateObjectClassProp( ObjectClassProp, AttributeName, Value );
+            }
+        }
+
         /// <summary>
         /// Update the attributes of an Object Class Prop, and cascade changes to existing NodeTypeProps
         /// </summary>
