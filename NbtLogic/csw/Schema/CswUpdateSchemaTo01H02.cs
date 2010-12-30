@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.Schema
 
             // Case 20005: Make Owner prop required
             CswNbtMetaDataObjectClassProp OwnerOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.OwnerPropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( OwnerOCP, "isrequired", true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( OwnerOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
 
             // BZ 10343
             DataRow ParentTypeDR = _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, GeneratorOC.ObjectClassId, CswNbtObjClassGenerator.ParentTypePropertyName, CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect, Int32.MinValue, Int32.MinValue );
@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.Schema
                                                                              CswNbtSubField.SubFieldName.Value,
                                                                              0 );
 
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MailReportWarningDaysOCP, "readonly", true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MailReportWarningDaysOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, true );
 
 
             // BZ 10425 - Remove 'Status' field from Mail Report (redundant with 'Run Status')
