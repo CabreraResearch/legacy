@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtObjClassUser UserNode { get { return this; } }
         public CswNbtObjClassRole RoleNode { get { return _RoleNodeObjClass; } }
         public string Rolename { get { return _RoleNodeObjClass.Name.Text; } }
-        public Int32 RoleTimeout { get { return Convert.ToInt32( _RoleNodeObjClass.Timeout.Value ); } }
+        public Int32 RoleTimeout { get { return CswConvert.ToInt32( _RoleNodeObjClass.Timeout.Value ); } }
 
         public CswNbtNodePropRelationship Role { get { return ( _CswNbtNode.Properties[RolePropertyName].AsRelationship ); } }
         public CswNbtNodePropLogical AccountLocked { get { return ( _CswNbtNode.Properties[AccountLockedPropertyName].AsLogical ); } }
@@ -241,7 +241,7 @@ namespace ChemSW.Nbt.ObjClasses
             double LoginCount = FailedLoginCount.Value;
             if( double.IsNaN( LoginCount ) ) LoginCount = 0;
             if( LoginCount < 0 ) LoginCount = 0;
-            return Convert.ToInt32( LoginCount );
+            return CswConvert.ToInt32( LoginCount );
         }
 
         public void incFailedLoginCount()
@@ -251,7 +251,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             this.FailedLoginCount.Value = Convert.ToDouble( failures );
 
-            if( failures >= Convert.ToInt32( _CswNbtResources.getConfigVariableValue( "FailedLoginLimit" ) ) )
+            if( failures >= CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "FailedLoginLimit" ) ) )
             {
                 this.AccountLocked.Checked = Tristate.True;
             }

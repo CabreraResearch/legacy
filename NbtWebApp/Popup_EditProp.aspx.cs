@@ -59,14 +59,14 @@ namespace ChemSW.Nbt.WebPages
                     {
                         // Edit property value for node
                         _Node = Master.CswNbtResources.Nodes.GetNode( NodePk );
-                        PropId = Convert.ToInt32( Request.QueryString["propid"].ToString() );
+                        PropId = CswConvert.ToInt32( Request.QueryString["propid"].ToString() );
                         CswNbtMetaDataNodeTypeProp MetaDataProp = Master.CswNbtResources.MetaData.getNodeTypeProp( PropId );
                         PropControl = CswFieldTypeWebControlFactory.makeControl( Master.CswNbtResources, PropPlaceHolder.Controls, string.Empty, MetaDataProp, _Node, NodeEditMode.EditInPopup, new CswErrorHandler( Master.HandleError ) );
                     }
                     else
                     {
                         // Edit default value for property
-                        PropId = Convert.ToInt32( Request.QueryString["propid"].ToString() );
+                        PropId = CswConvert.ToInt32( Request.QueryString["propid"].ToString() );
                         CswNbtMetaDataNodeTypeProp MetaDataProp = Master.CswNbtResources.MetaData.getNodeTypeProp( PropId );
                         PropControl = CswFieldTypeWebControlFactory.makeControl( Master.CswNbtResources, PropPlaceHolder.Controls, string.Empty, MetaDataProp.DefaultValue, NodeEditMode.EditInPopup, new CswErrorHandler( Master.HandleError ) );
                     }
@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.WebPages
                         {
                             foreach( string OtherNodeIdString in CheckedNodeIds.Split( ',' ) )
                             {
-                                //CswPrimaryKey OtherNodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( OtherNodeIdString ) );
+                                //CswPrimaryKey OtherNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( OtherNodeIdString ) );
                                 CswPrimaryKey OtherNodeId = new CswPrimaryKey();
                                 OtherNodeId.FromString( OtherNodeIdString );
                                 if( OtherNodeId != _Node.NodeId )

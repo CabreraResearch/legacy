@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.WebPages
                 if( Request.QueryString["dcsn"] != null && Request.QueryString["dcsn"] != string.Empty )
                     _DontChangeSelectedNode = ( Request.QueryString["dcsn"] == "1" );
                 if( Request.QueryString["svid"] != null && Request.QueryString["svid"] != string.Empty )
-                    _SessionViewId = Convert.ToInt32( Request.QueryString["svid"] );
+                    _SessionViewId = CswConvert.ToInt32( Request.QueryString["svid"] );
                 //if( Request.QueryString["vrui"] != null && Request.QueryString["vrui"] != string.Empty )
                 //    _ViewRelationshipUniqueId = Request.QueryString["vrui"];
 
@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.WebPages
                     _AddMode = true;
       
                     string NodeTypeIdString = Request.QueryString["nodetypeid"].ToString();
-                    Int32 NodeTypeId = Convert.ToInt32( NodeTypeIdString );
+                    Int32 NodeTypeId = CswConvert.ToInt32( NodeTypeIdString );
                     CswNbtMetaDataNodeType MetaDataNodeType = Master.CswNbtResources.MetaData.getNodeType( NodeTypeId );
 
                     //BZ 10181

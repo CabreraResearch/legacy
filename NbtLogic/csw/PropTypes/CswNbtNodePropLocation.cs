@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.PropTypes
                 string StringVal = _CswNbtNodePropData.GetPropRowValue( _NodeIdSubField.Column );
                 if( CswTools.IsInteger( StringVal ) )
                 {
-                    Int32 Val = Convert.ToInt32( StringVal );
+                    Int32 Val = CswConvert.ToInt32( StringVal );
                     if( Val != Int32.MinValue )
                         ret = new CswPrimaryKey( "nodes", Val );
                 }
@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.PropTypes
                 Int32 ret = Int32.MinValue;
                 string StringVal = _CswNbtNodePropData.GetPropRowValue( _RowSubField.Column );
                 if( CswTools.IsInteger( StringVal ) )
-                    ret = Convert.ToInt32( StringVal );
+                    ret = CswConvert.ToInt32( StringVal );
                 return ret;
             }
             set
@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.PropTypes
                 Int32 ret = Int32.MinValue;
                 string StringVal = _CswNbtNodePropData.GetPropRowValue( _ColumnSubField.Column );
                 if( CswTools.IsInteger( StringVal ) )
-                    ret = Convert.ToInt32( StringVal );
+                    ret = CswConvert.ToInt32( StringVal );
                 return ret;
             }
             set
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.PropTypes
 
                 Int32 MaxDepth = 5;
                 if( CswTools.IsInteger( _CswNbtResources.getConfigVariableValue( "loc_max_depth" ) ) )
-                    MaxDepth = Convert.ToInt32( _CswNbtResources.getConfigVariableValue( "loc_max_depth" ) );
+                    MaxDepth = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "loc_max_depth" ) );
 
                 CswNbtViewRelationship PriorLocationLevel = LocationLevel1;
                 for( int i = 2; i <= MaxDepth; i++ )
@@ -258,12 +258,12 @@ namespace ChemSW.Nbt.PropTypes
                 SelectedNodeId = new CswPrimaryKey( "nodes", NodeMap[NodeId.ToLower()] );
             else if( CswTools.IsInteger( NodeId ) )
             {
-                //RelatedNodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( NodeId ) );
+                //RelatedNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeId ) );
                 Int32 LocationNodeId = Int32.MinValue;
                 if( PropRow.Table.Columns.Contains( _BarcodeSubField.ToXmlNodeName() ) )
-                    LocationNodeId = _HandleReference( Convert.ToInt32( NodeId ), CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.ToXmlNodeName()].ToString() ) );
+                    LocationNodeId = _HandleReference( CswConvert.ToInt32( NodeId ), CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.ToXmlNodeName()].ToString() ) );
                 else
-                    LocationNodeId = _HandleReference( Convert.ToInt32( NodeId ), string.Empty );
+                    LocationNodeId = _HandleReference( CswConvert.ToInt32( NodeId ), string.Empty );
                 SelectedNodeId = new CswPrimaryKey( "nodes", LocationNodeId );
             }
             else
@@ -279,14 +279,14 @@ namespace ChemSW.Nbt.PropTypes
             {
                 string StringVal = PropRow[_RowSubField.ToXmlNodeName()].ToString();
                 if( CswTools.IsInteger( StringVal ) )
-                    SelectedRow = Convert.ToInt32( StringVal );
+                    SelectedRow = CswConvert.ToInt32( StringVal );
             }
 
             if( PropRow.Table.Columns.Contains( _ColumnSubField.ToXmlNodeName() ) )
             {
                 string StringVal = PropRow[_ColumnSubField.ToXmlNodeName()].ToString();
                 if( CswTools.IsInteger( StringVal ) )
-                    SelectedColumn = Convert.ToInt32( StringVal );
+                    SelectedColumn = CswConvert.ToInt32( StringVal );
             }
             PendingUpdate = true;
         }

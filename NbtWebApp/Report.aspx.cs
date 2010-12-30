@@ -94,12 +94,12 @@ namespace ChemSW.Nbt.WebPages
             _LoadingLiteral.Visible = false;
             if( Request.QueryString["reportid"] != string.Empty )
             {
-                CswPrimaryKey ReportId = new CswPrimaryKey( "nodes", Convert.ToInt32( Request.QueryString["reportid"] ) );
+                CswPrimaryKey ReportId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Request.QueryString["reportid"] ) );
                 CswNbtNode Node = Master.CswNbtResources.Nodes.GetNode( ReportId );
                 CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( Node );
 
                 // Get the Report Data
-                CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, Convert.ToInt32( ReportNode.View.ViewId ) );
+                CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( ReportNode.View.ViewId ) );
                 if( View == null )
                     throw new CswDniException( "Report has invalid View", "Report received a null view" );
 

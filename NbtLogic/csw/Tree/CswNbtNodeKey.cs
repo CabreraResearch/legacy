@@ -118,9 +118,9 @@ namespace ChemSW.Nbt
             NodeSpecies ret = NodeSpecies.UnKnown;
             if( Depth >= 0 )
             {
-                if( TreePath[Depth + 1].Substring( 0, CswNbtTreeNodes._ElemName_NodeGroup.Length ) == CswNbtTreeNodes._ElemName_NodeGroup )
+                if( TreePath[Depth + 1].Contains( CswNbtTreeNodes._ElemName_NodeGroup ) )
                     ret = NodeSpecies.Group;
-                else if( TreePath[Depth + 1].Substring( 0, CswNbtTreeNodes._ElemName_Node.Length ) == CswNbtTreeNodes._ElemName_Node )
+                else if( TreePath[Depth + 1].Contains( CswNbtTreeNodes._ElemName_Node ) )
                     ret = NodeSpecies.Plain;
             }
             return ret;
@@ -135,12 +135,15 @@ namespace ChemSW.Nbt
             if( Depth >= 0 )
             {
                 string NodeStr = TreePath[Depth + 1];
-                string IdStr1 = NodeStr.Substring( NodeStr.IndexOf( "@tablename='" ) + "@tablename='".Length );
-                IdStr1 = IdStr1.Substring( 0, IdStr1.IndexOf( "'" ) );
-                string IdStr2 = NodeStr.Substring( NodeStr.IndexOf( "@nodeid=" ) + "@nodeid=".Length );
-                IdStr2 = IdStr2.Substring( 0, IdStr2.Length - "]".Length );
-                if( CswTools.IsInteger( IdStr2 ) )
-                    ret = new CswPrimaryKey( IdStr1, Convert.ToInt32( IdStr2 ) );
+                if( NodeStr.Length > ( NodeStr.IndexOf( "@tablename='" ) + "@tablename='".Length ) )
+                {
+                    string IdStr1 = NodeStr.Substring( NodeStr.IndexOf( "@tablename='" ) + "@tablename='".Length );
+                    IdStr1 = IdStr1.Substring( 0, IdStr1.IndexOf( "'" ) );
+                    string IdStr2 = NodeStr.Substring( NodeStr.IndexOf( "@nodeid=" ) + "@nodeid=".Length );
+                    IdStr2 = IdStr2.Substring( 0, IdStr2.Length - "]".Length );
+                    if( CswTools.IsInteger( IdStr2 ) )
+                        ret = new CswPrimaryKey( IdStr1, CswConvert.ToInt32( IdStr2 ) );
+                }
             }
             return ret;
         }

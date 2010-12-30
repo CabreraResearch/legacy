@@ -273,10 +273,10 @@ namespace ChemSW.Nbt.WebPages
                     Label RowNameLiteral = new Label();
                     RowNameLiteral.Text = RowName;
                     RowNameLiteral.Style.Add( HtmlTextWriterStyle.FontWeight, "bold" );
-                    CustomerDataTable.addControl( Convert.ToInt32( RowHash[RowName] ), 0, RowNameLiteral );
+                    CustomerDataTable.addControl( CswConvert.ToInt32( RowHash[RowName] ), 0, RowNameLiteral );
                 }
 
-                DateTime StartDate = DateTime.Now.AddMonths( -1 * Convert.ToInt32( TimeList.SelectedValue ) );
+                DateTime StartDate = DateTime.Now.AddMonths( -1 * CswConvert.ToInt32( TimeList.SelectedValue ) );
                 DateTime EndDate = DateTime.Now.AddDays(1);   // EndDate = tomorrow will include today's data
 
                 // Data Columns
@@ -309,7 +309,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         if( UserItem.Selected )
                         {
-                            _makeDataColumn( LimitToAccessId, new CswPrimaryKey( "nodes", Convert.ToInt32( UserItem.Value ) ), CustomerDataTable, col, StartDate, EndDate, !AverageOnlyCheckBox.Checked );
+                            _makeDataColumn( LimitToAccessId, new CswPrimaryKey( "nodes", CswConvert.ToInt32( UserItem.Value ) ), CustomerDataTable, col, StartDate, EndDate, !AverageOnlyCheckBox.Checked );
                             col++;
                         }
                     }
@@ -367,7 +367,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     CustomerNodeId = CustomerNode.NodeId;
                     CustomerName = CustomerNode.NodeName;
-                    UserLimit = Convert.ToInt32( CswNbtNodeCaster.AsCustomer( CustomerNode ).UserCount.Value );
+                    UserLimit = CswConvert.ToInt32( CswNbtNodeCaster.AsCustomer( CustomerNode ).UserCount.Value );
                 }
                 CustomerNode = null;
             }
@@ -464,7 +464,7 @@ namespace ChemSW.Nbt.WebPages
             foreach( DataRow StatRow in StatisticsTable.Rows )
             {
                 double ThisPageTimeTotal = Convert.ToDouble( StatRow["average_servertime"].ToString() );
-                Int32 ThisPageCount = Convert.ToInt32( StatRow["count_lifecycles"].ToString() );
+                Int32 ThisPageCount = CswConvert.ToInt32( StatRow["count_lifecycles"].ToString() );
                 PageTimeTotal += ThisPageTimeTotal * ThisPageCount;
                 PageCount += ThisPageCount;
 
@@ -481,7 +481,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     CswPrimaryKey ThisUserID = new CswPrimaryKey( "nodes", CswConvert.ToInt32( StatRow["userid"] ) );
                     if( SessionsPerUserHash[ThisUserID] != null )
-                        SessionsPerUserHash[ThisUserID] = Convert.ToInt32( SessionsPerUserHash[ThisUserID] ) + 1;
+                        SessionsPerUserHash[ThisUserID] = CswConvert.ToInt32( SessionsPerUserHash[ThisUserID] ) + 1;
                     else
                         SessionsPerUserHash[ThisUserID] = 1;
                 }
@@ -527,9 +527,9 @@ namespace ChemSW.Nbt.WebPages
             {
                 foreach( CswPrimaryKey UserId in SessionsPerUserHash.Keys )
                 {
-                    if( Convert.ToInt32( SessionsPerUserHash[UserId] ) > MostSessions )
+                    if( CswConvert.ToInt32( SessionsPerUserHash[UserId] ) > MostSessions )
                     {
-                        MostSessions = Convert.ToInt32( SessionsPerUserHash[UserId] );
+                        MostSessions = CswConvert.ToInt32( SessionsPerUserHash[UserId] );
                         MostSessionsUserId = UserId;
                     }
                 }
@@ -650,7 +650,7 @@ namespace ChemSW.Nbt.WebPages
                     UserNameLink.ID = "UserNameLink";
                     UserNameLink.Text = UserName;
                     UserNameLink.OnClientClick = "openEditNodePopupFromNodeId('" + LimitToUserId.ToString() + "'); return false;";
-                    AutoTable.addControl( Convert.ToInt32( RowHash[NameRowName] ), ColumnNo, UserNameLink );
+                    AutoTable.addControl( CswConvert.ToInt32( RowHash[NameRowName] ), ColumnNo, UserNameLink );
                 }
                 else
                 {
@@ -659,7 +659,7 @@ namespace ChemSW.Nbt.WebPages
                         UserNameLiteral.Text = UserName;
                     else
                         UserNameLiteral.Text = "&nbsp;";
-                    AutoTable.addControl( Convert.ToInt32( RowHash[NameRowName] ), ColumnNo, UserNameLiteral );
+                    AutoTable.addControl( CswConvert.ToInt32( RowHash[NameRowName] ), ColumnNo, UserNameLiteral );
                 }
 
                 Literal UserIdLiteral = new Literal();
@@ -667,7 +667,7 @@ namespace ChemSW.Nbt.WebPages
                     UserIdLiteral.Text = LimitToUserId.PrimaryKey.ToString();
                 else
                     UserIdLiteral.Text = "&nbsp;";
-                AutoTable.addControl( Convert.ToInt32( RowHash[UserIdRowName] ), ColumnNo, UserIdLiteral );
+                AutoTable.addControl( CswConvert.ToInt32( RowHash[UserIdRowName] ), ColumnNo, UserIdLiteral );
             }
             else if( _NbtMgrEnabled )
             {
@@ -677,43 +677,43 @@ namespace ChemSW.Nbt.WebPages
                     CustomerNameLink.ID = "CustomerNameLink";
                     CustomerNameLink.Text = CustomerName;
                     CustomerNameLink.OnClientClick = "openEditNodePopupFromNodeId('" + CustomerNodeId.ToString() + "'); return false;";
-                    AutoTable.addControl( Convert.ToInt32( RowHash[NameRowName] ), ColumnNo, CustomerNameLink );
+                    AutoTable.addControl( CswConvert.ToInt32( RowHash[NameRowName] ), ColumnNo, CustomerNameLink );
                 }
                 else
                 {
                     Literal CustomerNameLiteral = new Literal();
                     CustomerNameLiteral.Text = CustomerName;
-                    AutoTable.addControl( Convert.ToInt32( RowHash[NameRowName] ), ColumnNo, CustomerNameLiteral );
+                    AutoTable.addControl( CswConvert.ToInt32( RowHash[NameRowName] ), ColumnNo, CustomerNameLiteral );
                 }
             }
 
             Literal AccessIDLiteral = new Literal();
             AccessIDLiteral.Text = AccessId;
-            AutoTable.addControl( Convert.ToInt32( RowHash[AccessIdRowName] ), ColumnNo, AccessIDLiteral );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[AccessIdRowName] ), ColumnNo, AccessIDLiteral );
 
             Literal LastLogoutLiteral = new Literal();
             if( LastLogout > DateTime.MinValue )
                 LastLogoutLiteral.Text = LastLogout.ToString();
             else
                 LastLogoutLiteral.Text = "&nbsp;";
-            AutoTable.addControl( Convert.ToInt32( RowHash[LastLogoutRowName] ), ColumnNo, LastLogoutLiteral );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[LastLogoutRowName] ), ColumnNo, LastLogoutLiteral );
 
             if( _DisplayMode == StatisticsDisplayMode.Schema )
             {
                 Literal TotalNodesLiteral = new Literal();
                 TotalNodesLiteral.Text = TotalNodes.ToString();
-                AutoTable.addControl( Convert.ToInt32( RowHash[TotalNodesRowName] ), ColumnNo, TotalNodesLiteral );
+                AutoTable.addControl( CswConvert.ToInt32( RowHash[TotalNodesRowName] ), ColumnNo, TotalNodesLiteral );
 
                 Literal TotalUsersLiteral = new Literal();
                 TotalUsersLiteral.Text = UserCount.ToString();
-                AutoTable.addControl( Convert.ToInt32( RowHash[TotalUsersRowName] ), ColumnNo, TotalUsersLiteral );
+                AutoTable.addControl( CswConvert.ToInt32( RowHash[TotalUsersRowName] ), ColumnNo, TotalUsersLiteral );
 
                 Literal MostSessionsPerUserLiteral = new Literal();
                 if( MostSessions > 0 && MostSessionsUserName != string.Empty )
                     MostSessionsPerUserLiteral.Text = MostSessions.ToString() + " (user: " + MostSessionsUserName + ")";
                 else
                     MostSessionsPerUserLiteral.Text = "0";
-                AutoTable.addControl( Convert.ToInt32( RowHash[MostSessionsPerUserRowName] ), ColumnNo, MostSessionsPerUserLiteral );
+                AutoTable.addControl( CswConvert.ToInt32( RowHash[MostSessionsPerUserRowName] ), ColumnNo, MostSessionsPerUserLiteral );
 
                 Literal PeakUsersLiteral = new Literal();
                 if( PeakUsers > 0 )
@@ -722,75 +722,75 @@ namespace ChemSW.Nbt.WebPages
                     PeakUsersLiteral.Text = "0";
                 if( UserLimit > 0 )
                     PeakUsersLiteral.Text += " (limit: " + UserLimit.ToString() + ")";
-                AutoTable.addControl( Convert.ToInt32( RowHash[PeakUsersRowName] ), ColumnNo, PeakUsersLiteral );
+                AutoTable.addControl( CswConvert.ToInt32( RowHash[PeakUsersRowName] ), ColumnNo, PeakUsersLiteral );
 
                 Literal PeakUsersCountLiteral = new Literal();
                 if( PeakUsersCount > 0 )
                     PeakUsersCountLiteral.Text = PeakUsersCount.ToString();
                 else
                     PeakUsersCountLiteral.Text = "0";
-                AutoTable.addControl( Convert.ToInt32( RowHash[PeakUsersCountRowName] ), ColumnNo, PeakUsersCountLiteral );
+                AutoTable.addControl( CswConvert.ToInt32( RowHash[PeakUsersCountRowName] ), ColumnNo, PeakUsersCountLiteral );
             }
 
             Literal TotalSessionsLiteral = new Literal();
             TotalSessionsLiteral.Text = TotalSessions.ToString();
-            AutoTable.addControl( Convert.ToInt32( RowHash[TotalSessionsRowName] ), ColumnNo, TotalSessionsLiteral );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[TotalSessionsRowName] ), ColumnNo, TotalSessionsLiteral );
 
             Literal AverageServerTimeLiteral = new Literal();
             AverageServerTimeLiteral.Text = AverageServerTime.ToString() + "ms";
-            AutoTable.addControl( Convert.ToInt32( RowHash[AverageServerTimeRowName] ), ColumnNo, AverageServerTimeLiteral );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[AverageServerTimeRowName] ), ColumnNo, AverageServerTimeLiteral );
 
             Literal AverageSessionLengthLiteral = new Literal();
             AverageSessionLengthLiteral.Text = AverageSessionTime.ToString();
-            AutoTable.addControl( Convert.ToInt32( RowHash[AverageSessionLengthRowName] ), ColumnNo, AverageSessionLengthLiteral );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[AverageSessionLengthRowName] ), ColumnNo, AverageSessionLengthLiteral );
 
             Literal ErrorsLiteral = new Literal();
             ErrorsLiteral.Text = Errors.ToString();
-            AutoTable.addControl( Convert.ToInt32( RowHash[ErrorsRowName] ), ColumnNo, ErrorsLiteral );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[ErrorsRowName] ), ColumnNo, ErrorsLiteral );
 
             WebControl MultiEditCountLink = _makeStatisticsPopupLink( MultiEditCount, AccessId, LimitToUserId, "viewsmultiedited", StartDate, EndDate, ShowPopupLinks );
-            AutoTable.addControl( Convert.ToInt32( RowHash[MultiEditCountRowName] ), ColumnNo, MultiEditCountLink );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[MultiEditCountRowName] ), ColumnNo, MultiEditCountLink );
 
             WebControl ActionLoadsCountLink = _makeStatisticsPopupLink( ActionLoadsCount, AccessId, LimitToUserId, "actionloads", StartDate, EndDate, ShowPopupLinks );
-            AutoTable.addControl( Convert.ToInt32( RowHash[ActionLoadsCountRowName] ), ColumnNo, ActionLoadsCountLink );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[ActionLoadsCountRowName] ), ColumnNo, ActionLoadsCountLink );
 
             WebControl ReportRunsCountLink = _makeStatisticsPopupLink( ReportRunsCount, AccessId, LimitToUserId, "reportsrun", StartDate, EndDate, ShowPopupLinks );
-            AutoTable.addControl( Convert.ToInt32( RowHash[ReportRunsCountRowName] ), ColumnNo, ReportRunsCountLink );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[ReportRunsCountRowName] ), ColumnNo, ReportRunsCountLink );
 
             WebControl ViewsLoadCountLink = _makeStatisticsPopupLink( ViewsLoadCount, AccessId, LimitToUserId, "viewsloaded", StartDate, EndDate, ShowPopupLinks );
-            AutoTable.addControl( Convert.ToInt32( RowHash[ViewsLoadCountRowName] ), ColumnNo, ViewsLoadCountLink );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[ViewsLoadCountRowName] ), ColumnNo, ViewsLoadCountLink );
 
             WebControl ViewsEditedCountLink = _makeStatisticsPopupLink( ViewsEditedCount, AccessId, LimitToUserId, "viewsedited", StartDate, EndDate, ShowPopupLinks );
-            AutoTable.addControl( Convert.ToInt32( RowHash[ViewsEditedCountRowName] ), ColumnNo, ViewsEditedCountLink );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[ViewsEditedCountRowName] ), ColumnNo, ViewsEditedCountLink );
 
             WebControl SearchesLoadCountLink = _makeStatisticsPopupLink( SearchesLoadCount, AccessId, LimitToUserId, "searchesloaded", StartDate, EndDate, ShowPopupLinks );
-            AutoTable.addControl( Convert.ToInt32( RowHash[SearchesLoadCountRowName] ), ColumnNo, SearchesLoadCountLink );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[SearchesLoadCountRowName] ), ColumnNo, SearchesLoadCountLink );
 
             WebControl ViewFilterModsLink = _makeStatisticsPopupLink( ViewFilterMods, AccessId, LimitToUserId, "viewfiltermods", StartDate, EndDate, ShowPopupLinks );
-            AutoTable.addControl( Convert.ToInt32( RowHash[ViewFilterModsRowName] ), ColumnNo, ViewFilterModsLink );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[ViewFilterModsRowName] ), ColumnNo, ViewFilterModsLink );
 
             WebControl NodesSavedCountLink = _makeStatisticsPopupLink( NodesSavedCount, AccessId, LimitToUserId, "nodessaved", StartDate, EndDate, ShowPopupLinks );
-            AutoTable.addControl( Convert.ToInt32( RowHash[NodesSavedCountRowName] ), ColumnNo, NodesSavedCountLink );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[NodesSavedCountRowName] ), ColumnNo, NodesSavedCountLink );
 
             WebControl NodesAddedCountLink = _makeStatisticsPopupLink( NodesAddedCount, AccessId, LimitToUserId, "nodesadded", StartDate, EndDate, ShowPopupLinks );
-            AutoTable.addControl( Convert.ToInt32( RowHash[NodesAddedCountRowName] ), ColumnNo, NodesAddedCountLink );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[NodesAddedCountRowName] ), ColumnNo, NodesAddedCountLink );
 
             WebControl NodesCopiedCountLink = _makeStatisticsPopupLink( NodesCopiedCount, AccessId, LimitToUserId, "nodescopied", StartDate, EndDate, ShowPopupLinks );
-            AutoTable.addControl( Convert.ToInt32( RowHash[NodesCopiedCountRowName] ), ColumnNo, NodesCopiedCountLink );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[NodesCopiedCountRowName] ), ColumnNo, NodesCopiedCountLink );
 
             WebControl NodesDeletedCountLink = _makeStatisticsPopupLink( NodesDeletedCount, AccessId, LimitToUserId, "nodesdeleted", StartDate, EndDate, ShowPopupLinks );
-            AutoTable.addControl( Convert.ToInt32( RowHash[NodesDeletedCountRowName] ), ColumnNo, NodesDeletedCountLink );
+            AutoTable.addControl( CswConvert.ToInt32( RowHash[NodesDeletedCountRowName] ), ColumnNo, NodesDeletedCountLink );
 
             if( ShowModeLink )
             {
                 LinkButton SwitchModeLink = new LinkButton();
                 SwitchModeLink.Text = "See Users";
                 SwitchModeLink.PostBackUrl = "Statistics.aspx?mode=user&accessid=" + AccessId;
-                AutoTable.addControl( Convert.ToInt32( RowHash[SwitchModeRowName] ), ColumnNo, SwitchModeLink );
+                AutoTable.addControl( CswConvert.ToInt32( RowHash[SwitchModeRowName] ), ColumnNo, SwitchModeLink );
             }
             else
             {
-                AutoTable.addControl( Convert.ToInt32( RowHash[SwitchModeRowName] ), ColumnNo, new CswLiteralNbsp() );
+                AutoTable.addControl( CswConvert.ToInt32( RowHash[SwitchModeRowName] ), ColumnNo, new CswLiteralNbsp() );
             }
         }
 

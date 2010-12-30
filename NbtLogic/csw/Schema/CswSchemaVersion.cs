@@ -45,14 +45,14 @@ namespace ChemSW.Nbt.Schema
             if( SchemaVersionAsString.Length < 6 && CswTools.IsInteger( SchemaVersionAsString ) )
             {
                 // Example: 74   (backwards compatibility)
-                _init( 0, 'X', Convert.ToInt32( SchemaVersionAsString ) );
+                _init( 0, 'X', CswConvert.ToInt32( SchemaVersionAsString ) );
             }
             else
             {
                 // Example: 01F-02
-                _init( Convert.ToInt32( SchemaVersionAsString.Substring( 0, 2 ) ),
+                _init( CswConvert.ToInt32( SchemaVersionAsString.Substring( 0, 2 ) ),
                        SchemaVersionAsString.Substring( 2, 1 )[0],
-                       Convert.ToInt32( SchemaVersionAsString.Substring( 4, 2 ) ) );
+                       CswConvert.ToInt32( SchemaVersionAsString.Substring( 4, 2 ) ) );
             }
         }
 

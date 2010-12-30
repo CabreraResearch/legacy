@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Statistics
         public void IncrementHash( Hashtable HT, object Key )
         {
             if ( HT.Contains( Key ) )
-                HT[ Key ] = Convert.ToInt32( HT[ Key ] ) + 1;
+                HT[ Key ] = CswConvert.ToInt32( HT[ Key ] ) + 1;
             else
                 HT[ Key ] = 1;
         }

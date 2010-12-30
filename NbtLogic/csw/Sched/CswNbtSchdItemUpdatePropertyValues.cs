@@ -70,9 +70,9 @@ namespace ChemSW.Nbt.Sched
                     // Update one of them at random (which will keep us from encountering errors which gum up the queue)
                     Random rand = new Random();
                     Int32 index = rand.Next( 0, OutOfDateNodes.Rows.Count );
-                    CswPrimaryKey nodeid = new CswPrimaryKey( "nodes", Convert.ToInt32( OutOfDateNodes.Rows[index]["nodeid"].ToString() ) );
-                    //Int32 propid = Convert.ToInt32(OutOfDateNodes.Rows[index]["nodetypepropid"].ToString());
-                    //Int32 jctnodepropid = Convert.ToInt32(OutOfDateNodes.Rows[index]["jctnodepropid"].ToString());
+                    CswPrimaryKey nodeid = new CswPrimaryKey( "nodes", CswConvert.ToInt32( OutOfDateNodes.Rows[index]["nodeid"].ToString() ) );
+                    //Int32 propid = CswConvert.ToInt32(OutOfDateNodes.Rows[index]["nodetypepropid"].ToString());
+                    //Int32 jctnodepropid = CswConvert.ToInt32(OutOfDateNodes.Rows[index]["jctnodepropid"].ToString());
                     CswNbtNode Node = _CswNbtResources.Nodes[ nodeid ];
                     if( Node == null )
                         throw new CswDniException( "Node not found (" + nodeid.ToString() + ")" );

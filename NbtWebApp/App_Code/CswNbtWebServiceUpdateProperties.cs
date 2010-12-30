@@ -34,8 +34,8 @@ namespace ChemSW.Nbt.WebServices
             {
                 string NodePropId = PropNode.Attributes["id"].Value;
                 string[] SplitNodePropId = NodePropId.Split( '_' );
-                Int32 NodeTypePropId = Convert.ToInt32( SplitNodePropId[1] );
-                CswPrimaryKey NodePk = new CswPrimaryKey( SplitNodePropId[3], Convert.ToInt32( SplitNodePropId[4] ) );
+                Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[1] );
+                CswPrimaryKey NodePk = new CswPrimaryKey( SplitNodePropId[3], CswConvert.ToInt32( SplitNodePropId[4] ) );
 
                 CswNbtNode Node = _CswNbtWebServiceResources.CswNbtResources.Nodes[NodePk];
                 CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );

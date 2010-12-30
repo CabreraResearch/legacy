@@ -430,7 +430,7 @@ namespace ChemSW.Nbt.WebPages
                     string ContainerQtyString = Sheet1.Cells[r, ContainerQtyColumn].Text;
                     if( CswTools.IsInteger( ContainerCountString ) && CswTools.IsFloat( ContainerQtyString ) )
                     {
-                        for( Int32 c = 0; c < Convert.ToInt32( ContainerCountString ); c++ )
+                        for( Int32 c = 0; c < CswConvert.ToInt32( ContainerCountString ); c++ )
                         {
                             CswNbtNode NewContainerNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContainerNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                             NewContainerNode.Properties[ContainerPackDetailProp].AsRelationship.RelatedNodeId = SelectedPackDetailNodeKey.NodeId;

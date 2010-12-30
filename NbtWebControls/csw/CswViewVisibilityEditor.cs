@@ -167,7 +167,7 @@ namespace ChemSW.NbtWebControls
                 EnsureChildControls();
                 CswPrimaryKey ret = null;
                 if( _NewViewVisibilityRoleDropDown.SelectedItem != null )
-                    ret = new CswPrimaryKey( "nodes", Convert.ToInt32( _NewViewVisibilityRoleDropDown.SelectedValue ) );
+                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _NewViewVisibilityRoleDropDown.SelectedValue ) );
                 return ret;
             }
             set
@@ -189,7 +189,7 @@ namespace ChemSW.NbtWebControls
                 EnsureChildControls();
                 CswPrimaryKey ret = null;
                 if( _NewViewVisibilityUserDropDown.SelectedItem != null )
-                    ret = new CswPrimaryKey( "nodes", Convert.ToInt32( _NewViewVisibilityUserDropDown.SelectedValue ) );
+                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _NewViewVisibilityUserDropDown.SelectedValue ) );
                 return ret;
             }
             set

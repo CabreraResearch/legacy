@@ -122,7 +122,7 @@ namespace ChemSW.Nbt
                     string[] delim1arr = new string[1];
                     delim1arr[0] = delim1;
                     string[] Split2 = elm.Split( delim1arr, StringSplitOptions.RemoveEmptyEntries );
-                    Int32 key = Convert.ToInt32( Split2[0] );
+                    Int32 key = CswConvert.ToInt32( Split2[0] );
                     string ViewString = Split2[1].ToString();
                     if( !ViewHash.ContainsKey( key ) )
                         ViewHash.Add( key, ViewString );

@@ -49,11 +49,11 @@ namespace ChemSW.Nbt.WebPages
                 //CswTools.IsInteger(Request.QueryString["nodeid"].ToString()) &&
                 CswTools.IsInteger(Request.QueryString["propid"].ToString()))
             {
-                CswNbtMetaDataNodeTypeProp MetaDataProp = Master.CswNbtResources.MetaData.getNodeTypeProp(Convert.ToInt32(Request.QueryString["propid"].ToString()));
+                CswNbtMetaDataNodeTypeProp MetaDataProp = Master.CswNbtResources.MetaData.getNodeTypeProp(CswConvert.ToInt32(Request.QueryString["propid"].ToString()));
                 CswPrimaryKey NodeId = new CswPrimaryKey();
                 NodeId.FromString( Request.QueryString["nodeid"] );
                 CswNbtNode Node = Master.CswNbtResources.Nodes[NodeId];
-                //CswNbtNodePropWrapper Prop = Node.Properties[Convert.ToInt32(Request.QueryString["propid"].ToString())];
+                //CswNbtNodePropWrapper Prop = Node.Properties[CswConvert.ToInt32(Request.QueryString["propid"].ToString())];
                 CswNbtNodePropWrapper Prop = Node.Properties[MetaDataProp];
                 CswNbtView GridView = Prop.AsGrid.View; //new CswNbtView(Master.CswNbtResources);
                 //GridView.LoadXml(Prop.AsGrid.ViewXml);
@@ -65,15 +65,15 @@ namespace ChemSW.Nbt.WebPages
             else if (Request.QueryString["viewid"] != null)
             {
                 //CswNbtView AView = new CswNbtView(Master.CswNbtResources);
-                //AView.LoadXml(Convert.ToInt32(Request.QueryString["viewid"].ToString()));
-                CswNbtView AView = (CswNbtView)CswNbtViewFactory.restoreView(Master.CswNbtResources, Convert.ToInt32(Request.QueryString["viewid"].ToString()));
+                //AView.LoadXml(CswConvert.ToInt32(Request.QueryString["viewid"].ToString()));
+                CswNbtView AView = (CswNbtView)CswNbtViewFactory.restoreView(Master.CswNbtResources, CswConvert.ToInt32(Request.QueryString["viewid"].ToString()));
                 _NodesGrid.View = AView;
             }
             else if (Request.QueryString["sessionviewid"] != null)
             {
                 //CswNbtView AView = new CswNbtView(Master.CswNbtResources);
-                //AView.LoadXml(Convert.ToInt32(Request.QueryString["viewid"].ToString()));
-                CswNbtView AView = (CswNbtView)Master.CswNbtResources.ViewCache.getView(Convert.ToInt32(Request.QueryString["sessionviewid"].ToString()));
+                //AView.LoadXml(CswConvert.ToInt32(Request.QueryString["viewid"].ToString()));
+                CswNbtView AView = (CswNbtView)Master.CswNbtResources.ViewCache.getView(CswConvert.ToInt32(Request.QueryString["sessionviewid"].ToString()));
                 _NodesGrid.View = AView;
             }
             else

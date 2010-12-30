@@ -93,7 +93,7 @@ namespace ChemSW.NbtWebControls
                 if( _TreeView.SelectedValue != string.Empty )
                 {
                     string[] SplitValue = _TreeView.SelectedValue.Split( '_' );
-                    return Convert.ToInt32( SplitValue[1] );
+                    return CswConvert.ToInt32( SplitValue[1] );
                 }
                 else
                 {
@@ -121,7 +121,7 @@ namespace ChemSW.NbtWebControls
             }
             else // Action
             {
-                Int32 PreviousActionId = Convert.ToInt32( PreviousViewObj.ToString() );
+                Int32 PreviousActionId = CswConvert.ToInt32( PreviousViewObj.ToString() );
                 if( PreviousActionId > 0 )
                 {
                     CswNbtAction Action = _CswNbtResources.Actions[PreviousActionId];

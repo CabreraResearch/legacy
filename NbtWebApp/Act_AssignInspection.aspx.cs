@@ -213,14 +213,14 @@ namespace ChemSW.Nbt.WebPages
                         }
                         break;
                     case 3:
-                        CswNbtView ViewToLoad = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, Convert.ToInt32( TargetViewDropDown.SelectedValue ) );
+                        CswNbtView ViewToLoad = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( TargetViewDropDown.SelectedValue ) );
                         ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( ViewToLoad, true, true, false, false );
                         string Xml = Tree.getTreeAsXml();
                         TargetTreeView.LoadXml( Xml );
                         TargetTreeView.ExpandAllNodes();
                         break;
                     case 4:
-                        CswNbtMetaDataNodeType InspectionNodeType = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( InspectionDropDown.SelectedValue ) );
+                        CswNbtMetaDataNodeType InspectionNodeType = Master.CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( InspectionDropDown.SelectedValue ) );
                         CswNbtMetaDataNodeTypeProp TargetProp = InspectionNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
 
                         Collection<CswNbtNodeKey> CheckedNodes = new Collection<CswNbtNodeKey>();
@@ -259,7 +259,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                CswNbtMetaDataNodeType InspectionNodeType = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( InspectionDropDown.SelectedValue ) );
+                CswNbtMetaDataNodeType InspectionNodeType = Master.CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( InspectionDropDown.SelectedValue ) );
                 CswNbtMetaDataNodeTypeProp TargetProp = InspectionNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
 
                 Collection<CswNbtNodeKey> CheckedNodes = new Collection<CswNbtNodeKey>();
@@ -349,7 +349,7 @@ namespace ChemSW.Nbt.WebPages
 
         private CswNbtView _makeNewInspectionsView( Collection<CswNbtNodeKey> TargetNodeKeys, Collection<CswPrimaryKey> ChildNodeIDs, CswNbtMetaDataNodeTypeProp TargetProp, CswNbtMetaDataNodeType DefaultGeneratorNodeType )
         {
-            CswNbtMetaDataNodeType InspectionNodeType = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( InspectionDropDown.SelectedValue ) );
+            CswNbtMetaDataNodeType InspectionNodeType = Master.CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( InspectionDropDown.SelectedValue ) );
 
             CswNbtView View = new CswNbtView( Master.CswNbtResources );
             View.ViewName = "New Inspections";

@@ -145,9 +145,9 @@ namespace ChemSW.Nbt.PropTypes
             CachedViewNames.Clear();
             if( SelectedViewIds.Count > 0 )
             {
-                if( SelectMode != PropertySelectMode.Multiple && Convert.ToInt32( SelectedViewIds[0] ) > 0 )
+                if( SelectMode != PropertySelectMode.Multiple && CswConvert.ToInt32( SelectedViewIds[0] ) > 0 )
                 {
-                    CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, Convert.ToInt32( SelectedViewIds[0] ) );
+                    CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( SelectedViewIds[0] ) );
                     if( View != null )
                         CachedViewNames.Add( View.ViewName );
                 }

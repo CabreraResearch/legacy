@@ -256,7 +256,7 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 if( _ObjectClassPropRow["fkvalue"].ToString() != string.Empty )
-                    return Convert.ToInt32( _ObjectClassPropRow["fkvalue"].ToString() );
+                    return CswConvert.ToInt32( _ObjectClassPropRow["fkvalue"].ToString() );
                 else
                     return Int32.MinValue;
             }
@@ -269,7 +269,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 Int32 ReturnVal = Int32.MinValue;
                 if( !_ObjectClassPropRow.IsNull( "display_col_add" ) )
-                    ReturnVal = Convert.ToInt32( _ObjectClassPropRow["display_col_add"].ToString() );
+                    ReturnVal = CswConvert.ToInt32( _ObjectClassPropRow["display_col_add"].ToString() );
                 return ( ReturnVal );
             }
         }//DisplayColAdd
@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 Int32 ReturnVal = Int32.MinValue;
                 if( !_ObjectClassPropRow.IsNull( "display_row_add" ) )
-                    ReturnVal = Convert.ToInt32( _ObjectClassPropRow["display_row_add"].ToString() );
+                    ReturnVal = CswConvert.ToInt32( _ObjectClassPropRow["display_row_add"].ToString() );
                 return ( ReturnVal );
             }
         }//DisplayColAdd

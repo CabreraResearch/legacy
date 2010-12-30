@@ -83,41 +83,13 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.beforeWriteNode();
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
 
-           /* if( null!= Node && null != CswNbtNodeCaster.AsGenerator( Node ).ParentView.ViewId )
-            {
-                CswNbtObjClassGenerator ThisGenerator = CswNbtNodeCaster.AsGenerator( Node );
-                CswNbtMetaDataNodeType ParentType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ThisGenerator.ParentType.SelectedNodeTypeIds ) );
-                CswNbtMetaDataNodeType OwnerType = _CswNbtResources.MetaData.getNodeType( ThisGenerator.Owner.TargetId );
-                Collection<CswNbtMetaDataNodeType> TargetTypes = new Collection<CswNbtMetaDataNodeType>();
-
-                foreach(String NType in TargetType.SelectedNodeTypeIds )
-                {
-                    CswNbtMetaDataNodeType newTarget = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NType ) );
-                    if( newTarget.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
-                        TargetTypes.Add( newTarget );
-                }
-
-                if( ParentType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.MountPointClass &&
-                    OwnerType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.MountPointGroupClass &&
-                    TargetTypes.Count > 0 )
-                {
-                    CswNbtView ParentView = CswNbtViewFactory.restoreView( _CswNbtResources, ThisGenerator.ParentView.ViewId );
-                    ParentView.ViewName = Node.NodeName + " ParentView";
-                    CswNbtViewRelationship ParentRelationship = ParentView.AddViewRelationship( OwnerType, false );
-                    CswNbtViewRelationship MountPointGroupChild = ParentView.AddViewRelationship( ParentRelationship, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );
-                    CswNbtViewRelationship MountPointChild = ParentView.AddViewRelationship( MountPointGroupChild, CswNbtViewRelationship.PropOwnerType.Second, MountPointGroupNTP, true );
-                    CswNbtViewRelationship FireExtinguisherChild = ParentView.AddViewRelationship( MountPointChild, CswNbtViewRelationship.PropOwnerType.Second, MountPointNTP, true );
-                    ParentView.save();
-                }
-            }
-            */ 
             // BZ 7845
             if ( TargetType.Empty )
                 Enabled.Checked = Tristate.False;
         } //beforeWriteNode()
 
         public override void afterWriteNode()
-        {
+        {   
             _CswNbtPropertySetSchedulerImpl.setLastFutureDate();
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
@@ -126,7 +98,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             // BZ 6754 - Delete all future nodes
             CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-            CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
+            CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
             CswNbtMetaDataObjectClass TargetObjectClass = TargetNodeType.ObjectClass;
 
             CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );

@@ -626,7 +626,7 @@ namespace ChemSW.NbtWebControls
                                 if( Value.Substring( 0, "today".Length ) == "today" )
                                 {
                                     FilterValueDatePicker.Today = true;
-                                    FilterValueDatePicker.TodayPlusDays = Convert.ToInt32( Value.Substring( "today+".Length ) );
+                                    FilterValueDatePicker.TodayPlusDays = CswConvert.ToInt32( Value.Substring( "today+".Length ) );
                                 }
                                 else
                                     FilterValueDatePicker.SelectedDate = Convert.ToDateTime( Value );
@@ -686,7 +686,7 @@ namespace ChemSW.NbtWebControls
                     {
                         if( values[PropSelectBox.UniqueID] != null && CswTools.IsInteger( values[PropSelectBox.UniqueID].ToString() ) )
                         {
-                            NewPropId = Convert.ToInt32( values[PropSelectBox.UniqueID].ToString() );
+                            NewPropId = CswConvert.ToInt32( values[PropSelectBox.UniqueID].ToString() );
                             ICswNbtMetaDataProp MetaDataProp = null;
                             //if( NewId.Substring( 0, _NodeTypePrefix.Length ) == _NodeTypePrefix )
                             MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NewPropId );
@@ -902,7 +902,7 @@ namespace ChemSW.NbtWebControls
                 EnsureChildControls();
                 Int32 ret = Int32.MinValue;
                 if( PropSelectBox.SelectedValue != string.Empty )
-                    ret = Convert.ToInt32( PropSelectBox.SelectedValue );
+                    ret = CswConvert.ToInt32( PropSelectBox.SelectedValue );
                 return ret;
             }
         }

@@ -295,11 +295,11 @@ namespace ChemSW.Nbt
                 if( Node.Attributes["mode"] != null )
                     ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), Node.Attributes["mode"].Value, true );
                 if( Node.Attributes["width"] != null && Node.Attributes["width"].Value != String.Empty )
-                    Width = Convert.ToInt32( Node.Attributes["width"].Value );
+                    Width = CswConvert.ToInt32( Node.Attributes["width"].Value );
                 //if( Node.Attributes[ "editmode" ] != null )
                 //    EditMode = ( GridEditMode ) Enum.Parse( typeof( GridEditMode ), Node.Attributes[ "editmode" ].Value, true );
                 if( Node.Attributes["viewid"] != null && Node.Attributes["viewid"].Value != String.Empty )
-                    ViewId = Convert.ToInt32( Node.Attributes["viewid"].Value );
+                    ViewId = CswConvert.ToInt32( Node.Attributes["viewid"].Value );
                 if( Node.Attributes["category"] != null && Node.Attributes["category"].Value != String.Empty )
                     Category = Node.Attributes["category"].Value;
                 if( Node.Attributes["visibility"] != null && Node.Attributes["visibility"].Value != String.Empty )
@@ -307,9 +307,9 @@ namespace ChemSW.Nbt
                 //if (Node.Attributes["addchildren"] != null && Node.Attributes["addchildren"].Value != String.Empty)
                 //    AddChildren = ( NbtViewAddChildrenSetting ) Enum.Parse( typeof( NbtViewAddChildrenSetting ), Node.Attributes[ "addchildren" ].Value, true );
                 if( Node.Attributes["visibilityroleid"] != null && Node.Attributes["visibilityroleid"].Value != String.Empty )
-                    VisibilityRoleId = new CswPrimaryKey( "nodes", Convert.ToInt32( Node.Attributes["visibilityroleid"].Value ) );
+                    VisibilityRoleId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Node.Attributes["visibilityroleid"].Value ) );
                 if( Node.Attributes["visibilityuserid"] != null && Node.Attributes["visibilityuserid"].Value != String.Empty )
-                    VisibilityUserId = new CswPrimaryKey( "nodes", Convert.ToInt32( Node.Attributes["visibilityuserid"].Value ) );
+                    VisibilityUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Node.Attributes["visibilityuserid"].Value ) );
                 //if( Node.Attributes["welcometext"] != null && Node.Attributes["welcometext"].Value != string.Empty )
                 //    WelcomeText = Node.Attributes["welcometext"].Value;
                 //if( Node.Attributes["relatedviewids"] != null && Node.Attributes["relatedviewids"].Value != string.Empty )

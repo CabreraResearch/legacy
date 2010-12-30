@@ -296,7 +296,7 @@ namespace ChemSW.NbtWebControls
             {
                 string[] SplitID = ( (LinkButton) sender ).ID.Split( '_' );
                 CswViewListTree.ViewType ThisViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), SplitID[1] );
-                Int32 ThisPk = Convert.ToInt32( SplitID[2] );
+                Int32 ThisPk = CswConvert.ToInt32( SplitID[2] );
                 if( OnViewLinkClick != null )
                     OnViewLinkClick( ThisViewType, ThisPk );
             }
@@ -312,7 +312,7 @@ namespace ChemSW.NbtWebControls
             {
                 string[] SplitID = ( (ImageButton) sender ).ID.Split( '_' );
                 CswViewListTree.ViewType ThisViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), SplitID[1] );
-                Int32 ThisPk = Convert.ToInt32( SplitID[2] );
+                Int32 ThisPk = CswConvert.ToInt32( SplitID[2] );
                 if( OnViewLinkClick != null )
                     OnViewLinkClick( ThisViewType, ThisPk );
             }
@@ -337,7 +337,7 @@ namespace ChemSW.NbtWebControls
             {
                 string[] SplitID = ( (LinkButton) sender ).ID.Split( '_' );
                 //CswViewListTree.ViewType ThisViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), SplitID[1] );
-                Int32 ViewId = Convert.ToInt32( SplitID[2] );
+                Int32 ViewId = CswConvert.ToInt32( SplitID[2] );
                 CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
                 //_setupSearchViewRecursive( _LayoutTable, ThisView.Root );
                 if( OnSearchClick != null )
@@ -354,7 +354,7 @@ namespace ChemSW.NbtWebControls
             {
                 string[] SplitID = ( (ImageButton) sender ).ID.Split( '_' );
                 //CswViewListTree.ViewType ThisViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), SplitID[1] );
-                Int32 ViewId = Convert.ToInt32( SplitID[2] );
+                Int32 ViewId = CswConvert.ToInt32( SplitID[2] );
                 CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
                 //_setupSearchViewRecursive( _LayoutTable, ThisView.Root );
                 if( OnSearchClick != null )

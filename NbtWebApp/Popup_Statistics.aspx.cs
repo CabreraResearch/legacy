@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebPages
 
             UserId = null;
             if( Request.QueryString["userid"] != null && Request.QueryString["userid"] != string.Empty )
-                UserId = new CswPrimaryKey( "nodes", Convert.ToInt32( Request.QueryString["userid"] ) );
+                UserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Request.QueryString["userid"] ) );
 
             ShowMode = Request.QueryString["show"];
 
@@ -167,9 +167,9 @@ namespace ChemSW.Nbt.WebPages
                 if( Label != string.Empty )
                 {
                     if( DataHash[Label] != null )
-                        DataHash[Label] = Convert.ToInt32( DataHash[Label] ) + Convert.ToInt32( DataRow["hitcount"].ToString() );
+                        DataHash[Label] = CswConvert.ToInt32( DataHash[Label] ) + CswConvert.ToInt32( DataRow["hitcount"].ToString() );
                     else
-                        DataHash.Add( Label, Convert.ToInt32( DataRow["hitcount"].ToString() ) );
+                        DataHash.Add( Label, CswConvert.ToInt32( DataRow["hitcount"].ToString() ) );
                 }
             }
 

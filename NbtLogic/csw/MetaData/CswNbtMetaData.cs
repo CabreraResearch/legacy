@@ -345,7 +345,7 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypesRow["islocked"] = "0";
             InsertedNodeTypesRow["tablename"] = "nodes";
             NodeTypesTable.Rows.Add(InsertedNodeTypesRow);
-            Int32 NodeTypeId = Convert.ToInt32(InsertedNodeTypesRow["nodetypeid"]);
+            Int32 NodeTypeId = CswConvert.ToInt32(InsertedNodeTypesRow["nodetypeid"]);
             InsertedNodeTypesRow["firstversionid"] = NodeTypeId.ToString();
             _CswNbtMetaDataResources.NodeTypeTableUpdate.update(NodeTypesTable);
 
@@ -816,7 +816,7 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypeRow["category"] = NodeType.Category;
             InsertedNodeTypeRow["islocked"] = "0";
             NewNodeTypeTable.Rows.Add(InsertedNodeTypeRow);
-            Int32 NewNodeTypeId = Convert.ToInt32(InsertedNodeTypeRow["nodetypeid"].ToString());
+            Int32 NewNodeTypeId = CswConvert.ToInt32(InsertedNodeTypeRow["nodetypeid"].ToString());
             if (IsVersioning)
             {
                 // new version of this nodetype
@@ -866,7 +866,7 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeTab.CopyTabToNewNodeTypeTabRow(NewTabRow);
                 NewTabRow["nodetypeid"] = NewNodeTypeId.ToString();
                 NewTabsTable.Rows.Add(NewTabRow);
-                Int32 NewTabId = Convert.ToInt32(NewTabRow["nodetypetabsetid"].ToString());
+                Int32 NewTabId = CswConvert.ToInt32(NewTabRow["nodetypetabsetid"].ToString());
                 _CswNbtMetaDataResources.NodeTypeTabTableUpdate.update(NewTabsTable);
                 TabMap.Add(NodeTypeTab.TabId, NewTabId);
 
@@ -882,9 +882,9 @@ namespace ChemSW.Nbt.MetaData
             {
                 DataRow NewPropRow = NewPropsTable.NewRow();
                 NewPropRow["nodetypeid"] = CswConvert.ToDbVal(NewNodeTypeId);
-                NewPropRow["nodetypetabsetid"] = CswConvert.ToDbVal(Convert.ToInt32(TabMap[NodeTypeProp.NodeTypeTab.TabId]));
+                NewPropRow["nodetypetabsetid"] = CswConvert.ToDbVal(CswConvert.ToInt32(TabMap[NodeTypeProp.NodeTypeTab.TabId]));
                 NewPropsTable.Rows.Add(NewPropRow);
-                Int32 NewPropId = Convert.ToInt32(NewPropRow["nodetypepropid"].ToString());
+                Int32 NewPropId = CswConvert.ToInt32(NewPropRow["nodetypepropid"].ToString());
                 if (IsVersioning)
                 {
                     NewPropRow["firstpropversionid"] = CswConvert.ToDbVal(NodeTypeProp.FirstPropVersionId);
@@ -997,8 +997,8 @@ namespace ChemSW.Nbt.MetaData
             foreach (DataRow CurrentRow in ViewsTable.Rows)
             {
                 //CswNbtView CurrentView = new CswNbtView(_CswNbtResources);
-                //CurrentView.LoadXml(Convert.ToInt32(CurrentRow["nodeviewid"].ToString()));
-                CswNbtView CurrentView = (CswNbtView)CswNbtViewFactory.restoreView(_CswNbtMetaDataResources.CswNbtResources, Convert.ToInt32(CurrentRow["nodeviewid"]));
+                //CurrentView.LoadXml(CswConvert.ToInt32(CurrentRow["nodeviewid"].ToString()));
+                CswNbtView CurrentView = (CswNbtView)CswNbtViewFactory.restoreView(_CswNbtMetaDataResources.CswNbtResources, CswConvert.ToInt32(CurrentRow["nodeviewid"]));
                 if (CurrentView.ContainsNodeType(NodeType))
                     CurrentView.Delete();
             }

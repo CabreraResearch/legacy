@@ -155,7 +155,7 @@ namespace ChemSW.NbtWebControls
                     _GridHeaderIcon.ImageUrl = _View.IconFileName;
 
                     // View width is in characters, not pixels
-                    _Grid.Width = Unit.Parse( ( Convert.ToInt32( View.Width * 7 ) ).ToString() + "px" );  // average pixel width per character
+                    _Grid.Width = Unit.Parse( ( CswConvert.ToInt32( View.Width * 7 ) ).ToString() + "px" );  // average pixel width per character
 
                     CswNbtNodeKey ParentKey = null;
                     if( ParentNodeKey != null && _View.Root.ChildRelationships.Count > 0 )
@@ -341,7 +341,7 @@ namespace ChemSW.NbtWebControls
                     if( ColumnName.Length > PropColumnPrefix.Length && ColumnName.Substring( 0, PropColumnPrefix.Length ) == PropColumnPrefix )
                     {
                         string NoPrefixColumnName = ColumnName.Substring( PropColumnPrefix.Length );
-                        //Int32 CurrentNodeTypePropId = Convert.ToInt32( NoPrefixColumnName.Substring( 0, NoPrefixColumnName.IndexOf( '_' ) ) );
+                        //Int32 CurrentNodeTypePropId = CswConvert.ToInt32( NoPrefixColumnName.Substring( 0, NoPrefixColumnName.IndexOf( '_' ) ) );
                         string RealColumnName = CswTools.XmlRealAttributeName( NoPrefixColumnName ); //.Substring( NoPrefixColumnName.IndexOf( '_' ) + 1 ) );
                         //CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( CurrentNodeTypePropId );
                         //CswNbtViewProperty CurrentViewProp = View.FindPropertyById( CswNbtViewProperty.CswNbtPropType.NodeTypePropId, CurrentNodeTypePropId );
@@ -392,7 +392,7 @@ namespace ChemSW.NbtWebControls
                         thisColumn.HeaderText = RealColumnName;
                         thisColumn.DataField = ColumnName;
                         if( CurrentViewProp != null && CurrentViewProp.Width != Int32.MinValue )
-                            thisColumn.HeaderStyle.Width = Unit.Parse( ( Convert.ToInt32( CurrentViewProp.Width * 7 ) ).ToString() + "px" );  // average pixel width per character
+                            thisColumn.HeaderStyle.Width = Unit.Parse( ( CswConvert.ToInt32( CurrentViewProp.Width * 7 ) ).ToString() + "px" );  // average pixel width per character
 
                         //thisColumn.OrderIndex = CurrentViewProp.Order;
                         //Telerik.Web.UI.GridTableView GTV = new GridTableView( _Grid );

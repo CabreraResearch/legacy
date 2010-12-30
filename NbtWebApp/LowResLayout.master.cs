@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 Int32 ret = Int32.MinValue;
                 if( CswTools.IsInteger( Request.QueryString["view"] ) )
-                    ret = Convert.ToInt32( Request.QueryString["view"] );
+                    ret = CswConvert.ToInt32( Request.QueryString["view"] );
                 return ret;
             }
         }
@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 Int32 ret = Int32.MinValue;
                 if( CswTools.IsInteger( Request.QueryString["tab"] ) )
-                    ret = Convert.ToInt32( Request.QueryString["tab"] );
+                    ret = CswConvert.ToInt32( Request.QueryString["tab"] );
                 return ret;
             }
         }
@@ -149,7 +149,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 Int32 ret = Int32.MinValue;
                 if( CswTools.IsInteger( Request.QueryString["prop"] ) )
-                    ret = Convert.ToInt32( Request.QueryString["prop"] );
+                    ret = CswConvert.ToInt32( Request.QueryString["prop"] );
                 return ret;
             }
         }

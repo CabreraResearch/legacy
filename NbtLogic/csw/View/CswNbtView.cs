@@ -470,7 +470,7 @@ namespace ChemSW.Nbt
             Clear();
             if( CopyView != null )
                 this.LoadXml( CopyView.ToXml() );
-            this.ViewId = Convert.ToInt32( NewRow["nodeviewid"].ToString() );
+            this.ViewId = CswConvert.ToInt32( NewRow["nodeviewid"].ToString() );
             this.ViewName = ViewName;
             this.Visibility = Visibility;
             this.VisibilityRoleId = RoleId;

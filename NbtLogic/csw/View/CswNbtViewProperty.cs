@@ -167,10 +167,15 @@ namespace ChemSW.Nbt
         {
             if( PropertyString[0] == NbtViewNodeType.CswNbtViewProperty.ToString() )
             {
+                //while( PropertyString.Count < 11 )
+                //{
+                //    PropertyString.Add( String.Empty );
+                //}
+                
                 if( PropertyString[1] != String.Empty )
                     Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropertyString[1], true );
                 if( PropertyString[2] != String.Empty )
-                    NodeTypePropId = Convert.ToInt32( PropertyString[2] );
+                    NodeTypePropId = CswConvert.ToInt32( PropertyString[2] );
                 if( PropertyString[3] != String.Empty )
                     Name = PropertyString[3];
                 //if( Values[4] != String.Empty )
@@ -182,11 +187,11 @@ namespace ChemSW.Nbt
                 if( PropertyString[7] != String.Empty )
                     FieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( PropertyString[7] ) );
                 if( PropertyString[8] != String.Empty )
-                    Order = Convert.ToInt32( PropertyString[8] );
+                    Order = CswConvert.ToInt32( PropertyString[8] );
                 if( PropertyString[9] != String.Empty )
-                    Width = Convert.ToInt32( PropertyString[9] );
+                    Width = CswConvert.ToInt32( PropertyString[9] );
                 if( PropertyString[10] != String.Empty )
-                    ObjectClassPropId = Convert.ToInt32( PropertyString[10] );
+                    ObjectClassPropId = CswConvert.ToInt32( PropertyString[10] );
             }
         }
 
@@ -203,14 +208,14 @@ namespace ChemSW.Nbt
                 if( PropNode.Attributes["value"] != null )   //backwards compatibility
                 {
                     if( Type == CswNbtPropType.NodeTypePropId )
-                        NodeTypePropId = Convert.ToInt32( PropNode.Attributes["value"].Value );
+                        NodeTypePropId = CswConvert.ToInt32( PropNode.Attributes["value"].Value );
                     else
-                        ObjectClassPropId = Convert.ToInt32( PropNode.Attributes["value"].Value );
+                        ObjectClassPropId = CswConvert.ToInt32( PropNode.Attributes["value"].Value );
                 }
                 if( PropNode.Attributes["nodetypepropid"] != null )
-                    NodeTypePropId = Convert.ToInt32( PropNode.Attributes["nodetypepropid"].Value );
+                    NodeTypePropId = CswConvert.ToInt32( PropNode.Attributes["nodetypepropid"].Value );
                 if( PropNode.Attributes["objectclasspropid"] != null )
-                    ObjectClassPropId = Convert.ToInt32( PropNode.Attributes["objectclasspropid"].Value );
+                    ObjectClassPropId = CswConvert.ToInt32( PropNode.Attributes["objectclasspropid"].Value );
                 if( PropNode.Attributes["name"] != null )
                     Name = PropNode.Attributes["name"].Value;
                 //if( PropNode.Attributes["arbitraryid"] != null )
@@ -222,9 +227,9 @@ namespace ChemSW.Nbt
                 if( PropNode.Attributes["fieldtype"] != null && PropNode.Attributes["fieldtype"].Value != string.Empty )
                     FieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( PropNode.Attributes["fieldtype"].Value ) );
                 if( PropNode.Attributes["order"] != null && PropNode.Attributes["order"].Value != string.Empty )
-                    Order = Convert.ToInt32( PropNode.Attributes["order"].Value );
+                    Order = CswConvert.ToInt32( PropNode.Attributes["order"].Value );
                 if( PropNode.Attributes["width"] != null && PropNode.Attributes["width"].Value != string.Empty )
-                    Width = Convert.ToInt32( PropNode.Attributes["width"].Value );
+                    Width = CswConvert.ToInt32( PropNode.Attributes["width"].Value );
             }
             catch( Exception ex )
             {

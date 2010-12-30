@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.WebPages
             if( CswTools.IsInteger( _LoadViewList.SelectedValue ) )
             {
                 // Run the selected View
-                CswNbtView SelectedView = CswNbtViewFactory.restoreView( Master.CswNbtResources, Convert.ToInt32( _LoadViewList.SelectedValue ) ) as CswNbtView;
+                CswNbtView SelectedView = CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( _LoadViewList.SelectedValue ) ) as CswNbtView;
                 ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( SelectedView, true, true, false, false );
 
                 // Harvest the Result IDs
@@ -235,7 +235,7 @@ namespace ChemSW.Nbt.WebPages
                                 //    Sheet.ColumnCount = CurrentMaxColumn + 1;
                                 //}
 
-                                FarPoint.Web.Spread.Cell ThisCell = Sheet.Cells[Row, Convert.ToInt32( ColumnHash[NodeTypeProp.PropName.ToLower()] )];
+                                FarPoint.Web.Spread.Cell ThisCell = Sheet.Cells[Row, CswConvert.ToInt32( ColumnHash[NodeTypeProp.PropName.ToLower()] )];
                                 ThisCell.Locked = false;
                                 switch( NodeTypeProp.FieldType.FieldType )
                                 {
@@ -307,7 +307,7 @@ namespace ChemSW.Nbt.WebPages
                     Sheet.Columns[ResultNodeIdColumn].Locked = true;
                     foreach( string PropName in ColumnHash.Keys )
                     {
-                        Sheet.Columns[Convert.ToInt32( ColumnHash[PropName.ToLower()] )].Label = PropName.ToUpper();
+                        Sheet.Columns[CswConvert.ToInt32( ColumnHash[PropName.ToLower()] )].Label = PropName.ToUpper();
                     }
                     Sheet.PageSize = 200;
                     Sheet.SelectionBackColor = System.Drawing.Color.FromArgb( 255, 255, 0 );
@@ -343,7 +343,7 @@ namespace ChemSW.Nbt.WebPages
             {
 
                 // Save changes
-                CswPrimaryKey ResultNodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( _Spread.Sheets[0].GetValue( Convert.ToInt32( e.CommandArgument ), ResultNodeIdColumn ) ) );
+                CswPrimaryKey ResultNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _Spread.Sheets[0].GetValue( CswConvert.ToInt32( e.CommandArgument ), ResultNodeIdColumn ) ) );
                 CswNbtNode ResultNode = Master.CswNbtResources.Nodes[ResultNodeId];
                 CswNbtMetaDataNodeType ResultNodeType = Master.CswNbtResources.MetaData.getNodeType( ResultNode.NodeTypeId );
 
@@ -351,9 +351,9 @@ namespace ChemSW.Nbt.WebPages
                 {
                     CswNbtMetaDataNodeTypeProp Prop = ResultNodeType.getNodeTypeProp( PropName );
                     // If the field is an "object", it is unchanged.  If it's a string, we have a value to store.
-                    if( e.EditValues[Convert.ToInt32( ColumnHash[PropName.ToLower()] )] is string )
+                    if( e.EditValues[CswConvert.ToInt32( ColumnHash[PropName.ToLower()] )] is string )
                     {
-                        string NewValue = e.EditValues[Convert.ToInt32( ColumnHash[PropName.ToLower()] )].ToString();
+                        string NewValue = e.EditValues[CswConvert.ToInt32( ColumnHash[PropName.ToLower()] )].ToString();
                         switch( Prop.FieldType.FieldType )
                         {
                             case CswNbtMetaDataFieldType.NbtFieldType.Date:

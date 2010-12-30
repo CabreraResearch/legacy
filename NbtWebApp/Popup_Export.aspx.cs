@@ -114,11 +114,11 @@ namespace ChemSW.Nbt.WebPages
                 CswNbtMetaDataNodeType NodeType = null;
                 if( Request.QueryString["nodetypeid"] != null )
                 {
-                    NodeType = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( Request.QueryString["nodetypeid"] ) );
+                    NodeType = Master.CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( Request.QueryString["nodetypeid"] ) );
                 }
                 else if( Request.QueryString["sessionviewid"] != null )
                 {
-                    CswNbtView = (CswNbtView) Master.CswNbtResources.ViewCache.getView( Convert.ToInt32( Request.QueryString["sessionviewid"] ) );
+                    CswNbtView = (CswNbtView) Master.CswNbtResources.ViewCache.getView( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) );
                 }
                 else
                 {
@@ -199,7 +199,7 @@ namespace ChemSW.Nbt.WebPages
                         //CswTools.IsInteger( Request.QueryString["nodeid"].ToString() ) &&
                         CswTools.IsInteger( Request.QueryString["propid"].ToString() ) )
                     {
-                        CswNbtMetaDataNodeTypeProp MetaDataProp = Master.CswNbtResources.MetaData.getNodeTypeProp( Convert.ToInt32( Request.QueryString["propid"].ToString() ) );
+                        CswNbtMetaDataNodeTypeProp MetaDataProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( Request.QueryString["propid"].ToString() ) );
                         CswPrimaryKey NodeId = new CswPrimaryKey();
                         NodeId.FromString( Request.QueryString["nodeid"] );
                         CswNbtNode Node = Master.CswNbtResources.Nodes[NodeId];
@@ -209,8 +209,8 @@ namespace ChemSW.Nbt.WebPages
                     }
                     else if( Request.QueryString["sessionviewid"] != null )
                     {
-                        //CswNbtView AView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, Convert.ToInt32( Request.QueryString["viewid"].ToString() ) );
-                        CswNbtView AView = (CswNbtView) Master.CswNbtResources.ViewCache.getView( Convert.ToInt32( Request.QueryString["sessionviewid"] ) );
+                        //CswNbtView AView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) );
+                        CswNbtView AView = (CswNbtView) Master.CswNbtResources.ViewCache.getView( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) );
                         _NodesGrid.View = AView;
                     }
                     else

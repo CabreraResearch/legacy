@@ -30,7 +30,7 @@ namespace ChemSW.Nbt
             DataTable DataTable = NodesSelect.getTable( FilterColumn, CswNbtNode.NodeId.PrimaryKey );
             if( DataTable.Rows.Count > 0 )
             {
-                CswNbtNode.NodeTypeId = Convert.ToInt32( DataTable.Rows[0]["nodetypeid"].ToString() );
+                CswNbtNode.NodeTypeId = CswConvert.ToInt32( DataTable.Rows[0]["nodetypeid"].ToString() );
                 CswNbtNode.NodeName = DataTable.Rows[0]["nodename"].ToString();
                 //CswNbtNode.PendingUpdate = ( DataTable.Rows[ 0 ][ "pendingupdate" ].ToString() == "1" );
                 ReturnVal = true;
