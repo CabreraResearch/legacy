@@ -1844,7 +1844,7 @@ namespace ChemSW.NbtWebControls
                                 {
                                     CurrentRelationship.clearGroupBy();
                                 }
-                                if( _View.ViewMode != NbtViewRenderingMode.Grid )
+                                if( _View.ViewMode == NbtViewRenderingMode.Tree )   
                                     CurrentRelationship.ShowInTree = _ShowInTreeCheck.Checked;
 
                             }
