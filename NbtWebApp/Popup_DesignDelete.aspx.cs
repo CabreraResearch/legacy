@@ -15,6 +15,7 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.DB;
 using ChemSW.CswWebControls;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -398,7 +399,10 @@ namespace ChemSW.Nbt.WebPages
         {
             CswNbtMetaDataNodeType NodeType = Master.CswNbtResources.MetaData.getNodeType( NodeTypeId );
             CswTableSelect ViewsSelect = Master.CswNbtResources.makeCswTableSelect( "getViewsUsingNodeType_select", "node_views" );
-            DataTable ViewsTable = ViewsSelect.getTable( new StringCollection { "nodeviewid", "viewname" } );
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            SelectCols.Add( "nodeviewid" );
+            SelectCols.Add( "viewname" );
+            DataTable ViewsTable = ViewsSelect.getTable( SelectCols );
             ArrayList RowsToRemove = new ArrayList();
             foreach( DataRow CurrentRow in ViewsTable.Rows )
             {
@@ -420,7 +424,10 @@ namespace ChemSW.Nbt.WebPages
         {
             CswNbtMetaDataNodeTypeProp NodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
             CswTableSelect ViewsSelect = Master.CswNbtResources.makeCswTableSelect( "getViewsUsingNodeTypeProp_select", "node_views" );
-            DataTable ViewsTable = ViewsSelect.getTable( new StringCollection { "nodeviewid", "viewname" } );
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            SelectCols.Add( "nodeviewid" );
+            SelectCols.Add( "viewname" );
+            DataTable ViewsTable = ViewsSelect.getTable( SelectCols );
             ArrayList RowsToRemove = new ArrayList();
             foreach( DataRow CurrentRow in ViewsTable.Rows )
             {
