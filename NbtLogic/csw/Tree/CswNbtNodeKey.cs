@@ -328,7 +328,7 @@ namespace ChemSW.Nbt
         /// <param name="TreeDepth">Depth for count (1 is top level)</param>
         public Int32 getNodeCountAtDepth( Int32 TreeDepth )
         {
-            return CswConvert.ToInt32( NodeCountPath[TreeDepth] );
+            return CswConvert.ToInt32( NodeCountPath[TreeDepth-1] );
         }
 
         #region IEquatable

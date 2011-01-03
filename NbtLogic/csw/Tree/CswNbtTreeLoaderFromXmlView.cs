@@ -138,22 +138,22 @@ namespace ChemSW.Nbt
 
             if( PageSize > 0 && IncludedKey != null && IncludedKey.TreeDepth > ParentDepth )
             {
-                NodeSpecies TreePathNodeSpecies = IncludedKey.TreePathNodeSpecies( ParentDepth + 1 );
+                NodeSpecies TreePathNodeSpecies = IncludedKey.TreePathNodeSpecies( ParentDepth + 2 );
                 if( TreePathNodeSpecies == NodeSpecies.Plain )
                 {
-                    FindThisNodeId = IncludedKey.TreePathNodeId( ParentDepth + 1 );
-                    FindThisNodeCount = IncludedKey.getNodeCountAtDepth( ParentDepth + 1 );
+                    FindThisNodeId = IncludedKey.TreePathNodeId( ParentDepth + 2 );
+                    FindThisNodeCount = IncludedKey.getNodeCountAtDepth( ParentDepth + 2 );
                 }
                 else if( TreePathNodeSpecies == NodeSpecies.Group )
                 {
                     if( IncludedKey.NodeSpecies == NodeSpecies.Group )
                     {
-                        FindThisGroupName = IncludedKey.TreePathGroupName( ParentDepth + 1 );
+                        FindThisGroupName = IncludedKey.TreePathGroupName( ParentDepth + 2 );
                     }
                     else
                     {
-                        FindThisNodeId = IncludedKey.TreePathNodeId( ParentDepth + 2 );
-                        FindThisNodeCount = IncludedKey.getNodeCountAtDepth( ParentDepth + 2 );
+                        FindThisNodeId = IncludedKey.TreePathNodeId( ParentDepth + 3 );
+                        FindThisNodeCount = IncludedKey.getNodeCountAtDepth( ParentDepth + 3 );
                     }
                 }
 
@@ -246,7 +246,7 @@ namespace ChemSW.Nbt
                                         bool ContinueDown = ( ( Recurse ||
                                                                 ( FindThisNodeId != null && ChildKey.NodeId == FindThisNodeId ) ||
                                                                 ( !Relationship.ShowInTree ) ||   // BZ 8082
-                                                                ( FindThisGroupName != string.Empty && ChildKey.TreePathGroupName( ParentDepth + 1 ) == FindThisGroupName ) ) &&
+                                                                ( FindThisGroupName != string.Empty && ChildKey.TreePathGroupName( ParentDepth + 2 ) == FindThisGroupName ) ) &&
                                                               Relationship.ChildRelationships.Count > 0 );
 
                                         if( ContinueDown || Relationship.ChildRelationships.Count == 0 )
