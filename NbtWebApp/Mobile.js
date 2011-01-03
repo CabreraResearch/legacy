@@ -803,7 +803,7 @@
                 case "Memo": if (name == IdStr) $sftomodify = $sf_text; break;
                 case "Number": if (name == IdStr) $sftomodify = $sf_value; break;
                 case "Password": break;
-                case "Quantity": if (name == IdStr) $sftomodify = $sf_value; break;
+                case "Quantity": if (name == IdStr + '_qty') $sftomodify = $sf_value; break;
                 case "Question":
                     if (name == IdStr + '_com')
                         $sftomodify = $sf_comments;
@@ -822,7 +822,6 @@
                 $sftomodify.text(value);
                 $xmlitem.attr('wasmodified', '1');
             }
-
         } // _FieldTypeHtmlToXml()
 
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
