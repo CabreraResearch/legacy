@@ -61,6 +61,7 @@ namespace ChemSW.Nbt.MetaData
             Name,
             NodeID,
             NodeType,
+            Number,
             Password,
             Path,
             Required,

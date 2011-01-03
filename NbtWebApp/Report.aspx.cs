@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.WebPages
                         {
                             CswTableSelect JctSelect = Master.CswNbtResources.makeCswTableSelect( "getReportLayoutBlob_select", "jct_nodes_props" );
                             JctSelect.AllowBlobColumns = true;
-                            StringCollection SelectColumns = new StringCollection();
+                            CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
                             SelectColumns.Add( "blobdata" );
                             SelectColumns.Add( "field2" );
                             DataTable JctTable = JctSelect.getTable( SelectColumns, "jctnodepropid", JctNodePropId, "", true );

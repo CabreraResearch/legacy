@@ -23,9 +23,14 @@ namespace ChemSW.Nbt.PropTypes
             }
 
             _SequenceSubField = ( (CswNbtFieldTypeRuleSequence) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).SequenceSubField;
+            _SequenceNumberSubField = ( (CswNbtFieldTypeRuleSequence) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).SequenceNumberSubField;
+            
+            _SequenceValue = new CswNbtSequenceValue( _CswNbtMetaDataNodeTypeProp.PropId, _CswNbtResources );
         }
 
+        private CswNbtSequenceValue _SequenceValue;
         private CswNbtSubField _SequenceSubField;
+        private CswNbtSubField _SequenceNumberSubField;
 
 
         override public bool Empty
@@ -54,6 +59,14 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Sequence
 
+        public string SequenceNumber
+        {
+            get
+            {
+                return _CswNbtNodePropData.GetPropRowValue( _SequenceNumberSubField.Column );
+            }
+        }//Sequence
+
         /// <summary>
         /// Sets Sequence to the next sequence value
         /// </summary>
@@ -61,9 +74,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( Sequence.Trim() == string.Empty )
             {
-                CswNbtSequenceValue CswNbtSequenceValue = new CswNbtSequenceValue( _CswNbtResources );
-                CswNbtSequenceValue.NodeTypePropId = _CswNbtMetaDataNodeTypeProp.PropId;
-                string value = CswNbtSequenceValue.Next;
+                string value = _SequenceValue.Next;
                 SetSequenceValueOverride( value, false );
             }
         }
@@ -78,14 +89,13 @@ namespace ChemSW.Nbt.PropTypes
         public void SetSequenceValueOverride( string value, bool ResetSequence )
         {
             _CswNbtNodePropData.SetPropRowValue( _SequenceSubField.Column, value );
+            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, _SequenceValue.deformatSequence( value ) );
             _CswNbtNodePropData.Gestalt = value;
 
             if( ResetSequence )
             {
                 // Keep the sequence up to date
-                CswNbtSequenceValue CswNbtSequenceValue = new CswNbtSequenceValue( _CswNbtResources );
-                CswNbtSequenceValue.NodeTypePropId = _CswNbtMetaDataNodeTypeProp.PropId;
-                CswNbtSequenceValue.Reset( value );
+                _SequenceValue.Resync();
             }
         }
 
@@ -114,6 +124,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode SequenceNode = CswXmlDocument.AppendXmlNode( ParentNode, _SequenceSubField.ToXmlNodeName(), Sequence );
+            XmlNode SequenceNumberNode = CswXmlDocument.AppendXmlNode( ParentNode, _SequenceSubField.ToXmlNodeName(), SequenceNumber );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
