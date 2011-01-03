@@ -58,6 +58,24 @@ namespace ChemSW.Nbt.Schema
                 } // foreach(CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps)
             } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtSchemaModTrnsctn.MetaData.NodeTypes )
 
+            // Case 20312
+            CswNbtMetaDataNodeType PhysicalInspectionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString(CswSchemaUpdater.HamletNodeTypes.Physical_Inspection) );
+            Int32 SetupTabId;
+            CswNbtMetaDataNodeTypeTab SetupTab = PhysicalInspectionNT.getNodeTypeTab( "Setup" );
+            if( null != SetupTab )
+                SetupTabId = SetupTab.TabId;
+            else
+                SetupTabId = PhysicalInspectionNT.getFirstNodeTypeTab().TabId;
+
+            CswNbtMetaDataNodeTypeProp LocationProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( PhysicalInspectionNT, 
+                                                                                                    CswNbtMetaDataFieldType.NbtFieldType.PropertyReference, 
+                                                                                                    "Location", 
+                                                                                                    SetupTabId );
+            CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point ) );
+            CswNbtMetaDataNodeTypeProp TargetNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+            CswNbtMetaDataNodeTypeProp LocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
+            LocationProp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString(), LocationNTP.PropId );
+            LocationProp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString(), LocationNTP.PropId );
 
         } // update()
 
