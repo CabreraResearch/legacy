@@ -5,6 +5,9 @@ using System.Data;
 using ChemSW.Exceptions;
 using ChemSW.DB;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
@@ -13,78 +16,65 @@ namespace ChemSW.Nbt
     {
 
         private CswNbtResources _CswNbtResources = null;
-//        private Int32 _NodeTypePropId = 0;
-        public CswNbtSequenceValue( CswNbtResources CswNbtResources )
+        private Int32 _NodeTypePropId = Int32.MinValue;
+        private Int32 _SequenceId = Int32.MinValue;
+        private DataRow _CurrentSequenceRow = null;
+
+        public CswNbtSequenceValue( CswNbtResources CswNbtResources, Int32 SequenceId )
         {
             _CswNbtResources = CswNbtResources;
 
-        }//generic
+            _SequenceId = SequenceId;
+            CswTableSelect SequencesSelect = _CswNbtResources.makeCswTableSelect( "SequencesSelect", "sequences" );
+            _CurrentSequenceRow = SequencesSelect.getTable( "sequenceid", _SequenceId, true ).Rows[0];
+        }
 
 
-
-        private DataRow _CurrentSequenceRow = null;
-        
-        
-        private Int32 _NodeTypePropId = Int32.MinValue;
-        public Int32 NodeTypePropId
+        public CswNbtSequenceValue( Int32 NodeTypePropId, CswNbtResources CswNbtResources )
         {
-            set
-            {
-                _NodeTypePropId = value;
+            _CswNbtResources = CswNbtResources;
 
-                string SelectText = @"select s.*,p.propname,p.sequenceid,t.nodetypename 
+            _NodeTypePropId = NodeTypePropId;
+
+            string SelectText = @"select s.*,p.propname,p.sequenceid,t.nodetypename 
                                         from nodetype_props p 
                                         left outer join sequences s on ( p.sequenceid = s.sequenceid ) 
                                         left outer join nodetypes t on (p.nodetypeid=t.nodetypeid) 
                                        where p.nodetypepropid = " + _NodeTypePropId.ToString();
 
-                CswArbitrarySelect SequencesSelect = _CswNbtResources.makeCswArbitrarySelect( "Sequence_nodetypeprop_select", SelectText );
-                DataTable SequencesTable = SequencesSelect.getTable();
+            CswArbitrarySelect SequencesSelect = _CswNbtResources.makeCswArbitrarySelect( "Sequence_nodetypeprop_select", SelectText );
+            DataTable SequencesTable = SequencesSelect.getTable();
 
-                if (SequencesTable.Rows.Count > 0)
-                {
-                    DataRow SequenceRow = SequencesTable.Rows[0];
-
-                    // BZ 5163
-                    //if( SequenceRow.IsNull( "sequenceid" )  )
-                    //{
-                    //    string NodeTypeName = SequenceRow[ "nodetypename" ].ToString();
-                    //    string PropName = SequenceRow[ "propname" ].ToString();
-
-                    //    throw ( new CswDniException( "The " + PropName + " property of node type " + NodeTypeName + " needs to have a sequence assigned", 
-                    //                                 "The query for SEQUENCES from nodetypepropid " + _NodeTypePropId.ToString() + " did not find a sequenceid" ) );
-                    //}
-
-
-                    //if( SequenceRow.IsNull( "sequencename" ) )
-                    //{
-                    //    throw ( new CswDniException( "A data error occurred", "There is no sequence name for sequenceid: " + SequencesTable.Rows[ 0 ]["sequenceid"].ToString()  ) );
-                    //}            
-
-                    _CurrentSequenceRow = SequenceRow;
-                }
-            }//set
-
-        }//NodeTypePropId
-
-        private Int32 _SequenceId = Int32.MinValue;
-        public Int32 SequenceId
-        {
-            set
+            if( SequencesTable.Rows.Count > 0 )
             {
-                _SequenceId = value;
-                CswTableSelect SequencesSelect = _CswNbtResources.makeCswTableSelect( "SequencesSelect", "sequences" );
-                _CurrentSequenceRow = SequencesSelect.getTable( "sequenceid", _SequenceId, true ).Rows[0];
-            }
-        }//SequenceId
+                DataRow SequenceRow = SequencesTable.Rows[0];
 
+                // BZ 5163
+                //if( SequenceRow.IsNull( "sequenceid" )  )
+                //{
+                //    string NodeTypeName = SequenceRow[ "nodetypename" ].ToString();
+                //    string PropName = SequenceRow[ "propname" ].ToString();
+
+                //    throw ( new CswDniException( "The " + PropName + " property of node type " + NodeTypeName + " needs to have a sequence assigned", 
+                //                                 "The query for SEQUENCES from nodetypepropid " + _NodeTypePropId.ToString() + " did not find a sequenceid" ) );
+                //}
+
+
+                //if( SequenceRow.IsNull( "sequencename" ) )
+                //{
+                //    throw ( new CswDniException( "A data error occurred", "There is no sequence name for sequenceid: " + SequencesTable.Rows[ 0 ]["sequenceid"].ToString()  ) );
+                //}            
+
+                _CurrentSequenceRow = SequenceRow;
+            }
+        }
 
         private string _Prep
         {
             get
             {
                 string ret = "";
-                if (!_CurrentSequenceRow.IsNull("prep"))
+                if( !_CurrentSequenceRow.IsNull( "prep" ) )
                     ret = _CurrentSequenceRow["prep"].ToString();
                 return ret;
             }
@@ -95,7 +85,7 @@ namespace ChemSW.Nbt
             get
             {
                 string ret = "";
-                if (!_CurrentSequenceRow.IsNull("Post"))
+                if( !_CurrentSequenceRow.IsNull( "Post" ) )
                     ret = _CurrentSequenceRow["Post"].ToString();
                 return ret;
             }
@@ -105,33 +95,42 @@ namespace ChemSW.Nbt
         {
             get
             {
-                Int32 ret= Int32.MinValue;
-                if (!_CurrentSequenceRow.IsNull("Pad"))
-                    ret = Convert.ToInt32(_CurrentSequenceRow["Pad"].ToString());
+                Int32 ret = Int32.MinValue;
+                if( !_CurrentSequenceRow.IsNull( "Pad" ) )
+                    ret = Convert.ToInt32( _CurrentSequenceRow["Pad"].ToString() );
                 return ret;
             }
         }
 
-        private string _formatSequence( string RawSequenceVal )
+        public string formatSequence( Int32 RawSequenceVal )
         {
             string ReturnVal = "";
-            
-            if(_Pad > 0)
-            {
-                while( RawSequenceVal.Length < _Pad )
-                    RawSequenceVal = "0" + RawSequenceVal;
-            }
-            ReturnVal = _Prep + RawSequenceVal + _Post;
+            ReturnVal = RawSequenceVal.ToString();
 
-            return( ReturnVal );
+            if( _Pad > 0 )
+            {
+                while( ReturnVal.Length < _Pad )
+                    ReturnVal = "0" + ReturnVal;
+            }
+            ReturnVal = _Prep + ReturnVal + _Post;
+
+            return ( ReturnVal );
         }
 
-        private Int32 _deformatSequence(string FormattedSequenceVal)
+        public Int32 deformatSequence( string FormattedSequenceVal )
         {
-            string RawSequenceVal = FormattedSequenceVal.Substring(_Prep.Length, (FormattedSequenceVal.Length - _Prep.Length - _Post.Length));
-            if (!CswTools.IsInteger(RawSequenceVal))
-                throw new CswDniException("Invalid sequence value", "CswNbtSequenceValue got an invalid sequence value: " + FormattedSequenceVal);
-            return Convert.ToInt32(RawSequenceVal);
+            Int32 ret = Int32.MinValue;
+            if( FormattedSequenceVal.Length > ( _Prep.Length + _Post.Length ) )
+            {
+                if( FormattedSequenceVal.Substring( 0, _Prep.Length ) == _Prep &&
+                    FormattedSequenceVal.Substring( FormattedSequenceVal.Length - _Post.Length, _Post.Length ) == _Post )
+                {
+                    string RawSequenceVal = FormattedSequenceVal.Substring( _Prep.Length, ( FormattedSequenceVal.Length - _Prep.Length - _Post.Length ) );
+                    if( CswTools.IsInteger( RawSequenceVal ) )
+                        ret = CswConvert.ToInt32( RawSequenceVal );
+                }
+            }
+            return ret;
         }
 
         public string makeExample( Int32 ExampleValue )
@@ -139,9 +138,9 @@ namespace ChemSW.Nbt
             if( null == _CurrentSequenceRow )
                 throw ( new CswDniException( "Internal error", "There is no current row; you must set the NodeTypePropId or SequenceId property" ) );
 
-            return( _formatSequence( ExampleValue.ToString() ) );
+            return ( formatSequence( ExampleValue ) );
         }
-        
+
         public string Next
         {
             get
@@ -152,16 +151,16 @@ namespace ChemSW.Nbt
 
                 string ReturnVal = "";
 
-                if (null != _CurrentSequenceRow)
+                if( null != _CurrentSequenceRow )
                 {
                     CswSequenceName SequenceName = new CswSequenceName( _CurrentSequenceRow["sequencename"].ToString() );
 
-                    if (!_CswNbtResources.doesUniqueSequenceExist(SequenceName.DBName))
-                        _CswNbtResources.makeUniqueSequence(SequenceName.DBName, 1);
+                    if( !_CswNbtResources.doesUniqueSequenceExist( SequenceName.DBName ) )
+                        _CswNbtResources.makeUniqueSequence( SequenceName.DBName, 1 );
 
-                    string RawSequenceVal = _CswNbtResources.getNextUniqueSequenceVal(SequenceName.DBName).ToString();
+                    Int32 RawSequenceVal = _CswNbtResources.getNextUniqueSequenceVal( SequenceName.DBName );
 
-                    ReturnVal = _formatSequence(RawSequenceVal);
+                    ReturnVal = formatSequence( RawSequenceVal );
                 }
                 return ReturnVal;
             }
@@ -174,43 +173,60 @@ namespace ChemSW.Nbt
             {
                 string ReturnVal = "";
 
-                if (null != _CurrentSequenceRow)
+                if( null != _CurrentSequenceRow )
                 {
                     CswSequenceName SequenceName = new CswSequenceName( _CurrentSequenceRow["sequencename"].ToString() );
 
-                    if (!_CswNbtResources.doesUniqueSequenceExist(SequenceName.DBName))
-                        _CswNbtResources.makeUniqueSequence(SequenceName.DBName, 1);
+                    if( !_CswNbtResources.doesUniqueSequenceExist( SequenceName.DBName ) )
+                        _CswNbtResources.makeUniqueSequence( SequenceName.DBName, 1 );
 
-                    string RawSequenceVal = _CswNbtResources.getCurrentUniqueSequenceVal(SequenceName.DBName).ToString();
+                    Int32 RawSequenceVal = _CswNbtResources.getCurrentUniqueSequenceVal( SequenceName.DBName );
 
-                    ReturnVal = _formatSequence(RawSequenceVal);
+                    ReturnVal = formatSequence( RawSequenceVal );
                 }
                 return ReturnVal;
             }
         }
 
         /// <summary>
-        /// Sets the sequence value to be one more than the current value supplied
+        /// Resets next sequence value based on existing values in the database.
         /// </summary>
-        /// <param name="CurrentFormattedValue">Current Formatted Sequence value</param>
-        public void Reset(string CurrentFormattedValue)
+        public void Resync()
         {
-            Int32 RealValue = _deformatSequence(CurrentFormattedValue) + 1;
-            if (null != _CurrentSequenceRow)
-            {
-                CswSequenceName SequenceName = new CswSequenceName( _CurrentSequenceRow["sequencename"].ToString() );
+            string SelectCols = string.Empty;
+            SelectCols += "j." + CswNbtFieldTypeRuleBarCode.SequenceNumberColumn.ToString();
+            if( CswNbtFieldTypeRuleBarCode.SequenceNumberColumn != CswNbtFieldTypeRuleSequence.SequenceNumberColumn )
+                SelectCols += ", j." + CswNbtFieldTypeRuleSequence.SequenceNumberColumn.ToString();
 
-                if( !_CswNbtResources.doesUniqueSequenceExist( SequenceName.DBName ) )
-                {
-                    _CswNbtResources.makeUniqueSequence( SequenceName.DBName, RealValue );
-                }
-                else
-                {
-                    _CswNbtResources.resetUniqueSequenceVal( SequenceName.DBName, RealValue );
-                }
-            }
-        }
+            string SelectText = @"select " + SelectCols + @"
+                                    from sequences s
+                                    join nodetype_props p on ( p.sequenceid = s.sequenceid ) 
+                                    join jct_nodes_props j on ( p.nodetypepropid = j.nodetypepropid and j.nodeid is not null )
+                                   where s.sequenceid = " + _CurrentSequenceRow["sequenceid"].ToString();
+
+            CswArbitrarySelect SeqValueSelect = _CswNbtResources.makeCswArbitrarySelect( "syncSequence_maxvalue_select", SelectText );
+            DataTable SeqValueTable = SeqValueSelect.getTable();
+
+            Int32 MaxSeqVal = Int32.MinValue;
+            foreach( DataRow SeqValueRow in SeqValueTable.Rows )
+            {
+                Int32 ThisSeqVal = CswConvert.ToInt32( SeqValueRow[CswNbtFieldTypeRuleBarCode.SequenceNumberColumn.ToString()] );
+                if( ThisSeqVal == Int32.MinValue )
+                    ThisSeqVal = CswConvert.ToInt32( SeqValueRow[CswNbtFieldTypeRuleSequence.SequenceNumberColumn.ToString()] );
+                if( ThisSeqVal > MaxSeqVal )
+                    MaxSeqVal = ThisSeqVal;
+            } // foreach( DataRow SeqValueRow in SeqValueTable.Rows )
+
+            CswSequenceName SequenceName = new CswSequenceName( _CurrentSequenceRow["sequencename"].ToString() );
+            _CswNbtResources.resetUniqueSequenceVal( SequenceName.DBName, MaxSeqVal + 1 );
+
+        } // Resync()
+
+
     }//CswNbtSequenceValue
+
+
+
 
 }//namespace ChemSW.Nbt
 

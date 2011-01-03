@@ -126,11 +126,11 @@
     <Content Include="csw\Notes\nodepropqueries.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CswCommon\CswCommon.csproj">
+    <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
       <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\CswWebControls\CswWebControls.csproj">
+    <ProjectReference Include="..\..\..\Common\CswWebControls\CswWebControls.csproj">
       <Project>{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}</Project>
       <Name>CswWebControls</Name>
     </ProjectReference>

@@ -991,7 +991,9 @@ namespace ChemSW.Nbt.MetaData
 
             // Delete Views
             CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate("DeleteNodeType_viewupdate", "node_views");
-            DataTable ViewsTable = ViewsUpdate.getTable(new StringCollection { "nodeviewid" });
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            SelectCols.Add("nodeviewid");
+            DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
             foreach (DataRow CurrentRow in ViewsTable.Rows)
             {
                 //CswNbtView CurrentView = new CswNbtView(_CswNbtResources);
@@ -1074,7 +1076,10 @@ namespace ChemSW.Nbt.MetaData
             // Delete Views
             // This has to come after because nodetype_props has an fk to node_views.
             CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate("DeleteNodeTypeProp_nodeview_update", "node_views");
-            DataTable ViewsTable = ViewsUpdate.getTable(new StringCollection { "nodeviewid", "viewxml" });
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            SelectCols.Add( "nodeviewid" );
+            SelectCols.Add( "viewxml" );
+            DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
             foreach (DataRow CurrentRow in ViewsTable.Rows)
             {
                 if (CurrentRow.RowState != DataRowState.Deleted)

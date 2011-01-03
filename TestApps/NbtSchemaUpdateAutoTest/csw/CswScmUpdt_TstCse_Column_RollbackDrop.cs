@@ -7,9 +7,9 @@ using System.Text;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
-//using ChemSW.RscAdo;
 using ChemSW.DB;
 using ChemSW.Nbt.Schema;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.SchemaUpdaterAutoTest
 {
@@ -31,7 +31,9 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
             _CswNbtSchemaModTrnsctn.beginTransaction();
 
             CswTableSelect CswTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "CswScmUpdt_TstCse_Column_RollbackDrop_select1", _TestTableName );
-            DataTable DataTable = CswTableSelect.getTable( new StringCollection { _TestColumnName }, string.Empty, Int32.MinValue, string.Empty, false, new Collection<OrderByClause> { new OrderByClause( _TestColumnName, OrderByType.Ascending ) } );
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            SelectCols.Add( _TestColumnName );
+            DataTable DataTable = CswTableSelect.getTable( SelectCols, string.Empty, Int32.MinValue, string.Empty, false, new Collection<OrderByClause> { new OrderByClause( _TestColumnName, OrderByType.Ascending ) } );
             
             List<string> RetrievedColumnVals = new List<string>();
             foreach ( DataRow CurrentRow in DataTable.Rows )
@@ -57,7 +59,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
                 throw ( new CswDniException( "Dropped column " + _TestColumnName + " was not restored to the meta data after rollback" ) );
 
             CswTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "CswScmUpdt_TstCse_Column_RollbackDrop_select2", _TestTableName );
-            DataTable = CswTableSelect.getTable( new StringCollection { _TestColumnName }, string.Empty, Int32.MinValue, string.Empty, false, new Collection<OrderByClause> { new OrderByClause( _TestColumnName, OrderByType.Ascending ) } );
+            DataTable = CswTableSelect.getTable( SelectCols, string.Empty, Int32.MinValue, string.Empty, false, new Collection<OrderByClause> { new OrderByClause( _TestColumnName, OrderByType.Ascending ) } );
 
             foreach ( DataRow CurrentRow in DataTable.Rows )
             {

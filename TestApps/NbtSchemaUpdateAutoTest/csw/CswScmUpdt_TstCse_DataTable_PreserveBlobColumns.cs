@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
@@ -7,10 +6,10 @@ using System.Text;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
-//using ChemSW.RscAdo;
 using ChemSW.DB;
 using ChemSW.Nbt.Schema;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.SchemaUpdaterAutoTest
 {
@@ -92,7 +91,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
                 //***              update the blob column when set the AllowBlobFlag. 
                 JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01G02_JctNodesProps_update", "jct_nodes_props" );
 
-                StringCollection SelectColumns = new StringCollection();
+                CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
                 SelectColumns.Add( "field1" );
                 SelectColumns.Add( "field2" );
                 SelectColumns.Add( "blobdata" );

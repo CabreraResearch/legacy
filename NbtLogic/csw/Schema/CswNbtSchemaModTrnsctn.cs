@@ -357,7 +357,9 @@ namespace ChemSW.Nbt.Schema
             List<CswNbtView> ReturnVal = new List<CswNbtView>();
 
             CswTableSelect ViewSelect = makeCswTableSelect( "SchemaModTrnsctn_restoreViews_select", "node_views" );
-            DataTable ViewTable = ViewSelect.getTable( new StringCollection { "nodeviewid" }, string.Empty, Int32.MinValue, " where viewname='" + ViewName + "'", false );
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            SelectCols.Add( "nodeviewid" );
+            DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, " where viewname='" + ViewName + "'", false );
             foreach( DataRow CurrentRow in ViewTable.Rows )
             {
                 ReturnVal.Add( CswNbtViewFactory.restoreView( _CswNbtResources, Convert.ToInt32( CurrentRow["nodeviewid"] ) ) );
@@ -733,7 +735,10 @@ namespace ChemSW.Nbt.Schema
             if( OldProp != null )
             {
                 string WhereClause = "where viewxml like '%" + OldProp.PropId.ToString() + "%'";
-                DataTable ReportedByViewsTable = ViewsUpdate.getTable( new StringCollection { "nodeviewid", "viewxml" }, "", Int32.MinValue, WhereClause, false );
+                CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+                SelectCols.Add( "nodeviewid" );
+                SelectCols.Add( "viewxml" );
+                DataTable ReportedByViewsTable = ViewsUpdate.getTable( SelectCols, "", Int32.MinValue, WhereClause, false );
                 foreach( DataRow CurrentRow in ReportedByViewsTable.Rows )
                 {
                     CswNbtView CurrentView = this.makeView();

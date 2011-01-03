@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtConfig", "NbtConfig\NbtConfig.csproj", "{DABF9D08-70E8-4D42-AF7A-577335A7129F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCommon", "..\CswCommon\CswCommon.csproj", "{434091FB-F487-4787-8BDB-58C2336B73C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCommon", "..\..\Common\CswCommon\CswCommon.csproj", "{434091FB-F487-4787-8BDB-58C2336B73C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigUI", "..\CswConfigUI\CswConfigUI.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigUI", "..\..\Common\CswConfigUI\CswConfigUI.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswFormsControls", "..\CswFormsControls\CswFormsControls.csproj", "{02F17B0F-5A95-4A99-81F4-456B8589008A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswFormsControls", "..\..\Common\CswFormsControls\CswFormsControls.csproj", "{02F17B0F-5A95-4A99-81F4-456B8589008A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswWebControls", "..\CswWebControls\CswWebControls.csproj", "{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswWebControls", "..\..\Common\CswWebControls\CswWebControls.csproj", "{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtLogic", "NbtLogic\NbtLogic.csproj", "{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}"
 EndProject

@@ -14,6 +14,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using ChemSW.NbtWebControls;
 using ChemSW.DB;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -31,7 +32,7 @@ namespace ChemSW.Nbt.WebPages
         {
             CswTableSelect JctSelect = Master.CswNbtResources.makeCswTableSelect("displayBlobData_select", "jct_nodes_props" );
             JctSelect.AllowBlobColumns = true;
-            StringCollection SelectColumns = new StringCollection();
+            CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
             SelectColumns.Add("blobdata");
             SelectColumns.Add("field2");
             DataTable JctTable = JctSelect.getTable( SelectColumns, "jctnodepropid", JctNodePropId, "", true );

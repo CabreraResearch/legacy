@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
@@ -7,9 +6,9 @@ using System.Text;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
-//using ChemSW.RscAdo;
 using ChemSW.DB;
 using ChemSW.Nbt.Schema;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.SchemaUpdaterAutoTest
 {
@@ -116,7 +115,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
 
                 //bz # 9102: This is the way of getting the record that causes the updated record disappear
 
-                StringCollection SelectColumns = new StringCollection();
+                CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
                 foreach ( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.NodeTypeProps )
                 {
                     foreach ( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )

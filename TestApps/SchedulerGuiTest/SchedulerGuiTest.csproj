@@ -67,7 +67,7 @@
     <None Include="Properties\Settings.settings" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CswCommon\CswCommon.csproj">
+    <ProjectReference Include="..\..\..\..\Common\CswCommon\CswCommon.csproj">
       <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
     </ProjectReference>

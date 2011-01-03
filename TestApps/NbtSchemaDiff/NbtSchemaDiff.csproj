@@ -68,11 +68,11 @@
     <None Include="Properties\Settings.settings" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CswCommon\CswCommon.csproj">
+    <ProjectReference Include="..\..\..\..\Common\CswCommon\CswCommon.csproj">
       <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\CswFormsControls\CswFormsControls.csproj">
+    <ProjectReference Include="..\..\..\..\Common\CswFormsControls\CswFormsControls.csproj">
       <Project>{02F17B0F-5A95-4A99-81F4-456B8589008A}</Project>
       <Name>CswFormsControls</Name>
     </ProjectReference>
