@@ -129,7 +129,7 @@
 
         function reloadViews(ChangePage)
         {
-            if($('#viewsdiv').hasClass('ui-page-active'))
+            if ($('#viewsdiv').hasClass('ui-page-active'))
             {
                 _addPageDivToBody({
                     DivId: 'loadingdiv',
@@ -142,7 +142,8 @@
                 });
                 $.mobile.changePage($('#loadingdiv'), "fade", false, true);
                 setTimeout(function () { continueReloadViews(true); removeDiv('loadingdiv') }, opts.DivRemovalDelay);
-            } else {
+            } else
+            {
                 continueReloadViews(ChangePage)
             }
         }
@@ -654,6 +655,8 @@
             if (sf_correctiveaction == undefined) sf_correctiveaction = '';
             if (sf_comments == undefined) sf_comments = '';
             if (sf_compliantanswers == undefined) sf_compliantanswers = '';
+
+            if (sf_value == 'NaN') sf_value = '';
 
             var Html = '<div id="' + IdStr + '_propname"';
             if (FieldType == "Question" && !(sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
@@ -1656,9 +1659,9 @@
         function _handleDataCheckTimer(onSuccess, onFailure)
         {
             var url = opts.ConnectTestUrl;
-            if(opts.RandomConnectionFailure)
+            if (opts.RandomConnectionFailure)
                 url = opts.ConnectTestRandomFailUrl;
-    
+
             $.ajax({
                 type: 'POST',
                 url: url,
