@@ -1191,15 +1191,21 @@
                     success: function (data, textStatus, XMLHttpRequest)
                     {
                         var $xml = $(data.d);
-                        SessionId = $xml.find('SessionId').text();
-                        if (SessionId != "")
+                        if ($xml.get(0).nodeName == "ERROR")
                         {
-                            _cacheSession(SessionId, UserName);
-                            reloadViews(true);
-                            removeDiv('logindiv');
+                            _handleAjaxError(XMLHttpRequest, $xml.text(), '');
                         } else
                         {
-                            _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
+                            SessionId = $xml.find('SessionId').text();
+                            if (SessionId != "")
+                            {
+                                _cacheSession(SessionId, UserName);
+                                reloadViews(true);
+                                removeDiv('logindiv');
+                            } else
+                            {
+                                _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
+                            }
                         }
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown)
