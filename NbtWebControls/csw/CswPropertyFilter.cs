@@ -437,7 +437,14 @@ namespace ChemSW.NbtWebControls
                 PrimaryId = _ObjectClassPrefix + CswNbtViewRelationship.SecondId;
             }
 
-            init_NodeTypeSelectBox( PrimaryId, CswNbtViewProperty.NodeTypeProp.PropName, SubFieldColumn, FilterMode, FilterValue );
+            // Case 20636
+            string PropName = string.Empty;
+            if( null != CswNbtViewProperty.NodeTypeProp )
+                PropName = CswNbtViewProperty.NodeTypeProp.PropName;
+            else if( null != CswNbtViewProperty.ObjectClassProp )
+                PropName = CswNbtViewProperty.ObjectClassProp.PropName;
+
+            init_NodeTypeSelectBox( PrimaryId, PropName, SubFieldColumn, FilterMode, FilterValue );
 
             this.ArbitraryId = CswNbtViewProperty.ArbitraryId;
         }
