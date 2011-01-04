@@ -135,7 +135,7 @@
 //                foreach( DataRow CurrentRow in ResultTable.Rows )
 //                {
 //                    NodeCount++;
-//                    if( _CswNbtResources.CurrentUser.CheckPermission( NodeTypePermission.View, Convert.ToInt32( CurrentRow[ "nodetypeid" ] ), null, null ) )
+//                    if( _CswNbtResources.CurrentUser.CheckPermission( NodeTypePermission.View, CswConvert.ToInt32( CurrentRow[ "nodetypeid" ] ), null, null ) )
 //                        _CswNbtTree.loadNodeAsChildFromRow(null, CurrentRow, "", true, true, true, NbtViewAddChildrenSetting.None, NodeCount);
 //                }
 //            }

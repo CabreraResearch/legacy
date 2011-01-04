@@ -414,10 +414,10 @@ namespace ChemSW.Nbt
             View.ViewName = "CswNbtNodes.makeUserNodeFromUsername(" + Username + ")";
             CswNbtViewRelationship UserRelationship = View.AddViewRelationship( User_ObjectClass, false );
             CswNbtViewProperty Prop = View.AddViewProperty( UserRelationship, UserName_ObjectClassProp );
-            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, Username, false );
+            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Equals, Username, false );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, true );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, true, true, true, true );
 
             // get user node
             UserTree.goToRoot();
@@ -426,6 +426,20 @@ namespace ChemSW.Nbt
                 UserTree.goToNthChild( 0 );
                 UserNode = UserTree.getNodeForCurrentPosition();
             }
+            //else
+            //{
+            //    foreach( CswNbtMetaDataNodeType UserNodeTypes in User_ObjectClass.NodeTypes )
+            //    {
+            //        foreach( CswNbtNode user in UserNodeTypes.getNodes( true, false ) )
+            //        {
+            //            if( user.Properties[UserName_ObjectClassProp.PropName].AsText.Text == Username )
+            //            {
+            //                UserNode = user;
+            //                break;
+            //            }
+            //        }
+            //    }
+            
             return UserNode;
         }
 

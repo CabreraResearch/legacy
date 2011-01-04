@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.PropTypes
                 CswPrimaryKey ret = null;
                 string StringVal = _CswNbtNodePropData.GetPropRowValue( _NodeIDSubField.Column );
                 if( CswTools.IsInteger( StringVal ) )
-                    ret = new CswPrimaryKey( TargetTableName, Convert.ToInt32( StringVal ) );
+                    ret = new CswPrimaryKey( TargetTableName, CswConvert.ToInt32( StringVal ) );
                 return ret;
             }
             set
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.PropTypes
             if( NodeMap != null && NodeMap.ContainsKey( NodeId.ToLower() ) )
                 RelatedNodeId = new CswPrimaryKey( "nodes", NodeMap[NodeId.ToLower()] );
             else if( CswTools.IsInteger( NodeId ) )
-                RelatedNodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( NodeId ) );
+                RelatedNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeId ) );
             else
                 RelatedNodeId = null;
 
@@ -230,7 +230,7 @@ namespace ChemSW.Nbt.PropTypes
         //    if( NodeMap != null && NodeMap.ContainsKey( NodeId.ToString() ) )
         //        ret = NodeMap[NodeId.ToString()];
         //    else if( CswTools.IsInteger( NodeId ) )
-        //        ret = Convert.ToInt32( NodeId );
+        //        ret = CswConvert.ToInt32( NodeId );
         //    return ret;
         //}
 

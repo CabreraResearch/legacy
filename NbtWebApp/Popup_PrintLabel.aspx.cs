@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.WebPages
                     NodeId = new CswPrimaryKey();
                     NodeId.FromString( Request.QueryString["nodeid"] );
                     _Node = Master.CswNbtResources.Nodes.GetNode( NodeId );
-                    PropId = Convert.ToInt32( Request.QueryString["propid"] );
+                    PropId = CswConvert.ToInt32( Request.QueryString["propid"] );
                 }
                 else
                 {
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.WebPages
                     Int32 resultcount = 1;  // because we already did one above
                     foreach( string NodeIdToPrintString in CheckedNodeIds.Split( ',' ) )
                     {
-                        CswPrimaryKey NodeIdToPrint = new CswPrimaryKey( "nodes", Convert.ToInt32( NodeIdToPrintString ) );
+                        CswPrimaryKey NodeIdToPrint = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeIdToPrintString ) );
                         if( NodeIdToPrint != _Node.NodeId )
                         {
                             if( resultcount < 5 )
@@ -252,7 +252,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 foreach( string NodeIdToPrintString in CheckedNodeIds.Split( ',' ) )
                 {
-                    CswPrimaryKey NodeIdToPrint = new CswPrimaryKey( "nodes", Convert.ToInt32( NodeIdToPrintString ) );
+                    CswPrimaryKey NodeIdToPrint = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeIdToPrintString ) );
                     if( NodeIdToPrint != _Node.NodeId )
                     {
                         CswNbtNode NodeToPrint = Master.CswNbtResources.Nodes.GetNode( NodeIdToPrint );
@@ -286,7 +286,7 @@ namespace ChemSW.Nbt.WebPages
                     if (ParamSplit[0] == PropertyParamName && CswTools.IsInteger(ParamSplit[1]))
                     {
                         FoundMatch = true;
-                        Int32 MaxLength = Convert.ToInt32(ParamSplit[1]);
+                        Int32 MaxLength = CswConvert.ToInt32(ParamSplit[1]);
                         Int32 CurrentIteration = 1;
                         while (ParamStartIndex >= 0)
                         {

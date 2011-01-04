@@ -966,9 +966,9 @@ namespace ChemSW.Nbt.WebPages
             //{
             //    foreach( string NodeTypeId in SessionsListEntry.NodeTypesSaved.Keys )
             //    {
-            //        if( Convert.ToInt32( SessionsListEntry.NodeTypesSaved[NodeTypeId] ) > 10 )
+            //        if( CswConvert.ToInt32( SessionsListEntry.NodeTypesSaved[NodeTypeId] ) > 10 )
             //        {
-            //            CswNbtMetaDataNodeType NodeType = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( NodeTypeId ) );
+            //            CswNbtMetaDataNodeType NodeType = Master.CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeId ) );
             //            ContentBox.addMessage( "Multi1", "Have you considered using Multi-Edit to save changes to multiple " + NodeType.NodeTypeName + " nodes at once?" );
             //            break;
             //        }

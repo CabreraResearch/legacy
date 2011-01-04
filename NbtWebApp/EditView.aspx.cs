@@ -41,9 +41,9 @@ namespace ChemSW.Nbt.WebPages
             {
                 if( Request.QueryString["viewid"] != null && Request.QueryString["viewid"].ToString() != string.Empty )
                 {
-                    if( Convert.ToInt32( Request.QueryString["viewid"] ) > 0 )
+                    if( CswConvert.ToInt32( Request.QueryString["viewid"] ) > 0 )
                     {
-                        CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, Convert.ToInt32( Request.QueryString["viewid"].ToString() ) );
+                        CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) );
                         _ViewEditorWizard = new CswViewEditorWizard( Master.CswNbtResources, View, null, Master.AjaxManager );
                     }
                 }
@@ -61,8 +61,8 @@ namespace ChemSW.Nbt.WebPages
 
                 if( Request.QueryString["step"] != null && CswTools.IsInteger( Request.QueryString["step"].ToString() ) )
                 {
-                    _ViewEditorWizard.MinimumStep = Convert.ToInt32( Request.QueryString["step"].ToString() );
-                    _ViewEditorWizard.CurrentStep = Convert.ToInt32( Request.QueryString["step"].ToString() );
+                    _ViewEditorWizard.MinimumStep = CswConvert.ToInt32( Request.QueryString["step"].ToString() );
+                    _ViewEditorWizard.CurrentStep = CswConvert.ToInt32( Request.QueryString["step"].ToString() );
                 }
 
                 if( Request.QueryString["return"] != null && Request.QueryString["return"].ToString() != string.Empty )
@@ -472,9 +472,9 @@ namespace ChemSW.NbtWebControls
                 if( values[_ViewVisibilityEditor._VisibilityDropDown.UniqueID] != null )
                     _ViewVisibilityEditor.SelectedVisibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), values[_ViewVisibilityEditor._VisibilityDropDown.UniqueID].ToString() );
                 if( values[_ViewVisibilityEditor._VisibilityRoleDropDown.UniqueID] != null )
-                    _ViewVisibilityEditor.SelectedRoleId = new CswPrimaryKey( "nodes", Convert.ToInt32( values[_ViewVisibilityEditor._VisibilityRoleDropDown.UniqueID].ToString() ) );
+                    _ViewVisibilityEditor.SelectedRoleId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( values[_ViewVisibilityEditor._VisibilityRoleDropDown.UniqueID].ToString() ) );
                 if( values[_ViewVisibilityEditor._VisibilityUserDropDown.UniqueID] != null )
-                    _ViewVisibilityEditor.SelectedUserId = new CswPrimaryKey( "nodes", Convert.ToInt32( values[_ViewVisibilityEditor._VisibilityUserDropDown.UniqueID].ToString() ) );
+                    _ViewVisibilityEditor.SelectedUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( values[_ViewVisibilityEditor._VisibilityUserDropDown.UniqueID].ToString() ) );
 
                 //if ( values[ _IncludeInQuickLaunch.UniqueID ] != null )
                 //    _IncludeInQuickLaunch.Checked = ( values[ _IncludeInQuickLaunch.UniqueID ] == "on" );
@@ -691,7 +691,7 @@ namespace ChemSW.NbtWebControls
         //    if ( _View.ViewMode == NbtViewRenderingMode.Grid )
         //    {
         //        if ( CswTools.IsInteger( _GridWidthBox.Text ) )
-        //            _View.Width = Convert.ToInt32( _GridWidthBox.Text );
+        //            _View.Width = CswConvert.ToInt32( _GridWidthBox.Text );
         //        else
         //            _View.Width = Int32.MinValue;
         //        _View.EditMode = ( ChemSW.Nbt.GridEditMode )Enum.Parse( typeof( ChemSW.Nbt.GridEditMode ), _GridEditModeDropDown.SelectedValue );
@@ -1774,7 +1774,7 @@ namespace ChemSW.NbtWebControls
                 {
                     case 1:
                         // Set values from SelectViewStep
-                        _View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, Convert.ToInt32( _LoadViewList.SelectedValue ) );
+                        _View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( _LoadViewList.SelectedValue ) );
                         break;
 
                     case 2:
@@ -1805,7 +1805,7 @@ namespace ChemSW.NbtWebControls
                             if( _View.Width > 0 )
                             {
                                 if( CswTools.IsInteger( _GridWidthBox.Text ) )
-                                    _View.Width = Convert.ToInt32( _GridWidthBox.Text );
+                                    _View.Width = CswConvert.ToInt32( _GridWidthBox.Text );
                             }
                             _View.ForMobile = false;
                             //_View.EditMode = (ChemSW.Nbt.GridEditMode) Enum.Parse( typeof( ChemSW.Nbt.GridEditMode ), _GridEditModeDropDown.SelectedValue.ToString() );
@@ -1832,19 +1832,19 @@ namespace ChemSW.NbtWebControls
                                     if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
                                     {
                                         CswNbtMetaDataNodeType SecondNodeType = _CswNbtResources.MetaData.getNodeType( CurrentRelationship.SecondId );
-                                        CurrentRelationship.setGroupByProp( SecondNodeType.getNodeTypeProp( Convert.ToInt32( _GroupByDropDown.SelectedValue ) ) );
+                                        CurrentRelationship.setGroupByProp( SecondNodeType.getNodeTypeProp( CswConvert.ToInt32( _GroupByDropDown.SelectedValue ) ) );
                                     }
                                     else
                                     {
                                         CswNbtMetaDataObjectClass SecondObjectClass = _CswNbtResources.MetaData.getObjectClass( CurrentRelationship.SecondId );
-                                        CurrentRelationship.setGroupByProp( SecondObjectClass.getObjectClassProp( Convert.ToInt32( _GroupByDropDown.SelectedValue ) ) );
+                                        CurrentRelationship.setGroupByProp( SecondObjectClass.getObjectClassProp( CswConvert.ToInt32( _GroupByDropDown.SelectedValue ) ) );
                                     }
                                 }
                                 else
                                 {
                                     CurrentRelationship.clearGroupBy();
                                 }
-                                if( _View.ViewMode != NbtViewRenderingMode.Grid )
+                                if( _View.ViewMode == NbtViewRenderingMode.Tree )   
                                     CurrentRelationship.ShowInTree = _ShowInTreeCheck.Checked;
 
                             }
@@ -1866,9 +1866,9 @@ namespace ChemSW.NbtWebControls
                                 PropViewNode.SortBy = _SortByCheckBox.Checked;
                                 PropViewNode.SortMethod = (CswNbtViewProperty.PropertySortMethod) Enum.Parse( typeof( CswNbtViewProperty.PropertySortMethod ), _SortByDropDown.SelectedValue );
                                 if( CswTools.IsInteger( _GridOrderBox.Text ) )
-                                    PropViewNode.Order = Convert.ToInt32( _GridOrderBox.Text );
+                                    PropViewNode.Order = CswConvert.ToInt32( _GridOrderBox.Text );
                                 if( CswTools.IsInteger( _GridColumnWidthBox.Text ) )
-                                    PropViewNode.Width = Convert.ToInt32( _GridColumnWidthBox.Text );
+                                    PropViewNode.Width = CswConvert.ToInt32( _GridColumnWidthBox.Text );
                             }
                             else if( PropertiesSelectedViewNode is CswNbtViewRelationship )
                             {
@@ -1941,14 +1941,14 @@ namespace ChemSW.NbtWebControls
         {
             try
             {
-                Int32 ViewId = Convert.ToInt32( _LoadViewList.SelectedValue );
+                Int32 ViewId = CswConvert.ToInt32( _LoadViewList.SelectedValue );
                 _View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
                 _View.Delete();
 
                 _SelectViewStep_OnStepLoad();
 
                 if( CswTools.IsInteger( _LoadViewList.SelectedValue ) )
-                    _View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, Convert.ToInt32( _LoadViewList.SelectedValue ) );
+                    _View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( _LoadViewList.SelectedValue ) );
 
                 _setView( true );
             }

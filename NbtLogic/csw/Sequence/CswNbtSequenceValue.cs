@@ -97,7 +97,7 @@ namespace ChemSW.Nbt
             {
                 Int32 ret = Int32.MinValue;
                 if( !_CurrentSequenceRow.IsNull( "Pad" ) )
-                    ret = Convert.ToInt32( _CurrentSequenceRow["Pad"].ToString() );
+                    ret = CswConvert.ToInt32(_CurrentSequenceRow["Pad"].ToString());
                 return ret;
             }
         }

@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 CswPrimaryKey NodeId = new CswPrimaryKey();
                 NodeId.FromString( Request.QueryString["nodeid"] );
-                Int32 PropId = Convert.ToInt32(Request.QueryString["propid"]);
+                Int32 PropId = CswConvert.ToInt32(Request.QueryString["propid"]);
                 _Mode = Request.QueryString["mode"];
                 if( NodeId != null && PropId > 0 )
                 {
@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         if( JctTable.Rows.Count > 1 )
                             throw new CswDniException( "Invalid Data Condition", "Popup_PutBlob.aspx.cs found more than 1 record for nodeid (" + NodeId.ToString() + ") and propid: " + PropId.ToString() );
-                        JctNodePropId = Convert.ToInt32( JctTable.Rows[0]["jctnodepropid"].ToString() );
+                        JctNodePropId = CswConvert.ToInt32( JctTable.Rows[0]["jctnodepropid"].ToString() );
                     }
 
                     _CswBlobber = new CswBlobber( _CswNbtResources );

@@ -130,9 +130,9 @@ namespace ChemSW.Nbt.PropTypes
                 string[] NodeTypeIdsArray = NodeTypeIds.Split( ',' );
                 foreach( string NodeTypeIdString in NodeTypeIdsArray )
                 {
-                    Int32 IdToAdd = Convert.ToInt32( NodeTypeIdString );
+                    Int32 IdToAdd = CswConvert.ToInt32( NodeTypeIdString );
                     if( NodeTypeMap.ContainsKey( IdToAdd ) )
-                        IdToAdd = Convert.ToInt32( NodeTypeMap[IdToAdd].ToString() );
+                        IdToAdd = CswConvert.ToInt32( NodeTypeMap[IdToAdd].ToString() );
 
                     if( ret != "" )
                         ret += ",";

@@ -182,16 +182,16 @@ namespace ChemSW.NbtWebControls
             if( _ParentSelector.RateButtonMonthly.Checked )
             {
                 if( MonthlyByDate.Checked )
-                    RateInterval.setMonthlyByDate( Convert.ToInt32( MonthFrequencySelect.SelectedValue ),
-                                                   Convert.ToInt32( MonthDateSelect.SelectedValue ),
-                                                   Convert.ToInt32( StartMonthSelect.SelectedValue ),
-                                                   Convert.ToInt32( StartYearSelect.SelectedValue ) );
+                    RateInterval.setMonthlyByDate( CswConvert.ToInt32( MonthFrequencySelect.SelectedValue ),
+                                                   CswConvert.ToInt32( MonthDateSelect.SelectedValue ),
+                                                   CswConvert.ToInt32( StartMonthSelect.SelectedValue ),
+                                                   CswConvert.ToInt32( StartYearSelect.SelectedValue ) );
                 else
-                    RateInterval.setMonthlyByWeekAndDay( Convert.ToInt32( MonthFrequencySelect.SelectedValue ),
-                                                         Convert.ToInt32( MonthWeekSelect.SelectedValue ),
+                    RateInterval.setMonthlyByWeekAndDay( CswConvert.ToInt32( MonthFrequencySelect.SelectedValue ),
+                                                         CswConvert.ToInt32( MonthWeekSelect.SelectedValue ),
                                                          (DayOfWeek) Enum.Parse( typeof( DayOfWeek ), values[this.UniqueID + "$" + "_monthlyday"].Substring( ( "_monthlyday_" ).Length ), true ),
-                                                         Convert.ToInt32( StartMonthSelect.SelectedValue ),
-                                                         Convert.ToInt32( StartYearSelect.SelectedValue ) );
+                                                         CswConvert.ToInt32( StartMonthSelect.SelectedValue ),
+                                                         CswConvert.ToInt32( StartYearSelect.SelectedValue ) );
             }
             return false;
         }

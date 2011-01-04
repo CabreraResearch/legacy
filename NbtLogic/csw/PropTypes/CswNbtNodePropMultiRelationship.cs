@@ -153,7 +153,7 @@
 //        {
 //            foreach( XmlNode CurrentNode in RelationshipXmlDoc.ChildNodes[0].ChildNodes )
 //            {
-//                CurrentNode.Attributes["nodename"].Value = _CswNbtResources.Nodes.GetNode( Convert.ToInt32( CurrentNode.Attributes["nodeid"].Value ) ).NodeName;
+//                CurrentNode.Attributes["nodename"].Value = _CswNbtResources.Nodes.GetNode( CswConvert.ToInt32( CurrentNode.Attributes["nodeid"].Value ) ).NodeName;
 //            }
 //        }
 
@@ -190,9 +190,9 @@
 //                    {
 //                        string thisNodeId = RelatedNode.Attributes["nodeid"].Value;
 //                        if( NodeMap.ContainsKey( thisNodeId ) )
-//                            AddRelatedNode( Convert.ToInt32( NodeMap[thisNodeId].ToString() ), "" );
+//                            AddRelatedNode( CswConvert.ToInt32( NodeMap[thisNodeId].ToString() ), "" );
 //                        else if( CswTools.IsInteger( thisNodeId ) )
-//                            AddRelatedNode( Convert.ToInt32( thisNodeId ), _CswNbtResources.Nodes.GetNode( Convert.ToInt32( thisNodeId ) ).NodeName );
+//                            AddRelatedNode( CswConvert.ToInt32( thisNodeId ), _CswNbtResources.Nodes.GetNode( CswConvert.ToInt32( thisNodeId ) ).NodeName );
 //                    }
 //                }
 //                else

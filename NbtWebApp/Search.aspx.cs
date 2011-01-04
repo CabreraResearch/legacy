@@ -349,7 +349,7 @@ namespace ChemSW.Nbt.WebPages
 
         //void _LoadDropDown_SelectedIndexChanged( object sender, EventArgs e )
         //{
-        //    Master.setViewId( Convert.ToInt32( _LoadDropDown.SelectedValue ) );
+        //    Master.setViewId( CswConvert.ToInt32( _LoadDropDown.SelectedValue ) );
         //    Master.Redirect( "Search.aspx" );
         //}
 
@@ -359,7 +359,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 if( CswTools.IsInteger( _LoadDropDown.SelectedValue ) )
                 {
-                    CswNbtView DoomedView = CswNbtViewFactory.restoreView( Master.CswNbtResources, Convert.ToInt32( _LoadDropDown.SelectedValue ) );
+                    CswNbtView DoomedView = CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( _LoadDropDown.SelectedValue ) );
                     if( DoomedView.Visibility == NbtViewVisibility.User )
                         DoomedView.Delete();
                     else
@@ -379,7 +379,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 if( CswTools.IsInteger( _LoadDropDown.SelectedValue ) )
                 {
-                    Master.setViewId( Convert.ToInt32( _LoadDropDown.SelectedValue ) );
+                    Master.setViewId( CswConvert.ToInt32( _LoadDropDown.SelectedValue ) );
                     Master.Redirect( "Search.aspx" );
                 }
             }

@@ -362,7 +362,7 @@ namespace ChemSW.Nbt.Schema
             DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, " where viewname='" + ViewName + "'", false );
             foreach( DataRow CurrentRow in ViewTable.Rows )
             {
-                ReturnVal.Add( CswNbtViewFactory.restoreView( _CswNbtResources, Convert.ToInt32( CurrentRow["nodeviewid"] ) ) );
+                ReturnVal.Add( CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
             }
 
             return ( ReturnVal );

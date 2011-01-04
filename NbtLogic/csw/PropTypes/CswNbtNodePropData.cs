@@ -403,7 +403,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     if( _PropsTable.Columns.Contains( "jctnodepropid" ) && !_PropRow.IsNull( "jctnodepropid" ) )
                     {
-                        ReturnVal = Convert.ToInt32( _PropRow["jctnodepropid"].ToString() );
+                        ReturnVal = CswConvert.ToInt32( _PropRow["jctnodepropid"].ToString() );
                     }
                 }
                 return ( ReturnVal );

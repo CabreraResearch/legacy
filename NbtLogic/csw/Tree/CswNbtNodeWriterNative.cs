@@ -52,7 +52,7 @@ namespace ChemSW.Nbt
             NewNodeRow[ "issystem" ] = "0";
             NewNodeTable.Rows.Add( NewNodeRow );
 
-            Node.NodeId = new CswPrimaryKey( "nodes", Convert.ToInt32( NewNodeTable.Rows[ 0 ][ "nodeid" ] ) );
+            Node.NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NewNodeTable.Rows[ 0 ][ "nodeid" ] ) );
 
             if( PostToDatabase )
                 CswTableUpdateNodes.update( NewNodeTable );

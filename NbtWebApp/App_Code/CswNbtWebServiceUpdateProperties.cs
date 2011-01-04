@@ -29,13 +29,13 @@ namespace ChemSW.Nbt.WebServices
             XmlDocument XmlDoc = new XmlDocument();
             XmlDoc.LoadXml( UpdatedViewXml );
 
-            XmlNodeList PropNodes = XmlDoc.SelectNodes( "result/node/subitems/prop[@wasmodified='1']" );
+            XmlNodeList PropNodes = XmlDoc.SelectNodes( "//prop[@wasmodified='1']" );
             foreach( XmlNode PropNode in PropNodes )
             {
                 string NodePropId = PropNode.Attributes["id"].Value;
                 string[] SplitNodePropId = NodePropId.Split( '_' );
-                Int32 NodeTypePropId = Convert.ToInt32( SplitNodePropId[1] );
-                CswPrimaryKey NodePk = new CswPrimaryKey( SplitNodePropId[3], Convert.ToInt32( SplitNodePropId[4] ) );
+                Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[1] );
+                CswPrimaryKey NodePk = new CswPrimaryKey( SplitNodePropId[3], CswConvert.ToInt32( SplitNodePropId[4] ) );
 
                 CswNbtNode Node = _CswNbtWebServiceResources.CswNbtResources.Nodes[NodePk];
                 CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );

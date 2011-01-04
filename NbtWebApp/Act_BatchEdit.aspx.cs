@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.WebPages
 
         //    foreach( DataRow Row in _DS.Tables[CswNbtMetaDataNodeTypeProp._Element_MetaDataNodeTypeProp].Rows )
         //    {
-        //        Int32 ThisNodeTypePropId = Convert.ToInt32( Row[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropId].ToString() );
+        //        Int32 ThisNodeTypePropId = CswConvert.ToInt32( Row[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropId].ToString() );
         //        if( View.ContainsNodeTypeProp( ThisNodeTypePropId ) )
         //        {
         //            GridTemplateColumn PropColumn = new GridTemplateColumn();
@@ -301,7 +301,7 @@ namespace ChemSW.Nbt.WebPages
         //        if( NodeTypeProp.FieldType.IsSimpleType() )
         //        {
         //            DataRowView NodeRow = (DataRowView) Item.DataItem;
-        //            Int32 NodeId = Convert.ToInt32( NodeRow[CswNbtImportExport._Attribute_NodeId].ToString() );
+        //            Int32 NodeId = CswConvert.ToInt32( NodeRow[CswNbtImportExport._Attribute_NodeId].ToString() );
         //            CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NodeId );
         //            CswNbtNodeKey Key = new CswNbtNodeKey( _CswNbtResources, null, string.Empty, Node.NodeId, Node.NodeSpecies, Node.NodeTypeId, Node.ObjectClassId, string.Empty, string.Empty, null );
         //            CswFieldTypeWebControlFactory Factory = new CswFieldTypeWebControlFactory( _CswNbtResources );

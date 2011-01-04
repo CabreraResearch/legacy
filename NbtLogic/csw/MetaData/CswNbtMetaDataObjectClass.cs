@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.MetaData
 
         public Int32 ObjectClassId
         {
-            get { return Convert.ToInt32( _ObjectClassRow[ "objectclassid" ].ToString() ); }
+            get { return CswConvert.ToInt32( _ObjectClassRow[ "objectclassid" ].ToString() ); }
         }
         //public string TableName
         //{

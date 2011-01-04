@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.Actions
         public Int32 makeNodes( CswNbtNode CswNbtNodeGenerator, DateTime FutureDate )
         {
             CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
-            Int32 TargetNodeTypeId = Convert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds );
+            Int32 TargetNodeTypeId = CswConvert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds );
             Int32 ReturnVal = 0;
 
             // Must have create permissions on this generator's target's nodetype
@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.Actions
                 foreach( String nodeTypeId in Generator.TargetType.SelectedNodeTypeIds )
                 {
                     
-                    Int32 CurrentTargetNodeTypeId = Convert.ToInt32( nodeTypeId );
+                    Int32 CurrentTargetNodeTypeId = CswConvert.ToInt32( nodeTypeId );
                     if( !( TargetNodeTypeIds.Contains( CurrentTargetNodeTypeId ) ) )
                         TargetNodeTypeIds.Add( CurrentTargetNodeTypeId );
                 }

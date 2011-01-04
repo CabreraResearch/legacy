@@ -152,31 +152,27 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        /// <summary>
+        /// Update the attributes of an Object Class Prop, and cascade changes to existing NodeTypeProps
+        /// </summary>
         public void UpdateObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes Attribute, object Value )
         {
             if( Attribute != CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.Unknown )
             {
-                String AttributeName = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( Attribute );
-                UpdateObjectClassProp( ObjectClassProp, AttributeName, Value );
-            }
-        }
-
-        /// <summary>
-        /// Update the attributes of an Object Class Prop, and cascade changes to existing NodeTypeProps
-        /// </summary>
-        public void UpdateObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, string AttributeName, object Value )
-        {
-            object DBValue = CswConvert.ToDbVal( Value );
-            if( ObjectClassProp._DataRow[AttributeName] != DBValue )
-            {
-                ObjectClassProp._DataRow[AttributeName] = DBValue;
-                _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );
-
-                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.NodeTypeProps )
+                string AttributeName = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( Attribute );
+                object DBValue = CswConvert.ToDbVal( Value );
+                if( ObjectClassProp._DataRow[AttributeName] != DBValue )
                 {
-                    NodeTypeProp._DataRow[AttributeName] = DBValue;
+                    ObjectClassProp._DataRow[AttributeName] = DBValue;
+                    _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );
+
+                    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.NodeTypeProps )
+                    {
+                        NodeTypeProp._DataRow[AttributeName] = DBValue;
+                    }
                 }
             }
-        }
+        } // UpdateObjectClassProp()
+
     }
 }

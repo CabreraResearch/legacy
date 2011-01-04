@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
             Int32 ArbitraryValue = 0;
             foreach( DataRow CurrentRow in PkTableTable.Rows )
             {
-                Int32 PkTablePk = Convert.ToInt32( CurrentRow[ReferenceColumnName] );
+                Int32 PkTablePk = CswConvert.ToInt32( CurrentRow[ReferenceColumnName] );
 
                 DataRow NewFkTableRow = FkTableTable.NewRow();
                 NewFkTableRow[ReferenceColumnName] = PkTablePk;

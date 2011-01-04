@@ -253,17 +253,17 @@ namespace ChemSW.NbtWebControls
         protected void SessionViewLink_Click( object sender, EventArgs e )
         {
             if( OnSessionViewLinkClick != null )
-                OnSessionViewLinkClick( Convert.ToInt32( ( (LinkButton) sender ).ID.Substring( "SessionViewLink_".Length ) ) );
+                OnSessionViewLinkClick( CswConvert.ToInt32( ( (LinkButton) sender ).ID.Substring( "SessionViewLink_".Length ) ) );
         }
         protected void ViewLink_Click( object sender, EventArgs e )
         {
             if( OnViewLinkClick != null )
-                OnViewLinkClick( Convert.ToInt32( ( (LinkButton) sender ).ID.Substring( "ViewLink_".Length ) ) );
+                OnViewLinkClick( CswConvert.ToInt32( ( (LinkButton) sender ).ID.Substring( "ViewLink_".Length ) ) );
         }
         protected void ActionLink_Click( object sender, EventArgs e )
         {
             if( OnActionLinkClick != null )
-                OnActionLinkClick( Convert.ToInt32( ( (LinkButton) sender ).ID.Substring( "ActionLink_".Length ) ) );
+                OnActionLinkClick( CswConvert.ToInt32( ( (LinkButton) sender ).ID.Substring( "ActionLink_".Length ) ) );
         }
 
         public event CswErrorHandler OnError;

@@ -452,7 +452,7 @@ namespace ChemSW.Nbt.WebPages
                     XmlNode DestNodeTypeNode = ResultXmlDoc.FirstChild.FirstChild.FirstChild.SelectSingleNode( "destnodetypeid" );
                     if( DestNodeTypeNode != null && CswTools.IsInteger( DestNodeTypeNode.InnerText ) )
                     {
-                        Int32 NodeTypeId = Convert.ToInt32( DestNodeTypeNode.InnerText );
+                        Int32 NodeTypeId = CswConvert.ToInt32( DestNodeTypeNode.InnerText );
                         LoadNodeTypeId.Value = NodeTypeId.ToString();
                         LoadNodeTypeLink.Visible = true;
                     }

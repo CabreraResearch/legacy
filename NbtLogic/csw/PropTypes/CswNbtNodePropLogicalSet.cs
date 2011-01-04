@@ -325,7 +325,7 @@ namespace ChemSW.Nbt.PropTypes
                 XmlNodeList YValueNodes = TempXmlDoc.ChildNodes[0].SelectNodes( "YValue" );
                 foreach( XmlNode YValueNode in YValueNodes )
                 {
-                    Int32 YValue = Convert.ToInt32( YValueNode.Attributes["y"].Value );
+                    Int32 YValue = CswConvert.ToInt32( YValueNode.Attributes["y"].Value );
                     if( NodeTypeMap.ContainsKey( YValue ) && NodeTypeMap[YValue] != Int32.MinValue )
                     {
                         foreach( XmlNode XValueNode in YValueNode.ChildNodes )

@@ -372,12 +372,12 @@ namespace ChemSW.Nbt.WebPages
                 if( TargetDropDown.SelectedValue.Substring( 0, "nt_".Length ) == "nt_" )
                 {
                     NewFKType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
-                    NewFKValue = Convert.ToInt32( TargetDropDown.SelectedValue.Substring( "nt_".Length ) );
+                    NewFKValue = CswConvert.ToInt32( TargetDropDown.SelectedValue.Substring( "nt_".Length ) );
                 }
                 else
                 {
                     NewFKType = CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString();
-                    NewFKValue = Convert.ToInt32( TargetDropDown.SelectedValue.Substring( "oc_".Length ) );
+                    NewFKValue = CswConvert.ToInt32( TargetDropDown.SelectedValue.Substring( "oc_".Length ) );
                 }
                 CswNbtMetaDataNodeTypeProp TargetProperty = NewInspectionNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
                 TargetProperty.SetFK(NewFKType, NewFKValue,string.Empty, Int32.MinValue);

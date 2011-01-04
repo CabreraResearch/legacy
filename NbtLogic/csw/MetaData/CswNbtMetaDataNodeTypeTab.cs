@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.MetaData
 
         public Int32 TabId
         {
-            get { return Convert.ToInt32( _NodeTypeTabRow[ "nodetypetabsetid" ].ToString() ); }
+            get { return CswConvert.ToInt32( _NodeTypeTabRow[ "nodetypetabsetid" ].ToString() ); }
         }
         public string TabName
         {
@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.MetaData
 
         public CswNbtMetaDataNodeType NodeType
         {
-            get { return _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( Convert.ToInt32( _NodeTypeTabRow[ "nodetypeid" ].ToString() ) ); }
+            get { return _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( CswConvert.ToInt32( _NodeTypeTabRow[ "nodetypeid" ].ToString() ) ); }
         }
 
 

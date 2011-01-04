@@ -93,15 +93,15 @@ namespace ChemSW.Nbt.Statistics
                     DataTable StatisticsViewsTable = StatisticsViewsTableCaddy.getEmptyTable();
                     foreach ( string ViewId in CswNbtStatisticsEntry.ViewsEdited.Keys )
                     {
-                        _makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, Convert.ToInt32( ViewId ), Convert.ToInt32( CswNbtStatisticsEntry.ViewsEdited[ViewId] ), "edit" );
+                        _makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, CswConvert.ToInt32( ViewId ), CswConvert.ToInt32( CswNbtStatisticsEntry.ViewsEdited[ViewId] ), "edit" );
                     }
                     foreach ( string ViewId in CswNbtStatisticsEntry.ViewsMultiEdited.Keys )
                     {
-                        _makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, Convert.ToInt32( ViewId ), Convert.ToInt32( CswNbtStatisticsEntry.ViewsMultiEdited[ViewId] ), "multiedit" );
+                        _makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, CswConvert.ToInt32( ViewId ), CswConvert.ToInt32( CswNbtStatisticsEntry.ViewsMultiEdited[ViewId] ), "multiedit" );
                     }
                     foreach ( string ViewId in CswNbtStatisticsEntry.ViewsLoaded.Keys )
                     {
-                        _makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, Convert.ToInt32( ViewId ), Convert.ToInt32( CswNbtStatisticsEntry.ViewsLoaded[ViewId] ), "load" );
+                        _makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, CswConvert.ToInt32( ViewId ), CswConvert.ToInt32( CswNbtStatisticsEntry.ViewsLoaded[ViewId] ), "load" );
                     }
                     StatisticsViewsTableCaddy.update( StatisticsViewsTable );
 
@@ -111,19 +111,19 @@ namespace ChemSW.Nbt.Statistics
                     DataTable StatisticsSearchesTable = StatisticsSearchesTableCaddy.getEmptyTable();
                     foreach ( string NodeTypePropId in CswNbtStatisticsEntry.NodeTypePropsSearched.Keys )
                     {
-                        _makeNewStatisticsSearchesRow( StatisticsSearchesTable, StatisticsId, Convert.ToInt32( NodeTypePropId ), Int32.MinValue, Convert.ToInt32( CswNbtStatisticsEntry.NodeTypePropsSearched[NodeTypePropId] ), "load" );
+                        _makeNewStatisticsSearchesRow( StatisticsSearchesTable, StatisticsId, CswConvert.ToInt32( NodeTypePropId ), Int32.MinValue, CswConvert.ToInt32( CswNbtStatisticsEntry.NodeTypePropsSearched[NodeTypePropId] ), "load" );
                     }
                     foreach ( string ObjectClassPropId in CswNbtStatisticsEntry.ObjectClassPropsSearched.Keys )
                     {
-                        _makeNewStatisticsSearchesRow( StatisticsSearchesTable, StatisticsId, Int32.MinValue, Convert.ToInt32( ObjectClassPropId ), Convert.ToInt32( CswNbtStatisticsEntry.ObjectClassPropsSearched[ObjectClassPropId] ), "load" );
+                        _makeNewStatisticsSearchesRow( StatisticsSearchesTable, StatisticsId, Int32.MinValue, CswConvert.ToInt32( ObjectClassPropId ), CswConvert.ToInt32( CswNbtStatisticsEntry.ObjectClassPropsSearched[ObjectClassPropId] ), "load" );
                     }
                     foreach ( string NodeTypePropId in CswNbtStatisticsEntry.NodeTypePropsFilterMod.Keys )
                     {
-                        _makeNewStatisticsSearchesRow( StatisticsSearchesTable, StatisticsId, Convert.ToInt32( NodeTypePropId ), Int32.MinValue, Convert.ToInt32( CswNbtStatisticsEntry.NodeTypePropsFilterMod[NodeTypePropId] ), "modify" );
+                        _makeNewStatisticsSearchesRow( StatisticsSearchesTable, StatisticsId, CswConvert.ToInt32( NodeTypePropId ), Int32.MinValue, CswConvert.ToInt32( CswNbtStatisticsEntry.NodeTypePropsFilterMod[NodeTypePropId] ), "modify" );
                     }
                     foreach ( string ObjectClassPropId in CswNbtStatisticsEntry.ObjectClassPropsFilterMod.Keys )
                     {
-                        _makeNewStatisticsSearchesRow( StatisticsSearchesTable, StatisticsId, Int32.MinValue, Convert.ToInt32( ObjectClassPropId ), Convert.ToInt32( CswNbtStatisticsEntry.ObjectClassPropsFilterMod[ObjectClassPropId] ), "modify" );
+                        _makeNewStatisticsSearchesRow( StatisticsSearchesTable, StatisticsId, Int32.MinValue, CswConvert.ToInt32( ObjectClassPropId ), CswConvert.ToInt32( CswNbtStatisticsEntry.ObjectClassPropsFilterMod[ObjectClassPropId] ), "modify" );
                     }
                     StatisticsSearchesTableCaddy.update( StatisticsSearchesTable );
 
@@ -133,19 +133,19 @@ namespace ChemSW.Nbt.Statistics
                     DataTable StatisticsNodeTypesTable = StatisticsNodeTypesTableCaddy.getEmptyTable();
                     foreach ( string NodeTypeId in CswNbtStatisticsEntry.NodeTypesSaved.Keys )
                     {
-                        _makeNewStatisticsNodeTypesRow( StatisticsNodeTypesTable, StatisticsId, Convert.ToInt32( NodeTypeId ), Convert.ToInt32( CswNbtStatisticsEntry.NodeTypesSaved[NodeTypeId] ), "save" );
+                        _makeNewStatisticsNodeTypesRow( StatisticsNodeTypesTable, StatisticsId, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( CswNbtStatisticsEntry.NodeTypesSaved[NodeTypeId] ), "save" );
                     }
                     foreach ( string NodeTypeId in CswNbtStatisticsEntry.NodeTypesCopied.Keys )
                     {
-                        _makeNewStatisticsNodeTypesRow( StatisticsNodeTypesTable, StatisticsId, Convert.ToInt32( NodeTypeId ), Convert.ToInt32( CswNbtStatisticsEntry.NodeTypesCopied[NodeTypeId] ), "copy" );
+                        _makeNewStatisticsNodeTypesRow( StatisticsNodeTypesTable, StatisticsId, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( CswNbtStatisticsEntry.NodeTypesCopied[NodeTypeId] ), "copy" );
                     }
                     foreach ( string NodeTypeId in CswNbtStatisticsEntry.NodeTypesDeleted.Keys )
                     {
-                        _makeNewStatisticsNodeTypesRow( StatisticsNodeTypesTable, StatisticsId, Convert.ToInt32( NodeTypeId ), Convert.ToInt32( CswNbtStatisticsEntry.NodeTypesDeleted[NodeTypeId] ), "delete" );
+                        _makeNewStatisticsNodeTypesRow( StatisticsNodeTypesTable, StatisticsId, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( CswNbtStatisticsEntry.NodeTypesDeleted[NodeTypeId] ), "delete" );
                     }
                     foreach ( string NodeTypeId in CswNbtStatisticsEntry.NodeTypesAdded.Keys )
                     {
-                        _makeNewStatisticsNodeTypesRow( StatisticsNodeTypesTable, StatisticsId, Convert.ToInt32( NodeTypeId ), Convert.ToInt32( CswNbtStatisticsEntry.NodeTypesAdded[NodeTypeId] ), "add" );
+                        _makeNewStatisticsNodeTypesRow( StatisticsNodeTypesTable, StatisticsId, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( CswNbtStatisticsEntry.NodeTypesAdded[NodeTypeId] ), "add" );
                     }
                     StatisticsNodeTypesTableCaddy.update( StatisticsNodeTypesTable );
 
@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.Statistics
                     DataTable StatisticsReportsTable = StatisticsReportsTableCaddy.getEmptyTable();
                     foreach ( string ReportId in CswNbtStatisticsEntry.ReportsLoaded.Keys )
                     {
-                        _makeNewStatisticsReportsRow( StatisticsReportsTable, StatisticsId, Convert.ToInt32( ReportId ), Convert.ToInt32( CswNbtStatisticsEntry.ReportsLoaded[ReportId] ), "load" );
+                        _makeNewStatisticsReportsRow( StatisticsReportsTable, StatisticsId, CswConvert.ToInt32( ReportId ), CswConvert.ToInt32( CswNbtStatisticsEntry.ReportsLoaded[ReportId] ), "load" );
                     }
                     StatisticsReportsTableCaddy.update( StatisticsReportsTable );
 
@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.Statistics
                     DataTable StatisticsActionsTable = StatisticsActionsTableCaddy.getEmptyTable();
                     foreach ( string ActionId in CswNbtStatisticsEntry.ActionsLoaded.Keys )
                     {
-                        _makeNewStatisticsActionsRow( StatisticsActionsTable, StatisticsId, Convert.ToInt32( ActionId ), Convert.ToInt32( CswNbtStatisticsEntry.ActionsLoaded[ActionId] ), "load" );
+                        _makeNewStatisticsActionsRow( StatisticsActionsTable, StatisticsId, CswConvert.ToInt32( ActionId ), CswConvert.ToInt32( CswNbtStatisticsEntry.ActionsLoaded[ActionId] ), "load" );
                     }
                     StatisticsActionsTableCaddy.update( StatisticsActionsTable );
 

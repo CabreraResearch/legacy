@@ -14,9 +14,10 @@
 
 <asp:Content ID="AllContent" ContentPlaceHolderID="MasterCenterContent" runat="server">
     <script language="Javascript">
-        if(screen.width < 800)
+        if(screen.width < 800 && location.search != "?redir=n")
         {
-            window.location="LowRes_Login.aspx";            
+            //window.location = "LowRes_Login.aspx";
+            window.location = "Mobile.html";            
         }
     </script>
 

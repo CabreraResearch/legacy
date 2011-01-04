@@ -53,10 +53,10 @@ namespace ChemSW.Nbt.Schema
 			// BZ 20081 - Make Finished and Cancelled 'required' to remove the blank option
             CswNbtMetaDataObjectClassProp FinishedOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( FinishedOCP, CswNbtSubField.SubFieldName.Checked, false );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FinishedOCP, "isrequired", CswConvert.ToDbVal( true ) );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FinishedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, CswConvert.ToDbVal( true ) );
 
             CswNbtMetaDataObjectClassProp CancelledOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CancelledOCP, "isrequired", CswConvert.ToDbVal( true ) );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CancelledOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, CswConvert.ToDbVal( true ) );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CancelledOCP, CswNbtSubField.SubFieldName.Checked, false );
 
             // Update existing values

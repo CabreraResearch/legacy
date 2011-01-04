@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Deactivated.Checked = Tristate.False;
                 IPFilterRegex.Text = _CswNbtResources.CswDbCfgInfo.CurrentIPFilterRegex;
                 if( CswTools.IsInteger( _CswNbtResources.CswDbCfgInfo.CurrentUserCount ) )
-                    UserCount.Value = Convert.ToInt32( _CswNbtResources.CswDbCfgInfo.CurrentUserCount );
+                    UserCount.Value = CswConvert.ToInt32( _CswNbtResources.CswDbCfgInfo.CurrentUserCount );
                 else
                     UserCount.Value = Double.NaN;
 

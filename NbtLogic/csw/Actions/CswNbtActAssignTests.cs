@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Actions
                 foreach( CswNbtNode ParamNode in ParamNodes )
                 {
                     CswNbtObjClassParameter ParameterObjClass = CswNbtNodeCaster.AsParameter( ParamNode );
-                    CswNbtMetaDataNodeType ResultNodeType = _CswNbtResources.MetaData.getNodeType( Convert.ToInt32( ParameterObjClass.ResultType.SelectedNodeTypeIds ) );
+                    CswNbtMetaDataNodeType ResultNodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ParameterObjClass.ResultType.SelectedNodeTypeIds ) );
 
                     if( ResultNodeType != null )
                     {

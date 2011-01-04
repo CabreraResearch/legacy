@@ -268,7 +268,7 @@ namespace ChemSW.Nbt.WebPages
                     //// Add a new Node
 
                     //CswNbtNodeKey NewKey = null;
-                    //Int32 NodeTypeId = Convert.ToInt32(SelectedItem.ID.Substring(_AddNodeActionPre.Length, SelectedItem.ID.Length - _AddNodeActionPre.Length));
+                    //Int32 NodeTypeId = CswConvert.ToInt32(SelectedItem.ID.Substring(_AddNodeActionPre.Length, SelectedItem.ID.Length - _AddNodeActionPre.Length));
 
                     //DataTable NodeTypeTable = _CswDataSource.getNodeType(NodeTypeId);
 

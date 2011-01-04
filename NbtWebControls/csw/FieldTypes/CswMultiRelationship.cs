@@ -97,9 +97,9 @@
 //                    foreach( DataRow Row in _Data.Rows )
 //                    {
 //                        if( _CheckBoxArray.GetValue( Row["NodeId"].ToString(), "Related" ) )
-//                            Prop.AsMultiRelationship.AddRelatedNode( Convert.ToInt32( Row["Node Id"].ToString() ), Row["Node Name"].ToString() );
+//                            Prop.AsMultiRelationship.AddRelatedNode( CswConvert.ToInt32( Row["Node Id"].ToString() ), Row["Node Name"].ToString() );
 //                        else
-//                            Prop.AsMultiRelationship.RemoveRelatedNode( Convert.ToInt32( Row["Node Id"].ToString() ) );
+//                            Prop.AsMultiRelationship.RemoveRelatedNode( CswConvert.ToInt32( Row["Node Id"].ToString() ) );
 //                    }
 //                    Prop.AsMultiRelationship.Save();
 //                }
