@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string FinalDueDatePropertyName { get { return "Final Due Date"; } }
         public static string NextDueDatePropertyName { get { return "Next Due Date"; } }
         public static string WarningDaysPropertyName { get { return "Warning Days"; } }
-        public static string GraceDaysPropertyName { get { return "Grace Days"; } }
+        //public static string GraceDaysPropertyName { get { return "Grace Days"; } }
         public static string EnabledPropertyName { get { return "Enabled"; } }
         public static string RunStatusPropertyName { get { return "Run Status"; } }
         public static string TargetTypePropertyName { get { return "Target Type"; } }
@@ -241,16 +241,16 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        /// <summary>
-        /// Days after due date to continue to allow edits
-        /// </summary>
-        public CswNbtNodePropNumber GraceDays
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[GraceDaysPropertyName].AsNumber );
-            }
-        }
+        ///// <summary>
+        ///// Days after due date to continue to allow edits
+        ///// </summary>
+        //public CswNbtNodePropNumber GraceDays
+        //{
+        //    get
+        //    {
+        //        return ( _CswNbtNode.Properties[GraceDaysPropertyName].AsNumber );
+        //    }
+        //}
         
         public CswNbtNodePropText Summary
         {

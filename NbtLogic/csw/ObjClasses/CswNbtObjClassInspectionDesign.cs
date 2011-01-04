@@ -282,10 +282,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// True if user checks Finished, all questions are answered, and all answer dates are before Missed Date
         /// </summary>
         private bool _allAnsweredinTime = true;
-        /// <summary>
-        /// Due Date + Grace Days
-        /// </summary>
-        private DateTime _MissedDate = DateTime.MinValue;
 
         /// <summary>
         /// Determine Inspection Status and set read-only
@@ -306,14 +302,12 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode ScheduleNode = _CswNbtResources.Nodes.GetNode( this.Generator.RelatedNodeId );
                 CswNbtObjClassGenerator Schedule = CswNbtNodeCaster.AsGenerator( ScheduleNode );
 
-                _MissedDate = this.Date.DateValue.AddDays( Schedule.GraceDays.Value );
-
                 foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                 {
                     CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
                     _OOC = ( _OOC || !QuestionProp.IsCompliant );
                     _allAnswered = ( _allAnswered && QuestionProp.Answer != string.Empty );
-                    _allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered <= _MissedDate );
+                    _allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered <= this.Date.DateValue );
                 }
 
                 if( _allAnswered )
@@ -340,7 +334,6 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     _Finished = false;
                 }
-
 
                 this.Finished.Checked = CswConvert.ToTristate( _Finished );
 

@@ -55,13 +55,11 @@ namespace ChemSW.Nbt.Sched
             {
                 DateTime DueDate = _InspectionNode.Date.DateValue;
                 CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( _InspectionNode.Generator.RelatedNodeId );
-                if( null != GeneratorNode )
+                if( null != GeneratorNode &&
+                    _Pending == _InspectionNode.Status.Value &&
+                    DateTime.Today >= DueDate )
                 {
-                    Double GraceDays = GeneratorNode.Properties[CswNbtObjClassGenerator.GraceDaysPropertyName].AsNumber.Value;
-                    if( _Pending == _InspectionNode.Status.Value && DateTime.Today >= DueDate.AddDays( GraceDays ) )
-                    {
-                        ReturnVal = true;
-                    }
+                    ReturnVal = true;
                 }
             }
             return ( ReturnVal );

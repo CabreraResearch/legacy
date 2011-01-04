@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.Schema
             ParentTypeDR["multi"] = CswConvert.ToDbVal(false);
 
             // BZ 10406: Add Grace Days to GeneratorClass
-            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, GeneratorOC.ObjectClassId, CswNbtObjClassGenerator.GraceDaysPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number, Int32.MinValue, Int32.MinValue );
+            //_CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, GeneratorOC.ObjectClassId, CswNbtObjClassGenerator.GraceDaysPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number, Int32.MinValue, Int32.MinValue );
             
             // BZ 10406: Add Status, Finished, Cancelled and Cancel Reason to InspectionDesignClass
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, InspectionDesignOC, CswNbtObjClassInspectionDesign.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List,
