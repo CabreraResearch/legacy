@@ -131,11 +131,11 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.StatusPropertyName ),
                                                                  CswNbtSubField.SubFieldName.Value,
                                                                  "Not Inspected" );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName ), "setvalonadd", true );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.TypePropertyName ), "setvalonadd", true );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.TypePropertyName ), "setvalonadd", true );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.DescriptionPropertyName ), "setvalonadd", true );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.DescriptionPropertyName ), "setvalonadd", true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName ), CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.TypePropertyName ), CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.TypePropertyName ), CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.DescriptionPropertyName ), CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.DescriptionPropertyName ), CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
 
         }//Update()
 

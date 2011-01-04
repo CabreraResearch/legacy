@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
             CswNbtMetaDataObjectClassProp StatusOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.StatusPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( StatusOCP, CswNbtSubField.SubFieldName.Value, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending ) );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( StatusOCP, "servermanaged", CswConvert.ToDbVal( true ) );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( StatusOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, CswConvert.ToDbVal( true ) );
 
             // Case 20437
             CswNbtMetaDataNodeTypeTab InspectionTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( MountPointNT, "Inspections", 2 );
@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.Schema
             // Case 20093
             CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClassProp LocNameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.NamePropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocNameOCP, "setvalonadd", true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocNameOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
             
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 

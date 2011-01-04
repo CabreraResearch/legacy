@@ -598,7 +598,6 @@ namespace ChemSW.Nbt
             }
             ret.Add( Selectable.ToString().ToLower() );
             ret.Add( ArbitraryId.ToString() );
-            ret.Add( "" ); // ArbitraryId.ToString();
             ret.Add( "" ); // ShowInGrid.ToString().ToLower();
             ret.Add( AddChildren.ToString() );
             ret.Add( AllowDelete.ToString() );

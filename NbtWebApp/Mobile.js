@@ -1019,6 +1019,8 @@
                 divhtml += '    <a href="#" id="' + p.DivId + '_refresh" class="refresh">Refresh</a>';
             if (!p.HideLogoutButton)
                 divhtml += '    <a href="#" id="' + p.DivId + '_logout">Logout</a>';
+
+            divhtml += '     <a rel="external" href="Login.aspx?redir=n">Full Site</a>';
             divhtml += '  </div>' +
                        '</div>';
 
