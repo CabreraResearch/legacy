@@ -775,7 +775,17 @@ namespace ChemSW.Nbt.WebPages
 
 
                     // BZ 7954 - this should be set first
+                    
                     PropToSave.IsRequired = Convert.ToBoolean( getPropAttributeValue( "EditProp_RequiredValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
+                    
+                    // Case 20297 - this should be set second
+                    String ValueOptionsString = getPropAttributeValue( "EditProp_ValueOptionsValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+                    if( PropToSave.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                        String.Empty == ValueOptionsString )
+                    {
+                        throw new CswDniException( "Compliant Answer is a required field", "Value option string is null" );
+                    }
+                    PropToSave.ValueOptions = ValueOptionsString;
 
                     PropToSave.PropName = getPropAttributeValue( "EditProp_NameValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.NodeTypeTab = SelectedNodeType.getNodeTypeTab( EditPropTabSelect.SelectedValue.ToString() );   // BZ 8014 - need to use tabname, not tabid, for versioning
@@ -794,7 +804,6 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.MaxValue = Convert.ToDouble( getPropAttributeValue( "EditProp_MaxValue" + OldSelectedNodeTypePropId.ToString(), typeof( Double ), EditPropPlaceHolder ) );
                     PropToSave.IsUnique = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsUnique" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.ListOptions = getPropAttributeValue( "EditProp_OptionsValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-                    PropToSave.ValueOptions = getPropAttributeValue( "EditProp_ValueOptionsValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.StaticText = getPropAttributeValue( "EditProp_TextValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.ReadOnly = Convert.ToBoolean( getPropAttributeValue( "EditProp_ReadOnlyValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.UseNumbering = Convert.ToBoolean( getPropAttributeValue( "EditProp_UseNumbering" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
@@ -807,6 +816,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.HelpText = getPropAttributeValue( "EditProp_HelpText" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.IsQuickSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsQuickSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.Extended = getPropAttributeValue( "EditProp_ExtendedValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+
 
                     // Default Value
                     Control Control = EditPropPlaceHolder.FindControl( "EditProp_DefaultValue" + OldSelectedNodeTypePropId.ToString() );
@@ -1860,23 +1870,41 @@ namespace ChemSW.Nbt.WebPages
                             QstnPossibleAnswersText.Text = SelectedNodeTypeProp.ListOptions;
                             QstnPossibleAnswersRow.Cells[1].Controls.Add( QstnPossibleAnswersText );
 
+
+
                             //Text: Compliant Answers
                             TableRow QstnCompliantAnswerRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) QstnCompliantAnswerRow.Cells[0].Controls[0] ).Text = "Compliant Answers:";
-                            TextBox QstnCompliantAnswerList = new TextBox();
-                            QstnCompliantAnswerList.CssClass = "textinput";
+                            CswCheckBoxArray QstnCompliantAnswerList = new CswCheckBoxArray( Master.CswNbtResources );
+                            DataTable CompliantAnswersTable = new DataTable();
+                            DataColumn AnswersColumn = CompliantAnswersTable.Columns.Add("Answers");
+                            DataColumn CompliantColumn = CompliantAnswersTable.Columns.Add("Compliant", typeof(bool) );
+                            CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                            PossibleAnswers.FromString( SelectedNodeTypeProp.ListOptions );
+                            CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
+                            CompliantAnswers.FromString(  SelectedNodeTypeProp.ValueOptions );
+                            for( Int32 i=0; i < PossibleAnswers.Count; i++ )
+                            {
+                                DataRow AnswerRow = CompliantAnswersTable.Rows.Add();
+                                AnswerRow[0] = PossibleAnswers[i];
+                                AnswerRow[1] = ( CompliantAnswers.Contains( PossibleAnswers[i] ) );
+                            }
+
+                            QstnCompliantAnswerList.CreateCheckBoxes( CompliantAnswersTable, AnswersColumn.ColumnName, AnswersColumn.ColumnName );
+                            //TextBox QstnCompliantAnswerList = new TextBox();
+                            //QstnCompliantAnswerList.CssClass = "textinput";
                             QstnCompliantAnswerList.ID = "EditProp_ValueOptionsValue" + SelectedNodeTypeProp.PropId.ToString();
-                            QstnCompliantAnswerList.Text = SelectedNodeTypeProp.ValueOptions;
+                            //QstnCompliantAnswerList.Text = SelectedNodeTypeProp.ValueOptions;
                             QstnCompliantAnswerRow.Cells[1].Controls.Add( QstnCompliantAnswerList );
 
-                            RequiredFieldValidator QstnCompliantAnswerRFV = new RequiredFieldValidator();
-                            QstnCompliantAnswerRFV.ControlToValidate = QstnCompliantAnswerList.ID;
-                            QstnCompliantAnswerRFV.ID = "EditProp_ValueOptionsValue_RFV" + SelectedNodeTypeProp.PropId.ToString();
-                            QstnCompliantAnswerRFV.Display = ValidatorDisplay.Dynamic;
-                            QstnCompliantAnswerRFV.EnableClientScript = true;
-                            QstnCompliantAnswerRFV.Text = "&nbsp;<img src=\"Images/vld/bad.gif\" alt=\"Value is required\" />";
-                            QstnCompliantAnswerRFV.ValidationGroup = "Design";
-                            QstnCompliantAnswerRow.Cells[1].Controls.Add( QstnCompliantAnswerRFV );
+                            //RequiredFieldValidator QstnCompliantAnswerRFV = new RequiredFieldValidator();
+                            //QstnCompliantAnswerRFV.ControlToValidate = QstnCompliantAnswerList.ID;
+                            //QstnCompliantAnswerRFV.ID = "EditProp_ValueOptionsValue_RFV" + SelectedNodeTypeProp.PropId.ToString();
+                            //QstnCompliantAnswerRFV.Display = ValidatorDisplay.Dynamic;
+                            //QstnCompliantAnswerRFV.EnableClientScript = true;
+                            //QstnCompliantAnswerRFV.Text = "&nbsp;<img src=\"Images/vld/bad.gif\" alt=\"Value is required\" />";
+                            //QstnCompliantAnswerRFV.ValidationGroup = "Design";
+                            //QstnCompliantAnswerRow.Cells[1].Controls.Add( QstnCompliantAnswerRFV );
                             break;
 
 
@@ -2353,6 +2381,10 @@ namespace ChemSW.Nbt.WebPages
                 else if( Control is CswTriStateCheckBox )
                 {
                     ret = ( (CswTriStateCheckBox) Control ).Checked.ToString().ToLower();
+                }
+                else if( Control is CswCheckBoxArray )
+                {
+                    ret = ( (CswCheckBoxArray) Control ).GetCheckedValues( 0 ).ToString();
                 }
             }
             if( ret == "" )
