@@ -68,7 +68,9 @@ namespace ChemSW.NbtWebControls
                     _CswSessionStorageDb.remove( PreviousSessionId );
                 }
 
-                ReturnVal = _CswAuthenticator.Authenticate( AccessId, UserName, Password, CswNbtWebTools.getIpAddress(), 0, ref RoleTimeout, ref UserId );
+
+
+                ReturnVal = _CswAuthenticator.Authenticate( AccessId, UserName, Password, CswNbtWebTools.getIpAddress(), _CswSessionStorageDb.getSessionCount( AccessId, UserName ), ref RoleTimeout, ref UserId );
                 EuphemisticStatus = _CswAuthenticator.euphemizeAuthenticationStatus( ReturnVal );
 
                 if( AuthenticationStatus.Authenticated == ReturnVal )
