@@ -205,7 +205,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _AllowedAnswers == null )
+                if( null == _AllowedAnswers || 
+                    _AllowedAnswers.ToString() != _CswNbtMetaDataNodeTypeProp.ListOptions ) // Case 20629
                 {
                     _AllowedAnswers = new CswCommaDelimitedString();
                     _AllowedAnswers.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
