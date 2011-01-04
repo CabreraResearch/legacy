@@ -307,7 +307,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
                     _OOC = ( _OOC || !QuestionProp.IsCompliant );
                     _allAnswered = ( _allAnswered && QuestionProp.Answer != string.Empty );
-                    _allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered <= this.Date.DateValue );
+                    _allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered.Date <= this.Date.DateValue );
                 }
 
                 if( _allAnswered )
