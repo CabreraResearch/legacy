@@ -132,28 +132,28 @@ namespace ChemSW.Nbt
             string FindThisGroupName = string.Empty;
             Int32 NodeCountLowerBoundExclusive = 0;
             Int32 NodeCountUpperBoundInclusive = PageSize;
-            Int32 ParentDepth = 0;
+            Int32 ParentDepth = 1;
             if( ParentNodeKey != null )
                 ParentDepth = ParentNodeKey.TreeDepth;
 
             if( PageSize > 0 && IncludedKey != null && IncludedKey.TreeDepth > ParentDepth )
             {
-                NodeSpecies TreePathNodeSpecies = IncludedKey.TreePathNodeSpecies( ParentDepth + 2 );
+                NodeSpecies TreePathNodeSpecies = IncludedKey.TreePathNodeSpecies( ParentDepth + 1 );
                 if( TreePathNodeSpecies == NodeSpecies.Plain )
                 {
-                    FindThisNodeId = IncludedKey.TreePathNodeId( ParentDepth + 2 );
-                    FindThisNodeCount = IncludedKey.getNodeCountAtDepth( ParentDepth + 2 );
+                    FindThisNodeId = IncludedKey.TreePathNodeId( ParentDepth + 1 );
+                    FindThisNodeCount = IncludedKey.getNodeCountAtDepth( ParentDepth + 1 );
                 }
                 else if( TreePathNodeSpecies == NodeSpecies.Group )
                 {
                     if( IncludedKey.NodeSpecies == NodeSpecies.Group )
                     {
-                        FindThisGroupName = IncludedKey.TreePathGroupName( ParentDepth + 2 );
+                        FindThisGroupName = IncludedKey.TreePathGroupName( ParentDepth + 1 );
                     }
                     else
                     {
-                        FindThisNodeId = IncludedKey.TreePathNodeId( ParentDepth + 3 );
-                        FindThisNodeCount = IncludedKey.getNodeCountAtDepth( ParentDepth + 3 );
+                        FindThisNodeId = IncludedKey.TreePathNodeId( ParentDepth + 2 );
+                        FindThisNodeCount = IncludedKey.getNodeCountAtDepth( ParentDepth + 2 );
                     }
                 }
 
