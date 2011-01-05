@@ -1287,7 +1287,7 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 2, 1, _SaveButton );
         }
 
-        private String ChkBoxArrayValueColumnName = String.Empty;
+        private static String ChkBoxArrayValueColumnName = "Compliant";
 
         private void init_EditPropertyPage()
         {
@@ -1879,7 +1879,6 @@ namespace ChemSW.Nbt.WebPages
                             CswCheckBoxArray QstnCompliantAnswerList = new CswCheckBoxArray( Master.CswNbtResources );
                             DataTable CompliantAnswersTable = new DataTable();
                             DataColumn AnswersColumn = CompliantAnswersTable.Columns.Add("Answers");
-                            ChkBoxArrayValueColumnName = "Compliant";
                             DataColumn CompliantColumn = CompliantAnswersTable.Columns.Add( ChkBoxArrayValueColumnName, typeof( bool ) );
                             CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
                             PossibleAnswers.FromString( SelectedNodeTypeProp.ListOptions );
