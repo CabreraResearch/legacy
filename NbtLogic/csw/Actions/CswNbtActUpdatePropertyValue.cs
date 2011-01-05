@@ -6,6 +6,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -13,13 +14,13 @@ namespace ChemSW.Nbt.Actions
     {
         private CswNbtResources _CswNbtResources;
 
-        public CswNbtActUpdatePropertyValue(CswNbtResources CswNbtResources)
+        public CswNbtActUpdatePropertyValue( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
         }
 
 
-        public void UpdateNode(CswNbtNode Node)
+        public void UpdateNode( CswNbtNode Node )
         {
             // BZ 10240
             if( Node.PendingUpdate && Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
@@ -29,11 +30,11 @@ namespace ChemSW.Nbt.Actions
 
 
             // Update all out of date values for a given node
-            foreach (CswNbtNodePropWrapper PropWrapper in Node.Properties)
+            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
             {
-                if (PropWrapper.PendingUpdate || Node.PendingUpdate)
+                if( PropWrapper.PendingUpdate || Node.PendingUpdate )
                 {
-                    switch (PropWrapper.FieldType.FieldType)
+                    switch( PropWrapper.FieldType.FieldType )
                     {
                         case CswNbtMetaDataFieldType.NbtFieldType.Composite:
                             CswNbtNodePropComposite CompositeProp = PropWrapper.AsComposite;
@@ -90,7 +91,7 @@ namespace ChemSW.Nbt.Actions
             } // foreach (CswNbtNodePropWrapper PropWrapper in Node.Properties)
 
             Node.PendingUpdate = false;
-        
+
         }// UpdateNode()
-    }
-}
+    } // public class CswNbtActUpdatePropertyValue
+} // namespace ChemSW.Nbt.Actions
