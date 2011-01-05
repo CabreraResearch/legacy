@@ -606,7 +606,7 @@ namespace ChemSW.Nbt.Schema
             OCPRow["readonly"] = CswConvert.ToDbVal( ReadOnly );
             OCPRow["display_col_add"] = CswConvert.ToDbVal( DisplayColAdd );
             OCPRow["display_row_add"] = CswConvert.ToDbVal( DisplayRowAdd );
-            if( DisplayRowAdd != Int32.MinValue || IsRequired )
+            if( DisplayRowAdd != Int32.MinValue )
             {
                 OCPRow["setvalonadd"] = CswConvert.ToDbVal( true );
             }
