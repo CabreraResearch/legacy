@@ -304,7 +304,8 @@ namespace ChemSW.Nbt.MetaData
                     _NodeTypePropRow["filter"] = string.Empty;
                     _NodeTypePropRow["filterpropid"] = CswConvert.ToDbVal( Int32.MinValue );
                     //SetValueOnAdd = true;
-                    _NodeTypePropRow["setvalonadd"] = CswConvert.ToDbVal( true );
+                    if( this.DefaultValue.Empty )
+                        _NodeTypePropRow["setvalonadd"] = CswConvert.ToDbVal( true );
                 }
             }
         }
@@ -847,8 +848,8 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToBoolean( _NodeTypePropRow["setvalonadd"] ); }
             set
             {
-                if( IsRequired && !value )
-                    throw new CswDniException( "Required properties must have 'set value on add' enabled", "User attempted to set SetValueOnAdd = false on a required property" );
+                if( IsRequired && !value && this.DefaultValue.Empty )
+                    throw new CswDniException( "Required properties must have 'set value on add' enabled unless a default value is present", "User attempted to set SetValueOnAdd = false on a required property with an empty default value" );
                 if( hasFilter() && value )
                     throw new CswDniException( "Conditional properties cannot have 'set value on add' enabled", "User attempted to set SetValueOnAdd = true on a conditional property" );
 

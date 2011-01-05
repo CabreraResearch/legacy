@@ -240,6 +240,7 @@ namespace ChemSW.Nbt.WebPages
         private HtmlGenericControl HiddenButtonDiv;
 
         private CswPropertyFilter _ConditionalFilter;
+        private CswFieldTypeWebControl _DefaultValueControl = null;
         private CheckBox _RequiredValue;
         private CheckBox _IsUnique;
         private CheckBox _SetValueOnAddValue;
@@ -429,11 +430,17 @@ namespace ChemSW.Nbt.WebPages
 
                 if( Master.DesignDeleteDialogWindow != null && DesignMenu != null && DesignMenu.DeleteMenuItem != null )
                     Master.DesignDeleteDialogWindow.OpenerElementID = DesignMenu.DeleteMenuItem.ID;
-
-                if( _SelectedNodeTypeProp != null )
+                
+                // Case 20480
+                if( _SelectedNodeTypeProp != null ) 
                 {
-                    if( _SetValueOnAddValue != null && !_SelectedNodeTypeProp.SetValueOnAddEnabled )
+                    if( _SetValueOnAddValue != null &&
+                        !_SelectedNodeTypeProp.SetValueOnAddEnabled &&
+                        _SelectedNodeTypeProp.DefaultValue.Empty &&
+                        _SelectedNodeTypeProp.IsRequired )
+                    {
                         _SetValueOnAddValue.InputAttributes.Add( "disabled", "disabled" ); //avoid problem of the enclosing span of the input tag being "disabled" (http://geekswithblogs.net/jonasb/archive/2006/07/27/86498.aspx)
+                    }
 
                     if( _ConditionalFilter != null && !_SelectedNodeTypeProp.FilterEnabled )
                         _ConditionalFilter.Attributes.Add( "disabled", "true" );
@@ -443,19 +450,27 @@ namespace ChemSW.Nbt.WebPages
                         _RequiredValue.Checked = false;
                         _RequiredValue.InputAttributes.Add( "disabled", "disabled" );
                     }
-                }
+                } //if( _SelectedNodeTypeProp != null )
 
                 if( _RequiredValue != null )
                 {
                     string onclick = "return onSetPropRequired('" + _RequiredValue.ClientID + "','";
-                    if( _SetValueOnAddValue != null ) onclick += _SetValueOnAddValue.ClientID;
+                    if( _SetValueOnAddValue != null && _SelectedNodeTypeProp.DefaultValue.Empty ) onclick += _SetValueOnAddValue.ClientID;
                     onclick += "','";
                     if( _ConditionalFilter != null ) onclick += _ConditionalFilter.ClientID;
                     onclick += "','";
                     if( _ConditionalFilter != null && _ConditionalFilter.PropSelectBox != null ) onclick += _ConditionalFilter.PropSelectBox.ClientID;
                     onclick += "');";
                     _RequiredValue.Attributes.Add( "onclick", onclick );
-                }
+
+                    if( _DefaultValueControl != null &&
+                        !_SelectedNodeTypeProp.SetValueOnAdd &&
+                        _SelectedNodeTypeProp.IsRequired &&
+                        _SelectedNodeTypeProp.DefaultValue.Empty )
+                    {
+                        throw new CswDniException( "Required properties must have a default value if not Set Value on Add", "Default value was empty, with required true and setvalonadd false" );
+                    }
+                } //if( _RequiredValue != null )
 
                 // BZ 4868
                 if( SelectedNodeTypeProp != null &&
@@ -2157,13 +2172,13 @@ namespace ChemSW.Nbt.WebPages
                     {
                         TableRow DefaultValueRow = makeEditPropTableRow( EditPropPlaceHolder );
                         ( (Literal) DefaultValueRow.Cells[0].Controls[0] ).Text = "Default Value:";
-                        CswFieldTypeWebControl DefaultValueControl = null;
+                        
                         // This spawns a row whenever we click on a property, but it's unavoidable at the moment, and it's only one row per property.
-                        DefaultValueControl = CswFieldTypeWebControlFactory.makeControl( Master.CswNbtResources,
+                        _DefaultValueControl = CswFieldTypeWebControlFactory.makeControl( Master.CswNbtResources,
                                             DefaultValueRow.Cells[1].Controls, "EditProp_DefaultValue" + SelectedNodeTypeProp.PropId.ToString(),
                                             SelectedNodeTypeProp.DefaultValue, NodeEditMode.DefaultValue, Master.HandleError );
                         // BZ 8307 - Even if the property is readonly, the default value is not.
-                        DefaultValueControl.DataBind();
+                        _DefaultValueControl.DataBind();
                     }
 
                     //Required
