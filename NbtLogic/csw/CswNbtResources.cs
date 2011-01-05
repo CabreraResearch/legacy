@@ -528,10 +528,12 @@ namespace ChemSW.Nbt
                     CswNbtNode ThisNode = NotifTree.getNodeForCurrentPosition();
                     CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) CswNbtNodeCaster.AsNotification( ThisNode );
 
-                    CswNbtNotificationKey NKey = new CswNbtNotificationKey( NotifNode.TargetNodeType.NodeTypeId, NotifNode.SelectedEvent, NotifNode.Property.Value, NotifNode.Value.Text );
-                    if( !_Notifs.ContainsKey( NKey ) )   // because we don't have compound unique rules yet
-                        _Notifs.Add( NKey, NotifNode );  // this means that if we have redundant events, only one will be processed
-
+                    if( NotifNode.TargetNodeType != null )
+                    {
+                        CswNbtNotificationKey NKey = new CswNbtNotificationKey( NotifNode.TargetNodeType.NodeTypeId, NotifNode.SelectedEvent, NotifNode.Property.Value, NotifNode.Value.Text );
+                        if( !_Notifs.ContainsKey( NKey ) )   // because we don't have compound unique rules yet
+                            _Notifs.Add( NKey, NotifNode );  // this means that if we have redundant events, only one will be processed
+                    }
                     NotifTree.goToParentNode();
                 }
             }

@@ -129,7 +129,7 @@
 
         function reloadViews(ChangePage)
         {
-            if($('#viewsdiv').hasClass('ui-page-active'))
+            if ($('#viewsdiv').hasClass('ui-page-active'))
             {
                 _addPageDivToBody({
                     DivId: 'loadingdiv',
@@ -142,7 +142,8 @@
                 });
                 $.mobile.changePage($('#loadingdiv'), "fade", false, true);
                 setTimeout(function () { continueReloadViews(true); removeDiv('loadingdiv') }, opts.DivRemovalDelay);
-            } else {
+            } else
+            {
                 continueReloadViews(ChangePage)
             }
         }
@@ -655,6 +656,8 @@
             if (sf_comments == undefined) sf_comments = '';
             if (sf_compliantanswers == undefined) sf_compliantanswers = '';
 
+            if (sf_value == 'NaN') sf_value = '';
+
             var Html = '<div id="' + IdStr + '_propname"';
             if (FieldType == "Question" && !(sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
                 Html += ' class="OOC"'
@@ -800,7 +803,7 @@
                 case "Memo": if (name == IdStr) $sftomodify = $sf_text; break;
                 case "Number": if (name == IdStr) $sftomodify = $sf_value; break;
                 case "Password": break;
-                case "Quantity": if (name == IdStr) $sftomodify = $sf_value; break;
+                case "Quantity": if (name == IdStr + '_qty') $sftomodify = $sf_value; break;
                 case "Question":
                     if (name == IdStr + '_com')
                         $sftomodify = $sf_comments;
@@ -819,7 +822,6 @@
                 $sftomodify.text(value);
                 $xmlitem.attr('wasmodified', '1');
             }
-
         } // _FieldTypeHtmlToXml()
 
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
@@ -1189,15 +1191,21 @@
                     success: function (data, textStatus, XMLHttpRequest)
                     {
                         var $xml = $(data.d);
-                        SessionId = $xml.find('SessionId').text();
-                        if (SessionId != "")
+                        if ($xml.get(0).nodeName == "ERROR")
                         {
-                            _cacheSession(SessionId, UserName);
-                            reloadViews(true);
-                            removeDiv('logindiv');
+                            _handleAjaxError(XMLHttpRequest, $xml.text(), '');
                         } else
                         {
-                            _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
+                            SessionId = $xml.find('SessionId').text();
+                            if (SessionId != "")
+                            {
+                                _cacheSession(SessionId, UserName);
+                                reloadViews(true);
+                                removeDiv('logindiv');
+                            } else
+                            {
+                                _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
+                            }
                         }
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -1656,9 +1664,9 @@
         function _handleDataCheckTimer(onSuccess, onFailure)
         {
             var url = opts.ConnectTestUrl;
-            if(opts.RandomConnectionFailure)
+            if (opts.RandomConnectionFailure)
                 url = opts.ConnectTestRandomFailUrl;
-    
+
             $.ajax({
                 type: 'POST',
                 url: url,

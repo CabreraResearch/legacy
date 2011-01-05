@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.WebServices
             XmlDocument XmlDoc = new XmlDocument();
             XmlDoc.LoadXml( UpdatedViewXml );
 
-            XmlNodeList PropNodes = XmlDoc.SelectNodes( "result/node/subitems/prop[@wasmodified='1']" );
+            XmlNodeList PropNodes = XmlDoc.SelectNodes( "//prop[@wasmodified='1']" );
             foreach( XmlNode PropNode in PropNodes )
             {
                 string NodePropId = PropNode.Attributes["id"].Value;

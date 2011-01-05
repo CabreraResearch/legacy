@@ -54,32 +54,47 @@ namespace ChemSW.NbtWebControls
 
             Int32 RoleTimeout = Int32.MinValue;
             CswPrimaryKey UserId = null;
-            _CswNbtResources.AccessId = AccessId;
 
-            string PreviousSessionId = string.Empty;
-            if( string.Empty != ( PreviousSessionId = _CswSessionStorageDb.getSessionId( UserName ) ) )
+
+            if( _CswNbtResources.CswDbCfgInfo.AccessIds.Contains( AccessId ) )
             {
-                _CswSessionStorageDb.remove( PreviousSessionId ); 
+
+
+                _CswNbtResources.AccessId = AccessId;
+
+                string PreviousSessionId = string.Empty;
+                if( string.Empty != ( PreviousSessionId = _CswSessionStorageDb.getSessionId( UserName ) ) )
+                {
+                    _CswSessionStorageDb.remove( PreviousSessionId );
+                }
+
+
+
+                ReturnVal = _CswAuthenticator.Authenticate( AccessId, UserName, Password, CswNbtWebTools.getIpAddress(), _CswSessionStorageDb.getSessionCount( AccessId, UserName ), ref RoleTimeout, ref UserId );
+                EuphemisticStatus = _CswAuthenticator.euphemizeAuthenticationStatus( ReturnVal );
+
+                if( AuthenticationStatus.Authenticated == ReturnVal )
+                {
+                    CswSessionsListEntry CswSessionsListEntry = new CswSessionsListEntry( SessionId = System.Guid.NewGuid().ToString() );
+                    CswSessionsListEntry.AccessId = AccessId;
+                    CswSessionsListEntry.IPAddress = CswNbtWebTools.getIpAddress();
+                    CswSessionsListEntry.LoginDate = DateTime.Now;
+                    CswSessionsListEntry.UserName = UserName;
+                    CswSessionsListEntry.IsMobile = true;
+
+
+                    _CswSessionStorageDb.save( CswSessionsListEntry );
+
+                    _CswNbtResources.CurrentUser = _CswAuthenticator.makeUser( UserName );
+
+                }
             }
-
-            ReturnVal = _CswAuthenticator.Authenticate( AccessId, UserName, Password, CswNbtWebTools.getIpAddress(), 0, ref RoleTimeout, ref UserId );
-            EuphemisticStatus = _CswAuthenticator.euphemizeAuthenticationStatus( ReturnVal );
-
-            if( AuthenticationStatus.Authenticated == ReturnVal )
+            else
             {
-                CswSessionsListEntry CswSessionsListEntry = new CswSessionsListEntry( SessionId = System.Guid.NewGuid().ToString() );
-                CswSessionsListEntry.AccessId = AccessId;
-                CswSessionsListEntry.IPAddress = CswNbtWebTools.getIpAddress();
-                CswSessionsListEntry.LoginDate = DateTime.Now;
-                CswSessionsListEntry.UserName = UserName;
-                CswSessionsListEntry.IsMobile = true;
+                ReturnVal = AuthenticationStatus.NonExistentAccessId;
+                EuphemisticStatus = _CswAuthenticator.euphemizeAuthenticationStatus( ReturnVal );
 
-
-                _CswSessionStorageDb.save( CswSessionsListEntry );
-
-                _CswNbtResources.CurrentUser = _CswAuthenticator.makeUser( UserName );
-
-            }
+            }//if-else accessid is legit
 
             return ( ReturnVal );
 
