@@ -1,0 +1,12 @@
+Assembly Hamlet.6
+CswCommon 4.6.1.5
+CswWebControls 4.4.1.6
+CswConfigUI 4.1.1.2
+NbtConfig 4.1.1.7
+NbtLogic 4.1.1.7
+NbtLogService 4.1.1.7
+NbtSchedService 4.1.1.7
+NbtSchemaImporter 4.1.1.7
+NbtSchemaUpdater 4.1.1.7
+NbtWebControls 4.1.1.7
+NbtWebApp 4.1.1.7
