@@ -129,6 +129,8 @@ copy("c:/kiln/nbt/nbt/NbtSetup/Release/NbtSetup.msi", "c:/kiln/Install/nbt/NbtSe
 	or printf("Could not copy c:/kiln/nbt/nbt/NbtSetup/bin/Release/NbtSetup.msi to c:/kiln/Install/nbt/NbtSetup.msi: $!\n");
 copy("c:/kiln/nbt/nbt/NbtSetup/Release/setup.exe", "c:/kiln/Install/nbt/setup.exe")
 	or printf("Could not copy c:/kiln/nbt/nbt/NbtSetup/bin/Release/NbtSetup.msi to c:/kiln/Install/nbt/NbtSetup.msi: $!\n");
+copy("c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master.dmp", "c:/kiln/Install/Schema/Nbt_Master.dmp")
+	or printf("Could not copy c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master.dmp to c:/kiln/Install/Schema/Nbt_Master.dmp: $!\n");
 
 &checkContinue;
 
