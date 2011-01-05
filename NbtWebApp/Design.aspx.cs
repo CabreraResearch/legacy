@@ -1287,7 +1287,7 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 2, 1, _SaveButton );
         }
 
-        private static String ChkBoxArrayValueColumnName = String.Empty;
+        private String ChkBoxArrayValueColumnName = String.Empty;
 
         private void init_EditPropertyPage()
         {
