@@ -1287,6 +1287,7 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 2, 1, _SaveButton );
         }
 
+        private static String ChkBoxArrayValueColumnName = String.Empty;
 
         private void init_EditPropertyPage()
         {
@@ -1347,7 +1348,7 @@ namespace ChemSW.Nbt.WebPages
                     NameValue.CssClass = "textinput";
                     NameValue.ID = "EditProp_NameValue" + SelectedNodeTypeProp.PropId.ToString();
                     NameValue.Text = SelectedNodeTypeProp.PropName;
-                    NameValue.Width = Unit.Parse( "250px" );
+                    NameValue.Width = Unit.Parse( "400px" );
                     NameValue.MaxLength = 512;
                     NameRow.Cells[1].Controls.Add( NameValue );
 
@@ -1878,7 +1879,8 @@ namespace ChemSW.Nbt.WebPages
                             CswCheckBoxArray QstnCompliantAnswerList = new CswCheckBoxArray( Master.CswNbtResources );
                             DataTable CompliantAnswersTable = new DataTable();
                             DataColumn AnswersColumn = CompliantAnswersTable.Columns.Add("Answers");
-                            DataColumn CompliantColumn = CompliantAnswersTable.Columns.Add("Compliant", typeof(bool) );
+                            ChkBoxArrayValueColumnName = "Compliant";
+                            DataColumn CompliantColumn = CompliantAnswersTable.Columns.Add( ChkBoxArrayValueColumnName, typeof( bool ) );
                             CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
                             PossibleAnswers.FromString( SelectedNodeTypeProp.ListOptions );
                             CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
@@ -2384,7 +2386,7 @@ namespace ChemSW.Nbt.WebPages
                 }
                 else if( Control is CswCheckBoxArray )
                 {
-                    ret = ( (CswCheckBoxArray) Control ).GetCheckedValues( 0 ).ToString();
+                    ret = ( (CswCheckBoxArray) Control ).GetCheckedValues( ChkBoxArrayValueColumnName ).ToString();
                 }
             }
             if( ret == "" )
