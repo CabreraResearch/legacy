@@ -435,9 +435,7 @@ namespace ChemSW.Nbt.WebPages
                 if( _SelectedNodeTypeProp != null ) 
                 {
                     if( _SetValueOnAddValue != null &&
-                        !_SelectedNodeTypeProp.SetValueOnAddEnabled &&
-                        _SelectedNodeTypeProp.DefaultValue.Empty &&
-                        _SelectedNodeTypeProp.IsRequired )
+                        !_SelectedNodeTypeProp.SetValueOnAddEnabled )
                     {
                         _SetValueOnAddValue.InputAttributes.Add( "disabled", "disabled" ); //avoid problem of the enclosing span of the input tag being "disabled" (http://geekswithblogs.net/jonasb/archive/2006/07/27/86498.aspx)
                     }

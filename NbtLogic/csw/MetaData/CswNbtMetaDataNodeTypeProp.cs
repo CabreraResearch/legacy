@@ -859,7 +859,14 @@ namespace ChemSW.Nbt.MetaData
 
         public bool SetValueOnAddEnabled
         {
-            get { return !IsRequired && !hasFilter(); }
+            get 
+            {
+                // Case 20480
+                return ( ( !IsRequired &&
+                           !hasFilter() ) || 
+                         ( IsRequired &&
+                           !DefaultValue.Empty ) ); 
+            }
         }
 
         public Int32 FilterNodeTypePropId
