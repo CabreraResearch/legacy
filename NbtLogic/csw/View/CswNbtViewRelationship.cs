@@ -754,9 +754,12 @@ namespace ChemSW.Nbt
             bool bFirst = true;
             foreach( CswPrimaryKey child in NodeIdsToFilterIn )
             {
-                if( !bFirst ) FilterInString += ','.ToString();
-                FilterInString += child.ToString();
-                bFirst = false;
+                if( null != child )
+                {
+                    if( !bFirst ) FilterInString += ','.ToString();
+                    FilterInString += child.ToString();
+                    bFirst = false;
+                }
             }
             NodeIdFilterInAttribute.Value = FilterInString;
             RelationshipNode.Attributes.Append( NodeIdFilterInAttribute );
