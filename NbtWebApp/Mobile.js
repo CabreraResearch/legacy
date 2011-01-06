@@ -1470,23 +1470,22 @@
 
         function _createDb(OnSuccess)
         {
-            _DoSql('CREATE TABLE IF NOT EXISTS configvars ' +
+            _DoSql( 'CREATE TABLE IF NOT EXISTS configvars ' +
                     '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
                     '   varname TEXT NOT NULL, ' +
                     '   varval TEXT);',
                     null,
-                    null
-                    );
-
-            _DoSql('CREATE TABLE IF NOT EXISTS views ' +
-                    '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                    '   rootid TEXT NOT NULL, ' +
-                    '   rootname TEXT NOT NULL, ' +
-                    '   viewxml TEXT, ' +
-                    '   wasmodified INTEGER );',
-                    null,
-                    OnSuccess
-                    );
+                    function() {
+                        _DoSql( 'CREATE TABLE IF NOT EXISTS views ' +
+                                '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
+                                '   rootid TEXT NOT NULL, ' +
+                                '   rootname TEXT NOT NULL, ' +
+                                '   viewxml TEXT, ' +
+                                '   wasmodified INTEGER );',
+                                null,
+                                OnSuccess
+                                );
+                    } );
 
         } //_createDb() 
 
@@ -1649,7 +1648,6 @@
         // ------------------------------------------------------------------------------------
         // Synchronization
         // ------------------------------------------------------------------------------------
-
 
         var _waitForData_TimeoutId;
         function _waitForData()
