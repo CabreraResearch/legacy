@@ -581,35 +581,71 @@ namespace ChemSW.Nbt.ObjClasses
             // BZ 10372 - Iterate all relationships
             foreach( CswNbtViewRelationship ViewRelationship in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
             {
-                // BZ 8355 - Set relationships on children pointing to parents, not the other way
-                if( ViewRelationship.PropOwner == CswNbtViewRelationship.PropOwnerType.Second )
+                // Case 20544 - If View is only one level deep, check for relationship props
+                if( 1 == View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count )
                 {
-                    if( ( ( ViewRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && ViewRelationship.SecondId == this.NodeTypeId ) ||
-                          ( ViewRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && ViewRelationship.SecondId == this.ObjectClassId ) ) &&
-                        ( ( ViewRelationship.FirstType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && ViewRelationship.FirstId == ParentNode.NodeTypeId ) ||
-                          ( ViewRelationship.FirstType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && ViewRelationship.FirstId == ParentNode.ObjectClassId ) ) )
+                    foreach( CswNbtMetaDataNodeTypeProp thisNTP in this.NodeType.NodeTypeProps )
                     {
-                        if( ViewRelationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
-                            Prop = this.Properties[_CswNbtResources.MetaData.getNodeTypeProp( ViewRelationship.PropId )];
-                        else if( ViewRelationship.PropType == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
-                            Prop = this.Properties[_CswNbtResources.MetaData.getObjectClassProp( ViewRelationship.PropId ).PropName];
-
-                        if( Prop != null )
+                        if( thisNTP.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                         {
-                            if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                            CswNbtNodePropWrapper thisProp = this.Properties[thisNTP];
+                            if( thisProp.AsRelationship.TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
                             {
-                                Prop.AsRelationship.RelatedNodeId = ParentNode.NodeId;
-                                Prop.AsRelationship.RefreshNodeName();
+                                CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( thisProp.AsRelationship.TargetId );
+                                if( ParentNode.NodeType == RelatedNodeType )
+                                {
+                                    Prop = thisProp;
+                                    Prop.AsRelationship.RelatedNodeId = ParentNode.NodeId;
+                                    Prop.AsRelationship.RefreshNodeName();
+                                    break;
+                                }
                             }
-                            if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                            else if( thisProp.AsRelationship.TargetType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
                             {
-                                Prop.AsLocation.SelectedNodeId = ParentNode.NodeId;
-                                Prop.AsLocation.RefreshNodeName();
+                                CswNbtMetaDataObjectClass RelatedObjectClass = _CswNbtResources.MetaData.getObjectClass( thisProp.AsRelationship.TargetId );
+                                if( ParentNode.ObjectClass == RelatedObjectClass )
+                                {
+                                    Prop = thisProp;
+                                    Prop.AsRelationship.RelatedNodeId = ParentNode.NodeId;
+                                    Prop.AsRelationship.RefreshNodeName();
+                                    break;
+                                }
                             }
                         }
                     }
-                } // if( ViewRelationship.PropOwner == CswNbtViewRelationship.PropOwnerType.Second )
-            } // foreach( CswNbtViewRelationship ViewRelationship in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+                }
+                else
+                {
+                    // BZ 8355 - Set relationships on children pointing to parents, not the other way
+                    if( ViewRelationship.PropOwner == CswNbtViewRelationship.PropOwnerType.Second )
+                    {
+                        if( ( ( ViewRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && ViewRelationship.SecondId == this.NodeTypeId ) ||
+                              ( ViewRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && ViewRelationship.SecondId == this.ObjectClassId ) ) &&
+                            ( ( ViewRelationship.FirstType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && ViewRelationship.FirstId == ParentNode.NodeTypeId ) ||
+                              ( ViewRelationship.FirstType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && ViewRelationship.FirstId == ParentNode.ObjectClassId ) ) )
+                        {
+                            if( ViewRelationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+                                Prop = this.Properties[_CswNbtResources.MetaData.getNodeTypeProp( ViewRelationship.PropId )];
+                            else if( ViewRelationship.PropType == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
+                                Prop = this.Properties[_CswNbtResources.MetaData.getObjectClassProp( ViewRelationship.PropId ).PropName];
+
+                            if( Prop != null )
+                            {
+                                if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                                {
+                                    Prop.AsRelationship.RelatedNodeId = ParentNode.NodeId;
+                                    Prop.AsRelationship.RefreshNodeName();
+                                }
+                                if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                                {
+                                    Prop.AsLocation.SelectedNodeId = ParentNode.NodeId;
+                                    Prop.AsLocation.RefreshNodeName();
+                                }
+                            }
+                        }
+                    } // if( ViewRelationship.PropOwner == CswNbtViewRelationship.PropOwnerType.Second )
+                } // foreach( CswNbtViewRelationship ViewRelationship in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+            }
         } // RelateToNode()
 
         #endregion Methods
