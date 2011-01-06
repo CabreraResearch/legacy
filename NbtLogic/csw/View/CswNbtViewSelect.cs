@@ -149,6 +149,7 @@ namespace ChemSW.Nbt
                     if( ThisView.Root.ChildRelationships.Count > 0 || !IncludeEmptyViews )      // BZ 8136
                     {
                         bool skipme = true;
+                        // Case 20452 - Remove views associated with disabled nodetypes/objectclasses
                         if( ThisView.IsFullyEnabled() )
                         {
                             foreach( CswNbtViewRelationship R in ThisView.Root.ChildRelationships )
