@@ -448,6 +448,9 @@
                 case "PROP":
                     var tab = $xmlitem.attr('tab');
                     var fieldtype = $xmlitem.attr('fieldtype');
+                    var gestalt = $xmlitem.attr('gestalt');
+                    if (gestalt == 'NaN') gestalt = '';
+
                     if (currenttab != tab)
                     {
                         if (currenttab != '')
@@ -503,7 +506,7 @@
                         default:
                             lihtml += '<li id="' + id + '_li">';
                             lihtml += ' <a href="#' + id + '">' + text + '</a>';
-                            lihtml += ' <p class="ui-li-aside">' + $xmlitem.attr('gestalt') + '</p>';
+                            lihtml += ' <p class="ui-li-aside">' + gestalt + '</p>';
                             lihtml += '</li>';
 
                             break;
