@@ -649,7 +649,11 @@ namespace ChemSW.NbtWebControls
                 _SearchMenuItem.Visible = true;
                 // Handle searching from grid properties:
                 if( View != null && ParentNodeKey != null )
-                    _SearchMenuItem.NavigateUrl = "Search.aspx?nodeid=" + ParentNodeKey.NodeId.ToString() + "&viewid=" + View.ViewId.ToString();
+                    // Case 20715 - need to check NodeSpecies first
+                    if( ParentNodeKey.NodeSpecies == NodeSpecies.Plain && null != ParentNodeKey.NodeId )
+                        _SearchMenuItem.NavigateUrl = "Search.aspx?nodeid=" + ParentNodeKey.NodeId.ToString() + "&viewid=" + View.ViewId.ToString();
+                    else
+                        _SearchMenuItem.NavigateUrl = "Search.aspx?nodeid=" + "&viewid=" + View.ViewId.ToString();
                 else
                     _SearchMenuItem.NavigateUrl = "Search.aspx";
                 //}
