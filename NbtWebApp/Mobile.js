@@ -1375,6 +1375,7 @@
                         HeaderText: 'Search',
                         content: Html,
                         HideSearchButton: true,
+                        HideRefreshButton: true,
                         backicon: 'arrow-u'
                     });
 
