@@ -567,7 +567,7 @@ namespace ChemSW.NbtWebControls
             PropTables = new Dictionary<CswNbtMetaDataNodeTypeProp, CswLayoutTable>();
 
             // case 20692
-            if( SelectedNode != null )
+            if( SelectedNode != null && SelectedNode.NodeSpecies == NodeSpecies.Plain && SelectedNode.NodeId != null )
             {
                 CswNbtActUpdatePropertyValue ActUPV = new CswNbtActUpdatePropertyValue( _CswNbtResources );
                 SelectedNode.PendingUpdate = true;
