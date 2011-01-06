@@ -566,6 +566,15 @@ namespace ChemSW.NbtWebControls
             _LayoutTable.Clear();
             PropTables = new Dictionary<CswNbtMetaDataNodeTypeProp, CswLayoutTable>();
 
+            // case 20692
+            if( SelectedNode != null )
+            {
+                CswNbtActUpdatePropertyValue ActUPV = new CswNbtActUpdatePropertyValue( _CswNbtResources );
+                SelectedNode.PendingUpdate = true;
+                ActUPV.UpdateNode( SelectedNode );
+                SelectedNode.postChanges( false );
+            }
+
             if( ( EditMode != NodeEditMode.AddInPopup && SelectedNodeSpecies == NodeSpecies.Plain ) ||
                 ( EditMode == NodeEditMode.Demo && SelectedNodeTypeId > 0 ) )
             {
