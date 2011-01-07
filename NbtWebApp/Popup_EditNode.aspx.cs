@@ -152,7 +152,18 @@ namespace ChemSW.Nbt.WebPages
 
                         if( null != ParentNode && ParentNode.NodeSpecies == NodeSpecies.Plain )
                         {
-                            _Node.RelateToNode( ParentNode, Master.CswNbtView );
+                            //Case 20544 - Use view from querystring in case we're adding from a grid/view prop
+                            if( null != Request.QueryString["sourceviewid"] && String.Empty != Request.QueryString["sourceviewid"] )
+                            {
+                                Int32 SourceViewId = CswConvert.ToInt32( Request.QueryString["sourceviewid"] );
+                                CswNbtView SourceView = CswNbtViewFactory.restoreView( Master.CswNbtResources, SourceViewId );
+                                if( null != SourceView )
+                                    _Node.RelateToNode( ParentNode, SourceView );
+                                else
+                                    _Node.RelateToNode( ParentNode, Master.CswNbtView );
+                            }
+                            else
+                                _Node.RelateToNode( ParentNode, Master.CswNbtView );
                         }
 
                         // BZ 10372 - We can't do this anymore since we can add new nodes anywhere in the tree

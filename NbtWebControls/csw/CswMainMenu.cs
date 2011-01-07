@@ -531,7 +531,8 @@ namespace ChemSW.NbtWebControls
                                     TypeMenuItem.Value = "addnode_" + Entry.NodeType.NodeTypeId.ToString();
                                     TypeMenuItem.CssClass = SubMenuGroupCssClass;
                                     //TypeMenuItem.Attributes.Add( "onclick", "openNewNodePopup('" + Entry.NodeType.NodeTypeId.ToString() + "', '" + ParentNodeKey.ToJavaScriptParam() + "', '" + ParentNodeKeyViewNode.View.SessionViewId.ToString() + "', '" + Entry.ViewRelationship.UniqueId + "', '" + AddMenuDoesntChangeViewString + "', '" + AddMenuDoesntChangeSelectedNodeString + "');" );
-                                    TypeMenuItem.Attributes.Add( "onclick", "openNewNodePopup('" + Entry.NodeType.NodeTypeId.ToString() + "', '" + ParentNodeKey.ToJavaScriptParam() + "', '" + ParentNodeKeyViewNode.View.SessionViewId.ToString() + "', '" + AddMenuDoesntChangeViewString + "', '" + AddMenuDoesntChangeSelectedNodeString + "');" );
+                                    // Case 20544 - Add viewid to querystring
+                                    TypeMenuItem.Attributes.Add( "onclick", "openNewNodePopup('" + Entry.NodeType.NodeTypeId.ToString() + "', '" + ParentNodeKey.ToJavaScriptParam() + "', '" + ParentNodeKeyViewNode.View.SessionViewId.ToString() + "', '" + AddMenuDoesntChangeViewString + "', '" + AddMenuDoesntChangeSelectedNodeString + "', '" + _View.ViewId.ToString() + "');" );
                                     _AddMenuItem.Items.Add( TypeMenuItem );
                                 }
                             }

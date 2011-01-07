@@ -1417,12 +1417,12 @@ function Popup_Cancel_Clicked()
 
 
 function openNewNodePopup( NodeTypeId, ParentNodeKey, SessionViewId, // ViewRelationshipUniqueId, 
-                           DontChangeView, DontChangeSelectedNode )
+                           DontChangeView, DontChangeSelectedNode, SourceViewId )
 {
     var oWnd = window.radopen(null, "MainAddDialog");
     var CheckedNodeIds = getMainTreeCheckedNodeIds();
     //oWnd.setUrl('Popup_EditNode.aspx?dcv=' + DontChangeView + '&dcsn=' + DontChangeSelectedNode + '&nodetypeid=' + NodeTypeId + '&parentnodekey=' + ParentNodeKey + '&svid=' + SessionViewId + '&vrui=' + ViewRelationshipUniqueId + '&checkednodeids=' + CheckedNodeIds);
-    oWnd.setUrl('Popup_EditNode.aspx?dcv=' + DontChangeView + '&dcsn=' + DontChangeSelectedNode + '&nodetypeid=' + NodeTypeId + '&parentnodekey=' + ParentNodeKey + '&svid=' + SessionViewId + '&checkednodeids=' + CheckedNodeIds);
+    oWnd.setUrl('Popup_EditNode.aspx?dcv=' + DontChangeView + '&dcsn=' + DontChangeSelectedNode + '&nodetypeid=' + NodeTypeId + '&parentnodekey=' + ParentNodeKey + '&svid=' + SessionViewId + '&checkednodeids=' + CheckedNodeIds + '&sourceviewid=' + SourceViewId);
 }
 
 function MainAdd_CallBack(radWindow, returnValue) 
