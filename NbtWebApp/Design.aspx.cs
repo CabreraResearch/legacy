@@ -430,9 +430,9 @@ namespace ChemSW.Nbt.WebPages
 
                 if( Master.DesignDeleteDialogWindow != null && DesignMenu != null && DesignMenu.DeleteMenuItem != null )
                     Master.DesignDeleteDialogWindow.OpenerElementID = DesignMenu.DeleteMenuItem.ID;
-                
+
                 // Case 20480
-                if( _SelectedNodeTypeProp != null ) 
+                if( _SelectedNodeTypeProp != null )
                 {
                     if( _SetValueOnAddValue != null &&
                         !_SelectedNodeTypeProp.SetValueOnAddEnabled )
@@ -448,27 +448,28 @@ namespace ChemSW.Nbt.WebPages
                         _RequiredValue.Checked = false;
                         _RequiredValue.InputAttributes.Add( "disabled", "disabled" );
                     }
-                } //if( _SelectedNodeTypeProp != null )
 
-                if( _RequiredValue != null )
-                {
-                    string onclick = "return onSetPropRequired('" + _RequiredValue.ClientID + "','";
-                    if( _SetValueOnAddValue != null && _SelectedNodeTypeProp.DefaultValue.Empty ) onclick += _SetValueOnAddValue.ClientID;
-                    onclick += "','";
-                    if( _ConditionalFilter != null ) onclick += _ConditionalFilter.ClientID;
-                    onclick += "','";
-                    if( _ConditionalFilter != null && _ConditionalFilter.PropSelectBox != null ) onclick += _ConditionalFilter.PropSelectBox.ClientID;
-                    onclick += "');";
-                    _RequiredValue.Attributes.Add( "onclick", onclick );
 
-                    if( _DefaultValueControl != null &&
-                        !_SelectedNodeTypeProp.SetValueOnAdd &&
-                        _SelectedNodeTypeProp.IsRequired &&
-                        _SelectedNodeTypeProp.DefaultValue.Empty )
+                    if( _RequiredValue != null )
                     {
-                        throw new CswDniException( "Required properties must have a default value if not Set Value on Add", "Default value was empty, with required true and setvalonadd false" );
-                    }
-                } //if( _RequiredValue != null )
+                        string onclick = "return onSetPropRequired('" + _RequiredValue.ClientID + "','";
+                        if( _SetValueOnAddValue != null && _SelectedNodeTypeProp.DefaultValue.Empty ) onclick += _SetValueOnAddValue.ClientID;
+                        onclick += "','";
+                        if( _ConditionalFilter != null ) onclick += _ConditionalFilter.ClientID;
+                        onclick += "','";
+                        if( _ConditionalFilter != null && _ConditionalFilter.PropSelectBox != null ) onclick += _ConditionalFilter.PropSelectBox.ClientID;
+                        onclick += "');";
+                        _RequiredValue.Attributes.Add( "onclick", onclick );
+
+                        if( _DefaultValueControl != null &&
+                            !_SelectedNodeTypeProp.SetValueOnAdd &&
+                            _SelectedNodeTypeProp.IsRequired &&
+                            _SelectedNodeTypeProp.DefaultValue.Empty )
+                        {
+                            throw new CswDniException( "Required properties must have a default value if not Set Value on Add", "Default value was empty, with required true and setvalonadd false" );
+                        }
+                    } //if( _RequiredValue != null )
+                } //if( _SelectedNodeTypeProp != null )
 
                 // BZ 4868
                 if( SelectedNodeTypeProp != null &&
@@ -788,9 +789,9 @@ namespace ChemSW.Nbt.WebPages
 
 
                     // BZ 7954 - this should be set first
-                    
+
                     PropToSave.IsRequired = Convert.ToBoolean( getPropAttributeValue( "EditProp_RequiredValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
-                    
+
                     // Case 20297 - this should be set second
                     String ValueOptionsString = getPropAttributeValue( "EditProp_ValueOptionsValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     if( PropToSave.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
@@ -1891,13 +1892,13 @@ namespace ChemSW.Nbt.WebPages
                             ( (Literal) QstnCompliantAnswerRow.Cells[0].Controls[0] ).Text = "Compliant Answers:";
                             CswCheckBoxArray QstnCompliantAnswerList = new CswCheckBoxArray( Master.CswNbtResources );
                             DataTable CompliantAnswersTable = new DataTable();
-                            DataColumn AnswersColumn = CompliantAnswersTable.Columns.Add("Answers");
+                            DataColumn AnswersColumn = CompliantAnswersTable.Columns.Add( "Answers" );
                             DataColumn CompliantColumn = CompliantAnswersTable.Columns.Add( ChkBoxArrayValueColumnName, typeof( bool ) );
                             CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
                             PossibleAnswers.FromString( SelectedNodeTypeProp.ListOptions );
                             CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
-                            CompliantAnswers.FromString(  SelectedNodeTypeProp.ValueOptions );
-                            for( Int32 i=0; i < PossibleAnswers.Count; i++ )
+                            CompliantAnswers.FromString( SelectedNodeTypeProp.ValueOptions );
+                            for( Int32 i = 0; i < PossibleAnswers.Count; i++ )
                             {
                                 DataRow AnswerRow = CompliantAnswersTable.Rows.Add();
                                 AnswerRow[0] = PossibleAnswers[i];
@@ -2170,7 +2171,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         TableRow DefaultValueRow = makeEditPropTableRow( EditPropPlaceHolder );
                         ( (Literal) DefaultValueRow.Cells[0].Controls[0] ).Text = "Default Value:";
-                        
+
                         // This spawns a row whenever we click on a property, but it's unavoidable at the moment, and it's only one row per property.
                         _DefaultValueControl = CswFieldTypeWebControlFactory.makeControl( Master.CswNbtResources,
                                             DefaultValueRow.Cells[1].Controls, "EditProp_DefaultValue" + SelectedNodeTypeProp.PropId.ToString(),
