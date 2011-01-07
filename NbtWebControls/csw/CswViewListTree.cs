@@ -220,12 +220,11 @@ namespace ChemSW.NbtWebControls
                             CswNbtView CurrentView = new CswNbtView( _CswNbtResources );
                             CurrentView.LoadXml( Row["viewxml"].ToString() );
                             CurrentView.ViewId = CswConvert.ToInt32( Row["nodeviewid"] );
-                            if( CurrentView.IsFullyEnabled() )
-                            {
-                                XmlNode CategoryNode = _getCategoryNode( DocRoot, Row["category"].ToString() );
-                                bool ThisSearchable = Row["viewxml"].ToString().Contains( "<Filter" );
-                                CategoryNode.AppendChild( _makeTreeViewXmlNode( XmlDoc, CurrentView.ViewId.ToString(), ViewType.View, CurrentView.ViewName, CurrentView.IconFileName, true, ThisSearchable ) );
-                            }
+
+                            // if( CurrentView.IsFullyEnabled() ) -- Case 20452: getVisibleViews() does this already
+                            XmlNode CategoryNode = _getCategoryNode( DocRoot, Row["category"].ToString() );
+                            bool ThisSearchable = Row["viewxml"].ToString().Contains( "<Filter" );
+                            CategoryNode.AppendChild( _makeTreeViewXmlNode( XmlDoc, CurrentView.ViewId.ToString(), ViewType.View, CurrentView.ViewName, CurrentView.IconFileName, true, ThisSearchable ) );
                         }
 
 
