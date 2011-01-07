@@ -127,6 +127,8 @@ namespace ChemSW.Nbt.Actions
                         Parents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
                     }
                 }
+                else if( String.Empty == GeneratorNode.ParentType.SelectedNodeTypeIds.ToString() )
+                    Parents.Add( GeneratorNode.Owner.RelatedNodeId );
             }
 
             foreach ( CswPrimaryKey NewParentPK in Parents )
