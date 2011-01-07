@@ -149,12 +149,16 @@ namespace ChemSW.Nbt
                     if( ThisView.Root.ChildRelationships.Count > 0 || !IncludeEmptyViews )      // BZ 8136
                     {
                         bool skipme = true;
-                        foreach( CswNbtViewRelationship R in ThisView.Root.ChildRelationships )
+                        // Case 20452 - Remove views associated with disabled nodetypes/objectclasses
+                        if( ThisView.IsFullyEnabled() )
                         {
-                            if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) )
+                            foreach( CswNbtViewRelationship R in ThisView.Root.ChildRelationships )
                             {
-                                skipme = false;
+                                if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+                                    User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) )
+                                {
+                                    skipme = false;
+                                }
                             }
                         }
                         if( skipme )
