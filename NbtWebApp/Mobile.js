@@ -50,10 +50,12 @@
             HideSearchButton: true,
             HideOnlineButton: true,
             HideRefreshButton: true,
-            HideLogoutButton: true
+            HideLogoutButton: true,
+            HideHelpButton: true
         });
 
         _makeSynchStatusDiv();
+        _makeHelpDiv();
 
         _initDB(false, function ()
         {
@@ -138,7 +140,8 @@
                     HideSearchButton: true,
                     HideOnlineButton: true,
                     HideRefreshButton: true,
-                    HideLogoutButton: true
+                    HideLogoutButton: true,
+                    HideHelpButton: true
                 });
                 $.mobile.changePage($('#loadingdiv'), "fade", false, true);
                 setTimeout(function () { continueReloadViews(true); removeDiv('loadingdiv') }, opts.DivRemovalDelay);
@@ -973,6 +976,7 @@
                 HideOnlineButton: false,
                 HideRefreshButton: false,
                 HideLogoutButton: false,
+                HideHelpButton: false,
                 backicon: undefined,
                 backtransition: undefined
             };
@@ -1023,6 +1027,8 @@
                 divhtml += '    <a href="#" id="' + p.DivId + '_logout">Logout</a>';
 
             divhtml += '     <a rel="external" href="Login.aspx?redir=n">Full Site</a>';
+            if (!p.HideHelpButton)
+                divhtml += '    <a href="#" id="' + p.DivId + '_help">Help</a>';
             divhtml += '  </div>' +
                        '</div>';
 
@@ -1069,6 +1075,9 @@
                 .end()
                 .find('#' + DivId + '_back')
                 .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
+                .end()
+                .find('#' + DivId + '_help')
+                .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
                 .end()
                 .find('input')
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
@@ -1168,6 +1177,24 @@
             return ($('#ss_pendingchangecnt').text() == 'Yes');
         }
 
+        // ------------------------------------------------------------------------------------
+        // Help Div
+        // ------------------------------------------------------------------------------------
+        
+        function _makeHelpDiv()
+        {
+            var content = '';
+            content += '<p>Help</p>';
+            
+            $divhtml = _addPageDivToBody({
+                DivId: 'help',
+                HeaderText: 'Help',
+                content: content,
+                HideSearchButton: true,
+                HideRefreshButton: true
+            });
+
+        }
 
         // ------------------------------------------------------------------------------------
         // Events
@@ -1247,7 +1274,8 @@
                         HideSearchButton: true,
                         HideOnlineButton: true,
                         HideRefreshButton: true,
-                        HideLogoutButton: true
+                        HideLogoutButton: true,
+                        HideHelpButton: true
                     });
                     $.mobile.changePage($('#loadingdiv'), "fade", false, true);
                     setTimeout(function () { continueRefresh(DivId); }, opts.DivRemovalDelay);
@@ -1310,6 +1338,11 @@
             $('#synchstatus_back').attr('href', '#' + DivId);
             $('#synchstatus_back').css('visibility', '');
             $.mobile.changePage($('#synchstatus'), 'slideup');
+        }
+
+        function onHelp(DivId, eventObj)
+        {
+            $.mobile.changePage($('#help'), 'slideup');
         }
 
         function onPropertyChange(DivId, eventObj)
