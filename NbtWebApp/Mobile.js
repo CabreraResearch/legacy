@@ -451,6 +451,9 @@
                 case "PROP":
                     var tab = $xmlitem.attr('tab');
                     var fieldtype = $xmlitem.attr('fieldtype');
+                    var gestalt = $xmlitem.attr('gestalt');
+                    if (gestalt == 'NaN') gestalt = '';
+
                     if (currenttab != tab)
                     {
                         if (currenttab != '')
@@ -506,7 +509,7 @@
                         default:
                             lihtml += '<li id="' + id + '_li">';
                             lihtml += ' <a href="#' + id + '">' + text + '</a>';
-                            lihtml += ' <p class="ui-li-aside">' + $xmlitem.attr('gestalt') + '</p>';
+                            lihtml += ' <p class="ui-li-aside">' + gestalt + '</p>';
                             lihtml += '</li>';
 
                             break;
@@ -1405,6 +1408,7 @@
                         HeaderText: 'Search',
                         content: Html,
                         HideSearchButton: true,
+                        HideRefreshButton: true,
                         backicon: 'arrow-u'
                     });
 
@@ -1503,23 +1507,22 @@
 
         function _createDb(OnSuccess)
         {
-            _DoSql('CREATE TABLE IF NOT EXISTS configvars ' +
+            _DoSql( 'CREATE TABLE IF NOT EXISTS configvars ' +
                     '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
                     '   varname TEXT NOT NULL, ' +
                     '   varval TEXT);',
                     null,
-                    null
-                    );
-
-            _DoSql('CREATE TABLE IF NOT EXISTS views ' +
-                    '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                    '   rootid TEXT NOT NULL, ' +
-                    '   rootname TEXT NOT NULL, ' +
-                    '   viewxml TEXT, ' +
-                    '   wasmodified INTEGER );',
-                    null,
-                    OnSuccess
-                    );
+                    function() {
+                        _DoSql( 'CREATE TABLE IF NOT EXISTS views ' +
+                                '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
+                                '   rootid TEXT NOT NULL, ' +
+                                '   rootname TEXT NOT NULL, ' +
+                                '   viewxml TEXT, ' +
+                                '   wasmodified INTEGER );',
+                                null,
+                                OnSuccess
+                                );
+                    } );
 
         } //_createDb() 
 
@@ -1682,7 +1685,6 @@
         // ------------------------------------------------------------------------------------
         // Synchronization
         // ------------------------------------------------------------------------------------
-
 
         var _waitForData_TimeoutId;
         function _waitForData()
