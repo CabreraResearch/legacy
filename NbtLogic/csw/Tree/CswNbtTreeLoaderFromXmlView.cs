@@ -550,7 +550,7 @@ namespace ChemSW.Nbt
                     // Case 10530
                     sortAlias++;
                     CswNbtSubField.PropColumn SubFieldColumn = Prop.NodeTypeProp.FieldTypeRule.SubFields.Default.Column;
-                    if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
+                    if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
                         SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date )
                     {
                         Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
