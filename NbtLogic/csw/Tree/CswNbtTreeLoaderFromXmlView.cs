@@ -574,9 +574,8 @@ namespace ChemSW.Nbt
                         Int32 propOrder = 0;
                         for( Int32 i = 0; i < OrderByProps.Count; i++ )
                         {
-                            
                             if( propOrder <= CswConvert.ToInt32( OrderByProps.GetKey( i ) ) )
-                                propOrder++;
+                                propOrder = CswConvert.ToInt32( OrderByProps.GetKey( i ) ) + 1;
                         }
                         OrderByProps.Add( propOrder, OrderByString );
                     }
