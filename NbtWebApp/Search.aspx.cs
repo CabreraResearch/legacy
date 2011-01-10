@@ -42,6 +42,10 @@ namespace ChemSW.Nbt.WebPages
                     //Master.ErrorBox.addMessage( "No matching results found", "Search returned 0 results" );
                     _SearchResultsLabel.Text = "No matching results found";
                 }
+                else
+                {
+                    _SearchResultsLabel.Visible = false;
+                }
 
                 _View = Master.CswNbtView;
 
