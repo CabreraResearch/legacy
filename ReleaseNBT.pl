@@ -118,7 +118,7 @@ foreach my $component (keys %versions)
 #---------------------------------------------------------------------------------
 printf("Step 3: Compile\n");
 
-&runCommand("devenv c:/kiln/nbt/nbt/Nbt.sln /Build \"Release\" /Project NbtSetup");
+&runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && devenv c:/kiln/nbt/nbt/Nbt.sln /Build \"Release\" /Project NbtSetup");
 
 &checkContinue;
 
@@ -128,9 +128,9 @@ printf("Step 4: Copy install files to Install repository\n");
 copy("c:/kiln/nbt/nbt/NbtSetup/Release/NbtSetup.msi", "c:/kiln/Install/nbt/NbtSetup.msi")
 	or printf("Could not copy c:/kiln/nbt/nbt/NbtSetup/bin/Release/NbtSetup.msi to c:/kiln/Install/nbt/NbtSetup.msi: $!\n");
 copy("c:/kiln/nbt/nbt/NbtSetup/Release/setup.exe", "c:/kiln/Install/nbt/setup.exe")
-	or printf("Could not copy c:/kiln/nbt/nbt/NbtSetup/bin/Release/NbtSetup.msi to c:/kiln/Install/nbt/NbtSetup.msi: $!\n");
-copy("c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master.dmp", "c:/kiln/Install/Schema/Nbt_Master.dmp")
-	or printf("Could not copy c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master.dmp to c:/kiln/Install/Schema/Nbt_Master.dmp: $!\n");
+	or printf("Could not copy c:/kiln/nbt/nbt/NbtSetup/bin/Release/setup.exe to c:/kiln/Install/nbt/setup.exe: $!\n");
+copy("c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master.dmp", "c:/kiln/Install/Nbt/Schema/Nbt_Master.dmp")
+	or printf("Could not copy c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master.dmp to c:/kiln/Install/Nbt/Schema/Nbt_Master.dmp: $!\n");
 
 &checkContinue;
 
