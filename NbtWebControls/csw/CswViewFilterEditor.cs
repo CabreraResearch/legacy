@@ -116,6 +116,9 @@ namespace ChemSW.NbtWebControls
             }
         }
 
+        public delegate void FilterClearHandler();
+        public event FilterClearHandler OnFilterClear = null;
+
         protected override void OnLoad( EventArgs e )
         {
             try
@@ -124,6 +127,8 @@ namespace ChemSW.NbtWebControls
                 {
                     _View = null;
                     LoadSearch( null, null );
+                    if( OnFilterClear != null )
+                        OnFilterClear();
                 }
 
                 _AjaxMgr.AjaxSettings.AddAjaxSetting( _AdvancedLink, _FilterItemTable );

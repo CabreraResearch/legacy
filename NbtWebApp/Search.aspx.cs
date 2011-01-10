@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.WebPages
 
                     _FilterEditor.LoadView( _View );
                     _SearchLabel.Text = _View.ViewName;
-                }
+                } // if-else( !_View.IsSearchable() )
             }
             catch( Exception ex )
             {
@@ -160,6 +160,7 @@ namespace ChemSW.Nbt.WebPages
                 _FilterEditor = new CswViewFilterEditor( Master.CswNbtResources, Master.AjaxManager );
                 _FilterEditor.ViewChanged += new CswViewFilterEditor.ViewChangedEventHandler( _FilterEditor_ViewChanged );
                 _FilterEditor.OnError += new CswErrorHandler( Master.HandleError );
+                _FilterEditor.OnFilterClear += new CswViewFilterEditor.FilterClearHandler( _FilterEditor_OnFilterClear );
                 CenteredDiv.Controls.Add( _FilterEditor );
 
                 _SearchResultsLabel = new Label();
@@ -254,6 +255,11 @@ namespace ChemSW.Nbt.WebPages
             {
                 Master.HandleError( ex );
             }
+        }
+
+        void _FilterEditor_OnFilterClear()
+        {
+            _SearchLabel.Text = "Search";
         }
 
         void _DeleteButton_Click( object sender, EventArgs e )
