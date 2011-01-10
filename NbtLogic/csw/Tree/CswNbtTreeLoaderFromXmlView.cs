@@ -585,8 +585,10 @@ namespace ChemSW.Nbt
 
             foreach( DictionaryEntry order in OrderByProps )
             {
-                if( String.Empty == OrderBy ) OrderBy = " order by " + CswConvert.ToString( order.Value ) + " ";
-                OrderBy += ", " + CswConvert.ToString( order.Value ) + " "; 
+                if( String.Empty == OrderBy ) 
+                    OrderBy = " order by " + CswConvert.ToString( order.Value ) + " ";
+                else
+                    OrderBy += ", " + CswConvert.ToString( order.Value ) + " "; 
             }
             
 
