@@ -220,8 +220,11 @@ namespace ChemSW.Nbt.PropTypes
             else
                 RelatedNodeId = null;
 
-            PropRow["destnodeid"] = RelatedNodeId.PrimaryKey;
-            PendingUpdate = true;
+            if( RelatedNodeId != null )
+            {
+                PropRow["destnodeid"] = RelatedNodeId.PrimaryKey;
+                PendingUpdate = true;
+            }
         }
 
         //private Int32 _HandleReference( Int32 NodeId, Dictionary<string, Int32> NodeMap )
