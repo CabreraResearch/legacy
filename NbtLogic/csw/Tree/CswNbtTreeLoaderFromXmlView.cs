@@ -579,15 +579,15 @@ namespace ChemSW.Nbt
                         }
                         OrderByProps.Add( propOrder, OrderByString );
                     }
-                }
-            }
+                } // if( Prop.SortBy )
+            } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
 
-            foreach( DictionaryEntry order in OrderByProps )
+            foreach( String o in OrderByProps.Values )
             {
                 if( String.Empty == OrderBy ) 
-                    OrderBy = " order by " + CswConvert.ToString( order.Value ) + " ";
+                    OrderBy = " order by " + o + " ";
                 else
-                    OrderBy += ", " + CswConvert.ToString( order.Value ) + " "; 
+                    OrderBy += ", " + o + " "; 
             }
             
 
