@@ -469,15 +469,14 @@ namespace ChemSW.Nbt.WebPages
                             throw new CswDniException( "Required properties must have a default value if not Set Value on Add", "Default value was empty, with required true and setvalonadd false" );
                         }
                     } //if( _RequiredValue != null )
-                } //if( _SelectedNodeTypeProp != null )
 
-                // BZ 4868
-                if( SelectedNodeTypeProp != null &&
-                    SelectedNodeTypeProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                    SelectedNodeTypeProp.FKValue == Int32.MinValue )
-                {
-                    _ViewXmlRow.Visible = false;
-                }
+                    // BZ 4868
+                    if( SelectedNodeTypeProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                        SelectedNodeTypeProp.FKValue == Int32.MinValue )
+                    {
+                        _ViewXmlRow.Visible = false;
+                    }
+                }//if( _SelectedNodeTypeProp != null )
 
                 // BZ 7389
                 if( SelectedNodeTypeProp != null && _WarningLabel != null && SelectedNodeTypeProp.IsUnique && SelectedNodeTypeProp.IsRequired )

@@ -540,31 +540,56 @@ namespace ChemSW.Nbt
 
 
             // Handle sort order
+            Int32 sortAlias = 0;
+            SortedList OrderByProps = new SortedList();
+            String OrderByString = String.Empty;
             foreach( CswNbtViewProperty Prop in Relationship.Properties )
             {
                 if( Prop.SortBy )
                 {
+                    // Case 10530
+                    sortAlias++;
                     CswNbtSubField.PropColumn SubFieldColumn = Prop.NodeTypeProp.FieldTypeRule.SubFields.Default.Column;
-                    switch( SubFieldColumn )
+                    if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
+                        SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date )
                     {
-                        case CswNbtSubField.PropColumn.Field1_Date:
-                            Select += ", j." + SubFieldColumn.ToString() + " mssqlorder";
-                            From += " left outer join jct_nodes_props j on (j.nodeid = n.nodeid and j.nodetypepropid = " + Prop.NodeTypePropId + ") ";
-                            OrderBy = " order by lower(j." + SubFieldColumn.ToString() + ")";
-                            break;
-                        case CswNbtSubField.PropColumn.Field1_Numeric:
-                            Select += ", j." + SubFieldColumn.ToString() + " mssqlorder";
-                            From += " left outer join jct_nodes_props j on (j.nodeid = n.nodeid and j.nodetypepropid = " + Prop.NodeTypePropId + ") ";
-                            OrderBy = " order by j." + SubFieldColumn.ToString() + " ";
-                            break;
-                        default:
-                            Select += ",lower(j." + SubFieldColumn.ToString() + ") mssqlorder";
-                            From += " left outer join jct_nodes_props j on (j.nodeid = n.nodeid and j.nodetypepropid = " + Prop.NodeTypePropId + ") ";
-                            OrderBy = " order by lower(j." + SubFieldColumn.ToString() + ")";
-                            break;
+                        Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
                     }
-                }
+                    else
+                        Select += ",lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ") mssqlorder" + sortAlias;
+
+                    // Case 10533
+                    if( SubFieldColumn == CswNbtSubField.PropColumn.Gestalt ||
+                         SubFieldColumn == CswNbtSubField.PropColumn.ClobData )
+                        OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
+                    else
+                        OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
+
+                    From += " left outer join jct_nodes_props j" + sortAlias + " on (j" + sortAlias + ".nodeid = n.nodeid and j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
+
+                    if( !OrderByProps.ContainsKey( Prop.Order ) )
+                        OrderByProps.Add( Prop.Order, OrderByString );
+                    else
+                    {
+                        Int32 propOrder = 0;
+                        for( Int32 i = 0; i < OrderByProps.Count; i++ )
+                        {
+                            if( propOrder <= CswConvert.ToInt32( OrderByProps.GetKey( i ) ) )
+                                propOrder = CswConvert.ToInt32( OrderByProps.GetKey( i ) ) + 1;
+                        }
+                        OrderByProps.Add( propOrder, OrderByString );
+                    }
+                } // if( Prop.SortBy )
+            } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
+
+            foreach( String o in OrderByProps.Values )
+            {
+                if( String.Empty == OrderBy ) 
+                    OrderBy = " order by " + o + " ";
+                else
+                    OrderBy += ", " + o + " "; 
             }
+            
 
             if( OrderBy == string.Empty )
             {
