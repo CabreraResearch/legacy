@@ -568,7 +568,7 @@ namespace ChemSW.Nbt
                     From += " left outer join jct_nodes_props j" + sortAlias + " on (j" + sortAlias + ".nodeid = n.nodeid and j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
 
                     if( !OrderByProps.ContainsKey( Prop.Order ) )
-                        OrderByProps.Add( Prop.Order, "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")" );
+                        OrderByProps.Add( Prop.Order, OrderByString );
                     else
                     {
                         Int32 propOrder = 0;
@@ -578,7 +578,7 @@ namespace ChemSW.Nbt
                             if( propOrder <= CswConvert.ToInt32( OrderByProps.GetKey( i ) ) )
                                 propOrder++;
                         }
-                        OrderByProps.Add( propOrder, "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")" );
+                        OrderByProps.Add( propOrder, OrderByString );
                     }
                 }
             }
