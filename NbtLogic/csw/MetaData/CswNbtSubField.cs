@@ -136,7 +136,9 @@ namespace ChemSW.Nbt.MetaData
 
         public string ToXmlNodeName()
         {
-            return this.Name.ToString().ToLower();
+            // case 20371 - In the NBT property importer, need to distinguish between NodeID (the subfield) and nodeid (the pk column)
+            //return this.Name.ToString().ToLower();
+            return this.Name.ToString();
         }
 
     }//CswNbtSubField
