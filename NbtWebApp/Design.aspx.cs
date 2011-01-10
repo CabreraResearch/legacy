@@ -432,7 +432,7 @@ namespace ChemSW.Nbt.WebPages
                     Master.DesignDeleteDialogWindow.OpenerElementID = DesignMenu.DeleteMenuItem.ID;
                 
                 // Case 20480
-                if( _SelectedNodeTypeProp != null ) 
+                if( _SelectedNodeTypeProp != null )
                 {
                     if( _SetValueOnAddValue != null &&
                         !_SelectedNodeTypeProp.SetValueOnAddEnabled )
@@ -448,35 +448,34 @@ namespace ChemSW.Nbt.WebPages
                         _RequiredValue.Checked = false;
                         _RequiredValue.InputAttributes.Add( "disabled", "disabled" );
                     }
-                } //if( _SelectedNodeTypeProp != null )
 
-                if( _RequiredValue != null )
-                {
-                    string onclick = "return onSetPropRequired('" + _RequiredValue.ClientID + "','";
-                    if( _SetValueOnAddValue != null && _SelectedNodeTypeProp.DefaultValue.Empty ) onclick += _SetValueOnAddValue.ClientID;
-                    onclick += "','";
-                    if( _ConditionalFilter != null ) onclick += _ConditionalFilter.ClientID;
-                    onclick += "','";
-                    if( _ConditionalFilter != null && _ConditionalFilter.PropSelectBox != null ) onclick += _ConditionalFilter.PropSelectBox.ClientID;
-                    onclick += "');";
-                    _RequiredValue.Attributes.Add( "onclick", onclick );
-
-                    if( _DefaultValueControl != null &&
-                        !_SelectedNodeTypeProp.SetValueOnAdd &&
-                        _SelectedNodeTypeProp.IsRequired &&
-                        _SelectedNodeTypeProp.DefaultValue.Empty )
+                    if( _RequiredValue != null )
                     {
-                        throw new CswDniException( "Required properties must have a default value if not Set Value on Add", "Default value was empty, with required true and setvalonadd false" );
-                    }
-                } //if( _RequiredValue != null )
+                        string onclick = "return onSetPropRequired('" + _RequiredValue.ClientID + "','";
+                        if( _SetValueOnAddValue != null && _SelectedNodeTypeProp.DefaultValue.Empty ) onclick += _SetValueOnAddValue.ClientID;
+                        onclick += "','";
+                        if( _ConditionalFilter != null ) onclick += _ConditionalFilter.ClientID;
+                        onclick += "','";
+                        if( _ConditionalFilter != null && _ConditionalFilter.PropSelectBox != null ) onclick += _ConditionalFilter.PropSelectBox.ClientID;
+                        onclick += "');";
+                        _RequiredValue.Attributes.Add( "onclick", onclick );
 
-                // BZ 4868
-                if( SelectedNodeTypeProp != null &&
-                    SelectedNodeTypeProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                    SelectedNodeTypeProp.FKValue == Int32.MinValue )
-                {
-                    _ViewXmlRow.Visible = false;
-                }
+                        if( _DefaultValueControl != null &&
+                            !_SelectedNodeTypeProp.SetValueOnAdd &&
+                            _SelectedNodeTypeProp.IsRequired &&
+                            _SelectedNodeTypeProp.DefaultValue.Empty )
+                        {
+                            throw new CswDniException( "Required properties must have a default value if not Set Value on Add", "Default value was empty, with required true and setvalonadd false" );
+                        }
+                    } //if( _RequiredValue != null )
+
+                    // BZ 4868
+                    if( SelectedNodeTypeProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                        SelectedNodeTypeProp.FKValue == Int32.MinValue )
+                    {
+                        _ViewXmlRow.Visible = false;
+                    }
+                }//if( _SelectedNodeTypeProp != null )
 
                 // BZ 7389
                 if( SelectedNodeTypeProp != null && _WarningLabel != null && SelectedNodeTypeProp.IsUnique && SelectedNodeTypeProp.IsRequired )
