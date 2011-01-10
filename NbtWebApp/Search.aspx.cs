@@ -39,7 +39,6 @@ namespace ChemSW.Nbt.WebPages
 
                 if( Request.QueryString["msg"] == "nomatch" )
                 {
-                    //Master.ErrorBox.addMessage( "No matching results found", "Search returned 0 results" );
                     _SearchResultsLabel.Text = "No matching results found";
                 }
                 else
@@ -51,10 +50,6 @@ namespace ChemSW.Nbt.WebPages
 
                 if( !_View.IsSearchable() )
                 {
-                    //_CswPropertyFilter.Visible = false;
-                    //_SearchButton.Visible = false;
-                    //_FilterEditor.Visible = true;
-                    //_SearchLabel.Visible = true;
                     CswNbtMetaDataObjectClass SearchOC = null;
                                     
                     if( Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.IMCS ) )
@@ -94,12 +89,6 @@ namespace ChemSW.Nbt.WebPages
                 }
                 else
                 {
-                    //_FilterEditor.Visible = false;
-                    //_SearchLabel.Visible = false;
-                    //_CswPropertyFilter.Visible = true;
-                    //_SearchButton.Visible = true;
-
-
                     if( _View.Visibility == NbtViewVisibility.Property &&
                         _View.ViewMode == NbtViewRenderingMode.Grid &&
                         Request.QueryString["nodeid"] != null && Request.QueryString["nodeid"] != string.Empty )
@@ -120,13 +109,6 @@ namespace ChemSW.Nbt.WebPages
                         _View.Root.removeChildRelationship( ParentRelationship );
                         _View.Root.addChildRelationship( GridRowRelationship );
 
-                        //_View = new CswNbtView( Master.CswNbtResources );
-                        //CswNbtViewRelationship NewRel = null;
-                        //if( OldSecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
-                        //    NewRel = _View.AddViewRelationship( Master.CswNbtResources.MetaData.getObjectClass( OldSecondId ) );
-                        //else if( OldSecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
-                        //    NewRel = _View.AddViewRelationship( Master.CswNbtResources.MetaData.getNodeType( OldSecondId ) );
-
                         CswNbtViewProperty NewRelationshipProp = null;
                         if( RelationshipPropType == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
                             NewRelationshipProp = _View.AddViewProperty( GridRowRelationship, Master.CswNbtResources.MetaData.getObjectClassProp( RelationshipPropId ) );
@@ -146,7 +128,6 @@ namespace ChemSW.Nbt.WebPages
                     _FilterEditor.LoadView( _View );
                     _SearchLabel.Text = _View.ViewName;
                 }
-                //    Master.Redirect( "SearchCustom.aspx" );
             }
             catch( Exception ex )
             {
@@ -162,9 +143,6 @@ namespace ChemSW.Nbt.WebPages
         private Button _LoadButton;
         private Button _DeleteButton;
         private Label _SearchResultsLabel;
-        //private CswPropertyFilter _CswPropertyFilter;
-        //private CswAutoTable _PropFilterTable;
-        //private Button _SearchButton;
 
         protected override void CreateChildControls()
         {
@@ -184,35 +162,6 @@ namespace ChemSW.Nbt.WebPages
                 _FilterEditor.OnError += new CswErrorHandler( Master.HandleError );
                 CenteredDiv.Controls.Add( _FilterEditor );
 
-                //// Default search for IMCS
-                //_PropFilterTable = new CswAutoTable();
-                //CenteredDiv.Controls.Add( _PropFilterTable );
-
-                //if( Master.CswNbtResources.MetaData != null ) // login page
-                //{
-                //    CswNbtMetaDataNodeType EquipmentNodeType = Master.CswNbtResources.MetaData.getNodeType( "Equipment" );
-                //    if( EquipmentNodeType != null && EquipmentNodeType.BarcodeProperty != null )
-                //        _CswPropertyFilter = new CswPropertyFilter( Master.CswNbtResources, Master.AjaxManager, EquipmentNodeType.NodeTypeId, EquipmentNodeType.BarcodeProperty.PropId, true, true, true, false );
-                //}
-                //else
-                //{
-                //    _CswPropertyFilter = new CswPropertyFilter( Master.CswNbtResources, Master.AjaxManager, null, true, true, true, false );
-                //}
-                //_CswPropertyFilter.OnError += new CswErrorHandler( Master.HandleError );
-                //_CswPropertyFilter.ID = "SearchPropFilter";
-                //_CswPropertyFilter.UseCheckChanges = false;
-                //_PropFilterTable.addControl( 0, 0, _CswPropertyFilter );
-
-                //_SearchButton = new Button();
-                //_SearchButton.ID = "SearchButton";
-                //_SearchButton.Text = "Search";
-                //_SearchButton.CssClass = "Button";
-                //_SearchButton.Click += new EventHandler( SearchButton_Click );
-                //TableCell SearchButtonCell = _PropFilterTable.getCell( 1, 0 );
-                //SearchButtonCell.ColumnSpan = 10;
-                //SearchButtonCell.HorizontalAlign = HorizontalAlign.Right;
-                //SearchButtonCell.Controls.Add( _SearchButton );
-
                 _SearchResultsLabel = new Label();
                 _SearchResultsLabel.CssClass = "ErrorContent";
                 CenteredDiv.Controls.Add( _SearchResultsLabel );
@@ -229,8 +178,6 @@ namespace ChemSW.Nbt.WebPages
                 _LoadDropDown = new DropDownList();
                 _LoadDropDown.ID = "LoadDropDown";
                 _initLoadSearch();
-                //_LoadDropDown.SelectedIndexChanged += new EventHandler( _LoadDropDown_SelectedIndexChanged );
-                //_LoadDropDown.AutoPostBack = true;
                 CenteredDiv.Controls.Add( _LoadDropDown );
 
                 CenteredDiv.Controls.Add( new CswLiteralNbsp() );
@@ -308,54 +255,6 @@ namespace ChemSW.Nbt.WebPages
                 Master.HandleError( ex );
             }
         }
-
-        //protected void SearchButton_Click( object sender, EventArgs e )
-        //{
-        //    try
-        //    {
-        //        // Make a view with the search parameters
-        //        CswNbtView SearchView = new CswNbtView( Master.CswNbtResources );
-        //        SearchView.ViewMode = NbtViewRenderingMode.List;
-
-        //        CswNbtViewRelationship SearchRelationship;
-        //        if( _CswPropertyFilter.SelectedNodeTypeLatestVersion != null )
-        //        {
-        //            SearchView.ViewName = _CswPropertyFilter.SelectedNodeTypeLatestVersion.NodeTypeName + " Search";
-        //            SearchRelationship = SearchView.AddViewRelationship( _CswPropertyFilter.SelectedNodeTypeLatestVersion );
-        //        }
-        //        else
-        //        {
-        //            SearchView.ViewName = "All " + _CswPropertyFilter.SelectedObjectClass.ObjectClass.ToString() + " Search";
-        //            SearchRelationship = SearchView.AddViewRelationship( _CswPropertyFilter.SelectedObjectClass );
-        //        }
-
-        //        CswNbtViewProperty SearchProperty;
-        //        if( _CswPropertyFilter.SelectedNodeTypePropFirstVersionId != Int32.MinValue )
-        //        {
-        //            SearchProperty = SearchView.AddViewProperty( SearchRelationship, Master.CswNbtResources.MetaData.getNodeTypeProp( _CswPropertyFilter.SelectedPropLatestVersion.PropId ) );
-        //        }
-        //        else
-        //        {
-        //            SearchProperty = SearchView.AddViewProperty( SearchRelationship, Master.CswNbtResources.MetaData.getObjectClassProp( _CswPropertyFilter.SelectedObjectClassPropId ) );
-        //        }
-
-        //        CswNbtViewPropertyFilter SearchPropFilter = SearchView.AddViewPropertyFilter( SearchProperty, _CswPropertyFilter.SelectedSubField.Name, _CswPropertyFilter.SelectedFilterMode, _CswPropertyFilter.FilterValue.ToString(), false );
-
-        //        Master.setViewXml( SearchView.ToString() );
-        //        Master.HandleSearch( SearchProperty );
-        //        Master.Redirect( "Main.aspx" );
-        //    }
-        //    catch( Exception ex )
-        //    {
-        //        Master.HandleError( ex );
-        //    }
-        //}
-
-        //void _LoadDropDown_SelectedIndexChanged( object sender, EventArgs e )
-        //{
-        //    Master.setViewId( CswConvert.ToInt32( _LoadDropDown.SelectedValue ) );
-        //    Master.Redirect( "Search.aspx" );
-        //}
 
         void _DeleteButton_Click( object sender, EventArgs e )
         {
