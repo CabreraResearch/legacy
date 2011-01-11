@@ -238,7 +238,7 @@ namespace ChemSW.NbtWebControls
             this.Cells.Add( new TableCell() );
 
             _LogicLiteral = new Literal();
-            _LogicLiteral.Text = " and ";
+            _LogicLiteral.Text = "&nbsp;and&nbsp;";
             this.Cells[this.Cells.Count - 1].Controls.Add( _LogicLiteral );
 
             this.Cells.Add( new TableCell() );

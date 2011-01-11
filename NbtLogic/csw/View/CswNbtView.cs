@@ -142,12 +142,12 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// True if the View can be used as a search (contains a property)
+        /// True if the View can be used as a search (contains a property filter)
         /// </summary>
         /// <returns></returns>
         public bool IsSearchable()
         {
-            return ( this.FindFirstProperty() != null );
+            return ( this.FindFirstPropertyFilter() != null );
         }
 
         /// <summary>

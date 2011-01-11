@@ -287,19 +287,19 @@ namespace ChemSW.Nbt.PropTypes
                     ret = Field1;
                     break;
                 case CswNbtSubField.PropColumn.Field1_FK:
-                    ret = Field1_Fk.ToString();
+                    ret = CswConvert.ToString( Field1_Fk );
                     break;
                 case CswNbtSubField.PropColumn.Field1_Numeric:
-                    ret = Field1_Numeric.ToString();
+                    ret = CswConvert.ToString( Field1_Numeric );
                     break;
                 case CswNbtSubField.PropColumn.Field1_Date:
-                    ret = Field1_Date.ToString();
+                    ret = CswConvert.ToString( Field1_Date );
                     break;
                 case CswNbtSubField.PropColumn.Field2:
                     ret = Field2;
                     break;
                 case CswNbtSubField.PropColumn.Field2_Date:
-                    ret = Field2_Date.ToString();
+                    ret = CswConvert.ToString( Field2_Date );
                     break;
                 case CswNbtSubField.PropColumn.Field3:
                     ret = Field3;
