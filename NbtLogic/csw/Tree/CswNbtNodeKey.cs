@@ -58,7 +58,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public string ToJavaScriptParam()
         {
-            return this.ToString().Replace( "'", @"\'" );
+            return this.ToString().Replace(@"\", @"\\").Replace( "'", @"\'" );
         }
 
         /// <summary>

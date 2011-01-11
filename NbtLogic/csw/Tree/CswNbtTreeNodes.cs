@@ -246,7 +246,7 @@ namespace ChemSW.Nbt
             // Don't throw -- just return null.
             //if( null == ( SelectedNode = _XmlDoc.SelectSingleNode( Path ) ) )
             //    throw ( new CswDniException( "No node matches this path: " + Path ) );
-            SelectedNode = _XmlDoc.SelectSingleNode( Path.ToString() );
+            SelectedNode = _XmlDoc.SelectSingleNode( Path.ToString(false) );
 
             return ( SelectedNode );
 
@@ -775,6 +775,9 @@ namespace ChemSW.Nbt
 
         public void setCurrentNodeExpandMode( string ExpandMode )
         {
+            if( null == _CurrentNode )
+                throw ( new CswDniException( "There is no current node" ) );
+
             if( _CurrentNode.Attributes[_AttrName_ExpandMode] == null )
                 _CurrentNode.Attributes.Append( _makeAttribute( _AttrName_ExpandMode, ExpandMode ) );
             else
@@ -999,6 +1002,9 @@ namespace ChemSW.Nbt
 
         public void addProperty( Int32 NodeTypePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType )
         {
+            if( null == _CurrentNode )
+                throw ( new CswDniException( "There is no current node" ) );
+            
             XmlNode NewXmlNode = _XmlDoc.CreateElement( _ElemName_NodeProp );
             _CurrentNode.AppendChild( NewXmlNode );
             NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_NodePropId, NodeTypePropId.ToString() ) );
