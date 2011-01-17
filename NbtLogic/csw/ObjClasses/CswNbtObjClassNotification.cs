@@ -130,7 +130,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterPopulateProps();
 
             // List options for 'Property' depend on TargetType
-            string PropertyOptions = string.Empty;
+            CswCommaDelimitedString PropertyOptions = new CswCommaDelimitedString();
             if( CswTools.IsInteger( TargetType.SelectedNodeTypeIds[0] ) )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
@@ -138,12 +138,11 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
                     {
-                        if( PropertyOptions != string.Empty ) PropertyOptions += ",";
-                        PropertyOptions += Prop.PropName;
+                        PropertyOptions.Add( Prop.PropName );
                     }
                     Property.Options.Override( PropertyOptions );
-                }
-            }
+                } // if( NodeType != null )
+            } // if( CswTools.IsInteger( TargetType.SelectedNodeTypeIds[0] ) )
 
         }//afterPopulateProps()
 

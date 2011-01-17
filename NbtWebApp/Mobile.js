@@ -689,7 +689,11 @@
                         Html += '<option value="' + options[i] + '"';
                         if (selectedvalue == options[i])
                             Html += ' selected';
-                        Html += '>' + options[i] + "</option>";
+                        
+                        if(options[i] != '')
+                            Html += '>' + options[i] + '</option>';
+                        else
+                            Html += '>[blank]</option>';
                     }
                     Html += '</select>';
                     break;
