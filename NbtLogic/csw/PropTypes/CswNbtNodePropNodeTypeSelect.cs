@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Text;
+using System.Linq;
 using System.Data;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.PropTypes
@@ -146,19 +143,23 @@ namespace ChemSW.Nbt.PropTypes
         public CswCommaDelimitedString SelectedNodeTypeNames()
         {
             CswCommaDelimitedString NodeTypeNames = new CswCommaDelimitedString();
-            foreach(string NodeTypeId in SelectedNodeTypeIds)
+            foreach( string NodeTypeId in SelectedNodeTypeIds )
             {
-                if( NodeTypeId.ToString() != string.Empty )
+                if( NodeTypeId != string.Empty )
                 {
-                    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
+                    IEnumerable<CswNbtMetaDataNodeType> MetaDataNodeTypes = _CswNbtResources.MetaData.NodeTypes
+                                                                                .Cast<CswNbtMetaDataNodeType>()
+                                                                                .Where( NodeType => NodeType.NodeTypeId.ToString() == NodeTypeId);
+                    foreach( CswNbtMetaDataNodeType NodeType in MetaDataNodeTypes )
                     {
-                        if( NodeType.NodeTypeId.ToString() == NodeTypeId.ToString() )
-                        {
-                            NodeTypeNames.Add( NodeType.LatestVersionNodeType.NodeTypeName );
-                        }
+                        NodeTypeNames.Add( NodeType.LatestVersionNodeType.NodeTypeName );
                     }
                 }
             } // foreach(string NodeTypeId in SelectedNodeTypeIds)
+            if( 0 == NodeTypeNames.Count )
+            {
+                NodeTypeNames.Add( "Select new NodeType");
+            }
 
             // Sort alphabetically
             NodeTypeNames.Sort();
