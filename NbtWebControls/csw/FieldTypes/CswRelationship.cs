@@ -1,20 +1,8 @@
 using System;
-using System.Collections.Specialized;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
-using System.Data;
 using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
-using Telerik.Web.UI;
 using ChemSW.Nbt.MetaData;
 using ChemSW.CswWebControls;
 
@@ -105,54 +93,12 @@ namespace ChemSW.NbtWebControls.FieldTypes
             }
         } // CswRelationship_DataBinding()
 
-        //void _TreeView_DataBound( object sender, EventArgs e )
-        //{
-        //    try
-        //    {
-        //        if( _SelectedNodeKey != null )
-        //        {
-        //            RadTreeNode SelectedNode = _TreeView.FindNodeByValue( _SelectedNodeKey.ToString() );
-        //            if( SelectedNode != null )
-        //                SelectedNode.Selected = true;
-        //        }
-        //    }
-        //    catch( Exception ex )
-        //    {
-        //        HandleError( ex );
-        //    }
-        //}
-
         public override void Save()
         {
             try
             {
                 if( !ReadOnly )
                 {
-                    //if( _hiddenClear.Value == "1" )
-                    //{
-                    //    Prop.ClearValue();
-                    //}
-                    //else
-                    //{
-                    //if( AllowEditValue && !ReadOnly )
-                    //if( !ReadOnly )
-                    //{
-                    //bool saved = false;
-                    //if( _TreeView.SelectedNode != null )
-                    //{
-                    //    CswNbtNodeKey SelectedNodeKey = new CswNbtNodeKey( _CswNbtResources, _TreeView.SelectedNode.Value );
-                    //    if( SelectedNodeKey.NodeId != null )
-                    //    {
-                    //        Prop.AsRelationship.RelatedNodeId = SelectedNodeKey.NodeId;
-                    //        Prop.AsRelationship.CachedNodeName = _TreeView.SelectedNode.Text;
-                    //        saved = true;
-                    //    }
-                    //}
-                    //if( !saved )
-                    //{
-                    //    Prop.AsRelationship.RelatedNodeId = null;
-                    //    Prop.AsRelationship.CachedNodeName = String.Empty;
-                    //}
                     if( _ValueList.SelectedValue != string.Empty )
                     {
                         Prop.AsRelationship.RelatedNodeId = SelectedNodeId;
@@ -163,8 +109,6 @@ namespace ChemSW.NbtWebControls.FieldTypes
                         Prop.AsRelationship.RelatedNodeId = null;
                         Prop.AsRelationship.CachedNodeName = String.Empty;
                     }
-                    //}
-                    //}
                 }
             }
             catch( Exception ex )
@@ -207,13 +151,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             }
         }
 
-        //private HtmlGenericControl _Div;
-        //private CswAutoTable _OuterTable;
-        //private RadTreeView _TreeView;
         private Label _ValueLabel;
-        //private CswImageButton _EditButton;
-        //private CswImageButton _ClearButton;
-        //private HiddenField _hiddenClear;
         private DropDownList _ValueList;
         private CswImageButton _AddNewButton;
 
@@ -225,7 +163,6 @@ namespace ChemSW.NbtWebControls.FieldTypes
             _ValueList = new DropDownList();
             _ValueList.ID = "relval";
             _ValueList.CssClass = DropDownCssClass;
-            //this.Controls.Add( _ValueList );
             Table.addControl( 0, 0, _ValueList );
 
             _ValueLabel = new Label();
@@ -237,37 +174,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
             _AddNewButton = new CswImageButton( CswImageButton.ButtonType.Add );
             _AddNewButton.ID = "newrel";
-            //this.Controls.Add( _AddNewButton );
             Table.addControl( 0, 2, _AddNewButton );
-
-            //_EditButton = new CswImageButton( CswImageButton.ButtonType.Edit );
-            //_EditButton.ID = "reledit";
-            //Table.addControl( 0, 1, _EditButton );
-
-            //_ClearButton = new CswImageButton( CswImageButton.ButtonType.Clear );
-            //_ClearButton.ID = "relclearbutton";
-            //Table.addControl( 0, 2, _ClearButton );
-
-            //_hiddenClear = new HiddenField();
-            //_hiddenClear.ID = "hiddenclear";
-            //Table.addControl( 0, 2, _hiddenClear );
-
-            //_OuterTable = new CswAutoTable();
-            //_OuterTable.ID = "relationship_outertable";
-            //_OuterTable.Attributes.Add( "class", "cbarray_outertable" );
-            //Table.getCell( 1, 0 ).ColumnSpan = 3;
-            //Table.addControl( 1, 0, _OuterTable );
-
-            //_Div = new HtmlGenericControl( "div" );
-            //_Div.ID = "relationshipdiv";
-            //_Div.Attributes.Add( "class", "cbarraydiv" );
-            //_OuterTable.addControl( 0, 0, _Div );
-
-            //_TreeView = new RadTreeView();
-            //_TreeView.ID = "relationshiptree";
-            //_TreeView.EnableEmbeddedSkins = false;
-            //_TreeView.Skin = "ChemSW";
-            //_Div.Controls.Add( _TreeView );
 
             base.CreateChildControls();
 
@@ -309,40 +216,6 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     _ValueLabel.Visible = false;
                     _ValueList.Visible = true;
                 }
-
-                //Int32 Height = 4;
-                //if(Prop != null)
-                //    Height = Prop.AsRelationship.Rows * 25;
-                //_Div.Style.Add( HtmlTextWriterStyle.Height, Height.ToString() + "px" );
-
-                //_ValueLabel.Visible = true;
-                //_EditButton.Visible = true;
-                //_OuterTable.Visible = false;
-                //_ClearButton.Visible = true;
-
-                //if( AllowEditValue && !ReadOnly )
-                //{
-                //    _OuterTable.Visible = true;
-                //    _TreeView.ExpandAllNodes();   // BZ 7745
-
-                //    _EditButton.Visible = false;
-                //    _ClearButton.Visible = false;
-                //    _ValueLabel.Visible = false;
-                //}
-                //if( ReadOnly )
-                //{
-                //    _EditButton.Visible = false;
-                //    _ClearButton.Visible = false;
-                //}
-                //if( Required )
-                //{
-                //    _ClearButton.Visible = false;
-                //}
-
-                //if( _EditButton.Visible && Prop != null && Prop.NodeId != null )
-                //    _EditButton.OnClientClick = "EditPropertyInPopup('" + Prop.NodeId.ToString() + "', '" + PropId.ToString() + "');";
-                //if( _ClearButton.Visible )
-                //    _ClearButton.OnClientClick = "return CswRelationship_clear('" + _ValueLabel.ClientID + "', '" + _hiddenClear.ClientID + "');";
 
             }
             catch( Exception ex )
