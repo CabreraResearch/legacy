@@ -120,7 +120,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
             if( Prop != null )
             {   
-                _ValueLabel.Text = Prop.AsNodeTypeSelect.SelectedNodeTypeNames().ToString();;
+                _ValueLabel.Text = Prop.AsNodeTypeSelect.SelectedNodeTypeNames().ToString();
                 if( !_AllowEditValue )
                 {
                     if(Prop.NodeId != null)
