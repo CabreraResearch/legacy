@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod]
-        public string UpdateProperties( string SessionId , string ParentId, string UpdatedViewXml )
+        public string UpdateProperties( string SessionId, string ParentId, string UpdatedViewXml, bool ForMobile )
         {
             string ReturnVal = string.Empty;
             try
@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
                 {
 
-                    CswNbtWebServiceUpdateProperties wsUP = new CswNbtWebServiceUpdateProperties( _CswNbtWebServiceResources );
+                    CswNbtWebServiceUpdateProperties wsUP = new CswNbtWebServiceUpdateProperties( _CswNbtWebServiceResources, ForMobile );
                     ReturnVal = result( wsUP.Run( ParentId, UpdatedViewXml ) );
 
                     end();
@@ -204,7 +204,7 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod]
-        public string RunView( string SessionId, string ParentId )
+        public string RunView( string SessionId, string ParentId, bool ForMobile )
         {
             string ReturnVal = string.Empty;
             try
@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
                 {
 
-                    CswNbtWebServiceView wsView = new CswNbtWebServiceView( _CswNbtWebServiceResources );
+                    CswNbtWebServiceView wsView = new CswNbtWebServiceView( _CswNbtWebServiceResources, ForMobile );
                     ReturnVal = result( wsView.Run( ParentId ) );
 
                     end();
@@ -231,6 +231,130 @@ namespace ChemSW.Nbt.WebServices
 
             return ( ReturnVal );
         } // RunView()
+
+
+        [WebMethod]
+        public string JQueryGetViews( string SessionId )
+        {
+            CswTimer Timer = new CswTimer();
+            string ReturnVal = string.Empty;
+            try
+            {
+                string EuphemisticAuthenticationStatus = string.Empty;
+                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
+                {
+
+                    _CswNbtWebServiceResources.CswNbtResources.logTimerResult( "before JQueryGetViews", Timer.ElapsedDurationInSecondsAsString );
+
+                    CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtWebServiceResources );
+                    ReturnVal = ws.getViews();
+
+                    _CswNbtWebServiceResources.CswNbtResources.logTimerResult( "after JQueryGetViews", Timer.ElapsedDurationInSecondsAsString );
+
+                    end();
+                }
+                else
+                {
+                    ReturnVal = result( EuphemisticAuthenticationStatus );
+                }
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            _CswNbtWebServiceResources.CswNbtResources.logTimerResult( "end JQueryGetViews", Timer.ElapsedDurationInSecondsAsString );
+            return ( ReturnVal );
+        } // JQueryGetViewS()
+
+        [WebMethod]
+        public string JQueryGetTree( string SessionId, Int32 ViewId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                string EuphemisticAuthenticationStatus = string.Empty;
+                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
+                {
+
+                    CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtWebServiceResources );
+                    ReturnVal = ws.getTree( ViewId );
+
+                    end();
+                }
+                else
+                {
+                    ReturnVal = result( EuphemisticAuthenticationStatus );
+                }
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+
+            return ( ReturnVal );
+        } // JQueryGetTree()
+
+
+        [WebMethod]
+        public string JQueryGetTabs( string SessionId, string NodePk )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                string EuphemisticAuthenticationStatus = string.Empty;
+                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
+                {
+
+                    CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtWebServiceResources );
+                    ReturnVal = ws.getTabs( NodePk );
+
+                    end();
+                }
+                else
+                {
+                    ReturnVal = result( EuphemisticAuthenticationStatus );
+                }
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+
+            return ( ReturnVal );
+        } // JQueryGetTabs()
+
+
+        [WebMethod]
+        public string JQueryGetProps( string SessionId, string NodePk, string TabId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                string EuphemisticAuthenticationStatus = string.Empty;
+                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
+                {
+
+                    CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtWebServiceResources );
+                    ReturnVal = ws.getProps( NodePk, TabId );
+
+                    end();
+                }
+                else
+                {
+                    ReturnVal = result( EuphemisticAuthenticationStatus );
+                }
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+
+            return ( ReturnVal );
+        } // JQueryGetTab()
 
         #endregion Web Methods
 
