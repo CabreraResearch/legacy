@@ -1,8 +1,16 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Text;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
+using System.Data;
 using ChemSW.Nbt;
+using ChemSW.Exceptions;
+using ChemSW.NbtWebControls;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
 using ChemSW.CswWebControls;
 
@@ -130,8 +138,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
             //initValidationJS();
             //initCheckChangesJS();
 
-            string Length = _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.Password_Length.ToString().ToLower() );
-            string Complexity = _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.Password_Complexity.ToString().ToLower() );
+            string Length = _CswNbtResources.getConfigVariableValue("password_length");
+            string Complexity = _CswNbtResources.getConfigVariableValue("password_complexity");
             _Password.Attributes.Add( "onkeypress", "CswPassword_onchange('" + _Password.ClientID + "','" + _Confirm.ClientID + "','" + _InvalidImg.ClientID + "'," + Length + "," + Complexity + ");" );
             //User must type password-no copy/paste
             //_Password.Attributes.Add( "onchange", "CswPassword_onchange('" + _Password.ClientID + "','" + _Confirm.ClientID + "','" + _InvalidImg.ClientID + "'," + Length + "," + Complexity + ");" );
