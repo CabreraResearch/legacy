@@ -1,9 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
@@ -233,7 +228,7 @@ namespace ChemSW.NbtWebControls
                         foreach( CswNbtAction Action in _CswNbtResources.Actions )
                         {
                             if( Action.ShowInList &&
-                                ( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
+                                ( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.Loc_Use_Images.ToString().ToLower() ) != "0" ) &&
                                     ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( Action.Name ) )
                             {
                                 XmlNode CategoryNode = _getCategoryNode( DocRoot, Action.Category );
