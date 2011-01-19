@@ -87,7 +87,7 @@
                     _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
                 }
             }); // $.ajax({
-        }
+        } // getViewSelect()
 
         function getTree(viewid)
         {

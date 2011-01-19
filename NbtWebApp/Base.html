@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+    <head>
+        <meta http-equiv="Expires" content="0">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Cache-Control" content="no-cache">
+
+        <title></title>
+
+        <script src="jquery/jquery-1.4.4.js"></script>
+
+	    <script src="jquery/jquery-ui-1.8.4/ui/jquery.ui.core.js"></script> 
+	    <script src="jquery/jquery-ui-1.8.4/ui/jquery.ui.widget.js"></script> 
+	    <script src="jquery/jquery-ui-1.8.4/ui/jquery.ui.tabs.js"></script> 
+        <link rel="stylesheet" href="jquery/jquery-ui-1.8.4/themes/base/jquery.ui.all.css"> 
+	
+        <script src="jquery/jsTree.v.1.0rc2/jquery.jstree.js"></script>
+
+        <link rel="stylesheet" href="style.css" />
+        <link href="Skin/Telerik.ChemSW.css" rel="stylesheet" type="text/css" />
+
+        <script src="js/CswDashboard.js"></script>
+        <script src="js/CswAuthenticate.js"></script>
+        <script src="Main.js"></script>
+    </head>
+
+    <body>
+        <script language="javascript">
+            var SessionId = '';
+            $(function () {
+                authenticate('1', 'admin', 'admin', function (s) {
+                    SessionId = s;
+                    $('#dashboard').CswDashboard({ 'SessionId': SessionId });
+                });
+            });
+        </script>
+
+        <form id="Form1" runat="server">
+            <div class="StandardMasterContentDiv">    
+                <div id="OuterDiv" class="OuterDiv">
+                    <table id="PageTable" class="PageTable" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td id="HeaderTable_LeftBorder" class="HeaderTable_LeftBorder" rowspan="3">
+                                <img id="headerblank1" src="Images/pagelayout/blank.gif" width="18" height="1"/>
+                            </td>
+                            <td id="HeaderTable_TopBorder" class="HeaderTable_TopBorder" colspan="2"></td>
+                            <td id="HeaderTable_RightBorder" class="HeaderTable_RightBorder" rowspan="3">
+                                <img id="headerblank2" src="Images/pagelayout/blank.gif" width="20" height="1"/>
+                            </td>
+                        </tr>          
+                        <tr>
+                        <td id="HeaderTable_LeftCell" class="HeaderTable_LeftCell">
+                            <img id="Image1" src="Images/pagelayout/header_logo32.gif" width="216" height="32"/>
+                        </td>
+                        <td id="HeaderTable_RightTopCell" class="HeaderTable_RightTopCell">
+              
+                            <!-- HEADER: TOP RIGHT -->
+                            <table id="HeaderInnerTable" width="100%" class="HeaderInnerTable" cellpadding="0" cellspacing="0">
+                                <tr id="TableRow1" runat="server">
+                                    <td>
+                                        <img id="blank4" src="Images/pagelayout/blank.gif" width="1" height="26"/>
+                                    </td>
+                                    <td id="HeaderInnerTable_LeftHeaderCell" class="HeaderInnerTable_LeftHeaderCell" align="center">
+                                        
+                                        <div id="dashboard"></div>
+
+                                    </td>
+                                    <td id="HeaderInnerTable_RightHeaderCell" class="HeaderInnerTable_RightHeaderCell" align="right">
+                                        <!-- Right Header Menu -->
+                                        <nobr>
+                                        <table id="Table3" runat="server">
+                                            <tr>
+                                                <td>
+                                                <nobr>
+                                                    <!--
+                                                    <tel:RadMenu id="RightHeaderMenu" 
+                                                                OnItemClick="RightHeaderMenu_OnItemSelectedHandler"
+                                                                OnClientItemClicked="RightHeaderMenu_ItemSelected"
+                                                                EnableEmbeddedSkins="false"
+                                                                Skin="ChemSW"
+                                                                class="Menu"
+                                                                width="280px">
+                                                        <Items>
+                                                            <tel:RadMenuItem Value="HomeMenuItem" Text="Home" />
+                                                            <tel:RadMenuItem Value="AdminMenuItem" Text="Admin" PostBack="false">
+                                                                <Items>
+                                                                    <tel:RadMenuItem Value="UserListMenuItem" Text="Current User List" />
+                                                                    <tel:RadMenuItem Value="LogMenuItem" Text="View Log" />
+                                                                    <tel:RadMenuItem Value="ConfigVarsMenuItem" Text="Edit Config Vars" />
+                                                                    <tel:RadMenuItem Value="StatisticsMenuItem" Text="Statistics" />
+                                                                </Items>
+                                                            </tel:RadMenuItem>
+                                                            <tel:RadMenuItem Value="PrefsMenuItem" Text="Preferences" PostBack="false">
+                                                                <Items>
+                                                                    <tel:RadMenuItem Value="ProfileMenuItem" Text="Profile" />
+                                                                    <tel:RadMenuItem Value="SubscriptionsMenuItem" Text="Subscriptions" />
+                                                                </Items>
+                                                            </tel:RadMenuItem>
+                                                            <tel:RadMenuItem Value="HelpTopMenuItem" Text="Help" PostBack="false">
+                                                                <Items>
+                                                                    <tel:RadMenuItem Value="HelpMenuItem" Text="Help" PostBack="false" />
+                                                                    <tel:RadMenuItem Value="AboutMenuItem" Text="About" PostBack="false" />
+                                                                </Items>
+                                                            </tel:RadMenuItem>
+                                                            <tel:RadMenuItem Value="LogoutMenuItem" Text="Logout" />
+                                                        </Items>
+                                                    </tel:RadMenu>
+                                                    -->
+                                                </nobr>
+                                                </td>
+                                                <td>
+                                                    <!--
+                                                    <nobr>
+                                                    <asp:Label id="UserLabel" Text="" />
+                                                    </nobr>
+                                                    -->
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        </nobr>
+                                        <!-- End Right Header Menu -->
+                                    </td>
+                                </tr>
+                            </table>
+                            <!-- END HEADER: TOP RIGHT -->
+              
+                        </td>
+                      </tr>
+          
+                      <tr>
+                          <td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2">
+                            <table cellpadding="0" cellspacing="0">
+                            <tr><td><img id="headerblank4" src="Images/pagelayout/blank.gif" width="1" height="30"/>
+                            </td>
+                            <td><asp:PlaceHolder id="MenuPlaceHolder" /></td>
+                            </tr></table>
+                          </td>
+                      </tr>
+          
+                      <tr>
+                        <td id="Td5" class="PageTable_LeftColumn"></td>
+                        <td colspan="2">
+                            <Csw:CswMessageBox id="_ErrorBox" />
+                        </td>
+                        <td id="Td6" class="PageTable_RightColumn"></td>
+                      </tr>
+          
+                      <tr>
+                        <td id="Td1" class="PageTable_LeftColumn" RowSpan="2">
+                            <img id="Image2" src="Images/pagelayout/blank.gif" width="1" height="450"/>
+                        </td>
+                        <td id="Td2" class="PageTable_LeftCell" VerticalAlign="Top">
+
+                            <asp:ContentPlaceHolder id="MasterLeftContent" runat="server">
+                            </asp:ContentPlaceHolder>
+                
+                        </td>
+                        <td id="Td3" class="PageTable_RightCell" VerticalAlign="Top" style="padding-left: 5px;">
+                            <asp:ContentPlaceHolder id="MasterRightContent" runat="server">
+                            </asp:ContentPlaceHolder>
+                        </td>
+                        <td id="Td4" class="PageTable_RightColumn" RowSpan="2"></td>
+                      </tr>
+          
+                      <tr>
+                        <td colspan="2" VerticalAlign="Top">
+                            <asp:ContentPlaceHolder id="MasterCenterContent" runat="server">
+                            </asp:ContentPlaceHolder>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td id="TableCell5" class="PageTable_LeftColumn"></td>
+                        <td id="TableCell6" colspan="1" class="PageTable_LeftCellNoBg">
+                            <asp:PlaceHolder id="quicklaunchplaceholder" runat="server"></asp:PlaceHolder>
+                        </td>
+                        <td id="TableCell7" class="PageTable_RightCell"></td>
+                        <td id="TableCell8" class="PageTable_RightColumn"></td>
+                      </tr>
+
+                      <tr>
+                        <td id="TableCell3" class="PageTable_LeftColumn"></td>
+                        <td colspan="2">
+                            <asp:ContentPlaceHolder id="ContextSensitiveContent" runat="server">
+                            </asp:ContentPlaceHolder>
+                        </td>
+                        <td id="TableCell4" class="PageTable_RightColumn"></td>
+                      </tr>
+          
+                      <tr>
+                        <td id="PageTable_BottomLeftCorner" class="PageTable_BottomLeftCorner"></td>
+                        <td colspan="1" id="PageTable_BottomRowLeft" class="PageTable_BottomRowLeft"></td>
+                        <td id="PageTable_BottomRowRight" class="PageTable_BottomRowRight"></td>
+                        <td id="PageTable_BottomRightCorner" class="PageTable_BottomRightCorner"></td>
+                      </tr>
+                    </table>
+                </div> 
+
+                <div style="text-align: right">
+                    Your use of this website implies your agreement with our <a target="_blank" href="TermsOfUse.aspx">Terms of Use</a>.&nbsp;&nbsp;&nbsp;
+                </div>
+            </div>
+            <br />
+            <br />
+            <br />
+            <div id="TimeReportOuter" class="TimeReportOuter" runat="server">
+                <table>
+                    <tr>
+                        <td>
+                            <span id="TimeReport" class="TimeReport" style="display: none;">
+                                <span id="PostbackLoadTimeSpan"></span><span id="PageLoadTimeSpan"></span>&nbsp;client&nbsp;/&nbsp;
+
+                                <script language="Javascript" type="text/javascript">
+                                    var endtime = new Date();
+                                    document.getElementByid('PageLoadTimeSpan').innerHTML = (endtime.getTime() - starttime.getTime()) / 1000 + "s";
+                                </script>    
+                                <asp:Literal id="TimeReportLiteral" runat="server"></asp:Literal>
+                            </span>
+                        </td>
+                        <td>
+                            <asp:PlaceHolder id="TimeReportImageButtonPH"></asp:PlaceHolder>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+    </body>
+</html>
+

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Web;
 using System.Xml;
 using System.Web.Services;
@@ -24,6 +25,78 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtWebServiceResources = CswNbtWebServiceResources;
         }
 
+        private class DashIcon
+        {
+            public string Text;
+            public string Id;
+            public string Href;
+            public CswNbtResources.CswNbtModule Module;
+
+            public DashIcon( string inText, string inId, string inHref, CswNbtResources.CswNbtModule inModule )
+            {
+                Text = inText;
+                Id = inId;
+                Href = inHref;
+                Module = inModule;
+            }
+        }
+
+        public string getDashboard()
+        {
+            string ret = string.Empty;
+            Collection<DashIcon> DashIcons = new Collection<DashIcon>();
+            DashIcons.Add( new DashIcon( "IMCS - Instrument Maintenance and Calibration",
+                                         "dash_imcs",
+                                         "http://www.chemswlive.com/19013.htm",
+                                         CswNbtResources.CswNbtModule.IMCS ) );
+            DashIcons.Add( new DashIcon( "FE - Fire Extinguisher Inspection",
+                                         "dash_fe",
+                                         "http://www.chemswlive.com/19002.htm",
+                                         CswNbtResources.CswNbtModule.FE ) );
+            DashIcons.Add( new DashIcon( "SI - Site Inspection",
+                                         "dash_si",
+                                         "http://www.chemswlive.com/19002.htm",
+                                         CswNbtResources.CswNbtModule.SI ) );
+            DashIcons.Add( new DashIcon( "STIS - Sample Tracking and Inventory System",
+                                         "dash_stis",
+                                         "http://www.chemswlive.com/19002.htm",
+                                         CswNbtResources.CswNbtModule.STIS ) );
+            DashIcons.Add( new DashIcon( "CISPro - Chemical Inventory System",
+                                         "dash_cispro",
+                                         "http://www.chemswlive.com/19002.htm",
+                                         CswNbtResources.CswNbtModule.CISPro ) );
+            DashIcons.Add( new DashIcon( "CCPro - Control Charts",
+                                         "dash_ccpro",
+                                         "http://www.chemswlive.com/19002.htm",
+                                         CswNbtResources.CswNbtModule.CCPro ) );
+            DashIcons.Add( new DashIcon( "BioSafety",
+                                         "dash_biosafety",
+                                         "http://www.chemswlive.com/19002.htm",
+                                         CswNbtResources.CswNbtModule.BioSafety ) );
+            DashIcons.Add( new DashIcon( "Mobile",
+                                         "dash_hh",
+                                         "http://www.chemswlive.com/cis-pro-mobile.htm",
+                                         CswNbtResources.CswNbtModule.Mobile ) );
+            DashIcons.Add( new DashIcon( "NBTManager",
+                                         "dash_nbtmgr",
+                                         "",
+                                         CswNbtResources.CswNbtModule.NBTManager ) );
+
+            foreach( DashIcon DashIcon in DashIcons )
+            {
+                if( _CswNbtWebServiceResources.CswNbtResources.IsModuleEnabled( DashIcon.Module ) )
+                {
+                    ret += "<dash id=\"" + DashIcon.Id + "\" text=\"" + DashIcon.Text + "\" href=\"" + DashIcon.Href + "\" />";
+                }
+                else if( DashIcon.Module != CswNbtResources.CswNbtModule.NBTManager )
+                {
+                    ret += "<dash id=\"" + DashIcon.Id + "_off\" text=\"" + DashIcon.Text + "\" href=\"" + DashIcon.Href + "\" />";
+                }
+            }
+
+            return "<dashboard>" + ret + "</dashboard>";
+        } // getDashboard()
+
         public string getViews()
         {
             string ret = string.Empty;
@@ -36,12 +109,6 @@ namespace ChemSW.Nbt.WebServices
             }
             return "<views>" + ret + "</views>";
         }
-
-        //private static string ViewIdPrefix = "viewid_";
-        //private static string PropIdPrefix = "prop_";
-        //private static string TabIdPrefix = "tab_";
-        //private static string NodeIdPrefix = "nodeid_";
-        //private static string NodeKeyPrefix = "nodekey_";
 
         public string getTree( Int32 ViewId )
         {
@@ -82,7 +149,7 @@ namespace ChemSW.Nbt.WebServices
         public string getProps( string NodePkString, string TabId )
         {
             string ret = string.Empty;
-                       CswPrimaryKey NodePk = new CswPrimaryKey();
+            CswPrimaryKey NodePk = new CswPrimaryKey();
             NodePk.FromString( NodePkString );
 
             CswNbtNode Node = _CswNbtWebServiceResources.CswNbtResources.Nodes[NodePk];

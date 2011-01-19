@@ -265,6 +265,33 @@ namespace ChemSW.Nbt.WebServices
             }
             _CswNbtWebServiceResources.CswNbtResources.logTimerResult( "end JQueryGetViews", Timer.ElapsedDurationInSecondsAsString );
             return ( ReturnVal );
+        } // JQueryGetViews()
+
+        [WebMethod]
+        public string JQueryGetDashboard( string SessionId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                string EuphemisticAuthenticationStatus = string.Empty;
+                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
+                {
+                    CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtWebServiceResources );
+                    ReturnVal = ws.getDashboard();
+
+                    end();
+                }
+                else
+                {
+                    ReturnVal = result( EuphemisticAuthenticationStatus );
+                }
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
         } // JQueryGetViewS()
 
         [WebMethod]
