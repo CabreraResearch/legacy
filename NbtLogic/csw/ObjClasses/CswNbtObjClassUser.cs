@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Text;
-using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
@@ -100,7 +95,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterCreateNode()
         {
             // BZ 9170
-            _CswNbtResources.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
+            _CswNbtResources.setConfigVariableValue( CswResources.NbtConfigurationVariables.Cache_LastUpdated.ToString().ToLower(), DateTime.Now.ToString() );
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
@@ -126,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             // BZ 9170
-            _CswNbtResources.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
+            _CswNbtResources.setConfigVariableValue( CswResources.NbtConfigurationVariables.Cache_LastUpdated.ToString().ToLower(), DateTime.Now.ToString() );
 
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
@@ -251,7 +246,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             this.FailedLoginCount.Value = Convert.ToDouble( failures );
 
-            if( failures >= CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "FailedLoginLimit" ) ) )
+            if( failures >= CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.FailedLoginLimit.ToString() ) ) )
             {
                 this.AccountLocked.Checked = Tristate.True;
             }

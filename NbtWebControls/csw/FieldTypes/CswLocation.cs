@@ -1,16 +1,7 @@
 using System;
-using System.Collections.Specialized;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
-using System.Data;
 using ChemSW.Nbt;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
@@ -30,7 +21,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             this.DataBinding += new EventHandler( CswLocation_DataBinding );
 
             AllowEditValue = ( EditMode != NodeEditMode.Edit && EditMode != NodeEditMode.Demo && EditMode != NodeEditMode.PrintReport && EditMode != NodeEditMode.LowRes );
-            _RelationshipMode = ( _CswNbtResources.getConfigVariableValue( "loc_use_images" ) == "0" );
+            _RelationshipMode = ( _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.Loc_Use_Images.ToString().ToLower() ) == "0" );
 
             EnsureChildControls();
         }

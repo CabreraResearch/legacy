@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
 using System.Data;
-using System.Text;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
@@ -110,7 +106,7 @@ namespace ChemSW.Nbt.Schema
 
         private CswSchemaVersion CurrentVersion
         {
-            get { return new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ) ); }
+            get { return new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.SchemaVersion.ToString().ToLower() ) ); }
         }
 
         public CswSchemaVersion TargetVersion
