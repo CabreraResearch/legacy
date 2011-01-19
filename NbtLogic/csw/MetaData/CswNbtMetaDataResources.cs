@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Data;
+using System.Text;
 using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -320,7 +323,7 @@ namespace ChemSW.Nbt.MetaData
                 ChangesMade = JctNodesPropsTableUpdate.updateAll() || ChangesMade;
 
             if ( ChangesMade )
-                CswNbtResources.setConfigVariableValue( CswResources.NbtConfigurationVariables.Cache_LastUpdated.ToString().ToLower(), DateTime.Now.ToString() );
+                CswNbtResources.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
         }
 
         public ICswNbtFieldTypeRule makeFieldTypeRule( ICswNbtMetaDataProp MetaDataProp )
