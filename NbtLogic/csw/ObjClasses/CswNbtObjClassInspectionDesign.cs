@@ -215,36 +215,35 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeCreateNode()
         {
             String NodeStatus = String.Empty;
-            CswNbtMetaDataNodeType AllInspectionVersionsNT = this.Node.NodeType.LatestVersionNodeType;
-            // Iterate all versions of the Inspection NT to catch existing nodes on older versions
-            while( null != AllInspectionVersionsNT )
+            CswNbtMetaDataNodeType ThisInspectionNT = this.Node.NodeType.LatestVersionNodeType;
+            if( null != ThisInspectionNT )
             {
                 //Limit collection to Inspections on the same Generator
-                IEnumerable<CswNbtNode> ThisInspectionNodes = AllInspectionVersionsNT.getNodes( true, true )
-                                                                                     .Where(InspectionNode => this.Generator.RelatedNodeId == InspectionNode.Properties[GeneratorPropertyName].AsRelationship.RelatedNodeId );
-                foreach( CswNbtNode InspectionNode in ThisInspectionNodes )
+                IEnumerable<CswNbtNode> AllNodesOfThisNT = ThisInspectionNT.getNodes( true, true )
+                                                                           .Where( InspectionNode => this.Generator.RelatedNodeId == InspectionNode.Properties[GeneratorPropertyName].AsRelationship.RelatedNodeId );
+                foreach( CswNbtNode InspectionNode in AllNodesOfThisNT )
                 {
                     CswNbtObjClassInspectionDesign PriorInspection = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
                     NodeStatus = PriorInspection.Status.Value;
 
                     if( //Inspection status is Pending, Overdue or not set
                         ( InspectionStatusAsString( InspectionStatus.Overdue ) == NodeStatus ||
-                        InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus ||
-                        String.Empty == NodeStatus ) &&
+                          InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus ||
+                          String.Empty == NodeStatus ) &&
                         //Inspections have the same target, and we're comparing different Inspection nodes
                         ( this.Target.RelatedNodeId == InspectionNode.Properties[TargetPropertyName].AsRelationship.RelatedNodeId &&
-                            this.Node != InspectionNode ) )
+                          this.Node != InspectionNode ) )
                     {
                         PriorInspection.Status.Value = InspectionStatus.Missed.ToString();
                         // Case 20755
                         PriorInspection.postChanges( true );
                     }
                 }
-                // Start over with the previous version of Inspection
-                AllInspectionVersionsNT = AllInspectionVersionsNT.PriorVersionNodeType;
             }
             _CswNbtObjClassDefault.beforeCreateNode();
-        } // beforeCreateNode()
+        }
+
+        // beforeCreateNode()
 
         /// <summary>
         /// Lock Node Type
