@@ -1,15 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ChemSW.Nbt;
-using ChemSW.NbtWebControls;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.NbtWebControls.FieldTypes
@@ -98,21 +91,18 @@ namespace ChemSW.NbtWebControls.FieldTypes
             _DropDownList = new DropDownList();
             _DropDownList.ID = "list";
             _DropDownList.CssClass = CswFieldTypeWebControl.DropDownCssClass;
-            this.Controls.Add(_DropDownList);
+            this.Controls.Add( _DropDownList );
 
             base.CreateChildControls();
 
-            if( Required && _EditMode != NodeEditMode.LowRes )
-            {
-                _RequiredValidator.Visible = true;
-                _RequiredValidator.Enabled = true;
-                _RequiredValidator.ControlToValidate = _DropDownList.ID;
-            }
+            _RequiredValidator.Visible = true;
+            _RequiredValidator.Enabled = true;
+            _RequiredValidator.ControlToValidate = _DropDownList.ID;
         }
 
         protected override void OnPreRender( EventArgs e )
         {
-            if(Prop != null && Prop.AsList != null )
+            if( Prop != null && Prop.AsList != null )
             {
                 if( null == _DropDownList.Items.FindByValue( Prop.AsList.Value ) )
                 {
@@ -123,8 +113,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 }
             }
 
-            if( _EditMode != NodeEditMode.LowRes )
-                _DropDownList.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange();" );
+            _DropDownList.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange();" );
 
             base.OnPreRender( e );
         }

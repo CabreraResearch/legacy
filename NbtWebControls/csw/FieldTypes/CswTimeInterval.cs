@@ -1,19 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
-using System.Data;
 using ChemSW.Nbt;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
 
@@ -39,15 +26,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
             EnsureChildControls();
             if( Prop != null )
             {
-                if( _EditMode != NodeEditMode.LowRes )
-                {
-                    _CswTimeIntervalSelector.RateInterval = Prop.AsTimeInterval.RateInterval;
-                    _CswTimeIntervalSelector.ReadOnly = ReadOnly;
-                }
-                else
-                {
-                    _Label.Text = Prop.AsTimeInterval.RateInterval.ToString();
-                }
+                _CswTimeIntervalSelector.RateInterval = Prop.AsTimeInterval.RateInterval;
+                _CswTimeIntervalSelector.ReadOnly = ReadOnly;
             }
         }
 
@@ -55,10 +35,10 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             if( !ReadOnly )
             {
-                if( _EditMode != NodeEditMode.LowRes )
-                    Prop.AsTimeInterval.RateInterval = RateInterval;
+                Prop.AsTimeInterval.RateInterval = RateInterval;
             }
         }
+
         public override void AfterSave()
         {
             DataBind();
@@ -71,19 +51,11 @@ namespace ChemSW.NbtWebControls.FieldTypes
         private Label _Label;
         protected override void CreateChildControls()
         {
-            if( _EditMode != NodeEditMode.LowRes )
-            {
-                _CswTimeIntervalSelector = new CswTimeIntervalSelector( true );
-                _CswTimeIntervalSelector.ID = "CswTimeIntervalSelector";
-                this.Controls.Add( _CswTimeIntervalSelector );
-            }
-            else
-            {
-                _Label = new Label();
-                _Label.ID = "timeintervallabel";
-                this.Controls.Add( _Label );
-            }
+            _CswTimeIntervalSelector = new CswTimeIntervalSelector( true );
+            _CswTimeIntervalSelector.ID = "CswTimeIntervalSelector";
+            this.Controls.Add( _CswTimeIntervalSelector );
             base.CreateChildControls();
-        } // CreateChildControls()
+        }
+        // CreateChildControls()
     }
 }

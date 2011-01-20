@@ -1,15 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.CswWebControls;
@@ -29,16 +21,11 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             if( Prop != null )
             {
-                if( _EditMode != NodeEditMode.LowRes )
-                {
-                    _TriStateCheckBox.Required = Required;
-                    _TriStateCheckBox.ReadOnly = ReadOnly;
-                    _TriStateCheckBox.Checked = Prop.AsLogical.Checked;
-                }
-                else
-                {
-                    _ListBox.SelectedValue = Prop.AsLogical.Checked.ToString();
-                }
+
+                _TriStateCheckBox.Required = Required;
+                _TriStateCheckBox.ReadOnly = ReadOnly;
+                _TriStateCheckBox.Checked = Prop.AsLogical.Checked;
+
             }
         }
 
@@ -46,25 +33,13 @@ namespace ChemSW.NbtWebControls.FieldTypes
         private DropDownList _ListBox;
         protected override void CreateChildControls()
         {
-            if( _EditMode != NodeEditMode.LowRes )
-            {
-                _TriStateCheckBox = new CswTriStateCheckBox( Required );
-                _TriStateCheckBox.ID = "TriStateCheckBox";
-                _TriStateCheckBox.OnError += new CswErrorHandler( HandleError );
-                _TriStateCheckBox.ValidationGroup = CswFieldTypeWebControl.FieldTypeValidationGroup;
-                this.Controls.Add( _TriStateCheckBox );
-            }
-            else
-            {
-                _ListBox = new DropDownList();
-                _ListBox.ID = "ListBox";
-                _ListBox.AutoPostBack = false;
-                _ListBox.CssClass = CswFieldTypeWebControl.DropDownCssClass;
-                _ListBox.Items.Add( new ListItem( "", Tristate.Null.ToString() ) );
-                _ListBox.Items.Add( new ListItem( "Yes", Tristate.True.ToString() ) );
-                _ListBox.Items.Add( new ListItem( "No", Tristate.False.ToString() ) );
-                this.Controls.Add( _ListBox );
-            }
+
+            _TriStateCheckBox = new CswTriStateCheckBox( Required );
+            _TriStateCheckBox.ID = "TriStateCheckBox";
+            _TriStateCheckBox.OnError += new CswErrorHandler( HandleError );
+            _TriStateCheckBox.ValidationGroup = CswFieldTypeWebControl.FieldTypeValidationGroup;
+            this.Controls.Add( _TriStateCheckBox );
+
 
             base.CreateChildControls();
         }
@@ -82,10 +57,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         }
         public override void Clear()
         {
-            if( _EditMode != NodeEditMode.LowRes )
-                _TriStateCheckBox.Checked = Tristate.Null;
-            else
-                _ListBox.SelectedValue = Tristate.Null.ToString();
+            _TriStateCheckBox.Checked = Tristate.Null;
         }
 
         /// <summary>
@@ -97,10 +69,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             {
                 EnsureChildControls();
                 Tristate ret = Tristate.Null;
-                if( _EditMode != NodeEditMode.LowRes )
-                    ret = _TriStateCheckBox.Checked;
-                else
-                    ret = (Tristate) Enum.Parse( typeof( Tristate ), _ListBox.SelectedValue );
+                ret = _TriStateCheckBox.Checked;
                 return ret;
             }
         }
@@ -114,28 +83,20 @@ namespace ChemSW.NbtWebControls.FieldTypes
             get
             {
                 EnsureChildControls();
-                if( _EditMode != NodeEditMode.LowRes )
-                    return _TriStateCheckBox.AutoPostBack;
-                //else
-                //    return _ListBox.AutoPostBack;
-                else
-                    return false;
+                return _TriStateCheckBox.AutoPostBack;
+
             }
             set
             {
                 EnsureChildControls();
-                if( _EditMode != NodeEditMode.LowRes )
-                    _TriStateCheckBox.AutoPostBack = value;
-                //else
-                //    _ListBox.AutoPostBack = value;
+                _TriStateCheckBox.AutoPostBack = value;
             }
         }
         
 
         protected override void OnPreRender(EventArgs e)
         {
-            if( _EditMode != NodeEditMode.LowRes )
-                _TriStateCheckBox.OnClientClick = "CswFieldTypeWebControl_onchange();";
+            _TriStateCheckBox.OnClientClick = "CswFieldTypeWebControl_onchange();";
             base.OnPreRender(e);
         }
 

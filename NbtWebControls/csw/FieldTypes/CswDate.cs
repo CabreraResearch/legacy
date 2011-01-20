@@ -1,17 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
-using System.Data;
 using Telerik.Web.UI;
 using ChemSW.Nbt;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.CswWebControls;
 
@@ -77,7 +68,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
         protected override void OnPreRender(EventArgs e)
         {
             if( ReadOnly )
+            {
                 _DateControl.Visible = false;
+            }
 
             base.OnPreRender(e);
         }
@@ -109,30 +102,14 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 _CswDatePicker = new CswDatePicker( DateTimeMode, true );
                 _CswDatePicker.ID = IDPrefix + "picker";
                 _CswDatePicker.ValidationGroup = CswFieldTypeWebControl.FieldTypeValidationGroup;
-                if( _EditMode != NodeEditMode.LowRes )
-                {
-                    ParentControl.Controls.Add( _CswDatePicker );
-                }
-                else
-                {
-                    _DateBox = new TextBox();
-                    _DateBox.ID = IDPrefix + "box";
-                    _DateBox.Width = Unit.Parse( "80px" );
-                    _DateBox.CssClass = CswFieldTypeWebControl.TextBoxCssClass;
-                    ParentControl.Controls.Add( _DateBox );
-                    
-                    Literal DateMask = new Literal();
-                    DateMask.Text = "&nbsp;(" + _CswDatePicker.DateFormat + ")";
-                    ParentControl.Controls.Add( DateMask );
-                }
+                ParentControl.Controls.Add( _CswDatePicker );
             }
 
             public bool Required
             {
                 set
                 {
-                    if( _EditMode != NodeEditMode.LowRes ) 
-                        _CswDatePicker.Required = value;
+                     _CswDatePicker.Required = value;
                 }
             }
 
@@ -149,10 +126,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
             public void Clear()
             {
-                if( _EditMode != NodeEditMode.LowRes )
-                    _CswDatePicker.Clear();
-                else
-                    _DateBox.Text = string.Empty;
+                _CswDatePicker.Clear();
             }
 
             public DateTime SelectedDate
@@ -160,30 +134,12 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 get
                 {
                     DateTime ret = DateTime.MinValue;
-                    if( _EditMode != NodeEditMode.LowRes )
-                        ret = _CswDatePicker.SelectedDate;
-                    else if( _DateBox.Text != string.Empty )
-                    {
-                        try
-                        {
-                            ret = Convert.ToDateTime( _DateBox.Text );
-                        }
-                        catch( System.FormatException ex )
-                        {
-                            //swallow it and continue
-                            _CswNbtResources.logError( ex );
-                        }
-                    } 
+                    ret = _CswDatePicker.SelectedDate;
                     return ret;
                 }
                 set
                 {
-                    if( _EditMode != NodeEditMode.LowRes )
-                        _CswDatePicker.SelectedDate = value;
-                    else if( value != DateTime.MinValue )
-                        _DateBox.Text = value.ToShortDateString();
-                    else
-                        _DateBox.Text = string.Empty;
+                    _CswDatePicker.SelectedDate = value;
                 }
             }
 
@@ -192,8 +148,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 get
                 {
                     RadDatePicker ret = null;
-                    if( _EditMode != NodeEditMode.LowRes )
-                        ret = _CswDatePicker.DatePicker;
+                    ret = _CswDatePicker.DatePicker;
                     return ret;
                 }
             }
@@ -202,10 +157,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             {
                 set
                 {
-                    if( _EditMode != NodeEditMode.LowRes )
-                        _CswDatePicker.Visible = value;
-                    else
-                        _DateBox.Visible = value;
+                    _CswDatePicker.Visible = value;
                 }
             }
         }

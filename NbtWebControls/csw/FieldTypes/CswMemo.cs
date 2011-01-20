@@ -1,15 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data;
 using ChemSW.Nbt;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.NbtWebControls.FieldTypes
@@ -69,7 +61,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             _TextBox = new TextBox();
             _TextBox.ID = "text";
             _TextBox.CssClass = CswFieldTypeWebControl.TextBoxCssClass;
-            this.Controls.Add(_TextBox);
+            this.Controls.Add( _TextBox );
 
             //_Validator = new Sample.Web.UI.Compatibility.CustomValidator();
             //_Validator.ID = "vld";
@@ -83,21 +75,16 @@ namespace ChemSW.NbtWebControls.FieldTypes
             _TextBox.CssClass = "textinput";
             base.CreateChildControls();
 
-            if( Required && _EditMode != NodeEditMode.LowRes)
-            {
-                _RequiredValidator.Visible = true;
-                _RequiredValidator.Enabled = true;
-                _RequiredValidator.ControlToValidate = _TextBox.ID;
-            }
+
+            _RequiredValidator.Visible = true;
+            _RequiredValidator.Enabled = true;
+            _RequiredValidator.ControlToValidate = _TextBox.ID;
         }
 
         protected override void OnPreRender( EventArgs e )
         {
-            if( _EditMode != NodeEditMode.LowRes )
-            {
-                _TextBox.Attributes.Add( "onkeypress", "CswFieldTypeWebControl_onchange();" );
-                _TextBox.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange();" );
-            }
+            _TextBox.Attributes.Add( "onkeypress", "CswFieldTypeWebControl_onchange();" );
+            _TextBox.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange();" );
             base.OnPreRender( e );
         }
 

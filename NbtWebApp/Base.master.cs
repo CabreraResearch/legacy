@@ -181,8 +181,7 @@ namespace ChemSW.Nbt.WebPages
                 if( !CswSessionManager.IsAuthenticated() )
                 {
                     string ScriptName = HttpContext.Current.Request.ServerVariables["SCRIPT_NAME"];
-                    if( ScriptName.Substring( ScriptName.LastIndexOf( '/' ) ) != "/Login.aspx" &&
-                        ScriptName.Substring( ScriptName.LastIndexOf( '/' ) ) != "/LowRes_Login.aspx" )
+                    if( ScriptName.Substring( ScriptName.LastIndexOf( '/' ) ) != "/Login.aspx" )
                     {
                         //ReleaseAll();
                         Redirect( LogoutPath );

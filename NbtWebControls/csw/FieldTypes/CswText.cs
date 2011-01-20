@@ -1,17 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data;
 using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
-using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {
@@ -124,11 +115,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
         /// </summary>
         protected override void OnPreRender( EventArgs e )
         {
-            if( _EditMode != NodeEditMode.LowRes )
-            {
-                _TextBox.Attributes.Add( "onkeypress", "CswFieldTypeWebControl_onchange();" );
-                _TextBox.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange();" );
-            }
+            _TextBox.Attributes.Add( "onkeypress", "CswFieldTypeWebControl_onchange();" );
+            _TextBox.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange();" );
             base.OnPreRender( e );
         }
 
