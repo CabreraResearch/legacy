@@ -1,0 +1,72 @@
+﻿using System;
+using ChemSW.DB;
+using System.Data;
+using ChemSW.Core;
+using ChemSW.Exceptions;
+
+namespace ChemSW.Nbt.Schema
+{
+    public class CswDemoDataManager
+    {
+
+        private CswNbtResources _CswNbtResources;
+        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
+        
+        public CswDemoDataManager( CswNbtResources CswNbtResources)
+        {
+            _CswNbtResources = CswNbtResources;
+            _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
+        }
+
+        /// <summary>
+        /// Removes all rows flagged isdemo=1
+        /// </summary>
+        public void RemoveDemoData()
+        {
+            if( "1" == _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.Is_Demo.ToString() ) )
+            {
+                String AllDemoTablesSQL = " select distinct tablename from data_dictionary where columnname='isdemo' ";
+                CswArbitrarySelect AllDemoTables = _CswNbtResources.makeCswArbitrarySelect( "Fetch Tables With Demo Data", AllDemoTablesSQL );
+                DataTable DemosDataTable = AllDemoTables.getTable();
+                CswCommaDelimitedString TablesToPrune = new CswCommaDelimitedString();
+                
+                for( Int32 i = 0; i < DemosDataTable.Rows.Count; i++ )
+                {
+                    if( DemosDataTable.Rows[i]["tablename"].ToString() != "nodes" &&
+                        DemosDataTable.Rows[i]["tablename"].ToString() != "statistics" )
+                    {
+                        TablesToPrune.Add( DemosDataTable.Rows[i]["tablename"].ToString() );
+                    }
+                }
+                TablesToPrune.Sort();
+
+                //As of 01H-17, executing this in alphabetical order (minus nodes/statistics) will work
+                foreach( String TableName in TablesToPrune )
+                {
+                    String NukeDemoDataSQL = "delete from " + TableName + " where isdemo = '" + CswConvert.ToDbVal( true ) + "'";
+                    try
+                    {
+                        _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( NukeDemoDataSQL );
+                    }
+                    catch( Exception ex )
+                    {
+                        throw new CswDniException( "Before records from the " + TableName + " table can be deleted, child records must be deleted first.", "Oracle threw an " + ex + " exception." );
+                    }
+                }
+                
+                // We just happen to know that these are the only 2 tables which have constraints and need to be dealt with separately
+                try
+                {
+                    _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from nodes where isdemo= '" + CswConvert.ToDbVal( true ) + "'" );
+                    _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from statistics where isdemo= '" + CswConvert.ToDbVal( true ) + "'" );
+                }
+                catch( Exception ex )
+                {
+                    throw new CswDniException( "Before records from the nodes/statistics table(s) can be deleted, child records must be deleted first.", "Oracle threw an " + ex + " exception." );
+                }
+
+                _CswNbtResources.setConfigVariableValue( CswResources.NbtConfigurationVariables.Is_Demo.ToString(), "0" );
+            }//if( "1" == _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.Is_Demo.ToString() ) )
+        }
+    }
+}

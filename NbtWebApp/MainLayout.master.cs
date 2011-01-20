@@ -1,5 +1,4 @@
 using System;
-using System.Data;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ChemSW.Exceptions;
@@ -12,7 +11,7 @@ using ChemSW.Core;
 using Telerik.Web.UI;
 using ChemSW.CswWebControls;
 using ChemSW.Nbt.Actions;
-using ChemSW.DB;
+using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -314,7 +313,6 @@ namespace ChemSW.Nbt.WebPages
             CswViewListTree.AfterModifyReport( Page.Session );
         }
 
-
         protected void RightHeaderMenu_OnItemSelectedHandler( object sender, RadMenuEventArgs e )
         {
             try
@@ -392,36 +390,10 @@ namespace ChemSW.Nbt.WebPages
                         }
                     case "RemoveDemoDataItem":
                         {
-                            String AllDemoTablesSQL = " select distinct tablename from data_dictionary where columnname='isdemo' ";
-                            CswArbitrarySelect AllDemoTables = Master.CswNbtResources.makeCswArbitrarySelect( "Fetch Tables With Demo Data", AllDemoTablesSQL );
-                            DataTable DemosDataTable = AllDemoTables.getTable();
-                            CswCommaDelimitedString TablesToPrune = new CswCommaDelimitedString();
-                            for( Int32 i = 0; i < DemosDataTable.Rows.Count; i++ )
-                            {
-
-                                TablesToPrune.Add( DemosDataTable.Rows[i]["tablename"].ToString() );
-                            }
-                            while( 0 < TablesToPrune.Count )
-                            {
-                                foreach( String TableName in TablesToPrune )
-                                {
-                                    String NukeDemoDataSQL = "delete from " + TableName + " where isdemo = '" + CswConvert.ToDbVal( true ) + "'";
-                                    try
-                                    {
-                                        Master.CswNbtResources.CswResources.execArbitraryPlatformNeutralSql( NukeDemoDataSQL );
-                                        TablesToPrune.Remove( TableName );
-                                    }
-                                    catch( Exception ex )
-                                    {
-                                        //Ignore rather than throw. Error was probably due to a PK/FK constraint which will no longer be present on the next iteration.
-                                    }
-                                }
-                            }
-                        }
-
-                        Master.CswNbtResources.setConfigVariableValue( CswResources.NbtConfigurationVariables.Is_Demo.ToString(), "0" );
+                            CswDemoDataManager DemoDataManager = new CswDemoDataManager( Master.CswNbtResources );
+                            DemoDataManager.RemoveDemoData();
                             break;
-                        
+                        }
                     default:
                         {
                             Master.Redirect( "Welcome.aspx" );
