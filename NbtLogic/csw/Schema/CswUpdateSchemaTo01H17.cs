@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.Schema
             // Case 20689
             String ConfigVarSQL = "update configuration_variables set variablename=lower(variablename)";
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( ConfigVarSQL );
-            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswResources.NbtConfigurationVariables.Is_Demo, "If 1, Schema is in Demo mode", "1", true );
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswResources.NbtConfigurationVariables.Is_Demo, "If 1, Schema is in Demo mode", "0", true );
             
             // isdemo columns
             const String DemoColumnDescription = "1 if the row is demo data";
