@@ -13,14 +13,18 @@
 	    <script src="jquery/jquery-ui-1.8.4/ui/jquery.ui.widget.js"></script> 
 	    <script src="jquery/jquery-ui-1.8.4/ui/jquery.ui.tabs.js"></script> 
         <link rel="stylesheet" href="jquery/jquery-ui-1.8.4/themes/base/jquery.ui.all.css"> 
-	
+
         <script src="jquery/jsTree.v.1.0rc2/jquery.jstree.js"></script>
 
         <link rel="stylesheet" href="style.css" />
         <link href="Skin/Telerik.ChemSW.css" rel="stylesheet" type="text/css" />
 
-        <script src="js/CswDashboard.js"></script>
+        <script src="js/CswMenu.js"></script>
+        <link rel="stylesheet" href="js/CswMenu.css" />
+
         <script src="js/CswAuthenticate.js"></script>
+        <script src="js/CswDashboard.js"></script>
+        <script src="js/CswHeaderMenu.js"></script>
         <script src="Main.js"></script>
     </head>
 
@@ -31,6 +35,7 @@
                 authenticate('1', 'admin', 'admin', function (s) {
                     SessionId = s;
                     $('#dashboard').CswDashboard({ 'SessionId': SessionId });
+                    $('#headermenu').CswHeaderMenu({ 'SessionId': SessionId });
                 });
             });
         </script>
@@ -66,59 +71,10 @@
 
                                     </td>
                                     <td id="HeaderInnerTable_RightHeaderCell" class="HeaderInnerTable_RightHeaderCell" align="right">
-                                        <!-- Right Header Menu -->
-                                        <nobr>
-                                        <table id="Table3" runat="server">
-                                            <tr>
-                                                <td>
-                                                <nobr>
-                                                    <!--
-                                                    <tel:RadMenu id="RightHeaderMenu" 
-                                                                OnItemClick="RightHeaderMenu_OnItemSelectedHandler"
-                                                                OnClientItemClicked="RightHeaderMenu_ItemSelected"
-                                                                EnableEmbeddedSkins="false"
-                                                                Skin="ChemSW"
-                                                                class="Menu"
-                                                                width="280px">
-                                                        <Items>
-                                                            <tel:RadMenuItem Value="HomeMenuItem" Text="Home" />
-                                                            <tel:RadMenuItem Value="AdminMenuItem" Text="Admin" PostBack="false">
-                                                                <Items>
-                                                                    <tel:RadMenuItem Value="UserListMenuItem" Text="Current User List" />
-                                                                    <tel:RadMenuItem Value="LogMenuItem" Text="View Log" />
-                                                                    <tel:RadMenuItem Value="ConfigVarsMenuItem" Text="Edit Config Vars" />
-                                                                    <tel:RadMenuItem Value="StatisticsMenuItem" Text="Statistics" />
-                                                                </Items>
-                                                            </tel:RadMenuItem>
-                                                            <tel:RadMenuItem Value="PrefsMenuItem" Text="Preferences" PostBack="false">
-                                                                <Items>
-                                                                    <tel:RadMenuItem Value="ProfileMenuItem" Text="Profile" />
-                                                                    <tel:RadMenuItem Value="SubscriptionsMenuItem" Text="Subscriptions" />
-                                                                </Items>
-                                                            </tel:RadMenuItem>
-                                                            <tel:RadMenuItem Value="HelpTopMenuItem" Text="Help" PostBack="false">
-                                                                <Items>
-                                                                    <tel:RadMenuItem Value="HelpMenuItem" Text="Help" PostBack="false" />
-                                                                    <tel:RadMenuItem Value="AboutMenuItem" Text="About" PostBack="false" />
-                                                                </Items>
-                                                            </tel:RadMenuItem>
-                                                            <tel:RadMenuItem Value="LogoutMenuItem" Text="Logout" />
-                                                        </Items>
-                                                    </tel:RadMenu>
-                                                    -->
-                                                </nobr>
-                                                </td>
-                                                <td>
-                                                    <!--
-                                                    <nobr>
-                                                    <asp:Label id="UserLabel" Text="" />
-                                                    </nobr>
-                                                    -->
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        </nobr>
-                                        <!-- End Right Header Menu -->
+                                        
+                                        <div id="headermenu"></div>
+                                        
+
                                     </td>
                                 </tr>
                             </table>
@@ -203,26 +159,6 @@
             <br />
             <br />
             <br />
-            <div id="TimeReportOuter" class="TimeReportOuter" runat="server">
-                <table>
-                    <tr>
-                        <td>
-                            <span id="TimeReport" class="TimeReport" style="display: none;">
-                                <span id="PostbackLoadTimeSpan"></span><span id="PageLoadTimeSpan"></span>&nbsp;client&nbsp;/&nbsp;
-
-                                <script language="Javascript" type="text/javascript">
-                                    var endtime = new Date();
-                                    document.getElementByid('PageLoadTimeSpan').innerHTML = (endtime.getTime() - starttime.getTime()) / 1000 + "s";
-                                </script>    
-                                <asp:Literal id="TimeReportLiteral" runat="server"></asp:Literal>
-                            </span>
-                        </td>
-                        <td>
-                            <asp:PlaceHolder id="TimeReportImageButtonPH"></asp:PlaceHolder>
-                        </td>
-                    </tr>
-                </table>
-            </div>
         </form>
     </body>
 </html>

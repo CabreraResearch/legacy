@@ -292,7 +292,34 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetViewS()
+        } // JQueryGetDashboard()
+
+        [WebMethod]
+        public string JQueryGetHeaderMenu( string SessionId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                string EuphemisticAuthenticationStatus = string.Empty;
+                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
+                {
+                    CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtWebServiceResources );
+                    ReturnVal = ws.getHeaderMenu();
+
+                    end();
+                }
+                else
+                {
+                    ReturnVal = result( EuphemisticAuthenticationStatus );
+                }
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        } // JQueryGetDashboard()
 
         [WebMethod]
         public string JQueryGetTree( string SessionId, Int32 ViewId )

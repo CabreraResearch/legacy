@@ -97,6 +97,32 @@ namespace ChemSW.Nbt.WebServices
             return "<dashboard>" + ret + "</dashboard>";
         } // getDashboard()
 
+
+        public string getHeaderMenu()
+        {
+            string ret = string.Empty;
+
+            ret += "<item text=\"Home\" href=\"Main.aspx\" />";
+            ret += "<item text=\"Admin\" href=\"\">";
+            ret += "  <item text=\"Current User List\" href=\"\"/>";
+            ret += "  <item text=\"View Log\" href=\"\"/>";
+            ret += "  <item text=\"Edit Config Vars\" href=\"\"/>";
+            ret += "  <item text=\"Statistics\" href=\"\"/>";
+            ret += "</item>";
+            ret += "<item text=\"Preferences\" href=\"\">";
+            ret += "  <item text=\"Profile\" href=\"\"/>";
+            ret += "  <item text=\"Subscriptions\" href=\"\"/>";
+            ret += "</item>";
+            ret += "<item text=\"Help\" href=\"\">";
+            ret += "  <item text=\"Help\" href=\"\"/>";
+            ret += "  <item text=\"About\" href=\"\"/>";
+            ret += "</item>";
+            ret += "<item text=\"Logout\" href=\"\"/>";
+            
+            return "<menu>"+ ret + "</menu>";
+        }
+
+
         public string getViews()
         {
             string ret = string.Empty;
