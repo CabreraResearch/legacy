@@ -145,12 +145,11 @@ namespace ChemSW.Nbt.PropTypes
             CswCommaDelimitedString NodeTypeNames = new CswCommaDelimitedString();
             foreach( string NodeTypeId in SelectedNodeTypeIds )
             {
-                if( NodeTypeId != string.Empty )
+
+                if( string.Empty != NodeTypeId )
                 {
-                    IEnumerable<CswNbtMetaDataNodeType> MetaDataNodeTypes = _CswNbtResources.MetaData.NodeTypes
-                                                                                .Cast<CswNbtMetaDataNodeType>()
-                                                                                .Where( NodeType => NodeType.NodeTypeId.ToString() == NodeTypeId);
-                    foreach( CswNbtMetaDataNodeType NodeType in MetaDataNodeTypes )
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeId ) );
+                    if( null != NodeType )
                     {
                         NodeTypeNames.Add( NodeType.LatestVersionNodeType.NodeTypeName );
                     }
