@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.WebPages
         {
             string RedirectDestination = string.Empty;
             CswLicenseManager LicenseManager = new CswLicenseManager( Master.CswNbtResources );
-            Int32 PasswordExpiryDays = CswConvert.ToInt32( Master.CswNbtResources.getConfigVariableValue( (CswResources.NbtConfigurationVariables.PasswordExpiry_Days).ToString().ToLower() ) );
+            Int32 PasswordExpiryDays = CswConvert.ToInt32( Master.CswNbtResources.getConfigVariableValue( "passwordexpiry_days" ) );
             if( Master.CswNbtResources.CurrentNbtUser.PasswordProperty.ChangedDate == DateTime.MinValue ||
                 Master.CswNbtResources.CurrentNbtUser.PasswordProperty.ChangedDate.AddDays( PasswordExpiryDays ).Date <= DateTime.Now.Date )
             {

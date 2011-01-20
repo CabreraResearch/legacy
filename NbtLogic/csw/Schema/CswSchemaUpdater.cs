@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.Schema
 
         private CswSchemaVersion CurrentVersion
         {
-            get { return new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.SchemaVersion.ToString().ToLower() ) ); }
+            get { return new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ) ); }
         }
 
         public CswSchemaVersion TargetVersion

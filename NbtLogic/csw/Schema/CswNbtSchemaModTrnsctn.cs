@@ -427,13 +427,13 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Action
         /// </summary>
-        public void createConfigurationVariable( CswResources.NbtConfigurationVariables Name, string Description, string VariableValue, bool IsSystem )
+        public void createConfigurationVariable( String Name, string Description, string VariableValue, bool IsSystem )
         {
             // Create the Configuration Variable
             CswTableUpdate ConfigVarTable = makeCswTableUpdate( "SchemaModTrnsctn_ConfigVarUpdate", "configuration_variables" );
             DataTable ConfigVarDataTable = ConfigVarTable.getEmptyTable();
             DataRow ConfigVarRow = ConfigVarDataTable.NewRow();
-            ConfigVarRow["variablename"] = Name.ToString().ToLower();
+            ConfigVarRow["variablename"] = Name.ToLower();
             ConfigVarRow["description"] = Description;
             ConfigVarRow["variablevalue"] = VariableValue;
             ConfigVarRow["issystem"] = CswConvert.ToDbVal( IsSystem );

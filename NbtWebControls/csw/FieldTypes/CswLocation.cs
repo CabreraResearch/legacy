@@ -21,7 +21,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             this.DataBinding += new EventHandler( CswLocation_DataBinding );
 
             AllowEditValue = ( EditMode != NodeEditMode.Edit && EditMode != NodeEditMode.Demo && EditMode != NodeEditMode.PrintReport && EditMode != NodeEditMode.LowRes );
-            _RelationshipMode = ( _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.Loc_Use_Images.ToString().ToLower() ) == "0" );
+            _RelationshipMode = ( _CswNbtResources.getConfigVariableValue( "loc_use_images" ) == "0" );
 
             EnsureChildControls();
         }

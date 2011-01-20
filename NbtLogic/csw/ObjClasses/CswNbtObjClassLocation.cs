@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             // BZ 6744
             // Hide the Child Location Type and Location Template controls
-            if( _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.Loc_Use_Images.ToString().ToLower() ) == "0" )
+            if( _CswNbtResources.getConfigVariableValue( "loc_use_images" ) == "0" )
             {
                 this.ChildLocationType.Hidden = true;
                 this.Rows.Hidden = true;

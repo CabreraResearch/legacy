@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.WebPages
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string BrandPageTitle = Master.CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.Brand_PageTitle.ToString().ToLower() );
+            string BrandPageTitle = Master.CswNbtResources.getConfigVariableValue( "brand_pagetitle" );
             if (BrandPageTitle != string.Empty)
             {
                 TitleContentLiteral.Text = "About " + BrandPageTitle;

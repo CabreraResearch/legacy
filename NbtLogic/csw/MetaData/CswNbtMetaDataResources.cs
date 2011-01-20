@@ -320,7 +320,7 @@ namespace ChemSW.Nbt.MetaData
                 ChangesMade = JctNodesPropsTableUpdate.updateAll() || ChangesMade;
 
             if ( ChangesMade )
-                CswNbtResources.setConfigVariableValue( CswResources.NbtConfigurationVariables.Cache_LastUpdated.ToString().ToLower(), DateTime.Now.ToString() );
+                CswNbtResources.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
         }
 
         public ICswNbtFieldTypeRule makeFieldTypeRule( ICswNbtMetaDataProp MetaDataProp )

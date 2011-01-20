@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void RemoveDemoData()
         {
-            if( "1" == _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.Is_Demo.ToString() ) )
+            if( "1" == _CswNbtResources.getConfigVariableValue( "is_demo" ) )
             {
                 String AllDemoTablesSQL = " select distinct tablename from data_dictionary where columnname='isdemo' ";
                 CswArbitrarySelect AllDemoTables = _CswNbtResources.makeCswArbitrarySelect( "Fetch Tables With Demo Data", AllDemoTablesSQL );
@@ -65,8 +65,8 @@ namespace ChemSW.Nbt.Schema
                     throw new CswDniException( "Before records from the nodes/statistics table(s) can be deleted, child records must be deleted first.", "Oracle threw an " + ex + " exception." );
                 }
 
-                _CswNbtResources.setConfigVariableValue( CswResources.NbtConfigurationVariables.Is_Demo.ToString(), "0" );
-            }//if( "1" == _CswNbtResources.getConfigVariableValue( CswResources.NbtConfigurationVariables.Is_Demo.ToString() ) )
+                _CswNbtResources.setConfigVariableValue( "is_demo", "0" );
+            }//if( "1" == _CswNbtResources.getConfigVariableValue( "is_demo" ) )
         }
     }
 }
