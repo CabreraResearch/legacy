@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.ServiceProcess;
-using System.Windows.Forms;
-using System.Text;
-using ChemSW.Nbt.Config;
-using ChemSW.Log;
+﻿using System.ServiceProcess;
 using ChemSW.Config;
+using ChemSW.Log;
+using ChemSW.Nbt.Config;
 
 
 namespace CswLogServiceNbt
