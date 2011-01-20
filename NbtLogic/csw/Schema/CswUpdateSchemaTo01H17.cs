@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
             Int32 FEModuleId = CswConvert.ToInt32( FETable.Rows[0]["moduleid"] );
 
             DataTable ImcsTable = ModulesTableSelect.getTable( "where name = 'IMCS'" );
-            Int32 ImcsModuleID = CswConvert.ToInt32( FETable.Rows[0]["moduleid"] );
+            Int32 ImcsModuleID = CswConvert.ToInt32( ImcsTable.Rows[0]["moduleid"] );
 
             if( null != AssemblyScheduleNT )
             {
