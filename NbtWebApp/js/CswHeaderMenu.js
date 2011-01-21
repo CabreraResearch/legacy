@@ -20,8 +20,7 @@
             data: "{SessionId: '" + SessionId + "'}",
             success: function (data, textStatus, XMLHttpRequest) {
                 var $data = $(data.d);
-                var $ul = $('<ul class="topnav"></ul>')
-                             .appendTo($MenuDiv);
+                var $ul = $('<ul class="topnav"></ul>');
 
                 $data.children().each(function() {
                     var $this = $(this);
@@ -46,6 +45,9 @@
                             });
                         }
                     }
+
+                    $MenuDiv.text('')
+                            .append($ul);
                 });
 
                 $ul.CswMenu();

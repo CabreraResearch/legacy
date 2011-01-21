@@ -11,7 +11,6 @@
         }
 
         var $DashDiv = $(this);
-
         $.ajax({
             type: 'POST',
             url: o.Url,
@@ -20,9 +19,8 @@
             data: "{SessionId: '" + SessionId + "'}",
             success: function (data, textStatus, XMLHttpRequest) {
                 var $data = $(data.d);
-                var $table = $('<table id="DashboardTable" class="DashboardTable" cellpadding="0" cellspacing="0"><tr></tr></table>')
-                             .appendTo($DashDiv);
-
+                var $table = $('<table id="DashboardTable" class="DashboardTable" cellpadding="0" cellspacing="0"><tr></tr></table>');
+                
                 $data.children().each(function() {
                     var $this = $(this);
 
@@ -40,6 +38,9 @@
                                       '</td>';
                     }
                     $table.find('tr').append(cellcontent);
+
+                    $DashDiv.text('')
+                            .append($table);
                 });
 
             }, // success{}

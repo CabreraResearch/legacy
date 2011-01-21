@@ -11,7 +11,7 @@ ul.topnav {
 ul.topnav li {
 	float: left;
 	margin: 0;
-	padding: 0px 7px 0 7px;
+    padding: 5px 7px 5px 7px;
 	position: relative; /*--Declare X and Y axis base for sub navigation--*/
     display: block;
     color: #6b94cf;
@@ -23,6 +23,7 @@ ul.topnav li:hover
 }    
 ul.topnav li a{
 	text-decoration: none;
+    color: #6b94cf;
 }
 ul.topnav li ul.subnav {
 	list-style: none;
