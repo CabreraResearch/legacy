@@ -1,0 +1,50 @@
+﻿
+/* Adapted from http://www.noupe.com/tutorial/drop-down-menu-jquery-css.html */
+
+ul.topnav {
+	list-style: none;
+	padding: 0 0 0 20px;
+	margin: 0;
+	float: left;
+	width: 920px;
+}
+ul.topnav li {
+	float: left;
+	margin: 0;
+	padding: 0px 7px 0 7px;
+	position: relative; /*--Declare X and Y axis base for sub navigation--*/
+    display: block;
+    color: #6b94cf;
+    cursor: pointer;
+}
+ul.topnav li:hover
+{
+	background-color: #ffffff;
+}    
+ul.topnav li a{
+	text-decoration: none;
+}
+ul.topnav li ul.subnav {
+	list-style: none;
+	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
+	left: 0; top: 22px;
+	background: #b8cce8;
+	margin: 0; padding: 0;
+	display: none;
+	float: left;
+	width: 170px;
+	border: 1px solid #111;
+}
+ul.topnav li ul.subnav li{
+	margin: 0; padding: 0;
+	border-bottom: 1px solid #6b94cf;
+	clear: both;
+    width: 100%;
+}
+html ul.topnav li ul.subnav li a {
+	float: left;
+	padding: 2px 0 2px 10px;
+}
+html ul.topnav li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
+	background-color: #fff;
+}

@@ -18,9 +18,12 @@ namespace ChemSW.Nbt.WebServices
     public class CswNbtWebServiceView
     {
         private CswNbtWebServiceResources _CswNbtWebServiceResources;
-        public CswNbtWebServiceView( CswNbtWebServiceResources CswNbtWebServiceResources )
+        private bool _ForMobile;
+
+        public CswNbtWebServiceView( CswNbtWebServiceResources CswNbtWebServiceResources, bool ForMobile )
         {
             _CswNbtWebServiceResources = CswNbtWebServiceResources;
+            _ForMobile = ForMobile;
         }
 
         private static string ViewIdPrefix = "viewid_";
@@ -42,7 +45,8 @@ namespace ChemSW.Nbt.WebServices
                 //Session["SessionViewId"] = View.SessionViewId;
 
                 // case 20083
-                ret += "<searches>" + _getSearchNodes( View ) + "</searches>";
+                if( _ForMobile )
+                    ret += "<searches>" + _getSearchNodes( View ) + "</searches>";
 
                 ICswNbtTree Tree = _CswNbtWebServiceResources.CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
 
@@ -113,16 +117,23 @@ namespace ChemSW.Nbt.WebServices
                 string ThisNodeId = ThisNode.NodeId.ToString();
 
                 string ThisSubItems = _runTreeNodesRecursive( Tree );
-                if( ThisSubItems == string.Empty )
+                if( _ForMobile && ThisSubItems == string.Empty )
                 {
                     ThisSubItems = _runProperties( ThisNode );
                 }
-
-                ret += "<node id=\"" + NodeIdPrefix + ThisNodeId + "\"";
-                ret += " name=\"" + ThisNodeName + "\"";
-                ret += " nodetype=\"" + ThisNode.NodeType.NodeTypeName + "\"";
-                ret += " objectclass=\"" + ThisNode.ObjectClass.ObjectClass.ToString() + "\"";
-                ret += " iconfilename=\"" + ThisNode.NodeType.IconFileName + "\"";
+                
+                if( _ForMobile )
+                {
+                    ret += "<node id=\"" + NodeIdPrefix + ThisNodeId + "\"";
+                    ret += " name=\"" + ThisNodeName + "\"";
+                    ret += " nodetype=\"" + ThisNode.NodeType.NodeTypeName + "\"";
+                    ret += " objectclass=\"" + ThisNode.ObjectClass.ObjectClass.ToString() + "\"";
+                    ret += " iconfilename=\"" + ThisNode.NodeType.IconFileName + "\"";
+                }
+                else
+                {
+                    ret += "<item id=\"" + NodeIdPrefix + ThisNodeId + "\"><content><name>" + ThisNodeName + "</name></content>";
+                }
 
                 // case 20083 - search values
                 foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps )
@@ -136,9 +147,16 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
 
-                ret += "><subitems>" + ThisSubItems + "</subitems>";
-                ret += "</node>";
-
+                if( _ForMobile )
+                {
+                    ret += "><subitems>" + ThisSubItems + "</subitems>";
+                    ret += "</node>";
+                }
+                else
+                {
+                    ret += ThisSubItems;
+                    ret += "</item>";
+                }
                 Tree.goToParentNode();
             }
             return ret;
