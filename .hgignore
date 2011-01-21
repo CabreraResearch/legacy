@@ -9,3 +9,4 @@ glob:CswDbCfgInfo.xml
 glob:CswSetupVbls.xml
 relre:\.log$
 glob:NbtWebApp/temp/*
+relre:ReSharper*
