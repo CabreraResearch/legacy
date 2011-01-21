@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Text;
-using System.Data;
+using System.Linq;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
 using ChemSW.Nbt.PropertySets;
@@ -125,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
             Null
         }
 
-                /// <summary>
+        /// <summary>
         /// Replaces underscore with space in enum
         /// </summary>
         public static string InspectionStatusAsString( InspectionStatus Status )
@@ -135,6 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ret = Status.ToString().Replace( '_', ' ' );
             return ret;
         }
+        
         /// <summary>
         /// Replaces space with underscore in enum
         /// </summary>
@@ -146,6 +143,9 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        /// <summary>
+        /// Returns Target status as string from TargetStatus Enum
+        /// </summary>
         public static string TargetStatusAsString( TargetStatus Status )
         {
             string ret = string.Empty;
@@ -153,6 +153,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ret = Status.ToString().Replace( '_', ' ' );
             return ret;
         }
+
         /// <summary>
         /// Replaces space with underscore in enum
         /// </summary>
@@ -187,8 +188,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// The constructor
         /// </summary>
-        /// <param name="CswNbtResources"></param>
-        /// <param name="Node"></param>
         public CswNbtObjClassInspectionDesign( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
@@ -198,7 +197,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Constructor overload
         /// </summary>
-        /// <param name="CswNbtResources"></param>
         public CswNbtObjClassInspectionDesign( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
         {
@@ -216,39 +214,36 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void beforeCreateNode()
         {
-            CswNbtNodePropList NodeStatus = null;
-            CswNbtNodePropRelationship NodeTarget = null;
-            CswNbtNodePropRelationship NodeGenerator = null;
-
-            foreach( CswNbtNode InspectionNode in this.Node.NodeType.getNodes( true, true ) )
+            String NodeStatus = String.Empty;
+            CswNbtMetaDataNodeType ThisInspectionNT = this.Node.NodeType.LatestVersionNodeType;
+            if( null != ThisInspectionNT )
             {
-                NodeStatus = InspectionNode.Properties[StatusPropertyName].AsList;
-                //Inspection status is Pending, Overdue or not set
-                if( InspectionStatusAsString( InspectionStatus.Overdue ) == NodeStatus.Value ||
-                    InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus.Value ||
-                    String.Empty == NodeStatus.Value )
+                //Limit collection to Inspections on the same Generator
+                IEnumerable<CswNbtNode> AllNodesOfThisNT = ThisInspectionNT.getNodes( true, true )
+                                                                           .Where( InspectionNode => this.Generator.RelatedNodeId == InspectionNode.Properties[GeneratorPropertyName].AsRelationship.RelatedNodeId );
+                foreach( CswNbtNode InspectionNode in AllNodesOfThisNT )
                 {
-                    NodeGenerator = InspectionNode.Properties[GeneratorPropertyName].AsRelationship;
-                    //Generator exists
-                    if( null != NodeGenerator )
+                    CswNbtObjClassInspectionDesign PriorInspection = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
+                    NodeStatus = PriorInspection.Status.Value;
+
+                    if( //Inspection status is Pending, Overdue or not set
+                        ( InspectionStatusAsString( InspectionStatus.Overdue ) == NodeStatus ||
+                          InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus ||
+                          String.Empty == NodeStatus ) &&
+                        //Inspections have the same target, and we're comparing different Inspection nodes
+                        ( this.Target.RelatedNodeId == InspectionNode.Properties[TargetPropertyName].AsRelationship.RelatedNodeId &&
+                          this.Node != InspectionNode ) )
                     {
-                        //Inspection is on the same generator
-                        if( this.Generator.RelatedNodeId == NodeGenerator.RelatedNodeId )
-                        {
-                            NodeTarget = InspectionNode.Properties[TargetPropertyName].AsRelationship;
-                            //Not this inspection, and Inspection has the same target
-                            if( this.Target.NodeId == NodeTarget.RelatedNodeId &&
-                                this.Node != InspectionNode )
-                            {
-                                NodeStatus.Value = InspectionStatus.Missed.ToString();
-                            }
-                        }
+                        PriorInspection.Status.Value = InspectionStatus.Missed.ToString();
+                        // Case 20755
+                        PriorInspection.postChanges( true );
                     }
                 }
             }
+            _CswNbtObjClassDefault.beforeCreateNode();
+        }
 
-             _CswNbtObjClassDefault.beforeCreateNode();
-        } // beforeCreateNode()
+        // beforeCreateNode()
 
         /// <summary>
         /// Lock Node Type

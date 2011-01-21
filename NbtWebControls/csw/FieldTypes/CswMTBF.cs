@@ -1,22 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data;
 using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
 using ChemSW.CswWebControls;
-using ChemSW.DB;
-using ChemSW.Core;
-using ChemSW.NbtWebControls.FieldTypes;
-using ChemSW.Nbt.ObjClasses;
-
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {
@@ -164,9 +151,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             }
 
             _MTBFValue.Text += "&nbsp;";
-
-            if( _EditMode != NodeEditMode.LowRes )
-                _UnitSelector.Attributes.Add( "onchange", "CswMTBF_toggleUnit('" + _MTBFValue.ClientID + "', '" + _hours.ToString() + "', '" + _days.ToString() + "', this.value);" );
+            _UnitSelector.Attributes.Add( "onchange", "CswMTBF_toggleUnit('" + _MTBFValue.ClientID + "', '" + _hours.ToString() + "', '" + _days.ToString() + "', this.value);" );
 
             _EditTable.Visible = false;
             _EditButton.Visible = true;

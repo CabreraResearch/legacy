@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
 using System.Data;
-using System.Text;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
@@ -83,6 +79,8 @@ namespace ChemSW.Nbt.Schema
             _UpdateDrivers.Add( Schema01H15Driver.SchemaVersion, Schema01H15Driver );
             CswSchemaUpdateDriver Schema01H16Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H16( _CswNbtSchemaModTrnsctn ) );
             _UpdateDrivers.Add( Schema01H16Driver.SchemaVersion, Schema01H16Driver );
+            CswSchemaUpdateDriver Schema01H17Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H17( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H17Driver.SchemaVersion, Schema01H17Driver );
 
             // This automatically detects the latest version
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys )

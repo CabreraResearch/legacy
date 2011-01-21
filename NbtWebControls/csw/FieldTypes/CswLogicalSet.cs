@@ -1,20 +1,8 @@
 ﻿using System;
-using System.Collections.Specialized;
-using System.Collections.Generic;
-using System.Collections;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 using System.Data;
 using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Core;
-using Telerik.Web.UI;
 using ChemSW.Nbt.MetaData;
 using ChemSW.CswWebControls;
 
@@ -44,17 +32,10 @@ namespace ChemSW.NbtWebControls.FieldTypes
             if( Prop != null )
             {
                 EnsureChildControls();
-                if( _EditMode != NodeEditMode.LowRes )
-                {
-                    DataTable Data = Prop.AsLogicalSet.GetDataAsTable( _NameColumn, _KeyColumn );
-                    _CBArray.ReadOnly = ReadOnly;
-                    _CBArray.CreateCheckBoxes( Data, _NameColumn, _KeyColumn );
-                    _CBArray.Rows = Prop.AsLogicalSet.Rows;
-                }
-                else
-                {
-                    _Label.Text = Prop.AsLogicalSet.Gestalt;
-                }
+                DataTable Data = Prop.AsLogicalSet.GetDataAsTable( _NameColumn, _KeyColumn );
+                _CBArray.ReadOnly = ReadOnly;
+                _CBArray.CreateCheckBoxes( Data, _NameColumn, _KeyColumn );
+                _CBArray.Rows = Prop.AsLogicalSet.Rows;
             }
         }
 
@@ -62,20 +43,17 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             if( !ReadOnly )
             {
-                if( _EditMode != NodeEditMode.LowRes )
-                {
-                    DataTable Data = Prop.AsLogicalSet.GetDataAsTable( _NameColumn, _KeyColumn );
+                DataTable Data = Prop.AsLogicalSet.GetDataAsTable( _NameColumn, _KeyColumn );
 
-                    foreach( DataRow Row in Data.Rows )
+                foreach( DataRow Row in Data.Rows )
+                {
+                    string YValue = Row[_KeyColumn].ToString();
+                    foreach( DataColumn Column in Data.Columns )
                     {
-                        string YValue = Row[_KeyColumn].ToString();
-                        foreach( DataColumn Column in Data.Columns )
+                        if( Column.ColumnName != _NameColumn && Column.ColumnName != _KeyColumn )
                         {
-                            if( Column.ColumnName != _NameColumn && Column.ColumnName != _KeyColumn )
-                            {
-                                string XValue = Column.ColumnName;
-                                Prop.AsLogicalSet.SetValue( XValue, YValue, _CBArray.GetValue( YValue, XValue ) );
-                            }
+                            string XValue = Column.ColumnName;
+                            Prop.AsLogicalSet.SetValue( XValue, YValue, _CBArray.GetValue( YValue, XValue ) );
                         }
                     }
                     Prop.AsLogicalSet.Save();
@@ -90,20 +68,17 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         public override void Clear()
         {
-            if( Prop != null && _EditMode != NodeEditMode.LowRes )
-            {
-                DataTable Data = Prop.AsLogicalSet.GetDataAsTable( _NameColumn, _KeyColumn );
+            DataTable Data = Prop.AsLogicalSet.GetDataAsTable( _NameColumn, _KeyColumn );
 
-                foreach( DataRow Row in Data.Rows )
+            foreach( DataRow Row in Data.Rows )
+            {
+                string YValue = Row[_KeyColumn].ToString();
+                foreach( DataColumn Column in Data.Columns )
                 {
-                    string YValue = Row[_KeyColumn].ToString();
-                    foreach( DataColumn Column in Data.Columns )
+                    if( Column.ColumnName != _NameColumn && Column.ColumnName != _KeyColumn )
                     {
-                        if( Column.ColumnName != _NameColumn && Column.ColumnName != _KeyColumn )
-                        {
-                            string XValue = Column.ColumnName;
-                            _CBArray.GetCheckBox( YValue, XValue ).Checked = false;
-                        }
+                        string XValue = Column.ColumnName;
+                        _CBArray.GetCheckBox( YValue, XValue ).Checked = false;
                     }
                 }
             }
@@ -113,18 +88,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
         private Label _Label;
         protected override void CreateChildControls()
         {
-            if( _EditMode != NodeEditMode.LowRes )
-            {
-                _CBArray = new CswCheckBoxArray( _CswNbtResources );
-                _CBArray.ID = "cbarray";
-                this.Controls.Add( _CBArray );
-            }
-            else
-            {
-                _Label = new Label();
-                _Label.ID = "ls_label";
-                this.Controls.Add( _Label );
-            }
+            _CBArray = new CswCheckBoxArray( _CswNbtResources );
+            _CBArray.ID = "cbarray";
+            this.Controls.Add( _CBArray );
             base.CreateChildControls();
         }
     }

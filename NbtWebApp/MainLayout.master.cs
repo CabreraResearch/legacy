@@ -1,15 +1,7 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 using ChemSW.Exceptions;
-using ChemSW.Nbt;
 using ChemSW.Security;
 using ChemSW.NbtWebControls;
 using ChemSW.Nbt.MetaData;
@@ -18,8 +10,8 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
 using Telerik.Web.UI;
 using ChemSW.CswWebControls;
-using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -44,6 +36,7 @@ namespace ChemSW.Nbt.WebPages
         private RadMenuItem HelpMenuItem;
         private RadMenuItem AboutMenuItem;
         private RadMenuItem LogoutMenuItem;
+        private RadMenuItem RemoveDemoDataItem;
         private Button HiddenChangeViewButton;
         private HiddenField HiddenChangeViewId;
         public CswMainMenu MainMenu;
@@ -109,10 +102,13 @@ namespace ChemSW.Nbt.WebPages
                 }
 
                 if( Master.CswNbtResources.getConfigVariableValue( "showloadbox" ) != "1" )
+                {
                     ProgressDiv.Visible = false;
+                }
                 else
+                {
                     ProgressDiv.Visible = true;
-
+                }
                 LogTimerResult( "MainLayout.OnInit() finished", Timer.ElapsedDurationInSecondsAsString );
             }
             catch( Exception ex )
@@ -140,6 +136,7 @@ namespace ChemSW.Nbt.WebPages
                 AboutMenuItem = RightHeaderMenu.FindItemByValue( "AboutMenuItem" );
                 LogoutMenuItem = RightHeaderMenu.FindItemByValue( "LogoutMenuItem" );
                 StatisticsMenuItem = RightHeaderMenu.FindItemByValue( "StatisticsMenuItem" );
+                RemoveDemoDataItem = RightHeaderMenu.FindItemByValue( "RemoveDemoDataItem" );
 
                 if( !HideContent && Master.IsAuthenticated() && Page.AppRelativeVirtualPath != @"~/License.aspx" )
                 {
@@ -165,7 +162,9 @@ namespace ChemSW.Nbt.WebPages
 
                     AdminMenuItem.Visible = false;
                     if( Master.CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    {
                         AdminMenuItem.Visible = true;
+                    }
 
                     //BrandTitle.Visible = false;
                     //BrandTitle2.Visible = false;
@@ -196,7 +195,13 @@ namespace ChemSW.Nbt.WebPages
                     UserListMenuItem.CssClass = "SubMenuGroup";
                     StatisticsMenuItem.CssClass = "SubMenuGroup";
                     ConfigVarsMenuItem.CssClass = "SubMenuGroup";
+                    RemoveDemoDataItem.CssClass = "SubMenuGroup";
 
+                    RemoveDemoDataItem.Visible = false;
+                    if( "1" == Master.CswNbtResources.getConfigVariableValue( "is_demo".ToLower() ) )
+                    {
+                        RemoveDemoDataItem.Visible = true;
+                    }
                     //SearchLiteral.Visible = false;
 
                     // Set dashboard module lights
@@ -308,65 +313,92 @@ namespace ChemSW.Nbt.WebPages
             CswViewListTree.AfterModifyReport( Page.Session );
         }
 
-
         protected void RightHeaderMenu_OnItemSelectedHandler( object sender, RadMenuEventArgs e )
         {
             try
             {
-                if( e.Item.Value == "HomeMenuItem" )
+                switch( e.Item.Value )
                 {
-                    //clearView();
-                    //setViewId( CswNbtResources.CurrentNbtUser.DefaultViewId, true );
-                    //Master.Redirect( "Main.aspx" );
-                    GoHome();
-                }
-                else if( e.Item.Value == "UserListMenuItem" )
-                {
-                    Redirect( "UserList.aspx" );
-                }
-                else if( e.Item.Value == "StatisticsMenuItem" )
-                {
-                    Redirect( "Statistics.aspx" );
-                }
-                else if( e.Item.Value == "HelpMenuItem" )
-                {
-                    // Client-side
-                }
-                else if( e.Item.Value == "AboutMenuItem" )
-                {
-                    // Client-side
-                }
-                else if( e.Item.Value == "ProfileMenuItem" )
-                {
-                    CswNbtMetaDataObjectClass UserObjectClass = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                    case "HomeMenuItem":
+                        {
+                            //clearView();
+                            //setViewId( CswNbtResources.CurrentNbtUser.DefaultViewId, true );
+                            //Master.Redirect( "Main.aspx" );
+                            GoHome();
+                            break;
+                        }
+                    case "UserListMenuItem":
+                        {
+                            Redirect( "UserList.aspx" );
+                            break;
+                        }
+                    case "StatisticsMenuItem":
+                        {
+                            Redirect( "Statistics.aspx" );
+                            break;
+                        }
+                    case "HelpMenuItem":
+                        {
+                            // Client-side
+                            break;
+                        }
+                    case "AboutMenuItem":
+                        {
+                            // Client-side
+                            break;
+                        }
+                    case "ProfileMenuItem":
+                        {
+                            CswNbtMetaDataObjectClass UserObjectClass =
+                                Master.CswNbtResources.MetaData.getObjectClass(
+                                    CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
 
-                    CswNbtView UserView = new CswNbtView( Master.CswNbtResources );
-                    UserView.ViewName = "Preferences";
-                    CswNbtViewRelationship UserRelationship = UserView.AddViewRelationship( UserObjectClass, true );
-                    UserRelationship.NodeIdsToFilterIn.Add( Master.CswNbtResources.CurrentUser.UserId );
+                            CswNbtView UserView = new CswNbtView( Master.CswNbtResources );
+                            UserView.ViewName = "Preferences";
+                            CswNbtViewRelationship UserRelationship = UserView.AddViewRelationship( UserObjectClass,
+                                                                                                    true );
+                            UserRelationship.NodeIdsToFilterIn.Add( Master.CswNbtResources.CurrentUser.UserId );
 
-                    ICswNbtTree PrefsTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, false, false, false, false );
-                    PrefsTree.goToNthChild( 0 );
-                    Session["Main_SelectedNodeKey"] = PrefsTree.getNodeKeyForCurrentPosition().ToString();
+                            ICswNbtTree PrefsTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, false, false,
+                                                                                                  false, false );
+                            PrefsTree.goToNthChild( 0 );
+                            Session["Main_SelectedNodeKey"] = PrefsTree.getNodeKeyForCurrentPosition().ToString();
 
-                    Master.setViewXml( UserView.ToString() );
-                    Master.Redirect( "Main.aspx" );
-                }
-                else if( e.Item.Value == "SubscriptionsMenuItem" )
-                {
-                    Master.Redirect( "Subscriptions.aspx" );
-                }
-                else if( e.Item.Value == "LogoutMenuItem" )
-                {
-                    Logout();
-                }
-                else if( e.Item.Value == "LogMenuItem" )
-                {
-                    Master.Redirect( "DisplayLog.aspx" );
-                }
-                else if( e.Item.Value == "ConfigVarsMenuItem" )
-                {
-                    Master.Redirect( "ConfigVars.aspx" );
+                            Master.setViewXml( UserView.ToString() );
+                            Master.Redirect( "Main.aspx" );
+                            break;
+                        }
+                    case "SubscriptionsMenuItem":
+                        {
+                            Master.Redirect( "Subscriptions.aspx" );
+                            break;
+                        }
+                    case "LogoutMenuItem":
+                        {
+                            Logout();
+                            break;
+                        }
+                    case "LogMenuItem":
+                        {
+                            Master.Redirect( "DisplayLog.aspx" );
+                            break;
+                        }
+                    case "ConfigVarsMenuItem":
+                        {
+                            Master.Redirect( "ConfigVars.aspx" );
+                            break;
+                        }
+                    case "RemoveDemoDataItem":
+                        {
+                            CswDemoDataManager DemoDataManager = new CswDemoDataManager( Master.CswNbtResources );
+                            DemoDataManager.RemoveDemoData();
+                            break;
+                        }
+                    default:
+                        {
+                            Master.Redirect( "Welcome.aspx" );
+                            break;
+                        }
                 }
             }
             catch( Exception ex )
@@ -454,7 +486,7 @@ namespace ChemSW.Nbt.WebPages
                     CswNbtResources.logError( ex );
 
                     // Display the error in the ErrorBox
-                    if( CswNbtResources.getConfigVariableValue( "DisplayErrorsInUI" ) != "0" )
+                    if( CswNbtResources.getConfigVariableValue( "displayerrorsinui" ) != "0" )
                     {
                         string Title;
                         string Message;

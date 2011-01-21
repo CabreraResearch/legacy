@@ -1,20 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data;
 using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
-using Telerik.Web.UI;
 using ChemSW.DB;
 using ChemSW.CswWebControls;
 
@@ -32,7 +23,6 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             this.DataBinding += new EventHandler( CswNodeTypeSelect_DataBinding );
         }
-
 
         private void CswNodeTypeSelect_DataBinding( object sender, EventArgs e )
         {
@@ -129,7 +119,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             EnsureChildControls();
 
             if( Prop != null )
-            {
+            {   
                 _ValueLabel.Text = Prop.AsNodeTypeSelect.SelectedNodeTypeNames().ToString();
                 if( !_AllowEditValue )
                 {

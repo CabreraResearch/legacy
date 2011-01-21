@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Data;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Collections.ObjectModel;
-using System.Text;
 using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.TblDn;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Actions;
 using ChemSW.Exceptions;
-using ChemSW.RscAdo;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.DB;
 using ChemSW.Nbt.Security;
@@ -42,7 +37,7 @@ namespace ChemSW.Nbt.Schema
             _CswDdl = new CswDDL( _CswNbtResources );
             //            _CswNbtSequenceManager = new CswNbtSequenceManager( _CswNbtResources );
         }//ctor
-
+        
         //private bool _ManageConstraints = true;
         //public bool ManageConstraints
         //{
@@ -427,6 +422,23 @@ namespace ChemSW.Nbt.Schema
             GrantActionPermission( RoleNode, Name );
 
             return NewActionId;
+        }
+
+        /// <summary>
+        /// Convenience function for making new Action
+        /// </summary>
+        public void createConfigurationVariable( String Name, string Description, string VariableValue, bool IsSystem )
+        {
+            // Create the Configuration Variable
+            CswTableUpdate ConfigVarTable = makeCswTableUpdate( "SchemaModTrnsctn_ConfigVarUpdate", "configuration_variables" );
+            DataTable ConfigVarDataTable = ConfigVarTable.getEmptyTable();
+            DataRow ConfigVarRow = ConfigVarDataTable.NewRow();
+            ConfigVarRow["variablename"] = Name.ToLower();
+            ConfigVarRow["description"] = Description;
+            ConfigVarRow["variablevalue"] = VariableValue;
+            ConfigVarRow["issystem"] = CswConvert.ToDbVal( IsSystem );
+            ConfigVarDataTable.Rows.Add( ConfigVarRow );
+            ConfigVarTable.update( ConfigVarDataTable );
         }
 
         /// <summary>

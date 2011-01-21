@@ -1,20 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
-using System.Data;
 using ChemSW.Nbt;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.CswWebControls;
 using ChemSW.Nbt.ObjClasses;
-using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {
@@ -79,35 +68,27 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 _Grid.ViewName = String.Empty;
                 _Grid.ID = "pgrid";
                 _Grid.OnError += new CswErrorHandler( HandleError );
-                if( _EditMode != NodeEditMode.LowRes )
+                if( _EditMode != NodeEditMode.PrintReport ) // BZ 8668
                 {
-                    if( _EditMode != NodeEditMode.PrintReport )   // BZ 8668
-                    {
-                        _Grid.ShowActionColumns = true;
-                        _Grid.DisplayMenu = true;
-                        _Grid.Menu.AllowAdd = true;
-                        _Grid.Menu.AllowDelete = true;
-                        //_Grid.Menu.AllowExport = true; //bz # 7129
-                        _Grid.Menu.NbtViewRenderingMode = NbtViewRenderingMode.Grid;
-                        _Grid.Menu.AllowPrint = true;
-                        _Grid.Menu.AddMenuDoesntChangeView = true;
-                        _Grid.Menu.AddMenuDoesntChangeSelectedNode = true;
-                    }
-                    else
-                    {
-                        _Grid.Grid.Skin = "ChemSWPrint";
-                    }
+                    _Grid.ShowActionColumns = true;
+                    _Grid.DisplayMenu = true;
+                    _Grid.Menu.AllowAdd = true;
+                    _Grid.Menu.AllowDelete = true;
+                    //_Grid.Menu.AllowExport = true; //bz # 7129
+                    _Grid.Menu.NbtViewRenderingMode = NbtViewRenderingMode.Grid;
+                    _Grid.Menu.AllowPrint = true;
+                    _Grid.Menu.AddMenuDoesntChangeView = true;
+                    _Grid.Menu.AddMenuDoesntChangeSelectedNode = true;
                 }
                 else
                 {
-                    _Grid.ShowActionColumns = false;
-                    _Grid.DisplayMenu = false;
-                    _Grid.DisplayViewName = false;
-                    _Grid.ShowAsHtmlTable = true;
+                    _Grid.Grid.Skin = "ChemSWPrint";
                 }
+
 
                 this.Controls.Add( _Grid );
             }
+
             catch( Exception ex )
             {
                 HandleError( ex );

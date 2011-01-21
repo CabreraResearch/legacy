@@ -1,17 +1,6 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 using ChemSW.Exceptions;
-using ChemSW.Nbt;
 using ChemSW.Core;
-using ChemSW.Security;
-using ChemSW.NbtWebControls;
 using ChemSW.Nbt.ObjClasses;
 using Telerik.Web.UI;
 
@@ -239,7 +228,7 @@ namespace ChemSW.Nbt.WebPages
                     CswNbtResources.logError( ex );
 
                     // Display the error in the ErrorBox
-                    if( CswNbtResources.getConfigVariableValue( "DisplayErrorsInUI" ) != "0" )
+                    if( CswNbtResources.getConfigVariableValue( "displayerrorsinui" ) != "0" )
                     {
                         string Title;
                         string Message;

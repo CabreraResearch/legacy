@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Text;
-using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
@@ -251,7 +246,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             this.FailedLoginCount.Value = Convert.ToDouble( failures );
 
-            if( failures >= CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "FailedLoginLimit" ) ) )
+            if( failures >= CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "failedloginlimit" ) ) )
             {
                 this.AccountLocked.Checked = Tristate.True;
             }

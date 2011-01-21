@@ -1,12 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -62,23 +56,28 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setDefaultMessage()
         {
-            switch( SelectedEvent )
+            if (null != TargetNodeType)
             {
-                case EventOption.Create:
-                    Message.Text = "New " + TargetNodeType.NodeTypeName + " has been created: " + MessageNodeNameReplacement + ".\r\n";
-                    break;
-                case EventOption.Edit:
-                    Message.Text = TargetNodeType.NodeTypeName + " has been edited: " + MessageNodeNameReplacement + ".\r\n";
-                    if( Property.Value != string.Empty )
-                        Message.Text += Property.Value + " changed to: " + MessagePropertyValueReplacement;
-                    break;
-                case EventOption.Delete:
-                    Message.Text = TargetNodeType.NodeTypeName + " has been deleted: " + MessageNodeNameReplacement + ".\r\n";
-                    break;
+                switch (SelectedEvent)
+                {
+                    case EventOption.Create:
+                        Message.Text = "New " + TargetNodeType.NodeTypeName + " has been created: " +
+                                       MessageNodeNameReplacement + ".\r\n";
+                        break;
+                    case EventOption.Edit:
+                        Message.Text = TargetNodeType.NodeTypeName + " has been edited: " + MessageNodeNameReplacement +
+                                       ".\r\n";
+                        if (Property.Value != string.Empty)
+                            Message.Text += Property.Value + " changed to: " + MessagePropertyValueReplacement;
+                        break;
+                    case EventOption.Delete:
+                        Message.Text = TargetNodeType.NodeTypeName + " has been deleted: " + MessageNodeNameReplacement +
+                                       ".\r\n";
+                        break;
+                }
             }
         }
-
-
+        
         public override void afterCreateNode()
         {
             // BZ 10094 - Reset cache

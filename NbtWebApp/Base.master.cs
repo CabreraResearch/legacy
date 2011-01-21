@@ -1,28 +1,13 @@
 ﻿using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Collections.Specialized;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using ChemSW.Nbt;
 using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.Config;
 using ChemSW.Security;
 //using ChemSW.Nbt.TableEvents;
-using ChemSW.Nbt.TreeEvents;
-using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Session;
-using Telerik.Web.UI;
-using ChemSW.Nbt.Security;
 using ChemSW.Config;
 using ChemSW.Nbt.Statistics;
 using ChemSW.CswWebControls;
@@ -196,8 +181,7 @@ namespace ChemSW.Nbt.WebPages
                 if( !CswSessionManager.IsAuthenticated() )
                 {
                     string ScriptName = HttpContext.Current.Request.ServerVariables["SCRIPT_NAME"];
-                    if( ScriptName.Substring( ScriptName.LastIndexOf( '/' ) ) != "/Login.aspx" &&
-                        ScriptName.Substring( ScriptName.LastIndexOf( '/' ) ) != "/LowRes_Login.aspx" )
+                    if( ScriptName.Substring( ScriptName.LastIndexOf( '/' ) ) != "/Login.aspx" )
                     {
                         //ReleaseAll();
                         Redirect( LogoutPath );

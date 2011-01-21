@@ -1,17 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
-using System.Data;
 using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
 using ChemSW.CswWebControls;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.NbtWebControls.FieldTypes
@@ -112,21 +103,18 @@ namespace ChemSW.NbtWebControls.FieldTypes
         protected override void OnPreRender(EventArgs e)
         {
             string MinValString = string.Empty;
-            if (_MinValue != Int32.MinValue)
+            if( _MinValue != Int32.MinValue )
                 MinValString = _MinValue.ToString();
             string MaxValString = string.Empty;
-            if (_MaxValue != Int32.MinValue)
+            if( _MaxValue != Int32.MinValue )
                 MaxValString = _MaxValue.ToString();
 
-            if( _EditMode != NodeEditMode.LowRes && !ReadOnly )
-            {
-                _TextBox.Attributes.Add( "onkeypress", "CswNumber_onchange('" + _TextBox.ClientID + "', '" + _InvalidImg.ClientID + "', '" + _Precision.ToString() + "', '" + MinValString + "', '" + MaxValString + "');" );
-                _TextBox.Attributes.Add( "onchange", "CswNumber_onchange('" + _TextBox.ClientID + "', '" + _InvalidImg.ClientID + "', '" + _Precision.ToString() + "', '" + MinValString + "', '" + MaxValString + "');" );
-            }
-            base.OnPreRender(e);
+            _TextBox.Attributes.Add( "onkeypress", "CswNumber_onchange('" + _TextBox.ClientID + "', '" + _InvalidImg.ClientID + "', '" + _Precision.ToString() + "', '" + MinValString + "', '" + MaxValString + "');" );
+            _TextBox.Attributes.Add( "onchange", "CswNumber_onchange('" + _TextBox.ClientID + "', '" + _InvalidImg.ClientID + "', '" + _Precision.ToString() + "', '" + MinValString + "', '" + MaxValString + "');" );
+            base.OnPreRender( e );
         }
 
-        
+
         public override void RenderControl(HtmlTextWriter writer)
         {
             if (ReadOnly)

@@ -1,19 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
-using System.Data;
 using System.Web.UI.WebControls;
-using ChemSW.NbtWebControls;
-using ChemSW.NbtWebControls.FieldTypes;
-using ChemSW.Security;
 using ChemSW.Nbt;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 

@@ -1,15 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data;
 using ChemSW.Nbt;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.NbtWebControls;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.CswWebControls;
 
@@ -33,14 +25,17 @@ namespace ChemSW.NbtWebControls.FieldTypes
             }
         }
 
+        // Case 20783
+        private bool _Succeeded = false;
         public override void Save()
         {
+            
             if( _EditMode == NodeEditMode.DefaultValue )
-                Prop.AsBarcode.SetBarcodeValueOverride( _ValueTextBox.Text, false );
+                _Succeeded = Prop.AsBarcode.SetBarcodeValueOverride( _ValueTextBox.Text, false );
             else if( !ReadOnly && _ValueTextBox.Text != CswNbtNodePropBarcode.AutoSignal && _ValueTextBox.Text != string.Empty )
-                Prop.AsBarcode.SetBarcodeValueOverride( _ValueTextBox.Text, false );
+                _Succeeded = Prop.AsBarcode.SetBarcodeValueOverride( _ValueTextBox.Text, false );
             else
-                Prop.AsBarcode.SetBarcodeValue();  // this will not overwrite
+                _Succeeded = Prop.AsBarcode.SetBarcodeValue();  // this will not overwrite
         }
         public override void AfterSave()
         {
@@ -101,7 +96,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             if( Prop != null && Prop != null && Prop.NodeId != null )
                 _PrintButton.OnClientClick = "openPrintLabelPopup('" + Prop.NodeId.ToString() + "','" + Prop.NodeTypePropId + "');";
 
-            if( _EditMode == NodeEditMode.PrintReport || _EditMode == NodeEditMode.LowRes )
+            if( _EditMode == NodeEditMode.PrintReport )
                 _PrintButton.Visible = false;
 
             base.OnPreRender( e );

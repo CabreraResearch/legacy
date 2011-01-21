@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -70,13 +68,15 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Sets Barcode to the next sequence value
         /// </summary>
-        public void SetBarcodeValue()
+        public bool SetBarcodeValue()
         {
+            bool Succeeded = false;
             if( Barcode.Trim() == string.Empty )
             {
                 string value = _SequenceValue.Next;
-                SetBarcodeValueOverride( value, false );
+                Succeeded = SetBarcodeValueOverride( value, false );
             }
+            return Succeeded;
         }
 
         /// <summary>
@@ -86,10 +86,10 @@ namespace ChemSW.Nbt.PropTypes
         /// <param name="value">Value to set for Barcode</param>
         /// <param name="ResetSequence">True if the sequence needs to be reset to this value 
         /// (set true if the value was not just generated from the sequence)</param>
-        public void SetBarcodeValueOverride( string value, bool ResetSequence )
+        public bool SetBarcodeValueOverride( string value, bool ResetSequence )
         {
-            _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, value );
-            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, _SequenceValue.deformatSequence( value ) );
+            bool Succeeded = _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, value );
+            Succeeded = ( Succeeded && _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, _SequenceValue.deformatSequence( value ) ) );
             _CswNbtNodePropData.Gestalt = value;
 
             if( ResetSequence )
@@ -97,6 +97,7 @@ namespace ChemSW.Nbt.PropTypes
                 // Keep the sequence up to date
                 _SequenceValue.Resync();
             }
+            return Succeeded;
         }
 
         override public void onBeforeUpdateNodePropRow( bool IsCopy )

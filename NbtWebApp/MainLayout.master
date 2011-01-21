@@ -178,6 +178,7 @@
                                                       <tel:RadMenuItem runat="server" Value="LogMenuItem" Text="View Log" />
                                                       <tel:RadMenuItem runat="server" Value="ConfigVarsMenuItem" Text="Edit Config Vars" />
                                                       <tel:RadMenuItem runat="server" Value="StatisticsMenuItem" Text="Statistics" />
+                                                      <tel:RadMenuItem runat="server" Value="RemoveDemoDataItem" Text="Remove Demo Data" OnClick="return confirm('This Will Delete All Demo Data. Are You Sure?')" />
                                                   </Items>
                                               </tel:RadMenuItem>
                                               <tel:RadMenuItem runat="server" Value="PrefsMenuItem" Text="Preferences" PostBack="false">

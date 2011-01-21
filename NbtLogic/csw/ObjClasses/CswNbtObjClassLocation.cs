@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 
 
