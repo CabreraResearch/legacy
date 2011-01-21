@@ -689,7 +689,11 @@
                         Html += '<option value="' + options[i] + '"';
                         if (selectedvalue == options[i])
                             Html += ' selected';
-                        Html += '>' + options[i] + "</option>";
+                        
+                        if(options[i] != '')
+                            Html += '>' + options[i] + '</option>';
+                        else
+                            Html += '>[blank]</option>';
                     }
                     Html += '</select>';
                     break;
@@ -1350,7 +1354,7 @@
 
         function onPropertyChange(DivId, eventObj)
         {
-            var $elm = $(eventObj.srcElement);
+            var $elm = $(eventObj.target);
             var name = $elm.attr('name');
             var value = $elm.attr('value');
 

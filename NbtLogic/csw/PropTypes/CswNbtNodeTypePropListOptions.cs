@@ -4,6 +4,8 @@ using System.Text;
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Core;
+
 namespace ChemSW.Nbt.PropTypes
 {
 
@@ -37,22 +39,21 @@ namespace ChemSW.Nbt.PropTypes
             }
             else
             {
-                Override( NodeTypeProp.ListOptions );
+                CswCommaDelimitedString Opts = new CswCommaDelimitedString();
+                Opts.FromString( NodeTypeProp.ListOptions );
+                Override( Opts );
             }
         }//ctor
 
-        public void Override( string CommaDelimitedOptions )
+        public void Override( CswCommaDelimitedString CommaDelimitedOptions )
         {
-            char[] Delims = { delimiter };
-            string[] Options = CommaDelimitedOptions.Split( Delims, StringSplitOptions.RemoveEmptyEntries );
-
             int iOptionCnt = 0;
-            _Options = new CswNbtNodeTypePropListOption[Options.Length + 1];
+            _Options = new CswNbtNodeTypePropListOption[CommaDelimitedOptions.Count + 1];
             _Options[iOptionCnt] = new CswNbtNodeTypePropListOption( "", "" );
             iOptionCnt++;
-            for( int i = 0; i < Options.Length; i++ )
+            for( int i = 0; i < CommaDelimitedOptions.Count; i++ )
             {
-                _Options[iOptionCnt] = new CswNbtNodeTypePropListOption( Options[i].Trim(), Options[i].Trim() );
+                _Options[iOptionCnt] = new CswNbtNodeTypePropListOption( CommaDelimitedOptions[i].Trim(), CommaDelimitedOptions[i].Trim() );
                 iOptionCnt++;
             }
         }
@@ -62,14 +63,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override string ToString()
         {
-            string ret = string.Empty;
+            CswCommaDelimitedString ret = new CswCommaDelimitedString();
             foreach( CswNbtNodeTypePropListOption Option in Options )
             {
-                if( ret != string.Empty )
-                    ret += delimiter.ToString();
-                ret += Option.Text;
+                ret.Add( Option.Text );
             }
-            return ret;
+            return ret.ToString();
         } // ToString()
 
     }//CswNbtNodeTypePropListOptions
