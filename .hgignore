@@ -10,3 +10,6 @@ glob:CswSetupVbls.xml
 relre:\.log$
 glob:NbtWebApp/temp/*
 relre:ReSharper*
+relre:log.txt
+relre:Log.txt
+relre:{*}
