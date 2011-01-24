@@ -26,13 +26,7 @@
                     var $this = $(this);
                     if($this.attr('text') != undefined)
                     {
-                        var $li;
-                        if($this.attr('href') != undefined && $this.attr('href') != '' ) {
-                            $li = $('<li><a href="' + $this.attr('href') + '">'+ $this.attr('text') +'</a></li>')
-                        }
-                        else {
-                            $li = $('<li>' + $this.attr('text') +'</li>')
-                        }
+                        var $li = HandleMenuItem($this);
                         $li.appendTo($ul);
 
                         if($this.children().length > 1) {
@@ -40,8 +34,8 @@
                                             .appendTo($li);
                             $this.children().each(function() {
                                 var $subthis = $(this);
-                                var $li = $('<li><a href="' + $subthis.attr('href') + '">'+ $subthis.attr('text') +'</a></li>')
-                                          .appendTo($subul);
+                                var $li = HandleMenuItem($subthis);
+                                $li.appendTo($subul);
                             });
                         }
                     }
@@ -58,6 +52,23 @@
                 //_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
             }
         }); // $.ajax({
+
+
+        function HandleMenuItem($this)
+        {
+            var $li;
+            if ($this.attr('href') != undefined && $this.attr('href') != '') {
+                $li = $('<li><a href="' + $this.attr('href') + '">' + $this.attr('text') + '</a></li>');
+            }
+            else if($this.attr('popup') != undefined && $this.attr('popup') != '' ) {
+                $li = $('<li>'+ $this.attr('text') +'</li>')
+                        .click(OpenPopup($this.attr('popup')));
+            }
+            else {
+                $li = $('<li>' + $this.attr('text') +'</li>');
+            }
+            return $li;
+        }
 
 
         // For proper chaining support

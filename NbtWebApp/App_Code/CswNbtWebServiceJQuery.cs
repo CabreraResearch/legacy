@@ -102,22 +102,22 @@ namespace ChemSW.Nbt.WebServices
         {
             string ret = string.Empty;
 
-            ret += "<item text=\"Home\" href=\"Main.aspx\" />";
-            ret += "<item text=\"Admin\" href=\"\">";
-            ret += "  <item text=\"Current User List\" href=\"\"/>";
-            ret += "  <item text=\"View Log\" href=\"\"/>";
-            ret += "  <item text=\"Edit Config Vars\" href=\"\"/>";
-            ret += "  <item text=\"Statistics\" href=\"\"/>";
+            ret += "<item text=\"Home\" href=\"NewMain.shtm\" />";
+            ret += "<item text=\"Admin\">";
+            ret += "  <item text=\"Current User List\" href=\"\" />";
+            ret += "  <item text=\"View Log\" href=\"\" />";
+            ret += "  <item text=\"Edit Config Vars\" href=\"\" />";
+            ret += "  <item text=\"Statistics\" href=\"\" />";
             ret += "</item>";
-            ret += "<item text=\"Preferences\" href=\"\">";
-            ret += "  <item text=\"Profile\" href=\"\"/>";
-            ret += "  <item text=\"Subscriptions\" href=\"\"/>";
+            ret += "<item text=\"Preferences\">";
+            ret += "  <item text=\"Profile\" href=\"\" />";
+            ret += "  <item text=\"Subscriptions\" href=\"\" />";
             ret += "</item>";
-            ret += "<item text=\"Help\" href=\"\">";
-            ret += "  <item text=\"Help\" href=\"\"/>";
-            ret += "  <item text=\"About\" href=\"\"/>";
+            ret += "<item text=\"Help\">";
+            ret += "  <item text=\"Help\" popup=\"help/index.htm\" />";
+            ret += "  <item text=\"About\" popup=\"Popup_About.aspx\" />";
             ret += "</item>";
-            ret += "<item text=\"Logout\" href=\"\"/>";
+            ret += "<item text=\"Logout\" />";
             
             return "<menu>"+ ret + "</menu>";
         }

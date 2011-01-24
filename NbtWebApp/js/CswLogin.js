@@ -35,6 +35,7 @@
 
         $LoginDiv.attr('align', 'center');
         $LoginDiv.append( LoginDivHtml );
+        $('#login_accessid').focus();
 
         $('#login_button').click( function() {
             $(this).attr('disabled', 'true');
