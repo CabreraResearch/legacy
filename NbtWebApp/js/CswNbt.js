@@ -1,5 +1,5 @@
 ﻿; (function ($) {
-    $.fn.Nbt = function (options) {
+    $.fn.CswNbt = function (options) {
 
         var o = {
             ViewSelectDivId: 'viewdiv',
@@ -10,7 +10,7 @@
             TreeUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetTree',
             TabsUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetTabs',
             PropsUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetProps',
-            AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate'
+            SessionId: ''
         };
 
         if (options) {
@@ -18,46 +18,11 @@
         }
 
         var DefaultViewId = "176";
-        var SessionId;
         var SelectedNodePk;
 
-        authenticate("1", "admin", "admin");
 
-        function authenticate(AccessId, UserName, Password)
-        {
-            starttime = new Date();
-            $.ajax({
-                    type: 'POST',
-                    url: o.AuthenticateUrl,
-                    dataType: "json",
-                    contentType: 'application/json; charset=utf-8',
-                    data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
-                    success: function (data, textStatus, XMLHttpRequest)
-                    {
-                        var $xml = $(data.d);
-                        if ($xml.get(0).nodeName == "ERROR")
-                        {
-                            _handleAjaxError(XMLHttpRequest, $xml.text(), '');
-                        } else
-                        {
-                            SessionId = $xml.find('SessionId').text();
-                            if (SessionId != "")
-                            {
-                                updateTimer("Authentication", starttime, new Date());
-                                getViewSelect();
-                            } // if (SessionId != "")
-                            else
-                            {
-                                _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
-                            }
-                        }
-                    }, // success{}
-                    error: function (XMLHttpRequest, textStatus, errorThrown)
-                    {
-                        _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-                    }
-                }); // $.ajax({
-        } // authenticate()
+        getViewSelect();
+
 
         function getViewSelect()
         {
@@ -67,7 +32,7 @@
                 url: o.ViewUrl,
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
-                data: '{ SessionId: "'+ SessionId +'" }',
+                data: '{ SessionId: "'+ o.SessionId +'" }',
                 success: function (data, textStatus, XMLHttpRequest)
                 {
                     var $viewsdiv = $("#" + o.ViewSelectDivId);
@@ -97,24 +62,27 @@
                 url: o.TreeUrl,
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
-                data: '{ SessionId: "'+ SessionId +'", ViewId: "'+ viewid +'" }',
+                data: '{ SessionId: "'+ o.SessionId +'", ViewId: "'+ viewid +'" }',
                 success: function (data, textStatus, XMLHttpRequest)
                 {
-                    $("#" + o.TreeDivId).jstree({
-                        "xml_data": {
-                            "data": data.d,
-                            "xsl": "nest"
-                        },
-                        "ui": {
-                            "select_limit": 1
-                        },
-                        "plugins": ["themes", "xml_data", "ui"]
-                    })  // .jstree({
-                    .bind('select_node.jstree', 
-                            function(e, data) {
-                                SelectedNodePk = data.args[0].parentNode.id;
-                                getTabs(SelectedNodePk);
-                            });
+                    $("#" + o.TreeDivId)
+                        .addClass('treediv')
+                        .jstree({
+                            "xml_data": {
+                                "data": data.d,
+                                "xsl": "nest"
+                            },
+                            "ui": {
+                                "select_limit": 1
+                            },
+                            "plugins": ["themes", "xml_data", "ui"]
+                        })  // .jstree({
+                        .bind('select_node.jstree', 
+                                function(e, data) {
+                                    SelectedNodePk = data.args[0].parentNode.id;
+                                    getTabs(SelectedNodePk);
+                                });
+
                     updateTimer("getTree", starttime, new Date());
                 }, // success{}
                 error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -133,7 +101,7 @@
                 url: o.TabsUrl,
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
-                data: '{ SessionId: "' + SessionId +'", NodePk: "' + nodepk + '" }',
+                data: '{ SessionId: "' + o.SessionId +'", NodePk: "' + nodepk + '" }',
                 success: function (data, textStatus, XMLHttpRequest)
                         {
                             var $outertabdiv = $("#" + o.TabDivId);
@@ -172,7 +140,7 @@
                 url: o.PropsUrl,
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
-                data: '{ SessionId: "' + SessionId +'", NodePk: "' + nodepk + '", TabId: "' + tabid + '" }',
+                data: '{ SessionId: "' + o.SessionId +'", NodePk: "' + nodepk + '", TabId: "' + tabid + '" }',
                 success: function (data, textStatus, XMLHttpRequest)
                         {
                             $div = $("#" + tabid);
@@ -201,12 +169,6 @@
                         }
             }); 
         } // getProps()
-
-        function _handleAuthenticationStatus(status)
-        {
-            alert(status);
-            //Logout();
-        } // _handleAuthenticationStatus()
 
         function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
         {

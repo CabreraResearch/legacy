@@ -994,6 +994,9 @@ body a
 	height: 400px;
 	overflow: auto;
 }
+.jstree-default.jstree-focused {
+	background-color: transparent;
+}
 
 .warning
 {

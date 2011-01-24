@@ -19,11 +19,10 @@
         <script src="js/CswMenu.js"></script>
         <link rel="stylesheet" href="js/CswMenu.css" />
 
-        <script src="js/CswAuthenticate.js"></script>
+        <script src="js/CswLogin.js"></script>
         <script src="js/CswDashboard.js"></script>
         <script src="js/CswHeaderMenu.js"></script>
 
-        <script src="Main.js"></script>
         <link rel="stylesheet" href="style.css" />
 
         <style>
@@ -53,21 +52,21 @@
 
     <body>
         <script language="javascript">
-            var SessionId = '';
+//            var SessionId = '';
 
-            $(function () {
-                var loadingSpan = '<span class="loading">Loading...</span>';
-                $('#dashboard').append(loadingSpan);
-                $('#headermenu').append(loadingSpan);
-                $('#username').append(loadingSpan);
+//            $(function () {
+//                var loadingSpan = '<span class="loading">Loading...</span>';
+//                $('#dashboard').append(loadingSpan);
+//                $('#headermenu').append(loadingSpan);
+//                $('#username').append(loadingSpan);
 
-                authenticate('1', 'admin', 'admin', function (s) {
-                    SessionId = s;
-                    $('#dashboard').CswDashboard({ 'SessionId': SessionId });
-                    $('#headermenu').CswHeaderMenu({ 'SessionId': SessionId });
-                    $('#username').text('admin');
-                });
-            });
+//                authenticate('1', 'admin', 'admin', function (s) {
+//                    SessionId = s;
+//                    $('#dashboard').CswDashboard({ 'SessionId': SessionId });
+//                    $('#headermenu').CswHeaderMenu({ 'SessionId': SessionId });
+//                    $('#username').text('admin');
+//                });
+            //});
         </script>
 
         <form id="Form1" runat="server">
@@ -139,65 +138,4 @@
                         <td id="Td6" class="PageTable_RightColumn"></td>
                       </tr>
           
-                      <tr>
-                        <td id="Td1" class="PageTable_LeftColumn" RowSpan="2">
-                            <img id="Image2" src="Images/pagelayout/blank.gif" width="1" height="450"/>
-                        </td>
-                        <td id="Td2" class="PageTable_LeftCell" VerticalAlign="Top">
-
-                            <asp:ContentPlaceHolder id="MasterLeftContent" runat="server">
-                            </asp:ContentPlaceHolder>
-                
-                        </td>
-                        <td id="Td3" class="PageTable_RightCell" VerticalAlign="Top" style="padding-left: 5px;">
-                            <asp:ContentPlaceHolder id="MasterRightContent" runat="server">
-                            </asp:ContentPlaceHolder>
-                        </td>
-                        <td id="Td4" class="PageTable_RightColumn" RowSpan="2"></td>
-                      </tr>
-          
-                      <tr>
-                        <td colspan="2" VerticalAlign="Top">
-                            <asp:ContentPlaceHolder id="MasterCenterContent" runat="server">
-                            </asp:ContentPlaceHolder>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td id="TableCell5" class="PageTable_LeftColumn"></td>
-                        <td id="TableCell6" colspan="1" class="PageTable_LeftCellNoBg">
-                            <asp:PlaceHolder id="quicklaunchplaceholder" runat="server"></asp:PlaceHolder>
-                        </td>
-                        <td id="TableCell7" class="PageTable_RightCell"></td>
-                        <td id="TableCell8" class="PageTable_RightColumn"></td>
-                      </tr>
-
-                      <tr>
-                        <td id="TableCell3" class="PageTable_LeftColumn"></td>
-                        <td colspan="2">
-                            <asp:ContentPlaceHolder id="ContextSensitiveContent" runat="server">
-                            </asp:ContentPlaceHolder>
-                        </td>
-                        <td id="TableCell4" class="PageTable_RightColumn"></td>
-                      </tr>
-          
-                      <tr>
-                        <td id="PageTable_BottomLeftCorner" class="PageTable_BottomLeftCorner"></td>
-                        <td colspan="1" id="PageTable_BottomRowLeft" class="PageTable_BottomRowLeft"></td>
-                        <td id="PageTable_BottomRowRight" class="PageTable_BottomRowRight"></td>
-                        <td id="PageTable_BottomRightCorner" class="PageTable_BottomRightCorner"></td>
-                      </tr>
-                    </table>
-                </div> 
-
-                <div style="text-align: right">
-                    Your use of this website implies your agreement with our <a target="_blank" href="TermsOfUse.aspx">Terms of Use</a>.&nbsp;&nbsp;&nbsp;
-                </div>
-            </div>
-            <br />
-            <br />
-            <br />
-        </form>
-    </body>
-</html>
 
