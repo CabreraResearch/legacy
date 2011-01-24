@@ -51,24 +51,6 @@
     </head>
 
     <body>
-        <script language="javascript">
-//            var SessionId = '';
-
-//            $(function () {
-//                var loadingSpan = '<span class="loading">Loading...</span>';
-//                $('#dashboard').append(loadingSpan);
-//                $('#headermenu').append(loadingSpan);
-//                $('#username').append(loadingSpan);
-
-//                authenticate('1', 'admin', 'admin', function (s) {
-//                    SessionId = s;
-//                    $('#dashboard').CswDashboard({ 'SessionId': SessionId });
-//                    $('#headermenu').CswHeaderMenu({ 'SessionId': SessionId });
-//                    $('#username').text('admin');
-//                });
-            //});
-        </script>
-
         <form id="Form1" runat="server">
             <div class="StandardMasterContentDiv">    
                 <div id="OuterDiv" class="OuterDiv">
@@ -96,7 +78,7 @@
                                     </td>
                                     <td id="HeaderInnerTable_LeftHeaderCell" class="HeaderInnerTable_LeftHeaderCell" align="center">
                                         
-                                        <div id="dashboard"></div>
+                                        <div id="header_dashboard"></div>
 
                                     </td>
                                     <td id="HeaderInnerTable_RightHeaderCell" class="HeaderInnerTable_RightHeaderCell" align="right">
@@ -104,10 +86,10 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <div id="headermenu"></div>
+                                                    <div id="header_menu"></div>
                                                 </td>
                                                 <td>
-                                                    <div id="username"></div>
+                                                    <div id="header_username"></div>
                                                 </td>
                                             </tr>
                                         </table>

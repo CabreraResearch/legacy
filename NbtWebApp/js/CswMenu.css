@@ -6,7 +6,7 @@ ul.topnav {
 	padding: 0 0 0 20px;
 	margin: 0;
 	float: left;
-	width: 920px;
+	
 }
 ul.topnav li {
 	float: left;
@@ -29,7 +29,7 @@ ul.topnav li ul.subnav {
 	list-style: none;
 	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
 	left: 0; top: 22px;
-	background: #b8cce8;
+	background: #ebebeb;
 	margin: 0; padding: 0;
 	display: none;
 	float: left;

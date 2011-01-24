@@ -44,9 +44,9 @@
                          $('#login_password').val(),
                          function(s) {
                             SessionId = s;
-                            $('#dashboard').CswDashboard({ 'SessionId': SessionId });
-                            $('#headermenu').CswHeaderMenu({ 'SessionId': SessionId });
-                            $('#username').text('admin');
+                            $('#header_dashboard').CswDashboard({ 'SessionId': SessionId });
+                            $('#header_menu').CswHeaderMenu({ 'SessionId': SessionId });
+                            $('#header_username').text('admin');
 
                             $LoginDiv.remove();
                             $('#treediv').CswNbt({ 'SessionId': SessionId });
