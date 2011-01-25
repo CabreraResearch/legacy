@@ -25,28 +25,25 @@ namespace ChemSW.Nbt.Schema
         {
             if( "1" == _CswNbtResources.getConfigVariableValue( "is_demo" ) )
             {
-                String AllDemoTablesSQL = " select distinct tablename from data_dictionary where columnname='isdemo' ";
+                String AllDemoTablesSQL = " select distinct tablename from data_dictionary where columnname='isdemo' and tablename <> 'nodes' and tablename <> 'statistics' order by tablename ";
                 CswArbitrarySelect AllDemoTables = _CswNbtResources.makeCswArbitrarySelect( "Fetch Tables With Demo Data", AllDemoTablesSQL );
                 DataTable DemosDataTable = AllDemoTables.getTable();
                 CswCommaDelimitedString TablesToPrune = new CswCommaDelimitedString();
                 
                 for( Int32 i = 0; i < DemosDataTable.Rows.Count; i++ )
                 {
-                    if( DemosDataTable.Rows[i]["tablename"].ToString() != "nodes" &&
-                        DemosDataTable.Rows[i]["tablename"].ToString() != "statistics" )
-                    {
-                        TablesToPrune.Add( DemosDataTable.Rows[i]["tablename"].ToString() );
-                    }
+                    TablesToPrune.Add( DemosDataTable.Rows[i]["tablename"].ToString() );
                 }
                 TablesToPrune.Sort();
 
                 //As of 01H-17, executing this in alphabetical order (minus nodes/statistics) will work
                 foreach( String TableName in TablesToPrune )
                 {
-                    String NukeDemoDataSQL = "delete from " + TableName + " where isdemo = '" + CswConvert.ToDbVal( true ) + "'";
+                    String NukeDemoDataSQL = "delete from " + TableName + " where isdemo = '" + CswConvert.ToDbVal( true ) + "' or isdemo is null ";
                     try
                     {
                         _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( NukeDemoDataSQL );
+                        _CswNbtSchemaModTrnsctn.commitTransaction();
                     }
                     catch( Exception ex )
                     {
@@ -57,8 +54,10 @@ namespace ChemSW.Nbt.Schema
                 // We just happen to know that these are the only 2 tables which have constraints and need to be dealt with separately
                 try
                 {
-                    _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from nodes where isdemo= '" + CswConvert.ToDbVal( true ) + "'" );
-                    _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from statistics where isdemo= '" + CswConvert.ToDbVal( true ) + "'" );
+                    _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from nodes where isdemo= '" + CswConvert.ToDbVal( true ) + "' or isdemo is null " );
+                    _CswNbtSchemaModTrnsctn.commitTransaction();
+                    _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from statistics where isdemo= '" + CswConvert.ToDbVal( true ) + "' or isdemo is null " );
+                    _CswNbtSchemaModTrnsctn.commitTransaction();
                 }
                 catch( Exception ex )
                 {
