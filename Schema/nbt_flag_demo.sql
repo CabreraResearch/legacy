@@ -62,6 +62,9 @@ set isdemo='0';
 update sequences
 set isdemo='0';
 
+update welcome
+set isdemo='0';
+
 update nodes
 set isdemo='1'
 where nodetypeid in (select nodetypeid
