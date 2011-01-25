@@ -37,12 +37,12 @@ namespace ChemSW.Nbt.WebServices
                 if( null == __CswNbtWebServiceResources )
                 {
                     __CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
-                                                                                Context.Session,
-                                                                                Context.Request,
-                                                                                Context.Response,
-                                                                                string.Empty,
-                                                                                System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
-                                                                                SetupMode.Web );
+                                                                                 Context.Session,
+                                                                                 Context.Request,
+                                                                                 Context.Response,
+                                                                                 string.Empty,
+                                                                                 System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
+                                                                                 SetupMode.Web );
                 }//if not created yet
 
                 return ( __CswNbtWebServiceResources ); 
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.WebServices
         #region Web Methods
 
 
-        [WebMethod]
+        [WebMethod(EnableSession=true)]
         public string Authenticate( string AccessId, string UserName, string Password )
         {
             string ReturnVal = string.Empty;
@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.WebServices
         }//Authenticate()
 
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string deAuthenticate( string SessionId )
         {
             string ReturnVal = string.Empty;
@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string UpdateProperties( string SessionId, string ParentId, string UpdatedViewXml, bool ForMobile )
         {
             string ReturnVal = string.Empty;
@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.WebServices
         } // UpdateProperties()
 
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string RunView( string SessionId, string ParentId, bool ForMobile )
         {
             string ReturnVal = string.Empty;
@@ -233,7 +233,7 @@ namespace ChemSW.Nbt.WebServices
         } // RunView()
 
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string JQueryGetViews( string SessionId )
         {
             CswTimer Timer = new CswTimer();
@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.WebServices
             return ( ReturnVal );
         } // JQueryGetViews()
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string JQueryGetDashboard( string SessionId )
         {
             string ReturnVal = string.Empty;
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.WebServices
             return ( ReturnVal );
         } // JQueryGetDashboard()
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string JQueryGetHeaderMenu( string SessionId )
         {
             string ReturnVal = string.Empty;
@@ -321,7 +321,7 @@ namespace ChemSW.Nbt.WebServices
             return ( ReturnVal );
         } // JQueryGetDashboard()
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string JQueryGetTree( string SessionId, Int32 ViewId )
         {
             string ReturnVal = string.Empty;
@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.WebServices
         } // JQueryGetTree()
 
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string JQueryGetTabs( string SessionId, string NodePk )
         {
             string ReturnVal = string.Empty;
@@ -381,7 +381,7 @@ namespace ChemSW.Nbt.WebServices
         } // JQueryGetTabs()
 
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string JQueryGetProps( string SessionId, string NodePk, string TabId )
         {
             string ReturnVal = string.Empty;

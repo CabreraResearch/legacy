@@ -3,7 +3,7 @@
 
         var o = {
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
-            onAuthenticate: function() {}
+            onAuthenticate: function(SessionId, Username) {}
         };
 
         if (options) {
@@ -13,41 +13,51 @@
         var $LoginDiv = $(this);
 
 
-        var LoginDivHtml = '  <table>' +
-                           '    <tr>' +
-                           '      <td align="right">Customer ID:</td>' +
-                           '      <td><input type="text" name="accessid" id="login_accessid" /></td>' +
-                           '    </tr>' +
-                           '    <tr>' +
-                           '      <td align="right">User Name:</td>' +
-                           '      <td><input type="text" name="username" id="login_username" /></td>' +
-                           '    </tr>' +
-                           '    <tr>' +
-                           '      <td align="right">Password:</td>' +
-                           '      <td><input type="password" name="password" id="login_password" /></td>' +
-                           '    </tr>' +
-                           '    <tr>' +
-                           '      <td align="right"></td>' +
-                           '      <td><input type="button" id="login_button" name="Login" value="Login" /></td>' +
-                           '    </tr>' +
-                           '  </table>';
+        var ThisSessionId = GetSessionId();
+        console.log(ThisSessionId);
+        if(ThisSessionId != null)
+        {
+            
+            o.onAuthenticate(ThisSessionId, GetUsername());
 
-        $LoginDiv.attr('align', 'center');
-        $LoginDiv.append( LoginDivHtml );
-        $('#login_accessid').focus();
+        } else {
+            var LoginDivHtml = '  <table>' +
+                               '    <tr>' +
+                               '      <td align="right">Customer ID:</td>' +
+                               '      <td><input type="text" name="accessid" id="login_accessid" /></td>' +
+                               '    </tr>' +
+                               '    <tr>' +
+                               '      <td align="right">User Name:</td>' +
+                               '      <td><input type="text" name="username" id="login_username" /></td>' +
+                               '    </tr>' +
+                               '    <tr>' +
+                               '      <td align="right">Password:</td>' +
+                               '      <td><input type="password" name="password" id="login_password" /></td>' +
+                               '    </tr>' +
+                               '    <tr>' +
+                               '      <td align="right"></td>' +
+                               '      <td><input type="button" id="login_button" name="Login" value="Login" /></td>' +
+                               '    </tr>' +
+                               '  </table>';
 
-        $('#login_button').click( function() {
-            $(this).val('Logging in...')
-                   .attr('disabled', 'true');
+            $LoginDiv.attr('align', 'center');
+            $LoginDiv.append( LoginDivHtml );
+            $('#login_accessid').focus();
 
-            authenticate($('#login_accessid').val(),
-                         $('#login_username').val(),
-                         $('#login_password').val(),
-                         function(s) {
-                            $LoginDiv.remove();
-                            o.onAuthenticate(s);
-                         });
-        });
+            $('#login_button').click( function() {
+                $(this).val('Logging in...')
+                       .attr('disabled', 'true');
+
+                authenticate($('#login_accessid').val(),
+                             $('#login_username').val(),
+                             $('#login_password').val(),
+                             function(s, u) {
+                                $LoginDiv.remove();
+                                o.onAuthenticate(s, u);
+                             });
+            });
+
+        }
 
         function authenticate(AccessId, UserName, Password, onsuccess) {
             $.ajax({
@@ -61,10 +71,12 @@
                     if ($xml.get(0).nodeName == "ERROR") {
                         _handleAjaxError(XMLHttpRequest, $xml.text(), '');
                     } else {
-                        SessionId = $xml.find('SessionId').text();
-                        if (SessionId != "") {
-
-                            onsuccess(SessionId);
+                        var ThisSessionId = $xml.find('SessionId').text();
+                        if (ThisSessionId != "") {
+                            
+                            SetSessionId(ThisSessionId);
+                            
+                            onsuccess(ThisSessionId, UserName);
 
                         } // if (SessionId != "")
                         else {

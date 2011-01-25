@@ -1,4 +1,30 @@
 ﻿// ------------------------------------------------------------------------------------
+// Cookies
+// ------------------------------------------------------------------------------------
+
+function SetSessionId(SessionId) {
+    $.cookie('csw_sessionid', SessionId);
+}
+function GetSessionId() {
+    return $.cookie('csw_sessionid');
+}
+function ClearSessionId() {
+    $.cookie('csw_sessionid', null);
+}
+
+function SetUsername(Username) {
+    $.cookie('csw_username', Username);
+}
+function GetUsername() {
+    return $.cookie('csw_username');
+}
+function ClearUsername() {
+    $.cookie('csw_username', null);
+}
+ 
+
+
+// ------------------------------------------------------------------------------------
 // Popups and Dialogs
 // ------------------------------------------------------------------------------------
 

@@ -17,7 +17,7 @@
             url: o.Url,
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
-            data: "{SessionId: '" + SessionId + "'}",
+            data: "{SessionId: '" + o.SessionId + "'}",
             success: function (data, textStatus, XMLHttpRequest) {
                 var $data = $(data.d);
                 var $ul = $('<ul class="topnav"></ul>');

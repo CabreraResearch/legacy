@@ -16,7 +16,7 @@
             url: o.Url,
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
-            data: "{SessionId: '" + SessionId + "'}",
+            data: "{SessionId: '" + o.SessionId + "'}",
             success: function (data, textStatus, XMLHttpRequest) {
                 var $data = $(data.d);
                 var $table = $('<table id="DashboardTable" class="DashboardTable" cellpadding="0" cellspacing="0"><tr></tr></table>');

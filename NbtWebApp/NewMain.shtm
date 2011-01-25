@@ -2,10 +2,6 @@
 
 <!--#include file="NewHeader.html" -->
 
-<script type="text/javascript">
-var SessionId = '';
-</script>
-
 <script src="js/CswNbt.js"></script>
 
                     <tr>
@@ -34,12 +30,11 @@ var SessionId = '';
                             <div id="logindiv"></div>
                             <script>
                                 $('#logindiv').CswLogin({
-                                    'onAuthenticate': function (s) {
-                                                        SessionId = s;
-                                                        $('#header_dashboard').CswDashboard({ 'SessionId': SessionId });
-                                                        $('#header_menu').CswHeaderMenu({ 'SessionId': SessionId });
-                                                        $('#header_username').text('admin');
-                                                        $('#treediv').CswNbt({ 'SessionId': SessionId });
+                                    'onAuthenticate': function (s, u) {
+                                                        $('#header_dashboard').CswDashboard({ 'SessionId': s });
+                                                        $('#header_menu').CswHeaderMenu({ 'SessionId': s });
+                                                        $('#header_username').text(u);
+                                                        $('#treediv').CswNbt({ 'SessionId': s });
                                                       }
                                                 });
                             </script>
