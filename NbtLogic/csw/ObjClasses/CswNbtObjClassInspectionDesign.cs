@@ -61,6 +61,10 @@ namespace ChemSW.Nbt.ObjClasses
         /// Reason for cancel
         /// </summary>
         public static string CancelReasonPropertyName { get { return "Cancel Reason"; } }
+        /// <summary>
+        /// Location of Inspection's Target
+        /// </summary>
+        public static string LocationPropertyName { get { return "Location"; } }
 
         /// <summary>
         /// Possible status values for Inspection. Should match List values on ID Status attribute.
@@ -548,6 +552,17 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[CancelReasonPropertyName].AsMemo );
+            }
+        }
+
+        /// <summary>
+        /// Location of Inspection's Target
+        /// </summary>
+        public CswNbtNodePropPropertyReference Location
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[LocationPropertyName].AsPropertyReference );
             }
         }
 

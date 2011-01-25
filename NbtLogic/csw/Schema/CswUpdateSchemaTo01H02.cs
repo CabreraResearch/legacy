@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Collections.ObjectModel;
 using System.Data;
-using System.Text;
 using ChemSW.Core;
-using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
-
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.PropTypes;
+
 
 namespace ChemSW.Nbt.Schema
 {
@@ -119,6 +113,9 @@ namespace ChemSW.Nbt.Schema
             // Case 20005: Make Owner prop required
             CswNbtMetaDataObjectClassProp OwnerOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.OwnerPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( OwnerOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+
+            // Case 20312
+            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, InspectionDesignOC.ObjectClassId, CswNbtObjClassInspectionDesign.LocationPropertyName, CswNbtMetaDataFieldType.NbtFieldType.PropertyReference, Int32.MinValue, Int32.MinValue );
 
             // BZ 10343
             DataRow ParentTypeDR = _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, GeneratorOC.ObjectClassId, CswNbtObjClassGenerator.ParentTypePropertyName, CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect, Int32.MinValue, Int32.MinValue );
