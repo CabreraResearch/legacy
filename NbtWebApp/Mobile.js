@@ -1,8 +1,7 @@
-﻿; (function ($)
+﻿;  ( function ($)
 {
     $.fn.CswMobile = function (options)
     {
-
         var opts = {
             DBShortName: 'Mobile.html',
             DBVersion: '1.0',
@@ -19,12 +18,12 @@
             DivRemovalDelay: 1000,
             RandomConnectionFailure: false
         };
-
+        
         if (options)
         {
             $.extend(opts, options);
         }
-
+        
         var rootid;
         var db;
         var UserName;
@@ -226,7 +225,7 @@
                 HideSearchButton: false,
                 ChangePage: false
             };
-
+            
             if (params)
             {
                 $.extend(p, params);
@@ -576,7 +575,7 @@
             {
                 case "InspectionDesignClass":
                     var DueDate = $xmlitem.find('prop[ocpname="Due Date"]').attr('gestalt');
-                    var Target = $xmlitem.find('prop[ocpname="Target"]').attr('gestalt');
+                    var Location = $xmlitem.find('prop[ocpname="Location"]').attr('gestalt');
                     var UnansweredCnt = 0;
                     $xmlitem.find('prop[fieldtype="Question"]').each(function ()
                     {
@@ -590,7 +589,7 @@
                     if (icon != '')
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
-                    Html += '<p>' + Target + '</p>';
+                    Html += '<p>' + Location + '</p>';
                     Html += '<p>Due: ' + DueDate + '</p>';
                     Html += '<span id="' + id + '_unansweredcnt" class="ui-li-count">' + UnansweredCnt + '</span>';
                     Html += '</li>';
@@ -778,7 +777,6 @@
             }
             return Html;
         }
-
 
         function _FieldTypeHtmlToXml($xmlitem, name, value)
         {
@@ -1822,7 +1820,8 @@
         // For proper chaining support
         return this;
     };
-})(jQuery);
+   
+}) ( jQuery );
 
 
 
