@@ -12,14 +12,14 @@
 
         var $MenuUl = $(this);
 
-        $("ul.topnav li").click(MenuClick);
+        $("ul.topnav").children('li').click(TopMenuClick);
+        $("ul.subnav").children('li').click(SubMenuClick);
 
-        function MenuClick()
+        function TopMenuClick()
         {
             $this = $(this);
 
-            // Hide all open subnavs
-            $this.parent().find("ul.subnav").hide();
+            HideAllSubMenus();
 
             // Show this subnav
             $this.find("ul.subnav")
@@ -28,10 +28,22 @@
 		            .hover(function () {
           	                },
                             function () {
-                                $this.find("ul.subnav")
-                                    .slideUp('fast');
+                                HideAllSubMenus();
                             });
         }
+
+        function SubMenuClick(data, e)
+        {
+            HideAllSubMenus();
+            // Prevent subnav elements from triggering topnav click
+            event.stopPropagation();
+        }
+        
+        function HideAllSubMenus()
+        {
+             $MenuUl.find("ul.subnav").slideUp('fast');
+        }
+
 
         // For proper chaining support
         return this;

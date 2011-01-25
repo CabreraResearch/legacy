@@ -3,6 +3,7 @@
 
         var o = {
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
+            onAuthenticate: function() {}
         };
 
         if (options) {
@@ -12,8 +13,7 @@
         var $LoginDiv = $(this);
 
 
-        var LoginDivHtml = //'<div align="center">' +
-                           '  <table>' +
+        var LoginDivHtml = '  <table>' +
                            '    <tr>' +
                            '      <td align="right">Customer ID:</td>' +
                            '      <td><input type="text" name="accessid" id="login_accessid" /></td>' +
@@ -31,26 +31,21 @@
                            '      <td><input type="button" id="login_button" name="Login" value="Login" /></td>' +
                            '    </tr>' +
                            '  </table>';
-                           //'</div>';
 
         $LoginDiv.attr('align', 'center');
         $LoginDiv.append( LoginDivHtml );
         $('#login_accessid').focus();
 
         $('#login_button').click( function() {
-            $(this).attr('disabled', 'true');
+            $(this).val('Logging in...')
+                   .attr('disabled', 'true');
 
             authenticate($('#login_accessid').val(),
                          $('#login_username').val(),
                          $('#login_password').val(),
                          function(s) {
-                            SessionId = s;
-                            $('#header_dashboard').CswDashboard({ 'SessionId': SessionId });
-                            $('#header_menu').CswHeaderMenu({ 'SessionId': SessionId });
-                            $('#header_username').text('admin');
-
                             $LoginDiv.remove();
-                            $('#treediv').CswNbt({ 'SessionId': SessionId });
+                            o.onAuthenticate(s);
                          });
         });
 
@@ -86,7 +81,10 @@
         function _handleAuthenticationStatus(status)
         {
             alert(status);
+            $('#login_button').val('Login')
+                              .attr('disabled', '');
             //Logout();
+
         } // _handleAuthenticationStatus()
 
 

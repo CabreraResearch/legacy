@@ -22,30 +22,27 @@
                 var $data = $(data.d);
                 var $ul = $('<ul class="topnav"></ul>');
 
+                $MenuDiv.text('')
+                        .append($ul);
+
                 $data.children().each(function() {
                     var $this = $(this);
                     if($this.attr('text') != undefined)
                     {
-                        var $li = HandleMenuItem($this);
-                        $li.appendTo($ul);
-
+                        var $li = HandleMenuItem($ul, $this);
+                        
                         if($this.children().length > 1) {
                             var $subul = $('<ul class="subnav"></ul>')
                                             .appendTo($li);
                             $this.children().each(function() {
-                                var $subthis = $(this);
-                                var $li = HandleMenuItem($subthis);
-                                $li.appendTo($subul);
+                                HandleMenuItem($subul, $(this));
                             });
                         }
                     }
 
-                    $MenuDiv.text('')
-                            .append($ul);
                 });
 
                 $ul.CswMenu();
-
 
             }, // success{}
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -54,18 +51,21 @@
         }); // $.ajax({
 
 
-        function HandleMenuItem($this)
+        function HandleMenuItem($ul, $this)
         {
             var $li;
             if ($this.attr('href') != undefined && $this.attr('href') != '') {
-                $li = $('<li><a href="' + $this.attr('href') + '">' + $this.attr('text') + '</a></li>');
+                $li = $('<li><a href="' + $this.attr('href') + '">' + $this.attr('text') + '</a></li>')
+                        .appendTo($ul)
             }
             else if($this.attr('popup') != undefined && $this.attr('popup') != '' ) {
-                $li = $('<li>'+ $this.attr('text') +'</li>')
-                        .click(OpenPopup($this.attr('popup')));
+                $li = $('<li class="headermenu_dialog">'+ $this.attr('text') +'</li>')
+                        .appendTo($ul)
+                        .click(function() { OpenDialog($this.attr('text'), $this.attr('popup')); });
             }
             else {
-                $li = $('<li>' + $this.attr('text') +'</li>');
+                $li = $('<li>' + $this.attr('text') +'</li>')
+                        .appendTo($ul)
             }
             return $li;
         }

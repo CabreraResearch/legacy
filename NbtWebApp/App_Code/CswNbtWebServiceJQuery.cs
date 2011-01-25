@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.WebServices
             ret += "</item>";
             ret += "<item text=\"Help\">";
             ret += "  <item text=\"Help\" popup=\"help/index.htm\" />";
-            ret += "  <item text=\"About\" popup=\"Popup_About.aspx\" />";
+            ret += "  <item text=\"About\" popup=\"About.html\" />";
             ret += "</item>";
             ret += "<item text=\"Logout\" />";
             

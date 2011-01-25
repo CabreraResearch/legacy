@@ -3,10 +3,10 @@
 <!--#include file="NewHeader.html" -->
 
 <script type="text/javascript">
-    var SessionId = '';
+var SessionId = '';
 </script>
 
-                        <script src="js/CswNbt.js"></script>
+<script src="js/CswNbt.js"></script>
 
                     <tr>
                         <td id="Td1" class="PageTable_LeftColumn" rowspan="2">
@@ -33,7 +33,15 @@
 
                             <div id="logindiv"></div>
                             <script>
-                                $('#logindiv').CswLogin();
+                                $('#logindiv').CswLogin({
+                                    'onAuthenticate': function (s) {
+                                                        SessionId = s;
+                                                        $('#header_dashboard').CswDashboard({ 'SessionId': SessionId });
+                                                        $('#header_menu').CswHeaderMenu({ 'SessionId': SessionId });
+                                                        $('#header_username').text('admin');
+                                                        $('#treediv').CswNbt({ 'SessionId': SessionId });
+                                                      }
+                                                });
                             </script>
 
                         </td>
