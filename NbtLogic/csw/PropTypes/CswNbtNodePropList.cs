@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
