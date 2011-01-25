@@ -57,7 +57,8 @@ namespace ChemSW.Nbt.Sched
                 CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( _InspectionNode.Generator.RelatedNodeId );
                 if( null != GeneratorNode &&
                     _Pending == _InspectionNode.Status.Value &&
-                    DateTime.Today >= DueDate )
+                    DateTime.Today >= DueDate &&
+                    Tristate.True != _InspectionNode.IsFuture.Checked )
                 {
                     ReturnVal = true;
                 }
