@@ -21,8 +21,55 @@ function GetUsername() {
 function ClearUsername() {
     $.cookie('csw_username', null);
 }
- 
 
+
+// ------------------------------------------------------------------------------------
+// Ajax
+// ------------------------------------------------------------------------------------
+
+function CswAjax(options) {
+    var o = {
+        url: '',
+        data: '',
+        success: function ($xml) { }
+    };
+
+    if (options) {
+        $.extend(o, options);
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: o.url,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        data: o.data,
+        success: function (data, textStatus, XMLHttpRequest) {
+            var $xml = $(data.d);
+            if ($xml.get(0).nodeName == "ERROR") {
+                _handleAjaxError(XMLHttpRequest, $xml.text(), '');
+            }
+            else {
+                o.success($xml, data.d);
+            }
+        }, // success{}
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+        }
+    });   // $.ajax({
+} // CswAjax()
+        
+function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown) 
+{
+    ErrorMessage = "Error: " + textStatus;
+    if (null != errorThrown) {
+        ErrorMessage += "; Exception: " + errorThrown.toString()
+    }
+    console.log(ErrorMessage);
+} // _handleAjaxError()
+
+
+ 
 
 // ------------------------------------------------------------------------------------
 // Popups and Dialogs
@@ -47,8 +94,6 @@ function OpenDialog(id, url) {
 function CloseDialog(id) {
     $('#' + id).remove();
 }
-
-
 
 
 // ------------------------------------------------------------------------------------

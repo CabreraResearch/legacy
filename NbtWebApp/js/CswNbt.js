@@ -2,10 +2,10 @@
     $.fn.CswNbt = function (options) {
 
         var o = {
-            ViewSelectDivId: 'viewdiv',
-            TreeDivId: 'treediv',
-            TabDivId: 'tabdiv',
-            TimerDiv: 'timerdiv',
+            ViewSelectDivId: 'LeftDiv',
+            TreeDivId: 'LeftDiv',
+            TabDivId: 'RightDiv',
+            TimerDiv: 'CenterDiv',
             ViewUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetViews',
             TreeUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetTree',
             TabsUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetTabs',
@@ -20,6 +20,14 @@
         var DefaultViewId = "176";
         var SelectedNodePk;
 
+        var $viewsdiv = $('<div id="viewsdiv" />')
+                        .appendTo($("#" + o.ViewSelectDivId));
+        var $treediv = $('<div id="treediv" class="treediv" />')
+                        .appendTo($("#" + o.TreeDivId));
+        var $outertabdiv = $('<div id="tabdiv" />')
+                        .appendTo($("#" + o.TabDivId));
+        var $timerdiv = $('<div id="timerdiv" />')
+                        .appendTo($("#" + o.TimerDiv));
 
         getViewSelect();
 
@@ -27,18 +35,15 @@
         function getViewSelect()
         {
             starttime = new Date();
-            $.ajax({
-                type: 'POST',
+            CswAjax({
                 url: o.ViewUrl,
-                dataType: "json",
-                contentType: 'application/json; charset=utf-8',
                 data: '{ SessionId: "'+ o.SessionId +'" }',
-                success: function (data, textStatus, XMLHttpRequest)
+                success: function ($xml)
                 {
-                    var $viewsdiv = $("#" + o.ViewSelectDivId);
                     $viewsdiv.children().remove();
-                    $select = $('<select name="viewselect" id="viewselect"><option value="">Select A View</option></select>').appendTo($viewsdiv);
-                    $(data.d).children().each(function() {
+                    $select = $('<select name="viewselect" id="viewselect"><option value="">Select A View</option></select>')
+                              .appendTo($viewsdiv);
+                    $xml.children().each(function() {
                         $this = $(this);
                         $select.append('<option value="'+$this.attr('id')+'">'+$this.attr('name')+'</option>');
                     });
@@ -46,30 +51,20 @@
                         getTree(e.target.value);
                     });
                     updateTimer("getViewSelect", starttime, new Date());
-                }, // success{}
-                error: function (XMLHttpRequest, textStatus, errorThrown)
-                {
-                    _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-                }
-            }); // $.ajax({
+                } // success{}
+            });
         } // getViewSelect()
 
         function getTree(viewid)
         {
             starttime = new Date();
-            $.ajax({
-                type: 'POST',
+            CswAjax({
                 url: o.TreeUrl,
-                dataType: "json",
-                contentType: 'application/json; charset=utf-8',
                 data: '{ SessionId: "'+ o.SessionId +'", ViewId: "'+ viewid +'" }',
-                success: function (data, textStatus, XMLHttpRequest)
-                {
-                    $("#" + o.TreeDivId)
-                        .addClass('treediv')
-                        .jstree({
+                success: function ($xml, xml) {
+                    $treediv.jstree({
                             "xml_data": {
-                                "data": data.d,
+                                "data": xml,
                                 "xsl": "nest"
                             },
                             "ui": {
@@ -82,35 +77,30 @@
                                     SelectedNodePk = data.args[0].parentNode.id;
                                     getTabs(SelectedNodePk);
                                 });
-
+                    clearTabs();
                     updateTimer("getTree", starttime, new Date());
-                }, // success{}
-                error: function (XMLHttpRequest, textStatus, errorThrown)
-                {
-                    _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-                }
-            }); // $.ajax({
+                } // success{}
+            });
         } // getTree()
 
+        function clearTabs()
+        {
+            $outertabdiv.children().remove();
+        }
 
         function getTabs(nodepk)
         {
             starttime = new Date();
-            $.ajax({
-                type: 'POST',
+            CswAjax({
                 url: o.TabsUrl,
-                dataType: 'json',
-                contentType: 'application/json; charset=utf-8',
                 data: '{ SessionId: "' + o.SessionId +'", NodePk: "' + nodepk + '" }',
-                success: function (data, textStatus, XMLHttpRequest)
-                        {
-                            var $outertabdiv = $("#" + o.TabDivId);
-                            $outertabdiv.children().remove()
+                success: function ($xml) {
+                            clearTabs();
                             var $tabdiv = $("<div><ul></ul></div>");
                             $outertabdiv.append($tabdiv);
 
                             //var firsttabid = null;
-                            $(data.d).children().each(function() { 
+                            $xml.children().each(function() { 
                                 $this = $(this);
                                 $tabdiv.children('ul').append('<li><a href="#'+ $this.attr('id') +'">'+ $this.attr('name') +'</a></li>');
                                 $tabdiv.append('<div id="'+ $this.attr('id') +'"></div>');
@@ -124,30 +114,21 @@
                             });
                             updateTimer("getTabs", starttime, new Date());
                             getProps(nodepk, $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]).attr('id'));
-                        }, // success{}
-                error: function (XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-                        }
+                        } // success{}
             });
         } // getTabs()
             
         function getProps(nodepk, tabid)
         {
             starttime = new Date();
-            $.ajax({
-                type: 'POST',
+            CswAjax({
                 url: o.PropsUrl,
-                dataType: 'json',
-                contentType: 'application/json; charset=utf-8',
                 data: '{ SessionId: "' + o.SessionId +'", NodePk: "' + nodepk + '", TabId: "' + tabid + '" }',
-                success: function (data, textStatus, XMLHttpRequest)
-                        {
+                success: function ($xml) {
                             $div = $("#" + tabid);
                             $div.children().remove();
                             var $table = $('<table></table>').appendTo($div);
-                            var $data = $(data.d);
-                            $data.children().each(function() { 
+                            $xml.children().each(function() { 
                                 $this = $(this);
                                 while($this.attr('displayrow') >= $table.find('tr').length)
                                 {
@@ -162,27 +143,14 @@
                                 $cell.append($this.attr('name') + ' = ' + $this.attr('gestalt'));
                             });
                             updateTimer("getProps", starttime, new Date());
-                        }, // success{}
-                error: function (XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-                        }
+                        } // success{}
             }); 
         } // getProps()
 
-        function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
-        {
-            ErrorMessage = "Error: " + textStatus;
-            if (null != errorThrown)
-            {
-                ErrorMessage += "; Exception: " + errorThrown.toString()
-            }
-            console.log(ErrorMessage);
-        } // _handleAjaxError()
 
         function updateTimer(label, starttime, endtime)
         {
-            $('#'+o.TimerDiv).append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] "+ label + " time: " + (endtime - starttime) + "ms<br>");
+            $timerdiv.append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] "+ label + " time: " + (endtime - starttime) + "ms<br>");
         }
 
         // For proper chaining support

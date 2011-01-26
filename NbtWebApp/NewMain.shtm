@@ -2,23 +2,20 @@
 
 <!--#include file="NewHeader.html" -->
 
-<script src="js/CswNbt.js"></script>
-
                     <tr>
                         <td id="Td1" class="PageTable_LeftColumn" rowspan="2">
                             <img src="Images/pagelayout/blank.gif" width="1" height="450"/>
                         </td>
                         <td id="Td2" class="PageTable_LeftCell" valign="top">
 
-                            <div id="viewdiv"></div>
-                            <div id="treediv"></div>
+                            <div id="LeftDiv"></div>
                             
                         </td>
 
                         <td id="Td3" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
 
-                            <div id="tabdiv"></div>
-                            <div id="timerdiv"></div>
+                            <div id="RightDiv"></div>
+                            
                         </td>
 
                         <td id="Td4" class="PageTable_RightColumn" rowspan="2"></td>
@@ -27,14 +24,15 @@
                       <tr>
                         <td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
 
-                            <div id="logindiv"></div>
+                            <div id="CenterDiv"></div>
+
                             <script>
-                                $('#logindiv').CswLogin({
+                                $('#CenterDiv').CswLogin({
                                     'onAuthenticate': function (s, u) {
                                                         $('#header_dashboard').CswDashboard({ 'SessionId': s });
                                                         $('#header_menu').CswHeaderMenu({ 'SessionId': s });
                                                         $('#header_username').text(u);
-                                                        $('#treediv').CswNbt({ 'SessionId': s });
+                                                        $('#leftdiv').CswNbt({ 'SessionId': s });
                                                       }
                                                 });
                             </script>

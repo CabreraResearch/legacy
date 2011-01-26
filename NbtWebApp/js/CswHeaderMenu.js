@@ -12,20 +12,16 @@
 
         var $MenuDiv = $(this);
 
-        $.ajax({
-            type: 'POST',
+        CswAjax({
             url: o.Url,
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
             data: "{SessionId: '" + o.SessionId + "'}",
-            success: function (data, textStatus, XMLHttpRequest) {
-                var $data = $(data.d);
+            success: function ($xml) {
                 var $ul = $('<ul class="topnav"></ul>');
 
                 $MenuDiv.text('')
                         .append($ul);
 
-                $data.children().each(function() {
+                $xml.children().each(function() {
                     var $this = $(this);
                     if($this.attr('text') != undefined)
                     {
@@ -44,10 +40,7 @@
 
                 $ul.CswMenu();
 
-            }, // success{}
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                //_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-            }
+            } // success{}
         }); // $.ajax({
 
 

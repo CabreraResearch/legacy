@@ -10,11 +10,11 @@
             $.extend(o, options);
         }
 
-        var $LoginDiv = $(this);
+        var $LoginDiv = $('<div id="logindiv" />')
+                        .appendTo($(this));
 
 
         var ThisSessionId = GetSessionId();
-        console.log(ThisSessionId);
         if(ThisSessionId != null)
         {
             
@@ -60,34 +60,23 @@
         }
 
         function authenticate(AccessId, UserName, Password, onsuccess) {
-            $.ajax({
-                type: 'POST',
+            CswAjax({
                 url: o.AuthenticateUrl,
-                dataType: "json",
-                contentType: 'application/json; charset=utf-8',
                 data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
-                success: function (data, textStatus, XMLHttpRequest) {
-                    var $xml = $(data.d);
-                    if ($xml.get(0).nodeName == "ERROR") {
-                        _handleAjaxError(XMLHttpRequest, $xml.text(), '');
-                    } else {
-                        var ThisSessionId = $xml.find('SessionId').text();
-                        if (ThisSessionId != "") {
+                success: function ($xml) {
+                    var ThisSessionId = $xml.find('SessionId').text();
+                    if (ThisSessionId != "") {
                             
-                            SetSessionId(ThisSessionId);
+                        SetSessionId(ThisSessionId);
                             
-                            onsuccess(ThisSessionId, UserName);
+                        onsuccess(ThisSessionId, UserName);
 
-                        } // if (SessionId != "")
-                        else {
-                            _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
-                        }
+                    } // if (SessionId != "")
+                    else {
+                        _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
                     }
-                }, // success{}
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    //_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-                }
-            });  // $.ajax({
+                } // success{}
+            });
         } // authenticate()
         
         function _handleAuthenticationStatus(status)
@@ -105,8 +94,4 @@
 
     }; // function(options) {
 })(jQuery);
-
-
-
-
 
