@@ -1,5 +1,7 @@
 ﻿;  ( function ($)
 {
+    ///
+
     $.fn.CswMobile = function (options)
     {
         var opts = {
@@ -510,7 +512,6 @@
                             lihtml += ' <a href="#' + id + '">' + text + '</a>';
                             lihtml += ' <p class="ui-li-aside">' + gestalt + '</p>';
                             lihtml += '</li>';
-
                             break;
                     }
 
@@ -627,12 +628,12 @@
             return ret;
         }
 
-
         function _FieldTypeXmlToHtml($xmlitem, ParentId)
         {
             var IdStr = $xmlitem.attr('id');
             var FieldType = $xmlitem.attr('fieldtype');
             var PropName = $xmlitem.attr('name');
+            var ReadOnly = ( "1" == $xmlitem.attr('readonly') );
 
             // Subfield values
             var sf_text = _extractCDataValue($xmlitem.children('text'));
@@ -668,112 +669,118 @@
                 Html += ' class="OOC"'
             Html += '>' + PropName + '</div><br/>';
 
-            switch (FieldType)
+            if( !ReadOnly )
             {
-                case "Date":
-                    Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
-                    break;
+                switch (FieldType)
+                {
+                    case "Date":
+                        Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
+                        break;
 
-                case "Link":
-                    Html += '<a href="' + sf_href + '">' + sf_text + '</a>';
-                    break;
+                    case "Link":
+                        Html += '<a href="' + sf_href + '">' + sf_text + '</a>';
+                        break;
 
-                case "List":
-                    Html += '<select name="' + IdStr + '">';
-                    var selectedvalue = sf_value;
-                    var optionsstr = sf_options;
-                    var options = optionsstr.split(',');
-                    for (var i = 0; i < options.length; i++)
-                    {
-                        Html += '<option value="' + options[i] + '"';
-                        if (selectedvalue == options[i])
-                            Html += ' selected';
+                    case "List":
+                        Html += '<select name="' + IdStr + '">';
+                        var selectedvalue = sf_value;
+                        var optionsstr = sf_options;
+                        var options = optionsstr.split(',');
+                        for (var i = 0; i < options.length; i++)
+                        {
+                            Html += '<option value="' + options[i] + '"';
+                            if (selectedvalue == options[i])
+                                Html += ' selected';
                         
-                        if(options[i] != '')
-                            Html += '>' + options[i] + '</option>';
-                        else
-                            Html += '>[blank]</option>';
-                    }
-                    Html += '</select>';
-                    break;
+                            if(options[i] != '')
+                                Html += '>' + options[i] + '</option>';
+                            else
+                                Html += '>[blank]</option>';
+                        }
+                        Html += '</select>';
+                        break;
 
-                case "Logical":
-                    Html += _makeLogicalFieldSet(IdStr, '_ans2', '_ans', sf_checked, sf_required);
-                    break;
+                    case "Logical":
+                        Html += _makeLogicalFieldSet(IdStr, '_ans2', '_ans', sf_checked, sf_required);
+                        break;
 
-                case "Memo":
-                    Html += '<textarea name="' + IdStr + '">' + sf_text + '</textarea>';
-                    break;
+                    case "Memo":
+                        Html += '<textarea name="' + IdStr + '">' + sf_text + '</textarea>';
+                        break;
 
-                case "Number":
-                    Html += '<input type="number" name="' + IdStr + '" value="' + sf_value + '"';
-                    // if (Prop.MinValue != Int32.MinValue)
-                    //     Html += "min = \"" + Prop.MinValue + "\"";
-                    // if (Prop.MaxValue != Int32.MinValue)
-                    //     Html += "max = \"" + Prop.MaxValue + "\"";
-                    Html += '/>';
-                    break;
+                    case "Number":
+                        Html += '<input type="number" name="' + IdStr + '" value="' + sf_value + '"';
+                        // if (Prop.MinValue != Int32.MinValue)
+                        //     Html += "min = \"" + Prop.MinValue + "\"";
+                        // if (Prop.MaxValue != Int32.MinValue)
+                        //     Html += "max = \"" + Prop.MaxValue + "\"";
+                        Html += '/>';
+                        break;
 
-                case "Password":
-                    Html += string.Empty;
-                    break;
+                    case "Password":
+                        Html += string.Empty;
+                        break;
 
-                case "Quantity":
-                    Html += '<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />';
-                    Html += sf_units;
-                    // Html += "<select name=\"" + IdStr + "_units\">";
-                    // string SelectedUnit = PropWrapper.AsQuantity.Units;
-                    // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
-                    // {
-                    //     string ThisUnitText = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
-                    //     Html += "<option value=\"" + UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text + "\"";
-                    //     if( ThisUnitText == SelectedUnit )
-                    //         Html += " selected";
-                    //     Html += ">" + ThisUnitText + "</option>";
-                    // }
-                    // Html += "</select>";
+                    case "Quantity":
+                        Html += '<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />';
+                        Html += sf_units;
+                        // Html += "<select name=\"" + IdStr + "_units\">";
+                        // string SelectedUnit = PropWrapper.AsQuantity.Units;
+                        // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
+                        // {
+                        //     string ThisUnitText = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
+                        //     Html += "<option value=\"" + UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text + "\"";
+                        //     if( ThisUnitText == SelectedUnit )
+                        //         Html += " selected";
+                        //     Html += ">" + ThisUnitText + "</option>";
+                        // }
+                        // Html += "</select>";
 
-                    break;
+                        break;
 
-                case "Question":
-                    Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
+                    case "Question":
+                        Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
 
-                    Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
-                    Html += sf_comments
-                    Html += '</textarea>';
+                        Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
+                        Html += sf_comments
+                        Html += '</textarea>';
 
-                    Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
-                    if (sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
-                        Html += 'style="display: none"';
-                    Html += 'onchange="';
-                    Html += 'var $cor = $(this); ';
-                    Html += 'if($cor.attr(\'value\') == \'\') { ';
-                    Html += '  $(\'#' + IdStr + '_li div\').addClass(\'OOC\'); '
-                    Html += '  $(\'#' + IdStr + '_propname\').addClass(\'OOC\'); '
-                    Html += '} else {';
-                    Html += '  $(\'#' + IdStr + '_li div\').removeClass(\'OOC\'); '
-                    Html += '  $(\'#' + IdStr + '_propname\').removeClass(\'OOC\'); '
-                    Html += '}';
-                    Html += '">';
-                    Html += sf_correctiveaction;
-                    Html += '</textarea>';
-                    break;
+                        Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
+                        if (sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
+                            Html += 'style="display: none"';
+                        Html += 'onchange="';
+                        Html += 'var $cor = $(this); ';
+                        Html += 'if($cor.attr(\'value\') == \'\') { ';
+                        Html += '  $(\'#' + IdStr + '_li div\').addClass(\'OOC\'); '
+                        Html += '  $(\'#' + IdStr + '_propname\').addClass(\'OOC\'); '
+                        Html += '} else {';
+                        Html += '  $(\'#' + IdStr + '_li div\').removeClass(\'OOC\'); '
+                        Html += '  $(\'#' + IdStr + '_propname\').removeClass(\'OOC\'); '
+                        Html += '}';
+                        Html += '">';
+                        Html += sf_correctiveaction;
+                        Html += '</textarea>';
+                        break;
 
-                case "Static":
-                    Html += sf_text;
-                    break;
+                    case "Static":
+                        Html += sf_text;
+                        break;
 
-                case "Text":
-                    Html += '<input type="text" name="' + IdStr + '" value="' + sf_text + '" />';
-                    break;
+                    case "Text":
+                        Html += '<input type="text" name="' + IdStr + '" value="' + sf_text + '" />';
+                        break;
 
-                case "Time":
-                    Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
-                    break;
+                    case "Time":
+                        Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
+                        break;
 
-                default:
-                    Html += $xmlitem.attr('gestalt');
-                    break;
+                    default:
+                        Html += $xmlitem.attr('gestalt');
+                        break;
+                }
+            }
+            else {
+                Html += $xmlitem.attr('gestalt');
             }
             return Html;
         }
@@ -1815,7 +1822,6 @@
             console.log(ErrorMessage);
             setOffline();
         }
-
 
         // For proper chaining support
         return this;
