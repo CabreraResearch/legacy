@@ -40,18 +40,18 @@
                     {
                         case 'Link':
                             $cell.append( $('<a href="">' + $item.attr('text') + '</a>') );
-                            $cell.find('a').click(function() { o.onLinkClick($item.attr('viewid'),$item.attr('actionid'),$item.attr('reportid')); return false; });
+                            $cell.find('a').click(function() { o.onLinkClick($item.attr('viewid'),$item.attr('actionid'),$item.attr('reportid')); $WelcomeDiv.remove(); return false; });
                             break;
                         case 'Search': 
                             $cell.append( $('<a href="">' + $item.attr('text') + '</a>') );
-                            $cell.find('a').click(function() { o.onSearchClick($item.attr('viewid')); return false; });
+                            $cell.find('a').click(function() { o.onSearchClick($item.attr('viewid')); $WelcomeDiv.remove(); return false; });
                             break;
                         case 'Text':
                             $cell.text($item.attr('text'));
                             break;
                         case 'Add': 
                             $cell.append( $('<a href="">' + $item.attr('text') + '</a>') );
-                            $cell.find('a').click(function() { o.onAddClick($item.attr('nodetypeid')); return false; });
+                            $cell.find('a').click(function() { o.onAddClick($item.attr('nodetypeid')); $WelcomeDiv.remove(); return false; });
                             break;
                     }
                 });
