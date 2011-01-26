@@ -38,6 +38,7 @@ function CswAjax(options) {
         $.extend(o, options);
     }
 
+    var starttime = new Date();
     $.ajax({
         type: 'POST',
         url: o.url,
@@ -45,6 +46,10 @@ function CswAjax(options) {
         contentType: 'application/json; charset=utf-8',
         data: o.data,
         success: function (data, textStatus, XMLHttpRequest) {
+
+            var endtime = new Date();
+            $('#timerdiv').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+
             var $xml = $(data.d);
             if ($xml.get(0).nodeName == "ERROR") {
                 _handleAjaxError(XMLHttpRequest, $xml.text(), '');
@@ -52,11 +57,12 @@ function CswAjax(options) {
             else {
                 o.success($xml, data.d);
             }
+
         }, // success{}
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
         }
-    });   // $.ajax({
+    });    // $.ajax({
 } // CswAjax()
         
 function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown) 
@@ -68,8 +74,6 @@ function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
     console.log(ErrorMessage);
 } // _handleAjaxError()
 
-
- 
 
 // ------------------------------------------------------------------------------------
 // Popups and Dialogs

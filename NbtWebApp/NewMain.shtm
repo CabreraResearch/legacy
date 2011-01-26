@@ -8,6 +8,7 @@
                         </td>
                         <td id="Td2" class="PageTable_LeftCell" valign="top">
 
+                            <div id="MenuDiv"></div>
                             <div id="LeftDiv"></div>
                             
                         </td>
@@ -25,26 +26,56 @@
                         <td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
 
                             <div id="CenterDiv"></div>
+                            <div id="timerdiv"></div>
 
                             <script>
                                 $('#CenterDiv').CswLogin({
                                     'onAuthenticate': function (s, u) {
-                                                        $('#header_dashboard').CswDashboard();
-                                                        $('#header_menu').CswHeaderMenu();
-                                                        $('#header_username').text(u);
-                                                        //$('#leftdiv').CswNbt();
-                                                        $('#CenterDiv').CswWelcome({ 
-                                                                                     onLinkClick: HandleWelcomeLinkClick 
-                                                                                    });
+                                        $('#header_dashboard').CswDashboard();
+                                        $('#header_menu').CswHeaderMenu();
+                                        $('#header_username').text(u);
+                                        $('#MenuDiv').CswViewSelect({ 'onSelect': GetViewTree });
+                                        $('#CenterDiv').CswWelcome({
+                                            onLinkClick: HandleWelcomeLinkClick
+                                        });
                                     }
                                 });
 
+                                function ClearLeft()
+                                {
+                                    $('#LeftDiv').children().remove();
+                                }
+                                function ClearRight()
+                                {
+                                    $('#RightDiv').children().remove();
+                                }
+                                function ClearCenter()
+                                {
+                                    $('#CenterDiv').children().remove();
+                                }
+
+                                function GetViewTree(viewid) 
+                                {
+                                    ClearLeft();
+                                    ClearRight(); 
+                                    ClearCenter();
+                                    $('#LeftDiv').CswViewTree({
+                                        'viewid': viewid,
+                                        onSelectNode: GetTabs
+                                    });
+                                }
+
+                                function GetTabs(nodeid) 
+                                {
+                                    ClearRight();
+                                    $('#RightDiv').CswNodeTabs({ 'nodeid': nodeid });
+                                }
+
                                 function HandleWelcomeLinkClick(viewid, actionid, reportid) {
+                                    ClearCenter();
                                     if (viewid != undefined && viewid != '') 
                                     {
-                                        $('#leftdiv').CswNbt({
-                                                               'viewid': viewid 
-                                                             });
+                                        GetViewTree(viewid);
                                     }
                                     else if (actionid != undefined && actionid != '') 
                                     {
