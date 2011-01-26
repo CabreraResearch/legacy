@@ -234,6 +234,44 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod( EnableSession = true )]
+        public string JQueryGetWelcomeItems( string SessionId, string strRoleId )
+        {
+            CswTimer Timer = new CswTimer();
+            string ReturnVal = string.Empty;
+            try
+            {
+                string EuphemisticAuthenticationStatus = string.Empty;
+                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
+                {
+
+                    _CswNbtWebServiceResources.CswNbtResources.logTimerResult( "before JQueryGetWelcomeItems", Timer.ElapsedDurationInSecondsAsString );
+
+                    CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtWebServiceResources );
+                    // Only administrators can get welcome content for other roles
+                    if( strRoleId != string.Empty && _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                        ReturnVal = ws.GetWelcomeItems( strRoleId );
+                    else
+                        ReturnVal = ws.GetWelcomeItems( _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser.RoleId.ToString() );
+
+                    _CswNbtWebServiceResources.CswNbtResources.logTimerResult( "after JQueryGetWelcomeItems", Timer.ElapsedDurationInSecondsAsString );
+
+                    end();
+                }
+                else
+                {
+                    ReturnVal = result( EuphemisticAuthenticationStatus );
+                }
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            _CswNbtWebServiceResources.CswNbtResources.logTimerResult( "end JQueryGetViews", Timer.ElapsedDurationInSecondsAsString );
+            return ( ReturnVal );
+        } // JQueryGetViews()
+
+        [WebMethod( EnableSession = true )]
         public string JQueryGetViews( string SessionId )
         {
             CswTimer Timer = new CswTimer();
