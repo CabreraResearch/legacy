@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.Schema
                 //As of 01H-17, executing this in alphabetical order (minus nodes/statistics) will work
                 foreach( String TableName in TablesToPrune )
                 {
-                    String NukeDemoDataSQL = "delete from " + TableName + " where isdemo = '" + CswConvert.ToDbVal( true ) + "' or isdemo is null ";
+                    String NukeDemoDataSQL = "delete from " + TableName + " where isdemo = '" + CswConvert.ToDbVal( true ) + "'";
                     try
                     {
                         _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( NukeDemoDataSQL );
@@ -54,9 +54,9 @@ namespace ChemSW.Nbt.Schema
                 // We just happen to know that these are the only 2 tables which have constraints and need to be dealt with separately
                 try
                 {
-                    _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from nodes where isdemo= '" + CswConvert.ToDbVal( true ) + "' or isdemo is null " );
+                    _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from nodes where isdemo= '" + CswConvert.ToDbVal( true ) + "'" );
                     _CswNbtSchemaModTrnsctn.commitTransaction();
-                    _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from statistics where isdemo= '" + CswConvert.ToDbVal( true ) + "' or isdemo is null " );
+                    _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from statistics where isdemo= '" + CswConvert.ToDbVal( true ) + "'" );
                     _CswNbtSchemaModTrnsctn.commitTransaction();
                 }
                 catch( Exception ex )
