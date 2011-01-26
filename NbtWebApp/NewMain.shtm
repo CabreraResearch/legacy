@@ -29,13 +29,32 @@
                             <script>
                                 $('#CenterDiv').CswLogin({
                                     'onAuthenticate': function (s, u) {
-                                                        $('#header_dashboard').CswDashboard({ 'SessionId': s });
-                                                        $('#header_menu').CswHeaderMenu({ 'SessionId': s });
+                                                        $('#header_dashboard').CswDashboard();
+                                                        $('#header_menu').CswHeaderMenu();
                                                         $('#header_username').text(u);
-                                                        //$('#leftdiv').CswNbt({ 'SessionId': s });
-                                                        $('#CenterDiv').CswWelcome({ 'SessionId': s });
-                                                      }
-                                                });
+                                                        //$('#leftdiv').CswNbt();
+                                                        $('#CenterDiv').CswWelcome({ 
+                                                                                     onLinkClick: HandleWelcomeLinkClick 
+                                                                                    });
+                                    }
+                                });
+
+                                function HandleWelcomeLinkClick(viewid, actionid, reportid) {
+                                    if (viewid != undefined && viewid != '') 
+                                    {
+                                        $('#leftdiv').CswNbt({
+                                                               'viewid': viewid 
+                                                             });
+                                    }
+                                    else if (actionid != undefined && actionid != '') 
+                                    {
+                                        alert('Actions are not yet handled!');
+                                    }
+                                    else if (reportid != undefined && reportid != '') 
+                                    {
+                                        alert('Reports are not yet handled!');
+                                    }
+                                }
                             </script>
 
                         </td>

@@ -104,6 +104,7 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( DataRow WelcomeRow in WelcomeTable.Rows )
             {
+                ret += "<item";
                 string LinkText = string.Empty;
                 if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
                 {
@@ -114,6 +115,7 @@ namespace ChemSW.Nbt.WebServices
                             LinkText = WelcomeRow["displaytext"].ToString();
                         else
                             LinkText = ThisView.ViewName;
+                        ret += " viewid=\"" + WelcomeRow["nodeviewid"].ToString() + "\"";
                     }
                 }
                 if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
@@ -126,6 +128,7 @@ namespace ChemSW.Nbt.WebServices
                         else
                             LinkText = ThisAction.Name.ToString();
                     }
+                    ret += " actionid=\"" + WelcomeRow["actionid"].ToString() + "\"";
                 }
                 if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )
                 {
@@ -134,6 +137,7 @@ namespace ChemSW.Nbt.WebServices
                         LinkText = WelcomeRow["displaytext"].ToString();
                     else
                         LinkText = ThisReportNode.NodeName;
+                    ret += " reportid=\"" + WelcomeRow["reportid"].ToString() + "\"";
                 }
                 if( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) != Int32.MinValue )
                 {
@@ -142,15 +146,18 @@ namespace ChemSW.Nbt.WebServices
                         LinkText = WelcomeRow["displaytext"].ToString();
                     else
                         LinkText = "Add New " + NodeType.NodeTypeName;
+                    ret += " nodetypeid=\"" + WelcomeRow["nodetypeid"].ToString() + "\"";
                 }
 
-                ret += "<item id=\"" + WelcomeRow["welcomeid"].ToString() + "\"";
-                ret += "      type=\"" + WelcomeRow["componenttype"].ToString() + "\"";
-                ret += "      buttonicon=\"" + IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() + "\"";
-                ret += "      text=\"" + LinkText + "\"";
-                ret += "      displayrow=\"" + WelcomeRow["display_row"].ToString() + "\"";
-                ret += "      displaycol=\"" + WelcomeRow["display_col"].ToString() + "\"";
-                ret += "/>";
+                if( LinkText != string.Empty )
+                {
+                    ret += "      type=\"" + WelcomeRow["componenttype"].ToString() + "\"";
+                    ret += "      buttonicon=\"" + IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() + "\"";
+                    ret += "      text=\"" + LinkText + "\"";
+                    ret += "      displayrow=\"" + WelcomeRow["display_row"].ToString() + "\"";
+                    ret += "      displaycol=\"" + WelcomeRow["display_col"].ToString() + "\"";
+                    ret += "/>";
+                }
 
             } // foreach( DataRow WelcomeRow in WelcomeTable.Rows )
 

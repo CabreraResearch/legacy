@@ -3,7 +3,6 @@
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/JQueryGetHeaderMenu',
-            SessionId: ''
         };
 
         if (options) {
@@ -14,7 +13,7 @@
 
         CswAjax({
             url: o.Url,
-            data: "{SessionId: '" + o.SessionId + "'}",
+            data: "{SessionId: '" + GetSessionId() + "'}",
             success: function ($xml) {
                 var $ul = $('<ul class="topnav"></ul>');
 

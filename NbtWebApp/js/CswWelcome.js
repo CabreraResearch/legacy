@@ -3,7 +3,9 @@
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/JQueryGetWelcomeItems',
-            SessionId: ''
+            onLinkClick: function(viewid, actionid, reportid) { },
+            onSearchClick: function(viewid) { },
+            onAddClick: function(nodetypeid) { }
         };
 
         if (options) {
@@ -13,7 +15,7 @@
 
         CswAjax({
             url: o.Url,
-            data: "{SessionId: '" + o.SessionId + "', RoleId: '' }",
+            data: "{SessionId: '" + GetSessionId() + "', RoleId: '' }",
             success: function ($xml) {
                 var $WelcomeDiv = $('<div id="welcomediv"><table class="WelcomeTable" align="center" cellpadding="20"></table></div>')
                                     .appendTo($this);
@@ -21,12 +23,12 @@
                 
                 $xml.children().each(function() {
 
-                //<item id=" + WelcomeRow["welcomeid"].ToString() + "\"";
-                //      type=\"" + WelcomeRow["componenttype"].ToString() + "\"";
-                //      buttonicon=\"" + IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() + "\"";
-                //      text=\"" + LinkText + "\"";
-                //      displayrow=\"" + WelcomeRow["display_row"].ToString() + "\"";
-                //      displaycol=\"" + WelcomeRow["display_col"].ToString() + "\"";
+                    //<item id=" + WelcomeRow["welcomeid"].ToString() + "\"";
+                    //      type=\"" + WelcomeRow["componenttype"].ToString() + "\"";
+                    //      buttonicon=\"" + IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() + "\"";
+                    //      text=\"" + LinkText + "\"";
+                    //      displayrow=\"" + WelcomeRow["display_row"].ToString() + "\"";
+                    //      displaycol=\"" + WelcomeRow["display_col"].ToString() + "\"";
 
                     var $item = $(this);
                     var $cell = getTableCell($table, $item.attr('displayrow'), $item.attr('displaycol'));
@@ -38,15 +40,18 @@
                     {
                         case 'Link':
                             $cell.append( $('<a href="">' + $item.attr('text') + '</a>') );
+                            $cell.find('a').click(function() { o.onLinkClick($item.attr('viewid'),$item.attr('actionid'),$item.attr('reportid')); return false; });
                             break;
                         case 'Search': 
                             $cell.append( $('<a href="">' + $item.attr('text') + '</a>') );
+                            $cell.find('a').click(function() { o.onSearchClick($item.attr('viewid')); return false; });
                             break;
                         case 'Text':
                             $cell.text($item.attr('text'));
                             break;
                         case 'Add': 
                             $cell.append( $('<a href="">' + $item.attr('text') + '</a>') );
+                            $cell.find('a').click(function() { o.onAddClick($item.attr('nodetypeid')); return false; });
                             break;
                     }
                 });

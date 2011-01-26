@@ -10,14 +10,14 @@
             TreeUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetTree',
             TabsUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetTabs',
             PropsUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetProps',
-            SessionId: ''
+            viewid: ''
         };
 
         if (options) {
             $.extend(o, options);
         }
 
-        var DefaultViewId = "176";
+        var SessionId = GetSessionId();
         var SelectedNodePk;
 
         var $viewsdiv = $('<div id="viewsdiv" />')
@@ -29,23 +29,31 @@
         var $timerdiv = $('<div id="timerdiv" />')
                         .appendTo($("#" + o.TimerDiv));
 
-        getViewSelect();
+        getViewSelect(o.viewid);
 
 
-        function getViewSelect()
+        function getViewSelect(selectedviewid)
         {
             starttime = new Date();
             CswAjax({
                 url: o.ViewUrl,
-                data: '{ SessionId: "'+ o.SessionId +'" }',
+                data: '{ SessionId: "'+ SessionId +'" }',
                 success: function ($xml)
                 {
                     $viewsdiv.children().remove();
                     $select = $('<select name="viewselect" id="viewselect"><option value="">Select A View</option></select>')
                               .appendTo($viewsdiv);
                     $xml.children().each(function() {
-                        $this = $(this);
-                        $select.append('<option value="'+$this.attr('id')+'">'+$this.attr('name')+'</option>');
+                        var $this = $(this);
+                        var thisid = $this.attr('id');
+                        var option = '<option value="' + thisid + '"';
+                        if(thisid == selectedviewid)
+                        {
+                            option += ' selected';
+                            getTree(thisid);
+                        }
+                        option += '>' + $this.attr('name') + '</option>';
+                        $select.append(option);
                     });
                     $select.bind('change', function(e, data) { 
                         getTree(e.target.value);
@@ -60,7 +68,7 @@
             starttime = new Date();
             CswAjax({
                 url: o.TreeUrl,
-                data: '{ SessionId: "'+ o.SessionId +'", ViewId: "'+ viewid +'" }',
+                data: '{ SessionId: "'+ SessionId +'", ViewId: "'+ viewid +'" }',
                 success: function ($xml, xml) {
                     $treediv.jstree({
                             "xml_data": {
@@ -93,7 +101,7 @@
             starttime = new Date();
             CswAjax({
                 url: o.TabsUrl,
-                data: '{ SessionId: "' + o.SessionId +'", NodePk: "' + nodepk + '" }',
+                data: '{ SessionId: "' + SessionId +'", NodePk: "' + nodepk + '" }',
                 success: function ($xml) {
                             clearTabs();
                             var $tabdiv = $("<div><ul></ul></div>");
@@ -123,7 +131,7 @@
             starttime = new Date();
             CswAjax({
                 url: o.PropsUrl,
-                data: '{ SessionId: "' + o.SessionId +'", NodePk: "' + nodepk + '", TabId: "' + tabid + '" }',
+                data: '{ SessionId: "' + SessionId +'", NodePk: "' + nodepk + '", TabId: "' + tabid + '" }',
                 success: function ($xml) {
                             $div = $("#" + tabid);
                             $div.children().remove();

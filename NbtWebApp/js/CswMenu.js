@@ -32,7 +32,7 @@
                             });
         }
 
-        function SubMenuClick(data, e)
+        function SubMenuClick()
         {
             HideAllSubMenus();
             // Prevent subnav elements from triggering topnav click

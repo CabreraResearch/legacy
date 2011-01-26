@@ -3,7 +3,6 @@
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/JQueryGetDashboard',
-            SessionId: ''
         };
 
         if (options) {
@@ -14,7 +13,7 @@
         
         CswAjax({
             url: o.Url,
-            data: "{SessionId: '" + o.SessionId + "'}",
+            data: "{SessionId: '" + GetSessionId() + "'}",
             success: function ($xml) {
                  
                     var $table = $('<table id="DashboardTable" class="DashboardTable" cellpadding="0" cellspacing="0"><tr></tr></table>');
