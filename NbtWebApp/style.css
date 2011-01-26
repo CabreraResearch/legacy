@@ -1151,6 +1151,15 @@ body a
 	border: 1px solid #003366;
 	width: 100px;
 }
+.WelcomeTable
+{
+	font-size: 16px;
+	text-align: center;
+}
+.WelcomeTable a
+{
+	font-size: 16px;
+}
 .WelcomeText
 {
 	font-size: 16px;

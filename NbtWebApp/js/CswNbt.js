@@ -127,19 +127,11 @@
                 success: function ($xml) {
                             $div = $("#" + tabid);
                             $div.children().remove();
-                            var $table = $('<table></table>').appendTo($div);
+                            var $table = $('<table></table>')
+                                           .appendTo($div);
                             $xml.children().each(function() { 
-                                $this = $(this);
-                                while($this.attr('displayrow') >= $table.find('tr').length)
-                                {
-                                    $table.append('<tr></tr>');
-                                }
-                                var $row = $($table.find('tr')[$this.attr('displayrow')]);
-                                while($this.attr('displaycol') >= $row.find('td').length)
-                                {
-                                    $row.append('<td></td>');
-                                }
-                                var $cell = $($row.find('td')[$this.attr('displaycol')]);
+                                var $this = $(this);
+                                var $cell = getTableCell($table, $this.attr('displayrow'), $this.attr('displaycol'));
                                 $cell.append($this.attr('name') + ' = ' + $this.attr('gestalt'));
                             });
                             updateTimer("getProps", starttime, new Date());

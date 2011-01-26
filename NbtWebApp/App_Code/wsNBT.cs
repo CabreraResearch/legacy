@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetWelcomeItems( string SessionId, string strRoleId )
+        public string JQueryGetWelcomeItems( string SessionId, string RoleId )
         {
             CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
@@ -248,8 +248,8 @@ namespace ChemSW.Nbt.WebServices
 
                     CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtWebServiceResources );
                     // Only administrators can get welcome content for other roles
-                    if( strRoleId != string.Empty && _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser.IsAdministrator() )
-                        ReturnVal = ws.GetWelcomeItems( strRoleId );
+                    if( RoleId != string.Empty && _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                        ReturnVal = ws.GetWelcomeItems( RoleId );
                     else
                         ReturnVal = ws.GetWelcomeItems( _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser.RoleId.ToString() );
 

@@ -148,8 +148,8 @@ namespace ChemSW.Nbt.WebServices
                 ret += "      type=\"" + WelcomeRow["componenttype"].ToString() + "\"";
                 ret += "      buttonicon=\"" + IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() + "\"";
                 ret += "      text=\"" + LinkText + "\"";
-                ret += "      display_row=\"" + WelcomeRow["display_row"].ToString() + "\"";
-                ret += "      display_col=\"" + WelcomeRow["display_col"].ToString() + "\"";
+                ret += "      displayrow=\"" + WelcomeRow["display_row"].ToString() + "\"";
+                ret += "      displaycol=\"" + WelcomeRow["display_col"].ToString() + "\"";
                 ret += "/>";
 
             } // foreach( DataRow WelcomeRow in WelcomeTable.Rows )

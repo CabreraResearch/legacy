@@ -10,10 +10,6 @@
             $.extend(o, options);
         }
 
-        var $LoginDiv = $('<div id="logindiv" />')
-                        .appendTo($(this));
-
-
         var ThisSessionId = GetSessionId();
         if(ThisSessionId != null)
         {
@@ -21,7 +17,8 @@
             o.onAuthenticate(ThisSessionId, GetUsername());
 
         } else {
-            var LoginDivHtml = '  <table>' +
+            var $LoginDiv = $( '<div id="logindiv" align="center" />' +
+                               '  <table>' +
                                '    <tr>' +
                                '      <td align="right">Customer ID:</td>' +
                                '      <td><input type="text" name="accessid" id="login_accessid" /></td>' +
@@ -38,10 +35,9 @@
                                '      <td align="right"></td>' +
                                '      <td><input type="button" id="login_button" name="Login" value="Login" /></td>' +
                                '    </tr>' +
-                               '  </table>';
+                               '  </table>')
+                               .appendTo($(this));
 
-            $LoginDiv.attr('align', 'center');
-            $LoginDiv.append( LoginDivHtml );
             $('#login_accessid').focus();
 
             $('#login_button').click( function() {
@@ -51,10 +47,7 @@
                 authenticate($('#login_accessid').val(),
                              $('#login_username').val(),
                              $('#login_password').val(),
-                             function(s, u) {
-                                $LoginDiv.remove();
-                                o.onAuthenticate(s, u);
-                             });
+                             o.onAuthenticate);
             });
 
         }
@@ -68,7 +61,8 @@
                     if (ThisSessionId != "") {
                             
                         SetSessionId(ThisSessionId);
-                            
+                        $LoginDiv.remove();
+
                         onsuccess(ThisSessionId, UserName);
 
                     } // if (SessionId != "")

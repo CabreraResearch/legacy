@@ -96,6 +96,30 @@ function CloseDialog(id) {
 }
 
 
+
+// ------------------------------------------------------------------------------------
+// Layout mechanics
+// ------------------------------------------------------------------------------------
+
+function getTableCell($table, row, col) {
+    var $cell = null;
+    if ( $table.length > 0 &&
+         row != undefined && row != '' &&
+         col != undefined && col != '' ) 
+    {
+        while (row >= $table.find('tr').length) {
+            $table.append('<tr></tr>');
+        }
+        var $row = $($table.find('tr')[row]);
+        while (col >= $row.find('td').length) {
+            $row.append('<td></td>');
+        }
+        var $cell = $($row.find('td')[col]);
+    }
+    return $cell;
+}
+
+
 // ------------------------------------------------------------------------------------
 // for debug
 // ------------------------------------------------------------------------------------
