@@ -839,6 +839,9 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources.CswResources.ClearCache();
         }
 
+        /// <summary>
+        /// Convenience function for updating S4s
+        /// </summary>
         public void UpdateS4( string QueryId, string QueryText )
         {
             CswTableUpdate S4Update = makeCswTableUpdate( "CswNbtSchemaModTrnsctn_UpdateS4", "static_sql_selects" );
@@ -852,6 +855,21 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources.CswResources.ClearCache();
         }
 
+        /// <summary>
+        /// Convenience function for updating configuration variables
+        /// </summary>
+        public void UpdateConfigurationVariable( string ConfigVar, string VariableValue )
+        {
+            CswTableUpdate ConfigVarUpdate = makeCswTableUpdate( "CswNbtSchemaModTrnsctn_UpdateConfigVar", "configuration_variables" );
+            DataTable ConfigVarTable = ConfigVarUpdate.getTable( "where lower(variablename) = '" + ConfigVar.ToLower() + "'" );
+            if( ConfigVarTable.Rows.Count < 0 )
+                throw new CswDniException( "No Match for Configuration Variable: " + ConfigVar, "CswNbtSchemaModTrnsctn::UpdateConfigurationVariable() returned 0 rows for variablename: " + ConfigVar );
+            ConfigVarTable.Rows[0]["variablevalue"] = VariableValue;
+            ConfigVarUpdate.update( ConfigVarTable );
+
+            // Clear cached values
+            _CswNbtResources.CswResources.ClearCache();
+        }
 
     }//class CswNbtSchemaModTrnsctn
 
