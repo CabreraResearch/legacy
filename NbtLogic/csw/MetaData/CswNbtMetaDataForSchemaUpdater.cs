@@ -140,15 +140,14 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="Value"></param>
         public void SetObjectClassPropDefaultValue( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtSubField.SubFieldName SubFieldName, object Value )
         {
-            object DBValue = CswConvert.ToDbVal( Value );
-            ObjectClassProp.DefaultValue.SetPropRowValue( ObjectClassProp.FieldTypeRule.SubFields[SubFieldName].Column, DBValue );
+            ObjectClassProp.DefaultValue.SetPropRowValue( ObjectClassProp.FieldTypeRule.SubFields[SubFieldName].Column, Value );
             // We're going to regret this day
-            ObjectClassProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, DBValue );
+            ObjectClassProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
 
             foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.NodeTypeProps )
             {
-                NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.FieldTypeRule.SubFields[SubFieldName].Column, DBValue );
-                NodeTypeProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, DBValue );
+                NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.FieldTypeRule.SubFields[SubFieldName].Column, Value );
+                NodeTypeProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
             }
         }
 

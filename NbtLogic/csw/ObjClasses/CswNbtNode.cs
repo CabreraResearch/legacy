@@ -135,7 +135,12 @@ namespace ChemSW.Nbt.ObjClasses
         }//UniqueId
 
         //bz # 5943
-        private NodeModificationState _NodeModificationState = NodeModificationState.Unknown;
+        private NodeModificationState __NodeModificationState = NodeModificationState.Unknown;
+        private NodeModificationState _NodeModificationState {
+            get { return __NodeModificationState; }
+            set { __NodeModificationState = value; }
+        }
+        
         public NodeModificationState ModificationState
         {
             get

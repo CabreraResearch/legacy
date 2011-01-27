@@ -99,10 +99,10 @@ namespace ChemSW.Nbt.PropTypes
                     if( value.TableName != TargetTableName )
                         throw new CswDniException( "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
 
-                    _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, CswConvert.ToDbVal( value.PrimaryKey ) );
+                    _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, value.PrimaryKey );
                 }
                 else
-                    _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, CswConvert.ToDbVal( Int32.MinValue ) );
+                    _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, Int32.MinValue );
             }
         }
 

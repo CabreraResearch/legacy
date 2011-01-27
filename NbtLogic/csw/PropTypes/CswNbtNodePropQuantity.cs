@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.PropTypes
                 string StringVal = string.Empty;
                 if( Double.IsNaN( value ) )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, CswConvert.ToDbVal( Double.NaN ) );
+                    _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, Double.NaN );
                 }
                 else
                 {
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _UnitsSubField.Column, value.ToString() );
+                _CswNbtNodePropData.SetPropRowValue( _UnitsSubField.Column, value );
                 _SynchGestalt();
             }
         }

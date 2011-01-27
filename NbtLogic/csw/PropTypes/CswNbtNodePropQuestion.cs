@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.PropTypes
         public string Comments
         {
             get { return _CswNbtNodePropData.GetPropRowValue( _CommentsSubField.Column ); }
-            set { _CswNbtNodePropData.SetPropRowValue( _CommentsSubField.Column, CswConvert.ToDbVal( value ) ); }
+            set { _CswNbtNodePropData.SetPropRowValue( _CommentsSubField.Column, value ); }
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace ChemSW.Nbt.PropTypes
         public bool IsCompliant
         {
             get { return CswConvert.ToBoolean( _CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column ) ); }
-            set { _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, CswConvert.ToDbVal( value ) ); }
+            set { _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value ); }
         }
 
         private void _SynchGestalt()

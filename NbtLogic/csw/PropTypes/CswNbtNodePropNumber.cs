@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( Double.IsNaN( value ) )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, CswConvert.ToDbVal( Double.NaN ) );
+                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, Double.NaN );
                     _CswNbtNodePropData.Gestalt = string.Empty;
                 }
                 else
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
                     if( Precision > Int32.MinValue )
                         RoundedValue = Math.Round( value, Precision, MidpointRounding.AwayFromZero );
 
-                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, RoundedValue.ToString() );
+                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, RoundedValue );
                     _CswNbtNodePropData.Gestalt = RoundedValue.ToString();
                 }
             }
