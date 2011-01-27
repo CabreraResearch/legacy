@@ -147,7 +147,18 @@ namespace ChemSW.Nbt
         /// <returns></returns>
         public bool IsSearchable()
         {
-            return ( this.FindFirstPropertyFilter() != null );
+            //return ( this.FindFirstPropertyFilters() != null );
+            bool ret = false;
+            ArrayList PropFilters = Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter );
+            foreach( CswNbtViewPropertyFilter Filter in PropFilters )
+            {
+                if( Filter.SubfieldName != CswNbtSubField.SubFieldName.NodeID )
+                {
+                    ret = true;
+                    break;
+                }
+            }
+            return ret;
         }
 
         /// <summary>
