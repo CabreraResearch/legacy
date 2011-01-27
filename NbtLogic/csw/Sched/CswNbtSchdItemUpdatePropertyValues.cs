@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.Sched
                     if( Node.NodeType != null )
                     {
                         CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = new CswNbtActUpdatePropertyValue( _CswNbtResources );
-                        CswNbtActUpdatePropertyValue.UpdateNode( Node );
+                        CswNbtActUpdatePropertyValue.UpdateNode( Node, false );
                         Node.postChanges( false );
                     }
 

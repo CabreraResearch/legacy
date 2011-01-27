@@ -96,7 +96,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         protected override void CreateChildControls()
         {
             _TextBox = new TextBox();
-            _TextBox.ID = "text";
+            _TextBox.ID = "text_" + _CswNbtMetaDataNodeTypeProp.PropId.ToString();
             _TextBox.CssClass = CswFieldTypeWebControl.TextBoxCssClass;
             this.Controls.Add(_TextBox);
 

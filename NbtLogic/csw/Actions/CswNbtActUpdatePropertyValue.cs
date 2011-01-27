@@ -20,10 +20,10 @@ namespace ChemSW.Nbt.Actions
         }
 
 
-        public void UpdateNode( CswNbtNode Node )
+        public void UpdateNode( CswNbtNode Node, bool ForceUpdate )
         {
             // BZ 10240
-            if( Node.PendingUpdate && Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+            if( ( Node.PendingUpdate || ForceUpdate ) && Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
             {
                 CswNbtNodeCaster.AsEquipment( Node ).SynchEquipmentToAssembly();
             }
@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Actions
             // Update all out of date values for a given node
             foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
             {
-                if( PropWrapper.PendingUpdate || Node.PendingUpdate )
+                if( PropWrapper.PendingUpdate || Node.PendingUpdate || ForceUpdate )
                 {
                     switch( PropWrapper.FieldType.FieldType )
                     {
