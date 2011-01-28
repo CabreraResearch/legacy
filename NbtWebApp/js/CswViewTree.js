@@ -21,13 +21,18 @@
             url: o.TreeUrl,
             data: '{ SessionId: "' + SessionId + '", ViewId: "' + o.viewid + '" }',
             success: function ($xml, xml) {
+                var firstid = $xml.find('item').first().attr('id');
                 $treediv.jstree({
                     "xml_data": {
                         "data": xml,
                         "xsl": "nest"
                     },
                     "ui": {
-                        "select_limit": 1
+                        "select_limit": 1,
+                        "initially_select": firstid
+                    },
+                    "core": {
+                        "initially_open": firstid
                     },
                     "plugins": ["themes", "xml_data", "ui"]
                 })  // .jstree({
@@ -37,6 +42,9 @@
                                 o.onSelectNode(SelectedNodePk);
                                 //getTabs(SelectedNodePk);
                             });
+
+                if(firstid != '')
+                    o.onSelectNode(firstid);
 
             } // success{}
         });
