@@ -56,6 +56,8 @@ namespace ChemSW.Nbt.WebServices
                 _CswNbtResources.finalize();
                 _CswNbtResources.release();
             }
+            if( _SessionResources != null )
+                _SessionResources.setCache();
         }
 
         private string error( Exception ex )
