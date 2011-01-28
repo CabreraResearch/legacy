@@ -19,11 +19,10 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceJQuery
     {
-        private CswNbtWebServiceResources _CswNbtWebServiceResources;
-
-        public CswNbtWebServiceJQuery( CswNbtWebServiceResources CswNbtWebServiceResources )
+        private CswNbtResources _CswNbtResources;
+        public CswNbtWebServiceJQuery( CswNbtResources CswNbtResources )
         {
-            _CswNbtWebServiceResources = CswNbtWebServiceResources;
+            _CswNbtResources = CswNbtResources;
         }
 
         private class DashIcon
@@ -85,7 +84,7 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( DashIcon DashIcon in DashIcons )
             {
-                if( _CswNbtWebServiceResources.CswNbtResources.IsModuleEnabled( DashIcon.Module ) )
+                if( _CswNbtResources.IsModuleEnabled( DashIcon.Module ) )
                 {
                     ret += "<dash id=\"" + DashIcon.Id + "\" text=\"" + DashIcon.Text + "\" href=\"" + DashIcon.Href + "\" />";
                 }
@@ -127,7 +126,7 @@ namespace ChemSW.Nbt.WebServices
         public string getViews()
         {
             string ret = string.Empty;
-            DataTable ViewDT = _CswNbtWebServiceResources.CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser, false, false );
+            DataTable ViewDT = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false );
             foreach( DataRow ViewRow in ViewDT.Rows )
             {
                 ret += "<view id=\"" + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
@@ -142,9 +141,9 @@ namespace ChemSW.Nbt.WebServices
             string ret = string.Empty;
             ret += @"<item id=""-1""><content><name>No results</name></content></item>";
 
-            CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtWebServiceResources.CswNbtResources, ViewId );
+            CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
 
-            ICswNbtTree Tree = _CswNbtWebServiceResources.CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
             
             string TreeXml = "<root>" +
                              "  <item id=\"root\" rel=\"root\">" +
@@ -173,12 +172,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( Rel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
                 {
-                    CswNbtMetaDataNodeType NodeType = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeType( Rel.SecondId );
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Rel.SecondId );
                     NodeTypes.Add( NodeType );
                 }
                 else
                 {
-                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtWebServiceResources.CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
+                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
                     foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
                     {
                         NodeTypes.Add( NodeType );
@@ -211,7 +210,7 @@ namespace ChemSW.Nbt.WebServices
             CswPrimaryKey NodePk = new CswPrimaryKey();
             NodePk.FromString( NodePkString );
 
-            CswNbtNode Node = _CswNbtWebServiceResources.CswNbtResources.Nodes[NodePk];
+            CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
             if( Node != null )
             {
                 ret = "<tabs>";
@@ -230,7 +229,7 @@ namespace ChemSW.Nbt.WebServices
             CswPrimaryKey NodePk = new CswPrimaryKey();
             NodePk.FromString( NodePkString );
 
-            CswNbtNode Node = _CswNbtWebServiceResources.CswNbtResources.Nodes[NodePk];
+            CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
             if( Node != null )
             {
                 foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )

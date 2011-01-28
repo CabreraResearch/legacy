@@ -3,13 +3,13 @@
 // ------------------------------------------------------------------------------------
 
 function SetSessionId(SessionId) {
-    $.cookie('csw_sessionid', SessionId);
+    $.cookie('CswSessionId', SessionId);
 }
 function GetSessionId() {
-    return $.cookie('csw_sessionid');
+    return $.cookie('CswSessionId');
 }
 function ClearSessionId() {
-    $.cookie('csw_sessionid', null);
+    $.cookie('CswSessionId', null);
 }
 
 function SetUsername(Username) {

@@ -71,7 +71,8 @@
                                     $('#RightDiv').CswNodeTabs({ 'nodeid': nodeid });
                                 }
 
-                                function HandleWelcomeLinkClick(viewid, actionid, reportid) {
+                                function HandleWelcomeLinkClick(viewid, actionid, reportid) 
+                                {
                                     ClearCenter();
                                     if (viewid != undefined && viewid != '') 
                                     {

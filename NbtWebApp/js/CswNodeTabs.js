@@ -11,8 +11,6 @@
             $.extend(o, options);
         }
 
-        var SessionId = GetSessionId();
-
         var $outertabdiv = $('<div id="tabdiv" />')
                         .appendTo($(this));
 
@@ -28,7 +26,7 @@
         {
             CswAjax({
                 url: o.TabsUrl,
-                data: '{ SessionId: "' + SessionId +'", NodePk: "' + nodepk + '" }',
+                data: '{ NodePk: "' + nodepk + '" }',
                 success: function ($xml) {
                             clearTabs();
                             var $tabdiv = $("<div><ul></ul></div>");
@@ -56,7 +54,7 @@
         {
             CswAjax({
                 url: o.PropsUrl,
-                data: '{ SessionId: "' + SessionId +'", NodePk: "' + nodepk + '", TabId: "' + tabid + '" }',
+                data: '{ NodePk: "' + nodepk + '", TabId: "' + tabid + '" }',
                 success: function ($xml) {
                             $div = $("#" + tabid);
                             $div.children().remove();

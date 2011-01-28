@@ -13,7 +13,7 @@
         
         CswAjax({
             url: o.Url,
-            data: "{SessionId: '" + GetSessionId() + "'}",
+            data: "",
             success: function ($xml) {
                  
                     var $table = $('<table id="DashboardTable" class="DashboardTable" cellpadding="0" cellspacing="0"><tr></tr></table>');

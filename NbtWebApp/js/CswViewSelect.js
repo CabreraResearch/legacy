@@ -11,8 +11,6 @@
             $.extend(o, options);
         }
 
-        var SessionId = GetSessionId();
-
         var $viewsdiv = $('<div id="viewsdiv" />')
                         .appendTo($(this));
 
@@ -23,7 +21,7 @@
             starttime = new Date();
             CswAjax({
                 url: o.ViewUrl,
-                data: '{ SessionId: "'+ SessionId +'" }',
+                data: '',
                 success: function ($xml)
                 {
                     $viewsdiv.children().remove();

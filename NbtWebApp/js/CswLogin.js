@@ -3,7 +3,7 @@
 
         var o = {
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
-            onAuthenticate: function(SessionId, Username) {}
+            onAuthenticate: function(Username) {}
         };
 
         if (options) {
@@ -11,10 +11,11 @@
         }
 
         var ThisSessionId = GetSessionId();
+console.log(ThisSessionId);            
         if(ThisSessionId != null)
         {
-            
-            o.onAuthenticate(ThisSessionId, GetUsername());
+
+            o.onAuthenticate( GetUsername() );
 
         } else {
             var $LoginDiv = $( '<div id="logindiv" align="center" />' +
@@ -57,16 +58,15 @@
                 url: o.AuthenticateUrl,
                 data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
                 success: function ($xml) {
-                    var ThisSessionId = $xml.find('SessionId').text();
-                    if (ThisSessionId != "") {
-                            
-                        SetSessionId(ThisSessionId);
+                    auth = $xml.find('AuthenticationStatus').text();
+                    if(auth == 'Authenticated')
+                    {
+                        SetUsername(UserName);
                         $LoginDiv.remove();
-
-                        onsuccess(ThisSessionId, UserName);
-
-                    } // if (SessionId != "")
-                    else {
+                        onsuccess(UserName);
+                    }
+                    else 
+                    {
                         _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
                     }
                 } // success{}

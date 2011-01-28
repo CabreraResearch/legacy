@@ -31,16 +31,12 @@ namespace ChemSW.Nbt.WebServices
     /// </summary>
     public class CswNbtWebServiceWelcomeItems : CompositeControl
     {
-        private CswNbtWebServiceResources _CswNbtWebServiceResources;
-        private CswNbtResources _CswNbtResources
-        {
-            get { return _CswNbtWebServiceResources.CswNbtResources; }
-        }
+        private CswNbtResources _CswNbtResources;
 
-        public CswNbtWebServiceWelcomeItems(CswNbtWebServiceResources CswNbtWebServiceResources)
+        public CswNbtWebServiceWelcomeItems( CswNbtResources CswNbtResources )
         {
-            _CswNbtWebServiceResources=CswNbtWebServiceResources;
-            
+            _CswNbtResources = CswNbtResources;
+
         }
 
         /// <summary>
@@ -165,7 +161,7 @@ namespace ChemSW.Nbt.WebServices
 
         } // GetWelcomeItems()
 
-        
+
         public void ResetWelcomeItems( string strRoleId )
         {
             CswPrimaryKey RolePk = new CswPrimaryKey();

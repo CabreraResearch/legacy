@@ -15,7 +15,7 @@
 
         CswAjax({
             url: o.Url,
-            data: "{SessionId: '" + GetSessionId() + "', RoleId: '' }",
+            data: "{ RoleId: '' }",
             success: function ($xml) {
                 var $WelcomeDiv = $('<div id="welcomediv"><table class="WelcomeTable" align="center" cellpadding="20"></table></div>')
                                     .appendTo($this);

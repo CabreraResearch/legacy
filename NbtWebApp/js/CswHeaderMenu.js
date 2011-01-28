@@ -13,7 +13,7 @@
 
         CswAjax({
             url: o.Url,
-            data: "{SessionId: '" + GetSessionId() + "'}",
+            data: "",
             success: function ($xml) {
                 var $ul = $('<ul class="topnav"></ul>');
 
