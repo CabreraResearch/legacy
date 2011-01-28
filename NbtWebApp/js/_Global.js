@@ -55,7 +55,7 @@ function CswAjax(options) {
                 _handleAjaxError(XMLHttpRequest, $xml.text(), '');
             }
             else {
-                o.success($xml, data.d);
+                o.success($xml);
             }
 
         }, // success{}

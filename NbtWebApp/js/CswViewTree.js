@@ -20,11 +20,15 @@
         CswAjax({
             url: o.TreeUrl,
             data: '{ SessionId: "' + SessionId + '", ViewId: "' + o.viewid + '" }',
-            success: function ($xml, xml) {
-                var firstid = $xml.find('item').first().attr('id');
+            success: function ($xml) {
+                var firstid = $xml.find('item').first().find('item').first().attr('id');
+                var treexml = $xml.find('tree').get(0).innerHTML;
+                var strTypes = $xml.find('types').text();
+                var jsonTypes = $.parseJSON(strTypes);
+
                 $treediv.jstree({
                     "xml_data": {
-                        "data": xml,
+                        "data": treexml,
                         "xsl": "nest"
                     },
                     "ui": {
@@ -32,19 +36,17 @@
                         "initially_select": firstid
                     },
                     "core": {
-                        "initially_open": firstid
+                        "initially_open": [ "root", firstid ]
                     },
-                    "plugins": ["themes", "xml_data", "ui"]
-                })  // .jstree({
-                    .bind('select_node.jstree', 
+                    "types": {
+                        "types": jsonTypes
+                    },
+                    "plugins": ["themes", "xml_data", "ui", "types"]
+                }).bind('select_node.jstree', 
                             function (e, data) {
-                                SelectedNodePk = data.args[0].parentNode.id;
+                                SelectedNodePk = data.rslt.obj.attr('id');
                                 o.onSelectNode(SelectedNodePk);
-                                //getTabs(SelectedNodePk);
                             });
-
-                if(firstid != '')
-                    o.onSelectNode(firstid);
 
             } // success{}
         });

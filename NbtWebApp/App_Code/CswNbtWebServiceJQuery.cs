@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Web;
 using System.Xml;
@@ -118,8 +119,8 @@ namespace ChemSW.Nbt.WebServices
             ret += "  <item text=\"About\" popup=\"About.html\" />";
             ret += "</item>";
             ret += "<item text=\"Logout\" />";
-            
-            return "<menu>"+ ret + "</menu>";
+
+            return "<menu>" + ret + "</menu>";
         }
 
 
@@ -144,13 +145,64 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtWebServiceResources.CswNbtResources, ViewId );
 
             ICswNbtTree Tree = _CswNbtWebServiceResources.CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
+            
+            string TreeXml = "<root>" +
+                             "  <item id=\"root\" rel=\"root\">" +
+                             "    <content>" +
+                             "      <name>" + View.ViewName + "</name>" +
+                             "    </content>" +
+                                  _runTreeNodesRecursive( Tree ) +
+                             "  </item>" +
+                             "</root>";
 
             if( Tree.getChildNodeCount() > 0 )
-                ret = "<root>" + _runTreeNodesRecursive( Tree ) + "</root>";
+                ret = "<result>" +
+                      "  <tree>" + TreeXml + "</tree>" +
+                      "  <types>{ " + _getTypes( View ) + " }</types>" +
+                      "</result>";
 
             return ret;
         } // getTree()
 
+        public string _getTypes( CswNbtView View )
+        {
+            string ret = string.Empty;
+            Collection<CswNbtMetaDataNodeType> NodeTypes = new Collection<CswNbtMetaDataNodeType>();
+            ArrayList Relationships = View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
+            foreach( CswNbtViewRelationship Rel in Relationships )
+            {
+                if( Rel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                {
+                    CswNbtMetaDataNodeType NodeType = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeType( Rel.SecondId );
+                    NodeTypes.Add( NodeType );
+                }
+                else
+                {
+                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtWebServiceResources.CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
+                    foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
+                    {
+                        NodeTypes.Add( NodeType );
+                    }
+                }
+            }
+
+            ret += "\"root\": { " +
+                    "    \"icon\": { " +
+                    "      \"image\": \"Images/view/viewtree.gif\" " +
+                    "    } " +
+                    "  }";
+            ret += ",\"default\": \"\" ";
+
+            foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
+            {
+                ret += ",\"nt_" + NodeType.FirstVersionNodeTypeId.ToString() + "\": { " +
+                        "    \"icon\": { " +
+                        "      \"image\": \"Images/icons/" + NodeType.IconFileName + "\" " +
+                        "    } " +
+                        "  }";
+            }
+            return ret;
+        }
 
         public string getTabs( string NodePkString )
         {
@@ -219,7 +271,10 @@ namespace ChemSW.Nbt.WebServices
                 string ThisNodeName = Tree.getNodeNameForCurrentPosition();
                 string ThisNodeId = ThisNode.NodeId.ToString();
 
-                ret += "<item id=\"" + ThisNodeId + "\"><content><name>" + ThisNodeName + "</name></content>";
+                ret += "<item id=\"" + ThisNodeId + "\" rel=\"nt_" + ThisNode.NodeType.FirstVersionNodeTypeId.ToString() + "\">";
+                ret += "  <content>";
+                ret += "    <name>" + ThisNodeName + "</name>";
+                ret += "  </content>";
                 ret += _runTreeNodesRecursive( Tree );
                 ret += "</item>";
 
