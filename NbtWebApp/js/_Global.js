@@ -38,7 +38,7 @@ function CswAjax(options) {
         $.extend(o, options);
     }
 
-    var starttime = new Date();
+    //var starttime = new Date();
     $.ajax({
         type: 'POST',
         url: o.url,
@@ -48,7 +48,7 @@ function CswAjax(options) {
         success: function (data, textStatus, XMLHttpRequest) {
 
             var endtime = new Date();
-            $('#timerdiv').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+            //$('#timerdiv').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
             var $xml = $(data.d);
             if ($xml.get(0).nodeName == "ERROR") {
