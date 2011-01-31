@@ -56,10 +56,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( DateTime.MinValue != value )
-                    _CswNbtNodePropData.SetPropRowValue( _StartDateTimeSubField.Column, value.ToString() );
-                else
-                    _CswNbtNodePropData.SetPropRowValue( _StartDateTimeSubField.Column, DBNull.Value );
+                _CswNbtNodePropData.SetPropRowValue( _StartDateTimeSubField.Column, value );
             }
         }//StartDateTime
 
@@ -95,16 +92,11 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
+                _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
                 if( value != Double.NaN )
-                {
-                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value.ToString() );
                     _CswNbtNodePropData.Gestalt = value.ToString() + " " + Units.ToString();
-                }
                 else
-                {
-                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, CswConvert.ToDbVal( Double.NaN ) );
                     _CswNbtNodePropData.Gestalt = string.Empty;
-                }
             }
         }
 

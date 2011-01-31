@@ -59,7 +59,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         protected override void CreateChildControls()
         {
             _TextBox = new TextBox();
-            _TextBox.ID = "text";
+            _TextBox.ID = "memo_" + _CswNbtMetaDataNodeTypeProp.PropId.ToString();
             _TextBox.CssClass = CswFieldTypeWebControl.TextBoxCssClass;
             this.Controls.Add( _TextBox );
 
@@ -75,10 +75,12 @@ namespace ChemSW.NbtWebControls.FieldTypes
             _TextBox.CssClass = "textinput";
             base.CreateChildControls();
 
-
-            _RequiredValidator.Visible = true;
-            _RequiredValidator.Enabled = true;
-            _RequiredValidator.ControlToValidate = _TextBox.ID;
+            if( Required )
+            {
+                _RequiredValidator.Visible = true;
+                _RequiredValidator.Enabled = true;
+                _RequiredValidator.ControlToValidate = _TextBox.ID;
+            }
         }
 
         protected override void OnPreRender( EventArgs e )

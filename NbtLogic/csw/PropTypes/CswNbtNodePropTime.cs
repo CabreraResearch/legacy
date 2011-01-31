@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 else
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _TimeValueSubField.Column, CswConvert.ToDbVal( DateTime.MinValue ) );
+                    _CswNbtNodePropData.SetPropRowValue( _TimeValueSubField.Column, DateTime.MinValue );
                     _CswNbtNodePropData.Gestalt = string.Empty;
                 }
             }

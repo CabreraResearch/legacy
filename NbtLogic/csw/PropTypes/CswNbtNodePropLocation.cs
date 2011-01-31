@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( value != null )
                     NewValue = value.PrimaryKey;
 
-                if( _CswNbtNodePropData.SetPropRowValue( _NodeIdSubField.Column, CswConvert.ToDbVal( NewValue ) ) )
+                if( _CswNbtNodePropData.SetPropRowValue( _NodeIdSubField.Column, NewValue ) )
                     PendingUpdate = true;
             }
         }
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( _CswNbtNodePropData.SetPropRowValue( _RowSubField.Column, CswConvert.ToDbVal( value ) ) )
+                if( _CswNbtNodePropData.SetPropRowValue( _RowSubField.Column, value ) )
                     PendingUpdate = true;
             }
         }
@@ -136,7 +136,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ColumnSubField.Column, CswConvert.ToDbVal( value ) );
+                _CswNbtNodePropData.SetPropRowValue( _ColumnSubField.Column, value );
                 PendingUpdate = true;
             }
         }

@@ -82,7 +82,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
             _TextBox = new TextBox();
             _TextBox.CssClass = "textinput";
-            _TextBox.ID = "text";
+            _TextBox.ID = "linktext_" + _CswNbtMetaDataNodeTypeProp.PropId.ToString();
             _TextBox.Columns = 40;
             _SubTable.addControl( 0, 1, _TextBox );
 

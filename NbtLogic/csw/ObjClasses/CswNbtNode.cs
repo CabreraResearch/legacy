@@ -304,19 +304,20 @@ namespace ChemSW.Nbt.ObjClasses
             _PendingUpdate = false;
         }//clear()
 
-        private string _NodeName = "";
+        private string _NodeName = string.Empty;
         public string NodeName
         {
             get { return ( _NodeName ); }
             set
             {
-                if( _NodeName != value )
+                // case 20781 - only mark modified if we're changing the name, not assigning it from DB
+                if( _NodeName != value && _NodeName != string.Empty)
                 {
-                    _NodeName = value;
                     //bz # 5943
                     //_Modified = true;
                     _NodeModificationState = NodeModificationState.Modified;
                 }
+                _NodeName = value;
             }
         }
         private bool _PendingUpdate = false;

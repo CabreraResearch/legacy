@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.PropTypes
 
         /// <summary>
         /// Sets the value of a column for a property
+        /// value should be in native format -- this function will convert to db format
         /// </summary>
         /// <param name="column">Target column</param>
         /// <param name="value">New value</param>
@@ -28,7 +29,9 @@ namespace ChemSW.Nbt.PropTypes
         public bool SetPropRowValue( CswNbtSubField.PropColumn column, object value )
         {
             bool ret = false;
-            if( _PropRow == null && value != DBNull.Value )
+            object dbval = CswConvert.ToDbVal( value );
+
+            if( _PropRow == null && dbval != DBNull.Value )
             {
                 _PropRow = _PropsTable.NewRow();
                 if( _NodeId != null )
@@ -54,7 +57,7 @@ namespace ChemSW.Nbt.PropTypes
                 _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
                 _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
 
-                if( !( _PropRow[column.ToString()].Equals( CswConvert.ToDbVal( value ) ) ) )
+                if( !( _PropRow[column.ToString()].Equals( dbval ) ) )
                 {
                     WasModified = true;
                     _PropRow[column.ToString()] = CswConvert.ToDbVal( value );

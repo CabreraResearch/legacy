@@ -95,9 +95,12 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
             base.CreateChildControls();
 
-            _RequiredValidator.Visible = true;
-            _RequiredValidator.Enabled = true;
-            _RequiredValidator.ControlToValidate = _DropDownList.ID;
+            if( Required )
+            {
+                _RequiredValidator.Visible = true;
+                _RequiredValidator.Enabled = true;
+                _RequiredValidator.ControlToValidate = _DropDownList.ID;
+            }
         }
 
         protected override void OnPreRender( EventArgs e )

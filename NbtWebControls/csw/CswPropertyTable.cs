@@ -562,8 +562,7 @@ namespace ChemSW.NbtWebControls
             if( SelectedNode != null && SelectedNode.NodeSpecies == NodeSpecies.Plain && SelectedNode.NodeId != null )
             {
                 CswNbtActUpdatePropertyValue ActUPV = new CswNbtActUpdatePropertyValue( _CswNbtResources );
-                SelectedNode.PendingUpdate = true;
-                ActUPV.UpdateNode( SelectedNode );
+                ActUPV.UpdateNode( SelectedNode, true );
                 SelectedNode.postChanges( false );
             }
 
