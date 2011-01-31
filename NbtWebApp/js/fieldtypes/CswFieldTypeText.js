@@ -4,18 +4,25 @@
         var ID = $propxml.attr('id');
         var Value = $propxml.children('text').text();
         var Required = $propxml.attr('required');
+        var ReadOnly = $propxml.attr('readonly');
 
         var $Div = $(this);
         
         $Div.children().remove();
-
-        var $TextBox = $('<input type="text" id="'+ ID +'" value="'+ Value +'" />"' )
-                         .appendTo($Div); 
-        if(Required)
+        if(ReadOnly)
         {
-            $TextBox.addClass("required");
+            $Div.append(Value);
         }
-
+        else 
+        {
+            var $TextBox = $('<input type="text" id="'+ ID +'" value="'+ Value +'" />"' )
+                             .appendTo($Div); 
+            if(Required)
+            {
+                $TextBox.addClass("required");
+            }
+        }
+        
         // For proper chaining support
         return this;
 

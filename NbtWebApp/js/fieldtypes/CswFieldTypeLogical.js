@@ -9,12 +9,22 @@
         var $Div = $(this);
         $Div.children().remove();
 
-        var $CheckboxImage = $('<div id="'+ ID +'" class="divbutton" alt="' + Checked + '" />"' )
-                               .appendTo($Div)
-                               .click(function() { onClick($CheckboxImage, Required); });
+        if(ReadOnly)
+        {
+            switch(Checked)
+            {
+                case "true": $Div.append('Yes'); break;
+                case "false": $Div.append('No'); break;
+            }
+        } 
+        else 
+        {
+            var $CheckboxImage = $('<div id="'+ ID +'" class="divbutton" alt="' + Checked + '" />"' )
+                                   .appendTo($Div)
+                                   .click(function() { onClick($CheckboxImage, Required); });
 
-        updateOffset($CheckboxImage, Checked);
-
+            updateOffset($CheckboxImage, Checked);
+        }
         
         function onClick($CheckboxImage, Required) 
         {
