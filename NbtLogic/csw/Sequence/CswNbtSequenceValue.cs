@@ -189,14 +189,16 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Resets next sequence value based on existing values in the database.
+        /// Resets next sequence value based on newest entry and existing values in the database.
         /// </summary>
-        public void Resync()
+        public void reSync( Int32 NewSeqVal )
         {
             string SelectCols = string.Empty;
             SelectCols += "j." + CswNbtFieldTypeRuleBarCode.SequenceNumberColumn.ToString();
             if( CswNbtFieldTypeRuleBarCode.SequenceNumberColumn != CswNbtFieldTypeRuleSequence.SequenceNumberColumn )
+            {
                 SelectCols += ", j." + CswNbtFieldTypeRuleSequence.SequenceNumberColumn.ToString();
+            }
 
             string SelectText = @"select " + SelectCols + @"
                                     from sequences s
@@ -207,7 +209,7 @@ namespace ChemSW.Nbt
             CswArbitrarySelect SeqValueSelect = _CswNbtResources.makeCswArbitrarySelect( "syncSequence_maxvalue_select", SelectText );
             DataTable SeqValueTable = SeqValueSelect.getTable();
 
-            Int32 MaxSeqVal = Int32.MinValue;
+            Int32 MaxSeqVal = NewSeqVal;
             foreach( DataRow SeqValueRow in SeqValueTable.Rows )
             {
                 Int32 ThisSeqVal = CswConvert.ToInt32( SeqValueRow[CswNbtFieldTypeRuleBarCode.SequenceNumberColumn.ToString()] );
