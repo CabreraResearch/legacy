@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
 using System.Data;
 using System.Xml;
@@ -147,18 +148,8 @@ namespace ChemSW.Nbt
         /// <returns></returns>
         public bool IsSearchable()
         {
-            //return ( this.FindFirstPropertyFilters() != null );
-            bool ret = false;
             ArrayList PropFilters = Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter );
-            foreach( CswNbtViewPropertyFilter Filter in PropFilters )
-            {
-                if( Filter.SubfieldName != CswNbtSubField.SubFieldName.NodeID )
-                {
-                    ret = true;
-                    break;
-                }
-            }
-            return ret;
+            return PropFilters.Cast<CswNbtViewPropertyFilter>().Any( Filter => Filter.SubfieldName != CswNbtSubField.SubFieldName.NodeID );
         }
 
         /// <summary>
