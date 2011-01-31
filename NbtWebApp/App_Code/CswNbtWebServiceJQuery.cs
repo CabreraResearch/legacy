@@ -246,6 +246,7 @@ namespace ChemSW.Nbt.WebServices
                             ret += " ocpname=\"" + PropWrapper.ObjectClassPropName + "\"";
                             ret += " displayrow=\"" + Prop.DisplayRow.ToString() + "\"";
                             ret += " displaycol=\"" + Prop.DisplayColumn.ToString() + "\"";
+                            ret += " required=\"" + Prop.IsRequired.ToString().ToLower() + "\"";
                             ret += ">";
                             XmlDocument XmlDoc = new XmlDocument();
                             CswXmlDocument.SetDocumentElement( XmlDoc, "root" );

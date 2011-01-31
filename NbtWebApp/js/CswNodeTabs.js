@@ -62,8 +62,22 @@
                                            .appendTo($div);
                             $xml.children().each(function() { 
                                 var $this = $(this);
-                                var $cell = getTableCell($table, $this.attr('displayrow'), $this.attr('displaycol'));
-                                $cell.append($this.attr('name') + ' = ' + $this.attr('gestalt'));
+                                var $labelcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2 ) - 1);
+                                var $propcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2));
+                                var fieldtype = $this.attr('fieldtype');
+                                var $propdiv = $('<div/>').appendTo($propcell); 
+
+                                $labelcell.append($this.attr('name'));
+
+                                switch(fieldtype)
+                                {
+                                    case "Text":
+                                        $propdiv.CswFieldTypeText($this);
+                                        break;
+                                    default:
+                                        $propdiv.append($this.attr('gestalt'));
+                                        break;
+                                }
                             });
                         } // success{}
             }); 
