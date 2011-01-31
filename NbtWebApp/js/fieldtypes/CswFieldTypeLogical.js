@@ -6,11 +6,6 @@
         var Required = $propxml.attr('required');
         var ReadOnly = $propxml.attr('readonly');
 
-        var TrueOffset = 20;
-        var FalseOffset = 18;
-        var NullOffset = 19;
-        var Multiplier = -18;
-
         var $Div = $(this);
         $Div.children().remove();
 
@@ -18,60 +13,54 @@
                                .appendTo($Div)
                                .click(function() { onClick($CheckboxImage, Required); });
 
-        var Offset = 0;
-        updateOffset(Checked);
-
-        if(Required)
-        {
-            
-        }
+        updateOffset($CheckboxImage, Checked);
 
         
-
-
         function onClick($CheckboxImage, Required) 
         {
-        	var currentValue = $CheckboxImage.attr('value');
-	        var newValue = "Null";
+        	var currentValue = $CheckboxImage.attr('alt');
+	        var newValue = "null";
 
-	        if (currentValue == "Null") {
-		        newValue = "True";
-	        } else if (currentValue == "False") {
-		        if (Required) {
-			        newValue = "True";
+	        if (currentValue == "null") {
+		        newValue = "true";
+	        } else if (currentValue == "false") {
+		        if (Required == "true") {
+			        newValue = "true";
 		        } else {
-			        newValue = "Null";
+			        newValue = "null";
 		        }
-	        } else if (currentValue == "True") {
-		        newValue = "False";
+	        } else if (currentValue == "true") {
+		        newValue = "false";
 	        }
-            updateOffset(newValue);
-        	$CheckboxImage.attr('alt', newValue);
-	    
-            var checkbutton = document.getElementById(checkbuttondivid);
-	        checkbutton.style.backgroundPosition = "0px " + Offset * Multipler + "px";
-	        checkbutton.onmouseover = function() { this.style.backgroundPosition = "-18px " + Offset * Multipler * -18 + "px"; }
-	        checkbutton.onmouseout = function() { this.style.backgroundPosition = "0px " + Offset * Multipler * -18 + "px"; }
-	
-	        if (autopostback == "true")
-		        document.getElementById(pbbuttonid).click();
+
+            $CheckboxImage.attr('alt', newValue);
+            updateOffset($CheckboxImage, newValue);
+        	
 	        return false;
-        }
+        } // onClick()
 
         function updateOffset($CheckboxImage, val)
         {
+            var TrueOffset = 20;
+            var FalseOffset = 18;
+            var NullOffset = 19;
+            var Multiplier = -18;
+
             var Offset;
             switch(val)
             {
-                case "True":  Offset = TrueOffset;  break;
-                case "False": Offset = FalseOffset; break;
-                case "Null":  Offset = NullOffset;  break;
+                case "true":  Offset = TrueOffset;  break;
+                case "false": Offset = FalseOffset; break;
+                case "null":  Offset = NullOffset;  break;
                 default:      Offset = NullOffset;  break;
             }
-            $CheckboxImage.style.background = "url(\'Images/buttons/buttons18.gif\') 0px '+ Offset * Multipler +'px no-repeat";
-            $CheckboxImage.bind('mouseover', function() { this.style.backgroundPosition = '-18px ' + Offset * Multipler + 'px'; })
-            $CheckboxImage.bind('mouseout', function() { this.style.backgroundPosition = '0px ' + Offset * Multipler + 'px'; })
-        }
+
+            $CheckboxImage.get(0).style.background = 'url(\'Images/buttons/buttons18.gif\') 0px '+ Offset * Multiplier + 'px no-repeat';
+            $CheckboxImage.unbind('mouseover');
+            $CheckboxImage.unbind('mouseout');
+            $CheckboxImage.bind('mouseover', function() { this.style.backgroundPosition = '-18px ' + Offset * Multiplier + 'px'; })
+            $CheckboxImage.bind('mouseout', function() { this.style.backgroundPosition = '0px ' + Offset * Multiplier + 'px'; })
+        } // updateOffset()
 
 
 
