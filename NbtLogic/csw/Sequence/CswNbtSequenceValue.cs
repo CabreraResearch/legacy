@@ -189,6 +189,14 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Resets next sequence value based on maximum existing value in the database.
+        /// </summary>
+        public void reSync()
+        {
+            reSync( Int32.MinValue );
+        }
+
+        /// <summary>
         /// Resets next sequence value based on newest entry and existing values in the database.
         /// </summary>
         public void reSync( Int32 NewSeqVal )
