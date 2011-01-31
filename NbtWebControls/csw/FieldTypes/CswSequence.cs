@@ -53,11 +53,11 @@ namespace ChemSW.NbtWebControls.FieldTypes
         public override void Save()
         {
             if( _EditMode == NodeEditMode.DefaultValue )
-                Prop.AsSequence.SetSequenceValueOverride( _ValueTextBox.Text, false );
+                Prop.AsSequence.setSequenceValueOverride( _ValueTextBox.Text, false );
             else if( !ReadOnly && _ValueTextBox.Text != CswNbtNodePropBarcode.AutoSignal && _ValueTextBox.Text != string.Empty )
-                Prop.AsSequence.SetSequenceValueOverride( _ValueTextBox.Text, false );
+                Prop.AsSequence.setSequenceValueOverride( _ValueTextBox.Text, false );
             else
-                Prop.AsSequence.SetSequenceValue();  // this will not overwrite
+                Prop.AsSequence.setSequenceValue();  // this will not overwrite
         }
         public override void AfterSave()
         {

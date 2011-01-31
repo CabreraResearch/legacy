@@ -70,12 +70,12 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Sets Sequence to the next sequence value
         /// </summary>
-        public void SetSequenceValue()
+        public void setSequenceValue()
         {
             if( Sequence.Trim() == string.Empty )
             {
                 string value = _SequenceValue.Next;
-                SetSequenceValueOverride( value, false );
+                setSequenceValueOverride( value, false );
             }
         }
 
@@ -83,19 +83,20 @@ namespace ChemSW.Nbt.PropTypes
         /// Sets Sequence to the provided value.  
         /// This allows manually overriding automatically generated sequence values.  Use carefully.
         /// </summary>
-        /// <param name="value">Value to set for Sequence</param>
+        /// <param name="SeqValue">Value to set for Sequence</param>
         /// <param name="ResetSequence">True if the sequence needs to be reset to this value 
         /// (set true if the value was not just generated from the sequence)</param>
-        public void SetSequenceValueOverride( string value, bool ResetSequence )
+        public void setSequenceValueOverride( string SeqValue, bool ResetSequence )
         {
-            _CswNbtNodePropData.SetPropRowValue( _SequenceSubField.Column, value );
-            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, _SequenceValue.deformatSequence( value ) );
-            _CswNbtNodePropData.Gestalt = value;
+            _CswNbtNodePropData.SetPropRowValue( _SequenceSubField.Column, SeqValue );
+            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, _SequenceValue.deformatSequence( SeqValue ) );
+            _CswNbtNodePropData.Gestalt = SeqValue;
 
             if( ResetSequence )
             {
                 // Keep the sequence up to date
-                _SequenceValue.Resync();
+                Int32 ThisSeqValue = CswConvert.ToInt32( SeqValue );
+                _SequenceValue.reSync( ThisSeqValue );
             }
         }
 
@@ -108,7 +109,7 @@ namespace ChemSW.Nbt.PropTypes
             }
 
             // Automatically generate a value.  This will not overwrite existing values.
-            SetSequenceValue();
+            setSequenceValue();
 
             base.onBeforeUpdateNodePropRow( IsCopy );
         }//onBeforeUpdateNodePropRow()
@@ -117,7 +118,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             // BZ 10498 - Don't copy, just generate a new value
             //base.onCopy();
-            SetSequenceValue();
+            setSequenceValue();
         }
 
 
@@ -131,13 +132,13 @@ namespace ChemSW.Nbt.PropTypes
         {
             string ProspectiveSequence = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SequenceSubField.ToXmlNodeName() );
             if( ProspectiveSequence != string.Empty )
-                SetSequenceValueOverride( ProspectiveSequence, false );
+                setSequenceValueOverride( ProspectiveSequence, false );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             string ProspectiveSequence = CswTools.XmlRealAttributeName( PropRow[_SequenceSubField.ToXmlNodeName()].ToString() );
             if( ProspectiveSequence != string.Empty )
-                SetSequenceValueOverride( ProspectiveSequence, false );
+                setSequenceValueOverride( ProspectiveSequence, false );
         }
 
     }//CswNbtNodeProp

@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
                         foreach( CswNbtNode Node in NodeType.getNodes( false, true ) )
                         {
                             // This will set the value of SequenceNumber correctly
-                            Node.Properties[Prop].AsBarcode.SetBarcodeValueOverride( Node.Properties[Prop].AsBarcode.Barcode, false );
+                            Node.Properties[Prop].AsBarcode.setBarcodeValueOverride( Node.Properties[Prop].AsBarcode.Barcode, false );
                             Node.postChanges( false );
                         }
                     } 
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Schema
                         foreach( CswNbtNode Node in NodeType.getNodes( false, true ) )
                         {
                             // This will set the value of SequenceNumber correctly
-                            Node.Properties[Prop].AsSequence.SetSequenceValueOverride( Node.Properties[Prop].AsSequence.Sequence, false );
+                            Node.Properties[Prop].AsSequence.setSequenceValueOverride( Node.Properties[Prop].AsSequence.Sequence, false );
                             Node.postChanges( false );
                         }
                     }

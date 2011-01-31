@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Core;
 using System.Xml;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -12,7 +13,7 @@ namespace ChemSW.Nbt.PropTypes
 
     public class CswNbtNodePropBarcode : CswNbtNodeProp
     {
-        public static string AutoSignal = "[auto]";
+        public const string AutoSignal = "[auto]";
 
         public CswNbtNodePropBarcode( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
@@ -32,7 +33,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSequenceValue _SequenceValue;
         private CswNbtSubField _BarcodeSubField;
         private CswNbtSubField _SequenceNumberSubField;
-
+          
         override public bool Empty
         {
             get
@@ -68,13 +69,13 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Sets Barcode to the next sequence value
         /// </summary>
-        public bool SetBarcodeValue()
+        public bool setBarcodeValue()
         {
             bool Succeeded = false;
             if( Barcode.Trim() == string.Empty )
             {
                 string value = _SequenceValue.Next;
-                Succeeded = SetBarcodeValueOverride( value, false );
+                Succeeded = setBarcodeValueOverride( value, false );
             }
             return Succeeded;
         }
@@ -83,19 +84,20 @@ namespace ChemSW.Nbt.PropTypes
         /// Sets Barcode to the provided value.  
         /// This allows manually overriding automatically generated sequence values.  Use carefully.
         /// </summary>
-        /// <param name="value">Value to set for Barcode</param>
+        /// <param name="SeqValue">Value to set for Barcode</param>
         /// <param name="ResetSequence">True if the sequence needs to be reset to this value 
         /// (set true if the value was not just generated from the sequence)</param>
-        public bool SetBarcodeValueOverride( string value, bool ResetSequence )
+        public bool setBarcodeValueOverride( string SeqValue, bool ResetSequence )
         {
-            bool Succeeded = _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, value );
-            Succeeded = ( Succeeded && _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, _SequenceValue.deformatSequence( value ) ) );
-            _CswNbtNodePropData.Gestalt = value;
+            bool Succeeded = _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, SeqValue );
+            Succeeded = ( Succeeded && _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, _SequenceValue.deformatSequence( SeqValue ) ) );
+            _CswNbtNodePropData.Gestalt = SeqValue;
 
             if( ResetSequence )
             {
                 // Keep the sequence up to date
-                _SequenceValue.Resync();
+                Int32 ThisSeqValue = CswConvert.ToInt32( SeqValue );
+                _SequenceValue.reSync( ThisSeqValue );
             }
             return Succeeded;
         }
@@ -109,7 +111,7 @@ namespace ChemSW.Nbt.PropTypes
             }
 
             // Automatically generate a value.  This will not overwrite existing values.
-            SetBarcodeValue();
+            setBarcodeValue();
 
             base.onBeforeUpdateNodePropRow( IsCopy );
         }//onBeforeUpdateNodePropRow()
@@ -117,9 +119,18 @@ namespace ChemSW.Nbt.PropTypes
         public override void Copy( CswNbtNodePropData Source )
         {
             // BZ 10498 - Don't copy, just generate a new value
-            //base.onCopy();
-            SetBarcodeValue();
+            // Waiting on disucssion w/ TDU
+            //String Barcode = Source.NodeTypeProp.DefaultValue.AsBarcode.Barcode.ToString();
+            //if( string.IsNullOrEmpty( Barcode ) )
+            //{
+                setBarcodeValue();
+            //}
+            //else // Case 20784
+            //{
+            //    setBarcodeValueOverride( Barcode, false );
+            //}
         }
+    
 
 
         public override void ToXml( XmlNode ParentNode )
@@ -132,13 +143,13 @@ namespace ChemSW.Nbt.PropTypes
         {
             string ProspectiveBarcode = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() );
             if( ProspectiveBarcode != string.Empty )
-                SetBarcodeValueOverride( ProspectiveBarcode, false );
+                setBarcodeValueOverride( ProspectiveBarcode, false );
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             string ProspectiveBarcode = CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.ToXmlNodeName()].ToString() );
             if( ProspectiveBarcode != string.Empty )
-                SetBarcodeValueOverride( ProspectiveBarcode, false );
+                setBarcodeValueOverride( ProspectiveBarcode, false );
         }
 
     }//CswNbtNodePropQuantity

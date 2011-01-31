@@ -429,11 +429,11 @@ namespace ChemSW.Nbt.WebPages
 
                             if( mpBarcodeExists )
                             {
-                                MountPointAsMP.Barcode.SetBarcodeValue();
+                                MountPointAsMP.Barcode.setBarcodeValue();
                                 MountPointNode.Properties[MPLegacyBarcodeNTP].AsText.Text = MountPointBarcode;
                             }
                             else
-                                MountPointAsMP.Barcode.SetBarcodeValueOverride( MountPointBarcode, true );
+                                MountPointAsMP.Barcode.setBarcodeValueOverride( MountPointBarcode, true );
 
                             MountPointAsMP.Description.Text = MountPointDescription;
                             MountPointAsMP.LastInspectionDate.DateValue = LastInspectionDate;
@@ -493,10 +493,10 @@ namespace ChemSW.Nbt.WebPages
                                 if( feBarcodeExists )
                                 {    
                                     FENode.Properties[FELegacyBarcodeNTP].AsText.Text = FEBarcode;
-                                    FENode.Properties[BarcodeNTP].AsBarcode.SetBarcodeValue();
+                                    FENode.Properties[BarcodeNTP].AsBarcode.setBarcodeValue();
                                 }
                                 else
-                                    FENode.Properties[BarcodeNTP].AsBarcode.SetBarcodeValueOverride( FEBarcode, true );
+                                    FENode.Properties[BarcodeNTP].AsBarcode.setBarcodeValueOverride( FEBarcode, true );
                                
                                 FENodeAsFE.Description.Text = FEDescription;
                                 FENodeAsFE.LastInspectionDate.DateValue = LastInspectionDate;
