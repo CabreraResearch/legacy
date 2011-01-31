@@ -89,13 +89,13 @@ namespace ChemSW.Nbt.PropTypes
         public void setSequenceValueOverride( string SeqValue, bool ResetSequence )
         {
             _CswNbtNodePropData.SetPropRowValue( _SequenceSubField.Column, SeqValue );
-            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, _SequenceValue.deformatSequence( SeqValue ) );
+            Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
+            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
             _CswNbtNodePropData.Gestalt = SeqValue;
 
             if( ResetSequence )
             {
                 // Keep the sequence up to date
-                Int32 ThisSeqValue = CswConvert.ToInt32( SeqValue );
                 _SequenceValue.reSync( ThisSeqValue );
             }
         }
