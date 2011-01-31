@@ -61,6 +61,10 @@ namespace ChemSW.Nbt.ObjClasses
         /// Reason for cancel
         /// </summary>
         public static string CancelReasonPropertyName { get { return "Cancel Reason"; } }
+        /// <summary>
+        /// Location of Inspection's Target
+        /// </summary>
+        public static string LocationPropertyName { get { return "Location"; } }
 
         /// <summary>
         /// Possible status values for Inspection. Should match List values on ID Status attribute.
@@ -214,29 +218,32 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void beforeCreateNode()
         {
-            String NodeStatus = String.Empty;
-            CswNbtMetaDataNodeType ThisInspectionNT = this.Node.NodeType.LatestVersionNodeType;
-            if( null != ThisInspectionNT )
+            if( Tristate.True != this.IsFuture.Checked )
             {
-                //Limit collection to Inspections on the same Generator
-                IEnumerable<CswNbtNode> AllNodesOfThisNT = ThisInspectionNT.getNodes( true, true )
-                                                                           .Where( InspectionNode => this.Generator.RelatedNodeId == InspectionNode.Properties[GeneratorPropertyName].AsRelationship.RelatedNodeId );
-                foreach( CswNbtNode InspectionNode in AllNodesOfThisNT )
+                String NodeStatus = String.Empty;
+                CswNbtMetaDataNodeType ThisInspectionNT = this.Node.NodeType.LatestVersionNodeType;
+                if( null != ThisInspectionNT )
                 {
-                    CswNbtObjClassInspectionDesign PriorInspection = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
-                    NodeStatus = PriorInspection.Status.Value;
-
-                    if( //Inspection status is Pending, Overdue or not set
-                        ( InspectionStatusAsString( InspectionStatus.Overdue ) == NodeStatus ||
-                          InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus ||
-                          String.Empty == NodeStatus ) &&
-                        //Inspections have the same target, and we're comparing different Inspection nodes
-                        ( this.Target.RelatedNodeId == InspectionNode.Properties[TargetPropertyName].AsRelationship.RelatedNodeId &&
-                          this.Node != InspectionNode ) )
+                    //Limit collection to Inspections on the same Generator
+                    IEnumerable<CswNbtNode> AllNodesOfThisNT = ThisInspectionNT.getNodes( true, true )
+                        .Where( InspectionNode => this.Generator.RelatedNodeId == InspectionNode.Properties[GeneratorPropertyName].AsRelationship.RelatedNodeId );
+                    foreach( CswNbtNode InspectionNode in AllNodesOfThisNT )
                     {
-                        PriorInspection.Status.Value = InspectionStatus.Missed.ToString();
-                        // Case 20755
-                        PriorInspection.postChanges( true );
+                        CswNbtObjClassInspectionDesign PriorInspection = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
+                        NodeStatus = PriorInspection.Status.Value;
+
+                        if( //Inspection status is Pending, Overdue or not set
+                            ( InspectionStatusAsString( InspectionStatus.Overdue ) == NodeStatus ||
+                              InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus ||
+                              String.Empty == NodeStatus ) &&
+                            //Inspections have the same target, and we're comparing different Inspection nodes
+                            ( this.Target.RelatedNodeId == InspectionNode.Properties[TargetPropertyName].AsRelationship.RelatedNodeId &&
+                              this.Node != InspectionNode ) )
+                        {
+                            PriorInspection.Status.Value = InspectionStatus.Missed.ToString();
+                            // Case 20755
+                            PriorInspection.postChanges( true );
+                        }
                     }
                 }
             }
@@ -548,6 +555,17 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[CancelReasonPropertyName].AsMemo );
+            }
+        }
+
+        /// <summary>
+        /// Location of Inspection's Target
+        /// </summary>
+        public CswNbtNodePropPropertyReference Location
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[LocationPropertyName].AsPropertyReference );
             }
         }
 

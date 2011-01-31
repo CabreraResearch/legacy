@@ -153,12 +153,14 @@ namespace ChemSW.Nbt.WebServices
                 foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
                 {
                     if( !Prop.HideInMobile &&
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password )
+                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
+                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) // Case 20772
                     {
                         CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
                         ret += "<prop id=\"" + PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() + "\"";
                         ret += " name=\"" + Prop.PropNameWithQuestionNo + "\"";
                         ret += " tab=\"" + Tab.TabName + "\"";
+                        ret += " readonly=\"" + CswConvert.ToDbVal( Prop.ReadOnly ) +"\"";
                         ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
                         ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";
                         ret += " ocpname=\"" + PropWrapper.ObjectClassPropName + "\"";

@@ -89,6 +89,9 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.vendors.ToString(), CswSchemaVersion.VendorsColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.welcome.ToString(), CswSchemaVersion.WelcomeColumns.isdemo.ToString(), DemoColumnDescription, true, false );
 
+            // Case 20828
+            _CswNbtSchemaModTrnsctn.UpdateConfigurationVariable( "failedloginlimit", "5" );
+
         } // update()
 
     }//class CswUpdateSchemaTo01H17

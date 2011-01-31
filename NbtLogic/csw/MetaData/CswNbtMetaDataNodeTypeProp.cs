@@ -1090,11 +1090,11 @@ namespace ChemSW.Nbt.MetaData
 
                             if( CurrentProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
                             {
-                                CurrentNode.Properties[this].AsSequence.SetSequenceValue();
+                                CurrentNode.Properties[this].AsSequence.setSequenceValue();
                             }
                             else if( CurrentProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
                             {
-                                CurrentNode.Properties[this].AsBarcode.SetBarcodeValue();
+                                CurrentNode.Properties[this].AsBarcode.setBarcodeValue();
                             }
 
                         } // for( int idx = 0; idx < TotalNodes; idx++ )
@@ -1104,7 +1104,8 @@ namespace ChemSW.Nbt.MetaData
 
                         // Resync Sequence to next new value
                         CswNbtSequenceValue SeqValue = new CswNbtSequenceValue( _CswNbtMetaDataResources.CswNbtResources, SequenceId );
-                        SeqValue.Resync();
+                        Int32 SeqValueInt = CswConvert.ToInt32( SeqValue.ToString() );
+                        SeqValue.reSync( SeqValueInt );
 
                     } // if( TotalNodes > 0 )
                 } // if prop is sequence or barcode

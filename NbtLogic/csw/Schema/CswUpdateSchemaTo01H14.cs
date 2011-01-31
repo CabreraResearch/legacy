@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Text;
-using ChemSW.Core;
-using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
-using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -42,7 +31,7 @@ namespace ChemSW.Nbt.Schema
                         foreach( CswNbtNode Node in NodeType.getNodes( false, true ) )
                         {
                             // This will set the value of SequenceNumber correctly
-                            Node.Properties[Prop].AsBarcode.SetBarcodeValueOverride( Node.Properties[Prop].AsBarcode.Barcode, false );
+                            Node.Properties[Prop].AsBarcode.setBarcodeValueOverride( Node.Properties[Prop].AsBarcode.Barcode, false );
                             Node.postChanges( false );
                         }
                     } 
@@ -51,7 +40,7 @@ namespace ChemSW.Nbt.Schema
                         foreach( CswNbtNode Node in NodeType.getNodes( false, true ) )
                         {
                             // This will set the value of SequenceNumber correctly
-                            Node.Properties[Prop].AsSequence.SetSequenceValueOverride( Node.Properties[Prop].AsSequence.Sequence, false );
+                            Node.Properties[Prop].AsSequence.setSequenceValueOverride( Node.Properties[Prop].AsSequence.Sequence, false );
                             Node.postChanges( false );
                         }
                     }
@@ -67,10 +56,7 @@ namespace ChemSW.Nbt.Schema
             else
                 SetupTabId = PhysicalInspectionNT.getFirstNodeTypeTab().TabId;
 
-            CswNbtMetaDataNodeTypeProp LocationProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( PhysicalInspectionNT, 
-                                                                                                    CswNbtMetaDataFieldType.NbtFieldType.PropertyReference, 
-                                                                                                    "Location", 
-                                                                                                    SetupTabId );
+            CswNbtMetaDataNodeTypeProp LocationProp = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.LocationPropertyName );
             CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point ) );
             CswNbtMetaDataNodeTypeProp TargetNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
             CswNbtMetaDataNodeTypeProp LocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );

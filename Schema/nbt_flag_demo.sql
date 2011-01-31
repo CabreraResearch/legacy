@@ -26,6 +26,9 @@ set isdemo='1';
 update statistics_views
 set isdemo='1';
 
+update statistics_searches
+set isdemo='1';
+
 update update_history
 set isdemo='1';
 
@@ -54,6 +57,12 @@ update jct_modules_actions
 set isdemo='0';
 
 update jct_modules_nodetypes
+set isdemo='0';
+
+update sequences
+set isdemo='0';
+
+update welcome
 set isdemo='0';
 
 update nodes

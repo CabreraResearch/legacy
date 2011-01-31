@@ -1,11 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
@@ -23,7 +18,6 @@ namespace ChemSW.Nbt
         {
             _CswNbtResources = CswNbtResources;
         }
-
 
         private ICswNbtNodeWriterImpl getWriterImpl( CswPrimaryKey NodePk )
         {
@@ -159,11 +153,11 @@ namespace ChemSW.Nbt
             {
                 if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                 {
-                    Prop.AsBarcode.SetBarcodeValue();  // does not overwrite
+                    Prop.AsBarcode.setBarcodeValue();  // does not overwrite
                 }
                 else if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence )
                 {
-                    Prop.AsSequence.SetSequenceValue();  // does not overwrite
+                    Prop.AsSequence.setSequenceValue();  // does not overwrite
                 }
             }
         }
