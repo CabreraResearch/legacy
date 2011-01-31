@@ -11,7 +11,6 @@
         }
 
         var ThisSessionId = GetSessionId();
-console.log(ThisSessionId);            
         if(ThisSessionId != null)
         {
 

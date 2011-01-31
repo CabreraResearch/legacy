@@ -71,6 +71,12 @@
 
                                 switch(fieldtype)
                                 {
+                                    case "Logical":
+                                        $propdiv.CswFieldTypeLogical($this);
+                                        break;
+                                    case "Memo":
+                                        $propdiv.CswFieldTypeMemo($this);
+                                        break;
                                     case "Text":
                                         $propdiv.CswFieldTypeText($this);
                                         break;
