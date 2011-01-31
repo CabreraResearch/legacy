@@ -633,7 +633,7 @@
             var IdStr = $xmlitem.attr('id');
             var FieldType = $xmlitem.attr('fieldtype');
             var PropName = $xmlitem.attr('name');
-            var ReadOnly = ( "1" == $xmlitem.attr('readonly') );
+            var ReadOnly = ( "true" == $xmlitem.attr('readonly') );
 
             // Subfield values
             var sf_text = _extractCDataValue($xmlitem.children('text'));

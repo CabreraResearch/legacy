@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.WebServices
                         ret += "<prop id=\"" + PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() + "\"";
                         ret += " name=\"" + Prop.PropNameWithQuestionNo + "\"";
                         ret += " tab=\"" + Tab.TabName + "\"";
-                        ret += " readonly=\"" + CswConvert.ToDbVal( Prop.ReadOnly ) +"\"";
+                        ret += " readonly=\"" + Prop.ReadOnly.ToString().ToLower() +"\"";
                         ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
                         ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";
                         ret += " ocpname=\"" + PropWrapper.ObjectClassPropName + "\"";

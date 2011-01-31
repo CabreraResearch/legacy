@@ -1104,8 +1104,7 @@ namespace ChemSW.Nbt.MetaData
 
                         // Resync Sequence to next new value
                         CswNbtSequenceValue SeqValue = new CswNbtSequenceValue( _CswNbtMetaDataResources.CswNbtResources, SequenceId );
-                        Int32 SeqValueInt = CswConvert.ToInt32( SeqValue.ToString() );
-                        SeqValue.reSync( SeqValueInt );
+                        SeqValue.reSync( SequenceId );
 
                     } // if( TotalNodes > 0 )
                 } // if prop is sequence or barcode

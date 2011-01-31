@@ -856,19 +856,14 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
-        /// Convenience function for updating configuration variables
+        /// Convenience function for setting value of a configuration variable
         /// </summary>
-        public void UpdateConfigurationVariable( string ConfigVar, string VariableValue )
+        public void setConfigVariableValue(String VariableName, String VariableValue )
         {
-            CswTableUpdate ConfigVarUpdate = makeCswTableUpdate( "CswNbtSchemaModTrnsctn_UpdateConfigVar", "configuration_variables" );
-            DataTable ConfigVarTable = ConfigVarUpdate.getTable( "where lower(variablename) = '" + ConfigVar.ToLower() + "'" );
-            if( ConfigVarTable.Rows.Count < 0 )
-                throw new CswDniException( "No Match for Configuration Variable: " + ConfigVar, "CswNbtSchemaModTrnsctn::UpdateConfigurationVariable() returned 0 rows for variablename: " + ConfigVar );
-            ConfigVarTable.Rows[0]["variablevalue"] = VariableValue;
-            ConfigVarUpdate.update( ConfigVarTable );
-
-            // Clear cached values
-            _CswNbtResources.CswResources.ClearCache();
+            if( !String.IsNullOrEmpty( VariableValue) && !String.IsNullOrEmpty( VariableName ) )
+            {
+                _CswNbtResources.setConfigVariableValue( VariableName, VariableValue );
+            }
         }
 
     }//class CswNbtSchemaModTrnsctn

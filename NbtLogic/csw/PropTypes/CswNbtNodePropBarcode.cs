@@ -90,13 +90,13 @@ namespace ChemSW.Nbt.PropTypes
         public bool setBarcodeValueOverride( string SeqValue, bool ResetSequence )
         {
             bool Succeeded = _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, SeqValue );
-            Succeeded = ( Succeeded && _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, _SequenceValue.deformatSequence( SeqValue ) ) );
+            Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
+            Succeeded = ( Succeeded && _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue ) );
             _CswNbtNodePropData.Gestalt = SeqValue;
 
             if( ResetSequence )
             {
                 // Keep the sequence up to date
-                Int32 ThisSeqValue = CswConvert.ToInt32( SeqValue );
                 _SequenceValue.reSync( ThisSeqValue );
             }
             return Succeeded;
