@@ -855,6 +855,17 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources.CswResources.ClearCache();
         }
 
+        /// <summary>
+        /// Convenience function for setting value of a configuration variable
+        /// </summary>
+        public void setConfigVariableValue(String VariableName, String VariableValue )
+        {
+            if( !String.IsNullOrEmpty( VariableValue) && !String.IsNullOrEmpty( VariableName ) )
+            {
+                _CswNbtResources.setConfigVariableValue( VariableName, VariableValue );
+            }
+        }
+
     }//class CswNbtSchemaModTrnsctn
 
 }//ChemSW.Nbt.Schema
