@@ -2,9 +2,10 @@
     $.fn.CswFieldTypeLogical = function ($propxml) {
 
         var ID = $propxml.attr('id');
-        var Checked = $propxml.children('checked').text();
         var Required = $propxml.attr('required');
         var ReadOnly = $propxml.attr('readonly');
+
+        var Checked = $propxml.children('checked').text();
 
         var $Div = $(this);
         $Div.children().remove();

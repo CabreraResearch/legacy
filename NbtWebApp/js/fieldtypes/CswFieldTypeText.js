@@ -2,9 +2,11 @@
     $.fn.CswFieldTypeText = function ($propxml) {
         
         var ID = $propxml.attr('id');
-        var Value = $propxml.children('text').text();
         var Required = $propxml.attr('required');
         var ReadOnly = $propxml.attr('readonly');
+
+        var Value = $propxml.children('text').text();
+        var Length = $propxml.children('text').attr('length');
 
         var $Div = $(this);
         
@@ -15,7 +17,7 @@
         }
         else 
         {
-            var $TextBox = $('<input type="text" id="'+ ID +'" value="'+ Value +'" />"' )
+            var $TextBox = $('<input type="text" class="textinput" size="' + Length + '" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
                              .appendTo($Div); 
             if(Required)
             {

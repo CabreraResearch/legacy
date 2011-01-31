@@ -2,11 +2,12 @@
     $.fn.CswFieldTypeMemo = function ($propxml) {
         
         var ID = $propxml.attr('id');
-        var rows = $propxml.children('text').attr('rows');
-        var columns = $propxml.children('text').attr('columns');
-        var Value = $propxml.children('text').text();
         var Required = $propxml.attr('required');
         var ReadOnly = $propxml.attr('readonly');
+
+        var Value = $propxml.children('text').text();
+        var rows = $propxml.children('text').attr('rows');
+        var columns = $propxml.children('text').attr('columns');
 
         var $Div = $(this);
         
@@ -17,7 +18,7 @@
         }
         else 
         {
-            var $TextArea = $('<textarea id="'+ ID +'" rows="'+rows+'" cols="'+columns+'">'+ Value +'</textarea>' )
+            var $TextArea = $('<textarea id="'+ ID +'" name="' + ID + '" rows="'+rows+'" cols="'+columns+'">'+ Value +'</textarea>' )
                              .appendTo($Div); 
             if(Required)
             {
