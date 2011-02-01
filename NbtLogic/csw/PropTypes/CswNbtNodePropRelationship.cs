@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -183,6 +184,27 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public Dictionary<CswPrimaryKey, string> getOptions()
+        {
+            Dictionary<CswPrimaryKey, string> Options = new Dictionary<CswPrimaryKey, string>();
+            if( View != null )
+            {
+                if( !Required )
+                    Options.Add( new CswPrimaryKey(), "" );
+
+                ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
+                for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
+                {
+                    CswNbtTree.goToNthChild( c );
+                    Options.Add( CswNbtTree.getNodeIdForCurrentPosition(), CswNbtTree.getNodeNameForCurrentPosition() );
+                    CswNbtTree.goToParentNode();
+                } // for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
+
+            } // if( View != null )
+            return Options;
+        } // getOptions()
+
+
         //public bool isNodeReference() { return true; }
 
         public override void ToXml( XmlNode ParentNode )
@@ -191,6 +213,23 @@ namespace ChemSW.Nbt.PropTypes
             if( RelatedNodeId != null )
                 RelatedNodeIdNode.InnerText = RelatedNodeId.PrimaryKey.ToString();
             XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
+
+            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
+            Dictionary<CswPrimaryKey, string> Options = getOptions();
+            foreach( CswPrimaryKey NodePk in Options.Keys )
+            {
+                XmlNode OptionNode = CswXmlDocument.AppendXmlNode( OptionsNode, "option" );
+                if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
+                {
+                    CswXmlDocument.AppendXmlAttribute( OptionNode, "id", NodePk.PrimaryKey.ToString() );
+                    CswXmlDocument.AppendXmlAttribute( OptionNode, "value", Options[NodePk] );
+                }
+                else
+                {
+                    CswXmlDocument.AppendXmlAttribute( OptionNode, "id", "" );
+                    CswXmlDocument.AppendXmlAttribute( OptionNode, "value", "" );
+                }
+            }
         }
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
