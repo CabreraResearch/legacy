@@ -2,7 +2,7 @@
     $.fn.CswWelcome = function (options) {
 
         var o = {
-            Url: '/NbtWebApp/wsNBT.asmx/JQueryGetWelcomeItems',
+            Url: '/NbtWebApp/wsNBT.asmx/GetWelcomeItems',
             onLinkClick: function(viewid, actionid, reportid) { },
             onSearchClick: function(viewid) { },
             onAddClick: function(nodetypeid) { }

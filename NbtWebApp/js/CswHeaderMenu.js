@@ -2,7 +2,7 @@
     $.fn.CswHeaderMenu = function (options) {
 
         var o = {
-            Url: '/NbtWebApp/wsNBT.asmx/JQueryGetHeaderMenu',
+            Url: '/NbtWebApp/wsNBT.asmx/GetHeaderMenu',
         };
 
         if (options) {

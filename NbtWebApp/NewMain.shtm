@@ -29,6 +29,8 @@
                             <!--<div id="timerdiv"></div>-->
 
                             <script>
+                                var currentviewid = '';
+
                                 $('#CenterDiv').CswLogin({
                                     'onAuthenticate': function (s, u) {
                                         $('#header_dashboard').CswDashboard();
@@ -56,6 +58,7 @@
 
                                 function GetViewTree(viewid) 
                                 {
+                                    currentviewid = viewid;
                                     ClearLeft();
                                     ClearRight(); 
                                     ClearCenter();
@@ -68,7 +71,16 @@
                                 function GetTabs(nodeid) 
                                 {
                                     ClearRight();
-                                    $('#RightDiv').CswNodeTabs({ 'nodeid': nodeid });
+                                    $('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, onSave: RefreshViewTree });
+                                }
+
+                                function RefreshViewTree() 
+                                {
+                                    ClearLeft();
+                                    $('#LeftDiv').CswViewTree({
+                                        'viewid': currentviewid,
+                                        onSelectNode: GetTabs
+                                    });
                                 }
 
                                 function HandleWelcomeLinkClick(viewid, actionid, reportid) 
@@ -87,6 +99,7 @@
                                         alert('Reports are not yet handled!');
                                     }
                                 }
+
                             </script>
 
                         </td>

@@ -1,4 +1,5 @@
-﻿// ------------------------------------------------------------------------------------
+﻿
+// ------------------------------------------------------------------------------------
 // Cookies
 // ------------------------------------------------------------------------------------
 
@@ -38,7 +39,7 @@ function CswAjax(options) {
         $.extend(o, options);
     }
 
-    //var starttime = new Date();
+    var starttime = new Date();
     $.ajax({
         type: 'POST',
         url: o.url,
@@ -48,7 +49,7 @@ function CswAjax(options) {
         success: function (data, textStatus, XMLHttpRequest) {
 
             var endtime = new Date();
-            //$('#timerdiv').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+            $('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
             var $xml = $(data.d);
             if ($xml.get(0).nodeName == "ERROR") {
@@ -74,6 +75,23 @@ function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
     console.log(ErrorMessage);
 } // _handleAjaxError()
 
+function extractCDataValue($node) {
+    // default
+    ret = $node.text();
+
+    // for some reason, CDATA fields come through from the webservice like this:
+    // <node><!--[CDATA[some text]]--></node>
+    var cdataval = $node.html();
+    if (cdataval != undefined && cdataval != '') {
+        var prefix = '<!--[CDATA[';
+        var suffix = ']]-->';
+
+        if (cdataval.substr(0, prefix.length) == prefix) {
+            ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
+        }
+    }
+    return ret;
+}
 
 // ------------------------------------------------------------------------------------
 // Popups and Dialogs
@@ -138,3 +156,6 @@ function iterate(obj) {
     else
         console.log("iterate() error: No popup!");
 }
+
+
+
