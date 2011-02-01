@@ -1,23 +1,19 @@
 ﻿; (function ($) {
         
     var PluginName = 'CswFieldTypeList';
-    var $propxml;
-    var $Div;
-    var $SelectBox;
-
+    
     var methods = {
         init: function(nodepk, $xml) {
-                $propxml = $xml;
 
-                $Div = $(this);
+                var $Div = $(this);
                 $Div.children().remove();
 
-                var ID = $propxml.attr('id');
-                var Required = $propxml.attr('required');
-                var ReadOnly = $propxml.attr('readonly');
+                var ID = $xml.attr('id');
+                var Required = $xml.attr('required');
+                var ReadOnly = $xml.attr('readonly');
 
-                var Value = $propxml.children('value').text();
-                var Options = $propxml.children('options').text();
+                var Value = $xml.children('value').text();
+                var Options = $xml.children('options').text();
 
                 if(ReadOnly)
                 {
@@ -25,13 +21,13 @@
                 }
                 else 
                 {
-                    $SelectBox = $('<select id="'+ ID +'" name="'+ ID +'" />"' )
+                    var $SelectBox = $('<select id="'+ ID +'" name="'+ ID +'" />"' )
                                         .appendTo($Div);
             
                     var SplitOptions = Options.split(',')
                     for(var i = 0; i < SplitOptions.length; i++)
                     {
-                        $SelectBox.append('<option value="'+SplitOptions[i]+'">'+SplitOptions[i]+'</option>');
+                        $SelectBox.append('<option value="' + SplitOptions[i] + '">' + SplitOptions[i] + '</option>');
                     }
                     $SelectBox.val( Value );
 
@@ -42,8 +38,9 @@
                 }
 
             },
-        save: function() {
-                $propxml.children('value').text($SelectBox.val());
+        save: function($propdiv, $xml) {
+                var $SelectBox = $propdiv.find('select');
+                $xml.children('value').text($SelectBox.val());
             }
     };
     

@@ -1,24 +1,20 @@
 ﻿; (function ($) {
         
     var PluginName = 'CswFieldTypeMemo';
-    var $propxml;
-    var $Div;
-    var $TextArea;
 
     var methods = {
         init: function(nodepk, $xml) {
-                $propxml = $xml;
-
-                $Div = $(this);
+        
+                var $Div = $(this);
                 $Div.children().remove();
 
-                var ID = $propxml.attr('id');
-                var Required = $propxml.attr('required');
-                var ReadOnly = $propxml.attr('readonly');
+                var ID = $xml.attr('id');
+                var Required = $xml.attr('required');
+                var ReadOnly = $xml.attr('readonly');
 
-                var Value = extractCDataValue($propxml.children('text'));
-                var rows = $propxml.children('text').attr('rows');
-                var columns = $propxml.children('text').attr('columns');
+                var Value = extractCDataValue($xml.children('text'));
+                var rows = $xml.children('text').attr('rows');
+                var columns = $xml.children('text').attr('columns');
 
                 if(ReadOnly)
                 {
@@ -26,7 +22,7 @@
                 }
                 else 
                 {
-                    $TextArea = $('<textarea id="'+ ID +'" name="' + ID + '" rows="'+rows+'" cols="'+columns+'">'+ Value +'</textarea>' )
+                    var $TextArea = $('<textarea id="'+ ID +'" name="' + ID + '" rows="'+rows+'" cols="'+columns+'">'+ Value +'</textarea>' )
                                   .appendTo($Div); 
                     if(Required)
                     {
@@ -35,8 +31,9 @@
                 }
 
             },
-        save: function() {
-                $propxml.children('text').text($TextArea.val());
+        save: function($propdiv, $xml) {
+                var $TextArea = $propdiv.find('textarea');
+                $xml.children('text').text($TextArea.val());
             }
     };
     

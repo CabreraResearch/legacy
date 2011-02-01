@@ -1,22 +1,18 @@
 ﻿; (function ($) {
         
     var PluginName = 'CswFieldTypeLogical';
-    var $propxml;
-    var $Div;
-    var $CheckboxImage;
 
     var methods = {
         init: function(nodepk, $xml) {
-                $propxml = $xml;
 
                 $Div = $(this);
                 $Div.children().remove();
 
-                var ID = $propxml.attr('id');
-                var Required = $propxml.attr('required');
-                var ReadOnly = $propxml.attr('readonly');
+                var ID = $xml.attr('id');
+                var Required = $xml.attr('required');
+                var ReadOnly = $xml.attr('readonly');
 
-                var Checked = $propxml.children('checked').text();
+                var Checked = $xml.children('checked').text();
 
                 if(ReadOnly)
                 {
@@ -35,8 +31,9 @@
                     updateOffset(Checked);
                 }
             },
-        save: function() {
-                $propxml.children('checked').text($CheckboxImage.attr('alt'));
+        save: function($propdiv, $xml) {
+                var $CheckboxImage = $propdiv.find('div');
+                $xml.children('checked').text($CheckboxImage.attr('alt'));
             }
     };
     

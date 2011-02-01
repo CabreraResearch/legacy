@@ -1,24 +1,20 @@
 ﻿; (function ($) {
         
     var PluginName = 'CswFieldTypeStatic';
-    var $propxml;
-    var $Div;
-    var $StaticDiv;
 
     var methods = {
         init: function(nodepk, $xml) {
-                $propxml = $xml;
-
-                $Div = $(this);
+                
+                var $Div = $(this);
                 $Div.children().remove();
                  
-                var ID = $propxml.attr('id');
-                //var Required = $propxml.attr('required');
-                //var ReadOnly = $propxml.attr('readonly');
+                var ID = $xml.attr('id');
+                //var Required = $xml.attr('required');
+                //var ReadOnly = $xml.attr('readonly');
 
-                var Text = $propxml.children('text').text();
-                var Columns = parseInt( $propxml.children('text').attr('columns') );
-                var Rows = parseInt( $propxml.children('text').attr('rows') );
+                var Text = $xml.children('text').text();
+                var Columns = parseInt( $xml.children('text').attr('columns') );
+                var Rows = parseInt( $xml.children('text').attr('rows') );
 
                 var overflow = 'auto';
                 var width = '';
@@ -38,10 +34,10 @@
                     height = Math.round( Rows + 0.5 + ( Rows / 5)) + 'em';
                 }
             
-                $StaticDiv = $('<div style="overflow: '+ overflow +'; width: '+ width +'; height: '+ height +';">' + Text + '</div>' )
+                var $StaticDiv = $('<div style="overflow: '+ overflow +'; width: '+ width +'; height: '+ height +';">' + Text + '</div>' )
                                .appendTo($Div); 
             },
-        save: function() {
+        save: function($propdiv, $xml) {
                 // no changes to save
             }
     };

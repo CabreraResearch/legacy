@@ -12,9 +12,6 @@
             $.extend(o, options);
         }
 
-        var $propsxml;
-        var controls;
-
         var $outertabdiv = $('<div id="tabdiv" />')
                         .appendTo($(this));
 
@@ -59,19 +56,15 @@
                 url: o.PropsUrl,
                 data: '{ NodePk: "' + o.nodeid + '", TabId: "' + tabid + '" }',
                 success: function ($xml) {
-                            // Store this for Save() later
-                            $propsxml = $xml;
-
                             $div = $("#" + tabid);
                             $div.children().remove();
                             
                             var $table = $('<table></table>')
                                            .appendTo($div);
 
-                            controls = new Array($xml.children().length);
                             var i = 0;
 
-                            $propsxml.children().each(function() { 
+                            $xml.children().each(function() { 
                                 var $this = $(this);
                                 var $labelcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2 ) - 1);
                                 var $propcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2));
@@ -82,13 +75,11 @@
 
                                 makePropControl($propdiv, fieldtype, $this);
                                 
-                                controls[i] = { 'div': $propdiv, 'fieldtype': fieldtype };
-                                i++;
                             });
 
                             $table.append('<tr><td><input type="button" id="SaveTab" name="SaveTab" value="Save"/></td></tr>')
                                   .find('#SaveTab')
-                                  .click(Save);
+                                  .click(function() { Save($table, $xml) });
                         } // success{}
             }); 
         } // getProps()
@@ -106,6 +97,9 @@
                 case "Memo":
                     $propdiv.CswFieldTypeMemo( 'init', o.nodeid, $propxml );
                     break;
+                case "Relationship":
+                    $propdiv.CswFieldTypeRelationship('init', o.nodeid, $propxml);
+                    break;
                 case "Static":
                     $propdiv.CswFieldTypeStatic( 'init', o.nodeid, $propxml );
                     break;
@@ -118,31 +112,38 @@
             }
         } // makePropControl()
 
-        function Save()
+        function Save($table, $propsxml)
         {
-            for(var i = 0; i < controls.length; i++)
-            {
-                switch(controls[i].fieldtype)
+            $propsxml.children().each(function() { 
+                var $propxml = $(this);
+                var $propcell = getTableCell($table, $propxml.attr('displayrow'), ($propxml.attr('displaycol') * 2));
+                var fieldtype = $propxml.attr('fieldtype');
+                var $propdiv = $propcell.children('div');
+                                
+                switch(fieldtype)
                 {
                     case "List":
-                        controls[i].div.CswFieldTypeList( 'save' );
+                        $propdiv.CswFieldTypeList( 'save', $propdiv, $propxml );
                         break;
                     case "Logical":
-                        controls[i].div.CswFieldTypeLogical( 'save' );
+                        $propdiv.CswFieldTypeLogical( 'save', $propdiv, $propxml );
                         break;
                     case "Memo":
-                        controls[i].div.CswFieldTypeMemo( 'save' );
+                        $propdiv.CswFieldTypeMemo( 'save', $propdiv, $propxml );
+                        break;
+                    case "Relationship":
+                        $propdiv.CswFieldTypeRelationship( 'save', $propdiv, $propxml );
                         break;
                     case "Static":
-                        controls[i].div.CswFieldTypeStatic( 'save' );
+                        $propdiv.CswFieldTypeStatic( 'save', $propdiv, $propxml );
                         break;
                     case "Text":
-                        controls[i].div.CswFieldTypeText( 'save' );
+                        $propdiv.CswFieldTypeText( 'save', $propdiv, $propxml );
                         break;
                     default:
                         break;
-                }
-            }
+                } // switch
+            }); // each()
 
             CswAjax({
                 url: '/NbtWebApp/wsNBT.asmx/SaveProps',

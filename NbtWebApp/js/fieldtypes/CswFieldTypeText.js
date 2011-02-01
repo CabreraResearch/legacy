@@ -1,23 +1,19 @@
 ﻿; (function ($) {
         
     var PluginName = 'CswFieldTypeText';
-    var $propxml;
-    var $Div;
-    var $TextBox;
 
     var methods = {
         init: function(nodepk, $xml) {
-                $propxml = $xml;
 
-                $Div = $(this);
+                var $Div = $(this);
                 $Div.children().remove();
 
-                var ID = $propxml.attr('id');
-                var Required = $propxml.attr('required');
-                var ReadOnly = $propxml.attr('readonly');
+                var ID = $xml.attr('id');
+                var Required = $xml.attr('required');
+                var ReadOnly = $xml.attr('readonly');
 
-                var Value = $propxml.children('text').text();
-                var Length = $propxml.children('text').attr('length');
+                var Value = $xml.children('text').text();
+                var Length = $xml.children('text').attr('length');
 
                 if(ReadOnly)
                 {
@@ -25,16 +21,17 @@
                 }
                 else 
                 {
-                    $TextBox = $('<input type="text" class="textinput" size="' + Length + '" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
-                                 .appendTo($Div);
+                    var $TextBox = $('<input type="text" class="textinput" size="' + Length + '" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
+                                     .appendTo($Div);
                     if(Required)
                     {
                         $TextBox.addClass("required");
                     }
                 }
             },
-        save: function() {
-                $propxml.children('text').text($TextBox.val());
+        save: function($propdiv, $xml) {
+                var $TextBox = $propdiv.find('input');
+                $xml.children('text').text($TextBox.val());
             }
     };
     
