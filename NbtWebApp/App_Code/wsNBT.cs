@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.WebServices
         } // jQueryGetWelcomeItems()
 
         [WebMethod( EnableSession = true )]
-        public string jQueryGetQuickLaunchItems( string UserId )
+        public string jQueryGetQuickLaunchItems( )
         {
             CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
@@ -136,8 +136,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 start();
 
+                CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
                 CswNbtWebServiceQuickLaunchItems ql = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
-                if( !string.IsNullOrEmpty( UserId ) )
+                if( null != UserId )
                 {
                     ReturnVal = ql.getQuickLaunchItems( UserId );
                 }

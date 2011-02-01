@@ -44,14 +44,11 @@ namespace ChemSW.Nbt.WebServices
             Unknown
         }
 
-        public string getQuickLaunchItems( string UserId )
+        public string getQuickLaunchItems( CswPrimaryKey UserId )
         {
             string ret = string.Empty;
 
-            CswPrimaryKey UserPk = new CswPrimaryKey();
-            UserPk.FromString( UserId );
-
-            CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( UserPk );
+            CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( UserId );
             CswNbtObjClassUser UserOC = CswNbtNodeCaster.AsUser( UserNode );
             CswCommaDelimitedString QuickLaunchViews = UserOC.QuickLaunchViews.SelectedViewIds;
             Int32 DisplayRow = 0;

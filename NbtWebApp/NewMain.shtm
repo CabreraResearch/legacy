@@ -39,8 +39,8 @@
                                         $('#CenterDiv').CswWelcome({
                                             onLinkClick: handleWelcomeLinkClick
                                         });
-                                        //$('#QuickLaunch').CswQuickLaunch({
-                                        //    onLinkClick: handleQuickLaunchItemClick
+                                        $('#QuickLaunch').CswQuickLaunch({
+                                            onLinkClick: handleQuickLaunchItemClick
                                         });
                                     }
                                 });

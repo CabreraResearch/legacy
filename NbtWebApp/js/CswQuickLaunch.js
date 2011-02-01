@@ -15,14 +15,14 @@
             url: o.Url,
             data: "{ UserId: '' }",
             success: function ($xml) {
-                var $QuickLaunchDiv = $('<div id="QuickLaunchDiv"><table class="QuickLaunchTable" align="center" cellpadding="20"></table></div>')
+                var $QuickLaunchDiv = $('<div id="quicklaunchdiv"><table class="QuickLaunchTable" align="center" cellpadding="20"></table></div>')
                                     .appendTo($this);
                 var $table = $QuickLaunchDiv.children('table');
                 
                 $xml.children().each(function() {
 
                     var $item = $(this);
-                    var $cell = getTableCell($table, $item.attr('displayrow'), $item.attr('displaycol'));
+                    var $cell = getTableCell($table, '0', '0');
 
                     switch($item.attr('type'))
                     {
