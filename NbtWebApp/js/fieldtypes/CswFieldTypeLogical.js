@@ -30,18 +30,18 @@
                 {
                     $CheckboxImage = $('<div id="'+ ID +'" class="divbutton" alt="' + Checked + '" />"' )
                                        .appendTo($Div)
-                                       .click(function() { onClick($CheckboxImage, Required); });
+                                       .click(function() { onClick(Required); });
 
-                    updateOffset($CheckboxImage, Checked);
+                    updateOffset(Checked);
                 }
             },
         save: function() {
-                $propxml.children('checked').text($CheckBoxImage.attr('alt'));
+                $propxml.children('checked').text($CheckboxImage.attr('alt'));
             }
     };
     
 
-    function onClick($CheckboxImage, Required) 
+    function onClick(Required) 
     {
         var currentValue = $CheckboxImage.attr('alt');
 	    var newValue = "null";
@@ -59,12 +59,12 @@
 	    }
 
         $CheckboxImage.attr('alt', newValue);
-        updateOffset($CheckboxImage, newValue);
+        updateOffset(newValue);
         	
 	    return false;
     } // onClick()
 
-    function updateOffset($CheckboxImage, val)
+    function updateOffset(val)
     {
         var TrueOffset = 20;
         var FalseOffset = 18;

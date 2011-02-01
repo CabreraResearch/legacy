@@ -16,7 +16,7 @@
                 var Required = $propxml.attr('required');
                 var ReadOnly = $propxml.attr('readonly');
 
-                var Value = $propxml.children('text').text();
+                var Value = extractCDataValue($propxml.children('text'));
                 var rows = $propxml.children('text').attr('rows');
                 var columns = $propxml.children('text').attr('columns');
 

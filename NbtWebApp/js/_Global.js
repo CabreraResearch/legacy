@@ -1,4 +1,5 @@
-﻿// ------------------------------------------------------------------------------------
+﻿
+// ------------------------------------------------------------------------------------
 // Cookies
 // ------------------------------------------------------------------------------------
 
@@ -74,6 +75,23 @@ function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
     console.log(ErrorMessage);
 } // _handleAjaxError()
 
+function extractCDataValue($node) {
+    // default
+    ret = $node.text();
+
+    // for some reason, CDATA fields come through from the webservice like this:
+    // <node><!--[CDATA[some text]]--></node>
+    var cdataval = $node.html();
+    if (cdataval != undefined && cdataval != '') {
+        var prefix = '<!--[CDATA[';
+        var suffix = ']]-->';
+
+        if (cdataval.substr(0, prefix.length) == prefix) {
+            ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
+        }
+    }
+    return ret;
+}
 
 // ------------------------------------------------------------------------------------
 // Popups and Dialogs
@@ -138,3 +156,6 @@ function iterate(obj) {
     else
         console.log("iterate() error: No popup!");
 }
+
+
+
