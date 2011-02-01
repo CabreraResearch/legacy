@@ -2,10 +2,8 @@
     $.fn.CswQuickLaunch = function (options) {
 
         var o = {
-            Url: '/NbtWebApp/wsNBT.asmx/JQueryGetWelcomeItems',
-            onLinkClick: function(viewid, actionid, reportid) { },
-            onSearchClick: function(viewid) { },
-            onAddClick: function(nodetypeid) { }
+            Url: '/NbtWebApp/wsNBT.asmx/jQueryGetQuickLaunchItems',
+            onLinkClick: function(viewid, actionid) { },
         };
 
         if (options) {
@@ -15,43 +13,26 @@
 
         CswAjax({
             url: o.Url,
-            data: "{ RoleId: '' }",
+            data: "{ UserId: '' }",
             success: function ($xml) {
-                var $WelcomeDiv = $('<div id="welcomediv"><table class="WelcomeTable" align="center" cellpadding="20"></table></div>')
+                var $QuickLaunchDiv = $('<div id="QuickLaunchDiv"><table class="QuickLaunchTable" align="center" cellpadding="20"></table></div>')
                                     .appendTo($this);
-                var $table = $WelcomeDiv.children('table');
+                var $table = $QuickLaunchDiv.children('table');
                 
                 $xml.children().each(function() {
-
-                    //<item id=" + WelcomeRow["welcomeid"].ToString() + "\"";
-                    //      type=\"" + WelcomeRow["componenttype"].ToString() + "\"";
-                    //      buttonicon=\"" + IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() + "\"";
-                    //      text=\"" + LinkText + "\"";
-                    //      displayrow=\"" + WelcomeRow["display_row"].ToString() + "\"";
-                    //      displaycol=\"" + WelcomeRow["display_col"].ToString() + "\"";
 
                     var $item = $(this);
                     var $cell = getTableCell($table, $item.attr('displayrow'), $item.attr('displaycol'));
 
-                    if($item.attr('buttonicon') != undefined && $item.attr('buttonicon') != '')
-                        $cell.append( $('<a href=""><img src="'+ $item.attr('buttonicon') +'"/></a><br/><br/>') );
-
                     switch($item.attr('type'))
                     {
-                        case 'Link':
+                        case 'View':
                             $cell.append( $('<a href="">' + $item.attr('text') + '</a>') );
-                            $cell.find('a').click(function() { o.onLinkClick($item.attr('viewid'),$item.attr('actionid'),$item.attr('reportid')); return false; });
+                            $cell.find('a').click(function() { o.onLinkClick($item.attr('viewid')); return false; });
                             break;
-                        case 'Search': 
-                            $cell.append( $('<a href="">' + $item.attr('text') + '</a>') );
-                            $cell.find('a').click(function() { o.onSearchClick($item.attr('viewid')); return false; });
-                            break;
-                        case 'Text':
-                            $cell.text($item.attr('text'));
-                            break;
-                        case 'Add': 
-                            $cell.append( $('<a href="">' + $item.attr('text') + '</a>') );
-                            $cell.find('a').click(function() { o.onAddClick($item.attr('nodetypeid')); return false; });
+                        case 'Action': 
+                            $cell.append( $('<a href=' + $item.attr('url') + '>' + $item.attr('text') + '</a>') );
+                            $cell.find('a').click(function() { o.onSearchClick($item.attr('actionid')); return false; });
                             break;
                     }
                 });

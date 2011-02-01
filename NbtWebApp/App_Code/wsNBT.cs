@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.WebServices
         }//deAuthenticate()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetWelcomeItems( string RoleId )
+        public string jQueryGetWelcomeItems( string RoleId )
         {
             CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
@@ -125,10 +125,10 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetWelcomeItems()
+        } // jQueryGetWelcomeItems()
 
         [WebMethod( EnableSession = true )]
-        public string jQueryGetQuickLaunch( string UserId )
+        public string jQueryGetQuickLaunchItems( string UserId )
         {
             CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
@@ -136,12 +136,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 start();
 
-                CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
-                // Only administrators can get welcome content for other roles
+                CswNbtWebServiceQuickLaunchItems ql = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
                 if( !string.IsNullOrEmpty( UserId ) )
-                    //ReturnVal = ws.GetWelcomeItems( RoleId );
-                //else
-                    //ReturnVal = ws.GetWelcomeItems( _CswNbtResources.CurrentNbtUser.RoleId.ToString() );
+                {
+                    ReturnVal = ql.getQuickLaunchItems( UserId );
+                }
 
                 end();
             }
@@ -150,10 +149,10 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetWelcomeItems()
+        } // jQueryGetQuickLaunchItems()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetViews()
+        public string jQueryGetViews()
         {
             CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
@@ -169,10 +168,10 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetViews()
+        } // jQueryGetViews()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetDashboard()
+        public string jQueryGetDashboard()
         {
             string ReturnVal = string.Empty;
             try
@@ -187,10 +186,10 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetDashboard()
+        } // jQueryGetDashboard()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetHeaderMenu()
+        public string jQueryGetHeaderMenu()
         {
             string ReturnVal = string.Empty;
             try
@@ -205,10 +204,10 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetHeaderMenu()
+        } // jQueryGetHeaderMenu()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetTree( Int32 ViewId )
+        public string jQueryGetTree( Int32 ViewId )
         {
             string ReturnVal = string.Empty;
             try
@@ -223,11 +222,11 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetTree()
+        } // jQueryGetTree()
 
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetTabs( string NodePk )
+        public string jQueryGetTabs( string NodePk )
         {
             string ReturnVal = string.Empty;
             try
@@ -242,10 +241,10 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetTabs()
+        } // jQueryGetTabs()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetProps( string NodePk, string TabId )
+        public string jQueryGetProps( string NodePk, string TabId )
         {
             string ReturnVal = string.Empty;
             try
@@ -260,7 +259,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetTab()
+        } // jQueryGetProps()
 
         #endregion Web Methods
 

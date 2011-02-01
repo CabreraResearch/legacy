@@ -30,13 +30,17 @@
 
                             <script>
                                 $('#CenterDiv').CswLogin({
-                                    'onAuthenticate': function (s, u) {
+                                    'onAuthenticate': function (s, u)
+                                    {
                                         $('#header_dashboard').CswDashboard();
                                         $('#header_menu').CswHeaderMenu();
                                         $('#header_username').text(u);
                                         $('#MenuDiv').CswViewSelect({ 'onSelect': GetViewTree });
                                         $('#CenterDiv').CswWelcome({
-                                            onLinkClick: HandleWelcomeLinkClick
+                                            onLinkClick: handleWelcomeLinkClick
+                                        });
+                                        //$('#QuickLaunch').CswQuickLaunch({
+                                        //    onLinkClick: handleQuickLaunchItemClick
                                         });
                                     }
                                 });
@@ -71,7 +75,7 @@
                                     $('#RightDiv').CswNodeTabs({ 'nodeid': nodeid });
                                 }
 
-                                function HandleWelcomeLinkClick(viewid, actionid, reportid) 
+                                function handleWelcomeLinkClick(viewid, actionid, reportid) 
                                 {
                                     ClearCenter();
                                     if (viewid != undefined && viewid != '') 
@@ -87,6 +91,19 @@
                                         alert('Reports are not yet handled!');
                                     }
                                 }
+
+                                function handleQuickLaunchItemClick(viewid, actionid)
+                                {
+                                    ClearCenter();
+                                    if (viewid != undefined && viewid != '')
+                                    {
+                                        GetViewTree(viewid);
+                                    }
+                                    else if (actionid != undefined && actionid != '')
+                                    {
+                                        alert('Actions are not yet handled!');
+                                    }
+                                }
                             </script>
 
                         </td>
@@ -94,7 +111,7 @@
                       <tr>
                         <td id="Td8" class="PageTable_CenterCell" colspan="2" valign="top">
 
-                            <div id="QuickLaunch">"hello"</div>
+                            <div id="QuickLaunch"></div>
                            
                         </td>
                      </tr>

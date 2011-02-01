@@ -2,7 +2,7 @@
     $.fn.CswViewTree = function (options) {
 
         var o = {
-            TreeUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetTree',
+            TreeUrl: '/NbtWebApp/wsNBT.asmx/jQueryGetTree',
             viewid: '',
             onSelectNode: function(nodeid) { }
         };
