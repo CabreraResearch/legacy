@@ -2,12 +2,14 @@
         
     var PluginName = 'CswFieldTypeMemo';
     var $propxml;
+    var $Div;
+    var $TextArea;
 
     var methods = {
         init: function(nodepk, $xml) {
                 $propxml = $xml;
 
-                var $Div = $(this);
+                $Div = $(this);
                 $Div.children().remove();
 
                 var ID = $propxml.attr('id');
@@ -24,8 +26,8 @@
                 }
                 else 
                 {
-                    var $TextArea = $('<textarea id="'+ ID +'" name="' + ID + '" rows="'+rows+'" cols="'+columns+'">'+ Value +'</textarea>' )
-                                     .appendTo($Div); 
+                    $TextArea = $('<textarea id="'+ ID +'" name="' + ID + '" rows="'+rows+'" cols="'+columns+'">'+ Value +'</textarea>' )
+                                  .appendTo($Div); 
                     if(Required)
                     {
                         $TextArea.addClass("required");
@@ -34,11 +36,7 @@
 
             },
         save: function() {
-                var $Div = $(this);
-                var o = $Div.data(PluginName);
-                //var $newPropXml = $propxml;
-                //$newPropXml.children('text').text($TextBox.val());
-                //SaveProp(nodepk, $newPropXml, function () { });
+                $propxml.children('text').text($TextArea.val());
             }
     };
     

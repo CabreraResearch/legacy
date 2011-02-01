@@ -2,12 +2,14 @@
         
     var PluginName = 'CswFieldTypeStatic';
     var $propxml;
+    var $Div;
+    var $StaticDiv;
 
     var methods = {
         init: function(nodepk, $xml) {
                 $propxml = $xml;
 
-                var $Div = $(this);
+                $Div = $(this);
                 $Div.children().remove();
                  
                 var ID = $propxml.attr('id');
@@ -36,15 +38,11 @@
                     height = Math.round( Rows + 0.5 + ( Rows / 5)) + 'em';
                 }
             
-                var $StaticDiv = $('<div style="overflow: '+ overflow +'; width: '+ width +'; height: '+ height +';">' + Text + '</div>' )
-                                    .appendTo($Div); 
+                $StaticDiv = $('<div style="overflow: '+ overflow +'; width: '+ width +'; height: '+ height +';">' + Text + '</div>' )
+                               .appendTo($Div); 
             },
         save: function() {
-                var $Div = $(this);
-                var o = $Div.data(PluginName);
-                //var $newPropXml = $propxml;
-                //$newPropXml.children('text').text($TextBox.val());
-                //SaveProp(nodepk, $newPropXml, function () { });
+                // no changes to save
             }
     };
     

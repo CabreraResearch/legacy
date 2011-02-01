@@ -34,8 +34,6 @@
                 }
             },
         save: function() {
-                var $Div = $(this);
-                var o = $Div.data(PluginName);
                 $propxml.children('text').text($TextBox.val());
             }
     };

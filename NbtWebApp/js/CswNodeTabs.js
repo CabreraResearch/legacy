@@ -119,7 +119,6 @@
 
         function Save()
         {
-            console.log('Save!');
             for(var i = 0; i < controls.length; i++)
             {
                 switch(controls[i].fieldtype)

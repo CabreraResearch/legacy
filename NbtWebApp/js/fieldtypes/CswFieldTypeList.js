@@ -2,12 +2,14 @@
         
     var PluginName = 'CswFieldTypeList';
     var $propxml;
+    var $Div;
+    var $SelectBox;
 
     var methods = {
         init: function(nodepk, $xml) {
                 $propxml = $xml;
 
-                var $Div = $(this);
+                $Div = $(this);
                 $Div.children().remove();
 
                 var ID = $propxml.attr('id');
@@ -23,7 +25,7 @@
                 }
                 else 
                 {
-                    var $SelectBox = $('<select id="'+ ID +'" name="'+ ID +'" />"' )
+                    $SelectBox = $('<select id="'+ ID +'" name="'+ ID +'" />"' )
                                         .appendTo($Div);
             
                     var SplitOptions = Options.split(',')
@@ -41,11 +43,7 @@
 
             },
         save: function() {
-                var $Div = $(this);
-                var o = $Div.data(PluginName);
-                //var $newPropXml = $propxml;
-                //$newPropXml.children('text').text($TextBox.val());
-                //SaveProp(nodepk, $newPropXml, function () { });
+                $propxml.children('value').text($SelectBox.val());
             }
     };
     

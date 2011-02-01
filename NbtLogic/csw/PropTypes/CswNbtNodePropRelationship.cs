@@ -201,9 +201,11 @@ namespace ChemSW.Nbt.PropTypes
             if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
                 NodeId = NodeMap[NodeId];
             RelatedNodeId = new CswPrimaryKey( "nodes", NodeId );
-
-            CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", RelatedNodeId.PrimaryKey.ToString() );
-            PendingUpdate = true;
+            if( RelatedNodeId != null )
+            {
+                CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", RelatedNodeId.PrimaryKey.ToString() );
+                PendingUpdate = true;
+            }
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
