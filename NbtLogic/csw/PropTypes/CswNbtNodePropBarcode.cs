@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Core;
 using System.Xml;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
