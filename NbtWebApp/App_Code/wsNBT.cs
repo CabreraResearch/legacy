@@ -103,8 +103,9 @@ namespace ChemSW.Nbt.WebServices
         }//deAuthenticate()
 
         [WebMethod( EnableSession = true )]
-        public string GetWelcomeItems( string RoleId )
+        public string jQueryGetWelcomeItems( string RoleId )
         {
+            CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
             try
             {
@@ -124,11 +125,37 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // GetWelcomeItems()
+        } // jQueryGetWelcomeItems()
 
         [WebMethod( EnableSession = true )]
-        public string GetViews()
+        public string JQueryGetViews()
         {
+            CswTimer Timer = new CswTimer();
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+
+                CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
+                CswNbtWebServiceQuickLaunchItems ql = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
+                if( null != UserId )
+                {
+                    ReturnVal = ql.getQuickLaunchItems( UserId );
+                }
+
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        } // jQueryGetQuickLaunchItems()
+
+        [WebMethod( EnableSession = true )]
+        public string jQueryGetViews()
+        {
+            CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
             try
             {
@@ -142,10 +169,10 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // GetViews()
+        } // jQueryGetViews()
 
         [WebMethod( EnableSession = true )]
-        public string GetDashboard()
+        public string jQueryGetDashboard()
         {
             string ReturnVal = string.Empty;
             try
@@ -160,10 +187,10 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // GetDashboard()
+        } // jQueryGetDashboard()
 
         [WebMethod( EnableSession = true )]
-        public string GetHeaderMenu()
+        public string jQueryGetHeaderMenu()
         {
             string ReturnVal = string.Empty;
             try
@@ -178,10 +205,10 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // GetHeaderMenu()
+        } // jQueryGetHeaderMenu()
 
         [WebMethod( EnableSession = true )]
-        public string GetTree( Int32 ViewId )
+        public string jQueryGetTree( Int32 ViewId )
         {
             string ReturnVal = string.Empty;
             try
@@ -196,11 +223,11 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // GetTree()
+        } // jQueryGetTree()
 
 
         [WebMethod( EnableSession = true )]
-        public string GetTabs( string NodePk )
+        public string jQueryGetTabs( string NodePk )
         {
             string ReturnVal = string.Empty;
             try
@@ -215,10 +242,10 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // GetTabs()
+        } // jQueryGetTabs()
 
         [WebMethod( EnableSession = true )]
-        public string GetProps( string NodePk, string TabId )
+        public string jQueryGetProps( string NodePk, string TabId )
         {
             string ReturnVal = string.Empty;
             try
@@ -233,7 +260,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // GetProps()
+        } // jQueryGetProps()
 
         [WebMethod( EnableSession = true )]
         public string SaveProps( string NodePk, string NewPropsXml )
