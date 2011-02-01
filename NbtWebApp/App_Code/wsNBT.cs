@@ -247,14 +247,14 @@ namespace ChemSW.Nbt.WebServices
         } // GetProps()
 
         [WebMethod( EnableSession = true )]
-        public string SaveProp( string NodePk, string NewPropXml )
+        public string SaveProps( string NodePk, string NewPropsXml )
         {
             string ReturnVal = string.Empty;
             try
             {
                 start();
                 CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                ReturnVal = ws.saveProp( NodePk, NewPropXml );
+                ReturnVal = ws.saveProps( NodePk, NewPropsXml );
                 end();
             }
             catch( Exception ex )

@@ -87,6 +87,7 @@
                                         alert('Reports are not yet handled!');
                                     }
                                 }
+
                             </script>
 
                         </td>
