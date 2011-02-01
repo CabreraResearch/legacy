@@ -80,6 +80,9 @@
                                     case "Memo":
                                         $propdiv.CswFieldTypeMemo($this);
                                         break;
+                                    case "Static":
+                                        $propdiv.CswFieldTypeStatic($this);
+                                        break;
                                     case "Text":
                                         $propdiv.CswFieldTypeText($this);
                                         break;
