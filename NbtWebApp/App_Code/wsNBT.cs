@@ -114,9 +114,8 @@ namespace ChemSW.Nbt.WebServices
         }//deAuthenticate()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetWelcomeItems( string RoleId )
+        public string GetWelcomeItems( string RoleId )
         {
-            CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
             try
             {
@@ -136,17 +135,16 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetWelcomeItems()
+        } // GetWelcomeItems()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetViews()
+        public string GetViews()
         {
-            CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
             try
             {
                 start();
-                CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtResources );
+                CswNbtWebServiceTreeView ws = new CswNbtWebServiceTreeView( _CswNbtResources );
                 ReturnVal = ws.getViews();
                 end();
             }
@@ -155,16 +153,16 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetViews()
+        } // GetViews()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetDashboard()
+        public string GetDashboard()
         {
             string ReturnVal = string.Empty;
             try
             {
                 start();
-                CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtResources );
+                CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
                 ReturnVal = ws.getDashboard();
                 end();
             }
@@ -173,16 +171,16 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetDashboard()
+        } // GetDashboard()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetHeaderMenu()
+        public string GetHeaderMenu()
         {
             string ReturnVal = string.Empty;
             try
             {
                 start();
-                CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtResources );
+                CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
                 ReturnVal = ws.getHeaderMenu();
                 end();
             }
@@ -191,16 +189,16 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetHeaderMenu()
+        } // GetHeaderMenu()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetTree( Int32 ViewId )
+        public string GetTree( Int32 ViewId )
         {
             string ReturnVal = string.Empty;
             try
             {
                 start();
-                CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtResources );
+                CswNbtWebServiceTreeView ws = new CswNbtWebServiceTreeView( _CswNbtResources );
                 ReturnVal = ws.getTree( ViewId );
                 end();
             }
@@ -209,17 +207,17 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetTree()
+        } // GetTree()
 
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetTabs( string NodePk )
+        public string GetTabs( string NodePk )
         {
             string ReturnVal = string.Empty;
             try
             {
                 start();
-                CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtResources );
+                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
                 ReturnVal = ws.getTabs( NodePk );
                 end();
             }
@@ -228,16 +226,16 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetTabs()
+        } // GetTabs()
 
         [WebMethod( EnableSession = true )]
-        public string JQueryGetProps( string NodePk, string TabId )
+        public string GetProps( string NodePk, string TabId )
         {
             string ReturnVal = string.Empty;
             try
             {
                 start();
-                CswNbtWebServiceJQuery ws = new CswNbtWebServiceJQuery( _CswNbtResources );
+                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
                 ReturnVal = ws.getProps( NodePk, TabId );
                 end();
             }
@@ -246,7 +244,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // JQueryGetTab()
+        } // GetProps()
 
         #endregion Web Methods
 

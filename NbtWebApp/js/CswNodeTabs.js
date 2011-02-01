@@ -2,8 +2,8 @@
     $.fn.CswNodeTabs = function (options) {
 
         var o = {
-            TabsUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetTabs',
-            PropsUrl: '/NbtWebApp/wsNBT.asmx/JQueryGetProps',
+            TabsUrl: '/NbtWebApp/wsNBT.asmx/GetTabs',
+            PropsUrl: '/NbtWebApp/wsNBT.asmx/GetProps',
             nodeid: ''
         };
 

@@ -17,10 +17,10 @@ using ChemSW.NbtWebControls;
 
 namespace ChemSW.Nbt.WebServices
 {
-    public class CswNbtWebServiceJQuery
+    public class CswNbtWebServiceTreeView
     {
         private CswNbtResources _CswNbtResources;
-        public CswNbtWebServiceJQuery( CswNbtResources CswNbtResources )
+        public CswNbtWebServiceTreeView( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
         }
@@ -203,62 +203,6 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
-        public string getTabs( string NodePkString )
-        {
-            string ret = string.Empty;
-
-            CswPrimaryKey NodePk = new CswPrimaryKey();
-            NodePk.FromString( NodePkString );
-
-            CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
-            if( Node != null )
-            {
-                ret = "<tabs>";
-                foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
-                {
-                    ret += "<tab id=\"" + Tab.TabId + "\" name=\"" + Tab.TabName + "\" />";
-                }
-                ret += "</tabs>";
-            }
-            return ret;
-        } // getTabs()
-
-        public string getProps( string NodePkString, string TabId )
-        {
-            string ret = string.Empty;
-            CswPrimaryKey NodePk = new CswPrimaryKey();
-            NodePk.FromString( NodePkString );
-
-            CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
-            if( Node != null )
-            {
-                foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
-                {
-                    if( Tab.TabId.ToString() == TabId )
-                    {
-                        foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
-                        {
-                            CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-                            ret += "<prop id=\"" + Node.NodeId.ToString() + "_" + Prop.PropId.ToString() + "\"";
-                            ret += " name=\"" + Prop.PropNameWithQuestionNo + "\"";
-                            ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
-                            ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";
-                            ret += " ocpname=\"" + PropWrapper.ObjectClassPropName + "\"";
-                            ret += " displayrow=\"" + Prop.DisplayRow.ToString() + "\"";
-                            ret += " displaycol=\"" + Prop.DisplayColumn.ToString() + "\"";
-                            ret += " required=\"" + Prop.IsRequired.ToString().ToLower() + "\"";
-                            ret += ">";
-                            XmlDocument XmlDoc = new XmlDocument();
-                            CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
-                            PropWrapper.ToXml( XmlDoc.DocumentElement );
-                            ret += XmlDoc.DocumentElement.InnerXml;
-                            ret += "</prop>";
-                        }
-                    }
-                }
-            }
-            return "<props>" + ret + "</props>";
-        } // getTab()
 
         private string _runTreeNodesRecursive( ICswNbtTree Tree )
         {
@@ -283,38 +227,8 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
-        private string _runProperties( CswNbtNode Node )
-        {
-            string ret = string.Empty;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
-            {
-                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
-                {
-                    if( !Prop.HideInMobile &&
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password )
-                    {
-                        CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-                        //ret += "<prop id=\"" + PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() + "\"";
-                        ret += " name=\"" + Prop.PropNameWithQuestionNo + "\"";
-                        ret += " tab=\"" + Tab.TabName + "\"";
-                        ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
-                        ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";
-                        ret += " ocpname=\"" + PropWrapper.ObjectClassPropName + "\"";
-                        ret += ">";
-                        XmlDocument XmlDoc = new XmlDocument();
-                        CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
-                        PropWrapper.ToXml( XmlDoc.DocumentElement );
-                        ret += XmlDoc.DocumentElement.InnerXml;
-                        ret += "<subitems></subitems>";
-                        ret += "</prop>";
-                    }
-                }
-            }
-
-            return ret;
-        }
 
 
-    } // class CswNbtWebServiceJQuery
+    } // class CswNbtWebServiceTreeView
 
 } // namespace ChemSW.Nbt.WebServices

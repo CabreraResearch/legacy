@@ -16,12 +16,12 @@ using ChemSW.NbtWebControls;
 
 namespace ChemSW.Nbt.WebServices
 {
-    public class CswNbtWebServiceUpdateProperties
+    public class CswNbtWebServiceMobileUpdateProperties
     {
         private CswNbtWebServiceResources _CswNbtWebServiceResources;
         private bool _ForMobile;
 
-        public CswNbtWebServiceUpdateProperties( CswNbtWebServiceResources CswNbtWebServiceResources, bool ForMobile )
+        public CswNbtWebServiceMobileUpdateProperties( CswNbtWebServiceResources CswNbtWebServiceResources, bool ForMobile )
         {
             _CswNbtWebServiceResources = CswNbtWebServiceResources;
             _ForMobile = ForMobile;
@@ -47,12 +47,12 @@ namespace ChemSW.Nbt.WebServices
             }
 
             // return the refreshed view
-            CswNbtWebServiceView ViewService = new CswNbtWebServiceView( _CswNbtWebServiceResources, _ForMobile );
+            CswNbtWebServiceMobileView ViewService = new CswNbtWebServiceMobileView( _CswNbtWebServiceResources, _ForMobile );
             return ViewService.Run( ParentId );
 
         } // Run()
 
-    } // class CswNbtWebServiceUpdateProperties
+    } // class CswNbtWebServiceMobileUpdateProperties
 
 } // namespace ChemSW.WebServices
 
