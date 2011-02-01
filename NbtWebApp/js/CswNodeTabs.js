@@ -4,7 +4,8 @@
         var o = {
             TabsUrl: '/NbtWebApp/wsNBT.asmx/GetTabs',
             PropsUrl: '/NbtWebApp/wsNBT.asmx/GetProps',
-            nodeid: ''
+            nodeid: '',
+            onSave: function() {}
         };
 
         if (options) {
@@ -146,7 +147,7 @@
             CswAjax({
                 url: '/NbtWebApp/wsNBT.asmx/SaveProps',
                 data: "{ NodePk: '" + o.nodeid + "', NewPropsXml: '" + $propsxml.get(0).outerHTML + "' }",
-                success: function() {} 
+                success: o.onSave 
             });
 
         } // Save()
