@@ -45,6 +45,8 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // getTabs()
 
+        private const char PropIdDelim = '_';
+
         public string getProps( string NodePkString, string TabId )
         {
             string ret = string.Empty;
@@ -61,7 +63,7 @@ namespace ChemSW.Nbt.WebServices
                         foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
                         {
                             CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-                            ret += "<prop id=\"" + Node.NodeId.ToString() + "_" + Prop.PropId.ToString() + "\"";
+                            ret += "<prop id=\"" + Node.NodeId.ToString() + PropIdDelim.ToString() + Prop.PropId.ToString() + "\"";
                             ret += " name=\"" + Prop.PropNameWithQuestionNo + "\"";
                             ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
                             ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";
@@ -83,60 +85,26 @@ namespace ChemSW.Nbt.WebServices
         } // getTab()
 
 
-        private string _runProperties( CswNbtNode Node )
-        {
-            string ret = string.Empty;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
-            {
-                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
-                {
-                    if( !Prop.HideInMobile &&
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password )
-                    {
-                        CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-                        //ret += "<prop id=\"" + PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() + "\"";
-                        ret += " name=\"" + Prop.PropNameWithQuestionNo + "\"";
-                        ret += " tab=\"" + Tab.TabName + "\"";
-                        ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
-                        ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";
-                        ret += " ocpname=\"" + PropWrapper.ObjectClassPropName + "\"";
-                        ret += ">";
-                        XmlDocument XmlDoc = new XmlDocument();
-                        CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
-                        PropWrapper.ToXml( XmlDoc.DocumentElement );
-                        ret += XmlDoc.DocumentElement.InnerXml;
-                        ret += "<subitems></subitems>";
-                        ret += "</prop>";
-                    }
-                }
-            }
-
-            return ret;
-        }
-
-        public void saveProps(string NodePkString, string PropXml)
+        public string saveProp( string NodePkString, string NewPropXml )
         {
             XmlDocument XmlDoc = new XmlDocument();
-            XmlDoc.LoadXml( UpdatedViewXml );
+            XmlDoc.LoadXml( NewPropXml );
+            
+            CswPrimaryKey NodePk = new CswPrimaryKey();
+            NodePk.FromString( NodePkString );
 
-            XmlNodeList PropNodes = XmlDoc.SelectNodes( "//prop[@wasmodified='1']" );
-            foreach( XmlNode PropNode in PropNodes )
-            {
-                string NodePropId = PropNode.Attributes["id"].Value;
-                string[] SplitNodePropId = NodePropId.Split( '_' );
-                Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[1] );
-                CswPrimaryKey NodePk = new CswPrimaryKey( SplitNodePropId[3], CswConvert.ToInt32( SplitNodePropId[4] ) );
+            string NodePropId = XmlDoc.DocumentElement.Attributes["id"].Value;
+            string[] SplitNodePropId = NodePropId.Split( PropIdDelim );
+            Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[2] );
 
-                CswNbtNode Node = _CswNbtWebServiceResources.CswNbtResources.Nodes[NodePk];
-                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
-                Node.postChanges( false );
-            }
+            CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
+            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+            Node.Properties[MetaDataProp].ReadXml( XmlDoc.DocumentElement, null, null );
+            Node.postChanges( false );
 
-            // return the refreshed view
-            CswNbtWebServiceView ViewService = new CswNbtWebServiceView( _CswNbtWebServiceResources, _ForMobile );
-            return ViewService.Run( ParentId );
-        }
+            return "<result>Succeeded</result>";
+        } // saveProp()
+            
 
     } // class CswNbtWebServiceTabsAndProps
 

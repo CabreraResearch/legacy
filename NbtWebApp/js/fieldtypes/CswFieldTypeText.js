@@ -1,5 +1,5 @@
 ﻿; (function ($) {
-    $.fn.CswFieldTypeText = function ($propxml) {
+    $.fn.CswFieldTypeText = function (nodepk, $propxml) {
         
         var ID = $propxml.attr('id');
         var Required = $propxml.attr('required');
@@ -18,11 +18,19 @@
         else 
         {
             var $TextBox = $('<input type="text" class="textinput" size="' + Length + '" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
-                             .appendTo($Div); 
+                             .appendTo($Div)
+                             .change(Save);
             if(Required)
             {
                 $TextBox.addClass("required");
             }
+        }
+
+        function Save()
+        {
+            var $newPropXml = $propxml;
+            $newPropXml.children('text').text($TextBox.val());
+            SaveProp(nodepk, $newPropXml, function () { });
         }
         
         // For proper chaining support

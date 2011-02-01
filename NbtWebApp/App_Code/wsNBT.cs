@@ -246,6 +246,24 @@ namespace ChemSW.Nbt.WebServices
             return ( ReturnVal );
         } // GetProps()
 
+        [WebMethod( EnableSession = true )]
+        public string SaveProp( string NodePk, string NewPropXml )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                ReturnVal = ws.saveProp( NodePk, NewPropXml );
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        } // GetProps()
+
         #endregion Web Methods
 
     }//wsNBT

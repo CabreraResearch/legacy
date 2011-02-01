@@ -72,19 +72,19 @@
                                 switch(fieldtype)
                                 {
                                     case "List":
-                                        $propdiv.CswFieldTypeList($this);
+                                        $propdiv.CswFieldTypeList(nodepk, $this);
                                         break;
                                     case "Logical":
-                                        $propdiv.CswFieldTypeLogical($this);
+                                        $propdiv.CswFieldTypeLogical(nodepk, $this);
                                         break;
                                     case "Memo":
-                                        $propdiv.CswFieldTypeMemo($this);
+                                        $propdiv.CswFieldTypeMemo(nodepk, $this);
                                         break;
                                     case "Static":
-                                        $propdiv.CswFieldTypeStatic($this);
+                                        $propdiv.CswFieldTypeStatic(nodepk, $this);
                                         break;
                                     case "Text":
-                                        $propdiv.CswFieldTypeText($this);
+                                        $propdiv.CswFieldTypeText(nodepk, $this);
                                         break;
                                     default:
                                         $propdiv.append($this.attr('gestalt'));

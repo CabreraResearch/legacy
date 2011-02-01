@@ -75,6 +75,16 @@ function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
 } // _handleAjaxError()
 
 
+function SaveProp(nodepk, $propxml, onsuccess) 
+{
+    var safeXml = $propxml.get(0).outerHTML;
+    CswAjax({
+        url: '/NbtWebApp/wsNBT.asmx/SaveProp',
+        data: "{ NodePk: '" + nodepk + "', NewPropXml: '" + $propxml.get(0).outerHTML + "' }",
+        success: onsuccess
+    });
+}
+
 // ------------------------------------------------------------------------------------
 // Popups and Dialogs
 // ------------------------------------------------------------------------------------

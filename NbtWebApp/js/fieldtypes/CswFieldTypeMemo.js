@@ -1,5 +1,5 @@
 ﻿; (function ($) {
-    $.fn.CswFieldTypeMemo = function ($propxml) {
+    $.fn.CswFieldTypeMemo = function (nodepk, $propxml) {
         
         var ID = $propxml.attr('id');
         var Required = $propxml.attr('required');
