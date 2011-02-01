@@ -128,6 +128,31 @@ namespace ChemSW.Nbt.WebServices
         } // JQueryGetWelcomeItems()
 
         [WebMethod( EnableSession = true )]
+        public string jQueryGetQuickLaunch( string UserId )
+        {
+            CswTimer Timer = new CswTimer();
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+
+                CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
+                // Only administrators can get welcome content for other roles
+                if( !string.IsNullOrEmpty( UserId ) )
+                    //ReturnVal = ws.GetWelcomeItems( RoleId );
+                //else
+                    //ReturnVal = ws.GetWelcomeItems( _CswNbtResources.CurrentNbtUser.RoleId.ToString() );
+
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        } // JQueryGetWelcomeItems()
+
+        [WebMethod( EnableSession = true )]
         public string JQueryGetViews()
         {
             CswTimer Timer = new CswTimer();
