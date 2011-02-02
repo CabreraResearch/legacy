@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--#include file="NewHeader.html" -->
+
+                    <tr>
+                        <td id="Td1" class="PageTable_LeftColumn" rowspan="3">
+                            <img src="Images/pagelayout/blank.gif" width="1" height="450"/>
+                        </td>
+                        <td id="Td2" class="PageTable_LeftCell" valign="top">
+
+                            <div id="MenuDiv"></div>
+                            <div id="LeftDiv"></div>
+                            
+                        </td>
+
+                        <td id="Td3" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
+
+                            <div id="RightDiv"></div>
+                            
+                        </td>
+
+                        <td id="Td4" class="PageTable_RightColumn" rowspan="3"></td>
+                      </tr>
+                                          
+                      <tr>
+                        <td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
+
+                            <div id="CenterDiv"></div>
+                            <!--<div id="timerdiv"></div>-->
+                        </td>
+                      </tr>
+                      <tr>
+                        <td id="Td8" class="PageTable_CenterCell" colspan="2" valign="top">
+
+                            <div id="QuickLaunch"></div>
+                           
+                        </td>
+                     </tr>
+
+<script>
+    var currentviewid = '';
+
+    $('#CenterDiv').CswLogin({
+        'onAuthenticate': function (s, u)
+        {
+            $('#header_dashboard').CswDashboard();
+            $('#header_menu').CswHeaderMenu();
+            $('#header_username').text(u);
+            $('#MenuDiv').CswViewSelect({ 'onSelect': getViewTree });
+            $('#CenterDiv').CswWelcome({
+                onLinkClick: handleWelcomeLinkClick
+            });
+            $('#QuickLaunch').CswQuickLaunch({
+                onLinkClick: handleQuickLaunchItemClick
+            });
+        }
+    });
+
+    function clearLeft()
+    {
+        $('#LeftDiv').children().remove();
+    }
+    function clearRight()
+    {
+        $('#RightDiv').children().remove();
+    }
+    function clearCenter()
+    {
+        $('#CenterDiv').children().remove();
+    }
+
+    function getViewTree(viewid)
+    {
+        currentviewid = viewid;
+        ClearLeft();
+        ClearRight();
+        ClearCenter();
+        $('#LeftDiv').CswViewTree({
+            'viewid': viewid,
+            onSelectNode: GetTabs
+        });
+    }
+
+    function getTabs(nodeid)
+    {
+        ClearRight();
+        $('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, onSave: refreshViewTree });
+    }
+
+    function refreshViewTree()
+    {
+        ClearLeft();
+        $('#LeftDiv').CswViewTree({
+            'viewid': currentviewid,
+            onSelectNode: GetTabs
+        });
+    }
+
+    function handleWelcomeLinkClick(viewid, actionid, reportid)
+    {
+        ClearCenter();
+        if (viewid != undefined && viewid != '')
+        {
+            getViewTree(viewid);
+        }
+        else if (actionid != undefined && actionid != '')
+        {
+            alert('Actions are not yet handled!');
+        }
+        else if (reportid != undefined && reportid != '')
+        {
+            alert('Reports are not yet handled!');
+        }
+    }
+
+    function handleQuickLaunchItemClick(viewid, actionid)
+    {
+        ClearCenter();
+        if (viewid != undefined && viewid != '')
+        {
+            getViewTree(viewid);
+        }
+        else if (actionid != undefined && actionid != '')
+        {
+            alert('Actions are not yet handled!');
+        }
+    }
+</script>
+
+<!--#include file="NewFooter.html" -->
