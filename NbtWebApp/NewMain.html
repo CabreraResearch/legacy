@@ -53,8 +53,13 @@
             $('#QuickLaunch').CswQuickLaunch({
                 onLinkClick: handleQuickLaunchItemClick
             });
+            $(document).ready(function ()
+            {
+                $('#breadcrumbs').xBreadcrumbs({ collapsible: true });
+            });
         }
     });
+    
 
     function clearLeft()
     {
@@ -72,33 +77,33 @@
     function getViewTree(viewid)
     {
         currentviewid = viewid;
-        ClearLeft();
-        ClearRight();
-        ClearCenter();
+        clearLeft();
+        clearRight();
+        clearCenter();
         $('#LeftDiv').CswViewTree({
             'viewid': viewid,
-            onSelectNode: GetTabs
+            onSelectNode: getTabs
         });
     }
 
     function getTabs(nodeid)
     {
-        ClearRight();
+        clearRight();
         $('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, onSave: refreshViewTree });
     }
 
     function refreshViewTree()
     {
-        ClearLeft();
+        clearLeft();
         $('#LeftDiv').CswViewTree({
             'viewid': currentviewid,
-            onSelectNode: GetTabs
+            onSelectNode: getTabs
         });
     }
 
     function handleWelcomeLinkClick(viewid, actionid, reportid)
     {
-        ClearCenter();
+        clearCenter();
         if (viewid != undefined && viewid != '')
         {
             getViewTree(viewid);
@@ -115,7 +120,7 @@
 
     function handleQuickLaunchItemClick(viewid, actionid)
     {
-        ClearCenter();
+        clearCenter();
         if (viewid != undefined && viewid != '')
         {
             getViewTree(viewid);
