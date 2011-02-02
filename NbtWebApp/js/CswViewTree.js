@@ -21,13 +21,14 @@
             data: 'ViewId=' + o.viewid,
             success: function ($xml) {
                 var firstid = $xml.find('item').first().find('item').first().attr('id');
-                var treexml = $xml.find('tree').get(0).innerHTML;
                 var strTypes = $xml.find('types').text();
                 var jsonTypes = $.parseJSON(strTypes);
+                var $treexml = $xml.find('tree').children('root')
+                var treexmlstring = xmlToString($treexml);
 
                 $treediv.jstree({
                     "xml_data": {
-                        "data": treexml,
+                        "data": treexmlstring,
                         "xsl": "nest"
                     },
                     "ui": {

@@ -12,7 +12,8 @@
                 var Required = $xml.attr('required');
                 var ReadOnly = $xml.attr('readonly');
 
-                var Value = extractCDataValue($xml.children('text'));
+                //var Value = extractCDataValue($xml.children('text'));
+                var Value = $xml.children('text').text();
                 var rows = $xml.children('text').attr('rows');
                 var columns = $xml.children('text').attr('columns');
 
