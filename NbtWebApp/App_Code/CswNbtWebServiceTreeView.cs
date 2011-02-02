@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Web;
 using System.Xml;
-using System.Web.Services;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.NbtWebControls;
 
 namespace ChemSW.Nbt.WebServices
 {

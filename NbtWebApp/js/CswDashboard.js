@@ -2,7 +2,7 @@
     $.fn.CswDashboard = function (options) {
 
         var o = {
-            Url: '/NbtWebApp/wsNBT.asmx/GetDashboard',
+            Url: '/NbtWebApp/wsNBT.asmx/getDashboard',
         };
 
         if (options) {

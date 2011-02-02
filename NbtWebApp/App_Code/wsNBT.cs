@@ -1,23 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Web;
 using System.Web.Services;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Config;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Session;
 using ChemSW.Security;
-using ChemSW.NbtWebControls;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -81,7 +70,7 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod( EnableSession = true )]
-        public string Authenticate( string AccessId, string UserName, string Password )
+        public string authenticate( string AccessId, string UserName, string Password )
         {
             string ReturnVal = string.Empty;
             try
@@ -99,7 +88,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             return ( ReturnVal );
-        }//Authenticate()
+        }//authenticate()
 
 
         [WebMethod( EnableSession = true )]
@@ -119,8 +108,9 @@ namespace ChemSW.Nbt.WebServices
         }//deAuthenticate()
 
         [WebMethod( EnableSession = true )]
-        public XmlDocument GetWelcomeItems( string RoleId )
+        public XmlDocument getWelcomeItems( string RoleId )
         {
+            CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
             try
             {
@@ -139,17 +129,41 @@ namespace ChemSW.Nbt.WebServices
             {
                 ReturnVal = error( ex );
             }
-
-            //return ( ReturnVal );
+	    //return ( ReturnVal );
             XmlDocument Doc = new XmlDocument();
             Doc.LoadXml( ReturnVal );
             return Doc;
-
-        } // GetWelcomeItems()
+        } // getWelcomeItems()
 
         [WebMethod( EnableSession = true )]
-        public XmlDocument GetViews()
+        public string getQuickLaunchItems()
         {
+            CswTimer Timer = new CswTimer();
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+
+                CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
+                CswNbtWebServiceQuickLaunchItems ql = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
+                if( null != UserId )
+                {
+                    ReturnVal = ql.getQuickLaunchItems( UserId );
+                }
+
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        } // getQuickLaunchItems()
+
+        [WebMethod( EnableSession = true )]
+        public string getViews()
+        {
+            CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
             try
             {
@@ -166,10 +180,10 @@ namespace ChemSW.Nbt.WebServices
             XmlDocument Doc = new XmlDocument();
             Doc.LoadXml( ReturnVal );
             return Doc;
-        } // GetViews()
+        } // getViews()
 
         [WebMethod( EnableSession = true )]
-        public XmlDocument GetDashboard()
+        public XmlDocument getDashboard()
         {
             string ReturnVal = string.Empty;
             try
@@ -187,10 +201,10 @@ namespace ChemSW.Nbt.WebServices
             XmlDocument Doc = new XmlDocument();
             Doc.LoadXml( ReturnVal );
             return Doc;
-        } // GetDashboard()
+        } // getDashboard()
 
         [WebMethod( EnableSession = true )]
-        public XmlDocument GetHeaderMenu()
+        public XmlDocument getHeaderMenu()
         {
             string ReturnVal = string.Empty;
             try
@@ -208,10 +222,10 @@ namespace ChemSW.Nbt.WebServices
             XmlDocument Doc = new XmlDocument();
             Doc.LoadXml( ReturnVal );
             return Doc;
-        } // GetHeaderMenu()
+        } // getHeaderMenu()
 
         [WebMethod( EnableSession = true )]
-        public XmlDocument GetTree( Int32 ViewId )
+        public XmlDocument getTree( Int32 ViewId )
         {
             string ReturnVal = string.Empty;
             try
@@ -229,11 +243,11 @@ namespace ChemSW.Nbt.WebServices
             XmlDocument Doc = new XmlDocument();
             Doc.LoadXml( ReturnVal );
             return Doc;
-        } // GetTree()
+        } // getTree()
 
 
         [WebMethod( EnableSession = true )]
-        public XmlDocument GetTabs( string NodePk )
+        public XmlDocument getTabs( string NodePk )
         {
             string ReturnVal = string.Empty;
             try
@@ -251,10 +265,10 @@ namespace ChemSW.Nbt.WebServices
             XmlDocument Doc = new XmlDocument();
             Doc.LoadXml( ReturnVal );
             return Doc;
-        } // GetTabs()
+        } // getTabs()
 
         [WebMethod( EnableSession = true )]
-        public XmlDocument GetProps( string NodePk, string TabId )
+        public XmlDocument getProps( string NodePk, string TabId )
         {
             string ReturnVal = string.Empty;
             try
@@ -272,10 +286,10 @@ namespace ChemSW.Nbt.WebServices
             XmlDocument Doc = new XmlDocument();
             Doc.LoadXml( ReturnVal );
             return Doc;
-        } // GetProps()
+        } // getProps()
 
         [WebMethod( EnableSession = true )]
-        public string SaveProps( string NodePk, string NewPropsXml )
+        public string saveProps( string NodePk, string NewPropsXml )
         {
             string ReturnVal = string.Empty;
             try
@@ -290,7 +304,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = error( ex );
             }
             return ( ReturnVal );
-        } // GetProps()
+        } // saveProps()
 
         #endregion Web Methods
 

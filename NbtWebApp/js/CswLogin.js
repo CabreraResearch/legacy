@@ -2,7 +2,7 @@
     $.fn.CswLogin = function (options) {
 
         var o = {
-            AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
+            AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/authenticate',
             onAuthenticate: function(Username) {}
         };
 

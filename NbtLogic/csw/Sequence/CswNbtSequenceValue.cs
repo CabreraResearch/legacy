@@ -1,13 +1,9 @@
 using System;
-using System.Collections;
-using System.Text;
 using System.Data;
 using ChemSW.Exceptions;
 using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
@@ -186,6 +182,14 @@ namespace ChemSW.Nbt
                 }
                 return ReturnVal;
             }
+        }
+
+        /// <summary>
+        /// Resets next sequence value based on maximum existing value in the database.
+        /// </summary>
+        public void reSync()
+        {
+            reSync( Int32.MinValue );
         }
 
         /// <summary>

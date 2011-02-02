@@ -1,14 +1,9 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Text;
 using System.Xml;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -1104,7 +1099,7 @@ namespace ChemSW.Nbt.MetaData
 
                         // Resync Sequence to next new value
                         CswNbtSequenceValue SeqValue = new CswNbtSequenceValue( _CswNbtMetaDataResources.CswNbtResources, SequenceId );
-                        SeqValue.reSync( SequenceId );
+                        SeqValue.reSync();
 
                     } // if( TotalNodes > 0 )
                 } // if prop is sequence or barcode
