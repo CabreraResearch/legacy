@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.WebServices
         {
             string ret = string.Empty;
 
-            ret += "<item text=\"Home\" href=\"NewMain.shtm\" />";
+            ret += "<item text=\"Home\" href=\"NewMain.html\" />";
             ret += "<item text=\"Admin\">";
             ret += "  <item text=\"Current User List\" href=\"\" />";
             ret += "  <item text=\"View Log\" href=\"\" />";
