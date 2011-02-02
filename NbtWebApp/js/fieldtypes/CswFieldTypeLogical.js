@@ -24,11 +24,18 @@
                 } 
                 else 
                 {
-                    $CheckboxImage = $('<div id="'+ ID +'" class="divbutton" alt="' + Checked + '" />"' )
-                                       .appendTo($Div)
-                                       .click(function() { onClick(Required); });
+                    var thisButtonType;
+                    switch(Checked)
+                    {
+                        case "true": thisButtonType = CswImageButton_ButtonType.CheckboxTrue; break;
+                        case "false": thisButtonType = CswImageButton_ButtonType.CheckboxFalse; break;
+                        default: thisButtonType = CswImageButton_ButtonType.CheckboxNull; break;
+                    }
 
-                    updateOffset(Checked);
+                    $Div.CswImageButton({ ButtonType: thisButtonType, 
+                                          AlternateText: Checked,
+                                          onClick: function($ImageDiv) { return onClick($ImageDiv, Required); }
+                                        });
                 }
             },
         save: function($propdiv, $xml) {
@@ -38,51 +45,31 @@
     };
     
 
-    function onClick(Required) 
+    function onClick($ImageDiv, Required) 
     {
-        var currentValue = $CheckboxImage.attr('alt');
-	    var newValue = "null";
-
-	    if (currentValue == "null") {
-		    newValue = "true";
+        var currentValue = $ImageDiv.attr('alt');
+	    var newValue = CswImageButton_ButtonType.CheckboxNull;
+	    var newAltText = "null";
+        if (currentValue == "null") {
+		    newValue = CswImageButton_ButtonType.CheckboxTrue;
+            newAltText = "true";
 	    } else if (currentValue == "false") {
 		    if (Required == "true") {
-			    newValue = "true";
+			    newValue = CswImageButton_ButtonType.CheckboxTrue;
+                newAltText = "true";
 		    } else {
-			    newValue = "null";
+			    newValue = CswImageButton_ButtonType.CheckboxNull;
+                newAltText = "null";
 		    }
 	    } else if (currentValue == "true") {
-		    newValue = "false";
+		    newValue = CswImageButton_ButtonType.CheckboxFalse;
+            newAltText = "false";
 	    }
-
-        $CheckboxImage.attr('alt', newValue);
-        updateOffset(newValue);
-        	
-	    return false;
+        $ImageDiv.attr('alt', newAltText);
+        return newValue;
     } // onClick()
 
-    function updateOffset(val)
-    {
-        var TrueOffset = 20;
-        var FalseOffset = 18;
-        var NullOffset = 19;
-        var Multiplier = -18;
 
-        var Offset;
-        switch(val)
-        {
-            case "true":  Offset = TrueOffset;  break;
-            case "false": Offset = FalseOffset; break;
-            case "null":  Offset = NullOffset;  break;
-            default:      Offset = NullOffset;  break;
-        }
-
-        $CheckboxImage.get(0).style.background = 'url(\'Images/buttons/buttons18.gif\') 0px '+ Offset * Multiplier + 'px no-repeat';
-        $CheckboxImage.unbind('mouseover');
-        $CheckboxImage.unbind('mouseout');
-        $CheckboxImage.bind('mouseover', function() { this.style.backgroundPosition = '-18px ' + Offset * Multiplier + 'px'; })
-        $CheckboxImage.bind('mouseout', function() { this.style.backgroundPosition = '0px ' + Offset * Multiplier + 'px'; })
-    } // updateOffset()
 
     // Method calling logic
     $.fn.CswFieldTypeLogical = function (method) {
@@ -97,3 +84,8 @@
   
     };
 })(jQuery);
+
+
+
+
+

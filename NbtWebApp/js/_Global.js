@@ -1,4 +1,40 @@
-﻿
+﻿// ------------------------------------------------------------------------------------
+// Enum definitions
+// ------------------------------------------------------------------------------------
+
+// For CswImageButton
+var CswImageButton_ButtonType = {
+    None: -1,
+    Add: 27,
+    ArrowNorth: 28,
+    ArrowEast: 29,
+    ArrowSouth: 30,
+    ArrowWest: 31,
+    Calendar: 6,
+    CheckboxFalse: 18,
+    CheckboxNull: 19,
+    CheckboxTrue: 20,
+    Clear: 4,
+    Clock: 10,
+    ClockGrey: 11,
+    Configure: 26,
+    Delete: 4,
+    Edit: 3,
+    Fire: 5,
+    PageFirst: 23,
+    PagePrevious: 24,
+    PageNext: 25,
+    PageLast: 22,
+    PinActive: 17,
+    PinInactive: 15,
+    Print: 2,
+    Refresh: 9,
+    SaveStatus: 13,
+    ToggleActive: 1,
+    ToggleInactive: 0,
+    View: 8
+}
+
 // ------------------------------------------------------------------------------------
 // Cookies
 // ------------------------------------------------------------------------------------
