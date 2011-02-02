@@ -34,7 +34,7 @@
                     height = Math.round( Rows + 0.5 + ( Rows / 5)) + 'em';
                 }
             
-                var $StaticDiv = $('<div style="overflow: '+ overflow +'; width: '+ width +'; height: '+ height +';">' + Text + '</div>' )
+                var $StaticDiv = $('<div class="staticvalue" style="overflow: '+ overflow +'; width: '+ width +'; height: '+ height +';">' + Text + '</div>' )
                                .appendTo($Div); 
             },
         save: function($propdiv, $xml) {
