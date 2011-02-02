@@ -24,8 +24,11 @@
                     }
                     else 
                     {
+                        var $mytable = makeTable(ID + '_tbl').appendTo($Div);
+
+                        var $selectcell = getTableCell($mytable, 1, 1);
                         var $SelectBox = $('<select id="'+ ID +'" name="'+ ID +'" class="selectinput" />"' )
-                                           .appendTo($Div);
+                                           .appendTo($selectcell);
 
                         $Options.children().each(function() {
                             var $this = $(this);
@@ -33,6 +36,13 @@
                         });
 
                         $SelectBox.val( SelectedNodeId );
+
+                        var $addcell = getTableCell($mytable, 1, 2);
+                        var $AddButton = $('<div />').appendTo($addcell);
+                        $AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
+                                                    AlternateText: "Add New",
+                                                    onClick: onAdd 
+                                                  });
 
                         if(Required)
                         {
@@ -47,6 +57,12 @@
                 }
         };
     
+
+        function onAdd($ImageDiv)
+        {
+            alert('This function has not been implemented yet.');
+        }
+
         // Method calling logic
         if ( methods[method] ) {
             return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
