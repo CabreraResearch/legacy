@@ -26,7 +26,6 @@
                         <td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
 
                             <div id="CenterDiv"></div>
-                            <!--<div id="timerdiv"></div>-->
 
                             <script>
                                 var currentviewid = '';
