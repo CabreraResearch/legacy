@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Web.SessionState;
 using System.Xml;
 using System.Data;
 using ChemSW.Core;
@@ -129,12 +131,27 @@ namespace ChemSW.Nbt.WebServices
             return "<views>" + ret + "</views>";
         }
 
-        public string getTree( Int32 ViewId )
+        public string getTree( Int32 ViewId, HttpSessionState Session )
         {
             string ret = string.Empty;
             ret += @"<item id=""-1""><content><name>No results</name></content></item>";
 
             CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+            if( null != View )
+            {
+                Dictionary<Int32, string> ViewHistory = null;
+                if( null == Session["ViewHistory"] )
+                {
+                    ViewHistory = new Dictionary<int, string>();
+                }
+                else
+                {
+                    ViewHistory = (Dictionary<Int32, string>) Session["ViewHistory"];                    
+                }
+                
+                ViewHistory.Add( ViewId, View.ViewName );
+                Session["ViewHistory"] = ViewHistory;
+            }
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
             

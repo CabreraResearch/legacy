@@ -11,7 +11,7 @@
         }
         var $this = $(this);
 
-        CswAjax({
+        CswAjaxJSON({
             url: o.Url,
             data: "{ UserId: '' }",
             success: function ($xml) {
