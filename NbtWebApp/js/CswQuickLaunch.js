@@ -2,7 +2,7 @@
     $.fn.CswQuickLaunch = function (options) {
 
         var o = {
-            Url: '/NbtWebApp/wsNBT.asmx/jQueryGetQuickLaunchItems',
+            Url: '/NbtWebApp/wsNBT.asmx/getQuickLaunchItems',
             onLinkClick: function(viewid, actionid) { },
         };
 

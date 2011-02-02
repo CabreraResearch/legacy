@@ -37,7 +37,7 @@
                                         $('#header_dashboard').CswDashboard();
                                         $('#header_menu').CswHeaderMenu();
                                         $('#header_username').text(u);
-                                        $('#MenuDiv').CswViewSelect({ 'onSelect': GetViewTree });
+                                        $('#MenuDiv').CswViewSelect({ 'onSelect': getViewTree });
                                         $('#CenterDiv').CswWelcome({
                                             onLinkClick: handleWelcomeLinkClick
                                         });
@@ -47,20 +47,20 @@
                                     }
                                 });
 
-                                function ClearLeft()
+                                function clearLeft()
                                 {
                                     $('#LeftDiv').children().remove();
                                 }
-                                function ClearRight()
+                                function clearRight()
                                 {
                                     $('#RightDiv').children().remove();
                                 }
-                                function ClearCenter()
+                                function clearCenter()
                                 {
                                     $('#CenterDiv').children().remove();
                                 }
 
-                                function GetViewTree(viewid) 
+                                function getViewTree(viewid) 
                                 {
                                     currentviewid = viewid;
                                     ClearLeft();
@@ -72,13 +72,13 @@
                                     });
                                 }
 
-                                function GetTabs(nodeid) 
+                                function getTabs(nodeid) 
                                 {
                                     ClearRight();
-                                    $('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, onSave: RefreshViewTree });
+                                    $('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, onSave: refreshViewTree });
                                 }
 
-                                function RefreshViewTree() 
+                                function refreshViewTree() 
                                 {
                                     ClearLeft();
                                     $('#LeftDiv').CswViewTree({

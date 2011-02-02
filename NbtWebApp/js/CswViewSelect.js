@@ -2,7 +2,7 @@
     $.fn.CswViewSelect = function (options) {
 
         var o = {
-            ViewUrl: '/NbtWebApp/wsNBT.asmx/GetViews',
+            ViewUrl: '/NbtWebApp/wsNBT.asmx/getViews',
             viewid: '',
             onSelect: function(viewid) { }
         };
