@@ -16,7 +16,11 @@
             data: "",
             success: function ($xml) {
                  
-                    var $table = $('<table id="DashboardTable" class="DashboardTable" cellpadding="0" cellspacing="0"><tr></tr></table>');
+                    //var $table = $('<table id="DashboardTable" class="DashboardTable" cellpadding="0" cellspacing="0"><tr></tr></table>');
+                    var $table = makeTable('DashboardTable');
+                    $table.addClass('DashboardTable');
+                    var $tr = $table.append('<tr />');
+
                     $xml.children().each(function() {
                         var $this = $(this);
 
@@ -33,7 +37,7 @@
                                           '  <div title="'+ $this.attr('text') +'" id="'+ $this.attr('id') +'" class="'+ $this.attr('id') +'" />' +
                                           '</td>';
                         }
-                        $table.find('tr').append(cellcontent);
+                        $tr.append(cellcontent);
 
                         $DashDiv.text('')
                                 .append($table);

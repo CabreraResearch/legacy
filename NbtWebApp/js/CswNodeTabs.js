@@ -59,20 +59,22 @@
                             $div = $("#" + tabid);
                             $div.children().remove();
                             
-                            var $table = $('<table></table>')
-                                           .appendTo($div);
-
+                            var $table = makeTable('proptable').appendTo($div);
+                            
                             var i = 0;
 
                             $xml.children().each(function() { 
                                 var $this = $(this);
-                                var $labelcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2 ) - 1);
-                                var $propcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2));
-                                var fieldtype = $this.attr('fieldtype');
-                                var $propdiv = $('<div/>').appendTo($propcell); 
 
+                                var $labelcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2 ) - 1);
+                                $labelcell.addClass('propertylabel');
                                 $labelcell.append($this.attr('name'));
 
+                                var $propcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2));
+                                $propcell.addClass('propertyvaluecell');
+                                var $propdiv = $('<div/>').appendTo($propcell); 
+
+                                var fieldtype = $this.attr('fieldtype');
                                 makePropControl($propdiv, fieldtype, $this);
                                 
                             });
