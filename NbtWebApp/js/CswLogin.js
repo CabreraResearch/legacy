@@ -53,11 +53,11 @@
         }
 
         function authenticate(AccessId, UserName, Password, onsuccess) {
-            CswAjax({
+            CswAjaxJSON({
                 url: o.AuthenticateUrl,
                 data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
-                success: function ($xml) {
-                    auth = $xml.find('AuthenticationStatus').text();
+                success: function (data) {
+                    auth = data.AuthenticationStatus;
                     if(auth == 'Authenticated')
                     {
                         SetUsername(UserName);
@@ -66,7 +66,7 @@
                     }
                     else 
                     {
-                        _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
+                        _handleAuthenticationStatus(auth);
                     }
                 } // success{}
             });

@@ -25,9 +25,9 @@
 
         function getTabs()
         {
-            CswAjax({
+            CswAjaxXml({
                 url: o.TabsUrl,
-                data: '{ NodePk: "' + o.nodeid + '" }',
+                data: 'NodePk=' + o.nodeid,
                 success: function ($xml) {
                             clearTabs();
                             var $tabdiv = $("<div><ul></ul></div>");
@@ -52,9 +52,9 @@
             
         function getProps(tabid)
         {
-            CswAjax({
+            CswAjaxXml({
                 url: o.PropsUrl,
-                data: '{ NodePk: "' + o.nodeid + '", TabId: "' + tabid + '" }',
+                data: 'NodePk=' + o.nodeid + '&TabId=' + tabid,
                 success: function ($xml) {
                             $div = $("#" + tabid);
                             $div.children().remove();
@@ -153,7 +153,7 @@
                 } // switch
             }); // each()
 
-            CswAjax({
+            CswAjaxJSON({
                 url: '/NbtWebApp/wsNBT.asmx/SaveProps',
                 data: "{ NodePk: '" + o.nodeid + "', NewPropsXml: '" + $propsxml.get(0).outerHTML + "' }",
                 success: o.onSave 

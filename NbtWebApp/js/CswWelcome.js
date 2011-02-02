@@ -13,9 +13,9 @@
         }
         var $this = $(this);
 
-        CswAjax({
+        CswAjaxXml({
             url: o.Url,
-            data: "{ RoleId: '' }",
+            data: "RoleId=",
             success: function ($xml) {
                 var $WelcomeDiv = $('<div id="welcomediv"><table class="WelcomeTable" align="center" cellpadding="20"></table></div>')
                                     .appendTo($this);

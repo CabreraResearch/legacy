@@ -19,7 +19,7 @@
         function getViewSelect(selectedviewid)
         {
             starttime = new Date();
-            CswAjax({
+            CswAjaxXml({
                 url: o.ViewUrl,
                 data: '',
                 success: function ($xml)

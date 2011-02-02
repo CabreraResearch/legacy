@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 using System.Web;
 using System.Web.Services;
 using System.Web.Script.Services;   // supports ScriptService attribute
@@ -86,13 +89,15 @@ namespace ChemSW.Nbt.WebServices
                 start();
                 _SessionResources.CswSessionManager.setAccessId( AccessId );
                 AuthenticationStatus AuthenticationStatus = _SessionResources.CswSessionManager.Authenticate( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
-                ReturnVal = result( "<AuthenticationStatus>" + AuthenticationStatus + "</AuthenticationStatus>" );
+                //ReturnVal = result( "<AuthenticationStatus>" + AuthenticationStatus + "</AuthenticationStatus>" );
+                ReturnVal = "{ \"AuthenticationStatus\": \"" + AuthenticationStatus + "\" }";
                 end();
             }
             catch( Exception ex )
             {
                 ReturnVal = error( ex );
             }
+
             return ( ReturnVal );
         }//Authenticate()
 
@@ -114,7 +119,7 @@ namespace ChemSW.Nbt.WebServices
         }//deAuthenticate()
 
         [WebMethod( EnableSession = true )]
-        public string GetWelcomeItems( string RoleId )
+        public XmlDocument GetWelcomeItems( string RoleId )
         {
             string ReturnVal = string.Empty;
             try
@@ -134,11 +139,16 @@ namespace ChemSW.Nbt.WebServices
             {
                 ReturnVal = error( ex );
             }
-            return ( ReturnVal );
+
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+
         } // GetWelcomeItems()
 
         [WebMethod( EnableSession = true )]
-        public string GetViews()
+        public XmlDocument GetViews()
         {
             string ReturnVal = string.Empty;
             try
@@ -152,11 +162,14 @@ namespace ChemSW.Nbt.WebServices
             {
                 ReturnVal = error( ex );
             }
-            return ( ReturnVal );
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
         } // GetViews()
 
         [WebMethod( EnableSession = true )]
-        public string GetDashboard()
+        public XmlDocument GetDashboard()
         {
             string ReturnVal = string.Empty;
             try
@@ -170,11 +183,14 @@ namespace ChemSW.Nbt.WebServices
             {
                 ReturnVal = error( ex );
             }
-            return ( ReturnVal );
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
         } // GetDashboard()
 
         [WebMethod( EnableSession = true )]
-        public string GetHeaderMenu()
+        public XmlDocument GetHeaderMenu()
         {
             string ReturnVal = string.Empty;
             try
@@ -188,11 +204,14 @@ namespace ChemSW.Nbt.WebServices
             {
                 ReturnVal = error( ex );
             }
-            return ( ReturnVal );
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
         } // GetHeaderMenu()
 
         [WebMethod( EnableSession = true )]
-        public string GetTree( Int32 ViewId )
+        public XmlDocument GetTree( Int32 ViewId )
         {
             string ReturnVal = string.Empty;
             try
@@ -206,12 +225,15 @@ namespace ChemSW.Nbt.WebServices
             {
                 ReturnVal = error( ex );
             }
-            return ( ReturnVal );
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
         } // GetTree()
 
 
         [WebMethod( EnableSession = true )]
-        public string GetTabs( string NodePk )
+        public XmlDocument GetTabs( string NodePk )
         {
             string ReturnVal = string.Empty;
             try
@@ -225,11 +247,14 @@ namespace ChemSW.Nbt.WebServices
             {
                 ReturnVal = error( ex );
             }
-            return ( ReturnVal );
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
         } // GetTabs()
 
         [WebMethod( EnableSession = true )]
-        public string GetProps( string NodePk, string TabId )
+        public XmlDocument GetProps( string NodePk, string TabId )
         {
             string ReturnVal = string.Empty;
             try
@@ -243,7 +268,10 @@ namespace ChemSW.Nbt.WebServices
             {
                 ReturnVal = error( ex );
             }
-            return ( ReturnVal );
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
         } // GetProps()
 
         [WebMethod( EnableSession = true )]

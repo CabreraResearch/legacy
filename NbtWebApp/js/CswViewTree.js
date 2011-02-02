@@ -16,9 +16,9 @@
         var $treediv = $('<div id="treediv" class="treediv" />')
                         .appendTo($(this));
 
-        CswAjax({
+        CswAjaxXml({
             url: o.TreeUrl,
-            data: '{ ViewId: "' + o.viewid + '" }',
+            data: 'ViewId=' + o.viewid,
             success: function ($xml) {
                 var firstid = $xml.find('item').first().find('item').first().attr('id');
                 var treexml = $xml.find('tree').get(0).innerHTML;

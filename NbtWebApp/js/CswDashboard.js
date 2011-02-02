@@ -11,7 +11,7 @@
 
         var $DashDiv = $(this);
         
-        CswAjax({
+        CswAjaxXml({
             url: o.Url,
             data: "",
             success: function ($xml) {

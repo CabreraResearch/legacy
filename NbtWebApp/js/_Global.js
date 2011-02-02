@@ -64,11 +64,12 @@ function ClearUsername() {
 // Ajax
 // ------------------------------------------------------------------------------------
 
-function CswAjax(options) {
+
+function CswAjaxJSON(options) {
     var o = {
         url: '',
         data: '',
-        success: function ($xml) { }
+        success: function (result) { }
     };
 
     if (options) {
@@ -83,24 +84,57 @@ function CswAjax(options) {
         contentType: 'application/json; charset=utf-8',
         data: o.data,
         success: function (data, textStatus, XMLHttpRequest) {
+            var endtime = new Date();
+            $('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+
+            o.success($.parseJSON(data.d));
+
+        }, // success{}
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+        }
+    });      // $.ajax({
+} // CswAjaxXml()
+
+function CswAjaxXml(options) {
+    var o = {
+        url: '',
+        data: '',
+        success: function ($xml) { }
+    };
+
+    if (options) {
+        $.extend(o, options);
+    }
+
+    var starttime = new Date();
+    $.ajax({
+        type: 'POST',
+        url: o.url,
+        dataType: "xml",
+        //contentType: 'application/json; charset=utf-8',
+        data: o.data,     // should be 'field1=value&field2=value'
+        success: function (data, textStatus, XMLHttpRequest) {
 
             var endtime = new Date();
             $('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-            var $xml = $(data.d);
-            if ($xml.get(0).nodeName == "ERROR") {
-                _handleAjaxError(XMLHttpRequest, $xml.text(), '');
+            // this is IE compliant
+            var $xml = $(XMLHttpRequest.responseXML);
+            var $realxml = $xml.children().first();
+            if ($realxml.nodeName == "ERROR") {
+                _handleAjaxError(XMLHttpRequest, $realxml.text(), '');
             }
             else {
-                o.success($xml);
+                o.success($realxml);
             }
 
         }, // success{}
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
         }
-    });    // $.ajax({
-} // CswAjax()
+    });          // $.ajax({
+} // CswAjaxXml()
         
 function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown) 
 {
