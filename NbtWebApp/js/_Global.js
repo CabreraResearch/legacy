@@ -145,23 +145,36 @@ function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
     console.log(ErrorMessage);
 } // _handleAjaxError()
 
-function extractCDataValue($node) {
-    // default
-    ret = $node.text();
+//function extractCDataValue($node) {
+//    // default
+//    ret = $node.text();
 
-    // for some reason, CDATA fields come through from the webservice like this:
-    // <node><!--[CDATA[some text]]--></node>
-    var cdataval = $node.html();
-    if (cdataval != undefined && cdataval != '') {
-        var prefix = '<!--[CDATA[';
-        var suffix = ']]-->';
+//    // for some reason, CDATA fields come through from the webservice like this:
+//    // <node><!--[CDATA[some text]]--></node>
+//    var cdataval = $node.html();
+//    if (cdataval != undefined && cdataval != '') {
+//        var prefix = '<!--[CDATA[';
+//        var suffix = ']]-->';
 
-        if (cdataval.substr(0, prefix.length) == prefix) {
-            ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
-        }
+//        if (cdataval.substr(0, prefix.length) == prefix) {
+//            ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
+//        }
+//    }
+//    return ret;
+//}
+
+function xmlToString($xmlnode) {
+    var xmlstring = $xmlnode.get(0).xml; // IE
+    if (!xmlstring) {            // FF, Chrome, Safari
+        var s = new XMLSerializer();
+        xmlstring = s.serializeToString($xmlnode.get(0));
     }
-    return ret;
+    if (!xmlstring) {
+        $.error("Browser does not support XML operations necessary to convert to string");
+    }
+    return xmlstring;
 }
+
 
 // ------------------------------------------------------------------------------------
 // Popups and Dialogs

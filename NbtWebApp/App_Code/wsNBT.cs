@@ -161,7 +161,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getQuickLaunchItems()
 
 		[WebMethod( EnableSession = true )]
-		public XmlDocument getViews()
+        public XmlDocument getViews()
 		{
 			CswTimer Timer = new CswTimer();
 			string ReturnVal = string.Empty;

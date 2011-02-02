@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.WebServices
             }
             Node.postChanges( false );
 
-            return "<result>Succeeded</result>";
+            return "{ \"result\": \"Succeeded\" }";
         } // saveProp()
             
 

@@ -155,7 +155,7 @@
 
             CswAjaxJSON({
                 url: '/NbtWebApp/wsNBT.asmx/SaveProps',
-                data: "{ NodePk: '" + o.nodeid + "', NewPropsXml: '" + $propsxml.get(0).outerHTML + "' }",
+                data: "{ NodePk: '" + o.nodeid + "', NewPropsXml: '" + xmlToString($propsxml) + "' }",
                 success: o.onSave 
             });
 
