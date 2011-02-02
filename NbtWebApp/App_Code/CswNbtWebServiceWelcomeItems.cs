@@ -143,7 +143,11 @@ namespace ChemSW.Nbt.WebServices
 
             } // foreach( DataRow WelcomeRow in WelcomeTable.Rows )
 
-            return "<welcome>" + ret + "</welcome>";
+            if( !string.IsNullOrEmpty(ret) )
+            {
+                ret = "<welcome>" + ret + "</welcome>";
+            }
+            return ret;
 
         } // GetWelcomeItems()
 

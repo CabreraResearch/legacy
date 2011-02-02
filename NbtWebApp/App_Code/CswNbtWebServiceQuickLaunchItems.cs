@@ -87,7 +87,12 @@ namespace ChemSW.Nbt.WebServices
                 DisplayRow++;
             } // foreach( CswNbtAction ThisAction...
 
-            return ( "<quicklaunch>" + ret + "</quicklaunch>" );
+            if( !string.IsNullOrEmpty(ret) )
+            {
+                ret = "<quicklaunch>" + ret + "</quicklaunch>";
+            }
+
+            return ret;
 
         } // getQuickLaunchItems()
 
