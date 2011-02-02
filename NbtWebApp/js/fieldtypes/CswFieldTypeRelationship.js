@@ -24,7 +24,7 @@
                     }
                     else 
                     {
-                        var $SelectBox = $('<select id="'+ ID +'" name="'+ ID +'" />"' )
+                        var $SelectBox = $('<select id="'+ ID +'" name="'+ ID +'" class="selectinput" />"' )
                                            .appendTo($Div);
 
                         $Options.children().each(function() {
