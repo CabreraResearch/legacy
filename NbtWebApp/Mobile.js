@@ -30,6 +30,7 @@
         var db;
         var UserName;
         var SessionId;
+        var $currentViewXml;
 
         // case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
@@ -285,6 +286,8 @@
                     {
                         if (xmlstr != '')
                         {
+                            $currentViewXml = $(xmlstr);
+                            
                             _processViewXml({
                                 ParentId: p.ParentId,
                                 DivId: p.DivId,
@@ -303,6 +306,8 @@
                                 {
                                     _storeViewXml(p.DivId, p.HeaderText, xml);
                                 }
+                                $currentViewXml = $(xml);
+                                
                                 _processViewXml({
                                     ParentId: p.ParentId,
                                     DivId: p.DivId,
@@ -318,11 +323,13 @@
                     });
                 } else  // Level 2 and up
                 {
-                    _fetchCachedViewXml(rootid, function (xmlstr)
-                    {
-                        if (xmlstr != '')
+//                    _fetchCachedViewXml(rootid, function (xmlstr)
+//                    {
+//                        if (xmlstr != '')
+//                        {
+                        if($currentViewXml != '')
                         {
-                            var $thisxmlstr = $(xmlstr).find('#' + p.DivId);
+                            var $thisxmlstr = $currentViewXml.find('#' + p.DivId);
                             _processViewXml({
                                 ParentId: p.ParentId,
                                 DivId: p.DivId,
@@ -334,7 +341,7 @@
                                 ChangePage: p.ChangePage
                             });
                         }
-                    });
+                    //});
                 }
             } else
             {
@@ -1364,12 +1371,13 @@
             var value = $elm.attr('value');
 
             // update the xml and store it
-            _fetchCachedViewXml(rootid, function (xmlstr)
+            if($currentViewXml != '')
             {
-                if (xmlstr != '')
-                {
-                    var $xmlstr = $(xmlstr);
-                    var $divxml = $xmlstr.find('#' + DivId);
+//            _fetchCachedViewXml(rootid, function (xmlstr)
+//            {
+//                if (xmlstr != '')
+//                {
+                    var $divxml = $currentViewXml.find('#' + DivId);
                     $divxml.andSelf().find('prop').each(function ()
                     {
                         _FieldTypeHtmlToXml($(this), name, value);
@@ -1377,11 +1385,11 @@
 
                     // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
                     // However, it appears to work, for now.
-                    _updateStoredViewXml(rootid, $xmlstr.wrap('<wrapper />').parent().html(), '1');
+                    _updateStoredViewXml(rootid, $currentViewXml.wrap('<wrapper />').parent().html(), '1');
 
                     _resetPendingChanges(true, false);
                 }
-            });
+            //});
 
         } // onPropertyChange()
 
