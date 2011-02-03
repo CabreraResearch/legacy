@@ -1,16 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Config;
 
 namespace ChemSW.Nbt.PropTypes
 {

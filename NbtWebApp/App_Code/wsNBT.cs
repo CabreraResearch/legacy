@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 using System.Web.Services;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Config;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Session;
 using ChemSW.Security;
-using ChemSW.NbtWebControls;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -29,34 +21,21 @@ namespace ChemSW.Nbt.WebServices
     {
         #region Session and Resource Management
 
-        private CswNbtWebServiceResources __CswNbtWebServiceResources;
-        private CswNbtWebServiceResources _CswNbtWebServiceResources
+        private CswSessionResourcesNbt _SessionResources;
+        private CswNbtResources _CswNbtResources;
+
+        private string _FilesPath
         {
             get
             {
-                if( null == __CswNbtWebServiceResources )
-                {
-                    __CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
-                                                                                Context.Session,
-                                                                                Context.Request,
-                                                                                Context.Response,
-                                                                                string.Empty,
-                                                                                System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
-                                                                                SetupMode.Web );
-                }//if not created yet
+                return ( System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc" );
+            }
+        }
 
-                return ( __CswNbtWebServiceResources ); 
-            }//get
-        }//_CswNbtWebServiceResources
-
-        private AuthenticationStatus start( string SessionId, ref string ExotericAuthenticationResult )
+        private void start()
         {
-            string EuphemisticAuthenticationStatus = string.Empty;
-            AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.startSession( SessionId, ref EuphemisticAuthenticationStatus );
-
-            ExotericAuthenticationResult = "<AuthenticationStatus>" + EuphemisticAuthenticationStatus + "</AuthenticationStatus>";
-
-            return ( AuthenticationStatus );
+            _SessionResources = new CswSessionResourcesNbt( Context.Application, Context.Session, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
+            _CswNbtResources = _SessionResources.CswNbtResources;
 
         }//start() 
 
@@ -64,13 +43,19 @@ namespace ChemSW.Nbt.WebServices
 
         private void end()
         {
-            _CswNbtWebServiceResources.endSession( EndSessionMode.esmCommit );
+            if( _CswNbtResources != null )
+            {
+                _CswNbtResources.finalize();
+                _CswNbtResources.release();
+            }
+            if( _SessionResources != null )
+                _SessionResources.setCache();
         }
 
         private string error( Exception ex )
         {
-            _CswNbtWebServiceResources.CswNbtResources.CswLogger.reportError( ex );
-            _CswNbtWebServiceResources.endSession( EndSessionMode.esmRollback );
+            _CswNbtResources.CswLogger.reportError( ex );
+            _CswNbtResources.Rollback();
             return "<error>Error: " + ex.Message + "</error>";
         }
 
@@ -84,153 +69,242 @@ namespace ChemSW.Nbt.WebServices
         #region Web Methods
 
 
-        [WebMethod]
-        public string Authenticate( string AccessId, string UserName, string Password )
+        [WebMethod( EnableSession = true )]
+        public string authenticate( string AccessId, string UserName, string Password )
         {
             string ReturnVal = string.Empty;
             try
             {
-                string ExotericAuthenticationResult = string.Empty;
+                start();
+                _SessionResources.CswSessionManager.setAccessId( AccessId );
+                AuthenticationStatus AuthenticationStatus = _SessionResources.CswSessionManager.Authenticate( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
+                //ReturnVal = result( "<AuthenticationStatus>" + AuthenticationStatus + "</AuthenticationStatus>" );
+                ReturnVal = "{ \"AuthenticationStatus\": \"" + AuthenticationStatus + "\" }";
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
 
-                string EuphemisticAuthenticationStatus = string.Empty;
-                string SessionId = string.Empty;
-                AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.authenticate( AccessId, UserName, Password, ref EuphemisticAuthenticationStatus, ref SessionId );
-                ExotericAuthenticationResult = "<AuthenticationStatus>" + EuphemisticAuthenticationStatus + "</AuthenticationStatus>";
+            return ( ReturnVal );
+        }//authenticate()
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    ReturnVal = "<SessionId>" + SessionId + "</SessionId>";
-                }
 
-                ReturnVal += ExotericAuthenticationResult;
+        [WebMethod( EnableSession = true )]
+        public string deAuthenticate()
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                _SessionResources.CswSessionManager.DeAuthenticate();
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        }//deAuthenticate()
 
-                ReturnVal = result( ReturnVal );
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getWelcomeItems( string RoleId )
+        {
+            CswTimer Timer = new CswTimer();
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+
+                CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
+                // Only administrators can get welcome content for other roles
+                if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    ReturnVal = ws.GetWelcomeItems( RoleId );
+                else
+                    ReturnVal = ws.GetWelcomeItems( _CswNbtResources.CurrentNbtUser.RoleId.ToString() );
 
                 end();
             }
-
             catch( Exception ex )
             {
                 ReturnVal = error( ex );
             }
+	    //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getWelcomeItems()
 
-            return ( ReturnVal );
-
-        }//Authenticate()
-
-
-        [WebMethod]
-        public string deAuthenticate( string SessionId )
+        [WebMethod( EnableSession = true )]
+        public string getQuickLaunchItems()
         {
+            CswTimer Timer = new CswTimer();
             string ReturnVal = string.Empty;
             try
             {
-                __CswNbtWebServiceResources.deAuthenticate( SessionId ); 
-                ReturnVal = result( "SessionId " + SessionId + " removed"  );
+                start();
+
+                CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
+                CswNbtWebServiceQuickLaunchItems ql = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
+                if( null != UserId )
+                {
+                    ReturnVal = ql.getQuickLaunchItems( UserId );
+                }
 
                 end();
             }
-
             catch( Exception ex )
             {
                 ReturnVal = error( ex );
             }
-
             return ( ReturnVal );
-
-        }//Authenticate()
-
+        } // getQuickLaunchItems()
 
         [WebMethod( EnableSession = true )]
-        public string ConnectTest()
+        public XmlDocument getViews()
         {
-            // no session needed here
-            return ( result( "Connected" ) );
-        }
-
+            CswTimer Timer = new CswTimer();
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceTreeView ws = new CswNbtWebServiceTreeView( _CswNbtResources );
+                ReturnVal = ws.getViews();
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getViews()
 
         [WebMethod( EnableSession = true )]
-        public string ConnectTestFail()
-        {
-            // no session needed here
-
-            // this exception needs to be UNCAUGHT
-            throw new Exception( "Emulated connection failure" );
-        }
-
-        [WebMethod( EnableSession = true )]
-        public string ConnectTestRandomFail()
-        {
-            // no session needed here
-
-            // this exception needs to be UNCAUGHT
-            Random r = new Random();
-            Int32 rand = r.Next( 0, 3 );
-            if(rand == 0)
-                throw new Exception( "Emulated connection failure" );
-            else
-                return ( result( "Connected" ) );
-        }
-
-
-        [WebMethod]
-        public string UpdateProperties( string SessionId , string ParentId, string UpdatedViewXml )
+        public XmlDocument getDashboard()
         {
             string ReturnVal = string.Empty;
             try
             {
-                string EuphemisticAuthenticationStatus = string.Empty;
-                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
-                {
-
-                    CswNbtWebServiceUpdateProperties wsUP = new CswNbtWebServiceUpdateProperties( _CswNbtWebServiceResources );
-                    ReturnVal = result( wsUP.Run( ParentId, UpdatedViewXml ) );
-
-                    end();
-                }
-                else
-                {
-                    ReturnVal = result( EuphemisticAuthenticationStatus );
-                }
+                start();
+                CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
+                ReturnVal = ws.getDashboard();
+                end();
             }
-
             catch( Exception ex )
             {
                 ReturnVal = error( ex );
             }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getDashboard()
 
-            return ( ReturnVal );
-        } // UpdateProperties()
-
-
-        [WebMethod]
-        public string RunView( string SessionId, string ParentId )
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getHeaderMenu()
         {
             string ReturnVal = string.Empty;
             try
             {
-                string EuphemisticAuthenticationStatus = string.Empty;
-                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
-                {
-
-                    CswNbtWebServiceView wsView = new CswNbtWebServiceView( _CswNbtWebServiceResources );
-                    ReturnVal = result( wsView.Run( ParentId ) );
-
-                    end();
-                }
-                else
-                {
-                    ReturnVal = result( EuphemisticAuthenticationStatus );
-                }
+                start();
+                CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
+                ReturnVal = ws.getHeaderMenu();
+                end();
             }
-
             catch( Exception ex )
             {
                 ReturnVal = error( ex );
             }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getHeaderMenu()
 
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getTree( Int32 ViewId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceTreeView ws = new CswNbtWebServiceTreeView( _CswNbtResources );
+                ReturnVal = ws.getTree( ViewId );
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getTree()
+
+
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getTabs( string NodePk )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                ReturnVal = ws.getTabs( NodePk );
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getTabs()
+
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getProps( string NodePk, string TabId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                ReturnVal = ws.getProps( NodePk, TabId );
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getProps()
+
+        [WebMethod( EnableSession = true )]
+        public string saveProps( string NodePk, string NewPropsXml )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                ReturnVal = ws.saveProps( NodePk, NewPropsXml );
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
             return ( ReturnVal );
-        } // RunView()
+        } // saveProps()
 
         #endregion Web Methods
 
