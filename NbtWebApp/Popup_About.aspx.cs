@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.WebPages
             }
 
             ArrayList Assemblies = new ArrayList();
-            Assemblies.Add( "CrystalDecisions.Web, Version=14.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" );
+            Assemblies.Add( "CrystalDecisions.Web, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" );
             Assemblies.Add( "CswCommon" );
             Assemblies.Add( "CswWebControls" );
             Assemblies.Add( "FarPoint.Web.Spread" );
