@@ -1855,6 +1855,16 @@ function CreateInspection_ShowAll_Click(checkbox, filtereddropdownid, alldropdow
 }
 
 
+function confirmDemoDataRemoval() 
+{
+    var c = confirm('Alert! This function is for the use of ChemSW, Inc. Support and QA ONLY! This will delete ALL demo data. This action is irreversible. Are You Sure?');
+    if (!c) {
+        event.stopPropagation();
+        return false;
+    } else {
+        return true;
+    }
+}
 
 // ------------------------------------------------------------------------------------
 // for debug
