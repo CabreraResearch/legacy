@@ -30,6 +30,7 @@ var CswImageButton_ButtonType = {
     Print: 2,
     Refresh: 9,
     SaveStatus: 13,
+    Select: 32,
     ToggleActive: 1,
     ToggleInactive: 0,
     View: 8
@@ -208,7 +209,7 @@ function CloseDialog(id) {
 
 function makeTable(id) 
 {
-    return $('<table id="'+ id +'" cellpadding="0" cellspacing="0" border="0" />');
+    return $('<table id="'+ id +'" cellpadding="0" cellspacing="0" border="0"><tr><td></td></tr></table>');
 }
 
 // row and col are 1-based

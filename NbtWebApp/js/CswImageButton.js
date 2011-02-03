@@ -35,12 +35,16 @@
 
         function setButton(NewButtonType) {
             var Multiplier = -18;
-            if (NewButtonType != CswImageButton_ButtonType.None) {
+            if (NewButtonType != undefined && NewButtonType != CswImageButton_ButtonType.None) {
                 $ImageDiv.get(0).style.background = 'url(\'Images/buttons/buttons18.gif\') 0px ' + NewButtonType * Multiplier + 'px no-repeat';
                 $ImageDiv.unbind('mouseover');
                 $ImageDiv.unbind('mouseout');
+                $ImageDiv.unbind('mousedown');
+                $ImageDiv.unbind('mouseup');
                 $ImageDiv.bind('mouseover', function () { this.style.backgroundPosition = '-18px ' + NewButtonType * Multiplier + 'px'; })
                 $ImageDiv.bind('mouseout', function () { this.style.backgroundPosition = '0px ' + NewButtonType * Multiplier + 'px'; })
+                $ImageDiv.bind('mousedown', function () { this.style.backgroundPosition = '-36px ' + NewButtonType * Multiplier + 'px'; })
+                $ImageDiv.bind('mouseup', function () { this.style.backgroundPosition = '-18px ' + NewButtonType * Multiplier + 'px'; })
             }
         } // setOffset()
     };
