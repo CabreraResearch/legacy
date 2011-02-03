@@ -1,35 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
-using System.Web;
-using System.Web.Services;          // supports WebMethod attribute
+﻿using System.Web.Services;          // supports WebMethod attribute
 using System.Web.Script.Services;   // supports ScriptService attribute
-using System.Web.Services.Protocols;
-using System.IO;
-using System.Data;
-using System.Xml;
 using System.Collections.Generic;   // supports IDictionary
-using System.Configuration;
-using System.Collections.Specialized;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.Config;
 //using ChemSW.Nbt.TableEvents;
-using ChemSW.Nbt.TreeEvents;
-using ChemSW.Audit;
-using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.NbtWebControls;
-using ChemSW.Nbt.Security;
 using Telerik.Web.UI;
 using ChemSW.Config;
-using ChemSW.Exceptions;
 
 /// <summary>
 /// NodeTypeTree WebService
