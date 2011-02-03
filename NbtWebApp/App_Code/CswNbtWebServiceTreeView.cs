@@ -15,6 +15,8 @@ namespace ChemSW.Nbt.WebServices
     public class CswNbtWebServiceTreeView
     {
         private CswNbtResources _CswNbtResources;
+        private const string QuickLaunchViews = "QuickLaunchViews";
+
         public CswNbtWebServiceTreeView( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
@@ -41,18 +43,25 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
             if( null != View )
             {
-                Dictionary<Int32, string> ViewHistory = null;
-                if( null == Session["ViewHistory"] )
+                Stack<KeyValuePair<Int32, string>> ViewHistory = null;
+                //Dictionary<Int32, string> ViewHistory = null;
+                if( null == Session[QuickLaunchViews] )
                 {
-                    ViewHistory = new Dictionary<int, string>();
+                    ViewHistory = new Stack<KeyValuePair<Int32, string>>();
                 }
                 else
                 {
-                    ViewHistory = (Dictionary<Int32, string>) Session["ViewHistory"];                    
+                    ViewHistory = (Stack<KeyValuePair<Int32, string>>) Session[QuickLaunchViews];                    
                 }
                 
-                ViewHistory.Add( ViewId, View.ViewName );
-                Session["ViewHistory"] = ViewHistory;
+                var ThisView = new KeyValuePair<int, string>(ViewId,View.ViewName);
+
+                if( !ViewHistory.Contains( ThisView ) )
+                {
+                    ViewHistory.Push( ThisView );
+                }
+
+                Session[QuickLaunchViews] = ViewHistory;
             }
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );

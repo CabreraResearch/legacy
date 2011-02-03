@@ -129,14 +129,14 @@ namespace ChemSW.Nbt.WebServices
 			{
 				ReturnVal = error( ex );
 			}
-		//return ( ReturnVal );
+			//return ( ReturnVal );
 			XmlDocument Doc = new XmlDocument();
 			Doc.LoadXml( ReturnVal );
 			return Doc;
 		} // getWelcomeItems()
 
 		[WebMethod( EnableSession = true )]
-		public string getQuickLaunchItems()
+		public XmlDocument getQuickLaunchItems()
 		{
 			CswTimer Timer = new CswTimer();
 			string ReturnVal = string.Empty;
@@ -157,11 +157,14 @@ namespace ChemSW.Nbt.WebServices
 			{
 				ReturnVal = error( ex );
 			}
-			return ( ReturnVal );
+			//return ( ReturnVal );
+			XmlDocument Doc = new XmlDocument();
+			Doc.LoadXml( ReturnVal );
+			return Doc;
 		} // getQuickLaunchItems()
 
 		[WebMethod( EnableSession = true )]
-        public XmlDocument getViews()
+		public XmlDocument getViews()
 		{
 			CswTimer Timer = new CswTimer();
 			string ReturnVal = string.Empty;
