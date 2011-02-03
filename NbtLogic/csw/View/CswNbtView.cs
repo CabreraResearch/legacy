@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Data;
 using System.Xml;
 using ChemSW.Exceptions;
@@ -12,7 +10,6 @@ using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt
 {
