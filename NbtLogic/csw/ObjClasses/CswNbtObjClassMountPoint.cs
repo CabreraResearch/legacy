@@ -1,11 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
-using System.Data;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Core;
@@ -118,13 +112,34 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
+            // Case 20907: sync FE status/inspection date with MP
+            var RelatedFireExtinguishers = new CswNbtView( _CswNbtResources );
+            RelatedFireExtinguishers.ViewName = "Fire Extinguishers on This Mount Point";
+            CswNbtMetaDataObjectClass FireExtinguisherOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.FireExtinguisherClass );
+            CswNbtMetaDataObjectClassProp MountPointOCP = FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
+            CswNbtViewRelationship FeRelationship = RelatedFireExtinguishers.AddViewRelationship( FireExtinguisherOC, false );
+            CswNbtViewProperty FeMountPointVP = RelatedFireExtinguishers.AddViewProperty( FeRelationship, MountPointOCP );
+            CswNbtViewPropertyFilter ThisMountPointFilt = RelatedFireExtinguishers.AddViewPropertyFilter( FeMountPointVP, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, this.NodeId.PrimaryKey.ToString(), false );
+
+            ICswNbtTree FireExtTree = _CswNbtResources.Trees.getTreeFromView( RelatedFireExtinguishers, true, true, true, false );
+            FireExtTree.goToRoot();
+
+            for( Int32 i = 0; i < FireExtTree.getChildNodeCount(); i++ )
+            {
+                FireExtTree.goToNthChild( i );
+                CswNbtNode FireExtNode = FireExtTree.getNodeForCurrentPosition();
+                CswNbtObjClassFireExtinguisher FireExtinguisher = CswNbtNodeCaster.AsFireExtinguisher( FireExtNode );
+                FireExtinguisher.Status.Value = this.Status.Value;
+                FireExtinguisher.LastInspectionDate.DateValue = this.LastInspectionDate.DateValue;
+                FireExtNode.postChanges( true );
+            }
+            
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
         public override void beforeDeleteNode()
         {
             _CswNbtObjClassDefault.beforeDeleteNode();
-
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()

@@ -314,40 +314,13 @@ namespace ChemSW.Nbt.ObjClasses
                     if( _OOC )
                     {
                         this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
-                        _Finished = false;
                     }
                     else
                     {
-                        CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Target.RelatedNodeId );
-                        ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
-                        if( null != Parent )
-                            Parent.LastInspectionDate.DateValue = DateTime.Now;
-
-                        if( _allAnsweredinTime )
-                            this.Status.Value = InspectionStatusAsString( InspectionStatus.Completed );
-                        else
-                            this.Status.Value = InspectionStatusAsString( InspectionStatus.Completed_Late );
+                        this.Status.Value = InspectionStatusAsString( _allAnsweredinTime ? InspectionStatus.Completed : InspectionStatus.Completed_Late );
                     }
                 }
-                else
-                {
-                    _Finished = false;
-                }
-
-                this.Finished.Checked = CswConvert.ToTristate( _Finished );
-
             }//else if ( _Finished )
-
-            if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
-               this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
-               this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
-               this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
-            {
-                foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
-                {
-                    Prop.ReadOnly = true;
-                }
-            }
 
             _CswNbtObjClassDefault.beforeWriteNode();
         }//beforeWriteNode()
@@ -361,19 +334,34 @@ namespace ChemSW.Nbt.ObjClasses
             if( ParentNode != null )
             {
                 ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
-                if( _allAnswered )
+                if( _allAnswered && _Finished )
                 {
-                    if( _OOC )
-                    {
-                        Parent.Status.Value = "OOC";
-                        ParentNode.PendingUpdate = true;
-                    }
-                    else
-                    {
-                        Parent.Status.Value = "OK";
-                    }
+                    Parent.Status.Value = _OOC ? "OOC" : "OK";
+                    Parent.LastInspectionDate.DateValue = DateTime.Now;
+                    ParentNode.PendingUpdate = true;
+                    ParentNode.postChanges( true );
                 }
             }
+
+            this.Finished.Checked = CswConvert.ToTristate( false );
+
+            CswNbtMetaDataFieldType QuestionFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Question );
+            CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[QuestionFT];
+            if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
+                this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
+                this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
+                this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
+            {
+                foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+                {
+                    Prop.ReadOnly = true;
+                }
+                CswNbtNodePropWrapper FinishedProp = this.Node.Properties[FinishedPropertyName];
+                FinishedProp.AsLogical.ReadOnly = true;
+                CswNbtNodePropWrapper CancelledProp = this.Node.Properties[CancelledPropertyName];
+                CancelledProp.AsLogical.ReadOnly = true;
+            }
+
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
