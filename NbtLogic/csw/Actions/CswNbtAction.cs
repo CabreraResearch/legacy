@@ -31,6 +31,11 @@ namespace ChemSW.Nbt.Actions
         public bool ShowInList;
         public string Category;
 
+        public string DisplayName
+        {
+            get { return Name.ToString().Replace( '_', ' ' ); }
+        }
+
         public CswNbtAction( Int32 TheActionId, string ActionUrl, CswNbtActionName ActionName, bool ActionShowInList, string ActionCategory )
         {
             ActionId = TheActionId;

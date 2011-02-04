@@ -12,27 +12,14 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.WebServices
 {
-    public class CswNbtWebServiceTreeView
+    public class CswNbtWebServiceTree
     {
         private CswNbtResources _CswNbtResources;
         private const string QuickLaunchViews = "QuickLaunchViews";
 
-        public CswNbtWebServiceTreeView( CswNbtResources CswNbtResources )
+        public CswNbtWebServiceTree( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-        }
-
-        public string getViews()
-        {
-            string ret = string.Empty;
-            DataTable ViewDT = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false );
-            foreach( DataRow ViewRow in ViewDT.Rows )
-            {
-                ret += "<view id=\"" + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
-                ret += " name=\"" + ViewRow["viewname"].ToString() + "\"";
-                ret += "/>";
-            }
-            return "<views>" + ret + "</views>";
         }
 
         public string getTree( Int32 ViewId, HttpSessionState Session )
@@ -150,6 +137,6 @@ namespace ChemSW.Nbt.WebServices
 
 
 
-    } // class CswNbtWebServiceTreeView
+    } // class CswNbtWebServiceTree
 
 } // namespace ChemSW.Nbt.WebServices

@@ -19,11 +19,13 @@
                     .appendTo($Div)
                     .attr('style', 'width: '+ o.Width);
 
-        $table = makeTable(o.ID + '_tbl').appendTo($TopDiv);
+        $table = makeTable(o.ID + '_tbl')
+                 .appendTo($TopDiv);
         $table.attr('width', '100%');
         
         $cell1 = getTableCell($table, 1, 1);
         $cell1.click(onClick);
+        $cell1.attr('width', '100%');
         $cell1.append(o.Text);
         
         $cell2 = getTableCell($table, 1, 2);

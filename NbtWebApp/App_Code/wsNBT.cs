@@ -163,27 +163,49 @@ namespace ChemSW.Nbt.WebServices
 			return Doc;
 		} // getQuickLaunchItems()
 
-		[WebMethod( EnableSession = true )]
-		public XmlDocument getViews()
-		{
-			CswTimer Timer = new CswTimer();
-			string ReturnVal = string.Empty;
-			try
-			{
-				start();
-				CswNbtWebServiceTreeView ws = new CswNbtWebServiceTreeView( _CswNbtResources );
-				ReturnVal = ws.getViews();
-				end();
-			}
-			catch( Exception ex )
-			{
-				ReturnVal = error( ex );
-			}
-			//return ( ReturnVal );
-			XmlDocument Doc = new XmlDocument();
-			Doc.LoadXml( ReturnVal );
-			return Doc;
-		} // getViews()
+        //[WebMethod( EnableSession = true )]
+        //public XmlDocument getViews()
+        //{
+        //    CswTimer Timer = new CswTimer();
+        //    string ReturnVal = string.Empty;
+        //    try
+        //    {
+        //        start();
+        //        CswNbtWebServiceTreeView ws = new CswNbtWebServiceTreeView( _CswNbtResources );
+        //        ReturnVal = ws.getViews();
+        //        end();
+        //    }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = error( ex );
+        //    }
+        //    //return ( ReturnVal );
+        //    XmlDocument Doc = new XmlDocument();
+        //    Doc.LoadXml( ReturnVal );
+        //    return Doc;
+        //} // getViews()
+
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getViewTree()
+        {
+            CswTimer Timer = new CswTimer();
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
+                ReturnVal = ws.getViewTree(Session);
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getViews()
 
 		[WebMethod( EnableSession = true )]
 		public XmlDocument getDashboard()
@@ -234,7 +256,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtWebServiceTreeView ws = new CswNbtWebServiceTreeView( _CswNbtResources );
+				CswNbtWebServiceTree ws = new CswNbtWebServiceTree( _CswNbtResources );
 				ReturnVal = ws.getTree( ViewId, Session );
 				end();
 			}

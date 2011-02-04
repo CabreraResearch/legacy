@@ -9,7 +9,7 @@
                         <td id="Td2" class="PageTable_LeftCell" valign="top">
 
                             <div id="MenuDiv"></div>
-                            <div id="ComboDiv"></div>
+                            <div id="ViewSelectDiv"></div>
                             <div id="LeftDiv"></div>
                             
                         </td>
@@ -41,23 +41,20 @@
 <script type="text/javascript">
     var currentviewid = '';
 
-    //$('#ComboDiv').CswComboBox();
-
     $('#CenterDiv').CswLogin({
-        'onAuthenticate': function (s, u)
+        'onAuthenticate': function (s, u) 
         {
             $('#header_dashboard').CswDashboard();
             $('#header_menu').CswHeaderMenu();
             $('#header_username').text(u);
-            $('#MenuDiv').CswViewSelect({ 'onSelect': getViewTree });
+            $('#ViewSelectDiv').CswViewSelect({ 'onSelect': getViewTree });
             $('#CenterDiv').CswWelcome({
                 onLinkClick: handleWelcomeLinkClick
             });
             $('#QuickLaunch').CswQuickLaunch({
                 onLinkClick: handleQuickLaunchItemClick
             });
-            $(document).ready(function ()
-            {
+            $(document).ready(function () {
                 $('#breadcrumbs').xBreadcrumbs({ collapsible: true });
             });
         }
