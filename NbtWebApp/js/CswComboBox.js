@@ -3,7 +3,9 @@
 
         var o = {
             ID: '',
-            Content: 'This ComboBox Is Empty!'
+            Text: '',
+            Content: 'This ComboBox Is Empty!',
+            Width: '180px'
         };
 
         if (options) {
@@ -14,14 +16,15 @@
         $Div.children().remove();
 
         $TopDiv = $('<div id="'+ o.ID +'_top" class="CswComboBox_TopDiv"></div>')
-                    .appendTo($Div);
+                    .appendTo($Div)
+                    .attr('style', 'width: '+ o.Width);
 
         $table = makeTable(o.ID + '_tbl').appendTo($TopDiv);
         $table.attr('width', '100%');
         
         $cell1 = getTableCell($table, 1, 1);
         $cell1.click(onClick);
-        $cell1.append('Content');
+        $cell1.append(o.Text);
         
         $cell2 = getTableCell($table, 1, 2);
         $cell2.addClass( "CswComboBox_ImageCell" )
@@ -32,6 +35,7 @@
 
         $ChildDiv = $('<div id="' + o.ID +'_child" class="CswComboBox_ChildDiv">')
                       .appendTo($Div)
+                      .attr('style', 'width: '+ o.Width)
                       .append(o.Content);
 
         function onClick()

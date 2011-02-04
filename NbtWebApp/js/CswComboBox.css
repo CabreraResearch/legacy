@@ -4,7 +4,6 @@
     background: #fff;
     border: 1px solid #abadb3;
     height: 18px;
-    width: 180px;
     padding: 0px 0px 0px 3px;
 }
 .CswComboBox_TopDiv_click
@@ -23,7 +22,6 @@
 {
     position: absolute;
     background: #fff;
-    width: 180px;
     height: 200px;
     border: 1px solid #abadb3;
     display: none;
