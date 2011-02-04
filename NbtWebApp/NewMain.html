@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--#include file="NewHeader.html" -->
+
+                    <tr>
+                        <td id="Td1" class="PageTable_LeftColumn" rowspan="3">
+                            <img src="Images/pagelayout/blank.gif" width="1" height="450"/>
+                        </td>
+                        <td id="Td2" class="PageTable_LeftCell" valign="top">
+
+                            <div id="MenuDiv"></div>
+                            <div id="ComboDiv"></div>
+                            <div id="LeftDiv"></div>
+                            
+                        </td>
+
+                        <td id="Td3" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
+
+                            <div id="RightDiv"></div>
+                            
+                        </td>
+
+                        <td id="Td4" class="PageTable_RightColumn" rowspan="3"></td>
+                      </tr>
+                                          
+                      <tr>
+                        <td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
+
+                            <div id="CenterDiv"></div>
+
+                        </td>
+                      </tr>
+                      <tr>
+                        <td id="Td8" class="PageTable_CenterCell" colspan="2" valign="top">
+
+                            <div id="QuickLaunch"></div>
+                           
+                        </td>
+                     </tr>
+
+<script type="text/javascript">
+    var currentviewid = '';
+
+    //$('#ComboDiv').CswComboBox();
+
+    $('#CenterDiv').CswLogin({
+        'onAuthenticate': function (s, u)
+        {
+            $('#header_dashboard').CswDashboard();
+            $('#header_menu').CswHeaderMenu();
+            $('#header_username').text(u);
+            $('#MenuDiv').CswViewSelect({ 'onSelect': getViewTree });
+            $('#CenterDiv').CswWelcome({
+                onLinkClick: handleWelcomeLinkClick
+            });
+            $('#QuickLaunch').CswQuickLaunch({
+                onLinkClick: handleQuickLaunchItemClick
+            });
+            $(document).ready(function ()
+            {
+                $('#breadcrumbs').xBreadcrumbs({ collapsible: true });
+            });
+        }
+    });
+    
+
+    function clearLeft()
+    {
+        $('#LeftDiv').children().remove();
+    }
+    function clearRight()
+    {
+        $('#RightDiv').children().remove();
+    }
+    function clearCenter()
+    {
+        $('#CenterDiv').children().remove();
+    }
+
+    function getViewTree(viewid)
+    {
+        currentviewid = viewid;
+        clearLeft();
+        clearRight();
+        clearCenter();
+        $('#LeftDiv').CswNodeTree({
+            'viewid': viewid,
+            onSelectNode: getTabs
+        });
+    }
+
+    function getTabs(nodeid)
+    {
+        clearRight();
+        $('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, onSave: refreshViewTree });
+    }
+
+    function refreshViewTree()
+    {
+        clearLeft();
+        $('#LeftDiv').CswNodeTree({
+            'viewid': currentviewid,
+            onSelectNode: getTabs
+        });
+    }
+
+    function handleWelcomeLinkClick(viewid, actionid, reportid)
+    {
+        clearCenter();
+        if (viewid != undefined && viewid != '')
+        {
+            getViewTree(viewid);
+        }
+        else if (actionid != undefined && actionid != '')
+        {
+            alert('Actions are not yet handled!');
+        }
+        else if (reportid != undefined && reportid != '')
+        {
+            alert('Reports are not yet handled!');
+        }
+    }
+
+    function handleQuickLaunchItemClick(viewid, actionid)
+    {
+        clearCenter();
+        if (viewid != undefined && viewid != '')
+        {
+            getViewTree(viewid);
+        }
+        else if (actionid != undefined && actionid != '')
+        {
+            alert('Actions are not yet handled!');
+        }
+    }
+</script>
+
+<!--#include file="NewFooter.html" -->

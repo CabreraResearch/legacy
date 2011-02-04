@@ -1,14 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Text;
-using System.Data;
-using System.Xml;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -34,7 +23,11 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Unknown rendering mode
         /// </summary>
-        Unknown
+        Unknown,
+        /// <summary>
+        /// Any View render mode
+        /// </summary>
+        Any
     };
 
     /// <summary>
