@@ -1,5 +1,5 @@
 ﻿; (function ($) {
-    $.fn.CswViewTree = function (options) {
+    $.fn.CswNodeTree = function (options) {
 
         var o = {
             TreeUrl: '/NbtWebApp/wsNBT.asmx/getTree',

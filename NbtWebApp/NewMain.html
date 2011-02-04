@@ -9,6 +9,7 @@
                         <td id="Td2" class="PageTable_LeftCell" valign="top">
 
                             <div id="MenuDiv"></div>
+                            <div id="ComboDiv"></div>
                             <div id="LeftDiv"></div>
                             
                         </td>
@@ -39,6 +40,8 @@
 
 <script type="text/javascript">
     var currentviewid = '';
+
+    //$('#ComboDiv').CswComboBox();
 
     $('#CenterDiv').CswLogin({
         'onAuthenticate': function (s, u)
@@ -80,7 +83,7 @@
         clearLeft();
         clearRight();
         clearCenter();
-        $('#LeftDiv').CswViewTree({
+        $('#LeftDiv').CswNodeTree({
             'viewid': viewid,
             onSelectNode: getTabs
         });
@@ -95,7 +98,7 @@
     function refreshViewTree()
     {
         clearLeft();
-        $('#LeftDiv').CswViewTree({
+        $('#LeftDiv').CswNodeTree({
             'viewid': currentviewid,
             onSelectNode: getTabs
         });
