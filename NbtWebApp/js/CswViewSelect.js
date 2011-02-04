@@ -5,7 +5,7 @@
             ID: '',
             ViewUrl: '/NbtWebApp/wsNBT.asmx/getViews',
             viewid: '',
-            onSelect: function(itemid) { },
+            onSelect: function(itemid, text, iconurl) { },
             ClickDelay: 300
         };
 
@@ -22,17 +22,31 @@
         {
             $viewtreediv = $('<div/>');
             $selectdiv.CswComboBox('init', { 'ID': o.ID + '_combo', 
-                                             'Content': $viewtreediv,
+                                             'TopContent': 'Select a View',
+                                             'SelectContent': $viewtreediv,
                                              'Width': '266px' });
 
             $viewtreediv.CswViewTree({ 'onSelect': onTreeSelect });
             
         } // getViewSelect()
 
-        function onTreeSelect(itemid)
+        function onTreeSelect(itemid, text, iconurl)
         {
+            var $newTopContent = $('<div></div>');
+            var $table = makeTable(o.ID + 'selectedtbl')
+                           .appendTo($newTopContent);
+            var $cell1 = getTableCell($table, 1, 1);
+            var $icondiv = $('<div />').appendTo($cell1);
+            $icondiv.css('background-image',  iconurl);
+            $icondiv.css('width', '18px');
+            $icondiv.css('height' ,'18px');
+
+            var $cell2 = getTableCell($table, 1, 2);
+            $cell2.append(text);
+
+            $selectdiv.CswComboBox( 'TopContent', $newTopContent );
             setTimeout(function() { $selectdiv.CswComboBox( 'toggle'); }, o.ClickDelay);
-            o.onSelect(itemid);
+            o.onSelect(itemid, text, iconurl);
         }
         
         // For proper chaining support

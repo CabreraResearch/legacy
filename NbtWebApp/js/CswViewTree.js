@@ -4,7 +4,7 @@
         var o = {
             ViewUrl: '/NbtWebApp/wsNBT.asmx/getViewTree',
             viewid: '',
-            onSelect: function (viewid) { }
+            onSelect: function (itemid, text, iconurl) { }
         };
 
         if (options) {
@@ -39,10 +39,10 @@
                             "types": jsonTypes
                         },
                         "plugins": ["themes", "xml_data", "ui", "types"]
-                    }).bind('select_node.jstree',
+                    }).bind('select_node.jstree', 
                                 function (e, data) {
-                                    SelectedItemId = data.rslt.obj.attr('id');
-                                    o.onSelect(SelectedItemId);
+                                    var Selected = jsTreeGetSelected($viewsdiv); 
+                                    o.onSelect(Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl);
                                 });
 
                 } // success{}
