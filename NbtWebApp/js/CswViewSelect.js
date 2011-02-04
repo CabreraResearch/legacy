@@ -5,7 +5,8 @@
             ID: '',
             ViewUrl: '/NbtWebApp/wsNBT.asmx/getViews',
             viewid: '',
-            onSelect: function(viewid) { }
+            onSelect: function(itemid) { },
+            ClickDelay: 300
         };
 
         if (options) {
@@ -20,13 +21,19 @@
         function getViewSelect(selectedviewid)
         {
             $viewtreediv = $('<div/>');
-            $selectdiv.CswComboBox({ 'ID': o.ID + '_combo', 
-                                     'Content': $viewtreediv });
+            $selectdiv.CswComboBox('init', { 'ID': o.ID + '_combo', 
+                                             'Content': $viewtreediv,
+                                             'Width': '266px' });
 
-            $viewtreediv.CswViewTree();
-
+            $viewtreediv.CswViewTree({ 'onSelect': onTreeSelect });
+            
         } // getViewSelect()
 
+        function onTreeSelect(itemid)
+        {
+            setTimeout(function() { $selectdiv.CswComboBox( 'toggle'); }, o.ClickDelay);
+            o.onSelect(itemid);
+        }
         
         // For proper chaining support
         return this;

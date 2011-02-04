@@ -47,7 +47,7 @@
             $('#header_dashboard').CswDashboard();
             $('#header_menu').CswHeaderMenu();
             $('#header_username').text(u);
-            $('#ViewSelectDiv').CswViewSelect({ 'onSelect': getViewTree });
+            $('#ViewSelectDiv').CswViewSelect({ 'onSelect': handleViewSelect });
             $('#CenterDiv').CswWelcome({
                 onLinkClick: handleWelcomeLinkClick
             });
@@ -72,6 +72,16 @@
     function clearCenter()
     {
         $('#CenterDiv').children().remove();
+    }
+
+    function handleViewSelect(itemid) 
+    {
+        if(startsWith(itemid, 'viewtree_'))
+        {
+            getViewTree(itemid.substr('viewtree_'.length));
+        } else {
+            alert('Handling for view tree item: ' + itemid + ' is not implemented yet.');
+        }
     }
 
     function getViewTree(viewid)

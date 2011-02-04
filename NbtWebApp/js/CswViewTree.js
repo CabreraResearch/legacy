@@ -11,10 +11,8 @@
             $.extend(o, options);
         }
 
-        var $viewsdiv = $('<div id="viewsdiv" />')
-                          .appendTo($(this))
-                          .children()
-                          .remove();
+        var $viewsdiv = $(this);
+        $viewsdiv.children().remove();
 
         CswAjaxXml({
                 url: o.ViewUrl,
