@@ -123,7 +123,7 @@ function CswAjaxXml(options) {
             // this is IE compliant
             var $xml = $(XMLHttpRequest.responseXML);
             var $realxml = $xml.children().first();
-            if ($realxml.nodeName == "ERROR") {
+            if ($realxml.first().get(0).nodeName == "error") {
                 _handleAjaxError(XMLHttpRequest, $realxml.text(), '');
             }
             else {
@@ -134,7 +134,7 @@ function CswAjaxXml(options) {
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
         }
-    });          // $.ajax({
+    });            // $.ajax({
 } // CswAjaxXml()
         
 function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown) 
@@ -232,6 +232,14 @@ function getTableCell($table, row, col) {
     return $cell;
 }
 
+// ------------------------------------------------------------------------------------
+// strings
+// ------------------------------------------------------------------------------------
+
+function startsWith(source, search) 
+{
+    return (source.substr(0, search.length) == search);
+}
 
 // ------------------------------------------------------------------------------------
 // for debug

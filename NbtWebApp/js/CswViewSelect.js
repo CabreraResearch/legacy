@@ -2,51 +2,38 @@
     $.fn.CswViewSelect = function (options) {
 
         var o = {
+            ID: '',
             ViewUrl: '/NbtWebApp/wsNBT.asmx/getViews',
             viewid: '',
-            onSelect: function(viewid) { }
+            onSelect: function(itemid) { },
+            ClickDelay: 300
         };
 
         if (options) {
             $.extend(o, options);
         }
 
-        var $viewsdiv = $('<div id="viewsdiv" />')
-                        .appendTo($(this));
+        var $selectdiv = $(this);
+        $selectdiv.children().remove();
 
         getViewSelect(o.viewid);
 
         function getViewSelect(selectedviewid)
         {
-            starttime = new Date();
-            CswAjaxXml({
-                url: o.ViewUrl,
-                data: '',
-                success: function ($xml)
-                {
-                    $viewsdiv.children().remove();
-                    $select = $('<select name="viewselect" id="viewselect"><option value="">Select A View</option></select>')
-                              .appendTo($viewsdiv);
-                    $xml.children().each(function() {
-                        var $this = $(this);
-                        var thisid = $this.attr('id');
-                        var option = '<option value="' + thisid + '"';
-                        if(thisid == selectedviewid)
-                        {
-                            option += ' selected';
-                            getTree(thisid);
-                        }
-                        option += '>' + $this.attr('name') + '</option>';
-                        $select.append(option);
-                    });
-                    $select.bind('change', function(e, data) { 
-                        //getTree(e.target.value);
-                        o.onSelect(e.target.value);
-                    });
-                } // success{}
-            });
+            $viewtreediv = $('<div/>');
+            $selectdiv.CswComboBox('init', { 'ID': o.ID + '_combo', 
+                                             'Content': $viewtreediv,
+                                             'Width': '266px' });
+
+            $viewtreediv.CswViewTree({ 'onSelect': onTreeSelect });
+            
         } // getViewSelect()
 
+        function onTreeSelect(itemid)
+        {
+            setTimeout(function() { $selectdiv.CswComboBox( 'toggle'); }, o.ClickDelay);
+            o.onSelect(itemid);
+        }
         
         // For proper chaining support
         return this;
