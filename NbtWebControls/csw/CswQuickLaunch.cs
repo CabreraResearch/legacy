@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Data;
-using System.Configuration;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Web;
-using System.Web.Security;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
-using ChemSW.Security;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Session;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
 using ChemSW.CswWebControls;
@@ -84,18 +78,9 @@ namespace ChemSW.NbtWebControls
                     }
                 }
                 DataTable ActionTable = UsersActions.GetDataAsTable( "actionname", "actionid" );
-                foreach( DataRow ActionRow in ActionTable.Rows )
+                foreach( int ThisActionId in from DataRow ActionRow in ActionTable.Rows where CswConvert.ToBoolean( ActionRow["Include"] ) select _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() )].ActionId into ThisActionId where ThisActionId > 0 select ThisActionId )
                 {
-                    if( CswConvert.ToBoolean( ActionRow["Include"] ) )
-                    {
-                        //BZ 8729 - this doesn't work
-                        //Int32 ThisActionId = CswConvert.ToInt32( ActionRow["actionid"] );
-                        Int32 ThisActionId = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() )].ActionId;
-                        if( ThisActionId > 0 )
-                        {
-                            _AddQuickLaunchLinkAction( ThisActionId, true );
-                        }
-                    }
+                    _AddQuickLaunchLinkAction( ThisActionId, true );
                 }
 
                 // Now recent ones
