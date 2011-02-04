@@ -301,9 +301,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else if( _Finished )
             {
-                CswNbtNode ScheduleNode = _CswNbtResources.Nodes.GetNode( this.Generator.RelatedNodeId );
-                CswNbtObjClassGenerator Schedule = CswNbtNodeCaster.AsGenerator( ScheduleNode );
-
                 foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                 {
                     CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
