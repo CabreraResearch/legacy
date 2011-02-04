@@ -18,9 +18,7 @@
                 var $QuickLaunchDiv = $('<div id="quicklaunchdiv"><ul id="breadcrumbs"></ul></div>')
                                     .appendTo($this);
                 var $list = $QuickLaunchDiv.children();
-                
-                console.log($xml);
-                
+               
                 $xml.children().each(function() {
 
                     var $item = $(this);

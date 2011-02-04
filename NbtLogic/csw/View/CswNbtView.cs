@@ -990,7 +990,16 @@ namespace ChemSW.Nbt
             return ret;
         } // FindViewNodeByUniqueIdRecursive
 
+        public Stack<CswNbtViewProperty> getOrderedViewProps()
+        {
+            var ViewProps = new Stack<CswNbtViewProperty>();
+            foreach( CswNbtViewRelationship Child in Root.ChildRelationships )
+            {
+                
+            }
 
+            return ViewProps;
+        }
 
         /// <summary>
         /// Returns the CswNbtViewProperty which corresponds to the property type and primary key provided
