@@ -27,26 +27,26 @@ namespace ChemSW.Nbt.WebPages
     public partial class Report : Page
     {
         protected CrystalReportViewer _CrystalReportViewer;
-        protected CswLiteralText _LoadingLiteral;
+        //protected CswLiteralText _LoadingLiteral;
         protected override void OnInit( EventArgs e )
         {
             try
             {
-                LoadReportButton.Style.Add( HtmlTextWriterStyle.Display, "none" );
-                LoadReportButton.Click += new EventHandler( LoadReportButton_Click );
+                //LoadReportButton.Style.Add( HtmlTextWriterStyle.Display, "none" );
+                //LoadReportButton.Click += new EventHandler( LoadReportButton_Click );
 
-                _LoadingLiteral = new CswLiteralText( "Loading..." );
-                ph.Controls.Add( _LoadingLiteral );
+                //_LoadingLiteral = new CswLiteralText( "Loading..." );
+                //ph.Controls.Add( _LoadingLiteral );
 
                 _CrystalReportViewer = new CrystalReportViewer();
                 _CrystalReportViewer.ID = "CrystalReportViewer";
                 ph.Controls.Add( _CrystalReportViewer );
 
-                if( Page.IsPostBack )
-                {
+                //if( Page.IsPostBack )
+                //{
                     // this allows paging on the report control to work
                     LoadReport();
-                }
+                //}
             }
             catch( Exception ex )
             {
@@ -59,8 +59,8 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                Master.AjaxManager.AjaxSettings.AddAjaxSetting( LoadReportButton, ph );
-                Master.AjaxManager.AjaxSettings.AddAjaxSetting( _CrystalReportViewer, _CrystalReportViewer );
+                //Master.AjaxManager.AjaxSettings.AddAjaxSetting( LoadReportButton, ph );
+                //Master.AjaxManager.AjaxSettings.AddAjaxSetting( _CrystalReportViewer, _CrystalReportViewer );
             }
             catch( Exception ex )
             {
@@ -72,26 +72,26 @@ namespace ChemSW.Nbt.WebPages
 
         protected override void OnPreRender( EventArgs e )
         {
-            string JS = @"  <script>
-                            function LoadReport()
-                            {
-                                document.getElementById('" + LoadReportButton.ClientID + @"').click();
-                            }
-                            </script>";
+//            string JS = @"  <script>
+//                            function LoadReport()
+//                            {
+//                                document.getElementById('" + LoadReportButton.ClientID + @"').click();
+//                            }
+//                            </script>";
 
-            System.Web.UI.ScriptManager.RegisterClientScriptBlock( this, this.GetType(), this.UniqueID + "_JS", JS, false );
+//            System.Web.UI.ScriptManager.RegisterClientScriptBlock( this, this.GetType(), this.UniqueID + "_JS", JS, false );
 
             base.OnPreRender( e );
         }
 
-        void LoadReportButton_Click( object sender, EventArgs e )
-        {
-            LoadReport();
-        }
+        //void LoadReportButton_Click( object sender, EventArgs e )
+        //{
+        //    LoadReport();
+        //}
 
         private void LoadReport()
         {
-            _LoadingLiteral.Visible = false;
+            //_LoadingLiteral.Visible = false;
             if( Request.QueryString["reportid"] != string.Empty )
             {
                 CswPrimaryKey ReportId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Request.QueryString["reportid"] ) );
