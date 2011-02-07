@@ -1,182 +1,203 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Web;
+using System.Collections.ObjectModel;
+using System.Web.SessionState;
 using System.Xml;
-using System.Web.Services;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.NbtWebControls;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceView
     {
-        private CswNbtWebServiceResources _CswNbtWebServiceResources;
-        public CswNbtWebServiceView( CswNbtWebServiceResources CswNbtWebServiceResources )
+        public enum ItemType
         {
-            _CswNbtWebServiceResources = CswNbtWebServiceResources;
+            Root,
+            View,
+            //ViewCategory, 
+            Category,
+            Action,
+            Report,
+            //ReportCategory, 
+            Search,
+            RecentView,
+            Unknown
+        };
+
+        private CswNbtResources _CswNbtResources;
+        private const string QuickLaunchViews = "QuickLaunchViews";
+
+        public CswNbtWebServiceView( CswNbtResources CswNbtResources )
+        {
+            _CswNbtResources = CswNbtResources;
         }
 
-        private static string ViewIdPrefix = "viewid_";
-        private static string PropIdPrefix = "prop_";
-        private static string TabIdPrefix = "tab_";
-        private static string NodeIdPrefix = "nodeid_";
-        private static string NodeKeyPrefix = "nodekey_";
+        //public string getViews()
+        //{
+        //    string ret = string.Empty;
+        //    DataTable ViewDT = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false );
+        //    foreach( DataRow ViewRow in ViewDT.Rows )
+        //    {
+        //        ret += "<view id=\"" + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
+        //        ret += " name=\"" + ViewRow["viewname"].ToString() + "\"";
+        //        ret += "/>";
+        //    }
+        //    return "<views>" + ret + "</views>";
+        //}
 
-        public string Run( string ParentId )
+        public const string ViewTreeSessionKey = "ViewTreeXml";
+
+        // jsTree compatible format
+        public string getViewTree( HttpSessionState Session )
         {
-            string ret = string.Empty;
 
-            if( ParentId.StartsWith( ViewIdPrefix ) )
+            //string ret = string.Empty;
+            //DataTable ViewDT = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false );
+            //foreach( DataRow ViewRow in ViewDT.Rows )
+            //{
+            //    ret += "<item id=\"" + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\" rel=\"" + ViewRow["viewmode"].ToString() + "\" >";
+            //    ret += "  <content><name>" + ViewRow["viewname"].ToString() + "</name></content>";
+            //    ret += "</item>";
+            //}
+            //return "<root>" + ret + "</root>";
+
+            XmlDocument TreeXmlDoc;
+            if( Session[ViewTreeSessionKey] != null )
             {
-                // Get the full XML for the entire view
-                Int32 ViewId = CswConvert.ToInt32( ParentId.Substring( ViewIdPrefix.Length ) );
-                CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtWebServiceResources.CswNbtResources, ViewId );
-                //View.SaveToCache();
-                //Session["SessionViewId"] = View.SessionViewId;
-
-                // case 20083
-                ret += "<searches>" + _getSearchNodes( View ) + "</searches>";
-
-                ICswNbtTree Tree = _CswNbtWebServiceResources.CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
-
-                if( Tree.getChildNodeCount() > 0 )
-                    ret += _runTreeNodesRecursive( Tree );
-                else
-                {
-                    ret += @"<node id="""" name=""No results""></node>";
-                }
-
-            }// if( ParentId.StartsWith( ViewIdPrefix ) )
+                TreeXmlDoc = (XmlDocument) Session[ViewTreeSessionKey];
+            }
             else
             {
-                // All Views
-                DataTable ViewDT = _CswNbtWebServiceResources.CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser, false, true );
-                if( ViewDT.Rows.Count > 0 )
+                TreeXmlDoc = new XmlDocument();
+                XmlNode DocRoot = TreeXmlDoc.CreateElement( "root" );
+                TreeXmlDoc.AppendChild( DocRoot );
+
+                // Views
+                DataTable ViewsTable = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false );
+
+                foreach( DataRow Row in ViewsTable.Rows )
                 {
-                    foreach( DataRow ViewRow in ViewDT.Rows )
+                    // BZ 10121
+                    // This is a performance hit, but since this view list is cached, it's ok
+                    CswNbtView CurrentView = new CswNbtView( _CswNbtResources );
+                    CurrentView.LoadXml( Row["viewxml"].ToString() );
+                    CurrentView.ViewId = CswConvert.ToInt32( Row["nodeviewid"] );
+
+                    _makeViewTreeNode( DocRoot, Row["category"].ToString(), ItemType.View, CurrentView.ViewMode, CurrentView.ViewId, CurrentView.ViewName );
+                }
+
+                // Actions
+                foreach( CswNbtAction Action in _CswNbtResources.Actions )
+                {
+                    if( Action.ShowInList &&
+                        ( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
+                            ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( Action.Name ) )
                     {
-                        ret += "<view id=\"" + ViewIdPrefix + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
-                        ret += " name=\"" + ViewRow["viewname"].ToString() + "\"";
-                        ret += "/>";
+                        _makeViewTreeNode( DocRoot, Action.Category, ItemType.Action, NbtViewRenderingMode.Unknown, Action.ActionId, Action.DisplayName );
                     }
+                }
+
+
+                // Reports
+                CswNbtMetaDataObjectClass ReportMetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
+                CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
+                ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
+                ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
+                for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
+                {
+                    ReportTree.goToNthChild( i );
+
+                    CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( ReportTree.getNodeForCurrentPosition() );
+                    _makeViewTreeNode( DocRoot, ReportNode.Category.Text, ItemType.Report, NbtViewRenderingMode.Unknown, ReportNode.NodeId.PrimaryKey, ReportNode.ReportName.Text );
+
+                    ReportTree.goToParentNode();
+                }
+                
+                Session[ViewTreeSessionKey] = TreeXmlDoc;
+
+            }
+
+            string ret = "<result>" +
+                         "  <tree>" + TreeXmlDoc.InnerXml + "</tree>" +
+                         "  <types>{ " + _getTypes() + " }</types>" +
+                         "</result>";
+
+            return ret;
+        } // getViewTree()
+
+        private void _makeViewTreeNode( XmlNode DocRoot, string Category, ItemType Type, NbtViewRenderingMode ViewMode, Int32 Id, string Text )
+        {
+            XmlNode CategoryNode = _getCategoryNode( DocRoot, Category );
+            _makeItemNode( CategoryNode, Type, ViewMode, Id, Text );
+        }
+
+        private XmlNode _makeItemNode( XmlNode ParentNode, ItemType Type, NbtViewRenderingMode ViewMode, Int32 Id, string Text )
+        {
+            XmlNode ItemNode = CswXmlDocument.AppendXmlNode( ParentNode, "item" );
+            XmlNode ContentNode = CswXmlDocument.AppendXmlNode( ItemNode, "content" );
+            XmlNode NameNode = CswXmlDocument.AppendXmlNode( ContentNode, "name" );
+            NameNode.InnerText = Text;
+
+            string rel = Type.ToString().ToLower();
+            if( Type == ItemType.View )
+                rel = Type.ToString().ToLower() + ViewMode.ToString().ToLower();
+            CswXmlDocument.AppendXmlAttribute( ItemNode, "rel", rel );
+            CswXmlDocument.AppendXmlAttribute( ItemNode, "id", rel + "_" + Id.ToString() );
+
+            return ItemNode;
+        }
+
+
+        private Int32 _catcount = 0;
+        private Dictionary<string, XmlNode> CategoryNodes = new Dictionary<string, XmlNode>();
+
+        private XmlNode _getCategoryNode( XmlNode DocRoot, string Category )
+        {
+            XmlNode CategoryNode = null;
+            if( Category != string.Empty )
+            {
+                if( CategoryNodes.ContainsKey( Category ) )
+                {
+                    CategoryNode = CategoryNodes[Category];
                 }
                 else
                 {
-                    ret += @"<node id="""" name=""No results""></node>";
+                    // Make one
+                    _catcount++;
+                    CategoryNode = _makeItemNode( DocRoot, ItemType.Category, NbtViewRenderingMode.Unknown, _catcount, Category );
+                    CategoryNodes.Add( Category, CategoryNode );
                 }
             }
-
-            return ret;
-        } // Run()
-
-        // case 20083 - search options
-        private string _getSearchNodes( CswNbtView View )
-        {
-            string ret = string.Empty;
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtWebServiceResources.CswNbtResources.MetaData.LatestVersionNodeTypes )
+            else
             {
-                if( View.ContainsNodeType( NodeType ) )
-                {
-                    foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in NodeType.NodeTypeProps )
-                    {
-                        if( MetaDataProp.MobileSearch )
-                        {
-                            ret += "<search name=\"" + MetaDataProp.PropNameWithQuestionNo + "\" id=\"";
-                            if( MetaDataProp.ObjectClassProp != null )
-                                ret += "search_ocp_" + MetaDataProp.ObjectClassPropId.ToString();
-                            else
-                                ret += "search_ntp_" + MetaDataProp.PropId.ToString();
-                            ret += "\"/>";
-                        }
-                    }
-                }
+                CategoryNode = DocRoot;
             }
-            return ret;
-        } // _getSearchNodes
+            return CategoryNode;
+        } // _getCategoryNode()
 
-        private string _runTreeNodesRecursive( ICswNbtTree Tree )
+
+        public string _getTypes()
         {
-            string ret = string.Empty;
-            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            string ret = "\"default\": \"\"";
+
+            string[] types = { "action", "category", "report", "viewtree", "viewgrid", "viewlist" };
+            foreach( string type in types )
             {
-                Tree.goToNthChild( c );
-
-                CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
-                string ThisNodeName = Tree.getNodeNameForCurrentPosition();
-                string ThisNodeId = ThisNode.NodeId.ToString();
-
-                string ThisSubItems = _runTreeNodesRecursive( Tree );
-                if( ThisSubItems == string.Empty )
-                {
-                    ThisSubItems = _runProperties( ThisNode );
-                }
-
-                ret += "<node id=\"" + NodeIdPrefix + ThisNodeId + "\"";
-                ret += " name=\"" + ThisNodeName + "\"";
-                ret += " nodetype=\"" + ThisNode.NodeType.NodeTypeName + "\"";
-                ret += " objectclass=\"" + ThisNode.ObjectClass.ObjectClass.ToString() + "\"";
-                ret += " iconfilename=\"" + ThisNode.NodeType.IconFileName + "\"";
-
-                // case 20083 - search values
-                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps )
-                {
-                    if( MetaDataProp.MobileSearch )
-                    {
-                        if( MetaDataProp.ObjectClassProp != null )
-                            ret += " search_ocp_" + MetaDataProp.ObjectClassPropId.ToString() + "=\"" + ThisNode.Properties[MetaDataProp].Gestalt + "\"";
-                        else
-                            ret += " search_ntp_" + MetaDataProp.PropId.ToString() + "=\"" + ThisNode.Properties[MetaDataProp].Gestalt + "\"";
-                    }
-                }
-
-                ret += "><subitems>" + ThisSubItems + "</subitems>";
-                ret += "</node>";
-
-                Tree.goToParentNode();
+                ret += @",""" + type + @""": {
+                       ""icon"": {
+                         ""image"": ""Images/view/" + type + @".gif""
+                       }
+                     }";
             }
             return ret;
         }
 
 
-        private string _runProperties( CswNbtNode Node )
-        {
-            string ret = string.Empty;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
-            {
-                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
-                {
-                    if( !Prop.HideInMobile &&
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) // Case 20772
-                    {
-                        CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-                        ret += "<prop id=\"" + PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() + "\"";
-                        ret += " name=\"" + Prop.PropNameWithQuestionNo + "\"";
-                        ret += " tab=\"" + Tab.TabName + "\"";
-                        ret += " readonly=\"" + Prop.ReadOnly.ToString().ToLower() +"\"";
-                        ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
-                        ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";
-                        ret += " ocpname=\"" + PropWrapper.ObjectClassPropName + "\"";
-                        ret += ">";
-                        XmlDocument XmlDoc = new XmlDocument();
-                        CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
-                        PropWrapper.ToXml( XmlDoc.DocumentElement );
-                        ret += XmlDoc.DocumentElement.InnerXml;
-                        ret += "<subitems></subitems>";
-                        ret += "</prop>";
-                    }
-                }
-            }
-
-            return ret;
-        }
 
 
     } // class CswNbtWebServiceView
