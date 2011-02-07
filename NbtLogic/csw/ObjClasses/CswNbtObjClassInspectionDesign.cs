@@ -294,6 +294,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[QuestionFT];
             _Finished = ( Tristate.True == this.Finished.Checked );
             _Cancelled = ( Tristate.True == this.Cancelled.Checked );
+            bool FinishedCheck = false;
 
             if( _Cancelled )
             {
@@ -318,11 +319,12 @@ namespace ChemSW.Nbt.ObjClasses
                     else
                     {
                         this.Status.Value = InspectionStatusAsString( _allAnsweredinTime ? InspectionStatus.Completed : InspectionStatus.Completed_Late );
-                        this.Finished.Checked = CswConvert.ToTristate( true ); // This is the only condition for persisting Finished==checked
+                        FinishedCheck = true;
                     }
                 }
             }//else if ( _Finished )
 
+            this.Finished.Checked = CswConvert.ToTristate( FinishedCheck );
             _CswNbtObjClassDefault.beforeWriteNode();
         }//beforeWriteNode()
 
@@ -343,6 +345,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
+            // Probably should be in beforeWriteNode(), but it works for now
             if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
                 this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
                 this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
