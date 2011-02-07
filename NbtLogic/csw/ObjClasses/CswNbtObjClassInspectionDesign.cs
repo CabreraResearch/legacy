@@ -318,6 +318,7 @@ namespace ChemSW.Nbt.ObjClasses
                     else
                     {
                         this.Status.Value = InspectionStatusAsString( _allAnsweredinTime ? InspectionStatus.Completed : InspectionStatus.Completed_Late );
+                        this.Finished.Checked = CswConvert.ToTristate( true ); // This is the only condition for persisting Finished==checked
                     }
                 }
             }//else if ( _Finished )
@@ -338,21 +339,18 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     Parent.Status.Value = _OOC ? "OOC" : "OK";
                     Parent.LastInspectionDate.DateValue = DateTime.Now;
-                    ParentNode.PendingUpdate = true;
-                    ParentNode.postChanges( true );
+                    ParentNode.postChanges( false );
                 }
             }
 
-            this.Finished.Checked = CswConvert.ToTristate( false );
-
-            CswNbtMetaDataFieldType QuestionFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Question );
-            CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[QuestionFT];
             if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
                 this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
                 this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
                 this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
             {
-                foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+                CswNbtMetaDataFieldType QuestionFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Question );
+                CswNbtPropEnmrtrFiltered QuestionsFltr = this.Node.Properties[QuestionFT];
+                foreach( CswNbtNodePropWrapper Prop in QuestionsFltr )
                 {
                     Prop.ReadOnly = true;
                 }
