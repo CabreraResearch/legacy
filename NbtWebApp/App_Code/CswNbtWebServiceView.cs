@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.WebServices
                 TreeXmlDoc.AppendChild( DocRoot );
 
                 // Views
-                DataTable ViewsTable = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false );
+                DataTable ViewsTable = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, NbtViewRenderingMode.Any );
 
                 foreach( DataRow Row in ViewsTable.Rows )
                 {

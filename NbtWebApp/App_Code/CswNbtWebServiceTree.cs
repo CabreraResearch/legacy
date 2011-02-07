@@ -22,7 +22,6 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-            DataTable ViewDT = _CswNbtResources.ViewSelect.getVisibleViews( NbtViewRenderingMode.Tree );
         public string getTree( Int32 ViewId, HttpSessionState Session )
         {
             string ret = string.Empty;
