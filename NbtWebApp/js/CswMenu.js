@@ -1,52 +1,52 @@
 ﻿/* Adapted from http://www.noupe.com/tutorial/drop-down-menu-jquery-css.html */
 
 ; (function ($) {
-    $.fn.CswMenu = function (options) {
+	$.fn.CswMenu = function (options) {
 
-        var o = {
-        };
+		var o = {
+		};
 
-        if (options) {
-            $.extend(o, options);
-        }
+		if (options) {
+			$.extend(o, options);
+		}
 
-        var $MenuUl = $(this);
+		var $MenuUl = $(this);
 
-        $("ul.topnav").children('li').click(TopMenuClick);
-        $("ul.subnav").children('li').click(SubMenuClick);
+		$("ul.topnav").children('li').click(TopMenuClick);
+		$("ul.subnav").children('li').click(SubMenuClick);
 
-        function TopMenuClick()
-        {
-            $this = $(this);
+		function TopMenuClick()
+		{
+			$this = $(this);
 
-            HideAllSubMenus();
+			HideAllSubMenus();
 
-            // Show this subnav
-            $this.find("ul.subnav")
-                    .slideDown('fast')
-                    .show()
-		            .hover(function () {
-          	                },
-                            function () {
-                                HideAllSubMenus();
-                            });
-        }
+			// Show this subnav
+			$this.find("ul.subnav")
+					.slideDown('fast')
+					.show()
+					.hover(function () {
+							},
+							function () {
+								HideAllSubMenus();
+							});
+		}
 
-        function SubMenuClick()
-        {
-            HideAllSubMenus();
-            // Prevent subnav elements from triggering topnav click
-            event.stopPropagation();
-        }
-        
-        function HideAllSubMenus()
-        {
-             $MenuUl.find("ul.subnav").slideUp('fast');
-        }
+		function SubMenuClick()
+		{
+			HideAllSubMenus();
+			// Prevent subnav elements from triggering topnav click
+			event.stopPropagation();
+		}
+		
+		function HideAllSubMenus()
+		{
+			 $MenuUl.find("ul.subnav").slideUp('fast');
+		}
 
 
-        // For proper chaining support
-        return this;
+		// For proper chaining support
+		return this;
 
-    }; // function(options) {
+	}; // function(options) {
 })(jQuery);

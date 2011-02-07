@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 // All Views
-                DataTable ViewDT = _CswNbtWebServiceResources.CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser, false, true );
+                DataTable ViewDT = _CswNbtWebServiceResources.CswNbtResources.ViewSelect.getVisibleViews( false );
                 if( ViewDT.Rows.Count > 0 )
                 {
                     foreach( DataRow ViewRow in ViewDT.Rows )

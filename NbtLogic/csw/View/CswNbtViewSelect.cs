@@ -74,9 +74,17 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
+        public DataTable getVisibleViews( NbtViewRenderingMode ViewRenderingMode )
+        {
+            return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false, ViewRenderingMode );
+        }
+        
+        /// <summary>
+        /// Get a DataTable of all views visible to the current user
+        /// </summary>
         public DataTable getVisibleViews( bool IncludeEmptyViews )
         {
-            return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false );
+            return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, NbtViewRenderingMode.Any );
         }
 
         /// <summary>
@@ -84,7 +92,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public DataTable getVisibleViews( ICswNbtUser User, bool IncludeEmptyViews )
         {
-            return getVisibleViews( string.Empty, User, IncludeEmptyViews, false );
+            return getVisibleViews( string.Empty, User, IncludeEmptyViews, false, NbtViewRenderingMode.Any );
         }
 
         /// <summary>
@@ -92,7 +100,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public DataTable getVisibleViews( string OrderBy, bool IncludeEmptyViews )
         {
-            return getVisibleViews( OrderBy, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false );
+            return getVisibleViews( OrderBy, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, NbtViewRenderingMode.Any );
         }
 
 
@@ -112,7 +120,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
-        public DataTable getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly )
+        public DataTable getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, NbtViewRenderingMode ViewRenderingMode )
         {
             DataTable ViewsTable = null;
             if( _LastVisibleViews != null &&
@@ -152,12 +160,16 @@ namespace ChemSW.Nbt
                         // Case 20452 - Remove views associated with disabled nodetypes/objectclasses
                         if( ThisView.IsFullyEnabled() )
                         {
-                            foreach( CswNbtViewRelationship R in ThisView.Root.ChildRelationships )
+                            if( NbtViewRenderingMode.Any == ViewRenderingMode ||
+                                ThisView.ViewMode == ViewRenderingMode )
                             {
-                                if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                    User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) )
+                                foreach( CswNbtViewRelationship R in ThisView.Root.ChildRelationships )
                                 {
-                                    skipme = false;
+                                    if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+                                        User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) )
+                                    {
+                                        skipme = false;
+                                    }
                                 }
                             }
                         }
