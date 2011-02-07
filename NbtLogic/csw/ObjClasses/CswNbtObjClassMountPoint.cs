@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassFireExtinguisher FireExtinguisher = CswNbtNodeCaster.AsFireExtinguisher( FireExtNode );
                 FireExtinguisher.Status.Value = this.Status.Value;
                 FireExtinguisher.LastInspectionDate.DateValue = this.LastInspectionDate.DateValue;
-                FireExtNode.postChanges( true );
+                FireExtNode.postChanges( false );
             }
             
             _CswNbtObjClassDefault.afterWriteNode();
