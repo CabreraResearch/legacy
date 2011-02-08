@@ -233,6 +233,20 @@ function getTableCell($table, row, col) {
 }
 
 // ------------------------------------------------------------------------------------
+// jsTree
+// ------------------------------------------------------------------------------------
+
+function jsTreeGetSelected($treediv) 
+{
+    $SelectedItem = $treediv.jstree('get_selected');
+    return { 
+        'SelectedIconUrl': $SelectedItem.children('a').children('ins').css('background-image'),
+        'SelectedId': $SelectedItem.attr('id'),
+        'SelectedText': $SelectedItem.text()
+    };
+}
+
+// ------------------------------------------------------------------------------------
 // strings
 // ------------------------------------------------------------------------------------
 
