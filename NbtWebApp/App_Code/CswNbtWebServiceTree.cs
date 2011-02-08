@@ -22,12 +22,11 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        public string getTree( Int32 ViewId, HttpSessionState Session )
+        public string getTree( CswNbtView View, HttpSessionState Session )
         {
             string ret = string.Empty;
             ret += @"<item id=""-1""><content><name>No results</name></content></item>";
 
-            CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
             if( null != View )
             {
                 Stack<KeyValuePair<Int32, string>> ViewHistory = null;
@@ -41,7 +40,7 @@ namespace ChemSW.Nbt.WebServices
                     ViewHistory = (Stack<KeyValuePair<Int32, string>>) Session[QuickLaunchViews];                    
                 }
                 
-                var ThisView = new KeyValuePair<int, string>(ViewId,View.ViewName);
+                var ThisView = new KeyValuePair<int, string>(View.ViewId,View.ViewName);
 
                 if( !ViewHistory.Contains( ThisView ) )
                 {
@@ -52,7 +51,6 @@ namespace ChemSW.Nbt.WebServices
             }
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
-            
             string TreeXml = "<root>" +
                              "  <item id=\"root\" rel=\"root\">" +
                              "    <content>" +

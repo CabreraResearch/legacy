@@ -7,6 +7,9 @@ using System.Web.Script.Services;   // supports ScriptService attribute
 using ChemSW.Core;
 using ChemSW.Config;
 using ChemSW.Security;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -163,49 +166,57 @@ namespace ChemSW.Nbt.WebServices
 			return Doc;
 		} // getQuickLaunchItems()
 
-        //[WebMethod( EnableSession = true )]
-        //public XmlDocument getViews()
-        //{
-        //    CswTimer Timer = new CswTimer();
-        //    string ReturnVal = string.Empty;
-        //    try
-        //    {
-        //        start();
-        //        CswNbtWebServiceTreeView ws = new CswNbtWebServiceTreeView( _CswNbtResources );
-        //        ReturnVal = ws.getViews();
-        //        end();
-        //    }
-        //    catch( Exception ex )
-        //    {
-        //        ReturnVal = error( ex );
-        //    }
-        //    //return ( ReturnVal );
-        //    XmlDocument Doc = new XmlDocument();
-        //    Doc.LoadXml( ReturnVal );
-        //    return Doc;
-        //} // getViews()
+		public string getQuickLaunchItemsJSON()
+		{
+			string json = string.Empty;
+			XmlDocument doc = getQuickLaunchItems();
+			json = JsonConvert.SerializeObject( doc );
+			return json;
+		}
 
-        [WebMethod( EnableSession = true )]
-        public XmlDocument getViewTree()
-        {
-            CswTimer Timer = new CswTimer();
-            string ReturnVal = string.Empty;
-            try
-            {
-                start();
-                CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
-                ReturnVal = ws.getViewTree(Session);
-                end();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = error( ex );
-            }
-            //return ( ReturnVal );
-            XmlDocument Doc = new XmlDocument();
-            Doc.LoadXml( ReturnVal );
-            return Doc;
-        } // getViews()
+		//[WebMethod( EnableSession = true )]
+		//public XmlDocument getViews()
+		//{
+		//    CswTimer Timer = new CswTimer();
+		//    string ReturnVal = string.Empty;
+		//    try
+		//    {
+		//        start();
+		//        CswNbtWebServiceTreeView ws = new CswNbtWebServiceTreeView( _CswNbtResources );
+		//        ReturnVal = ws.getViews();
+		//        end();
+		//    }
+		//    catch( Exception ex )
+		//    {
+		//        ReturnVal = error( ex );
+		//    }
+		//    //return ( ReturnVal );
+		//    XmlDocument Doc = new XmlDocument();
+		//    Doc.LoadXml( ReturnVal );
+		//    return Doc;
+		//} // getViews()
+
+		[WebMethod( EnableSession = true )]
+		public XmlDocument getViewTree()
+		{
+			CswTimer Timer = new CswTimer();
+			string ReturnVal = string.Empty;
+			try
+			{
+				start();
+				CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
+				ReturnVal = ws.getViewTree(Session);
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = error( ex );
+			}
+			//return ( ReturnVal );
+			XmlDocument Doc = new XmlDocument();
+			Doc.LoadXml( ReturnVal );
+			return Doc;
+		} // getViews()
 
 		[WebMethod( EnableSession = true )]
 		public XmlDocument getDashboard()
@@ -250,24 +261,70 @@ namespace ChemSW.Nbt.WebServices
 		} // getHeaderMenu()
 
 		[WebMethod( EnableSession = true )]
-		public XmlDocument getTree( Int32 ViewId )
+		public XmlDocument getGrid( Int32 ViewId )
 		{
-			string ReturnVal = string.Empty;
+			var ReturnXml = new XmlDocument();
 			try
 			{
 				start();
-				CswNbtWebServiceTree ws = new CswNbtWebServiceTree( _CswNbtResources );
-				ReturnVal = ws.getTree( ViewId, Session );
+				CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				if( null != View )
+				{
+					var g = new CswNbtWebServiceGrid( _CswNbtResources );
+					ReturnXml = g.getGridXml( View, Session );
+				}
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = error( ex );
+				ReturnXml.LoadXml( error( ex ) );
 			}
-			//return ( ReturnVal );
-			XmlDocument Doc = new XmlDocument();
-			Doc.LoadXml( ReturnVal );
-			return Doc;
+
+			return ReturnXml;
+		} // getGrid()
+
+		[WebMethod( EnableSession = true )]
+		public string getGridJson( Int32 ViewId )
+		{
+			XmlDocument GridDoc = getGrid( ViewId );
+			//string ReturnVal = JsonConvert.SerializeXmlNode( GridDoc, Formatting.Indented );
+			string ReturnVal = @"{
+				""columns"": [
+								{""id"":""nametext"", ""name"":""nametext"", ""field"":""nametext""},
+								{""id"":""target"", ""name"":""target"", ""field"":""target""}
+							 ],
+				""grid"": {                
+					""nametext"": ""monthly inspection"",
+					""target"": ""mp1""
+				}
+			}";
+			
+			return ReturnVal;
+		}
+
+		[WebMethod( EnableSession = true )]
+		public XmlDocument getTree( Int32 ViewId )
+		{
+			var ReturnVal = string.Empty;
+			var ReturnXml = new XmlDocument();
+			try
+			{
+				start();
+				CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				if( null != View )
+				{
+					var ws = new CswNbtWebServiceTree( _CswNbtResources );
+					ReturnVal = ws.getTree( View, Session );
+					ReturnXml.LoadXml( ReturnVal );
+				}
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnXml.LoadXml( error( ex ) );
+			}
+			
+			return ReturnXml;
 		} // getTree()
 
 

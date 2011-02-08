@@ -76,10 +76,16 @@
 
     function handleViewSelect(itemid) 
     {
-        if(startsWith(itemid, 'viewtree_'))
+        if (startsWith(itemid, 'viewtree_'))
         {
             getViewTree(itemid.substr('viewtree_'.length));
-        } else {
+        }
+        else if (startsWith(itemid, 'viewgrid_'))
+        {
+            getViewGrid(itemid.substr('viewgrid_'.length));
+        }
+        else
+        {
             alert('Handling for view tree item: ' + itemid + ' is not implemented yet.');
         }
     }
@@ -91,6 +97,18 @@
         clearRight();
         clearCenter();
         $('#LeftDiv').CswNodeTree({
+            'viewid': viewid,
+            onSelectNode: getTabs
+        });
+    }
+
+    function getViewGrid(viewid)
+    {
+        currentviewid = viewid;
+        clearLeft();
+        clearRight();
+        clearCenter();
+        $('#CenterDiv').CswNodeGrid({
             'viewid': viewid,
             onSelectNode: getTabs
         });

@@ -990,12 +990,18 @@ namespace ChemSW.Nbt
             return ret;
         } // FindViewNodeByUniqueIdRecursive
 
-        public Stack<CswNbtViewProperty> getOrderedViewProps()
+        /// <summary>
+        /// Returns an ordered stack of CswNbtMetaDataNodeTypeProps
+        /// </summary>
+        /// <returns></returns>
+        public Stack<CswNbtMetaDataNodeTypeProp> getOrderedViewProps()
         {
-            var ViewProps = new Stack<CswNbtViewProperty>();
-            foreach( CswNbtViewRelationship Child in Root.ChildRelationships )
+            var ViewProps = new Stack<CswNbtMetaDataNodeTypeProp>();
+            IEnumerable<CswNbtViewProperty> ChildProps = Root.ChildRelationships.SelectMany( Child => Child.Properties );
+
+            foreach( var CswNbtMetaDataNodeTypeProp in from c in ChildProps orderby c.Order ascending select c.NodeTypeProp )
             {
-                
+                ViewProps.Push( CswNbtMetaDataNodeTypeProp );
             }
 
             return ViewProps;

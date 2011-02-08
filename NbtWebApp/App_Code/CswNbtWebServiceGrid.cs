@@ -16,83 +16,106 @@ namespace ChemSW.Nbt.WebServices
     {
         private CswNbtResources _CswNbtResources;
         private const string QuickLaunchViews = "QuickLaunchViews";
+        private enum XmlElements { result, tree, root, types, name, nodetype, properties, prop, item, content }
+        private enum XmlAttributes { icon, image, id, rel, propid, gestalt, fieldtype, ocpropname, ntpropname, read_only }
 
         public CswNbtWebServiceGrid( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
         }
 
-        public string getViews()
+        //public string getViews()
+        //{
+        //    string ret = string.Empty;
+        //    DataTable ViewDT = _CswNbtResources.ViewSelect.getVisibleViews( NbtViewRenderingMode.Grid );
+        //    foreach( DataRow ViewRow in ViewDT.Rows )
+        //    {
+        //        ret += "<view id=\"" + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
+        //        ret += " name=\"" + ViewRow["viewname"].ToString() + "\"";
+        //        ret += "/>";
+        //    }
+        //    return "<views>" + ret + "</views>";
+        //}
+
+        private static XmlDocument _GridXML; 
+        private static XmlDeclaration _XmlDec;
+        private static XmlElement _RootNode;
+
+        public XmlDocument getGridXml( CswNbtView View, HttpSessionState Session )
         {
-            string ret = string.Empty;
-            DataTable ViewDT = _CswNbtResources.ViewSelect.getVisibleViews( NbtViewRenderingMode.Grid );
-            foreach( DataRow ViewRow in ViewDT.Rows )
-            {
-                ret += "<view id=\"" + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
-                ret += " name=\"" + ViewRow["viewname"].ToString() + "\"";
-                ret += "/>";
-            }
-            return "<views>" + ret + "</views>";
-        }
+            var ThisNodeAttr = new Dictionary<string, string>();
 
-        public string getTree( Int32 ViewId, HttpSessionState Session )
+            _GridXML = new XmlDocument();
+            _XmlDec = _GridXML.CreateXmlDeclaration( "1.0", null, null );
+            XmlNode DefinitionNode = _GridXML.AppendChild( _XmlDec );
+            _RootNode = CswXmlDocument.SetDocumentElement( _GridXML, "gridview" );
+            XmlNode ResultNode = CswXmlDocument.AppendXmlNode( _RootNode, XmlElements.result.ToString() );
+            XmlNode TreeNode = CswXmlDocument.AppendXmlNode( ResultNode, XmlElements.tree.ToString() );
+            XmlNode RootNode = CswXmlDocument.AppendXmlNode( TreeNode, XmlElements.root.ToString() );
+
+            ICswNbtTree Tree = getGridTree( View, Session );
+
+            if( Tree.getChildNodeCount() > 0 )
+            {
+                ThisNodeAttr.Add( XmlAttributes.rel.ToString(), XmlElements.root.ToString() );
+                ThisNodeAttr.Add( XmlAttributes.id.ToString(), XmlElements.root.ToString() );
+                _makeItemNodeXML( RootNode, ThisNodeAttr, View.ViewName );
+                _runTreeNodesRecursiveXML( RootNode, Tree, View );
+                _getTypesXML( ResultNode, View );
+            }
+
+            return _GridXML;
+        } // getGridXml
+
+        private static string _GridJSON = string.Empty;
+        private static string _GridColumnsJSON;
+        private static string _GridDataJSON;
+
+        public string getGridJSON( CswNbtView View, HttpSessionState Session )
         {
-            string ret = string.Empty;
-            ret += @"<item id=""-1""><content><name>No results</name></content></item>";
+            ICswNbtTree Tree = getGridTree( View, Session );
 
-            CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-            if( null != View )
+            if( Tree.getChildNodeCount() > 0 )
             {
-                Stack<KeyValuePair<Int32, string>> ViewHistory = null;
-                //Dictionary<Int32, string> ViewHistory = null;
-                if( null == Session[QuickLaunchViews] )
-                {
-                    ViewHistory = new Stack<KeyValuePair<Int32, string>>();
-                }
-                else
-                {
-                    ViewHistory = (Stack<KeyValuePair<Int32, string>>) Session[QuickLaunchViews];                    
-                }
-                
-                var ThisView = new KeyValuePair<int, string>(ViewId,View.ViewName);
-
-                if( !ViewHistory.Contains( ThisView ) )
-                {
-                    ViewHistory.Push( ThisView );
-                }
-
-                Session[QuickLaunchViews] = ViewHistory;
+                //ThisNodeAttr.Add( XmlAttributes.rel.ToString(), XmlElements.root.ToString() );
+                //ThisNodeAttr.Add( XmlAttributes.id.ToString(), XmlElements.root.ToString() );
+                //_makeItemNodeXML( RootNode, ThisNodeAttr, View.ViewName );
+                //_runTreeNodesRecursive( RootNode, Tree, View );
+                //_getTypes( ResultNode, View );
             }
+
+            return _GridJSON;
+        } // getGridJSON
+
+        private ICswNbtTree getGridTree( CswNbtView View, HttpSessionState Session )
+        {
+            //Append to QuickLaunch
+            Stack<KeyValuePair<Int32, string>> ViewHistory = null;
+            if( null == Session[QuickLaunchViews] )
+            {
+                ViewHistory = new Stack<KeyValuePair<Int32, string>>();
+            }
+            else
+            {
+                ViewHistory = (Stack<KeyValuePair<Int32, string>>) Session[QuickLaunchViews];
+            }
+            var ThisView = new KeyValuePair<int, string>( View.ViewId, View.ViewName );
+
+            if( !ViewHistory.Contains( ThisView ) )
+            {
+                ViewHistory.Push( ThisView );
+            }
+            Session[QuickLaunchViews] = ViewHistory;
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
             
-            string TreeXml = "<root>" +
-                             "  <item id=\"root\" rel=\"root\">" +
-                             "    <content>" +
-                             "      <name>" + View.ViewName + "</name>" +
-                             "    </content>" +
-                                  _runTreeNodesRecursive( Tree ) +
-                             "  </item>" +
-                             "</root>";
+            return Tree;
+        } // getGrid()
 
-            if( Tree.getChildNodeCount() > 0 )
-                ret = "<result>" +
-                      "  <tree>" + TreeXml + "</tree>" +
-                      "  <types>{ " + _getTypes( View ) + " }</types>" +
-                      "</result>";
-
-            return ret;
-        } // getTree()
-
-        public string _getTypes( CswNbtView View )
+        private void _getTypesXML( XmlNode ParentNode, CswNbtView View )
         {
-            string ret = string.Empty;
-            Collection<CswNbtMetaDataNodeType> NodeTypes = new Collection<CswNbtMetaDataNodeType>();
+            var NodeTypes = new Collection<CswNbtMetaDataNodeType>();
             ArrayList Relationships = View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
-            //foreach( CswNbtViewProperty prop in View.getSortProperty )
-            //{
-                
-            //}
             
             foreach( CswNbtViewRelationship Rel in Relationships )
             {
@@ -109,49 +132,147 @@ namespace ChemSW.Nbt.WebServices
                         NodeTypes.Add( NodeType );
                     }
                 }
-            }
+            } // foreach( CswNbtViewRelationship Rel in Relationships )
 
-            ret += "\"root\": { " +
-                    "    \"icon\": { " +
-                    "      \"image\": \"Images/view/viewtree.gif\" " +
-                    "    } " +
-                    "  }";
-            ret += ",\"default\": \"\" ";
+            XmlNode TypesNode = CswXmlDocument.AppendXmlNode( ParentNode, XmlElements.types.ToString() );
+            XmlNode RootNode = CswXmlDocument.AppendXmlNode( TypesNode, XmlElements.root.ToString() );
+            CswXmlDocument.AppendXmlAttribute( RootNode, XmlAttributes.icon.ToString(), string.Empty );
+            CswXmlDocument.AppendXmlAttribute( RootNode, XmlAttributes.image.ToString(), "Images/view/viewgrid.gif" );
+            XmlNode DefaultNode = CswXmlDocument.AppendXmlNode( TypesNode, "default" );
 
             foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
             {
-                ret += ",\"nt_" + NodeType.FirstVersionNodeTypeId.ToString() + "\": { " +
-                        "    \"icon\": { " +
-                        "      \"image\": \"Images/icons/" + NodeType.IconFileName + "\" " +
-                        "    } " +
-                        "  }";
+                XmlNode NodeTypeNode = CswXmlDocument.AppendXmlNode( DefaultNode, XmlElements.nodetype.ToString() );
+                CswXmlDocument.AppendXmlAttribute( NodeTypeNode, XmlAttributes.icon.ToString(), string.Empty );
+                CswXmlDocument.AppendXmlAttribute( NodeTypeNode, XmlAttributes.image.ToString(), "Images/icons/" + NodeType.IconFileName );
+                CswXmlDocument.AppendXmlAttribute( NodeTypeNode, XmlElements.nodetype.ToString(), "nt_" + NodeType.FirstVersionNodeTypeId.ToString() );
             }
-            return ret;
-        }
+        } // _getTypesXML
 
-
-        private string _runTreeNodesRecursive( ICswNbtTree Tree )
+        private void _runTreeNodesRecursiveXML( XmlNode ParentNode, ICswNbtTree Tree, CswNbtView View )
         {
-            string ret = string.Empty;
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 Tree.goToNthChild( c );
 
                 CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
+                var ThisNodeAttr = new Dictionary<string, string>();
                 string ThisNodeName = Tree.getNodeNameForCurrentPosition();
-                string ThisNodeId = ThisNode.NodeId.ToString();
 
-                ret += "<item id=\"" + ThisNodeId + "\" rel=\"nt_" + ThisNode.NodeType.FirstVersionNodeTypeId.ToString() + "\">";
-                ret += "  <content>";
-                ret += "    <name>" + ThisNodeName + "</name>";
-                ret += "  </content>";
-                ret += _runTreeNodesRecursive( Tree );
-                ret += "</item>";
+                ThisNodeAttr.Add( XmlAttributes.id.ToString(), ThisNode.NodeId.ToString() );
+                ThisNodeAttr.Add( XmlAttributes.rel.ToString(), "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId.ToString() );
+                var TheseXmlNodes = _makeItemNodeXML( ParentNode, ThisNodeAttr, ThisNodeName );
+                var ItemNode = TheseXmlNodes[0]; 
+                var NameNode = TheseXmlNodes[1];
+                Stack<CswNbtMetaDataNodeTypeProp> Props = View.getOrderedViewProps();
+                _getNodePropertiesXML( NameNode, Props, ThisNode );
+                
+                _runTreeNodesRecursiveXML( ItemNode, Tree, View );
 
                 Tree.goToParentNode();
             }
-            return ret;
-        }
+        } // _runTreeNodesRecursiveXML
+
+        private void _getNodePropertiesXML( XmlNode ParentNode, Stack<CswNbtMetaDataNodeTypeProp> Props, CswNbtNode NbtNode )
+        {
+            var PropertiesNode = CswXmlDocument.AppendXmlNode( ParentNode, XmlElements.properties.ToString() );
+            foreach( var NodeTypeProp in Props )
+            {
+                if( NodeTypeProp.NodeType != NbtNode.NodeType ) continue;
+                var PropNode = CswXmlDocument.AppendXmlNode( PropertiesNode, XmlElements.prop.ToString() );
+                PropNode.InnerText = NodeTypeProp.PropName;
+                CswXmlDocument.AppendXmlAttribute( PropNode, XmlAttributes.propid.ToString(), NodeTypeProp.PropId.ToString() );
+                CswXmlDocument.AppendXmlAttribute( PropNode, XmlAttributes.gestalt.ToString(), NbtNode.Properties[NodeTypeProp].Gestalt );
+                CswXmlDocument.AppendXmlAttribute( PropNode, XmlAttributes.fieldtype.ToString(), NbtNode.Properties[NodeTypeProp].FieldType.FieldType.ToString() );
+                CswXmlDocument.AppendXmlAttribute( PropNode, XmlAttributes.ocpropname.ToString(), NbtNode.Properties[NodeTypeProp].ObjectClassPropName );
+                CswXmlDocument.AppendXmlAttribute( PropNode, XmlAttributes.ntpropname.ToString(), NbtNode.Properties[NodeTypeProp].PropName );
+                CswXmlDocument.AppendXmlAttribute( PropNode, XmlAttributes.read_only.ToString(), NbtNode.Properties[NodeTypeProp].ReadOnly.ToString() );
+            }
+        } // _getNodePropertiesXML
+
+        /// <summary>
+        /// Appends XML Nodes to the ParentNode
+        /// </summary>
+        /// <param name="ParentNode">"root" node to append sub-elements</param>
+        /// <param name="NodesText">node element name, node inner text</param>
+        /// <param name="Attributes">attribute name, attribute value applied to first node</param>
+        /// <returns>Collection with 2 members; 1=="item",2=="name"</returns>
+        private Collection<XmlNode> _makeItemNodeXML( XmlNode ParentNode, Dictionary<string, string> Attributes, string Text )
+        {
+            var XmlNodes = new Collection<XmlNode>();
+            XmlNode ItemNode = CswXmlDocument.AppendXmlNode( ParentNode, XmlElements.item.ToString() );
+            XmlNode ContentNode = CswXmlDocument.AppendXmlNode( ItemNode, XmlElements.content.ToString() );
+            XmlNode NameNode = CswXmlDocument.AppendXmlNode( ContentNode, XmlElements.name.ToString() );
+            NameNode.InnerText = Text;
+
+            XmlNodes.Insert( 0, ItemNode );
+            XmlNodes.Insert( 1, NameNode );
+
+            foreach( var attr in Attributes )
+            {
+                CswXmlDocument.AppendXmlAttribute( ItemNode, attr.Key, attr.Value );
+            }
+            return XmlNodes;
+        } // _makeItemNodeXML
+
+        private void _runTreeNodesRecursiveJSON( string ParentJSON, ICswNbtTree Tree, CswNbtView View )
+        {
+            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            {
+                Tree.goToNthChild( c );
+
+                CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
+                var ThisNodeAttr = new Dictionary<string, string>();
+                string ThisNodeName = Tree.getNodeNameForCurrentPosition();
+
+                Stack<CswNbtMetaDataNodeTypeProp> Props = View.getOrderedViewProps();
+                if( Props.Count > 0 )
+                {
+                   // _getNodePropertiesJSON( ParentJSON, Props, ThisNode );
+                }
+
+                _runTreeNodesRecursiveJSON( ParentJSON, Tree, View );
+
+                Tree.goToParentNode();
+            }
+        } // _runTreeNodesRecursiveJSON
+
+        /// <summary>
+        /// Generates JSON content for all properties selected in the View
+        /// </summary>
+        /// <param name="ParentJSON"></param>
+        /// <param name="Props"></param>
+        /// <param name="NbtNode"></param>
+        /// <returns>Returns an array of property names for use as column names</returns>
+        private CswDelimitedString _getNodePropertiesJSON( ref string ParentJSON, CswDelimitedString ColumnNames, Stack<CswNbtMetaDataNodeTypeProp> Props, CswNbtNode NbtNode )
+        {
+            string ColumnDefinition = string.Empty;
+            foreach( var NodeTypeProp in Props )
+            {
+                if( NodeTypeProp.NodeType != NbtNode.NodeType ) continue;
+                ColumnDefinition = @"{""id"":""" + NodeTypeProp.PropName.Replace( " ", "" ).ToLower() + @"";
+                ColumnDefinition += @", ""name"":" + NodeTypeProp.PropName + @"";
+                ColumnDefinition += @", ""field"":" + NodeTypeProp.PropName.Replace( " ", "" ).ToLower() + @"";
+                if( !NbtNode.Properties[NodeTypeProp].ReadOnly )
+                {
+                    ColumnDefinition += ", editor:TextCellEditor";
+                }
+                if( NbtNode.Properties[NodeTypeProp].Required )
+                {
+                    ColumnDefinition += ", validator:requiredFieldValidator ";
+                }
+                if( 0 < NodeTypeProp.Length )
+                {
+                    ColumnDefinition += ", width:" + NodeTypeProp.Length.ToString();
+                }
+                ColumnDefinition +=  "}";
+                ColumnNames.Add( ColumnDefinition );
+
+                ParentJSON += @"" + NodeTypeProp.PropName + @""":" + @"" + NbtNode.Properties[NodeTypeProp].Gestalt + @"";
+            }
+            return ColumnNames;
+        } // _getNodePropertiesJSON
+
 
 
 
