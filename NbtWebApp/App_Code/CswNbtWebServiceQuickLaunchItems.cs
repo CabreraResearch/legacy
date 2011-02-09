@@ -84,14 +84,14 @@ namespace ChemSW.Nbt.WebServices
                         QuickLaunchHistory.Push( ThisView );
                     }
                 } // foreach( CswNbtView QuickLaunchView...
+                
+                //This ensures that the user's Quick Launch views stay at bottom of the stack
+                Session[QuickLaunchViews] = QuickLaunchHistory;
             } // if( null != UserNode )
-
-            //This ensures that the user's Quick Launch views stay at bottom of the stack
-            Session[QuickLaunchViews] = QuickLaunchHistory;
 
             foreach( KeyValuePair<Int32, string> pair in QuickLaunchHistory )
             {
-                XmlNode ThisItem = CswXmlDocument.AppendXmlNode( ReturnXML, "item" );
+                XmlNode ThisItem = CswXmlDocument.AppendXmlNode( QuickLaunchNode, "item" );
                 CswXmlDocument.AppendXmlAttribute( ThisItem, "type", QuickLaunchType.View.ToString() );
                 CswXmlDocument.AppendXmlAttribute( ThisItem, "viewid", pair.Key.ToString() );
                 CswXmlDocument.AppendXmlAttribute( ThisItem, "text", pair.Value );
@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.WebServices
                                                     where null != ThisAction
                                                     select ThisAction )
                 {
-                    XmlNode ThisItem = CswXmlDocument.AppendXmlNode( ReturnXML, "item" );
+                    XmlNode ThisItem = CswXmlDocument.AppendXmlNode( QuickLaunchNode, "item" );
                     CswXmlDocument.AppendXmlAttribute( ThisItem, "type", QuickLaunchType.Action.ToString() );
                     CswXmlDocument.AppendXmlAttribute( ThisItem, "viewid", ThisAction.ActionId.ToString() );
                     CswXmlDocument.AppendXmlAttribute( ThisItem, "text", ThisAction.Name.ToString() );
@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.WebServices
                 } // foreach( CswNbtAction ThisAction...
             } // if( isNewSession )
 
-            ret = ReturnXML.ToString();
+            ret = ReturnXML.InnerXml;
 
             return ret;
 

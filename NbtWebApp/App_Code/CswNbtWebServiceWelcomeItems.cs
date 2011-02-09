@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.WebServices
 
             } // foreach( DataRow WelcomeRow in WelcomeTable.Rows )
 
-            ret = ReturnXML.ToString();
+            ret = ReturnXML.InnerXml;
             return ret;
 
         } // GetWelcomeItems()

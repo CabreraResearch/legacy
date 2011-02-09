@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.WebServices
 				start();
 
 				CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
-				CswNbtWebServiceQuickLaunchItems ql = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
+				var ql = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
 				if( null != UserId )
 				{
 					ReturnVal = ql.getQuickLaunchItems( UserId, Session );
