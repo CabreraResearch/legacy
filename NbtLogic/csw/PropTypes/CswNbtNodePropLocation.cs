@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 Int32 NewValue = Int32.MinValue;
-                if( value != null )
+                if( value != null && value.PrimaryKey > 0 )
                     NewValue = value.PrimaryKey;
 
                 if( _CswNbtNodePropData.SetPropRowValue( _NodeIdSubField.Column, NewValue ) )
