@@ -298,7 +298,8 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode LSXmlNode = CswXmlDocument.AppendXmlNode( ParentNode, _ElemName_LogicalSetXml );
-            CswXmlDocument.SetInnerTextAsCData( LSXmlNode, LogicalSetXmlDoc.InnerXml.ToString() );
+            //CswXmlDocument.SetInnerTextAsCData( LSXmlNode, LogicalSetXmlDoc.InnerXml.ToString() );
+            LSXmlNode.InnerText = LogicalSetXmlDoc.InnerXml;
         }
         /// <summary>
         /// Initialize this object with data from the given XmlNode
@@ -306,6 +307,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             LogicalSetXmlDoc = new XmlDocument();
+            //LogicalSetXmlDoc.LoadXml( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ElemName_LogicalSetXml ) );
             LogicalSetXmlDoc.LoadXml( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ElemName_LogicalSetXml ) );
         }
         /// <summary>
