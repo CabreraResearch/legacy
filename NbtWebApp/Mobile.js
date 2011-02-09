@@ -584,6 +584,7 @@
                 case "InspectionDesignClass":
                     var DueDate = $xmlitem.find('prop[ocpname="Due Date"]').attr('gestalt');
                     var Location = $xmlitem.find('prop[ocpname="Location"]').attr('gestalt');
+                    var MountPoint = $xmlitem.find('prop[ocpname="Target"]').attr('gestalt');
                     var UnansweredCnt = 0;
                     $xmlitem.find('prop[fieldtype="Question"]').each(function ()
                     {
@@ -598,6 +599,7 @@
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
                     Html += '<p>' + Location + '</p>';
+                    Html += '<p>' + MountPoint + '</p>';
                     Html += '<p>Due: ' + DueDate + '</p>';
                     Html += '<span id="' + id + '_unansweredcnt" class="ui-li-count">' + UnansweredCnt + '</span>';
                     Html += '</li>';
