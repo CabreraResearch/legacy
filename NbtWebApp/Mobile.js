@@ -252,7 +252,7 @@
                                 ParentId: p.ParentId,
                                 DivId: p.DivId,
                                 HeaderText: p.HeaderText,
-                                $xml: $(xml).children(),
+                                $xml: $(xml),
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 HideSearchButton: p.HideSearchButton,
@@ -271,7 +271,7 @@
                                 ParentId: p.ParentId,
                                 DivId: p.DivId,
                                 HeaderText: p.HeaderText,
-                                $xml: $(xml).children(),
+                                $xml: $(xml),
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 HideSearchButton: p.HideSearchButton,
@@ -292,7 +292,7 @@
                                 ParentId: p.ParentId,
                                 DivId: p.DivId,
                                 HeaderText: p.HeaderText,
-                                $xml: $(xmlstr).children(),
+                                $xml: $(xmlstr),
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 HideSearchButton: p.HideSearchButton,
@@ -312,7 +312,7 @@
                                     ParentId: p.ParentId,
                                     DivId: p.DivId,
                                     HeaderText: p.HeaderText,
-                                    $xml: $(xml).children(),
+                                    $xml: $(xml),
                                     parentlevel: p.level,
                                     HideRefreshButton: p.HideRefreshButton,
                                     HideSearchButton: p.HideSearchButton,
@@ -334,7 +334,7 @@
                                 ParentId: p.ParentId,
                                 DivId: p.DivId,
                                 HeaderText: p.HeaderText,
-                                $xml: $thisxmlstr.children('subitems').first().children(),
+                                $xml: $thisxmlstr.children('subitems').first(),
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 HideSearchButton: p.HideSearchButton,
@@ -408,9 +408,9 @@
 
             onAfterAddDiv = function ($divhtml) { };
 
-            p.$xml.each(function ()
+            p.$xml.children().each(function ()
             {
-                content += _makeListItemFromXml(p.$xml, this, p.DivId, p.parentlevel);
+                content += _makeListItemFromXml(this, p.DivId, p.parentlevel);
             });
             content += _endUL();
 
@@ -431,7 +431,7 @@
 
         } // _processViewXml()
 
-        function _makeListItemFromXml($xml, xmlitem, DivId, parentlevel)
+        function _makeListItemFromXml(xmlitem, DivId, parentlevel)
         {
             var $xmlitem = $(xmlitem);
             var id = $xmlitem.attr('id');
@@ -1325,12 +1325,14 @@
                 // fetch new content
                 _ajaxViewXml(RealDivId, function (xml)
                 {
+                    $currentViewXml = $(xml);
                     _updateStoredViewXml(RealDivId, xml, '0');
+
                     _processViewXml({
                         ParentId: 'viewsdiv',
                         DivId: RealDivId,
                         HeaderText: HeaderText,
-                        $xml: $(xml).children(),
+                        '$xml': $(xml),
                         parentlevel: 1,
                         HideRefreshButton: false,
                         HideSearchButton: true,
@@ -1456,7 +1458,7 @@
                             if ($node.attr(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
                                 hitcount++;
-                                content += _makeListItemFromXml($xmlstr, this, DivId, 1, false);
+                                content += _makeListItemFromXml(this, DivId, 1, false);
                             }
                         }
                     });
