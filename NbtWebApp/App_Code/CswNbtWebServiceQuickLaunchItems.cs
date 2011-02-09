@@ -51,12 +51,13 @@ namespace ChemSW.Nbt.WebServices
         public string getQuickLaunchItems( CswPrimaryKey UserId, HttpSessionState Session )
         {
             string ret = string.Empty;
-            var ReturnXML = new XmlDocument();   
+            var ReturnXML = new XmlDocument();
+            bool isNewSession = ( null == Session[QuickLaunchViews] );
             XmlNode QuickLaunchNode = CswXmlDocument.SetDocumentElement( ReturnXML, "quicklaunch" );
-            
+
             // Add Recent Views from Session First
             Stack<KeyValuePair<Int32, string>> QuickLaunchHistory = null;
-            if( null != Session[QuickLaunchViews] )
+            if( !isNewSession )
             {
                 QuickLaunchHistory = (Stack<KeyValuePair<Int32, string>>) Session[QuickLaunchViews];
             }
@@ -66,7 +67,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( UserId );
-            if( null != UserNode )
+            if( null != UserNode && isNewSession )
             {
                 // Add Stored Views Next
                 CswNbtObjClassUser UserOC = CswNbtNodeCaster.AsUser( UserNode );
@@ -77,18 +78,18 @@ namespace ChemSW.Nbt.WebServices
                     .Select( ViewId => CswNbtViewFactory.restoreView( _CswNbtResources, ViewId ) )
                     .Where( QuickLaunchView => null != QuickLaunchView && QuickLaunchView.IsFullyEnabled() ) )
                 {
-                    var ThisView = new KeyValuePair<int, string>(QuickLaunchView.ViewId,QuickLaunchView.ViewName);
+                    var ThisView = new KeyValuePair<int, string>( QuickLaunchView.ViewId, QuickLaunchView.ViewName );
                     if( !QuickLaunchHistory.Contains( ThisView ) )
                     {
                         QuickLaunchHistory.Push( ThisView );
                     }
                 } // foreach( CswNbtView QuickLaunchView...
             } // if( null != UserNode )
-            
+
             //This ensures that the user's Quick Launch views stay at bottom of the stack
             Session[QuickLaunchViews] = QuickLaunchHistory;
 
-            foreach( KeyValuePair<Int32,string> pair in QuickLaunchHistory )
+            foreach( KeyValuePair<Int32, string> pair in QuickLaunchHistory )
             {
                 XmlNode ThisItem = CswXmlDocument.AppendXmlNode( ReturnXML, "item" );
                 CswXmlDocument.AppendXmlAttribute( ThisItem, "type", QuickLaunchType.View.ToString() );
@@ -97,22 +98,24 @@ namespace ChemSW.Nbt.WebServices
 
             } // foreach( Int32 ViewId in QuickLaunchDict.Keys )
 
-            // Add Stored Actions Last
-            CswNbtNodePropLogicalSet ActionsLogicalSet = ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser.UserNode ).QuickLaunchActions;
-            DataTable ActionsTable = ActionsLogicalSet.GetDataAsTable( ActionName, ActionPk );
-            foreach( CswNbtAction ThisAction in from DataRow ActionRow in ActionsTable.Rows
-                                                where CswConvert.ToBoolean( ActionRow[ActionSelected] )
-                                                select _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionRow[ActionName].ToString() )]
-                                                into ThisAction
-                                                where null != ThisAction
-                                                select ThisAction )
+            if( isNewSession )  // Add Stored Actions Last
             {
-                XmlNode ThisItem = CswXmlDocument.AppendXmlNode( ReturnXML, "item" );
-                CswXmlDocument.AppendXmlAttribute( ThisItem, "type", QuickLaunchType.Action.ToString() );
-                CswXmlDocument.AppendXmlAttribute( ThisItem, "viewid", ThisAction.ActionId.ToString() );
-                CswXmlDocument.AppendXmlAttribute( ThisItem, "text", ThisAction.Name.ToString() );
-                CswXmlDocument.AppendXmlAttribute( ThisItem, "url", ThisAction.Url );
-            } // foreach( CswNbtAction ThisAction...
+                CswNbtNodePropLogicalSet ActionsLogicalSet = ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser.UserNode ).QuickLaunchActions;
+                DataTable ActionsTable = ActionsLogicalSet.GetDataAsTable( ActionName, ActionPk );
+                foreach( CswNbtAction ThisAction in from DataRow ActionRow in ActionsTable.Rows
+                                                    where CswConvert.ToBoolean( ActionRow[ActionSelected] )
+                                                    select _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionRow[ActionName].ToString() )]
+                                                    into ThisAction
+                                                    where null != ThisAction
+                                                    select ThisAction )
+                {
+                    XmlNode ThisItem = CswXmlDocument.AppendXmlNode( ReturnXML, "item" );
+                    CswXmlDocument.AppendXmlAttribute( ThisItem, "type", QuickLaunchType.Action.ToString() );
+                    CswXmlDocument.AppendXmlAttribute( ThisItem, "viewid", ThisAction.ActionId.ToString() );
+                    CswXmlDocument.AppendXmlAttribute( ThisItem, "text", ThisAction.Name.ToString() );
+                    CswXmlDocument.AppendXmlAttribute( ThisItem, "url", ThisAction.Url );
+                } // foreach( CswNbtAction ThisAction...
+            } // if( isNewSession )
 
             ret = ReturnXML.ToString();
 
