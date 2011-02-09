@@ -9,6 +9,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
+using System.Xml;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -69,6 +70,8 @@ namespace ChemSW.Nbt.WebServices
         public string GetWelcomeItems( string strRoleId )
         {
             string ret = string.Empty;
+            var ReturnXML = new XmlDocument();
+            XmlNode WelcomeNode = CswXmlDocument.SetDocumentElement( ReturnXML, "welcome" );
 
             CswPrimaryKey RolePk = new CswPrimaryKey();
             RolePk.FromString( strRoleId );
@@ -86,7 +89,8 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( DataRow WelcomeRow in WelcomeTable.Rows )
             {
-                ret += "<item";
+                XmlNode ItemNode = CswXmlDocument.AppendXmlNode( WelcomeNode, "item" );
+                
                 string LinkText = string.Empty;
                 if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
                 {
@@ -97,7 +101,7 @@ namespace ChemSW.Nbt.WebServices
                             LinkText = WelcomeRow["displaytext"].ToString();
                         else
                             LinkText = ThisView.ViewName;
-                        ret += " viewid=\"" + WelcomeRow["nodeviewid"].ToString() + "\"";
+                        CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", WelcomeRow["nodeviewid"].ToString() );
                     }
                 }
                 if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
@@ -110,7 +114,7 @@ namespace ChemSW.Nbt.WebServices
                         else
                             LinkText = ThisAction.Name.ToString();
                     }
-                    ret += " actionid=\"" + WelcomeRow["actionid"].ToString() + "\"";
+                    CswXmlDocument.AppendXmlAttribute( ItemNode, "actionid", WelcomeRow["actionid"].ToString() );
                 }
                 if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )
                 {
@@ -119,7 +123,7 @@ namespace ChemSW.Nbt.WebServices
                         LinkText = WelcomeRow["displaytext"].ToString();
                     else
                         LinkText = ThisReportNode.NodeName;
-                    ret += " reportid=\"" + WelcomeRow["reportid"].ToString() + "\"";
+                    CswXmlDocument.AppendXmlAttribute( ItemNode, "reportid", WelcomeRow["reportid"].ToString() );
                 }
                 if( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) != Int32.MinValue )
                 {
@@ -128,25 +132,21 @@ namespace ChemSW.Nbt.WebServices
                         LinkText = WelcomeRow["displaytext"].ToString();
                     else
                         LinkText = "Add New " + NodeType.NodeTypeName;
-                    ret += " nodetypeid=\"" + WelcomeRow["nodetypeid"].ToString() + "\"";
+                    CswXmlDocument.AppendXmlAttribute( ItemNode, "nodetypeid", WelcomeRow["nodetypeid"].ToString() );
                 }
 
                 if( LinkText != string.Empty )
                 {
-                    ret += "      type=\"" + WelcomeRow["componenttype"].ToString() + "\"";
-                    ret += "      buttonicon=\"" + IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() + "\"";
-                    ret += "      text=\"" + LinkText + "\"";
-                    ret += "      displayrow=\"" + WelcomeRow["display_row"].ToString() + "\"";
-                    ret += "      displaycol=\"" + WelcomeRow["display_col"].ToString() + "\"";
-                    ret += "/>";
+                    CswXmlDocument.AppendXmlAttribute( ItemNode, "type", WelcomeRow["componenttype"].ToString() );
+                    CswXmlDocument.AppendXmlAttribute( ItemNode, "buttonicon", IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() );
+                    CswXmlDocument.AppendXmlAttribute( ItemNode, "text", LinkText );
+                    CswXmlDocument.AppendXmlAttribute( ItemNode, "displayrow", WelcomeRow["display_row"].ToString() );
+                    CswXmlDocument.AppendXmlAttribute( ItemNode, "displaycol", WelcomeRow["display_col"].ToString() );
                 }
 
             } // foreach( DataRow WelcomeRow in WelcomeTable.Rows )
 
-            if( !string.IsNullOrEmpty(ret) )
-            {
-                ret = "<welcome>" + ret + "</welcome>";
-            }
+            ret = ReturnXML.ToString();
             return ret;
 
         } // GetWelcomeItems()
