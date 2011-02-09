@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.WebServices
 
                 string EuphemisticAuthenticationStatus = string.Empty;
                 string SessionId = string.Empty;
-                AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.authenticate( AccessId, UserName, Password, ref EuphemisticAuthenticationStatus, ref SessionId );
+                AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.authenticate( AccessId.ToLower(), UserName, Password, ref EuphemisticAuthenticationStatus, ref SessionId );
                 ExotericAuthenticationResult = "<AuthenticationStatus>" + EuphemisticAuthenticationStatus + "</AuthenticationStatus>";
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
