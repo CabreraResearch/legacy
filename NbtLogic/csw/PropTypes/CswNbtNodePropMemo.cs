@@ -85,6 +85,8 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.ToXmlNodeName() );
+            CswXmlDocument.AppendXmlAttribute( TextNode, "rows", Rows.ToString() );
+            CswXmlDocument.AppendXmlAttribute( TextNode, "columns", Columns.ToString() );
             CswXmlDocument.SetInnerTextAsCData( TextNode, Text );
         }
 
