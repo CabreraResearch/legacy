@@ -22,7 +22,6 @@
                 $xml.children().each(function() {
 
                     var $item = $(this);
-                    //var $cell = getTableCell($table, $item.attr('displayrow'), $item.attr('displaycol'));
                     switch($item.attr('type'))
                     {
                         case 'View':

@@ -92,8 +92,6 @@ namespace ChemSW.Nbt.WebServices
                 ret += "      type=\"" + QuickLaunchType.View + "\"";
                 ret += "      viewid=\"" + pair.Key + "\"";
                 ret += "      text=\"" + pair.Value + "\"";
-                ret += "      displayrow=\"" + DisplayRow + "\"";
-                ret += "      displaycol=\"0\"";
                 ret += "/>";
                 DisplayRow++;
             } // foreach( Int32 ViewId in QuickLaunchDict.Keys )
@@ -113,8 +111,6 @@ namespace ChemSW.Nbt.WebServices
                 ret += "      actionid=\"" + ThisAction.ActionId + "\"";
                 ret += "      text=\"" + ThisAction.Name + "\"";
                 ret += "      url=\"" + ThisAction.Url + "\"";
-                ret += "      displayrow=\"" + DisplayRow + "\"";
-                ret += "      displaycol=\"0\"";
                 ret += "/>";
                 DisplayRow++;
             } // foreach( CswNbtAction ThisAction...
