@@ -8,6 +8,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.PropTypes;
 using System.Collections.Generic;
+using System.Xml;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -50,8 +51,9 @@ namespace ChemSW.Nbt.WebServices
         public string getQuickLaunchItems( CswPrimaryKey UserId, HttpSessionState Session )
         {
             string ret = string.Empty;
-            Int32 DisplayRow = 0;
-
+            var ReturnXML = new XmlDocument();   
+            XmlNode QuickLaunchNode = CswXmlDocument.SetDocumentElement( ReturnXML, "quicklaunch" );
+            
             // Add Recent Views from Session First
             Stack<KeyValuePair<Int32, string>> QuickLaunchHistory = null;
             if( null != Session[QuickLaunchViews] )
@@ -88,12 +90,11 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( KeyValuePair<Int32,string> pair in QuickLaunchHistory )
             {
-                ret += "<item";
-                ret += "      type=\"" + QuickLaunchType.View + "\"";
-                ret += "      viewid=\"" + pair.Key + "\"";
-                ret += "      text=\"" + pair.Value + "\"";
-                ret += "/>";
-                DisplayRow++;
+                XmlNode ThisItem = CswXmlDocument.AppendXmlNode( ReturnXML, "item" );
+                CswXmlDocument.AppendXmlAttribute( ThisItem, "type", QuickLaunchType.View.ToString() );
+                CswXmlDocument.AppendXmlAttribute( ThisItem, "viewid", pair.Key.ToString() );
+                CswXmlDocument.AppendXmlAttribute( ThisItem, "text", pair.Value );
+
             } // foreach( Int32 ViewId in QuickLaunchDict.Keys )
 
             // Add Stored Actions Last
@@ -106,19 +107,14 @@ namespace ChemSW.Nbt.WebServices
                                                 where null != ThisAction
                                                 select ThisAction )
             {
-                ret += "<item";
-                ret += "      type=\"" + QuickLaunchType.Action + "\"";
-                ret += "      actionid=\"" + ThisAction.ActionId + "\"";
-                ret += "      text=\"" + ThisAction.Name + "\"";
-                ret += "      url=\"" + ThisAction.Url + "\"";
-                ret += "/>";
-                DisplayRow++;
+                XmlNode ThisItem = CswXmlDocument.AppendXmlNode( ReturnXML, "item" );
+                CswXmlDocument.AppendXmlAttribute( ThisItem, "type", QuickLaunchType.Action.ToString() );
+                CswXmlDocument.AppendXmlAttribute( ThisItem, "viewid", ThisAction.ActionId.ToString() );
+                CswXmlDocument.AppendXmlAttribute( ThisItem, "text", ThisAction.Name.ToString() );
+                CswXmlDocument.AppendXmlAttribute( ThisItem, "url", ThisAction.Url );
             } // foreach( CswNbtAction ThisAction...
 
-            if( !string.IsNullOrEmpty(ret) )
-            {
-                ret = "<quicklaunch>" + ret + "</quicklaunch>";
-            }
+            ret = ReturnXML.ToString();
 
             return ret;
 
