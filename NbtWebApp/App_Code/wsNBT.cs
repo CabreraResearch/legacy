@@ -261,7 +261,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getHeaderMenu()
 
 		[WebMethod( EnableSession = true )]
-		public XmlDocument getGrid( Int32 ViewId )
+		public XmlDocument getGridXML( Int32 ViewId )
 		{
 			var ReturnXml = new XmlDocument();
 			try
@@ -284,22 +284,26 @@ namespace ChemSW.Nbt.WebServices
 		} // getGrid()
 
 		[WebMethod( EnableSession = true )]
-		public string getGridJson( Int32 ViewId )
+		public string getGridJSON( Int32 ViewId )
 		{
-			XmlDocument GridDoc = getGrid( ViewId );
-			//string ReturnVal = JsonConvert.SerializeXmlNode( GridDoc, Formatting.Indented );
-			string ReturnVal = @"{
-				""columns"": [
-								{""id"":""nametext"", ""name"":""nametext"", ""field"":""nametext""},
-								{""id"":""target"", ""name"":""target"", ""field"":""target""}
-							 ],
-				""grid"": {                
-					""nametext"": ""monthly inspection"",
-					""target"": ""mp1""
+			var ReturnJSON = string.Empty;
+			try
+			{
+				start();
+				CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				if( null != View )
+				{
+					var g = new CswNbtWebServiceGrid( _CswNbtResources );
+					ReturnJSON = g.getGridJSON( View, Session );
 				}
-			}";
-			
-			return ReturnVal;
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnJSON = ( error( ex ) );
+			}
+
+			return ReturnJSON;
 		}
 
 		[WebMethod( EnableSession = true )]
