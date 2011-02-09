@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtObjClassUser UserOC = CswNbtNodeCaster.AsUser( UserNode );
                 CswCommaDelimitedString UserQuickLaunchViews = UserOC.QuickLaunchViews.SelectedViewIds;
                 foreach( CswNbtView QuickLaunchView in UserQuickLaunchViews.Where( View => !String.IsNullOrEmpty( View ) )
-                    .Select( View => CswConvert.ToInt32( View ) )
+                    .Select( CswConvert.ToInt32 )
                     .Where( ViewId => Int32.MinValue != ViewId )
                     .Select( ViewId => CswNbtViewFactory.restoreView( _CswNbtResources, ViewId ) )
                     .Where( QuickLaunchView => null != QuickLaunchView && QuickLaunchView.IsFullyEnabled() ) )
