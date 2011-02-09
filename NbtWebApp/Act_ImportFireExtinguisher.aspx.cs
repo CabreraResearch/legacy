@@ -1,12 +1,27 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using ChemSW.Nbt;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.NbtWebControls;
 using ChemSW.Exceptions;
+using FarPoint.Web.Spread;
 using ChemSW.CswWebControls;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
+using System.Text;
 using System.Data.OleDb;
 using Telerik.Web.UI;
 
@@ -293,17 +308,19 @@ namespace ChemSW.Nbt.WebPages
                         string FESize = Row[ImportColumnsToDisplayString( ImportColumns.Fire_Extinguisher_Size )].ToString();
                         string FESizeUnit = Row[ImportColumnsToDisplayString( ImportColumns.Fire_Extinguisher_Size_Unit )].ToString();
 
-                        if( BuildingName != string.Empty && RoomName != string.Empty && MountPointDescription != string.Empty )
+                        if( BuildingName != string.Empty &&
+                            RoomName != string.Empty &&
+                            MountPointDescription != string.Empty )  // ignore blank rows
                         {
-
                             // Parse values
                             string MountPointStatusString = Row[ImportColumnsToDisplayString( ImportColumns.Mount_Point_Status )].ToString();
-                            CswNbtObjClassInspectionDesign.TargetStatus TargetStatus = CswNbtObjClassInspectionDesign.TargetStatusFromString( MountPointStatusString );
-                            if( CswNbtObjClassInspectionDesign.TargetStatus.Null == TargetStatus )
-                            {
+                            CswNbtObjClassInspectionDesign.TargetStatus TargetStatus = CswNbtObjClassInspectionDesign.TargetStatus.Null;
+                            if( MountPointStatusString != string.Empty )
+                                TargetStatus = CswNbtObjClassInspectionDesign.TargetStatusFromString( MountPointStatusString );
+                            else
                                 TargetStatus = CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected;
-                            }
                             string TargetStatusString = CswNbtObjClassInspectionDesign.TargetStatusAsString( TargetStatus );
+
                             string LastInspectionDateString = Row[ImportColumnsToDisplayString( ImportColumns.Last_Inspection_Date )].ToString();
                             DateTime LastInspectionDate = DateTime.MinValue;
                             DateTime.TryParse( LastInspectionDateString, out LastInspectionDate );
@@ -318,7 +335,7 @@ namespace ChemSW.Nbt.WebPages
                                 CswNbtMetaDataNodeTypeProp VendorNameNTP = VendorNT.getNodeTypeProp( "Vendor Name" );
                                 if( VendorNameNTP != null )
                                 {
-                                    foreach( CswNbtNode ExistingVendorNode in VendorNT.getNodes( true, true ) ) // force update to get new ones as we add them
+                                    foreach( CswNbtNode ExistingVendorNode in VendorNT.getNodes( true, true ) )  // force update to get new ones as we add them
                                     {
                                         if( ExistingVendorNode.NodeName.ToLower().Trim() == FEManufacturer.ToLower().Trim() )
                                         {
@@ -342,33 +359,28 @@ namespace ChemSW.Nbt.WebPages
 
                             CswNbtNode FloorNode = null;
                             if( FloorName != string.Empty )
-                            {
                                 FloorNode = _HandleBuilding( FloorNT, FloorName, BuildingNode, _HandleBuildingLevel.Floor );
-                            }
 
                             CswNbtNode RoomNode = null;
                             if( RoomName != null )
                             {
                                 if( FloorNode != null )
-                                {
                                     RoomNode = _HandleBuilding( RoomNT, RoomName, FloorNode, _HandleBuildingLevel.Room );
-                                }
                                 else
-                                {
                                     RoomNode = _HandleBuilding( RoomNT, RoomName, BuildingNode, _HandleBuildingLevel.Room );
-                                }
                             }
                             // Mount Point Group
                             CswNbtNode MountPointGroupNode = null;
                             if( MountPointGroup != string.Empty )
                             {
-                                foreach( CswNbtNode ExistingMountPointGroupNode in MountPointGroupNT.getNodes( true, true ) ) // force update to get new ones as we add them
+                                foreach( CswNbtNode ExistingMountPointGroupNode in MountPointGroupNT.getNodes( true, true ) )  // force update to get new ones as we add them
                                 {
                                     if( CswNbtNodeCaster.AsMountPointGroup( ExistingMountPointGroupNode ).Name.Text.ToLower().Trim() == MountPointGroup.ToLower().Trim() )
                                     {
                                         MountPointGroupNode = ExistingMountPointGroupNode;
                                         break;
                                     }
+
                                 }
                                 if( null == MountPointGroupNode )
                                 {
@@ -378,6 +390,10 @@ namespace ChemSW.Nbt.WebPages
                                 }
 
                             } // if( MountPointGroup != string.Empty )
+                            else
+                            {
+                                // will use the default value for mount point group on mount point creation
+                            }
 
                             // Mount Point
                             CswNbtMetaDataNodeTypeProp MPLegacyBarcodeNTP = null;
@@ -417,9 +433,7 @@ namespace ChemSW.Nbt.WebPages
                                 MountPointNode.Properties[MPLegacyBarcodeNTP].AsText.Text = MountPointBarcode;
                             }
                             else
-                            {
                                 MountPointAsMP.Barcode.setBarcodeValueOverride( MountPointBarcode, true );
-                            }
 
                             MountPointAsMP.Description.Text = MountPointDescription;
                             MountPointAsMP.LastInspectionDate.DateValue = LastInspectionDate;
@@ -429,9 +443,7 @@ namespace ChemSW.Nbt.WebPages
                             MountPointAsMP.Status.Value = TargetStatusString;
                             //CswNbtMetaDataNodeTypeProp MountPointGroupNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.MountPointGroupPropertyName );
                             if( null != MountPointGroupNode )
-                            {
                                 MountPointAsMP.MountPointGroup.RelatedNodeId = MountPointGroupNode.NodeId;
-                            }
                             MountPointNode.postChanges( false );
 
 
@@ -473,24 +485,22 @@ namespace ChemSW.Nbt.WebPages
                                         //if( ExistingBarcode >= FeBarcodeVal )
                                         //    FeBarcodeVal = ExistingBarcode + 1;
                                     }
-                                } // if( FireExtNT != null && ( FEDescription != string.Empty || FEBarcode != string.Empty || FEManufacturer != string.Empty || FEModel != string.Empty || FESize != string.Empty ) )
-
+                                } 
+                                
                                 FENode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( FireExtNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                                 CswNbtObjClassFireExtinguisher FENodeAsFE = CswNbtNodeCaster.AsFireExtinguisher( FENode );
 
                                 if( feBarcodeExists )
-                                {
+                                {    
                                     FENode.Properties[FELegacyBarcodeNTP].AsText.Text = FEBarcode;
                                     FENode.Properties[BarcodeNTP].AsBarcode.setBarcodeValue();
                                 }
                                 else
-                                {
                                     FENode.Properties[BarcodeNTP].AsBarcode.setBarcodeValueOverride( FEBarcode, true );
-                                }
-
+                               
                                 FENodeAsFE.Description.Text = FEDescription;
                                 FENodeAsFE.LastInspectionDate.DateValue = LastInspectionDate;
-                                FENodeAsFE.Status.Value = TargetStatusString;
+                                FENodeAsFE.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( TargetStatus );
                                 FENodeAsFE.MountPoint.RelatedNodeId = MountPointNode.NodeId;
                                 FENodeAsFE.Type.Value = Type;
 
@@ -530,60 +540,63 @@ namespace ChemSW.Nbt.WebPages
                                 NodeKeysToInclude.Add( FEManufacturerNode.NodeId );
                             if( FENode != null && !NodeKeysToInclude.Contains( FENode.NodeId ) )
                                 NodeKeysToInclude.Add( FENode.NodeId );
-                        } // if( BuildingName != string.Empty && RoomName != string.Empty && MountPointDescription != string.Empty )
 
-                        CswNbtView NewNodesView = new CswNbtView( Master.CswNbtResources );
-                        if( !hasLegacyBarcode )
-                        {
-                            NewNodesView.ViewName = "New Locations";
-                            CswNbtViewRelationship BuildingRel = NewNodesView.AddViewRelationship( BuildingNT, false );
-                            CswNbtViewRelationship FloorRel = NewNodesView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, FloorLocationNTP, false );
-                            CswNbtViewRelationship RoomRelFloor = NewNodesView.AddViewRelationship( FloorRel, CswNbtViewRelationship.PropOwnerType.Second, RoomLocationNTP, false );
-                            CswNbtViewRelationship RoomRelBuilding = NewNodesView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, RoomLocationNTP, false );
-                            CswNbtViewRelationship MountPointRel1 = NewNodesView.AddViewRelationship( RoomRelFloor, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationNTP, false );
-                            CswNbtViewRelationship MountPointRel2 = NewNodesView.AddViewRelationship( RoomRelBuilding, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationNTP, false );
-                            CswNbtViewRelationship FERel1 = NewNodesView.AddViewRelationship( MountPointRel1, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
-                            CswNbtViewRelationship FERel2 = NewNodesView.AddViewRelationship( MountPointRel2, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
+                        } // if( BuildingName != string.Empty )
+                        
+                    } // foreach(DataRow Row in ExcelData.Rows)
 
-                            BuildingRel.NodeIdsToFilterIn = NodeKeysToInclude;
-                            FloorRel.NodeIdsToFilterIn = NodeKeysToInclude;
-                            RoomRelFloor.NodeIdsToFilterIn = NodeKeysToInclude;
-                            RoomRelBuilding.NodeIdsToFilterIn = NodeKeysToInclude;
-                            MountPointRel1.NodeIdsToFilterIn = NodeKeysToInclude;
-                            MountPointRel2.NodeIdsToFilterIn = NodeKeysToInclude;
-                            FERel1.NodeIdsToFilterIn = NodeKeysToInclude;
-                            FERel2.NodeIdsToFilterIn = NodeKeysToInclude;
-                        } // if( !hasLegacyBarcode )
-                        else
-                        {
-                            NewNodesView.ViewName = "Import Results";
-                            NewNodesView.ViewMode = NbtViewRenderingMode.Grid;
-                            NewNodesView.Width = 150;
-                            CswNbtViewRelationship MountPointRel = NewNodesView.AddViewRelationship( MountPointNT, false );
-                            CswNbtMetaDataNodeTypeProp MpLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
-                            CswNbtMetaDataNodeTypeProp MpStatusNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.StatusPropertyName );
-                            CswNbtMetaDataNodeTypeProp MpTypeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.TypePropertyName );
-                            CswNbtMetaDataNodeTypeProp MpBarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
-                            CswNbtMetaDataNodeTypeProp MpLegacyBarcodeNTP = MountPointNT.getNodeTypeProp( MpLegacyBarcodeName );
-                            CswNbtViewProperty MpTypeProp = NewNodesView.AddViewProperty( MountPointRel, MpTypeNTP );
-                            CswNbtViewProperty MpStatusProp = NewNodesView.AddViewProperty( MountPointRel, MpStatusNTP );
-                            CswNbtViewProperty MpLocationProp = NewNodesView.AddViewProperty( MountPointRel, MpLocationNTP );
-                            CswNbtViewProperty MpBarcodeProp = NewNodesView.AddViewProperty( MountPointRel, MpBarcodeNTP );
-                            CswNbtViewProperty MpLegacyBarProp = NewNodesView.AddViewProperty( MountPointRel, MpLegacyBarcodeNTP );
-                            //CswNbtViewRelationship FireExtRel = NewNodesView.AddViewRelationship( MountPointRel, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
-                            //CswNbtMetaDataNodeTypeProp FeBarcodeNTP = FireExtNT.getNodeTypeProp( FeBarcodeName );
-                            //CswNbtMetaDataNodeTypeProp FeLegacyBarNTP = FireExtNT.getNodeTypeProp( FeLegacyBarcodeName );
-                            //CswNbtViewProperty FeBarcodeProp = NewNodesView.AddViewProperty( FireExtRel, FeBarcodeNTP );
-                            //CswNbtViewProperty FeLegacyBarProp = NewNodesView.AddViewProperty( FireExtRel, FeLegacyBarNTP );
+                    CswNbtView NewNodesView = new CswNbtView( Master.CswNbtResources );
+                    if( !hasLegacyBarcode )
+                    {
+                        NewNodesView.ViewName = "New Locations";
+                        CswNbtViewRelationship BuildingRel = NewNodesView.AddViewRelationship( BuildingNT, false );
+                        CswNbtViewRelationship FloorRel = NewNodesView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, FloorLocationNTP, false );
+                        CswNbtViewRelationship RoomRelFloor = NewNodesView.AddViewRelationship( FloorRel, CswNbtViewRelationship.PropOwnerType.Second, RoomLocationNTP, false );
+                        CswNbtViewRelationship RoomRelBuilding = NewNodesView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, RoomLocationNTP, false );
+                        CswNbtViewRelationship MountPointRel1 = NewNodesView.AddViewRelationship( RoomRelFloor, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationNTP, false );
+                        CswNbtViewRelationship MountPointRel2 = NewNodesView.AddViewRelationship( RoomRelBuilding, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationNTP, false );
+                        CswNbtViewRelationship FERel1 = NewNodesView.AddViewRelationship( MountPointRel1, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
+                        CswNbtViewRelationship FERel2 = NewNodesView.AddViewRelationship( MountPointRel2, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
 
-                            MountPointRel.NodeIdsToFilterIn = NodeKeysToInclude;
-                            //FireExtRel.NodeIdsToFilterIn = NodeKeysToInclude;
-                        }
-
-                        NewNodesView.SaveToCache();
-                        Master.setSessionViewId( NewNodesView.SessionViewId );
-                        Master.Redirect( "Main.aspx" );
+                        BuildingRel.NodeIdsToFilterIn = NodeKeysToInclude;
+                        FloorRel.NodeIdsToFilterIn = NodeKeysToInclude;
+                        RoomRelFloor.NodeIdsToFilterIn = NodeKeysToInclude;
+                        RoomRelBuilding.NodeIdsToFilterIn = NodeKeysToInclude;
+                        MountPointRel1.NodeIdsToFilterIn = NodeKeysToInclude;
+                        MountPointRel2.NodeIdsToFilterIn = NodeKeysToInclude;
+                        FERel1.NodeIdsToFilterIn = NodeKeysToInclude;
+                        FERel2.NodeIdsToFilterIn = NodeKeysToInclude;
                     }
+                    else
+                    {
+                        NewNodesView.ViewName = "Import Results";
+                        NewNodesView.ViewMode = NbtViewRenderingMode.Grid;
+                        NewNodesView.Width = 150;
+                        CswNbtViewRelationship MountPointRel = NewNodesView.AddViewRelationship( MountPointNT, false );
+                        CswNbtMetaDataNodeTypeProp MpLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
+                        CswNbtMetaDataNodeTypeProp MpStatusNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.StatusPropertyName );
+                        CswNbtMetaDataNodeTypeProp MpTypeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.TypePropertyName );
+                        CswNbtMetaDataNodeTypeProp MpBarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
+                        CswNbtMetaDataNodeTypeProp MpLegacyBarcodeNTP = MountPointNT.getNodeTypeProp( MpLegacyBarcodeName );
+                        CswNbtViewProperty MpTypeProp = NewNodesView.AddViewProperty( MountPointRel, MpTypeNTP );
+                        CswNbtViewProperty MpStatusProp = NewNodesView.AddViewProperty( MountPointRel, MpStatusNTP );
+                        CswNbtViewProperty MpLocationProp = NewNodesView.AddViewProperty( MountPointRel, MpLocationNTP );
+                        CswNbtViewProperty MpBarcodeProp = NewNodesView.AddViewProperty( MountPointRel, MpBarcodeNTP );
+                        CswNbtViewProperty MpLegacyBarProp = NewNodesView.AddViewProperty( MountPointRel, MpLegacyBarcodeNTP );
+                        //CswNbtViewRelationship FireExtRel = NewNodesView.AddViewRelationship( MountPointRel, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
+                        //CswNbtMetaDataNodeTypeProp FeBarcodeNTP = FireExtNT.getNodeTypeProp( FeBarcodeName );
+                        //CswNbtMetaDataNodeTypeProp FeLegacyBarNTP = FireExtNT.getNodeTypeProp( FeLegacyBarcodeName );
+                        //CswNbtViewProperty FeBarcodeProp = NewNodesView.AddViewProperty( FireExtRel, FeBarcodeNTP );
+                        //CswNbtViewProperty FeLegacyBarProp = NewNodesView.AddViewProperty( FireExtRel, FeLegacyBarNTP );
+
+                        MountPointRel.NodeIdsToFilterIn = NodeKeysToInclude;
+                        //FireExtRel.NodeIdsToFilterIn = NodeKeysToInclude;
+                    }
+
+                    NewNodesView.SaveToCache();
+                    Master.setSessionViewId( NewNodesView.SessionViewId );
+                    Master.Redirect( "Main.aspx" );
+
                 } // if nodetypes exist
             }
             catch( Exception ex )
@@ -619,22 +632,22 @@ namespace ChemSW.Nbt.WebPages
         //    return ret;
         //} // _GetStatus()
         private enum _HandleBuildingLevel { Building, Floor, Room };
-        private CswNbtNode _HandleBuilding( CswNbtMetaDataNodeType LocationNT, string LocationName,
+        private CswNbtNode _HandleBuilding( CswNbtMetaDataNodeType LocationNT, string LocationName, 
                                             CswNbtNode ParentNode, _HandleBuildingLevel Level )
         {
             CswNbtNode ThisNode = null;
 
-            foreach( CswNbtNode ExistingNode in LocationNT.getNodes( true, true ) )   // force update to get new ones as we add them
-            {
-                if( ( Level == _HandleBuildingLevel.Building &&
-                      CswNbtNodeCaster.AsLocation( ExistingNode ).Name.Text.ToLower().Trim() == LocationName.ToLower().Trim() ) ||
-                    ( ( Level == _HandleBuildingLevel.Floor || Level == _HandleBuildingLevel.Room ) &&
-                      CswNbtNodeCaster.AsLocation( ExistingNode ).Location.SelectedNodeId == ParentNode.NodeId &&
-                      CswNbtNodeCaster.AsLocation( ExistingNode ).Name.Text.ToLower().Trim() == LocationName.ToLower().Trim() ) )
+                foreach( CswNbtNode ExistingNode in LocationNT.getNodes( true, true ) )   // force update to get new ones as we add them
                 {
-                    ThisNode = ExistingNode;
-                    break;
-                }
+                    if( ( Level == _HandleBuildingLevel.Building &&
+                          CswNbtNodeCaster.AsLocation( ExistingNode ).Name.Text.ToLower().Trim() == LocationName.ToLower().Trim() ) ||
+                        ( ( Level == _HandleBuildingLevel.Floor || Level == _HandleBuildingLevel.Room ) &&
+                          CswNbtNodeCaster.AsLocation( ExistingNode ).Location.SelectedNodeId == ParentNode.NodeId &&
+                          CswNbtNodeCaster.AsLocation( ExistingNode ).Name.Text.ToLower().Trim() == LocationName.ToLower().Trim() ) )
+                    {
+                        ThisNode = ExistingNode;
+                        break;
+                    }
             }
             if( ThisNode == null )
             {
