@@ -16,7 +16,7 @@
             MainPageUrl: '/NbtWebApp/Mobile.html',
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             Theme: 'a',
-            PollingInterval: 5000,
+            PollingInterval: 30000,
             DivRemovalDelay: 1000,
             RandomConnectionFailure: false
         };
