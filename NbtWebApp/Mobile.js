@@ -442,9 +442,6 @@
             var nextid = $xmlitem.next().attr('id');
             var previd = $xmlitem.prev().attr('id');
 
-            var currentcnt = $xmlitem.prevAll().andSelf().length;
-            var siblingcnt = $xmlitem.siblings().andSelf().length;
-
             var lihtml = '';
             switch (PageType)
             {
@@ -461,6 +458,9 @@
                     var fieldtype = $xmlitem.attr('fieldtype');
                     var gestalt = $xmlitem.attr('gestalt');
                     if (gestalt == 'NaN') gestalt = '';
+
+                    var currentcnt = $xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
+                    var siblingcnt = $xmlitem.siblings('[fieldtype="'+fieldtype+'"]').andSelf().length;
 
                     if (currenttab != tab)
                     {
@@ -529,7 +529,8 @@
                         toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-back="true">Previous</a>';
                     if (nextid != undefined)
                         toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
-                    toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
+                    if(fieldtype == "Question")
+                        toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
                     _addPageDivToBody({
                         ParentId: DivId,
