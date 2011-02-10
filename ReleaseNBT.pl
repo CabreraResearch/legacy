@@ -127,10 +127,15 @@ printf("Step 4: Copy install files to Install repository\n");
 
 copy("c:/kiln/nbt/nbt/NbtSetup/Release/NbtSetup.msi", "c:/kiln/Install/nbt/NbtSetup.msi")
 	or printf("Could not copy c:/kiln/nbt/nbt/NbtSetup/bin/Release/NbtSetup.msi to c:/kiln/Install/nbt/NbtSetup.msi: $!\n");
+
 copy("c:/kiln/nbt/nbt/NbtSetup/Release/setup.exe", "c:/kiln/Install/nbt/setup.exe")
 	or printf("Could not copy c:/kiln/nbt/nbt/NbtSetup/bin/Release/setup.exe to c:/kiln/Install/nbt/setup.exe: $!\n");
-copy("c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master.dmp", "c:/kiln/Install/Nbt/Schema/Nbt_Master.dmp")
-	or printf("Could not copy c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master.dmp to c:/kiln/Install/Nbt/Schema/Nbt_Master.dmp: $!\n");
+
+copy("c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master_11g.dmp", "c:/kiln/Install/Nbt/Schema/Nbt_Master_11g.dmp")
+	or printf("Could not copy c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master_11g.dmp to c:/kiln/Install/Nbt/Schema/Nbt_Master_11g.dmp: $!\n");
+
+copy("c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master_10g.dmp", "c:/kiln/Install/Nbt/Schema/Nbt_Master_10g.dmp")
+	or printf("Could not copy c:/kiln/nbt/nbt/Schema/Dumps/Nbt_Master_10g.dmp to c:/kiln/Install/Nbt/Schema/Nbt_Master_10g.dmp: $!\n");
 
 &checkContinue;
 
