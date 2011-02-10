@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
             var PiSetupTab = PhysicalInspectionNT.getNodeTypeTab( "Setup" );
             if( null != PiSetupTab )
             {
-                PiSetupTab.TabName = "Detail";
+                PiSetupTab.TabName = "Details";
                 PiSetupTab.TabOrder = 3;
             }
 
