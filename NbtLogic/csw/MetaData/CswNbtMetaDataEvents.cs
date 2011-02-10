@@ -221,9 +221,9 @@ namespace ChemSW.Nbt.MetaData
                 // Set nametemplate = Name + Date
                 NewNodeType.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( NameProp.PropName.ToString() ) + " " + CswNbtMetaData.MakeTemplateEntry( DateProp.PropName.ToString() );
 
-                // Set first tab to be "Setup"
+                // Set first tab to be "Details"
                 CswNbtMetaDataNodeTypeTab FirstTab = NewNodeType.getFirstNodeTypeTab();
-                FirstTab.TabName = "Setup";
+                FirstTab.TabName = "Details";
                 FirstTab.TabOrder = 10;
                 FirstTab.IncludeInNodeReport = false;
 
