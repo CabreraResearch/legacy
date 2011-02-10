@@ -71,8 +71,8 @@ namespace ChemSW.Nbt.Schema
 					var PiSetupTab = LatestVersionInspectionNT.getNodeTypeTab( "Setup" );
 					if( null != PiSetupTab )
 					{
-					  PiSetupTab.TabName = "Details";
-					  PiSetupTab.TabOrder = 3;
+					    PiSetupTab.TabName = "Details";
+					    PiSetupTab.TabOrder = 10;
 					}
 
 				} // if( !InspectionNT.IsLocked )
