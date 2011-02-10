@@ -146,38 +146,38 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 _AnswerList.CssClass = CswFieldTypeWebControl.ListOptionTextField;
                 TopTable.addControl( 1, 1, _AnswerList );
 
+                _CorrectiveActionTextName = new CswLiteralText( "Corrective Action: " );
+                TopTable.addControl( 2, 0, _CorrectiveActionTextName );
+
+                _CorrectiveActionText = new TextBox();
+                _CorrectiveActionText.ID = "actn";
+                _CorrectiveActionText.CssClass = CswFieldTypeWebControl.TextBoxCssClass;
+                _CorrectiveActionText.Width = 200;
+                TopTable.addControl( 2, 1, _CorrectiveActionText );
+
                 _CommentsTextName = new CswLiteralText( "Comments: " );
-                TopTable.addControl( 2, 0, _CommentsTextName );
+                TopTable.addControl( 3, 0, _CommentsTextName );
 
                 _CommentsText = new TextBox();
                 _CommentsText.ID = "comm";
                 _CommentsText.Width = 200;
                 _CommentsText.CssClass = CswFieldTypeWebControl.TextBoxCssClass;
                 _CommentsText.TextMode = TextBoxMode.MultiLine;
-                TopTable.addControl( 2, 1, _CommentsText );
-
-                _CorrectiveActionTextName = new CswLiteralText( "Corrective Action: " );
-                TopTable.addControl( 4, 0, _CorrectiveActionTextName );
-
-                _CorrectiveActionText = new TextBox();
-                _CorrectiveActionText.ID = "actn";
-                _CorrectiveActionText.CssClass = CswFieldTypeWebControl.TextBoxCssClass;
-                _CorrectiveActionText.Width = 200;
-                TopTable.addControl( 4, 1, _CorrectiveActionText );
+                TopTable.addControl( 3, 1, _CommentsText );
 
                 _CorrectedDateName = new CswLiteralText( "Date Corrected: " );
-                TopTable.addControl( 5, 0, _CorrectedDateName );
+                TopTable.addControl( 4, 0, _CorrectedDateName );
 
                 _CorrectedDate = new Literal();
                 _CorrectedDate.ID = "crctd";
-                TopTable.addControl( 5, 1, _CorrectedDate );
+                TopTable.addControl( 4, 1, _CorrectedDate );
 
                 _AnsweredDateName = new CswLiteralText( "Date Answered: " );
-                TopTable.addControl( 6, 0, _AnsweredDateName );
+                TopTable.addControl( 5, 0, _AnsweredDateName );
 
                 _AnsweredDate = new Literal();
                 _AnsweredDate.ID = "answd";
-                TopTable.addControl( 6, 1, _AnsweredDate );
+                TopTable.addControl( 5, 1, _AnsweredDate );
             }
             catch ( Exception ex )
             {

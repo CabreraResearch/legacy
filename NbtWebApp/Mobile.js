@@ -16,7 +16,7 @@
             MainPageUrl: '/NbtWebApp/Mobile.html',
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             Theme: 'a',
-            PollingInterval: 5000,
+            PollingInterval: 30000,
             DivRemovalDelay: 1000,
             RandomConnectionFailure: false
         };
@@ -442,9 +442,6 @@
             var nextid = $xmlitem.next().attr('id');
             var previd = $xmlitem.prev().attr('id');
 
-            var currentcnt = $xmlitem.prevAll().andSelf().length;
-            var siblingcnt = $xmlitem.siblings().andSelf().length;
-
             var lihtml = '';
             switch (PageType)
             {
@@ -461,6 +458,9 @@
                     var fieldtype = $xmlitem.attr('fieldtype');
                     var gestalt = $xmlitem.attr('gestalt');
                     if (gestalt == 'NaN') gestalt = '';
+
+                    var currentcnt = $xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
+                    var siblingcnt = $xmlitem.siblings('[fieldtype="'+fieldtype+'"]').andSelf().length;
 
                     if (currenttab != tab)
                     {
@@ -529,7 +529,8 @@
                         toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-back="true">Previous</a>';
                     if (nextid != undefined)
                         toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
-                    toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
+                    if(fieldtype == "Question")
+                        toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
 
                     _addPageDivToBody({
                         ParentId: DivId,
@@ -585,6 +586,7 @@
                     var DueDate = $xmlitem.find('prop[ocpname="Due Date"]').attr('gestalt');
                     var Location = $xmlitem.find('prop[ocpname="Location"]').attr('gestalt');
                     var MountPoint = $xmlitem.find('prop[ocpname="Target"]').attr('gestalt');
+                    var Status = $xmlitem.find('prop[ocpname="Status"]').attr('gestalt');
                     var UnansweredCnt = 0;
                     $xmlitem.find('prop[fieldtype="Question"]').each(function ()
                     {
@@ -600,7 +602,7 @@
                     Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
                     Html += '<p>' + Location + '</p>';
                     Html += '<p>' + MountPoint + '</p>';
-                    Html += '<p>Due: ' + DueDate + '</p>';
+                    Html += '<p>'+ Status + ', Due: ' + DueDate + '</p>';
                     Html += '<span id="' + id + '_unansweredcnt" class="ui-li-count">' + UnansweredCnt + '</span>';
                     Html += '</li>';
                     break;
@@ -750,10 +752,6 @@
                     case "Question":
                         Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
 
-                        Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
-                        Html += sf_comments
-                        Html += '</textarea>';
-
                         Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
                         if (sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
                             Html += 'style="display: none"';
@@ -769,6 +767,11 @@
                         Html += '">';
                         Html += sf_correctiveaction;
                         Html += '</textarea>';
+
+                        Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
+                        Html += sf_comments
+                        Html += '</textarea>';
+
                         break;
 
                     case "Static":
