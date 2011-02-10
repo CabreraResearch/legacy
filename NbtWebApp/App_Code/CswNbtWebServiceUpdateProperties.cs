@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Web;
 using System.Web.Services;
 using ChemSW.Core;
@@ -30,6 +31,10 @@ namespace ChemSW.Nbt.WebServices
             XmlDoc.LoadXml( UpdatedViewXml );
 
             XmlNodeList PropNodes = XmlDoc.SelectNodes( "//prop[@wasmodified='1']" );
+
+            // post changes once per node, not once per prop            
+            Collection<CswNbtNode> NodesToPost = new Collection<CswNbtNode>();
+
             foreach( XmlNode PropNode in PropNodes )
             {
                 string NodePropId = PropNode.Attributes["id"].Value;
@@ -40,11 +45,16 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtNode Node = _CswNbtWebServiceResources.CswNbtResources.Nodes[NodePk];
                 CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
                 Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
-                Node.postChanges( false );
+
+                if( !NodesToPost.Contains( Node ) )
+                    NodesToPost.Add( Node );
             }
 
+            foreach( CswNbtNode Node in NodesToPost )
+                Node.postChanges( false );
+
             // return the refreshed view
-            CswNbtWebServiceView ViewService = new CswNbtWebServiceView(_CswNbtWebServiceResources);
+            CswNbtWebServiceView ViewService = new CswNbtWebServiceView( _CswNbtWebServiceResources );
             return ViewService.Run( ParentId );
 
         } // Run()
