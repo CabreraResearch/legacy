@@ -1,14 +1,15 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Web.UI.WebControls;
-using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Exceptions;
-using ChemSW.CswWebControls;
 using System.Data.OleDb;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Exceptions;
+using ChemSW.Core;
+using ChemSW.CswWebControls;
 using Telerik.Web.UI;
+using System.Collections.ObjectModel;
+using System.Collections;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -531,59 +532,60 @@ namespace ChemSW.Nbt.WebPages
                             if( FENode != null && !NodeKeysToInclude.Contains( FENode.NodeId ) )
                                 NodeKeysToInclude.Add( FENode.NodeId );
                         } // if( BuildingName != string.Empty && RoomName != string.Empty && MountPointDescription != string.Empty )
+                    } //foreach( DataRow Row in ExcelData.Rows )
 
-                        CswNbtView NewNodesView = new CswNbtView( Master.CswNbtResources );
-                        if( !hasLegacyBarcode )
-                        {
-                            NewNodesView.ViewName = "New Locations";
-                            CswNbtViewRelationship BuildingRel = NewNodesView.AddViewRelationship( BuildingNT, false );
-                            CswNbtViewRelationship FloorRel = NewNodesView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, FloorLocationNTP, false );
-                            CswNbtViewRelationship RoomRelFloor = NewNodesView.AddViewRelationship( FloorRel, CswNbtViewRelationship.PropOwnerType.Second, RoomLocationNTP, false );
-                            CswNbtViewRelationship RoomRelBuilding = NewNodesView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, RoomLocationNTP, false );
-                            CswNbtViewRelationship MountPointRel1 = NewNodesView.AddViewRelationship( RoomRelFloor, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationNTP, false );
-                            CswNbtViewRelationship MountPointRel2 = NewNodesView.AddViewRelationship( RoomRelBuilding, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationNTP, false );
-                            CswNbtViewRelationship FERel1 = NewNodesView.AddViewRelationship( MountPointRel1, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
-                            CswNbtViewRelationship FERel2 = NewNodesView.AddViewRelationship( MountPointRel2, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
+                    CswNbtView NewNodesView = new CswNbtView( Master.CswNbtResources );
+                    if( !hasLegacyBarcode )
+                    {
+                        NewNodesView.ViewName = "New Locations";
+                        CswNbtViewRelationship BuildingRel = NewNodesView.AddViewRelationship( BuildingNT, false );
+                        CswNbtViewRelationship FloorRel = NewNodesView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, FloorLocationNTP, false );
+                        CswNbtViewRelationship RoomRelFloor = NewNodesView.AddViewRelationship( FloorRel, CswNbtViewRelationship.PropOwnerType.Second, RoomLocationNTP, false );
+                        CswNbtViewRelationship RoomRelBuilding = NewNodesView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, RoomLocationNTP, false );
+                        CswNbtViewRelationship MountPointRel1 = NewNodesView.AddViewRelationship( RoomRelFloor, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationNTP, false );
+                        CswNbtViewRelationship MountPointRel2 = NewNodesView.AddViewRelationship( RoomRelBuilding, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationNTP, false );
+                        CswNbtViewRelationship FERel1 = NewNodesView.AddViewRelationship( MountPointRel1, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
+                        CswNbtViewRelationship FERel2 = NewNodesView.AddViewRelationship( MountPointRel2, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
 
-                            BuildingRel.NodeIdsToFilterIn = NodeKeysToInclude;
-                            FloorRel.NodeIdsToFilterIn = NodeKeysToInclude;
-                            RoomRelFloor.NodeIdsToFilterIn = NodeKeysToInclude;
-                            RoomRelBuilding.NodeIdsToFilterIn = NodeKeysToInclude;
-                            MountPointRel1.NodeIdsToFilterIn = NodeKeysToInclude;
-                            MountPointRel2.NodeIdsToFilterIn = NodeKeysToInclude;
-                            FERel1.NodeIdsToFilterIn = NodeKeysToInclude;
-                            FERel2.NodeIdsToFilterIn = NodeKeysToInclude;
-                        } // if( !hasLegacyBarcode )
-                        else
-                        {
-                            NewNodesView.ViewName = "Import Results";
-                            NewNodesView.ViewMode = NbtViewRenderingMode.Grid;
-                            NewNodesView.Width = 150;
-                            CswNbtViewRelationship MountPointRel = NewNodesView.AddViewRelationship( MountPointNT, false );
-                            CswNbtMetaDataNodeTypeProp MpLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
-                            CswNbtMetaDataNodeTypeProp MpStatusNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.StatusPropertyName );
-                            CswNbtMetaDataNodeTypeProp MpTypeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.TypePropertyName );
-                            CswNbtMetaDataNodeTypeProp MpBarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
-                            CswNbtMetaDataNodeTypeProp MpLegacyBarcodeNTP = MountPointNT.getNodeTypeProp( MpLegacyBarcodeName );
-                            CswNbtViewProperty MpTypeProp = NewNodesView.AddViewProperty( MountPointRel, MpTypeNTP );
-                            CswNbtViewProperty MpStatusProp = NewNodesView.AddViewProperty( MountPointRel, MpStatusNTP );
-                            CswNbtViewProperty MpLocationProp = NewNodesView.AddViewProperty( MountPointRel, MpLocationNTP );
-                            CswNbtViewProperty MpBarcodeProp = NewNodesView.AddViewProperty( MountPointRel, MpBarcodeNTP );
-                            CswNbtViewProperty MpLegacyBarProp = NewNodesView.AddViewProperty( MountPointRel, MpLegacyBarcodeNTP );
-                            //CswNbtViewRelationship FireExtRel = NewNodesView.AddViewRelationship( MountPointRel, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
-                            //CswNbtMetaDataNodeTypeProp FeBarcodeNTP = FireExtNT.getNodeTypeProp( FeBarcodeName );
-                            //CswNbtMetaDataNodeTypeProp FeLegacyBarNTP = FireExtNT.getNodeTypeProp( FeLegacyBarcodeName );
-                            //CswNbtViewProperty FeBarcodeProp = NewNodesView.AddViewProperty( FireExtRel, FeBarcodeNTP );
-                            //CswNbtViewProperty FeLegacyBarProp = NewNodesView.AddViewProperty( FireExtRel, FeLegacyBarNTP );
+                        BuildingRel.NodeIdsToFilterIn = NodeKeysToInclude;
+                        FloorRel.NodeIdsToFilterIn = NodeKeysToInclude;
+                        RoomRelFloor.NodeIdsToFilterIn = NodeKeysToInclude;
+                        RoomRelBuilding.NodeIdsToFilterIn = NodeKeysToInclude;
+                        MountPointRel1.NodeIdsToFilterIn = NodeKeysToInclude;
+                        MountPointRel2.NodeIdsToFilterIn = NodeKeysToInclude;
+                        FERel1.NodeIdsToFilterIn = NodeKeysToInclude;
+                        FERel2.NodeIdsToFilterIn = NodeKeysToInclude;
+                    } // if( !hasLegacyBarcode )
+                    else
+                    {
+                        NewNodesView.ViewName = "Import Results";
+                        NewNodesView.ViewMode = NbtViewRenderingMode.Grid;
+                        NewNodesView.Width = 150;
+                        CswNbtViewRelationship MountPointRel = NewNodesView.AddViewRelationship( MountPointNT, false );
+                        CswNbtMetaDataNodeTypeProp MpLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
+                        CswNbtMetaDataNodeTypeProp MpStatusNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.StatusPropertyName );
+                        CswNbtMetaDataNodeTypeProp MpTypeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.TypePropertyName );
+                        CswNbtMetaDataNodeTypeProp MpBarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
+                        CswNbtMetaDataNodeTypeProp MpLegacyBarcodeNTP = MountPointNT.getNodeTypeProp( MpLegacyBarcodeName );
+                        CswNbtViewProperty MpTypeProp = NewNodesView.AddViewProperty( MountPointRel, MpTypeNTP );
+                        CswNbtViewProperty MpStatusProp = NewNodesView.AddViewProperty( MountPointRel, MpStatusNTP );
+                        CswNbtViewProperty MpLocationProp = NewNodesView.AddViewProperty( MountPointRel, MpLocationNTP );
+                        CswNbtViewProperty MpBarcodeProp = NewNodesView.AddViewProperty( MountPointRel, MpBarcodeNTP );
+                        CswNbtViewProperty MpLegacyBarProp = NewNodesView.AddViewProperty( MountPointRel, MpLegacyBarcodeNTP );
+                        //CswNbtViewRelationship FireExtRel = NewNodesView.AddViewRelationship( MountPointRel, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
+                        //CswNbtMetaDataNodeTypeProp FeBarcodeNTP = FireExtNT.getNodeTypeProp( FeBarcodeName );
+                        //CswNbtMetaDataNodeTypeProp FeLegacyBarNTP = FireExtNT.getNodeTypeProp( FeLegacyBarcodeName );
+                        //CswNbtViewProperty FeBarcodeProp = NewNodesView.AddViewProperty( FireExtRel, FeBarcodeNTP );
+                        //CswNbtViewProperty FeLegacyBarProp = NewNodesView.AddViewProperty( FireExtRel, FeLegacyBarNTP );
 
-                            MountPointRel.NodeIdsToFilterIn = NodeKeysToInclude;
-                            //FireExtRel.NodeIdsToFilterIn = NodeKeysToInclude;
-                        }
-
-                        NewNodesView.SaveToCache();
-                        Master.setSessionViewId( NewNodesView.SessionViewId );
-                        Master.Redirect( "Main.aspx" );
+                        MountPointRel.NodeIdsToFilterIn = NodeKeysToInclude;
+                        //FireExtRel.NodeIdsToFilterIn = NodeKeysToInclude;
                     }
+
+                    NewNodesView.SaveToCache();
+                    Master.setSessionViewId( NewNodesView.SessionViewId );
+                    Master.Redirect( "Main.aspx" );
+
                 } // if nodetypes exist
             }
             catch( Exception ex )
