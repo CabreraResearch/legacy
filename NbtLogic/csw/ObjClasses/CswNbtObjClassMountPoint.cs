@@ -48,59 +48,61 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
-            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-            CswNbtNode MountPointGroupNode = _CswNbtResources.Nodes.GetNode( this.MountPointGroup.RelatedNodeId );
+            // Case 20947: We don't want to create past inspections automatically (for now). Maybe this should be configurable later?
 
-            if( null != MountPointGroupNode )
-            {
-                CswNbtView SchedulesView = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship GeneratorRelationship = SchedulesView.AddViewRelationship( GeneratorOC, false );
-                CswNbtViewProperty OwnerProperty = SchedulesView.AddViewProperty( GeneratorRelationship, GeneratorOC.getObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName ) );
-                CswNbtViewPropertyFilter OwnerPropFilter = SchedulesView.AddViewPropertyFilter( OwnerProperty, 
-                                                                                                CswNbtSubField.SubFieldName.NodeID, 
-                                                                                                CswNbtPropFilterSql.PropertyFilterMode.Equals, 
-                                                                                                MountPointGroupNode.NodeId.PrimaryKey.ToString(), 
-                                                                                                false );
-                ICswNbtTree SchedulesTree = _CswNbtResources.Trees.getTreeFromView( SchedulesView, true, true, false, false );
-                SchedulesTree.goToRoot();
+            //CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            //CswNbtNode MountPointGroupNode = _CswNbtResources.Nodes.GetNode( this.MountPointGroup.RelatedNodeId );
+
+            //if( null != MountPointGroupNode )
+            //{
+            //    CswNbtView SchedulesView = new CswNbtView( _CswNbtResources );
+            //    CswNbtViewRelationship GeneratorRelationship = SchedulesView.AddViewRelationship( GeneratorOC, false );
+            //    CswNbtViewProperty OwnerProperty = SchedulesView.AddViewProperty( GeneratorRelationship, GeneratorOC.getObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName ) );
+            //    CswNbtViewPropertyFilter OwnerPropFilter = SchedulesView.AddViewPropertyFilter( OwnerProperty, 
+            //                                                                                    CswNbtSubField.SubFieldName.NodeID, 
+            //                                                                                    CswNbtPropFilterSql.PropertyFilterMode.Equals, 
+            //                                                                                    MountPointGroupNode.NodeId.PrimaryKey.ToString(), 
+            //                                                                                    false );
+            //    ICswNbtTree SchedulesTree = _CswNbtResources.Trees.getTreeFromView( SchedulesView, true, true, false, false );
+            //    SchedulesTree.goToRoot();
 
                 
-                //CswDelimitedString NodeTypeIds = new CswDelimitedString(',');
+            //    //CswDelimitedString NodeTypeIds = new CswDelimitedString(',');
 
-                //For each generator with this Mount Point's MPG
-                for( Int32 i = 0; i < SchedulesTree.getChildNodeCount(); i++ )
-                {
-                    SchedulesTree.goToNthChild( i );
-                    CswNbtNode ScheduleNode = SchedulesTree.getNodeForCurrentPosition();
-                    CswNbtObjClassGenerator ScheduleOC = CswNbtNodeCaster.AsGenerator( ScheduleNode );
+            //    //For each generator with this Mount Point's MPG
+            //    for( Int32 i = 0; i < SchedulesTree.getChildNodeCount(); i++ )
+            //    {
+            //        SchedulesTree.goToNthChild( i );
+            //        CswNbtNode ScheduleNode = SchedulesTree.getNodeForCurrentPosition();
+            //        CswNbtObjClassGenerator ScheduleOC = CswNbtNodeCaster.AsGenerator( ScheduleNode );
 
-                    CswCommaDelimitedString NodeTypeIds = ScheduleOC.TargetType.SelectedNodeTypeIds;
-                    //For each target node type on the generator
-                    foreach( String NtId in NodeTypeIds )
-                    {
-                        CswNbtMetaDataNodeType InspectionNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NtId ) );
-                        if( null != InspectionNT )
-                        {
-                            //For the past interval. Scheduler will handle current interval.
-                            CswNbtNode PastInspectionNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( InspectionNT.LatestVersionNodeType.NodeTypeId,
-                                                                                                          CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                            if( null != PastInspectionNode )
-                            {
-                                CswNbtObjClassInspectionDesign InspectionOC = CswNbtNodeCaster.AsInspectionDesign( PastInspectionNode );
-                                InspectionOC.Owner.RelatedNodeId = this.NodeId;
-                                InspectionOC.Generator.RelatedNodeId = ScheduleNode.NodeId;
-                                CswRateInterval ScheduleInterval = ScheduleOC.DueDateInterval.RateInterval;
-                                InspectionOC.Date.DateValue = ScheduleInterval.getPrevious( ScheduleOC.NextDueDate.DateValue );
-                                PastInspectionNode.postChanges( true );
-                            }
+            //        CswCommaDelimitedString NodeTypeIds = ScheduleOC.TargetType.SelectedNodeTypeIds;
+            //        //For each target node type on the generator
+            //        foreach( String NtId in NodeTypeIds )
+            //        {
+            //            CswNbtMetaDataNodeType InspectionNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NtId ) );
+            //            if( null != InspectionNT )
+            //            {
+            //                //For the past interval. Scheduler will handle current interval.
+            //                CswNbtNode PastInspectionNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( InspectionNT.LatestVersionNodeType.NodeTypeId,
+            //                                                                                              CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            //                if( null != PastInspectionNode )
+            //                {
+            //                    CswNbtObjClassInspectionDesign InspectionOC = CswNbtNodeCaster.AsInspectionDesign( PastInspectionNode );
+            //                    InspectionOC.Owner.RelatedNodeId = this.NodeId;
+            //                    InspectionOC.Generator.RelatedNodeId = ScheduleNode.NodeId;
+            //                    CswRateInterval ScheduleInterval = ScheduleOC.DueDateInterval.RateInterval;
+            //                    InspectionOC.Date.DateValue = ScheduleInterval.getPrevious( ScheduleOC.NextDueDate.DateValue );
+            //                    PastInspectionNode.postChanges( true );
+            //                }
 
-                        }
-                    }// for( Int32 n = 0; n < NodeTypeIds.Count; n++ )
+            //            }
+            //        }// for( Int32 n = 0; n < NodeTypeIds.Count; n++ )
 
-                    SchedulesTree.goToParentNode();
+            //        SchedulesTree.goToParentNode();
 
-                } // for( Int32 i = 0; i < SchedulesTree.getChildNodeCount(); i++ )
-            } // if( null != MountPointGroupNode )
+            //    } // for( Int32 i = 0; i < SchedulesTree.getChildNodeCount(); i++ )
+            //} // if( null != MountPointGroupNode )
 
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
