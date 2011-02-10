@@ -227,6 +227,25 @@ namespace ChemSW.Nbt.MetaData
                 FirstTab.TabOrder = 10;
                 FirstTab.IncludeInNodeReport = false;
 
+                // case 20951 - Add an Action tab
+                CswNbtMetaDataNodeTypeTab ActionTab = _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Action", 9 );
+
+                CswNbtMetaDataNodeTypeProp FinishedProp = NewNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.FinishedPropertyName );
+                FinishedProp.NodeTypeTab = ActionTab;
+                FinishedProp.DisplayRow = 1;
+                FinishedProp.DisplayColumn = 1;
+
+                CswNbtMetaDataNodeTypeProp CancelledProp = NewNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.CancelledPropertyName );
+                CancelledProp.NodeTypeTab = ActionTab;
+                CancelledProp.DisplayRow = 2;
+                CancelledProp.DisplayColumn = 1;
+
+                CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.CancelReasonPropertyName );
+                CancelReasonProp.NodeTypeTab = ActionTab;
+                CancelReasonProp.DisplayRow = 3;  // even though webapp interprets this independently, Mobile needs this to be 3
+                CancelReasonProp.DisplayColumn = 1;
+
+
                 // Add a "Section 1" tab
                 _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Section 1", 1 );
             }
