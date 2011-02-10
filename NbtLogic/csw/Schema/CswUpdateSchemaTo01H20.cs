@@ -23,13 +23,13 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            // case 20951
             CswNbtMetaDataObjectClass InspectionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
             foreach( CswNbtMetaDataNodeType InspectionNT in InspectionOC.NodeTypes )
             {
                 CswNbtMetaDataNodeType LatestVersionInspectionNT = InspectionNT.LatestVersionNodeType;
                 if( !LatestVersionInspectionNT.IsLocked )
                 {
+                    // case 20951
                     CswNbtMetaDataNodeTypeTab ActionTab = LatestVersionInspectionNT.getNodeTypeTab( "Action" );
                     if( ActionTab == null )
                     {
@@ -50,6 +50,18 @@ namespace ChemSW.Nbt.Schema
                     CancelReasonProp.NodeTypeTab = ActionTab;
                     CancelReasonProp.DisplayRow = 3;  // even though webapp interprets this independently, Mobile needs this to be 3
                     CancelReasonProp.DisplayColumn = 1;
+
+
+                    // case 20955
+                    CswNbtMetaDataNodeTypeProp GeneratorProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
+                    CswNbtMetaDataNodeTypeProp IsFutureProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.IsFuturePropertyName );
+                    CswNbtMetaDataNodeTypeProp RouteProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
+                    CswNbtMetaDataNodeTypeProp RouteOrderProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RouteOrderPropertyName );
+
+                    GeneratorProp.HideInMobile = true;
+                    IsFutureProp.HideInMobile = true;
+                    RouteProp.HideInMobile = true;
+                    RouteOrderProp.HideInMobile = true;
 
                 } // if( !InspectionNT.IsLocked )
             } // foreach( CswNbtMetaDataNodeType InspectionNT in InspectionOC.NodeTypes )
