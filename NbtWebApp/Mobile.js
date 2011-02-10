@@ -751,10 +751,6 @@
                     case "Question":
                         Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
 
-                        Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
-                        Html += sf_comments
-                        Html += '</textarea>';
-
                         Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
                         if (sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
                             Html += 'style="display: none"';
@@ -770,6 +766,11 @@
                         Html += '">';
                         Html += sf_correctiveaction;
                         Html += '</textarea>';
+
+                        Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
+                        Html += sf_comments
+                        Html += '</textarea>';
+
                         break;
 
                     case "Static":
