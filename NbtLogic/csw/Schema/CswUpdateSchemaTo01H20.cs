@@ -63,8 +63,13 @@ namespace ChemSW.Nbt.Schema
                     RouteProp.HideInMobile = true;
                     RouteOrderProp.HideInMobile = true;
 
+                    // case 20948
+                    CswNbtMetaDataNodeTypeProp DueDateProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.DatePropertyName );
+                    DueDateProp.DisplayRow = 4;
+
                 } // if( !InspectionNT.IsLocked )
             } // foreach( CswNbtMetaDataNodeType InspectionNT in InspectionOC.NodeTypes )
+
 
 
         } // update()
