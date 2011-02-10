@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeTab ActionTab = LatestVersionInspectionNT.getNodeTypeTab( "Action" );
                     if( ActionTab == null )
                     {
-                        ActionTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( LatestVersionInspectionNT, "Action", 2 );
+                        ActionTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( LatestVersionInspectionNT, "Action", 9 );
                     }
 
                     CswNbtMetaDataNodeTypeProp FinishedProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.FinishedPropertyName );
