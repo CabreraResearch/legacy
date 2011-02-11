@@ -48,9 +48,8 @@ namespace ChemSW.Nbt.WebServices
             Unknown
         }
 
-        public string getQuickLaunchItems( CswPrimaryKey UserId, HttpSessionState Session )
+        public XmlDocument getQuickLaunchItems( CswPrimaryKey UserId, HttpSessionState Session )
         {
-            string ret = string.Empty;
             var ReturnXML = new XmlDocument();
             bool isNewSession = ( null == Session[QuickLaunchViews] );
             XmlNode QuickLaunchNode = CswXmlDocument.SetDocumentElement( ReturnXML, "quicklaunch" );
@@ -117,9 +116,7 @@ namespace ChemSW.Nbt.WebServices
                 } // foreach( CswNbtAction ThisAction...
             } // if( isNewSession )
 
-            ret = ReturnXML.InnerXml;
-
-            return ret;
+            return ReturnXML;
 
         } // getQuickLaunchItems()
 
