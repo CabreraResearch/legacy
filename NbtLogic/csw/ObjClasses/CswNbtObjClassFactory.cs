@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 
@@ -108,12 +104,12 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassMailReport( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MountPointClass:
-                    ReturnVal = new CswNbtObjClassMountPoint( CswNbtResources, Node );
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
+                    ReturnVal = new CswNbtObjClassInspectionTarget( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MountPointGroupClass:
-                    ReturnVal = new CswNbtObjClassMountPointGroup( CswNbtResources, Node );
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass:
+                    ReturnVal = new CswNbtObjClassInspectionTargetGroup( CswNbtResources, Node );
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass:
@@ -274,12 +270,12 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassMailReport( CswNbtResources );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MountPointClass:
-                    ReturnVal = new CswNbtObjClassMountPoint( CswNbtResources );
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
+                    ReturnVal = new CswNbtObjClassInspectionTarget( CswNbtResources );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MountPointGroupClass:
-                    ReturnVal = new CswNbtObjClassMountPointGroup( CswNbtResources );
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass:
+                    ReturnVal = new CswNbtObjClassInspectionTargetGroup( CswNbtResources );
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass:

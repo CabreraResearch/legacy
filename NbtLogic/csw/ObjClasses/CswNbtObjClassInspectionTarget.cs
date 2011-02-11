@@ -2,11 +2,10 @@ using System;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMountPoint : CswNbtObjClass, ICswNbtPropertySetInspectionParent
+    public class CswNbtObjClassInspectionTarget : CswNbtObjClass, ICswNbtPropertySetInspectionParent
     {
         public static string LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
         public static string StatusPropertyName { get { return "Status"; } }
@@ -14,7 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string DescriptionPropertyName { get { return "Description"; } }
         public static string TypePropertyName { get { return "Type"; } }
         public static string BarcodePropertyName { get { return "Barcode"; } }
-        public static string MountPointGroupPropertyName { get { return "Mount Point Group"; } }
+        public static string InspectionTargetGroupPropertyName { get { return "Inspection Target Group"; } }
 
         //ICswNbtPropertySetInspectionParent
         public string InspectionParentStatusPropertyName { get { return StatusPropertyName; } }
@@ -22,13 +21,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassMountPoint( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassInspectionTarget( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }
 
-        public CswNbtObjClassMountPoint( CswNbtResources CswNbtResources )
+        public CswNbtObjClassInspectionTarget( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
@@ -36,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MountPointClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass ); }
         }
 
         #region Inherited Events
@@ -51,9 +50,9 @@ namespace ChemSW.Nbt.ObjClasses
             // Case 20947: We don't want to create past inspections automatically (for now). Maybe this should be configurable later?
 
             //CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-            //CswNbtNode MountPointGroupNode = _CswNbtResources.Nodes.GetNode( this.MountPointGroup.RelatedNodeId );
+            //CswNbtNode InspectionTargetGroupNode = _CswNbtResources.Nodes.GetNode( this.InspectionTargetGroup.RelatedNodeId );
 
-            //if( null != MountPointGroupNode )
+            //if( null != InspectionTargetGroupNode )
             //{
             //    CswNbtView SchedulesView = new CswNbtView( _CswNbtResources );
             //    CswNbtViewRelationship GeneratorRelationship = SchedulesView.AddViewRelationship( GeneratorOC, false );
@@ -61,7 +60,7 @@ namespace ChemSW.Nbt.ObjClasses
             //    CswNbtViewPropertyFilter OwnerPropFilter = SchedulesView.AddViewPropertyFilter( OwnerProperty, 
             //                                                                                    CswNbtSubField.SubFieldName.NodeID, 
             //                                                                                    CswNbtPropFilterSql.PropertyFilterMode.Equals, 
-            //                                                                                    MountPointGroupNode.NodeId.PrimaryKey.ToString(), 
+            //                                                                                    InspectionTargetGroupNode.NodeId.PrimaryKey.ToString(), 
             //                                                                                    false );
             //    ICswNbtTree SchedulesTree = _CswNbtResources.Trees.getTreeFromView( SchedulesView, true, true, false, false );
             //    SchedulesTree.goToRoot();
@@ -69,7 +68,7 @@ namespace ChemSW.Nbt.ObjClasses
                 
             //    //CswDelimitedString NodeTypeIds = new CswDelimitedString(',');
 
-            //    //For each generator with this Mount Point's MPG
+            //    //For each generator with this Inspection Target's MPG
             //    for( Int32 i = 0; i < SchedulesTree.getChildNodeCount(); i++ )
             //    {
             //        SchedulesTree.goToNthChild( i );
@@ -102,7 +101,7 @@ namespace ChemSW.Nbt.ObjClasses
             //        SchedulesTree.goToParentNode();
 
             //    } // for( Int32 i = 0; i < SchedulesTree.getChildNodeCount(); i++ )
-            //} // if( null != MountPointGroupNode )
+            //} // if( null != InspectionTargetGroupNode )
 
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
@@ -116,12 +115,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             // Case 20907: sync FE status/inspection date with MP
             var RelatedFireExtinguishers = new CswNbtView( _CswNbtResources );
-            RelatedFireExtinguishers.ViewName = "Fire Extinguishers on This Mount Point";
+            RelatedFireExtinguishers.ViewName = "Fire Extinguishers on This Inspection Target";
             CswNbtMetaDataObjectClass FireExtinguisherOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.FireExtinguisherClass );
-            CswNbtMetaDataObjectClassProp MountPointOCP = FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
+            CswNbtMetaDataObjectClassProp InspectionTargetOCP = FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.InspectionTargetPropertyName );
             CswNbtViewRelationship FeRelationship = RelatedFireExtinguishers.AddViewRelationship( FireExtinguisherOC, false );
-            CswNbtViewProperty FeMountPointVP = RelatedFireExtinguishers.AddViewProperty( FeRelationship, MountPointOCP );
-            CswNbtViewPropertyFilter ThisMountPointFilt = RelatedFireExtinguishers.AddViewPropertyFilter( FeMountPointVP, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, this.NodeId.PrimaryKey.ToString(), false );
+            CswNbtViewProperty FeInspectionTargetVP = RelatedFireExtinguishers.AddViewProperty( FeRelationship, InspectionTargetOCP );
+            CswNbtViewPropertyFilter ThisInspectionTargetFilt = RelatedFireExtinguishers.AddViewPropertyFilter( FeInspectionTargetVP, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, this.NodeId.PrimaryKey.ToString(), false );
 
             ICswNbtTree FireExtTree = _CswNbtResources.Trees.getTreeFromView( RelatedFireExtinguishers, true, true, true, false );
             FireExtTree.goToRoot();
@@ -175,7 +174,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Mount Point Inspection Status (OK, OOC)
+        /// Inspection Target Inspection Status (OK, OOC)
         /// </summary>
         public CswNbtNodePropList Status
         {
@@ -186,7 +185,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Location of Mount Point
+        /// Location of Inspection Target
         /// </summary>
         public CswNbtNodePropLocation Location
         {
@@ -220,11 +219,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropRelationship MountPointGroup
+        public CswNbtNodePropRelationship InspectionTargetGroup
         {
             get
             {
-                return ( _CswNbtNode.Properties[MountPointGroupPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[InspectionTargetGroupPropertyName].AsRelationship );
             }
         }
         

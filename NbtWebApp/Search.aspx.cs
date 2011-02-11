@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.WebPages
                     }
                     else if( Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.FE ) )
                     {
-                        SearchOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MountPointClass );
+                        SearchOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
                     }
                     else if( Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
                     {

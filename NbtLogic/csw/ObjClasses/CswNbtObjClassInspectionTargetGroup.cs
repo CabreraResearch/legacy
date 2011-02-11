@@ -1,28 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMountPointGroup : CswNbtObjClass
+    public class CswNbtObjClassInspectionTargetGroup : CswNbtObjClass
     {
         public static string NamePropertyName { get { return "Name"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassMountPointGroup( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassInspectionTargetGroup( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }
 
-        public CswNbtObjClassMountPointGroup( CswNbtResources CswNbtResources )
+        public CswNbtObjClassInspectionTargetGroup( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
@@ -30,7 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MountPointGroupClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass ); }
         }
 
         #region Inherited Events

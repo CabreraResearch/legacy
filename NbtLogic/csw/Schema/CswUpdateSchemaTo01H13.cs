@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Text;
-using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-using ChemSW.DB;
+﻿using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -46,9 +34,9 @@ where ((visibility = 'Global') or
 order by #orderbyclause" );
 
             // Case 20502
-            CswNbtMetaDataObjectClass MountPointOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MountPointClass );
-            CswNbtMetaDataObjectClassProp MountPointGroupOCP = MountPointOC.getObjectClassProp( CswNbtObjClassMountPoint.MountPointGroupPropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MountPointGroupOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+            CswNbtMetaDataObjectClass InspectionTargetOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+            CswNbtMetaDataObjectClassProp InspectionTargetGroupOCP = InspectionTargetOC.getObjectClassProp( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( InspectionTargetGroupOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
 
         } // update()
 

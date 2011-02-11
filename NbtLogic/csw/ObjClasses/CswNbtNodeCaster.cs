@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropertySets;
@@ -90,17 +87,17 @@ namespace ChemSW.Nbt.ObjClasses
             return ( (CswNbtObjClassMailReport) Node.ObjClass );
         }//AsMailReport
 
-        public static CswNbtObjClassMountPoint AsMountPoint( CswNbtNode Node )
+        public static CswNbtObjClassInspectionTarget AsInspectionTarget( CswNbtNode Node )
         {
-            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MountPointClass );
-            return ( (CswNbtObjClassMountPoint) Node.ObjClass );
-        }//AsMountPoint
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+            return ( (CswNbtObjClassInspectionTarget) Node.ObjClass );
+        }//AsInspectionTarget
 
-        public static CswNbtObjClassMountPointGroup AsMountPointGroup( CswNbtNode Node )
+        public static CswNbtObjClassInspectionTargetGroup AsInspectionTargetGroup( CswNbtNode Node )
         {
-            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MountPointGroupClass );
-            return ( (CswNbtObjClassMountPointGroup) Node.ObjClass );
-        }//AsMountPoint
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
+            return ( (CswNbtObjClassInspectionTargetGroup) Node.ObjClass );
+        }//AsInspectionTarget
         
         public static CswNbtObjClassNotification AsNotification( CswNbtNode Node )
         {

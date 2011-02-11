@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Actions;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
 using ChemSW.Nbt.PropertySets;
-using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -292,7 +285,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Node type of parent. In FE parent is node type of Fire Extinguisher or Mount Point. In IMCS, parent type is not used.
+        /// Node type of parent. In FE parent is node type of Fire Extinguisher or Inspection Target. In IMCS, parent type is not used.
         /// </summary>
         public CswNbtNodePropNodeTypeSelect ParentType
         {
@@ -303,7 +296,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// View from owner to parent. In FE this is Location Group > Location > Mount Point > Inspection. Parent view not utilized elsewhere, yet.
+        /// View from owner to parent. In FE this is Location Group > Location > Inspection Target > Inspection. Parent view not utilized elsewhere, yet.
         /// </summary>
         public CswNbtNodePropViewReference ParentView
         {

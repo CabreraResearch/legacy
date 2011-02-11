@@ -404,7 +404,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         /// <summary>
         /// Inspection target == owner == parent. 
-        /// In FE, target == Mount Point
+        /// In FE, target == Inspection Target
         /// </summary>
         public CswNbtNodePropRelationship Target
         {

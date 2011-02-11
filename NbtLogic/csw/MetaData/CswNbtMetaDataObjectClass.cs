@@ -1,11 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Text;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -31,8 +27,8 @@ namespace ChemSW.Nbt.MetaData
             MaterialClass,
             MaterialSubclassClass,
             MaterialSynonymClass,
-            MountPointClass,
-            MountPointGroupClass,
+            InspectionTargetClass,
+            InspectionTargetGroupClass,
             NotificationClass,
             PackageClass,
             PackDetailClass,

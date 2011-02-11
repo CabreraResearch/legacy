@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 
@@ -14,7 +8,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public static string LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
         public static string StatusPropertyName { get { return "Status"; } }
-        public static string MountPointPropertyName { get { return "Mount Point"; } }
+        public static string InspectionTargetPropertyName { get { return "Inspection Target"; } }
         public static string DescriptionPropertyName { get { return "Description"; } }
         public static string TypePropertyName { get { return "Type"; } }
 
@@ -104,11 +98,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropRelationship MountPoint
+        public CswNbtNodePropRelationship InspectionTarget
         {
             get
             {
-                return ( _CswNbtNode.Properties[MountPointPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[InspectionTargetPropertyName].AsRelationship );
             }
         }
 
