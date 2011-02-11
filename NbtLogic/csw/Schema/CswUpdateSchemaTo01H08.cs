@@ -189,8 +189,8 @@ namespace ChemSW.Nbt.Schema
             if( null != BuildingNT && null != FloorNT && null != RoomNT && null != MountPointNT && null != FireExtinguisherNT )
             {
                 RoomParent = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
-                CswNbtMetaDataNodeTypeProp MountPointParent = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
-                CswNbtMetaDataNodeTypeProp FireExtinguisherParent = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
+                CswNbtMetaDataNodeTypeProp MountPointParent = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
+                CswNbtMetaDataNodeTypeProp FireExtinguisherParent = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.InspectionTargetPropertyName );
                 CswNbtMetaDataNodeTypeProp BuildingNameNTP = BuildingNT.getNodeTypeProp( "Name" );
                 CswNbtMetaDataNodeTypeProp BuildingBarcodeNTP = BuildingNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.BarcodePropertyName );
                 CswNbtMetaDataNodeTypeProp FloorBarcodeNTP = FloorNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.BarcodePropertyName );

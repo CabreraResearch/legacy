@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.Schema
 			CswNbtViewRelationship FExtinguisherRelationship = FireExtinguisherView.AddViewRelationship( FireExtinguisherNT, false );
 			CswNbtMetaDataNodeTypeProp FEBarcodeNTP = FireExtinguisherNT.getNodeTypeProp( "Barcode" );
 			CswNbtMetaDataNodeTypeProp FEDescriptionNTP = FireExtinguisherNT.getNodeTypeProp( CswNbtObjClassFireExtinguisher.DescriptionPropertyName );
-			CswNbtMetaDataNodeTypeProp FEMountPointNTP = FireExtinguisherNT.getNodeTypeProp( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
+			CswNbtMetaDataNodeTypeProp FEMountPointNTP = FireExtinguisherNT.getNodeTypeProp( CswNbtObjClassFireExtinguisher.InspectionTargetPropertyName );
 			CswNbtMetaDataNodeTypeProp FEStatusNTP = FireExtinguisherNT.getNodeTypeProp( CswNbtObjClassFireExtinguisher.StatusPropertyName );
 			CswNbtViewProperty FEBarcodeVP = FireExtinguisherView.AddViewProperty( FExtinguisherRelationship, FEBarcodeNTP );
 			FEBarcodeVP.Order = 1;
@@ -104,8 +104,8 @@ namespace ChemSW.Nbt.Schema
 			CswNbtViewPropertyFilter FEDescriptionVPF = FireExtinguisherView.AddViewPropertyFilter( FEDescriptionVP, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Begins, string.Empty, false );
 
 			CswNbtViewRelationship MPointRelationship = FireExtinguisherView.AddViewRelationship( FExtinguisherRelationship, CswNbtViewRelationship.PropOwnerType.First, FEMountPointNTP, false );
-			CswNbtMetaDataNodeTypeProp MPLocationNTP = MountPointNT.getNodeTypeProp( CswNbtObjClassMountPoint.LocationPropertyName );
-			CswNbtMetaDataNodeTypeProp MPDescriptionNTP = MountPointNT.getNodeTypeProp( CswNbtObjClassMountPoint.DescriptionPropertyName );
+            CswNbtMetaDataNodeTypeProp MPLocationNTP = MountPointNT.getNodeTypeProp( CswNbtObjClassInspectionTarget.LocationPropertyName );
+            CswNbtMetaDataNodeTypeProp MPDescriptionNTP = MountPointNT.getNodeTypeProp( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
 			CswNbtViewProperty MPLocationVP = FireExtinguisherView.AddViewProperty( MPointRelationship, MPLocationNTP );
 			FEBarcodeVP.Order = 5;
 			CswNbtViewPropertyFilter MPLocationVPF = FireExtinguisherView.AddViewPropertyFilter( MPLocationVP, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Begins, string.Empty, false );

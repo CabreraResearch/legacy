@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Schema
                                                                                                     "Barcode",
                                                                                                     SetupTabId );
             CswNbtMetaDataNodeTypeProp TargetNTP = PhysicalInspectionsNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
-            CswNbtMetaDataNodeTypeProp BarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
+            CswNbtMetaDataNodeTypeProp BarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.BarcodePropertyName );
             MPBarcodeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString(), BarcodeNTP.PropId );
             MPBarcodeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString(), BarcodeNTP.PropId );
 
