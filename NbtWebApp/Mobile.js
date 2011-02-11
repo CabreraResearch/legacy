@@ -910,7 +910,7 @@
 
         function _makeSafeId(val)
         {
-            return val.replace('/', '');
+            return val.replace(/'/gi, '');
         }
 
 
@@ -1774,7 +1774,7 @@
                             dataType: "json",
                             contentType: 'application/json; charset=utf-8',
                             //data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
-                            data: "{ SessionId: '" + SessionId + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
+                            data: "{ SessionId: '" + SessionId + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml.replace(/'/gi, '\\\'') + "'}",
                             success: function (data, textStatus, XMLHttpRequest)
                             {
                                 var $xml = $(data.d);
