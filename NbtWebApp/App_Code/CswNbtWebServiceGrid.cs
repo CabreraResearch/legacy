@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.WebServices
 			XmlDocument GridXml = getGridXml( View, Session );
 
 			var UnsortedXmlDataSet = new DataSet();
-			UnsortedXmlDataSet.ReadXml( new System.IO.StringReader( GridXml.ToString() ), XmlReadMode.InferTypedSchema );
+			UnsortedXmlDataSet.ReadXml( new System.IO.StringReader( GridXml.InnerXml ), XmlReadMode.InferTypedSchema );
 
 			if( UnsortedXmlDataSet.Tables.Count > 0 && UnsortedXmlDataSet.Tables[0].Rows.Count > 0 )
 			{
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			Session[QuickLaunchViews] = ViewHistory;
 
-			ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
+			ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
 
 			//if( ParentKey != null )
 			//    CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGridProperty;
@@ -100,7 +100,6 @@ namespace ChemSW.Nbt.WebServices
 		{
 			string ColumnDefinition = string.Empty;
 			var ColumnNames = new CswCommaDelimitedString();
-			string RowDefinition = string.Empty;
 			
 			foreach( DataTable Table in Grid.Tables )
 			{
@@ -139,9 +138,9 @@ namespace ChemSW.Nbt.WebServices
 
 						if( null != CurrentNTP )
 						{
-							ColumnDefinition = @"{""id"":""" + ColumnName.Replace( " ", "" ).ToLower() + @"";
-							ColumnDefinition += @", ""name"":" + ColumnName + @"";
-							ColumnDefinition += @", ""field"":" + ColumnName.Replace( " ", "" ).ToLower() + @"";
+							ColumnDefinition = @"{""id"":""" + NoPrefixColumnName + @"";
+							ColumnDefinition += @", ""name"":" + RealColumnName + @"";
+							ColumnDefinition += @", ""field"":" + NoPrefixColumnName + @"";
 
 							if( !CurrentNTP.ReadOnly )
 							{
@@ -175,11 +174,22 @@ namespace ChemSW.Nbt.WebServices
 				}
 				foreach( DataRow Row in Table.Rows )
 				{
+					string RowDefinition = string.Empty;
 					foreach( DataColumn Column in Table.Columns )
 					{
-						RowDefinition += @"{""" + Column.ColumnName + @""": " + @"""" + Row[Column.ColumnName].ToString() + @"""}";
-						GridData.Add( RowDefinition );
+						if( Column.ColumnName.Length > PropColumnPrefix.Length && Column.ColumnName.Substring( 0, PropColumnPrefix.Length ) == PropColumnPrefix )
+						{
+							string NoPrefixColumnName = Column.ColumnName.Substring( PropColumnPrefix.Length );
+							string RealColumnName = CswTools.XmlRealAttributeName( NoPrefixColumnName );
+							if( !string.IsNullOrWhiteSpace( RowDefinition ) )
+							{
+								RowDefinition += ",";
+							}
+							RowDefinition += @"{""" + RealColumnName + @""": " + @"""" + Row[Column.ColumnName].ToString() + @"""}";
+							
+						}
 					}
+					GridData.Add( RowDefinition );
 				}
 			}
 
