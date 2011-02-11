@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         if( MetaDataProp.MobileSearch )
                         {
-                            ret += "<search name=\"" + MetaDataProp.PropNameWithQuestionNo + "\" id=\"";
+                            ret += "<search name=\"" + CswTools.SafeJavascriptParam(MetaDataProp.PropNameWithQuestionNo )+ "\" id=\"";
                             if( MetaDataProp.ObjectClassProp != null )
                                 ret += "search_ocp_" + MetaDataProp.ObjectClassPropId.ToString();
                             else
@@ -119,10 +119,10 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 ret += "<node id=\"" + NodeIdPrefix + ThisNodeId + "\"";
-                ret += " name=\"" + ThisNodeName + "\"";
-                ret += " nodetype=\"" + ThisNode.NodeType.NodeTypeName + "\"";
-                ret += " objectclass=\"" + ThisNode.ObjectClass.ObjectClass.ToString() + "\"";
-                ret += " iconfilename=\"" + ThisNode.NodeType.IconFileName + "\"";
+                ret += " name=\"" + CswTools.SafeJavascriptParam( ThisNodeName ) + "\"";
+                ret += " nodetype=\"" + CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) + "\"";
+                ret += " objectclass=\"" + CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) + "\"";
+                ret += " iconfilename=\"" + CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) + "\"";
 
                 // case 20083 - search values
                 foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps )
@@ -130,9 +130,9 @@ namespace ChemSW.Nbt.WebServices
                     if( MetaDataProp.MobileSearch )
                     {
                         if( MetaDataProp.ObjectClassProp != null )
-                            ret += " search_ocp_" + MetaDataProp.ObjectClassPropId.ToString() + "=\"" + ThisNode.Properties[MetaDataProp].Gestalt + "\"";
+                            ret += " search_ocp_" + MetaDataProp.ObjectClassPropId.ToString() + "=\"" + CswTools.SafeJavascriptParam(ThisNode.Properties[MetaDataProp].Gestalt) + "\"";
                         else
-                            ret += " search_ntp_" + MetaDataProp.PropId.ToString() + "=\"" + ThisNode.Properties[MetaDataProp].Gestalt + "\"";
+                            ret += " search_ntp_" + MetaDataProp.PropId.ToString() + "=\"" + CswTools.SafeJavascriptParam(ThisNode.Properties[MetaDataProp].Gestalt) + "\"";
                     }
                 }
 
@@ -158,17 +158,17 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
                         ret += "<prop id=\"" + PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() + "\"";
-                        ret += " name=\"" + Prop.PropNameWithQuestionNo + "\"";
-                        ret += " tab=\"" + Tab.TabName + "\"";
-                        ret += " readonly=\"" + Prop.ReadOnly.ToString().ToLower() +"\"";
+                        ret += " name=\"" + CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) + "\"";
+                        ret += " tab=\"" + CswTools.SafeJavascriptParam( Tab.TabName ) + "\"";
+                        ret += " readonly=\"" + Prop.ReadOnly.ToString().ToLower() + "\"";
                         ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
-                        ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";
-                        ret += " ocpname=\"" + PropWrapper.ObjectClassPropName + "\"";
+                        ret += " gestalt=\"" + CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) + "\"";
+                        ret += " ocpname=\"" + CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) + "\"";
                         ret += ">";
                         XmlDocument XmlDoc = new XmlDocument();
                         CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
                         PropWrapper.ToXml( XmlDoc.DocumentElement );
-                        ret += XmlDoc.DocumentElement.InnerXml;
+                        ret += CswTools.SafeJavascriptParam( XmlDoc.DocumentElement.InnerXml );
                         ret += "<subitems></subitems>";
                         ret += "</prop>";
                     }
