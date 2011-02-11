@@ -141,8 +141,8 @@ namespace ChemSW.Nbt.WebServices
 		[WebMethod( EnableSession = true )]
 		public XmlDocument getQuickLaunchItems()
 		{
-			CswTimer Timer = new CswTimer();
-			string ReturnVal = string.Empty;
+			var Timer = new CswTimer();
+			var ReturnXML = new XmlDocument();
 			try
 			{
 				start();
@@ -151,19 +151,17 @@ namespace ChemSW.Nbt.WebServices
 				var ql = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
 				if( null != UserId )
 				{
-					ReturnVal = ql.getQuickLaunchItems( UserId, Session );
+					ReturnXML = ql.getQuickLaunchItems( UserId, Session );
 				}
 
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = error( ex );
+				ReturnXML.LoadXml( error( ex ) );
 			}
-			//return ( ReturnVal );
-			XmlDocument Doc = new XmlDocument();
-			Doc.LoadXml( ReturnVal );
-			return Doc;
+
+			return ReturnXML;
 		} // getQuickLaunchItems()
 
 		public string getQuickLaunchItemsJSON()
