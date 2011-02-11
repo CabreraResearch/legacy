@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.WebServices
                 Node.postChanges( false );
 
             // return the refreshed view
-            CswNbtWebServiceView ViewService = new CswNbtWebServiceView( _CswNbtWebServiceResources );
+            CswNbtWebServiceMobileView ViewService = new CswNbtWebServiceMobileView( _CswNbtWebServiceResources, _ForMobile );
             return ViewService.Run( ParentId );
 
         } // Run()
