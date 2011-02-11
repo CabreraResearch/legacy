@@ -97,7 +97,10 @@
                     $propdiv.CswFieldTypeLogical( 'init', o.nodeid, $propxml );
                     break;
                 case "Memo":
-                    $propdiv.CswFieldTypeMemo( 'init', o.nodeid, $propxml );
+                    $propdiv.CswFieldTypeMemo('init', o.nodeid, $propxml);
+                    break;
+                case "Number":
+                    $propdiv.CswFieldTypeNumber( 'init', o.nodeid, $propxml );
                     break;
                 case "PropertyReference":
                     $propdiv.CswFieldTypePropertyReference('init', o.nodeid, $propxml);
@@ -135,6 +138,9 @@
                         break;
                     case "Memo":
                         $propdiv.CswFieldTypeMemo( 'save', $propdiv, $propxml );
+                        break;
+                    case "Number":
+                        $propdiv.CswFieldTypeNumber( 'save', $propdiv, $propxml );
                         break;
                     case "PropertyReference":
                         $propdiv.CswFieldTypePropertyReference( 'save', $propdiv, $propxml );
