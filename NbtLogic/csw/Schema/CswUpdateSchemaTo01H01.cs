@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Collections.ObjectModel;
 using System.Data;
-using System.Text;
 using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
 using ChemSW.DB;
-using ChemSW.Nbt.ObjClasses;
-
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {

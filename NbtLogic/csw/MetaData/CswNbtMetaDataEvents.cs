@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ChemSW.Nbt;
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
