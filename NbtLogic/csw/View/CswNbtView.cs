@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Data;
 using System.Xml;
 using ChemSW.Exceptions;
@@ -12,7 +10,6 @@ using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt
 {
@@ -993,7 +990,22 @@ namespace ChemSW.Nbt
             return ret;
         } // FindViewNodeByUniqueIdRecursive
 
+        /// <summary>
+        /// Returns an ordered stack of CswNbtMetaDataNodeTypeProps
+        /// </summary>
+        /// <returns></returns>
+        public Stack<CswNbtMetaDataNodeTypeProp> getOrderedViewProps()
+        {
+            var ViewProps = new Stack<CswNbtMetaDataNodeTypeProp>();
+            IEnumerable<CswNbtViewProperty> ChildProps = Root.ChildRelationships.SelectMany( Child => Child.Properties );
 
+            foreach( var CswNbtMetaDataNodeTypeProp in from c in ChildProps orderby c.Order ascending select c.NodeTypeProp )
+            {
+                ViewProps.Push( CswNbtMetaDataNodeTypeProp );
+            }
+
+            return ViewProps;
+        }
 
         /// <summary>
         /// Returns the CswNbtViewProperty which corresponds to the property type and primary key provided

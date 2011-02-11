@@ -1,13 +1,9 @@
 using System;
-using System.Collections;
-using System.Text;
 using System.Data;
 using ChemSW.Exceptions;
 using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
