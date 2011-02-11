@@ -1,25 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections;
 using System.Web;
 using System.Web.SessionState;
-using System.Text;
-using System.Data;
-using System.Configuration;
-using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Session;
 using ChemSW.Nbt.Config;
-using ChemSW.Audit;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.TreeEvents;
 using ChemSW.Security;
 using ChemSW.Nbt.Security;
 using ChemSW.Config;
-using ChemSW.DB;
 using ChemSW.CswWebControls;
 using ChemSW.Nbt.Statistics;
 
