@@ -265,9 +265,9 @@ namespace ChemSW.Nbt.WebPages
                 {
                     CswNbtMetaDataNodeTypeProp FloorLocationNTP = FloorNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
                     CswNbtMetaDataNodeTypeProp RoomLocationNTP = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
-                    CswNbtMetaDataNodeTypeProp MountPointLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
-                    CswNbtMetaDataNodeTypeProp FEMountPointNTP = FireExtNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.MountPointPropertyName );
-                    CswNbtMetaDataNodeTypeProp MountPointGroupNameNTP = MountPointGroupNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPointGroup.NamePropertyName );
+                    CswNbtMetaDataNodeTypeProp MountPointLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
+                    CswNbtMetaDataNodeTypeProp FEMountPointNTP = FireExtNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.InspectionTargetPropertyName );
+                    CswNbtMetaDataNodeTypeProp MountPointGroupNameNTP = MountPointGroupNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTargetGroup.NamePropertyName );
 
                     DataTable ExcelData = _getUploadedData();
                     Collection<CswPrimaryKey> NodeKeysToInclude = new Collection<CswPrimaryKey>();
@@ -365,7 +365,7 @@ namespace ChemSW.Nbt.WebPages
                             {
                                 foreach( CswNbtNode ExistingMountPointGroupNode in MountPointGroupNT.getNodes( true, true ) ) // force update to get new ones as we add them
                                 {
-                                    if( CswNbtNodeCaster.AsMountPointGroup( ExistingMountPointGroupNode ).Name.Text.ToLower().Trim() == MountPointGroup.ToLower().Trim() )
+                                    if( CswNbtNodeCaster.AsInspectionTargetGroup( ExistingMountPointGroupNode ).Name.Text.ToLower().Trim() == MountPointGroup.ToLower().Trim() )
                                     {
                                         MountPointGroupNode = ExistingMountPointGroupNode;
                                         break;
@@ -389,7 +389,7 @@ namespace ChemSW.Nbt.WebPages
                                 CswNbtView ExistingBarcodes = new CswNbtView( Master.CswNbtResources );
                                 ExistingBarcodes.ViewName = "Barcode Already Exists";
                                 CswNbtViewRelationship MountPointViewRel = ExistingBarcodes.AddViewRelationship( MountPointNT, false );
-                                CswNbtMetaDataNodeTypeProp MountPointBarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
+                                CswNbtMetaDataNodeTypeProp MountPointBarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.BarcodePropertyName );
                                 CswNbtViewProperty BarcodeViewProp = ExistingBarcodes.AddViewProperty( MountPointViewRel, MountPointBarcodeNTP );
                                 CswNbtViewPropertyFilter BarcodeViewFilt = ExistingBarcodes.AddViewPropertyFilter( BarcodeViewProp, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Equals, MountPointBarcode, false );
                                 ICswNbtTree MpTree = Master.CswNbtResources.Trees.getTreeFromView( ExistingBarcodes, true, true, true, false );
@@ -403,14 +403,14 @@ namespace ChemSW.Nbt.WebPages
                                     if( null == MPLegacyBarcodeNTP )
                                         MPLegacyBarcodeNTP = Master.CswNbtResources.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Text, MpLegacyBarcodeName, Int32.MinValue );
 
-                                    //Int32 ExistingBarcode = CswConvert.ToInt32( CswNbtNodeCaster.AsMountPoint( MPNode ).Barcode.Barcode );
+                                    //Int32 ExistingBarcode = CswConvert.ToInt32( CswNbtNodeCaster.AsInspectionTarget( MPNode ).Barcode.Barcode );
                                     //if( ExistingBarcode >= MpBarcodeVal )
                                     //    MpBarcodeVal = ExistingBarcode + 1;
                                 }
                             }
 
                             CswNbtNode MountPointNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( MountPointNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                            CswNbtObjClassMountPoint MountPointAsMP = CswNbtNodeCaster.AsMountPoint( MountPointNode );
+                            CswNbtObjClassInspectionTarget MountPointAsMP = CswNbtNodeCaster.AsInspectionTarget( MountPointNode );
 
                             if( mpBarcodeExists )
                             {
@@ -428,10 +428,10 @@ namespace ChemSW.Nbt.WebPages
                             MountPointAsMP.Location.RefreshNodeName();
                             MountPointAsMP.Type.Value = Type;
                             MountPointAsMP.Status.Value = TargetStatusString;
-                            //CswNbtMetaDataNodeTypeProp MountPointGroupNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.MountPointGroupPropertyName );
+                            //CswNbtMetaDataNodeTypeProp MountPointGroupNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.MountPointGroupPropertyName );
                             if( null != MountPointGroupNode )
                             {
-                                MountPointAsMP.MountPointGroup.RelatedNodeId = MountPointGroupNode.NodeId;
+                                MountPointAsMP.InspectionTargetGroup.RelatedNodeId = MountPointGroupNode.NodeId;
                             }
                             MountPointNode.postChanges( false );
 
@@ -492,7 +492,7 @@ namespace ChemSW.Nbt.WebPages
                                 FENodeAsFE.Description.Text = FEDescription;
                                 FENodeAsFE.LastInspectionDate.DateValue = LastInspectionDate;
                                 FENodeAsFE.Status.Value = TargetStatusString;
-                                FENodeAsFE.MountPoint.RelatedNodeId = MountPointNode.NodeId;
+                                FENodeAsFE.InspectionTarget.RelatedNodeId = MountPointNode.NodeId;
                                 FENodeAsFE.Type.Value = Type;
 
                                 CswNbtMetaDataNodeTypeProp ManufacturerNTP = FENode.NodeType.getNodeTypeProp( "Manufacturer" );
@@ -562,10 +562,10 @@ namespace ChemSW.Nbt.WebPages
                         NewNodesView.ViewMode = NbtViewRenderingMode.Grid;
                         NewNodesView.Width = 150;
                         CswNbtViewRelationship MountPointRel = NewNodesView.AddViewRelationship( MountPointNT, false );
-                        CswNbtMetaDataNodeTypeProp MpLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.LocationPropertyName );
-                        CswNbtMetaDataNodeTypeProp MpStatusNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.StatusPropertyName );
-                        CswNbtMetaDataNodeTypeProp MpTypeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.TypePropertyName );
-                        CswNbtMetaDataNodeTypeProp MpBarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMountPoint.BarcodePropertyName );
+                        CswNbtMetaDataNodeTypeProp MpLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
+                        CswNbtMetaDataNodeTypeProp MpStatusNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.StatusPropertyName );
+                        CswNbtMetaDataNodeTypeProp MpTypeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.TypePropertyName );
+                        CswNbtMetaDataNodeTypeProp MpBarcodeNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.BarcodePropertyName );
                         CswNbtMetaDataNodeTypeProp MpLegacyBarcodeNTP = MountPointNT.getNodeTypeProp( MpLegacyBarcodeName );
                         CswNbtViewProperty MpTypeProp = NewNodesView.AddViewProperty( MountPointRel, MpTypeNTP );
                         CswNbtViewProperty MpStatusProp = NewNodesView.AddViewProperty( MountPointRel, MpStatusNTP );
