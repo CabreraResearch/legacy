@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.Schema
             MPGroupNode.Properties[MountPointGroupNameNTP].AsText.Text = "A";
             MPGroupNode.postChanges( true );
 
-            //Inspection Target NT with Hydrostatic Inspection, Barcode and Inspection Target Group Props
+            //Mount Point NT with Hydrostatic Inspection, Barcode and Mount Point Group Props
             CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( MountPointOC.ObjectClassId, CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point ), "Fire Extinguisher" );
             MountPointNT.IconFileName = "safecab.gif";
             CswNbtMetaDataNodeTypeProp MPHydrostaticInspectionNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Date, "Hydrostatic Inspection", Int32.MinValue );
@@ -59,6 +59,7 @@ namespace ChemSW.Nbt.Schema
                                               CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassInspectionTarget.DescriptionPropertyName ) );
             
             CswNbtMetaDataNodeTypeProp MountPointGroupNTP = MountPointNT.getNodeTypeProp( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+            MountPointGroupNTP.PropName = "Mount Point Group";
             MountPointGroupNTP.SetValueOnAdd = true;
             MountPointGroupNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointGroupNT.NodeTypeId, string.Empty, Int32.MinValue );
             MountPointGroupNTP.DefaultValue.AsRelationship.RelatedNodeId = MPGroupNode.NodeId;
@@ -108,12 +109,12 @@ namespace ChemSW.Nbt.Schema
             MonthlyOnFirst.setMonthlyByDate( 1, 1, DateTime.Today.Month, DateTime.Today.Year );
             DueDateIntervalNTP.DefaultValue.AsTimeInterval.RateInterval = MonthlyOnFirst;
 
-            //Generator Parent type is Inspection Target
+            //Generator Parent type is Mount Point
             CswNbtMetaDataNodeTypeProp ParentTypeNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentTypePropertyName );
             ParentTypeNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointNT.NodeTypeId, string.Empty, Int32.MinValue );
             ParentTypeNTP.DefaultValue.AsNodeTypeSelect.SelectedNodeTypeIds.Add( MountPointNT.NodeTypeId.ToString() );
 
-            //Generator Owner is Inspection Target Group
+            //Generator Owner is Mount Point Group
             CswNbtMetaDataNodeTypeProp OwnerNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
             OwnerNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), MountPointGroupNT.NodeTypeId, string.Empty, Int32.MinValue );
             OwnerNTP.DefaultValue.AsRelationship.RelatedNodeId = MPGroupNode.NodeId;
