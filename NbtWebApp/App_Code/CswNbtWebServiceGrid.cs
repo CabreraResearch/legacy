@@ -26,10 +26,9 @@ namespace ChemSW.Nbt.WebServices
 		public string getGridJSON( CswNbtView View, HttpSessionState Session )
 		{
 			string GridJSON = string.Empty;
-			string GridJSONData = string.Empty;
-			string GridJSONColumns = string.Empty;
-		    var ColumnsDelimited = new CswCommaDelimitedString();
-		    
+			var GridJSONData = new CswCommaDelimitedString();
+			string GridJSONColumns = "{}";
+			
 			XmlDocument GridXml = getGridXml( View, Session );
 
 			var UnsortedXmlDataSet = new DataSet();
@@ -37,15 +36,16 @@ namespace ChemSW.Nbt.WebServices
 
 			if( UnsortedXmlDataSet.Tables.Count > 0 && UnsortedXmlDataSet.Tables[0].Rows.Count > 0 )
 			{
-				
+				GridJSONColumns = _getGridColumnsJSON( UnsortedXmlDataSet, View, ref GridJSONData ).ToString();
 			}
+			
 
 			GridJSON = @"{
 							""columns"": [
 											" + GridJSONColumns +
 										 @"],
 							""grid"": {                
-								" + GridJSONData +
+								" + GridJSONData.ToString() +
 							@"}
 						}";
 
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.WebServices
 
 
 
-        private const string PropColumnPrefix = "Prop_";
+		private const string PropColumnPrefix = "Prop_";
 		/// <summary>
 		/// Generates JSON content for all properties selected in the View
 		/// </summary>
@@ -96,90 +96,94 @@ namespace ChemSW.Nbt.WebServices
 		/// <param name="Props"></param>
 		/// <param name="NbtNode"></param>
 		/// <returns>Returns an array of property names for use as column names</returns>
-        private CswCommaDelimitedString _getNodePropertiesJSON( ref string ParentJSON, CswCommaDelimitedString ColumnNames, DataSet Grid, CswNbtView View )
+		private CswCommaDelimitedString _getGridColumnsJSON( DataSet Grid, CswNbtView View, ref CswCommaDelimitedString GridData )
 		{
-            string ColumnDefinition = string.Empty;
+			string ColumnDefinition = string.Empty;
+			var ColumnNames = new CswCommaDelimitedString();
+			string RowDefinition = string.Empty;
+			
+			foreach( DataTable Table in Grid.Tables )
+			{
+				foreach( DataColumn Column in Table.Columns )
+				{
+					string ColumnName = Column.ColumnName;
+					if( Column.ColumnName.Length > PropColumnPrefix.Length && Column.ColumnName.Substring( 0, PropColumnPrefix.Length ) == PropColumnPrefix )
+					{
+						string NoPrefixColumnName = ColumnName.Substring( PropColumnPrefix.Length );
+						string RealColumnName = CswTools.XmlRealAttributeName( NoPrefixColumnName );
+						
+						CswNbtViewProperty CurrentViewProp = View.FindPropertyByName( RealColumnName );
+						
+						var ColFieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+						CswNbtMetaDataNodeTypeProp CurrentNTP = null;
+						if( CurrentViewProp != null )
+						{
+							if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+							{
+								CswNbtMetaDataNodeType CurrentNT = _CswNbtResources.MetaData.getNodeType( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
+								CurrentNTP = CurrentNT.getNodeTypeProp( RealColumnName );
+								if( CurrentNTP != null )
+									ColFieldType = CurrentNTP.FieldType.FieldType;
+							}
+							else if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+							{
+								CswNbtMetaDataObjectClass CurrentOC = _CswNbtResources.MetaData.getObjectClass( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
+								foreach( CswNbtMetaDataNodeType CurrentNT in CurrentOC.NodeTypes )
+								{
+									CurrentNTP = CurrentNT.getNodeTypeProp( RealColumnName );
+									if( CurrentNTP != null )
+										ColFieldType = CurrentNTP.FieldType.FieldType;
+								}
+							}
+						}
 
-            foreach( DataTable Table in Grid.Tables )
-            {
-                foreach( DataColumn Column in Table.Columns )
-                {
-                    //string ColumnName = Column.ColumnName;
-                    if( Column.ColumnName.Length > PropColumnPrefix.Length && Column.ColumnName.Substring( 0, PropColumnPrefix.Length ) == PropColumnPrefix )
-                    {
-                        string ColumnName = Column.ColumnName;
-                        string NoPrefixColumnName = ColumnName.Substring( PropColumnPrefix.Length );
-                        
-                        string RealColumnName = CswTools.XmlRealAttributeName( NoPrefixColumnName ); //.Substring( NoPrefixColumnName.IndexOf( '_' ) + 1 ) );
-                        
-                        CswNbtViewProperty CurrentViewProp = View.FindPropertyByName( RealColumnName );
-                        
-                        var ColFieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
-                        CswNbtMetaDataNodeTypeProp CurrentNTP = null;
-                        if( CurrentViewProp != null )
-                        {
-                            if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
-                            {
-                                CswNbtMetaDataNodeType CurrentNT = _CswNbtResources.MetaData.getNodeType( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
-                                CurrentNTP = CurrentNT.getNodeTypeProp( RealColumnName );
-                                if( CurrentNTP != null )
-                                    ColFieldType = CurrentNTP.FieldType.FieldType;
-                            }
-                            else if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
-                            {
-                                CswNbtMetaDataObjectClass CurrentOC = _CswNbtResources.MetaData.getObjectClass( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
-                                foreach( CswNbtMetaDataNodeType CurrentNT in CurrentOC.NodeTypes )
-                                {
-                                    CurrentNTP = CurrentNT.getNodeTypeProp( RealColumnName );
-                                    if( CurrentNTP != null )
-                                        ColFieldType = CurrentNTP.FieldType.FieldType;
-                                }
-                            }
-                        }
+						if( null != CurrentNTP )
+						{
+							ColumnDefinition = @"{""id"":""" + ColumnName.Replace( " ", "" ).ToLower() + @"";
+							ColumnDefinition += @", ""name"":" + ColumnName + @"";
+							ColumnDefinition += @", ""field"":" + ColumnName.Replace( " ", "" ).ToLower() + @"";
 
-                        string thisColumnCSS = string.Empty;
-                        string Width = string.Empty;
-                        //switch( CurrentNodeTypeProp.FieldType.FieldType )
-                        switch( ColFieldType )
-                        {
-                            case CswNbtMetaDataFieldType.NbtFieldType.Date:
-                                break;
-                            case CswNbtMetaDataFieldType.NbtFieldType.Time:
-                                break;
-                            default:
-                                break;
-                        }
-                        if( CurrentViewProp != null && CurrentViewProp.Width != Int32.MinValue )
-                            Width = Unit.Parse( ( CswConvert.ToInt32( CurrentViewProp.Width * 7 ) ).ToString() + "px" ).ToString();  // average pixel width per character
-                        if( null != CurrentNTP )
-                        {
-                            ColumnDefinition = @"{""id"":""" + ColumnName.Replace( " ", "" ).ToLower() + @"";
-                            ColumnDefinition += @", ""name"":" + ColumnName + @"";
-                            ColumnDefinition += @", ""field"":" + ColumnName.Replace( " ", "" ).ToLower() + @"";
+							if( !CurrentNTP.ReadOnly )
+							{
+								ColumnDefinition += ", editor:TextCellEditor";
+							}
+							if( CurrentNTP.IsRequired )
+							{
+								ColumnDefinition += ", validator:requiredFieldValidator ";
+							}
+							if( CurrentViewProp.Width != Int32.MinValue )
+							{
+								string Width = Unit.Parse( ( CswConvert.ToInt32( CurrentViewProp.Width*7 ) ).ToString() + "px" ).ToString();
+								ColumnDefinition += ", width:" + Width;
+							}
 
-                            if( !CurrentNTP.ReadOnly )
-                            {
-                                ColumnDefinition += ", editor:TextCellEditor";
-                            }
-                            if( CurrentNTP.IsRequired )
-                            {
-                                ColumnDefinition += ", validator:requiredFieldValidator ";
-                            }
-                            if( 0 < CurrentNTP.Length )
-                            {
-                                ColumnDefinition += ", width:" + CurrentNTP.Length;
-                            }
+							switch( ColFieldType )
+							{
+								case CswNbtMetaDataFieldType.NbtFieldType.Date:
+									break;
+								case CswNbtMetaDataFieldType.NbtFieldType.Time:
+									break;
+								default:
+									break;
+							}
 
-                            ColumnDefinition += "}";
-                            ColumnNames.Add( ColumnDefinition );
+							ColumnDefinition += "}";
+							ColumnNames.Add( ColumnDefinition );
+						}
 
-                            ParentJSON += @"" + CurrentNTP.PropName + @""":" + @""; //+ CurrentNTP.Gestalt + @"";
-                        }
-                    }
-                }
-            }
+					}
+				}
+				foreach( DataRow Row in Table.Rows )
+				{
+					foreach( DataColumn Column in Table.Columns )
+					{
+						RowDefinition += @"{""" + Column.ColumnName + @""": " + @"""" + Row[Column.ColumnName].ToString() + @"""}";
+						GridData.Add( RowDefinition );
+					}
+				}
+			}
 
-            return ColumnNames;
+			return ColumnNames;
 		} // _getNodePropertiesJSON
 
 
