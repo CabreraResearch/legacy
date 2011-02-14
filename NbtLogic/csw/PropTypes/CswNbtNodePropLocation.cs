@@ -240,11 +240,13 @@ namespace ChemSW.Nbt.PropTypes
             if( NodeMap != null && NodeMap.ContainsKey( LocationNodeId ) )
                 LocationNodeId = NodeMap[LocationNodeId];
             SelectedNodeId = new CswPrimaryKey( "nodes", LocationNodeId );
-
-            CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", SelectedNodeId.PrimaryKey.ToString() );
-            SelectedRow = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _RowSubField.ToXmlNodeName() );
-            SelectedColumn = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ColumnSubField.ToXmlNodeName() );
-            PendingUpdate = true;
+            if( SelectedNodeId != null )
+            {
+                CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", SelectedNodeId.PrimaryKey.ToString() );
+                SelectedRow = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _RowSubField.ToXmlNodeName() );
+                SelectedColumn = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ColumnSubField.ToXmlNodeName() );
+                PendingUpdate = true;
+            }
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
