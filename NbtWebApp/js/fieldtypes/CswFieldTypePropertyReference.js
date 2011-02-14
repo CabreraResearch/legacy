@@ -13,7 +13,8 @@
                 //var ReadOnly = $xml.attr('readonly');
 
                 var Text = $xml.children('value').text();
-            
+                Text += '&nbsp;';
+
                 var $StaticDiv = $('<div id="'+ ID +'" class="staticvalue">' + Text + '</div>' )
                                .appendTo($Div); 
             },
