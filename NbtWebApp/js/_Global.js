@@ -224,19 +224,27 @@ function makeTable(id)
 // row and col are 1-based
 function getTableCell($table, row, col) {
     var $cell = null;
-
     if ($table.length > 0 &&
          row != undefined && row != '' &&
-         col != undefined && col != '' ) 
+         col != undefined && col != '') 
     {
-        while (row >= $table.children('tbody').children('tr').length) {
+        if (row <= 0) {
+            console.log("error: row must be greater than 1, got: " + row);
+            row = 1;
+        }
+        if (col <= 0) {
+            console.log("error: col must be greater than 1, got: " + col);
+            col = 1;
+        }
+
+        while (row > $table.children('tbody').children('tr').length) {
             $table.append('<tr></tr>');
         }
-        var $row = $($table.children('tbody').children('tr')[row]);
-        while (col >= $row.children('td').length) {
+        var $row = $($table.children('tbody').children('tr')[row-1]);
+        while (col > $row.children('td').length) {
             $row.append('<td></td>');
         }
-        var $cell = $($row.children('td')[col]);
+        var $cell = $($row.children('td')[col-1]);
     }
     return $cell;
 }
