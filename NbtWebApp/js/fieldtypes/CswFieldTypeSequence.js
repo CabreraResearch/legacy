@@ -31,7 +31,6 @@
             },
         save: function($propdiv, $xml) {
                 var $TextBox = $propdiv.find('input');
-                console.log($TextBox.val());
                 $xml.children('sequence').text($TextBox.val());
             }
     };

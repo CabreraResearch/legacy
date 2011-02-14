@@ -50,8 +50,8 @@
 
             },
         save: function($propdiv, $xml) {
-                var $TextBox = $propdiv.find('input');
-                $xml.children('text').text($TextBox.val());
+//                var $TextBox = $propdiv.find('input');
+//                $xml.children('text').text($TextBox.val());
             }
     };
     
