@@ -117,6 +117,9 @@
                 case "Image":
                     $propdiv.CswFieldTypeImage('init', o.nodeid, $propxml);
                     break;
+                case "Link":
+                    $propdiv.CswFieldTypeLink('init', o.nodeid, $propxml);
+                    break;
                 case "List":
                     $propdiv.CswFieldTypeList( 'init', o.nodeid, $propxml );
                     break;
@@ -168,6 +171,9 @@
                         break;
                     case "Image":
                         $propdiv.CswFieldTypeImage( 'save', $propdiv, $propxml );
+                        break;
+                    case "Link":
+                        $propdiv.CswFieldTypeLink( 'save', $propdiv, $propxml );
                         break;
                     case "List":
                         $propdiv.CswFieldTypeList( 'save', $propdiv, $propxml );
