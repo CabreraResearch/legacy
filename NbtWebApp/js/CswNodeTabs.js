@@ -90,6 +90,9 @@
         {
             switch(fieldtype)
             {
+                case "Barcode":
+                    $propdiv.CswFieldTypeBarcode('init', o.nodeid, $propxml);
+                    break;
                 case "List":
                     $propdiv.CswFieldTypeList( 'init', o.nodeid, $propxml );
                     break;
@@ -130,6 +133,9 @@
                                 
                 switch(fieldtype)
                 {
+                    case "Barcode":
+                        $propdiv.CswFieldTypeBarcode( 'save', $propdiv, $propxml );
+                        break;
                     case "List":
                         $propdiv.CswFieldTypeList( 'save', $propdiv, $propxml );
                         break;

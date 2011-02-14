@@ -202,6 +202,15 @@ function CloseDialog(id) {
 }
 
 
+// Print Label
+function openPrintLabelPopup(nodeid, propid) {
+    
+    var oWnd = window.radopen(null, 'PrintLabelDialog');
+    var CheckedNodeIds = getMainTreeCheckedNodeIds();
+    oWnd.setUrl('Popup_PrintLabel.aspx?nodeid=' + nodeid + '&propid=' + propid + '&checkednodeids=' + CheckedNodeIds);
+    return false;
+}
+
 
 // ------------------------------------------------------------------------------------
 // Layout mechanics
