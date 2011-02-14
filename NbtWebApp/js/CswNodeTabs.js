@@ -111,6 +111,9 @@
                 case "Relationship":
                     $propdiv.CswFieldTypeRelationship('init', o.nodeid, $propxml);
                     break;
+                case "Sequence":
+                    $propdiv.CswFieldTypeSequence('init', o.nodeid, $propxml);
+                    break;
                 case "Static":
                     $propdiv.CswFieldTypeStatic( 'init', o.nodeid, $propxml );
                     break;
@@ -153,6 +156,9 @@
                         break;                    
                     case "Relationship":
                         $propdiv.CswFieldTypeRelationship( 'save', $propdiv, $propxml );
+                        break;
+                    case "Sequence":
+                        $propdiv.CswFieldTypeSequence( 'save', $propdiv, $propxml );
                         break;
                     case "Static":
                         $propdiv.CswFieldTypeStatic( 'save', $propdiv, $propxml );

@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode SequenceNode = CswXmlDocument.AppendXmlNode( ParentNode, _SequenceSubField.ToXmlNodeName(), Sequence );
-            XmlNode SequenceNumberNode = CswXmlDocument.AppendXmlNode( ParentNode, _SequenceSubField.ToXmlNodeName(), SequenceNumber );
+            XmlNode SequenceNumberNode = CswXmlDocument.AppendXmlNode( ParentNode, _SequenceNumberSubField.ToXmlNodeName(), SequenceNumber );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
