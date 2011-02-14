@@ -66,16 +66,20 @@
 
                             $xml.children().each(function() { 
                                 var $this = $(this);
+                                var fieldtype = $this.attr('fieldtype');
 
-                                var $labelcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2 ) - 1);
-                                $labelcell.addClass('propertylabel');
-                                $labelcell.append($this.attr('name'));
+                                if( fieldtype != 'Image' && 
+                                    fieldtype != 'Grid' )
+                                {
+                                    var $labelcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2 ) - 1);
+                                    $labelcell.addClass('propertylabel');
+                                    $labelcell.append($this.attr('name'));
+                                }
 
                                 var $propcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2));
                                 $propcell.addClass('propertyvaluecell');
                                 var $propdiv = $('<div/>').appendTo($propcell); 
 
-                                var fieldtype = $this.attr('fieldtype');
                                 makePropControl($propdiv, fieldtype, $this);
                                 
                             });
@@ -109,6 +113,9 @@
                     break;
                 case "Date":
                     $propdiv.CswFieldTypeDate('init', o.nodeid, $propxml);
+                    break;
+                case "Image":
+                    $propdiv.CswFieldTypeImage('init', o.nodeid, $propxml);
                     break;
                 case "List":
                     $propdiv.CswFieldTypeList( 'init', o.nodeid, $propxml );
@@ -158,6 +165,9 @@
                         break;
                     case "Date":
                         $propdiv.CswFieldTypeDate( 'save', $propdiv, $propxml );
+                        break;
+                    case "Image":
+                        $propdiv.CswFieldTypeImage( 'save', $propdiv, $propxml );
                         break;
                     case "List":
                         $propdiv.CswFieldTypeList( 'save', $propdiv, $propxml );
