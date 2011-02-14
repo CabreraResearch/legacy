@@ -23,31 +23,35 @@
                 }
                 else 
                 {
-                    var $TextBox = $('<input type="text" class="textinput" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
+                    var $TextBox = $('<input type="text" class="textinput number" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
                                      .appendTo($Div);
-                    //$TextBox.change(function() { validate($Div, $TextBox, MinValue, MaxValue, Precision) });
                     
+                    if(MinValue != undefined)
+                    {
+                        jQuery.validator.addMethod( ID + "_validateFloatMinValue", function(value, element) { 
+                                return (this.optional(element) || validateFloatMinValue($(element).val(), MinValue));
+                            }, 'Number must be greater than or equal to ' + MinValue);
+                        $TextBox.addClass( ID + "_validateFloatMinValue" );
+                    }
+                    if(MaxValue != undefined)
+                    {
+                        jQuery.validator.addMethod( ID + "_validateFloatMaxValue", function(value, element) { 
+                                return (this.optional(element) || validateFloatMaxValue($(element).val(), MaxValue));
+                            }, 'Number must be less than or equal to ' + MaxValue);
+                        $TextBox.addClass( ID + "_validateFloatMaxValue" );
+                    }
                     if(Precision == undefined || Precision <= 0)
                     {
-                        // Integer
-                        $TextBox.addClass("number");
-                        $TextBox.min(MinValue);
-                        $TextBox.max(MaxValue);
+                        jQuery.validator.addMethod( ID + "_validateInteger", function(value, element) { 
+                                return (this.optional(element) || validateInteger($(element).val()));
+                            }, 'Value must be an integer');
+                        $TextBox.addClass( ID + "_validateInteger" );
                     } else {
-                        // Float
-                        jQuery.validator.addMethod( ID + "_validateFloatMinValue", function(value, element) { 
-                                return (this.optional(element) || validateFloatMinValue($(element).val(), MinValue))
-                            }, 'Number must be greater than or equal to ' + MinValue);
-                        jQuery.validator.addMethod( ID + "_validateFloatMaxValue", function(value, element) { 
-                                return (this.optional(element) || validateFloatMaxValue($(element).val(), MaxValue))
-                            }, 'Number must be less than or equal to ' + MaxValue);
                         jQuery.validator.addMethod( ID + "_validateFloatPrecision", function(value, element) { 
-                                return (this.optional(element) || validateFloatPrecision($(element).val(), Precision))
+                                return (this.optional(element) || validateFloatPrecision($(element).val(), Precision));
                             }, 'Value must be numeric');
-                        $TextBox.addClass( ID + "_validateFloatMinValue" );
-                        $TextBox.addClass( ID + "_validateFloatMaxValue" );
                         $TextBox.addClass( ID + "_validateFloatPrecision" );
-                    }   
+                    }
 
                     if(Required)
                     {

@@ -306,6 +306,12 @@ function validateFloatPrecision(value, precision) {
     return isValid;
 } // validateFloatPrecision()
 
+function validateInteger(value) {
+    // Integers Only
+    var regex = /^\-?\d*$/g;
+    return (regex.test(value));
+} // validateInteger()
+
 // ------------------------------------------------------------------------------------
 // strings
 // ------------------------------------------------------------------------------------
