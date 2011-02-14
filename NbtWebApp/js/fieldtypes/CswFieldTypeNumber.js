@@ -25,7 +25,29 @@
                 {
                     var $TextBox = $('<input type="text" class="textinput" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
                                      .appendTo($Div);
-                    $TextBox.change(function() { validate($Div, $TextBox, MinValue, MaxValue, Precision) });
+                    //$TextBox.change(function() { validate($Div, $TextBox, MinValue, MaxValue, Precision) });
+                    
+                    if(Precision == undefined || Precision <= 0)
+                    {
+                        // Integer
+                        $TextBox.addClass("number");
+                        $TextBox.min(MinValue);
+                        $TextBox.max(MaxValue);
+                    } else {
+                        // Float
+                        jQuery.validator.addMethod( ID + "_validateFloatMinValue", function(value, element) { 
+                                return (this.optional(element) || validateFloatMinValue($(element).val(), MinValue))
+                            }, 'Number must be greater than or equal to ' + MinValue);
+                        jQuery.validator.addMethod( ID + "_validateFloatMaxValue", function(value, element) { 
+                                return (this.optional(element) || validateFloatMaxValue($(element).val(), MaxValue))
+                            }, 'Number must be less than or equal to ' + MaxValue);
+                        jQuery.validator.addMethod( ID + "_validateFloatPrecision", function(value, element) { 
+                                return (this.optional(element) || validateFloatPrecision($(element).val(), Precision))
+                            }, 'Value must be numeric');
+                        $TextBox.addClass( ID + "_validateFloatMinValue" );
+                        $TextBox.addClass( ID + "_validateFloatMaxValue" );
+                        $TextBox.addClass( ID + "_validateFloatPrecision" );
+                    }   
 
                     if(Required)
                     {
@@ -39,54 +61,6 @@
             }
     };
     
-
-    function validate($Div, $textbox, minvalue, maxvalue, precision)
-    {
-        var strValue = $textbox.val();
-        var nValue = parseFloat(strValue);
-
-	    var regex;
-	    var msg;
-	    var invalidMsg;
-	    var isValid = true;
-	
-	    // PRECISION
-	    if (precision > 0)
-	    {
-		    // Allow any valid number -- we'll round later
-		    regex = /^\-?\d*\.?\d*$/g;
-		    msg = 'Value must be numeric'; 
-	    }
-	    else
-	    {
-		    // Integers Only
-		    regex = /^\-?\d*$/g;
-		    msg = 'Value must be an integer'; 
-	    }
-	    if(isValid && !regex.test(strValue))
-	    {
-		    isValid = false; 
-		    invalidMsg = msg;
-	    }
-	
-	    // MINVALUE
-	    if(isValid && minvalue != "" && nValue < minvalue)
-	    {
-		    isValid = false;
-		    invalidMsg = 'Value must be greater than or equal to ' + minvalue;
-	    }
-	    // MAXVALUE
-	    if(isValid && maxvalue != "" && nValue > maxvalue)
-	    {
-		    isValid = false;
-		    invalidMsg = 'Value must be less than or equal to ' + maxvalue;
-	    }
-
-        $textbox.CswValid(isValid);
-
-    } // validate()
-
-
     // Method calling logic
     $.fn.CswFieldTypeNumber = function (method) {
         

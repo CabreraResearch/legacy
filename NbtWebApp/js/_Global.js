@@ -255,6 +255,57 @@ function jsTreeGetSelected($treediv)
     };
 }
 
+
+// ------------------------------------------------------------------------------------
+// Validation
+// ------------------------------------------------------------------------------------
+
+function validateFloatMinValue(value, minvalue) {
+    var nValue = parseFloat(value);
+    var nMinValue = parseFloat(minvalue);
+    var isValid = true;
+
+    if (nMinValue != undefined)
+    {
+        if (nValue == undefined || nValue < nMinValue) {
+            isValid = false;
+        }
+    }
+    return isValid; 
+} // validateFloatMinValue()
+
+function validateFloatMaxValue(value, maxvalue) {
+    var nValue = parseFloat(value);
+    var nMaxValue = parseFloat(maxvalue);
+    var isValid = true;
+
+    if (nMaxValue != undefined) {
+        if (nValue == undefined || nValue > nMaxValue) {
+            isValid = false;
+        }
+    }
+    return isValid; 
+} // validateFloatMaxValue()
+
+function validateFloatPrecision(value, precision) {
+    var isValid = true;
+
+    var regex;
+    if (precision > 0) {
+        // Allow any valid number -- we'll round later
+        regex = /^\-?\d*\.?\d*$/g;
+    }
+    else {
+        // Integers Only
+        regex = /^\-?\d*$/g;
+    }
+    if (isValid && !regex.test(value)) {
+        isValid = false;
+    }
+
+    return isValid;
+} // validateFloatPrecision()
+
 // ------------------------------------------------------------------------------------
 // strings
 // ------------------------------------------------------------------------------------

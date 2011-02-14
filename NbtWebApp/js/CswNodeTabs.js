@@ -36,7 +36,7 @@
                             $xml.children().each(function() { 
                                 $this = $(this);
                                 $tabdiv.children('ul').append('<li><a href="#'+ $this.attr('id') +'">'+ $this.attr('name') +'</a></li>');
-                                $tabdiv.append('<div id="'+ $this.attr('id') +'"></div>');
+                                $tabdiv.append('<div id="'+ $this.attr('id') +'"><form id="'+ $this.attr('id') +'_form"></div>');
                                 //if(null == firsttabid) 
                                 //    firsttabid = $this.attr('id');
                             });
@@ -57,9 +57,10 @@
                 data: 'NodePk=' + o.nodeid + '&TabId=' + tabid,
                 success: function ($xml) {
                             $div = $("#" + tabid);
-                            $div.children().remove();
+                            $form = $div.children('form');
+                            $form.children().remove();
                             
-                            var $table = makeTable('proptable').appendTo($div);
+                            var $table = makeTable('proptable').appendTo($form);
                             
                             var i = 0;
 
@@ -82,6 +83,19 @@
                             $table.append('<tr><td><input type="button" id="SaveTab" name="SaveTab" value="Save"/></td></tr>')
                                   .find('#SaveTab')
                                   .click(function() { Save($table, $xml) });
+
+                            // Validation
+                            $form.validate({ 
+                                             highlight: function(element, errorClass) {
+                                                 var $elm = $(element);
+                                                 $elm.animate({ backgroundColor: '#ff6666'});
+                                             },
+                                             unhighlight: function(element, errorClass) {
+                                                 var $elm = $(element);
+                                                 $elm.css('background-color', '#66ff66');
+                                                 setTimeout(function() { $elm.animate({ backgroundColor: 'transparent'}); }, 500);
+                                             }
+                                           });
                         } // success{}
             }); 
         } // getProps()
@@ -92,6 +106,9 @@
             {
                 case "Barcode":
                     $propdiv.CswFieldTypeBarcode('init', o.nodeid, $propxml);
+                    break;
+                case "Date":
+                    $propdiv.CswFieldTypeDate('init', o.nodeid, $propxml);
                     break;
                 case "List":
                     $propdiv.CswFieldTypeList( 'init', o.nodeid, $propxml );
@@ -138,6 +155,9 @@
                 {
                     case "Barcode":
                         $propdiv.CswFieldTypeBarcode( 'save', $propdiv, $propxml );
+                        break;
+                    case "Date":
+                        $propdiv.CswFieldTypeDate( 'save', $propdiv, $propxml );
                         break;
                     case "List":
                         $propdiv.CswFieldTypeList( 'save', $propdiv, $propxml );
