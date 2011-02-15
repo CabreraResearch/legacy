@@ -26,8 +26,8 @@ namespace ChemSW.Nbt.WebServices
 		public string getGridJSON( CswNbtView View, HttpSessionState Session )
 		{
 			string GridJSON = string.Empty;
-			var GridJSONData = new CswCommaDelimitedString();
-			string GridJSONColumns = "{}";
+			string GridJSONData = string.Empty;
+			string GridJSONColumns = string.Empty;
 			
 			XmlDocument GridXml = getGridXml( View, Session );
 
@@ -36,19 +36,20 @@ namespace ChemSW.Nbt.WebServices
 
 			if( UnsortedXmlDataSet.Tables.Count > 0 && UnsortedXmlDataSet.Tables[0].Rows.Count > 0 )
 			{
-				GridJSONColumns = _getGridColumnsJSON( UnsortedXmlDataSet, View, ref GridJSONData ).ToString();
-			}
-			
+				GridJSONColumns = _getGridColumnsJSON( UnsortedXmlDataSet, View, ref GridJSONData );
+				string Width = Unit.Parse( ( CswConvert.ToInt32( View.Width * 7 ) ).ToString() + "px" ).ToString();
 
-			GridJSON = @"{
+				GridJSON = @"{
+							""viewname"": """ + View.ViewName + @""",
+							""viewwidth"": """ + Width + @""",
 							""columns"": [
 											" + GridJSONColumns +
-										 @"],
-							""grid"": {                
-								" + GridJSONData.ToString() +
-							@"}
+						   @"],
+							""grid"": [                
+								" + GridJSONData +
+						   @"]
 						}";
-
+			}
 			return GridJSON;
 		} // getGridJSON
 
@@ -96,17 +97,28 @@ namespace ChemSW.Nbt.WebServices
 		/// <param name="Props"></param>
 		/// <param name="NbtNode"></param>
 		/// <returns>Returns an array of property names for use as column names</returns>
-		private CswCommaDelimitedString _getGridColumnsJSON( DataSet Grid, CswNbtView View, ref CswCommaDelimitedString GridData )
+		private string _getGridColumnsJSON( DataSet Grid, CswNbtView View, ref string GridData )
 		{
 			string ColumnDefinition = string.Empty;
-			var ColumnNames = new CswCommaDelimitedString();
+			string ColumnNames = string.Empty;
 			
 			foreach( DataTable Table in Grid.Tables )
 			{
 				foreach( DataColumn Column in Table.Columns )
 				{
 					string ColumnName = Column.ColumnName;
-					if( Column.ColumnName.Length > PropColumnPrefix.Length && Column.ColumnName.Substring( 0, PropColumnPrefix.Length ) == PropColumnPrefix )
+					if( ColumnName == "NodeKey")
+					{
+						ColumnDefinition = @"{""id"":""id""";
+						ColumnDefinition += @", ""name"":""id""";
+						ColumnDefinition += @", ""field"":""id""";
+						if( !string.IsNullOrEmpty( ColumnNames ) )
+						{
+							ColumnNames += ",";
+						}
+						ColumnNames += ColumnDefinition;
+					} // if( ColumnName == "NodeKey")
+					else if( Column.ColumnName.Length > PropColumnPrefix.Length && Column.ColumnName.Substring( 0, PropColumnPrefix.Length ) == PropColumnPrefix )
 					{
 						string NoPrefixColumnName = ColumnName.Substring( PropColumnPrefix.Length );
 						string RealColumnName = CswTools.XmlRealAttributeName( NoPrefixColumnName );
@@ -134,26 +146,55 @@ namespace ChemSW.Nbt.WebServices
 										ColFieldType = CurrentNTP.FieldType.FieldType;
 								}
 							}
-						}
+						} // if( CurrentViewProp != null )
 
 						if( null != CurrentNTP )
 						{
-							ColumnDefinition = @"{""id"":""" + NoPrefixColumnName + @"";
-							ColumnDefinition += @", ""name"":" + RealColumnName + @"";
-							ColumnDefinition += @", ""field"":" + NoPrefixColumnName + @"";
+							ColumnDefinition = @"{""id"": """ + NoPrefixColumnName + @"""";
+							ColumnDefinition += @", ""name"": """ + RealColumnName + @"""";
+							ColumnDefinition += @", ""field"": """ + NoPrefixColumnName + @"""";
 
-							if( !CurrentNTP.ReadOnly )
+							if( false ) //!CurrentNTP.ReadOnly )
 							{
-								ColumnDefinition += ", editor:TextCellEditor";
-							}
-							if( CurrentNTP.IsRequired )
-							{
-								ColumnDefinition += ", validator:requiredFieldValidator ";
-							}
+								if( CurrentNTP.IsRequired )
+								{
+									//ColumnDefinition += @", ""validator"":""requiredFieldValidator""";
+								}
+								switch( ColFieldType )
+								{
+									// Reference slick.editors.js for full list of methods
+									case CswNbtMetaDataFieldType.NbtFieldType.Date:
+										ColumnDefinition += @", ""minWidth"":""60""";
+									//	ColumnDefinition += @", ""editor"":""DateCellEditor""";
+										break;
+									case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+										ColumnDefinition += @", ""minWidth"":""20""";
+										ColumnDefinition += @", ""maxWidth"":""60""";
+										//ColumnDefinition += @", ""formatter"":""BoolCellFormatter""";
+										//ColumnDefinition += @", ""editor"":""YesNoCheckboxCellEditor""";
+										break;
+									//case CswNbtMetaDataFieldType.NbtFieldType.Percent:
+									//	ColumnDefinition += @", ""formatter"":""GraphicalPercentCompleteCellFormatter""";
+									//	ColumnDefinition += @", ""editor"":""PercentCompleteCellEditor""";
+									//	break;
+									case CswNbtMetaDataFieldType.NbtFieldType.Memo:
+										//ColumnDefinition += @", ""editor"":""LongTextCellEditor""";
+										break;
+									case CswNbtMetaDataFieldType.NbtFieldType.Number:
+										//ColumnDefinition += @", ""editor"":""IntegerCellEditor""";
+										break;
+									//case CswNbtMetaDataFieldType.NbtFieldType.Time:
+									//	break;
+									default:
+										//ColumnDefinition += @", ""formatter"":TaskNameFormatter";
+										//ColumnDefinition += @", ""editor"":TextCellEditor";
+										break;
+								}
+							} // if( !CurrentNTP.ReadOnly )
 							if( CurrentViewProp.Width != Int32.MinValue )
 							{
-								string Width = Unit.Parse( ( CswConvert.ToInt32( CurrentViewProp.Width*7 ) ).ToString() + "px" ).ToString();
-								ColumnDefinition += ", width:" + Width;
+							    string Width = Unit.Parse( ( CswConvert.ToInt32( CurrentViewProp.Width*7 ) ).ToString() + "px" ).ToString();
+								ColumnDefinition += @", ""width"": """ + Width + @"""";
 							}
 
 							switch( ColFieldType )
@@ -165,31 +206,53 @@ namespace ChemSW.Nbt.WebServices
 								default:
 									break;
 							}
-
-							ColumnDefinition += "}";
-							ColumnNames.Add( ColumnDefinition );
-						}
-
-					}
+							ColumnDefinition += @", ""resizable"":""true""";
+							ColumnDefinition += @", ""sortable"":""true""}";
+							if( !string.IsNullOrEmpty( ColumnNames ) )
+							{
+								ColumnNames += ",";
+							}
+							ColumnNames += ColumnDefinition;
+						} // if( null != CurrentNTP )
+					} // else if( Column.ColumnName.Length > PropColumnPrefix.Length && Column.ColumnName.Substring( 0, PropColumnPrefix.Length ) == PropColumnPrefix )
 				}
+				
+				Int32 i = 0; //using i iterator for now. Eventually will want to store a PK in this slot.
 				foreach( DataRow Row in Table.Rows )
 				{
 					string RowDefinition = string.Empty;
 					foreach( DataColumn Column in Table.Columns )
 					{
-						if( Column.ColumnName.Length > PropColumnPrefix.Length && Column.ColumnName.Substring( 0, PropColumnPrefix.Length ) == PropColumnPrefix )
+						if( Column.ColumnName == "NodeKey" )
+						{
+							var ThisNode = new CswNbtNodeKey( _CswNbtResources, Row[Column.ColumnName].ToString() );
+							if( Int32.MinValue != ThisNode.NodeId.PrimaryKey )
+							{
+								if( !string.IsNullOrWhiteSpace( RowDefinition ) )
+								{
+									RowDefinition += ",";
+								}
+								RowDefinition += @" ""id"": """ + ThisNode.NodeId.PrimaryKey + @""" ";
+							}
+						}
+						else if( Column.ColumnName.Length > PropColumnPrefix.Length && Column.ColumnName.Substring( 0, PropColumnPrefix.Length ) == PropColumnPrefix )
 						{
 							string NoPrefixColumnName = Column.ColumnName.Substring( PropColumnPrefix.Length );
-							string RealColumnName = CswTools.XmlRealAttributeName( NoPrefixColumnName );
+
 							if( !string.IsNullOrWhiteSpace( RowDefinition ) )
 							{
 								RowDefinition += ",";
 							}
-							RowDefinition += @"{""" + RealColumnName + @""": " + @"""" + Row[Column.ColumnName].ToString() + @"""}";
-							
+							RowDefinition += @" """ + NoPrefixColumnName + @""": """ + Row[Column.ColumnName].ToString() + @""" ";
 						}
 					}
-					GridData.Add( RowDefinition );
+					RowDefinition = "{ " + RowDefinition + " }";
+					if( !string.IsNullOrWhiteSpace( GridData ) )
+					{
+						GridData += ",";
+					}
+					GridData += RowDefinition;
+					i++;
 				}
 			}
 

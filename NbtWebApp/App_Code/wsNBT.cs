@@ -301,6 +301,25 @@ namespace ChemSW.Nbt.WebServices
 				ReturnJSON = ( error( ex ) );
 			}
 
+			// For debug: always provide something
+			if( string.IsNullOrEmpty(ReturnJSON) )
+			{
+				string GridJSONColumns = @"""equipment"",""assembly""";
+				//string GridJSONColumns = @"{""id"": ""equipment"", ""name"": ""equipment"", ""field"": ""equipment""}" ;
+				//GridJSONColumns += @",{""id"": ""assembly"", ""name"": ""assembly"", ""field"": ""assembly""}";
+				string GridJSONData = @"{""id"":""0"", ""equipment"": ""big box"", ""assembly"": ""collection of boxes""}";
+				GridJSONData += @",{""id"":""1"", ""equipment"": ""small box"", ""assembly"": ""collection of boxes""}";
+
+				ReturnJSON = @"{
+							""viewname"": ""Debug View"",
+							""columns"": [
+											" + GridJSONColumns +
+										 @"],
+							""grid"": [                
+								" + GridJSONData +
+							@"]
+						}";
+			}
 			return ReturnJSON;
 		}
 
