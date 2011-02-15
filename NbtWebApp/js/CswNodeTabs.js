@@ -129,6 +129,9 @@
                 case "Logical":
                     $propdiv.CswFieldTypeLogical( 'init', o.nodeid, $propxml );
                     break;
+                case "LogicalSet":
+                    $propdiv.CswFieldTypeLogicalSet( 'init', o.nodeid, $propxml );
+                    break;
                 case "Memo":
                     $propdiv.CswFieldTypeMemo('init', o.nodeid, $propxml);
                     break;
@@ -185,7 +188,10 @@
                         $propdiv.CswFieldTypeLocation( 'save', $propdiv, $propxml );
                         break;
                     case "Logical":
-                        $propdiv.CswFieldTypeLogical( 'save', $propdiv, $propxml );
+                        $propdiv.CswFieldTypeLogical('save', $propdiv, $propxml);
+                        break;
+                    case "LogicalSet":
+                        $propdiv.CswFieldTypeLogicalSet( 'save', $propdiv, $propxml );
                         break;
                     case "Memo":
                         $propdiv.CswFieldTypeMemo( 'save', $propdiv, $propxml );
