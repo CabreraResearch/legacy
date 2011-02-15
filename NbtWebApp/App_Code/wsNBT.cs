@@ -305,27 +305,29 @@ namespace ChemSW.Nbt.WebServices
 		}
 
 		[WebMethod( EnableSession = true )]
-		public XmlDocument getTree( Int32 ViewId )
+        public XmlDocument getTree( Int32 ViewId, string IDPrefix )
 		{
 			var ReturnVal = string.Empty;
 			var ReturnXml = new XmlDocument();
-			try
-			{
-				start();
-				CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-				if( null != View )
-				{
-					var ws = new CswNbtWebServiceTree( _CswNbtResources );
-					ReturnVal = ws.getTree( View, Session );
-					ReturnXml.LoadXml( ReturnVal );
-				}
-				end();
-			}
-			catch( Exception ex )
-			{
-				ReturnXml.LoadXml( error( ex ) );
-			}
-			
+            if( ViewId != Int32.MinValue )
+            {
+                try
+                {
+                    start();
+                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+                    if( null != View )
+                    {
+                        var ws = new CswNbtWebServiceTree( _CswNbtResources );
+                        ReturnVal = ws.getTree( View, Session, IDPrefix );
+                        ReturnXml.LoadXml( ReturnVal );
+                    }
+                    end();
+                }
+                catch( Exception ex )
+                {
+                    ReturnXml.LoadXml( error( ex ) );
+                }
+            }
 			return ReturnXml;
 		} // getTree()
 

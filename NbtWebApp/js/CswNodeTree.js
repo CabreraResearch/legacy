@@ -2,25 +2,44 @@
     $.fn.CswNodeTree = function (options) {
 
         var o = {
+            ID: '', 
             TreeUrl: '/NbtWebApp/wsNBT.asmx/getTree',
             viewid: '',
-            onSelectNode: function(nodeid, nodename, iconurl) { }
+            nodeid: '',
+            onSelectNode: function(nodeid, nodename, iconurl) { },
+            SelectFirstChild: true
         };
 
         if (options) {
             $.extend(o, options);
         }
 
-        var SelectedNodePk;
-
         var $treediv = $('<div id="treediv" class="treediv" />')
                         .appendTo($(this));
+        var IDPrefix = o.ID + '_';
 
         CswAjaxXml({
             url: o.TreeUrl,
-            data: 'ViewId=' + o.viewid,
+            data: 'ViewId=' + o.viewid + '&IDPrefix=' + IDPrefix,
             success: function ($xml) {
-                var firstid = $xml.find('item').first().find('item').first().attr('id');
+                var selectid;
+                if(o.nodeid != undefined && o.nodeid != '') 
+                    selectid = IDPrefix + o.nodeid;
+                else
+                {
+                    if(o.SelectFirstChild)
+                        selectid = $xml.find('item').first().find('item').first().attr('id');
+                    else
+                        selectid = IDPrefix + 'root';
+                }
+
+                // make sure selected item is visible
+                var $selecteditem = $xml.find('item[id="'+ selectid + '"]');
+                var $itemparents = $selecteditem.parents('item').andSelf();
+                var initiallyOpen = new Array();
+                var i = 0;
+                $itemparents.each(function() { initiallyOpen[i] = $(this).attr('id'); i++; });
+
                 var strTypes = $xml.find('types').text();
                 var jsonTypes = $.parseJSON(strTypes);
                 var $treexml = $xml.find('tree').children('root')
@@ -33,10 +52,10 @@
                     },
                     "ui": {
                         "select_limit": 1,
-                        "initially_select": firstid
+                        "initially_select": selectid
                     },
                     "core": {
-                        "initially_open": [ "root", firstid ]
+                        "initially_open": initiallyOpen
                     },
                     "types": {
                         "types": jsonTypes
@@ -44,7 +63,7 @@
                     "plugins": ["themes", "xml_data", "ui", "types"]
                 }).bind('select_node.jstree', 
                                 function (e, data) {
-                                    var Selected = jsTreeGetSelected($treediv); 
+                                    var Selected = jsTreeGetSelected($treediv, IDPrefix); 
                                     o.onSelectNode(Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl);
                                 });
 

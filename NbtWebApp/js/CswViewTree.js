@@ -41,7 +41,7 @@
                         "plugins": ["themes", "xml_data", "ui", "types"]
                     }).bind('select_node.jstree', 
                                 function (e, data) {
-                                    var Selected = jsTreeGetSelected($viewsdiv); 
+                                    var Selected = jsTreeGetSelected($viewsdiv, ''); 
                                     o.onSelect(Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl);
                                 });
 

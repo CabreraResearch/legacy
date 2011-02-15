@@ -33,24 +33,26 @@ namespace ChemSW.Nbt
 
         public static CswNbtView restoreView( CswNbtResources CswNbtResources, Int32 ViewId )
         {
-            CswNbtView ReturnVal = null;
-
-            CswTableSelect ViewsTableSelect = CswNbtResources.makeCswTableSelect( "restoreView_select", "node_views" );
-            DataTable ViewTable = ViewsTableSelect.getTable( "nodeviewid", ViewId );
-            if( ViewTable.Rows.Count > 0 )
+            // try cache first
+            CswNbtView ReturnVal = CswNbtResources.ViewCache.getView( ViewId );
+            if( ReturnVal == null )
             {
-                string ViewAsString = ViewTable.Rows[0]["viewxml"].ToString();
-                ReturnVal = restoreView( CswNbtResources, ViewAsString );
-                ReturnVal.ViewId = ViewId;  // BZ 8068
+                CswTableSelect ViewsTableSelect = CswNbtResources.makeCswTableSelect( "restoreView_select", "node_views" );
+                DataTable ViewTable = ViewsTableSelect.getTable( "nodeviewid", ViewId );
+                if( ViewTable.Rows.Count > 0 )
+                {
+                    string ViewAsString = ViewTable.Rows[0]["viewxml"].ToString();
+                    ReturnVal = restoreView( CswNbtResources, ViewAsString );
+                    ReturnVal.ViewId = ViewId;  // BZ 8068
 
-                // Override XML values with values from row
-                ReturnVal.Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), ViewTable.Rows[0]["visibility"].ToString() );
-                ReturnVal.VisibilityRoleId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["roleid"] ) );
-                ReturnVal.VisibilityUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["userid"] ) );
-                ReturnVal.Category = ViewTable.Rows[0]["category"].ToString();
-                ReturnVal.ViewName = ViewTable.Rows[0]["viewname"].ToString();
+                    // Override XML values with values from row
+                    ReturnVal.Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), ViewTable.Rows[0]["visibility"].ToString() );
+                    ReturnVal.VisibilityRoleId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["roleid"] ) );
+                    ReturnVal.VisibilityUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["userid"] ) );
+                    ReturnVal.Category = ViewTable.Rows[0]["category"].ToString();
+                    ReturnVal.ViewName = ViewTable.Rows[0]["viewname"].ToString();
+                }
             }
-
             return ( ReturnVal );
 
         }//restoreView()

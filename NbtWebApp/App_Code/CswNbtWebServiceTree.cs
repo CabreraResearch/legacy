@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        public string getTree( CswNbtView View, HttpSessionState Session )
+        public string getTree( CswNbtView View, HttpSessionState Session, string IDPrefix )
         {
             string ret = string.Empty;
             ret += @"<item id=""-1""><content><name>No results</name></content></item>";
@@ -52,11 +52,11 @@ namespace ChemSW.Nbt.WebServices
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
             string TreeXml = "<root>" +
-                             "  <item id=\"root\" rel=\"root\">" +
+                             "  <item id=\""+ IDPrefix + "root\" rel=\"root\">" +
                              "    <content>" +
                              "      <name>" + View.ViewName + "</name>" +
                              "    </content>" +
-                                  _runTreeNodesRecursive( Tree ) +
+                                  _runTreeNodesRecursive( Tree, IDPrefix ) +
                              "  </item>" +
                              "</root>";
 
@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
 
-        private string _runTreeNodesRecursive( ICswNbtTree Tree )
+        private string _runTreeNodesRecursive( ICswNbtTree Tree, string IDPrefix )
         {
             string ret = string.Empty;
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
@@ -121,11 +121,11 @@ namespace ChemSW.Nbt.WebServices
                 string ThisNodeName = Tree.getNodeNameForCurrentPosition();
                 string ThisNodeId = ThisNode.NodeId.ToString();
 
-                ret += "<item id=\"" + ThisNodeId + "\" rel=\"nt_" + ThisNode.NodeType.FirstVersionNodeTypeId.ToString() + "\">";
+                ret += "<item id=\"" + IDPrefix + ThisNodeId + "\" rel=\"nt_" + ThisNode.NodeType.FirstVersionNodeTypeId.ToString() + "\">";
                 ret += "  <content>";
                 ret += "    <name>" + ThisNodeName + "</name>";
                 ret += "  </content>";
-                ret += _runTreeNodesRecursive( Tree );
+                ret += _runTreeNodesRecursive( Tree, IDPrefix );
                 ret += "</item>";
 
                 Tree.goToParentNode();

@@ -123,6 +123,9 @@
                 case "List":
                     $propdiv.CswFieldTypeList( 'init', o.nodeid, $propxml );
                     break;
+                case "Location":
+                    $propdiv.CswFieldTypeLocation('init', o.nodeid, $propxml);
+                    break;
                 case "Logical":
                     $propdiv.CswFieldTypeLogical( 'init', o.nodeid, $propxml );
                     break;
@@ -177,6 +180,9 @@
                         break;
                     case "List":
                         $propdiv.CswFieldTypeList( 'save', $propdiv, $propxml );
+                        break;
+                    case "Location":
+                        $propdiv.CswFieldTypeLocation( 'save', $propdiv, $propxml );
                         break;
                     case "Logical":
                         $propdiv.CswFieldTypeLogical( 'save', $propdiv, $propxml );

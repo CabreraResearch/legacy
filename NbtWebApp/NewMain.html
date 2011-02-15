@@ -47,7 +47,7 @@
             $('#header_dashboard').CswDashboard();
             $('#header_menu').CswHeaderMenu();
             $('#header_username').text(u);
-            $('#ViewSelectDiv').CswViewSelect({ 'onSelect': handleViewSelect });
+            $('#ViewSelectDiv').CswViewSelect({ ID: 'mainviewselect', 'onSelect': handleViewSelect });
             $('#CenterDiv').CswWelcome({
                 onLinkClick: handleWelcomeLinkClick
             });
@@ -97,6 +97,7 @@
         clearRight();
         clearCenter();
         $('#LeftDiv').CswNodeTree({
+            ID: 'main',
             'viewid': viewid,
             onSelectNode: getTabs
         });
@@ -124,6 +125,7 @@
     {
         clearLeft();
         $('#LeftDiv').CswNodeTree({
+            ID: 'main',
             'viewid': currentviewid,
             onSelectNode: getTabs
         });

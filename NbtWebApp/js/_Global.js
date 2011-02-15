@@ -253,13 +253,13 @@ function getTableCell($table, row, col) {
 // jsTree
 // ------------------------------------------------------------------------------------
 
-function jsTreeGetSelected($treediv) 
+function jsTreeGetSelected($treediv, IDPrefix) 
 {
     $SelectedItem = $treediv.jstree('get_selected');
     return { 
         'SelectedIconUrl': $SelectedItem.children('a').children('ins').css('background-image'),
-        'SelectedId': $SelectedItem.attr('id'),
-        'SelectedText': $SelectedItem.text()
+        'SelectedId': $SelectedItem.attr('id').substring(IDPrefix.length),
+        'SelectedText': $SelectedItem.children('a').first().text().trim()
     };
 }
 
