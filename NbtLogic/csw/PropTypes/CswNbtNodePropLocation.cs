@@ -180,40 +180,43 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
+        private CswNbtView _View = null;
         public CswNbtView View
         {
             get
             {
-                CswNbtMetaDataObjectClass LocationClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-                CswNbtMetaDataObjectClassProp LocationClassProp = LocationClass.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
-
-                CswNbtView LocationView = new CswNbtView( _CswNbtResources );
-                LocationView.ViewName = "Locations";
-
-                CswNbtViewRelationship LocationLevel1 = LocationView.AddViewRelationship( LocationClass, true );
-                if( NodeId != null )
-                    LocationLevel1.NodeIdsToFilterOut.Add( NodeId );
-
-                // Only Locations with null parent locations at the root
-                CswNbtViewProperty LocationViewProp = LocationView.AddViewProperty( LocationLevel1, LocationClassProp );
-                CswNbtViewPropertyFilter LocationViewPropNull = LocationView.AddViewPropertyFilter( LocationViewProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Null, string.Empty, false );
-
-                Int32 MaxDepth = 5;
-                if( CswTools.IsInteger( _CswNbtResources.getConfigVariableValue( "loc_max_depth" ) ) )
-                    MaxDepth = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "loc_max_depth" ) );
-
-                CswNbtViewRelationship PriorLocationLevel = LocationLevel1;
-                for( int i = 2; i <= MaxDepth; i++ )
+                if( _View == null )
                 {
-                    CswNbtViewRelationship LocationLevelX = LocationView.AddViewRelationship( PriorLocationLevel, CswNbtViewRelationship.PropOwnerType.Second, LocationClassProp, true );
-                    if( NodeId != null )
-                        LocationLevelX.NodeIdsToFilterOut.Add( NodeId );
-                    PriorLocationLevel = LocationLevelX;
-                }
+                    CswNbtMetaDataObjectClass LocationClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+                    CswNbtMetaDataObjectClassProp LocationClassProp = LocationClass.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
 
-                return LocationView;
-            }
-        }
+                    _View = new CswNbtView( _CswNbtResources );
+                    _View.ViewName = "Top";
+
+                    CswNbtViewRelationship LocationLevel1 = _View.AddViewRelationship( LocationClass, true );
+                    if( NodeId != null )
+                        LocationLevel1.NodeIdsToFilterOut.Add( NodeId );
+
+                    // Only Locations with null parent locations at the root
+                    CswNbtViewProperty LocationViewProp = _View.AddViewProperty( LocationLevel1, LocationClassProp );
+                    CswNbtViewPropertyFilter LocationViewPropNull = _View.AddViewPropertyFilter( LocationViewProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Null, string.Empty, false );
+
+                    Int32 MaxDepth = 5;
+                    if( CswTools.IsInteger( _CswNbtResources.getConfigVariableValue( "loc_max_depth" ) ) )
+                        MaxDepth = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "loc_max_depth" ) );
+
+                    CswNbtViewRelationship PriorLocationLevel = LocationLevel1;
+                    for( int i = 2; i <= MaxDepth; i++ )
+                    {
+                        CswNbtViewRelationship LocationLevelX = _View.AddViewRelationship( PriorLocationLevel, CswNbtViewRelationship.PropOwnerType.Second, LocationClassProp, true );
+                        if( NodeId != null )
+                            LocationLevelX.NodeIdsToFilterOut.Add( NodeId );
+                        PriorLocationLevel = LocationLevelX;
+                    }
+                } // if( _View == null )
+                return _View;
+            } // get
+        } // View
 
         public override void ToXml( XmlNode ParentNode )
         {
@@ -223,9 +226,11 @@ namespace ChemSW.Nbt.PropTypes
             XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
             XmlNode CachedPathNode = CswXmlDocument.AppendXmlNode( ParentNode, _PathSubField.ToXmlNodeName(), CachedPath );
             XmlNode CachedBarcodeNode = CswXmlDocument.AppendXmlNode( ParentNode, _BarcodeSubField.ToXmlNodeName(), CachedBarcode );
+            View.SaveToCache();
+            XmlNode ViewIdNode = CswXmlDocument.AppendXmlNode( ParentNode, "viewid", View.SessionViewId.ToString() );
 
             if( SelectedNodeId != null )
-                SelectedNodeNode.InnerText = SelectedNodeId.PrimaryKey.ToString();
+                SelectedNodeNode.InnerText = SelectedNodeId.ToString();
             if( SelectedColumn != Int32.MinValue )
                 SelectedColumnNode.InnerText = SelectedColumn.ToString();
             if( SelectedRow != Int32.MinValue )
@@ -236,15 +241,17 @@ namespace ChemSW.Nbt.PropTypes
         {
             // Getting the value as a string is on purpose.
             //SelectedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIdSubField.ToXmlNodeName() ), CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() ), NodeMap ) );
-            Int32 LocationNodeId = _HandleReference( CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIdSubField.ToXmlNodeName() ), CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() ) );
-            if( NodeMap != null && NodeMap.ContainsKey( LocationNodeId ) )
-                LocationNodeId = NodeMap[LocationNodeId];
-            SelectedNodeId = new CswPrimaryKey( "nodes", LocationNodeId );
-
-            CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", SelectedNodeId.PrimaryKey.ToString() );
-            SelectedRow = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _RowSubField.ToXmlNodeName() );
-            SelectedColumn = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ColumnSubField.ToXmlNodeName() );
-            PendingUpdate = true;
+            CswPrimaryKey LocationNodeId = _HandleReference( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _NodeIdSubField.ToXmlNodeName() ), CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() ) );
+            if( NodeMap != null && NodeMap.ContainsKey( LocationNodeId.PrimaryKey ) )
+                LocationNodeId = new CswPrimaryKey( "nodes", NodeMap[LocationNodeId.PrimaryKey] );
+            SelectedNodeId = LocationNodeId;
+            if( SelectedNodeId != null )
+            {
+                CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", SelectedNodeId.PrimaryKey.ToString() );
+                SelectedRow = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _RowSubField.ToXmlNodeName() );
+                SelectedColumn = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ColumnSubField.ToXmlNodeName() );
+                PendingUpdate = true;
+            }
         }
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
@@ -254,18 +261,16 @@ namespace ChemSW.Nbt.PropTypes
             string NodeId = CswTools.XmlRealAttributeName( PropRow[_NodeIdSubField.ToXmlNodeName()].ToString() );
             if( NodeMap != null && NodeMap.ContainsKey( NodeId.ToLower() ) )
                 SelectedNodeId = new CswPrimaryKey( "nodes", NodeMap[NodeId.ToLower()] );
-            else if( CswTools.IsInteger( NodeId ) )
+            else
             {
                 //RelatedNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeId ) );
-                Int32 LocationNodeId = Int32.MinValue;
+                CswPrimaryKey LocationNodeId = null;
                 if( PropRow.Table.Columns.Contains( _BarcodeSubField.ToXmlNodeName() ) )
-                    LocationNodeId = _HandleReference( CswConvert.ToInt32( NodeId ), CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.ToXmlNodeName()].ToString() ) );
+                    LocationNodeId = _HandleReference( NodeId, CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.ToXmlNodeName()].ToString() ) );
                 else
-                    LocationNodeId = _HandleReference( CswConvert.ToInt32( NodeId ), string.Empty );
-                SelectedNodeId = new CswPrimaryKey( "nodes", LocationNodeId );
+                    LocationNodeId = _HandleReference( NodeId, string.Empty );
+                SelectedNodeId = LocationNodeId;
             }
-            else
-                SelectedNodeId = null;
 
             if( SelectedNodeId != null )
             {
@@ -289,10 +294,12 @@ namespace ChemSW.Nbt.PropTypes
             PendingUpdate = true;
         }
 
-        private Int32 _HandleReference( Int32 LocationNodeId, string LocationBarcode ) //, Dictionary<Int32, Int32> NodeMap )
+        private CswPrimaryKey _HandleReference( string LocationNodeIdStr, string LocationBarcode ) //, Dictionary<Int32, Int32> NodeMap )
         {
             //Int32 ret = Int32.MinValue;
-            if( LocationNodeId == Int32.MinValue && LocationBarcode != string.Empty )
+            CswPrimaryKey LocationNodeId = new CswPrimaryKey();
+            LocationNodeId.FromString( LocationNodeIdStr );
+            if( LocationNodeId.PrimaryKey == Int32.MinValue && LocationBarcode != string.Empty )
             {
                 // Find the location with this barcode value
                 CswNbtMetaDataObjectClass LocationObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
@@ -311,7 +318,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     LocationTree.goToNthChild( 0 );
                     CswNbtNode LocationNode = LocationTree.getNodeForCurrentPosition();
-                    LocationNodeId = LocationNode.NodeId.PrimaryKey;
+                    LocationNodeId = LocationNode.NodeId;
                 }
             }
             return LocationNodeId;

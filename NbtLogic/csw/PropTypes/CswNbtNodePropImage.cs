@@ -112,10 +112,23 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
+        public string ImageUrl
+        {
+            get
+            {
+                return "GetBlob.aspx?mode=image&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.PrimaryKey.ToString() + "&propid=" + NodeTypePropId.ToString();
+            }
+        }
+
+
+
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode FileNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _FileNameSubField.ToXmlNodeName(), FileName );
             XmlNode ContentTypeNode = CswXmlDocument.AppendXmlNode( ParentNode, _ContentTypeSubField.ToXmlNodeName(), ContentType );
+            XmlNode ImageUrlNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.Href.ToString(), ImageUrl );
+            CswXmlDocument.AppendXmlAttribute( ImageUrlNode, "width", Width.ToString() );
+            CswXmlDocument.AppendXmlAttribute( ImageUrlNode, "height", Height.ToString() );
 
             // TODO: We need to figure out how we want to do this, for binary data
             // Handle blob data
