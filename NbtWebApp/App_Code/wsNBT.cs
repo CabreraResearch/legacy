@@ -307,8 +307,8 @@ namespace ChemSW.Nbt.WebServices
 				string GridJSONColumns = @"""equipment"",""assembly""";
 				//string GridJSONColumns = @"{""id"": ""equipment"", ""name"": ""equipment"", ""field"": ""equipment""}" ;
 				//GridJSONColumns += @",{""id"": ""assembly"", ""name"": ""assembly"", ""field"": ""assembly""}";
-				string GridJSONData = @"{""id"":""0"", ""equipment"": ""big box"", ""assembly"": ""collection of boxes""}";
-				GridJSONData += @",{""id"":""1"", ""equipment"": ""small box"", ""assembly"": ""collection of boxes""}";
+				string GridJSONData = @"{""id"":""0"", ""equipment"":""big box"", ""assembly"":""collection of boxes""}";
+				GridJSONData += @",{""id"":""1"", ""equipment"":""small box"", ""assembly"":""collection of boxes""}";
 
 				ReturnJSON = @"{
 							""viewname"": ""Debug View"",

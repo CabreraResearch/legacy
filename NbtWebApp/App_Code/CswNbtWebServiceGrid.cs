@@ -10,6 +10,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using System.Web.UI.WebControls;
+using System.Xml.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -78,7 +79,9 @@ namespace ChemSW.Nbt.WebServices
 			//if( ParentKey != null )
 			//    CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGridProperty;
 			//else
-			Tree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGrid;
+
+			var RawXML = XElement.Parse( Tree.getRawTreeXml() );
+			XElement RootNode = RawXML.Element( "NbtNode" );
 
 			string GridXmlString = Tree.getTreeAsXml();
 			var GridXml = new XmlDocument();
