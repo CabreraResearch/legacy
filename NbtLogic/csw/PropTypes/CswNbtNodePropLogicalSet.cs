@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.Xml;
+using System.IO;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -145,7 +146,7 @@ namespace ChemSW.Nbt.PropTypes
             Data.Columns.Add( KeyColumn );
 
             foreach( string XValue in XValues )
-                Data.Columns.Add( XValue, typeof( bool ) );
+                Data.Columns.Add( XValue.ToLower(), typeof( bool ) );
 
             if( _CswNbtMetaDataNodeTypeProp.IsFK && _CswNbtMetaDataNodeTypeProp.FKType == "fkeydefid" )
             {
@@ -161,7 +162,7 @@ namespace ChemSW.Nbt.PropTypes
                     Row[KeyColumn] = CurrentYValueRow[FkeyDefsTable.Rows[0]["pk_column"].ToString()].ToString();
                     foreach( string XValue in XValues )
                     {
-                        Row[XValue] = CheckValue( XValue, Row[KeyColumn].ToString() );
+                        Row[XValue.ToLower()] = CheckValue( XValue, Row[KeyColumn].ToString() );
                     }
                     Data.Rows.Add( Row );
                 }
@@ -292,23 +293,72 @@ namespace ChemSW.Nbt.PropTypes
 
         private string _ElemName_LogicalSetXml = "LogicalSetXml";
 
+        private string _NameColumn = "name";
+        private string _KeyColumn = "key";
+        private string _TableName = "logicalsetitem";
+
         /// <summary>
         /// Convert this data to XML format, and add beneath the given parent node
         /// </summary>
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode LSXmlNode = CswXmlDocument.AppendXmlNode( ParentNode, _ElemName_LogicalSetXml );
-            //CswXmlDocument.SetInnerTextAsCData( LSXmlNode, LogicalSetXmlDoc.InnerXml.ToString() );
-            LSXmlNode.InnerText = LogicalSetXmlDoc.InnerXml;
+            
+            ////CswXmlDocument.SetInnerTextAsCData( LSXmlNode, LogicalSetXmlDoc.InnerXml.ToString() );
+            //LSXmlNode.InnerText = LogicalSetXmlDoc.InnerXml;
+
+            DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
+            Data.TableName = _TableName;
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+            Data.WriteXml( sw );
+            LSXmlNode.InnerText = sb.ToString();
         }
         /// <summary>
         /// Initialize this object with data from the given XmlNode
         /// </summary>
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            LogicalSetXmlDoc = new XmlDocument();
+            // This isn't the most efficient way...but it works for now
+
+            DataTable ExistingData = GetDataAsTable( _NameColumn, _KeyColumn );
+            ExistingData.TableName = _TableName;
+
+            //LogicalSetXmlDoc = new XmlDocument();
+            ////LogicalSetXmlDoc.LoadXml( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ElemName_LogicalSetXml ) );
             //LogicalSetXmlDoc.LoadXml( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ElemName_LogicalSetXml ) );
-            LogicalSetXmlDoc.LoadXml( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ElemName_LogicalSetXml ) );
+
+            XmlDocument InXmlDoc = new XmlDocument();
+            InXmlDoc.LoadXml( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ElemName_LogicalSetXml ) );
+
+            StringBuilder sbSchema = new StringBuilder();
+            StringWriter swSchema = new StringWriter( sbSchema );
+            ExistingData.WriteXmlSchema( swSchema );
+
+            DataTable NewData = new DataTable();
+            NewData.TableName = _TableName;
+            StringReader srXml = new StringReader( InXmlDoc.InnerXml );
+            StringReader srSchema = new StringReader( sbSchema.ToString() );
+            NewData.ReadXmlSchema( srSchema );
+            NewData.ReadXml( srXml );
+
+            foreach( DataRow NewRow in NewData.Rows )
+            {
+                foreach( DataRow ExistingRow in ExistingData.Rows )
+                {
+                    if( NewRow[_KeyColumn].ToString() == ExistingRow[_KeyColumn].ToString() )
+                    {
+                        foreach( DataColumn Column in ExistingData.Columns )
+                        {
+                            if( Column.ColumnName != _NameColumn && Column.ColumnName != _KeyColumn )
+                            {
+                                SetValue( Column.ColumnName, NewRow[_KeyColumn].ToString(), CswConvert.ToBoolean( NewRow[Column.ColumnName] ) );
+                            }
+                        } // foreach( DataColumn Column in ExistingData.Columns )
+                    } // if( NewRow[_KeyColumn] == ExistingRow[_KeyColumn] )
+                } // foreach( DataRow ExistingRow in ExistingData.Rows )
+            } // foreach( DataRow NewRow in NewData.Rows )
+
             Save();
         }
         /// <summary>
