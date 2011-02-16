@@ -15,7 +15,8 @@
                              values: [ false, true, false ] },
                            { label: 'row3', 
                              key: 3,
-                             values: [ true, false, true ] }]
+                             values: [ true, false, true ] }],
+                    rows: 4
                     //CheckboxesOnLeft: false,
                     //UseRadios: false,
                     //ReadOnly: false
@@ -28,13 +29,19 @@
                 var $Div = $(this);
                 $Div.children().remove();
 
+                var $OuterDiv = $('<div/>').appendTo($Div);
                 var $table = makeTable(o.ID + '_tbl')
-                               .appendTo($Div);
-                
+                               .appendTo($OuterDiv);
+
+                $OuterDiv.css('height', (25 * o.rows) + 'px');
+                $OuterDiv.addClass('cbarraydiv');
+                $table.addClass('cbarraytable');
+
                 // Header
                 for(var c = 0; c < o.cols.length; c++)
                 {
                     var $cell = getTableCell($table, 1, c+2);
+                    $cell.addClass('cbarraycell');
                     $cell.append(o.cols[c]);
                 }
 
@@ -44,11 +51,13 @@
                     var row = o.data[r];
                     // Row label
                     var $labelcell = getTableCell($table, r+2, 1);
+                    $labelcell.addClass('cbarraycell');
                     $labelcell.append(row.label);
                     for(var c = 0; c < o.cols.length; c++)
                     {
                         
                         var $cell = getTableCell($table, r+2, c+2);
+                        $cell.addClass('cbarraycell');
                         var checkid = o.ID + '_' + r + '_' + c;
                         var $check = $('<input type="checkbox" class="CBACheckBox" id="'+ checkid + '" />')
                                        .appendTo($cell);
