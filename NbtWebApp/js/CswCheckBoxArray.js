@@ -49,9 +49,15 @@
                     {
                         
                         var $cell = getTableCell($table, r+2, c+2);
-                        
-                        var $check = $('<input type="checkbox" class="CBACheckBox" key="'+ row.key +'" row="' + r + '" col="' + c + '" id="'+ o.ID + '_' + r + '_' + c + '" />')
+                        var checkid = o.ID + '_' + r + '_' + c;
+                        var $check = $('<input type="checkbox" class="CBACheckBox" id="'+ checkid + '" />')
                                        .appendTo($cell);
+                        $check.attr('key', row.key);
+                        $check.attr('rowlabel', row.label);
+                        $check.attr('collabel', o.cols[c]);
+                        $check.attr('row', r);
+                        $check.attr('col', c);
+
                         if(row.values[c]) {
                             $check.attr('checked', 'true');
                         }
@@ -61,19 +67,22 @@
             }, // init
 
             getdata: function () {
-
                 var $Div = $(this);
                 var data = new Array();
                 
                 $Div.find('.CBACheckBox')
                     .each(function() {
-                        var $check = $(this);
-                        var r = parseInt($check.attr('row'));
-                        var c = parseInt($check.attr('col'));
-                        if(data[r] == undefined) 
-                            data[r] = new Array();
-                        data[r][c] = $check.attr('checked');
-                    });
+                            var $check = $(this);
+                            var r = parseInt($check.attr('row'));
+                            var c = parseInt($check.attr('col'));
+                            if(data[r] == undefined) 
+                                data[r] = new Array();
+                            data[r][c] = { key: $check.attr('key'),
+                                           rowlabel: $check.attr('rowlabel'),
+                                           collabel: $check.attr('collabel'),
+                                           checked: $check.attr('checked') 
+                                         };
+                        });
                 return data;
             }
         };

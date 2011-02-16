@@ -309,6 +309,7 @@ namespace ChemSW.Nbt.PropTypes
             LogicalSetXmlDoc = new XmlDocument();
             //LogicalSetXmlDoc.LoadXml( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ElemName_LogicalSetXml ) );
             LogicalSetXmlDoc.LoadXml( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ElemName_LogicalSetXml ) );
+            Save();
         }
         /// <summary>
         /// Initialize this object with data from the given DataRow
@@ -336,14 +337,14 @@ namespace ChemSW.Nbt.PropTypes
                         }
                     }
                 }
-                Save();
             }
             else
             {
                 // Load verbatim
                 setXml( PropRow[_ElemName_LogicalSetXml].ToString() );
             }
-        }
-    }
-}
+            Save();
+        } // ReadDataRow()
+    } // class CswNbtNodePropLogicalSet
+} // namespace ChemSW.Nbt.PropTypes
 

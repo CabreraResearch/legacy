@@ -5,36 +5,35 @@
     var methods = {
         init: function(nodepk, $xml) {
 
-                $Div = $(this);
+                var $Div = $(this);
                 $Div.children().remove();
 
                 var ID = $xml.attr('id');
                 var Required = $xml.attr('required');
                 var ReadOnly = $xml.attr('readonly');
 
-                var LogicalSetXml = $xml.children('LogicalSetXml').first();
+                var $LogicalSetXml = $($xml.children('LogicalSetXml').text());
                 
                 var $CBADiv = $('<div />')
                                 .appendTo($Div);
-                
-                var $xml = $($(LogicalSetXml).text());
-                
+
                 // get columns
                 var cols = new Array();
                 var c = 0;
 
-                $xml.find('yvalue')
-                    .first()
-                    .children()
-                    .each(function() {
-                        cols[c] = this.nodeName;
-                        c++;
-                    });
+                $LogicalSetXml.find('yvalue')
+                              .first()
+                              .children()
+                              .each(function() {
+                                  cols[c] = this.nodeName;
+                                  c++;
+                              });
+
 
                 // get data
                 var data = new Array();
                 var d = 0;
-                $xml.find('yvalue').each(function () {
+                $LogicalSetXml.find('yvalue').each(function () {
                     var $this = $(this);
                     var values = new Array();
                     var r = 0;
@@ -50,51 +49,36 @@
                     data[d] = $elm;
                     d++;
                 });
-
+                
                 $CBADiv.CswCheckBoxArray('init', {
-                                            'ID': ID + '_cba',
-                                            'cols': cols,
-                                            'data': data
+                                         'ID': ID + '_cba',
+                                         'cols': cols,
+                                         'data': data
                                         });
 
 
             },
         save: function($propdiv, $xml) {
+                var $LogicalSetXml = $($xml.children('LogicalSetXml').text());
                 var $CBADiv = $propdiv.children('div').first();
-                var data = $CBADiv.CswCheckBoxArray( 'getdata' );
-                
+                var formdata = $CBADiv.CswCheckBoxArray( 'getdata' );
+                for( var r = 0; r < formdata.length; r++)
+                {
+                    for( var c = 0; c < formdata[r].length; c++)
+                    {
+                        var checkitem = formdata[r][c];
+                        $xmlitem = $LogicalSetXml.find('yvalue[y="'+ checkitem.key +'"]');
+                        if(checkitem.checked && $xmlitem.find(checkitem.collabel).text() == "0")
+                            $xmlitem.find(checkitem.collabel).text('1');
+                        else if(!checkitem.checked && $xmlitem.find(checkitem.collabel).text() == "1")
+                            $xmlitem.find(checkitem.collabel).text('0');
 
-//                var $CheckboxImage = $propdiv.find('div');
-//                $xml.children('checked').text($CheckboxImage.attr('alt'));
+                    } // for( var c = 0; c < formdata.length; c++)
+                } // for( var r = 0; r < formdata.length; r++)
+                $xml.children('LogicalSetXml').text($LogicalSetXml.get(0).outerHTML);
             }
     };
     
-
-//    function onClick($ImageDiv, Required) 
-//    {
-//        var currentValue = $ImageDiv.attr('alt');
-//	    var newValue = CswImageButton_ButtonType.CheckboxNull;
-//	    var newAltText = "null";
-//        if (currentValue == "null") {
-//		    newValue = CswImageButton_ButtonType.CheckboxTrue;
-//            newAltText = "true";
-//	    } else if (currentValue == "false") {
-//		    if (Required == "true") {
-//			    newValue = CswImageButton_ButtonType.CheckboxTrue;
-//                newAltText = "true";
-//		    } else {
-//			    newValue = CswImageButton_ButtonType.CheckboxNull;
-//                newAltText = "null";
-//		    }
-//	    } else if (currentValue == "true") {
-//		    newValue = CswImageButton_ButtonType.CheckboxFalse;
-//            newAltText = "false";
-//	    }
-//        $ImageDiv.attr('alt', newAltText);
-//        return newValue;
-//    } // onClick()
-
-
 
     // Method calling logic
     $.fn.CswFieldTypeLogicalSet = function (method) {
