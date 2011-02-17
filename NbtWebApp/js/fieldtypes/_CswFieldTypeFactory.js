@@ -37,6 +37,9 @@ $.CswFieldTypeFactory = function (method) {
                 case "Number":
                     $propdiv.CswFieldTypeNumber('init', nodeid, $propxml);
                     break;
+                case "Password":
+                    $propdiv.CswFieldTypePassword('init', nodeid, $propxml);
+                    break;
                 case "PropertyReference":
                     $propdiv.CswFieldTypePropertyReference('init', nodeid, $propxml);
                     break;
@@ -92,6 +95,9 @@ $.CswFieldTypeFactory = function (method) {
                     break;
                 case "Number":
                     $propdiv.CswFieldTypeNumber('save', $propdiv, $propxml);
+                    break;
+                case "Password":
+                    $propdiv.CswFieldTypePassword('save', $propdiv, $propxml);
                     break;
                 case "PropertyReference":
                     $propdiv.CswFieldTypePropertyReference('save', $propdiv, $propxml);

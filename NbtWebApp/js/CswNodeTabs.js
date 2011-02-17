@@ -112,7 +112,7 @@
                 var fieldtype = $propxml.attr('fieldtype');
                 var $propdiv = $propcell.children('div');
                   
-                $.CswFieldTypeFactory('save', fieldtype, $propdiv, $propxml);              
+                $.CswFieldTypeFactory('save', fieldtype, o.nodeid, $propdiv, $propxml);              
 
             }); // each()
 
