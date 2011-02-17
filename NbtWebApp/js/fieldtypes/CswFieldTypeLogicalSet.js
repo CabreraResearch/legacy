@@ -12,23 +12,24 @@
                 var Required = $xml.attr('required');
                 var ReadOnly = $xml.attr('readonly');
 
-                var $LogicalSetXml = $($xml.children('LogicalSetXml').text());
-                var NameCol = "NAME";
-                var KeyCol = "KEY";
+                var $LogicalSetXml = $xml.children('logicalsetxml');
+                var NameCol = "name";
+                var KeyCol = "key";
 
-                // <DocumentElement>
-                //   <LogicalSetItem>
-                //      <Name>Assembly</Name>
-                //      <Key>7</Key>
-                //      <View>true</View>
-                //      <Create>true</Create>
-                //      <Delete>true</Delete>
-                //      <Edit>true</Edit>
-                //    </LogicalSetItem>
-                //    <LogicalSetItem> ... 
-                //    </LogicalSetItem>
-                // </DocumentElement>
-                
+                //<LogicalSetXml>
+                //    <item>
+                //        <column field="name" value="Assembly"></column>
+                //        <column field="key" value="7"></column>
+                //        <column field="View" value="True"></column>
+                //        <column field="Create" value="True"></column>
+                //        <column field="Delete" value="True"></column>
+                //        <column field="Edit" value="True"></column>
+                //    </item>
+                //    <item>
+                //        ...
+                //    </item>
+                //</LogicalSetXml>
+            
                 var $CBADiv = $('<div />')
                                 .appendTo($Div);
 
@@ -36,34 +37,34 @@
                 var cols = new Array();
                 var c = 0;
 
-                $LogicalSetXml.find('LogicalSetItem')
+                $LogicalSetXml.find('item')
                               .first()
-                              .children()
+                              .children('column')
                               .each(function() {
-                                      if(this.nodeName != NameCol && this.nodeName != KeyCol)
+                                      var fieldname = $(this).attr('field');
+                                      if(fieldname != NameCol && fieldname != KeyCol)
                                       {
-                                          cols[c] = this.nodeName;
+                                          cols[c] = fieldname;
                                           c++;
                                       }
                               });
 
-
                 // get data
                 var data = new Array();
                 var d = 0;
-                $LogicalSetXml.find('LogicalSetItem').each(function () {
+                $LogicalSetXml.find('item').each(function () {
                     var $this = $(this);
                     var values = new Array();
                     var r = 0;
                     for(var c = 0; c < cols.length; c++)
                     {
-console.log($this.children(cols[c]).text());
-                        values[r] = ($this.children(cols[c]).text() == "true");
+                        var value = $this.children('column[field="'+ cols[c] +'"]').attr('value');
+                        values[r] = (value == "True");
                         r++;
                     }
 
-                    var $elm = { 'label': $this.children(NameCol).text(),
-                                 'key': $this.children(KeyCol).text(),
+                    var $elm = { 'label': $this.children('column[field="' + NameCol + '"]').attr('value'),
+                                 'key': $this.children('column[field="' + KeyCol + '"]').attr('value'),
                                  'values': values };
                     data[d] = $elm;
                     d++;
@@ -78,7 +79,7 @@ console.log($this.children(cols[c]).text());
 
             },
         save: function($propdiv, $xml) {
-                var $LogicalSetXml = $($xml.children('LogicalSetXml').text());
+                var $LogicalSetXml = $xml.children('logicalsetxml');
                 var $CBADiv = $propdiv.children('div').first();
                 var formdata = $CBADiv.CswCheckBoxArray( 'getdata' );
                 for( var r = 0; r < formdata.length; r++)
@@ -86,16 +87,17 @@ console.log($this.children(cols[c]).text());
                     for( var c = 0; c < formdata[r].length; c++)
                     {
                         var checkitem = formdata[r][c];
-                        $xmlitem = $LogicalSetXml.find('LogicalSetItem:has(Key:contains("'+ checkitem.key +'"))');
-                        if(checkitem.checked && $xmlitem.find(checkitem.collabel).text() == "false")
-                            $xmlitem.find(checkitem.collabel).text('true');
-                        else if(!checkitem.checked && $xmlitem.find(checkitem.collabel).text() == "true")
-                            $xmlitem.find(checkitem.collabel).text('false');
+                        var $xmlitem = $LogicalSetXml.find('item:has(column[field="key"][value="'+ checkitem.key +'"])');
+                        var $xmlitemcolumn = $xmlitem.find('column[field="'+checkitem.collabel+'"]');
+                    
+                        if(checkitem.checked && $xmlitemcolumn.attr('value') == "False")
+                            $xmlitemcolumn.attr('value', 'True');
+                        else if(!checkitem.checked && $xmlitemcolumn.attr('value') == "True")
+                            $xmlitemcolumn.attr('value', 'False');
 
                     } // for( var c = 0; c < formdata.length; c++)
                 } // for( var r = 0; r < formdata.length; r++)
-                $xml.children('LogicalSetXml').text($LogicalSetXml.get(0).outerHTML);
-            }
+            } // save()
     };
     
 
