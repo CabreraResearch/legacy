@@ -59,7 +59,7 @@
                         var $cell = getTableCell($table, r+2, c+2);
                         $cell.addClass('cbarraycell');
                         var checkid = o.ID + '_' + r + '_' + c;
-                        var $check = $('<input type="checkbox" class="CBACheckBox" id="'+ checkid + '" />')
+                        var $check = $('<input type="checkbox" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" />')
                                        .appendTo($cell);
                         $check.attr('key', row.key);
                         $check.attr('rowlabel', row.label);
@@ -72,6 +72,15 @@
                         }
                     } // for(var c = 0; c < o.cols.length; c++)
                 } // for(var r = 0; r < o.data.length; r++)
+
+                var CheckAllLinkText = "Check All";
+                if($('.CBACheckBox_' + o.ID + '[type=checkbox]').not(':checked').length == 0)
+                    CheckAllLinkText = "Uncheck All";
+
+                var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ CheckAllLinkText +'</a></div>')
+                                     .appendTo($Div);
+                var $checkalllink = $checkalldiv.children('a');
+                $checkalllink.click(function() { ToggleCheckAll($checkalllink, o.ID); return false; });
 
             }, // init
 
@@ -96,6 +105,27 @@
             }
         };
     
+        function ToggleCheckAll($checkalllink, id)
+        {
+            // Are there any unchecked checkboxes?
+            if($('.CBACheckBox_' + id + '[type=checkbox]').not(':checked').length > 0)
+            {
+                CheckAll($checkalllink, id);
+            } else {
+                UncheckAll($checkalllink, id);
+            }
+        } // ToggleCheckAll()
+
+        function CheckAll($checkalllink, id)
+        {
+            $('.CBACheckBox_' + id).attr('checked', 'checked');
+            $checkalllink.text('Uncheck all');
+        }
+        function UncheckAll($checkalllink, id)
+        {
+            $('.CBACheckBox_' + id).removeAttr('checked');
+            $checkalllink.text('Check all');
+        }
 
         // Method calling logic
         if ( methods[method] ) {
