@@ -304,16 +304,6 @@ namespace ChemSW.Nbt.PropTypes
         {
             XmlNode LSXmlNode = CswXmlDocument.AppendXmlNode( ParentNode, _ElemName_LogicalSetXml );
             
-            ////CswXmlDocument.SetInnerTextAsCData( LSXmlNode, LogicalSetXmlDoc.InnerXml.ToString() );
-            //LSXmlNode.InnerText = LogicalSetXmlDoc.InnerXml;
-
-            //DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
-            //Data.TableName = _TableName;
-            //StringBuilder sb = new StringBuilder();
-            //StringWriter sw = new StringWriter(sb);
-            //Data.WriteXml( sw );
-            //LSXmlNode.InnerText = sb.ToString();
-
             DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
             foreach( DataRow Row in Data.Rows )
             {
