@@ -80,7 +80,7 @@
                                 $propcell.addClass('propertyvaluecell');
                                 var $propdiv = $('<div/>').appendTo($propcell); 
 
-                                makePropControl($propdiv, fieldtype, $this);
+                                $.CswFieldTypeFactory('make', o.nodeid, fieldtype, $propdiv, $this); 
                                 
                             });
 
@@ -104,61 +104,6 @@
             }); 
         } // getProps()
 
-        function makePropControl($propdiv, fieldtype, $propxml)
-        {
-            switch(fieldtype)
-            {
-                case "Barcode":
-                    $propdiv.CswFieldTypeBarcode('init', o.nodeid, $propxml);
-                    break;
-                case "Date":
-                    $propdiv.CswFieldTypeDate('init', o.nodeid, $propxml);
-                    break;
-                case "Image":
-                    $propdiv.CswFieldTypeImage('init', o.nodeid, $propxml);
-                    break;
-                case "Link":
-                    $propdiv.CswFieldTypeLink('init', o.nodeid, $propxml);
-                    break;
-                case "List":
-                    $propdiv.CswFieldTypeList( 'init', o.nodeid, $propxml );
-                    break;
-                case "Location":
-                    $propdiv.CswFieldTypeLocation('init', o.nodeid, $propxml);
-                    break;
-                case "Logical":
-                    $propdiv.CswFieldTypeLogical( 'init', o.nodeid, $propxml );
-                    break;
-                case "LogicalSet":
-                    $propdiv.CswFieldTypeLogicalSet( 'init', o.nodeid, $propxml );
-                    break;
-                case "Memo":
-                    $propdiv.CswFieldTypeMemo('init', o.nodeid, $propxml);
-                    break;
-                case "Number":
-                    $propdiv.CswFieldTypeNumber( 'init', o.nodeid, $propxml );
-                    break;
-                case "PropertyReference":
-                    $propdiv.CswFieldTypePropertyReference('init', o.nodeid, $propxml);
-                    break;
-                case "Relationship":
-                    $propdiv.CswFieldTypeRelationship('init', o.nodeid, $propxml);
-                    break;
-                case "Sequence":
-                    $propdiv.CswFieldTypeSequence('init', o.nodeid, $propxml);
-                    break;
-                case "Static":
-                    $propdiv.CswFieldTypeStatic( 'init', o.nodeid, $propxml );
-                    break;
-                case "Text":
-                    $propdiv.CswFieldTypeText( 'init', o.nodeid, $propxml );
-                    break;
-                default:
-                    $propdiv.append($propxml.attr('gestalt'));
-                    break;
-            }
-        } // makePropControl()
-
         function Save($table, $propsxml)
         {
             $propsxml.children().each(function() { 
@@ -166,57 +111,9 @@
                 var $propcell = getTableCell($table, $propxml.attr('displayrow'), ($propxml.attr('displaycol') * 2));
                 var fieldtype = $propxml.attr('fieldtype');
                 var $propdiv = $propcell.children('div');
-                                
-                switch(fieldtype)
-                {
-                    case "Barcode":
-                        $propdiv.CswFieldTypeBarcode( 'save', $propdiv, $propxml );
-                        break;
-                    case "Date":
-                        $propdiv.CswFieldTypeDate( 'save', $propdiv, $propxml );
-                        break;
-                    case "Image":
-                        $propdiv.CswFieldTypeImage( 'save', $propdiv, $propxml );
-                        break;
-                    case "Link":
-                        $propdiv.CswFieldTypeLink( 'save', $propdiv, $propxml );
-                        break;
-                    case "List":
-                        $propdiv.CswFieldTypeList( 'save', $propdiv, $propxml );
-                        break;
-                    case "Location":
-                        $propdiv.CswFieldTypeLocation( 'save', $propdiv, $propxml );
-                        break;
-                    case "Logical":
-                        $propdiv.CswFieldTypeLogical('save', $propdiv, $propxml);
-                        break;
-                    case "LogicalSet":
-                        $propdiv.CswFieldTypeLogicalSet( 'save', $propdiv, $propxml );
-                        break;
-                    case "Memo":
-                        $propdiv.CswFieldTypeMemo( 'save', $propdiv, $propxml );
-                        break;
-                    case "Number":
-                        $propdiv.CswFieldTypeNumber( 'save', $propdiv, $propxml );
-                        break;
-                    case "PropertyReference":
-                        $propdiv.CswFieldTypePropertyReference( 'save', $propdiv, $propxml );
-                        break;                    
-                    case "Relationship":
-                        $propdiv.CswFieldTypeRelationship( 'save', $propdiv, $propxml );
-                        break;
-                    case "Sequence":
-                        $propdiv.CswFieldTypeSequence( 'save', $propdiv, $propxml );
-                        break;
-                    case "Static":
-                        $propdiv.CswFieldTypeStatic( 'save', $propdiv, $propxml );
-                        break;
-                    case "Text":
-                        $propdiv.CswFieldTypeText( 'save', $propdiv, $propxml );
-                        break;
-                    default:
-                        break;
-                } // switch
+                  
+                $.CswFieldTypeFactory('save', fieldtype, $propdiv, $propxml);              
+
             }); // each()
 
             CswAjaxJSON({
