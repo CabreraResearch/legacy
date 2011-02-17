@@ -31,6 +31,9 @@ $.CswFieldTypeFactory = function (method) {
                 case "Memo":
                     $propdiv.CswFieldTypeMemo('init', nodeid, $propxml);
                     break;
+                case "MTBF":
+                    $propdiv.CswFieldTypeMTBF('init', nodeid, $propxml);
+                    break;
                 case "Number":
                     $propdiv.CswFieldTypeNumber('init', nodeid, $propxml);
                     break;
@@ -83,6 +86,9 @@ $.CswFieldTypeFactory = function (method) {
                     break;
                 case "Memo":
                     $propdiv.CswFieldTypeMemo('save', $propdiv, $propxml);
+                    break;
+                case "MTBF":
+                    $propdiv.CswFieldTypeMTBF('save', $propdiv, $propxml);
                     break;
                 case "Number":
                     $propdiv.CswFieldTypeNumber('save', $propdiv, $propxml);
