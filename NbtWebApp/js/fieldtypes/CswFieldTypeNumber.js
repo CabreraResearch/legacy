@@ -13,6 +13,7 @@
                 var ReadOnly = $xml.attr('readonly');
 
                 var Value = $xml.children('value').text();
+                if(Value == "NaN") Value = '';
                 var MinValue = $xml.children('value').attr('minvalue');
                 var MaxValue = $xml.children('value').attr('maxvalue');
                 var Precision = $xml.children('value').attr('precision');
