@@ -95,13 +95,15 @@ namespace ChemSW.Nbt.WebServices
 
 
 		[WebMethod( EnableSession = true )]
-		public string deAuthenticate()
+		public string deauthenticate()
 		{
 			string ReturnVal = string.Empty;
 			try
 			{
+                start();
 				_SessionResources.CswSessionManager.DeAuthenticate();
-				end();
+                ReturnVal = "{ \"Deauthentication\": \"Succeeded\" }";
+                end();
 			}
 			catch( Exception ex )
 			{

@@ -3,6 +3,7 @@
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getHeaderMenu',
+            onLogout: function() { },
         };
 
         if (options) {
@@ -54,6 +55,16 @@
                 $li = $('<li class="headermenu_dialog">'+ $this.attr('text') +'</li>')
                         .appendTo($ul)
                         .click(function() { OpenDialog($this.attr('text'), $this.attr('popup')); });
+            }
+            else if($this.attr('action') != undefined && $this.attr('action') != '' ) {
+                $li = $('<li><a href="#">' + $this.attr('text') + '</a></li>')
+                        .appendTo($ul)
+                switch($this.attr('action'))
+                {
+                    case 'Logout':
+                        $li.children('a').click(function() { o.onLogout(); return false; });
+                        break;
+                }
             }
             else {
                 $li = $('<li>' + $this.attr('text') +'</li>')
