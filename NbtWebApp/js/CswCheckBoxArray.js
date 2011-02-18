@@ -16,15 +16,20 @@
                            { label: 'row3', 
                              key: 3,
                              values: [ true, false, true ] }],
-                    rows: 4
+                    HeightInRows: 4,
                     //CheckboxesOnLeft: false,
-                    //UseRadios: false,
+                    UseRadios: false,
+                    Required: false
                     //ReadOnly: false
                 };
 
                 if (options) {
                     $.extend(o, options);
                 }
+
+                var CheckType = "checkbox";
+                if(o.UseRadios)
+                    CheckType = "radio";
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -33,33 +38,61 @@
                 var $table = makeTable(o.ID + '_tbl')
                                .appendTo($OuterDiv);
 
-                $OuterDiv.css('height', (25 * o.rows) + 'px');
+                $OuterDiv.css('height', (25 * o.HeightInRows) + 'px');
                 $OuterDiv.addClass('cbarraydiv');
                 $table.addClass('cbarraytable');
 
                 // Header
+                var tablerow = 1;
                 for(var c = 0; c < o.cols.length; c++)
                 {
-                    var $cell = getTableCell($table, 1, c+2);
+                    var $cell = getTableCell($table, tablerow, c+2);
                     $cell.addClass('cbarraycell');
                     $cell.append(o.cols[c]);
                 }
+                tablerow++;
+
+                //[none] row
+                if(o.UseRadios && ! o.Required)
+                {
+                    // Row label
+                    var $labelcell = getTableCell($table, tablerow, 1);
+                    $labelcell.addClass('cbarraycell');
+                    $labelcell.append('[none]');
+                    for(var c = 0; c < o.cols.length; c++)
+                    {
+                        var $cell = getTableCell($table, tablerow, c+2);
+                        $cell.addClass('cbarraycell');
+                        var checkid = o.ID + '_none';
+                        var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
+                                       .appendTo($cell);
+                        $check.attr('key', '');
+                        $check.attr('rowlabel', '[none]');
+                        $check.attr('collabel', o.cols[c]);
+                        $check.attr('row', -1);
+                        $check.attr('col', c);
+                        
+                        $check.attr('checked', 'true');   // the browser will override this if another one is checked
+
+                    } // for(var c = 0; c < o.cols.length; c++)
+                } // if(o.UseRadios && ! o.Required)
+                tablerow++;
 
                 // Data
                 for(var r = 0; r < o.data.length; r++)
                 {
                     var row = o.data[r];
                     // Row label
-                    var $labelcell = getTableCell($table, r+2, 1);
+                    var $labelcell = getTableCell($table, tablerow + r, 1);
                     $labelcell.addClass('cbarraycell');
                     $labelcell.append(row.label);
                     for(var c = 0; c < o.cols.length; c++)
                     {
                         
-                        var $cell = getTableCell($table, r+2, c+2);
+                        var $cell = getTableCell($table, tablerow + r, c+2);
                         $cell.addClass('cbarraycell');
                         var checkid = o.ID + '_' + r + '_' + c;
-                        var $check = $('<input type="checkbox" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" />')
+                        var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
                                        .appendTo($cell);
                         $check.attr('key', row.key);
                         $check.attr('rowlabel', row.label);
@@ -74,7 +107,7 @@
                 } // for(var r = 0; r < o.data.length; r++)
 
                 var CheckAllLinkText = "Check All";
-                if($('.CBACheckBox_' + o.ID + '[type=checkbox]').not(':checked').length == 0)
+                if($('.CBACheckBox_' + o.ID).not(':checked').length == 0)
                     CheckAllLinkText = "Uncheck All";
 
                 var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ CheckAllLinkText +'</a></div>')
@@ -84,11 +117,19 @@
 
             }, // init
 
-            getdata: function () {
+            getdata: function (options) {
+                
+                var o = {
+                    ID: '',
+                };
+
+                if (options) {
+                    $.extend(o, options);
+                }
+                
                 var $Div = $(this);
                 var data = new Array();
-                
-                $Div.find('.CBACheckBox')
+                $Div.find('.CBACheckBox_' + o.ID)
                     .each(function() {
                             var $check = $(this);
                             var r = parseInt($check.attr('row'));
@@ -108,7 +149,7 @@
         function ToggleCheckAll($checkalllink, id)
         {
             // Are there any unchecked checkboxes?
-            if($('.CBACheckBox_' + id + '[type=checkbox]').not(':checked').length > 0)
+            if($('.CBACheckBox_' + id).not(':checked').length > 0)
             {
                 CheckAll($checkalllink, id);
             } else {

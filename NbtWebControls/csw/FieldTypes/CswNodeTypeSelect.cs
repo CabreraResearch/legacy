@@ -34,35 +34,10 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 SelectMode = Prop.AsNodeTypeSelect.SelectMode;
                 if( _AllowEditValue )
                 {
-                    DataTable Data = new CswDataTable("nodetypeselectdatatable","");
-                    Data.Columns.Add( "NodeType Name", typeof( string ) );
-                    Data.Columns.Add( "nodetypeid", typeof( int ) );
-                    Data.Columns.Add( "Include", typeof( bool ) );
-
-                    if( SelectMode != PropertySelectMode.Multiple && !Required )
-                    {
-                        DataRow NTRow = Data.NewRow();
-                        NTRow["NodeType Name"] = "[none]";
-                        NTRow["nodetypeid"] = CswConvert.ToDbVal( Int32.MinValue );
-                        NTRow["Include"] = ( Prop.AsNodeTypeSelect.SelectedNodeTypeIds.Count == 0 );
-                        Data.Rows.Add( NTRow );
-                    }
-
-                    string searchstr = CswNbtNodePropNodeTypeSelect.delimiter.ToString() + Prop.AsNodeTypeSelect.SelectedNodeTypeIds + CswNbtNodePropNodeTypeSelect.delimiter.ToString();
-                    bool first = true;
-                    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
-                    {
-                        DataRow NTRow = Data.NewRow();
-                        NTRow["NodeType Name"] = NodeType.NodeTypeName;          // latest name
-                        NTRow["nodetypeid"] = NodeType.FirstVersionNodeTypeId;   // first nodetypeid
-                        NTRow["Include"] = ( ( searchstr.IndexOf( CswNbtNodePropNodeTypeSelect.delimiter.ToString() + NodeType.FirstVersionNodeTypeId + CswNbtNodePropNodeTypeSelect.delimiter.ToString() ) >= 0 ) ||
-                                             ( first && Required && Prop.AsNodeTypeSelect.SelectedNodeTypeIds.Count == 0 ) );
-                        Data.Rows.Add( NTRow );
-                        first = false;
-                    }
-
+                    DataTable Data = Prop.AsNodeTypeSelect.Options;
+                    
                     _CBArray.UseRadios = ( SelectMode == PropertySelectMode.Single );
-                    _CBArray.CreateCheckBoxes( Data, "NodeType Name", "nodetypeid" );
+                    _CBArray.CreateCheckBoxes( Data, CswNbtNodePropNodeTypeSelect.NameColumn, CswNbtNodePropNodeTypeSelect.KeyColumn );
                 }
             }
         }

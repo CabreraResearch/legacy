@@ -6,6 +6,7 @@ using System.Xml;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.DB;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -104,15 +105,92 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public DataTable Options
+        {
+            get
+            {
+                DataTable Data = new CswDataTable( TableName, "" );
+                Data.Columns.Add( NameColumn, typeof( string ) );
+                Data.Columns.Add( KeyColumn, typeof( int ) );
+                Data.Columns.Add( ValueColumn, typeof( bool ) );
+
+                if( SelectMode != PropertySelectMode.Multiple && !Required )
+                {
+                    DataRow NTRow = Data.NewRow();
+                    NTRow[NameColumn] = "[none]";
+                    NTRow[KeyColumn] = CswConvert.ToDbVal( Int32.MinValue );
+                    NTRow[ValueColumn] = ( SelectedNodeTypeIds.Count == 0 );
+                    Data.Rows.Add( NTRow );
+                }
+
+                bool first = true;
+                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+                {
+                    DataRow NTRow = Data.NewRow();
+                    NTRow[NameColumn] = NodeType.NodeTypeName;          // latest name
+                    NTRow[KeyColumn] = NodeType.FirstVersionNodeTypeId;   // first nodetypeid
+                    NTRow[ValueColumn] = ( SelectedNodeTypeIds.Contains( NodeType.FirstVersionNodeTypeId.ToString() ) ||
+                                         ( first && Required && SelectedNodeTypeIds.Count == 0 ) );
+                    Data.Rows.Add( NTRow );
+                    first = false;
+                }
+                return Data;
+            }
+        }
+        
+        public const string NameColumn = "NodeTypeName";
+        public const string KeyColumn = "nodetypeid";
+        public const string ValueColumn = "Include";
+        public const string TableName = "nodetypeselectdatatable";
+
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode SelectedNTsNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName(), SelectedNodeTypeIds.ToString() );
+            CswXmlDocument.AppendXmlAttribute( SelectedNTsNode, "SelectMode", SelectMode.ToString() );
+            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "Options" );
+
+            DataTable Data = Options;
+            foreach( DataRow Row in Data.Rows )
+            {
+                XmlNode ItemNode = CswXmlDocument.AppendXmlNode( OptionsNode, "item" );
+                foreach( DataColumn Column in Data.Columns )
+                {
+                    XmlNode ColumnNode = CswXmlDocument.AppendXmlNode( ItemNode, "column" );
+                    CswXmlDocument.AppendXmlAttribute( ColumnNode, "field", Column.ColumnName );
+                    CswXmlDocument.AppendXmlAttribute( ColumnNode, "value", Row[Column].ToString() );
+                }
+            }
         }
+
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            SelectedNodeTypeIds.FromString( _HandleReferences( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName() ), NodeTypeMap ) );
-        }
+            //SelectedNodeTypeIds.FromString( _HandleReferences( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName() ), NodeTypeMap ) );
+            CswCommaDelimitedString NewSelectedNodeTypeIds = new CswCommaDelimitedString();
+
+            foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "Options" ).ChildNodes )
+            {
+                string key = string.Empty;
+                string name = string.Empty;
+                bool value = false;
+                foreach( XmlNode ColumnNode in ItemNode.ChildNodes )
+                {
+                    if( KeyColumn == ColumnNode.Attributes["field"].Value )
+                        key = ColumnNode.Attributes["value"].Value;
+                    if( NameColumn == ColumnNode.Attributes["field"].Value )
+                        name = ColumnNode.Attributes["value"].Value;
+                    if( ValueColumn == ColumnNode.Attributes["field"].Value )
+                        value = CswConvert.ToBoolean(ColumnNode.Attributes["value"].Value);
+                }
+                if( value )
+                {
+                    NewSelectedNodeTypeIds.Add( key );
+                }
+            } // foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "Options" ).ChildNodes )
+
+            SelectedNodeTypeIds = NewSelectedNodeTypeIds;
+        } // ReadXml()
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             SelectedNodeTypeIds.FromString( _HandleReferences( CswTools.XmlRealAttributeName( PropRow[_SelectedNodeTypeIdsSubField.ToXmlNodeName()].ToString() ), NodeTypeMap ) );
@@ -157,7 +235,7 @@ namespace ChemSW.Nbt.PropTypes
             } // foreach(string NodeTypeId in SelectedNodeTypeIds)
             if( 0 == NodeTypeNames.Count )
             {
-                NodeTypeNames.Add( "Select new NodeType");
+                NodeTypeNames.Add( "Select new NodeType" );
             }
 
             // Sort alphabetically
