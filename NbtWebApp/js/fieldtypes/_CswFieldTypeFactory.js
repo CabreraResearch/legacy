@@ -7,8 +7,17 @@ $.CswFieldTypeFactory = function (method) {
                 case "Barcode":
                     $propdiv.CswFieldTypeBarcode('init', nodeid, $propxml);
                     break;
+                case "Blob":
+                    $propdiv.CswFieldTypeBlob('init', nodeid, $propxml);
+                    break;
+                case "Composite":
+                    $propdiv.CswFieldTypeComposite('init', nodeid, $propxml);
+                    break;
                 case "Date":
                     $propdiv.CswFieldTypeDate('init', nodeid, $propxml);
+                    break;
+                case "Grid":
+                    $propdiv.CswFieldTypeGrid('init', nodeid, $propxml);
                     break;
                 case "Image":
                     $propdiv.CswFieldTypeImage('init', nodeid, $propxml);
@@ -22,6 +31,9 @@ $.CswFieldTypeFactory = function (method) {
                 case "Location":
                     $propdiv.CswFieldTypeLocation('init', nodeid, $propxml);
                     break;
+                case "LocationContents":
+                    $propdiv.CswFieldTypeLocationContents('init', nodeid, $propxml);
+                    break;
                 case "Logical":
                     $propdiv.CswFieldTypeLogical('init', nodeid, $propxml);
                     break;
@@ -34,6 +46,9 @@ $.CswFieldTypeFactory = function (method) {
                 case "MTBF":
                     $propdiv.CswFieldTypeMTBF('init', nodeid, $propxml);
                     break;
+                case "NodeTypeSelect":
+                    $propdiv.CswFieldTypeNodeTypeSelect('init', nodeid, $propxml);
+                    break;
                 case "Number":
                     $propdiv.CswFieldTypeNumber('init', nodeid, $propxml);
                     break;
@@ -42,6 +57,12 @@ $.CswFieldTypeFactory = function (method) {
                     break;
                 case "PropertyReference":
                     $propdiv.CswFieldTypePropertyReference('init', nodeid, $propxml);
+                    break;
+                case "Quantity":
+                    $propdiv.CswFieldTypeQuantity('init', nodeid, $propxml);
+                    break;
+                case "Question":
+                    $propdiv.CswFieldTypeQuestion('init', nodeid, $propxml);
                     break;
                 case "Relationship":
                     $propdiv.CswFieldTypeRelationship('init', nodeid, $propxml);
@@ -55,6 +76,21 @@ $.CswFieldTypeFactory = function (method) {
                 case "Text":
                     $propdiv.CswFieldTypeText('init', nodeid, $propxml);
                     break;
+                case "Time":
+                    $propdiv.CswFieldTypeTime('init', nodeid, $propxml);
+                    break;
+                case "TimeInterval":
+                    $propdiv.CswFieldTypeTimeInterval('init', nodeid, $propxml);
+                    break;
+                case "UserSelect":
+                    $propdiv.CswFieldTypeUserSelect('init', nodeid, $propxml);
+                    break;
+                case "ViewPickList":
+                    $propdiv.CswFieldTypeViewPickList('init', nodeid, $propxml);
+                    break;
+                case "ViewReference":
+                    $propdiv.CswFieldTypeViewReference('init', nodeid, $propxml);
+                    break;
                 default:
                     $propdiv.append($propxml.attr('gestalt'));
                     break;
@@ -66,8 +102,17 @@ $.CswFieldTypeFactory = function (method) {
                 case "Barcode":
                     $propdiv.CswFieldTypeBarcode('save', $propdiv, $propxml);
                     break;
+                case "Blob":
+                    $propdiv.CswFieldTypeBlob('save', $propdiv, $propxml);
+                    break;
+                case "Composite":
+                    $propdiv.CswFieldTypeComposite('save', $propdiv, $propxml);
+                    break;
                 case "Date":
                     $propdiv.CswFieldTypeDate('save', $propdiv, $propxml);
+                    break;
+                case "Grid":
+                    $propdiv.CswFieldTypeGrid('save', $propdiv, $propxml);
                     break;
                 case "Image":
                     $propdiv.CswFieldTypeImage('save', $propdiv, $propxml);
@@ -81,6 +126,9 @@ $.CswFieldTypeFactory = function (method) {
                 case "Location":
                     $propdiv.CswFieldTypeLocation('save', $propdiv, $propxml);
                     break;
+                case "LocationContents":
+                    $propdiv.CswFieldTypeLocationContents('save', $propdiv, $propxml);
+                    break;
                 case "Logical":
                     $propdiv.CswFieldTypeLogical('save', $propdiv, $propxml);
                     break;
@@ -93,6 +141,9 @@ $.CswFieldTypeFactory = function (method) {
                 case "MTBF":
                     $propdiv.CswFieldTypeMTBF('save', $propdiv, $propxml);
                     break;
+                case "NodeTypeSelect":
+                    $propdiv.CswFieldTypeNodeTypeSelect('save', $propdiv, $propxml);
+                    break;
                 case "Number":
                     $propdiv.CswFieldTypeNumber('save', $propdiv, $propxml);
                     break;
@@ -101,6 +152,12 @@ $.CswFieldTypeFactory = function (method) {
                     break;
                 case "PropertyReference":
                     $propdiv.CswFieldTypePropertyReference('save', $propdiv, $propxml);
+                    break;
+                case "Quantity":
+                    $propdiv.CswFieldTypeQuantity('save', $propdiv, $propxml);
+                    break;
+                case "Question":
+                    $propdiv.CswFieldTypeQuestion('save', $propdiv, $propxml);
                     break;
                 case "Relationship":
                     $propdiv.CswFieldTypeRelationship('save', $propdiv, $propxml);
@@ -113,6 +170,21 @@ $.CswFieldTypeFactory = function (method) {
                     break;
                 case "Text":
                     $propdiv.CswFieldTypeText('save', $propdiv, $propxml);
+                    break;
+                case "Time":
+                    $propdiv.CswFieldTypeTime('save', $propdiv, $propxml);
+                    break;
+                case "TimeInterval":
+                    $propdiv.CswFieldTypeTimeInterval('save', $propdiv, $propxml);
+                    break;
+                case "UserSelect":
+                    $propdiv.CswFieldTypeUserSelect('save', $propdiv, $propxml);
+                    break;
+                case "ViewPickList":
+                    $propdiv.CswFieldTypeViewPickList('save', $propdiv, $propxml);
+                    break;
+                case "ViewReference":
+                    $propdiv.CswFieldTypeViewReference('save', $propdiv, $propxml);
                     break;
                 default:
                     break;
