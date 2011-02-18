@@ -1,6 +1,6 @@
 ﻿; (function ($) {
         
-    var PluginName = 'CswFieldTypeBlob';
+    var PluginName = 'CswFieldTypeFile';
 
     var methods = {
         init: function(nodepk, $xml) {
@@ -31,7 +31,7 @@
     };
     
     // Method calling logic
-    $.fn.CswFieldTypeBlob = function (method) {
+    $.fn.CswFieldTypeFile = function (method) {
         
         if ( methods[method] ) {
           return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));

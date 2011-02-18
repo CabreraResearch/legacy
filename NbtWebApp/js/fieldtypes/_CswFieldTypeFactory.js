@@ -7,14 +7,14 @@ $.CswFieldTypeFactory = function (method) {
                 case "Barcode":
                     $propdiv.CswFieldTypeBarcode('init', nodeid, $propxml);
                     break;
-                case "Blob":
-                    $propdiv.CswFieldTypeBlob('init', nodeid, $propxml);
-                    break;
                 case "Composite":
                     $propdiv.CswFieldTypeComposite('init', nodeid, $propxml);
                     break;
                 case "Date":
                     $propdiv.CswFieldTypeDate('init', nodeid, $propxml);
+                    break;
+                case "File":
+                    $propdiv.CswFieldTypeFile('init', nodeid, $propxml);
                     break;
                 case "Grid":
                     $propdiv.CswFieldTypeGrid('init', nodeid, $propxml);
@@ -102,14 +102,14 @@ $.CswFieldTypeFactory = function (method) {
                 case "Barcode":
                     $propdiv.CswFieldTypeBarcode('save', $propdiv, $propxml);
                     break;
-                case "Blob":
-                    $propdiv.CswFieldTypeBlob('save', $propdiv, $propxml);
-                    break;
                 case "Composite":
                     $propdiv.CswFieldTypeComposite('save', $propdiv, $propxml);
                     break;
                 case "Date":
                     $propdiv.CswFieldTypeDate('save', $propdiv, $propxml);
+                    break;
+                case "File":
+                    $propdiv.CswFieldTypeFile('save', $propdiv, $propxml);
                     break;
                 case "Grid":
                     $propdiv.CswFieldTypeGrid('save', $propdiv, $propxml);
