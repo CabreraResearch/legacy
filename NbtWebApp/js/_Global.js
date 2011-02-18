@@ -40,9 +40,9 @@ var CswImageButton_ButtonType = {
 // Cookies
 // ------------------------------------------------------------------------------------
 
-function SetSessionId(SessionId) {
-    $.cookie('CswSessionId', SessionId);
-}
+//function SetSessionId(SessionId) {
+//    $.cookie('CswSessionId', SessionId);
+//}
 function GetSessionId() {
     return $.cookie('CswSessionId');
 }

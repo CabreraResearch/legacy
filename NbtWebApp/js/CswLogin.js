@@ -14,7 +14,7 @@
                         }
 
                         var ThisSessionId = GetSessionId();
-                        if(ThisSessionId != null)
+                        if(ThisSessionId != undefined && ThisSessionId != '' && ThisSessionId != null)
                         {
 
                             o.onAuthenticate( GetUsername() );
@@ -86,6 +86,7 @@
                                         url: o.DeauthenticateUrl,
                                         data: "",
                                         success: function (data) {
+                                            ClearUsername();
                                             o.onDeauthenticate();
                                         } // success{}
                                     });                        

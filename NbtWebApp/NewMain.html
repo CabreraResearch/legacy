@@ -49,9 +49,11 @@
             'onAuthenticate': function (s, u) {
                 $('#header_dashboard').CswDashboard();
                 $('#header_menu').CswHeaderMenu({ onLogout: function () {
-                    $('#CenterDiv').CswLogin('logout');
-                    initAll();
-                } 
+                    $('#CenterDiv').CswLogin('logout', { onDeauthenticate: function () {
+                        window.location = 'NewMain.html';
+                    }
+                    });
+                }
                 });
                 $('#header_username').text(u);
                 $('#ViewSelectDiv').CswViewSelect({ ID: 'mainviewselect', 'onSelect': handleViewSelect });

@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
                 start();
-				_SessionResources.CswSessionManager.DeAuthenticate();
+                _SessionResources.CswSessionManager.DeAuthenticate();
                 ReturnVal = "{ \"Deauthentication\": \"Succeeded\" }";
                 end();
 			}
