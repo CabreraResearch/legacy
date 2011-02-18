@@ -1,6 +1,8 @@
 ﻿; (function ($) {
         
     var PluginName = 'CswFieldTypeLogicalSet';
+    var NameCol = "name";
+    var KeyCol = "key";
 
     var methods = {
         init: function(nodepk, $xml) {
@@ -9,12 +11,10 @@
                 $Div.children().remove();
 
                 var ID = $xml.attr('id');
-                var Required = $xml.attr('required');
-                var ReadOnly = $xml.attr('readonly');
+                var Required = ($xml.attr('required') == "true");
+                var ReadOnly = ($xml.attr('readonly') == "true");
 
                 var $LogicalSetXml = $xml.children('logicalsetxml');
-                var NameCol = "name";
-                var KeyCol = "key";
 
                 //<LogicalSetXml>
                 //    <item>
@@ -81,14 +81,14 @@
         save: function($propdiv, $xml) {
                 var $LogicalSetXml = $xml.children('logicalsetxml');
                 var $CBADiv = $propdiv.children('div').first();
-                var formdata = $CBADiv.CswCheckBoxArray( 'getdata' );
+                var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': $xml.attr('id') + '_cba' } );
                 for( var r = 0; r < formdata.length; r++)
                 {
                     for( var c = 0; c < formdata[r].length; c++)
                     {
                         var checkitem = formdata[r][c];
-                        var $xmlitem = $LogicalSetXml.find('item:has(column[field="key"][value="'+ checkitem.key +'"])');
-                        var $xmlitemcolumn = $xmlitem.find('column[field="'+checkitem.collabel+'"]');
+                        var $xmlitem = $LogicalSetXml.find('item:has(column[field="'+ KeyCol +'"][value="'+ checkitem.key +'"])');
+                        var $xmlitemcolumn = $xmlitem.find('column[field="' + checkitem.collabel + '"]');
                     
                         if(checkitem.checked && $xmlitemcolumn.attr('value') == "False")
                             $xmlitemcolumn.attr('value', 'True');

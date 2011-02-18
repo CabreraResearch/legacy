@@ -9,8 +9,8 @@
                 $Div.children().remove();
 
                 var ID = $xml.attr('id');
-                var Required = $xml.attr('required');
-                var ReadOnly = $xml.attr('readonly');
+                var Required = ($xml.attr('required') == "true");
+                var ReadOnly = ($xml.attr('readonly') == "true");
 
                 var Text = $xml.children('text').text();
                 var Href = $xml.children('href').text();

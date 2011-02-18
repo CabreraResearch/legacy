@@ -11,8 +11,9 @@
                     $Div.children().remove();
 
                     var ID = $xml.attr('id');
-                    var Required = $xml.attr('required');
-                    var ReadOnly = $xml.attr('readonly');
+                    var Required = ($xml.attr('required') == "true");
+                    var ReadOnly = ($xml.attr('readonly') == "true");
+
                     var NodeId = $xml.children('nodeid').text().trim();
                     var Name = $xml.children('name').text();
                     var Path = $xml.children('path').text();
