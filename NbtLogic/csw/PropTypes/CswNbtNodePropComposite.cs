@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodePropData.PendingUpdate = false;
             return Value;
         }
-
+        
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode CachedValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedValueSubField.ToXmlNodeName(), CachedValue );
