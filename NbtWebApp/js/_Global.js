@@ -149,7 +149,7 @@ function CswAjaxXml(options) {
         
 function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown) 
 {
-    ErrorMessage = "Error: " + textStatus;
+    ErrorMessage = "A WebServices Error Occurred: " + textStatus;
     if (null != errorThrown) {
         ErrorMessage += "; Exception: " + errorThrown.toString()
     }
