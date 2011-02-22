@@ -298,7 +298,7 @@ function HandleMenuItem($ul, $this, onLogout) {
                 break;
 
             case 'Logout':
-                $li.children('a').click(function () { onLogout; return false; });
+                $li.children('a').click(function () { onLogout(); return false; });
                 break;
         }
     }

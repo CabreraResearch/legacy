@@ -2,7 +2,7 @@
     $.fn.CswDashboard = function (options) {
 
         var o = {
-            Url: '/NbtWebApp/wsNBT.asmx/getDashboard',
+            Url: '/NbtWebApp/wsNBT.asmx/getDashboard'
         };
 
         if (options) {
@@ -30,7 +30,7 @@
                             cellcontent = '<td class="DashboardCell">' +
                                           '  <a target="_blank" href="'+ $this.attr('href') + '">' +
                                           '    <div title="'+ $this.attr('text') +'" id="'+ $this.attr('id') +'" class="'+ $this.attr('id') +'" />' +
-                                          '  </a>'
+                                          '  </a>' +
                                           '</td>';
                         } else {
                             cellcontent = '<td class="DashboardCell">' +

@@ -3,7 +3,7 @@
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getHeaderMenu',
-            onLogout: function() { },
+            onLogout: function() { }
         };
 
         if (options) {
