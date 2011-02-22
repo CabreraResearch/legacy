@@ -4,7 +4,7 @@ my $param = "";
 $param .= extract("c:\\kiln\\nbt\\nbt\\nbtwebapp\\js");
 $param .= extract("c:\\kiln\\nbt\\nbt\\nbtwebapp\\js\\fieldtypes");
 
-`java -jar "C:\\kiln\\ThirdParty\\Closure Compiler\\compiler.jar" $param --js_output_file c:\\kiln\\nbt\\nbt\\nbtwebapp\\js\\CswAll.min.js`;
+`java -jar "C:\\kiln\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file c:\\kiln\\nbt\\nbt\\nbtwebapp\\js\\CswAll.min.js`;
 
 sub extract
 {
