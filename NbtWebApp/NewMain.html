@@ -54,7 +54,7 @@
     function initAll()
     {
         $('#CenterDiv').CswLogin('login', {
-            'onAuthenticate': function (s, u) {
+            'onAuthenticate': function (u) {
                 $('#header_username').text(u);
                 $('#header_dashboard').CswDashboard();
                 $('#header_menu').CswMenuHeader({ onLogout: function () {
