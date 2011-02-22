@@ -60,6 +60,16 @@ function ClearUsername() {
     $.cookie('csw_username', null);
 }
 
+function SetCurrentViewId(ViewId) {
+    $.cookie('csw_currentviewid', ViewId);
+}
+function GetCurrentViewId() {
+    return $.cookie('csw_currentviewid');
+}
+function ClearCurrentViewId() {
+    $.cookie('csw_currentviewid', null);
+}
+
 
 // ------------------------------------------------------------------------------------
 // Ajax
@@ -202,16 +212,6 @@ function CloseDialog(id) {
 }
 
 
-// Print Label
-function openPrintLabelPopup(nodeid, propid) {
-    
-    var oWnd = window.radopen(null, 'PrintLabelDialog');
-    var CheckedNodeIds = getMainTreeCheckedNodeIds();
-    oWnd.setUrl('Popup_PrintLabel.aspx?nodeid=' + nodeid + '&propid=' + propid + '&checkednodeids=' + CheckedNodeIds);
-    return false;
-}
-
-
 // ------------------------------------------------------------------------------------
 // Layout mechanics
 // ------------------------------------------------------------------------------------
@@ -263,6 +263,51 @@ function jsTreeGetSelected($treediv, IDPrefix)
     };
 }
 
+
+// ------------------------------------------------------------------------------------
+// Menu
+// ------------------------------------------------------------------------------------
+
+function GoHome() 
+{
+    ClearCurrentViewId();
+    window.location = "NewMain.html";
+}
+
+function HandleMenuItem($ul, $this, onLogout) {
+    var $li;
+    if ($this.attr('href') != undefined && $this.attr('href') != '') {
+        $li = $('<li><a href="' + $this.attr('href') + '">' + $this.attr('text') + '</a></li>')
+                        .appendTo($ul)
+    }
+    else if ($this.attr('popup') != undefined && $this.attr('popup') != '') {
+        $li = $('<li class="headermenu_dialog">' + $this.attr('text') + '</li>')
+                        .appendTo($ul)
+                        .click(function () { OpenDialog($this.attr('text'), $this.attr('popup')); });
+    }
+    else if ($this.attr('action') != undefined && $this.attr('action') != '') {
+        $li = $('<li><a href="#">' + $this.attr('text') + '</a></li>')
+                        .appendTo($ul)
+        switch ($this.attr('action')) {
+
+            case 'Home':
+                $li.children('a').click(function () {
+                    GoHome();
+                    return false;
+                });
+                break;
+
+            case 'Logout':
+                $li.children('a').click(function () { onLogout; return false; });
+                break;
+        }
+    }
+    else {
+        $li = $('<li>' + $this.attr('text') + '</li>')
+                        .appendTo($ul)
+    }
+    return $li;
+}
 
 // ------------------------------------------------------------------------------------
 // Validation

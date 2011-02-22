@@ -29,7 +29,8 @@ body a
 {
 	background: url(Images/pagelayout/pagelayoutcorners.gif) -0px -0px no-repeat;
 	width: 18px;
-	height: 79px;
+	/* height: 79px; */
+	height: 32px;
 }
 .HeaderTable_TopBorder
 {
@@ -40,7 +41,8 @@ body a
 {
 	background: url(Images/pagelayout/pagelayoutcorners.gif) -29px -0px no-repeat;
 	width: 20px;
-	height: 79px;
+	/* height: 79px; */
+	height: 32px;
 	
 }
 .HeaderTable_LeftCell

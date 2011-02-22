@@ -239,26 +239,47 @@ namespace ChemSW.Nbt.WebServices
 			return Doc;
 		} // getDashboard()
 
-		[WebMethod( EnableSession = true )]
-		public XmlDocument getHeaderMenu()
-		{
-			string ReturnVal = string.Empty;
-			try
-			{
-				start();
-				CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
-				ReturnVal = ws.getHeaderMenu();
-				end();
-			}
-			catch( Exception ex )
-			{
-				ReturnVal = error( ex );
-			}
-			//return ( ReturnVal );
-			XmlDocument Doc = new XmlDocument();
-			Doc.LoadXml( ReturnVal );
-			return Doc;
-		} // getHeaderMenu()
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getHeaderMenu()
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
+                ReturnVal = ws.getHeaderMenu();
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getHeaderMenu()		[WebMethod( EnableSession = true )]
+
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getMainMenu( Int32 ViewId, string NodePk )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceMainMenu ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
+                ReturnVal = ws.getMenu(ViewId, NodePk);
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getMainMenu()
 
 		[WebMethod( EnableSession = true )]
 		public XmlDocument getGridXML( Int32 ViewId )

@@ -28,10 +28,11 @@
 		<script src="js/CswCheckBoxArray.js" type="text/javascript"></script>
 		<script src="js/CswComboBox.js" type="text/javascript"></script>
 		<script src="js/CswDashboard.js" type="text/javascript"></script>
-		<script src="js/CswHeaderMenu.js" type="text/javascript"></script>
 		<script src="js/CswImageButton.js" type="text/javascript"></script>
 		<script src="js/CswLogin.js" type="text/javascript"></script>
 		<script src="js/CswMenu.js" type="text/javascript"></script>
+		<script src="js/CswMenuHeader.js" type="text/javascript"></script>
+		<script src="js/CswMenuMain.js" type="text/javascript"></script>
 		<script src="js/CswViewSelect.js" type="text/javascript"></script>
 		<script src="js/CswViewTree.js" type="text/javascript"></script>
 		<script src="js/CswNodeTree.js" type="text/javascript"></script>
@@ -109,13 +110,13 @@
 		<form id="Form1" runat="server">
 			<div class="StandardMasterContentDiv">    
 				<div id="OuterDiv" class="OuterDiv">
-					<table id="PageTable" class="PageTable" cellpadding="0" cellspacing="0">
+					<table id="PageTable" class="PageTable" cellpadding="0" cellspacing="0" border="0">
 						<tr>
-							<td id="HeaderTable_LeftBorder" class="HeaderTable_LeftBorder" rowspan="3">
+							<td id="HeaderTable_LeftBorder" class="HeaderTable_LeftBorder" rowspan="2">
 								<img id="headerblank1" src="Images/pagelayout/blank.gif" width="18" height="1"/>
 							</td>
 							<td id="HeaderTable_TopBorder" class="HeaderTable_TopBorder" colspan="2"></td>
-							<td id="HeaderTable_RightBorder" class="HeaderTable_RightBorder" rowspan="3">
+							<td id="HeaderTable_RightBorder" class="HeaderTable_RightBorder" rowspan="2">
 								<img id="headerblank2" src="Images/pagelayout/blank.gif" width="20" height="1"/>
 							</td>
 						</tr>          
@@ -157,22 +158,5 @@
 						</td>
 					  </tr>
 		  
-					  <tr>
-						  <td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2">
-							<table cellpadding="0" cellspacing="0">
-							<tr><td><img id="headerblank4" src="Images/pagelayout/blank.gif" width="1" height="30"/>
-							</td>
-							<td><asp:PlaceHolder id="MenuPlaceHolder" /></td>
-							</tr></table>
-						  </td>
-					  </tr>
-		  
-					  <tr>
-						<td id="Td5" class="PageTable_LeftColumn"></td>
-						<td colspan="2">
-							<Csw:CswMessageBox id="_ErrorBox" />
-						</td>
-						<td id="Td6" class="PageTable_RightColumn"></td>
-					  </tr>
 		  
 

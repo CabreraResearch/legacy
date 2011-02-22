@@ -2,73 +2,89 @@
 
 <!--#include file="NewHeader.html" -->
 
-                    <tr>
-                        <td id="Td1" class="PageTable_LeftColumn" rowspan="3">
+					<tr>
+                        <td id="Td5" class="PageTable_LeftColumn" rowspan="5">
                             <img src="Images/pagelayout/blank.gif" width="1" height="450"/>
                         </td>
-                        <td id="Td2" class="PageTable_LeftCell" valign="top">
 
-                            <div id="MenuDiv"></div>
+						<td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2">
+						    <table cellpadding="0" cellspacing="0">
+						        <tr>
+                                    <td><img id="headerblank4" src="Images/pagelayout/blank.gif" width="1" height="30"/></td>
+        						    <td><div id="MainMenuDiv"></div></td>
+		        				</tr>
+                            </table>
+						</td>
+
+                        <td id="Td7" class="PageTable_RightColumn" rowspan="5"></td>
+					</tr>
+
+					<tr>
+					    <td colspan="2">
+						    <div id="ErrorDiv" class="ErrorContent" style="display: none;"></div>
+					    </td>
+					</tr>
+		  
+                    <tr>
+                        <td id="Td2" class="PageTable_LeftCell" valign="top">
                             <div id="ViewSelectDiv"></div>
                             <div id="LeftDiv"></div>
-                            
                         </td>
-
                         <td id="Td3" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
-
                             <div id="RightDiv"></div>
-                            
                         </td>
-
-                        <td id="Td4" class="PageTable_RightColumn" rowspan="3"></td>
-                      </tr>
+                    </tr>
                                           
-                      <tr>
+                    <tr>
                         <td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
-
                             <div id="CenterDiv"></div>
-
                         </td>
-                      </tr>
-                      <tr>
+                    </tr>
+                    
+                    <tr>
                         <td id="Td8" class="PageTable_CenterCell" colspan="2" valign="top">
-
                             <div id="QuickLaunch"></div>
-                           
-                        </td>
-                     </tr>
+                    </td>
+                    </tr>
 
 <script type="text/javascript">
-    var currentviewid = '';
-
+    
     initAll();
 
     function initAll()
     {
         $('#CenterDiv').CswLogin('login', {
             'onAuthenticate': function (s, u) {
+                $('#header_username').text(u);
                 $('#header_dashboard').CswDashboard();
-                $('#header_menu').CswHeaderMenu({ onLogout: function () {
+                $('#header_menu').CswMenuHeader({ onLogout: function () {
                     $('#CenterDiv').CswLogin('logout', { onDeauthenticate: function () {
                         window.location = 'NewMain.html';
                     }
                     });
                 }
                 });
-                $('#header_username').text(u);
+
                 $('#ViewSelectDiv').CswViewSelect({ ID: 'mainviewselect', 'onSelect': handleViewSelect });
-                $('#CenterDiv').CswWelcome({
-                    onLinkClick: handleWelcomeLinkClick
-                });
+
+                var viewid = GetCurrentViewId();
+                if (viewid == null) {
+                    $('#CenterDiv').CswWelcome({
+                        onLinkClick: handleWelcomeLinkClick
+                    });
+                } else {
+                    getViewTree(viewid);
+                }
+
                 $('#QuickLaunch').CswQuickLaunch({
                     onLinkClick: handleQuickLaunchItemClick
                 });
-                $(document).ready(function () {
-                    $('#breadcrumbs').xBreadcrumbs({ collapsible: true });
-                });
-            }
-        });
-    }
+
+                $('#breadcrumbs').xBreadcrumbs({ collapsible: true });
+
+            } // onAuthenticate
+        }); // CswLogin
+    } // initAll()
 
     function clearLeft()
     {
@@ -99,22 +115,30 @@
         }
     }
 
+    function refreshMainMenu(viewid, nodeid) 
+    {
+        $('#MainMenuDiv').CswMenuMain({ 
+                                        'viewid': viewid,
+                                        'nodeid': nodeid
+                                     });
+    }
+
     function getViewTree(viewid)
     {
-        currentviewid = viewid;
+        SetCurrentViewId(viewid);
         clearLeft();
         clearRight();
         clearCenter();
         $('#LeftDiv').CswNodeTree({
             ID: 'main',
             'viewid': viewid,
-            onSelectNode: getTabs
+            onSelectNode: function (nodeid) { getTabs(nodeid); refreshMainMenu(viewid, nodeid); }
         });
     }
 
     function getViewGrid(viewid)
     {
-        currentviewid = viewid;
+        SetCurrentViewId(viewid);
         clearLeft();
         clearRight();
         clearCenter();
@@ -135,7 +159,7 @@
         clearLeft();
         $('#LeftDiv').CswNodeTree({
             ID: 'main',
-            'viewid': currentviewid,
+            'viewid': GetCurrentViewId(),
             onSelectNode: getTabs
         });
     }
