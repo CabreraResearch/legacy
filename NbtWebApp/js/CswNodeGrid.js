@@ -4,14 +4,12 @@
 	$.fn.CswNodeGrid = function (options, dom) {
 
 		var o = {
-			GridUrl: '/NbtWebApp/wsNBT.asmx/getGridJson',
-			viewid: '',
 			datatype: "local", 
 			height: 300,
 			rowNum:10, 
 			autoencode: true,
 			autowidth: true, 
-			rowList:[10,20,30],  
+			rowList:[10,25,50],  
 			editurl:"/Popup_EditNode.aspx",
 			sortname: "nodeid", 
 			shrinkToFit: true,
@@ -26,6 +24,8 @@
 		}
 
 		var d = {
+			GridUrl: '/NbtWebApp/wsNBT.asmx/getGridJson',
+			viewid: '',
 			id: "CswNodeGrid",
 			gridTable: "_gridOuter",
 			gridPager: "_gridPager"
@@ -39,7 +39,7 @@
 		var gridRows = [];
 
 		var gridTableId = d.id + d.gridTable;
-		var $gridOuter = $('<table id="' + gridTableId + '" />')
+		var $gridOuter = makeTable(gridTableId) //$('<table id="' + gridTableId + '" />')
 						.appendTo($(this));
 		
 		var gridPagerId = d.id + d.gridPager;
@@ -47,8 +47,8 @@
 						 .appendTo($(this));
 		
 		CswAjaxJSON({
-			url: o.GridUrl,
-			data: "{ViewId: '" +  o.viewid + "'}",
+			url: d.GridUrl,
+			data: "{ViewId: '" +  d.viewid + "'}",
 			success: function (gridJson) {
 					
 					gridData = gridJson.grid;
