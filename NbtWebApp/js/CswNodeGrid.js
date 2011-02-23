@@ -1,68 +1,84 @@
-﻿; (function ($) {
-    $.fn.CswNodeGrid = function (options) {
+﻿/// <reference path="../jquery/jquery-1.4.4.js" />
 
-        var o = {
-            GridUrl: '/NbtWebApp/wsNBT.asmx/getGridJson',
-            viewid: '',
-            onSelectNode: function(nodeid) { }
-        };
+; (function ($) {
+	$.fn.CswNodeGrid = function (options) {
 
-        if (options) {
-            $.extend(o, options);
-        }
+		var o = {
+			GridUrl: '/NbtWebApp/wsNBT.asmx/getGridJson',
+			viewid: '',
+			enableColumnReorder: true,
+			editable: true,
+			enableAddRow: true,
+			enableCellNavigation: true,
+			asyncEditorLoading: true,
+			autoEdit: false,
+			autoHeight: false,
+			topPanelHeight: 25,
+			forceFitColumns: false
+			//,onSelectNode: function(nodeid) { }
+		};
+		
+		if (options) {
+			$.extend(o, options);
+		}
+		
+		var gridData;
+		var dataView;
+		var grid;
+		var pager;
+		var columnpicker;
 
-        var SelectedNodePk;
-        var grid;
-        
-        var options = {
-            enableCellNavigation: false,
-            enableColumnReorder: false
-        };
+		var $gridOuter = $('<table id="gridOuter" />')
+						.appendTo($(this));
+		var $gridPager = $('<div id="gridPager" style="width:100%; height:20px;" />')
+						 .appendTo($(this));
 
-        console.log("hey");
-        var $griddiv = $('<div id="griddiv" class="griddiv" />')
-                        .appendTo($(this));
+		CswAjaxJSON({
+			url: o.GridUrl,
+			data: "{ViewId: '" +  o.viewid + "'}",
+			success: function (gridJson) {
+					
+					console.log(gridJson);
+					
+					gridData = gridJson.grid;
+					gridRows = gridData.rows;
+					console.log(gridData);
 
-        CswAjaxJSON({
-            url: o.GridUrl,
-            data: "{ViewId: '" +  o.viewid + "'}",
-            success: function (data) {
-                
-                console.log(data);
-                
-                var columns = data.columns;
-                var griddata = data.grid;
-                
-                grid = new Slick.Grid($griddiv,griddata,columns,options);
+					var ViewName = gridJson.viewname;
+					var columns = gridJson.columnnames;
+					var columnDefinition = gridJson.columndefinition
+					var gridWidth =  gridJson.viewwidth;
+					if( gridWidth == '' )
+					{
+						widthgridWidth = 500;
+					}
 
-//                $treediv.jstree({
-//                    "xml_data": {
-//                        "data": treexmlstring,
-//                        "xsl": "nest"
-//                    },
-//                    "ui": {
-//                        "select_limit": 1,
-//                        "initially_select": firstid
-//                    },
-//                    "core": {
-//                        "initially_open": [ "root", firstid ]
-//                    },
-//                    "types": {
-//                        "types": jsonTypes
-//                    },
-//                    "plugins": ["themes", "xml_data", "ui", "types"]
-//                }).bind('select_node.jstree', 
-//                            function (e, data) {
-//                                SelectedNodePk = data.rslt.obj.attr('id');
-//                                o.onSelectNode(SelectedNodePk);
-//                            });
+					jQuery($gridOuter).jqGrid({ 
+						datatype: "local", 
+						data: gridRows,
+						colNames: columns,  
+						colModel: columnDefinition, 
+						height: 300,
+						width: gridWidth,
+						rowNum:10, 
+						autoencode: true,
+						autowidth: true, 
+						rowList:[10,20,30], 
+						pager: $gridPager, 
+						sortname: 'id', 
+						shrinkToFit: true,
+						viewrecords: true, 
+						sortorder: "asc", 
+						multiselect: true,
+						caption: ViewName });
+					jQuery($gridOuter).jqGrid('navGrid', $gridPager, {edit:true,add:true,del:true} ); 
+					
+			} // success{}
+		});
 
-            } // success{}
-        });
+		// For proper chaining support
+		return this;
 
-        // For proper chaining support
-        return this;
-
-    }; // function(options) {
+	}; // function(options) {
 })(jQuery);
 

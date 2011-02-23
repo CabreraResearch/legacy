@@ -10,6 +10,8 @@ using ChemSW.Security;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using Formatting = Newtonsoft.Json.Formatting;
+using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -67,6 +69,29 @@ namespace ChemSW.Nbt.WebServices
 			return "<result>" + ReturnVal + "</result>";
 		}
 
+		private const string QuickLaunchViews = "QuickLaunchViews";
+		private void addToQuickLaunch(CswNbtView View)
+		{
+			//Append to QuickLaunch
+			Stack<KeyValuePair<Int32, string>> ViewHistory = null;
+			if( null == Session[QuickLaunchViews] )
+			{
+				ViewHistory = new Stack<KeyValuePair<Int32, string>>();
+			}
+			else
+			{
+				ViewHistory = (Stack<KeyValuePair<Int32, string>>) Session[QuickLaunchViews];
+			}
+			var ThisView = new KeyValuePair<int, string>( View.ViewId, View.ViewName );
+
+			if( !ViewHistory.Contains( ThisView ) )
+			{
+				ViewHistory.Push( ThisView );
+			}
+			Session[QuickLaunchViews] = ViewHistory;
+
+		}
+
 		#endregion Session and Resource Management
 
 		#region Web Methods
@@ -95,15 +120,15 @@ namespace ChemSW.Nbt.WebServices
 
 
 		[WebMethod( EnableSession = true )]
-		public string deauthenticate()
+		public string deAuthenticate()
 		{
 			string ReturnVal = string.Empty;
 			try
 			{
-                start();
-                _SessionResources.CswSessionManager.DeAuthenticate();
-                ReturnVal = "{ \"Deauthentication\": \"Succeeded\" }";
-                end();
+                		start();
+                		_SessionResources.CswSessionManager.DeAuthenticate();
+               			 ReturnVal = "{ \"Deauthentication\": \"Succeeded\" }";
+                		end();
 			}
 			catch( Exception ex )
 			{
@@ -291,8 +316,10 @@ namespace ChemSW.Nbt.WebServices
 				CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
 				if( null != View )
 				{
-					var g = new CswNbtWebServiceGrid( _CswNbtResources );
-					ReturnXml = g.getGridXml( View, Session );
+					var g = new CswNbtWebServiceGrid( _CswNbtResources, View);
+					string XDocString = g.getGrid( CswNbtWebServiceGrid.GridReturnType.Xml );
+					ReturnXml.LoadXml( XDocString );
+					addToQuickLaunch( View );
 				}
 				end();
 			}
@@ -305,7 +332,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getGrid()
 
 		[WebMethod( EnableSession = true )]
-		public string getGridJSON( Int32 ViewId )
+		public string getGridJson( Int32 ViewId )
 		{
 			var ReturnJSON = string.Empty;
 			try
@@ -314,8 +341,9 @@ namespace ChemSW.Nbt.WebServices
 				CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
 				if( null != View )
 				{
-					var g = new CswNbtWebServiceGrid( _CswNbtResources );
-					ReturnJSON = g.getGridJSON( View, Session );
+					var g = new CswNbtWebServiceGrid( _CswNbtResources, View );
+					ReturnJSON = g.getGrid( CswNbtWebServiceGrid.GridReturnType.Json );
+					addToQuickLaunch( View );
 				}
 				end();
 			}
@@ -328,29 +356,28 @@ namespace ChemSW.Nbt.WebServices
 		}
 
 		[WebMethod( EnableSession = true )]
-        public XmlDocument getTree( Int32 ViewId, string IDPrefix )
+		public XmlDocument getTree( Int32 ViewId )
 		{
-			var ReturnVal = string.Empty;
+			var XmlString = string.Empty;
 			var ReturnXml = new XmlDocument();
-            if( ViewId != Int32.MinValue )
-            {
-                try
-                {
-                    start();
-                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-                    if( null != View )
-                    {
-                        var ws = new CswNbtWebServiceTree( _CswNbtResources );
-                        ReturnVal = ws.getTree( View, Session, IDPrefix );
-                        ReturnXml.LoadXml( ReturnVal );
-                    }
-                    end();
-                }
-                catch( Exception ex )
-                {
-                    ReturnXml.LoadXml( error( ex ) );
-                }
-            }
+			try
+			{
+				start();
+				CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				if( null != View )
+				{
+					var ws = new CswNbtWebServiceTree( _CswNbtResources );
+					XmlString = ws.getTree( View );
+					ReturnXml.LoadXml( XmlString );
+					addToQuickLaunch( View );
+				}
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnXml.LoadXml( error( ex ) );
+			}
+			
 			return ReturnXml;
 		} // getTree()
 
