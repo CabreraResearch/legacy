@@ -4,6 +4,8 @@ using ChemSW.Core;
 using System.Web.UI.WebControls;
 using System.Linq;
 using System.Xml.Linq;
+using ChemSW.Nbt.MetaData;
+using FarPoint.Web.Spread;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -206,15 +208,26 @@ namespace ChemSW.Nbt.WebServices
 								    new JProperty( "index", Column.Attribute( GridPropName ).Value.ToLower().Replace( " ", "_" ) ),
 								    new JProperty( "sortable", "true"),
 									new JProperty( "search", "true" ),
+									new JProperty( "resizable", "true" ),
 									new JProperty( "fieldtype", Column.Attribute( GridFieldType ).Value )
 				               	) 
 							  ));
+			JArray JColumns = (JArray) ColumnDefinition[GridColumnDefinition];
+			JColumns.AddFirst( new JObject(
+			                   	new JProperty( GridName, "id" ),
+			                   	new JProperty( "index", "id" ),
+			                   	new JProperty( "hidden", "true" )
+			                   	) );
+
+			//var ColFieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+			//foreach( int NodeTypePropId in ColumnCollection.Select( XElement => CswConvert.ToInt32( XElement.Attribute( GridNodeTypePropId ).Value ) ) )
+			//{
+			      //fetch fieldtype and inject fieldtype specific logic into jqGrid Column Definition array
+				  //dates, bools, etc
+			      // set 'sorttype' to make columns sortable
+			//}
 			
-					//if( ThisNtp.Length != Int32.MinValue )
-					//{
-					//    string ColumnWidth = Unit.Parse( ( CswConvert.ToInt32( ThisNtp.Length * 7 ) ).ToString() + "px" ).ToString();
-					//    ColumnDefinition += @", ""width"": """ + ColumnWidth + @"""";
-					//}
+			ColumnDefinition = new JProperty( GridColumnDefinition, JColumns );
 
 			return ColumnDefinition;
 		} // getGridColumnDefinitionJson()

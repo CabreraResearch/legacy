@@ -64,7 +64,7 @@
 						autoencode: true,
 						autowidth: true, 
 						rowList:[10,20,30], 
-						pager: jQuery($gridPager), 
+						pager: $gridPager, 
 						sortname: 'id', 
 						shrinkToFit: true,
 						viewrecords: true, 
