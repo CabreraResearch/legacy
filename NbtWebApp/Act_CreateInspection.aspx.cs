@@ -310,7 +310,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                Master.Redirect( "Main.aspx" );
+                Master.GoMain();
             }
             catch( Exception ex )
             {

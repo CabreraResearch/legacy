@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.WebPages
 
             if( string.Empty == QueryStringRedirect )
             {
-                //Master.Redirect( "Main.aspx" );
+                //Master.GoMain();
                 Master.GoHome();
             }
             else

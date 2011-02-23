@@ -202,6 +202,7 @@ namespace ChemSW.Nbt.WebPages
             Master.Redirect( url );
         }
         public void GoHome() { Master.GoHome(); }
+        public void GoMain() { Master.GoMain(); }
 
         #endregion Page Lifecycle
 

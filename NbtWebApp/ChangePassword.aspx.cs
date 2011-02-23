@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 PasswordControl.Save();
                 UserNode.postChanges( true );
-                // Master.Redirect( "Main.aspx" );
+                // Master.GoMain();
                 Master.GoHome();
             }
         }

@@ -286,6 +286,10 @@ namespace ChemSW.Nbt.WebPages
         {
             Redirect( "Welcome.aspx" );
         }
+        public void GoMain()
+        {
+            Redirect( "Main.aspx" );
+        }
 
         #endregion Page Lifecycle
 

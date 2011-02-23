@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.WebPages
             Master.setViewId( ViewId, ForceReload );
         }
 
-        private string ReturnTo = "Main.aspx";
+        private string ReturnTo = string.Empty;
 
         protected override void OnInit( EventArgs e )
         {
@@ -81,7 +81,10 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                Master.Redirect( ReturnTo );
+                if( ReturnTo != string.Empty )
+                    Master.Redirect( ReturnTo );
+                else
+                    Master.GoMain();
             }
             catch( Exception ex )
             {
@@ -101,7 +104,10 @@ namespace ChemSW.Nbt.WebPages
                 // BZ 8686 - Clear the view loader cache
                 Page.Session.Remove( CswViewListTree.SessionCachedXmlName );
 
-                Master.Redirect( ReturnTo );
+                if( ReturnTo != string.Empty )
+                    Master.Redirect( ReturnTo );
+                else
+                    Master.GoMain();
             }
             catch( Exception ex )
             {

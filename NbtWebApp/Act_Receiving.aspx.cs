@@ -409,7 +409,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                Master.Redirect( "Main.aspx" );
+                Master.GoMain();
             }
             catch( Exception ex )
             {
@@ -458,7 +458,7 @@ namespace ChemSW.Nbt.WebPages
                 PackDetailRel.ShowInTree = false;
 
                 Master.setViewXml( NewContainersView.ToString() );
-                Master.Redirect( "Main.aspx" );
+                Master.GoMain();
             }
             catch( Exception ex )
             {

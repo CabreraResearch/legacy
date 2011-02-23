@@ -896,7 +896,7 @@ namespace ChemSW.Nbt.WebPages
             // Make default view
             CswNbtView DefaultView = SelectedNodeType.CreateDefaultView();
             Master.setViewXml( DefaultView.ToXml().InnerXml );
-            Master.Redirect( "Main.aspx" );
+            Master.GoMain();
         }
 
         #endregion Events

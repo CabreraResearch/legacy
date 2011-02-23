@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.WebPages
 
                 CswNbtView NewResultsView = _makeNewResultsByAliquotView( AliquotNodeKeys, TestNodeKeys, ResultNodeIds );
                 Master.setViewXml( NewResultsView.ToString() );
-                Master.Redirect( "Main.aspx" );
+                Master.GoMain();
             }
         }
 
@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.WebPages
         }
         void AssignTestsWizard_onCancel( object CswWizard, CswWizardEventArgs CswWizardEventArgs )
         {
-            Master.Redirect( "Main.aspx" );
+            Master.GoMain();
         }
 
         private bool _initViewList( DropDownList ViewList )
