@@ -15,8 +15,7 @@ namespace ChemSW.Nbt.WebServices
     public class CswNbtWebServiceTree
     {
         private CswNbtResources _CswNbtResources;
-        private const string QuickLaunchViews = "QuickLaunchViews";
-
+        
         public CswNbtWebServiceTree( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
