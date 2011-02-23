@@ -274,7 +274,7 @@ function GoHome()
     window.location = "NewMain.html";
 }
 
-function HandleMenuItem($ul, $this, onLogout) {
+function HandleMenuItem($ul, $this, onLogout, onAddNode) {
     var $li;
     if ($this.attr('href') != undefined && $this.attr('href') != '') {
         $li = $('<li><a href="' + $this.attr('href') + '">' + $this.attr('text') + '</a></li>')
@@ -287,18 +287,20 @@ function HandleMenuItem($ul, $this, onLogout) {
     }
     else if ($this.attr('action') != undefined && $this.attr('action') != '') {
         $li = $('<li><a href="#">' + $this.attr('text') + '</a></li>')
-                        .appendTo($ul)
+                        .appendTo($ul);
+        var $a = $li.children('a');
         switch ($this.attr('action')) {
 
+            case 'AddNode':
+                $a.click(function () { makeAddNodeDialog($this, onAddNode); return false; });
+                break;
+
             case 'Home':
-                $li.children('a').click(function () {
-                    GoHome();
-                    return false;
-                });
+                $a.click(function () { GoHome(); return false; });
                 break;
 
             case 'Logout':
-                $li.children('a').click(function () { onLogout(); return false; });
+                $a.click(function () { onLogout(); return false; });
                 break;
         }
     }
@@ -308,6 +310,25 @@ function HandleMenuItem($ul, $this, onLogout) {
     }
     return $li;
 }
+
+
+function makeAddNodeDialog($xml, onAddNode) 
+{
+    var nodetypeid = $xml.attr('nodetypeid');
+    var $div = $('<div></div>');
+    $div.CswNodeTabs({
+        'nodetypeid': nodetypeid,
+        'EditMode': 'AddInPopup',
+        'onSave': function (nodeid) {
+            $div.dialog('close');
+            onAddNode(nodeid);
+        }
+    });
+    $div.dialog({ 'modal': true, 
+                  'width': 800, 
+                  'height': 600 });
+}
+
 
 // ------------------------------------------------------------------------------------
 // Validation

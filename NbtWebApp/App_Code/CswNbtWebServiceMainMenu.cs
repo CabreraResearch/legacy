@@ -66,7 +66,8 @@ namespace ChemSW.Nbt.WebServices
             ret += "<item text=\"Add\">";
             foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in View.Root.AllowedChildNodeTypes() )
             {
-                ret += "  <item text=\"" + Entry.NodeType.NodeTypeName + "\" popup=\"Popup_EditNode.aspx?dcv=0&dcsn=0&nodetypeid=" + Entry.NodeType.NodeTypeId + "&parentnodekey=" + NodePk.ToString() + "&svid=" + View.SessionViewId.ToString() + "&checkednodeids=&sourceviewid=\" />";
+                //ret += "  <item text=\"" + Entry.NodeType.NodeTypeName + "\" popup=\"Popup_EditNode.aspx?dcv=0&dcsn=0&nodetypeid=" + Entry.NodeType.NodeTypeId + "&parentnodekey=" + NodePk.ToString() + "&svid=" + View.SessionViewId.ToString() + "&checkednodeids=&sourceviewid=\" />";
+                ret += "  <item text=\"" + Entry.NodeType.NodeTypeName + "\" nodetypeid=\"" + Entry.NodeType.NodeTypeId.ToString() + "\" action=\"AddNode\" />";
             }
             ret += "</item>";
 

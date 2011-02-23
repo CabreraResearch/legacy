@@ -4,7 +4,8 @@
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getMainMenu',
             viewid: '',
-            nodeid: ''
+            nodeid: '',
+            onAddNode: function(newnodeid) { }
         };
 
         if (options) {
@@ -26,13 +27,13 @@
                     var $this = $(this);
                     if($this.attr('text') != undefined)
                     {
-                        var $li = HandleMenuItem($ul, $this, null);
+                        var $li = HandleMenuItem($ul, $this, null, o.onAddNode);
                         
                         if($this.children().length > 1) {
                             var $subul = $('<ul class="subnav"></ul>')
                                             .appendTo($li);
                             $this.children().each(function() {
-                                HandleMenuItem($subul, $(this), null);
+                                HandleMenuItem($subul, $(this), null, o.onAddNode);
                             });
                         }
                     }

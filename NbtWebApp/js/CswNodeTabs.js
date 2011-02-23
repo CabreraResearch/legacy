@@ -2,9 +2,12 @@
     $.fn.CswNodeTabs = function (options) {
 
         var o = {
+            ID: '',
             TabsUrl: '/NbtWebApp/wsNBT.asmx/getTabs',
             PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
             nodeid: '',
+            nodetypeid: '',
+            EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
             onSave: function() {}
         };
 
@@ -12,7 +15,7 @@
             $.extend(o, options);
         }
 
-        var $outertabdiv = $('<div id="tabdiv" />')
+        var $outertabdiv = $('<div id="' + o.ID + '_tabdiv" />')
                         .appendTo($(this));
 
         getTabs(o.nodeid);
@@ -27,7 +30,7 @@
         {
             CswAjaxXml({
                 url: o.TabsUrl,
-                data: 'NodePk=' + o.nodeid,
+                data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&NodeTypeId=' + o.nodetypeid,
                 success: function ($xml) {
                             clearTabs();
                             var $tabdiv = $("<div><ul></ul></div>");
@@ -54,13 +57,13 @@
         {
             CswAjaxXml({
                 url: o.PropsUrl,
-                data: 'NodePk=' + o.nodeid + '&TabId=' + tabid,
+                data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&TabId=' + tabid + '&NodeTypeId=' + o.nodetypeid,
                 success: function ($xml) {
                             $div = $("#" + tabid);
                             $form = $div.children('form');
                             $form.children().remove();
                             
-                            var $table = makeTable('proptable').appendTo($form);
+                            var $table = makeTable(o.ID + '_proptable').appendTo($form);
                             
                             var i = 0;
 
@@ -118,8 +121,10 @@
 
             CswAjaxJSON({
                 url: '/NbtWebApp/wsNBT.asmx/SaveProps',
-                data: "{ NodePk: '" + o.nodeid + "', NewPropsXml: '" + xmlToString($propsxml) + "' }",
-                success: o.onSave 
+                data: "{ EditMode: '"+ o.EditMode + "', NodePk: '" + o.nodeid + "', NodeTypeId: '"+ o.nodetypeid +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",
+                success: function(data) { 
+                    o.onSave(data.nodeid); 
+                }
             });
 
         } // Save()
