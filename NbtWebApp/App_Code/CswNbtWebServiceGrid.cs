@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// id
 		/// </summary>
-		private const string GridId = "id";
+		private const string GridId = "nodeid";
 		/// <summary>
 		/// cell
 		/// </summary>
@@ -134,17 +134,40 @@ namespace ChemSW.Nbt.WebServices
 
 		private JObject getDebugGridJson()
 		{
-			String JsonString = @"{""viewname"": ""Debug View"",
-								""viewwidth"": ""150"",
-								""columnnames"": [""Equipment"",""Assembly""],
-								""columndefinition"": [{""name"": ""Equipment"", ""index"": ""Equipment"", ""sortable"":""true"", ""search"":""true""}
-												      ,{""name"": ""Assembly"", ""index"": ""Assembly"", ""sortable"":""true"", ""search"":""true""}],
-								""grid"": [{""total"": ""1"",
-											""page"": ""1"",
-											""records"": ""2"",
-											""rows"": [{""id"":""0"", ""Equipment"":""big box"", ""Assembly"":""collection of boxes""}
-													  ,{""id"":""1"", ""Equipment"":""small box"", ""Assembly"":""collection of boxes""}]
-											}]
+			String JsonString = @"{""viewname"": ""Debug View""
+								,""viewwnodeidth"": ""150""
+								,""columnnames"": [""nodeid"",""Equipment"",""Assembly""]
+								,""columndefinition"": [{""name"": ""nodeid"", ""index"": ""nodeid"", ""key"":""true"", ""sortable"":""true"", ""sorttype"":""int""}
+													  ,{""name"": ""Equipment"", ""index"": ""Equipment"", ""sortable"":""true"", ""search"":""true""}
+												      ,{""name"": ""Assembly"", ""index"": ""Assembly"", ""sortable"":""true"", ""search"":""true""}]
+								,""grid"": {""total"": ""1""
+										   ,""page"": ""1""
+										   ,""records"": ""2""
+										   ,""rows"": [{""nodeid"":""0"", ""Equipment"":""big box"", ""Assembly"":""collection of boxes""}
+													  ,{""nodeid"":""1"", ""Equipment"":""small box 1"", ""Assembly"":""collection of boxes""}
+													  ,{""nodeid"":""2"", ""Equipment"":""small box 2"", ""Assembly"":""ancient collection of boxes""}
+													  ,{""nodeid"":""3"", ""Equipment"":""small box 3"", ""Assembly"":""collection of boxes""}
+													  ,{""nodeid"":""4"", ""Equipment"":""small box 4"", ""Assembly"":""dazzling collection of boxes""}
+													  ,{""nodeid"":""5"", ""Equipment"":""small box 5"", ""Assembly"":""old collection of boxes""}
+													  ,{""nodeid"":""6"", ""Equipment"":""small box 6"", ""Assembly"":""collection of boxes""}
+													  ,{""nodeid"":""7"", ""Equipment"":""small box 7"", ""Assembly"":""dazzling collection of boxes""}
+													  ,{""nodeid"":""8"", ""Equipment"":""small box 8"", ""Assembly"":""collection of boxes""}
+													  ,{""nodeid"":""9"", ""Equipment"":""small box 9"", ""Assembly"":""old collection of boxes""}
+													  ,{""nodeid"":""10"", ""Equipment"":""small box 10"", ""Assembly"":""collection of boxes""}
+													  ,{""nodeid"":""11"", ""Equipment"":""small box 11"", ""Assembly"":""collection of boxes""}
+													  ,{""nodeid"":""12"", ""Equipment"":""small box 12"", ""Assembly"":""collection of boxes""}
+													  ,{""nodeid"":""13"", ""Equipment"":""small box 13"", ""Assembly"":""big collection of boxes""}
+													  ,{""nodeid"":""14"", ""Equipment"":""small box 14"", ""Assembly"":""collection of boxes""}
+													  ,{""nodeid"":""15"", ""Equipment"":""small box 15"", ""Assembly"":""collection of boxes""}
+													  ,{""nodeid"":""16"", ""Equipment"":""small box 16"", ""Assembly"":""medium collection of boxes""}
+													  ,{""nodeid"":""17"", ""Equipment"":""small box 17"", ""Assembly"":""collection of boxes""}
+													  ,{""nodeid"":""18"", ""Equipment"":""small box 18"", ""Assembly"":""dazzling collection of boxes""}
+													  ,{""nodeid"":""19"", ""Equipment"":""small box 19"", ""Assembly"":""dazzling collection of boxes""}
+													  ,{""nodeid"":""20"", ""Equipment"":""small box 20"", ""Assembly"":""dazzling collection of boxes""}
+													  ,{""nodeid"":""21"", ""Equipment"":""small box 21"", ""Assembly"":""new collection of boxes""}
+													  ,{""nodeid"":""22"", ""Equipment"":""small box 22"", ""Assembly"":""new collection of boxes""}
+													  ]
+											}
 								}";
 			JObject DebugGrid = JObject.Parse( JsonString );
 			return DebugGrid;
@@ -184,13 +207,14 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		private JProperty getGridColumnNamesJson(IEnumerable<XElement> ColumnCollection)
 		{
-			JProperty ColumnNames = new JProperty( GridColumnNames,
-									   new JArray(
+			JArray ColumnArray = new JArray(
 				               			from Column in ColumnCollection
 				               			where Column.Attributes( GridPropName ).Count() == 1 
 				               			select new JValue( Column.Attribute( GridPropName ).Value )
-				               			)
-					    );
+				               			);
+			ColumnArray.AddFirst( new JValue( "nodeid" ) );
+
+			JProperty ColumnNames = new JProperty( GridColumnNames, ColumnArray );
 			return ColumnNames;
 		} // getGridColumnNamesJson()
 
@@ -199,24 +223,24 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		private JProperty getGridColumnDefinitionJson( IEnumerable<XElement> ColumnCollection )
 		{
-			JProperty ColumnDefinition = new JProperty( GridColumnDefinition,
-				               	new JArray( 
-								from Column in ColumnCollection
-				               	where Column.Attributes( GridPropName ).Count() == 1 && Column.Attributes( GridNodeTypePropId ).Count() == 1
-				               	select new JObject( 
-									new JProperty( GridName, Column.Attribute( GridPropName ).Value ),
-								    new JProperty( "index", Column.Attribute( GridPropName ).Value.ToLower().Replace( " ", "_" ) ),
-								    new JProperty( "sortable", "true"),
-									new JProperty( "search", "true" ),
-									new JProperty( "resizable", "true" ),
-									new JProperty( "fieldtype", Column.Attribute( GridFieldType ).Value )
-				               	) 
-							  ));
-			JArray JColumns = (JArray) ColumnDefinition[GridColumnDefinition];
-			JColumns.AddFirst( new JObject(
-			                   	new JProperty( GridName, "id" ),
-			                   	new JProperty( "index", "id" ),
-			                   	new JProperty( "hidden", "true" )
+			
+			JArray ColumnArray = new JArray( 
+									from Column in ColumnCollection
+				               		where Column.Attributes( GridPropName ).Count() == 1 && Column.Attributes( GridNodeTypePropId ).Count() == 1
+				               		select new JObject( 
+										new JProperty( GridName, Column.Attribute( GridPropName ).Value ),
+										new JProperty( "index", Column.Attribute( GridPropName ).Value.ToLower().Replace( " ", "_" ) ),
+										new JProperty( "sortable", "true"),
+										new JProperty( "search", "true" ),
+										new JProperty( "resizable", "true" ),
+										new JProperty( "fieldtype", Column.Attribute( GridFieldType ).Value )
+				               			) 
+									);
+
+			ColumnArray.AddFirst( new JObject(
+								new JProperty( GridName, "nodeid" ),
+			                   	new JProperty( "index", "nodeid" ),
+								new JProperty( "key", "true" )
 			                   	) );
 
 			//var ColFieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
@@ -226,8 +250,8 @@ namespace ChemSW.Nbt.WebServices
 				  //dates, bools, etc
 			      // set 'sorttype' to make columns sortable
 			//}
-			
-			ColumnDefinition = new JProperty( GridColumnDefinition, JColumns );
+
+			JProperty ColumnDefinition = new JProperty( GridColumnDefinition, ColumnArray );
 
 			return ColumnDefinition;
 		} // getGridColumnDefinitionJson()

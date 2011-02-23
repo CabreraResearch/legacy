@@ -3,196 +3,193 @@
 <!--#include file="NewHeader.html" -->
 
 					<tr>
-                        <td id="Td5" class="PageTable_LeftColumn" rowspan="5">
-                            <img src="Images/pagelayout/blank.gif" width="1" height="450"/>
-                        </td>
-
-						<td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2">
-						    <table cellpadding="0" cellspacing="0">
-						        <tr>
-                                    <td><img id="headerblank4" src="Images/pagelayout/blank.gif" width="1" height="30"/></td>
-        						    <td><div id="MainMenuDiv"></div></td>
-		        				</tr>
-                            </table>
+						<td id="Td5" class="PageTable_LeftColumn" rowspan="5">
+							<img src="Images/pagelayout/blank.gif" width="1" height="450"/>
 						</td>
 
-                        <td id="Td7" class="PageTable_RightColumn" rowspan="5"></td>
+						<td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2">
+							<table cellpadding="0" cellspacing="0">
+								<tr>
+									<td><img id="headerblank4" src="Images/pagelayout/blank.gif" width="1" height="30"/></td>
+									<td><div id="MainMenuDiv"></div></td>
+								</tr>
+							</table>
+						</td>
+
+						<td id="Td7" class="PageTable_RightColumn" rowspan="5"></td>
 					</tr>
 
 					<tr>
-					    <td colspan="2">
-						    <div id="ErrorDiv" class="ErrorContent" style="display: none;"></div>
-					    </td>
+						<td colspan="2">
+							<div id="ErrorDiv" class="ErrorContent" style="display: none;"></div>
+						</td>
 					</tr>
 		  
-                    <tr>
-                        <td id="Td2" class="PageTable_LeftCell" valign="top">
-                            <div id="ViewSelectDiv"></div>
-                            <div id="LeftDiv"></div>
-                        </td>
-                        <td id="Td3" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
-                            <div id="RightDiv"></div>
-                        </td>
-                    </tr>
-                                          
-                    <tr>
-                        <td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
-                            <div id="CenterDiv"></div>
-                        </td>
-                    </tr>
-                    
-                    <tr>
-                        <td id="Td8" class="PageTable_CenterCell" colspan="2" valign="top">
-                            <div id="QuickLaunch"></div>
-                    </td>
-                    </tr>
+					<tr>
+						<td id="Td2" class="PageTable_LeftCell" valign="top">
+							<div id="ViewSelectDiv"></div>
+							<div id="LeftDiv"></div>
+						</td>
+						<td id="Td3" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
+							<div id="RightDiv"></div>
+						</td>
+					</tr>
+										  
+					<tr>
+						<td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
+							<div id="CenterDiv"></div>
+						</td>
+					</tr>
+					
+					<tr>
+						<td id="Td8" class="PageTable_CenterCell" colspan="2" valign="top">
+							<div id="QuickLaunch"></div>
+					</td>
+					</tr>
 
 <script type="text/javascript">
-    
-    initAll();
+	
+	initAll();
 
-    function initAll()
-    {
-        $('#CenterDiv').CswLogin('login', {
-            'onAuthenticate': function (u) {
-                $('#header_username').text(u);
-                $('#header_dashboard').CswDashboard();
-                $('#header_menu').CswMenuHeader({ onLogout: function () {
-                    $('#CenterDiv').CswLogin('logout', { onDeauthenticate: function () {
-                        window.location = 'NewMain.html';
-                    }
-                    });
-                }
-                });
+	function initAll()
+	{
+		$('#CenterDiv').CswLogin('login', {
+			'onAuthenticate': function (u) {
+				$('#header_username').text(u);
+				$('#header_dashboard').CswDashboard();
+				$('#header_menu').CswMenuHeader({ onLogout: function () {
+					$('#CenterDiv').CswLogin('logout', { onDeauthenticate: function () {
+						window.location = 'NewMain.html';
+					}
+					});
+				}
+				});
 
-                $('#ViewSelectDiv').CswViewSelect({ ID: 'mainviewselect', 'onSelect': handleViewSelect });
+				$('#ViewSelectDiv').CswViewSelect({ ID: 'mainviewselect', 'onSelect': handleViewSelect });
 
-                var viewid = GetCurrentViewId();
-                if (viewid == null) {
-                    $('#CenterDiv').CswWelcome({
-                        onLinkClick: handleWelcomeLinkClick
-                    });
-                } else {
-                    getViewTree(viewid);
-                }
+				var viewid = GetCurrentViewId();
+				if (viewid == null) {
+					$('#CenterDiv').CswWelcome({
+						onLinkClick: handleWelcomeLinkClick
+					});
+				} else {
+					getViewTree(viewid);
+				}
 
-                $('#QuickLaunch').CswQuickLaunch({
-                    onLinkClick: handleQuickLaunchItemClick
-                });
+				$('#QuickLaunch').CswQuickLaunch({
+					onLinkClick: handleQuickLaunchItemClick
+				});
 
-                $('#breadcrumbs').xBreadcrumbs({ collapsible: true });
+				$('#breadcrumbs').xBreadcrumbs({ collapsible: true });
 
-            } // onAuthenticate
-        }); // CswLogin
-    } // initAll()
+			} // onAuthenticate
+		}); // CswLogin
+	} // initAll()
 
-    function clearLeft()
-    {
-        $('#LeftDiv').children().remove();
-    }
-    function clearRight()
-    {
-        $('#RightDiv').children().remove();
-    }
-    function clearCenter()
-    {
-        $('#CenterDiv').children().remove();
-    }
+	function clearLeft()
+	{
+		$('#LeftDiv').children().remove();
+	}
+	function clearRight()
+	{
+		$('#RightDiv').children().remove();
+	}
+	function clearCenter()
+	{
+		$('#CenterDiv').children().remove();
+	}
 
-    function handleViewSelect(itemid, text, iconurl) 
-    {
-        if (startsWith(itemid, 'viewtree_'))
-        {
-            getViewTree(itemid.substr('viewtree_'.length));
-        }
-        else if (startsWith(itemid, 'viewgrid_'))
-        {
-            getViewGrid(itemid.substr('viewgrid_'.length));
-        }
-        else
-        {
-            alert('Handling for view tree item: ' + itemid + ' is not implemented yet.');
-        }
-    }
+	function handleViewSelect(itemid, text, iconurl) 
+	{
+		if (startsWith(itemid, 'viewtree_'))
+		{
+			getViewTree(itemid.substr('viewtree_'.length));
+		}
+		else if (startsWith(itemid, 'viewgrid_'))
+		{
+			getViewGrid(itemid.substr('viewgrid_'.length));
+		}
+		else
+		{
+			alert('Handling for view tree item: ' + itemid + ' is not implemented yet.');
+		}
+	}
 
-    function refreshMainMenu(viewid, nodeid) 
-    {
-        $('#MainMenuDiv').CswMenuMain({ 
-                                        'viewid': viewid,
-                                        'nodeid': nodeid
-                                     });
-    }
+	function refreshMainMenu(viewid, nodeid) 
+	{
+		$('#MainMenuDiv').CswMenuMain({ 
+										'viewid': viewid,
+										'nodeid': nodeid
+									 });
+	}
 
-    function getViewTree(viewid)
-    {
-        SetCurrentViewId(viewid);
-        clearLeft();
-        clearRight();
-        clearCenter();
-        $('#LeftDiv').CswNodeTree({
-            ID: 'main',
-            'viewid': viewid,
-            onSelectNode: function (nodeid) { getTabs(nodeid); refreshMainMenu(viewid, nodeid); }
-        });
-    }
+	function getViewTree(viewid)
+	{
+		SetCurrentViewId(viewid);
+		clearLeft();
+		clearRight();
+		clearCenter();
+		$('#LeftDiv').CswNodeTree({
+			ID: 'main',
+			'viewid': viewid,
+			onSelectNode: function (nodeid) { getTabs(nodeid); refreshMainMenu(viewid, nodeid); }
+		});
+	}
 
-    function getViewGrid(viewid)
-    {
-        SetCurrentViewId(viewid);
-        clearLeft();
-        clearRight();
-        clearCenter();
-        $('#CenterDiv').CswNodeGrid({
-            'viewid': viewid
-            //,onSelectNode: getTabs
-        });
-    }
+	function getViewGrid(viewid)
+	{
+		SetCurrentViewId(viewid);
+		clearLeft();
+		clearRight();
+		clearCenter();
+		$('#CenterDiv').CswNodeGrid( {'viewid': viewid}, { id:'CswNodeGrid' } );
+	}
 
-    function getTabs(nodeid)
-    {
-        clearRight();
-        $('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, onSave: refreshViewTree });
-    }
+	function getTabs(nodeid)
+	{
+		clearRight();
+		$('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, onSave: refreshViewTree });
+	}
 
-    function refreshViewTree()
-    {
-        clearLeft();
-        $('#LeftDiv').CswNodeTree({
-            ID: 'main',
-            'viewid': GetCurrentViewId(),
-            onSelectNode: getTabs
-        });
-    }
+	function refreshViewTree()
+	{
+		clearLeft();
+		$('#LeftDiv').CswNodeTree({
+			ID: 'main',
+			'viewid': GetCurrentViewId(),
+			onSelectNode: getTabs
+		});
+	}
 
-    function handleWelcomeLinkClick(viewid, actionid, reportid)
-    {
-        clearCenter();
-        if (viewid != undefined && viewid != '')
-        {
-            getViewTree(viewid);
-        }
-        else if (actionid != undefined && actionid != '')
-        {
-            alert('Actions are not yet handled!');
-        }
-        else if (reportid != undefined && reportid != '')
-        {
-            alert('Reports are not yet handled!');
-        }
-    }
+	function handleWelcomeLinkClick(viewid, actionid, reportid)
+	{
+		clearCenter();
+		if (viewid != undefined && viewid != '')
+		{
+			getViewTree(viewid);
+		}
+		else if (actionid != undefined && actionid != '')
+		{
+			alert('Actions are not yet handled!');
+		}
+		else if (reportid != undefined && reportid != '')
+		{
+			alert('Reports are not yet handled!');
+		}
+	}
 
-    function handleQuickLaunchItemClick(viewid, actionid)
-    {
-        clearCenter();
-        if (viewid != undefined && viewid != '')
-        {
-            getViewTree(viewid);
-        }
-        else if (actionid != undefined && actionid != '')
-        {
-            alert('Actions are not yet handled!');
-        }
-    }
+	function handleQuickLaunchItemClick(viewid, actionid)
+	{
+		clearCenter();
+		if (viewid != undefined && viewid != '')
+		{
+			getViewTree(viewid);
+		}
+		else if (actionid != undefined && actionid != '')
+		{
+			alert('Actions are not yet handled!');
+		}
+	}
 </script>
 
 <!--#include file="NewFooter.html" -->
