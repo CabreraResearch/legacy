@@ -125,10 +125,10 @@ namespace ChemSW.Nbt.WebServices
 			string ReturnVal = string.Empty;
 			try
 			{
-                		start();
-                		_SessionResources.CswSessionManager.DeAuthenticate();
-               			 ReturnVal = "{ \"Deauthentication\": \"Succeeded\" }";
-                		end();
+						start();
+						_SessionResources.CswSessionManager.DeAuthenticate();
+						 ReturnVal = "{ \"Deauthentication\": \"Succeeded\" }";
+						end();
 			}
 			catch( Exception ex )
 			{
@@ -264,47 +264,47 @@ namespace ChemSW.Nbt.WebServices
 			return Doc;
 		} // getDashboard()
 
-        [WebMethod( EnableSession = true )]
-        public XmlDocument getHeaderMenu()
-        {
-            string ReturnVal = string.Empty;
-            try
-            {
-                start();
-                CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
-                ReturnVal = ws.getHeaderMenu();
-                end();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = error( ex );
-            }
-            //return ( ReturnVal );
-            XmlDocument Doc = new XmlDocument();
-            Doc.LoadXml( ReturnVal );
-            return Doc;
-        } // getHeaderMenu()		[WebMethod( EnableSession = true )]
+		[WebMethod( EnableSession = true )]
+		public XmlDocument getHeaderMenu()
+		{
+			string ReturnVal = string.Empty;
+			try
+			{
+				start();
+				CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
+				ReturnVal = ws.getHeaderMenu();
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = error( ex );
+			}
+			//return ( ReturnVal );
+			XmlDocument Doc = new XmlDocument();
+			Doc.LoadXml( ReturnVal );
+			return Doc;
+		} // getHeaderMenu()		[WebMethod( EnableSession = true )]
 
-        [WebMethod( EnableSession = true )]
-        public XmlDocument getMainMenu( Int32 ViewId, string NodePk )
-        {
-            string ReturnVal = string.Empty;
-            try
-            {
-                start();
-                CswNbtWebServiceMainMenu ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
-                ReturnVal = ws.getMenu(ViewId, NodePk);
-                end();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = error( ex );
-            }
-            //return ( ReturnVal );
-            XmlDocument Doc = new XmlDocument();
-            Doc.LoadXml( ReturnVal );
-            return Doc;
-        } // getMainMenu()
+		[WebMethod( EnableSession = true )]
+		public XmlDocument getMainMenu( Int32 ViewId, string NodePk )
+		{
+			string ReturnVal = string.Empty;
+			try
+			{
+				start();
+				CswNbtWebServiceMainMenu ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
+				ReturnVal = ws.getMenu(ViewId, NodePk);
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = error( ex );
+			}
+			//return ( ReturnVal );
+			XmlDocument Doc = new XmlDocument();
+			Doc.LoadXml( ReturnVal );
+			return Doc;
+		} // getMainMenu()
 
 		[WebMethod( EnableSession = true )]
 		public XmlDocument getGridXML( Int32 ViewId )
@@ -356,7 +356,7 @@ namespace ChemSW.Nbt.WebServices
 		}
 
 		[WebMethod( EnableSession = true )]
-		public XmlDocument getTree( Int32 ViewId )
+		public XmlDocument getTree( Int32 ViewId, string IDPrefix )
 		{
 			var XmlString = string.Empty;
 			var ReturnXml = new XmlDocument();
@@ -367,7 +367,7 @@ namespace ChemSW.Nbt.WebServices
 				if( null != View )
 				{
 					var ws = new CswNbtWebServiceTree( _CswNbtResources );
-					XmlString = ws.getTree( View );
+					XmlString = ws.getTree( View, IDPrefix );
 					ReturnXml.LoadXml( XmlString );
 					addToQuickLaunch( View );
 				}
