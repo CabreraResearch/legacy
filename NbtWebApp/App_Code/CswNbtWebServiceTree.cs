@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Web.SessionState;
-using System.Xml;
-using System.Data;
-using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -22,33 +16,10 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        public string getTree( CswNbtView View, HttpSessionState Session )
+        public string getTree( CswNbtView View )
         {
             string ret = string.Empty;
             ret += @"<item id=""-1""><content><name>No results</name></content></item>";
-
-            if( null != View )
-            {
-                Stack<KeyValuePair<Int32, string>> ViewHistory = null;
-                //Dictionary<Int32, string> ViewHistory = null;
-                if( null == Session[QuickLaunchViews] )
-                {
-                    ViewHistory = new Stack<KeyValuePair<Int32, string>>();
-                }
-                else
-                {
-                    ViewHistory = (Stack<KeyValuePair<Int32, string>>) Session[QuickLaunchViews];                    
-                }
-                
-                var ThisView = new KeyValuePair<int, string>(View.ViewId,View.ViewName);
-
-                if( !ViewHistory.Contains( ThisView ) )
-                {
-                    ViewHistory.Push( ThisView );
-                }
-
-                Session[QuickLaunchViews] = ViewHistory;
-            }
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
             string TreeXml = "<root>" +
