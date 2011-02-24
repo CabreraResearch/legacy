@@ -73,23 +73,22 @@ namespace ChemSW.Nbt.WebServices
 		private void addToQuickLaunch(CswNbtView View)
 		{
 			//Append to QuickLaunch
-			Stack<KeyValuePair<Int32, string>> ViewHistory = null;
+			Stack<Tuple<Int32, string, string>> ViewHistory = null;
 			if( null == Session[QuickLaunchViews] )
 			{
-				ViewHistory = new Stack<KeyValuePair<Int32, string>>();
+				ViewHistory = new Stack<Tuple<Int32, string, string>>();
 			}
 			else
 			{
-				ViewHistory = (Stack<KeyValuePair<Int32, string>>) Session[QuickLaunchViews];
+				ViewHistory = (Stack<Tuple<Int32, string, string>>) Session[QuickLaunchViews];
 			}
-			var ThisView = new KeyValuePair<int, string>( View.ViewId, View.ViewName );
+			var ThisView = new Tuple<Int32, string, string>( View.ViewId, View.ViewName, View.ViewMode.ToString() );
 
 			if( !ViewHistory.Contains( ThisView ) )
 			{
 				ViewHistory.Push( ThisView );
 			}
 			Session[QuickLaunchViews] = ViewHistory;
-
 		}
 
 		#endregion Session and Resource Management
@@ -146,7 +145,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 
-				CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
+				var ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
 				// Only administrators can get welcome content for other roles
 				if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
 					ReturnVal = ws.GetWelcomeItems( RoleId );
@@ -224,12 +223,11 @@ namespace ChemSW.Nbt.WebServices
 		[WebMethod( EnableSession = true )]
 		public XmlDocument getViewTree()
 		{
-			CswTimer Timer = new CswTimer();
 			string ReturnVal = string.Empty;
 			try
 			{
 				start();
-				CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
+				var ws = new CswNbtWebServiceView( _CswNbtResources );
 				ReturnVal = ws.getViewTree(Session);
 				end();
 			}
@@ -271,7 +269,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
+				var ws = new CswNbtWebServiceHeader( _CswNbtResources );
 				ReturnVal = ws.getHeaderMenu();
 				end();
 			}
@@ -292,7 +290,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtWebServiceMainMenu ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
+				var ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
 				ReturnVal = ws.getMenu(ViewId, NodePk);
 				end();
 			}
