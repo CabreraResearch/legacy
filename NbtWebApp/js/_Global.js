@@ -211,6 +211,37 @@ function CloseDialog(id) {
     $('#' + id).remove();
 }
 
+function addNodeDialog(nodetypeid, onAddNode) {
+    var $div = $('<div></div>');
+    $div.CswNodeTabs({
+        'nodetypeid': nodetypeid,
+        'EditMode': 'AddInPopup',
+        'onSave': function (nodeid) {
+            $div.dialog('close');
+            onAddNode(nodeid);
+        }
+    });
+    $div.dialog({ 'modal': true,
+        'width': 800,
+        'height': 600
+    });
+}
+
+function editNodeDialog(nodeid, onEditNode) {
+    var $div = $('<div></div>');
+    $div.CswNodeTabs({
+        'nodeid': nodeid,
+        'EditMode': 'Edit',
+        'onSave': function (nodeid) {
+            $div.dialog('close');
+            onEditNode(nodeid);
+        }
+    });
+    $div.dialog({ 'modal': true,
+        'width': 800,
+        'height': 600
+    });
+}
 
 // ------------------------------------------------------------------------------------
 // Layout mechanics
@@ -309,39 +340,6 @@ function HandleMenuItem($ul, $this, onLogout, onAddNode) {
                         .appendTo($ul)
     }
     return $li;
-}
-
-
-function addNodeDialog(nodetypeid, onAddNode) {
-    var $div = $('<div></div>');
-    $div.CswNodeTabs({
-        'nodetypeid': nodetypeid,
-        'EditMode': 'AddInPopup',
-        'onSave': function (nodeid) {
-            $div.dialog('close');
-            onAddNode(nodeid);
-        }
-    });
-    $div.dialog({ 'modal': true,
-        'width': 800,
-        'height': 600
-    });
-}
-
-function editNodeDialog(nodeid, onEditNode) {
-    var $div = $('<div></div>');
-    $div.CswNodeTabs({
-        'nodeid': nodeid,
-        'EditMode': 'Edit',
-        'onSave': function (nodeid) {
-            $div.dialog('close');
-            onEditNode(nodeid);
-        }
-    });
-    $div.dialog({ 'modal': true,
-        'width': 800,
-        'height': 600
-    });
 }
 
 
