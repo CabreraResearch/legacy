@@ -292,7 +292,7 @@ function HandleMenuItem($ul, $this, onLogout, onAddNode) {
         switch ($this.attr('action')) {
 
             case 'AddNode':
-                $a.click(function () { makeAddNodeDialog($this, onAddNode); return false; });
+                $a.click(function () { addNodeDialog($this.attr('nodetypeid'), onAddNode); return false; });
                 break;
 
             case 'Home':
@@ -312,9 +312,7 @@ function HandleMenuItem($ul, $this, onLogout, onAddNode) {
 }
 
 
-function makeAddNodeDialog($xml, onAddNode) 
-{
-    var nodetypeid = $xml.attr('nodetypeid');
+function addNodeDialog(nodetypeid, onAddNode) {
     var $div = $('<div></div>');
     $div.CswNodeTabs({
         'nodetypeid': nodetypeid,
@@ -324,9 +322,26 @@ function makeAddNodeDialog($xml, onAddNode)
             onAddNode(nodeid);
         }
     });
-    $div.dialog({ 'modal': true, 
-                  'width': 800, 
-                  'height': 600 });
+    $div.dialog({ 'modal': true,
+        'width': 800,
+        'height': 600
+    });
+}
+
+function editNodeDialog(nodeid, onEditNode) {
+    var $div = $('<div></div>');
+    $div.CswNodeTabs({
+        'nodeid': nodeid,
+        'EditMode': 'Edit',
+        'onSave': function (nodeid) {
+            $div.dialog('close');
+            onEditNode(nodeid);
+        }
+    });
+    $div.dialog({ 'modal': true,
+        'width': 800,
+        'height': 600
+    });
 }
 
 
