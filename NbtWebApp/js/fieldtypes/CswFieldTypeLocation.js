@@ -31,7 +31,7 @@
                         var $selectdiv = $('<div class="locationselect" value="'+ NodeId +'"/>' )
                                            .appendTo($selectcell);
 
-                        var $locationtree = $('<div />').CswNodeTree({  'ID': ID,
+                        var $locationtree = $('<div />').CswNodeTree('init', { 'ID': ID,
                                                                     viewid: ViewId,
                                                                     nodeid: NodeId,
                                                                     onSelectNode: function(itemid, text, iconurl) { onTreeSelect($selectdiv, itemid, text, iconurl); },

@@ -174,12 +174,12 @@ namespace ChemSW.Nbt.WebPages
 
             CswNbtView NewSamplesView = _makeNewSamplesView( ParentSampleNode.NodeId, SampleNodeIds );
             Master.setViewXml( NewSamplesView.ToString() );
-            Master.Redirect( "Main.aspx" );
+            Master.GoMain();
         }
 
         void SplitSamplesWizard_onCancel( object CswWizard, CswWizardEventArgs CswWizardEventArgs )
         {
-            Master.Redirect( "Main.aspx" );
+            Master.GoMain();
         }
 
         private CswNbtNode _getSampleNodeFromBarcode( string SampleBarcode )

@@ -866,12 +866,12 @@ namespace ChemSW.Nbt.WebPages
         //void PropTable_OnSearch( CswNbtView SearchView )
         //{
         //    Master.setViewXml( SearchView.ToString() );
-        //    Master.Redirect( "Main.aspx" );
+        //    Master.GoMain();
         //}
         //void PropTable_OnViewClick( Int32 ViewId )
         //{
         //    Master.setViewId( ViewId );
-        //    Master.Redirect( "Main.aspx" );
+        //    Master.GoMain();
         //}
 
 

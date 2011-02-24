@@ -323,7 +323,7 @@ namespace ChemSW.Nbt.WebPages
                 // Make a view of new inspections
                 CswNbtView NewView = _makeNewInspectionsView( CheckedNodes, NewChildNodeIds, TargetProp, DefaultGeneratorNodeType );
                 Master.setViewXml( NewView.ToString() );
-                Master.Redirect( "Main.aspx" );
+                Master.GoMain();
             }
             catch( Exception ex )
             {
@@ -335,7 +335,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                Master.Redirect( "Main.aspx" );
+                Master.GoMain();
             }
             catch( Exception ex )
             {

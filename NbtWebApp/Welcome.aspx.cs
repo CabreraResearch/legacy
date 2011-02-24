@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.WebPages
             SelectedNodeKey = Tree.getNodeKeyForCurrentPosition();
 
             Master.setViewXml( NewNodeView.ToString() );
-            Master.Redirect( "Main.aspx" );
+            Master.GoMain();
         }
 
         #endregion Events

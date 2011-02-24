@@ -25,13 +25,13 @@
                     var $this = $(this);
                     if($this.attr('text') != undefined)
                     {
-                        var $li = HandleMenuItem($ul, $this, o.onLogout);
+                        var $li = HandleMenuItem($ul, $this, o.onLogout, null);
                         
                         if($this.children().length > 1) {
                             var $subul = $('<ul class="subnav"></ul>')
                                             .appendTo($li);
                             $this.children().each(function() {
-                                HandleMenuItem($subul, $(this), o.onLogout);
+                                HandleMenuItem($subul, $(this), o.onLogout, null);
                             });
                         }
                     }

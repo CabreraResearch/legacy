@@ -89,6 +89,7 @@ namespace ChemSW.Nbt.WebServices
 				ViewHistory.Push( ThisView );
 			}
 			Session[QuickLaunchViews] = ViewHistory;
+
 		}
 
 		#endregion Session and Resource Management
@@ -380,65 +381,68 @@ namespace ChemSW.Nbt.WebServices
 		} // getTree()
 
 
-		[WebMethod( EnableSession = true )]
-		public XmlDocument getTabs( string NodePk )
-		{
-			string ReturnVal = string.Empty;
-			try
-			{
-				start();
-				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				ReturnVal = ws.getTabs( NodePk );
-				end();
-			}
-			catch( Exception ex )
-			{
-				ReturnVal = error( ex );
-			}
-			//return ( ReturnVal );
-			XmlDocument Doc = new XmlDocument();
-			Doc.LoadXml( ReturnVal );
-			return Doc;
-		} // getTabs()
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getTabs( string EditMode, string NodePk, string NodeTypeId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+                ReturnVal = ws.getTabs( RealEditMode, NodePk, CswConvert.ToInt32( NodeTypeId ) );
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getTabs()
 
-		[WebMethod( EnableSession = true )]
-		public XmlDocument getProps( string NodePk, string TabId )
-		{
-			string ReturnVal = string.Empty;
-			try
-			{
-				start();
-				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				ReturnVal = ws.getProps( NodePk, TabId );
-				end();
-			}
-			catch( Exception ex )
-			{
-				ReturnVal = error( ex );
-			}
-			//return ( ReturnVal );
-			XmlDocument Doc = new XmlDocument();
-			Doc.LoadXml( ReturnVal );
-			return Doc;
-		} // getProps()
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getProps( string EditMode, string NodePk, string TabId, string NodeTypeId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+                ReturnVal = ws.getProps( RealEditMode, NodePk, TabId, CswConvert.ToInt32( NodeTypeId ) );
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal );
+            return Doc;
+        } // getProps()
 
-		[WebMethod( EnableSession = true )]
-		public string saveProps( string NodePk, string NewPropsXml )
-		{
-			string ReturnVal = string.Empty;
-			try
-			{
-				start();
-				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				ReturnVal = ws.saveProps( NodePk, NewPropsXml );
-				end();
-			}
-			catch( Exception ex )
-			{
-				ReturnVal = error( ex );
-			}
-			return ( ReturnVal );
-		} // saveProps()
+        [WebMethod( EnableSession = true )]
+        public string saveProps( string EditMode, string NodePk, string NewPropsXml, string NodeTypeId )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+                ReturnVal = ws.saveProps( RealEditMode, NodePk, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) );
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        } // saveProps()
 
 		#endregion Web Methods
 

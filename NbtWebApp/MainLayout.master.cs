@@ -323,7 +323,7 @@ namespace ChemSW.Nbt.WebPages
                         {
                             //clearView();
                             //setViewId( CswNbtResources.CurrentNbtUser.DefaultViewId, true );
-                            //Master.Redirect( "Main.aspx" );
+                            //Master.GoMain();
                             GoHome();
                             break;
                         }
@@ -365,7 +365,7 @@ namespace ChemSW.Nbt.WebPages
                             Session["Main_SelectedNodeKey"] = PrefsTree.getNodeKeyForCurrentPosition().ToString();
 
                             Master.setViewXml( UserView.ToString() );
-                            Master.Redirect( "Main.aspx" );
+                            Master.GoMain();
                             break;
                         }
                     case "SubscriptionsMenuItem":
@@ -551,12 +551,12 @@ namespace ChemSW.Nbt.WebPages
             {
                 case CswViewListTree.ViewType.View:
                     Master.setViewId( Pk );
-                    Master.Redirect( "Main.aspx" );
+                    Master.GoMain();
                     break;
                 case CswViewListTree.ViewType.RecentView:
                     CswNbtView View = (CswNbtView) Master.CswNbtResources.ViewCache.getView( Pk );
                     Master.setViewXml( View.ToXml().InnerXml.ToString() );
-                    Master.Redirect( "Main.aspx" );
+                    Master.GoMain();
                     break;
                 case CswViewListTree.ViewType.Action:
                     CswNbtAction Action = Master.CswNbtResources.Actions[Pk];
@@ -577,13 +577,13 @@ namespace ChemSW.Nbt.WebPages
         protected void _QuickLaunch_OnViewLinkClick( Int32 ViewId )
         {
             Master.setViewId( ViewId );
-            Master.Redirect( "Main.aspx" );
+            Master.GoMain();
         }
 
         protected void _QuickLaunch_OnSessionViewLinkClick( Int32 SessionViewId )
         {
             Master.setSessionViewId( SessionViewId );
-            Master.Redirect( "Main.aspx" );
+            Master.GoMain();
         }
 
         protected void _QuickLaunch_OnActionLinkClick( Int32 ActionId )
@@ -657,6 +657,7 @@ namespace ChemSW.Nbt.WebPages
         public void ReleaseAll() { Master.ReleaseAll(); }
         public void Redirect( string url ) { Master.Redirect( url ); }
         public void GoHome() { Master.GoHome(); }
+        public void GoMain() { Master.GoMain(); }
         public void LogMessage( string Message ) { Master.LogMessage( Message ); }
         public void LogTimerResult( string Message, string TimerResult ) { Master.LogTimerResult( Message, TimerResult ); }
         public CswNbtResources CswNbtResources { get { return Master.CswNbtResources; } }

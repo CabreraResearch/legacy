@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.WebPages
 
                 if( bGetOut )
                 {
-                    //Master.Redirect( "Main.aspx" );
+                    //Master.GoMain();
                     Master.GoHome();
                 }
             }

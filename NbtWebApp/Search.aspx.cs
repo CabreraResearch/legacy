@@ -235,7 +235,7 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 Master.setViewXml( e.NewView.ToString() );
-                Master.Redirect( "Main.aspx" );
+                Master.GoMain();
             }
             catch( Exception ex )
             {

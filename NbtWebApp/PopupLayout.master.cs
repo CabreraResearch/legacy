@@ -120,6 +120,7 @@ namespace ChemSW.Nbt.WebPages
             Master.Redirect(url);
         }
         public void GoHome() { Master.GoHome(); }
+        public void GoMain() { Master.GoMain(); }
 
         public void LogMessage(string Message)
         {

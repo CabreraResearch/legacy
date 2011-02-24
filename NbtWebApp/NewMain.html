@@ -117,10 +117,13 @@
 
 	function refreshMainMenu(viewid, nodeid) 
 	{
-		$('#MainMenuDiv').CswMenuMain({ 
-										'viewid': viewid,
-										'nodeid': nodeid
-									 });
+        $('#MainMenuDiv').CswMenuMain({
+            'viewid': viewid,
+            'nodeid': nodeid,
+            onAddNode: function (newnodeid) {
+                refreshViewTree(newnodeid);
+            }
+        });
 	}
 
 	function getViewTree(viewid)
@@ -129,10 +132,10 @@
 		clearLeft();
 		clearRight();
 		clearCenter();
-		$('#LeftDiv').CswNodeTree({
+        $('#LeftDiv').CswNodeTree('init', {
 			ID: 'main',
 			'viewid': viewid,
-			onSelectNode: function (nodeid) { getTabs(nodeid); refreshMainMenu(viewid, nodeid); }
+            onSelectNode: function (nodeid) { getTabs(nodeid); refreshMainMenu(viewid, nodeid); },
 		});
 	}
 
@@ -151,13 +154,14 @@
 		$('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, onSave: refreshViewTree });
 	}
 
-	function refreshViewTree()
+    function refreshViewTree(newnodeid)
 	{
 		clearLeft();
-		$('#LeftDiv').CswNodeTree({
-			ID: 'main',
+        $('#LeftDiv').CswNodeTree('init', {
+            'ID': 'main',
 			'viewid': GetCurrentViewId(),
-			onSelectNode: getTabs
+            'nodeid': newnodeid,
+            'onSelectNode': getTabs
 		});
 	}
 

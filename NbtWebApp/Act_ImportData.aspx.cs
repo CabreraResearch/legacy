@@ -467,7 +467,7 @@ namespace ChemSW.Nbt.WebPages
                 if( LoadViewXml.Value != string.Empty )
                 {
                     Master.setViewXml( LoadViewXml.Value.ToString() );
-                    Master.Redirect( "Main.aspx" );
+                    Master.GoMain();
                 }
             }
             catch( Exception ex )
