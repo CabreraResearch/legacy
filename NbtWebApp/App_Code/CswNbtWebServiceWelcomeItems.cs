@@ -10,6 +10,8 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using System.Xml;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -58,7 +60,7 @@ namespace ChemSW.Nbt.WebServices
         private DataTable _getWelcomeTable( Int32 RoleId )
         {
             CswTableSelect WelcomeSelect = _CswNbtResources.makeCswTableSelect( "WelcomeSelect", "welcome" );
-            string WhereClause = "where roleid = '" + RoleId.ToString() + "'";
+			string WhereClause = "where roleid = '" + RoleId.ToString() + "'";
             Collection<OrderByClause> OrderBy = new Collection<OrderByClause>();
             OrderBy.Add( new OrderByClause( "display_row", OrderByType.Ascending ) );
             OrderBy.Add( new OrderByClause( "display_col", OrderByType.Ascending ) );
@@ -102,6 +104,7 @@ namespace ChemSW.Nbt.WebServices
                         else
                             LinkText = ThisView.ViewName;
                         CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", WelcomeRow["nodeviewid"].ToString() );
+						CswXmlDocument.AppendXmlAttribute( ItemNode, "viewtype", ThisView.ViewMode.ToString() );
                     }
                 }
                 if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
