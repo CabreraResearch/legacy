@@ -243,6 +243,38 @@ function editNodeDialog(nodeid, onEditNode) {
     });
 }
 
+
+function aboutDialog() {
+    var $div = $('<div></div>');
+    CswAjaxXml({
+        url: '/NbtWebApp/wsNBT.asmx/getAbout',
+        data: '',
+        success: function ($xml) {
+            $div.append('NBT Assembly Version: ' + $xml.children('assembly').text() + '<br/><br/>');
+            var $table = makeTable('abouttable')
+                          .appendTo($div);
+            var row = 1;
+            $xml.children('component').each(function () {
+                var $namecell = getTableCell($table, row, 1);
+                var $versioncell = getTableCell($table, row, 2);
+                var $copyrightcell = getTableCell($table, row, 3);
+                $namecell.css('padding', '2px 5px 2px 5px');
+                $versioncell.css('padding', '2px 5px 2px 5px');
+                $copyrightcell.css('padding', '2px 5px 2px 5px');
+                var $component = $(this);
+                $namecell.append($component.children('name').text());
+                $versioncell.append($component.children('version').text());
+                $copyrightcell.append($component.children('copyright').text());
+                row++;
+            });
+        }
+    });
+    $div.dialog({ 'modal': true,
+        'width': 600,
+        'height': 400
+    });
+}
+
 // ------------------------------------------------------------------------------------
 // Layout mechanics
 // ------------------------------------------------------------------------------------
@@ -321,6 +353,10 @@ function HandleMenuItem($ul, $this, onLogout, onAddNode) {
                         .appendTo($ul);
         var $a = $li.children('a');
         switch ($this.attr('action')) {
+
+            case 'About':
+                $a.click(function () { aboutDialog(); return false; });
+                break;
 
             case 'AddNode':
                 $a.click(function () { addNodeDialog($this.attr('nodetypeid'), onAddNode); return false; });

@@ -445,6 +445,27 @@ namespace ChemSW.Nbt.WebServices
             return ( ReturnVal );
         } // saveProps()
 
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getAbout()
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
+                ReturnVal = ws.makeVersionXml();
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            //return ( ReturnVal );
+            XmlDocument Doc = new XmlDocument();
+            Doc.LoadXml( ReturnVal.Replace("&", "&amp;") );
+            return Doc;
+        } // saveProps()
+
         #endregion Web Methods
 
     }//wsNBT

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Web;
-using System.Xml;
-using System.Web.Services;
 using System.Data;
+using System.IO;
+using System.Reflection;
+using System.Web;
+using System.Web.Services;
+using System.Xml;
 using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
@@ -115,12 +117,89 @@ namespace ChemSW.Nbt.WebServices
             ret += "</item>";
             ret += "<item text=\"Help\">";
             ret += "  <item text=\"Help\" popup=\"help/index.htm\" />";
-            ret += "  <item text=\"About\" popup=\"About.html\" />";
+            ret += "  <item text=\"About\" action=\"About\" />";
             ret += "</item>";
             ret += "<item text=\"Logout\" action=\"Logout\" />";
 
             return "<menu>" + ret + "</menu>";
         }
+
+
+        public string makeVersionXml()
+        {
+            string ret = string.Empty;
+
+            string AssemblyFilePath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "/_Assembly.txt";
+            if( File.Exists( AssemblyFilePath ) )
+            {
+                TextReader AssemblyFileReader = new StreamReader( AssemblyFilePath );
+                ret += "<assembly>" + AssemblyFileReader.ReadLine() + "</assembly>";
+                AssemblyFileReader.Close();
+            }
+
+            string VersionFilePath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "/_Version.txt";
+            if( File.Exists( VersionFilePath ) )
+            {
+                TextReader VersionFileReader = new StreamReader( VersionFilePath );
+                ret += "<component>";
+                ret += " <name>NbtWebApp</name>";
+                ret += " <version>" + VersionFileReader.ReadLine() + "</version>";
+                ret += " <copyright>Copyright &copy; ChemSW, Inc. 2005-2011</copyright>";
+                ret += "</component>";
+                VersionFileReader.Close();
+            }
+
+            ArrayList Assemblies = new ArrayList();
+            Assemblies.Add( "CrystalDecisions.Web, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" );
+            Assemblies.Add( "CswCommon" );
+            Assemblies.Add( "CswWebControls" );
+            Assemblies.Add( "FarPoint.Web.Spread" );
+            Assemblies.Add( "NbtConfig" );
+            Assemblies.Add( "NbtLogic" );
+            Assemblies.Add( "NbtWebControls" );
+            Assemblies.Add( "Telerik.Web.UI" );
+
+            foreach( string AssemblyName in Assemblies )
+            {
+                ret += "<component>";
+                if( AssemblyName.Contains( "," ) )
+                    ret += "<name>" + AssemblyName.Substring( 0, AssemblyName.IndexOf( ',' ) ) + "</name>";
+                else
+                    ret += "<name>" + AssemblyName + "</name>";
+                Assembly AssemblyInfo = Assembly.Load( AssemblyName );
+                object[] AssemblyAttributes = (object[]) AssemblyInfo.GetCustomAttributes( true );
+
+                string Version = AssemblyInfo.GetName().Version.ToString();
+                string Copyright = string.Empty;
+                foreach( object AssemblyAttribute in AssemblyAttributes )
+                {
+                    //if (AssemblyAttribute is AssemblyFileVersionAttribute)
+                    //{
+                    //    Version = ( (AssemblyFileVersionAttribute) AssemblyAttribute ).Version;
+                    //}
+                    if( AssemblyAttribute is AssemblyCopyrightAttribute )
+                    {
+                        Copyright = ( (AssemblyCopyrightAttribute) AssemblyAttribute ).Copyright;
+                    }
+                }
+                ret += "<version>" + Version + "</version>";
+                ret += "<copyright>" + Copyright + "</copyright>";
+                ret += "</component>";
+            }
+
+            //CswTableCaddy ConfigVarsTableCaddy = Master.CswNbtResources.makeCswTableCaddy("configuration_variables");
+            //ConfigVarsTableCaddy.WhereClause = "where variablename = 'schemaversion'";
+            //DataTable ConfigVarsTable = ConfigVarsTableCaddy.Table;
+
+            ret += "<component>";
+            ret += " <name>Schema</name>";
+            ret += " <version>" + _CswNbtResources.getConfigVariableValue( "schemaversion" ) + "</version>";
+            ret += " <copyright>Copyright &copy; ChemSW, Inc. 2005-2011</copyright>";
+            ret += "</component>"; 
+
+            return "<versions>" + ret + "</versions>";
+        } // makeVersionXml()
+
 
 
     } // class CswNbtWebServiceHeader
