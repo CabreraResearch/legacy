@@ -13,8 +13,8 @@ namespace ChemSW.Nbt.WebServices
 {
 	public class CswNbtWebServiceGrid
 	{
-		private CswNbtResources _CswNbtResources;
-		private CswNbtView _View;
+		private readonly CswNbtResources _CswNbtResources;
+		private readonly CswNbtView _View;
 		
 		/// <summary>
 		/// rows
@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.WebServices
 			return GridString;
 		} // getGrid()
 
-		private JObject getDebugGridJson()
+		private static JObject getDebugGridJson()
 		{
 			String JsonString = @"{""viewname"": ""Debug View""
 								,""viewwnodeidth"": ""150""
@@ -186,14 +186,14 @@ namespace ChemSW.Nbt.WebServices
 				IEnumerable<XElement> ColumnCollection = GridXDoc.Elements( GridRows ).Elements( GridRow ).First().Elements( GridCell );
 
 				JProperty GridRowsJObj = getGridRowsJson();
-				JProperty GridColumnNames = getGridColumnNamesJson( ColumnCollection );
+				JProperty GridColumnNamesJson = getGridColumnNamesJson( ColumnCollection );
 				JProperty GrodColumnDef = getGridColumnDefinitionJson( ColumnCollection );
 				string Width = Unit.Parse( ( CswConvert.ToInt32( _View.Width*7 ) ).ToString() + "px" ).ToString();
 
 				GridShellJObj = new JObject(
 					new JProperty( GridViewName, _View.ViewName ),
 					new JProperty( GridViewWidth, Width ),
-					GridColumnNames,
+					GridColumnNamesJson,
 					GrodColumnDef,
 					GridRowsJObj
 					);
@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Generates a JSON property of an array of friendly Column Names
 		/// </summary>
-		private JProperty getGridColumnNamesJson(IEnumerable<XElement> ColumnCollection)
+		private static JProperty getGridColumnNamesJson(IEnumerable<XElement> ColumnCollection)
 		{
 			JArray ColumnArray = new JArray(
 				               			from Column in ColumnCollection
@@ -221,7 +221,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Generates a JSON property with the definitional data for a jqGrid Column Array
 		/// </summary>
-		private JProperty getGridColumnDefinitionJson( IEnumerable<XElement> ColumnCollection )
+		private static JProperty getGridColumnDefinitionJson( IEnumerable<XElement> ColumnCollection )
 		{
 			
 			JArray ColumnArray = new JArray( 
@@ -276,9 +276,9 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		private XDocument getGridXDoc()
 		{
-			var RawXML = getGridTree();
+			var RawXml = getGridTree();
 			XDocument GridXDoc = null;
-			if( null != RawXML )
+			if( null != RawXml )
 			{
 				GridXDoc = new XDocument(
 					new XDeclaration( "1.0", "utf-8", "yes" ),
@@ -287,7 +287,7 @@ namespace ChemSW.Nbt.WebServices
 					              new XElement( GridPage ),
 					              new XElement( GridTotal ),
 					              new XElement( GridRecords ),
-					              from c in RawXML.DescendantNodes().OfType<XElement>()
+					              from c in RawXml.DescendantNodes().OfType<XElement>()
 					              where c.Name == ( GridNbtNode ) && c.Attribute( GridNodeId ).Value != "0"
 					              select new XElement( GridRow,
 					                                   new XAttribute( GridId, c.Attribute( GridNodeId ).Value ),
@@ -311,9 +311,9 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		private JProperty getGridRowsJson()
 		{
-			var RawXML = getGridTree();
+			var RawXml = getGridTree();
 			JProperty GridJObj = null;
-			if( null != RawXML )
+			if( null != RawXml )
 			{
 				GridJObj = new JProperty("grid",
 								new JObject(
@@ -322,7 +322,7 @@ namespace ChemSW.Nbt.WebServices
 									new JProperty( GridRecords, "1" ),
 									new JProperty( GridRows,
 												   new JArray(
-					               					from c in RawXML.DescendantNodes().OfType<XElement>()
+					               					from c in RawXml.DescendantNodes().OfType<XElement>()
 					               					where c.Name == ( GridNbtNode ) && c.Attribute( GridNodeId ).Value != "0"
 					               					select new JObject(
 					               						new JProperty( GridId, c.Attribute( GridNodeId ).Value ),
