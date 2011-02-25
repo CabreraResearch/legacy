@@ -65,19 +65,19 @@
 				}
 				});
 
-				$('#ViewSelectDiv').CswViewSelect({ ID: 'mainviewselect', 'onSelect': handleViewSelect });
+				$('#ViewSelectDiv').CswViewSelect({ ID: 'mainviewselect', 'onSelect': handleItemSelect });
 
 				var viewid = GetCurrentViewId();
 				if (viewid == null) {
 					$('#CenterDiv').CswWelcome({
-						onLinkClick: handleWelcomeLinkClick
+						onLinkClick: handleItemSelect
 					});
 				} else {
 					getViewTree(viewid);
 				}
 
 				$('#QuickLaunch').CswQuickLaunch({
-					onLinkClick: handleQuickLaunchItemClick
+					onLinkClick: handleItemSelect
 				});
 
 				$('#breadcrumbs').xBreadcrumbs({ collapsible: true });
@@ -99,22 +99,79 @@
 		$('#CenterDiv').children().remove();
 	}
 
-	function handleViewSelect(itemid, text, iconurl) 
+	function handleItemSelect(optSelect) 
 	{
-		if (startsWith(itemid, 'viewtree_'))
-		{
-			getViewTree(itemid.substr('viewtree_'.length));
+		clearCenter();
+		var o = {
+					type: 'view',
+					viewmode: 'tree',
+					itemid: '', 
+					text: '', 
+					iconurl: '',
+					viewid: '',
+					actionid: '',
+					reportid: '',
+					linktype: ''
+				 };
+		if (optSelect) {
+			$.extend(o, optSelect);
 		}
-		else if (startsWith(itemid, 'viewgrid_'))
+   
+		switch(o.viewmode)
 		{
-			getViewGrid(itemid.substr('viewgrid_'.length));
-		}
-		else
-		{
-			alert('Handling for view tree item: ' + itemid + ' is not implemented yet.');
+			case 'grid':
+			{
+				if( o.viewid != undefined && o.viewid != '' )
+				{
+					getViewGrid(o.viewid);
+				}
+				else
+				{
+					alert('No View Selected!');
+				}
+				break;
+			}
+			case 'list':
+			{
+				alert('List Views not yet supported!');
+				break;
+			}
+			case 'tree': 
+			{
+				if( o.viewid != undefined && o.viewid != '' )
+				{
+					getViewTree(o.viewid);
+				}
+				else
+				{
+					alert('No View Selected!');
+				}
+				break;
+			}
+			default:
+			{
+				switch(o.type)
+				{
+					case 'action':
+					{
+						alert('Actions are not yet handled!');
+						break;
+					}
+					case 'report':
+					{
+						alert('Reports are not yet handled!');
+						break;
+					}
+					default:
+					{
+						alert('Handling for link type ' + o.linktype + ' is not implemented yet.');
+						break;
+					}
+				}				
+				break;
+			}
 		}
 	}
-
 	function refreshMainMenu(viewid, nodeid) 
 	{
 		$('#MainMenuDiv').CswMenuMain({
@@ -165,35 +222,24 @@
 		});
 	}
 
-	function handleWelcomeLinkClick(viewid, actionid, reportid)
-	{
-		clearCenter();
-		if (viewid != undefined && viewid != '')
-		{
-			getViewTree(viewid);
-		}
-		else if (actionid != undefined && actionid != '')
-		{
-			alert('Actions are not yet handled!');
-		}
-		else if (reportid != undefined && reportid != '')
-		{
-			alert('Reports are not yet handled!');
-		}
-	}
+//	function handleWelcomeLinkClick(viewid, actionid, reportid)
+//	{
+//		clearCenter();
 
-	function handleQuickLaunchItemClick(viewid, actionid)
-	{
-		clearCenter();
-		if (viewid != undefined && viewid != '')
-		{
-			getViewTree(viewid);
-		}
-		else if (actionid != undefined && actionid != '')
-		{
-			alert('Actions are not yet handled!');
-		}
-	}
+//	}
+
+//	function handleQuickLaunchItemClick(viewid, actionid)
+//	{
+//		clearCenter();
+//		if (viewid != undefined && viewid != '')
+//		{
+//			getViewTree(viewid);
+//		}
+//		else if (actionid != undefined && actionid != '')
+//		{
+//			alert('Actions are not yet handled!');
+//		}
+//	}
 </script>
 
 <!--#include file="NewFooter.html" -->

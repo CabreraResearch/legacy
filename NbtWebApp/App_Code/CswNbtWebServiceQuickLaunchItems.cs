@@ -17,17 +17,6 @@ namespace ChemSW.Nbt.WebServices
 	/// </summary>
 	public class CswNbtWebServiceQuickLaunchItems : CompositeControl
 	{
-		private CswNbtResources _CswNbtResources;
-		private const string ActionName = "actionname";
-		private const string ActionPk = "actionid";
-		private const string ActionSelected = "Include";
-		private const string QuickLaunchViews = "QuickLaunchViews";
-		private const string QuickLaunch = "quicklaunch";
-
-		public CswNbtWebServiceQuickLaunchItems( CswNbtResources CswNbtResources )
-		{
-			_CswNbtResources = CswNbtResources;
-		}
 
 		/// <summary>
 		/// Types of Quick Launch Links
@@ -47,95 +36,106 @@ namespace ChemSW.Nbt.WebServices
 			/// </summary>
 			Unknown
 		}
+		
+		private readonly CswNbtResources _CswNbtResources;
+		private const string ActionName = "actionname";
+		private const string ActionPk = "actionid";
+		private const string ActionSelected = "Include";
+		private const string QuickLaunchViews = "QuickLaunchViews";
+		private const string QuickLaunch = "quicklaunch";
 
-		public XmlDocument getQuickLaunchItems( CswPrimaryKey UserId, HttpSessionState Session )
+		private LinkedList<Tuple<Int32, string, string, QuickLaunchType>> _QuickLaunchHistory = null;
+		private readonly bool _IsNewSession;
+
+		public CswNbtWebServiceQuickLaunchItems( CswNbtResources CswNbtResources, HttpSessionState Session )
 		{
-			var ReturnXML = new XmlDocument();
-			CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( UserId );
-			if( null != UserNode )
+			_CswNbtResources = CswNbtResources;
+			_IsNewSession = ( null == Session[QuickLaunchViews] );
+			if( !_IsNewSession )
 			{
-				
-				bool IsNewSession = ( null == Session[QuickLaunchViews] );
-				
-
-				// Add Recent Views from Session First
-				Stack<Tuple<Int32, string, string>> QuickLaunchHistory = null;
-				if( !IsNewSession )
-				{
-					QuickLaunchHistory = (Stack<Tuple<Int32, string, string>>) Session[QuickLaunchViews];
-				}
-				else
-				{
-					QuickLaunchHistory = new Stack<Tuple<int, string, string>>();
-				}
-
-				ReturnXML = generateQuickLaunchItemsXml( UserNode, QuickLaunchHistory, Session, IsNewSession );
-
+				_QuickLaunchHistory = (LinkedList<Tuple<Int32, string, string, QuickLaunchType>>) Session[QuickLaunchViews];
 			}
-			return ReturnXML;
+			else
+			{
+				_QuickLaunchHistory = new LinkedList<Tuple<int, string, string, QuickLaunchType>>();
+			}
 
-		} // getQuickLaunchItems()
+		}
 
 		/// <summary>
-		/// Generates the Quick Launch Items XML which either includes session history or is only stored content
+		/// Returns Quick Launch Items including History in Session
 		/// </summary>
-		private XmlDocument generateQuickLaunchItemsXml( CswNbtNode UserNode, Stack<Tuple<Int32, string, string>> QuickLaunchHistory, HttpSessionState Session, bool IsNewSession = true )
+		public XmlDocument getQuickLaunchItems( CswPrimaryKey UserId, HttpSessionState Session )
 		{
-			var ReturnXML = new XmlDocument();
-			XmlNode QuickLaunchNode = CswXmlDocument.SetDocumentElement( ReturnXML, QuickLaunch );
-			
-			if( IsNewSession )
+			var ReturnXml = new XmlDocument();
+			XmlNode QuickLaunchNode = CswXmlDocument.SetDocumentElement( ReturnXml, QuickLaunch );
+			if( _IsNewSession )
 			{
-				//Add the user's stored views to QuickLaunchHistory
-				CswNbtObjClassUser UserOC = CswNbtNodeCaster.AsUser( UserNode );
-				CswCommaDelimitedString UserQuickLaunchViews = UserOC.QuickLaunchViews.SelectedViewIds;
-				foreach( CswNbtView QuickLaunchView in UserQuickLaunchViews.Where( View => !String.IsNullOrEmpty( View ) )
-					.Select( View => CswConvert.ToInt32( View ) )
-					.Where( ViewId => Int32.MinValue != ViewId )
-					.Select( ViewId => CswNbtViewFactory.restoreView( _CswNbtResources, ViewId ) )
-					.Where( QuickLaunchView => null != QuickLaunchView && QuickLaunchView.IsFullyEnabled() ) )
+				CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( UserId );
+				if( null != UserNode )
 				{
-					var ThisView = new Tuple<Int32, string, string>( QuickLaunchView.ViewId, QuickLaunchView.ViewName, QuickLaunchView.ViewMode.ToString() );
-					if( !QuickLaunchHistory.Contains( ThisView ) )
+					CswNbtObjClassUser UserOc = CswNbtNodeCaster.AsUser( UserNode );
+
+					//Add the user's stored views to QuickLaunchHistory
+					CswCommaDelimitedString UserQuickLaunchViews = UserOc.QuickLaunchViews.SelectedViewIds;
+					foreach( var ThisTupleView in UserQuickLaunchViews.Where( View => !String.IsNullOrEmpty( View ) )
+						.Select( CswConvert.ToInt32 )
+						.Where( ViewId => Int32.MinValue != ViewId )
+						.Select( ViewId => CswNbtViewFactory.restoreView( _CswNbtResources, ViewId ) )
+						.Where( QuickLaunchView => null != QuickLaunchView && QuickLaunchView.IsFullyEnabled() )
+						.Select( QuickLaunchView => new Tuple<Int32, string, string, QuickLaunchType>( QuickLaunchView.ViewId, QuickLaunchView.ViewName, QuickLaunchView.ViewMode.ToString(), QuickLaunchType.View ) ) )
 					{
-						QuickLaunchHistory.Push( ThisView );
+						if( _QuickLaunchHistory.Contains( ThisTupleView ) )
+						{
+							_QuickLaunchHistory.Remove( ThisTupleView );
+						}
+						_QuickLaunchHistory.AddFirst( ThisTupleView );
 					}
-				} // foreach( CswNbtView QuickLaunchView...
-				
-				//This ensures that the user's Quick Launch views stay at bottom of the stack
-				Session[QuickLaunchViews] = QuickLaunchHistory;
+
+					//Add the user's stored actions to QuickLaunchHistory
+					CswNbtNodePropLogicalSet ActionsLogicalSet = UserOc.QuickLaunchActions;
+					DataTable ActionsTable = ActionsLogicalSet.GetDataAsTable( ActionName, ActionPk );
+					foreach( var ThisTupleAction in ( from DataRow ActionRow in ActionsTable.Rows
+						                                where CswConvert.ToBoolean( ActionRow[ActionSelected] )
+						                                select _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionRow[ActionName].ToString() )]
+						                                into ThisAction where null != ThisAction select ThisAction )
+						.Select( ThisAction => new Tuple<Int32, string, string, QuickLaunchType>( ThisAction.ActionId, ThisAction.Name.ToString(), ThisAction.Url, QuickLaunchType.Action ) ) )
+					{
+						if( _QuickLaunchHistory.Contains( ThisTupleAction ) )
+						{
+							_QuickLaunchHistory.Remove( ThisTupleAction );
+						}
+						_QuickLaunchHistory.AddFirst( ThisTupleAction );
+					}
+				}
 			} // if( IsNewSession )
 
-			foreach( var Tuple in QuickLaunchHistory )
+			Session[QuickLaunchViews] = _QuickLaunchHistory;
+
+			foreach( var Tuple in _QuickLaunchHistory )
 			{
 				XmlNode ThisItem = CswXmlDocument.AppendXmlNode( QuickLaunchNode, "item" );
-				CswXmlDocument.AppendXmlAttribute( ThisItem, "type", QuickLaunchType.View.ToString() );
-				CswXmlDocument.AppendXmlAttribute( ThisItem, "viewid", Tuple.Item1.ToString() );
-				CswXmlDocument.AppendXmlAttribute( ThisItem, "text", Tuple.Item2 );
-				CswXmlDocument.AppendXmlAttribute( ThisItem, "viewmode", Tuple.Item3 );
-			} // foreach( var Tuple in QuickLaunchHistory )
-
-			if( IsNewSession )
-			{
-				CswNbtNodePropLogicalSet ActionsLogicalSet = ( _CswNbtResources.CurrentNbtUser.UserNode ).QuickLaunchActions;
-				DataTable ActionsTable = ActionsLogicalSet.GetDataAsTable( ActionName, ActionPk );
-				foreach( CswNbtAction ThisAction in from DataRow ActionRow in ActionsTable.Rows
-				                                    where CswConvert.ToBoolean( ActionRow[ActionSelected] )
-				                                    select _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionRow[ActionName].ToString() )]
-				                                    into ThisAction
-				                                    where null != ThisAction
-				                                    select ThisAction )
+				CswXmlDocument.AppendXmlAttribute( ThisItem, "type", Tuple.Item4.ToString() ); //QuickLaunchType
+				CswXmlDocument.AppendXmlAttribute( ThisItem, "itemid", Tuple.Item1.ToString() ); //viewid/actionid
+				CswXmlDocument.AppendXmlAttribute( ThisItem, "text", Tuple.Item2 ); //ViewName/ActionName
+				switch( Tuple.Item4 )
 				{
-					XmlNode ThisItem = CswXmlDocument.AppendXmlNode( QuickLaunchNode, "item" );
-					CswXmlDocument.AppendXmlAttribute( ThisItem, "type", QuickLaunchType.Action.ToString() );
-					CswXmlDocument.AppendXmlAttribute( ThisItem, "viewid", ThisAction.ActionId.ToString() );
-					CswXmlDocument.AppendXmlAttribute( ThisItem, "text", ThisAction.Name.ToString() );
-					CswXmlDocument.AppendXmlAttribute( ThisItem, "url", ThisAction.Url );
-				} // foreach( CswNbtAction ThisAction...
-			} // if( IsNewSession )
+					case QuickLaunchType.View:
+						{
+							CswXmlDocument.AppendXmlAttribute( ThisItem, "viewmode", Tuple.Item3.ToLower() );
+							break;
+						}
+					case QuickLaunchType.Action:
+						{
+							CswXmlDocument.AppendXmlAttribute( ThisItem, "url", Tuple.Item3.ToLower() );
+							break;
+						}
+				}
+			} // foreach( var Tuple in QuickLaunchHistory )
+			
+			return ReturnXml;
 
-			return ReturnXML;
-		} // getUsersStoredViews()
+		} // getQuickLaunchItems()
 
 		/// <summary>
 		/// Resets the Quick Launch Item's XML to the user's stored quick launch items
@@ -146,8 +146,8 @@ namespace ChemSW.Nbt.WebServices
 			CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( UserId );
 			if( null != UserNode )
 			{
-				Stack<Tuple<Int32, string, string>> QuickLaunchHistory = null;
-				ReturnXML = generateQuickLaunchItemsXml( UserNode, QuickLaunchHistory, Session );
+				LinkedList<Tuple<Int32, string, string>> QuickLaunchHistory = null;
+				ReturnXML = getQuickLaunchItems( UserId, Session );
 				Session[QuickLaunchViews] = QuickLaunchHistory;
 			}
 			return ReturnXML;

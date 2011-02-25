@@ -135,28 +135,32 @@ namespace ChemSW.Nbt.WebServices
 			_makeItemNode( CategoryNode, Type, Id, Text, ViewMode );
 		}
 
-		private XmlNode _makeItemNode( XmlNode ParentNode, ItemType Type, Int32 Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
+		private static XmlNode _makeItemNode( XmlNode ParentNode, ItemType ItemType, Int32 Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
 		{
 			XmlNode ItemNode = CswXmlDocument.AppendXmlNode( ParentNode, "item" );
 			XmlNode ContentNode = CswXmlDocument.AppendXmlNode( ItemNode, "content" );
 			XmlNode NameNode = CswXmlDocument.AppendXmlNode( ContentNode, "name" );
-			if( ViewMode != NbtViewRenderingMode.Unknown )
-			{
-				XmlNode ViewTypeNode = CswXmlDocument.AppendXmlNode( ContentNode, "viewmode" );
-				ViewTypeNode.Value = ViewMode.ToString();
-			}
 			NameNode.InnerText = Text;
 
-			string rel = Type.ToString().ToLower();
-			if( Type == ItemType.View )
-				rel = Type.ToString().ToLower() + ViewMode.ToString().ToLower();
-			CswXmlDocument.AppendXmlAttribute( ItemNode, "rel", rel );
-			CswXmlDocument.AppendXmlAttribute( ItemNode, "id", rel + "_" + Id.ToString() );
+			string Type = ItemType.ToString().ToLower();
+			string Mode = ViewMode.ToString().ToLower();
+			string Rel = Type;
+			
+			if( Type == ItemType.View.ToString() )
+			{
+				CswXmlDocument.AppendXmlAttribute( ItemNode, "viewmode", ViewMode.ToString().ToLower() );
+				Rel += Mode;
+			}
+
+			CswXmlDocument.AppendXmlAttribute( ItemNode, "type", Type );
+			CswXmlDocument.AppendXmlAttribute( ItemNode, "rel", Rel );
+			CswXmlDocument.AppendXmlAttribute( ItemNode, "id", Rel + "_" + Id.ToString() );
+			CswXmlDocument.AppendXmlAttribute( ItemNode, Type + "id", Id.ToString() );
 
 			return ItemNode;
 		}
 
-		private Int32 _catcount = 0;
+		private Int32 _Catcount = 0;
 		private Dictionary<string, XmlNode> CategoryNodes = new Dictionary<string, XmlNode>();
 
 		private XmlNode _getCategoryNode( XmlNode DocRoot, string Category )
@@ -171,8 +175,8 @@ namespace ChemSW.Nbt.WebServices
 				else
 				{
 					// Make one
-					_catcount++;
-					CategoryNode = _makeItemNode( DocRoot, ItemType.Category, _catcount, Category );
+					_Catcount++;
+					CategoryNode = _makeItemNode( DocRoot, ItemType.Category, _Catcount, Category );
 					CategoryNodes.Add( Category, CategoryNode );
 				}
 			}

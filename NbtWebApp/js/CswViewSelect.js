@@ -1,57 +1,57 @@
 ﻿; (function ($) {
-    $.fn.CswViewSelect = function (options) {
+	$.fn.CswViewSelect = function (options) {
 
-        var o = {
-            ID: '',
-            ViewUrl: '/NbtWebApp/wsNBT.asmx/getViews',
-            viewid: '',
-            onSelect: function(itemid, text, iconurl) { },
-            ClickDelay: 300
-        };
+		var o = {
+			ID: '',
+			ViewUrl: '', //'/NbtWebApp/wsNBT.asmx/getViews',
+			viewid: '',
+			onSelect: function(optSelect) { },
+			ClickDelay: 300
+		};
 
-        if (options) {
-            $.extend(o, options);
-        }
+		if (options) {
+			$.extend(o, options);
+		}
 
-        var $selectdiv = $(this);
-        $selectdiv.children().remove();
+		var $selectdiv = $(this);
+		$selectdiv.children().remove();
 
-        getViewSelect(o.viewid);
+		getViewSelect(o.viewid);
 
-        function getViewSelect(selectedviewid)
-        {
-            $viewtreediv = $('<div/>');
-            $selectdiv.CswComboBox('init', { 'ID': o.ID + '_combo', 
-                                             'TopContent': 'Select a View',
-                                             'SelectContent': $viewtreediv,
-                                             'Width': '266px' });
+		function getViewSelect(selectedviewid)
+		{
+			$viewtreediv = $('<div/>');
+			$selectdiv.CswComboBox('init', { 'ID': o.ID + '_combo', 
+											 'TopContent': 'Select a View',
+											 'SelectContent': $viewtreediv,
+											 'Width': '266px' });
 
-            $viewtreediv.CswViewTree({ 'onSelect': onTreeSelect });
-            
-        } // getViewSelect()
+			$viewtreediv.CswViewTree({ 'onSelect': onTreeSelect });
+			
+		} // getViewSelect()
 
-        function onTreeSelect(itemid, text, iconurl)
-        {
-            var $newTopContent = $('<div></div>');
-            var $table = makeTable(o.ID + 'selectedtbl')
-                           .appendTo($newTopContent);
-            var $cell1 = getTableCell($table, 1, 1);
-            var $icondiv = $('<div />').appendTo($cell1);
-            $icondiv.css('background-image',  iconurl);
-            $icondiv.css('width', '18px');
-            $icondiv.css('height' ,'18px');
+		function onTreeSelect(optSelect) //itemid, text, iconurl
+		{
+			var $newTopContent = $('<div></div>');
+			var $table = makeTable(o.ID + 'selectedtbl')
+						   .appendTo($newTopContent);
+			var $cell1 = getTableCell($table, 1, 1);
+			var $icondiv = $('<div />').appendTo($cell1);
+			$icondiv.css('background-image',  optSelect.iconurl);
+			$icondiv.css('width', '18px');
+			$icondiv.css('height' ,'18px');
 
-            var $cell2 = getTableCell($table, 1, 2);
-            $cell2.append(text);
+			var $cell2 = getTableCell($table, 1, 2);
+			$cell2.append(optSelect.text);
 
-            $selectdiv.CswComboBox( 'TopContent', $newTopContent );
-            setTimeout(function() { $selectdiv.CswComboBox( 'toggle'); }, o.ClickDelay);
-            o.onSelect(itemid, text, iconurl);
-        }
-        
-        // For proper chaining support
-        return this;
+			$selectdiv.CswComboBox( 'TopContent', $newTopContent );
+			setTimeout(function() { $selectdiv.CswComboBox( 'toggle'); }, o.ClickDelay);
+			o.onSelect(optSelect);
+		}
+		
+		// For proper chaining support
+		return this;
 
-    }; // function(options) {
+	}; // function(options) {
 }) (jQuery);
 

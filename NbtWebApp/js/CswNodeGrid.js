@@ -3,6 +3,7 @@
 ; (function ($) {
 	$.fn.CswNodeGrid = function (options, dom) {
 
+		// jqGrid properties
 		var o = {
 			datatype: "local", 
 			height: 300,
@@ -23,6 +24,7 @@
 			$.extend(o, options);
 		}
 
+		// CswNodeGrid properties
 		var d = {
 			GridUrl: '/NbtWebApp/wsNBT.asmx/getGridJson',
 			viewid: '',
@@ -39,7 +41,7 @@
 		var gridRows = [];
 
 		var gridTableId = d.id + d.gridTable;
-		var $gridOuter = makeTable(gridTableId) //$('<table id="' + gridTableId + '" />')
+		var $gridOuter = makeTable(gridTableId)
 						.appendTo($(this));
 		
 		var gridPagerId = d.id + d.gridPager;
