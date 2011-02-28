@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         if( MetaDataProp.MobileSearch )
                         {
-                            ret += "<search name=\"" + CswTools.SafeJavascriptParam(MetaDataProp.PropNameWithQuestionNo )+ "\" id=\"";
+                            ret += "<search name=\"" + CswTools.SafeJavascriptParam( MetaDataProp.PropNameWithQuestionNo ) + "\" id=\"";
                             if( MetaDataProp.ObjectClassProp != null )
                                 ret += "search_ocp_" + MetaDataProp.ObjectClassPropId.ToString();
                             else
@@ -113,32 +113,39 @@ namespace ChemSW.Nbt.WebServices
                 string ThisNodeId = ThisNode.NodeId.ToString();
 
                 string ThisSubItems = _runTreeNodesRecursive( Tree );
-                if( ThisSubItems == string.Empty )
-                {
-                    ThisSubItems = _runProperties( ThisNode );
-                }
 
-                ret += "<node id=\"" + NodeIdPrefix + ThisNodeId + "\"";
-                ret += " name=\"" + CswTools.SafeJavascriptParam( ThisNodeName ) + "\"";
-                ret += " nodetype=\"" + CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) + "\"";
-                ret += " objectclass=\"" + CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) + "\"";
-                ret += " iconfilename=\"" + CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) + "\"";
-
-                // case 20083 - search values
-                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps )
+                if( Tree.getNodeShowInTreeForCurrentPosition() )
                 {
-                    if( MetaDataProp.MobileSearch )
+                    if( ThisSubItems == string.Empty )
                     {
-                        if( MetaDataProp.ObjectClassProp != null )
-                            ret += " search_ocp_" + MetaDataProp.ObjectClassPropId.ToString() + "=\"" + CswTools.SafeJavascriptParam(ThisNode.Properties[MetaDataProp].Gestalt) + "\"";
-                        else
-                            ret += " search_ntp_" + MetaDataProp.PropId.ToString() + "=\"" + CswTools.SafeJavascriptParam(ThisNode.Properties[MetaDataProp].Gestalt) + "\"";
+                        ThisSubItems = _runProperties( ThisNode );
                     }
+
+                    ret += "<node id=\"" + NodeIdPrefix + ThisNodeId + "\"";
+                    ret += " name=\"" + CswTools.SafeJavascriptParam( ThisNodeName ) + "\"";
+                    ret += " nodetype=\"" + CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) + "\"";
+                    ret += " objectclass=\"" + CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) + "\"";
+                    ret += " iconfilename=\"" + CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) + "\"";
+
+                    // case 20083 - search values
+                    foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps )
+                    {
+                        if( MetaDataProp.MobileSearch )
+                        {
+                            if( MetaDataProp.ObjectClassProp != null )
+                                ret += " search_ocp_" + MetaDataProp.ObjectClassPropId.ToString() + "=\"" + CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) + "\"";
+                            else
+                                ret += " search_ntp_" + MetaDataProp.PropId.ToString() + "=\"" + CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) + "\"";
+                        }
+                    }
+
+                    ret += "><subitems>" + ThisSubItems + "</subitems>";
+                    ret += "</node>";
                 }
-
-                ret += "><subitems>" + ThisSubItems + "</subitems>";
-                ret += "</node>";
-
+                else
+                {
+                    ret += ThisSubItems;
+                }
                 Tree.goToParentNode();
             }
             return ret;

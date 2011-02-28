@@ -13,18 +13,18 @@ namespace ChemSW.Nbt.ObjClasses
     /// </summary>
     public class CswNbtObjClassInspectionDesign : CswNbtObjClass, ICswNbtPropertySetGeneratorTarget
     {
-        /// <summary>
-        /// Inspection Route
-        /// </summary>
-        public static string RoutePropertyName { get { return "Route"; } }
+        ///// <summary>
+        ///// Inspection Route
+        ///// </summary>
+        //public static string RoutePropertyName { get { return "Route"; } }
         /// <summary>
         /// Target == Owner == Parent
         /// </summary>
         public static string TargetPropertyName { get { return "Target"; } }
-        /// <summary>
-        /// This Inspection's order within Route
-        /// </summary>
-        public static string RouteOrderPropertyName { get { return "Route Order"; } }
+        ///// <summary>
+        ///// This Inspection's order within Route
+        ///// </summary>
+        //public static string RouteOrderPropertyName { get { return "Route Order"; } }
         /// <summary>
         /// Inspection name
         /// </summary>
@@ -391,16 +391,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        /// <summary>
-        /// Inspection route
-        /// </summary>
-        public CswNbtNodePropRelationship Route
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[RoutePropertyName].AsRelationship );
-            }
-        }
+        ///// <summary>
+        ///// Inspection route
+        ///// </summary>
+        //public CswNbtNodePropRelationship Route
+        //{
+        //    get
+        //    {
+        //        return ( _CswNbtNode.Properties[RoutePropertyName].AsRelationship );
+        //    }
+        //}
 
         /// <summary>
         /// Inspection target == owner == parent. 
@@ -414,16 +414,16 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        /// <summary>
-        /// Order on route
-        /// </summary>
-        public CswNbtNodePropNumber RouteOrder
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[RouteOrderPropertyName].AsNumber );
-            }
-        }
+        ///// <summary>
+        ///// Order on route
+        ///// </summary>
+        //public CswNbtNodePropNumber RouteOrder
+        //{
+        //    get
+        //    {
+        //        return ( _CswNbtNode.Properties[RouteOrderPropertyName].AsNumber );
+        //    }
+        //}
 
         /// <summary>
         /// Inspection name

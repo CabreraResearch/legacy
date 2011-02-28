@@ -55,8 +55,8 @@ namespace ChemSW.Nbt.Schema
 					// case 20955
 					CswNbtMetaDataNodeTypeProp GeneratorProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
 					CswNbtMetaDataNodeTypeProp IsFutureProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.IsFuturePropertyName );
-					CswNbtMetaDataNodeTypeProp RouteProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
-					CswNbtMetaDataNodeTypeProp RouteOrderProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RouteOrderPropertyName );
+					CswNbtMetaDataNodeTypeProp RouteProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( "Route" );
+					CswNbtMetaDataNodeTypeProp RouteOrderProp = LatestVersionInspectionNT.getNodeTypePropByObjectClassPropName( "Route Order" );
 
 					GeneratorProp.HideInMobile = true;
 					IsFutureProp.HideInMobile = true;
