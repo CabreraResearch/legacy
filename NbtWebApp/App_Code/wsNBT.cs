@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.WebServices
 
 
 		[WebMethod( EnableSession = true )]
-		public string deAuthenticate()
+		public string deauthenticate()
 		{
 			string ReturnVal = string.Empty;
 			try
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = error( ex );
 			}
 			return ( ReturnVal );
-		}//deAuthenticate()
+		}//deauthenticate()
 
 		[WebMethod( EnableSession = true )]
 		public XmlDocument getWelcomeItems( string RoleId )

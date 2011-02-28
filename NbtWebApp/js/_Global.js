@@ -98,7 +98,7 @@ function CswAjaxJSON(options) {
 			var endtime = new Date();
 			$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-			o.success($.parseJSON(data.d));
+            o.success($.parseJSON(data.d));
 
 		}, // success{}
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -241,6 +241,38 @@ function editNodeDialog(nodeid, onEditNode) {
 		'width': 800,
 		'height': 600
 	});
+}
+
+
+function aboutDialog() {
+    var $div = $('<div></div>');
+    CswAjaxXml({
+        url: '/NbtWebApp/wsNBT.asmx/getAbout',
+        data: '',
+        success: function ($xml) {
+            $div.append('NBT Assembly Version: ' + $xml.children('assembly').text() + '<br/><br/>');
+            var $table = makeTable('abouttable')
+                          .appendTo($div);
+            var row = 1;
+            $xml.children('component').each(function () {
+                var $namecell = getTableCell($table, row, 1);
+                var $versioncell = getTableCell($table, row, 2);
+                var $copyrightcell = getTableCell($table, row, 3);
+                $namecell.css('padding', '2px 5px 2px 5px');
+                $versioncell.css('padding', '2px 5px 2px 5px');
+                $copyrightcell.css('padding', '2px 5px 2px 5px');
+                var $component = $(this);
+                $namecell.append($component.children('name').text());
+                $versioncell.append($component.children('version').text());
+                $copyrightcell.append($component.children('copyright').text());
+                row++;
+            });
+        }
+    });
+    $div.dialog({ 'modal': true,
+        'width': 600,
+        'height': 400
+    });
 }
 
 // ------------------------------------------------------------------------------------
