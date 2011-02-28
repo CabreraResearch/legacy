@@ -916,6 +916,17 @@ namespace ChemSW.Nbt
             return Convert.ToBoolean( _CurrentNode.Attributes[_AttrName_Selectable].Value );
         }//getSelectableForCurrentNode()
 
+        public bool getNodeShowInTreeForCurrentNode()
+        {
+            if( null == _CurrentNode )
+                throw ( new CswDniException( "There is no current node" ) );
+
+            if( _CurrentNode.Name != _ElemName_Node )
+                throw ( new CswDniException( "The current node (" + _CurrentNode.Name + ") is not a CswNbtNode" ) );
+
+            return Convert.ToBoolean( _CurrentNode.Attributes[_AttrName_ShowInTree].Value );
+        }//getNodeShowInTreeForCurrentNode()
+
 
         public int getNodeCountForCurrentLevel()
         {

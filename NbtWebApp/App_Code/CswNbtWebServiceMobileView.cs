@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         if( MetaDataProp.MobileSearch )
                         {
-                            ret += "<search name=\"" + CswTools.SafeJavascriptParam(MetaDataProp.PropNameWithQuestionNo )+ "\" id=\"";
+                            ret += "<search name=\"" + CswTools.SafeJavascriptParam( MetaDataProp.PropNameWithQuestionNo ) + "\" id=\"";
                             if( MetaDataProp.ObjectClassProp != null )
                                 ret += "search_ocp_" + MetaDataProp.ObjectClassPropId.ToString();
                             else

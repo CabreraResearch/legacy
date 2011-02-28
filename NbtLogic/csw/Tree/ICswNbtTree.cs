@@ -278,6 +278,11 @@ namespace ChemSW.Nbt
         /// </summary>
         bool getNodeSelectableForCurrentPosition();
         /// <summary>
+        /// True if the currently indexed node should appear in the tree, false otherwise
+        /// </summary>
+        bool getNodeShowInTreeForCurrentPosition();
+
+        /// <summary>
         /// Returns the NodeKey of the currently indexed node's parent
         /// </summary>
         CswNbtNodeKey getNodeKeyForParentOfCurrentPosition();
