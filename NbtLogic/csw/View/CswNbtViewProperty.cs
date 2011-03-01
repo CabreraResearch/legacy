@@ -393,9 +393,11 @@ namespace ChemSW.Nbt
             this.Name = Prop.PropNameWithQuestionNo;
         }
 
-        #region IComparable
+		
 
-        public int CompareTo( object obj )
+		#region IComparable
+
+		public int CompareTo( object obj )
         {
             if( obj is CswNbtViewProperty )
                 return CompareTo( (CswNbtViewProperty) obj );
