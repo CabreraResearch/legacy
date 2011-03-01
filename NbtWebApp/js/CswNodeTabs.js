@@ -38,7 +38,7 @@
 							$xml.children().each(function() { 
 								$this = $(this);
 								$tabdiv.children('ul').append('<li><a href="#'+ $this.attr('id') +'">'+ $this.attr('name') +'</a></li>');
-								console.log(' $this.attr(id) ' +  $this.attr('id') );
+								//console.log(' $this.attr(id) ' +  $this.attr('id') );
 								$tabdiv.append('<div id="'+ $this.attr('id') +'"><form id="'+ $this.attr('id') +'_form"></div>');
 								//if(null == firsttabid) 
 								//    firsttabid = $this.attr('id');
@@ -66,7 +66,7 @@
 							
 							
 							var $table = makeTable(o.nodeid + '_proptable').appendTo($form);
-							console.log('$div = ' + $div);
+							//console.log('$div = ' + $div);
 							var i = 0;
 
 							$xml.children().each(function() { 
