@@ -132,10 +132,10 @@ namespace ChemSW.Nbt.WebServices
 			string ReturnVal = string.Empty;
 			try
 			{
-						start();
-						_SessionResources.CswSessionManager.DeAuthenticate();
-						 ReturnVal = "{ \"Deauthentication\": \"Succeeded\" }";
-						end();
+				start();
+				_SessionResources.CswSessionManager.DeAuthenticate();
+				ReturnVal = "{ \"Deauthentication\": \"Succeeded\" }";
+				end();
 			}
 			catch( Exception ex )
 			{
@@ -305,42 +305,23 @@ namespace ChemSW.Nbt.WebServices
 		} // getMainMenu()
 
 		[WebMethod( EnableSession = true )]
-		public XmlDocument getGridXml( Int32 ViewId )
-		{
-			var ReturnXml = new XmlDocument();
-			try
-			{
-				start();
-				CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-				if( null != View )
-				{
-					var g = new CswNbtWebServiceGrid( _CswNbtResources, View);
-					string XDocString = g.getGrid( CswNbtWebServiceGrid.GridReturnType.Xml );
-					ReturnXml.LoadXml( XDocString );
-					addToQuickLaunch( View );
-				}
-				end();
-			}
-			catch( Exception ex )
-			{
-				ReturnXml.LoadXml( error( ex ) );
-			}
-
-			return ReturnXml;
-		} // getGrid()
-
-		[WebMethod( EnableSession = true )]
-		public string getGridJson( Int32 ViewId )
+		public string getGridJson( Int32 ViewId, string CswNbtNodeKey = null )
 		{
 			var ReturnJSON = string.Empty;
 			try
 			{
 				start();
+				
 				CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
 				if( null != View )
 				{
-					var g = new CswNbtWebServiceGrid( _CswNbtResources, View );
-					ReturnJSON = g.getGrid( CswNbtWebServiceGrid.GridReturnType.Json );
+					CswNbtNodeKey ParentNodeKey = null;
+					if( !string.IsNullOrEmpty( CswNbtNodeKey ) )
+					{
+						ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, CswNbtNodeKey );
+					}
+					var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
+					ReturnJSON = g.getGrid();
 					addToQuickLaunch( View );
 				}
 				end();
@@ -410,7 +391,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
 				ReturnVal = ws.getProps( RealEditMode, NodePk, TabId, CswConvert.ToInt32( NodeTypeId ) );
 				end();
 			}

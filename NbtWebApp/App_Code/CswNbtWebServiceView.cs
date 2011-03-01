@@ -10,6 +10,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Actions;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -120,10 +121,10 @@ namespace ChemSW.Nbt.WebServices
 				Session[ViewTreeSessionKey] = TreeXmlDoc;
 
 			}
-
+			
 			string ret = "<result>" +
 						 "  <tree>" + TreeXmlDoc.InnerXml + "</tree>" +
-						 "  <types>{ " + _getTypes() + " }</types>" +
+						 "  <types> " + _getTypes() + " </types>" +
 						 "</result>";
 
 			return ret;
@@ -145,8 +146,8 @@ namespace ChemSW.Nbt.WebServices
 			string Type = ItemType.ToString().ToLower();
 			string Mode = ViewMode.ToString().ToLower();
 			string Rel = Type;
-			
-			if( Type == ItemType.View.ToString() )
+
+			if( ViewMode != NbtViewRenderingMode.Unknown )
 			{
 				CswXmlDocument.AppendXmlAttribute( ItemNode, "viewmode", ViewMode.ToString().ToLower() );
 				Rel += Mode;
@@ -190,17 +191,23 @@ namespace ChemSW.Nbt.WebServices
 
 		public string _getTypes()
 		{
-			string ret = "\"default\": \"\"";
+			JObject ReturnObj = new JObject( new JProperty("default", "") );
 
 			string[] types = { "action", "category", "report", "viewtree", "viewgrid", "viewlist" };
 			foreach( string type in types )
 			{
-				ret += @",""" + type + @""": {
-					   ""icon"": {
-						 ""image"": ""Images/view/" + type + @".gif""
-					   }
-					 }";
+				ReturnObj.Add( new JProperty( type, 
+									new JObject( 
+										new JProperty( "icon", 
+											new JObject( 
+												new JProperty( "image", "Images/view/" + type + @".gif" ) 
+														) 
+													) 
+												) 
+											)
+										);
 			}
+			string ret = ReturnObj.ToString();
 			return ret;
 		}
 

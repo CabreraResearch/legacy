@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 NodePk = new CswPrimaryKey();
                 NodePk.FromString( NodePkString );
-                Node = _CswNbtResources.Nodes.GetNode( NodePk );
+                Node = _CswNbtResources.Nodes.GetNode( NodePk );				
             }
 
             // SEARCH
