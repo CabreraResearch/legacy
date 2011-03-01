@@ -202,116 +202,6 @@ function deleteNode(nodeid, onSuccess) {
 
 
 // ------------------------------------------------------------------------------------
-// Popups and Dialogs
-// ------------------------------------------------------------------------------------
-
-function OpenPopup(popupurl) {
-    var popup = window.open(popupurl, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
-    popup.focus();
-    return popup;
-}
-
-function OpenDialog(id, url) {
-    var $dialogdiv = $('<div id="' + id + '" style="display: none;"></div>');
-    $dialogdiv.load(url,
-                    {},
-                    function (responseText, textStatus, XMLHttpRequest) {
-                        $dialogdiv.appendTo('body')
-                                  .dialog();
-                    });
-}
-
-function CloseDialog(id) {
-    $('#' + id).remove();
-}
-
-function addNodeDialog(nodetypeid, onAddNode) {
-    var $div = $('<div></div>');
-    $div.CswNodeTabs({
-        'nodetypeid': nodetypeid,
-        'EditMode': 'AddInPopup',
-        'onSave': function (nodeid) {
-            $div.dialog('close');
-            onAddNode(nodeid);
-        }
-    });
-    $div.dialog({ 'modal': true,
-                  'width': 800,
-                  'height': 600
-    });
-}
-
-function editNodeDialog(nodeid, onEditNode) {
-    var $div = $('<div></div>');
-    $div.CswNodeTabs({
-        'nodeid': nodeid,
-        'EditMode': 'EditInPopup',
-        'onSave': function (nodeid) {
-            $div.dialog('close');
-            onEditNode(nodeid);
-        }
-    });
-    $div.dialog({ 'modal': true,
-                  'width': 800,
-                  'height': 600
-    });
-}
-
-
-function deleteNodeDialog(nodename, nodeid, onDeleteNode) {
-    var $div = $('<div>Are you sure you want to delete: '+ nodename +'?<br/><br/></div>');
-    
-    $('<input type="button" id="deletenode_submit" name="deletenode_submit" value="Delete" />')
-        .appendTo($div)
-        .click(function () {
-            $div.dialog('close');
-            deleteNode(nodeid, onDeleteNode);
-        });
-
-    $('<input type="button" id="deletenode_cancel" name="deletenode_cancel" value="Cancel" />')
-        .appendTo($div)
-        .click(function () {
-            $div.dialog('close');
-        });
-
-    $div.dialog({ 'modal': true,
-                  'width': 400,
-                  'height': 200
-        });
-}
-
-function aboutDialog() {
-    var $div = $('<div></div>');
-    CswAjaxXml({
-        url: '/NbtWebApp/wsNBT.asmx/getAbout',
-        data: '',
-        success: function ($xml) {
-            $div.append('NBT Assembly Version: ' + $xml.children('assembly').text() + '<br/><br/>');
-            var $table = makeTable('abouttable')
-                          .appendTo($div);
-            var row = 1;
-            $xml.children('component').each(function () {
-                var $namecell = getTableCell($table, row, 1);
-                var $versioncell = getTableCell($table, row, 2);
-                var $copyrightcell = getTableCell($table, row, 3);
-                $namecell.css('padding', '2px 5px 2px 5px');
-                $versioncell.css('padding', '2px 5px 2px 5px');
-                $copyrightcell.css('padding', '2px 5px 2px 5px');
-                var $component = $(this);
-                $namecell.append($component.children('name').text());
-                $versioncell.append($component.children('version').text());
-                $copyrightcell.append($component.children('copyright').text());
-                row++;
-            });
-        }
-    });
-    $div.dialog({ 'modal': true,
-                  'width': 600,
-                  'height': 400
-    });
-}
-
-// ------------------------------------------------------------------------------------
 // Layout mechanics
 // ------------------------------------------------------------------------------------
 
@@ -391,15 +281,15 @@ function HandleMenuItem($ul, $this, onLogout, onAlterNode) {
         switch ($this.attr('action')) {
 
             case 'About':
-                $a.click(function () { aboutDialog(); return false; });
+                $a.click(function () { $.CswDialog('AboutDialog'); return false; });
                 break;
 
             case 'AddNode':
-                $a.click(function () { addNodeDialog($this.attr('nodetypeid'), onAlterNode); return false; });
+                $a.click(function () { $.CswDialog('AddNodeDialog', $this.attr('nodetypeid'), onAlterNode); return false; });
                 break;
 
             case 'DeleteNode':
-                $a.click(function () { deleteNodeDialog($this.attr('nodename'), $this.attr('nodeid'), onAlterNode); return false; });
+                $a.click(function () { $.CswDialog('DeleteNodeDialog', $this.attr('nodename'), $this.attr('nodeid'), onAlterNode); return false; });
                 break;
 
             case 'Home':

@@ -1,90 +1,130 @@
-﻿// ------------------------------------------------------------------------------------
-// Popups and Dialogs
-// ------------------------------------------------------------------------------------
-
-; (function ($) {
-    $.fn.CswDialog = function (options, method, text) {
-
-        var o = {
-            disabled: false,
-            autoOpen: true,
-            buttons: '', //{ "Ok": function() { $(this).dialog("close"); } }
-            closeOnEscape: true,
-            closeText: 'close',
-            dialogClass: 'alert',
-            draggable: true,
-            height: 'auto',
-            hide: null,
-            maxHeight: false,
-            maxWidth: false,
-            minHeight: '150',
-            minWidth: '150',
-            modal: true,
-            position: 'center',
-            resizable: true,
-            show: '',
-            stack: true,
-            title: '',
-            width: '300',
-            zIndex: '1000'
-        };
-
-        if (options) {
-            $.extend(o, options);
-        }
+﻿; (function ($) {
         
-        var $Dialog = $(this);
+    var PluginName = 'CswDialog';
 
-        var $DialogDiv = $('<div id="dialog"><p>' + text + '</p></div>');
-                                
-        switch(method)
-        {
-            case 'destroy':
-                $DialogDiv.dialog("destroy");
-                break;
+    var methods = {
 
-            case 'disable': 
-                $DialogDiv.dialog("disable");
-                break;
+        // Specialized
 
-            case 'enable': 
-                $DialogDiv.dialog("enable");
-                break;
+        'AddNodeDialog': function (nodetypeid, onAddNode) {
+                            var $div = $('<div></div>');
+                            $div.CswNodeTabs({
+                                'nodetypeid': nodetypeid,
+                                'EditMode': 'AddInPopup',
+                                'onSave': function (nodeid) {
+                                    $div.dialog('close');
+                                    onAddNode(nodeid);
+                                }
+                            });
+                            $div.dialog({ 'modal': true,
+                                'width': 800,
+                                'height': 600
+                            });
+                        },        
 
-            case 'option': 
-                $DialogDiv.dialog("option", o);
-                $DialogDiv.dialog("open");
-                break;
+        'EditNodeDialog': function (nodeid, onEditNode) {
+                            var $div = $('<div></div>');
+                            $div.CswNodeTabs({
+                                'nodeid': nodeid,
+                                'EditMode': 'EditInPopup',
+                                'onSave': function (nodeid) {
+                                    $div.dialog('close');
+                                    onEditNode(nodeid);
+                                }
+                            });
+                            $div.dialog({ 'modal': true,
+                                'width': 800,
+                                'height': 600
+                            });
+                        },
 
-            case 'widget': 
-                $DialogDiv.dialog("widget");
-                break;
+        'DeleteNodeDialog': function (nodename, nodeid, onDeleteNode) {
+                            var $div = $('<div>Are you sure you want to delete: ' + nodename + '?<br/><br/></div>');
 
-            case 'close': 
-                $DialogDiv.dialog("close");
-                break;
+                            $('<input type="button" id="deletenode_submit" name="deletenode_submit" value="Delete" />')
+                                .appendTo($div)
+                                .click(function () {
+                                    $div.dialog('close');
+                                    deleteNode(nodeid, onDeleteNode);
+                                });
 
-            case 'isOpen': 
-                $DialogDiv.dialog("isOpen");
-                break;
+                            $('<input type="button" id="deletenode_cancel" name="deletenode_cancel" value="Cancel" />')
+                                .appendTo($div)
+                                .click(function () {
+                                    $div.dialog('close');
+                                });
 
-            case 'moveToTop': 
-                $DialogDiv.dialog("moveToTop");
-                break;
+                            $div.dialog({ 'modal': true,
+                                'width': 400,
+                                'height': 200
+                            });
+                        },
 
-            case 'open': 
-                $DialogDiv.dialog("open");
-                break;
+        'AboutDialog': function () {
+                            var $div = $('<div></div>');
+                            CswAjaxXml({
+                                url: '/NbtWebApp/wsNBT.asmx/getAbout',
+                                data: '',
+                                success: function ($xml) {
+                                    $div.append('NBT Assembly Version: ' + $xml.children('assembly').text() + '<br/><br/>');
+                                    var $table = makeTable('abouttable')
+                                                  .appendTo($div);
+                                    var row = 1;
+                                    $xml.children('component').each(function () {
+                                        var $namecell = getTableCell($table, row, 1);
+                                        var $versioncell = getTableCell($table, row, 2);
+                                        var $copyrightcell = getTableCell($table, row, 3);
+                                        $namecell.css('padding', '2px 5px 2px 5px');
+                                        $versioncell.css('padding', '2px 5px 2px 5px');
+                                        $copyrightcell.css('padding', '2px 5px 2px 5px');
+                                        var $component = $(this);
+                                        $namecell.append($component.children('name').text());
+                                        $versioncell.append($component.children('version').text());
+                                        $copyrightcell.append($component.children('copyright').text());
+                                        row++;
+                                    });
+                                }
+                            });
+                            $div.dialog({ 'modal': true,
+                                'width': 600,
+                                'height': 400
+                            });
+                        },
 
-            default:
-                $DialogDiv.dialog();
-                break;
-        }
 
-        // For proper chaining support
-        return this;
+        // Generic
 
-    }; // function(options) {
+        'OpenPopup': function(url) { 
+                            var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
+                            popup.focus();
+                            return popup;
+                        },
+        'OpenDialog': function (id, url) {
+                            var $dialogdiv = $('<div id="' + id + '"></div>');
+                            $dialogdiv.load(url,
+                                            {},
+                                            function (responseText, textStatus, XMLHttpRequest) {
+                                                $dialogdiv.appendTo('body')
+                                                          .dialog();
+                                            });
+                        },
+        'CloseDialog': function (id) {
+                            $('#' + id)
+                                .dialog('close')
+                                .remove();
+                        }
+    };
+    
+    // Method calling logic
+    $.CswDialog = function (method) {
+        
+        if ( methods[method] ) {
+          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+        } else if ( typeof method === 'object' || ! method ) {
+          return methods.init.apply( this, arguments );
+        } else {
+          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+        }    
+  
+    };
 })(jQuery);
-
-
