@@ -53,6 +53,7 @@
 //									if (optSelect) {
 //										$.extend(s, optSelect);
 //									}
+									console.log(optSelect);
 									o.onSelect(optSelect); //(Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl)
 								});
 
