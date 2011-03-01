@@ -18,7 +18,6 @@
 				var $QuickLaunchDiv = $('<div id="quicklaunchdiv"><ul id="launchitems"></ul></div>')
 									.appendTo($this);
 				var $list = $QuickLaunchDiv.children();
-			   console.log($xml);
 				$xml.children().each(function() {
 
 					var $item = $(this);
@@ -29,7 +28,7 @@
 							url: $item.attr('url'),
 							viewid: $item.attr('itemid') //actions provide their own links. itemid will only be used as viewid.
 					};
-							console.log(optSelect);
+							
 					switch(optSelect.type)
 					{
 						case 'View':
