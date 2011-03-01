@@ -61,12 +61,12 @@ namespace ChemSW.Nbt.Schema
             // case 21049
 
             // Rename properties            
-            PhysInsp_TargetNTP.PropName = "FE Mount Point";
+            PhysInsp_TargetNTP.PropName = "FE Inspection Point";
             PhysInsp_GeneratorNTP.PropName = "Schedule";
             PhysInspSched_OwnerNTP.PropName = "Inspection Group";
             PhysInspSched_TargetTypeNTP.PropName = "Inspection Type";
-            PhysInspSched_ParentTypeNTP.PropName = "FE Mount Point Type";
-            PhysInspSched_ParentViewNTP.PropName = "FE Mount Point View";
+            PhysInspSched_ParentTypeNTP.PropName = "FE Inspection Point Type";
+            PhysInspSched_ParentViewNTP.PropName = "FE Inspection Point View";
 
             // Fix layout of Physical Inspection Schedule Settings tab        
             PhysInspSched_OwnerNTP.DisplayRow = 1;
@@ -86,9 +86,9 @@ namespace ChemSW.Nbt.Schema
             MountPointGroupNT.getFirstNodeTypeTab().TabName = "Inspection Group";
             MountPoint_MountPointGroupNTP.PropName = "Inspection Group";
 
-            // Rename 'mount point' to 'FE mount point'
-            MountPointNT.NodeTypeName = "FE Mount Point";
-            MountPointNT.getFirstNodeTypeTab().TabName = "FE Mount Point";
+            // Rename 'mount point' to 'FE Inspection Point'
+            MountPointNT.NodeTypeName = "FE Inspection Point";
+            MountPointNT.getFirstNodeTypeTab().TabName = "FE Inspection Point";
 
             // Make Inspection's Target Type editable
             PhysInspSched_TargetTypeNTP.ReadOnly = false;
@@ -145,8 +145,8 @@ namespace ChemSW.Nbt.Schema
             MountPoint_RouteNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), RouteNT.NodeTypeId, string.Empty, Int32.MinValue );
 
             // Add grid of Mount Points to Route
-            CswNbtMetaDataNodeTypeTab RouteMountPointsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RouteNT, "FE Mount Points", 2 );
-            CswNbtMetaDataNodeTypeProp Route_MountPointsGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( RouteNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Mount Points Grid", RouteMountPointsTab.TabId );
+            CswNbtMetaDataNodeTypeTab RouteMountPointsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RouteNT, "FE Inspection Points", 2 );
+            CswNbtMetaDataNodeTypeProp Route_MountPointsGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( RouteNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Inspection Points Grid", RouteMountPointsTab.TabId );
 
             CswNbtView RouteMountPointsGridView = _CswNbtSchemaModTrnsctn.restoreView( Route_MountPointsGridNTP.ViewId );
             CswNbtViewRelationship RouteRel = RouteMountPointsGridView.AddViewRelationship( RouteNT, true );
@@ -246,6 +246,10 @@ namespace ChemSW.Nbt.Schema
 
             MyInspView.save();
 
+            // Rename "Mount Points by Location"
+            CswNbtView MPBLView = _CswNbtSchemaModTrnsctn.restoreView( "Mount Points by Location" );
+            MPBLView.ViewName = "FE Inspection Points By Location";
+            MPBLView.save();
 
         } // update()
 
