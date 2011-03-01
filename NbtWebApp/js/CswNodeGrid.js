@@ -1,7 +1,7 @@
 ﻿/// <reference path="../jquery/jquery-1.4.4.js" />
 
 ; (function ($) {
-	$.fn.CswNodeGrid = function (options, dom) {
+	$.fn.CswNodeGrid = function (optJqGrid, optCswNodeGrid) {
 
 		// jqGrid properties
 		var o = {
@@ -20,8 +20,8 @@
 			multiselect: true,
 		};
 		
-		if (options) {
-			$.extend(o, options);
+		if (optJqGrid) {
+			$.extend(o, optJqGrid);
 		}
 
 		// CswNodeGrid properties
@@ -29,12 +29,14 @@
 			GridUrl: '/NbtWebApp/wsNBT.asmx/getGridJson',
 			viewid: '',
 			id: "CswNodeGrid",
+			nodeid: '',
+			cswnbtnodekey: '',
 			gridTable: "_gridOuter",
 			gridPager: "_gridPager"
 		};
 		
-		if(dom) {
-			$.extend(d,dom);
+		if(optCswNodeGrid) {
+			$.extend(d,optCswNodeGrid);
 		}
 
 		var gridData = [];
@@ -50,9 +52,12 @@
 		
 		CswAjaxJSON({
 			url: d.GridUrl,
-			data: "{ViewId: '" +  d.viewid + "'}",
+			data: "{ViewId: '" +  d.viewid + '&CswNbtNodeKey=' + d.cswnbtnodekey +"'}",
 			success: function (gridJson) {
 					
+					console.log('gridJson follows.');
+					console.log(gridJson);
+
 					gridData = gridJson.grid;
 					gridRows = gridData.rows;
 
