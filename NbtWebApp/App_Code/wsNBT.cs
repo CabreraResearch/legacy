@@ -7,6 +7,7 @@ using System.Web.Script.Services;   // supports ScriptService attribute
 using ChemSW.Core;
 using ChemSW.Config;
 using ChemSW.Security;
+using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using Formatting = Newtonsoft.Json.Formatting;
@@ -465,6 +466,27 @@ namespace ChemSW.Nbt.WebServices
             Doc.LoadXml( ReturnVal.Replace("&", "&amp;") );
             return Doc;
         } // saveProps()
+
+        [WebMethod( EnableSession = true )]
+        public string DeleteNode(string NodePk)
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswPrimaryKey RealNodePk = new CswPrimaryKey();
+                RealNodePk.FromString( NodePk );
+                CswNbtNode NodeToDelete = _CswNbtResources.Nodes[RealNodePk];
+                NodeToDelete.delete();
+                ReturnVal = "{ \"Result\": \"Succeeded\" }";
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        }
 
         #endregion Web Methods
 

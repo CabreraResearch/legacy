@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.WebServices
                 //    ( (CswNbtViewRelationship) SelectedNodeKeyViewNode ).AllowDelete &&
                 if( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Delete, Node.NodeTypeId, Node, null ) )
                 {
-                    ret += "<item text=\"Delete\" popup=\"Popup_DeleteNode.aspx?nodekey=" + NodePk.ToString() + "&checkednodeids=\" />";
+                    ret += "<item text=\"Delete\" action=\"DeleteNode\" nodeid=\"" + Node.NodeId.ToString() + "\" nodename=\"" + Node.NodeName + "\" />";
                 }
             }
 
@@ -149,7 +149,7 @@ namespace ChemSW.Nbt.WebServices
             // MULTI-EDIT
             ret += "<item text=\"Multi-Edit\" action=\"multiedit\" />";
 
-            return "<menu>" + ret.Replace("&", "&amp;") + "</menu>";
+            return "<menu>" + ret.Replace( "&", "&amp;" ) + "</menu>";
         }
 
 

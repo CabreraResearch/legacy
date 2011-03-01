@@ -186,6 +186,20 @@ function xmlToString($xmlnode) {
     return xmlstring;
 }
 
+// ------------------------------------------------------------------------------------
+// Node interactions
+// ------------------------------------------------------------------------------------
+
+function deleteNode(nodeid, onSuccess) {
+    CswAjaxJSON({
+        url: '/NbtWebApp/wsNBT.asmx/DeleteNode',
+        data: '{ "NodePk":"' + nodeid + '" }',
+        success: function (result) {
+            onSuccess('');  // returning '' will reselect the first node in the tree
+        }
+    });
+}
+
 
 // ------------------------------------------------------------------------------------
 // Popups and Dialogs
@@ -222,8 +236,8 @@ function addNodeDialog(nodetypeid, onAddNode) {
         }
     });
     $div.dialog({ 'modal': true,
-        'width': 800,
-        'height': 600
+                  'width': 800,
+                  'height': 600
     });
 }
 
@@ -231,18 +245,40 @@ function editNodeDialog(nodeid, onEditNode) {
     var $div = $('<div></div>');
     $div.CswNodeTabs({
         'nodeid': nodeid,
-        'EditMode': 'Edit',
+        'EditMode': 'EditInPopup',
         'onSave': function (nodeid) {
             $div.dialog('close');
             onEditNode(nodeid);
         }
     });
     $div.dialog({ 'modal': true,
-        'width': 800,
-        'height': 600
+                  'width': 800,
+                  'height': 600
     });
 }
 
+
+function deleteNodeDialog(nodename, nodeid, onDeleteNode) {
+    var $div = $('<div>Are you sure you want to delete: '+ nodename +'?<br/><br/></div>');
+    
+    $('<input type="button" id="deletenode_submit" name="deletenode_submit" value="Delete" />')
+        .appendTo($div)
+        .click(function () {
+            $div.dialog('close');
+            deleteNode(nodeid, onDeleteNode);
+        });
+
+    $('<input type="button" id="deletenode_cancel" name="deletenode_cancel" value="Cancel" />')
+        .appendTo($div)
+        .click(function () {
+            $div.dialog('close');
+        });
+
+    $div.dialog({ 'modal': true,
+                  'width': 400,
+                  'height': 200
+        });
+}
 
 function aboutDialog() {
     var $div = $('<div></div>');
@@ -270,8 +306,8 @@ function aboutDialog() {
         }
     });
     $div.dialog({ 'modal': true,
-        'width': 600,
-        'height': 400
+                  'width': 600,
+                  'height': 400
     });
 }
 
@@ -337,7 +373,7 @@ function GoHome()
     window.location = "NewMain.html";
 }
 
-function HandleMenuItem($ul, $this, onLogout, onAddNode) {
+function HandleMenuItem($ul, $this, onLogout, onAlterNode) {
     var $li;
     if ($this.attr('href') != undefined && $this.attr('href') != '') {
         $li = $('<li><a href="' + $this.attr('href') + '">' + $this.attr('text') + '</a></li>')
@@ -359,7 +395,11 @@ function HandleMenuItem($ul, $this, onLogout, onAddNode) {
                 break;
 
             case 'AddNode':
-                $a.click(function () { addNodeDialog($this.attr('nodetypeid'), onAddNode); return false; });
+                $a.click(function () { addNodeDialog($this.attr('nodetypeid'), onAlterNode); return false; });
+                break;
+
+            case 'DeleteNode':
+                $a.click(function () { deleteNodeDialog($this.attr('nodename'), $this.attr('nodeid'), onAlterNode); return false; });
                 break;
 
             case 'Home':
