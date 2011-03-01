@@ -192,6 +192,7 @@
 		$('#LeftDiv').CswNodeTree('init', {
 			ID: 'main',
 			'viewid': viewid,
+			cswnbtnodekey: '',
 			onSelectNode: function (nodeid) { getTabs(nodeid); refreshMainMenu(viewid, nodeid); },
 		});
 	}
@@ -202,7 +203,7 @@
 		clearLeft();
 		clearRight();
 		clearCenter();
-		$('#CenterDiv').CswNodeGrid( {}, { 'viewid': viewid, id:'CswNodeGrid' } );
+		$('#CenterDiv').CswNodeGrid( {}, { 'viewid': viewid, id:'CswNodeGrid', nodeid: '', cswnbtnodekey: '' } );
 	}
 
 	function getTabs(nodeid)
