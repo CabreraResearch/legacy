@@ -40,7 +40,7 @@
                             $xml.children().each(function() { 
                                 $tab = $(this);
                                 $tabdiv.children('ul').append('<li><a href="#'+ $tab.attr('id') +'">'+ $tab.attr('name') +'</a></li>');
-                                $tabdiv.append('<div id="'+ $tab.attr('id') +'"><form id="'+ $tab.attr('id') +'_form"></div>');
+                                $tabdiv.append('<div id="'+ $tab.attr('id') +'"><form id="'+ $tab.attr('id') +'_form" /></div>');
                                 //if(null == firsttabid) 
                                 //    firsttabid = $tab.attr('id');
                             });
@@ -125,7 +125,6 @@
                 var onchange = function() {};
                 if($prop.attr('hassubprops') == "true")
                     onchange = function() { 
-                                    console.log('doin the onchange');
                                     // do a fake 'save' to update the xml with the current value
                                     $.CswFieldTypeFactory('save', fieldtype, o.nodeid, $propdiv, $prop);              
                                     // update the propxml from the server
@@ -173,7 +172,7 @@
                 var $prop = $(this);
                 var $propcell = getTableCell($table, $prop.attr('displayrow'), ($prop.attr('displaycol') * 2));
                 var fieldtype = $prop.attr('fieldtype');
-                var $propdiv = $propcell.children('div');
+                var $propdiv = $propcell.children('div').first();
 
                 $.CswFieldTypeFactory('save', fieldtype, o.nodeid, $propdiv, $prop);              
 
@@ -181,7 +180,7 @@
                 if($prop.attr('hassubprops') == "true")
                 {
                     var $subprops = $prop.children('subprops');
-                    if($subprops.length > 0)
+                    if($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
                     {
                         var $subtable = $propcell.children('#' + $prop.attr('id') + '_subproptable').first();
                         _updatePropXmlFromForm($subtable, $subprops);

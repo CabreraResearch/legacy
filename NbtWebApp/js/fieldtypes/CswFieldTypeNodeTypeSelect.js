@@ -61,7 +61,6 @@
                 else if (!checkitem.checked && $xmlvaluecolumn.attr('value') == "True")
                     $xmlvaluecolumn.attr('value', 'False');
             } // for( var r = 0; r < formdata.length; r++)
-            console.log($OptionsXml);
         } // save()
     };
 

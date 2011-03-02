@@ -153,7 +153,7 @@ function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
     if (null != errorThrown) {
         ErrorMessage += "; Exception: " + errorThrown.toString()
     }
-    console.log(ErrorMessage);
+    log(ErrorMessage);
 } // _handleAjaxError()
 
 //function extractCDataValue($node) {
@@ -215,25 +215,24 @@ function getTableCell($table, row, col) {
     var $cell = null;
     if ($table.length > 0 &&
          row != undefined && row != '' &&
-         col != undefined && col != '') 
-    {
+         col != undefined && col != '') {
         if (row <= 0) {
-            console.log("error: row must be greater than 1, got: " + row);
+            log("error: row must be greater than 1, got: " + row);
             row = 1;
         }
         if (col <= 0) {
-            console.log("error: col must be greater than 1, got: " + col);
+            log("error: col must be greater than 1, got: " + col);
             col = 1;
         }
 
         while (row > $table.children('tbody').children('tr').length) {
             $table.append('<tr></tr>');
         }
-        var $row = $($table.children('tbody').children('tr')[row-1]);
+        var $row = $($table.children('tbody').children('tr')[row - 1]);
         while (col > $row.children('td').length) {
             $row.append('<td></td>');
         }
-        var $cell = $($row.children('td')[col-1]);
+        var $cell = $($row.children('td')[col - 1]);
     }
     return $cell;
 }
@@ -245,11 +244,17 @@ function getTableCell($table, row, col) {
 function jsTreeGetSelected($treediv, IDPrefix) 
 {
     $SelectedItem = $treediv.jstree('get_selected');
-    return { 
-        'SelectedIconUrl': $SelectedItem.children('a').children('ins').css('background-image'),
-        'SelectedId': $SelectedItem.attr('id').substring(IDPrefix.length),
-        'SelectedText': $SelectedItem.children('a').first().text().trim()
+    
+    var iconurl = $SelectedItem.children('a').children('ins').css('background-image');
+    var id = $SelectedItem.attr('id').substring(IDPrefix.length);
+    var text = $SelectedItem.children('a').first().text().trim();
+
+    var ret = { 
+        'SelectedIconUrl': iconurl,
+        'SelectedId': id,
+        'SelectedText': text
     };
+    return ret;
 }
 
 
@@ -386,8 +391,23 @@ function iterate(obj) {
     if (popup != null)
         popup.document.write(str);
     else
-        console.log("iterate() error: No popup!");
+        log("iterate() error: No popup!");
 }
 
+// because IE 8 doesn't support console.log unless the console is open (*duh*)
+function log(s) {
+    try { console.log(s) } catch (e) { alert(s) }
+};
 
+
+// ------------------------------------------------------------------------------------
+// Browser Compatibility
+// ------------------------------------------------------------------------------------
+
+// for IE 8
+if (typeof String.prototype.trim !== 'function') {
+    String.prototype.trim = function () {
+        return this.replace(/^\s+|\s+$/g, '');
+    }
+}
 

@@ -34,7 +34,7 @@
                     var $cell = getTableCell($table, $item.attr('displayrow'), $item.attr('displaycol'));
 
                     if($item.attr('buttonicon') != undefined && $item.attr('buttonicon') != '')
-                        $cell.append( $('<a href=""><img src="'+ $item.attr('buttonicon') +'"/></a><br/><br/>') );
+                        $cell.append( $('<a href=""><img border="0" src="'+ $item.attr('buttonicon') +'"/></a><br/><br/>') );
 
                     switch($item.attr('type'))
                     {

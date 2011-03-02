@@ -54,7 +54,7 @@
 
 	function initAll()
 	{
-	    if (debug) console.log('NewMain.initAll()');
+	    if (debug) log('NewMain.initAll()');
 	    $('#CenterDiv').CswLogin('login', {
 			'onAuthenticate': function (u) {
 				$('#header_username').text(u);
@@ -90,23 +90,23 @@
 
 	function clearLeft()
 	{
-	    if (debug) console.log('NewMain.clearLeft()');
+	    if (debug) log('NewMain.clearLeft()');
 	    $('#LeftDiv').children().remove();
 	}
 	function clearRight()
 	{
-	    if (debug) console.log('NewMain.clearRight()');
+	    if (debug) log('NewMain.clearRight()');
 	    $('#RightDiv').children().remove();
 	}
 	function clearCenter()
 	{
-	    if (debug) console.log('NewMain.clearCenter()');
+	    if (debug) log('NewMain.clearCenter()');
 	    $('#CenterDiv').children().remove();
 	}
 
 	function handleViewSelect(itemid, text, iconurl) 
 	{
-	    if (debug) console.log('NewMain.handleViewSelect()');
+	    if (debug) log('NewMain.handleViewSelect()');
 	    if (startsWith(itemid, 'viewtree_'))
 		{
 			getViewTree(itemid.substr('viewtree_'.length));
@@ -123,7 +123,7 @@
 
 	function refreshMainMenu(viewid, nodeid) 
 	{
-	    if (debug) console.log('NewMain.refreshMainMenu()');
+	    if (debug) log('NewMain.refreshMainMenu()');
 	    $('#MainMenuDiv').CswMenuMain({
             'viewid': viewid,
             'nodeid': nodeid,
@@ -135,7 +135,7 @@
 
 	function getViewTree(viewid)
 	{
-	    if (debug) console.log('NewMain.getViewTree()');
+	    if (debug) log('NewMain.getViewTree()');
 	    SetCurrentViewId(viewid);
 		clearLeft();
 		clearRight();
@@ -148,14 +148,14 @@
     }
 
     function onSelectViewTreeNode(viewid, nodeid) {
-        if (debug) console.log('NewMain.onSelectViewTreeNode()');
+        if (debug) log('NewMain.onSelectViewTreeNode()');
         getTabs(nodeid);
         refreshMainMenu(viewid, nodeid);
     }
 
 	function getViewGrid(viewid)
 	{
-	    if (debug) console.log('NewMain.getViewGrid()');
+	    if (debug) log('NewMain.getViewGrid()');
 	    SetCurrentViewId(viewid);
 		clearLeft();
 		clearRight();
@@ -165,14 +165,14 @@
 
 	function getTabs(nodeid)
 	{
-	    if (debug) console.log('NewMain.getTabs()');
+	    if (debug) log('NewMain.getTabs()');
 	    clearRight();
 		$('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, onSave: refreshViewTree });
 	}
 
     function refreshViewTree(newnodeid)
 	{
-	    if (debug) console.log('NewMain.refreshViewTree()');
+	    if (debug) log('NewMain.refreshViewTree()');
 	    clearLeft();
 	    var viewid = GetCurrentViewId();
         $('#LeftDiv').CswNodeTree('init', {
@@ -185,7 +185,7 @@
 
 	function handleWelcomeLinkClick(viewid, actionid, reportid)
 	{
-	    if (debug) console.log('NewMain.handleWelcomeLinkClick()');
+	    if (debug) log('NewMain.handleWelcomeLinkClick()');
 	    clearCenter();
 		if (viewid != undefined && viewid != '')
 		{
@@ -203,7 +203,7 @@
 
 	function handleQuickLaunchItemClick(viewid, actionid)
 	{
-	    if (debug) console.log('NewMain.handleQuickLaunchItemClick()');
+	    if (debug) log('NewMain.handleQuickLaunchItemClick()');
 	    clearCenter();
 		if (viewid != undefined && viewid != '')
 		{
