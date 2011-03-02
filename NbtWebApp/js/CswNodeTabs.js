@@ -4,6 +4,7 @@
         var o = {
             ID: '',
             TabsUrl: '/NbtWebApp/wsNBT.asmx/getTabs',
+            SinglePropUrl: '/NbtWebApp/wsNBT.asmx/getSingleProp',
             PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
             nodeid: '',
             nodetypeid: '',
@@ -37,11 +38,11 @@
                             $outertabdiv.append($tabdiv);
                             //var firsttabid = null;
                             $xml.children().each(function() { 
-                                $this = $(this);
-                                $tabdiv.children('ul').append('<li><a href="#'+ $this.attr('id') +'">'+ $this.attr('name') +'</a></li>');
-                                $tabdiv.append('<div id="'+ $this.attr('id') +'"><form id="'+ $this.attr('id') +'_form"></div>');
+                                $tab = $(this);
+                                $tabdiv.children('ul').append('<li><a href="#'+ $tab.attr('id') +'">'+ $tab.attr('name') +'</a></li>');
+                                $tabdiv.append('<div id="'+ $tab.attr('id') +'"><form id="'+ $tab.attr('id') +'_form"></div>');
                                 //if(null == firsttabid) 
-                                //    firsttabid = $this.attr('id');
+                                //    firsttabid = $tab.attr('id');
                             });
                             $tabdiv.tabs({
                                 select: function(event, ui) {
@@ -63,29 +64,12 @@
                             $form = $div.children('form');
                             $form.children().remove();
                             
-                            var $table = makeTable(o.ID + '_proptable').appendTo($form);
+                            var $table = makeTable(o.ID + '_proptable')
+                                         .appendTo($form);
                             
                             var i = 0;
 
-                            $xml.children().each(function() { 
-                                var $this = $(this);
-                                var fieldtype = $this.attr('fieldtype');
-
-                                if( fieldtype != 'Image' && 
-                                    fieldtype != 'Grid' )
-                                {
-                                    var $labelcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2 ) - 1);
-                                    $labelcell.addClass('propertylabel');
-                                    $labelcell.append($this.attr('name'));
-                                }
-
-                                var $propcell = getTableCell($table, $this.attr('displayrow'), ($this.attr('displaycol') * 2));
-                                $propcell.addClass('propertyvaluecell');
-                                var $propdiv = $('<div/>').appendTo($propcell); 
-
-                                $.CswFieldTypeFactory('make', o.nodeid, fieldtype, $propdiv, $this); 
-                                
-                            });
+                            _handleProps($table, $xml);
 
                             $table.append('<tr><td><input type="button" id="SaveTab" name="SaveTab" value="Save"/></td></tr>')
                                   .find('#SaveTab')
@@ -107,17 +91,71 @@
             }); 
         } // getProps()
 
+        function _handleProps($table, $xml)
+        {
+            $xml.children().each(function() { 
+                var $prop = $(this);
+                var fieldtype = $prop.attr('fieldtype');
+
+                if( $prop.attr('display') != 'false' &&
+                    fieldtype != 'Image' && 
+                    fieldtype != 'Grid' )
+                {
+                    var $labelcell = getTableCell($table, $prop.attr('displayrow'), ($prop.attr('displaycol') * 2 ) - 1);
+                    $labelcell.addClass('propertylabel');
+                    $labelcell.append($prop.attr('name'));
+                }
+
+                var $propcell = getTableCell($table, $prop.attr('displayrow'), ($prop.attr('displaycol') * 2));
+                $propcell.addClass('propertyvaluecell');
+
+                _makeProp($propcell, $prop);
+
+            });
+        } // _handleProps()
+
+        function _makeProp($propcell, $prop)
+        {
+            $propcell.children().remove();
+            if($prop.attr('display') != 'false')
+            {
+                var $propdiv = $('<div/>').appendTo($propcell); 
+                var fieldtype = $prop.attr('fieldtype');
+
+                var onchange = function() {};
+                if($prop.attr('hassubprops') == "true")
+                    onchange = function() { 
+                                    console.log('doin the onchange');
+                                    // do a fake 'save' to update the xml with the current value
+                                    $.CswFieldTypeFactory('save', fieldtype, o.nodeid, $propdiv, $prop);              
+                                    // update the propxml from the server
+                                    CswAjaxXml({
+                                                url: o.SinglePropUrl,
+                                                data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&PropId=' + $prop.attr('id') + '&NodeTypeId=' + o.nodetypeid + '&NewPropXml='+ xmlToString($prop),
+                                                success: function ($xml) {
+                                                             _makeProp($propcell, $xml.children().first());
+                                                         }
+                                                });
+                               };
+
+                $.CswFieldTypeFactory('make', o.nodeid, fieldtype, $propdiv, $prop, onchange); 
+
+                // recurse on sub-props
+                var $subprops = $prop.children('subprops');
+                if($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
+                {
+                    var $subtable = makeTable($prop.attr('id') + '_subproptable')
+                                    .appendTo($propcell);
+
+                    _handleProps($subtable, $subprops);
+                }
+            }
+        } // _makeProp()
+
+
         function Save($table, $propsxml)
         {
-            $propsxml.children().each(function() { 
-                var $propxml = $(this);
-                var $propcell = getTableCell($table, $propxml.attr('displayrow'), ($propxml.attr('displaycol') * 2));
-                var fieldtype = $propxml.attr('fieldtype');
-                var $propdiv = $propcell.children('div');
-                  
-                $.CswFieldTypeFactory('save', fieldtype, o.nodeid, $propdiv, $propxml);              
-
-            }); // each()
+            _updatePropXmlFromForm($table, $propsxml);
 
             CswAjaxJSON({
                 url: '/NbtWebApp/wsNBT.asmx/SaveProps',
@@ -128,6 +166,29 @@
             });
 
         } // Save()
+
+        function _updatePropXmlFromForm($table, $propsxml)
+        {
+            $propsxml.children().each(function() { 
+                var $prop = $(this);
+                var $propcell = getTableCell($table, $prop.attr('displayrow'), ($prop.attr('displaycol') * 2));
+                var fieldtype = $prop.attr('fieldtype');
+                var $propdiv = $propcell.children('div');
+
+                $.CswFieldTypeFactory('save', fieldtype, o.nodeid, $propdiv, $prop);              
+
+                // recurse on subprops
+                if($prop.attr('hassubprops') == "true")
+                {
+                    var $subprops = $prop.children('subprops');
+                    if($subprops.length > 0)
+                    {
+                        var $subtable = $propcell.children('#' + $prop.attr('id') + '_subproptable').first();
+                        _updatePropXmlFromForm($subtable, $subprops);
+                    }
+                }
+            }); // each()
+        } // _updatePropXmlFromForm()
 
         // For proper chaining support
         return this;

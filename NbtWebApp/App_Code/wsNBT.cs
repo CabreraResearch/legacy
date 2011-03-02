@@ -408,23 +408,41 @@ namespace ChemSW.Nbt.WebServices
         [WebMethod( EnableSession = true )]
         public XmlDocument getProps( string EditMode, string NodePk, string TabId, string NodeTypeId )
         {
-            string ReturnVal = string.Empty;
+            XmlDocument ReturnXml = null;
             try
             {
                 start();
                 CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
                 CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-                ReturnVal = ws.getProps( RealEditMode, NodePk, TabId, CswConvert.ToInt32( NodeTypeId ) );
+                ReturnXml = ws.getProps( RealEditMode, NodePk, TabId, CswConvert.ToInt32( NodeTypeId ) );
                 end();
             }
             catch( Exception ex )
             {
-                ReturnVal = error( ex );
+                ReturnXml = new XmlDocument();
+                ReturnXml.LoadXml( error( ex ) );
             }
-            //return ( ReturnVal );
-            XmlDocument Doc = new XmlDocument();
-            Doc.LoadXml( ReturnVal );
-            return Doc;
+            return ReturnXml;
+        } // getProps()
+
+        [WebMethod( EnableSession = true )]
+        public XmlDocument getSingleProp( string EditMode, string NodePk, string PropId, string NodeTypeId, string NewPropXml )
+        {
+            XmlDocument ReturnXml = null;
+            try
+            {
+                start();
+                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+                ReturnXml = ws.getSingleProp( RealEditMode, NodePk, PropId, CswConvert.ToInt32( NodeTypeId ), NewPropXml );
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnXml = new XmlDocument();
+                ReturnXml.LoadXml( error( ex ) );
+            }
+            return ReturnXml;
         } // getProps()
 
         [WebMethod( EnableSession = true )]
@@ -463,12 +481,12 @@ namespace ChemSW.Nbt.WebServices
             }
             //return ( ReturnVal );
             XmlDocument Doc = new XmlDocument();
-            Doc.LoadXml( ReturnVal.Replace("&", "&amp;") );
+            Doc.LoadXml( ReturnVal.Replace( "&", "&amp;" ) );
             return Doc;
         } // saveProps()
 
         [WebMethod( EnableSession = true )]
-        public string DeleteNode(string NodePk)
+        public string DeleteNode( string NodePk )
         {
             string ReturnVal = string.Empty;
             try

@@ -5,7 +5,7 @@
     var KeyCol = "key";
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -73,7 +73,8 @@
                 $CBADiv.CswCheckBoxArray('init', {
                                          'ID': ID + '_cba',
                                          'cols': cols,
-                                         'data': data
+                                         'data': data,
+                                         'onchange': onchange
                                         });
 
 

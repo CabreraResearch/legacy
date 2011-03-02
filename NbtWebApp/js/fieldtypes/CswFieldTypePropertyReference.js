@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypePropertyReference';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
                 
                 var $Div = $(this);
                 $Div.children().remove();

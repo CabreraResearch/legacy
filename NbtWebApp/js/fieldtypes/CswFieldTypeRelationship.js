@@ -5,7 +5,7 @@
         var PluginName = 'CswFieldTypeRelationship';
 
         var methods = {
-            init: function(nodepk, $xml) {
+            init: function(nodepk, $xml, onchange) {
             
                     var $Div = $(this);
                     $Div.children().remove();
@@ -28,7 +28,8 @@
 
                         var $selectcell = getTableCell($mytable, 1, 1);
                         var $SelectBox = $('<select id="'+ ID +'" name="'+ ID +'" class="selectinput" />"' )
-                                           .appendTo($selectcell);
+                                           .appendTo($selectcell)
+                                           .change(onchange);
 
                         $Options.children().each(function() {
                             var $this = $(this);

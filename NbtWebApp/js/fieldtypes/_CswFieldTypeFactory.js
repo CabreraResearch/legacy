@@ -2,94 +2,94 @@
 $.CswFieldTypeFactory = function (method) {
 
     var methods = {
-        'make': function (nodeid, fieldtype, $propdiv, $propxml) {
+        'make': function (nodeid, fieldtype, $propdiv, $propxml, onchange) {
             switch (fieldtype) {
                 case "Barcode":
-                    $propdiv.CswFieldTypeBarcode('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeBarcode('init', nodeid, $propxml, onchange);
                     break;
                 case "Composite":
-                    $propdiv.CswFieldTypeComposite('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeComposite('init', nodeid, $propxml, onchange);
                     break;
                 case "Date":
-                    $propdiv.CswFieldTypeDate('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeDate('init', nodeid, $propxml, onchange);
                     break;
                 case "File":
-                    $propdiv.CswFieldTypeFile('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeFile('init', nodeid, $propxml, onchange);
                     break;
                 case "Grid":
-                    $propdiv.CswFieldTypeGrid('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeGrid('init', nodeid, $propxml, onchange);
                     break;
                 case "Image":
-                    $propdiv.CswFieldTypeImage('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeImage('init', nodeid, $propxml, onchange);
                     break;
                 case "Link":
-                    $propdiv.CswFieldTypeLink('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeLink('init', nodeid, $propxml, onchange);
                     break;
                 case "List":
-                    $propdiv.CswFieldTypeList('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeList('init', nodeid, $propxml, onchange);
                     break;
                 case "Location":
-                    $propdiv.CswFieldTypeLocation('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeLocation('init', nodeid, $propxml, onchange);
                     break;
                 case "LocationContents":
-                    $propdiv.CswFieldTypeLocationContents('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeLocationContents('init', nodeid, $propxml, onchange);
                     break;
                 case "Logical":
-                    $propdiv.CswFieldTypeLogical('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeLogical('init', nodeid, $propxml, onchange);
                     break;
                 case "LogicalSet":
-                    $propdiv.CswFieldTypeLogicalSet('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeLogicalSet('init', nodeid, $propxml, onchange);
                     break;
                 case "Memo":
-                    $propdiv.CswFieldTypeMemo('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeMemo('init', nodeid, $propxml, onchange);
                     break;
                 case "MTBF":
-                    $propdiv.CswFieldTypeMTBF('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeMTBF('init', nodeid, $propxml, onchange);
                     break;
                 case "NodeTypeSelect":
-                    $propdiv.CswFieldTypeNodeTypeSelect('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeNodeTypeSelect('init', nodeid, $propxml, onchange);
                     break;
                 case "Number":
-                    $propdiv.CswFieldTypeNumber('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeNumber('init', nodeid, $propxml, onchange);
                     break;
                 case "Password":
-                    $propdiv.CswFieldTypePassword('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypePassword('init', nodeid, $propxml, onchange);
                     break;
                 case "PropertyReference":
-                    $propdiv.CswFieldTypePropertyReference('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypePropertyReference('init', nodeid, $propxml, onchange);
                     break;
                 case "Quantity":
-                    $propdiv.CswFieldTypeQuantity('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeQuantity('init', nodeid, $propxml, onchange);
                     break;
                 case "Question":
-                    $propdiv.CswFieldTypeQuestion('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeQuestion('init', nodeid, $propxml, onchange);
                     break;
                 case "Relationship":
-                    $propdiv.CswFieldTypeRelationship('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeRelationship('init', nodeid, $propxml, onchange);
                     break;
                 case "Sequence":
-                    $propdiv.CswFieldTypeSequence('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeSequence('init', nodeid, $propxml, onchange);
                     break;
                 case "Static":
-                    $propdiv.CswFieldTypeStatic('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeStatic('init', nodeid, $propxml, onchange);
                     break;
                 case "Text":
-                    $propdiv.CswFieldTypeText('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeText('init', nodeid, $propxml, onchange);
                     break;
                 case "Time":
-                    $propdiv.CswFieldTypeTime('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeTime('init', nodeid, $propxml, onchange);
                     break;
                 case "TimeInterval":
-                    $propdiv.CswFieldTypeTimeInterval('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeTimeInterval('init', nodeid, $propxml, onchange);
                     break;
                 case "UserSelect":
-                    $propdiv.CswFieldTypeUserSelect('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeUserSelect('init', nodeid, $propxml, onchange);
                     break;
                 case "ViewPickList":
-                    $propdiv.CswFieldTypeViewPickList('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeViewPickList('init', nodeid, $propxml, onchange);
                     break;
                 case "ViewReference":
-                    $propdiv.CswFieldTypeViewReference('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeViewReference('init', nodeid, $propxml, onchange);
                     break;
                 default:
                     $propdiv.append($propxml.attr('gestalt'));

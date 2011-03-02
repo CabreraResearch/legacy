@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeNumber';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -25,7 +25,8 @@
                 else 
                 {
                     var $TextBox = $('<input type="text" class="textinput number" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
-                                     .appendTo($Div);
+                                     .appendTo($Div)
+                                     .change(onchange);
                     
                     if(MinValue != undefined)
                     {

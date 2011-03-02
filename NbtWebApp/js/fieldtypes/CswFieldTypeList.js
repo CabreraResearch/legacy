@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeList';
     
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -22,7 +22,8 @@
                 else 
                 {
                     var $SelectBox = $('<select id="'+ ID +'" name="'+ ID +'" class="selectinput" />"' )
-                                        .appendTo($Div);
+                                        .appendTo($Div)
+                                        .change(onchange);
             
                     var SplitOptions = Options.split(',')
                     for(var i = 0; i < SplitOptions.length; i++)

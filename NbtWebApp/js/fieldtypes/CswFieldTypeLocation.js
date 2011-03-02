@@ -5,7 +5,7 @@
         var PluginName = 'CswFieldTypeLocation';
 
         var methods = {
-            init: function(nodepk, $xml) {
+            init: function(nodepk, $xml, onchange) {
             
                     var $Div = $(this);
                     $Div.children().remove();
@@ -34,7 +34,7 @@
                         var $locationtree = $('<div />').CswNodeTree('init', { 'ID': ID,
                                                                     viewid: ViewId,
                                                                     nodeid: NodeId,
-                                                                    onSelectNode: function(itemid, text, iconurl) { onTreeSelect($selectdiv, itemid, text, iconurl); },
+                                                                    onSelectNode: function(itemid, text, iconurl) { onTreeSelect($selectdiv, itemid, text, iconurl); onchange(); },
                                                                     SelectFirstChild: false
                                                                  });
 

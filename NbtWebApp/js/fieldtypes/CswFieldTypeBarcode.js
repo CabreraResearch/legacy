@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeBarcode';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -24,7 +24,8 @@
 
                     var $cell1 = getTableCell($table, 1, 1);
                     var $TextBox = $('<input type="text" class="textinput" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
-                                     .appendTo($cell1);
+                                     .appendTo($cell1)
+                                     .change(onchange);
 
                     var $cell2 = getTableCell($table, 1, 2);
                     var $PrintButton = $('<div/>' )

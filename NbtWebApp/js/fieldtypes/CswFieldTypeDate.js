@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeDate';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -24,6 +24,7 @@
                 {
                     var $TextBox = $('<input type="text" class="textinput date" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
                                      .appendTo($Div)
+                                     .change(onchange)
                                      .datepicker();
                     if(Required)
                     {

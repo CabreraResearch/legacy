@@ -46,9 +46,14 @@ namespace ChemSW.Nbt.WebServices
 
         private const char PropIdDelim = '_';
 
-        public string getProps( NodeEditMode EditMode, string NodePkString, string TabId, Int32 NodeTypeId )
+        /// <summary>
+        /// Returns XML for all properties in a given tab
+        /// </summary>
+        public XmlDocument getProps( NodeEditMode EditMode, string NodePkString, string TabId, Int32 NodeTypeId )
         {
-            string ret = string.Empty;
+            XmlDocument PropXmlDoc = new XmlDocument();
+            CswXmlDocument.SetDocumentElement( PropXmlDoc, "props" );
+
             if( EditMode == NodeEditMode.AddInPopup )
             {
                 CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
@@ -60,7 +65,7 @@ namespace ChemSW.Nbt.WebServices
                           Prop.SetValueOnAdd ) &&
                         Prop.FilterNodeTypePropId == Int32.MinValue )
                     {
-                        ret += _makePropXml( Node, Prop, Prop.DisplayRowAdd, Prop.DisplayColAdd );
+                        _addProp( PropXmlDoc, EditMode, Node, Prop );
                     }
                 }
             }
@@ -75,42 +80,114 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( !Prop.hasFilter() )
                     {
-                        ret += _makePropXml( Node, Prop, Prop.DisplayRow, Prop.DisplayColumn );
+                        _addProp( PropXmlDoc, EditMode, Node, Prop );
                     }
                 }
-            }
-            return "<props>" + ret + "</props>";
+
+            } // if-else( EditMode == NodeEditMode.AddInPopup )
+            return PropXmlDoc;
         } // getProps()
 
 
-        private string _makePropXml( CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 Row, Int32 Column )
+        /// <summary>
+        /// Returns XML for a single property and its conditional properties
+        /// </summary>
+        public XmlDocument getSingleProp( NodeEditMode EditMode, string NodePkString, string PropIdFromXml, Int32 NodeTypeId, string NewPropXml )
         {
-            string ret = string.Empty;
+            XmlDocument PropXmlDoc = new XmlDocument();
+            CswXmlDocument.SetDocumentElement( PropXmlDoc, "props" );
+            CswNbtNode Node = null;
+            if( EditMode == NodeEditMode.AddInPopup )
+            {
+                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            }
+            else
+            {
+                CswPrimaryKey NodePk = new CswPrimaryKey();
+                NodePk.FromString( NodePkString );
+                Node = _CswNbtResources.Nodes[NodePk];
+            }
+
+            if( NewPropXml != string.Empty )
+            {
+                // for prop filters, update node prop value but don't save the change
+                XmlDocument XmlDoc = new XmlDocument();
+                XmlDoc.LoadXml( NewPropXml );
+                _applyPropXml( Node, XmlDoc.DocumentElement );
+            }
+
+            string[] SplitNodePropId = PropIdFromXml.Split( PropIdDelim );
+            Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[SplitNodePropId.Length - 1] );
+
+            CswNbtMetaDataNodeTypeProp Prop = Node.NodeType.getNodeTypeProp( NodeTypePropId );
+            _addProp( PropXmlDoc, EditMode, Node, Prop );
+
+            if( NewPropXml != string.Empty )
+            {
+                //Node.Rollback();
+            }
+
+            return PropXmlDoc;
+        } // getProp()
+
+
+        private void _addProp( XmlDocument XmlDoc, NodeEditMode EditMode, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
+        {
+            if( EditMode == NodeEditMode.AddInPopup )
+            {
+                _makePropXml( XmlDoc, XmlDoc.DocumentElement, Node, Prop, Prop.DisplayRowAdd, Prop.DisplayColAdd );
+            }
+            else
+            {
+                XmlNode PropXmlNode = _makePropXml( XmlDoc, XmlDoc.DocumentElement, Node, Prop, Prop.DisplayRow, Prop.DisplayColumn );
+
+                // Handle conditional properties
+                XmlNode SubPropsXmlNode = null;
+                foreach( CswNbtMetaDataNodeTypeProp FilterProp in Prop.NodeTypeTab.NodeTypePropsByDisplayOrder )
+                {
+                    if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
+                    {
+                        CswXmlDocument.AppendXmlAttribute( PropXmlNode, "hassubprops", "true" );
+                        if( SubPropsXmlNode == null )
+                        {
+                            SubPropsXmlNode = CswXmlDocument.AppendXmlNode( PropXmlNode, "subprops" );
+                        }
+                        XmlNode FilterPropXml = _makePropXml( XmlDoc, SubPropsXmlNode, Node, FilterProp, FilterProp.DisplayRow, FilterProp.DisplayColumn );
+
+                        // Hide those for whom the filter doesn't match
+                        // (but we need the XML node to be there to store the value, for client-side changes)
+                        CswXmlDocument.AppendXmlAttribute( FilterPropXml, "display", FilterProp.CheckFilter( Node ).ToString().ToLower() );
+
+                    } // if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
+                } // foreach( CswNbtMetaDataNodeTypeProp FilterProp in Tab.NodeTypePropsByDisplayOrder )
+            } // if-else( EditMode == NodeEditMode.AddInPopup )
+        } // addProp()
+
+
+        private XmlNode _makePropXml( XmlDocument PropXmlDoc, XmlNode ParentXmlNode, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 Row, Int32 Column )
+        {
+            XmlNode PropXmlNode = CswXmlDocument.AppendXmlNode( ParentXmlNode, "prop" );
+
             CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
 
             if( Node.NodeId != null )
-                ret += "<prop id=\"" + Node.NodeId.ToString() + PropIdDelim.ToString() + Prop.PropId.ToString() + "\"";
+                CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", Node.NodeId.ToString() + PropIdDelim.ToString() + Prop.PropId.ToString() );
             else
-                ret += "<prop id=\"new" + PropIdDelim.ToString() + Prop.PropId.ToString() + "\"";
-            ret += " name=\"" + Prop.PropNameWithQuestionNo + "\"";
-            ret += " fieldtype=\"" + Prop.FieldType.FieldType.ToString() + "\"";
+                CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", "new" + PropIdDelim.ToString() + Prop.PropId.ToString() );
+            CswXmlDocument.AppendXmlAttribute( PropXmlNode, "name", Prop.PropNameWithQuestionNo );
+            CswXmlDocument.AppendXmlAttribute( PropXmlNode, "fieldtype", Prop.FieldType.FieldType.ToString() );
             if( Prop.ObjectClassProp != null )
             {
-                ret += " ocpname=\"" + Prop.ObjectClassProp.PropName + "\"";
+                CswXmlDocument.AppendXmlAttribute( PropXmlNode, "ocpname", Prop.ObjectClassProp.PropName );
             }
-            ret += " displayrow=\"" + Row.ToString() + "\"";
-            ret += " displaycol=\"" + Column.ToString() + "\"";
-            ret += " required=\"" + Prop.IsRequired.ToString().ToLower() + "\"";
-            ret += " gestalt=\"" + PropWrapper.Gestalt.Replace( "\"", "&quot;" ) + "\"";
-            ret += ">";
+            CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displayrow", Row.ToString() );
+            CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displaycol", Column.ToString() );
+            CswXmlDocument.AppendXmlAttribute( PropXmlNode, "required", Prop.IsRequired.ToString().ToLower() );
+            CswXmlDocument.AppendXmlAttribute( PropXmlNode, "gestalt", PropWrapper.Gestalt.Replace( "\"", "&quot;" ) );
 
-            XmlDocument XmlDoc = new XmlDocument();
-            CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
-            PropWrapper.ToXml( XmlDoc.DocumentElement );
-            ret += XmlDoc.DocumentElement.InnerXml;
+            PropWrapper.ToXml( PropXmlNode );
 
-            ret += "</prop>";
-            return ret;
+            return PropXmlNode;
         }
 
         public string saveProps( NodeEditMode EditMode, string NodePkString, string NewPropsXml, Int32 NodeTypeId )
@@ -132,17 +209,34 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
             {
-                string NodePropId = PropNode.Attributes["id"].Value;
-                string[] SplitNodePropId = NodePropId.Split( PropIdDelim );
-                Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[SplitNodePropId.Length - 1] );
-
-                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
+                _applyPropXml( Node, PropNode );
             }
+
             Node.postChanges( false );
 
             return "{ \"result\": \"Succeeded\", \"nodeid\": \"" + Node.NodeId.ToString() + "\" }";
-        } // saveProp()
+        } // saveProps()
+
+        private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
+        {
+            string NodePropId = PropNode.Attributes["id"].Value;
+            string[] SplitNodePropId = NodePropId.Split( PropIdDelim );
+            Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[SplitNodePropId.Length - 1] );
+
+            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+            Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
+
+            // Recurse on sub-props
+            XmlNode SubPropsNode = CswXmlDocument.ChildXmlNode( PropNode, "subprops" );
+            if( SubPropsNode != null )
+            {
+                foreach( XmlNode ChildPropNode in SubPropsNode.ChildNodes )
+                {
+                    _applyPropXml( Node, ChildPropNode );
+                }
+            }
+
+        } // _applyPropXml
 
 
     } // class CswNbtWebServiceTabsAndProps
