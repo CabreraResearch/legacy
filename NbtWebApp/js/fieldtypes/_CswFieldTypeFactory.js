@@ -2,7 +2,7 @@
 $.CswFieldTypeFactory = function (method) {
 
     var methods = {
-        'make': function (nodeid, fieldtype, $propdiv, $propxml) {
+        'make': function (nodeid, fieldtype, $propdiv, $propxml, cswnodekey) {
             switch (fieldtype) {
                 case "Barcode":
                     $propdiv.CswFieldTypeBarcode('init', nodeid, $propxml);
@@ -17,7 +17,7 @@ $.CswFieldTypeFactory = function (method) {
                     $propdiv.CswFieldTypeFile('init', nodeid, $propxml);
                     break;
                 case "Grid":
-                    $propdiv.CswFieldTypeGrid('init', nodeid, $propxml);
+                    $propdiv.CswFieldTypeGrid('init', nodeid, $propxml, cswnodekey);
                     break;
                 case "Image":
                     $propdiv.CswFieldTypeImage('init', nodeid, $propxml);
@@ -97,7 +97,7 @@ $.CswFieldTypeFactory = function (method) {
             } // switch (fieldtype)
         }, // make
 
-        'save': function (fieldtype, nodeid, $propdiv, $propxml) {
+        'save': function (fieldtype, nodeid, $propdiv, $propxml, cswnbtnodekey) {
             switch (fieldtype) {
                 case "Barcode":
                     $propdiv.CswFieldTypeBarcode('save', $propdiv, $propxml);
@@ -112,7 +112,7 @@ $.CswFieldTypeFactory = function (method) {
                     $propdiv.CswFieldTypeFile('save', $propdiv, $propxml);
                     break;
                 case "Grid":
-                    $propdiv.CswFieldTypeGrid('save', $propdiv, $propxml);
+                    $propdiv.CswFieldTypeGrid('save', $propdiv, $propxml, cswnbtnodekey);
                     break;
                 case "Image":
                     $propdiv.CswFieldTypeImage('save', $propdiv, $propxml);

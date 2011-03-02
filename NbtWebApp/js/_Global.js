@@ -175,6 +175,7 @@ function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
 //}
 
 function xmlToString($xmlnode) {
+	console.log($xmlnode);
 	var xmlstring = $xmlnode.get(0).xml; // IE
 	if (!xmlstring) {            // FF, Chrome, Safari
 		var s = new XMLSerializer();
@@ -231,6 +232,7 @@ function editNodeDialog(nodeid, onEditNode) {
 	var $div = $('<div></div>');
 	$div.CswNodeTabs({
 		'nodeid': nodeid,
+		cswnbtnodekey: '',
 		'EditMode': 'Edit',
 		'onSave': function (nodeid) {
 			$div.dialog('close');
@@ -325,7 +327,8 @@ function jsTreeGetSelected($treediv, IDPrefix)
 		'SelectedText': $SelectedItem.children('a').first().text().trim(),
 		'SelectedViewMode': $SelectedItem.attr('viewmode'),
 		'SelectedViewId': $SelectedItem.attr('viewid'),
-		'SelectedType': $SelectedItem.attr('type')
+		'SelectedType': $SelectedItem.attr('type'),
+		'SelectedCswNbtNodeKey': $SelectedItem.attr('cswnbtnodekey')
 	};
 }
 

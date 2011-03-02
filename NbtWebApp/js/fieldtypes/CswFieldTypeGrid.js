@@ -3,7 +3,7 @@
 	var PluginName = 'CswFieldTypeGrid';
 
 	var methods = {
-		init: function(nodepk, $xml) {
+		init: function(nodepk, $xml, cswnbtnodekey) {
 
 				var $Div = $(this);
 				$Div.children().remove();
@@ -21,7 +21,7 @@
 				}
 				else 
 				{
-					$($Div).CswNodeGrid( {}, {viewid:'1478', nodeid: nodepk, cswnbtnodekey: ''} );
+					$($Div).CswNodeGrid( {}, {viewid:'1478', nodeid: nodepk, 'cswnbtnodekey': cswnbtnodekey} );
 				}
 			},
 		save: function($propdiv, $xml) {

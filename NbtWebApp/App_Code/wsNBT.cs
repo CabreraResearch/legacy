@@ -369,7 +369,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
 				ReturnVal = ws.getTabs( RealEditMode, NodePk, CswConvert.ToInt32( NodeTypeId ) );
 				end();
 			}
@@ -413,7 +413,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
 				ReturnVal = ws.saveProps( RealEditMode, NodePk, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) );
 				end();
 			}

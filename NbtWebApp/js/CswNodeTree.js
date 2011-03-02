@@ -11,7 +11,7 @@
 				viewid: '',
 				nodeid: '',
 				cswnbtnodekey: '',
-				onSelectNode: function(nodeid, nodename, iconurl) { },
+				onSelectNode: function(nodeid, nodename, iconurl, cswnbtnodekey) { },
 				SelectFirstChild: true
 			};
 
@@ -27,6 +27,8 @@
 				url: o.TreeUrl,
 				data: 'ViewId=' + o.viewid + '&IDPrefix=' + IDPrefix,
 				success: function ($xml) {
+					//console.log('CswNodeTree xml');
+					//console.log($xml);
 					var selectid;
 					if(o.nodeid != undefined && o.nodeid != '') 
 						selectid = IDPrefix + o.nodeid;
@@ -69,7 +71,7 @@
 					}).bind('select_node.jstree', 
 									function (e, data) {
 										var Selected = jsTreeGetSelected($treediv, IDPrefix); 
-										o.onSelectNode(Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl);
+										o.onSelectNode(Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.CswNbtNodeKey);
 									});
 
 					// DO NOT define an onSuccess() function here that interacts with the tree.

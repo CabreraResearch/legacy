@@ -193,7 +193,7 @@
 			ID: 'main',
 			'viewid': viewid,
 			cswnbtnodekey: '',
-			onSelectNode: function (nodeid) { getTabs(nodeid); refreshMainMenu(viewid, nodeid); },
+			onSelectNode: function (nodeid,cswnbtnodekey) { getTabs(nodeid,cswnbtnodekey); refreshMainMenu(viewid, nodeid); },
 		});
 	}
 
@@ -206,10 +206,10 @@
 		$('#CenterDiv').CswNodeGrid( {}, { 'viewid': viewid, id:'CswNodeGrid', nodeid: '', cswnbtnodekey: '' } );
 	}
 
-	function getTabs(nodeid)
+	function getTabs(nodeid,cswnbtnodekey)
 	{
 		clearRight();
-		$('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, onSave: refreshViewTree });
+		$('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, onSave: refreshViewTree });
 	}
 
 	function refreshViewTree(newnodeid)

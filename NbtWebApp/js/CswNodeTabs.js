@@ -6,6 +6,7 @@
 			TabsUrl: '/NbtWebApp/wsNBT.asmx/getTabs',
 			PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
 			nodeid: '',
+			cswnodekey: '',
 			nodetypeid: '',
 			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
 			onSave: function() {}
@@ -87,7 +88,7 @@
 								$propcell.addClass('propertyvaluecell');
 								var $propdiv = $('<div/>').appendTo($propcell); 
 
-								$.CswFieldTypeFactory('make', o.nodeid, fieldtype, $propdiv, $this); 
+								$.CswFieldTypeFactory('make', o.nodeid, fieldtype, $propdiv, $this, o.cswnodekey); 
 								
 							});
 
@@ -119,10 +120,13 @@
 				var fieldtype = $propxml.attr('fieldtype');
 				var $propdiv = $propcell.children('div');
 				  
-				$.CswFieldTypeFactory('save', fieldtype, o.nodeid, $propdiv, $propxml);              
+				$.CswFieldTypeFactory('save', fieldtype, o.nodeid, $propdiv, $propxml, o.cswnodekey);              
 
 			}); // each()
-
+			
+			console.log('CswNodeTabs');
+			console.log($propsxml);
+			
 			CswAjaxJSON({
 				url: '/NbtWebApp/wsNBT.asmx/SaveProps',
 				data: "{ EditMode: '"+ o.EditMode + "', NodePk: '" + o.nodeid + "', NodeTypeId: '"+ o.nodetypeid +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",

@@ -19,6 +19,8 @@
 				data: '',
 				success: function ($xml)
 				{
+					console.log('CswViewTree');
+					console.log($xml);
 					var strTypes = $xml.find('types').text();
 					var jsonTypes = $.parseJSON(strTypes);
 					var $treexml = $xml.find('tree').children('root')
