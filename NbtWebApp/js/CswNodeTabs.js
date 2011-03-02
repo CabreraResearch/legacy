@@ -6,7 +6,7 @@
 			TabsUrl: '/NbtWebApp/wsNBT.asmx/getTabs',
 			PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
 			nodeid: '',
-			cswnodekey: '',
+			cswnbtnodekey: '',
 			nodetypeid: '',
 			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
 			onSave: function() {}
@@ -61,6 +61,12 @@
 				url: o.PropsUrl,
 				data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&TabId=' + tabid + '&NodeTypeId=' + o.nodetypeid,
 				success: function ($xml) {
+							
+							console.log('CswNodeTabs.getProps() $xml');
+							console.log($xml);
+							console.log('CswNodeTabs.getProps() o');
+							console.log(o);
+
 							$div = $("#" + tabid);
 							$form = $div.children('form');
 							$form.children().remove();
@@ -88,7 +94,7 @@
 								$propcell.addClass('propertyvaluecell');
 								var $propdiv = $('<div/>').appendTo($propcell); 
 
-								$.CswFieldTypeFactory('make', o.nodeid, fieldtype, $propdiv, $this, o.cswnodekey); 
+								$.CswFieldTypeFactory('make', o.nodeid, fieldtype, $propdiv, $this, o.cswnbtnodekey); 
 								
 							});
 
@@ -120,7 +126,7 @@
 				var fieldtype = $propxml.attr('fieldtype');
 				var $propdiv = $propcell.children('div');
 				  
-				$.CswFieldTypeFactory('save', fieldtype, o.nodeid, $propdiv, $propxml, o.cswnodekey);              
+				$.CswFieldTypeFactory('save', fieldtype, o.nodeid, $propdiv, $propxml, o.cswnbtnodekey);              
 
 			}); // each()
 			

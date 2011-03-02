@@ -305,9 +305,9 @@ namespace ChemSW.Nbt.WebServices
 		} // getMainMenu()
 
 		[WebMethod( EnableSession = true )]
-		public string getGridJson( Int32 ViewId, string CswNbtNodeKey = null )
+		public string getGrid( Int32 ViewId, string CswNbtNodeKey = null )
 		{
-			var ReturnJSON = string.Empty;
+			var ReturnJson = string.Empty;
 			try
 			{
 				start();
@@ -321,18 +321,18 @@ namespace ChemSW.Nbt.WebServices
 						ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, CswNbtNodeKey );
 					}
 					var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
-					ReturnJSON = g.getGrid();
+					ReturnJson = g.getGrid();
 					addToQuickLaunch( View );
 				}
 				end();
 			}
-			catch( Exception ex )
+			catch( Exception Ex )
 			{
-				ReturnJSON = ( error( ex ) );
+				ReturnJson = ( error( Ex ) );
 			}
 
-			return ReturnJSON;
-		}
+			return ReturnJson;
+		} // getGrid()
 
 		[WebMethod( EnableSession = true )]
 		public XmlDocument getTree( Int32 ViewId, string IDPrefix )

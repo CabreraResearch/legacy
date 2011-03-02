@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
@@ -117,9 +118,11 @@ namespace ChemSW.Nbt.WebServices
 			XmlDocument XmlDoc = new XmlDocument();
 			CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
 			PropWrapper.ToXml( XmlDoc.DocumentElement );
-			string ret = XmlDoc.DocumentElement.InnerXml;
-			// ThisProp += ret ?
-			
+
+			for(Int32 i=0; i < XmlDoc.DocumentElement.ChildNodes.Count; i++)
+			{
+				ThisProp.Add( XElement.Parse( XmlDoc.DocumentElement.ChildNodes[i].OuterXml ) );
+			}
 			return ThisProp;
 		}
 

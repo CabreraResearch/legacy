@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.WebServices
 				var ParentNode = ( new XElement( "item",
 										new XAttribute( "id", ThisNodeId ),
 										new XAttribute( "rel", ThisNodeRel ),
-										new XAttribute( "cswnodekey", ThisNodeKey.ToString() ), 
+										new XAttribute( "cswnbtnodekey", ThisNodeKey.ToString() ), 
 											new XElement( "content" ,
 												new XElement( "name" , ThisNodeName )
 												)

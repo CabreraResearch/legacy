@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.WebServices
 				               			);
 
 			ColumnArray.AddFirst( new JValue( "nodeid" ) ); //better to use int for jqGrid key
-			ColumnArray.AddFirst( new JValue( "nodekey" ) ); //we'll want CswNbtNodeKey for add/edit/delete
+			ColumnArray.AddFirst( new JValue( "cswnbtnodekey" ) ); //we'll want CswNbtNodeKey for add/edit/delete
 			var ColumnNames = new JProperty( GridColumnNames, ColumnArray );
 			return ColumnNames;
 
@@ -258,8 +258,8 @@ namespace ChemSW.Nbt.WebServices
 			
 			//we'll want CswNbtNodeKey for add/edit/delete
 			ColumnArray.AddFirst( new JObject(
-								new JProperty( GridName, "nodekey" ),
-								new JProperty( "index", "nodekey" )
+								new JProperty( GridName, "cswnbtnodekey" ),
+								new JProperty( "index", "cswnbtnodekey" )
 								) );
 
 			JProperty ColumnDefinition = new JProperty( GridColumnDefinition, ColumnArray );

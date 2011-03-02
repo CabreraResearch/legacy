@@ -19,8 +19,6 @@
 				data: '',
 				success: function ($xml)
 				{
-					console.log('CswViewTree');
-					console.log($xml);
 					var strTypes = $xml.find('types').text();
 					var jsonTypes = $.parseJSON(strTypes);
 					var $treexml = $xml.find('tree').children('root')
@@ -50,13 +48,10 @@
 												itemid: Selected.SelectedId, 
 												text: Selected.SelectedText, 
 												iconurl: Selected.SelectedIconUrl,
-												viewid: Selected.SelectedViewId
+												viewid: Selected.SelectedViewId,
+												cswnbtnodekey: Selected.SelectedCswNbtNodeKey
 											 };
-//									if (optSelect) {
-//										$.extend(s, optSelect);
-//									}
-									console.log(optSelect);
-									o.onSelect(optSelect); //(Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl)
+									o.onSelect(optSelect);
 								});
 
 				} // success{}

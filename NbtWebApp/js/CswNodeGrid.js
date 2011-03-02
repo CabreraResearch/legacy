@@ -26,7 +26,7 @@
 
 		// CswNodeGrid properties
 		var d = {
-			GridUrl: '/NbtWebApp/wsNBT.asmx/getGridJson',
+			GridUrl: '/NbtWebApp/wsNBT.asmx/getGrid',
 			viewid: '',
 			id: "CswNodeGrid",
 			nodeid: '',
@@ -52,11 +52,13 @@
 		
 		CswAjaxJSON({
 			url: d.GridUrl,
-			data: "{ViewId: '" +  d.viewid + '&CswNbtNodeKey=' + d.cswnbtnodekey +"'}",
+			data: "{ViewId: '" +  d.viewid + "', CswNbtNodeKey: '" + d.cswnbtnodekey + "'}",
 			success: function (gridJson) {
 					
-					console.log('gridJson follows.');
+					console.log('CswNodeGrid gridJson follows.');
 					console.log(gridJson);
+					console.log('CswNodeGrid d');
+					console.log(d);
 
 					gridData = gridJson.grid;
 					gridRows = gridData.rows;
@@ -141,6 +143,7 @@
 
 					jQuery($gridOuter).jqGrid(jqGridOptions)
 									  .hideCol('nodeid')
+									  .hideCol('nodekey')
 									  .navGrid( '#'+gridPagerId, optNav, optEdit, optAdd, optDel, optSearch, optView );
 					
 			} // success{}

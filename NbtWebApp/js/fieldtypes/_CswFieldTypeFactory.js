@@ -2,7 +2,7 @@
 $.CswFieldTypeFactory = function (method) {
 
     var methods = {
-        'make': function (nodeid, fieldtype, $propdiv, $propxml, cswnodekey) {
+        'make': function (nodeid, fieldtype, $propdiv, $propxml, cswnbtnodekey) {
             switch (fieldtype) {
                 case "Barcode":
                     $propdiv.CswFieldTypeBarcode('init', nodeid, $propxml);
@@ -17,7 +17,7 @@ $.CswFieldTypeFactory = function (method) {
                     $propdiv.CswFieldTypeFile('init', nodeid, $propxml);
                     break;
                 case "Grid":
-                    $propdiv.CswFieldTypeGrid('init', nodeid, $propxml, cswnodekey);
+                    $propdiv.CswFieldTypeGrid('init', nodeid, $propxml, cswnbtnodekey);
                     break;
                 case "Image":
                     $propdiv.CswFieldTypeImage('init', nodeid, $propxml);

@@ -321,6 +321,8 @@ function getTableCell($table, row, col) {
 function jsTreeGetSelected($treediv, IDPrefix) 
 {
 	$SelectedItem = $treediv.jstree('get_selected');
+	console.log('_Global jsTreeGetSelected() SelectedCswNbtNodeKey');
+	console.log($SelectedItem.attr('cswnbtnodekey'));
 	return { 
 		'SelectedIconUrl': $SelectedItem.children('a').children('ins').css('background-image'),
 		'SelectedId': $SelectedItem.attr('id').substring(IDPrefix.length),
@@ -330,6 +332,7 @@ function jsTreeGetSelected($treediv, IDPrefix)
 		'SelectedType': $SelectedItem.attr('type'),
 		'SelectedCswNbtNodeKey': $SelectedItem.attr('cswnbtnodekey')
 	};
+
 }
 
 
