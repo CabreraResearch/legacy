@@ -73,7 +73,7 @@
 										var Selected = jsTreeGetSelected($treediv, IDPrefix); 
 										o.onSelectNode(Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.CswNbtNodeKey);
 									});
-
+					
 					// DO NOT define an onSuccess() function here that interacts with the tree.
 					// The tree has initalization events that appear to happen asynchronously,
 					// and thus having an onSuccess() function that changes the selected node will
@@ -83,7 +83,7 @@
 			});
 		},
 
-		'selectNode': function(newnodeid) {
+		'selectNode': function(newnodeid, newcswnbtnodekey) {
 			var $treediv = $(this).children('.treediv')
 			var IDPrefix = $treediv.attr('id');
 			$treediv.jstree('select_node', '#' + IDPrefix + newnodeid);

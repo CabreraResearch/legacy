@@ -4,7 +4,7 @@
 		var o = {
 			ViewUrl: '/NbtWebApp/wsNBT.asmx/getViewTree',
 			viewid: '',
-			onSelect: function (optSelect) { } //itemid, text, iconurl
+			onSelect: function (nodeid, nodename, iconurl, cswnbtnodekey) { } //optSelect
 		};
 
 		if (options) {
@@ -13,7 +13,7 @@
 
 		var $viewsdiv = $(this);
 		$viewsdiv.children().remove();
-
+		
 		CswAjaxXml({
 				url: o.ViewUrl,
 				data: '',
@@ -23,7 +23,7 @@
 					var jsonTypes = $.parseJSON(strTypes);
 					var $treexml = $xml.find('tree').children('root')
 					var treexmlstring = xmlToString($treexml);
-
+					log('here ');
 					$viewsdiv.jstree({
 						"xml_data": {
 							"data": treexmlstring,
@@ -48,10 +48,10 @@
 												itemid: Selected.SelectedId, 
 												text: Selected.SelectedText, 
 												iconurl: Selected.SelectedIconUrl,
-												viewid: Selected.SelectedViewId,
-												cswnbtnodekey: Selected.SelectedCswNbtNodeKey
+												viewid: Selected.SelectedViewId												
 											 };
-									o.onSelect(optSelect);
+									console.log('select nk = ');
+									o.onSelect( Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey);
 								});
 
 				} // success{}

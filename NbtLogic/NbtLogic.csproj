@@ -214,8 +214,6 @@
     <Compile Include="csw\Sched\CswNbtSchdItemUpdateInspectionStatus.cs" />
     <Compile Include="csw\Sched\CswNbtSchdItemUpdateMTBF.cs" />
     <Compile Include="csw\Sched\CswNbtSchdItemUpdatePropertyValues.cs" />
-    <Compile Include="csw\Schema\CswUpdateSchemaTo01H23.cs" />
-    <Compile Include="csw\Schema\CswUpdateSchemaTo01H22.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H21.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H20.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H19.cs" />
@@ -248,6 +246,8 @@
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H05.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H06.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H07.cs" />
+    <Compile Include="csw\Schema\CswUpdateSchemaTo01H22.cs" />
+    <Compile Include="csw\Schema\CswUpdateSchemaTo01H23.cs" />
     <Compile Include="csw\Schema\ICswUpdateSchemaTo.cs" />
     <Compile Include="csw\Security\CswNbtAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSystemUser.cs" />

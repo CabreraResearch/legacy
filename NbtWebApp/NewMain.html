@@ -48,14 +48,14 @@
 					</tr>
 
 <script type="text/javascript">
-    var debug = false;
+	var debug = false;
 
 	initAll();
 
 	function initAll()
 	{
-	    if (debug) log('NewMain.initAll()');
-	    $('#CenterDiv').CswLogin('login', {
+		if (debug) log('NewMain.initAll()');
+		$('#CenterDiv').CswLogin('login', {
 			'onAuthenticate': function (u) {
 				$('#header_username').text(u);
 				$('#header_dashboard').CswDashboard();
@@ -82,26 +82,24 @@
 					onLinkClick: handleItemSelect
 				});
 
-				$('#breadcrumbs').xBreadcrumbs({ collapsible: true });
-
 			} // onAuthenticate
 		}); // CswLogin
 	} // initAll()
 
 	function clearLeft()
 	{
-	    if (debug) log('NewMain.clearLeft()');
-	    $('#LeftDiv').children().remove();
+		if (debug) log('NewMain.clearLeft()');
+		$('#LeftDiv').children().remove();
 	}
 	function clearRight()
 	{
-	    if (debug) log('NewMain.clearRight()');
-	    $('#RightDiv').children().remove();
+		if (debug) log('NewMain.clearRight()');
+		$('#RightDiv').children().remove();
 	}
 	function clearCenter()
 	{
-	    if (debug) log('NewMain.clearCenter()');
-	    $('#CenterDiv').children().remove();
+		if (debug) log('NewMain.clearCenter()');
+		$('#CenterDiv').children().remove();
 	}
 
 	function handleItemSelect(optSelect) 
@@ -178,66 +176,70 @@
 			}
 		}
 	}
-	function refreshMainMenu(viewid, nodeid) 
+	function refreshMainMenu(viewid, nodeid, cswnbtnodekey) 
 	{
-	    if (debug) log('NewMain.refreshMainMenu()');
-	    $('#MainMenuDiv').CswMenuMain({
-            'viewid': viewid,
-            'nodeid': nodeid,
-            onAddNode: function (newnodeid) {
-                refreshViewTree(newnodeid);
-            }
-        });
+		if (debug) log('NewMain.refreshMainMenu()');
+		$('#MainMenuDiv').CswMenuMain({
+			'viewid': viewid,
+			'nodeid': nodeid,
+			'cswnbtnodekey': cswnbtnodekey,
+			onAddNode: function (newnodeid, newcswnbtnodekey) {
+			    refreshViewTree(newnodeid, newcswnbtnodekey);
+			}
+		});
 	}
 
 	function getViewTree(viewid)
 	{
-	    if (debug) log('NewMain.getViewTree()');
-	    SetCurrentViewId(viewid);
+		if (debug) log('NewMain.getViewTree()');
+		SetCurrentViewId(viewid);
 		clearLeft();
 		clearRight();
 		clearCenter();
 		$('#LeftDiv').CswNodeTree('init', {
-		    'ID': 'main',
-		    'viewid': viewid,
-		    'onSelectNode': function (nodeid,cswnbtnodekey) { onSelectViewTreeNode(viewid, nodeid, cswnbtnodekey); }
+			'ID': 'main',
+			'viewid': viewid,
+			'onSelectNode': function (nodeid, nodename, iconurl, cswnbtnodekey) { onSelectViewTreeNode(viewid, nodeid, cswnbtnodekey); }
 		});
 	}
 
-    function onSelectViewTreeNode(viewid, nodeid, cswnbtnodekey) {
-        if (debug) log('NewMain.onSelectViewTreeNode()');
-        getTabs(nodeid);
-        refreshMainMenu(viewid, nodeid);
-    }
+	function onSelectViewTreeNode(viewid, nodeid, cswnbtnodekey) {
+		if (debug) log('NewMain.onSelectViewTreeNode()');
+		getTabs(nodeid, cswnbtnodekey);
+		refreshMainMenu(viewid, nodeid, cswnbtnodekey);
+	}
 
 	function getViewGrid(viewid)
 	{
-	    if (debug) log('NewMain.getViewGrid()');
-	    SetCurrentViewId(viewid);
+		if (debug) log('NewMain.getViewGrid()');
+		SetCurrentViewId(viewid);
 		clearLeft();
 		clearRight();
 		clearCenter();
 		$('#CenterDiv').CswNodeGrid( {}, { 'viewid': viewid, id:'CswNodeGrid' } );
 	}
 
-	function getTabs(nodeid,cswnbtnodekey)
+	function getTabs(nodeid, cswnbtnodekey)
 	{
-	    if (debug) log('NewMain.getTabs()');
-	    clearRight();
+	    log('NewMain getTabs()');
+	    log(cswnbtnodekey);
+		if (debug) log('NewMain.getTabs()');
+		clearRight();
 		$('#RightDiv').CswNodeTabs({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, onSave: refreshViewTree });
 	}
 
-    function refreshViewTree(newnodeid)
+	function refreshViewTree(newnodeid,newcswnbtnodekey)
 	{
-	    if (debug) log('NewMain.refreshViewTree()');
-	    clearLeft();
-	    var viewid = GetCurrentViewId();
-        $('#LeftDiv').CswNodeTree('init', {
-            'ID': 'main',
-            'viewid': viewid,
-            'nodeid': newnodeid,
-            'onSelectNode': function (nodeid) { onSelectViewTreeNode(viewid, nodeid); }
-        });
+		if (debug) log('NewMain.refreshViewTree()');
+		clearLeft();
+		var viewid = GetCurrentViewId();
+		$('#LeftDiv').CswNodeTree('init', {
+			'ID': 'main',
+			'viewid': viewid,
+			'nodeid': newnodeid,
+			'cswnbtnodekey': newcswnbtnodekey,
+			'onSelectNode': function (nodeid, nodename, iconurl, cswnbtnodekey) { onSelectViewTreeNode(viewid, nodeid, cswnbtnodekey); }
+		});
 	}
 
 </script>

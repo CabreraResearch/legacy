@@ -55,11 +55,6 @@
 			data: "{ViewId: '" +  d.viewid + "', CswNbtNodeKey: '" + d.cswnbtnodekey + "'}",
 			success: function (gridJson) {
 					
-					console.log('CswNodeGrid gridJson follows.');
-					console.log(gridJson);
-					console.log('CswNodeGrid d');
-					console.log(d);
-
 					gridData = gridJson.grid;
 					gridRows = gridData.rows;
 
@@ -143,7 +138,7 @@
 
 					jQuery($gridOuter).jqGrid(jqGridOptions)
 									  .hideCol('nodeid')
-									  .hideCol('nodekey')
+									  //.hideCol('cswnbtnodekey')
 									  .navGrid( '#'+gridPagerId, optNav, optEdit, optAdd, optDel, optSearch, optView );
 					
 			} // success{}
