@@ -3,7 +3,7 @@
 	var PluginName = 'CswFieldTypeGrid';
 
 	var methods = {
-		init: function(nodepk, $xml, cswnbtnodekey) {
+		init: function(nodepk, $xml, onchange, cswnbtnodekey) {
 
 				var $Div = $(this);
 				$Div.children().remove();
@@ -12,7 +12,7 @@
 				var Required = ($xml.attr('required') == "true");
 				var ReadOnly = ($xml.attr('readonly') == "true");
 
-				var Value = $xml.children('value').text();
+				var Value = $xml.children('value').text().trim();
 				console.log("grid prop XML" + $xml);
 				//$Div.append("xml starts here" + $xml);
 				if(ReadOnly)

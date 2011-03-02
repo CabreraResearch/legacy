@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeBarcode';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -12,7 +12,7 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Value = $xml.children('barcode').text();
+                var Value = $xml.children('barcode').text().trim();
 
                 if(ReadOnly)
                 {
@@ -24,7 +24,8 @@
 
                     var $cell1 = getTableCell($table, 1, 1);
                     var $TextBox = $('<input type="text" class="textinput" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
-                                     .appendTo($cell1);
+                                     .appendTo($cell1)
+                                     .change(onchange);
 
                     var $cell2 = getTableCell($table, 1, 2);
                     var $PrintButton = $('<div/>' )
@@ -33,7 +34,7 @@
                                                             AlternateText: '',
                                                             ID: '',
                                                             onClick: function (alttext) { 
-                                                                OpenDialog(ID + '_dialog', 'Popup_PrintLabel.aspx?nodeid=' + nodepk + '&propid=' + ID); 
+                                                                $.CswDialog('OpenDialog', ID + '_dialog', 'Popup_PrintLabel.aspx?nodeid=' + nodepk + '&propid=' + ID); 
                                                                 return CswImageButton_ButtonType.None; 
                                                             }
                                                          });

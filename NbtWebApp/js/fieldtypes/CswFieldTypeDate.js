@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeDate';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -12,7 +12,7 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Value = $xml.children('value').text();
+                var Value = $xml.children('value').text().trim();
                 if(Value == '1/1/0001')
                     Value = '';
 
@@ -24,6 +24,7 @@
                 {
                     var $TextBox = $('<input type="text" class="textinput date" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
                                      .appendTo($Div)
+                                     .change(onchange)
                                      .datepicker();
                     if(Required)
                     {

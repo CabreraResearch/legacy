@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeNumber';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -12,7 +12,7 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Value = $xml.children('value').text();
+                var Value = $xml.children('value').text().trim();
                 if(Value == "NaN") Value = '';
                 var MinValue = $xml.children('value').attr('minvalue');
                 var MaxValue = $xml.children('value').attr('maxvalue');
@@ -25,7 +25,8 @@
                 else 
                 {
                     var $TextBox = $('<input type="text" class="textinput number" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
-                                     .appendTo($Div);
+                                     .appendTo($Div)
+                                     .change(onchange);
                     
                     if(MinValue != undefined)
                     {

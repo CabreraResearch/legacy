@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeLink';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -12,8 +12,8 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Text = $xml.children('text').text();
-                var Href = $xml.children('href').text();
+                var Text = $xml.children('text').text().trim();
+                var Href = $xml.children('href').text().trim();
 
                 if(ReadOnly)
                 {

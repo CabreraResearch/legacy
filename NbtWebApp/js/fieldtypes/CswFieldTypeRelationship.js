@@ -5,7 +5,7 @@
         var PluginName = 'CswFieldTypeRelationship';
 
         var methods = {
-            init: function(nodepk, $xml) {
+            init: function(nodepk, $xml, onchange) {
             
                     var $Div = $(this);
                     $Div.children().remove();
@@ -14,8 +14,8 @@
                     var Required = ($xml.attr('required') == "true");
                     var ReadOnly = ($xml.attr('readonly') == "true");
 
-                    var SelectedNodeId = $xml.children('nodeid').text();
-                    var SelectedName = $xml.children('name').text();
+                    var SelectedNodeId = $xml.children('nodeid').text().trim();
+                    var SelectedName = $xml.children('name').text().trim();
                     var $Options = $xml.children('options');
 
                     if(ReadOnly)
@@ -28,7 +28,8 @@
 
                         var $selectcell = getTableCell($mytable, 1, 1);
                         var $SelectBox = $('<select id="'+ ID +'" name="'+ ID +'" class="selectinput" />"' )
-                                           .appendTo($selectcell);
+                                           .appendTo($selectcell)
+                                           .change(onchange);
 
                         $Options.children().each(function() {
                             var $this = $(this);

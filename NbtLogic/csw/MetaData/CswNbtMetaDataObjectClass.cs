@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -171,6 +173,19 @@ namespace ChemSW.Nbt.MetaData
             return DefaultView;
         }
 
+        public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes )
+        {
+            Collection<CswNbtNode> Collection = new Collection<CswNbtNode>();
+            CswNbtView View = CreateDefaultView();
+            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( View, forceReInit, true, true, includeSystemNodes );
+            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            {
+                Tree.goToNthChild( c );
+                Collection.Add( Tree.getNodeForCurrentPosition() );
+                Tree.goToParentNode();
+            }
+            return Collection;
+        }
 
         #region IEquatable
 

@@ -478,6 +478,13 @@ namespace ChemSW.Nbt
         {
             return _CswNbtTreeNodes.getSelectableForCurrentNode();
         }//getNodeSelectableForCurrentPosition()
+        /// <summary>
+        /// True if the currently indexed node is selectable, false otherwise
+        /// </summary>
+        public bool getNodeShowInTreeForCurrentPosition()
+        {
+            return _CswNbtTreeNodes.getNodeShowInTreeForCurrentNode();
+        }//getNodeShowInTreeForCurrentPosition()
 
         /// <summary>
         /// Returns the NodeKey of the currently indexed node's parent

@@ -12,7 +12,7 @@
 //                var Required = ($xml.attr('required') == "true");
 //                var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Text = $xml.children('text').text();
+                var Text = $xml.children('text').text().trim();
                 var Columns = parseInt( $xml.children('text').attr('columns') );
                 var Rows = parseInt( $xml.children('text').attr('rows') );
 

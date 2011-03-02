@@ -1,9 +1,9 @@
 ﻿; (function ($) {
         
-    var PluginName = 'CswFieldType';
+    var PluginName = 'CswFieldTypeUserSelect';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -12,7 +12,7 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Value = $xml.children('value').text();
+                var Value = $xml.children('value').text().trim();
 
                 $Div.append('[Not Implemented Yet]');
 //                if(ReadOnly)
@@ -31,7 +31,7 @@
     };
     
     // Method calling logic
-    $.fn.CswFieldType = function (method) {
+    $.fn.CswFieldTypeUserSelect = function (method) {
         
         if ( methods[method] ) {
           return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));

@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeMemo';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
         
                 var $Div = $(this);
                 $Div.children().remove();
@@ -13,7 +13,7 @@
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
                 //var Value = extractCDataValue($xml.children('text'));
-                var Value = $xml.children('text').text();
+                var Value = $xml.children('text').text().trim();
                 var rows = $xml.children('text').attr('rows');
                 var columns = $xml.children('text').attr('columns');
 
@@ -24,7 +24,8 @@
                 else 
                 {
                     var $TextArea = $('<textarea id="'+ ID +'" name="' + ID + '" rows="'+rows+'" cols="'+columns+'">'+ Value +'</textarea>' )
-                                  .appendTo($Div); 
+                                     .appendTo($Div)
+                                     .change(onchange); 
                     if(Required)
                     {
                         $TextArea.addClass("required");

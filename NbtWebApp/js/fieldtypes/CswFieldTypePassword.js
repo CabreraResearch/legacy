@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypePassword';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -24,9 +24,11 @@
                     var $cell21 = getTableCell($table, 2, 1);
 
                     var $TextBox1 = $('<input type="password" class="textinput" id="'+ ID +'_pwd1" name="' + ID + '" />"' )
-                                     .appendTo($cell11);
+                                     .appendTo($cell11)
+                                     .change(onchange);
                     var $TextBox1 = $('<input type="password" class="textinput password2" id="'+ ID +'_pwd2" name="' + ID + '" />"' )
-                                     .appendTo($cell21);
+                                     .appendTo($cell21)
+                                     .change(onchange);
 //                    if(Required)
 //                    {
 //                        $TextBox.addClass("required");

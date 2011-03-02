@@ -351,12 +351,12 @@ namespace ChemSW.Nbt.WebPages
                         NewNameTemplateText += " ";
                     NewNameTemplateText += CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassInspectionDesign.DatePropertyName );
                 }
-                if( NameTemplateRouteCheckBox.Checked )
-                {
-                    if( NewNameTemplateText != string.Empty )
-                        NewNameTemplateText += " ";
-                    NewNameTemplateText += CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassInspectionDesign.RoutePropertyName );
-                }
+                //if( NameTemplateRouteCheckBox.Checked )
+                //{
+                //    if( NewNameTemplateText != string.Empty )
+                //        NewNameTemplateText += " ";
+                //    NewNameTemplateText += CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassInspectionDesign.RoutePropertyName );
+                //}
                 NewInspectionNodeType.NameTemplateText = NewNameTemplateText;
 
                 // Set the target nodeType of the Target relationship property

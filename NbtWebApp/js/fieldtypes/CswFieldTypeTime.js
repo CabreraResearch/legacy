@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeTime';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -12,7 +12,7 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Value = $xml.children('value').text();
+                var Value = $xml.children('value').text().trim();
 
                 $Div.append('[Not Implemented Yet]');
 //                if(ReadOnly)

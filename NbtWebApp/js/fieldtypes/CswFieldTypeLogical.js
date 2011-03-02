@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeLogical';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 $Div = $(this);
                 $Div.children().remove();
@@ -12,7 +12,7 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Checked = $xml.children('checked').text();
+                var Checked = $xml.children('checked').text().trim();
 
                 if(ReadOnly)
                 {
@@ -34,7 +34,11 @@
 
                     $Div.CswImageButton({ ButtonType: thisButtonType, 
                                           AlternateText: Checked,
-                                          onClick: function($ImageDiv) { return onClick($ImageDiv, Required); }
+                                          onClick: function($ImageDiv) { 
+                                                        onClick($ImageDiv, Required); 
+                                                        onchange(); 
+                                                        return false;
+                                                    }
                                         });
                 }
             },

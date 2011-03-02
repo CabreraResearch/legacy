@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeImage';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -12,10 +12,10 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Href = $xml.children('href').text();
+                var Href = $xml.children('href').text().trim();
                 var Width = $xml.children('href').attr('width');
                 var Height = $xml.children('href').attr('height');
-                var FileName = $xml.children('name').text();
+                var FileName = $xml.children('name').text().trim();
 
                 var $table = makeTable(ID + '_tbl')
                              .appendTo($Div);

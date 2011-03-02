@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeText';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -12,7 +12,7 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Value = $xml.children('text').text();
+                var Value = $xml.children('text').text().trim();
                 var Length = $xml.children('text').attr('length');
 
                 if(ReadOnly)
@@ -22,7 +22,8 @@
                 else 
                 {
                     var $TextBox = $('<input type="text" class="textinput" size="' + Length + '" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
-                                     .appendTo($Div);
+                                     .appendTo($Div)
+                                     .change(onchange);
                     if(Required)
                     {
                         $TextBox.addClass("required");

@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeMTBF';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -12,9 +12,9 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var StartDate = $xml.children('startdatetime').text();
-                var Value = $xml.children('value').text();
-                var Units = $xml.children('units').text();
+                var StartDate = $xml.children('startdatetime').text().trim();
+                var Value = $xml.children('value').text().trim();
+                var Units = $xml.children('units').text().trim();
 
                 var $table = makeTable(ID + '_tbl')
                                 .appendTo($Div);

@@ -6,7 +6,7 @@
     var ValueCol = "Include";
 
     var methods = {
-        init: function (nodepk, $xml) {
+        init: function (nodepk, $xml, onchange) {
 
             var $Div = $(this);
             $Div.children().remove();
@@ -16,7 +16,7 @@
             var ReadOnly = ($xml.attr('readonly') == "true");
 
             var $OptionsXml = $xml.children('options');
-            var SelectedNodeTypeIds = $xml.children('NodeType').text();
+            var SelectedNodeTypeIds = $xml.children('NodeType').text().trim();
             var SelectMode = $xml.children('NodeType').attr('SelectMode');   // Single, Multiple, Blank
 
             var $CBADiv = $('<div />')
@@ -41,7 +41,8 @@
                 'cols': [ ValueCol ],
                 'data': data,
                 'UseRadios': (SelectMode == 'Single'),
-                'Required': Required
+                'Required': Required,
+                'onchange': onchange
             });
 
 
@@ -60,7 +61,6 @@
                 else if (!checkitem.checked && $xmlvaluecolumn.attr('value') == "True")
                     $xmlvaluecolumn.attr('value', 'False');
             } // for( var r = 0; r < formdata.length; r++)
-            //console.log($OptionsXml);
         } // save()
     };
 

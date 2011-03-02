@@ -169,9 +169,9 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp InspectionGeneratorNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
             InspectionGeneratorNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionScheduleNT.NodeTypeId, string.Empty, Int32.MinValue );
 
-            //Inspection has FE Route
-            CswNbtMetaDataNodeTypeProp RouteNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
-            RouteNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionRouteNT.NodeTypeId, string.Empty, Int32.MinValue );
+            ////Inspection has FE Route
+            //CswNbtMetaDataNodeTypeProp RouteNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
+            //RouteNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), PhysicalInspectionRouteNT.NodeTypeId, string.Empty, Int32.MinValue );
 
             // </ Case 20004 >
 
@@ -255,9 +255,9 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp PIDueDateNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.DatePropertyName );
                 CswNbtViewProperty PIDueDateVP = PhysicalInspectionView.AddViewProperty( InspectionRelationship, PIDueDateNTP );
                 PhysicalInspectionView.AddViewPropertyFilter( PIDueDateVP, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, DateTime.MinValue.ToString(), false );
-                CswNbtMetaDataNodeTypeProp PIRouteNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
-                CswNbtViewProperty PIRouteVP = PhysicalInspectionView.AddViewProperty( InspectionRelationship, PIRouteNTP );
-                PhysicalInspectionView.AddViewPropertyFilter( PIRouteVP, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Begins, string.Empty, false );
+                //CswNbtMetaDataNodeTypeProp PIRouteNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.RoutePropertyName );
+                //CswNbtViewProperty PIRouteVP = PhysicalInspectionView.AddViewProperty( InspectionRelationship, PIRouteNTP );
+                //PhysicalInspectionView.AddViewPropertyFilter( PIRouteVP, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Begins, string.Empty, false );
                 CswNbtMetaDataNodeTypeProp PIStatusNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.StatusPropertyName );
                 CswNbtViewProperty PIStatusVP = PhysicalInspectionView.AddViewProperty( InspectionRelationship, PIStatusNTP );
                 PhysicalInspectionView.AddViewPropertyFilter( PIStatusVP, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );

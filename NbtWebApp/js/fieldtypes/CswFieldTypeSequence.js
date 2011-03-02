@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeSequence';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(nodepk, $xml, onchange) {
 
                 var $Div = $(this);
                 $Div.children().remove();
@@ -12,7 +12,7 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Value = $xml.children('sequence').text();
+                var Value = $xml.children('sequence').text().trim();
 
                 if(ReadOnly)
                 {
@@ -21,7 +21,8 @@
                 else 
                 {
                     var $TextBox = $('<input type="text" class="textinput" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
-                                     .appendTo($Div);
+                                     .appendTo($Div)
+                                     .change(onchange);
 
                     if(Required)
                     {

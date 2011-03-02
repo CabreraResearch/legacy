@@ -19,8 +19,9 @@
                     HeightInRows: 4,
                     //CheckboxesOnLeft: false,
                     UseRadios: false,
-                    Required: false
+                    Required: false,
                     //ReadOnly: false
+                    onchange: function() { }
                 };
 
                 if (options) {
@@ -65,7 +66,8 @@
                         $cell.addClass('cbarraycell');
                         var checkid = o.ID + '_none';
                         var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
-                                       .appendTo($cell);
+                                       .appendTo($cell)
+                                       .change(o.onchange);
                         $check.attr('key', '');
                         $check.attr('rowlabel', '[none]');
                         $check.attr('collabel', o.cols[c]);
