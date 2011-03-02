@@ -12,7 +12,7 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Checked = $xml.children('checked').text();
+                var Checked = $xml.children('checked').text().trim();
 
                 if(ReadOnly)
                 {

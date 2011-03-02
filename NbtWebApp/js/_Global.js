@@ -134,7 +134,7 @@ function CswAjaxXml(options) {
             var $xml = $(XMLHttpRequest.responseXML);
             var $realxml = $xml.children().first();
             if ($realxml.first().get(0).nodeName == "error") {
-                _handleAjaxError(XMLHttpRequest, $realxml.text(), '');
+                _handleAjaxError(XMLHttpRequest, $realxml.text().trim(), '');
             }
             else {
                 o.success($realxml);

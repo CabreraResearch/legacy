@@ -12,7 +12,7 @@
 //                var Required = ($xml.attr('required') == "true");
 //                var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Text = $xml.children('value').text();
+                var Text = $xml.children('value').text().trim();
                 Text += '&nbsp;';
 
                 var $StaticDiv = $('<div id="'+ ID +'" class="staticvalue">' + Text + '</div>' )

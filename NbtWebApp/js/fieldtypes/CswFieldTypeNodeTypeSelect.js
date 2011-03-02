@@ -16,7 +16,7 @@
             var ReadOnly = ($xml.attr('readonly') == "true");
 
             var $OptionsXml = $xml.children('options');
-            var SelectedNodeTypeIds = $xml.children('NodeType').text();
+            var SelectedNodeTypeIds = $xml.children('NodeType').text().trim();
             var SelectMode = $xml.children('NodeType').attr('SelectMode');   // Single, Multiple, Blank
 
             var $CBADiv = $('<div />')

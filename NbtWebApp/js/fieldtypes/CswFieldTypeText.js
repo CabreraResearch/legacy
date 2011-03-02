@@ -12,7 +12,7 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Value = $xml.children('text').text();
+                var Value = $xml.children('text').text().trim();
                 var Length = $xml.children('text').attr('length');
 
                 if(ReadOnly)

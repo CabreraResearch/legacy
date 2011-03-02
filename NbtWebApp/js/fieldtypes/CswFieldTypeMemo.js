@@ -13,7 +13,7 @@
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
                 //var Value = extractCDataValue($xml.children('text'));
-                var Value = $xml.children('text').text();
+                var Value = $xml.children('text').text().trim();
                 var rows = $xml.children('text').attr('rows');
                 var columns = $xml.children('text').attr('columns');
 

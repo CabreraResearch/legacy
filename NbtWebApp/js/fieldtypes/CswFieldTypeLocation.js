@@ -15,9 +15,9 @@
                     var ReadOnly = ($xml.attr('readonly') == "true");
 
                     var NodeId = $xml.children('nodeid').text().trim();
-                    var Name = $xml.children('name').text();
-                    var Path = $xml.children('path').text();
-                    var ViewId = $xml.children('viewid').text();
+                    var Name = $xml.children('name').text().trim();
+                    var Path = $xml.children('path').text().trim();
+                    var ViewId = $xml.children('viewid').text().trim();
 
                     if(ReadOnly)
                     {

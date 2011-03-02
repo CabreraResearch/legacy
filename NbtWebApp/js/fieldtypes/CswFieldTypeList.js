@@ -12,8 +12,8 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Value = $xml.children('value').text();
-                var Options = $xml.children('options').text();
+                var Value = $xml.children('value').text().trim();
+                var Options = $xml.children('options').text().trim();
 
                 if(ReadOnly)
                 {

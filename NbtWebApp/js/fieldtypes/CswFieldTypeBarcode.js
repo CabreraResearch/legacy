@@ -12,7 +12,7 @@
                 var Required = ($xml.attr('required') == "true");
                 var ReadOnly = ($xml.attr('readonly') == "true");
 
-                var Value = $xml.children('barcode').text();
+                var Value = $xml.children('barcode').text().trim();
 
                 if(ReadOnly)
                 {
