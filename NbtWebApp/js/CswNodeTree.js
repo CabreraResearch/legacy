@@ -11,7 +11,7 @@
 				viewid: '',
 				nodeid: '',
 				cswnbtnodekey: '',
-				onSelectNode: function(nodeid, nodename, iconurl, cswnbtnodekey) { },
+				onSelectNode: function(optSelect) { },
 				SelectFirstChild: true
 			};
 
@@ -70,8 +70,14 @@
 						"plugins": ["themes", "xml_data", "ui", "types"]
 					}).bind('select_node.jstree', 
 									function (e, data) {
-										var Selected = jsTreeGetSelected($treediv, IDPrefix); 
-										o.onSelectNode(Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.CswNbtNodeKey);
+										var Selected = jsTreeGetSelected($treediv, IDPrefix);
+										var optSelect =  {
+											nodeid: Selected.SelectedId, 
+											nodename: Selected.SelectedText, 
+											iconurl: Selected.SelectedIconUrl, 
+											cswnbtnodekey: Selected.SelectedCswNbtNodeKey
+										}
+										o.onSelectNode(optSelect);
 									});
 					
 					// DO NOT define an onSuccess() function here that interacts with the tree.

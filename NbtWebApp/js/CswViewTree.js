@@ -23,7 +23,7 @@
 					var jsonTypes = $.parseJSON(strTypes);
 					var $treexml = $xml.find('tree').children('root')
 					var treexmlstring = xmlToString($treexml);
-					log('here ');
+					
 					$viewsdiv.jstree({
 						"xml_data": {
 							"data": treexmlstring,
@@ -50,7 +50,6 @@
 												iconurl: Selected.SelectedIconUrl,
 												viewid: Selected.SelectedViewId												
 											 };
-									console.log('select nk = ');
 									o.onSelect( Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey);
 								});
 
