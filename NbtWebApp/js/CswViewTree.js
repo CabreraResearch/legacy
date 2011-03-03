@@ -4,7 +4,7 @@
 		var o = {
 			ViewUrl: '/NbtWebApp/wsNBT.asmx/getViewTree',
 			viewid: '',
-			onSelect: function (nodeid, nodename, iconurl, cswnbtnodekey) { } //optSelect
+			onSelect: function (optSelect) { } // nodeid, nodename, iconurl, cswnbtnodekey
 		};
 
 		if (options) {
@@ -48,9 +48,12 @@
 												itemid: Selected.SelectedId, 
 												text: Selected.SelectedText, 
 												iconurl: Selected.SelectedIconUrl,
-												viewid: Selected.SelectedViewId												
+												viewid: Selected.SelectedViewId,
+                                                nodeid: Selected.SelectedId, 
+                                                nodename: Selected.SelectedText, 
+                                                cswnbtnodekey: Selected.SelectedCswNbtNodeKey												
 											 };
-									o.onSelect( Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey);
+									o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
 								});
 
 				} // success{}

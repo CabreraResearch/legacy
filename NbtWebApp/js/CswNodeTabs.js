@@ -20,7 +20,7 @@
 		var $outertabdiv = $('<div id="' + o.ID + '_tabdiv" />')
 						.appendTo($(this));
 
-		getTabs(o.nodeid);
+		getTabs(o);
 
 
 		function clearTabs()
@@ -45,23 +45,36 @@
 								//if(null == firsttabid) 
 								//    firsttabid = $tab.attr('id');
 							});
+                            var optSelect = {
+                                tabid: ''
+                            }
 							$tabdiv.tabs({
 								select: function(event, ui) {
-											getProps($($tabdiv.children('div')[ui.index]).attr('id'));
+                                            optSelect.tabid = $($tabdiv.children('div')[ui.index]).attr('id');
+											getProps(optSelect);
 										}
 							});
-							getProps($($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]).attr('id'));
+                            optSelect.tabid = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]).attr('id');
+							getProps(optSelect);
 						} // success{}
 			});
 		} // getTabs()
 			
-		function getProps(tabid)
+		function getProps(optSelect) //tabid
 		{
+            var p = {
+                tabid = ''
+            }
+            if(optSelect)
+            {
+                $.extend(p, optSelect);
+            }
+
 			CswAjaxXml({
 				url: o.PropsUrl,
-				data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&TabId=' + tabid + '&NodeTypeId=' + o.nodetypeid,
+				data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&TabId=' + p.tabid + '&NodeTypeId=' + o.nodetypeid,
 				success: function ($xml) {
-							$div = $("#" + tabid);
+							$div = $("#" + p.tabid);
 							$form = $div.children('form');
 							$form.children().remove();
 							
@@ -137,8 +150,17 @@
 														 }
 												});
 							   };
+                var ft = {
+                    'function': 'make',
+                    nodeid: o.nodeid, 
+                    'fieldtype': fieldtype, 
+                    'propdiv': $propdiv, 
+                    'propxml': $prop, 
+                    'onchange': onchange, 
+                    cswnbtnodekey: o.cswnbtnodekey
+                }
 
-				$.CswFieldTypeFactory('make', o.nodeid, fieldtype, $propdiv, $prop, onchange, o.cswnbtnodekey); 
+				$.CswFieldTypeFactory(ft); // 'make', o.nodeid, fieldtype, $propdiv, $prop, onchange, o.cswnbtnodekey
 
 				// recurse on sub-props
 				var $subprops = $prop.children('subprops');

@@ -89,10 +89,17 @@
 			});
 		},
 
-		'selectNode': function(newnodeid, newcswnbtnodekey) {
-			var $treediv = $(this).children('.treediv')
+		'selectNode': function(optSelect) { //newnodeid, newcswnbtnodekey
+			var o = {
+                newnodeid: '', 
+                newcswnbtnodekey: ''
+            }
+            if (optSelect) {
+				$.extend(o, optSelect);
+			}
+            var $treediv = $(this).children('.treediv')
 			var IDPrefix = $treediv.attr('id');
-			$treediv.jstree('select_node', '#' + IDPrefix + newnodeid);
+			$treediv.jstree('select_node', '#' + IDPrefix + o.newnodeid);
 		}
 	};
 

@@ -13,8 +13,8 @@
 		var $MenuUl = $(this);
 
 		$("ul.topnav").children('li')
-                      .click(TopMenuClick)
-                      .hover(TopMenuClick, HideAllSubMenus);
+					  .click(TopMenuClick)
+					  .hover(TopMenuClick, HideAllSubMenus);
 		$("ul.subnav").children('li').click(SubMenuClick);
 
 		function TopMenuClick()

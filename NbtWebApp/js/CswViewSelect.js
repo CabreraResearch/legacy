@@ -18,8 +18,17 @@
 
 		getViewSelect(o.viewid);
 
-		function getViewSelect(selectedviewid)
+		function getViewSelect(optSelect) // selectedviewid
 		{
+            var m = {
+			    selectedviewid: '',
+			    viewid: '',
+		    };
+
+		    if (optSelect) {
+			    $.extend(m, optSelect);
+		    }
+
 			$viewtreediv = $('<div/>');
 			$selectdiv.CswComboBox('init', { 'ID': o.ID + '_combo', 
 											 'TopContent': 'Select a View',
