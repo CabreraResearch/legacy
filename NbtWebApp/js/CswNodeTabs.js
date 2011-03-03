@@ -92,7 +92,8 @@
 
                             $div.CswLayoutTable('finish');
 
-							$div.append('<input type="button" id="SaveTab" name="SaveTab" value="Save"/>')
+                            $('<input type="button" id="SaveTab" name="SaveTab" value="Save"/>')
+                                  .appendTo($div)
 								  .click(function() { Save($div, $xml) });
 
 							// Validation
@@ -190,7 +191,7 @@
 
 			CswAjaxJSON({
 				url: '/NbtWebApp/wsNBT.asmx/SaveProps',
-				data: "{ EditMode: '"+ o.EditMode + "', NodePk: '" + o.nodeid + '&NodeKey=' + o.cswnbtnodekey + "', NodeTypeId: '"+ o.nodetypeid +"', NewPropsXml: '" + xmlToString(saveOpt.$propsxml) + "' }",
+				data: "{ EditMode: '"+ o.EditMode + "', NodePk: '" + o.nodeid + '&NodeKey=' + o.cswnbtnodekey + "', NodeTypeId: '"+ o.nodetypeid +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",
 				success: function(data) { 
 					var dataOpt = {
 						nodeid: data.nodeid,
@@ -213,7 +214,7 @@
 					'nodeid': o.nodeid
 				};
 				propOpt.fieldtype = propOpt.$propxml.attr('fieldtype');
-				var $cellset = $div.CswLayoutTable('cellset', $prop.attr('displayrow'), $prop.attr('displaycol'));
+				var $cellset = $div.CswLayoutTable('cellset', propOpt.$propxml.attr('displayrow'), propOpt.$propxml.attr('displaycol'));
 				propOpt.$propcell = $cellset[1][2];
 				propOpt.$propdiv = propOpt.$propcell.children('div').first();
 
