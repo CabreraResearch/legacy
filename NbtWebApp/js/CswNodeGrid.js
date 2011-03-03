@@ -37,8 +37,8 @@
 		var gridRows = [];
 
 		var gridTableId = o.id + o.gridTable;
-		var $gridOuter = makeTable(gridTableId)
-						.appendTo($(this));
+		var $gridOuter = $.CswTable({ ID: gridTableId })
+  						    .appendTo($(this));
 		
 		var gridPagerId = o.id + o.gridPager;
 		var $gridPager = $('<div id="' + gridPagerId + '" style="width:100%; height:20px;" />')

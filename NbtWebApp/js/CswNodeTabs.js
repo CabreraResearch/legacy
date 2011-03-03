@@ -176,7 +176,7 @@
 				var $subprops = makeOpt.$prop.children('subprops');
 				if($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 				{
-					var $subtable = makeTable(makeOpt.$prop.attr('id') + '_subproptable')
+                    var $subtable = $.CswTable({ ID: makeOpt.$prop.attr('id') + '_subproptable' })
 									.appendTo(makeOpt.$propcell);
 					_handleProps($subtable, $subprops);
 				}

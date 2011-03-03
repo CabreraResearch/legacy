@@ -138,7 +138,7 @@
         function getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd)
         {
 //            // top left cell of each cellset
-//            var $cell = getTableCell( $table, (row - 1) * cellsetrows + 1, (column - 1) * cellsetcolumns + 1)
+//            var $cell = $table.CswTable('cell', (row - 1) * cellsetrows + 1, (column - 1) * cellsetcolumns + 1)
 
 //            var thistop = $cell.offset().top;
 //            var thisleft = $cell.offset().left;

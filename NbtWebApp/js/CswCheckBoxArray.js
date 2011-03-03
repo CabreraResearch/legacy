@@ -36,7 +36,7 @@
                 $Div.children().remove();
 
                 var $OuterDiv = $('<div/>').appendTo($Div);
-                var $table = makeTable(o.ID + '_tbl')
+                var $table = $.CswTable({ ID: o.ID + '_tbl' })
                                .appendTo($OuterDiv);
 
                 $OuterDiv.css('height', (25 * o.HeightInRows) + 'px');
@@ -47,7 +47,7 @@
                 var tablerow = 1;
                 for(var c = 0; c < o.cols.length; c++)
                 {
-                    var $cell = getTableCell($table, tablerow, c+2);
+                    var $cell = $table.CswTable('cell', tablerow, c+2);
                     $cell.addClass('cbarraycell');
                     $cell.append(o.cols[c]);
                 }
@@ -57,12 +57,12 @@
                 if(o.UseRadios && ! o.Required)
                 {
                     // Row label
-                    var $labelcell = getTableCell($table, tablerow, 1);
+                    var $labelcell = $table.CswTable('cell', tablerow, 1);
                     $labelcell.addClass('cbarraycell');
                     $labelcell.append('[none]');
                     for(var c = 0; c < o.cols.length; c++)
                     {
-                        var $cell = getTableCell($table, tablerow, c+2);
+                        var $cell = $table.CswTable('cell', tablerow, c+2);
                         $cell.addClass('cbarraycell');
                         var checkid = o.ID + '_none';
                         var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
@@ -85,13 +85,13 @@
                 {
                     var row = o.data[r];
                     // Row label
-                    var $labelcell = getTableCell($table, tablerow + r, 1);
+                    var $labelcell = $table.CswTable('cell', tablerow + r, 1);
                     $labelcell.addClass('cbarraycell');
                     $labelcell.append(row.label);
                     for(var c = 0; c < o.cols.length; c++)
                     {
                         
-                        var $cell = getTableCell($table, tablerow + r, c+2);
+                        var $cell = $table.CswTable('cell', tablerow + r, c+2);
                         $cell.addClass('cbarraycell');
                         var checkid = o.ID + '_' + r + '_' + c;
                         var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')

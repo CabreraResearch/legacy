@@ -13,12 +13,12 @@
             var Height = o.$propxml.children('href').attr('height');
             var FileName = o.$propxml.children('name').text().trim();
 
-            var $table = makeTable(ID + '_tbl')
+            var $table = $.CswTable({ ID: o.ID + '_tbl' })
                             .appendTo($Div);
-            var $cell11 = getTableCell($table, 1, 1).attr('colspan', '3');
-            var $cell21 = getTableCell($table, 2, 1).attr('width', Width-36);
-            var $cell22 = getTableCell($table, 2, 2).attr('align', 'right');
-            var $cell23 = getTableCell($table, 2, 3).attr('align', 'right');
+            var $cell11 = $table.CswTable('cell', 1, 1).attr('colspan', '3');
+            var $cell21 = $table.CswTable('cell', 2, 1).attr('width', Width-36);
+            var $cell22 = $table.CswTable('cell', 2, 2).attr('align', 'right');
+            var $cell23 = $table.CswTable('cell', 2, 3).attr('align', 'right');
 
             var $TextBox = $('<a href="'+ Href +'" target="_blank"><img src="' + Href + '" alt="' + FileName + '" width="'+ Width +'" height="'+ Height +'"/></a>')
                                 .appendTo($cell11);

@@ -22,15 +22,15 @@
                             .appendTo($Div)
                             .attr('style', 'width: '+ o.Width);
 
-                $table = makeTable(o.ID + '_tbl')
-                         .appendTo($TopDiv);
+                var $table = $.CswTable({ ID: o.ID + '_tbl' })
+                                 .appendTo($TopDiv);
                 $table.attr('width', '100%');
         
-                $cell1 = getTableCell($table, 1, 1);
+                $cell1 = $table.CswTable('cell', 1, 1);
                 $cell1.attr('width', '100%');
                 $cell1.append(o.TopContent);
         
-                $cell2 = getTableCell($table, 1, 2);
+                $cell2 = $table.CswTable('cell', 1, 2);
                 $cell2.addClass( "CswComboBox_ImageCell" );
 
                 var $ChildDiv = $('<div id="' + o.ID +'_child" class="CswComboBox_ChildDiv">')
@@ -50,7 +50,7 @@
                     var $Div = $(this);
                     var $TopDiv = $Div.children('.CswComboBox_TopDiv');
                     var $table = $TopDiv.children('table');
-                    var $cell1 = getTableCell($table, 1, 1);
+                    var $cell1 = $table.CswTable('cell', 1, 1);
                     $cell1.text('');
                     $cell1.children().remove();
                     $cell1.append(content);

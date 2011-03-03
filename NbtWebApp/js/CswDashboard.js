@@ -16,8 +16,7 @@
             data: "",
             success: function ($xml) {
                  
-                    //var $table = $('<table id="DashboardTable" class="DashboardTable" cellpadding="0" cellspacing="0"><tr></tr></table>');
-                    var $table = makeTable('DashboardTable');
+                    var $table = $.CswTable({ ID: 'DashboardTable' });
                     $table.addClass('DashboardTable');
                     var $tr = $table.append('<tr />');
 
