@@ -3,8 +3,9 @@
 ; (function ($) {
 	$.fn.CswNodeGrid = function (optJqGrid, optCswNodeGrid) {
 
-		// jqGrid properties
+		
 		var o = {
+			// jqGrid properties
 			datatype: "local", 
 			height: 300,
 			rowNum:10, 
@@ -18,14 +19,7 @@
 			emptyrecords:"No Data to Display", 
 			sortorder: "asc", 
 			multiselect: true,
-		};
-		
-		if (optJqGrid) {
-			$.extend(o, optJqGrid);
-		}
-
-		// CswNodeGrid properties
-		var d = {
+			// CswNodeGrid properties
 			GridUrl: '/NbtWebApp/wsNBT.asmx/getGrid',
 			viewid: '',
 			id: "CswNodeGrid",
@@ -35,24 +29,24 @@
 			gridPager: "_gridPager"
 		};
 		
-		if(optCswNodeGrid) {
-			$.extend(d,optCswNodeGrid);
+		if (optJqGrid) {
+			$.extend(o, optJqGrid);
 		}
 
 		var gridData = [];
 		var gridRows = [];
 
-		var gridTableId = d.id + d.gridTable;
+		var gridTableId = o.id + o.gridTable;
 		var $gridOuter = makeTable(gridTableId)
 						.appendTo($(this));
 		
-		var gridPagerId = d.id + d.gridPager;
+		var gridPagerId = o.id + o.gridPager;
 		var $gridPager = $('<div id="' + gridPagerId + '" style="width:100%; height:20px;" />')
 						 .appendTo($(this));
 		
 		CswAjaxJSON({
-			url: d.GridUrl,
-			data: "{ViewId: '" +  d.viewid + "', CswNbtNodeKey: '" + d.cswnbtnodekey + "'}",
+			url: o.GridUrl,
+			data: "{ViewId: '" +  o.viewid + "', CswNbtNodeKey: '" + o.cswnbtnodekey + "'}",
 			success: function (gridJson) {
 					
 					gridData = gridJson.grid;
@@ -77,7 +71,7 @@
 					};
 
 					var optSearch = {
-						id: d.id,
+						id: o.id,
 						caption: "Search...",
 						Find: "Find",
 						Reset: "Reset",
@@ -87,7 +81,7 @@
 						rulesText: "rules"
 					}
 					var optEdit = {
-						id: d.id,
+						id: o.id,
 						addCaption: "Add Record",
 						editCaption: "Edit Record",
 						bSubmit: "Submit",
@@ -100,19 +94,19 @@
 					}
 					var optAdd = {};
 					var optView = {
-						id: d.id,
+						id: o.id,
 						caption: "View Record",
 						bClose: "Close"
 					}
 					var optDel = {
-						id: d.id,
+						id: o.id,
 						caption: "Delete",
 						msg: "Delete selected record(s)?",
 						bSubmit: "Delete",
 						bCancel: "Cancel"
 					}
 					var optNav = {
-						id: d.id,
+						id: o.id,
 						edit: true,
 						edittext: "",
 						edittitle: "Edit selected row",

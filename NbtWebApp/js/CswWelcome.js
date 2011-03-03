@@ -4,8 +4,8 @@
 		var o = {
 			Url: '/NbtWebApp/wsNBT.asmx/getWelcomeItems',
 			onLinkClick: function(optSelect) { }, //viewid, actionid, reportid
-			onSearchClick: function(viewid) { },
-			onAddClick: function(nodetypeid) { }
+			onSearchClick: function(optSelect) { }, //viewid
+			onAddClick: function(optSelect) { } //nodetypeid
 		};
 
 		if (options) {
@@ -57,14 +57,14 @@
 							break;
 						case 'Search': 
 							$cell.append( $('<a href="">' + optSelect.text + '</a>') );
-							$cell.find('a').click(function() { o.onSearchClick(optSelect.viewid); return false; });
+							$cell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
 							break;
 						case 'Text':
 							$cell.text(optSelect.text);
 							break;
 						case 'Add': 
 							$cell.append( $('<a href="">' + optSelect.text + '</a>') );
-							$cell.find('a').click(function() { o.onAddClick(optSelect.nodetypeid); return false; });
+							$cell.find('a').click(function() { o.onAddClick(optSelect); return false; }); //nodetypeid
 							break;
 					}
 				});

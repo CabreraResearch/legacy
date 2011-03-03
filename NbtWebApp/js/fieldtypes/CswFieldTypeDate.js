@@ -3,38 +3,34 @@
     var PluginName = 'CswFieldTypeDate';
 
     var methods = {
-        init: function(nodepk, $xml, onchange) {
+        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
-                var $Div = $(this);
-                $Div.children().remove();
+            var $Div = $(this);
+            $Div.children().remove();
 
-                var ID = $xml.attr('id');
-                var Required = ($xml.attr('required') == "true");
-                var ReadOnly = ($xml.attr('readonly') == "true");
+            var Value = o.$propxml.children('value').text().trim();
+            if(Value == '1/1/0001')
+                Value = '';
 
-                var Value = $xml.children('value').text().trim();
-                if(Value == '1/1/0001')
-                    Value = '';
-
-                if(ReadOnly)
+            if(o.ReadOnly)
+            {
+                $Div.append(Value);
+            }
+            else 
+            {
+                var $TextBox = $('<input type="text" class="textinput date" id="'+ o.ID +'" name="' + o.ID + '" value="'+ Value +'" />"' )
+                                    .appendTo($Div)
+                                    .change(o.onchange)
+                                    .datepicker();
+                if(o.Required)
                 {
-                    $Div.append(Value);
+                    $TextBox.addClass("required");
                 }
-                else 
-                {
-                    var $TextBox = $('<input type="text" class="textinput date" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
-                                     .appendTo($Div)
-                                     .change(onchange)
-                                     .datepicker();
-                    if(Required)
-                    {
-                        $TextBox.addClass("required");
-                    }
-                }
-            },
-        save: function($propdiv, $xml) {
-                var $TextBox = $propdiv.find('input');
-                $xml.children('value').text($TextBox.val());
+            }
+        },
+        save: function(o) { //$propdiv, $xml
+                var $TextBox = o.$propdiv.find('input');
+                o.$propxml.children('value').text($TextBox.val());
             }
     };
     

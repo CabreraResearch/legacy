@@ -3,40 +3,36 @@
     var PluginName = 'CswFieldTypeMTBF';
 
     var methods = {
-        init: function(nodepk, $xml, onchange) {
+        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
-                var $Div = $(this);
-                $Div.children().remove();
+            var $Div = $(this);
+            $Div.children().remove();
 
-                var ID = $xml.attr('id');
-                var Required = ($xml.attr('required') == "true");
-                var ReadOnly = ($xml.attr('readonly') == "true");
+            var StartDate = o.$propxml.children('startdatetime').text().trim();
+            var Value = o.$propxml.children('value').text().trim();
+            var Units = o.$propxml.children('units').text().trim();
 
-                var StartDate = $xml.children('startdatetime').text().trim();
-                var Value = $xml.children('value').text().trim();
-                var Units = $xml.children('units').text().trim();
+            var $table = makeTable(o.ID + '_tbl')
+                            .appendTo($Div);
+            var $cell11 = getTableCell($table, 1, 1);
+            var $cell12 = getTableCell($table, 1, 2);
 
-                var $table = makeTable(ID + '_tbl')
-                                .appendTo($Div);
-                var $cell11 = getTableCell($table, 1, 1);
-                var $cell12 = getTableCell($table, 1, 2);
-
-                $cell11.append(Value + '&nbsp;' + Units);
-                if(!ReadOnly)
-                {
-                    var $EditButton = $('<div />')
-                                        .appendTo($cell12);
-                    $EditButton.CswImageButton({
-                                                 ButtonType: CswImageButton_ButtonType.Edit,
-                                                 AlternateText: 'Edit',
-                                                 'ID': ID,
-                                                 onClick: function (alttext) { alert('This is not implemented yet'); return CswImageButton_ButtonType.None; }
-                                              });
-                }
-            },
-        save: function($propdiv, $xml) {
-                var $StartDateTextBox = $propdiv.find('input#'+ ID +'_sd');
-                $xml.children('startdatetime').text($StartDateTextBox.val());
+            $cell11.append(Value + '&nbsp;' + Units);
+            if(!o.ReadOnly)
+            {
+                var $EditButton = $('<div />')
+                                    .appendTo($cell12);
+                $EditButton.CswImageButton({
+                                                ButtonType: CswImageButton_ButtonType.Edit,
+                                                AlternateText: 'Edit',
+                                                'ID': o.ID,
+                                                onClick: function (alttext) { alert('This is not implemented yet'); return CswImageButton_ButtonType.None; }
+                                            });
+            }
+        },
+        save: function(o) { //$propdiv, $xml
+                var $StartDateTextBox = o.$propdiv.find('input#'+ o.ID +'_sd');
+                o.$propxml.children('startdatetime').text($StartDateTextBox.val());
             }
     };
     

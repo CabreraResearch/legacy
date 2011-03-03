@@ -3,51 +3,47 @@
     var PluginName = 'CswFieldTypeBarcode';
 
     var methods = {
-        init: function(nodepk, $xml, onchange) {
+        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly  == nodeid,propxml,onchange
 
-                var $Div = $(this);
-                $Div.children().remove();
+            var $Div = $(this);
+            $Div.children().remove();
 
-                var ID = $xml.attr('id');
-                var Required = ($xml.attr('required') == "true");
-                var ReadOnly = ($xml.attr('readonly') == "true");
+            var Value = o.$propxml.children('barcode').text().trim();
 
-                var Value = $xml.children('barcode').text().trim();
+            if(o.ReadOnly)
+            {
+                $Div.append(Value);
+            }
+            else 
+            {
+                var $table = makeTable(o.ID + '_tbl').appendTo($Div);
 
-                if(ReadOnly)
+                var $cell1 = getTableCell($table, 1, 1);
+                var $TextBox = $('<input type="text" class="textinput" id="'+ o.ID +'" name="' + o.ID + '" value="'+ Value +'" />"' )
+                                    .appendTo($cell1)
+                                    .change(o.onchange);
+
+                var $cell2 = getTableCell($table, 1, 2);
+                var $PrintButton = $('<div/>' )
+                                        .appendTo($cell2)
+                                        .CswImageButton({  ButtonType: CswImageButton_ButtonType.Print,
+                                                        AlternateText: '',
+                                                        ID: o.ID + '_print',
+                                                        onClick: function (alttext) { 
+                                                            $.CswDialog('OpenDialog', o.ID + '_dialog', 'Popup_PrintLabel.aspx?nodeid=' + o.nodeid + '&propid=' + o.ID); 
+                                                            return CswImageButton_ButtonType.None; 
+                                                        }
+                                                        });
+
+                if(o.Required)
                 {
-                    $Div.append(Value);
+                    $TextBox.addClass("required");
                 }
-                else 
-                {
-                    var $table = makeTable(ID + '_tbl').appendTo($Div);
-
-                    var $cell1 = getTableCell($table, 1, 1);
-                    var $TextBox = $('<input type="text" class="textinput" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
-                                     .appendTo($cell1)
-                                     .change(onchange);
-
-                    var $cell2 = getTableCell($table, 1, 2);
-                    var $PrintButton = $('<div/>' )
-                                         .appendTo($cell2)
-                                         .CswImageButton({  ButtonType: CswImageButton_ButtonType.Print,
-                                                            AlternateText: '',
-                                                            ID: '',
-                                                            onClick: function (alttext) { 
-                                                                $.CswDialog('OpenDialog', ID + '_dialog', 'Popup_PrintLabel.aspx?nodeid=' + nodepk + '&propid=' + ID); 
-                                                                return CswImageButton_ButtonType.None; 
-                                                            }
-                                                         });
-
-                    if(Required)
-                    {
-                        $TextBox.addClass("required");
-                    }
-                }
-            },
-        save: function($propdiv, $xml) {
-                var $TextBox = $propdiv.find('input');
-                $xml.children('barcode').text($TextBox.val());
+            }
+        },
+        save: function(o) {
+                var $TextBox = o.$propdiv.find('input');
+                o.$propxml.children('barcode').text($TextBox.val());
             }
     };
     

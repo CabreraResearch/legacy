@@ -3,39 +3,35 @@
     var PluginName = 'CswFieldTypeMemo';
 
     var methods = {
-        init: function(nodepk, $xml, onchange) {
+        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
         
-                var $Div = $(this);
-                $Div.children().remove();
+            var $Div = $(this);
+            $Div.children().remove();
 
-                var ID = $xml.attr('id');
-                var Required = ($xml.attr('required') == "true");
-                var ReadOnly = ($xml.attr('readonly') == "true");
+            //var Value = extractCDataValue($xml.children('text'));
+            var Value = o.$propxml.children('text').text().trim();
+            var rows = o.$propxml.children('text').attr('rows');
+            var columns = o.$propxml.children('text').attr('columns');
 
-                //var Value = extractCDataValue($xml.children('text'));
-                var Value = $xml.children('text').text().trim();
-                var rows = $xml.children('text').attr('rows');
-                var columns = $xml.children('text').attr('columns');
-
-                if(ReadOnly)
+            if(o.ReadOnly)
+            {
+                $Div.append(Value);
+            }
+            else 
+            {
+                var $TextArea = $('<textarea id="'+ o.ID +'" name="' + o.ID + '" rows="'+rows+'" cols="'+columns+'">'+ Value +'</textarea>' )
+                                    .appendTo($Div)
+                                    .change(o.onchange); 
+                if(o.Required)
                 {
-                    $Div.append(Value);
+                    $TextArea.addClass("required");
                 }
-                else 
-                {
-                    var $TextArea = $('<textarea id="'+ ID +'" name="' + ID + '" rows="'+rows+'" cols="'+columns+'">'+ Value +'</textarea>' )
-                                     .appendTo($Div)
-                                     .change(onchange); 
-                    if(Required)
-                    {
-                        $TextArea.addClass("required");
-                    }
-                }
+            }
 
-            },
-        save: function($propdiv, $xml) {
-                var $TextArea = $propdiv.find('textarea');
-                $xml.children('text').text($TextArea.val());
+        },
+        save: function(o) { //$propdiv, $xml
+                var $TextArea = o.$propdiv.find('textarea');
+                o.$propxml.children('text').text($TextArea.val());
             }
     };
     

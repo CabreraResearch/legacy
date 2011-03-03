@@ -3,28 +3,28 @@
 	var PluginName = 'CswFieldTypeGrid';
 
 	var methods = {
-		init: function(nodepk, $xml, onchange, cswnbtnodekey) {
+		init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
 
-				var $Div = $(this);
-				$Div.children().remove();
+			var $Div = $(this);
+			$Div.children().remove();
 
-				var ID = $xml.attr('id');
-				var Required = ($xml.attr('required') == "true");
-				var ReadOnly = ($xml.attr('readonly') == "true");
+			var Value = o.$propxml.children('value').text().trim();
+			var ViewId = o.$propxml.children('viewid').text().trim();
+			var options = {
+				viewid: ViewId
+			}
+			$.extend(options,o);
 
-				var Value = $xml.children('value').text().trim();
-				console.log("grid prop XML" + $xml);
-				//$Div.append("xml starts here" + $xml);
-				if(ReadOnly)
-				{
-					$Div.append(Value);
-				}
-				else 
-				{
-					$($Div).CswNodeGrid( {}, {viewid:'1478', nodeid: nodepk, 'cswnbtnodekey': cswnbtnodekey} );
-				}
-			},
-		save: function($propdiv, $xml) {
+			if(o.ReadOnly)
+			{
+				$Div.append(Value);
+			}
+			else 
+			{
+				$($Div).CswNodeGrid(options);
+			}
+		},
+		save: function(o) {
 //                var $TextBox = $propdiv.find('input');
 //                $xml.children('barcode').text($TextBox.val());
 			}

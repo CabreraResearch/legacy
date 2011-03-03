@@ -5,56 +5,52 @@
         var PluginName = 'CswFieldTypeRelationship';
 
         var methods = {
-            init: function(nodepk, $xml, onchange) {
+            init: function(o) { //nodepk = o.nodeid, o.$propxml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
             
-                    var $Div = $(this);
-                    $Div.children().remove();
+                var $Div = $(this);
+                $Div.children().remove();
 
-                    var ID = $xml.attr('id');
-                    var Required = ($xml.attr('required') == "true");
-                    var ReadOnly = ($xml.attr('readonly') == "true");
+                var SelectedNodeId = o.$propxml.children('nodeid').text().trim();
+                var SelectedName = o.$propxml.children('name').text().trim();
+                var $Options = o.$propxml.children('options');
 
-                    var SelectedNodeId = $xml.children('nodeid').text().trim();
-                    var SelectedName = $xml.children('name').text().trim();
-                    var $Options = $xml.children('options');
+                if(o.ReadOnly)
+                {
+                    $Div.append(SelectedName);
+                }
+                else 
+                {
+                    var $mytable = makeTable(o.ID + '_tbl').appendTo($Div);
 
-                    if(ReadOnly)
+                    var $selectcell = getTableCell($mytable, 1, 1);
+                    var $SelectBox = $('<select id="'+ o.ID +'" name="'+ o.ID +'" class="selectinput" />"' )
+                                        .appendTo($selectcell)
+                                        .change(o.onchange);
+
+                    $Options.children().each(function() {
+                        var $this = $(this);
+                        $SelectBox.append('<option value="' + $this.attr('id') + '">' + $this.attr('value') + '</option>');
+                    });
+
+                    $SelectBox.val( SelectedNodeId );
+
+                    var $addcell = getTableCell($mytable, 1, 2);
+                    var $AddButton = $('<div />').appendTo($addcell);
+                    $AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
+                                                AlternateText: "Add New",
+                                                onClick: onAdd 
+                                                });
+
+                    if(o.Required)
                     {
-                        $Div.append(SelectedName);
+                        $SelectBox.addClass("required");
                     }
-                    else 
-                    {
-                        var $mytable = makeTable(ID + '_tbl').appendTo($Div);
+                }
 
-                        var $selectcell = getTableCell($mytable, 1, 1);
-                        var $SelectBox = $('<select id="'+ ID +'" name="'+ ID +'" class="selectinput" />"' )
-                                           .appendTo($selectcell)
-                                           .change(onchange);
-
-                        $Options.children().each(function() {
-                            var $this = $(this);
-                            $SelectBox.append('<option value="' + $this.attr('id') + '">' + $this.attr('value') + '</option>');
-                        });
-
-                        $SelectBox.val( SelectedNodeId );
-
-                        var $addcell = getTableCell($mytable, 1, 2);
-                        var $AddButton = $('<div />').appendTo($addcell);
-                        $AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
-                                                    AlternateText: "Add New",
-                                                    onClick: onAdd 
-                                                  });
-
-                        if(Required)
-                        {
-                            $SelectBox.addClass("required");
-                        }
-                    }
-
-                },
-            save: function($propdiv, $xml) {
-                    var $SelectBox = $propdiv.find('select');
-                    $xml.children('nodeid').text($SelectBox.val());
+            },
+            save: function(o) {
+                    var $SelectBox = o.$propdiv.find('select');
+                    o.$propxml.children('nodeid').text($SelectBox.val());
                 }
         };
     

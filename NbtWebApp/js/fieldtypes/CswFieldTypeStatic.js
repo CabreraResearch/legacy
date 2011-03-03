@@ -3,41 +3,37 @@
     var PluginName = 'CswFieldTypeStatic';
 
     var methods = {
-        init: function(nodepk, $xml) {
+        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
                 
-                var $Div = $(this);
-                $Div.children().remove();
+            var $Div = $(this);
+            $Div.children().remove();
                  
-                var ID = $xml.attr('id');
-//                var Required = ($xml.attr('required') == "true");
-//                var ReadOnly = ($xml.attr('readonly') == "true");
+            var Text = o.$propxml.children('text').text().trim();
+            var Columns = parseInt( o.$propxml.children('text').attr('columns') );
+            var Rows = parseInt( o.$propxml.children('text').attr('rows') );
 
-                var Text = $xml.children('text').text().trim();
-                var Columns = parseInt( $xml.children('text').attr('columns') );
-                var Rows = parseInt( $xml.children('text').attr('rows') );
-
-                var overflow = 'auto';
-                var width = '';
-                var height = '';
-                if(Columns > 0 && Rows > 0)
-                {
-                    overflow = 'scroll';
-                    width = Math.round( Columns + 2 - ( Columns / 2.25)) + 'em';
-                    height = Math.round( Rows + 2.5 + ( Rows / 5)) + 'em';
-                }
-                else if(Columns > 0)
-                {
-                    width = Math.round( Columns - ( Columns / 2.25)) + 'em';
-                }
-                else if(Rows > 0)
-                {
-                    height = Math.round( Rows + 0.5 + ( Rows / 5)) + 'em';
-                }
+            var overflow = 'auto';
+            var width = '';
+            var height = '';
+            if(Columns > 0 && Rows > 0)
+            {
+                overflow = 'scroll';
+                width = Math.round( Columns + 2 - ( Columns / 2.25)) + 'em';
+                height = Math.round( Rows + 2.5 + ( Rows / 5)) + 'em';
+            }
+            else if(Columns > 0)
+            {
+                width = Math.round( Columns - ( Columns / 2.25)) + 'em';
+            }
+            else if(Rows > 0)
+            {
+                height = Math.round( Rows + 0.5 + ( Rows / 5)) + 'em';
+            }
             
-                var $StaticDiv = $('<div class="staticvalue" style="overflow: '+ overflow +'; width: '+ width +'; height: '+ height +';">' + Text + '</div>' )
-                               .appendTo($Div); 
-            },
-        save: function($propdiv, $xml) {
+            var $StaticDiv = $('<div class="staticvalue" style="overflow: '+ overflow +'; width: '+ width +'; height: '+ height +';">' + Text + '</div>' )
+                            .appendTo($Div); 
+        },
+        save: function(o) {
                 // no changes to save
             }
     };

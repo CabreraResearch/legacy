@@ -6,7 +6,7 @@
 			viewid: '',
 			nodeid: '',
 			cswnbtnodekey: '',
-			onAddNode: function(newnodeid,newcswnbtnodekey) { }
+			onAddNode: function(optSelect) { } //newnodeid,newcswnbtnodekey
 		};
 
 		if (options) {
@@ -14,7 +14,8 @@
 		}
 
 		var $MenuDiv = $(this);
-
+		log('MainMenu');
+		log(o);
 		CswAjaxXml({
 			url: o.Url,
 			data: "ViewId=" + o.viewid + "&NodePk=" + o.nodeid + "&NodeKey=" + o.cswnbtnodekey,

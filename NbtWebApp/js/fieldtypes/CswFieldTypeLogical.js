@@ -1,92 +1,88 @@
 ﻿; (function ($) {
-        
-    var PluginName = 'CswFieldTypeLogical';
+		
+	var PluginName = 'CswFieldTypeLogical';
 
-    var methods = {
-        init: function(nodepk, $xml, onchange) {
+	var methods = {
+		init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
-                $Div = $(this);
-                $Div.children().remove();
+			$Div = $(this);
+			$Div.children().remove();
 
-                var ID = $xml.attr('id');
-                var Required = ($xml.attr('required') == "true");
-                var ReadOnly = ($xml.attr('readonly') == "true");
+			var Checked = o.$propxml.children('checked').text().trim();
 
-                var Checked = $xml.children('checked').text().trim();
+			if(o.ReadOnly)
+			{
+				switch(Checked)
+				{
+					case "true": $Div.append('Yes'); break;
+					case "false": $Div.append('No'); break;
+				}
+			} 
+			else 
+			{
+				var thisButtonType;
+				switch(Checked)
+				{
+					case "true": thisButtonType = CswImageButton_ButtonType.CheckboxTrue; break;
+					case "false": thisButtonType = CswImageButton_ButtonType.CheckboxFalse; break;
+					default: thisButtonType = CswImageButton_ButtonType.CheckboxNull; break;
+				}
 
-                if(ReadOnly)
-                {
-                    switch(Checked)
-                    {
-                        case "true": $Div.append('Yes'); break;
-                        case "false": $Div.append('No'); break;
-                    }
-                } 
-                else 
-                {
-                    var thisButtonType;
-                    switch(Checked)
-                    {
-                        case "true": thisButtonType = CswImageButton_ButtonType.CheckboxTrue; break;
-                        case "false": thisButtonType = CswImageButton_ButtonType.CheckboxFalse; break;
-                        default: thisButtonType = CswImageButton_ButtonType.CheckboxNull; break;
-                    }
+				$Div.CswImageButton({ ButtonType: thisButtonType, 
+										AlternateText: Checked,
+										onClick: function(o) { //$ImageDiv
+													onClick(o); //$ImageDiv, Required
+													onchange(); 
+													return false;
+												}
+									});
+			}
+		},
+		save: function(o) { //$propdiv, $xml
+				var $CheckboxImage = o.$propdiv.find('div');
+				o.$propxml.children('checked').text($CheckboxImage.attr('alt'));
+			}
+	};
+	
 
-                    $Div.CswImageButton({ ButtonType: thisButtonType, 
-                                          AlternateText: Checked,
-                                          onClick: function($ImageDiv) { 
-                                                        onClick($ImageDiv, Required); 
-                                                        onchange(); 
-                                                        return false;
-                                                    }
-                                        });
-                }
-            },
-        save: function($propdiv, $xml) {
-                var $CheckboxImage = $propdiv.find('div');
-                $xml.children('checked').text($CheckboxImage.attr('alt'));
-            }
-    };
-    
-
-    function onClick($ImageDiv, Required) 
-    {
-        var currentValue = $ImageDiv.attr('alt');
-	    var newValue = CswImageButton_ButtonType.CheckboxNull;
-	    var newAltText = "null";
-        if (currentValue == "null") {
-		    newValue = CswImageButton_ButtonType.CheckboxTrue;
-            newAltText = "true";
-	    } else if (currentValue == "false") {
-		    if (Required == "true") {
-			    newValue = CswImageButton_ButtonType.CheckboxTrue;
-                newAltText = "true";
-		    } else {
-			    newValue = CswImageButton_ButtonType.CheckboxNull;
-                newAltText = "null";
-		    }
-	    } else if (currentValue == "true") {
-		    newValue = CswImageButton_ButtonType.CheckboxFalse;
-            newAltText = "false";
-	    }
-        $ImageDiv.attr('alt', newAltText);
-        return newValue;
-    } // onClick()
+	function onClick(o) //$ImageDiv, Required
+	{
+		var currentValue = o.$ImageDiv.attr('alt');
+		var newValue = CswImageButton_ButtonType.CheckboxNull;
+		var newAltText = "null";
+		if (currentValue == "null") {
+			newValue = CswImageButton_ButtonType.CheckboxTrue;
+			newAltText = "true";
+		} else if (currentValue == "false") {
+			if (o.Required == "true") {
+				newValue = CswImageButton_ButtonType.CheckboxTrue;
+				newAltText = "true";
+			} else {
+				newValue = CswImageButton_ButtonType.CheckboxNull;
+				newAltText = "null";
+			}
+		} else if (currentValue == "true") {
+			newValue = CswImageButton_ButtonType.CheckboxFalse;
+			newAltText = "false";
+		}
+		o.$ImageDiv.attr('alt', newAltText);
+		return newValue;
+	} // onClick()
 
 
 
-    // Method calling logic
-    $.fn.CswFieldTypeLogical = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
-        } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
-        }    
+	// Method calling logic
+	$.fn.CswFieldTypeLogical = function (method) {
+		
+		if ( methods[method] ) {
+		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+		} else if ( typeof method === 'object' || ! method ) {
+		  return methods.init.apply( this, arguments );
+		} else {
+		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		}    
   
-    };
+	};
 })(jQuery);
 
 

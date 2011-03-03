@@ -3,19 +3,15 @@
     var PluginName = 'CswFieldTypeFile';
 
     var methods = {
-        init: function(nodepk, $xml, onchange) {
+        init: function(o) { //o.nodeid, o.$propxml, o.onchange
 
                 var $Div = $(this);
                 $Div.children().remove();
 
-                var ID = $xml.attr('id');
-                var Required = ($xml.attr('required') == "true");
-                var ReadOnly = ($xml.attr('readonly') == "true");
+                var Href = o.$propxml.children('href').text().trim();
+                var FileName = o.$propxml.children('name').text().trim();
 
-                var Href = $xml.children('href').text().trim();
-                var FileName = $xml.children('name').text().trim();
-
-                var $table = makeTable(ID + '_tbl')
+                var $table = makeTable(o.ID + '_tbl')
                              .appendTo($Div);
                 var $cell11 = getTableCell($table, 1, 1);
                 var $cell12 = getTableCell($table, 1, 2);
@@ -23,14 +19,14 @@
 
                 $cell11.append('<a href="'+ Href +'" target="_blank">'+ FileName +'</a>');
 
-                if(!ReadOnly)
+                if(!o.ReadOnly)
                 {
                     var $editButton = $('<div/>')
                         .appendTo($cell12)
                         .CswImageButton({   
                                             ButtonType: CswImageButton_ButtonType.Edit,
                                             AlternateText: 'Edit',
-                                            ID: ID + '_edit',
+                                            ID: o.ID + '_edit',
                                             onClick: function (alttext) { alert('this function has not yet been implemented!'); return CswImageButton_ButtonType.None; }
                                         });
                     var $clearButton = $('<div/>')
@@ -38,15 +34,15 @@
                         .CswImageButton({
                                             ButtonType: CswImageButton_ButtonType.Clear,
                                             AlternateText: 'Clear',
-                                            ID: ID + '_clr',
+                                            ID: o.ID + '_clr',
                                             onClick: function (alttext) { alert('this function has not yet been implemented!'); return CswImageButton_ButtonType.None; }
                                         });
                 }
 
             },
-        save: function($propdiv, $xml) {
+        save: function(o) {
 //                var $TextBox = $propdiv.find('input');
-//                $xml.children('barcode').text($TextBox.val());
+//                o.$propxml.children('barcode').text($TextBox.val());
             }
     };
     

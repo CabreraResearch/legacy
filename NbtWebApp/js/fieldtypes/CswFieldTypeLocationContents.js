@@ -3,19 +3,15 @@
     var PluginName = 'CswFieldTypeLocationContents';
 
     var methods = {
-        init: function(nodepk, $xml, onchange) {
+        init: function(o) { // nodepk, $xml, onchange
 
                 var $Div = $(this);
                 $Div.children().remove();
 
-                var ID = $xml.attr('id');
-                var Required = ($xml.attr('required') == "true");
-                var ReadOnly = ($xml.attr('readonly') == "true");
-
-                var Value = $xml.children('value').text().trim();
+                var Value = o.$propxml.children('value').text().trim();
 
                 $Div.append('[Not Implemented Yet]');
-//                if(ReadOnly)
+//                if(o.ReadOnly)
 //                {
 //                    $Div.append(Value);
 //                }
@@ -24,7 +20,7 @@
 //                    
 //                }
             },
-        save: function($propdiv, $xml) {
+        save: function(o) {
 //                var $TextBox = $propdiv.find('input');
 //                $xml.children('barcode').text($TextBox.val());
             }

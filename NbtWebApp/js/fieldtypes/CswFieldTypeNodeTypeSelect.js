@@ -6,18 +6,14 @@
     var ValueCol = "Include";
 
     var methods = {
-        init: function (nodepk, $xml, onchange) {
+        init: function (o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
             var $Div = $(this);
             $Div.children().remove();
 
-            var ID = $xml.attr('id');
-            var Required = ($xml.attr('required') == "true");
-            var ReadOnly = ($xml.attr('readonly') == "true");
-
-            var $OptionsXml = $xml.children('options');
-            var SelectedNodeTypeIds = $xml.children('NodeType').text().trim();
-            var SelectMode = $xml.children('NodeType').attr('SelectMode');   // Single, Multiple, Blank
+            var $OptionsXml = o.$propxml.children('options');
+            var SelectedNodeTypeIds = o.$propxml.children('NodeType').text().trim();
+            var SelectMode = o.$propxml.children('NodeType').attr('SelectMode');   // Single, Multiple, Blank
 
             var $CBADiv = $('<div />')
                             .appendTo($Div);
@@ -37,20 +33,20 @@
             });
 
             $CBADiv.CswCheckBoxArray('init', {
-                'ID': ID + '_cba',
+                'ID': o.ID + '_cba',
                 'cols': [ ValueCol ],
                 'data': data,
                 'UseRadios': (SelectMode == 'Single'),
-                'Required': Required,
-                'onchange': onchange
+                'Required': o.Required,
+                'onchange': o.onchange
             });
 
 
         },
-        save: function ($propdiv, $xml) {
-            var $OptionsXml = $xml.children('options');
-            var $CBADiv = $propdiv.children('div').first();
-            var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': $xml.attr('id') + '_cba' } );
+        save: function (o) { //$propdiv, $xml
+            var $OptionsXml = o.$propxml.children('options');
+            var $CBADiv = o.$propdiv.children('div').first();
+            var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             for (var r = 0; r < formdata.length; r++) {
                 var checkitem = formdata[r][0];
                 var $xmlitem = $OptionsXml.find('item:has(column[field="' + KeyCol + '"][value="' + checkitem.key + '"])');
