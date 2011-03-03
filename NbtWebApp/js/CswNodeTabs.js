@@ -114,47 +114,43 @@
 		function _handleProps($div, $xml)
 		{
 			$xml.children().each(function() { 
-				var $prop = $(this);
-				var fieldtype = $prop.attr('fieldtype');
-                var $cellset = $div.CswLayoutTable('cellset', $prop.attr('displayrow'), $prop.attr('displaycol'));
+				var $propxml = $(this);
+				var fieldtype = $propxml.attr('fieldtype');
+                var $cellset = $div.CswLayoutTable('cellset', $propxml.attr('displayrow'), $propxml.attr('displaycol'));
 				
-                if( $prop.attr('display') != 'false' &&
+                if( $propxml.attr('display') != 'false' &&
 					fieldtype != 'Image' && 
 					fieldtype != 'Grid' )
 				{
 					var $labelcell = $cellset[1][1];
 					$labelcell.addClass('propertylabel');
-					$labelcell.append($prop.attr('name'));
+					$labelcell.append($propxml.attr('name'));
 				}
 
 				var $propcell = $cellset[1][2];
 				$propcell.addClass('propertyvaluecell');
 
-				var makeOpt = {
-					'$propcell': $propcell, 
-					'$prop': $prop	
-				};
-				_makeProp(makeOpt); //$propcell, $prop
+				_makeProp($propcell, $propxml);
 
 			});
 		} // _handleProps()
 
-		function _makeProp(makeOpt) //$propcell, $prop
+		function _makeProp($propcell, $propxml)
 		{
-			makeOpt.$propcell.contents().remove();
-			if(makeOpt.$prop.attr('display') != 'false')
+			$propcell.contents().remove();
+			if($propxml.attr('display') != 'false')
 			{
 				var fieldOpt = {
-					'fieldtype': makeOpt.$prop.attr('fieldtype'),
+					'fieldtype': $propxml.attr('fieldtype'),
 					'nodeid':  o.nodeid,
-					'$propdiv': $('<div/>').appendTo(makeOpt.$propcell),
-					'$propxml': makeOpt.$prop,
+					'$propdiv': $('<div/>').appendTo($propcell),
+					'$propxml': $propxml,
 					'onchange': onchange, 
 					'cswnbtnodekey': o.cswnbtnodekey
 				};
 
 				var onchange = function() {};
-				if(makeOpt.$prop.attr('hassubprops') == "true")
+				if($propxml.attr('hassubprops') == "true")
 				{	
 					onchange = function() { 
 									// do a fake 'save' to update the xml with the current value
@@ -162,9 +158,9 @@
 									// update the propxml from the server
 									CswAjaxXml({
 												url: o.SinglePropUrl,
-												data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&NodeKey=' + o.cswnbtnodekey + '&PropId=' + makeOpt.$prop.attr('id') + '&NodeTypeId=' + o.nodetypeid + '&NewPropXml='+ xmlToString(makeOpt.$prop),
+												data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&NodeKey=' + o.cswnbtnodekey + '&PropId=' + $propxml.attr('id') + '&NodeTypeId=' + o.nodetypeid + '&NewPropXml='+ xmlToString($propxml),
 												success: function ($xml) {
-															 _makeProp({'$propcell': makeOpt.$propcell, '$prop': $xml.children().first()});
+															 _makeProp($propcell, $xml.children().first());
 														 }
 												});
 							   };
@@ -173,11 +169,11 @@
 				$.CswFieldTypeFactory('make', fieldOpt);
 
 				// recurse on sub-props
-				var $subprops = makeOpt.$prop.children('subprops');
+				var $subprops = $propxml.children('subprops');
 				if($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 				{
-                    var $subtable = $.CswTable({ ID: makeOpt.$prop.attr('id') + '_subproptable' })
-									.appendTo(makeOpt.$propcell);
+                    var $subtable = $.CswTable({ ID: $propxml.attr('id') + '_subproptable' })
+									.appendTo($propcell);
 					_handleProps($subtable, $subprops);
 				}
 			}
