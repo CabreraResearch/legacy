@@ -306,24 +306,27 @@ namespace ChemSW.Nbt.WebServices
 		} // getMainMenu()
 
 		[WebMethod( EnableSession = true )]
-		public string getGrid( Int32 ViewId, string CswNbtNodeKey = null )
+		public string getGrid( string ViewPk, string CswNbtNodeKey = null )
 		{
 			var ReturnJson = string.Empty;
 			try
 			{
 				start();
-				
-				CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-				if( null != View )
+				Int32 ViewId = CswConvert.ToInt32( ViewPk );
+				if( Int32.MinValue != ViewId )
 				{
-					CswNbtNodeKey ParentNodeKey = null;
-					if( !string.IsNullOrEmpty( CswNbtNodeKey ) )
+					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+					if( null != View )
 					{
-						ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, CswNbtNodeKey );
+						CswNbtNodeKey ParentNodeKey = null;
+						if( !string.IsNullOrEmpty( CswNbtNodeKey ) )
+						{
+							ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, CswNbtNodeKey );
+						}
+						var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
+						ReturnJson = g.getGrid();
+						addToQuickLaunch( View );
 					}
-					var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
-					ReturnJson = g.getGrid();
-					addToQuickLaunch( View );
 				}
 				end();
 			}
