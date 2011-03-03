@@ -72,16 +72,16 @@
 				
 				$('#header_username').text(u);
 				$('#header_dashboard').CswDashboard();
-				$('#header_menu').CswMenuHeader(initOpt);
-				$('#ViewSelectDiv').CswViewSelect(initOpt);
+				$('#header_menu').CswMenuHeader( {'onLogout': initOpt.onLogout} );
+				$('#ViewSelectDiv').CswViewSelect( {'ID': initOpt.ID, 'onSelect': initOpt.onSelect} );
 
 				if (initOpt.viewid == null) {
-					$('#CenterDiv').CswWelcome(initOpt);
+					$('#CenterDiv').CswWelcome( {'onLinkClick': initOpt.onLinkClick} );
 				} else {
-					getNodesTree(initOpt);
+					getNodesTree( {'viewid': initOpt.viewid} );
 				}
 
-				$('#QuickLaunch').CswQuickLaunch(initOpt);
+	            $('#QuickLaunch').CswQuickLaunch({ 'onLinkClick': initOpt.onLinkClick });
 
 			} // onAuthenticate
 		}); // CswLogin
@@ -128,7 +128,7 @@
 			{
 				if( o.viewid != undefined && o.viewid != '' )
 				{
-					getViewGrid(o);
+				    getViewGrid( { 'viewid': o.viewid, 'nodeid': '', 'cswnbtnodekey': o.cswnbtnodekey } );
 				}
 				else
 				{
@@ -145,7 +145,7 @@
 			{
 				if( o.viewid != undefined && o.viewid != '' )
 				{
-					getViewTree(o);
+					getNodesTree( {'viewid': o.viewid} );
 				}
 				else
 				{
@@ -186,8 +186,8 @@
 			onAddNode: ''
 		};
 
-		o.onAddNode = function (o) { //newnodeid, newcswnbtnodekey
-			refreshViewTree(o); } //newnodeid, newcswnbtnodekey
+		o.onAddNode = function (opt) { //newnodeid, newcswnbtnodekey
+			refreshViewTree(opt); } //newnodeid, newcswnbtnodekey
 
 		if (options)
 		{
@@ -196,21 +196,21 @@
 		if (debug) log('NewMain.refreshMainMenu()');
 		if (debug) log(o);
 
-		$('#MainMenuDiv').CswMenuMain(o);
+		$('#MainMenuDiv').CswMenuMain( {'viewid': o.viewid, 'nodeid': o.nodeid, 'onAddNode': o.onAddNode} );
 	}
 
 	function getNodesTree(options) {
 		var o = {
 			viewid: '',
-			nodeid: '',
-			cswnbtnodekey: '',
-			nodename: '', 
-			iconurl: '',
+			//nodeid: '',
+			//cswnbtnodekey: '',
+			//nodename: '', 
+			//iconurl: '',
 			'ID': 'main',
 			'onSelectNode': '' //viewid, nodeid, cswnbtnodekey
 		};
 		o.onSelectNode = function (opt) { //nodeid, nodename, iconurl, cswnbtnodekey 
-			onSelectViewTreeNode(opt); }
+			onSelectTreeNode(opt); }
 
 		if (options)
 		{
@@ -224,10 +224,10 @@
 		clearRight();
 		clearCenter();
 
-		$('#LeftDiv').CswNodeTree('init', o);
+		$('#LeftDiv').CswNodeTree('init', {'ID': o.ID, 'viewid': o.viewid, 'onSelectNode': o.onSelectNode} );
 	}
 
-	function onSelectViewTreeNode(options) {
+	function onSelectTreeNode(options) {
 		var o = {
 			viewid: '', 
 			nodeid: '', 
@@ -238,11 +238,11 @@
 			$.extend(o, options);
 		}
 
-		if (debug) log('NewMain.onSelectViewTreeNode()');
+		if (debug) log('NewMain.onSelectTreeNode()');
 		if (debug) log(o);
 
-		getTabs(o); //nodeid, cswnbtnodekey
-		refreshMainMenu(o); //viewid, nodeid, cswnbtnodekey
+		getTabs( {'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey} );  //nodeid, cswnbtnodekey
+		refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey }); //viewid, nodeid, cswnbtnodekey
 	}
 
 	function getViewGrid(options)
@@ -257,12 +257,15 @@
 		{
 			$.extend(o, options);
 		}
+		
 		if (debug) log('NewMain.getViewGrid()');
+		if (debug) log(o);
+
 		SetCurrentViewId(o.viewid);
 		clearLeft();
 		clearRight();
 		clearCenter();
-		$('#CenterDiv').CswNodeGrid(o);
+		$('#CenterDiv').CswNodeGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'id': o.id });
 	}
 
 	function getTabs(options)
@@ -276,11 +279,12 @@
 		{
 			$.extend(o, options);
 		}
-		log('NewMain getTabs()');
-		log(o.cswnbtnodekey);
+
 		if (debug) log('NewMain.getTabs()');
+		if (debug) log(o);
+
 		clearRight();
-		$('#RightDiv').CswNodeTabs(o); //{ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, onSave: refreshViewTree }
+		$('#RightDiv').CswNodeTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'onSave': o.onSave });
 	}
 
 	function refreshViewTree(options)
@@ -297,7 +301,7 @@
 			'onSelectNode': ''
 		};
 		o.onSelectNode = function (opt) { //nodeid, nodename, iconurl, cswnbtnodekey
-			   onSelectViewTreeNode(opt); } //viewid, nodeid, cswnbtnodekey
+			   onSelectTreeNode(opt); } //viewid, nodeid, cswnbtnodekey
 		
 		if (options)
 		{
@@ -309,7 +313,7 @@
 
 		clearLeft();
 		//var viewid = GetCurrentViewId();
-		$('#LeftDiv').CswNodeTree('init', o);
+		$('#LeftDiv').CswNodeTree('init', {'ID': o.ID, 'viewid': o.viewid, 'nodeid': o.nodeid, 'onSelectNode': o.onSelectNode });
 	}
 
 </script>
