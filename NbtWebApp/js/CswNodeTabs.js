@@ -24,7 +24,7 @@
 
 		function clearTabs()
 		{
-			$outertabdiv.children().remove();
+			$outertabdiv.contents().remove();
 		}
 
 		function getTabs()
@@ -75,7 +75,7 @@
 				success: function ($xml) {
 							$div = $("#" + p.tabid);
 							$form = $div.children('form');
-							$form.children().remove();
+							$form.contents().remove();
 							
                             $div.CswLayoutTable('init', {
                                                           'ID': o.ID + '_props', 
@@ -88,9 +88,8 @@
 							var i = 0;
 							
 							_handleProps($div, $xml);
-							
 
-                            $div.CswLayoutTable('finish');
+                            $div.CswLayoutTable('config');
 
                             $('<input type="button" id="SaveTab" name="SaveTab" value="Save"/>')
                                   .appendTo($div)
@@ -142,7 +141,7 @@
 
 		function _makeProp(makeOpt) //$propcell, $prop
 		{
-			makeOpt.$propcell.children().remove();
+			makeOpt.$propcell.contents().remove();
 			if(makeOpt.$prop.attr('display') != 'false')
 			{
 				var fieldOpt = {

@@ -6,7 +6,7 @@
 		init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
 			$Div = $(this);
-			$Div.children().remove();
+			$Div.contents().remove();
 
 			var Checked = o.$propxml.children('checked').text().trim();
 

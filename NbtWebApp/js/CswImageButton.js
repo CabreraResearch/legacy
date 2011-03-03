@@ -17,7 +17,7 @@
         }
 
         $Div = $(this);
-        $Div.children().remove();
+        $Div.contents().remove();
 
 
         var $ImageDiv = $('<div id="' + o.ID + '" class="divbutton" alt="' + o.AlternateText + '" />"')

@@ -90,17 +90,17 @@
 	function clearLeft()
 	{
 		if (debug) log('NewMain.clearLeft()');
-		$('#LeftDiv').children().remove();
+		$('#LeftDiv').contents().remove();
 	}
 	function clearRight()
 	{
 		if (debug) log('NewMain.clearRight()');
-		$('#RightDiv').children().remove();
+		$('#RightDiv').contents().remove();
 	}
 	function clearCenter()
 	{
 		if (debug) log('NewMain.clearCenter()');
-		$('#CenterDiv').children().remove();
+		$('#CenterDiv').contents().remove();
 	}
 
 	function handleItemSelect(options) 

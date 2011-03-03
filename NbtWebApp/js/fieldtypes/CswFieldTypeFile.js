@@ -6,7 +6,7 @@
         init: function(o) { //o.nodeid, o.$propxml, o.onchange
 
                 var $Div = $(this);
-                $Div.children().remove();
+                $Div.contents().remove();
 
                 var Href = o.$propxml.children('href').text().trim();
                 var FileName = o.$propxml.children('name').text().trim();

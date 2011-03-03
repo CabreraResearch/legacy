@@ -8,7 +8,7 @@
             init: function(o) { //nodepk = o.nodeid, o.$propxml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
             
                 var $Div = $(this);
-                $Div.children().remove();
+                $Div.contents().remove();
 
                 var SelectedNodeId = o.$propxml.children('nodeid').text().trim();
                 var SelectedName = o.$propxml.children('name').text().trim();
