@@ -217,8 +217,7 @@ function jsTreeGetSelected($treediv, IDPrefix)
 	var viewid = $SelectedItem.attr('viewid');
 	var type = $SelectedItem.attr('type');
 	var nodekey = $SelectedItem.attr('cswnbtnodekey');
-	log('Selected Item');
-	log($SelectedItem);   
+
 	var ret = { 
 		'SelectedIconUrl': iconurl,
 		'SelectedId': id,

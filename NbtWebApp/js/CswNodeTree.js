@@ -27,8 +27,6 @@
 				url: o.TreeUrl,
 				data: 'ViewId=' + o.viewid + '&IDPrefix=' + IDPrefix,
 				success: function ($xml) {
-					//console.log('CswNodeTree xml');
-					//console.log($xml);
 					var selectid;
 					if(o.nodeid != undefined && o.nodeid != '') 
 						selectid = IDPrefix + o.nodeid;
