@@ -14,7 +14,8 @@
 		}
 
 		var $MenuDiv = $(this);
-
+		log('MainMenu');
+		log(o);
 		CswAjaxXml({
 			url: o.Url,
 			data: "ViewId=" + o.viewid + "&NodePk=" + o.nodeid + "&NodeKey=" + o.cswnbtnodekey,

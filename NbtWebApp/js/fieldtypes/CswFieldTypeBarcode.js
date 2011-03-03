@@ -3,59 +3,47 @@
     var PluginName = 'CswFieldTypeBarcode';
 
     var methods = {
-        init: function(optSelect) { //nodepk, $xml, onchange == nodeid,propxml,onchange
-            var o = {
-                nodeid: '',
-                propxml: '',
-                onchange: ''
-            }
-            if(optSelect)
+        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly  == nodeid,propxml,onchange
+
+            var $Div = $(this);
+            $Div.children().remove();
+
+            var Value = o.$propxml.children('barcode').text().trim();
+
+            if(o.ReadOnly)
             {
-                $.extend(o,optSelect);
+                $Div.append(Value);
             }
-                var $Div = $(this);
-                $Div.children().remove();
+            else 
+            {
+                var $table = makeTable(o.ID + '_tbl').appendTo($Div);
 
-                var ID = o.propxml.attr('id');
-                var Required = (o.propxml.attr('required') == "true");
-                var ReadOnly = (o.propxml.attr('readonly') == "true");
+                var $cell1 = getTableCell($table, 1, 1);
+                var $TextBox = $('<input type="text" class="textinput" id="'+ o.ID +'" name="' + o.ID + '" value="'+ Value +'" />"' )
+                                    .appendTo($cell1)
+                                    .change(o.onchange);
 
-                var Value = o.propxml.children('barcode').text().trim();
+                var $cell2 = getTableCell($table, 1, 2);
+                var $PrintButton = $('<div/>' )
+                                        .appendTo($cell2)
+                                        .CswImageButton({  ButtonType: CswImageButton_ButtonType.Print,
+                                                        AlternateText: '',
+                                                        ID: o.ID + '_print',
+                                                        onClick: function (alttext) { 
+                                                            $.CswDialog('OpenDialog', o.ID + '_dialog', 'Popup_PrintLabel.aspx?nodeid=' + o.nodeid + '&propid=' + o.ID); 
+                                                            return CswImageButton_ButtonType.None; 
+                                                        }
+                                                        });
 
-                if(ReadOnly)
+                if(o.Required)
                 {
-                    $Div.append(Value);
+                    $TextBox.addClass("required");
                 }
-                else 
-                {
-                    var $table = makeTable(ID + '_tbl').appendTo($Div);
-
-                    var $cell1 = getTableCell($table, 1, 1);
-                    var $TextBox = $('<input type="text" class="textinput" id="'+ ID +'" name="' + ID + '" value="'+ Value +'" />"' )
-                                     .appendTo($cell1)
-                                     .change(o.onchange);
-
-                    var $cell2 = getTableCell($table, 1, 2);
-                    var $PrintButton = $('<div/>' )
-                                         .appendTo($cell2)
-                                         .CswImageButton({  ButtonType: CswImageButton_ButtonType.Print,
-                                                            AlternateText: '',
-                                                            ID: '',
-                                                            onClick: function (alttext) { 
-                                                                $.CswDialog('OpenDialog', ID + '_dialog', 'Popup_PrintLabel.aspx?nodeid=' + o.nodeid + '&propid=' + ID); 
-                                                                return CswImageButton_ButtonType.None; 
-                                                            }
-                                                         });
-
-                    if(Required)
-                    {
-                        $TextBox.addClass("required");
-                    }
-                }
-            },
-        save: function(o.propdiv, o.propxml) {
-                var $TextBox = $propdiv.find('input');
-                o.propxml.children('barcode').text($TextBox.val());
+            }
+        },
+        save: function(o) {
+                var $TextBox = o.$propdiv.find('input');
+                o.$propxml.children('barcode').text($TextBox.val());
             }
     };
     

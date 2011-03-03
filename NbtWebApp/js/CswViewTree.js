@@ -49,9 +49,9 @@
 												text: Selected.SelectedText, 
 												iconurl: Selected.SelectedIconUrl,
 												viewid: Selected.SelectedViewId,
-                                                nodeid: Selected.SelectedId, 
-                                                nodename: Selected.SelectedText, 
-                                                cswnbtnodekey: Selected.SelectedCswNbtNodeKey												
+												nodeid: Selected.SelectedId, 
+												nodename: Selected.SelectedText, 
+												cswnbtnodekey: Selected.SelectedCswNbtNodeKey												
 											 };
 									o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
 								});

@@ -1,223 +1,234 @@
 ﻿
-$.CswFieldTypeFactory = function (method, methodOpt)
+$.CswFieldTypeFactory = function (method)
 {
-    var m = {
-        make: '',
-        save: '',
-        nodeid: '',
-        fieldtype: '',
-        propdiv: '',
-        propxml: '',
-        onchange: '',
-        cswnbtnodekey: ''
-    }
-    if (methodOpt)
-    {
-        $.extend(m, methodOpt);
-    }
-    var methods = {
-        'make': function(m)
-        {
-            switch (m.fieldtype)
-            {
-                case "Barcode":
-                    $propdiv.CswFieldTypeBarcode(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Composite":
-                    $propdiv.CswFieldTypeComposite(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Date":
-                    $propdiv.CswFieldTypeDate(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "File":
-                    $propdiv.CswFieldTypeFile(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Grid":
-                    $propdiv.CswFieldTypeGrid(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Image":
-                    $propdiv.CswFieldTypeImage(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Link":
-                    $propdiv.CswFieldTypeLink(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "List":
-                    $propdiv.CswFieldTypeList(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Location":
-                    $propdiv.CswFieldTypeLocation(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "LocationContents":
-                    $propdiv.CswFieldTypeLocationContents(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Logical":
-                    $propdiv.CswFieldTypeLogical(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "LogicalSet":
-                    $propdiv.CswFieldTypeLogicalSet(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Memo":
-                    $propdiv.CswFieldTypeMemo(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "MTBF":
-                    $propdiv.CswFieldTypeMTBF(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "NodeTypeSelect":
-                    $propdiv.CswFieldTypeNodeTypeSelect(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Number":
-                    $propdiv.CswFieldTypeNumber(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Password":
-                    $propdiv.CswFieldTypePassword(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "PropertyReference":
-                    $propdiv.CswFieldTypePropertyReference(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Quantity":
-                    $propdiv.CswFieldTypeQuantity(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Question":
-                    $propdiv.CswFieldTypeQuestion(m); //'init', nodeid, $propxml, onchange
-                    break;
-                case "Relationship":
-                    $propdiv.CswFieldTypeRelationship(m); //('init', nodeid, $propxml, onchange);
-                    break;
-                case "Sequence":
-                    $propdiv.CswFieldTypeSequence(m); //('init', nodeid, $propxml, onchange);
-                    break;
-                case "Static":
-                    $propdiv.CswFieldTypeStatic(m); //('init', nodeid, $propxml, onchange);
-                    break;
-                case "Text":
-                    $propdiv.CswFieldTypeText(m); //('init', nodeid, $propxml, onchange);
-                    break;
-                case "Time":
-                    $propdiv.CswFieldTypeTime(m); //('init', nodeid, $propxml, onchange);
-                    break;
-                case "TimeInterval":
-                    $propdiv.CswFieldTypeTimeInterval(m); //('init', nodeid, $propxml, onchange);
-                    break;
-                case "UserSelect":
-                    $propdiv.CswFieldTypeUserSelect(m); //('init', nodeid, $propxml, onchange);
-                    break;
-                case "ViewPickList":
-                    $propdiv.CswFieldTypeViewPickList(m); //('init', nodeid, $propxml, onchange);
-                    break;
-                case "ViewReference":
-                    $propdiv.CswFieldTypeViewReference(m); //('init', nodeid, $propxml, onchange);
-                    break;
-                default:
-                    $propdiv.append($propxml.attr(m); //('gestalt'));
-                    break;
-            } // switch (fieldtype)
-        }, // make
-        
-       'save': function (m) {
-            switch (m.fieldtype)
-            {
-                case "Barcode":
-                    $propdiv.CswFieldTypeBarcode(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Composite":
-                    $propdiv.CswFieldTypeComposite(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Date":
-                    $propdiv.CswFieldTypeDate(m); //('save', $propdiv, $propxml);
-                    break;
-                case "File":
-                    $propdiv.CswFieldTypeFile(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Grid":
-                    $propdiv.CswFieldTypeGrid(m); //('save', $propdiv, $propxml, cswnbtnodekey);
-                    break;
-                case "Image":
-                    $propdiv.CswFieldTypeImage(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Link":
-                    $propdiv.CswFieldTypeLink(m); //('save', $propdiv, $propxml);
-                    break;
-                case "List":
-                    $propdiv.CswFieldTypeList(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Location":
-                    $propdiv.CswFieldTypeLocation(m); //('save', $propdiv, $propxml);
-                    break;
-                case "LocationContents":
-                    $propdiv.CswFieldTypeLocationContents(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Logical":
-                    $propdiv.CswFieldTypeLogical(m); //('save', $propdiv, $propxml);
-                    break;
-                case "LogicalSet":
-                    $propdiv.CswFieldTypeLogicalSet(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Memo":
-                    $propdiv.CswFieldTypeMemo(m); //('save', $propdiv, $propxml);
-                    break;
-                case "MTBF":
-                    $propdiv.CswFieldTypeMTBF(m); //('save', $propdiv, $propxml);
-                    break;
-                case "NodeTypeSelect":
-                    $propdiv.CswFieldTypeNodeTypeSelect(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Number":
-                    $propdiv.CswFieldTypeNumber(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Password":
-                    $propdiv.CswFieldTypePassword(m); //('save', $propdiv, $propxml);
-                    break;
-                case "PropertyReference":
-                    $propdiv.CswFieldTypePropertyReference(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Quantity":
-                    $propdiv.CswFieldTypeQuantity(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Question":
-                    $propdiv.CswFieldTypeQuestion(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Relationship":
-                    $propdiv.CswFieldTypeRelationship(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Sequence":
-                    $propdiv.CswFieldTypeSequence(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Static":
-                    $propdiv.CswFieldTypeStatic(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Text":
-                    $propdiv.CswFieldTypeText(m); //('save', $propdiv, $propxml);
-                    break;
-                case "Time":
-                    $propdiv.CswFieldTypeTime(m); //('save', $propdiv, $propxml);
-                    break;
-                case "TimeInterval":
-                    $propdiv.CswFieldTypeTimeInterval(m); //('save', $propdiv, $propxml);
-                    break;
-                case "UserSelect":
-                    $propdiv.CswFieldTypeUserSelect(m); //('save', $propdiv, $propxml);
-                    break;
-                case "ViewPickList":
-                    $propdiv.CswFieldTypeViewPickList(m); //('save', $propdiv, $propxml);
-                    break;
-                case "ViewReference":
-                    $propdiv.CswFieldTypeViewReference(m); //('save', $propdiv, $propxml);
-                    break;
-                default:
-                    break;
-            } // switch(fieldtype)
-        } // save
-    };
+	var m = {
+		nodeid: '',
+		fieldtype: '',
+		'$propdiv': '',
+		'$propxml': '',
+		onchange: '',
+		cswnbtnodekey: '',
+		'ID': '',
+		'Required': '',
+		'ReadOnly': ''
+	};
 
-    // Method calling logic
-    if (m.methods[method])
-    {
-        return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-    } else if (typeof method === 'object' || !method)
-    {
-        return methods.init.apply(this, arguments);
-    } else
-    {
-        $.error('Method ' + method + ' does not exist on ' + PluginName);
-    }
+	var methods = {
+		'make': function(options)
+		{
+			if (options)
+			{
+				$.extend(m, options);
+			}
+			m.ID = m.$propxml.attr('id');
+			m.Required = (m.$propxml.attr('required') == "true");
+			m.ReadOnly = (m.$propxml.attr('readonly') == "true");
+			
+			switch (m.fieldtype)
+			{
+				case "Barcode":
+					m.$propdiv.CswFieldTypeBarcode('init', m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Composite":
+					m.$propdiv.CswFieldTypeComposite('init', m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Date":
+					m.$propdiv.CswFieldTypeDate('init', m); //'init', nodeid, $propxml, onchange
+					break;
+				case "File":
+					m.$propdiv.CswFieldTypeFile('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Grid":
+					m.$propdiv.CswFieldTypeGrid('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Image":
+					m.$propdiv.CswFieldTypeImage('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Link":
+					m.$propdiv.CswFieldTypeLink('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "List":
+					m.$propdiv.CswFieldTypeList('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Location":
+					m.$propdiv.CswFieldTypeLocation('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "LocationContents":
+					m.$propdiv.CswFieldTypeLocationContents('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Logical":
+					m.$propdiv.CswFieldTypeLogical('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "LogicalSet":
+					m.$propdiv.CswFieldTypeLogicalSet('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Memo":
+					m.$propdiv.CswFieldTypeMemo('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "MTBF":
+					m.$propdiv.CswFieldTypeMTBF('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "NodeTypeSelect":
+					m.$propdiv.CswFieldTypeNodeTypeSelect('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Number":
+					m.$propdiv.CswFieldTypeNumber('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Password":
+					m.$propdiv.CswFieldTypePassword('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "PropertyReference":
+					m.$propdiv.CswFieldTypePropertyReference('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Quantity":
+					m.$propdiv.CswFieldTypeQuantity('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Question":
+					m.$propdiv.CswFieldTypeQuestion('init',m); //'init', nodeid, $propxml, onchange
+					break;
+				case "Relationship":
+					m.$propdiv.CswFieldTypeRelationship('init',m); //('init', nodeid, $propxml, onchange);
+					break;
+				case "Sequence":
+					m.$propdiv.CswFieldTypeSequence('init',m); //('init', nodeid, $propxml, onchange);
+					break;
+				case "Static":
+					m.$propdiv.CswFieldTypeStatic('init',m); //('init', nodeid, $propxml, onchange);
+					break;
+				case "Text":
+					m.$propdiv.CswFieldTypeText('init',m); //('init', nodeid, $propxml, onchange);
+					break;
+				case "Time":
+					m.$propdiv.CswFieldTypeTime('init',m); //('init', nodeid, $propxml, onchange);
+					break;
+				case "TimeInterval":
+					m.$propdiv.CswFieldTypeTimeInterval('init',m); //('init', nodeid, $propxml, onchange);
+					break;
+				case "UserSelect":
+					m.$propdiv.CswFieldTypeUserSelect('init',m); //('init', nodeid, $propxml, onchange);
+					break;
+				case "ViewPickList":
+					m.$propdiv.CswFieldTypeViewPickList('init',m); //('init', nodeid, $propxml, onchange);
+					break;
+				case "ViewReference":
+					m.$propdiv.CswFieldTypeViewReference('init',m); //('init', nodeid, $propxml, onchange);
+					break;
+				default:
+					m.$propdiv.append(m.$propxml.attr('init',m)); //('gestalt'));
+					break;
+			} // switch (fieldtype)
+		}, // make
+		
+	   'save': function (options) {
+			if (options)
+			{
+				$.extend(m, options);
+			}
+			
+			switch (m.fieldtype)
+			{
+				case "Barcode":
+					m.$propdiv.CswFieldTypeBarcode('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Composite":
+					m.$propdiv.CswFieldTypeComposite('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Date":
+					m.$propdiv.CswFieldTypeDate('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "File":
+					m.$propdiv.CswFieldTypeFile('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Grid":
+					m.$propdiv.CswFieldTypeGrid('save',m); //('save', $propdiv, $propxml, cswnbtnodekey);
+					break;
+				case "Image":
+					m.$propdiv.CswFieldTypeImage('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Link":
+					m.$propdiv.CswFieldTypeLink('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "List":
+					m.$propdiv.CswFieldTypeList('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Location":
+					m.$propdiv.CswFieldTypeLocation('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "LocationContents":
+					m.$propdiv.CswFieldTypeLocationContents('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Logical":
+					m.$propdiv.CswFieldTypeLogical('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "LogicalSet":
+					m.$propdiv.CswFieldTypeLogicalSet('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Memo":
+					m.$propdiv.CswFieldTypeMemo('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "MTBF":
+					m.$propdiv.CswFieldTypeMTBF('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "NodeTypeSelect":
+					m.$propdiv.CswFieldTypeNodeTypeSelect('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Number":
+					m.$propdiv.CswFieldTypeNumber('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Password":
+					m.$propdiv.CswFieldTypePassword('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "PropertyReference":
+					m.$propdiv.CswFieldTypePropertyReference('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Quantity":
+					m.$propdiv.CswFieldTypeQuantity('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Question":
+					m.$propdiv.CswFieldTypeQuestion('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Relationship":
+					m.$propdiv.CswFieldTypeRelationship('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Sequence":
+					m.$propdiv.CswFieldTypeSequence('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Static":
+					m.$propdiv.CswFieldTypeStatic('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Text":
+					m.$propdiv.CswFieldTypeText('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "Time":
+					m.$propdiv.CswFieldTypeTime('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "TimeInterval":
+					m.$propdiv.CswFieldTypeTimeInterval('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "UserSelect":
+					m.$propdiv.CswFieldTypeUserSelect('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "ViewPickList":
+					m.$propdiv.CswFieldTypeViewPickList('save',m); //('save', $propdiv, $propxml);
+					break;
+				case "ViewReference":
+					m.$propdiv.CswFieldTypeViewReference('save',m); //('save', $propdiv, $propxml);
+					break;
+				default:
+					break;
+			} // switch(fieldtype)
+		} // save
+	};
+
+	// Method calling logic
+	if (methods[method])
+	{
+		return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+	} else if (typeof method === 'object' || !method)
+	{
+		return methods.init.apply(this, arguments);
+	} else
+	{
+		$.error('Method ' + method + ' does not exist on ' + PluginName);
+	}
 }    // $.CswFieldTypeFactory

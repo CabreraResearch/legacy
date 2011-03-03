@@ -75,8 +75,9 @@
 											nodeid: Selected.SelectedId, 
 											nodename: Selected.SelectedText, 
 											iconurl: Selected.SelectedIconUrl, 
-											cswnbtnodekey: Selected.SelectedCswNbtNodeKey
-										}
+											cswnbtnodekey: Selected.SelectedCswNbtNodeKey,
+											viewid: o.viewid
+										};
 										o.onSelectNode(optSelect);
 									});
 					
@@ -91,13 +92,13 @@
 
 		'selectNode': function(optSelect) { //newnodeid, newcswnbtnodekey
 			var o = {
-                newnodeid: '', 
-                newcswnbtnodekey: ''
-            }
-            if (optSelect) {
+				newnodeid: '', 
+				newcswnbtnodekey: ''
+			}
+			if (optSelect) {
 				$.extend(o, optSelect);
 			}
-            var $treediv = $(this).children('.treediv')
+			var $treediv = $(this).children('.treediv')
 			var IDPrefix = $treediv.attr('id');
 			$treediv.jstree('select_node', '#' + IDPrefix + o.newnodeid);
 		}

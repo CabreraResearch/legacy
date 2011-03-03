@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 
-				CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
+				var ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
 				// Only administrators can get welcome content for other roles
 				if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
 					ReturnVal = ws.GetWelcomeItems( RoleId );
@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
+				var ws = new CswNbtWebServiceHeader( _CswNbtResources );
 				ReturnVal = ws.getDashboard();
 				end();
 			}
@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
+				var ws = new CswNbtWebServiceHeader( _CswNbtResources );
 				ReturnVal = ws.getHeaderMenu();
 				end();
 			}
@@ -285,13 +285,13 @@ namespace ChemSW.Nbt.WebServices
 		} // getHeaderMenu()		[WebMethod( EnableSession = true )]
 
 		[WebMethod( EnableSession = true )]
-		public XmlDocument getMainMenu( Int32 ViewId, string NodePk )
+		public XmlDocument getMainMenu( Int32 ViewId, string NodePk, string NodeKey )
 		{
 			string ReturnVal = string.Empty;
 			try
 			{
 				start();
-				CswNbtWebServiceMainMenu ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
+				var ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
 				ReturnVal = ws.getMenu( ViewId, NodePk );
 				end();
 			}
@@ -369,8 +369,8 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
 				ReturnVal = ws.getTabs( RealEditMode, NodePk, CswConvert.ToInt32( NodeTypeId ) );
 				end();
 			}
@@ -391,8 +391,8 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
 				ReturnXml = ws.getProps( RealEditMode, NodePk, TabId, CswConvert.ToInt32( NodeTypeId ) );
 				end();
 			}
@@ -411,8 +411,8 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
 				ReturnXml = ws.getSingleProp( RealEditMode, NodePk, PropId, CswConvert.ToInt32( NodeTypeId ), NewPropXml );
 				end();
 			}
@@ -431,8 +431,8 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
 				ReturnVal = ws.saveProps( RealEditMode, NodePk, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) );
 				end();
 			}
@@ -450,7 +450,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtWebServiceHeader ws = new CswNbtWebServiceHeader( _CswNbtResources );
+				var ws = new CswNbtWebServiceHeader( _CswNbtResources );
 				ReturnVal = ws.makeVersionXml();
 				end();
 			}

@@ -3,22 +3,18 @@
     var PluginName = 'CswFieldTypePropertyReference';
 
     var methods = {
-        init: function(nodepk, $xml, onchange) {
+        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
                 
                 var $Div = $(this);
                 $Div.children().remove();
                  
-                var ID = $xml.attr('id');
-//                var Required = ($xml.attr('required') == "true");
-//                var ReadOnly = ($xml.attr('readonly') == "true");
-
-                var Text = $xml.children('value').text().trim();
+                var Text = o.$propxml.children('value').text().trim();
                 Text += '&nbsp;';
 
-                var $StaticDiv = $('<div id="'+ ID +'" class="staticvalue">' + Text + '</div>' )
+                var $StaticDiv = $('<div id="'+ o.ID +'" class="staticvalue">' + Text + '</div>' )
                                .appendTo($Div); 
             },
-        save: function($propdiv, $xml) {
+        save: function(o) { //$propdiv, $xml
                 // no changes to save
             }
     };

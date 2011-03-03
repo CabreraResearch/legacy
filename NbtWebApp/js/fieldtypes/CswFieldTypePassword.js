@@ -3,48 +3,43 @@
     var PluginName = 'CswFieldTypePassword';
 
     var methods = {
-        init: function(nodepk, $xml, onchange) {
+        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
-                var $Div = $(this);
-                $Div.children().remove();
+            var $Div = $(this);
+            $Div.children().remove();
 
-                var ID = $xml.attr('id');
-                var Required = ($xml.attr('required') == "true");
-                var ReadOnly = ($xml.attr('readonly') == "true");
+            if(o.ReadOnly)
+            {
+                // show nothing
+            }
+            else 
+            {
+                var $table = makeTable(o.ID + '_tbl')
+                                .appendTo($Div);
+                var $cell11 = getTableCell($table, 1, 1);
+                var $cell21 = getTableCell($table, 2, 1);
 
-                if(ReadOnly)
-                {
-                    // show nothing
-                }
-                else 
-                {
-                    var $table = makeTable(ID + '_tbl')
-                                    .appendTo($Div);
-                    var $cell11 = getTableCell($table, 1, 1);
-                    var $cell21 = getTableCell($table, 2, 1);
-
-                    var $TextBox1 = $('<input type="password" class="textinput" id="'+ ID +'_pwd1" name="' + ID + '" />"' )
-                                     .appendTo($cell11)
-                                     .change(onchange);
-                    var $TextBox1 = $('<input type="password" class="textinput password2" id="'+ ID +'_pwd2" name="' + ID + '" />"' )
-                                     .appendTo($cell21)
-                                     .change(onchange);
-//                    if(Required)
+                var $TextBox1 = $('<input type="password" class="textinput" id="'+ o.ID +'_pwd1" name="' + o.ID + '" />"' )
+                                    .appendTo($cell11)
+                                    .change(onchange);
+                var $TextBox2 = $('<input type="password" class="textinput password2" id="'+ o.ID +'_pwd2" name="' + o.ID + '" />"' )
+                                    .appendTo($cell21)
+                                    .change(onchange);
+//                    if(o.Required)
 //                    {
 //                        $TextBox.addClass("required");
 //                    }
 
-                    jQuery.validator.addMethod( "password2", function(value, element) { 
-                                var pwd1 = $('#' + ID + '_pwd1').val();
-                                var pwd2 = $('#' + ID + '_pwd2').val();
-                                return ((pwd1 == '' && pwd2 == '') || pwd1 == pwd2);
-                            }, 'Passwords do not match!');
-                }
-            },
-        save: function($propdiv, $xml) {
-                var ID = $xml.attr('id');
-                var $TextBox = $propdiv.find('input#' + ID + '_pwd1');
-                $xml.children('newpassword').text($TextBox.val());
+                jQuery.validator.addMethod( "password2", function(value, element) { 
+                            var pwd1 = $('#' + o.ID + '_pwd1').val();
+                            var pwd2 = $('#' + o.ID + '_pwd2').val();
+                            return ((pwd1 == '' && pwd2 == '') || pwd1 == pwd2);
+                        }, 'Passwords do not match!');
+            }
+        },
+        save: function(o) { //$propdiv, $xml
+                var $TextBox = $propdiv.find('input#' + o.ID + '_pwd1');
+                o.$propxml.children('newpassword').text($TextBox.val());
             }
     };
     

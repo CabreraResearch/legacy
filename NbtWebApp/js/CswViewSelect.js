@@ -20,14 +20,14 @@
 
 		function getViewSelect(optSelect) // selectedviewid
 		{
-            var m = {
-			    selectedviewid: '',
-			    viewid: '',
-		    };
+			var m = {
+				selectedviewid: '',
+				viewid: '',
+			};
 
-		    if (optSelect) {
-			    $.extend(m, optSelect);
-		    }
+			if (optSelect) {
+				$.extend(m, optSelect);
+			}
 
 			$viewtreediv = $('<div/>');
 			$selectdiv.CswComboBox('init', { 'ID': o.ID + '_combo', 

@@ -6,7 +6,7 @@
 		
 		var o = {
 			// jqGrid properties
-            datatype: "local", 
+			datatype: "local", 
 			height: 300,
 			rowNum:10, 
 			autoencode: true,
@@ -19,8 +19,8 @@
 			emptyrecords:"No Data to Display", 
 			sortorder: "asc", 
 			multiselect: true,
-            // CswNodeGrid properties
-            GridUrl: '/NbtWebApp/wsNBT.asmx/getGrid',
+			// CswNodeGrid properties
+			GridUrl: '/NbtWebApp/wsNBT.asmx/getGrid',
 			viewid: '',
 			id: "CswNodeGrid",
 			nodeid: '',

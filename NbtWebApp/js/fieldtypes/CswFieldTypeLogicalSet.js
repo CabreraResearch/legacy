@@ -5,84 +5,80 @@
     var KeyCol = "key";
 
     var methods = {
-        init: function(nodepk, $xml, onchange) {
+        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
-                var $Div = $(this);
-                $Div.children().remove();
+            var $Div = $(this);
+            $Div.children().remove();
 
-                var ID = $xml.attr('id');
-                var Required = ($xml.attr('required') == "true");
-                var ReadOnly = ($xml.attr('readonly') == "true");
+            var $LogicalSetXml = o.$propxml.children('logicalsetxml');
 
-                var $LogicalSetXml = $xml.children('logicalsetxml');
-
-                //<LogicalSetXml>
-                //    <item>
-                //        <column field="name" value="Assembly"></column>
-                //        <column field="key" value="7"></column>
-                //        <column field="View" value="True"></column>
-                //        <column field="Create" value="True"></column>
-                //        <column field="Delete" value="True"></column>
-                //        <column field="Edit" value="True"></column>
-                //    </item>
-                //    <item>
-                //        ...
-                //    </item>
-                //</LogicalSetXml>
+            //<LogicalSetXml>
+            //    <item>
+            //        <column field="name" value="Assembly"></column>
+            //        <column field="key" value="7"></column>
+            //        <column field="View" value="True"></column>
+            //        <column field="Create" value="True"></column>
+            //        <column field="Delete" value="True"></column>
+            //        <column field="Edit" value="True"></column>
+            //    </item>
+            //    <item>
+            //        ...
+            //    </item>
+            //</LogicalSetXml>
             
-                var $CBADiv = $('<div />')
-                                .appendTo($Div);
+            var $CBADiv = $('<div />')
+                            .appendTo($Div);
 
-                // get columns
-                var cols = new Array();
-                var c = 0;
+            // get columns
+            var cols = new Array();
+            var c = 0;
 
-                $LogicalSetXml.find('item')
-                              .first()
-                              .children('column')
-                              .each(function() {
-                                      var fieldname = $(this).attr('field');
-                                      if(fieldname != NameCol && fieldname != KeyCol)
-                                      {
-                                          cols[c] = fieldname;
-                                          c++;
-                                      }
-                              });
+            $LogicalSetXml.find('item')
+                            .first()
+                            .children('column')
+                            .each(function() {
+                                    var fieldname = $(this).attr('field');
+                                    if(fieldname != NameCol && fieldname != KeyCol)
+                                    {
+                                        cols[c] = fieldname;
+                                        c++;
+                                    }
+                            });
 
-                // get data
-                var data = new Array();
-                var d = 0;
-                $LogicalSetXml.find('item').each(function () {
-                    var $this = $(this);
-                    var values = new Array();
-                    var r = 0;
-                    for(var c = 0; c < cols.length; c++)
-                    {
-                        var value = $this.children('column[field="'+ cols[c] +'"]').attr('value');
-                        values[r] = (value == "True");
-                        r++;
-                    }
+            // get data
+            var data = new Array();
+            var d = 0;
+            $LogicalSetXml.find('item').each(function () {
+                var $this = $(this);
+                var values = new Array();
+                var r = 0;
+                for(var c = 0; c < cols.length; c++)
+                {
+                    var value = $this.children('column[field="'+ cols[c] +'"]').attr('value');
+                    values[r] = (value == "True");
+                    r++;
+                }
 
-                    var $elm = { 'label': $this.children('column[field="' + NameCol + '"]').attr('value'),
-                                 'key': $this.children('column[field="' + KeyCol + '"]').attr('value'),
-                                 'values': values };
-                    data[d] = $elm;
-                    d++;
-                });
+                var $elm = { 'label': $this.children('column[field="' + NameCol + '"]').attr('value'),
+                                'key': $this.children('column[field="' + KeyCol + '"]').attr('value'),
+                                'values': values };
+                data[d] = $elm;
+                d++;
+            });
                 
-                $CBADiv.CswCheckBoxArray('init', {
-                                         'ID': ID + '_cba',
-                                         'cols': cols,
-                                         'data': data,
-                                         'onchange': onchange
-                                        });
+            $CBADiv.CswCheckBoxArray('init', {
+                                        'ID': o.ID + '_cba',
+                                        'cols': cols,
+                                        'data': data,
+                                        'onchange': o.onchange
+                                    });
 
 
-            },
-        save: function($propdiv, $xml) {
-                var $LogicalSetXml = $xml.children('logicalsetxml');
-                var $CBADiv = $propdiv.children('div').first();
-                var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': $xml.attr('id') + '_cba' } );
+        },
+        save: function(o) { //$propdiv, $xml
+                var $LogicalSetXml = o.$propxml.children('logicalsetxml');
+                var $CBADiv = o.$propdiv.children('div').first();
+                var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
                 for( var r = 0; r < formdata.length; r++)
                 {
                     for( var c = 0; c < formdata[r].length; c++)
