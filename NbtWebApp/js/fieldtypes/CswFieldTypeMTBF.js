@@ -12,10 +12,10 @@
             var Value = o.$propxml.children('value').text().trim();
             var Units = o.$propxml.children('units').text().trim();
 
-            var $table = makeTable(o.ID + '_tbl')
+            var $table = $.CswTable({ ID: o.ID + '_tbl' })
                             .appendTo($Div);
-            var $cell11 = getTableCell($table, 1, 1);
-            var $cell12 = getTableCell($table, 1, 2);
+            var $cell11 = $table.CswTable('cell', 1, 1);
+            var $cell12 = $table.CswTable('cell', 1, 2);
 
             $cell11.append(Value + '&nbsp;' + Units);
             if(!o.ReadOnly)

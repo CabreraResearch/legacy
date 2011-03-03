@@ -68,13 +68,13 @@
 								data: '',
 								success: function ($xml) {
 									$div.append('NBT Assembly Version: ' + $xml.children('assembly').text() + '<br/><br/>');
-									var $table = makeTable('abouttable')
+									var $table = $.CswTable({ ID: 'abouttable' })
 												  .appendTo($div);
 									var row = 1;
 									$xml.children('component').each(function () {
-										var $namecell = getTableCell($table, row, 1);
-										var $versioncell = getTableCell($table, row, 2);
-										var $copyrightcell = getTableCell($table, row, 3);
+										var $namecell = $table.CswTable('cell', row, 1);
+										var $versioncell = $table.CswTable('cell', row, 2);
+										var $copyrightcell = $table.CswTable('cell', row, 3);
 										$namecell.css('padding', '2px 5px 2px 5px');
 										$versioncell.css('padding', '2px 5px 2px 5px');
 										$copyrightcell.css('padding', '2px 5px 2px 5px');

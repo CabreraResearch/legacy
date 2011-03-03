@@ -22,9 +22,10 @@
 				}
 				else 
 				{
-					var $mytable = makeTable(o.ID + '_tbl').appendTo($Div);
+                    var $table = $.CswTable({ ID: o.ID + '_tbl' })
+                                    .appendTo($Div);
 
-					var $selectcell = getTableCell($mytable, 1, 1);
+					var $selectcell = $table.CswTable('cell', 1, 1);
 					var $selectdiv = $('<div class="locationselect" value="'+ o.nodeid +'"/>' )
 										.appendTo($selectcell);
 					options = {
@@ -46,7 +47,7 @@
 											'SelectContent': $locationtree,
 											'Width': '266px' });
 
-					var $addcell = getTableCell($mytable, 1, 2);
+					var $addcell = $table.CswTable('cell', 1, 2);
 					var $AddButton = $('<div />').appendTo($addcell);
 					$AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
 												AlternateText: "Add New",

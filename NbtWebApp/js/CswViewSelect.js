@@ -42,15 +42,15 @@
 		function onTreeSelect(optSelect) //itemid, text, iconurl
 		{
 			var $newTopContent = $('<div></div>');
-			var $table = makeTable(o.ID + 'selectedtbl')
+            var $table = $.CswTable({ ID: o.ID + 'selectedtbl' })
 						   .appendTo($newTopContent);
-			var $cell1 = getTableCell($table, 1, 1);
+			var $cell1 = $table.CswTable('cell', 1, 1);
 			var $icondiv = $('<div />').appendTo($cell1);
 			$icondiv.css('background-image',  optSelect.iconurl);
 			$icondiv.css('width', '18px');
 			$icondiv.css('height' ,'18px');
 
-			var $cell2 = getTableCell($table, 1, 2);
+			var $cell2 = $table.CswTable('cell', 1, 2);
 			$cell2.append(optSelect.text);
 
 			$selectdiv.CswComboBox( 'TopContent', $newTopContent );

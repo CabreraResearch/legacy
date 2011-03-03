@@ -14,10 +14,10 @@
             }
             else 
             {
-                var $table = makeTable(o.ID + '_tbl')
+                var $table = $.CswTable({ ID: o.ID + '_tbl' })
                                 .appendTo($Div);
-                var $cell11 = getTableCell($table, 1, 1);
-                var $cell21 = getTableCell($table, 2, 1);
+                var $cell11 = $table.CswTable('cell', 1, 1);
+                var $cell21 = $table.CswTable('cell', 2, 1);
 
                 var $TextBox1 = $('<input type="password" class="textinput" id="'+ o.ID +'_pwd1" name="' + o.ID + '" />"' )
                                     .appendTo($cell11)

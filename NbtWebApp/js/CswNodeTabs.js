@@ -77,19 +77,23 @@
 							$form = $div.children('form');
 							$form.children().remove();
 							
-							var $table = makeTable(o.ID + '_proptable')
-										 .appendTo($form);
+                            $div.CswLayoutTable('init', {
+                                                          'ID': o.ID + '_props', 
+                                                          cellset: { 
+                                                                     rows: 1, 
+                                                                     columns: 2 
+                                                                   }
+                                                        });
 							
 							var i = 0;
-							var handleOpt = {
-								'$table': $table, 
-								'$xml': $xml
-							};
-							_handleProps(handleOpt); //$table, $xml
+							
+							_handleProps($div, $xml);
+							
 
-							$table.append('<tr><td><input type="button" id="SaveTab" name="SaveTab" value="Save"/></td></tr>')
-								  .find('#SaveTab')
-								  .click(function() { Save(handleOpt) }); //$table, $xml
+                            $div.CswLayoutTable('finish');
+
+							$div.append('<input type="button" id="SaveTab" name="SaveTab" value="Save"/>')
+								  .click(function() { Save($div, $xml) });
 
 							// Validation
 							$form.validate({ 
@@ -107,22 +111,23 @@
 			}); 
 		} // getProps()
 
-		function _handleProps(handleOpt) //$table, $xml
+		function _handleProps($div, $xml)
 		{
-			handleOpt.$xml.children().each(function() { 
+			$xml.children().each(function() { 
 				var $prop = $(this);
 				var fieldtype = $prop.attr('fieldtype');
-
-				if( $prop.attr('display') != 'false' &&
+                var $cellset = $div.CswLayoutTable('cellset', $prop.attr('displayrow'), $prop.attr('displaycol'));
+				
+                if( $prop.attr('display') != 'false' &&
 					fieldtype != 'Image' && 
 					fieldtype != 'Grid' )
 				{
-					var $labelcell = getTableCell(handleOpt.$table, $prop.attr('displayrow'), ($prop.attr('displaycol') * 2 ) - 1);
+					var $labelcell = $cellset[1][1];
 					$labelcell.addClass('propertylabel');
 					$labelcell.append($prop.attr('name'));
 				}
 
-				var $propcell = getTableCell(handleOpt.$table, $prop.attr('displayrow'), ($prop.attr('displaycol') * 2));
+				var $propcell = $cellset[1][2];
 				$propcell.addClass('propertyvaluecell');
 
 				var makeOpt = {
@@ -171,21 +176,17 @@
 				var $subprops = makeOpt.$prop.children('subprops');
 				if($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 				{
-					var $subtable = makeTable(makeOpt.$prop.attr('id') + '_subproptable')
+                    var $subtable = $.CswTable({ ID: makeOpt.$prop.attr('id') + '_subproptable' })
 									.appendTo(makeOpt.$propcell);
-					var handleOpt = {
-						'$table': $subtable, 
-						'$xml': $subprops
-					};
-					_handleProps(handleOpt);
+					_handleProps($subtable, $subprops);
 				}
 			}
 		} // _makeProp()
 
 
-		function Save(saveOpt) //$table, $propsxml
+		function Save($div, $propsxml)
 		{
-			_updatePropXmlFromForm(saveOpt); //$table, $propsxml
+			_updatePropXmlFromForm($div, $propsxml);
 
 			CswAjaxJSON({
 				url: '/NbtWebApp/wsNBT.asmx/SaveProps',
@@ -201,18 +202,19 @@
 
 		} // Save()
 
-		function _updatePropXmlFromForm(updateOpt) //$table, $propsxml
+		function _updatePropXmlFromForm($div, $propsxml)
 		{
-			updateOpt.$propsxml.children().each(function() { 
+			$propsxml.children().each(function() { 
 				var propOpt = {
-					'$propxml': $(this),
+     					'$propxml': $(this),
 					'$propdiv': '',
 					'$propCell': '',
 					'fieldtype': '',
 					'nodeid': o.nodeid
 				};
 				propOpt.fieldtype = propOpt.$propxml.attr('fieldtype');
-				propOpt.$propCell = getTableCell(updateOpt.$table, propOpt.$propxml.attr('displayrow'), (propOpt.$propxml.attr('displaycol') * 2));
+				var $cellset = $div.CswLayoutTable('cellset', $prop.attr('displayrow'), $prop.attr('displaycol'));
+				propOpt.$propcell = $cellset[1][2];
 				propOpt.$propdiv = propOpt.$propcell.children('div').first();
 
 				$.CswFieldTypeFactory('save', propOpt);              

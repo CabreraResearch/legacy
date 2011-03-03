@@ -203,42 +203,6 @@ function deleteNode(nodeid, onSuccess) {
 
 
 // ------------------------------------------------------------------------------------
-// Layout mechanics
-// ------------------------------------------------------------------------------------
-
-function makeTable(id) 
-{
-	return $('<table id="'+ id +'" cellpadding="0" cellspacing="0" border="0"><tr><td></td></tr></table>');
-}
-
-// row and col are 1-based
-function getTableCell($table, row, col) {
-	var $cell = null;
-	if ($table.length > 0 &&
-		 row != undefined && row != '' &&
-		 col != undefined && col != '') {
-		if (row <= 0) {
-			log("error: row must be greater than 1, got: " + row);
-			row = 1;
-		}
-		if (col <= 0) {
-			log("error: col must be greater than 1, got: " + col);
-			col = 1;
-		}
-
-		while (row > $table.children('tbody').children('tr').length) {
-			$table.append('<tr></tr>');
-		}
-		var $row = $($table.children('tbody').children('tr')[row-1]);
-		while (col > $row.children('td').length) {
-			$row.append('<td></td>');
-		}
-		$cell = $($row.children('td')[col-1]);
-	}
-	return $cell;
-}
-
-// ------------------------------------------------------------------------------------
 // jsTree
 // ------------------------------------------------------------------------------------
 

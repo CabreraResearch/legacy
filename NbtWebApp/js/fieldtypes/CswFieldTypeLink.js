@@ -17,10 +17,10 @@
             }
             else 
             {
-                var $table = makeTable(o.ID + '_tbl')
+                var $table = $.CswTable({ ID: o.ID + '_tbl' })
                                 .appendTo($Div);
-                var $cell11 = getTableCell($table, 1, 1);
-                var $cell12 = getTableCell($table, 1, 2);
+                var $cell11 = $table.CswTable('cell', 1, 1);
+                var $cell12 = $table.CswTable('cell', 1, 2);
 
                 var $Link = $('<a href="'+ Href +'" target="_blank">'+ Text +'</a>&nbsp;&nbsp;' )
                                 .appendTo($cell11);

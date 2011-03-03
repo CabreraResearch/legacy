@@ -16,14 +16,15 @@
             }
             else 
             {
-                var $table = makeTable(o.ID + '_tbl').appendTo($Div);
+                var $table = $.CswTable({ ID: o.ID + '_tbl' })
+                                .appendTo($Div);
 
-                var $cell1 = getTableCell($table, 1, 1);
+                var $cell1 = $table.CswTable('cell', 1, 1);
                 var $TextBox = $('<input type="text" class="textinput" id="'+ o.ID +'" name="' + o.ID + '" value="'+ Value +'" />"' )
                                     .appendTo($cell1)
                                     .change(o.onchange);
 
-                var $cell2 = getTableCell($table, 1, 2);
+                var $cell2 = $table.CswTable('cell', 1, 2);
                 var $PrintButton = $('<div/>' )
                                         .appendTo($cell2)
                                         .CswImageButton({  ButtonType: CswImageButton_ButtonType.Print,

@@ -31,7 +31,7 @@
 					//      displaycol=\"" + WelcomeRow["display_col"].ToString() + "\"";
 
 					var $item = $(this);
-					var $cell = getTableCell($table, $item.attr('displayrow'), $item.attr('displaycol'));
+					var $cell = $table.CswTable('cell', $item.attr('displayrow'), $item.attr('displaycol'));
 
 					if($item.attr('buttonicon') != undefined && $item.attr('buttonicon') != '')
 						$cell.append( $('<a href=""><img border="0" src="'+ $item.attr('buttonicon') +'"/></a><br/><br/>') );
