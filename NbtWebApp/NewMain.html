@@ -48,7 +48,7 @@
 					</tr>
 
 <script type="text/javascript">
-	var debug = true;
+	var debug = false;
 
 	initAll();
 
@@ -193,7 +193,8 @@
 		{
 			$.extend(o, options);
 		}
-		if (debug) log('NewMain.refreshMainMenu()');
+
+		if (debug) log('NewMain.refreshMainMenu()');
 		if (debug) log(o);
 
 		$('#MainMenuDiv').CswMenuMain( {'viewid': o.viewid, 'nodeid': o.nodeid, 'onAddNode': o.onAddNode} );
@@ -209,14 +210,16 @@
 			'ID': 'main',
 			'onSelectNode': '' //viewid, nodeid, cswnbtnodekey
 		};
-		o.onSelectNode = function (opt) { //nodeid, nodename, iconurl, cswnbtnodekey 
+
+		o.onSelectNode = function (opt) { //nodeid, nodename, iconurl, cswnbtnodekey 
 			onSelectTreeNode(opt); }
 
 		if (options)
 		{
 			$.extend(o, options);
 		}
-		if (debug) log('NewMain.getNodesTree()');
+
+		if (debug) log('NewMain.getNodesTree()');
 		if (debug) log(o);
 
 		SetCurrentViewId(o.viewid);

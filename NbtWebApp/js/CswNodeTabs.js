@@ -113,7 +113,7 @@
 
 		function _handleProps($div, $xml)
 		{
-			handleOpt.$xml.children().each(function() { 
+			$xml.children().each(function() { 
 				var $prop = $(this);
 				var fieldtype = $prop.attr('fieldtype');
                 var $cellset = $div.CswLayoutTable('cellset', $prop.attr('displayrow'), $prop.attr('displaycol'));
@@ -178,11 +178,7 @@
 				{
 					var $subtable = makeTable(makeOpt.$prop.attr('id') + '_subproptable')
 									.appendTo(makeOpt.$propcell);
-					var handleOpt = {
-						'$table': $subtable, 
-						'$xml': $subprops
-					};
-					_handleProps(handleOpt);
+					_handleProps($subtable, $subprops);
 				}
 			}
 		} // _makeProp()
