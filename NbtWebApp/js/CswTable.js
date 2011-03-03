@@ -1,46 +1,68 @@
 ﻿; (function ($) {
-    $.fn.CswTable = function (method) {
-        var PluginName = "CswTable";
 
+    // CswTable
+    // Examples:
+    //   Make the table
+    //     var $table = $.CswTable({ ID: 'tableid' });
+    //   Use the table
+    //     var $cell12 = $table.CswTable('cell', 1, 2);
+
+    var PluginName = "CswTable";
+
+    $.CswTable = function (options) {
+        var o = {
+            ID: '',
+            TableCssClass: '',
+            CellCssClass: ''
+        };
+        if (options) {
+            $.extend(o, options);
+        }
+        return $('<table id="'+ o.ID +'" class="'+ o.TableCssClass +'" cellcssclass="'+ o.CellCssClass +'" cellpadding="0" cellspacing="0" border="0"><tr><td class="'+ o.CellCssClass + '"></td></tr></table>');
+    };
+
+    $.fn.CswTable = function (method) {
+        
         var methods = {
-            'make': function (options) {
-                        var o = {
-                            ID: '',
-                        };
-                        if (options) {
-                            $.extend(o, options);
-                        }
-                        return $('<table id="'+ o.ID +'" cellpadding="0" cellspacing="0" border="0"><tr><td></td></tr></table>');
-                    },
 
             // row and col are 1-based
-            'getCell': function (row, col) {
+            'cell': function (row, col) {
                         var $table = $(this);
-	                    var $cell = null;
-	                    if ($table.length > 0 &&
-		                     row != undefined && row != '' &&
-		                     col != undefined && col != '') {
-		                    if (row <= 0) {
-			                    log("error: row must be greater than 1, got: " + row);
-			                    row = 1;
-		                    }
-		                    if (col <= 0) {
-			                    log("error: col must be greater than 1, got: " + col);
-			                    col = 1;
-		                    }
-
-		                    while (row > $table.children('tbody').children('tr').length) {
-			                    $table.append('<tr></tr>');
-		                    }
-		                    var $row = $($table.children('tbody').children('tr')[row-1]);
-		                    while (col > $row.children('td').length) {
-			                    $row.append('<td></td>');
-		                    }
-		                    $cell = $($row.children('td')[col-1]);
-	                    }
-	                    return $cell;
+	                    return getCell($table, row, col);
                     },
 
+            'maxrows': function() {
+                        return getMaxRows($(this));
+                    },
+
+            'maxcolumns': function() {
+                        return getMaxColumns($(this));
+                    },
+
+            'finish': function(onEmptyCell) {
+                        var $table = $(this);
+
+                        // find maximum dimensions
+                        var maxrows = getMaxRows($table);
+                        var maxcolumns = getMaxColumns($table);
+
+                        // make missing cells, and add &nbsp; to empty cells
+                        for(var r = 1; r <= maxrows; r++)
+                        {
+                            for(var c = 1; c <= maxcolumns; c++)
+                            {
+                                var $cell = getCell($table, r, c);
+                                if($cell.contents().length == 0)
+                                {
+                                    if(onEmptyCell != null)
+                                        onEmptyCell($cell, r, c);
+                                    else
+                                        $cell.append('&nbsp;');
+                                }
+                            }
+                        }
+                    },
+            
             // These are safe for nested tables, since using $.find() is not
             'findRow': function (criteria) {
                         var $table = $(this);
@@ -69,6 +91,54 @@
 
         };
 
+        function getMaxRows($table)
+        {
+            var $rows = $table.children('tbody').children('tr');
+            return $rows.length;
+        }
+
+        function getMaxColumns($table)
+        {
+            var $rows = $table.children('tbody').children('tr');
+            var maxcolumns = 0;
+            for(var r = 0; r < $rows.length; r++)
+            {
+                var $columns = $($rows[r]).children('td');
+                if($columns.length > maxcolumns)
+                {
+                    maxcolumns = $columns.length;
+                }
+            }
+            return maxcolumns;
+        }
+
+        // row and col are 1-based
+        function getCell($table, row, col) 
+        {
+	        var $cell = null;
+	        if ($table.length > 0 &&
+		            row != undefined && row != '' &&
+		            col != undefined && col != '') {
+		        if (row <= 0) {
+			        log("error: row must be greater than 1, got: " + row);
+			        row = 1;
+		        }
+		        if (col <= 0) {
+			        log("error: col must be greater than 1, got: " + col);
+			        col = 1;
+		        }
+
+		        while (row > $table.children('tbody').children('tr').length) {
+			        $table.append('<tr></tr>');
+		        }
+		        var $row = $($table.children('tbody').children('tr')[row-1]);
+		        while (col > $row.children('td').length) {
+			        $row.append('<td class="'+ $table.attr('cellcssclass') +'"></td>');
+		        }
+		        $cell = $($row.children('td')[col-1]);
+	        }
+	        return $cell;
+        }
 
         // Method calling logic
         if (methods[method]) {
@@ -79,6 +149,6 @@
             $.error('Method ' + method + ' does not exist on ' + PluginName);
         }
 
-    }; // function(options) {
+    }; // function(method) {
 })(jQuery);
 

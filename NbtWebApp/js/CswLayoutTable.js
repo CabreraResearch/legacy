@@ -12,9 +12,12 @@
                             $.extend(o, options);
                         }
                         var $div = $(this);
-                        var $table = makeTable(o.ID + '_tbl')
+                        var $table = $.CswTable({ 
+                                                  ID: o.ID + '_tbl', 
+                                                  TableCssClass: 'CswLayoutTable_table',
+                                                  CellCssClass: 'CswLayoutTable_cell'
+                                                })
                                        .appendTo($div)
-                                       .addClass('CswLayoutTable_table')
                                        .attr('cellset_rows', o.cellset.rows)
                                        .attr('cellset_columns', o.cellset.columns);
                     },
@@ -39,52 +42,46 @@
                         var $table = $(this).children('table');
                         var cellsetrows = parseInt($table.attr('cellset_rows'));
                         var cellsetcolumns = parseInt($table.attr('cellset_columns'));
+                        var tablemaxrows = $table.CswTable('maxrows');
+                        var tablemaxcolumns = $table.CswTable('maxcolumns');
+                        
+                        // add an extra row and column
+                        var $newcell = getCell($table, (tablemaxrows / cellsetrows ) + 1, (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
+                        $table.CswTable('finish', function($cell, row, column) {
 
-                        // find maximum dimensions
-                        var $rows = tableFindRow($table, '');
-                        var maxcolumns = 0;
-                        for(var r = 0; r < $rows.length; r++)
-                        {
-                            var $columns = tableRowFindCell($($rows[r]), '');
-                            if($columns.length > maxcolumns) 
-                                maxcolumns = $columns.length;
-                        }
+                                $cell.append('&nbsp;');
 
-                        // fill out all rows and columns, and add an extra row and column
-                        for(var r = 1; r <= (($rows.length + 1) / cellsetrows); r++)
-                        {
-                            for(var c = 1; c <= Math.ceil((maxcolumns + 1) / cellsetcolumns); c++)
-                            {
-                                for(var csr = 1; csr <= cellsetrows; csr++)
-                                {
-                                    for(var csc = 1; csc <= cellsetcolumns; csc++)
-                                    {
-                                        var $thiscell = getCell($table, r, c, csr, csc, cellsetrows, cellsetcolumns);
-                                        if($thiscell.contents().length == 0)
-                                        {
-                                            $thiscell.append('&nbsp;').addClass('CswLayoutTable_emptycell');
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                                treatCell($table, $cell, 
+                                          Math.ceil(row / cellsetrows), 
+                                          Math.ceil(column / cellsetcolumns), 
+                                          parseInt(parseInt(cellsetrows - row % cellsetrows)),
+                                          parseInt(parseInt(cellsetcolumns - column % cellsetcolumns)),
+                                          cellsetrows,
+                                          cellsetcolumns);
+                            });
                     }
         };
 
         function getCell($table, row, column, cellsetrow, cellsetcolumn, cellsetrows, cellsetcolumns)
         {
-            var $cell = getTableCell( $table, ((row - 1) * cellsetrows) + cellsetrow, ((column - 1) * cellsetcolumns) + cellsetcolumn);
+            var realrow = ((row - 1) * cellsetrows) + cellsetrow;
+            var realcolumn = ((column - 1) * cellsetcolumns) + cellsetcolumn;
+            var $cell = $table.CswTable('cell', realrow, realcolumn);
 
+            treatCell($table, $cell, row, column, cellsetrow, cellsetcolumn, cellsetrows, cellsetcolumns)
+
+            return $cell;
+        }
+
+        function treatCell($table, $cell, row, column, cellsetrow, cellsetcolumn, cellsetrows, cellsetcolumns)
+        {
             $cell.attr('row', row)
                  .attr('column', column)
                  .attr('cellsetrow', cellsetrow)
                  .attr('cellsetcolumn', cellsetcolumn)
-                 .addClass('CswLayoutTable_cell')
                  .drag(function(ev, dd) { onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
                  .drop(function(ev, dd) { onDrop(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
                  .hover(onHoverIn, onHoverOut);
-
-            return $cell;
         }
 
         function onHoverIn(ev, dd)
@@ -98,9 +95,10 @@
 
         function onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns) 
         {
-            tableFindCell($table, '.CswLayoutTable_swapcell').removeClass('CswLayoutTable_swapcell');
+            $table.CswTable('findCell', '.CswLayoutTable_swapcell')
+                  .removeClass('CswLayoutTable_swapcell');
 
-            var $cells = tableFindCell($table, '[row="'+ row +'"][column="'+ column +'"]');
+            var $cells = $table.CswTable('findCell', '[row="'+ row +'"][column="'+ column +'"]');
             $cells.addClass('CswLayoutTable_dragcell');
 
             var $swapcells = getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd);
@@ -112,9 +110,10 @@
 
         function onDrop(ev, dd, $table, row, column, cellsetrows, cellsetcolumns)
         { 
-            tableFindCell($table, '.CswLayoutTable_swapcell').removeClass('CswLayoutTable_swapcell');
+            $table.CswTable('findCell', '.CswLayoutTable_swapcell')
+                  .removeClass('CswLayoutTable_swapcell');
 
-            var $cells = tableFindCell($table, '[row="'+ row +'"][column="'+ column +'"]');
+            var $cells = $table.CswTable('findCell', '[row="'+ row +'"][column="'+ column +'"]');
             $cells.removeClass('CswLayoutTable_dragcell');
 
             var $swapcells = getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd);
@@ -153,7 +152,7 @@
 
 //            return $table.find('td[row="'+ newrow +'"][column="'+ newcol +'"]');
             var $hovercell = $('.CswLayoutTable_hover');
-            return tableFindCell($table, '[row="'+ $hovercell.attr('row') +'"][column="'+ $hovercell.attr('column') +'"]');
+            return $table.CswTable('findCell', '[row="'+ $hovercell.attr('row') +'"][column="'+ $hovercell.attr('column') +'"]');
         }
 
         // Method calling logic
