@@ -65,16 +65,22 @@
 							$form = $div.children('form');
 							$form.children().remove();
 							
-							var $table = makeTable(o.ID + '_proptable')
-										 .appendTo($form);
+                            $div.CswLayoutTable('init', {
+                                                          'ID': o.ID + '_props', 
+                                                          cellset: { 
+                                                                     rows: 1, 
+                                                                     columns: 2 
+                                                                   }
+                                                        });
 							
 							var i = 0;
 
-							_handleProps($table, $xml);
+							_handleProps($div, $xml);
 
-							$table.append('<tr><td><input type="button" id="SaveTab" name="SaveTab" value="Save"/></td></tr>')
-								  .find('#SaveTab')
-								  .click(function() { Save($table, $xml) });
+                            $div.CswLayoutTable('finish');
+
+							$div.append('<input type="button" id="SaveTab" name="SaveTab" value="Save"/>')
+								  .click(function() { Save($div, $xml) });
 
 							// Validation
 							$form.validate({ 
@@ -92,22 +98,23 @@
 			}); 
 		} // getProps()
 
-		function _handleProps($table, $xml)
+		function _handleProps($div, $xml)
 		{
 			$xml.children().each(function() { 
 				var $prop = $(this);
 				var fieldtype = $prop.attr('fieldtype');
-
-				if( $prop.attr('display') != 'false' &&
+                var $cellset = $div.CswLayoutTable('cellset', $prop.attr('displayrow'), $prop.attr('displaycol'));
+				
+                if( $prop.attr('display') != 'false' &&
 					fieldtype != 'Image' && 
 					fieldtype != 'Grid' )
 				{
-					var $labelcell = getTableCell($table, $prop.attr('displayrow'), ($prop.attr('displaycol') * 2 ) - 1);
+					var $labelcell = $cellset[1][1];
 					$labelcell.addClass('propertylabel');
 					$labelcell.append($prop.attr('name'));
 				}
 
-				var $propcell = getTableCell($table, $prop.attr('displayrow'), ($prop.attr('displaycol') * 2));
+				var $propcell = $cellset[1][2];
 				$propcell.addClass('propertyvaluecell');
 
 				_makeProp($propcell, $prop);
@@ -153,9 +160,9 @@
 		} // _makeProp()
 
 
-		function Save($table, $propsxml)
+		function Save($div, $propsxml)
 		{
-			_updatePropXmlFromForm($table, $propsxml);
+			_updatePropXmlFromForm($div, $propsxml);
 
 			CswAjaxJSON({
 				url: '/NbtWebApp/wsNBT.asmx/SaveProps',
@@ -167,11 +174,12 @@
 
 		} // Save()
 
-		function _updatePropXmlFromForm($table, $propsxml)
+		function _updatePropXmlFromForm($div, $propsxml)
 		{
 			$propsxml.children().each(function() { 
 				var $prop = $(this);
-				var $propcell = getTableCell($table, $prop.attr('displayrow'), ($prop.attr('displaycol') * 2));
+                var $cellset = $div.CswLayoutTable('cellset', $prop.attr('displayrow'), $prop.attr('displaycol'));
+				var $propcell = $cellset[1][2];
 				var fieldtype = $prop.attr('fieldtype');
 				var $propdiv = $propcell.children('div').first();
 

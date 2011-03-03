@@ -203,12 +203,35 @@ function deleteNode(nodeid, onSuccess) {
 
 
 // ------------------------------------------------------------------------------------
-// Layout mechanics
+// Tables
 // ------------------------------------------------------------------------------------
 
 function makeTable(id) 
 {
 	return $('<table id="'+ id +'" cellpadding="0" cellspacing="0" border="0"><tr><td></td></tr></table>');
+}
+
+// These are safe for nested tables, since using $.find() is not
+function tableFindRow($table, criteria) {
+    var $rows = $table.children('tbody').children('tr');
+    if (criteria != '' && criteria != null) {
+        $rows = $rows.filter(criteria);
+    }
+    return $rows;
+}
+function tableFindCell($table, criteria) {
+    var $cells = $table.children('tbody').children('tr').children('td');
+    if (criteria != '' && criteria != null) {
+        $cells = $cells.filter(criteria);
+    }
+    return $cells;
+}
+function tableRowFindCell($row, criteria) {
+    var $cells = $row.children('td');
+    if (criteria != '' && criteria != null) {
+        $cells = $cells.filter(criteria);
+    }
+    return $cells;
 }
 
 // row and col are 1-based

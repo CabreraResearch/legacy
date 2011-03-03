@@ -1,0 +1,21 @@
+﻿.CswLayoutTable_cell
+{
+/* border: 1px solid red; */
+    cursor: move;
+}
+.CswLayoutTable_dragcell
+{
+    background-color: #dddddd;
+}
+.CswLayoutTable_swapcell
+{
+    background-color: #ffff00;
+}
+.CswLayoutTable_hover
+{
+}
+.CswLayoutTable_emptycell
+{
+    width: 50px;
+    height: 15px;
+}
