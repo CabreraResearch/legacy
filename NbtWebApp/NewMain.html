@@ -4,13 +4,13 @@
 
 					<tr>
 						<td id="Td5" class="PageTable_LeftColumn" rowspan="5">
-							<img src="Images/pagelayout/blank.gif" width="1" height="450"/>
+							<img src="Images/pagelayout/blank.gif" alt="X" width="1" height="450"/>
 						</td>
 
 						<td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2">
 							<table cellpadding="0" cellspacing="0">
 								<tr>
-									<td><img id="headerblank4" src="Images/pagelayout/blank.gif" width="1" height="30"/></td>
+									<td><img id="headerblank4" src="Images/pagelayout/blank.gif" alt="X" width="1" height="30"/></td>
 									<td><div id="MainMenuDiv"></div></td>
 								</tr>
 							</table>
@@ -48,7 +48,7 @@
 					</tr>
 
 <script type="text/javascript">
-	var debug = false;
+	var debug = true;
 
 	initAll();
 
@@ -81,7 +81,7 @@
 					getNodesTree( {'viewid': initOpt.viewid} );
 				}
 
-	            $('#QuickLaunch').CswQuickLaunch({ 'onLinkClick': initOpt.onLinkClick });
+				$('#QuickLaunch').CswQuickLaunch({ 'onLinkClick': initOpt.onLinkClick });
 
 			} // onAuthenticate
 		}); // CswLogin
@@ -128,7 +128,7 @@
 			{
 				if( o.viewid != undefined && o.viewid != '' )
 				{
-				    getViewGrid( { 'viewid': o.viewid, 'nodeid': '', 'cswnbtnodekey': o.cswnbtnodekey } );
+					getViewGrid( { 'viewid': o.viewid, 'nodeid': '', 'cswnbtnodekey': o.cswnbtnodekey } );
 				}
 				else
 				{
@@ -241,8 +241,11 @@
 			$.extend(o, options);
 		}
 
-		if (debug) log('NewMain.onSelectTreeNode()');
-		if (debug) log(o);
+		if (debug)
+		{
+		    log('NewMain.onSelectTreeNode()');
+		    log(o);
+		}
 
 		getTabs( {'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey} );  //nodeid, cswnbtnodekey
 		refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey }); //viewid, nodeid, cswnbtnodekey
@@ -260,9 +263,12 @@
 		{
 			$.extend(o, options);
 		}
-		
-		if (debug) log('NewMain.getViewGrid()');
-		if (debug) log(o);
+
+		if (debug)
+		{
+		    log('NewMain.getViewGrid()');
+		    log(o);
+		}
 
 		SetCurrentViewId(o.viewid);
 		clearLeft();
@@ -283,8 +289,11 @@
 			$.extend(o, options);
 		}
 
-		if (debug) log('NewMain.getTabs()');
-		if (debug) log(o);
+		if (debug)
+		{
+		    log('NewMain.getTabs()');
+		    log(o);
+		}
 
 		clearRight();
 		$('#RightDiv').CswNodeTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'onSave': o.onSave });
@@ -310,9 +319,12 @@
 		{
 			$.extend(o, options);
 		}
-		
-		if (debug) log('NewMain.refreshViewTree()');
-		if (debug) log(o);
+
+		if (debug)
+		{
+		    log('NewMain.refreshViewTree()');
+		    log(o);
+		}
 
 		clearLeft();
 		//var viewid = GetCurrentViewId();
