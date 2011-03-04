@@ -77,20 +77,20 @@
 							$form = $div.children('form');
 							$form.children().remove();
 							
-                            $div.CswLayoutTable('init', {
-                                                          'ID': o.ID + '_props', 
-                                                          cellset: { 
-                                                                     rows: 1, 
-                                                                     columns: 2 
-                                                                   }
-                                                        });
+							$div.CswLayoutTable('init', {
+														  'ID': o.ID + '_props', 
+														  cellset: { 
+																	 rows: 1, 
+																	 columns: 2 
+																   }
+														});
 							
 							var i = 0;
 							
 							_handleProps($div, $xml);
 							
 
-                            $div.CswLayoutTable('finish');
+							$div.CswLayoutTable('finish');
 
 							$div.append('<input type="button" id="SaveTab" name="SaveTab" value="Save"/>')
 								  .click(function() { Save($div, $xml) });
@@ -116,9 +116,9 @@
 			$xml.children().each(function() { 
 				var $prop = $(this);
 				var fieldtype = $prop.attr('fieldtype');
-                var $cellset = $div.CswLayoutTable('cellset', $prop.attr('displayrow'), $prop.attr('displaycol'));
+				var $cellset = $div.CswLayoutTable('cellset', $prop.attr('displayrow'), $prop.attr('displaycol'));
 				
-                if( $prop.attr('display') != 'false' &&
+				if( $prop.attr('display') != 'false' &&
 					fieldtype != 'Image' && 
 					fieldtype != 'Grid' )
 				{
@@ -176,7 +176,7 @@
 				var $subprops = makeOpt.$prop.children('subprops');
 				if($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 				{
-                    var $subtable = $.CswTable({ ID: makeOpt.$prop.attr('id') + '_subproptable' })
+					var $subtable = $.CswTable({ ID: makeOpt.$prop.attr('id') + '_subproptable' })
 									.appendTo(makeOpt.$propcell);
 					_handleProps($subtable, $subprops);
 				}
@@ -206,7 +206,7 @@
 		{
 			$propsxml.children().each(function() { 
 				var propOpt = {
-     					'$propxml': $(this),
+						'$propxml': $(this),
 					'$propdiv': '',
 					'$propCell': '',
 					'fieldtype': '',
