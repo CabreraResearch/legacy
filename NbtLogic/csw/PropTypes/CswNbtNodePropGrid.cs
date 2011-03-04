@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
-using ChemSW.Nbt.MetaData;
 using System.Xml;
-using ChemSW.Core;
+using System.Xml.Linq;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -13,8 +11,8 @@ namespace ChemSW.Nbt.PropTypes
     public class CswNbtNodePropGrid : CswNbtNodeProp
     {
 
-        public CswNbtNodePropGrid(CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp)
-            : base(CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp)
+        public CswNbtNodePropGrid( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
         }//generic
 
@@ -22,7 +20,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return (0 == Gestalt.Length);
+                return ( 0 == Gestalt.Length );
             }//
         }
 
@@ -44,7 +42,7 @@ namespace ChemSW.Nbt.PropTypes
                 CswNbtView Ret = null;
                 if( _CswNbtMetaDataNodeTypeProp.ViewId != Int32.MinValue )
                     //Ret.LoadXml(_CswNbtMetaDataNodeTypeProp.ViewId);
-                    Ret = ( CswNbtView ) CswNbtViewFactory.restoreView( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.ViewId );
+                    Ret = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.ViewId );
                 return Ret;
             }
         }
@@ -59,7 +57,7 @@ namespace ChemSW.Nbt.PropTypes
             //    _CswNbtMetaDataNodeTypeProp.TextAreaRows = value;
             //}
         }
-        
+
         public override void ToXml( XmlNode Parent )
         {
             // Nothing to save
@@ -68,6 +66,17 @@ namespace ChemSW.Nbt.PropTypes
         {
             // Nothing to restore
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // Nothing to restore

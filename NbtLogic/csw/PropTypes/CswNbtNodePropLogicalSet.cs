@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using System.Xml;
-using System.IO;
+using System.Xml.Linq;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Core;
 
 
 namespace ChemSW.Nbt.PropTypes
@@ -303,7 +300,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode LSXmlNode = CswXmlDocument.AppendXmlNode( ParentNode, _ElemName_LogicalSetXml );
-            
+
             DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
             foreach( DataRow Row in Data.Rows )
             {
@@ -322,8 +319,8 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            
-            foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode(XmlNode, _ElemName_LogicalSetXml).ChildNodes )
+
+            foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, _ElemName_LogicalSetXml ).ChildNodes )
             {
                 // get key and name
                 string key = string.Empty;
@@ -336,19 +333,30 @@ namespace ChemSW.Nbt.PropTypes
                         name = ColumnNode.Attributes["value"].Value;
                 }
                 // save values
-                foreach( XmlNode ColumnNode in ItemNode.ChildNodes ) 
+                foreach( XmlNode ColumnNode in ItemNode.ChildNodes )
                 {
                     string field = ColumnNode.Attributes["field"].Value;
                     string value = ColumnNode.Attributes["value"].Value;
                     if( field != _KeyColumn && field != _NameColumn )
                     {
-                        SetValue( field, key, CswConvert.ToBoolean( value ));
+                        SetValue( field, key, CswConvert.ToBoolean( value ) );
                     }
                 }
             }
 
             Save();
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Initialize this object with data from the given DataRow
         /// </summary>

@@ -1,30 +1,29 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
-using ChemSW.Nbt.MetaData;
 using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropMol : CswNbtNodeProp
     {
-        public CswNbtNodePropMol (CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp)
-            : base(CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp)
+        public CswNbtNodePropMol( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
             _MolSubField = ( (CswNbtFieldTypeRuleMol) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).MolSubField;
         }
-    
+
         private CswNbtSubField _MolSubField;
 
         override public bool Empty
         {
             get
             {
-                return (0 == Gestalt.Length);
+                return ( 0 == Gestalt.Length );
             }
         }
 
@@ -42,7 +41,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue(_MolSubField.Column);
+                return _CswNbtNodePropData.GetPropRowValue( _MolSubField.Column );
             }
             set
             {
@@ -61,6 +60,17 @@ namespace ChemSW.Nbt.PropTypes
         {
             Mol = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _MolSubField.ToXmlNodeName() );
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             Mol = CswTools.XmlRealAttributeName( PropRow[_MolSubField.ToXmlNodeName()].ToString() );

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -22,7 +23,7 @@ namespace ChemSW.Nbt.PropTypes
 
             _SequenceSubField = ( (CswNbtFieldTypeRuleSequence) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).SequenceSubField;
             _SequenceNumberSubField = ( (CswNbtFieldTypeRuleSequence) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).SequenceNumberSubField;
-            
+
             _SequenceValue = new CswNbtSequenceValue( _CswNbtMetaDataNodeTypeProp.PropId, _CswNbtResources );
         }
 
@@ -132,6 +133,17 @@ namespace ChemSW.Nbt.PropTypes
             if( ProspectiveSequence != string.Empty )
                 setSequenceValueOverride( ProspectiveSequence, false );
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             string ProspectiveSequence = CswTools.XmlRealAttributeName( PropRow[_SequenceSubField.ToXmlNodeName()].ToString() );

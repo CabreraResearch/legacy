@@ -1,19 +1,17 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Core;
 using System.Xml;
+using System.Xml.Linq;
+using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropTimeInterval : CswNbtNodeProp
     {
-        public CswNbtNodePropTimeInterval(CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp)
+        public CswNbtNodePropTimeInterval( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
             //_RateInterval = new CswRateInterval(CswNbtNodePropData.Gestalt);   //this should be backwards compatible...
@@ -98,12 +96,23 @@ namespace ChemSW.Nbt.PropTypes
             XmlDocument Doc = new XmlDocument();
             XmlNode IntervalNode = CswXmlDocument.SetDocumentElement( Doc, _IntervalSubField.ToXmlNodeName() );
             IntervalNode.InnerXml = IntervalXmlAsString;
-            
+
             CswRateInterval NewRateInterval = new CswRateInterval();
             NewRateInterval.ReadXml( IntervalNode );
             // Setting RateInterval triggers the change to the property value -- don't skip this step
             RateInterval = NewRateInterval;
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             //RateInterval = new CswRateInterval( PropRow[_IntervalSubField.ToXmlNodeName()].ToString() );
@@ -113,7 +122,7 @@ namespace ChemSW.Nbt.PropTypes
                 XmlDocument Doc = new XmlDocument();
                 XmlNode IntervalNode = CswXmlDocument.SetDocumentElement( Doc, _IntervalSubField.ToXmlNodeName() );
                 IntervalNode.InnerXml = IntervalXmlAsString.Trim();
-                
+
                 CswRateInterval NewRateInterval = new CswRateInterval();
                 NewRateInterval.ReadXml( IntervalNode );
                 // Setting RateInterval triggers the change to the property value -- don't skip this step

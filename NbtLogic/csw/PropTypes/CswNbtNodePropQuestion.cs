@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -17,18 +18,18 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropQuestion( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            if ( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question )
+            if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question )
             {
                 throw ( new CswDniException( "A data consistency problem occurred",
                                             "CswNbtNodePropQuestion() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
             }
 
-            _AnswerSubField = ( (CswNbtFieldTypeRuleQuestion)CswNbtMetaDataNodeTypeProp.FieldTypeRule ).AnswerSubField;
-            _CommentsSubField = ( (CswNbtFieldTypeRuleQuestion)CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CommentsSubField;
-            _CorrectiveActionSubField = ( (CswNbtFieldTypeRuleQuestion)CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CorrectiveActionSubField;
-            _DateAnsweredSubField = ( (CswNbtFieldTypeRuleQuestion)CswNbtMetaDataNodeTypeProp.FieldTypeRule ).DateAnsweredSubField;
-            _DateCorrectedSubField = ( (CswNbtFieldTypeRuleQuestion)CswNbtMetaDataNodeTypeProp.FieldTypeRule ).DateCorrectedSubField;
-            _IsCompliantSubField = ( (CswNbtFieldTypeRuleQuestion)CswNbtMetaDataNodeTypeProp.FieldTypeRule ).IsCompliantSubField;
+            _AnswerSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).AnswerSubField;
+            _CommentsSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CommentsSubField;
+            _CorrectiveActionSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CorrectiveActionSubField;
+            _DateAnsweredSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).DateAnsweredSubField;
+            _DateCorrectedSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).DateCorrectedSubField;
+            _IsCompliantSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).IsCompliantSubField;
 
         }//ctor
 
@@ -64,9 +65,9 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 string AnswerVal = value;
-                
+
                 DateTime UpdateDateAnswered = DateTime.MinValue;
-                if ( !string.IsNullOrEmpty( AnswerVal ) )
+                if( !string.IsNullOrEmpty( AnswerVal ) )
                 {
                     UpdateDateAnswered = DateTime.Today;
                 }
@@ -85,7 +86,7 @@ namespace ChemSW.Nbt.PropTypes
         public String CorrectiveAction
         {
             get { return _CswNbtNodePropData.GetPropRowValue( _CorrectiveActionSubField.Column ); }
-            set 
+            set
             {
                 String val = value;
                 DateTime UpdateDateCorrected = DateTime.Today;
@@ -94,7 +95,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     UpdateDateCorrected = DateTime.MinValue;
                 }
-                
+
                 DateCorrected = UpdateDateCorrected;
                 //IsCompliant = _IsCompliant;
                 _CswNbtNodePropData.SetPropRowValue( _CorrectiveActionSubField.Column, val );
@@ -154,7 +155,7 @@ namespace ChemSW.Nbt.PropTypes
         //    }
         //}
 
-        private void _synchGestalt(String GestaltValue)
+        private void _synchGestalt( String GestaltValue )
         {
             _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, GestaltValue );
         }
@@ -205,7 +206,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( null == _AllowedAnswers || 
+                if( null == _AllowedAnswers ||
                     _AllowedAnswers.ToString() != _CswNbtMetaDataNodeTypeProp.ListOptions ) // Case 20629
                 {
                     _AllowedAnswers = new CswCommaDelimitedString();
@@ -262,6 +263,16 @@ namespace ChemSW.Nbt.PropTypes
             DateCorrected = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateCorrectedSubField.ToXmlNodeName() );
         }
 
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             Answer = CswTools.XmlRealAttributeName( PropRow[_AnswerSubField.ToXmlNodeName()].ToString() );
@@ -271,7 +282,7 @@ namespace ChemSW.Nbt.PropTypes
             if( !String.IsNullOrEmpty( DateAnsweredString ) )
                 DateAnswered = Convert.ToDateTime( DateAnsweredString );
             String DateCorrectedString = CswTools.XmlRealAttributeName( PropRow[_DateCorrectedSubField.ToXmlNodeName()].ToString() );
-            if ( !String.IsNullOrEmpty( DateCorrectedString ) )
+            if( !String.IsNullOrEmpty( DateCorrectedString ) )
                 DateCorrected = Convert.ToDateTime( DateCorrectedString );
         }
 

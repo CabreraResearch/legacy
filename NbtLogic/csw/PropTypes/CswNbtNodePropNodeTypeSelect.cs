@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Data;
 using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.DB;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.PropTypes
                 return Data;
             }
         }
-        
+
         public const string NameColumn = "NodeTypeName";
         public const string KeyColumn = "nodetypeid";
         public const string ValueColumn = "Include";
@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.PropTypes
                     if( NameColumn == ColumnNode.Attributes["field"].Value )
                         name = ColumnNode.Attributes["value"].Value;
                     if( ValueColumn == ColumnNode.Attributes["field"].Value )
-                        value = CswConvert.ToBoolean(ColumnNode.Attributes["value"].Value);
+                        value = CswConvert.ToBoolean( ColumnNode.Attributes["value"].Value );
                 }
                 if( value )
                 {
@@ -190,6 +190,16 @@ namespace ChemSW.Nbt.PropTypes
 
             SelectedNodeTypeIds = NewSelectedNodeTypeIds;
         } // ReadXml()
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

@@ -1,14 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
 using System.Xml;
+using System.Xml.Linq;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -125,13 +122,37 @@ namespace ChemSW.Nbt.PropTypes
         //public bool IsNodeReference( XmlNode PropertyValueNode ) { return _CswNbtNodeProp.IsNodeReference( PropertyValueNode ); }
         //public bool IsNodeTypeReference( XmlNode PropertyValueNode ) { return _CswNbtNodeProp.IsNodeTypeReference( PropertyValueNode ); }
 
+        /// <summary>
+        /// Returns defined Field Type attributes/subfields as XmlDocument class XmlNode
+        /// </summary>
+        /// <param name="Parent">XmlDocument class XmlNode</param>
         public void ToXml( XmlNode Parent )
         {
             _CswNbtNodeProp.ToXml( Parent );
         }
+        /// <summary>
+        /// Parses defined Field Type attributes/subfields into a XmlDocument class object
+        /// </summary>
+        /// <param name="Node">XmlDocument class XmlNode</param>
         public void ReadXml( XmlNode Node, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             _CswNbtNodeProp.ReadXml( Node, NodeMap, NodeTypeMap );
+        }
+        /// <summary>
+        /// Returns defined Field Type attributes/subfields as XContainer class XElement
+        /// </summary>
+        /// <param name="Parent">XContainer class XElement</param>
+        public void ToXElement( XElement Parent )
+        {
+            _CswNbtNodeProp.ToXElement( Parent );
+        }
+        /// <summary>
+        /// Parses defined Field Type attributes/subfields into a XContainer class object
+        /// </summary>
+        /// <param name="Node">XContainer class XElement</param>
+        public void ReadXElement( XElement Node, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            _CswNbtNodeProp.ReadXElement( Node, NodeMap, NodeTypeMap );
         }
         public void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
