@@ -106,6 +106,7 @@ namespace ChemSW.Nbt.WebServices
 
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string authenticate( string AccessId, string UserName, string Password )
 		{
 			string ReturnVal = string.Empty;
@@ -128,6 +129,7 @@ namespace ChemSW.Nbt.WebServices
 
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string deauthenticate()
 		{
 			string ReturnVal = string.Empty;
@@ -146,6 +148,7 @@ namespace ChemSW.Nbt.WebServices
 		}//deAuthenticate()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getWelcomeItems( string RoleId )
 		{
 			CswTimer Timer = new CswTimer();
@@ -174,6 +177,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getWelcomeItems()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getQuickLaunchItems()
 		{
 			var ReturnXML = new XmlDocument();
@@ -222,6 +226,7 @@ namespace ChemSW.Nbt.WebServices
 		//} // getViews()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getViewTree()
 		{
 			string ReturnVal = string.Empty;
@@ -243,6 +248,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getViews()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getDashboard()
 		{
 			string ReturnVal = string.Empty;
@@ -264,6 +270,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getDashboard()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getHeaderMenu()
 		{
 			string ReturnVal = string.Empty;
@@ -285,6 +292,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getHeaderMenu()		[WebMethod( EnableSession = true )]
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getMainMenu( Int32 ViewId, string NodePk, string NodeKey )
 		{
 			string ReturnVal = string.Empty;
@@ -306,6 +314,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getMainMenu()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string getGrid( string ViewPk, string CswNbtNodeKey = null )
 		{
 			var ReturnJson = string.Empty;
@@ -339,6 +348,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getGrid()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getTree( Int32 ViewId, string IDPrefix )
 		{
 			var XmlString = string.Empty;
@@ -366,6 +376,7 @@ namespace ChemSW.Nbt.WebServices
 
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getTabs( string EditMode, string NodePk, string NodeTypeId )
 		{
 			string ReturnVal = string.Empty;
@@ -388,6 +399,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getTabs()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getProps( string EditMode, string NodePk, string TabId, string NodeTypeId )
 		{
 			XmlDocument ReturnXml = null;
@@ -408,6 +420,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getProps()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getSingleProp( string EditMode, string NodePk, string PropId, string NodeTypeId, string NewPropXml )
 		{
 			XmlDocument ReturnXml = null;
@@ -428,6 +441,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getProps()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public string saveProps( string EditMode, string NodePk, string NewPropsXml, string NodeTypeId )
 		{
 			string ReturnVal = string.Empty;
@@ -447,6 +461,7 @@ namespace ChemSW.Nbt.WebServices
 		} // saveProps()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getAbout()
 		{
 			string ReturnVal = string.Empty;
@@ -468,6 +483,7 @@ namespace ChemSW.Nbt.WebServices
 		} // saveProps()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public string DeleteNode( string NodePk )
 		{
 			string ReturnVal = string.Empty;
