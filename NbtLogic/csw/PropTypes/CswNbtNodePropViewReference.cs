@@ -1,17 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
 using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.DB;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -70,7 +66,7 @@ namespace ChemSW.Nbt.PropTypes
                     NewView.save();
                     _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, NewView.ViewId );
                     _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, PropName );
-                    
+
                     // Case 20194. KLUGE Alert!!!
                     CswNbtNode node = _CswNbtResources.Nodes.GetNode( _CswNbtNodePropData.NodeId );
                     if( null != node )
@@ -128,6 +124,17 @@ namespace ChemSW.Nbt.PropTypes
             ViewId = CswConvert.ToInt32( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ViewIdSubField.ToXmlNodeName() ) );
             PendingUpdate = true;
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             ViewId = CswConvert.ToInt32( PropRow[_ViewIdSubField.ToXmlNodeName()].ToString() );

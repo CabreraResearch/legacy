@@ -1,9 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -12,8 +11,8 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropStatic : CswNbtNodeProp
     {
-        public CswNbtNodePropStatic(CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp)
-            : base(CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp)
+        public CswNbtNodePropStatic( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
             _TextSubField = ( (CswNbtFieldTypeRuleStatic) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).TextSubField;
         }
@@ -66,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if (_CswNbtMetaDataNodeTypeProp.TextAreaRows != Int32.MinValue)
+                if( _CswNbtMetaDataNodeTypeProp.TextAreaRows != Int32.MinValue )
                     return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
                 else
                     return Int32.MinValue;
@@ -81,7 +80,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if (_CswNbtMetaDataNodeTypeProp.TextAreaColumns != Int32.MinValue)
+                if( _CswNbtMetaDataNodeTypeProp.TextAreaColumns != Int32.MinValue )
                     return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
                 else
                     return Int32.MinValue;
@@ -103,6 +102,17 @@ namespace ChemSW.Nbt.PropTypes
         {
             StaticText = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _TextSubField.ToXmlNodeName() );
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             StaticText = CswTools.XmlRealAttributeName( PropRow[_TextSubField.ToXmlNodeName()].ToString() );

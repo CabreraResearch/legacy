@@ -1,12 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.PropTypes
@@ -44,7 +42,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue(_CachedValueSubField.Column);
+                return _CswNbtNodePropData.GetPropRowValue( _CachedValueSubField.Column );
             }
         }
 
@@ -66,7 +64,7 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodePropData.PendingUpdate = false;
             return Value;
         }
-        
+
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode CachedValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedValueSubField.ToXmlNodeName(), CachedValue );
@@ -77,6 +75,17 @@ namespace ChemSW.Nbt.PropTypes
             // Nothing to restore
             PendingUpdate = true;
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // Nothing to restore

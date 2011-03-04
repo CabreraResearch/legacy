@@ -1,17 +1,14 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
 using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.DB;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.PropTypes
@@ -217,6 +214,17 @@ namespace ChemSW.Nbt.PropTypes
             SelectedViewIds.FromString( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedViewIdsSubField.ToXmlNodeName() ) );
             PendingUpdate = true;
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             SelectedViewIds.FromString( CswTools.XmlRealAttributeName( PropRow[_SelectedViewIdsSubField.ToXmlNodeName()].ToString() ) );
