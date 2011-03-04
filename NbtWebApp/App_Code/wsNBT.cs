@@ -70,26 +70,24 @@ namespace ChemSW.Nbt.WebServices
 			return "<result>" + ReturnVal + "</result>";
 		}
 
-		private const string QuickLaunchViews = "QuickLaunchViews";
 		/// <summary>
 		/// Append to QuickLaunch
 		/// </summary>
 		private void addToQuickLaunch(CswNbtView View)
 		{
+			const string QuickLaunchViews = CswNbtWebServiceQuickLaunchItems.QuickLaunchViews;
 			if( ( View.ViewId > 0 ) || ( View.ViewId <= 0 && View.SessionViewId > 0 ) )
 			{
-				//Tuple == Item1: itemid (view/action), Item2: name, Item3: url(Action),viewmod(View), Item4: item type (Action/View)
-				LinkedList<Tuple<Int32, string, string, CswNbtWebServiceQuickLaunchItems.QuickLaunchType>> ViewHistoryList = null;
+				LinkedList<CswNbtQuickLaunchItem> ViewHistoryList = null;
 				if( null == Session[QuickLaunchViews] )
 				{
-					ViewHistoryList = new LinkedList<Tuple<int, string, string, CswNbtWebServiceQuickLaunchItems.QuickLaunchType>>();
+					ViewHistoryList = new LinkedList<CswNbtQuickLaunchItem>();
 				}
 				else
 				{
-					ViewHistoryList = (LinkedList<Tuple<Int32, string, string, CswNbtWebServiceQuickLaunchItems.QuickLaunchType>>) Session[QuickLaunchViews];
+					ViewHistoryList = (LinkedList<CswNbtQuickLaunchItem>) Session[QuickLaunchViews];
 				}
-				var ThisView = new Tuple<Int32, string, string, CswNbtWebServiceQuickLaunchItems.QuickLaunchType>
-					( View.ViewId, View.ViewName, View.ViewMode.ToString(), CswNbtWebServiceQuickLaunchItems.QuickLaunchType.View );
+				var ThisView = new CswNbtQuickLaunchItem( View.ViewId, View.ViewName, View.ViewMode );
 
 				if( ViewHistoryList.Contains( ThisView ) )
 				{
@@ -151,7 +149,6 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getWelcomeItems( string RoleId )
 		{
-			CswTimer Timer = new CswTimer();
 			string ReturnVal = string.Empty;
 			try
 			{
@@ -180,26 +177,28 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getQuickLaunchItems()
 		{
-			var ReturnXML = new XmlDocument();
+			var ReturnDoc = new XmlDocument();
 			try
 			{
 				start();
 
 				CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
-				var ql = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources, Session );
+				var ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources, Session );
 				if( null != UserId )
 				{
-					ReturnXML = ql.getQuickLaunchItems( UserId, Session );
+					var QuickLaunchItems = new XElement( "quicklaunch" );
+					QuickLaunchItems.Add( ws.getQuickLaunchItems( UserId ) );
+					ReturnDoc.LoadXml( QuickLaunchItems.ToString() );
 				}
 
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnXML.LoadXml( error( ex ) );
+				ReturnDoc.LoadXml( error( ex ) );
 			}
 
-			return ReturnXML;
+			return ReturnDoc;
 		} // getQuickLaunchItems()
 
 
