@@ -8,7 +8,7 @@
         init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
             var $Div = $(this);
-            $Div.children().remove();
+            $Div.contents().remove();
 
             var $LogicalSetXml = o.$propxml.children('logicalsetxml');
 

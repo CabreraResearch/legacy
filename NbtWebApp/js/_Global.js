@@ -384,3 +384,13 @@ if (typeof String.prototype.trim !== 'function') {
 	}
 }
 
+
+// This is a workaround to a problem introduced by using jquery.validation with jquery 1.5
+// http://stackoverflow.com/questions/5068822/ajax-parseerror-on-verrorsfoundtrue-vmessagelogin-failed
+// http://blog.m0sa.net/2011/02/jqueryvalidation-breaks-jquery-15-ajax.html
+
+$(function () {
+    $.ajaxSettings.cache = false;
+    $.ajaxSettings.jsonp = undefined;
+    $.ajaxSettings.jsonpCallback = undefined;
+})

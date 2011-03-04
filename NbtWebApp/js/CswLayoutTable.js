@@ -19,7 +19,8 @@
                                                 })
                                        .appendTo($div)
                                        .attr('cellset_rows', o.cellset.rows)
-                                       .attr('cellset_columns', o.cellset.columns);
+                                       .attr('cellset_columns', o.cellset.columns)
+                                       .attr('configmode', 'false');
                     },
 
             'cellset': function(row, column) {
@@ -38,8 +39,10 @@
                         }
                         return cellset;
                     },
-            'finish': function() {
+            'config': function() {
                         var $table = $(this).children('table');
+                        $table.attr('configmode', 'true');
+
                         var cellsetrows = parseInt($table.attr('cellset_rows'));
                         var cellsetcolumns = parseInt($table.attr('cellset_columns'));
                         var tablemaxrows = $table.CswTable('maxrows');
@@ -59,8 +62,15 @@
                                           cellsetrows,
                                           cellsetcolumns);
                             });
+                        $table.CswTable('findCell', '.CswLayoutTable_cell')
+                            .addClass('CswLayoutTable_configcell');
                     }
         };
+
+        function isConfigMode($table)
+        {
+            return ($table.attr('configmode') == "true");
+        }
 
         function getCell($table, row, column, cellsetrow, cellsetcolumn, cellsetrows, cellsetcolumns)
         {
@@ -81,55 +91,64 @@
                  .attr('cellsetcolumn', cellsetcolumn)
                  .drag(function(ev, dd) { onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
                  .drop(function(ev, dd) { onDrop(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
-                 .hover(onHoverIn, onHoverOut);
+                 .hover(function(ev, dd) { onHoverIn(ev, dd, $table, $(this)); },
+                        function(ev, dd) { onHoverOut(ev, dd, $table, $(this)); } );
         }
 
-        function onHoverIn(ev, dd)
+        function onHoverIn(ev, dd, $table, $cell)
         {
-            $(this).addClass('CswLayoutTable_hover');
+            if(isConfigMode($table))
+                $cell.addClass('CswLayoutTable_hover');
         }
-        function onHoverOut(ev, dd)
+        function onHoverOut(ev, dd, $table, $cell)
         {
-            $(this).removeClass('CswLayoutTable_hover');
+            if(isConfigMode($table))
+                $cell.removeClass('CswLayoutTable_hover');
         }
 
         function onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns) 
         {
-            $table.CswTable('findCell', '.CswLayoutTable_swapcell')
-                  .removeClass('CswLayoutTable_swapcell');
-
-            var $cells = $table.CswTable('findCell', '[row="'+ row +'"][column="'+ column +'"]');
-            $cells.addClass('CswLayoutTable_dragcell');
-
-            var $swapcells = getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd);
-            if($swapcells.length > 0)
+            if(isConfigMode($table))
             {
-                $swapcells.addClass('CswLayoutTable_swapcell');
+                $table.CswTable('findCell', '.CswLayoutTable_swapcell')
+                      .removeClass('CswLayoutTable_swapcell');
+
+                var $cells = $table.CswTable('findCell', '[row="'+ row +'"][column="'+ column +'"]');
+                $cells.addClass('CswLayoutTable_dragcell');
+
+                var $swapcells = getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd);
+                if($swapcells.length > 0)
+                {
+                    $swapcells.addClass('CswLayoutTable_swapcell');
+                }
             }
         } // onDrag
 
         function onDrop(ev, dd, $table, row, column, cellsetrows, cellsetcolumns)
         { 
-            $table.CswTable('findCell', '.CswLayoutTable_swapcell')
-                  .removeClass('CswLayoutTable_swapcell');
-
-            var $cells = $table.CswTable('findCell', '[row="'+ row +'"][column="'+ column +'"]');
-            $cells.removeClass('CswLayoutTable_dragcell');
-
-            var $swapcells = getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd);
-            if($swapcells.length > 0)
+            if(isConfigMode($table))
             {
-                var $tempdiv = $('<div />');
-                for(r = 1; r <= cellsetrows; r++)
-                {
-                    for(c = 1; c <= cellsetcolumns; c++)
-                    {
-                        var $cell = $cells.filter('[cellsetrow="'+ r +'"][cellsetcolumn="'+ c +'"]');
-                        var $swapcell = $swapcells.filter('[cellsetrow="'+ r +'"][cellsetcolumn="'+ c +'"]');
+                $table.CswTable('findCell', '.CswLayoutTable_swapcell')
+                      .removeClass('CswLayoutTable_swapcell');
 
-                        $cell.contents().appendTo($tempdiv);
-                        $swapcell.contents().appendTo($cell);
-                        $tempdiv.contents().appendTo($swapcell);
+                var $cells = $table.CswTable('findCell', '[row="'+ row +'"][column="'+ column +'"]');
+                $cells.removeClass('CswLayoutTable_dragcell');
+
+                var $swapcells = getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd);
+                if($swapcells.length > 0)
+                {
+                    var $tempdiv = $('<div />');
+                    for(r = 1; r <= cellsetrows; r++)
+                    {
+                        for(c = 1; c <= cellsetcolumns; c++)
+                        {
+                            var $cell = $cells.filter('[cellsetrow="'+ r +'"][cellsetcolumn="'+ c +'"]');
+                            var $swapcell = $swapcells.filter('[cellsetrow="'+ r +'"][cellsetcolumn="'+ c +'"]');
+
+                            $cell.contents().appendTo($tempdiv);
+                            $swapcell.contents().appendTo($cell);
+                            $tempdiv.contents().appendTo($swapcell);
+                        }
                     }
                 }
             }

@@ -16,7 +16,7 @@
                 }
 
                 var $Div = $(this);
-                $Div.children().remove();
+                $Div.contents().remove();
 
                 var $TopDiv = $('<div id="'+ o.ID +'_top" class="CswComboBox_TopDiv"></div>')
                             .appendTo($Div)
@@ -52,7 +52,7 @@
                     var $table = $TopDiv.children('table');
                     var $cell1 = $table.CswTable('cell', 1, 1);
                     $cell1.text('');
-                    $cell1.children().remove();
+                    $cell1.contents().remove();
                     $cell1.append(content);
                 },
             toggle: function() {

@@ -12,7 +12,7 @@
 		}
 
 		var $viewsdiv = $(this);
-		$viewsdiv.children().remove();
+		$viewsdiv.contents().remove();
 		
 		CswAjaxXml({
 				url: o.ViewUrl,

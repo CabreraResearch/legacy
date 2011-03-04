@@ -14,7 +14,7 @@
 		}
 
 		var $selectdiv = $(this);
-		$selectdiv.children().remove();
+		$selectdiv.contents().remove();
 
 		getViewSelect(o.viewid);
 

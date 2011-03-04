@@ -1,6 +1,9 @@
 ﻿.CswLayoutTable_cell
 {
-    border: 1px solid red; 
+}
+.CswLayoutTable_configcell
+{
+    border: 1px solid #aaaaaa;
     cursor: move;
 }
 .CswLayoutTable_dragcell

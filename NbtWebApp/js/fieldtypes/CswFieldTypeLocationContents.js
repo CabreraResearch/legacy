@@ -6,7 +6,7 @@
         init: function(o) { // nodepk, $xml, onchange
 
                 var $Div = $(this);
-                $Div.children().remove();
+                $Div.contents().remove();
 
                 var Value = o.$propxml.children('value').text().trim();
 
