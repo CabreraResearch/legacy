@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Xml;
+using System.Xml.Linq;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Core;
-using System.Xml;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.PropTypes
@@ -32,7 +33,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSequenceValue _SequenceValue;
         private CswNbtSubField _BarcodeSubField;
         private CswNbtSubField _SequenceNumberSubField;
-          
+
         override public bool Empty
         {
             get
@@ -122,14 +123,14 @@ namespace ChemSW.Nbt.PropTypes
             //String Barcode = Source.NodeTypeProp.DefaultValue.AsBarcode.Barcode.ToString();
             //if( string.IsNullOrEmpty( Barcode ) )
             //{
-                setBarcodeValue();
+            setBarcodeValue();
             //}
             //else // Case 20784
             //{
             //    setBarcodeValueOverride( Barcode, false );
             //}
         }
-    
+
 
 
         public override void ToXml( XmlNode ParentNode )
@@ -144,6 +145,17 @@ namespace ChemSW.Nbt.PropTypes
             if( ProspectiveBarcode != string.Empty )
                 setBarcodeValueOverride( ProspectiveBarcode, false );
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             string ProspectiveBarcode = CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.ToXmlNodeName()].ToString() );

@@ -1,21 +1,20 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
 using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropPropertyReference : CswNbtNodeProp
     {
-        public CswNbtNodePropPropertyReference(CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp)
-            : base(CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp)
+        public CswNbtNodePropPropertyReference( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
             _CachedValueSubField = ( (CswNbtFieldTypeRulePropertyReference) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CachedValueSubField;
         }
@@ -26,7 +25,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return (0 == Gestalt.Length);
+                return ( 0 == Gestalt.Length );
             }
         }
 
@@ -44,7 +43,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue(_CachedValueSubField.Column);
+                return _CswNbtNodePropData.GetPropRowValue( _CachedValueSubField.Column );
             }
         }
 
@@ -87,8 +86,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if (_CswNbtMetaDataNodeTypeProp.ValuePropType != String.Empty)
-                    return (CswNbtViewRelationship.PropIdType)Enum.Parse(typeof(CswNbtViewRelationship.PropIdType), _CswNbtMetaDataNodeTypeProp.ValuePropType, true);
+                if( _CswNbtMetaDataNodeTypeProp.ValuePropType != String.Empty )
+                    return (CswNbtViewRelationship.PropIdType) Enum.Parse( typeof( CswNbtViewRelationship.PropIdType ), _CswNbtMetaDataNodeTypeProp.ValuePropType, true );
                 else
                     return CswNbtViewRelationship.PropIdType.Unknown;
             }
@@ -97,7 +96,7 @@ namespace ChemSW.Nbt.PropTypes
             //    _CswNbtMetaDataNodeTypeProp.ValuePropType = value.ToString();
             //}
         }
-        
+
 
         public string RecalculateReferenceValue()
         {
@@ -134,7 +133,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( RelationshipType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
                     ReferenceView.AddViewRelationship( ThisNodeRelationship, CswNbtViewRelationship.PropOwnerType.First, _CswNbtResources.MetaData.getNodeTypeProp( RelationshipId ), false );
                 else
-                    ReferenceView.AddViewRelationship( ThisNodeRelationship, CswNbtViewRelationship.PropOwnerType.First, _CswNbtResources.MetaData.getObjectClassProp( RelationshipId ), false ); 
+                    ReferenceView.AddViewRelationship( ThisNodeRelationship, CswNbtViewRelationship.PropOwnerType.First, _CswNbtResources.MetaData.getObjectClassProp( RelationshipId ), false );
 
                 //ReferenceView.Root.NodeIdsToFilterIn.Add(_CswNbtNodePropData.NodeId);
                 //ReferenceView.Root.FilterInNodesRecursively = false;
@@ -185,6 +184,17 @@ namespace ChemSW.Nbt.PropTypes
             //nothing to restore
             PendingUpdate = true;
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             //nothing to restore

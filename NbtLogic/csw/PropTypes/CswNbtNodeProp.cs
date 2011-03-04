@@ -1,15 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Text;
 using System.Data;
 using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -283,7 +280,9 @@ namespace ChemSW.Nbt.PropTypes
         public enum IdRefState { Unknown, SourceResolved, SourceOpen, DestinationOpen, DestinationResolved };
 
         abstract public void ToXml( XmlNode ParentNode );
+        abstract public void ToXElement( XElement ParentNode );
         abstract public void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
+        abstract public void ReadXElement( XElement XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
         abstract public void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
 
         #endregion Xml Operations

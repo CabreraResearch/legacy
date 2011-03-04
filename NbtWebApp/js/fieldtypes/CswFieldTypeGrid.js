@@ -10,18 +10,20 @@
 
 			var Value = o.$propxml.children('value').text().trim();
 			var ViewId = o.$propxml.children('viewid').text().trim();
-			var options = {
-				viewid: ViewId
+			
+			if (debug)
+			{ 
+				log('CswFieldTypeGrid');
+				log(o.$propxml);
 			}
-			$.extend(options,o);
-
+								
 			if(o.ReadOnly)
 			{
 				$Div.append(Value);
 			}
 			else 
 			{
-				$($Div).CswNodeGrid(options);
+				$($Div).CswNodeGrid({'viewid': ViewId, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey} );
 			}
 		},
 		save: function(o) {

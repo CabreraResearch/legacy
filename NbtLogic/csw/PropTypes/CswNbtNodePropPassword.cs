@@ -1,18 +1,16 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
-using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Encryption;
 using System.Xml;
+using System.Xml.Linq;
+using ChemSW.Core;
+using ChemSW.Encryption;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropPassword: CswNbtNodeProp
+    public class CswNbtNodePropPassword : CswNbtNodeProp
     {
         private CswEncryption _CswEncryption;
 
@@ -101,6 +99,17 @@ namespace ChemSW.Nbt.PropTypes
             EncryptedPassword = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _EncryptedPasswordSubField.ToXmlNodeName() );
             Password = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" );
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+        {
+            throw new NotImplementedException();
+        }
+
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             EncryptedPassword = CswTools.XmlRealAttributeName( PropRow[_EncryptedPasswordSubField.ToXmlNodeName()].ToString() );

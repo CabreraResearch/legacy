@@ -94,15 +94,15 @@
                                                     });
                             
                             var $layouttable = $form.CswLayoutTable('init', {
-                                                          'ID': o.ID + '_props', 
-                                                          cellset: { 
-                                                                     rows: 1, 
-                                                                     columns: 2 
+														  'ID': o.ID + '_props', 
+														  cellset: { 
+																	 rows: 1, 
+																	 columns: 2 
                                                                    },
                                                           onSwap: function(e, onSwapData) { 
                                                                         onSwap(onSwapData);
-                                                                   }
-                                                        });
+																   }
+														});
 							
 							var i = 0;
 							
@@ -259,7 +259,7 @@
 		{
 			$propsxml.children().each(function() { 
 				var propOpt = {
-     					'$propxml': $(this),
+						'$propxml': $(this),
 					'$propdiv': '',
 					'$propCell': '',
 					'fieldtype': '',
