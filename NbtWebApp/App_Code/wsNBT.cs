@@ -485,6 +485,25 @@ namespace ChemSW.Nbt.WebServices
 			return ( ReturnVal );
 		}
 
+        [WebMethod( EnableSession = true )]
+        public string MoveProp( string PropId, string NewRow, string NewColumn )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
+                ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        }
+
 		#endregion Web Methods
 
 	}//wsNBT
