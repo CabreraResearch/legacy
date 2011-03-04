@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Generates a JSON property of an array of friendly Column Names
 		/// </summary>
-		private JProperty getGridColumnNamesJson(IEnumerable<CswNbtViewProperty> PropCollection)
+		private static JProperty getGridColumnNamesJson(IEnumerable<CswNbtViewProperty> PropCollection)
 		{
 			JArray ColumnArray = new JArray(
 				               			from ViewProp in  PropCollection
@@ -240,7 +240,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Generates a JSON property with the definitional data for a jqGrid Column Array
 		/// </summary>
-		private JProperty getGridColumnDefinitionJson( IEnumerable<CswNbtViewProperty> PropCollection )
+		private static JProperty getGridColumnDefinitionJson( IEnumerable<CswNbtViewProperty> PropCollection )
 		{
 
 			JArray ColumnArray = new JArray(
