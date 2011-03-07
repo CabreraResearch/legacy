@@ -26,8 +26,8 @@ $.CswFieldTypeFactory = function (method)
 
 			if (debug)
 			{
-				log('CswFieldTypeFactory on fieldtype ' + m.fieldtype);
-				log(m.$propxml);
+				//log('CswFieldTypeFactory on fieldtype ' + m.fieldtype);
+				//log(m.$propxml);
 			}
 
 			switch (m.fieldtype)
