@@ -92,8 +92,8 @@
 
 							$div.CswLayoutTable('finish');
 
-                            $('<input type="button" id="SaveTab" name="SaveTab" value="Save"/>')
-                                  .appendTo($div)
+							$('<input type="button" id="SaveTab" name="SaveTab" value="Save"/>')
+								  .appendTo($div)
 								  .click(function() { Save($div, $xml) });
 
 							// Validation

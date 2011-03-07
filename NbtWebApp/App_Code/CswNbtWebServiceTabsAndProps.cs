@@ -174,11 +174,15 @@ namespace ChemSW.Nbt.WebServices
 
 			CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
 
-			if( Node.NodeId != null )
-				CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", Node.NodeId.ToString() + PropIdDelim.ToString() + Prop.PropId.ToString() );
-			else
-				CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", "new" + PropIdDelim.ToString() + Prop.PropId.ToString() );
-			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "name", Prop.PropNameWithQuestionNo );
+            if( Node.NodeId != null )
+            {
+                CswXmlDocument.AppendXmlAttribute(PropXmlNode, "id", Node.NodeId.ToString() + PropIdDelim + Prop.PropId);
+            }
+            else
+            {
+                CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", "new" + PropIdDelim + Prop.PropId );
+            }
+		    CswXmlDocument.AppendXmlAttribute( PropXmlNode, "name", Prop.PropNameWithQuestionNo );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "fieldtype", Prop.FieldType.FieldType.ToString() );
 			if( Prop.ObjectClassProp != null )
 			{
