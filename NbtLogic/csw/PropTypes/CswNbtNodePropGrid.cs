@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Xml;
 using System.Xml.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.PropTypes
@@ -58,9 +59,11 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
-        public override void ToXml( XmlNode Parent )
+        public override void ToXml( XmlNode ParentNode )
         {
-            // Nothing to save
+            CswXmlDocument.AppendXmlNode( ParentNode, "viewname", View.ViewName );
+            CswXmlDocument.AppendXmlNode( ParentNode, "viewid", View.ViewId.ToString() );
+            CswXmlDocument.AppendXmlNode( ParentNode, "width", Width.ToString() );
         }
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
