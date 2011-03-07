@@ -8,13 +8,13 @@
 			var $Div = $(this);
 			$Div.children().remove();
 
-			var Value = o.$propxml.children('value').text().trim();
 			var ViewId = o.$propxml.children('viewid').text().trim();
-			
+
 			if (debug)
 			{ 
 				log('CswFieldTypeGrid');
 				log(o.$propxml);
+				log(ViewId);
 			}
 								
 			if(o.ReadOnly)
