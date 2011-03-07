@@ -6,6 +6,7 @@
 			TabsUrl: '/NbtWebApp/wsNBT.asmx/getTabs',
 			SinglePropUrl: '/NbtWebApp/wsNBT.asmx/getSingleProp',
 			PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
+            MovePropUrl: '/NbtWebApp/wsNBT.asmx/moveProp',
 			nodeid: '',
 			cswnbtnodekey: '',
 			nodetypeid: '',
@@ -24,7 +25,7 @@
 
 		function clearTabs()
 		{
-			$outertabdiv.children().remove();
+			$outertabdiv.contents().remove();
 		}
 
 		function getTabs()
@@ -74,27 +75,43 @@
 				data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&TabId=' + p.tabid + '&NodeTypeId=' + o.nodetypeid,
 				success: function ($xml) {
 							$div = $("#" + p.tabid);
-							$form = $div.children('form');
-							$form.children().remove();
+
+							var $form = $div.children('form');
+							$form.contents().remove();
 							
-							$div.CswLayoutTable('init', {
+                            var $buttondiv = $('<div />')
+                                                .appendTo($form)
+                                                .css({ float: 'right' });
+
+                            var $configbutton = $buttondiv.CswImageButton({
+                                                        ButtonType: CswImageButton_ButtonType.Configure,
+                                                        AlternateText: 'Configure',
+                                                        ID: o.ID + 'configbtn',
+                                                        onClick: function (alttext) { 
+                                                            Config($layouttable, $(this)); 
+                                                            return CswImageButton_ButtonType.None; 
+                                                        }
+                                                    });
+                            
+                            var $layouttable = $form.CswLayoutTable('init', {
 														  'ID': o.ID + '_props', 
 														  cellset: { 
 																	 rows: 1, 
 																	 columns: 2 
+                                                                   },
+                                                          onSwap: function(e, onSwapData) { 
+                                                                        onSwap(onSwapData);
 																   }
 														});
 							
 							var i = 0;
 							
-							_handleProps($div, $xml);
-							
-
-							$div.CswLayoutTable('finish');
+							_handleProps($layouttable, $xml);
 
 							$('<input type="button" id="SaveTab" name="SaveTab" value="Save"/>')
-								  .appendTo($div)
-								  .click(function() { Save($div, $xml) });
+                                  .appendTo($form)
+								  .click(function() { Save($layouttable, $xml) });
+
 
 							// Validation
 							$form.validate({ 
@@ -112,50 +129,85 @@
 			}); 
 		} // getProps()
 
-		function _handleProps($div, $xml)
+        function Config($layouttable, $configbutton)
+        {
+            $layouttable.CswLayoutTable('toggleConfig');
+        }
+
+        function onSwap(onSwapData)
+        {
+            _moveProp(_getPropertyCell(onSwapData.cellset).children('div').first(), onSwapData.swaprow, onSwapData.swapcolumn);
+            _moveProp(_getPropertyCell(onSwapData.swapcellset).children('div').first(), onSwapData.row, onSwapData.column);
+        } // onSwap()
+
+        function _moveProp($propdiv, newrow, newcolumn)
+        {
+            if($propdiv.length > 0)
+            {
+                var propid = $propdiv.attr('propid');
+                CswAjaxJSON({
+				    url: o.MovePropUrl,
+				    data: '{ "PropId": "'+ propid +'", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '" }',
+				    success: function (result) {
+                                
+                             }
+                });
+            }
+        } // _moveProp()
+
+        function _getLabelCell($cellset)
+        {
+            return $cellset[1][1];
+        }
+        function _getPropertyCell($cellset)
+        {
+            return $cellset[1][2];
+        }
+
+		function _handleProps($layouttable, $xml)
 		{
 			$xml.children().each(function() { 
-				var $prop = $(this);
-				var fieldtype = $prop.attr('fieldtype');
-				var $cellset = $div.CswLayoutTable('cellset', $prop.attr('displayrow'), $prop.attr('displaycol'));
+				var $propxml = $(this);
+				var fieldtype = $propxml.attr('fieldtype');
+                var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.attr('displayrow'), $propxml.attr('displaycol'));
 				
-				if( $prop.attr('display') != 'false' &&
+                if( $propxml.attr('display') != 'false' &&
 					fieldtype != 'Image' && 
 					fieldtype != 'Grid' )
 				{
-					var $labelcell = $cellset[1][1];
+					var $labelcell = _getLabelCell($cellset);
 					$labelcell.addClass('propertylabel');
-					$labelcell.append($prop.attr('name'));
+					$labelcell.append($propxml.attr('name'));
 				}
 
-				var $propcell = $cellset[1][2];
+				var $propcell = _getPropertyCell($cellset);
 				$propcell.addClass('propertyvaluecell');
 
-				var makeOpt = {
-					'$propcell': $propcell, 
-					'$prop': $prop	
-				};
-				_makeProp(makeOpt); //$propcell, $prop
+				_makeProp($propcell, $propxml);
 
 			});
 		} // _handleProps()
 
-		function _makeProp(makeOpt) //$propcell, $prop
+		function _makeProp($propcell, $propxml)
 		{
-			makeOpt.$propcell.children().remove();
-			if(makeOpt.$prop.attr('display') != 'false')
+			$propcell.contents().remove();
+			if($propxml.attr('display') != 'false')
 			{
 				var fieldOpt = {
-					'fieldtype': makeOpt.$prop.attr('fieldtype'),
+					'fieldtype': $propxml.attr('fieldtype'),
 					'nodeid':  o.nodeid,
-					'$propdiv': $('<div/>').appendTo(makeOpt.$propcell),
-					'$propxml': makeOpt.$prop,
+					'propid':  $propxml.attr('id'),
+					'$propdiv': $('<div/>').appendTo($propcell),
+					'$propxml': $propxml,
 					'onchange': onchange, 
 					'cswnbtnodekey': o.cswnbtnodekey
 				};
 
+                fieldOpt.$propdiv.attr('nodeid', fieldOpt.nodeid);
+                fieldOpt.$propdiv.attr('propid', fieldOpt.propid);
+
 				var onchange = function() {};
-				if(makeOpt.$prop.attr('hassubprops') == "true")
+				if($propxml.attr('hassubprops') == "true")
 				{	
 					onchange = function() { 
 									// do a fake 'save' to update the xml with the current value
@@ -163,9 +215,9 @@
 									// update the propxml from the server
 									CswAjaxXml({
 												url: o.SinglePropUrl,
-												data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&NodeKey=' + o.cswnbtnodekey + '&PropId=' + makeOpt.$prop.attr('id') + '&NodeTypeId=' + o.nodetypeid + '&NewPropXml='+ xmlToString(makeOpt.$prop),
+												data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&NodeKey=' + o.cswnbtnodekey + '&PropId=' + $propxml.attr('id') + '&NodeTypeId=' + o.nodetypeid + '&NewPropXml='+ xmlToString($propxml),
 												success: function ($xml) {
-															 _makeProp({'$propcell': makeOpt.$propcell, '$prop': $xml.children().first()});
+															 _makeProp($propcell, $xml.children().first());
 														 }
 												});
 							   };
@@ -174,20 +226,20 @@
 				$.CswFieldTypeFactory('make', fieldOpt);
 
 				// recurse on sub-props
-				var $subprops = makeOpt.$prop.children('subprops');
+				var $subprops = $propxml.children('subprops');
 				if($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 				{
-					var $subtable = $.CswTable({ ID: makeOpt.$prop.attr('id') + '_subproptable' })
-									.appendTo(makeOpt.$propcell);
+                    var $subtable = $.CswTable({ ID: $propxml.attr('id') + '_subproptable' })
+									.appendTo($propcell);
 					_handleProps($subtable, $subprops);
 				}
 			}
 		} // _makeProp()
 
 
-		function Save($div, $propsxml)
+		function Save($layouttable, $propsxml)
 		{
-			_updatePropXmlFromForm($div, $propsxml);
+			_updatePropXmlFromForm($layouttable, $propsxml);
 
 			CswAjaxJSON({
 				url: '/NbtWebApp/wsNBT.asmx/SaveProps',
@@ -203,7 +255,7 @@
 
 		} // Save()
 
-		function _updatePropXmlFromForm($div, $propsxml)
+		function _updatePropXmlFromForm($layouttable, $propsxml)
 		{
 			$propsxml.children().each(function() { 
 				var propOpt = {
@@ -214,8 +266,8 @@
 					'nodeid': o.nodeid
 				};
 				propOpt.fieldtype = propOpt.$propxml.attr('fieldtype');
-				var $cellset = $div.CswLayoutTable('cellset', propOpt.$propxml.attr('displayrow'), propOpt.$propxml.attr('displaycol'));
-				propOpt.$propcell = $cellset[1][2];
+				var $cellset = $layouttable.CswLayoutTable('cellset', propOpt.$propxml.attr('displayrow'), propOpt.$propxml.attr('displaycol'));
+				propOpt.$propcell = _getPropertyCell($cellset);
 				propOpt.$propdiv = propOpt.$propcell.children('div').first();
 
 				$.CswFieldTypeFactory('save', propOpt);              

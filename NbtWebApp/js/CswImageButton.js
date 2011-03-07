@@ -17,7 +17,7 @@
         }
 
         $Div = $(this);
-        $Div.children().remove();
+        //$Div.contents().remove();
 
 
         var $ImageDiv = $('<div id="' + o.ID + '" class="divbutton" alt="' + o.AlternateText + '" />"')
@@ -47,5 +47,7 @@
                 $ImageDiv.bind('mouseup', function () { this.style.backgroundPosition = '-18px ' + NewButtonType * Multiplier + 'px'; })
             }
         } // setOffset()
+
+        return $ImageDiv;
     };
 })(jQuery);

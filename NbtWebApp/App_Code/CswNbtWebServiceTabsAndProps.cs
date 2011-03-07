@@ -120,8 +120,7 @@ namespace ChemSW.Nbt.WebServices
 				_applyPropXml( Node, XmlDoc.DocumentElement );
 			}
 
-			string[] SplitNodePropId = PropIdFromXml.Split( PropIdDelim );
-			Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[SplitNodePropId.Length - 1] );
+            Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdFromXml );
 
 			CswNbtMetaDataNodeTypeProp Prop = Node.NodeType.getNodeTypeProp( NodeTypePropId );
 			_addProp( PropXmlDoc, EditMode, Node, Prop );
@@ -196,7 +195,21 @@ namespace ChemSW.Nbt.WebServices
 			PropWrapper.ToXml( PropXmlNode );
 
 			return PropXmlNode;
-		}
+        } // _makePropXml()
+
+        public bool moveProp( string PropIdAttr, Int32 NewRow, Int32 NewColumn )
+        {
+            bool ret = false;
+            Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdAttr );
+            if( NodeTypePropId != Int32.MinValue && NewRow > 0 && NewColumn > 0 )
+            {
+                CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+                Prop.DisplayColumn = NewColumn;
+                Prop.DisplayRow = NewRow;
+                ret = true;
+            }
+            return ret;
+        } // moveProp()
 
 		public string saveProps( NodeEditMode EditMode, string NodePkString, string NewPropsXml, Int32 NodeTypeId )
 		{
@@ -225,11 +238,16 @@ namespace ChemSW.Nbt.WebServices
 			return "{ \"result\": \"Succeeded\", \"nodeid\": \"" + Node.NodeId.ToString() + "\" }";
 		} // saveProps()
 
-		private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
+        private Int32 _getPropIdFromAttribute( string PropIdAttr )
 		{
-			string NodePropId = PropNode.Attributes["id"].Value;
-			string[] SplitNodePropId = NodePropId.Split( PropIdDelim );
-			Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[SplitNodePropId.Length - 1] );
+            string[] SplitNodePropId = PropIdAttr.Split( PropIdDelim );
+            Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[SplitNodePropId.Length - 1] );
+            return NodeTypePropId;
+        }
+
+        private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
+        {
+            Int32 NodeTypePropId = _getPropIdFromAttribute(PropNode.Attributes["id"].Value);
 
 			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 			Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );

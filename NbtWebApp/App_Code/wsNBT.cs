@@ -70,26 +70,24 @@ namespace ChemSW.Nbt.WebServices
 			return "<result>" + ReturnVal + "</result>";
 		}
 
-		private const string QuickLaunchViews = "QuickLaunchViews";
 		/// <summary>
 		/// Append to QuickLaunch
 		/// </summary>
 		private void addToQuickLaunch(CswNbtView View)
 		{
+			const string QuickLaunchViews = CswNbtWebServiceQuickLaunchItems.QuickLaunchViews;
 			if( ( View.ViewId > 0 ) || ( View.ViewId <= 0 && View.SessionViewId > 0 ) )
 			{
-				//Tuple == Item1: itemid (view/action), Item2: name, Item3: url(Action),viewmod(View), Item4: item type (Action/View)
-				LinkedList<Tuple<Int32, string, string, CswNbtWebServiceQuickLaunchItems.QuickLaunchType>> ViewHistoryList = null;
+				LinkedList<CswNbtQuickLaunchItem> ViewHistoryList = null;
 				if( null == Session[QuickLaunchViews] )
 				{
-					ViewHistoryList = new LinkedList<Tuple<int, string, string, CswNbtWebServiceQuickLaunchItems.QuickLaunchType>>();
+					ViewHistoryList = new LinkedList<CswNbtQuickLaunchItem>();
 				}
 				else
 				{
-					ViewHistoryList = (LinkedList<Tuple<Int32, string, string, CswNbtWebServiceQuickLaunchItems.QuickLaunchType>>) Session[QuickLaunchViews];
+					ViewHistoryList = (LinkedList<CswNbtQuickLaunchItem>) Session[QuickLaunchViews];
 				}
-				var ThisView = new Tuple<Int32, string, string, CswNbtWebServiceQuickLaunchItems.QuickLaunchType>
-					( View.ViewId, View.ViewName, View.ViewMode.ToString(), CswNbtWebServiceQuickLaunchItems.QuickLaunchType.View );
+				var ThisView = new CswNbtQuickLaunchItem( View.ViewId, View.ViewName, View.ViewMode );
 
 				if( ViewHistoryList.Contains( ThisView ) )
 				{
@@ -106,6 +104,7 @@ namespace ChemSW.Nbt.WebServices
 
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string authenticate( string AccessId, string UserName, string Password )
 		{
 			string ReturnVal = string.Empty;
@@ -128,6 +127,7 @@ namespace ChemSW.Nbt.WebServices
 
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string deauthenticate()
 		{
 			string ReturnVal = string.Empty;
@@ -146,9 +146,9 @@ namespace ChemSW.Nbt.WebServices
 		}//deAuthenticate()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getWelcomeItems( string RoleId )
 		{
-			CswTimer Timer = new CswTimer();
 			string ReturnVal = string.Empty;
 			try
 			{
@@ -174,28 +174,31 @@ namespace ChemSW.Nbt.WebServices
 		} // getWelcomeItems()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getQuickLaunchItems()
 		{
-			var ReturnXML = new XmlDocument();
+			var ReturnDoc = new XmlDocument();
 			try
 			{
 				start();
 
 				CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
-				var ql = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources, Session );
+				var ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources, Session );
 				if( null != UserId )
 				{
-					ReturnXML = ql.getQuickLaunchItems( UserId, Session );
+					var QuickLaunchItems = new XElement( "quicklaunch" );
+					QuickLaunchItems.Add( ws.getQuickLaunchItems( UserId ) );
+					ReturnDoc.LoadXml( QuickLaunchItems.ToString() );
 				}
 
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnXML.LoadXml( error( ex ) );
+				ReturnDoc.LoadXml( error( ex ) );
 			}
 
-			return ReturnXML;
+			return ReturnDoc;
 		} // getQuickLaunchItems()
 
 
@@ -222,6 +225,7 @@ namespace ChemSW.Nbt.WebServices
 		//} // getViews()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getViewTree()
 		{
 			string ReturnVal = string.Empty;
@@ -243,6 +247,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getViews()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getDashboard()
 		{
 			string ReturnVal = string.Empty;
@@ -264,6 +269,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getDashboard()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getHeaderMenu()
 		{
 			string ReturnVal = string.Empty;
@@ -285,6 +291,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getHeaderMenu()		[WebMethod( EnableSession = true )]
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getMainMenu( Int32 ViewId, string NodePk, string NodeKey )
 		{
 			string ReturnVal = string.Empty;
@@ -306,6 +313,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getMainMenu()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string getGrid( string ViewPk, string CswNbtNodeKey = null )
 		{
 			var ReturnJson = string.Empty;
@@ -339,6 +347,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getGrid()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getTree( Int32 ViewId, string IDPrefix )
 		{
 			var XmlString = string.Empty;
@@ -366,6 +375,7 @@ namespace ChemSW.Nbt.WebServices
 
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getTabs( string EditMode, string NodePk, string NodeTypeId )
 		{
 			string ReturnVal = string.Empty;
@@ -388,6 +398,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getTabs()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getProps( string EditMode, string NodePk, string TabId, string NodeTypeId )
 		{
 			XmlDocument ReturnXml = null;
@@ -408,6 +419,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getProps()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getSingleProp( string EditMode, string NodePk, string PropId, string NodeTypeId, string NewPropXml )
 		{
 			XmlDocument ReturnXml = null;
@@ -428,6 +440,7 @@ namespace ChemSW.Nbt.WebServices
 		} // getProps()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public string saveProps( string EditMode, string NodePk, string NewPropsXml, string NodeTypeId )
 		{
 			string ReturnVal = string.Empty;
@@ -447,6 +460,7 @@ namespace ChemSW.Nbt.WebServices
 		} // saveProps()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getAbout()
 		{
 			string ReturnVal = string.Empty;
@@ -468,6 +482,7 @@ namespace ChemSW.Nbt.WebServices
 		} // saveProps()
 
 		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public string DeleteNode( string NodePk )
 		{
 			string ReturnVal = string.Empty;
@@ -487,6 +502,25 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return ( ReturnVal );
 		}
+
+        [WebMethod( EnableSession = true )]
+        public string MoveProp( string PropId, string NewRow, string NewColumn )
+        {
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
+                ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        }
 
 		#endregion Web Methods
 

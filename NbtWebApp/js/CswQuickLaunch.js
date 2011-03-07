@@ -18,7 +18,11 @@
 				var $QuickLaunchDiv = $('<div id="quicklaunchdiv"><ul id="launchitems"></ul></div>')
 									.appendTo($this);
 				var $list = $QuickLaunchDiv.children();
-				$xml.children().each(function() {
+				$xml.children("items").children("item").each(function() {
+					
+					if(debug)
+					{
+					}
 
 					var $item = $(this);
 					var optSelect = {

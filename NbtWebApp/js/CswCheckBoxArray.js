@@ -33,7 +33,7 @@
                     CheckType = "radio";
 
                 var $Div = $(this);
-                $Div.children().remove();
+                $Div.contents().remove();
 
                 var $OuterDiv = $('<div/>').appendTo($Div);
                 var $table = $.CswTable({ ID: o.ID + '_tbl' })

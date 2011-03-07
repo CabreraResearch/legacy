@@ -13,12 +13,16 @@
         var o = {
             ID: '',
             TableCssClass: '',
-            CellCssClass: ''
+            CellCssClass: '',
+            onCreateCell: function(e, $table, $cell, row, column) {}
         };
         if (options) {
             $.extend(o, options);
         }
-        return $('<table id="'+ o.ID +'" class="'+ o.TableCssClass +'" cellcssclass="'+ o.CellCssClass +'" cellpadding="0" cellspacing="0" border="0"><tr><td class="'+ o.CellCssClass + '"></td></tr></table>');
+        var $table = $('<table id="'+ o.ID +'" class="'+ o.TableCssClass +'" cellcssclass="'+ o.CellCssClass +'" cellpadding="0" cellspacing="0" border="0"><tr><td class="'+ o.CellCssClass + '"></td></tr></table>');
+        $table.bind('CswTable_onCreateCell', o.onCreateCell);
+
+        return $table;
     };
 
     $.fn.CswTable = function (method) {
@@ -133,7 +137,9 @@
 		        }
 		        var $row = $($table.children('tbody').children('tr')[row-1]);
 		        while (col > $row.children('td').length) {
-			        $row.append('<td class="'+ $table.attr('cellcssclass') +'"></td>');
+			        var $newcell = $('<td class="'+ $table.attr('cellcssclass') +'" valign="top"></td>')
+                                        .appendTo($row);
+                    $table.trigger('CswTable_onCreateCell', [ $table, $newcell, row, col ]);
 		        }
 		        $cell = $($row.children('td')[col-1]);
 	        }
