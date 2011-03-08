@@ -318,9 +318,9 @@ namespace ChemSW.Nbt.WebServices
 		public string getGrid( string ViewPk, string CswNbtNodeKey = null )
 		{
 			var ReturnJson = string.Empty;
-		    string ParsedNokeKey = wsTools.FromSafeJavaScriptParam( CswNbtNodeKey );
+			string ParsedNokeKey = wsTools.FromSafeJavaScriptParam( CswNbtNodeKey );
 
-            try
+			try
 			{
 				start();
 				Int32 ViewId = CswConvert.ToInt32( ViewPk );
@@ -330,9 +330,9 @@ namespace ChemSW.Nbt.WebServices
 					if( null != View )
 					{
 						CswNbtNodeKey ParentNodeKey = null;
-                        if( !string.IsNullOrEmpty( ParsedNokeKey ) )
+						if( !string.IsNullOrEmpty( ParsedNokeKey ) )
 						{
-                            ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNokeKey );
+							ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNokeKey );
 						}
 						var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
 						ReturnJson = g.getGrid().ToString();
