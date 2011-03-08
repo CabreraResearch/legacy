@@ -1,4 +1,24 @@
-﻿/// <reference path="../jquery/jquery-1.4.4.js" />
+﻿/// <reference path="../jquery/jquery-1.5.1.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.treegrid.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.celledit.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.common.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.custom.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.formedit.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.grouping.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.import.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.inlinedit.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.jqueryui.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.loader.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.postext.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.setcolumns.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.subgrid.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.tbltogrid.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.base.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/JsonXml.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/jqDnR.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/jqModal.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/jquery.fmatter.js" />
+/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/jquery.searchFilter.js" />
 
 ; (function ($) {
 	$.fn.CswNodeGrid = function (optJqGrid, optCswNodeGrid) {
@@ -44,22 +64,25 @@
 		var $gridPager = $('<div id="' + gridPagerId + '" style="width:100%; height:20px;" />')
 						 .appendTo($(this));
 		
-        if(debug)
-        {
-            log('CswNodeGrid');
-        }
+		if(debug)
+		{
+			log('CswNodeGrid');
+			log(o);
+		}
 
 		CswAjaxJSON({
 			url: o.GridUrl,
 			data: "{ViewPk: '" +  o.viewid + "', 'CswNbtNodeKey': '" + o.cswnbtnodekey + "'}", //" + o.cswnbtnodekey + "
 			success: function (gridJson) {
 					
+					log('here');
+
 					gridData = gridJson.grid;
 					gridRows = gridData.rows;
 
 					var ViewName = gridJson.viewname;
 					var columns = gridJson.columnnames;
-					var columnDefinition = gridJson.columndefinition
+					var columnDefinition = gridJson.columndefinition;
 					var gridWidth =  gridJson.viewwidth;
 					if( gridWidth == '' )
 					{
@@ -73,11 +96,10 @@
 						width: gridWidth,
 						pager: $gridPager, 
 						caption: ViewName,
-						toppager: true,
+						toppager: true
 					};
 
 					var optSearch = {
-						//id: o.id + '_search_button',
 						caption: "Search...",
 						Find: "Find",
 						Reset: "Reset",
@@ -87,50 +109,11 @@
 						rulesText: "rules"
 					};
 
-//					var optEdit = {
-//						//id: o.id + '_edit_button',
-//						addCaption: "Add Row 3",
-//						editCaption: "Edit Row",
-//						bSubmit: "Submit",
-//						bCancel: "Cancel",
-//						bClose: "Close",
-//						saveData: "Data has been changed! Save changes?",
-//						bYes : "Yes",
-//						bNo : "No",
-//						bExit : "Cancel",
-//						editfunc: function() {
-//								$.CswDialog('EditNodeDialog', nodeid, onEditNode, cswnbtnodekey);
-//								return false;
-//							}
-//					};
-
-//					var optAdd = {
-//						//id: o.id + '_add_button',
-//						add: true,
-//						addCaption: "Add row 1",
-//						addtext:"",
-//						addtitle: "Add row 2",
-//						addfunc: function() {
-//								alert('hey');
-//								$.CswDialog('AddNodeDialog', $this.attr('nodetypeid'), onAddNode);
-//								return false;
-//							}
-//					};
-
-//					var optView = {
-//						//id: o.id + '_view_button',
-//						caption: "View Record 0",
-//						viewCaption: "View Record 1",
-//						bClose: "Close"
-//					};
-
 					var optDel = {
-						//id: o.id + '_delete_btton',
 						caption: "Delete",
 						msg: "Delete selected record(s)?",
 						bSubmit: "Delete",
-						bCancel: "Cancel",
-						
+						bCancel: "Cancel"
 					};
 
 					var optNav = {
@@ -141,6 +124,11 @@
 						edittext: "",
 						edittitle: "Edit row",
 						editfunc: function() {
+								var rowid = $gridOuter.jqGrid('getGridParam', 'selrow');
+								if (rowid !== null) {
+									var cswnbtnodekey = $gridOuter.jqGrid('getCell', rowid, 'cswnbtnodekey');
+									alert ("the cell with id="+rowid+" and the key='" + cswnbtnodekey + "' is selected.");
+								}
 								$.CswDialog('EditNodeDialog', nodeid, onEditNode, cswnbtnodekey);
 								return false;
 							},
@@ -150,7 +138,12 @@
 						addtext:"",
 						addtitle: "Add row",
 						addfunc: function() {
-								alert('hey');
+								var rowid = $gridOuter.jqGrid('getGridParam', 'selrow');
+								if (rowid !== null) {
+									var cswnbtnodekey = $gridOuter.jqGrid('getCell', rowid, 'cswnbtnodekey');
+									alert ("the cell with id="+rowid+" and the key='" + cswnbtnodekey + "' is selected.");
+								}
+								//alert('hey');
 								$.CswDialog('AddNodeDialog', $this.attr('nodetypeid'), onAddNode);
 								return false;
 							},
@@ -160,6 +153,11 @@
 						deltext: "",
 						deltitle: "Delete row",
 						delfunc: function() {
+								var rowid = $gridOuter.jqGrid('getGridParam', 'selrow');
+								if (rowid !== null) {
+									var cswnbtnodekey = $gridOuter.jqGrid('getCell', rowid, 'cswnbtnodekey');
+									alert ("the cell with id="+rowid+" and the key='" + cswnbtnodekey + "' is selected.");
+								}
 								$.CswDialog('DeleteNodeDialog', nodename, nodeid, onDeleteNode, cswnbtnodekey);
 								return false;
 							},
@@ -185,18 +183,51 @@
 							}
 					};
 
+					if(debug)
+					{
+						log(jqGridOptions);
+						log(o);
+					}
+
 					$.extend(jqGridOptions, o);
+
+					if(debug)
+					{
+						log(jqGridOptions);
+						//log(o);
+					}
 
 					$gridOuter.jqGrid(jqGridOptions)
 									  .hideCol('nodeid')
 									  .hideCol('cswnbtnodekey');
 					
-					//all JSON option past optNav define the behavior of the built-in pop-up
+					//all JSON option past 'optNav' define the behavior of the built-in pop-up
 					$gridOuter.jqGrid('navGrid', '#'+gridPagerId, optNav, {}, {}, optDel, optSearch, {} );
-					
-					// remove some double elements from top 					var topPagerDiv = $('#' + $gridOuter[0].id + '_toppager')[0];         					$("#edit_" + $gridOuter[0].id + "_top", topPagerDiv).remove();        					$("#del_" + $gridOuter[0].id + "_top", topPagerDiv).remove();         					$("#search_" + $gridOuter[0].id + "_top", topPagerDiv).remove();         					$("#add_" + $gridOuter[0].id + "_top", topPagerDiv).remove();     					$("#view_" + $gridOuter[0].id + "_top", topPagerDiv).remove();					//$("#" + $gridOuter[0].id + "_toppager_center", topPagerDiv).remove(); 					$(".ui-paging-info", topPagerDiv).remove();
+					
 
-					$gridOuter.jqGrid('navButtonAdd', '#' + $gridOuter[0].id + '_toppager_left' , { 											caption: "Columns",							                buttonicon: 'ui-icon-wrench',							                onClickButton: function() {							                    $gridOuter.jqGrid('columnChooser', {													done: function(perm) {							                            if (!perm) { return false; }							                            this.jqGrid('remapColumns', perm, true);														}													});												}											});
+					//remove some dup elements from top pager
+					var topPagerDiv = $('#' + $gridOuter[0].id + '_toppager')[0];         
+					$("#edit_" + $gridOuter[0].id + "_top", topPagerDiv).remove();        
+					$("#del_" + $gridOuter[0].id + "_top", topPagerDiv).remove();         
+					$("#search_" + $gridOuter[0].id + "_top", topPagerDiv).remove();         
+					$("#add_" + $gridOuter[0].id + "_top", topPagerDiv).remove();     
+					$("#view_" + $gridOuter[0].id + "_top", topPagerDiv).remove();
+					$("#" + $gridOuter[0].id + "_toppager_center", topPagerDiv).remove(); 
+					$(".ui-paging-info", topPagerDiv).remove();
+
+					//add custom button to nav panel
+					$gridOuter.jqGrid('navButtonAdd', '#' + $gridOuter[0].id + '_toppager_left' , { 
+											caption: "Columns",
+											buttonicon: 'ui-icon-wrench',
+											onClickButton: function() {
+												$gridOuter.jqGrid('columnChooser', {
+													done: function(perm) {
+														if (!perm) { return false; }
+															$gridOuter.jqGrid('remapColumns', perm, true);
+														}
+													});
+												}
+											});
 			} // success{}
 		});
 
