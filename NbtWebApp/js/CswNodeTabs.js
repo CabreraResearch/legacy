@@ -32,7 +32,7 @@
 		{
 			CswAjaxXml({
 				url: o.TabsUrl,
-				data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&NodeTypeId=' + o.nodetypeid,
+				data: 'EditMode='+ o.EditMode +'&NodeKey=' + o.cswnbtnodekey + '&NodeTypeId=' + o.nodetypeid,
 				success: function ($xml) {
 							clearTabs();
 							var $tabdiv = $("<div><ul></ul></div>");
@@ -72,7 +72,7 @@
 
 			CswAjaxXml({
 				url: o.PropsUrl,
-				data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&TabId=' + p.tabid + '&NodeTypeId=' + o.nodetypeid,
+				data: 'EditMode='+ o.EditMode +'&NodeKey=' + o.cswnbtnodekey + '&TabId=' + p.tabid + '&NodeTypeId=' + o.nodetypeid,
 				success: function ($xml) {
 							$div = $("#" + p.tabid);
 
@@ -205,6 +205,7 @@
 
                 fieldOpt.$propdiv.attr('nodeid', fieldOpt.nodeid);
                 fieldOpt.$propdiv.attr('propid', fieldOpt.propid);
+				fieldOpt.$propdiv.attr('cswnbtnodekey', fieldOpt.cswnbtnodekey);
 
 				var onchange = function() {};
 				if($propxml.attr('hassubprops') == "true")
@@ -215,7 +216,7 @@
 									// update the propxml from the server
 									CswAjaxXml({
 												url: o.SinglePropUrl,
-												data: 'EditMode='+ o.EditMode +'&NodePk=' + o.nodeid + '&NodeKey=' + o.cswnbtnodekey + '&PropId=' + $propxml.attr('id') + '&NodeTypeId=' + o.nodetypeid + '&NewPropXml='+ xmlToString($propxml),
+												data: 'EditMode='+ o.EditMode + '&NodeKey=' + o.cswnbtnodekey + '&PropId=' + $propxml.attr('id') + '&NodeTypeId=' + o.nodetypeid + '&NewPropXml='+ xmlToString($propxml),
 												success: function ($xml) {
 															 _makeProp($propcell, $xml.children().first());
 														 }
@@ -243,7 +244,7 @@
 
 			CswAjaxJSON({
 				url: '/NbtWebApp/wsNBT.asmx/SaveProps',
-				data: "{ EditMode: '"+ o.EditMode + "', NodePk: '" + o.nodeid + '&NodeKey=' + o.cswnbtnodekey + "', NodeTypeId: '"+ o.nodetypeid +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",
+				data: "{ EditMode: '"+ o.EditMode + "', NodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '"+ o.nodetypeid +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",
 				success: function(data) { 
 					var dataOpt = {
 						nodeid: data.nodeid,
@@ -259,11 +260,12 @@
 		{
 			$propsxml.children().each(function() { 
 				var propOpt = {
-						'$propxml': $(this),
+					'$propxml': $(this),
 					'$propdiv': '',
 					'$propCell': '',
 					'fieldtype': '',
-					'nodeid': o.nodeid
+					'nodeid': o.nodeid,
+					'cswnbtnodekey': o.cswnbtnodekey
 				};
 				propOpt.fieldtype = propOpt.$propxml.attr('fieldtype');
 				var $cellset = $layouttable.CswLayoutTable('cellset', propOpt.$propxml.attr('displayrow'), propOpt.$propxml.attr('displaycol'));

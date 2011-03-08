@@ -64,23 +64,16 @@
 		var $gridPager = $('<div id="' + gridPagerId + '" style="width:100%; height:20px;" />')
 						 .appendTo($(this));
 		
-		if(debug)
-		{
-			log('CswNodeGrid');
-			log(o);
-		}
-
 		CswAjaxJSON({
 			url: o.GridUrl,
 			data: "{ViewPk: '" +  o.viewid + "', 'CswNbtNodeKey': '" + o.cswnbtnodekey + "'}", //" + o.cswnbtnodekey + "
 			success: function (gridJson) {
 					
-					log('here');
-
 					gridData = gridJson.grid;
 					gridRows = gridData.rows;
 
 					var ViewName = gridJson.viewname;
+					var NodeTypeId = gridJson.nodetypeid;
 					var columns = gridJson.columnnames;
 					var columnDefinition = gridJson.columndefinition;
 					var gridWidth =  gridJson.viewwidth;
@@ -109,13 +102,6 @@
 						rulesText: "rules"
 					};
 
-					var optDel = {
-						caption: "Delete",
-						msg: "Delete selected record(s)?",
-						bSubmit: "Delete",
-						bCancel: "Cancel"
-					};
-
 					var optNav = {
 						cloneToTop: true,
 
@@ -123,13 +109,14 @@
 						edit: true,
 						edittext: "",
 						edittitle: "Edit row",
-						editfunc: function() {
-								var rowid = $gridOuter.jqGrid('getGridParam', 'selrow');
+						editfunc: function(rowid) {
 								if (rowid !== null) {
-									var cswnbtnodekey = $gridOuter.jqGrid('getCell', rowid, 'cswnbtnodekey');
-									alert ("the cell with id="+rowid+" and the key='" + cswnbtnodekey + "' is selected.");
+									var CswNbtNodeKey = $gridOuter.jqGrid('getCell', rowid, 'cswnbtnodekey');
+									var NodeId = $gridOuter.jqGrid('getCell', rowid, 'nodeid');
+									var OnEditNode = function(options) {};
+									var RequestReadOnly = false;
 								}
-								$.CswDialog('EditNodeDialog', nodeid, onEditNode, cswnbtnodekey);
+								$.CswDialog('EditNodeDialog', NodeId, OnEditNode, CswNbtNodeKey, RequestReadOnly);
 								return false;
 							},
 
@@ -138,13 +125,8 @@
 						addtext:"",
 						addtitle: "Add row",
 						addfunc: function() {
-								var rowid = $gridOuter.jqGrid('getGridParam', 'selrow');
-								if (rowid !== null) {
-									var cswnbtnodekey = $gridOuter.jqGrid('getCell', rowid, 'cswnbtnodekey');
-									alert ("the cell with id="+rowid+" and the key='" + cswnbtnodekey + "' is selected.");
-								}
-								//alert('hey');
-								$.CswDialog('AddNodeDialog', $this.attr('nodetypeid'), onAddNode);
+								var OnAddNode = function(options) {};
+								$.CswDialog('AddNodeDialog', NodeTypeId, OnAddNode);
 								return false;
 							},
 
@@ -152,13 +134,14 @@
 						del: true,
 						deltext: "",
 						deltitle: "Delete row",
-						delfunc: function() {
-								var rowid = $gridOuter.jqGrid('getGridParam', 'selrow');
+						delfunc: function(rowid) {
 								if (rowid !== null) {
-									var cswnbtnodekey = $gridOuter.jqGrid('getCell', rowid, 'cswnbtnodekey');
-									alert ("the cell with id="+rowid+" and the key='" + cswnbtnodekey + "' is selected.");
+									var CswNbtNodeKey = $gridOuter.jqGrid('getCell', rowid, 'cswnbtnodekey');
+									var NodeId = $gridOuter.jqGrid('getCell', rowid, 'nodeid');
+									var NodeName = $gridOuter.jqGrid('getCell', rowid, 'nodename');;
+									var OnDeleteNode = function(options) {};
 								}
-								$.CswDialog('DeleteNodeDialog', nodename, nodeid, onDeleteNode, cswnbtnodekey);
+								$.CswDialog('DeleteNodeDialog', NodeName, NodeId, OnDeleteNode, CswNbtNodeKey);
 								return false;
 							},
 						
@@ -177,32 +160,27 @@
 						view: true,
 						viewtext: "",
 						viewtitle: "View row",
-						viewfunc: function() {
-								$.CswDialog('ViewNodeDialog', nodeid, onEditNode, cswnbtnodekey);
+						viewfunc: function(rowid) {
+								if (rowid !== null) {
+									var CswNbtNodeKey = $gridOuter.jqGrid('getCell', rowid, 'cswnbtnodekey');
+									var NodeId = $gridOuter.jqGrid('getCell', rowid, 'nodeid');
+									var OnEditNode = function(options) {};
+									var RequestReadOnly = true;
+								}
+								$.CswDialog('EditNodeDialog', NodeId, OnEditNode, CswNbtNodeKey, RequestReadOnly);
 								return false;
 							}
 					};
 
-					if(debug)
-					{
-						log(jqGridOptions);
-						log(o);
-					}
-
 					$.extend(jqGridOptions, o);
-
-					if(debug)
-					{
-						log(jqGridOptions);
-						//log(o);
-					}
 
 					$gridOuter.jqGrid(jqGridOptions)
 									  .hideCol('nodeid')
-									  .hideCol('cswnbtnodekey');
+									  .hideCol('cswnbtnodekey')
+									  .hideCol('nodename');
 					
 					//all JSON option past 'optNav' define the behavior of the built-in pop-up
-					$gridOuter.jqGrid('navGrid', '#'+gridPagerId, optNav, {}, {}, optDel, optSearch, {} );
+					$gridOuter.jqGrid('navGrid', '#'+gridPagerId, optNav, {}, {}, {}, optSearch, {} );
 					
 
 					//remove some dup elements from top pager

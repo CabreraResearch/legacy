@@ -148,7 +148,8 @@
 			{
 				if( o.viewid != undefined && o.viewid != '' )
 				{
-					getViewGrid( { 'viewid': o.viewid, 'nodeid': '', 'cswnbtnodekey': o.cswnbtnodekey } );
+				    if (debug) log('handleItemSelect() called getViewGrid()');
+                    getViewGrid( { 'viewid': o.viewid, 'nodeid': '', 'cswnbtnodekey': o.cswnbtnodekey } );
 				}
 				else
 				{
@@ -164,7 +165,8 @@
 			case 'tree': 
 			{
 				if( o.viewid != undefined && o.viewid != '' )
-				{
+				{   
+                    if(debug) log('handleItemSelect() called getNodesTree()');
 					getNodesTree( {'viewid': o.viewid} );
 				}
 				else
@@ -217,7 +219,7 @@
 		if (debug) log('NewMain.refreshMainMenu()');
 		if (debug) log(o);
 
-		$('#MainMenuDiv').CswMenuMain( {'viewid': o.viewid, 'nodeid': o.nodeid, 'onAddNode': o.onAddNode} );
+		$('#MainMenuDiv').CswMenuMain( {'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'onAddNode': o.onAddNode} );
 	}
 
 	function getViewGrid(options)
@@ -260,7 +262,7 @@
 		if (debug) 
 		{
 			log('NewMain.getNodesTree()');
-			log(o);
+			//log(o);
 		}
 
 		$('#LeftDiv').CswNodeTree('init', {'ID': o.ID, 'viewid': o.viewid, 'onSelectNode': o.onSelectNode} );
@@ -280,7 +282,7 @@
 		if (debug)
 		{
 			log('NewMain.onSelectTreeNode()');
-			log(o);
+			//log(o);
 		}
 
 		getTabs( {'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey} );  //nodeid, cswnbtnodekey
@@ -302,7 +304,7 @@
 		if (debug)
 		{
 			log('NewMain.getTabs()');
-			log(o);
+			//log(o);
 		}
 
 		clear({right: true});
@@ -334,7 +336,7 @@
 		if (debug)
 		{
 			log('NewMain.refreshViewTree()');
-			log(o);
+			//log(o);
 		}
 
 		clear({left: true});

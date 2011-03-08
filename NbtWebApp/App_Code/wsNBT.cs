@@ -11,6 +11,7 @@ using ChemSW.Security;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Formatting = Newtonsoft.Json.Formatting;
 using System.Xml.Linq;
 using System.Collections.Generic;
@@ -293,24 +294,30 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XmlDocument getMainMenu( Int32 ViewId, string NodePk, string NodeKey )
+		public string getMainMenu( string ViewNum, string SafeNodeKey )
 		{
 			string ReturnVal = string.Empty;
-			try
-			{
-				start();
-				var ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
-				ReturnVal = ws.getMenu( ViewId, NodePk );
-				end();
+            XElement ReturnNode;
+            try
+            {
+                start();
+                var ws = new CswNbtWebServiceMainMenu(_CswNbtResources);
+                Int32 ViewId = CswConvert.ToInt32(ViewNum);
+                if (Int32.MinValue != ViewId || !string.IsNullOrEmpty(SafeNodeKey))   
+                {
+                    ReturnNode = ws.getMenu(ViewId, SafeNodeKey);
+                    ReturnVal = ReturnNode.ToString();
+                }
+                end();
 			}
 			catch( Exception ex )
 			{
 				ReturnVal = error( ex );
 			}
 			//return ( ReturnVal );
-			XmlDocument Doc = new XmlDocument();
-			Doc.LoadXml( ReturnVal );
-			return Doc;
+			//XmlDocument Doc = new XmlDocument();
+			//Doc.LoadXml( ReturnVal );
+            return ReturnVal;
 		} // getMainMenu()
 
 		[WebMethod( EnableSession = true )]
@@ -379,7 +386,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XmlDocument getTabs( string EditMode, string NodePk, string NodeTypeId )
+		public XmlDocument getTabs( string EditMode, string NodeKey, string NodeTypeId )
 		{
 			string ReturnVal = string.Empty;
 			try
@@ -387,7 +394,7 @@ namespace ChemSW.Nbt.WebServices
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-				ReturnVal = ws.getTabs( RealEditMode, NodePk, CswConvert.ToInt32( NodeTypeId ) );
+                ReturnVal = ws.getTabs( RealEditMode, NodeKey, CswConvert.ToInt32( NodeTypeId ) );
 				end();
 			}
 			catch( Exception ex )
@@ -402,7 +409,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XmlDocument getProps( string EditMode, string NodePk, string TabId, string NodeTypeId )
+		public XmlDocument getProps( string EditMode, string NodeKey, string TabId, string NodeTypeId )
 		{
 			XmlDocument ReturnXml = null;
 			try
@@ -410,7 +417,7 @@ namespace ChemSW.Nbt.WebServices
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-				ReturnXml = ws.getProps( RealEditMode, NodePk, TabId, CswConvert.ToInt32( NodeTypeId ) );
+                ReturnXml = ws.getProps( RealEditMode, NodeKey, TabId, CswConvert.ToInt32( NodeTypeId ) );
 				end();
 			}
 			catch( Exception ex )
@@ -423,7 +430,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XmlDocument getSingleProp( string EditMode, string NodePk, string PropId, string NodeTypeId, string NewPropXml )
+        public XmlDocument getSingleProp( string EditMode, string NodeKey, string PropId, string NodeTypeId, string NewPropXml )
 		{
 			XmlDocument ReturnXml = null;
 			try
@@ -431,7 +438,7 @@ namespace ChemSW.Nbt.WebServices
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-				ReturnXml = ws.getSingleProp( RealEditMode, NodePk, PropId, CswConvert.ToInt32( NodeTypeId ), NewPropXml );
+                ReturnXml = ws.getSingleProp( RealEditMode, NodeKey, PropId, CswConvert.ToInt32( NodeTypeId ), NewPropXml );
 				end();
 			}
 			catch( Exception ex )
@@ -444,7 +451,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public string saveProps( string EditMode, string NodePk, string NewPropsXml, string NodeTypeId )
+		public string saveProps( string EditMode, string NodeKey, string NewPropsXml, string NodeTypeId )
 		{
 			string ReturnVal = string.Empty;
 			try
@@ -452,7 +459,7 @@ namespace ChemSW.Nbt.WebServices
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-				ReturnVal = ws.saveProps( RealEditMode, NodePk, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) );
+                ReturnVal = ws.saveProps( RealEditMode, NodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) );
 				end();
 			}
 			catch( Exception ex )
@@ -485,44 +492,46 @@ namespace ChemSW.Nbt.WebServices
 		} // saveProps()
 
 		[WebMethod( EnableSession = true )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public string DeleteNode( string NodePk )
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string DeleteNode( string NodeKey )
 		{
-			string ReturnVal = string.Empty;
+			JProperty ReturnVal = new JProperty("Result");
 			try
 			{
 				start();
-				CswPrimaryKey RealNodePk = new CswPrimaryKey();
-				RealNodePk.FromString( NodePk );
-				CswNbtNode NodeToDelete = _CswNbtResources.Nodes[RealNodePk];
+				//CswPrimaryKey RealNodePk = new CswPrimaryKey();
+				CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey(_CswNbtResources, NodeKey);
+                //RealNodePk.FromString( NodePk );
+                CswNbtNode NodeToDelete = _CswNbtResources.Nodes[NbtNodeKey.NodeId];
 				NodeToDelete.delete();
-				ReturnVal = "{ \"Result\": \"Succeeded\" }";
+                ReturnVal.Value = "Succeeded";
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = error( ex );
+                ReturnVal.Value = error( ex );
 			}
-			return ( ReturnVal );
+			return ( ReturnVal.ToString() );
 		}
 
 		[WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string MoveProp( string PropId, string NewRow, string NewColumn )
 		{
-			string ReturnVal = string.Empty;
+            JProperty ReturnVal = new JProperty( "Result" );
 			try
 			{
 				start();
 				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 				bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
-				ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
+				ReturnVal.Value = ret.ToString().ToLower();
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = error( ex );
+				ReturnVal.Value = error( ex );
 			}
-			return ( ReturnVal );
+			return ( ReturnVal.ToString() );
 		}
 
 		#endregion Web Methods
