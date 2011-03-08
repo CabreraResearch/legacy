@@ -117,37 +117,37 @@ namespace ChemSW.Nbt.WebServices
 
 
 
-		public string getGrid()
+		public JObject getGrid()
 		{
-			return getGrid( GridReturnType.Json );
+            return getGridOuterJson(); 
 		} // getGrid()
 
-		public string getGrid( GridReturnType GridType )
-		{
-			string GridString = string.Empty;
-			switch( GridType)
-			{
-				case GridReturnType.Xml:
-					XDocument GridXDoc = getGridXDoc();
-					if( null != GridXDoc )
-					{
-						GridString = GridXDoc.ToString();
-					}
-					break;
-				case GridReturnType.Json:
-					JObject GridJson = getGridOuterJson();
-					if( null != GridJson )
-					{
-						GridString = GridJson.ToString();
-					}
-					//else
-					//{
-					//    GridString = getDebugGridJson().ToString(); // for debug only
-					//}
-					break;
-			}
-			return GridString;
-		} // getGrid()
+        //public string getGrid( GridReturnType GridType )
+        //{
+        //    string GridString = string.Empty;
+        //    switch( GridType)
+        //    {
+        //        case GridReturnType.Xml:
+        //            XDocument GridXDoc = getGridXElements();
+        //            if( null != GridXDoc )
+        //            {
+        //                GridString = GridXDoc.ToString();
+        //            }
+        //            break;
+        //        case GridReturnType.Json:
+        //            JObject GridJson = getGridOuterJson();
+        //            if( null != GridJson )
+        //            {
+        //                GridString = GridJson.ToString();
+        //            }
+        //            //else
+        //            //{
+        //            //    GridString = getDebugGridJson().ToString(); // for debug only
+        //            //}
+        //            break;
+        //    }
+        //    return GridString;
+        //} // getGrid()
 
 //        private static JObject getDebugGridJson()
 //        {
@@ -196,25 +196,30 @@ namespace ChemSW.Nbt.WebServices
 		private JObject getGridOuterJson()
 		{
 			JObject GridShellJObj = null;
-			XDocument GridXDoc = getGridXDoc();
+			IEnumerable<XElement> GridNodes = getGridXElements();
+			IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps();//GridXDoc.Elements( GridRows ).Elements( GridRow ).First().Elements( GridCell );
 
-			if( null != GridXDoc ) // render an empty grid: --&& GridXDoc.Nodes().Count() > 0
+		    JProperty GridRows = null;
+			if(GridNodes.Count() > 0 )
 			{
-				IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps();//GridXDoc.Elements( GridRows ).Elements( GridRow ).First().Elements( GridCell );
+                GridRows = getGridRowsJson( GridNodes );
+			}
+			else
+			{
+			    GridRows = new JProperty("grid");
+			}
 
-				JProperty GridRowsJObj = getGridRowsJson();
-				JProperty GridOrderedColumnDisplayNames = getGridColumnNamesJson( ColumnCollection );
+		    JProperty GridOrderedColumnDisplayNames = getGridColumnNamesJson( ColumnCollection );
 				JProperty GridColumnDefinitions = getGridColumnDefinitionJson( ColumnCollection );
-				string Width = Unit.Parse( ( CswConvert.ToInt32( _View.Width*7 ) ).ToString() ).ToString();
+				string Width = CswConvert.ToInt32( _View.Width*7 ).ToString();
 
 				GridShellJObj = new JObject(
 					new JProperty( GridViewName, _View.ViewName ),
 					new JProperty( GridViewWidth, Width ),
 					GridOrderedColumnDisplayNames,
 					GridColumnDefinitions,
-					GridRowsJObj
+					GridRows
 					);
-			} // if( null != GridXDoc && GridXDoc.Nodes().Count() > 0 )
 
 			return GridShellJObj;
 		} // getGridOuterJson()
@@ -227,7 +232,7 @@ namespace ChemSW.Nbt.WebServices
 			JArray ColumnArray = new JArray(
 				               			from ViewProp in  PropCollection
 				               			//where !string.IsNullOrEmpty(ViewProp.Name)  
-				               			select new JValue( ViewProp.Name )
+				               			select new JValue( ViewProp.NodeTypeProp.PropName )
 				               			);
 
 			ColumnArray.AddFirst( new JValue( "nodeid" ) ); //better to use int for jqGrid key
@@ -277,7 +282,7 @@ namespace ChemSW.Nbt.WebServices
 			if( _ParentNodeKey != null && _View.Root.ChildRelationships.Count > 0 )
 			{
 				// This is a Grid Property
-				( (CswNbtViewRelationship) _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
+				( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
 			}
 			
 			ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );
@@ -287,78 +292,85 @@ namespace ChemSW.Nbt.WebServices
 			{
 				RawXml = XElement.Parse( Tree.getRawTreeXml() );
 			}
+        
+
 			return RawXml;
 		} // getGridColumnsJson()
 
-		/// <summary>
-		/// Transforms the Tree XML into an XDocument
-		/// </summary>
-		private XDocument getGridXDoc()
-		{
-			var RawXml = getGridTree();
-			XDocument GridXDoc = null;
-			if( null != RawXml )
-			{
-				GridXDoc = new XDocument(
-					new XDeclaration( "1.0", "utf-8", "yes" ),
-					new XComment( "Grid XML" ),
-					new XElement( GridRows,
-					              new XElement( GridPage ),
-					              new XElement( GridTotal ),
-					              new XElement( GridRecords ),
-					              from c in RawXml.DescendantNodes().OfType<XElement>()
-					              where c.Name == ( GridNbtNode ) && c.Attribute( GridNodeId ).Value != "0"
-					              select new XElement( GridRow,
-					                                   new XAttribute( GridId, c.Attribute( GridNodeId ).Value ),
-					                                   from x in c.Elements()
-					                                   where x.Name == ( GridNbtNodeProp )
-					                                   select new XElement( GridCell,
-					                                                        new XText( new XCData( x.Attribute( GridGestalt ).Value ) ),
-					                                                        new XAttribute( GridPropName, x.Attribute( GridName ).Value ),
-					                                                        new XAttribute( GridFieldType, x.Attribute( GridFieldType ).Value ),
-					                                                        new XAttribute( GridNodeTypePropId, x.Attribute( GridNodeTypePropId ).Value )
-					                                   	)
-					              	)
-						)
-					);
-			}
-			return GridXDoc;
-		} // getGridXDoc()
+        /// <summary>
+        /// Transforms the Tree XML into an XDocument
+        /// </summary>
+        private IEnumerable<XElement> getGridXElements()
+        {
+            var RawXml = getGridTree();
+            IEnumerable<XElement> NodesInGrid = ( from Element in RawXml.DescendantNodes().OfType<XElement>()
+                                                  where Element.Name == ( "NbtNode" ) && //only concerned with "NbtNode" elements
+                                                        //Element.Elements( "NbtNode" ).Count() == 0 && //should be the most junior child
+                                                        Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
+                                                        Element.Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
+                                                  select Element );
+            return NodesInGrid;
+            //XDocument GridXDoc = null;
+            //if( null != RawXml )
+            //{
+            //    GridXDoc = new XDocument(
+            //        new XDeclaration( "1.0", "utf-8", "yes" ),
+            //        new XComment( "Grid XML" ),
+            //        new XElement( GridRows,
+            //                      new XElement( GridPage ),
+            //                      new XElement( GridTotal ),
+            //                      new XElement( GridRecords, NodesInGrid.Count() ),
+            //                      from c in NodesInGrid
+            //                          //RawXml.DescendantNodes().OfType<XElement>()
+            //                      //where c.Name == ( GridNbtNode ) && c.Elements("NbtNode").Count() == 0 && c.Attribute( GridNodeId ).Value != "0"
+            //                      select new XElement( GridRow,
+            //                                           new XAttribute( GridId, c.Attribute( GridNodeId ).Value ),
+            //                                           from x in c.Elements()
+            //                                           where x.Name == ( GridNbtNodeProp )
+            //                                           select new XElement( GridCell,
+            //                                                                new XText( new XCData( x.Attribute( GridGestalt ).Value ) ),
+            //                                                                new XAttribute( GridPropName, x.Attribute( GridName ).Value ),
+            //                                                                new XAttribute( GridFieldType, x.Attribute( GridFieldType ).Value ),
+            //                                                                new XAttribute( GridNodeTypePropId, x.Attribute( GridNodeTypePropId ).Value )
+            //                                            )
+            //                        )
+            //            )
+            //        );
+            //}
+            //return GridXDoc;
+        } // getGridXElements()
 
 		/// <summary>
 		/// Transforms the Tree XML into a JProperty
 		/// </summary>
-		private JProperty getGridRowsJson()
+        private static JProperty getGridRowsJson( IEnumerable<XElement> NodesInGrid )
 		{
-			var RawXml = getGridTree();
 			JProperty GridJObj = null;
-			if( null != RawXml )
-			{
-				GridJObj = new JProperty("grid",
-								new JObject(
-									new JProperty( GridTotal, "1" ),
-									new JProperty( GridPage, "1" ),
-									new JProperty( GridRecords, "1" ),
-									new JProperty( GridRows,
-												   new JArray(
-					               					from Element in RawXml.DescendantNodes().OfType<XElement>()
-					               					where Element.Name == ( GridNbtNode ) && Element.Attribute( GridNodeId ).Value != "0"
-					               					select new JObject(
-					               						new JProperty( GridId, Element.Attribute( GridNodeId ).Value ),
-														new JProperty( "nodekey", Element.Attribute( "key" ).Value ),
-					               						from DirtyElement in Element.Elements()
-					               						where DirtyElement.Name == ( GridNbtNodeProp )
-					               						select massageGridCell( DirtyElement ) //JProperty( x.Attribute( GridName ).Value.ToLower().Replace(" ","_"), x.Attribute( GridGestalt ).Value )
-					               						)
+
+			GridJObj = new JProperty("grid",
+							new JObject(
+								new JProperty( GridTotal, "1" ),
+								new JProperty( GridPage, "1" ),
+								new JProperty( GridRecords, NodesInGrid.Elements().Count() ),
+								new JProperty( GridRows,
+												new JArray(
+                                                from Element in NodesInGrid
+					               				select new JObject(
+					               					new JProperty( GridId, Element.Attribute( GridNodeId ).Value ),
+													new JProperty( "cswnbtnodekey", Element.Attribute( "key" ).Value ),
+					               					from DirtyElement in Element.Elements()
+					               					where DirtyElement.Name == ( GridNbtNodeProp )
+					               					select massageGridCell( DirtyElement ) 
 					               					)
-												)
+					               				)
 											)
-									);
-			}
+										)
+								);
+			
 			return GridJObj;
 		} // getGridRowsJson()
 
-		private JProperty massageGridCell(XElement DirtyElement)
+		private static JProperty massageGridCell(XElement DirtyElement)
 		{
 			string CleanPropName = DirtyElement.Attribute( GridName ).Value.ToLower().Replace( " ", "_" );
 			string CleanValue = string.Empty;
@@ -498,7 +510,7 @@ namespace ChemSW.Nbt.WebServices
 					JProperty ReturnProp = null;
 					if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Date )
 					{
-						ReturnProp = new JProperty( "datefmt", "dd/mm/yyyy" );
+						ReturnProp = new JProperty( "datefmt", "mm/dd/yyyy" );
 					}
 					return ReturnProp;
 				}
@@ -702,7 +714,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				get
 				{
-					string ColumnName = NbtViewProperty.Name.ToLower().Replace(" ","_");
+					string ColumnName = NbtViewProperty.NodeTypeProp.PropName.ToLower().Replace(" ","_");
 					if( ColumnName == "subgrid" || ColumnName == "cb" || ColumnName == "rn" )
 					{
 						ColumnName += "_col";
@@ -731,7 +743,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				get
 				{
-					JProperty ReturnProp = new JProperty( "label", NbtViewProperty.Name );
+					JProperty ReturnProp = new JProperty( "label", NbtViewProperty.NodeTypeProp.PropName );
 					return ReturnProp;
 				}
 			}

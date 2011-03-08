@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Web.Services;
@@ -317,7 +318,9 @@ namespace ChemSW.Nbt.WebServices
 		public string getGrid( string ViewPk, string CswNbtNodeKey = null )
 		{
 			var ReturnJson = string.Empty;
-			try
+		    string ParsedNokeKey = wsTools.FromSafeJavaScriptParam( CswNbtNodeKey );
+
+            try
 			{
 				start();
 				Int32 ViewId = CswConvert.ToInt32( ViewPk );
@@ -327,12 +330,12 @@ namespace ChemSW.Nbt.WebServices
 					if( null != View )
 					{
 						CswNbtNodeKey ParentNodeKey = null;
-						if( !string.IsNullOrEmpty( CswNbtNodeKey ) )
+                        if( !string.IsNullOrEmpty( ParsedNokeKey ) )
 						{
-							ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, CswNbtNodeKey );
+                            ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNokeKey );
 						}
 						var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
-						ReturnJson = g.getGrid();
+						ReturnJson = g.getGrid().ToString();
 						addToQuickLaunch( View );
 					}
 				}
@@ -503,24 +506,24 @@ namespace ChemSW.Nbt.WebServices
 			return ( ReturnVal );
 		}
 
-        [WebMethod( EnableSession = true )]
-        public string MoveProp( string PropId, string NewRow, string NewColumn )
-        {
-            string ReturnVal = string.Empty;
-            try
-            {
-                start();
-                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
-                ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
-                end();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = error( ex );
-            }
-            return ( ReturnVal );
-        }
+		[WebMethod( EnableSession = true )]
+		public string MoveProp( string PropId, string NewRow, string NewColumn )
+		{
+			string ReturnVal = string.Empty;
+			try
+			{
+				start();
+				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+				bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
+				ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = error( ex );
+			}
+			return ( ReturnVal );
+		}
 
 		#endregion Web Methods
 

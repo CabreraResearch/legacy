@@ -14,17 +14,10 @@
 			{ 
 				log('CswFieldTypeGrid');
 				log(o.$propxml);
-				log(ViewId);
 			}
-								
-			if(o.ReadOnly)
-			{
-				$Div.append(Value);
-			}
-			else 
-			{
-				$($Div).CswNodeGrid({'viewid': ViewId, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey} );
-			}
+
+			$($Div).CswNodeGrid({'viewid': ViewId, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly} );
+
 		},
 		save: function(o) {
 //                var $TextBox = $propdiv.find('input');

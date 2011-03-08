@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Script.Serialization;
 using System.Xml.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
@@ -119,7 +121,8 @@ namespace ChemSW.Nbt.WebServices
 
 				CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
 				CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
-				
+
+			    string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToJavaScriptParam()) ;
 				string ThisNodeName = Tree.getNodeNameForCurrentPosition();
 				string ThisNodeId = IDPrefix + ThisNode.NodeId.ToString();
 				string ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
@@ -127,7 +130,7 @@ namespace ChemSW.Nbt.WebServices
 				var ParentNode = ( new XElement( "item",
 										new XAttribute( "id", ThisNodeId ),
 										new XAttribute( "rel", ThisNodeRel ),
-										new XAttribute( "cswnbtnodekey", ThisNodeKey.ToString() ), 
+                                        new XAttribute( "cswnbtnodekey", ThisNodeKeyString ), 
 											new XElement( "content" ,
 												new XElement( "name" , ThisNodeName )
 												)

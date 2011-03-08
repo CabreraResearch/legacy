@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -58,7 +56,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public string ToJavaScriptParam()
         {
-            return this.ToString().Replace(@"\", @"\\").Replace( "'", @"\'" );
+            return ToString().Replace( @"\", @"\\" ).Replace( "'", @"\'" );
         }
 
         /// <summary>
@@ -167,7 +165,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public Int32 TreeDepth
         {
-            get {  return TreePath.Count - 2;   }
+            get { return TreePath.Count - 2; }
         }
 
         private CswNbtTreeKey _CswNbtTreeKey = null;
@@ -228,11 +226,11 @@ namespace ChemSW.Nbt
         /// </summary>
         public Int32 NodeTypeId
         {
-            get 
+            get
             {
-                return ( CswConvert.ToInt32( _DelimitedString[3] ) ); 
+                return ( CswConvert.ToInt32( _DelimitedString[3] ) );
             }
-            set 
+            set
             {
                 _DelimitedString[3] = value.ToString();
             }
@@ -243,13 +241,13 @@ namespace ChemSW.Nbt
         /// </summary>
         public Int32 ObjectClassId
         {
-            get 
+            get
             {
-                return ( CswConvert.ToInt32( _DelimitedString[4] ) ); 
+                return ( CswConvert.ToInt32( _DelimitedString[4] ) );
             }
-            set 
+            set
             {
-                _DelimitedString[4] = value.ToString(); 
+                _DelimitedString[4] = value.ToString();
             }
         }
 
@@ -265,7 +263,7 @@ namespace ChemSW.Nbt
                     ret = ObjClasses.NodeSpecies.Plain;
                 return ret;
             }
-            set 
+            set
             {
                 _DelimitedString[2] = value.ToString();
             }
@@ -328,7 +326,7 @@ namespace ChemSW.Nbt
         /// <param name="TreeDepth">Depth for count (1 is top level)</param>
         public Int32 getNodeCountAtDepth( Int32 TreeDepth )
         {
-            return CswConvert.ToInt32( NodeCountPath[TreeDepth-1] );
+            return CswConvert.ToInt32( NodeCountPath[TreeDepth - 1] );
         }
 
         #region IEquatable
