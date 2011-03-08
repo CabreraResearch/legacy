@@ -119,35 +119,35 @@ namespace ChemSW.Nbt.WebServices
 
 		public JObject getGrid()
 		{
-            return getGridOuterJson(); 
+			return getGridOuterJson(); 
 		} // getGrid()
 
-        //public string getGrid( GridReturnType GridType )
-        //{
-        //    string GridString = string.Empty;
-        //    switch( GridType)
-        //    {
-        //        case GridReturnType.Xml:
-        //            XDocument GridXDoc = getGridXElements();
-        //            if( null != GridXDoc )
-        //            {
-        //                GridString = GridXDoc.ToString();
-        //            }
-        //            break;
-        //        case GridReturnType.Json:
-        //            JObject GridJson = getGridOuterJson();
-        //            if( null != GridJson )
-        //            {
-        //                GridString = GridJson.ToString();
-        //            }
-        //            //else
-        //            //{
-        //            //    GridString = getDebugGridJson().ToString(); // for debug only
-        //            //}
-        //            break;
-        //    }
-        //    return GridString;
-        //} // getGrid()
+		//public string getGrid( GridReturnType GridType )
+		//{
+		//    string GridString = string.Empty;
+		//    switch( GridType)
+		//    {
+		//        case GridReturnType.Xml:
+		//            XDocument GridXDoc = getGridXElements();
+		//            if( null != GridXDoc )
+		//            {
+		//                GridString = GridXDoc.ToString();
+		//            }
+		//            break;
+		//        case GridReturnType.Json:
+		//            JObject GridJson = getGridOuterJson();
+		//            if( null != GridJson )
+		//            {
+		//                GridString = GridJson.ToString();
+		//            }
+		//            //else
+		//            //{
+		//            //    GridString = getDebugGridJson().ToString(); // for debug only
+		//            //}
+		//            break;
+		//    }
+		//    return GridString;
+		//} // getGrid()
 
 //        private static JObject getDebugGridJson()
 //        {
@@ -198,18 +198,18 @@ namespace ChemSW.Nbt.WebServices
 			JObject GridShellJObj = null;
 			IEnumerable<XElement> GridNodes = getGridXElements();
 			IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps();//GridXDoc.Elements( GridRows ).Elements( GridRow ).First().Elements( GridCell );
-
-		    JProperty GridRows = null;
+			
+			JProperty GridRows = null;
 			if(GridNodes.Count() > 0 )
 			{
-                GridRows = getGridRowsJson( GridNodes );
+				GridRows = getGridRowsJson( GridNodes );
 			}
 			else
 			{
-			    GridRows = new JProperty("grid");
+				GridRows = new JProperty("grid");
 			}
 
-		    JProperty GridOrderedColumnDisplayNames = getGridColumnNamesJson( ColumnCollection );
+			JProperty GridOrderedColumnDisplayNames = getGridColumnNamesJson( ColumnCollection );
 				JProperty GridColumnDefinitions = getGridColumnDefinitionJson( ColumnCollection );
 				string Width = CswConvert.ToInt32( _View.Width*7 ).ToString();
 
@@ -230,10 +230,10 @@ namespace ChemSW.Nbt.WebServices
 		private static JProperty getGridColumnNamesJson(IEnumerable<CswNbtViewProperty> PropCollection)
 		{
 			JArray ColumnArray = new JArray(
-				               			from ViewProp in  PropCollection
-				               			//where !string.IsNullOrEmpty(ViewProp.Name)  
-				               			select new JValue( ViewProp.NodeTypeProp.PropName )
-				               			);
+										from ViewProp in  PropCollection
+										//where !string.IsNullOrEmpty(ViewProp.Name)  
+										select new JValue( ViewProp.NodeTypeProp.PropName )
+										);
 
 			ColumnArray.AddFirst( new JValue( "nodeid" ) ); //better to use int for jqGrid key
 			ColumnArray.AddFirst( new JValue( "cswnbtnodekey" ) ); //we'll want CswNbtNodeKey for add/edit/delete
@@ -257,9 +257,9 @@ namespace ChemSW.Nbt.WebServices
 			//better to use int for jqGrid key
 			ColumnArray.AddFirst( new JObject(
 								new JProperty( GridName, "nodeid" ),
-			                   	new JProperty( "index", "nodeid" ),
+								new JProperty( "index", "nodeid" ),
 								new JProperty( "key", "true" )
-			                   	) );
+								) );
 			
 			//we'll want CswNbtNodeKey for add/edit/delete
 			ColumnArray.AddFirst( new JObject(
@@ -292,58 +292,58 @@ namespace ChemSW.Nbt.WebServices
 			{
 				RawXml = XElement.Parse( Tree.getRawTreeXml() );
 			}
-        
+		
 
 			return RawXml;
 		} // getGridColumnsJson()
 
-        /// <summary>
-        /// Transforms the Tree XML into an XDocument
-        /// </summary>
-        private IEnumerable<XElement> getGridXElements()
-        {
-            var RawXml = getGridTree();
-            IEnumerable<XElement> NodesInGrid = ( from Element in RawXml.DescendantNodes().OfType<XElement>()
-                                                  where Element.Name == ( "NbtNode" ) && //only concerned with "NbtNode" elements
-                                                        //Element.Elements( "NbtNode" ).Count() == 0 && //should be the most junior child
-                                                        Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
-                                                        Element.Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
-                                                  select Element );
-            return NodesInGrid;
-            //XDocument GridXDoc = null;
-            //if( null != RawXml )
-            //{
-            //    GridXDoc = new XDocument(
-            //        new XDeclaration( "1.0", "utf-8", "yes" ),
-            //        new XComment( "Grid XML" ),
-            //        new XElement( GridRows,
-            //                      new XElement( GridPage ),
-            //                      new XElement( GridTotal ),
-            //                      new XElement( GridRecords, NodesInGrid.Count() ),
-            //                      from c in NodesInGrid
-            //                          //RawXml.DescendantNodes().OfType<XElement>()
-            //                      //where c.Name == ( GridNbtNode ) && c.Elements("NbtNode").Count() == 0 && c.Attribute( GridNodeId ).Value != "0"
-            //                      select new XElement( GridRow,
-            //                                           new XAttribute( GridId, c.Attribute( GridNodeId ).Value ),
-            //                                           from x in c.Elements()
-            //                                           where x.Name == ( GridNbtNodeProp )
-            //                                           select new XElement( GridCell,
-            //                                                                new XText( new XCData( x.Attribute( GridGestalt ).Value ) ),
-            //                                                                new XAttribute( GridPropName, x.Attribute( GridName ).Value ),
-            //                                                                new XAttribute( GridFieldType, x.Attribute( GridFieldType ).Value ),
-            //                                                                new XAttribute( GridNodeTypePropId, x.Attribute( GridNodeTypePropId ).Value )
-            //                                            )
-            //                        )
-            //            )
-            //        );
-            //}
-            //return GridXDoc;
-        } // getGridXElements()
+		/// <summary>
+		/// Transforms the Tree XML into an XDocument
+		/// </summary>
+		private IEnumerable<XElement> getGridXElements()
+		{
+			var RawXml = getGridTree();
+			IEnumerable<XElement> NodesInGrid = ( from Element in RawXml.DescendantNodes().OfType<XElement>()
+												  where Element.Name == ( "NbtNode" ) && //only concerned with "NbtNode" elements
+														//Element.Elements( "NbtNode" ).Count() == 0 && //should be the most junior child
+														Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
+														Element.Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
+												  select Element );
+			return NodesInGrid;
+			//XDocument GridXDoc = null;
+			//if( null != RawXml )
+			//{
+			//    GridXDoc = new XDocument(
+			//        new XDeclaration( "1.0", "utf-8", "yes" ),
+			//        new XComment( "Grid XML" ),
+			//        new XElement( GridRows,
+			//                      new XElement( GridPage ),
+			//                      new XElement( GridTotal ),
+			//                      new XElement( GridRecords, NodesInGrid.Count() ),
+			//                      from c in NodesInGrid
+			//                          //RawXml.DescendantNodes().OfType<XElement>()
+			//                      //where c.Name == ( GridNbtNode ) && c.Elements("NbtNode").Count() == 0 && c.Attribute( GridNodeId ).Value != "0"
+			//                      select new XElement( GridRow,
+			//                                           new XAttribute( GridId, c.Attribute( GridNodeId ).Value ),
+			//                                           from x in c.Elements()
+			//                                           where x.Name == ( GridNbtNodeProp )
+			//                                           select new XElement( GridCell,
+			//                                                                new XText( new XCData( x.Attribute( GridGestalt ).Value ) ),
+			//                                                                new XAttribute( GridPropName, x.Attribute( GridName ).Value ),
+			//                                                                new XAttribute( GridFieldType, x.Attribute( GridFieldType ).Value ),
+			//                                                                new XAttribute( GridNodeTypePropId, x.Attribute( GridNodeTypePropId ).Value )
+			//                                            )
+			//                        )
+			//            )
+			//        );
+			//}
+			//return GridXDoc;
+		} // getGridXElements()
 
 		/// <summary>
 		/// Transforms the Tree XML into a JProperty
 		/// </summary>
-        private static JProperty getGridRowsJson( IEnumerable<XElement> NodesInGrid )
+		private static JProperty getGridRowsJson( IEnumerable<XElement> NodesInGrid )
 		{
 			JProperty GridJObj = null;
 
@@ -354,15 +354,15 @@ namespace ChemSW.Nbt.WebServices
 								new JProperty( GridRecords, NodesInGrid.Elements().Count() ),
 								new JProperty( GridRows,
 												new JArray(
-                                                from Element in NodesInGrid
-					               				select new JObject(
-					               					new JProperty( GridId, Element.Attribute( GridNodeId ).Value ),
-													new JProperty( "cswnbtnodekey", Element.Attribute( "key" ).Value ),
-					               					from DirtyElement in Element.Elements()
-					               					where DirtyElement.Name == ( GridNbtNodeProp )
-					               					select massageGridCell( DirtyElement ) 
-					               					)
-					               				)
+												from Element in NodesInGrid
+												select new JObject(
+													new JProperty( GridId, Element.Attribute( GridNodeId ).Value ),
+													new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam(Element.Attribute( "key" ).Value) ),
+													from DirtyElement in Element.Elements()
+													where DirtyElement.Name == ( GridNbtNodeProp )
+													select massageGridCell( DirtyElement ) 
+													)
+												)
 											)
 										)
 								);
@@ -441,8 +441,8 @@ namespace ChemSW.Nbt.WebServices
 				//foreach public/instanced property in the JqGridViewProperty class of type JProperty which is not null, 
 				//add the property value to the return JObject
 				foreach( JProperty ThisPropAttribute in ( from PropertyInfo in JType.GetProperties( Flags )
-				                                          where PropertyInfo.PropertyType == typeof (JProperty)
-				                                          select (JProperty) PropertyInfo.GetValue( JqGridViewProp, null ) )
+														  where PropertyInfo.PropertyType == typeof (JProperty)
+														  select (JProperty) PropertyInfo.GetValue( JqGridViewProp, null ) )
 															.Where( ThisPropAttribute => null != ThisPropAttribute ) )
 				{
 					if( null != ReturnObj.Property( ThisPropAttribute.Name ) )
