@@ -60,15 +60,34 @@ function ClearUsername() {
 	$.cookie('csw_username', null);
 }
 
-function SetCurrentViewId(ViewId) {
-	$.cookie('csw_currentviewid', ViewId);
+function SetCurrentView(options) {
+	var o = {
+		viewid: '',
+		viewmode: ''
+	};
+	if (options)
+	{
+		$.extend(o, options);
+	}
+	$.cookie('csw_currentviewid', o.viewid);
+	$.cookie('csw_currentviewmode', o.viewmode);
 }
-function GetCurrentViewId() {
-	return $.cookie('csw_currentviewid');
+
+function GetCurrentView()
+{
+	var view = {
+		viewid: $.cookie('csw_currentviewid'),
+		viewmode: $.cookie('csw_currentviewmode')
+	};
+	return view;
 }
-function ClearCurrentViewId() {
+
+function ClearCurrentView()
+{
 	$.cookie('csw_currentviewid', null);
+	$.cookie('csw_currentviewmode', null);
 }
+
 
 
 // ------------------------------------------------------------------------------------
@@ -86,6 +105,17 @@ function CswAjaxJSON(options) {
 	if (options) {
 		$.extend(o, options);
 	}
+	
+	if (debug)
+	{
+		log(options);
+		log(o);
+	}
+
+	//in jQuery 1.5 $ is no longer the global jQuery. See //Validation Hack
+	$.ajaxSettings.cache = false;
+	$.ajaxSettings.jsonp = undefined;
+	$.ajaxSettings.jsonpCallback = undefined;
 
 	var starttime = new Date();
 	$.ajax({
@@ -117,6 +147,11 @@ function CswAjaxXml(options) {
 	if (options) {
 		$.extend(o, options);
 	}
+
+	//in jQuery 1.5 $ is no longer the global jQuery. See //Validation Hack
+	$.ajaxSettings.cache = false;
+	$.ajaxSettings.jsonp = undefined;
+	$.ajaxSettings.jsonpCallback = undefined;
 
 	var starttime = new Date();
 	$.ajax({
@@ -237,7 +272,7 @@ function jsTreeGetSelected($treediv, IDPrefix)
 
 function GoHome() 
 {
-	ClearCurrentViewId();
+	ClearCurrentView();
 	window.location = "NewMain.html";
 }
 
@@ -385,12 +420,13 @@ if (typeof String.prototype.trim !== 'function') {
 }
 
 
+// Validation Hack
 // This is a workaround to a problem introduced by using jquery.validation with jquery 1.5
 // http://stackoverflow.com/questions/5068822/ajax-parseerror-on-verrorsfoundtrue-vmessagelogin-failed
 // http://blog.m0sa.net/2011/02/jqueryvalidation-breaks-jquery-15-ajax.html
 
 $(function () {
-    $.ajaxSettings.cache = false;
-    $.ajaxSettings.jsonp = undefined;
-    $.ajaxSettings.jsonpCallback = undefined;
+	$.ajaxSettings.cache = false;
+	$.ajaxSettings.jsonp = undefined;
+	$.ajaxSettings.jsonpCallback = undefined;
 })
