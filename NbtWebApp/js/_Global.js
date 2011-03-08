@@ -106,17 +106,6 @@ function CswAjaxJSON(options) {
 		$.extend(o, options);
 	}
 	
-	if (debug)
-	{
-		log(options);
-		log(o);
-	}
-
-	//in jQuery 1.5 $ is no longer the global jQuery. See //Validation Hack
-	$.ajaxSettings.cache = false;
-	$.ajaxSettings.jsonp = undefined;
-	$.ajaxSettings.jsonpCallback = undefined;
-
 	var starttime = new Date();
 	$.ajax({
 		type: 'POST',
@@ -149,9 +138,9 @@ function CswAjaxXml(options) {
 	}
 
 	//in jQuery 1.5 $ is no longer the global jQuery. See //Validation Hack
-	$.ajaxSettings.cache = false;
-	$.ajaxSettings.jsonp = undefined;
-	$.ajaxSettings.jsonpCallback = undefined;
+	//$.ajaxSettings.cache = false;
+	//$.ajaxSettings.jsonp = undefined;
+	//$.ajaxSettings.jsonpCallback = undefined;
 
 	var starttime = new Date();
 	$.ajax({
@@ -425,8 +414,8 @@ if (typeof String.prototype.trim !== 'function') {
 // http://stackoverflow.com/questions/5068822/ajax-parseerror-on-verrorsfoundtrue-vmessagelogin-failed
 // http://blog.m0sa.net/2011/02/jqueryvalidation-breaks-jquery-15-ajax.html
 
-$(function () {
-	$.ajaxSettings.cache = false;
-	$.ajaxSettings.jsonp = undefined;
-	$.ajaxSettings.jsonpCallback = undefined;
-})
+//$(function () {
+//	$.ajaxSettings.cache = false;
+//	$.ajaxSettings.jsonp = undefined;
+//	$.ajaxSettings.jsonpCallback = undefined;
+//})

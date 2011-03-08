@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Reflection;
 using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt;
-using System.Web.UI.WebControls;
 using System.Linq;
 using System.Xml.Linq;
 using ChemSW.Nbt.MetaData;
-using FarPoint.Web.Spread;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -119,107 +115,40 @@ namespace ChemSW.Nbt.WebServices
 
 		public JObject getGrid()
 		{
-			return getGridOuterJson(); 
+			return _getGridOuterJson(); 
 		} // getGrid()
-
-		//public string getGrid( GridReturnType GridType )
-		//{
-		//    string GridString = string.Empty;
-		//    switch( GridType)
-		//    {
-		//        case GridReturnType.Xml:
-		//            XDocument GridXDoc = getGridXElements();
-		//            if( null != GridXDoc )
-		//            {
-		//                GridString = GridXDoc.ToString();
-		//            }
-		//            break;
-		//        case GridReturnType.Json:
-		//            JObject GridJson = getGridOuterJson();
-		//            if( null != GridJson )
-		//            {
-		//                GridString = GridJson.ToString();
-		//            }
-		//            //else
-		//            //{
-		//            //    GridString = getDebugGridJson().ToString(); // for debug only
-		//            //}
-		//            break;
-		//    }
-		//    return GridString;
-		//} // getGrid()
-
-//        private static JObject getDebugGridJson()
-//        {
-//            String JsonString = @"{""viewname"": ""Debug View""
-//								,""viewwnodeidth"": ""150""
-//								,""columnnames"": [""nodeid"",""Equipment"",""Assembly""]
-//								,""columndefinition"": [{""name"": ""nodeid"", ""index"": ""nodeid"", ""key"":""true"", ""sortable"":""true"", ""sorttype"":""int""}
-//													  ,{""name"": ""Equipment"", ""index"": ""Equipment"", ""sortable"":""true"", ""search"":""true""}
-//												      ,{""name"": ""Assembly"", ""index"": ""Assembly"", ""sortable"":""true"", ""search"":""true""}]
-//								,""grid"": {""total"": ""1""
-//										   ,""page"": ""1""
-//										   ,""records"": ""2""
-//										   ,""rows"": [{""nodeid"":""0"", ""Equipment"":""big box"", ""Assembly"":""collection of boxes""}
-//													  ,{""nodeid"":""1"", ""Equipment"":""small box 1"", ""Assembly"":""collection of boxes""}
-//													  ,{""nodeid"":""2"", ""Equipment"":""small box 2"", ""Assembly"":""ancient collection of boxes""}
-//													  ,{""nodeid"":""3"", ""Equipment"":""small box 3"", ""Assembly"":""collection of boxes""}
-//													  ,{""nodeid"":""4"", ""Equipment"":""small box 4"", ""Assembly"":""dazzling collection of boxes""}
-//													  ,{""nodeid"":""5"", ""Equipment"":""small box 5"", ""Assembly"":""old collection of boxes""}
-//													  ,{""nodeid"":""6"", ""Equipment"":""small box 6"", ""Assembly"":""collection of boxes""}
-//													  ,{""nodeid"":""7"", ""Equipment"":""small box 7"", ""Assembly"":""dazzling collection of boxes""}
-//													  ,{""nodeid"":""8"", ""Equipment"":""small box 8"", ""Assembly"":""collection of boxes""}
-//													  ,{""nodeid"":""9"", ""Equipment"":""small box 9"", ""Assembly"":""old collection of boxes""}
-//													  ,{""nodeid"":""10"", ""Equipment"":""small box 10"", ""Assembly"":""collection of boxes""}
-//													  ,{""nodeid"":""11"", ""Equipment"":""small box 11"", ""Assembly"":""collection of boxes""}
-//													  ,{""nodeid"":""12"", ""Equipment"":""small box 12"", ""Assembly"":""collection of boxes""}
-//													  ,{""nodeid"":""13"", ""Equipment"":""small box 13"", ""Assembly"":""big collection of boxes""}
-//													  ,{""nodeid"":""14"", ""Equipment"":""small box 14"", ""Assembly"":""collection of boxes""}
-//													  ,{""nodeid"":""15"", ""Equipment"":""small box 15"", ""Assembly"":""collection of boxes""}
-//													  ,{""nodeid"":""16"", ""Equipment"":""small box 16"", ""Assembly"":""medium collection of boxes""}
-//													  ,{""nodeid"":""17"", ""Equipment"":""small box 17"", ""Assembly"":""collection of boxes""}
-//													  ,{""nodeid"":""18"", ""Equipment"":""small box 18"", ""Assembly"":""dazzling collection of boxes""}
-//													  ,{""nodeid"":""19"", ""Equipment"":""small box 19"", ""Assembly"":""dazzling collection of boxes""}
-//													  ,{""nodeid"":""20"", ""Equipment"":""small box 20"", ""Assembly"":""dazzling collection of boxes""}
-//													  ,{""nodeid"":""21"", ""Equipment"":""small box 21"", ""Assembly"":""new collection of boxes""}
-//													  ,{""nodeid"":""22"", ""Equipment"":""small box 22"", ""Assembly"":""new collection of boxes""}
-//													  ]
-//											}
-//								}";
-//            JObject DebugGrid = JObject.Parse( JsonString );
-//            return DebugGrid;
-//        }
 
 		/// <summary>
 		/// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
 		/// </summary>
-		private JObject getGridOuterJson()
+		private JObject _getGridOuterJson()
 		{
 			JObject GridShellJObj = null;
-			IEnumerable<XElement> GridNodes = getGridXElements();
-			IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps();//GridXDoc.Elements( GridRows ).Elements( GridRow ).First().Elements( GridCell );
+			IEnumerable<XElement> GridNodes = _getGridXElements();
+			IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps();
 			
 			JProperty GridRows = null;
 			if(GridNodes.Count() > 0 )
 			{
-				GridRows = getGridRowsJson( GridNodes );
+				GridRows = _getGridRowsJson( GridNodes );
 			}
 			else
 			{
 				GridRows = new JProperty("grid");
 			}
 
-			JProperty GridOrderedColumnDisplayNames = getGridColumnNamesJson( ColumnCollection );
-				JProperty GridColumnDefinitions = getGridColumnDefinitionJson( ColumnCollection );
-				string Width = CswConvert.ToInt32( _View.Width*7 ).ToString();
+			JProperty GridOrderedColumnDisplayNames = _getGridColumnNamesJson( ColumnCollection );
+			JProperty GridColumnDefinitions = _getGridColumnDefinitionJson( ColumnCollection );
+			string Width = CswConvert.ToInt32( _View.Width*7 ).ToString();
 
-				GridShellJObj = new JObject(
-					new JProperty( GridViewName, _View.ViewName ),
-					new JProperty( GridViewWidth, Width ),
-					GridOrderedColumnDisplayNames,
-					GridColumnDefinitions,
-					GridRows
-					);
+			GridShellJObj = new JObject(
+				new JProperty( GridViewName, _View.ViewName ),
+				new JProperty( GridViewWidth, Width ),
+                new JProperty( "nodetypeid", _View.ViewNodeTypeId),
+				GridOrderedColumnDisplayNames,
+				GridColumnDefinitions,
+				GridRows
+				);
 
 			return GridShellJObj;
 		} // getGridOuterJson()
@@ -227,7 +156,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Generates a JSON property of an array of friendly Column Names
 		/// </summary>
-		private static JProperty getGridColumnNamesJson(IEnumerable<CswNbtViewProperty> PropCollection)
+		private static JProperty _getGridColumnNamesJson(IEnumerable<CswNbtViewProperty> PropCollection)
 		{
 			JArray ColumnArray = new JArray(
 										from ViewProp in  PropCollection
@@ -245,7 +174,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Generates a JSON property with the definitional data for a jqGrid Column Array
 		/// </summary>
-		private static JProperty getGridColumnDefinitionJson( IEnumerable<CswNbtViewProperty> PropCollection )
+		private static JProperty _getGridColumnDefinitionJson( IEnumerable<CswNbtViewProperty> PropCollection )
 		{
 
 			JArray ColumnArray = new JArray(
@@ -275,7 +204,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Returns an XElement of the View's Tree
 		/// </summary>
-		private XElement getGridTree()
+		private XElement _getGridTree()
 		{
 			XElement RawXml = null;
 
@@ -300,9 +229,9 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Transforms the Tree XML into an XDocument
 		/// </summary>
-		private IEnumerable<XElement> getGridXElements()
+		private IEnumerable<XElement> _getGridXElements()
 		{
-			var RawXml = getGridTree();
+			var RawXml = _getGridTree();
 			IEnumerable<XElement> NodesInGrid = ( from Element in RawXml.DescendantNodes().OfType<XElement>()
 												  where Element.Name == ( "NbtNode" ) && //only concerned with "NbtNode" elements
 														//Element.Elements( "NbtNode" ).Count() == 0 && //should be the most junior child
@@ -343,7 +272,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Transforms the Tree XML into a JProperty
 		/// </summary>
-		private static JProperty getGridRowsJson( IEnumerable<XElement> NodesInGrid )
+		private static JProperty _getGridRowsJson( IEnumerable<XElement> NodesInGrid )
 		{
 			JProperty GridJObj = null;
 
@@ -357,10 +286,11 @@ namespace ChemSW.Nbt.WebServices
 												from Element in NodesInGrid
 												select new JObject(
 													new JProperty( GridId, Element.Attribute( GridNodeId ).Value ),
+                                                    new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
 													new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam(Element.Attribute( "key" ).Value) ),
 													from DirtyElement in Element.Elements()
 													where DirtyElement.Name == ( GridNbtNodeProp )
-													select massageGridCell( DirtyElement ) 
+													select _massageGridCell( DirtyElement ) 
 													)
 												)
 											)
@@ -370,7 +300,7 @@ namespace ChemSW.Nbt.WebServices
 			return GridJObj;
 		} // getGridRowsJson()
 
-		private static JProperty massageGridCell(XElement DirtyElement)
+		private static JProperty _massageGridCell(XElement DirtyElement)
 		{
 			string CleanPropName = DirtyElement.Attribute( GridName ).Value.ToLower().Replace( " ", "_" );
 			string CleanValue = string.Empty;
@@ -427,10 +357,8 @@ namespace ChemSW.Nbt.WebServices
 			} //ctor
 
 			/// <summary>
-			/// 
+			/// Transforms an Nbt View Property into well-form JSON for consumption by a jqGrid
 			/// </summary>
-			/// <param name="ViewProperty"></param>
-			/// <returns></returns>
 			public static JObject getJqGridAttributesForViewProp( CswNbtViewProperty ViewProperty )
 			{
 				var JqGridViewProp = new JqGridViewProperty( ViewProperty );
@@ -930,6 +858,76 @@ namespace ChemSW.Nbt.WebServices
 			#endregion
 		} // private class JqGridViewProperty
 
+
+        #region Archive
+        //public string getGrid( GridReturnType GridType )
+        //{
+        //    string GridString = string.Empty;
+        //    switch( GridType)
+        //    {
+        //        case GridReturnType.Xml:
+        //            XDocument GridXDoc = getGridXElements();
+        //            if( null != GridXDoc )
+        //            {
+        //                GridString = GridXDoc.ToString();
+        //            }
+        //            break;
+        //        case GridReturnType.Json:
+        //            JObject GridJson = getGridOuterJson();
+        //            if( null != GridJson )
+        //            {
+        //                GridString = GridJson.ToString();
+        //            }
+        //            //else
+        //            //{
+        //            //    GridString = getDebugGridJson().ToString(); // for debug only
+        //            //}
+        //            break;
+        //    }
+        //    return GridString;
+        //} // getGrid()
+
+        //        private static JObject getDebugGridJson()
+        //        {
+        //            String JsonString = @"{""viewname"": ""Debug View""
+        //								,""viewwnodeidth"": ""150""
+        //								,""columnnames"": [""nodeid"",""Equipment"",""Assembly""]
+        //								,""columndefinition"": [{""name"": ""nodeid"", ""index"": ""nodeid"", ""key"":""true"", ""sortable"":""true"", ""sorttype"":""int""}
+        //													  ,{""name"": ""Equipment"", ""index"": ""Equipment"", ""sortable"":""true"", ""search"":""true""}
+        //												      ,{""name"": ""Assembly"", ""index"": ""Assembly"", ""sortable"":""true"", ""search"":""true""}]
+        //								,""grid"": {""total"": ""1""
+        //										   ,""page"": ""1""
+        //										   ,""records"": ""2""
+        //										   ,""rows"": [{""nodeid"":""0"", ""Equipment"":""big box"", ""Assembly"":""collection of boxes""}
+        //													  ,{""nodeid"":""1"", ""Equipment"":""small box 1"", ""Assembly"":""collection of boxes""}
+        //													  ,{""nodeid"":""2"", ""Equipment"":""small box 2"", ""Assembly"":""ancient collection of boxes""}
+        //													  ,{""nodeid"":""3"", ""Equipment"":""small box 3"", ""Assembly"":""collection of boxes""}
+        //													  ,{""nodeid"":""4"", ""Equipment"":""small box 4"", ""Assembly"":""dazzling collection of boxes""}
+        //													  ,{""nodeid"":""5"", ""Equipment"":""small box 5"", ""Assembly"":""old collection of boxes""}
+        //													  ,{""nodeid"":""6"", ""Equipment"":""small box 6"", ""Assembly"":""collection of boxes""}
+        //													  ,{""nodeid"":""7"", ""Equipment"":""small box 7"", ""Assembly"":""dazzling collection of boxes""}
+        //													  ,{""nodeid"":""8"", ""Equipment"":""small box 8"", ""Assembly"":""collection of boxes""}
+        //													  ,{""nodeid"":""9"", ""Equipment"":""small box 9"", ""Assembly"":""old collection of boxes""}
+        //													  ,{""nodeid"":""10"", ""Equipment"":""small box 10"", ""Assembly"":""collection of boxes""}
+        //													  ,{""nodeid"":""11"", ""Equipment"":""small box 11"", ""Assembly"":""collection of boxes""}
+        //													  ,{""nodeid"":""12"", ""Equipment"":""small box 12"", ""Assembly"":""collection of boxes""}
+        //													  ,{""nodeid"":""13"", ""Equipment"":""small box 13"", ""Assembly"":""big collection of boxes""}
+        //													  ,{""nodeid"":""14"", ""Equipment"":""small box 14"", ""Assembly"":""collection of boxes""}
+        //													  ,{""nodeid"":""15"", ""Equipment"":""small box 15"", ""Assembly"":""collection of boxes""}
+        //													  ,{""nodeid"":""16"", ""Equipment"":""small box 16"", ""Assembly"":""medium collection of boxes""}
+        //													  ,{""nodeid"":""17"", ""Equipment"":""small box 17"", ""Assembly"":""collection of boxes""}
+        //													  ,{""nodeid"":""18"", ""Equipment"":""small box 18"", ""Assembly"":""dazzling collection of boxes""}
+        //													  ,{""nodeid"":""19"", ""Equipment"":""small box 19"", ""Assembly"":""dazzling collection of boxes""}
+        //													  ,{""nodeid"":""20"", ""Equipment"":""small box 20"", ""Assembly"":""dazzling collection of boxes""}
+        //													  ,{""nodeid"":""21"", ""Equipment"":""small box 21"", ""Assembly"":""new collection of boxes""}
+        //													  ,{""nodeid"":""22"", ""Equipment"":""small box 22"", ""Assembly"":""new collection of boxes""}
+        //													  ]
+        //											}
+        //								}";
+        //            JObject DebugGrid = JObject.Parse( JsonString );
+        //            return DebugGrid;
+        //        }
+        #endregion
 
 	} // class CswNbtWebServiceGrid
 

@@ -10,12 +10,6 @@
 
 			var ViewId = o.$propxml.children('viewid').text().trim();
 
-			if (debug)
-			{ 
-				log('CswFieldTypeGrid');
-				log(o.$propxml);
-			}
-
 			$($Div).CswNodeGrid({'viewid': ViewId, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly} );
 
 		},
