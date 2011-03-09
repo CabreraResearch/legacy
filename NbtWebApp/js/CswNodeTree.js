@@ -26,7 +26,7 @@
 
 			CswAjaxXml({
 				url: o.TreeUrl,
-				data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&ViewMode=' + o.viewmode,
+				data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix,
 				success: function ($xml) {
 					var selectid;
 					var treePlugins = ["themes", "xml_data", "ui", "types"];

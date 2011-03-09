@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getTree( string ViewNum, string IDPrefix, string ViewMode )
+		public XElement getTree( string ViewNum, string IDPrefix )
 		{
 		    var TreeNode = new XElement("tree");
 
@@ -365,7 +365,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != View )
                     {
                         var ws = new CswNbtWebServiceTree( _CswNbtResources );
-                        TreeNode = ws.getTree( View, IDPrefix, ViewMode );
+                        TreeNode = ws.getTree( View, IDPrefix );
                         addToQuickLaunch( View );
                     }
                 }

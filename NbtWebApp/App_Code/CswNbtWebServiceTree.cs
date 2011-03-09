@@ -18,21 +18,19 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 		}
 
-        public XElement getTree( CswNbtView View, string IDPrefix, string ViewMode )
+        public XElement getTree( CswNbtView View, string IDPrefix )
         {
             var ReturnNode = new XElement( "root" );
             string EmptyOrInvalid = "Not a Tree or List view.";
-            NbtViewRenderingMode RenderingMode;
-            NbtViewRenderingMode.TryParse( ViewMode, true, out RenderingMode );
 
-            if( RenderingMode == NbtViewRenderingMode.Tree || RenderingMode == NbtViewRenderingMode.List )
+            if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
                 if( Tree.getChildNodeCount() > 0 )
                 {
 
                     var RootNode = new XElement( "root" );
-                    if( RenderingMode == NbtViewRenderingMode.Tree )
+                    if( View.ViewMode == NbtViewRenderingMode.Tree )
                     {
                         var RootItemNode = new XElement( "item",
                                                 new XAttribute( "id", IDPrefix + "root" ),
@@ -42,7 +40,7 @@ namespace ChemSW.Nbt.WebServices
                         RootNode.Add( RootItemNode );
                         _runTreeNodesRecursive( Tree, IDPrefix, RootItemNode );
                     }
-                    else if( RenderingMode == NbtViewRenderingMode.List )
+                    else if( View.ViewMode == NbtViewRenderingMode.List )
                     {
                         _runTreeNodesRecursive( Tree, IDPrefix, RootNode );
                     }
