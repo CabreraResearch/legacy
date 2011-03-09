@@ -2,9 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Script.Serialization;
 using System.Xml.Linq;
-using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
@@ -20,37 +18,55 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 		}
 
-		public XElement getTree( CswNbtView View, string IDPrefix )
-		{
-            var ReturnNode = new XElement( "root",
-										new XElement( "item",
-											new XAttribute( "id", "-1" ),
-											new XAttribute( "rel", "root" ),
-												new XElement( "content",
-													new XElement( "name", "No results" )
-													)
-										));
-			
-			ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
+        public XElement getTree( CswNbtView View, string IDPrefix, string ViewMode )
+        {
+            var ReturnNode = new XElement( "root" );
+            string EmptyOrInvalid = "Not a Tree or List view.";
+            NbtViewRenderingMode RenderingMode;
+            NbtViewRenderingMode.TryParse( ViewMode, true, out RenderingMode );
 
-			if( Tree.getChildNodeCount() > 0 )
-			{
-				var RootNode = new XElement( "root" );
-				var RootItemNode = new XElement( "item",
-										new XAttribute( "id", IDPrefix + "root" ),
-										new XAttribute( "rel", "root" ),
-											new XElement( "content" ,
-												new XElement( "name", View.ViewName )
-												)
-									);
-				RootNode.Add( RootItemNode );
-				_runTreeNodesRecursive( Tree, IDPrefix, RootItemNode );
+            if( RenderingMode == NbtViewRenderingMode.Tree || RenderingMode == NbtViewRenderingMode.List )
+            {
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
+                if( Tree.getChildNodeCount() > 0 )
+                {
 
-                ReturnNode = new XElement( "result",
-									new XElement( "tree", RootNode ),
-				                    new XElement( "types", getTypes( View ).ToString() ) );
-			} // if( Tree.getChildNodeCount() > 0 )
-
+                    var RootNode = new XElement( "root" );
+                    if( RenderingMode == NbtViewRenderingMode.Tree )
+                    {
+                        var RootItemNode = new XElement( "item",
+                                                new XAttribute( "id", IDPrefix + "root" ),
+                                                new XAttribute( "rel", "root" ),
+                                                new XElement( "content",
+                                                            new XElement( "name", View.ViewName ) ) );
+                        RootNode.Add( RootItemNode );
+                        _runTreeNodesRecursive( Tree, IDPrefix, RootItemNode );
+                    }
+                    else if( RenderingMode == NbtViewRenderingMode.List )
+                    {
+                        _runTreeNodesRecursive( Tree, IDPrefix, RootNode );
+                    }
+                    ReturnNode = new XElement( "result",
+                                    new XElement( "tree", RootNode ),
+                                    new XElement( "types", getTypes( View ).ToString() ) );
+                }
+                else
+                {
+                    EmptyOrInvalid = "No Results";
+                }
+            } // if( Tree.getChildNodeCount() > 0 )
+            else
+            {
+                EmptyOrInvalid = "Not a Tree or List view.";
+            }
+            if( !string.IsNullOrEmpty( EmptyOrInvalid ) )
+            {
+                ReturnNode.Add( new XElement( "item",
+                                    new XAttribute( "id", "-1" ),
+                                    new XAttribute( "rel", "root" ),
+                                        new XElement( "content",
+                                            new XElement( "name", EmptyOrInvalid ))) );
+            }
             return ReturnNode;
 		} // getTree()
 

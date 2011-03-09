@@ -142,60 +142,54 @@
 		
 		SetCurrentView({ viewid: o.viewid, viewmode: o.viewmode });
 		
-		switch(o.viewmode)
+        if( o.viewid != undefined && o.viewid != '' && o.viewmode != undefined && o.viewmode != '' )
 		{
-			case 'grid':
-			{
-				if( o.viewid != undefined && o.viewid != '' )
-				{
+		    switch(o.viewmode)
+		    {
+			    case 'grid':
+			    {
 				    if (debug) log('handleItemSelect() called getViewGrid()');
                     getViewGrid( { 'viewid': o.viewid, 'nodeid': '', 'cswnbtnodekey': o.cswnbtnodekey } );
-				}
-				else
-				{
-					alert('No View Selected!');
-				}
-				break;
-			}
-			case 'list':
-			{
-				alert('List Views not yet supported!');
-				break;
-			}
-			case 'tree': 
-			{
-				if( o.viewid != undefined && o.viewid != '' )
-				{   
+				    break;
+			    }
+			    case 'list':
+			    {
+			        if (debug) log('handleItemSelect() called getNodesTree()');
+			        getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });
+				    break;
+			    }
+			    case 'tree': 
+			    {
                     if(debug) log('handleItemSelect() called getNodesTree()');
-					getNodesTree( {'viewid': o.viewid} );
-				}
-				else
-				{
-					alert('No View Selected!');
-				}
-				break;
-			}
-			default:
+                    getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });
+				    break;
+			    }
+                default:
+                {
+                    alert('No View Selected!');
+                    break;
+                }
+            }
+        }
+		else if(o.type != undefined && o.type != '')
+		{
+			switch(o.type)
 			{
-				switch(o.type)
+				case 'action':
 				{
-					case 'action':
-					{
-						alert('Actions are not yet handled!');
-						break;
-					}
-					case 'report':
-					{
-						alert('Reports are not yet handled!');
-						break;
-					}
-					default:
-					{
-						alert('Handling for link type ' + o.linktype + ' is not implemented yet.');
-						break;
-					}
-				}				
-				break;
+					alert('Actions are not yet handled!');
+					break;
+				}
+				case 'report':
+				{
+					alert('Reports are not yet handled!');
+					break;
+				}
+				default:
+				{
+					alert('Handling for link type ' + o.linktype + ' is not implemented yet.');
+					break;
+				}
 			}
 		}
 	}
@@ -246,7 +240,8 @@
 
 	function getNodesTree(options) {
 		var o = {
-			viewid: '',
+		    viewid: '',
+            viewmode: 'tree',
 			'ID': 'main',
 			'onSelectNode': ''
 		};
@@ -261,11 +256,11 @@
 
 		if (debug) 
 		{
-			log('NewMain.getNodesTree()');
+			log('NewMain.getNodesTree() on ' + o.viewmode + ' view');
 			//log(o);
 		}
 
-		$('#LeftDiv').CswNodeTree('init', {'ID': o.ID, 'viewid': o.viewid, 'onSelectNode': o.onSelectNode} );
+		$('#LeftDiv').CswNodeTree('init', {'ID': o.ID, 'viewid': o.viewid, 'viewmode': o.viewmode, 'onSelectNode': o.onSelectNode} );
 	}
 
 	function onSelectTreeNode(options) {

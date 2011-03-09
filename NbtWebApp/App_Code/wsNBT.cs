@@ -351,21 +351,25 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getTree( Int32 ViewId, string IDPrefix )
+		public XElement getTree( string ViewNum, string IDPrefix, string ViewMode )
 		{
 		    var TreeNode = new XElement("tree");
 
 			try
 			{
 				start();
-				CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-				if( null != View )
-				{
-					var ws = new CswNbtWebServiceTree( _CswNbtResources );
-                    TreeNode = ws.getTree( View, IDPrefix );
-					addToQuickLaunch( View );
-				}
-				end();
+			    Int32 ViewId = CswConvert.ToInt32( ViewNum );
+                if( Int32.MinValue != ViewId )
+                {
+                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+                    if( null != View )
+                    {
+                        var ws = new CswNbtWebServiceTree( _CswNbtResources );
+                        TreeNode = ws.getTree( View, IDPrefix, ViewMode );
+                        addToQuickLaunch( View );
+                    }
+                }
+			    end();
 			}
 			catch( Exception ex )
 			{
