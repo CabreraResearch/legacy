@@ -137,11 +137,6 @@ function CswAjaxXml(options) {
 		$.extend(o, options);
 	}
 
-	//in jQuery 1.5 $ is no longer the global jQuery. See //Validation Hack
-	//$.ajaxSettings.cache = false;
-	//$.ajaxSettings.jsonp = undefined;
-	//$.ajaxSettings.jsonpCallback = undefined;
-
 	var starttime = new Date();
 	$.ajax({
 		type: 'POST',
