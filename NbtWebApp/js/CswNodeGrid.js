@@ -66,7 +66,7 @@
 		
 		CswAjaxJSON({
 			url: o.GridUrl,
-			data: "{ViewPk: '" +  o.viewid + "', 'CswNbtNodeKey': '" + o.cswnbtnodekey + "'}", //" + o.cswnbtnodekey + "
+			data: "{ViewPk: '" +  o.viewid + "', 'SafeNodeKey': '" + o.cswnbtnodekey + "'}", //" + o.cswnbtnodekey + "
 			success: function (gridJson) {
 					
 					gridData = gridJson.grid;

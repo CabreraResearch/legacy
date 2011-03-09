@@ -17,7 +17,7 @@
 
 		CswAjaxXml({
 			url: o.Url,
-			data: "ViewNum=" + o.viewid + "&NodePk=" + o.nodeid + "&SafeNodeKey=" + o.cswnbtnodekey,
+			data: "ViewNum=" + o.viewid + "&SafeNodeKey=" + o.cswnbtnodekey,
 			success: function ($xml) {
 				var $ul = $('<ul class="topnav"></ul>');
 
