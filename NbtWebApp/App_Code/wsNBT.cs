@@ -502,6 +502,36 @@ namespace ChemSW.Nbt.WebServices
 			return Doc;
 		} // saveProps()
 
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement getSearch( string ViewNum )
+        {
+            var SearchNode = new XElement( "search" );
+
+            try
+            {
+                start();
+                Int32 ViewId = CswConvert.ToInt32( ViewNum );
+                if( Int32.MinValue != ViewId )
+                {
+                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+                    if( null != View )
+                    {
+                        var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                        SearchNode = ws.getSearch( View );
+                        addToQuickLaunch( View );
+                    }
+                }
+                end();
+            }
+            catch( Exception ex )
+            {
+                SearchNode = XElement.Parse( error( ex ) );
+            }
+
+            return SearchNode;
+        } // getSearch()
+
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string DeleteNode( string SafeNodeKey )
