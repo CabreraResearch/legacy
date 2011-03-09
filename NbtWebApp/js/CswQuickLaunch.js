@@ -33,16 +33,16 @@
 							viewid: $item.attr('itemid') //actions provide their own links. itemid will only be used as viewid.
 					};
 							
-					switch(optSelect.type)
+					switch(optSelect.type) //webservice converts to lower case
 					{
-						case 'View':
+						case 'view':
 						
-							$('<li><a href="#' + optSelect.text + '_' + optSelect.type + optSelect.viewid +'">' + optSelect.text + '</a></li>')
+							$('<li><a href="#' + optSelect.text + '_' + optSelect.type + '_' + optSelect.viewmode + '_' + optSelect.viewid +'">' + optSelect.text + '</a></li>')
 								 .appendTo($list) 
 								 .children('a')
 								 .click(function() { o.onLinkClick(optSelect); return false; });
 							break;
-						case 'Action': 
+						case 'action': 
 							$('<li><a href=' + optSelect.url + '>' + optSelect.text + '</a></li>') 
 								.appendTo($list);
 							break;

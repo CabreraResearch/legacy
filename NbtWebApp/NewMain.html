@@ -141,10 +141,10 @@
 		}
 		
 		SetCurrentView({ viewid: o.viewid, viewmode: o.viewmode });
-		
-        if( o.viewid != undefined && o.viewid != '' && o.viewmode != undefined && o.viewmode != '' )
+
+		if (o.viewid != undefined && o.viewid != '') //&& o.viewmode != undefined && o.viewmode != ''
 		{
-		    switch(o.viewmode)
+		    switch(o.viewmode) //webservice converts to lower case
 		    {
 			    case 'grid':
 			    {
@@ -154,19 +154,20 @@
 			    }
 			    case 'list':
 			    {
-			        if (debug) log('handleItemSelect() called getNodesTree()');
+			        if (debug) log('handleItemSelect() called getNodesTree() for ' + o.viewmode);
 			        getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });
 				    break;
 			    }
 			    case 'tree': 
 			    {
-                    if(debug) log('handleItemSelect() called getNodesTree()');
+                    if(debug) log('handleItemSelect() called getNodesTree() for ' + o.viewmode);
                     getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });
 				    break;
 			    }
                 default:
                 {
-                    alert('No View Selected!');
+                    if (debug) log('handleItemSelect() called getNodesTree() for ' + o.viewmode);
+                    getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });
                     break;
                 }
             }
