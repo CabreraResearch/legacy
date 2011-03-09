@@ -176,9 +176,9 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XmlDocument getQuickLaunchItems()
+		public XElement getQuickLaunchItems()
 		{
-			var ReturnDoc = new XmlDocument();
+            var QuickLaunchItems = new XElement( "quicklaunch" );
 			try
 			{
 				start();
@@ -187,19 +187,17 @@ namespace ChemSW.Nbt.WebServices
 				var ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources, Session );
 				if( null != UserId )
 				{
-					var QuickLaunchItems = new XElement( "quicklaunch" );
 					QuickLaunchItems.Add( ws.getQuickLaunchItems( UserId ) );
-					ReturnDoc.LoadXml( QuickLaunchItems.ToString() );
 				}
 
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnDoc.LoadXml( error( ex ) );
+                QuickLaunchItems = XElement.Parse( error( ex ) );
 			}
 
-			return ReturnDoc;
+            return QuickLaunchItems;
 		} // getQuickLaunchItems()
 
 
@@ -387,7 +385,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 start();
                 string ParsedNokeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
-                if (!string.IsNullOrEmpty(ParsedNokeKey))
+                if (!string.IsNullOrEmpty(ParsedNokeKey) || EditMode == "AddInPopup")
                 {
                     var ws = new CswNbtWebServiceTabsAndProps(_CswNbtResources);
                     var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse(typeof (CswNbtWebServiceTabsAndProps.NodeEditMode), EditMode);
@@ -412,7 +410,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 				string ParsedNokeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
-                if( !string.IsNullOrEmpty( ParsedNokeKey ) )
+                if( !string.IsNullOrEmpty( ParsedNokeKey ) || EditMode == "AddInPopup" )
                 {
                     var ws = new CswNbtWebServiceTabsAndProps(_CswNbtResources);
                     var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse(typeof (CswNbtWebServiceTabsAndProps.NodeEditMode), EditMode);

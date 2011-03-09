@@ -164,9 +164,10 @@ namespace ChemSW.Nbt.WebServices
 										select new JValue( ViewProp.NodeTypeProp.PropName )
 										);
 
-			ColumnArray.AddFirst( new JValue( "nodeid" ) ); //better to use int for jqGrid key
+            ColumnArray.AddFirst( new JValue( "nodename" ) ); //better to use int for jqGrid key
 			ColumnArray.AddFirst( new JValue( "cswnbtnodekey" ) ); //we'll want CswNbtNodeKey for add/edit/delete
-			var ColumnNames = new JProperty( GridColumnNames, ColumnArray );
+            ColumnArray.AddFirst( new JValue( "nodeid" ) ); //better to use int for jqGrid key
+            var ColumnNames = new JProperty( GridColumnNames, ColumnArray );
 			return ColumnNames;
 
 		} // getGridColumnNamesJson()
@@ -182,20 +183,26 @@ namespace ChemSW.Nbt.WebServices
 										where JqGridProp != null
 										select JqGridViewProperty.getJqGridAttributesForViewProp(JqGridProp)
 										);
-			
-			//better to use int for jqGrid key
+
+            //we'll want NodeName for edit/delete
+            ColumnArray.AddFirst( new JObject(
+                                new JProperty( GridName, "nodename" ),
+                                new JProperty( "index", "nodename" )
+                                ) );
+            
+            //we'll want CswNbtNodeKey for add/edit/delete
+            ColumnArray.AddFirst( new JObject(
+                                new JProperty( GridName, "cswnbtnodekey" ),
+                                new JProperty( "index", "cswnbtnodekey" )
+                                ) );
+            
+            //better to use int for jqGrid key
 			ColumnArray.AddFirst( new JObject(
 								new JProperty( GridName, "nodeid" ),
 								new JProperty( "index", "nodeid" ),
 								new JProperty( "key", "true" )
 								) );
-			
-			//we'll want CswNbtNodeKey for add/edit/delete
-			ColumnArray.AddFirst( new JObject(
-								new JProperty( GridName, "cswnbtnodekey" ),
-								new JProperty( "index", "cswnbtnodekey" )
-								) );
-
+            
 			JProperty ColumnDefinition = new JProperty( GridColumnDefinition, ColumnArray );
 
 			return ColumnDefinition;
@@ -234,7 +241,6 @@ namespace ChemSW.Nbt.WebServices
 			var RawXml = _getGridTree();
 			IEnumerable<XElement> NodesInGrid = ( from Element in RawXml.DescendantNodes().OfType<XElement>()
 												  where Element.Name == ( "NbtNode" ) && //only concerned with "NbtNode" elements
-														//Element.Elements( "NbtNode" ).Count() == 0 && //should be the most junior child
 														Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
 														Element.Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
 												  select Element );
@@ -286,9 +292,9 @@ namespace ChemSW.Nbt.WebServices
 												from Element in NodesInGrid
 												select new JObject(
 													new JProperty( GridId, Element.Attribute( GridNodeId ).Value ),
-                                                    new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
 													new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam(Element.Attribute( "key" ).Value) ),
-													from DirtyElement in Element.Elements()
+                                                    new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
+                                                    from DirtyElement in Element.Elements()
 													where DirtyElement.Name == ( GridNbtNodeProp )
 													select _massageGridCell( DirtyElement ) 
 													)
