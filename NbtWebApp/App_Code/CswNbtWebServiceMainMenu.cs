@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Xml.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -57,39 +59,40 @@ namespace ChemSW.Nbt.WebServices
                             new XAttribute("href",SearchHref)));
 
 			// ADD
+            XElement AddNode = new XElement( "item",
+                                    new XAttribute( "text", "Add" ) );
 			if( View != null && View.ViewId <= 0 )
 			{
-                XElement AddNode = new XElement( "item",
-                                    new XAttribute( "text", "Add" ) );
-                foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in View.Root.AllowedChildNodeTypes() )
-				{
-					AddNode.Add(new XElement("item"),
-                                    new XAttribute("text",Entry.NodeType.NodeTypeName),
-                                    new XAttribute( "nodetypeid", Entry.NodeType.NodeTypeId ),
-                                    new XAttribute("action","AddNode"));
-				}
-                MenuNode.Add(AddNode);
+			    foreach (XElement AddNodeType in View.Root.AllowedChildNodeTypes()
+                                                 .Select(Entry => new XElement("item", 
+                                                                    new XAttribute("text", Entry.NodeType.NodeTypeName), 
+                                                                    new XAttribute("nodetypeid", Entry.NodeType.NodeTypeId), 
+                                                                    new XAttribute("action", "AddNode"))))
+			    {
+			        AddNode.Add(AddNodeType);
+			    }
 			}
+            MenuNode.Add( AddNode );
 
-			// COPY
+            // COPY
             MenuNode.Add( new XElement( "item",
                             new XAttribute( "text", "Copy" ),
                             new XAttribute( "href", "Popup_CopyNode.aspx?nodekey=" + Node.NodeId.PrimaryKey ) ) );
 
 			// DELETE
-			if( !string.IsNullOrEmpty( NodeKey ) && null != Node && Node.NodeSpecies == NodeSpecies.Plain )
+			if( !string.IsNullOrEmpty( NodeKey ) && 
+                null != Node && 
+                Node.NodeSpecies == NodeSpecies.Plain && 
+                _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Delete, Node.NodeTypeId, Node, null ))
 			{
-				//if( SelectedNodeKeyViewNode is CswNbtViewRelationship &&
-				//    ( (CswNbtViewRelationship) SelectedNodeKeyViewNode ).AllowDelete &&
-				if( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Delete, Node.NodeTypeId, Node, null ) )
-				{
-                    MenuNode.Add( new XElement( "item" ,
-                                    new XAttribute( "text", "Delete" ),
-                                    new XAttribute( "popup", "Popup_DeleteNode.aspx?nodekey=" + Node.NodeId.PrimaryKey + "&checkednodeids=" )));
-				}
+
+                string PopUp = "Popup_DeleteNode.aspx?nodekey=" + Node.NodeId.PrimaryKey + "&checkednodeids=";
+                MenuNode.Add(new XElement("item",
+			                              new XAttribute("text", "Delete"),
+			                              new XAttribute("popup", PopUp )));
 			}
 
-			// SAVE VIEW AS
+		    // SAVE VIEW AS
 			if( View != null && View.ViewId <= 0 )
 			{
                 MenuNode.Add( new XElement( "item",
@@ -103,9 +106,11 @@ namespace ChemSW.Nbt.WebServices
 				CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.NodeType.BarcodeProperty;
 				if( BarcodeProperty != null )
 				{
+				    string PopUp = "Popup_PrintLabel.aspx?nodeid=" + Node.NodeId.PrimaryKey + "&propid=" +
+				                   BarcodeProperty.PropId + "&checkednodeids=";
                     MenuNode.Add( new XElement( "item",
                                     new XAttribute( "text", "Print Label" ),
-                                    new XAttribute( "popup", "Popup_PrintLabel.aspx?nodeid=" + Node.NodeId.PrimaryKey + "&propid=" + BarcodeProperty.PropId + "&checkednodeids=" )));
+                                    new XAttribute( "popup", PopUp ) ) );
 				}
 			}
 
@@ -117,41 +122,47 @@ namespace ChemSW.Nbt.WebServices
                              new XAttribute("popup", "PrintGrid.aspx?sessionviewid=" + View.SessionViewId)));
             }
 		    // EXPORT
+            XElement ExportNode = new XElement( "item",
+                                    new XAttribute( "text", "Export" ) );
 			if( NbtViewRenderingMode.Grid == View.ViewMode )
 			{
-                XElement ExportNode = new XElement( "item",
-                                    new XAttribute( "text", "Export" ) );
-                foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) ) )
-				{
-					if( ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
-					{
-						ExportNode.Add(new XElement( "item",
-                                    new XAttribute( "text", FormatType ),
-                                    new XAttribute( "popup", "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode )));
-					}
-				}
-			    MenuNode.Add(ExportNode);
+                
+                foreach (XElement ExportType in from ExportOutputFormat FormatType 
+                                                    in Enum.GetValues(typeof (ExportOutputFormat))
+                                                    where ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled(CswNbtResources.CswNbtModule.Mobile)
+                                                    select new XElement("item", 
+                                                        new XAttribute("text", FormatType), 
+                                                        new XAttribute("popup", "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode)))
+                {
+                    ExportNode.Add(ExportType);
+                }
+			    
             }
 			else  // tree or list
 			{
-                XElement ExportNode = new XElement( "item",
-                                    new XAttribute( "text", "Report XML" ) );
+                ExportNode.Add( new XElement( "item",
+                                    new XAttribute( "text", "Report XML" ) ) );
                 if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
                 {
-                    ExportNode.Add(new XElement( "item",
+                    string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" +
+                                    ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+                    ExportNode.Add( new XElement( "item",
                                     new XAttribute( "text", "Mobile XML" ),
-                                    new XAttribute( "popup", "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" + ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode )));
+                                    new XAttribute( "popup", PopUp )));
                 }
 			}
+            MenuNode.Add( ExportNode );
 
 			// MOBILE
 			if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
 			{
+                string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" + 
+                                ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode; 
                 XElement MobileNode = new XElement( "item",
                                     new XAttribute( "text", "Mobile" ) );
                 MobileNode.Add( new XElement( "item",
                                     new XAttribute( "text", "Export Mobile XML" ),
-                                    new XAttribute( "popup", "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" + ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode )));
+                                    new XAttribute( "popup", PopUp )));
                 MobileNode.Add( new XElement( "item",
                                     new XAttribute( "text", "Import Mobile XML" ),
                                     new XAttribute( "href", _CswNbtResources.Actions[CswNbtActionName.Load_Mobile_Data].Url )));
@@ -180,7 +191,6 @@ namespace ChemSW.Nbt.WebServices
                                     new XAttribute( "action", "multiedit" )));
 			return MenuNode;
 		}
-
 
 	} // class CswNbtWebServiceMainMenu
 

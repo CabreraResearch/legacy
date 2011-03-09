@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 		}
 
-		public string getTabs( NodeEditMode EditMode, string NodeKey, Int32 NodeTypeId )
+		public XElement getTabs( NodeEditMode EditMode, string NodeKey, Int32 NodeTypeId )
 		{
 			XElement TabsNode = new XElement( "tabs" );
 			if( EditMode == NodeEditMode.AddInPopup )
@@ -43,8 +43,7 @@ namespace ChemSW.Nbt.WebServices
 										new XAttribute( "name", Tab.TabName ) ) );
 				}
 			}
-			string ret = TabsNode.ToString();
-			return ret;
+            return TabsNode;
 		} // getTabs()
 
 		private const char PropIdDelim = '_';

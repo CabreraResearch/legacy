@@ -47,8 +47,6 @@ namespace ChemSW.Nbt.WebServices
 
 		}//start() 
 
-
-
 		private void end()
 		{
 			if( _CswNbtResources != null )
@@ -67,10 +65,11 @@ namespace ChemSW.Nbt.WebServices
 			return "<error>Error: " + ex.Message + "</error>";
 		}
 
-		private string result( string ReturnVal )
-		{
-			return "<result>" + ReturnVal + "</result>";
-		}
+        //never used
+        //private string result( string ReturnVal )
+        //{
+        //    return "<result>" + ReturnVal + "</result>";
+        //}
 
 		/// <summary>
 		/// Append to QuickLaunch
@@ -294,30 +293,26 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public string getMainMenu( string ViewNum, string SafeNodeKey )
+		public XElement getMainMenu( string ViewNum, string NodePk, string SafeNodeKey )
 		{
-			string ReturnVal = string.Empty;
-            XElement ReturnNode;
+            XElement ReturnNode = new XElement("return");
+		    string t = string.Empty;
             try
             {
                 start();
                 var ws = new CswNbtWebServiceMainMenu(_CswNbtResources);
                 Int32 ViewId = CswConvert.ToInt32(ViewNum);
-                if (Int32.MinValue != ViewId || !string.IsNullOrEmpty(SafeNodeKey))   
+                if (Int32.MinValue != ViewId || !string.IsNullOrEmpty(SafeNodeKey))
                 {
                     ReturnNode = ws.getMenu(ViewId, SafeNodeKey);
-                    ReturnVal = ReturnNode.ToString();
                 }
                 end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = error( ex );
+                ReturnNode = XElement.Parse( error( ex ) );
 			}
-			//return ( ReturnVal );
-			//XmlDocument Doc = new XmlDocument();
-			//Doc.LoadXml( ReturnVal );
-            return ReturnVal;
+            return ReturnNode;
 		} // getMainMenu()
 
 		[WebMethod( EnableSession = true )]
@@ -358,10 +353,10 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XmlDocument getTree( Int32 ViewId, string IDPrefix )
+		public XElement getTree( Int32 ViewId, string IDPrefix )
 		{
-			var XmlString = string.Empty;
-			var ReturnXml = new XmlDocument();
+		    var TreeNode = new XElement("tree");
+
 			try
 			{
 				start();
@@ -369,42 +364,39 @@ namespace ChemSW.Nbt.WebServices
 				if( null != View )
 				{
 					var ws = new CswNbtWebServiceTree( _CswNbtResources );
-					XmlString = ws.getTree( View, IDPrefix );
-					ReturnXml.LoadXml( XmlString );
+                    TreeNode = ws.getTree( View, IDPrefix );
 					addToQuickLaunch( View );
 				}
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnXml.LoadXml( error( ex ) );
+                TreeNode = XElement.Parse( error( ex ) );
 			}
 
-			return ReturnXml;
+            return TreeNode;
 		} // getTree()
 
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XmlDocument getTabs( string EditMode, string NodeKey, string NodeTypeId )
+		public XElement getTabs( string EditMode, string NodeKey, string NodeTypeId )
 		{
-			string ReturnVal = string.Empty;
-			try
+		    var TabsNode = new XElement("tabs");
+            try
 			{
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-                ReturnVal = ws.getTabs( RealEditMode, NodeKey, CswConvert.ToInt32( NodeTypeId ) );
+                TabsNode = ws.getTabs( RealEditMode, NodeKey, CswConvert.ToInt32( NodeTypeId ) );
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = error( ex );
+                TabsNode = XElement.Parse( error( ex ) );
 			}
-			//return ( ReturnVal );
-			XmlDocument Doc = new XmlDocument();
-			Doc.LoadXml( ReturnVal );
-			return Doc;
+
+            return TabsNode;
 		} // getTabs()
 
 		[WebMethod( EnableSession = true )]

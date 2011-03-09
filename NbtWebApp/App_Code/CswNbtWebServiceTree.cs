@@ -20,10 +20,9 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 		}
 
-		public string getTree( CswNbtView View, string IDPrefix )
+		public XElement getTree( CswNbtView View, string IDPrefix )
 		{
-			string ret = string.Empty;
-			var NoResultsNode = new XElement( "root",
+            var ReturnNode = new XElement( "root",
 										new XElement( "item",
 											new XAttribute( "id", "-1" ),
 											new XAttribute( "rel", "root" ),
@@ -47,17 +46,12 @@ namespace ChemSW.Nbt.WebServices
 				RootNode.Add( RootItemNode );
 				_runTreeNodesRecursive( Tree, IDPrefix, RootItemNode );
 
-				var OuterNodes = new XElement( "result",
+                ReturnNode = new XElement( "result",
 									new XElement( "tree", RootNode ),
 				                    new XElement( "types", getTypes( View ).ToString() ) );
-				ret = OuterNodes.ToString();
 			} // if( Tree.getChildNodeCount() > 0 )
-			else
-			{
-				ret = NoResultsNode.ToString();
-			} // No Results
 
-			return ret;
+            return ReturnNode;
 		} // getTree()
 
 		public JObject getTypes( CswNbtView View )
