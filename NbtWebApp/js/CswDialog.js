@@ -92,21 +92,20 @@
 							});
 						},
 
-			'SearchDialog': function (viewid, onSearchSubmit, props) {
-							var $div = $('<div></div>');
-							CswAjaxXml({
-								url: '/NbtWebApp/wsNBT.asmx/getSearch',
-								data: 'ViewNum: ' + viewid ,
-								success: function ($xml) {
+		'SearchDialog': function (viewid, onSearchSubmit, props) {
+						var $div = $('<div></div>');
+						CswAjaxXml({
+							url: '/NbtWebApp/wsNBT.asmx/getSearch',
+							data: 'ViewNum: ' + viewid ,
+							success: function ($xml) {
 									
-									});
-								}
-							});
-							$div.dialog({ 'modal': true,
-								'width': 800,
-								'height': 600
-							});
-						},
+							}
+						});
+						$div.dialog({ 'modal': true,
+							'width': 800,
+							'height': 600
+						});
+					},
 
 		// Generic
 
