@@ -7,6 +7,7 @@ using System.Web.Services;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using ChemSW.Core;
 using ChemSW.Config;
+using ChemSW.Nbt.Security;
 using ChemSW.Security;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Converters;
@@ -317,7 +318,7 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string getGrid( string ViewPk, string SafeNodeKey = null )
 		{
-			var ReturnJson = string.Empty;
+            var ReturnJson = string.Empty;
             string ParsedNokeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
 
 			try
@@ -336,17 +337,17 @@ namespace ChemSW.Nbt.WebServices
 						}
 						var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
 						ReturnJson = g.getGrid().ToString();
-						addToQuickLaunch( View );
+                        addToQuickLaunch( View );
 					}
 				}
 				end();
 			}
 			catch( Exception Ex )
 			{
-				ReturnJson = ( error( Ex ) );
+                ReturnJson = JsonConvert.SerializeObject( error( Ex ) );
 			}
 
-			return ReturnJson;
+            return ReturnJson;
 		} // getGrid()
 
 		[WebMethod( EnableSession = true )]
@@ -504,7 +505,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = true )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getSearch( string ViewNum )
+        public XElement getSearchProps( string ViewNum )
         {
             var SearchNode = new XElement( "search" );
 
@@ -518,7 +519,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != View )
                     {
                         var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-                        SearchNode = ws.getSearch( View );
+                        SearchNode = ws.getSearchProps( View );
                         addToQuickLaunch( View );
                     }
                 }
@@ -531,6 +532,32 @@ namespace ChemSW.Nbt.WebServices
 
             return SearchNode;
         } // getSearch()
+
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement getSearchViews( string IsMobile, string OrderBy = null )
+        {
+            var SearchNode = new XElement( "search" );
+            try
+            {
+                start();
+                
+                ICswNbtUser UserId = _CswNbtResources.CurrentNbtUser;
+                bool ForMobile = CswConvert.ToBoolean(IsMobile);
+
+                var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                SearchNode = ws.getSearchViews( UserId, ForMobile, OrderBy );
+
+                end();
+            }
+            catch( Exception ex )
+            {
+                SearchNode = XElement.Parse( error( ex ) );
+            }
+
+            return SearchNode;
+        } // getSearch()
+
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
