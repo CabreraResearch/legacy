@@ -20,10 +20,6 @@
 				var $list = $QuickLaunchDiv.children();
 				$xml.children("items").children("item").each(function() {
 					
-					if(debug)
-					{
-					}
-
 					var $item = $(this);
 					var optSelect = {
 							type: $item.attr('type'),
