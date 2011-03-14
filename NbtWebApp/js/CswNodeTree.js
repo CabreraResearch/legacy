@@ -9,6 +9,7 @@
 				ID: '', 
 				TreeUrl: '/NbtWebApp/wsNBT.asmx/getTree',
 				viewid: '',
+				viewmode: '',
 				nodeid: '',
 				cswnbtnodekey: '',
 				onSelectNode: function(optSelect) { },
@@ -25,17 +26,34 @@
 
 			CswAjaxXml({
 				url: o.TreeUrl,
-				data: 'ViewId=' + o.viewid + '&IDPrefix=' + IDPrefix,
+				data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix,
 				success: function ($xml) {
 					var selectid;
+					var treePlugins = ["themes", "xml_data", "ui", "types"];
+					var treeThemes;
 					if(o.nodeid != undefined && o.nodeid != '') 
+					{
 						selectid = IDPrefix + o.nodeid;
+					}
 					else
 					{
 						if(o.SelectFirstChild)
-							selectid = $xml.find('item').first().find('item').first().attr('id');
+						{	
+							if(o.viewmode == 'list' )
+							{
+								selectid = $xml.find('item').first().attr('id');
+								treeThemes = {"dots": false};
+							}
+							else
+							{
+								selectid = $xml.find('item').first().find('item').first().attr('id');
+								treeThemes = {"dots": true};
+							}
+						}
 						else
+						{
 							selectid = IDPrefix + 'root';
+						}
 					}
 
 					// make sure selected item is visible
@@ -49,7 +67,7 @@
 					var jsonTypes = $.parseJSON(strTypes);
 					var $treexml = $xml.find('tree').children('root')
 					var treexmlstring = xmlToString($treexml);
-
+				
 					$treediv.jstree({
 						"xml_data": {
 							"data": treexmlstring,
@@ -59,13 +77,14 @@
 							"select_limit": 1,
 							"initially_select": selectid
 						},
+						"themes": treeThemes,
 						"core": {
 							"initially_open": initiallyOpen
 						},
 						"types": {
 							"types": jsonTypes
 						},
-						"plugins": ["themes", "xml_data", "ui", "types"]
+						"plugins": treePlugins
 					}).bind('select_node.jstree', 
 									function (e, data) {
 										var Selected = jsTreeGetSelected($treediv, IDPrefix);
@@ -78,7 +97,6 @@
 										};
 										o.onSelectNode(optSelect);
 									});
-					
 					// DO NOT define an onSuccess() function here that interacts with the tree.
 					// The tree has initalization events that appear to happen asynchronously,
 					// and thus having an onSuccess() function that changes the selected node will

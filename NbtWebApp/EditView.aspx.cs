@@ -1586,7 +1586,7 @@ namespace ChemSW.NbtWebControls
         {
             if( _View != null )
             {
-                CswNbtViewNode DefaultFilterNode = _View.FindFirstProperty();
+                CswNbtViewNode DefaultFilterNode = _View.findFirstProperty();
                 _FiltersViewTree.SelectableNodeTextPrefix = @"&nbsp;<img src=""Images\buttons\smallclear.gif"" style=""border: 0px;"" onclick=""ViewTree_ClearButton_Click('";
                 _FiltersViewTree.SelectableNodeTextSuffix = @"', '" + _HiddenNodeToRemoveField.ClientID + @"', '" + _HiddenRemoveButton.ClientID + @"');"" />";
                 _FiltersViewTree.reinitTreeFromView( _View, null, DefaultFilterNode, CswViewStructureTree.ViewTreeSelectType.Filter );

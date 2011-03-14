@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Data;
 using System.Collections.ObjectModel;
+using System.Data;
 using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
 using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using System.IO;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -61,8 +60,11 @@ namespace ChemSW.Nbt.Schema
             // case 21049
 
             // Rename properties            
-            PhysInsp_TargetNTP.PropName = "FE Inspection Point";
-            PhysInsp_GeneratorNTP.PropName = "Schedule";
+            if( !PhysInspNT.IsLocked )
+            {
+                PhysInsp_TargetNTP.PropName = "FE Inspection Point";
+                PhysInsp_GeneratorNTP.PropName = "Schedule";
+            }
             PhysInspSched_OwnerNTP.PropName = "Inspection Group";
             PhysInspSched_TargetTypeNTP.PropName = "Inspection Type";
             PhysInspSched_ParentTypeNTP.PropName = "FE Inspection Point Type";
@@ -78,9 +80,11 @@ namespace ChemSW.Nbt.Schema
             MountPointNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( MountPoint_BarcodeNTP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( MountPoint_DescriptionNTP.PropName );
 
             // Generator and Due Date should not be mobile search options
-            PhysInsp_GeneratorNTP.MobileSearch = false;
-            PhysInsp_DueDateNTP.MobileSearch = false;
-
+            if( !PhysInspNT.IsLocked )
+            {
+                PhysInsp_GeneratorNTP.MobileSearch = false;
+                PhysInsp_DueDateNTP.MobileSearch = false;
+            }
             // Rename 'mount point group' to 'inspection group'
             MountPointGroupNT.NodeTypeName = "Inspection Group";
             MountPointGroupNT.getFirstNodeTypeTab().TabName = "Inspection Group";
@@ -108,38 +112,40 @@ namespace ChemSW.Nbt.Schema
 
             // Remove Route and Route Order properties from Physical Inspection
             //  1. get rid of objectclasspropid on nodetype props
-            CswTableUpdate NTPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H22_NTP_Update", "nodetype_props" );
-            DataTable NTPTable = NTPUpdate.getTable( "where objectclasspropid in (" + PhysInsp_RouteNTP.ObjectClassPropId.ToString() + "," + PhysInsp_RouteOrderNTP.ObjectClassPropId.ToString() + ")" );
-            Collection<CswNbtMetaDataNodeTypeProp> NTPsToDelete = new Collection<CswNbtMetaDataNodeTypeProp>();
-            foreach( DataRow NTPRow in NTPTable.Rows )
+            if( !PhysInspNT.IsLocked )
             {
-                NTPRow["objectclasspropid"] = CswConvert.ToDbVal( string.Empty );
-                NTPsToDelete.Add( _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( CswConvert.ToInt32( NTPRow["nodetypepropid"] ) ) );
-            }
-            NTPUpdate.update( NTPTable );
+                CswTableUpdate NTPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H22_NTP_Update", "nodetype_props" );
+                DataTable NTPTable = NTPUpdate.getTable( "where objectclasspropid in (" + PhysInsp_RouteNTP.ObjectClassPropId.ToString() + "," + PhysInsp_RouteOrderNTP.ObjectClassPropId.ToString() + ")" );
+                Collection<CswNbtMetaDataNodeTypeProp> NTPsToDelete = new Collection<CswNbtMetaDataNodeTypeProp>();
+                foreach( DataRow NTPRow in NTPTable.Rows )
+                {
+                    NTPRow["objectclasspropid"] = CswConvert.ToDbVal( string.Empty );
+                    NTPsToDelete.Add( _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( CswConvert.ToInt32( NTPRow["nodetypepropid"] ) ) );
+                }
+                NTPUpdate.update( NTPTable );
 
-            //  2. delete object class props
-            CswTableUpdate OCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H22_OCP_Update", "object_class_props" );
-            DataTable OCPTable = OCPUpdate.getTable( "where objectclasspropid in (" + PhysInsp_RouteNTP.ObjectClassPropId.ToString() + "," + PhysInsp_RouteOrderNTP.ObjectClassPropId.ToString() + ")" );
-            Collection<DataRow> OCPRowsToDelete = new Collection<DataRow>();
-            foreach( DataRow OCPRow in OCPTable.Rows )
-            {
-                OCPRowsToDelete.Add( OCPRow );
-            }
-            foreach( DataRow DoomedRow in OCPRowsToDelete )
-            {
-                DoomedRow.Delete();
-            }
-            OCPUpdate.update( OCPTable );
+                //  2. delete object class props
+                CswTableUpdate OCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H22_OCP_Update", "object_class_props" );
+                DataTable OCPTable = OCPUpdate.getTable( "where objectclasspropid in (" + PhysInsp_RouteNTP.ObjectClassPropId.ToString() + "," + PhysInsp_RouteOrderNTP.ObjectClassPropId.ToString() + ")" );
+                Collection<DataRow> OCPRowsToDelete = new Collection<DataRow>();
+                foreach( DataRow OCPRow in OCPTable.Rows )
+                {
+                    OCPRowsToDelete.Add( OCPRow );
+                }
+                foreach( DataRow DoomedRow in OCPRowsToDelete )
+                {
+                    DoomedRow.Delete();
+                }
+                OCPUpdate.update( OCPTable );
 
-            //  3. delete nodetype props
-            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
+                //  3. delete nodetype props
+                _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 
-            foreach( CswNbtMetaDataNodeTypeProp DoomedNTP in NTPsToDelete )
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( DoomedNTP );
+                foreach( CswNbtMetaDataNodeTypeProp DoomedNTP in NTPsToDelete )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( DoomedNTP );
+                }
             }
-
             // Add Route relationship to Mount Point
             CswNbtMetaDataNodeTypeProp MountPoint_RouteNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MountPointNT, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Route", MountPointNT.getFirstNodeTypeTab().TabId );
             MountPoint_RouteNTP.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), RouteNT.NodeTypeId, string.Empty, Int32.MinValue );

@@ -18,44 +18,54 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 		}
 
-		public string getTree( CswNbtView View, string IDPrefix )
-		{
-			string ret = string.Empty;
-			var NoResultsNode = new XElement( "root",
-										new XElement( "item",
-											new XAttribute( "id", "-1" ),
-											new XAttribute( "rel", "root" ),
-												new XElement( "content",
-													new XElement( "name", "No results" )
-													)
-										));
-			
-			ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
+        public XElement getTree( CswNbtView View, string IDPrefix )
+        {
+            var ReturnNode = new XElement( "root" );
+            string EmptyOrInvalid = "Not a Tree or List view.";
 
-			if( Tree.getChildNodeCount() > 0 )
-			{
-				var RootNode = new XElement( "root" );
-				var RootItemNode = new XElement( "item",
-										new XAttribute( "id", IDPrefix + "root" ),
-										new XAttribute( "rel", "root" ),
-											new XElement( "content" ,
-												new XElement( "name", View.ViewName )
-												)
-									);
-				RootNode.Add( RootItemNode );
-				_runTreeNodesRecursive( Tree, IDPrefix, RootItemNode );
+            if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
+            {
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
+                if( Tree.getChildNodeCount() > 0 )
+                {
 
-				var OuterNodes = new XElement( "result",
-									new XElement( "tree", RootNode ),
-				                    new XElement( "types", getTypes( View ).ToString() ) );
-				ret = OuterNodes.ToString();
-			} // if( Tree.getChildNodeCount() > 0 )
-			else
-			{
-				ret = NoResultsNode.ToString();
-			} // No Results
-
-			return ret;
+                    var RootNode = new XElement( "root" );
+                    if( View.ViewMode == NbtViewRenderingMode.Tree )
+                    {
+                        var RootItemNode = new XElement( "item",
+                                                new XAttribute( "id", IDPrefix + "root" ),
+                                                new XAttribute( "rel", "root" ),
+                                                new XElement( "content",
+                                                            new XElement( "name", View.ViewName ) ) );
+                        RootNode.Add( RootItemNode );
+                        _runTreeNodesRecursive( Tree, IDPrefix, RootItemNode );
+                    }
+                    else if( View.ViewMode == NbtViewRenderingMode.List )
+                    {
+                        _runTreeNodesRecursive( Tree, IDPrefix, RootNode );
+                    }
+                    ReturnNode = new XElement( "result",
+                                    new XElement( "tree", RootNode ),
+                                    new XElement( "types", getTypes( View ).ToString() ) );
+                }
+                else
+                {
+                    EmptyOrInvalid = "No Results";
+                }
+            } // if( Tree.getChildNodeCount() > 0 )
+            else
+            {
+                EmptyOrInvalid = "Not a Tree or List view.";
+            }
+            if( !string.IsNullOrEmpty( EmptyOrInvalid ) )
+            {
+                ReturnNode.Add( new XElement( "item",
+                                    new XAttribute( "id", "-1" ),
+                                    new XAttribute( "rel", "root" ),
+                                        new XElement( "content",
+                                            new XElement( "name", EmptyOrInvalid ))) );
+            }
+            return ReturnNode;
 		} // getTree()
 
 		public JObject getTypes( CswNbtView View )
@@ -119,7 +129,8 @@ namespace ChemSW.Nbt.WebServices
 
 				CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
 				CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
-				
+
+			    string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToJavaScriptParam()) ;
 				string ThisNodeName = Tree.getNodeNameForCurrentPosition();
 				string ThisNodeId = IDPrefix + ThisNode.NodeId.ToString();
 				string ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
@@ -127,7 +138,7 @@ namespace ChemSW.Nbt.WebServices
 				var ParentNode = ( new XElement( "item",
 										new XAttribute( "id", ThisNodeId ),
 										new XAttribute( "rel", ThisNodeRel ),
-										new XAttribute( "cswnbtnodekey", ThisNodeKey.ToString() ), 
+                                        new XAttribute( "cswnbtnodekey", ThisNodeKeyString ), 
 											new XElement( "content" ,
 												new XElement( "name" , ThisNodeName )
 												)

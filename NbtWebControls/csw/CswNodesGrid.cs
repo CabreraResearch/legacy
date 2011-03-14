@@ -345,7 +345,7 @@ namespace ChemSW.NbtWebControls
                         string RealColumnName = CswTools.XmlRealAttributeName( NoPrefixColumnName ); //.Substring( NoPrefixColumnName.IndexOf( '_' ) + 1 ) );
                         //CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( CurrentNodeTypePropId );
                         //CswNbtViewProperty CurrentViewProp = View.FindPropertyById( CswNbtViewProperty.CswNbtPropType.NodeTypePropId, CurrentNodeTypePropId );
-                        CswNbtViewProperty CurrentViewProp = View.FindPropertyByName( RealColumnName );
+                        CswNbtViewProperty CurrentViewProp = View.findPropertyByName( RealColumnName );
                         //if( CurrentViewProp == null )
                         //    CurrentViewProp = View.FindPropertyByName( CurrentNodeTypeProp.PropName );
                         CswNbtMetaDataFieldType.NbtFieldType ColFieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Text;
+using System.Linq;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Security;
@@ -78,7 +78,7 @@ namespace ChemSW.Nbt
         {
             return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false, ViewRenderingMode );
         }
-        
+
         /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
@@ -201,6 +201,55 @@ namespace ChemSW.Nbt
             CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getUserViews_select", "getUserViewInfo" );
             ViewsSelect.S4Parameters.Add( "getuserid", _CswNbtResources.CurrentUser.UserId.PrimaryKey.ToString() );
             return ViewsSelect.getTable();
+        }
+
+        /// <summary>
+        /// Get an XElement of all views searchable by the current user
+        /// </summary>
+        public XElement getSearchableViews( ICswNbtUser User, bool MobileOnly, string OrderBy = null )
+        {
+            DataTable ViewsTable = null;
+            var SearchableViewsTimer = new CswTimer();
+            XElement SearchNode = new XElement( "search" );
+
+            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getSearchableViews_select", "getSearchableViewsInfo" );
+            ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
+            ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
+            if( MobileOnly )
+            {
+                ViewsSelect.S4Parameters.Add( "addclause", "and formobile = '" + CswConvert.ToDbVal( true ) + "'" );
+            }
+            else
+            {
+                ViewsSelect.S4Parameters.Add( "addclause", " " );
+            }
+            if( !string.IsNullOrEmpty( OrderBy ) )
+            {
+                ViewsSelect.S4Parameters.Add( "orderbyclause", OrderBy );
+            }
+            else
+            {
+                ViewsSelect.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );
+            }
+            ViewsTable = ViewsSelect.getTable();
+
+            _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() data fetched", SearchableViewsTimer.ElapsedDurationInSecondsAsString );
+
+            foreach( CswNbtView ThisView in ViewsTable.Rows.Cast<DataRow>()
+                                            .Select( Row => CswNbtViewFactory.restoreView( _CswNbtResources, Row["viewxml"].ToString() ) )
+                                            .Where( ThisView => 0 < ThisView.Root.ChildRelationships
+                                                .Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+                                                        User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ).Count() &&
+                                                ( ThisView.IsFullyEnabled() ) ) )
+            {
+                SearchNode.Add( new XElement( "view",
+                                            new XAttribute( "viewname", ThisView.ViewName ),
+                                            new XAttribute( "viewmode", ThisView.ViewMode ),
+                                            new XAttribute( "viewid", ThisView.ViewId ) ) );
+            }
+            _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() finished", SearchableViewsTimer.ElapsedDurationInSecondsAsString );
+
+            return SearchNode;
         }
     }
 }

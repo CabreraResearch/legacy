@@ -8,23 +8,10 @@
 			var $Div = $(this);
 			$Div.contents().remove();
 
-			var Value = o.$propxml.children('value').text().trim();
 			var ViewId = o.$propxml.children('viewid').text().trim();
-			
-			if (debug)
-			{ 
-				log('CswFieldTypeGrid');
-				log(o.$propxml);
-			}
-								
-			if(o.ReadOnly)
-			{
-				$Div.append(Value);
-			}
-			else 
-			{
-				$($Div).CswNodeGrid({'viewid': ViewId, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey} );
-			}
+
+			$($Div).CswNodeGrid({'viewid': ViewId, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly} );
+
 		},
 		save: function(o) {
 //                var $TextBox = $propdiv.find('input');
