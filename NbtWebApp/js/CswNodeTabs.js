@@ -79,20 +79,6 @@
 							var $form = $div.children('form');
 							$form.contents().remove();
 							
-                            var $buttondiv = $('<div />')
-                                                .appendTo($form)
-                                                .css({ float: 'right' });
-
-                            var $configbutton = $buttondiv.CswImageButton({
-                                                        ButtonType: CswImageButton_ButtonType.Configure,
-                                                        AlternateText: 'Configure',
-                                                        ID: o.ID + 'configbtn',
-                                                        onClick: function (alttext) { 
-                                                            Config($layouttable, $(this)); 
-                                                            return CswImageButton_ButtonType.None; 
-                                                        }
-                                                    });
-                            
                             var $layouttable = $form.CswLayoutTable('init', {
 														  'ID': o.ID + '_props', 
 														  cellset: { 
@@ -129,10 +115,10 @@
 			}); 
 		} // getProps()
 
-        function Config($layouttable, $configbutton)
-        {
-            $layouttable.CswLayoutTable('toggleConfig');
-        }
+//        function Config($layouttable, $configbutton)
+//        {
+//            $layouttable.CswLayoutTable('toggleConfig');
+//        }
 
         function onSwap(onSwapData)
         {

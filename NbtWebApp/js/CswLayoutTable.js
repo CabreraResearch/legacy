@@ -7,16 +7,31 @@
                         var o = {
                             ID: '',
                             cellset: { rows: 1, columns: 1 },
-                            onSwap: function(e, onSwapData){ }
+                            onSwap: function(e, onSwapData){ },
+                            TableCssClass: '',
+                            CellCssClass: '',
+                            cellpadding: 0,
+                            cellspacing: 0,
+                            width: '',
+                            align: ''
                         };
                         if (options) {
                             $.extend(o, options);
                         }
                         var $parent = $(this);
+
+                        var $buttondiv = $('<div />')
+                                            .appendTo($parent)
+                                            .css({ float: 'right' });
+
                         var $table = $parent.CswTable('init', { 
                                                   'ID': o.ID + '_tbl', 
-                                                  'TableCssClass': 'CswLayoutTable_table',
-                                                  'CellCssClass': 'CswLayoutTable_cell',
+                                                  'TableCssClass': o.TableCssClass + ' CswLayoutTable_table',
+                                                  'CellCssClass': o.CellCssClass + ' CswLayoutTable_cell',
+                                                  'cellpadding': o.cellpadding,
+                                                  'cellspacing': o.cellspacing,
+                                                  'width': o.width,
+                                                  'align': o.align,
                                                   'onCreateCell': function(ev, $table, $newcell, realrow, realcolumn) { 
                                                                     onCreateCell($table, $newcell, realrow, realcolumn, o.cellset.rows, o.cellset.columns);
                                                                   }
@@ -26,6 +41,17 @@
 
                         setConfigMode($table, 'false');
                         $table.bind('CswLayoutTable_onSwap', o.onSwap);
+
+                        var $configbutton = $buttondiv.CswImageButton({
+                                                    ButtonType: CswImageButton_ButtonType.Configure,
+                                                    AlternateText: 'Configure',
+                                                    ID: o.ID + 'configbtn',
+                                                    onClick: function (alttext) { 
+                                                        _toggleConfig($table);
+                                                        return CswImageButton_ButtonType.None; 
+                                                    }
+                                                });
+                            
                         return $table;
                     },
 
@@ -35,30 +61,8 @@
                     },
 
             'toggleConfig': function() {
-                        var $table = $(this);
-                        if(isConfigMode($table))
-                        {
-                            $table.CswTable('findCell', '.CswLayoutTable_cell')
-                                .removeClass('CswLayoutTable_configcell');
-
-                            setConfigMode($table, 'false');
-                        } else {
-                            var cellsetrows = parseInt($table.attr('cellset_rows'));
-                            var cellsetcolumns = parseInt($table.attr('cellset_columns'));
-                            var tablemaxrows = $table.CswTable('maxrows');
-                            var tablemaxcolumns = $table.CswTable('maxcolumns');
-                        
-                            // add an extra row and column
-                            //var $newcell = getCell($table, (tablemaxrows / cellsetrows ) + 1, (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
-                            
-                            $table.CswTable('finish', null);
-                            
-                            $table.CswTable('findCell', '.CswLayoutTable_cell')
-                                .addClass('CswLayoutTable_configcell');
-
-                            setConfigMode($table, 'true');
-                        }
-                    },
+                        _toggleConfig($(this));
+                     },
             
             'isConfig': function() {
                         var $table = $(this);
@@ -92,6 +96,32 @@
         {
             $table.attr('configmode', mode);
         }
+
+        function _toggleConfig($table)
+        {
+            if(isConfigMode($table))
+            {
+                $table.CswTable('findCell', '.CswLayoutTable_cell')
+                    .removeClass('CswLayoutTable_configcell');
+
+                setConfigMode($table, 'false');
+            } else {
+                var cellsetrows = parseInt($table.attr('cellset_rows'));
+                var cellsetcolumns = parseInt($table.attr('cellset_columns'));
+                var tablemaxrows = $table.CswTable('maxrows');
+                var tablemaxcolumns = $table.CswTable('maxcolumns');
+                        
+                // add an extra row and column
+                //var $newcell = getCell($table, (tablemaxrows / cellsetrows ) + 1, (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
+                            
+                $table.CswTable('finish', null);
+                            
+                $table.CswTable('findCell', '.CswLayoutTable_cell')
+                    .addClass('CswLayoutTable_configcell');
+
+                setConfigMode($table, 'true');
+            }
+        } // _toggleConfig()
 
         function getCell($table, row, column, cellsetrow, cellsetcolumn, cellsetrows, cellsetcolumns)
         {

@@ -18,12 +18,16 @@
                             ID: '',
                             TableCssClass: '',
                             CellCssClass: '',
+                            cellpadding: 0,
+                            cellspacing: 0,
+                            width: '',
+                            align: '',
                             onCreateCell: function(e, $table, $cell, row, column) {}
                         };
                         if (options) {
                             $.extend(o, options);
                         }
-                        var $table = $('<table id="'+ o.ID +'" class="'+ o.TableCssClass +'" cellcssclass="'+ o.CellCssClass +'" cellpadding="0" cellspacing="0" border="0"><tr><td class="'+ o.CellCssClass + '"></td></tr></table>');
+                        var $table = $('<table id="'+ o.ID +'" class="'+ o.TableCssClass +'" align="'+ o.align +'" width="'+ o.width +'" cellcssclass="'+ o.CellCssClass +'" cellpadding="'+ o.cellpadding +'" cellspacing="'+ o.cellspacing +'" border="0"><tr><td class="'+ o.CellCssClass + '"></td></tr></table>');
                         $table.bind('CswTable_onCreateCell', function(e, $table, $cell, row, column) { 
                                                                 o.onCreateCell(e, $table, $cell, row, column); 
                                                                 e.stopPropagation();  // prevents events from triggering in nested tables
