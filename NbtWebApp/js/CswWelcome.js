@@ -3,6 +3,7 @@
 
 		var o = {
 			Url: '/NbtWebApp/wsNBT.asmx/getWelcomeItems',
+            MoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/moveWelcomeItems',
 			onLinkClick: function(optSelect) { }, //viewid, actionid, reportid
 			onSearchClick: function(optSelect) { }, //viewid
 			onAddClick: function(optSelect) { } //nodetypeid
@@ -28,7 +29,7 @@
                                                                  'TableCssClass': 'WelcomeTable',
                                                                  'cellpadding': 10,
                                                                  'align': 'center',
-                                                                 'onSwap': function(e, onSwapData) {}
+                                                                 'onSwap': function(e, onSwapData) { onSwap(onSwapData); }
                                                                 });
 				
 				$xml.children().each(function() {
@@ -59,10 +60,12 @@
 						case 'Link':
 							$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
 							$textcell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
+							$imagecell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
 							break;
 						case 'Search': 
 							$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
 							$textcell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
+							$imagecell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
 							break;
 						case 'Text':
 							$textcell.text(optSelect.text);
@@ -70,12 +73,38 @@
 						case 'Add': 
 							$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
 							$textcell.find('a').click(function() { o.onAddClick(optSelect); return false; }); //nodetypeid
+							$imagecell.find('a').click(function() { o.onAddClick(optSelect); return false; }); //nodetypeid
 							break;
 					}
+
+                    $textcell.append('<input type="hidden" welcomeid="' + $item.attr('welcomeid') + '" />');
 				});
 				
 			} // success{}
 		});
+
+
+        function onSwap(onSwapData)
+        {
+            _moveItem(onSwapData.cellset, onSwapData.swaprow, onSwapData.swapcolumn);
+            _moveItem(onSwapData.swapcellset, onSwapData.row, onSwapData.column);
+        } // onSwap()
+
+        function _moveItem(cellset, newrow, newcolumn)
+        {
+            var $textcell = $(cellset[2][1]);
+            if($textcell.length > 0)
+            {
+                var welcomeid = $textcell.children('input').attr('welcomeid');
+                CswAjaxJSON({
+				    url: o.MoveWelcomeItemUrl,
+				    data: '{ "RoleId": "", "WelcomeId": "'+ welcomeid +'", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '" }',
+				    success: function (result) {
+                             }
+                });
+            }
+        } // _moveItem()
+
 
 		// For proper chaining support
 		return this;
