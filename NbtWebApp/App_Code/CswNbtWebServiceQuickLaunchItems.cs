@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		public static void addToQuickLaunch( CswNbtView View, HttpSessionState Session )
 		{
-			if( ( View.ViewId > 0 ) || ( View.ViewId <= 0 && View.SessionViewId > 0 ) )
+			if( View.ViewId > 0 || View.SessionViewId > 0 )
 			{
 				LinkedList<CswNbtQuickLaunchItem> ViewHistoryList = null;
 				if( null == Session[QuickLaunchViews] )
