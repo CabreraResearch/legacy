@@ -88,34 +88,6 @@ namespace ChemSW.Nbt.WebServices
         //    return "<result>" + ReturnVal + "</result>";
         //}
 
-		/// <summary>
-		/// Append to QuickLaunch
-		/// </summary>
-		private void addToQuickLaunch(CswNbtView View)
-		{
-			const string QuickLaunchViews = CswNbtWebServiceQuickLaunchItems.QuickLaunchViews;
-			if( ( View.ViewId > 0 ) || ( View.ViewId <= 0 && View.SessionViewId > 0 ) )
-			{
-				LinkedList<CswNbtQuickLaunchItem> ViewHistoryList = null;
-				if( null == Session[QuickLaunchViews] )
-				{
-					ViewHistoryList = new LinkedList<CswNbtQuickLaunchItem>();
-				}
-				else
-				{
-					ViewHistoryList = (LinkedList<CswNbtQuickLaunchItem>) Session[QuickLaunchViews];
-				}
-				var ThisView = new CswNbtQuickLaunchItem( View.ViewId, View.ViewName, View.ViewMode );
-
-				if( ViewHistoryList.Contains( ThisView ) )
-				{
-					ViewHistoryList.Remove( ThisView );
-				}
-				ViewHistoryList.AddFirst( ThisView );
-				Session[QuickLaunchViews] = ViewHistoryList;
-			}
-		} // addToQuickLaunch()
-
 		#endregion Session and Resource Management
 
 		#region Web Methods
@@ -344,7 +316,7 @@ namespace ChemSW.Nbt.WebServices
 						}
 						var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
 						ReturnJson = g.getGrid();
-                        addToQuickLaunch( View );
+                        CswNbtWebServiceQuickLaunchItems.addToQuickLaunch(View, Session);
 					}
 				}
 				end();
@@ -374,7 +346,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         var ws = new CswNbtWebServiceTree( _CswNbtResources );
                         TreeNode = ws.getTree( View, IDPrefix );
-                        addToQuickLaunch( View );
+                        CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
                     }
                 }
 			    end();
@@ -509,61 +481,7 @@ namespace ChemSW.Nbt.WebServices
 			return Doc;
 		} // saveProps()
 
-        [WebMethod( EnableSession = true )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getSearchProps( string ViewNum )
-        {
-            var SearchNode = new XElement( "search" );
-            var ConstrainToObjectClass = Int32.MinValue;
-            try
-            {
-                start();
-                Int32 ViewId = CswConvert.ToInt32( ViewNum );
-                if( Int32.MinValue != ViewId )
-                {
-                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-                    if( null != View )
-                    {
-                        var ws = new CswNbtWebServiceSearch( _CswNbtResources, ConstrainToObjectClass );
-                        //SearchNode = ws.getSearchProps( View );
-                        addToQuickLaunch( View );
-                    }
-                }
-                end();
-            }
-            catch( Exception ex )
-            {
-                SearchNode = xError( ex );
-            }
-
-            return SearchNode;
-        } // getSearch()
-
-        [WebMethod( EnableSession = true )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getSearchViews( string IsMobile, string OrderBy = null )
-        {
-            var SearchNode = new XElement( "search" );
-            try
-            {
-                start();
-                
-                ICswNbtUser UserId = _CswNbtResources.CurrentNbtUser;
-                bool ForMobile = CswConvert.ToBoolean(IsMobile);
-
-                var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-                SearchNode = ws.getSearchViews( UserId, ForMobile, OrderBy );
-
-                end();
-            }
-            catch( Exception ex )
-            {
-                SearchNode = xError( ex );
-            }
-
-            return SearchNode;
-        } // getSearch()
-
+        
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]

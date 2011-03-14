@@ -121,6 +121,33 @@ namespace ChemSW.Nbt.WebServices
 			return Reset;
 		} // ResetQuickLaunchItems()
 
+		/// <summary>
+		/// Adds an item to the Session's QuickLaunchViews
+		/// </summary>
+		public static void addToQuickLaunch( CswNbtView View, HttpSessionState Session )
+		{
+			if( ( View.ViewId > 0 ) || ( View.ViewId <= 0 && View.SessionViewId > 0 ) )
+			{
+				LinkedList<CswNbtQuickLaunchItem> ViewHistoryList = null;
+				if( null == Session[QuickLaunchViews] )
+				{
+					ViewHistoryList = new LinkedList<CswNbtQuickLaunchItem>();
+				}
+				else
+				{
+					ViewHistoryList = (LinkedList<CswNbtQuickLaunchItem>) Session[QuickLaunchViews];
+				}
+				var ThisView = new CswNbtQuickLaunchItem( View.ViewId, View.ViewName, View.ViewMode );
+
+				if( ViewHistoryList.Contains( ThisView ) )
+				{
+					ViewHistoryList.Remove( ThisView );
+				}
+				ViewHistoryList.AddFirst( ThisView );
+				Session[QuickLaunchViews] = ViewHistoryList;
+			}
+		}
+
 	} // class CswNbtWebServiceWelcomeItems
 
 	/// <summary>
