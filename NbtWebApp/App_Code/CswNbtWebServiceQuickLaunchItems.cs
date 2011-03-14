@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.WebServices
 		private const string ActionSelected = "Include";
 		private HttpSessionState _Session;
 		private LinkedList<CswNbtQuickLaunchItem> _QuickLaunchHistory = null;
-		private readonly bool _IsNewSession;
+		private bool _IsNewSession;
 
 		public const string QuickLaunchViews = "QuickLaunchViews";
 		public CswNbtWebServiceQuickLaunchItems( CswNbtResources CswNbtResources, HttpSessionState Session )
@@ -109,16 +109,12 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Resets the Quick Launch Item's XML to the user's stored quick launch items
 		/// </summary>
-		public XElement resetQuickLaunchItems( CswPrimaryKey UserId, CswNbtResources CswNbtResources, HttpSessionState Session )
+        public XElement resetQuickLaunchItems( CswPrimaryKey UserId )
 		{
-			var Reset = new XElement( "quicklaunch" );
-			if( null != UserId )
-			{
-				_Session[QuickLaunchViews] = null;
-				var QuickLaunchService = new CswNbtWebServiceQuickLaunchItems( CswNbtResources, Session );
-				Reset = QuickLaunchService.getQuickLaunchItems( UserId );
-			}
-			return Reset;
+			_Session[QuickLaunchViews] = null;
+		    _IsNewSession = true;
+		    _QuickLaunchHistory = null;
+            return getQuickLaunchItems( UserId );
 		} // ResetQuickLaunchItems()
 
 		/// <summary>
