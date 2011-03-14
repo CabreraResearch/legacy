@@ -17,8 +17,7 @@
             }
             else 
             {
-                var $table = $.CswTable({ ID: o.ID + '_tbl' })
-                                .appendTo($Div);
+                var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
                 var $cell11 = $table.CswTable('cell', 1, 1);
                 var $cell12 = $table.CswTable('cell', 1, 2);
 

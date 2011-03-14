@@ -22,8 +22,7 @@
 				}
 				else 
 				{
-                    var $table = $.CswTable({ ID: o.ID + '_tbl' })
-                                    .appendTo($Div);
+                    var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
 					var $selectcell = $table.CswTable('cell', 1, 1);
 					var $selectdiv = $('<div class="locationselect" value="'+ o.nodeid +'"/>' )

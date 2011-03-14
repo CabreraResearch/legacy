@@ -42,8 +42,7 @@
 		function onTreeSelect(optSelect) //itemid, text, iconurl
 		{
 			var $newTopContent = $('<div></div>');
-            var $table = $.CswTable({ ID: o.ID + 'selectedtbl' })
-						   .appendTo($newTopContent);
+            var $table = $newTopContent.CswTable('init', { ID: o.ID + 'selectedtbl' });
 			var $cell1 = $table.CswTable('cell', 1, 1);
 			var $icondiv = $('<div />').appendTo($cell1);
 			$icondiv.css('background-image',  optSelect.iconurl);

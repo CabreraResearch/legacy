@@ -13,7 +13,7 @@
                             $.extend(o, options);
                         }
                         var $parent = $(this);
-                        var $table = $.CswTable({ 
+                        var $table = $parent.CswTable('init', { 
                                                   'ID': o.ID + '_tbl', 
                                                   'TableCssClass': 'CswLayoutTable_table',
                                                   'CellCssClass': 'CswLayoutTable_cell',
@@ -21,7 +21,6 @@
                                                                     onCreateCell($table, $newcell, realrow, realcolumn, o.cellset.rows, o.cellset.columns);
                                                                   }
                                                 })
-                                       .appendTo($parent)
                                        .attr('cellset_rows', o.cellset.rows)
                                        .attr('cellset_columns', o.cellset.columns);
 

@@ -229,8 +229,7 @@
 				var $subprops = $propxml.children('subprops');
 				if($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 				{
-                    var $subtable = $.CswTable({ ID: $propxml.attr('id') + '_subproptable' })
-									.appendTo($propcell);
+                    var $subtable = $propcell.CswTable('init', { ID: $propxml.attr('id') + '_subproptable' });
 					_handleProps($subtable, $subprops);
 				}
 			}

@@ -68,8 +68,7 @@
 								data: '',
 								success: function ($xml) {
 									$div.append('NBT Assembly Version: ' + $xml.children('assembly').text() + '<br/><br/>');
-									var $table = $.CswTable({ ID: 'abouttable' })
-												  .appendTo($div);
+									var $table = $div.CswTable('init', { ID: 'abouttable' });
 									var row = 1;
 									$xml.children('component').each(function () {
 										var $namecell = $table.CswTable('cell', row, 1);
