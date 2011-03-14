@@ -92,8 +92,9 @@ namespace ChemSW.Nbt.WebServices
 
 		#region Web Methods
 
+        #region Background Tasks
 
-		[WebMethod( EnableSession = true )]
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string authenticate( string AccessId, string UserName, string Password )
 		{
@@ -135,7 +136,11 @@ namespace ChemSW.Nbt.WebServices
 			return ( ReturnVal.ToString() );
 		}//deAuthenticate()
 
-		[WebMethod( EnableSession = true )]
+        #endregion
+
+
+
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XElement getWelcomeItems( string RoleId )
 		{
@@ -481,9 +486,65 @@ namespace ChemSW.Nbt.WebServices
 			return Doc;
 		} // saveProps()
 
-        
+        #region Search
 
-		[WebMethod( EnableSession = true )]
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement getSearchProps( string ViewNum, string SelectedSubField, string FilterValue )
+        {
+            var SearchNode = new XElement( "search" );
+            var ConstrainToObjectClass = Int32.MinValue;
+            try
+            {
+                start();
+                Int32 ViewId = CswConvert.ToInt32( ViewNum );
+                if( Int32.MinValue != ViewId )
+                {
+                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+                    if( null != View )
+                    {
+                        var ws = new CswNbtWebServiceSearch( _CswNbtResources, ConstrainToObjectClass );
+                        ws.getSearchProps( View, SelectedSubField, FilterValue );
+                    }
+                }
+                end();
+            }
+            catch( Exception ex )
+            {
+                SearchNode = xError( ex );
+            }
+
+            return SearchNode;
+        } // getSearch()
+
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement getSearchViews( string IsMobile, string OrderBy = null )
+        {
+            var SearchNode = new XElement( "search" );
+            try
+            {
+                start();
+
+                ICswNbtUser UserId = _CswNbtResources.CurrentNbtUser;
+                bool ForMobile = CswConvert.ToBoolean( IsMobile );
+
+                var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                SearchNode = ws.getSearchViews( UserId, ForMobile, OrderBy );
+
+                end();
+            }
+            catch( Exception ex )
+            {
+                SearchNode = xError( ex );
+            }
+
+            return SearchNode;
+        } // getSearch()
+
+        #endregion
+
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string DeleteNode( string SafeNodeKey )
 		{

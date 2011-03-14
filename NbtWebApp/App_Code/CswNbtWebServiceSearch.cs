@@ -374,7 +374,34 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
+        #region Execute Search
 
+        public XElement doViewBasedSearch( string SearchXml, CswNbtView SearchView )
+        {
+            var ViewSearch = new XElement( "search" );
+            if( !string.IsNullOrEmpty( SearchXml ) && null != SearchView )
+            {
+                ViewSearch = XElement.Parse( SearchXml );
+                foreach( XElement Prop in ViewSearch.Elements("prop") )
+                {
+                    //CswNbtViewProperty ViewProp = new CswNbtViewProperty()  
+                
+                }
+
+
+
+            }
+            return ViewSearch;
+        }
+
+        public XElement doNodesSearch( string SearchXml )
+        {
+            var NodesSearch = new XElement( "search" );
+
+            return NodesSearch;
+        }
+
+        #endregion
 
     } // class CswNbtWebServiceSearch
 
