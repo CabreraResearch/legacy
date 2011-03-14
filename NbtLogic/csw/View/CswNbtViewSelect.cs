@@ -212,7 +212,7 @@ namespace ChemSW.Nbt
             var SearchableViewsTimer = new CswTimer();
             XElement SearchNode = new XElement( "search" );
 
-            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
+            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getSearchableViews_select", "getSearchableViewsInfo" );
             ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
             ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
             if( MobileOnly )
@@ -247,7 +247,7 @@ namespace ChemSW.Nbt
                                             new XAttribute( "viewmode", ThisView.ViewMode ),
                                             new XAttribute( "viewid", ThisView.ViewId ) ) );
             }
-            _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() finished", SearchableViewsTimer.ElapsedDurationInSecondsAsString );
+            _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() finished", SearchableViewsTimer.ElapsedDurationInSecondsAsString );
 
             return SearchNode;
         }
