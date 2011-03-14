@@ -97,41 +97,39 @@ namespace ChemSW.Nbt.WebServices
         [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string authenticate( string AccessId, string UserName, string Password )
-		{
-		    JProperty ReturnVal = new JProperty( "AuthenticationStatus" );
+        {
+        	JObject ReturnVal = new JObject();
 			try
 			{
 				start();
 				_SessionResources.CswSessionManager.setAccessId( AccessId );
 				AuthenticationStatus AuthenticationStatus = _SessionResources.CswSessionManager.Authenticate( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
-				//ReturnVal = result( "<AuthenticationStatus>" + AuthenticationStatus + "</AuthenticationStatus>" );
-				ReturnVal.Value = AuthenticationStatus.ToString();
+				ReturnVal.Add( new JProperty("AuthenticationStatus", AuthenticationStatus.ToString() ));
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = jError( ex );
+				ReturnVal.Add( jError( ex ) );
 			}
 
 			return ( ReturnVal.ToString() );
 		}//authenticate()
 
-
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string deauthenticate()
 		{
-		    JProperty ReturnVal = new JProperty( "Deauthentication" );
+			JObject ReturnVal = new JObject();
 			try
 			{
 				start();
 				_SessionResources.CswSessionManager.DeAuthenticate();
-				ReturnVal.Value = "Succeeded";
+				ReturnVal.Add( new JProperty( "Deauthentication",  "Succeeded"));
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = jError( ex );
+				ReturnVal.Add( jError( ex ));
 			}
 			return ( ReturnVal.ToString() );
 		}//deAuthenticate()
