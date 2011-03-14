@@ -199,12 +199,8 @@
 		var o = {
 			viewid: '',
 			nodeid: '',
-			cswnbtnodekey: '',
-			onAddNode: ''
+			cswnbtnodekey: ''
 		};
-
-		o.onAddNode = function (opt) { //newnodeid, newcswnbtnodekey
-			refreshViewTree(opt); } //newnodeid, newcswnbtnodekey
 
 		if (options)
 		{
@@ -214,7 +210,7 @@
 		if (debug) log('NewMain.refreshMainMenu()');
 		if (debug) log(o);
 
-		$('#MainMenuDiv').CswMenuMain( {'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'onAddNode': o.onAddNode} );
+		$('#MainMenuDiv').CswMenuMain( {'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'onAddNode': refreshSelected} );
 	}
 
 	function getViewGrid(options)
@@ -223,12 +219,19 @@
 			viewid: '',
 			nodeid: '',
 			cswnbtnodekey: '',
-			id: 'CswNodeGrid'
+			id: 'CswNodeGrid',
+            onAddNode: '',
+            onEditNode: '',
+            onDeleteNode: ''
 		};
 		if (options)
 		{
 			$.extend(o, options);
 		}
+
+		o.onAddNode = function() { getViewGrid(o); };
+        o.onEditNode = function() { getViewGrid(o); };
+        o.onDeleteNode = function() { getViewGrid(o); };
 
 		if (debug)
 		{
@@ -290,7 +293,7 @@
 		var o = {
 			nodeid: '',
 			cswnbtnodekey: '',
-			onSave: refreshViewTree
+			onSave: refreshSelected
 		};
 		if (options)
 		{
@@ -307,7 +310,46 @@
 		$('#RightDiv').CswNodeTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'onSave': o.onSave });
 	}
 
-	function refreshViewTree(options)
+	function refreshSelected(type, options)
+	{
+		var o = {
+			newnodeid: '',
+			newcswnbtnodekey: '',
+			nodeid: '',
+			cswnbtnodekey: '',
+			'ID': 'main',
+			nodename: '', 
+			iconurl: '',
+		};
+		if(options) $.extend(o,options);
+		
+		switch (type)
+		{
+			case 'tree':
+			{
+				refreshNodesTree(o);
+				break;
+			}
+			case 'grid':
+			{
+				alert('Grid not implemented yet!');
+				break;
+			}
+			case 'list':
+			{
+				alert('Grid not implemented yet!');
+				break;
+			}
+			default:
+			{
+				refreshNodesTree(o);
+				break;
+			}
+		}
+
+	}
+
+	function refreshNodesTree(options)
 	{
 		var view = GetCurrentView();
 
@@ -319,7 +361,6 @@
 			'ID': 'main',
 			nodename: '', 
 			iconurl: '',
-			'onSelectNode': ''
 		};
 		o.onSelectNode = function (opt) { //nodeid, nodename, iconurl, cswnbtnodekey
 			   onSelectTreeNode(opt); } //viewid, nodeid, cswnbtnodekey
@@ -331,7 +372,7 @@
 
 		if (debug)
 		{
-			log('NewMain.refreshViewTree()');
+			log('NewMain.refreshNodesTree()');
 			//log(o);
 		}
 

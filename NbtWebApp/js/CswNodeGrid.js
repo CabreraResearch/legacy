@@ -46,7 +46,10 @@
 			nodeid: '',
 			cswnbtnodekey: '',
 			gridTable: "_gridOuter",
-			gridPager: "_gridPager"
+			gridPager: "_gridPager",
+			onAddNode: function(nodeid,cswnbtnodekey){},
+			onEditNode: function(nodeid,cswnbtnodekey){},
+			onDeleteNode: function(nodeid,cswnbtnodekey){}
 		};
 		
 		if (optJqGrid) {
@@ -113,10 +116,9 @@
 								if (rowid !== null) {
 									var CswNbtNodeKey = $gridOuter.jqGrid('getCell', rowid, 'cswnbtnodekey');
 									var NodeId = $gridOuter.jqGrid('getCell', rowid, 'nodeid');
-									var OnEditNode = function(options) {};
 									var RequestReadOnly = false;
 								}
-								$.CswDialog('EditNodeDialog', NodeId, OnEditNode, CswNbtNodeKey, RequestReadOnly);
+								$.CswDialog('EditNodeDialog', NodeId, o.onEditNode, CswNbtNodeKey, RequestReadOnly);
 								return false;
 							},
 
@@ -125,8 +127,7 @@
 						addtext:"",
 						addtitle: "Add row",
 						addfunc: function() {
-								var OnAddNode = function(options) {};
-								$.CswDialog('AddNodeDialog', NodeTypeId, OnAddNode);
+								$.CswDialog('AddNodeDialog', NodeTypeId, o.onAddNode);
 								return false;
 							},
 
@@ -138,10 +139,9 @@
 								if (rowid !== null) {
 									var CswNbtNodeKey = $gridOuter.jqGrid('getCell', rowid, 'cswnbtnodekey');
 									var NodeId = $gridOuter.jqGrid('getCell', rowid, 'nodeid');
-									var NodeName = $gridOuter.jqGrid('getCell', rowid, 'nodename');;
-									var OnDeleteNode = function(options) {};
+									var NodeName = $gridOuter.jqGrid('getCell', rowid, 'nodename');
 								}
-								$.CswDialog('DeleteNodeDialog', NodeName, NodeId, OnDeleteNode, CswNbtNodeKey);
+								$.CswDialog('DeleteNodeDialog', NodeName, NodeId, o.onDeleteNode, CswNbtNodeKey);
 								return false;
 							},
 						

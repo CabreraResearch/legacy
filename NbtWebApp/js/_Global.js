@@ -210,12 +210,12 @@ function xmlToString($xmlnode) {
 // Node interactions
 // ------------------------------------------------------------------------------------
 
-function deleteNode(nodeid, onSuccess) {
+function deleteNode(nodeid, onSuccess, cswnbtnodekey) {
 	CswAjaxJSON({
 		url: '/NbtWebApp/wsNBT.asmx/DeleteNode',
 		data: '{ "NodePk":"' + nodeid + '" }',
 		success: function (result) {
-			onSuccess('');  // returning '' will reselect the first node in the tree
+			onSuccess('','');  // returning '' will reselect the first node in the tree
 		}
 	});
 }
