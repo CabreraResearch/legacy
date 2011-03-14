@@ -290,9 +290,7 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		public static bool operator !=( CswNbtQuickLaunchItem Ql1, CswNbtQuickLaunchItem Ql2 )
 		{
-			return !( Ql1.ItemId == Ql2.ItemId && 
-					  Ql1.ItemName == Ql2.ItemName &&  
-					  Ql1.ItemType == Ql2.ItemType );
+			return !( Ql1 == Ql2 );
 		}
 
 		/// <summary>
