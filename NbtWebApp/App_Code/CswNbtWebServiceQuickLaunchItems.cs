@@ -109,18 +109,16 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Resets the Quick Launch Item's XML to the user's stored quick launch items
 		/// </summary>
-		public XElement resetQuickLaunchItems( CswPrimaryKey UserId )
+		public XElement resetQuickLaunchItems( CswPrimaryKey UserId, CswNbtResources CswNbtResources, HttpSessionState Session )
 		{
-			XElement QuickLaunchNode = null;
-			CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( UserId );
-			if( null != UserNode )
+			var Reset = new XElement( "quicklaunch" );
+			if( null != UserId )
 			{
-				LinkedList<Tuple<Int32, string, string>> QuickLaunchHistory = null;
-				QuickLaunchNode = getQuickLaunchItems( UserId );
-				_Session[QuickLaunchViews] = QuickLaunchHistory;
+				_Session[QuickLaunchViews] = null;
+				var QuickLaunchService = new CswNbtWebServiceQuickLaunchItems( CswNbtResources, Session );
+				Reset = QuickLaunchService.getQuickLaunchItems( UserId );
 			}
-			return QuickLaunchNode;
-
+			return Reset;
 		} // ResetQuickLaunchItems()
 
 	} // class CswNbtWebServiceWelcomeItems
