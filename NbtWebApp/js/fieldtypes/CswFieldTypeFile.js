@@ -11,8 +11,7 @@
                 var Href = o.$propxml.children('href').text().trim();
                 var FileName = o.$propxml.children('name').text().trim();
 
-                var $table = $.CswTable({ ID: o.ID + '_tbl' })
-                             .appendTo($Div);
+                var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
                 var $cell11 = $table.CswTable('cell', 1, 1);
                 var $cell12 = $table.CswTable('cell', 1, 2);
                 var $cell13 = $table.CswTable('cell', 1, 3);

@@ -16,8 +16,7 @@
             }
             else 
             {
-                var $table = $.CswTable({ ID: o.ID + '_tbl' })
-                                .appendTo($Div);
+                var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
                 var $cell1 = $table.CswTable('cell', 1, 1);
                 var $TextBox = $('<input type="text" class="textinput" id="'+ o.ID +'" name="' + o.ID + '" value="'+ Value +'" />"' )

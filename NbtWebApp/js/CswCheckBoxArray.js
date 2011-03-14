@@ -36,8 +36,7 @@
                 $Div.contents().remove();
 
                 var $OuterDiv = $('<div/>').appendTo($Div);
-                var $table = $.CswTable({ ID: o.ID + '_tbl' })
-                               .appendTo($OuterDiv);
+                var $table = $OuterDiv.CswTable('init', { ID: o.ID + '_tbl' });
 
                 $OuterDiv.css('height', (25 * o.HeightInRows) + 'px');
                 $OuterDiv.addClass('cbarraydiv');

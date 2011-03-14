@@ -3,6 +3,7 @@
 
 		var o = {
 			Url: '/NbtWebApp/wsNBT.asmx/getWelcomeItems',
+            MoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/moveWelcomeItems',
 			onLinkClick: function(optSelect) { }, //viewid, actionid, reportid
 			onSearchClick: function(optSelect) { }, //viewid
 			onAddClick: function(optSelect) { } //nodetypeid
@@ -17,24 +18,29 @@
 			url: o.Url,
 			data: "RoleId=",
 			success: function ($xml) {
-				var $WelcomeDiv = $('<div id="welcomediv"><table class="WelcomeTable" align="center" cellpadding="20"></table></div>')
-									.appendTo($this);
-				var $table = $WelcomeDiv.children('table');
+				var $WelcomeDiv = $('<div id="welcomediv"></div>')
+									.appendTo($this)
+                                    .css('text-align', 'center')
+                                    .css('font-size', '1.2em');
+
+				var $table = $WelcomeDiv.CswLayoutTable('init', {
+                                                                 'ID': 'welcometable',
+                                                                 'cellset': { rows: 2, columns: 1 },
+                                                                 'TableCssClass': 'WelcomeTable',
+                                                                 'cellpadding': 10,
+                                                                 'align': 'center',
+                                                                 'onSwap': function(e, onSwapData) { onSwap(onSwapData); }
+                                                                });
 				
 				$xml.children().each(function() {
 
-					//<item id=" + WelcomeRow["welcomeid"].ToString() + "\"";
-					//      type=\"" + WelcomeRow["componenttype"].ToString() + "\"";
-					//      buttonicon=\"" + IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() + "\"";
-					//      text=\"" + LinkText + "\"";
-					//      displayrow=\"" + WelcomeRow["display_row"].ToString() + "\"";
-					//      displaycol=\"" + WelcomeRow["display_col"].ToString() + "\"";
-
 					var $item = $(this);
-					var $cell = $table.CswTable('cell', $item.attr('displayrow'), $item.attr('displaycol'));
+                    var $cellset = $table.CswLayoutTable('cellset', $item.attr('displayrow'), $item.attr('displaycol'));
+					var $imagecell = $cellset[1][1];
+					var $textcell = $cellset[2][1];
 
 					if($item.attr('buttonicon') != undefined && $item.attr('buttonicon') != '')
-						$cell.append( $('<a href=""><img border="0" src="'+ $item.attr('buttonicon') +'"/></a><br/><br/>') );
+						$imagecell.append( $('<a href=""><img border="0" src="'+ $item.attr('buttonicon') +'"/></a>') );
 					
 					var optSelect = {
 						type: $item.attr('type'),
@@ -52,25 +58,53 @@
 					switch(optSelect.linktype)
 					{
 						case 'Link':
-							$cell.append( $('<a href="">' + optSelect.text + '</a>') );
-							$cell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
+							$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
+							$textcell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
+							$imagecell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
 							break;
 						case 'Search': 
-							$cell.append( $('<a href="">' + optSelect.text + '</a>') );
-							$cell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
+							$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
+							$textcell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
+							$imagecell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
 							break;
 						case 'Text':
-							$cell.text(optSelect.text);
+							$textcell.text(optSelect.text);
 							break;
 						case 'Add': 
-							$cell.append( $('<a href="">' + optSelect.text + '</a>') );
-							$cell.find('a').click(function() { o.onAddClick(optSelect); return false; }); //nodetypeid
+							$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
+							$textcell.find('a').click(function() { o.onAddClick(optSelect); return false; }); //nodetypeid
+							$imagecell.find('a').click(function() { o.onAddClick(optSelect); return false; }); //nodetypeid
 							break;
 					}
+
+                    $textcell.append('<input type="hidden" welcomeid="' + $item.attr('welcomeid') + '" />');
 				});
 				
 			} // success{}
 		});
+
+
+        function onSwap(onSwapData)
+        {
+            _moveItem(onSwapData.cellset, onSwapData.swaprow, onSwapData.swapcolumn);
+            _moveItem(onSwapData.swapcellset, onSwapData.row, onSwapData.column);
+        } // onSwap()
+
+        function _moveItem(cellset, newrow, newcolumn)
+        {
+            var $textcell = $(cellset[2][1]);
+            if($textcell.length > 0)
+            {
+                var welcomeid = $textcell.children('input').attr('welcomeid');
+                CswAjaxJSON({
+				    url: o.MoveWelcomeItemUrl,
+				    data: '{ "RoleId": "", "WelcomeId": "'+ welcomeid +'", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '" }',
+				    success: function (result) {
+                             }
+                });
+            }
+        } // _moveItem()
+
 
 		// For proper chaining support
 		return this;

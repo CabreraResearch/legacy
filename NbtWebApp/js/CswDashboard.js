@@ -16,7 +16,7 @@
             data: "",
             success: function ($xml) {
                  
-                    var $table = $.CswTable({ ID: 'DashboardTable' });
+                    var $table = $DashDiv.CswTable('init', { ID: 'DashboardTable' });
                     $table.addClass('DashboardTable');
                     var $tr = $table.append('<tr />');
 
@@ -38,8 +38,6 @@
                         }
                         $tr.append(cellcontent);
 
-                        $DashDiv.text('')
-                                .append($table);
                     });
 
             } // success{}

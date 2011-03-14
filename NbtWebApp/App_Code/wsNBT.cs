@@ -169,7 +169,32 @@ namespace ChemSW.Nbt.WebServices
 			return ReturnVal;
 		} // getWelcomeItems()
 
-		[WebMethod( EnableSession = true )]
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string moveWelcomeItems( string RoleId, string WelcomeId, string NewRow, string NewColumn )
+        {
+            bool ret = false;
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
+                // Only administrators can move welcome content for other roles
+                string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
+                if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    UseRoleId = RoleId;
+                ret = ws.MoveWelcomeItems( UseRoleId, CswConvert.ToInt32( WelcomeId ), CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
+                ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        } // moveWelcomeItems()
+        
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XElement getQuickLaunchItems()
 		{

@@ -3,31 +3,41 @@
     // CswTable
     // Examples:
     //   Make the table
-    //     var $table = $.CswTable({ ID: 'tableid' });
+    //     var $table = $ParentDiv.CswTable('init', { ID: 'tableid' });
     //   Use the table
     //     var $cell12 = $table.CswTable('cell', 1, 2);
 
     var PluginName = "CswTable";
 
-    $.CswTable = function (options) {
-        var o = {
-            ID: '',
-            TableCssClass: '',
-            CellCssClass: '',
-            onCreateCell: function(e, $table, $cell, row, column) {}
-        };
-        if (options) {
-            $.extend(o, options);
-        }
-        var $table = $('<table id="'+ o.ID +'" class="'+ o.TableCssClass +'" cellcssclass="'+ o.CellCssClass +'" cellpadding="0" cellspacing="0" border="0"><tr><td class="'+ o.CellCssClass + '"></td></tr></table>');
-        $table.bind('CswTable_onCreateCell', o.onCreateCell);
-
-        return $table;
-    };
-
     $.fn.CswTable = function (method) {
         
         var methods = {
+            
+            'init': function (options) {
+                        var o = {
+                            ID: '',
+                            TableCssClass: '',
+                            CellCssClass: '',
+                            cellpadding: 0,
+                            cellspacing: 0,
+                            width: '',
+                            align: '',
+                            onCreateCell: function(e, $table, $cell, row, column) {}
+                        };
+                        if (options) {
+                            $.extend(o, options);
+                        }
+                        var $table = $('<table id="'+ o.ID +'" class="'+ o.TableCssClass +'" align="'+ o.align +'" width="'+ o.width +'" cellcssclass="'+ o.CellCssClass +'" cellpadding="'+ o.cellpadding +'" cellspacing="'+ o.cellspacing +'" border="0"><tr><td class="'+ o.CellCssClass + '"></td></tr></table>');
+                        $table.bind('CswTable_onCreateCell', function(e, $table, $cell, row, column) { 
+                                                                o.onCreateCell(e, $table, $cell, row, column); 
+                                                                e.stopPropagation();  // prevents events from triggering in nested tables
+                                                             });
+                        $table.trigger('CswTable_onCreateCell', [ $table, $table.find('td'), 1, 1 ]);
+
+                        $(this).append($table);
+
+                        return $table;
+                    },
 
             // row and col are 1-based
             'cell': function (row, col) {
@@ -139,7 +149,7 @@
 		        while (col > $row.children('td').length) {
 			        var $newcell = $('<td class="'+ $table.attr('cellcssclass') +'" valign="top"></td>')
                                         .appendTo($row);
-                    $table.trigger('CswTable_onCreateCell', [ $table, $newcell, row, col ]);
+                    $table.trigger('CswTable_onCreateCell', [ $table, $newcell, row, $row.children('td').length ]);
 		        }
 		        $cell = $($row.children('td')[col-1]);
 	        }

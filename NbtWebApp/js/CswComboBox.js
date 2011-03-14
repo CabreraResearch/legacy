@@ -22,8 +22,7 @@
                             .appendTo($Div)
                             .attr('style', 'width: '+ o.Width);
 
-                var $table = $.CswTable({ ID: o.ID + '_tbl' })
-                                 .appendTo($TopDiv);
+                var $table = $TopDiv.CswTable('init', { ID: o.ID + '_tbl' });
                 $table.attr('width', '100%');
         
                 $cell1 = $table.CswTable('cell', 1, 1);
