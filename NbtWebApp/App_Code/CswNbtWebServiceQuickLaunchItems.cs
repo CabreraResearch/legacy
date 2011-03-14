@@ -301,7 +301,7 @@ namespace ChemSW.Nbt.WebServices
 			bool Equals = false;
 			if( ( Obj is CswNbtQuickLaunchItem ) )
 			{
-				Equals = ( this == (CswNbtQuickLaunchItem) Obj );
+				Equals = ( this == Obj );
 			}
 			return Equals;
 		}
