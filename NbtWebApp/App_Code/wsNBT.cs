@@ -298,7 +298,7 @@ namespace ChemSW.Nbt.WebServices
 		public string getGrid( string ViewPk, string SafeNodeKey )
 		{
 		    var ReturnJson = new JObject();
-            string ParsedNokeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
+            string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
 
 			try
 			{
@@ -310,9 +310,9 @@ namespace ChemSW.Nbt.WebServices
 					if( null != View )
 					{
 						CswNbtNodeKey ParentNodeKey = null;
-						if( !string.IsNullOrEmpty( ParsedNokeKey ) )
+						if( !string.IsNullOrEmpty( ParsedNodeKey ) )
 						{
-							ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNokeKey );
+							ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
 						}
 						var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
 						ReturnJson = g.getGrid();
@@ -368,12 +368,12 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 start();
-                string ParsedNokeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
-                if (!string.IsNullOrEmpty(ParsedNokeKey) || EditMode == "AddInPopup")
+                string ParsedNodeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
+                if (!string.IsNullOrEmpty(ParsedNodeKey) || EditMode == "AddInPopup")
                 {
                     var ws = new CswNbtWebServiceTabsAndProps(_CswNbtResources);
                     var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse(typeof (CswNbtWebServiceTabsAndProps.NodeEditMode), EditMode);
-                    TabsNode = ws.getTabs( RealEditMode, ParsedNokeKey, CswConvert.ToInt32( NodeTypeId ) );
+                    TabsNode = ws.getTabs( RealEditMode, ParsedNodeKey, CswConvert.ToInt32( NodeTypeId ) );
                 }
                 end();
 			}
@@ -393,12 +393,12 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				string ParsedNokeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
-                if( !string.IsNullOrEmpty( ParsedNokeKey ) || EditMode == "AddInPopup" )
+				string ParsedNodeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
+                if( !string.IsNullOrEmpty( ParsedNodeKey ) || EditMode == "AddInPopup" )
                 {
                     var ws = new CswNbtWebServiceTabsAndProps(_CswNbtResources);
                     var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse(typeof (CswNbtWebServiceTabsAndProps.NodeEditMode), EditMode);
-                    ReturnXml = ws.getProps( RealEditMode, ParsedNokeKey, TabId, CswConvert.ToInt32( NodeTypeId ) );
+                    ReturnXml = ws.getProps( RealEditMode, ParsedNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ) );
                 }
 			    end();
 			}
@@ -418,12 +418,12 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-                string ParsedNokeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
-                if( !string.IsNullOrEmpty( ParsedNokeKey ) )
+                string ParsedNodeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
+                if( !string.IsNullOrEmpty( ParsedNodeKey ) )
                 {
                     var ws = new CswNbtWebServiceTabsAndProps(_CswNbtResources);
                     var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse(typeof (CswNbtWebServiceTabsAndProps.NodeEditMode), EditMode);
-                    ReturnXml = ws.getSingleProp( RealEditMode, ParsedNokeKey, PropId, CswConvert.ToInt32( NodeTypeId ),
+                    ReturnXml = ws.getSingleProp( RealEditMode, ParsedNodeKey, PropId, CswConvert.ToInt32( NodeTypeId ),
                                                  NewPropXml);
                 }
 			    end();
@@ -444,12 +444,12 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-                string ParsedNokeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
-                if( !string.IsNullOrEmpty( ParsedNokeKey ) )
+                string ParsedNodeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
+                if( !string.IsNullOrEmpty( ParsedNodeKey ) )
                 {
                     var ws = new CswNbtWebServiceTabsAndProps(_CswNbtResources);
                     var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse(typeof (CswNbtWebServiceTabsAndProps.NodeEditMode), EditMode);
-                    ReturnVal = XElement.Parse(ws.saveProps( RealEditMode, ParsedNokeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) ));
+                    ReturnVal = XElement.Parse(ws.saveProps( RealEditMode, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) ));
                 }
 			    end();
 			}
@@ -491,10 +491,10 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-                string ParsedNokeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
-                if( !string.IsNullOrEmpty( ParsedNokeKey ) )
+                string ParsedNodeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
+                if( !string.IsNullOrEmpty( ParsedNodeKey ) )
                 {
-                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNokeKey );
+                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
                     CswNbtNode NodeToDelete = _CswNbtResources.Nodes[NbtNodeKey.NodeId];
                     NodeToDelete.delete();
                     ReturnVal.Value = "Succeeded";
