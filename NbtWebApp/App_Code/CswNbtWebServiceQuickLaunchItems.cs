@@ -88,9 +88,8 @@ namespace ChemSW.Nbt.WebServices
 						_QuickLaunchHistory.AddFirst( QuickLaunchItem );
 					}
 				}
+				_Session[QuickLaunchViews] = _QuickLaunchHistory;
 			} // if( IsNewSession )
-
-			_Session[QuickLaunchViews] = _QuickLaunchHistory;
 
 			foreach( var Item in _QuickLaunchHistory )
 			{
