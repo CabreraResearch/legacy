@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.WebServices
 
 			JProperty GridOrderedColumnDisplayNames = _getGridColumnNamesJson( ColumnCollection );
 			JProperty GridColumnDefinitions = _getGridColumnDefinitionJson( ColumnCollection );
-			string Width = CswConvert.ToInt32( _View.Width*7 ).ToString();
+			string Width =  ( _View.Width*7 ).ToString() ;
 
 			GridShellJObj = new JObject(
 				new JProperty( GridViewName, _View.ViewName ),
