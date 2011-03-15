@@ -6,14 +6,23 @@
 
 		// Specialized
 
-		'AddNodeDialog': function (nodetypeid, onAddNode) {
+		'AddNodeDialog': function (options) {
+							var o = {
+								'nodetypeid': '', 
+								'onAddNode': function(nodeid, nodekey) { }
+								};
+
+							if (options) {
+								$.extend(o, options);
+							}
+
 							var $div = $('<div></div>');
 							$div.CswNodeTabs({
-								'nodetypeid': nodetypeid,
+								'nodetypeid': o.nodetypeid,
 								'EditMode': 'AddInPopup',
 								'onSave': function (nodeid,cswnbtnodekey) {
 									$div.dialog('close');
-									onAddNode(nodeid,cswnbtnodekey);
+									o.onAddNode(nodeid,cswnbtnodekey);
 								}
 							});
 							$div.dialog({ 'modal': true,
@@ -21,16 +30,26 @@
 								'height': 600
 							});
 						},        
+		
+		'EditNodeDialog': function (options) {
+							var o = {
+								'nodeid': '',
+								'nodekey': '', 
+								'onEditNode': function(nodeid, nodekey) { }
+								};
 
-		'EditNodeDialog': function (nodeid, onEditNode, cswnbtnodekey) {
+							if (options) {
+								$.extend(o, options);
+							}
+
 							var $div = $('<div></div>');
 							$div.CswNodeTabs({
-								'nodeid': nodeid,
-								'cswnbtnodekey': cswnbtnodekey,
+								'nodeid': o.nodeid,
+								'nodekey': o.nodekey,
 								'EditMode': 'EditInPopup',
-								'onSave': function (nodeid,cswnbtnodekey) {
+								'onSave': function (nodeid,nodekey) {
 									$div.dialog('close');
-									onEditNode(nodeid,cswnbtnodekey);
+									o.onEditNode(nodeid,nodekey);
 								}
 							});
 							$div.dialog({ 'modal': true,
@@ -39,14 +58,67 @@
 							});
 						},
 
-		'DeleteNodeDialog': function (nodename, nodeid, onDeleteNode, cswnbtnodekey) {
-							var $div = $('<div>Are you sure you want to delete: ' + nodename + '?<br/><br/></div>');
+		'CopyNodeDialog': function (options) {
+							var o = {
+								'nodename': '',
+								'nodeid': '',
+								'nodekey': '', 
+								'onCopyNode': function(nodeid, nodekey) { }
+								};
+
+							if (options) {
+								$.extend(o, options);
+							}
+
+							var $div = $('<div>Copying: ' + o.nodename + '<br/><br/></div>');
+
+							$('<input type="button" id="copynode_submit" name="copynode_submit" value="Copy" />')
+								.appendTo($div)
+								.click(function () {
+									$div.dialog('close');
+									copyNode({
+												'nodeid': o.nodeid, 
+												'nodekey': o.nodekey, 
+												'onSuccess': o.onCopyNode 
+											   });
+								});
+
+							$('<input type="button" id="copynode_cancel" name="copynode_cancel" value="Cancel" />')
+								.appendTo($div)
+								.click(function () {
+									$div.dialog('close');
+								});
+
+							
+							$div.dialog({ 'modal': true,
+								'width': 400,
+								'height': 300
+							});
+						},        
+		
+		'DeleteNodeDialog': function (options) {
+							var o = {
+								'nodename': '',
+								'nodeid': '',
+								'nodekey': '', 
+								'onDeleteNode': function(nodeid, nodekey) { }
+								};
+
+							if (options) {
+								$.extend(o, options);
+							}
+
+							var $div = $('<div>Are you sure you want to delete: ' + o.nodename + '?<br/><br/></div>');
 
 							$('<input type="button" id="deletenode_submit" name="deletenode_submit" value="Delete" />')
 								.appendTo($div)
 								.click(function () {
 									$div.dialog('close');
-									deleteNode(nodeid, onDeleteNode, cswnbtnodekey);
+									deleteNode({
+												'nodeid': o.nodeid, 
+												'nodekey': o.nodekey, 
+												'onSuccess': o.onDeleteNode 
+											   });
 								});
 
 							$('<input type="button" id="deletenode_cancel" name="deletenode_cancel" value="Cancel" />')

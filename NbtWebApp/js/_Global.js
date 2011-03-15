@@ -209,13 +209,41 @@ function xmlToString($xmlnode) {
 // ------------------------------------------------------------------------------------
 // Node interactions
 // ------------------------------------------------------------------------------------
+function copyNode(options)
+{
+	var o = {
+		'nodeid': '',
+		'nodekey': '',
+		'onSuccess': function (nodeid, nodekey) { }
+	};
+	if (options)
+	{
+		$.extend(o, options);
+	}
+	CswAjaxJSON({
+		url: '/NbtWebApp/wsNBT.asmx/CopyNode',
+		data: '{ "NodePk":"' + o.nodeid + '" }',
+		success: function (result)
+		{
+			o.onSuccess(result.NewNodeId, '');
+		}
+	});
+}
 
-function deleteNode(nodeid, onSuccess) {
+function deleteNode(options) {
+	var o = {
+		'nodeid': '',
+		'onSuccess': function (nodeid, nodekey) { }
+	};
+	if (options) {
+		$.extend(o, options);
+	}
+
 	CswAjaxJSON({
 		url: '/NbtWebApp/wsNBT.asmx/DeleteNode',
-		data: '{ "NodePk":"' + nodeid + '" }',
+		data: '{ "NodePk":"' + o.nodeid + '" }',
 		success: function (result) {
-			onSuccess('');  // returning '' will reselect the first node in the tree
+			o.onSuccess('', '');  // returning '' will reselect the first node in the tree
 		}
 	});
 }
@@ -260,33 +288,74 @@ function GoHome()
 	window.location = "NewMain.html";
 }
 
-function HandleMenuItem($ul, $this, onLogout, onAlterNode) {
+function HandleMenuItem(options) {
+	var o = {
+		'$ul': '',
+		'$this': '',
+		'onLogout': function () { },
+		'onAlterNode': function (nodeid, nodekey) { }
+	};
+	if (options) {
+		$.extend(o, options);
+	}
+
 	var $li;
-	if ($this.attr('href') != undefined && $this.attr('href') != '') {
-		$li = $('<li><a href="' + $this.attr('href') + '">' + $this.attr('text') + '</a></li>')
-						.appendTo($ul)
+	if (o.$this.attr('href') != undefined && o.$this.attr('href') != '')
+	{
+		$li = $('<li><a href="' + o.$this.attr('href') + '">' + o.$this.attr('text') + '</a></li>')
+						.appendTo(o.$ul)
 	}
-	else if ($this.attr('popup') != undefined && $this.attr('popup') != '') {
-		$li = $('<li class="headermenu_dialog">' + $this.attr('text') + '</li>')
-						.appendTo($ul)
-						.click(function () { OpenDialog($this.attr('text'), $this.attr('popup')); });
+	else if (o.$this.attr('popup') != undefined && o.$this.attr('popup') != '')
+	{
+		$li = $('<li class="headermenu_dialog">' + o.$this.attr('text') + '</li>')
+						.appendTo(o.$ul)
+						.click(function () { OpenDialog(o.$this.attr('text'), o.$this.attr('popup')); });
 	}
-	else if ($this.attr('action') != undefined && $this.attr('action') != '') {
-		$li = $('<li><a href="#">' + $this.attr('text') + '</a></li>')
-						.appendTo($ul);
+	else if (o.$this.attr('action') != undefined && o.$this.attr('action') != '')
+	{
+		$li = $('<li><a href="#">' + o.$this.attr('text') + '</a></li>')
+						.appendTo(o.$ul);
 		var $a = $li.children('a');
-		switch ($this.attr('action')) {
+		switch (o.$this.attr('action'))
+		{
 
 			case 'About':
 				$a.click(function () { $.CswDialog('AboutDialog'); return false; });
 				break;
 
 			case 'AddNode':
-				$a.click(function () { $.CswDialog('AddNodeDialog', $this.attr('nodetypeid'), onAlterNode); return false; });
+				$a.click(function ()
+				{
+					$.CswDialog('AddNodeDialog', {
+						'nodetypeid': o.$this.attr('nodetypeid'),
+						'onAddNode': o.onAlterNode
+					}); 
+					return false;
+				});
 				break;
 
 			case 'DeleteNode':
-				$a.click(function () { $.CswDialog('DeleteNodeDialog', $this.attr('nodename'), $this.attr('nodeid'), onAlterNode); return false; });
+				$a.click(function ()
+				{
+					$.CswDialog('DeleteNodeDialog', {
+						'nodename': o.$this.attr('nodename'),
+						'nodeid': o.$this.attr('nodeid'),
+						'onDeleteNode': o.onAlterNode
+					});
+					return false;
+				});
+				break;
+
+			case 'CopyNode':
+				$a.click(function ()
+				{
+					$.CswDialog('CopyNodeDialog', {
+						'nodename': o.$this.attr('nodename'),
+						'nodeid': o.$this.attr('nodeid'),
+						'onCopyNode': o.onAlterNode
+					});
+					return false;
+				});
 				break;
 
 			case 'Home':
@@ -294,13 +363,13 @@ function HandleMenuItem($ul, $this, onLogout, onAlterNode) {
 				break;
 
 			case 'Logout':
-				$a.click(function () { onLogout(); return false; });
+				$a.click(function () { o.onLogout(); return false; });
 				break;
 		}
 	}
 	else {
-		$li = $('<li>' + $this.attr('text') + '</li>')
-						.appendTo($ul)
+		$li = $('<li>' + o.$this.attr('text') + '</li>')
+						.appendTo(o.$ul)
 	}
 	return $li;
 }

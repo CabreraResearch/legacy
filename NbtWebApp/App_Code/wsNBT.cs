@@ -10,6 +10,9 @@ using ChemSW.Config;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -32,6 +35,7 @@ namespace ChemSW.Nbt.WebServices
 
 		private CswSessionResourcesNbt _SessionResources;
 		private CswNbtResources _CswNbtResources;
+		private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
 
 		private string _FilesPath
 		{
@@ -45,6 +49,7 @@ namespace ChemSW.Nbt.WebServices
 		{
 			_SessionResources = new CswSessionResourcesNbt( Context.Application, Context.Session, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
 			_CswNbtResources = _SessionResources.CswNbtResources;
+			_CswNbtStatisticsEvents = _SessionResources.CswNbtStatisticsEvents;
 
 		}//start() 
 
@@ -510,28 +515,61 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string DeleteNode( string SafeNodeKey )
+		public string DeleteNode( string NodePk )
 		{
-			var ReturnVal = new JProperty( "delete" );
+			var ReturnVal = new JObject();
 			try
 			{
 				start();
-				string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-				if( !string.IsNullOrEmpty( ParsedNodeKey ) )
+				CswPrimaryKey RealNodePk = new CswPrimaryKey();
+				RealNodePk.FromString( NodePk );
+				if( RealNodePk.PrimaryKey != Int32.MinValue )
 				{
-					CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
-					CswNbtNode NodeToDelete = _CswNbtResources.Nodes[NbtNodeKey.NodeId];
-					NodeToDelete.delete();
-					ReturnVal.Value = "Succeeded";
+					CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+					bool ret = ws.DeleteNode( RealNodePk );
+					ReturnVal.Add( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
 				}
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = jError( ex );
+				ReturnVal.Add( jError( ex ) );
 			}
 			return ( ReturnVal.ToString() );
 		}
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string CopyNode( string NodePk )
+		{
+			var ReturnVal = new JObject();
+			try
+			{
+				start();
+				CswPrimaryKey RealNodePk = new CswPrimaryKey();
+				RealNodePk.FromString( NodePk );
+				if( RealNodePk.PrimaryKey != Int32.MinValue )
+				{
+					CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+					CswPrimaryKey NewNodePk = ws.CopyNode( RealNodePk );
+					if( NewNodePk != null )
+					{
+						ReturnVal.Add( new JProperty( "NewNodeId", NewNodePk.ToString() ) );
+					}
+					else
+					{
+						ReturnVal.Add( new JProperty( "NewNodeId", "" ) );
+					}
+				} 
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal.Add( jError( ex ) );
+			}
+			return ( ReturnVal.ToString() );
+		}
+
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
