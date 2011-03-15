@@ -118,7 +118,7 @@ foreach my $component (keys %versions)
 #---------------------------------------------------------------------------------
 printf("Step 3: Compile\n");
 
-&runCommand("c:\kiln\nbt\nbt\nbtwebapp\js\_compile.pl");
+&runCommand("c:\\kiln\\nbt\\nbt\\nbtwebapp\\js\\_compile.pl");
 
 &runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && devenv c:/kiln/nbt/nbt/Nbt.sln /Build \"Release\" /Project NbtSetup");
 
