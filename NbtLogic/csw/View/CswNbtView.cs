@@ -57,6 +57,19 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Determines if View should be added to QuickLaunch items
+        /// </summary>
+        public bool IsQuickLaumch
+        {
+            get
+            {
+                bool ReturnVal = ( ( ViewId > 0 || SessionViewId > 0 ) &&
+                                    ( Visibility != NbtViewVisibility.Property ) );
+                return ReturnVal;
+            }
+        }
+
+        /// <summary>
         /// Visibility permission setting
         /// </summary>
         public NbtViewVisibility Visibility
