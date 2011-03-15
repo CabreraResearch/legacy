@@ -572,8 +572,8 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
-        	[WebMethod( EnableSession = true )]
-    		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        [WebMethod( EnableSession = true )]
+    	[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string DeleteNode( string NodePk )
 		{
 			var ReturnVal = new JObject();
@@ -625,29 +625,9 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string DeleteNode( string SafeNodeKey )
-		{
-			var ReturnVal = new JProperty("delete");
-			try
-			{
-				start();
-                string ParsedNodeKey = wsTools.FromSafeJavaScriptParam(SafeNodeKey);
-                if( !string.IsNullOrEmpty( ParsedNodeKey ) )
-                {
-                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
-                    CswNbtNode NodeToDelete = _CswNbtResources.Nodes[NbtNodeKey.NodeId];
-                    NodeToDelete.delete();
-                    ReturnVal.Value = "Succeeded";
-                }
-			    end();
+			    ReturnVal.Add( jError( ex ) );
 			}
-			catch( Exception ex )
-			{
-                ReturnVal = jError( ex );
-			}
-			return ( ReturnVal.ToString() );
+		    return ( ReturnVal.ToString() );
 		}
 
 
