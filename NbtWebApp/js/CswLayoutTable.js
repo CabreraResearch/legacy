@@ -8,12 +8,15 @@
                             ID: '',
                             cellset: { rows: 1, columns: 1 },
                             onSwap: function(e, onSwapData){ },
+							onAddClick: function() { },
                             TableCssClass: '',
                             CellCssClass: '',
                             cellpadding: 0,
                             cellspacing: 0,
                             width: '',
-                            align: ''
+                            align: '',
+							showConfigButton: false,
+							showAddButton: false
                         };
                         if (options) {
                             $.extend(o, options);
@@ -42,16 +45,33 @@
                         setConfigMode($table, 'false');
                         $table.bind('CswLayoutTable_onSwap', o.onSwap);
 
-                        var $configbutton = $buttondiv.CswImageButton({
+                        if(o.showAddButton)
+						{
+							$buttondiv.CswImageButton({
+                        							ButtonType: CswImageButton_ButtonType.Add,
+                        							AlternateText: 'Add',
+                        							ID: o.ID + 'addbtn',
+                        							onClick: function (alttext)
+                        							{
+                        								o.onAddClick();
+														return CswImageButton_ButtonType.None;
+                        							}
+												});
+                        }
+						if(o.showConfigButton)
+						{
+							$buttondiv.CswImageButton({
                                                     ButtonType: CswImageButton_ButtonType.Configure,
                                                     AlternateText: 'Configure',
                                                     ID: o.ID + 'configbtn',
-                                                    onClick: function (alttext) { 
+                                                    onClick: function (alttext) 
+													{ 
                                                         _toggleConfig($table);
                                                         return CswImageButton_ButtonType.None; 
                                                     }
                                                 });
-                            
+                        }
+						    
                         return $table;
                     },
 

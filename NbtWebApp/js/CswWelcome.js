@@ -29,7 +29,10 @@
                                                                  'TableCssClass': 'WelcomeTable',
                                                                  'cellpadding': 10,
                                                                  'align': 'center',
-                                                                 'onSwap': function(e, onSwapData) { onSwap(onSwapData); }
+                                                                 'onSwap': function(e, onSwapData) { onSwap(onSwapData); },
+																 'showConfigButton': true,
+																 'showAddButton': true,
+																 'onAddClick': function() { $.CswDialog('AddWelcomeItemDialog') }
                                                                 });
 				
 				$xml.children().each(function() {

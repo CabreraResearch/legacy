@@ -5,6 +5,42 @@
 	var methods = {
 
 		// Specialized
+		'AddWelcomeItemDialog': function() {
+							var $div = $('<div></div>');
+							var $table = $div.CswTable('init', {
+									ID: 'addwelcomeitem_tbl',
+		//                            TableCssClass: '',
+		//                            CellCssClass: '',
+		//                            cellpadding: 0,
+		//                            cellspacing: 0,
+		//                            width: '',
+		//                            align: '',
+		//                            onCreateCell: function(e, $table, $cell, row, column) {}
+									});
+							$table.CswTable('cell', 1, 1).append('Type:');
+							var $typeselect = $('<select id="welcome_type" name="welcome_type"></select>')
+												.appendTo($table.CswTable('cell', 1, 2));
+							$typeselect.append('<option value="Add">Add</option>');
+							$typeselect.append('<option value="Link">Link</option>');
+							$typeselect.append('<option value="Search">Search</option>');
+							$typeselect.append('<option value="Text">Text</option>');
+						
+							$table.CswTable('cell', 2, 1).append('View:');
+							$table.CswTable('cell', 2, 2).CswViewSelect({
+																			'ID': 'welcome_viewsel',
+																			//'viewid': '',
+																			//'onSelect': function(optSelect) { },
+																		});
+
+							$table.CswTable('cell', 3, 1).append('Add New:');
+							$table.CswTable('cell', 3, 2) //nodetype selector
+
+							$div.dialog({ 'modal': true,
+								'width': 600,
+								'height': 400
+							});
+
+						},
 
 		'AddNodeDialog': function (options) {
 							var o = {
