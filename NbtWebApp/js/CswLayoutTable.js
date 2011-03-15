@@ -22,7 +22,7 @@
 
                         var $buttondiv = $('<div />')
                                             .appendTo($parent)
-                                            .css({ float: 'right' });
+                                            .css({ 'float': 'right' });
 
                         var $table = $parent.CswTable('init', { 
                                                   'ID': o.ID + '_tbl', 

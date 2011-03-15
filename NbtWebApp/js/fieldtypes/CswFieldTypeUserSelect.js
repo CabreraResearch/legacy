@@ -3,7 +3,7 @@
     var PluginName = 'CswFieldTypeUserSelect';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        'init': function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
 
                 var $Div = $(this);
                 $Div.contents().remove();
@@ -20,7 +20,7 @@
 //                    
 //                }
             },
-        save: function(o) {
+        'save': function(o) {
 //                var $TextBox = $propdiv.find('input');
 //                $xml.children('barcode').text($TextBox.val());
             }

@@ -22,7 +22,7 @@
 		{
 			var m = {
 				selectedviewid: '',
-				viewid: '',
+				viewid: ''
 			};
 
 			if (optSelect) {

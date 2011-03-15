@@ -24,12 +24,6 @@ $.CswFieldTypeFactory = function (method)
 			m.Required = (m.$propxml.attr('required') == "true");
 			m.ReadOnly = (m.$propxml.attr('readonly') == "true");
 
-			if (debug)
-			{
-				//log('CswFieldTypeFactory on fieldtype ' + m.fieldtype);
-				//log(m.$propxml);
-			}
-
 			switch (m.fieldtype)
 			{
 				case "Barcode":
