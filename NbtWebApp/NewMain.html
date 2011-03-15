@@ -309,26 +309,20 @@
 		$('#RightDiv').CswNodeTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'onSave': o.onSave });
 	}
 
-	function refreshSelected(type, options)
+	function refreshSelected(options)
 	{
 		var o = {
-			newnodeid: '',
-			newcswnbtnodekey: '',
+			type: 'tree',
 			nodeid: '',
 			cswnbtnodekey: '',
 			'ID': 'main',
 			nodename: '', 
-			iconurl: '',
+			iconurl: ''
 		};
 		if(options) $.extend(o,options);
 		
-		switch (type)
+		switch (o.type)
 		{
-			case 'tree':
-			{
-				refreshNodesTree(o);
-				break;
-			}
 			case 'grid':
 			{
 				alert('Grid not implemented yet!');
@@ -336,12 +330,12 @@
 			}
 			case 'list':
 			{
-				alert('Grid not implemented yet!');
+				alert('List not implemented yet!');
 				break;
 			}
-			default:
+			default: //tree
 			{
-				refreshNodesTree(o);
+				refreshNodesTree( {'ID': o.ID, 'viewid': view.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'nodename': o.nodename} );
 				break;
 			}
 		}
@@ -353,15 +347,13 @@
 		var view = GetCurrentView();
 
 		var o = {
-			newnodeid: '',
-			newcswnbtnodekey: '',
 			nodeid: '',
 			cswnbtnodekey: '',
 			'ID': 'main',
 			nodename: '', 
-			iconurl: '',
+			iconurl: ''
 		};
-		o.onSelectNode = function (opt) { //nodeid, nodename, iconurl, cswnbtnodekey
+		var onSelectNode = function (opt) { //nodeid, nodename, iconurl, cswnbtnodekey
 			   onSelectTreeNode(opt); } //viewid, nodeid, cswnbtnodekey
 		
 		if (options)
@@ -376,7 +368,8 @@
 		}
 
 		clear({left: true});
-		$('#LeftDiv').CswNodeTree('init', {'ID': o.ID, 'viewid': view.viewid, 'nodeid': o.nodeid, 'onSelectNode': o.onSelectNode });
+		$('#LeftDiv').CswNodeTree('init', {'ID': o.ID, 'viewid': view.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 
+										   'nodename': o.nodename, 'onSelectNode': onSelectNode });
 	}
 
 </script>
