@@ -3,7 +3,6 @@
 	$.fn.CswFieldTypeLocation = function (method) {
 
 		var PluginName = 'CswFieldTypeLocation';
-		var options = [];
 
 		var methods = {
 			init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
@@ -27,17 +26,15 @@
 					var $selectcell = $table.CswTable('cell', 1, 1);
 					var $selectdiv = $('<div class="locationselect" value="'+ o.nodeid +'"/>' )
 										.appendTo($selectcell);
-					options = {
-						'$selectdiv': $selectdiv,
-						itemid: '',
-						text: '',
-						iconurl: ''
-					};
+
 					var $locationtree = $('<div />').CswNodeTree('init', { 'ID': o.ID,
 																viewid: ViewId,
 																nodeid: o.nodeid,
-																onSelectNode: function(options) //itemid, text, iconurl
-																	{ onTreeSelect(options); onchange(); }, //$selectdiv, itemid, text, iconurl
+																onSelectNode: function(optSelect)
+																				{ 
+																					onTreeSelect($selectdiv, optSelect.itemid, optSelect.text, optSelect.iconurl ); 
+																					onchange(); 
+																				}, 
 																SelectFirstChild: false
 																});
 
@@ -67,14 +64,10 @@
 		};
 	
 	
-		function onTreeSelect(o) //$selectdiv, itemid, text, iconurl
+		function onTreeSelect($selectdiv, itemid, text, iconurl)
 		{
-			if(options)
-			{
-				$.extend(o,options);
-			}
-			o.$selectdiv.attr('value', o.itemid);
-			o.$selectdiv.CswComboBox( 'TopContent', o.text );
+			$selectdiv.attr('value', o.itemid);
+			$selectdiv.CswComboBox( 'TopContent', o.text );
 			setTimeout(function() { o.$selectdiv.CswComboBox( 'close'); }, 300);
 		}
 		

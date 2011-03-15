@@ -4,7 +4,15 @@
 		var o = {
 			ViewUrl: '/NbtWebApp/wsNBT.asmx/getViewTree',
 			viewid: '',
-			onSelect: function (optSelect) { } // nodeid, nodename, iconurl, cswnbtnodekey
+			onSelect: function (optSelect) { 
+							var o = {
+								iconurl: '',
+								type: '',
+								viewid: '',
+								viewname: '',
+								viewmode: ''
+								};
+						}
 		};
 
 		if (options) {
@@ -43,15 +51,11 @@
 								function (e, data) {
 									var Selected = jsTreeGetSelected($viewsdiv, ''); 
 									var optSelect = {
-												type: Selected.SelectedType,
-												viewmode: Selected.SelectedViewMode,
-												itemid: Selected.SelectedId, 
-												text: Selected.SelectedText, 
-												iconurl: Selected.SelectedIconUrl,
-												viewid: Selected.SelectedViewId,
-												nodeid: Selected.SelectedId, 
-												nodename: Selected.SelectedText, 
-												cswnbtnodekey: Selected.SelectedCswNbtNodeKey												
+												iconurl: Selected.iconurl,
+												type: Selected.$item.attr('type'),
+												viewid: Selected.$item.attr('viewid'),
+												viewname: Selected.text, 
+												viewmode: Selected.$item.attr('viewmode'),
 											 };
 									o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
 								});

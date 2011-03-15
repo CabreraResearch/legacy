@@ -243,27 +243,31 @@
 
 	function getNodesTree(options) {
 		var o = {
-		    viewid: '',
-            viewmode: 'tree',
+		    'viewid': '',
+            'viewmode': 'tree',
 			'ID': 'main',
-			'onSelectNode': ''
 		};
 
-		o.onSelectNode = function (opt) { //nodeid, nodename, iconurl, cswnbtnodekey 
-			onSelectTreeNode(opt); }
-
-		if (options) 		
-		{
+		if (options) {
 			$.extend(o, options);
 		}
 
 		if (debug) 
 		{
 			log('NewMain.getNodesTree() on ' + o.viewmode + ' view');
-			//log(o);
 		}
 
-		$('#LeftDiv').CswNodeTree('init', {'ID': o.ID, 'viewid': o.viewid, 'viewmode': o.viewmode, 'onSelectNode': o.onSelectNode} );
+		$('#LeftDiv').CswNodeTree('init', {
+											'ID': o.ID, 
+											'viewid': o.viewid, 
+											'viewmode': o.viewmode, 
+											'onSelectNode': function(optSelect) { 
+													onSelectTreeNode({ 'viewid': optSelect.viewid,
+																		'nodeid': optSelect.id,
+																		'cswnbtnodekey': optSelect.cswnbtnodekey
+																	});
+												}
+										});
 	}
 
 	function onSelectTreeNode(options) {
@@ -280,11 +284,10 @@
 		if (debug)
 		{
 			log('NewMain.onSelectTreeNode()');
-			//log(o);
 		}
 
-		getTabs( {'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey} );  //nodeid, cswnbtnodekey
-		refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey }); //viewid, nodeid, cswnbtnodekey
+		getTabs( {'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey} );
+		refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 	}
 
 	function getTabs(options)
@@ -347,9 +350,9 @@
 		var view = GetCurrentView();
 
 		var o = {
+			'ID': 'main',
 			nodeid: '',
 			cswnbtnodekey: '',
-			'ID': 'main',
 			nodename: '', 
 			iconurl: ''
 		};
@@ -369,7 +372,14 @@
 
 		clear({left: true});
 		$('#LeftDiv').CswNodeTree('init', {'ID': o.ID, 'viewid': view.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 
-										   'nodename': o.nodename, 'onSelectNode': onSelectNode });
+										   'nodename': o.nodename, 
+										   'onSelectNode': function(optSelect) { 
+													onSelectTreeNode({ 'viewid': optSelect.viewid,
+																		'nodeid': optSelect.id,
+																		'cswnbtnodekey': optSelect.cswnbtnodekey
+																	});
+												}
+										});
 	}
 
 </script>

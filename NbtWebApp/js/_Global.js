@@ -256,23 +256,11 @@ function deleteNode(options) {
 function jsTreeGetSelected($treediv, IDPrefix) 
 {
 	$SelectedItem = $treediv.jstree('get_selected');
-
-	var iconurl = $SelectedItem.children('a').children('ins').css('background-image');
-	var id = $SelectedItem.attr('id').substring(IDPrefix.length);
-	var text = $SelectedItem.children('a').first().text().trim();
-	var viewmode = $SelectedItem.attr('viewmode');
-	var viewid = $SelectedItem.attr('viewid');
-	var type = $SelectedItem.attr('type');
-	var nodekey = $SelectedItem.attr('cswnbtnodekey');
-
 	var ret = { 
-		'SelectedIconUrl': iconurl,
-		'SelectedId': id,
-		'SelectedText': text,
-		'SelectedViewMode': viewmode,
-		'SelectedViewId': viewid,
-		'SelectedType': type,
-		'SelectedCswNbtNodeKey': nodekey
+		'iconurl': $SelectedItem.children('a').children('ins').css('background-image'),
+		'id': $SelectedItem.attr('id').substring(IDPrefix.length),
+		'text': $SelectedItem.children('a').first().text().trim(),
+		'$item': $SelectedItem
 	};
 	return ret;
 }
