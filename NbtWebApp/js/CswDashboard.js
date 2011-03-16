@@ -2,7 +2,8 @@
     $.fn.CswDashboard = function (options) {
 
         var o = {
-            Url: '/NbtWebApp/wsNBT.asmx/getDashboard'
+            Url: '/NbtWebApp/wsNBT.asmx/getDashboard',
+			onSuccess: function() { }
         };
 
         if (options) {
@@ -39,6 +40,8 @@
                         $tr.append(cellcontent);
 
                     });
+
+					o.onSuccess();
 
             } // success{}
         });

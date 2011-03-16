@@ -13,6 +13,7 @@
 							viewmode: ''
 						};
 			},
+			onSuccess: function() {},
 			ClickDelay: 300
 		};
 
@@ -42,7 +43,7 @@
 											 'SelectContent': $viewtreediv,
 											 'Width': '266px' });
 
-			$viewtreediv.CswViewTree({ 'onSelect': onTreeSelect });
+			$viewtreediv.CswViewTree({ 'onSelect': onTreeSelect, 'onSuccess': o.onSuccess });
 			
 		} // getViewSelect()
 

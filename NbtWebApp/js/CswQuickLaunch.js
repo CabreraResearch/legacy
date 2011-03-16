@@ -3,7 +3,8 @@
 
 		var o = {
 			Url: '/NbtWebApp/wsNBT.asmx/getQuickLaunchItems',
-			onLinkClick: function(optSelect) { } //viewid, actionid
+			onLinkClick: function(optSelect) { },
+			onSuccess: function() { }
 		};
 
 		if (options) {
@@ -45,6 +46,8 @@
 					}
 				});
 				
+				o.onSuccess();
+
 			} // success{}
 		});
 

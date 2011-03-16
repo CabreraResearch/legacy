@@ -12,7 +12,8 @@
 								viewname: '',
 								viewmode: ''
 								};
-						}
+						},
+			onSuccess: function() { }
 		};
 
 		if (options) {
@@ -59,6 +60,8 @@
 											 };
 									o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
 								});
+
+					o.onSuccess();
 
 				} // success{}
 			});
