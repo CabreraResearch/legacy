@@ -473,7 +473,7 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XElement saveProps( string EditMode, string SafeNodeKey, string NewPropsXml, string NodeTypeId )
 		{
-			var ReturnVal = new XElement( "saveprops" );
+			XElement ReturnVal = new XElement( "saveprops" );
 			try
 			{
 				start();
@@ -497,7 +497,7 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getAbout()
 		{
-			var ReturnVal = string.Empty;
+			string ReturnVal = string.Empty;
 			try
 			{
 				start();
@@ -512,7 +512,7 @@ namespace ChemSW.Nbt.WebServices
 			XmlDocument Doc = new XmlDocument();
 			Doc.LoadXml( ReturnVal.Replace( "&", "&amp;" ) );
 			return Doc;
-		} // saveProps()
+		} // getAbout()
 
         #region Search
 
@@ -649,7 +649,45 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
-		}
+		} // MoveProp()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement getNodeTypes()
+		{
+			XElement ReturnVal = new XElement( "nodetypes" );
+			try
+			{
+				start();
+				var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
+				ReturnVal = ws.getNodeTypes();
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = xError( ex );
+			}
+			return ( ReturnVal );
+		} // getNodeTypes()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement getWelcomeButtonIconList()
+		{
+			XElement ReturnVal = new XElement("buttonicons");
+			try
+			{
+				start();
+				var ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
+				ReturnVal = ws.getButtonIconList();
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = xError( ex );
+			}
+			return ( ReturnVal );
+		} // getWelcomeButtonIconList()
 
 		#endregion Web Methods
 

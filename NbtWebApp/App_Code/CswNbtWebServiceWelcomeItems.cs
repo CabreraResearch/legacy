@@ -12,6 +12,7 @@ using ChemSW.Nbt.Actions;
 using System.Xml;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Xml.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -346,6 +347,29 @@ namespace ChemSW.Nbt.WebServices
            
             return ret;
         } // MoveWelcomeItems
+
+		public XElement getButtonIconList()
+		{
+			XElement ret = new XElement( "buttonicons" );
+
+			//ret.Add( new XElement( "icon", new XAttribute( "filename", "blank.gif" ) ) );
+
+			System.IO.DirectoryInfo d = new System.IO.DirectoryInfo( System.Web.HttpContext.Current.Request.PhysicalApplicationPath + CswWelcomeTable.IconImageRoot );
+			System.IO.FileInfo[] IconFiles = d.GetFiles();
+			foreach( System.IO.FileInfo IconFile in IconFiles )
+			{
+				if( //IconFile.Name != "blank.gif" &&
+					( IconFile.Name.EndsWith( ".gif" ) || IconFile.Name.EndsWith( ".jpg" ) || IconFile.Name.EndsWith( ".png" ) ) )
+				{
+					ret.Add( new XElement( "icon", new XAttribute( "filename", IconFile.Name ) ) );
+
+					//ListItem IconItem = new ListItem( IconFile.Name, IconFile.Name );
+					//IconList.Items.Add( IconItem );
+				}
+			}
+			return ret;
+		} // _initButtonIconList()
+
 
 	} // class CswNbtWebServiceWelcomeItems
 } // namespace ChemSW.Nbt.WebServices

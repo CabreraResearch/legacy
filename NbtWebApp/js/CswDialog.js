@@ -5,18 +5,11 @@
 	var methods = {
 
 		// Specialized
+
 		'AddWelcomeItemDialog': function() {
 							var $div = $('<div></div>');
-							var $table = $div.CswTable('init', {
-									ID: 'addwelcomeitem_tbl',
-		//                            TableCssClass: '',
-		//                            CellCssClass: '',
-		//                            cellpadding: 0,
-		//                            cellspacing: 0,
-		//                            width: '',
-		//                            align: '',
-		//                            onCreateCell: function(e, $table, $cell, row, column) {}
-									});
+							var $table = $div.CswTable('init', { ID: 'addwelcomeitem_tbl' });
+
 							$table.CswTable('cell', 1, 1).append('Type:');
 							var $typeselect = $('<select id="welcome_type" name="welcome_type"></select>')
 												.appendTo($table.CswTable('cell', 1, 2));
@@ -33,14 +26,45 @@
 																		});
 
 							$table.CswTable('cell', 3, 1).append('Add New:');
-							$table.CswTable('cell', 3, 2) //nodetype selector
+							$table.CswTable('cell', 3, 2).CswNodeTypeSelect({
+																			'ID': 'welcome_ntsel'
+																			});
+
+							$table.CswTable('cell', 4, 1).append('Text:');
+							$table.CswTable('cell', 4, 2).append('<input type="text" id="welcome_text" value="" />');
+
+							$table.CswTable('cell', 5, 1).append('Use Button:');
+							var $buttonsel = $('<select id="welcome_button" />')
+												.appendTo($table.CswTable('cell', 5, 2));
+							$buttonsel.append('<option value="blank.gif"></option>');
+
+							var $buttonimg = $('<img id="welcome_btnimg" />')
+												.appendTo( $table.CswTable('cell', 6, 2) );
+
+							$buttonsel.change(function(event) { 
+								$buttonimg.attr('src', 'Images/biggerbuttons/' + $buttonsel.val()); 
+							});
+
+							CswAjaxXml({ 
+										'url': '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
+										'success': function($xml) { 
+													$xml.children().each(function() {
+														var $icon = $(this);
+														var filename = $icon.attr('filename');
+														if(filename != 'blank.gif') 
+														{
+															$buttonsel.append('<option value="'+ filename +'">'+ filename +'</option>');
+														}
+													}); // each
+												} // success
+										}); // CswAjaxXml
 
 							$div.dialog({ 'modal': true,
-								'width': 600,
+								'width': 400,
 								'height': 400
 							});
 
-						},
+						}, // AddWelcomeItemDialog
 
 		'AddNodeDialog': function (options) {
 							var o = {
