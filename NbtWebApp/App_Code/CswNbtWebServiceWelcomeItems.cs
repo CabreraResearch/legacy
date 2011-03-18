@@ -326,27 +326,54 @@ namespace ChemSW.Nbt.WebServices
 		} // _AddWelcomeItem()
 
 
-        public bool MoveWelcomeItems( string strRoleId, Int32 WelcomeId, Int32 NewRow, Int32 NewColumn )
-        {
-            bool ret = false;
+		public bool MoveWelcomeItems( string strRoleId, Int32 WelcomeId, Int32 NewRow, Int32 NewColumn )
+		{
+			bool ret = false;
 
-            CswPrimaryKey RolePk = new CswPrimaryKey();
-            RolePk.FromString( strRoleId );
-            Int32 RoleId = RolePk.PrimaryKey;
+			CswPrimaryKey RolePk = new CswPrimaryKey();
+			RolePk.FromString( strRoleId );
+			Int32 RoleId = RolePk.PrimaryKey;
 
-            if( WelcomeId != Int32.MinValue )
-            {
-                CswTableUpdate WelcomeUpdate = _CswNbtResources.makeCswTableUpdate( "AddWelcomeItem_Update", "welcome" );
-                DataTable WelcomeTable = WelcomeUpdate.getTable("welcomeid", WelcomeId);
-                DataRow WelcomeRow = WelcomeTable.Rows[0];
-                WelcomeRow["display_row"] = CswConvert.ToDbVal(NewRow);
-                WelcomeRow["display_col"] = CswConvert.ToDbVal(NewColumn);
-                WelcomeUpdate.update( WelcomeTable );
-                ret = true;
-            } // if( WelcomeId != Int32.MinValue ) 
-           
-            return ret;
-        } // MoveWelcomeItems
+			if( WelcomeId != Int32.MinValue )
+			{
+				CswTableUpdate WelcomeUpdate = _CswNbtResources.makeCswTableUpdate( "AddWelcomeItem_Update", "welcome" );
+				DataTable WelcomeTable = WelcomeUpdate.getTable( "welcomeid", WelcomeId );
+				if( WelcomeTable.Rows.Count > 0 )
+				{
+					DataRow WelcomeRow = WelcomeTable.Rows[0];
+					WelcomeRow["display_row"] = CswConvert.ToDbVal( NewRow );
+					WelcomeRow["display_col"] = CswConvert.ToDbVal( NewColumn );
+					WelcomeUpdate.update( WelcomeTable );
+					ret = true;
+				}
+			} // if( WelcomeId != Int32.MinValue ) 
+
+			return ret;
+		} // MoveWelcomeItems
+
+		public bool DeleteWelcomeItem( string strRoleId, Int32 WelcomeId )
+		{
+			bool ret = false;
+
+			CswPrimaryKey RolePk = new CswPrimaryKey();
+			RolePk.FromString( strRoleId );
+			Int32 RoleId = RolePk.PrimaryKey;
+
+			if( WelcomeId != Int32.MinValue )
+			{
+				CswTableUpdate WelcomeUpdate = _CswNbtResources.makeCswTableUpdate( "AddWelcomeItem_Update", "welcome" );
+				DataTable WelcomeTable = WelcomeUpdate.getTable( "welcomeid", WelcomeId );
+				if( WelcomeTable.Rows.Count > 0 )
+				{
+					DataRow WelcomeRow = WelcomeTable.Rows[0];
+					WelcomeRow.Delete();
+					WelcomeUpdate.update( WelcomeTable );
+					ret = true;
+				}
+			} // if( WelcomeId != Int32.MinValue ) 
+
+			return ret;
+		} // MoveWelcomeItems
 
 		public XElement getButtonIconList()
 		{

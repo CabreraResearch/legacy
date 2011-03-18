@@ -8,6 +8,7 @@
 				var o = {
 					Url: '/NbtWebApp/wsNBT.asmx/getWelcomeItems',
 					MoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/moveWelcomeItems',
+					RemoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/deleteWelcomeItem',
 					onLinkClick: function(optSelect) { }, //viewid, actionid, reportid
 					onSearchClick: function(optSelect) { }, //viewid
 					onAddClick: function(optSelect) { }, //nodetypeid
@@ -34,7 +35,7 @@
 																		 'TableCssClass': 'WelcomeTable',
 																		 'cellpadding': 10,
 																		 'align': 'center',
-																		 'onSwap': function(e, onSwapData) 
+																		 'onSwap': function(ev, onSwapData) 
 																			{ 
 																				_onSwap({
 																					cellset: onSwapData.cellset, 
@@ -48,7 +49,17 @@
 																			 },
 																		 'showConfigButton': true,
 																		 'showAddButton': true,
-																		 'onAddClick': function() { $.CswDialog('AddWelcomeItemDialog', { 'onAdd': o.onAddComponent }); }
+																		 'showRemoveButton': true,
+																		 'onAddClick': function() { $.CswDialog('AddWelcomeItemDialog', { 'onAdd': o.onAddComponent }); },
+																		 'onRemove': function(ev, onRemoveData) 
+																			{ 
+																				_removeItem({
+																					cellset: onRemoveData.cellset,
+																					row: onRemoveData.row,
+																					column: onRemoveData.column,
+																					RemoveWelcomeItemUrl: o.RemoveWelcomeItemUrl
+																				});
+																			}
 																		});
 				
 						$xml.children().each(function() {
@@ -196,6 +207,35 @@
 		}    
   
 	};
+
+	function _removeItem(removedata)
+	{
+		var r = {
+					'cellset': '',
+					'row': '',
+					'column': '',
+					'RemoveWelcomeItemUrl': '',
+					'onSuccess': function() { }
+				};
+		if(removedata) {
+			$.extend(r, removedata);
+		}
+        var $textcell = $(r.cellset[2][1]);
+        if($textcell.length > 0)
+        {
+            var welcomeid = $textcell.children('input').attr('welcomeid');
+		
+			CswAjaxJSON({
+				url: r.RemoveWelcomeItemUrl,
+				data: '{ "RoleId": "", "WelcomeId": "'+ welcomeid +'" }',
+				success: function (result) 
+					{
+						r.onSuccess();
+					}
+	        });
+
+		} // if($textcell.length > 0)
+	} // _removeItem()
 
 	function _addItem(addoptions)
 	{

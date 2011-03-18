@@ -7,17 +7,38 @@
                         var o = {
                             ID: '',
                             cellset: { rows: 1, columns: 1 },
-                            onSwap: function(e, onSwapData){ },
+                            onSwap: function(event, onSwapData)
+								{ 
+									var s = { 
+                                        table: '',
+                                        cellset: '',
+                                        swapcellset: '',
+                                        row: '',
+                                        column: '',
+                                        swaprow: '',
+                                        swapcolumn: ''
+                                    };
+								},
 							onAddClick: function() { },
-                            TableCssClass: '',
+                            onRemove: function(event, onRemoveData)
+								{ 
+									var r = { 
+                                        table: '',
+                                        cellset: '',
+                                        row: '',
+                                        column: ''
+                                    };
+								},
+							TableCssClass: '',
                             CellCssClass: '',
                             cellpadding: 0,
                             cellspacing: 0,
                             width: '',
                             align: '',
 							showConfigButton: false,
-							showAddButton: false
-                        };
+							showAddButton: false,
+							showRemoveButton: false
+						};
                         if (options) {
                             $.extend(o, options);
                         }
@@ -44,10 +65,14 @@
 
                         setConfigMode($table, 'false');
                         $table.bind('CswLayoutTable_onSwap', o.onSwap);
+						$table.bind('CswLayoutTable_onRemove', o.onRemove);
 
-                        if(o.showAddButton)
+						var $buttontable = $buttondiv.CswTable('init', { ID: 'welcome_buttontbl' });
+						var $addbtn;
+						var $rembtn;
+						if(o.showAddButton)
 						{
-							$buttondiv.CswImageButton({
+							$addbtn = $buttontable.CswTable('cell', 1, 1).CswImageButton({
                         							ButtonType: CswImageButton_ButtonType.Add,
                         							AlternateText: 'Add',
                         							ID: o.ID + 'addbtn',
@@ -56,17 +81,30 @@
                         								o.onAddClick();
 														return CswImageButton_ButtonType.None;
                         							}
-												});
+												}).hide();
                         }
+                        if(o.showRemoveButton)
+						{
+							$rembtn = $buttontable.CswTable('cell', 1, 2).CswImageButton({
+                        							ButtonType: CswImageButton_ButtonType.Delete,
+                        							AlternateText: 'Remove',
+                        							ID: o.ID + 'rembtn',
+                        							onClick: function (alttext)
+                        							{
+														_toggleRemove($table, $rembtn);
+														return CswImageButton_ButtonType.None;
+                        							}
+												}).hide();
+						}
 						if(o.showConfigButton)
 						{
-							$buttondiv.CswImageButton({
+							$buttontable.CswTable('cell', 1, 3).CswImageButton({
                                                     ButtonType: CswImageButton_ButtonType.Configure,
                                                     AlternateText: 'Configure',
                                                     ID: o.ID + 'configbtn',
                                                     onClick: function (alttext) 
 													{ 
-                                                        _toggleConfig($table);
+                                                        _toggleConfig($table, $addbtn, $rembtn);
                                                         return CswImageButton_ButtonType.None; 
                                                     }
                                                 });
@@ -80,10 +118,6 @@
                         return _getCellSet($table, row, column);
                     },
 
-            'toggleConfig': function() {
-                        _toggleConfig($(this));
-                     },
-            
             'isConfig': function() {
                         var $table = $(this);
                         return isConfigMode($table);
@@ -107,25 +141,49 @@
             return cellset;
         }
 
+		function isRemoveMode($table)
+		{
+            return ($table.attr('removemode') == "true");
+		}
+	    function setRemoveMode($table, mode)
+        {
+            $table.attr('removemode', mode);
+        }
 
         function isConfigMode($table)
         {
             return ($table.attr('configmode') == "true");
         }
-        function setConfigMode($table, mode)
+	    function setConfigMode($table, mode)
         {
             $table.attr('configmode', mode);
         }
-
-        function _toggleConfig($table)
+		function _toggleRemove($table, $rembtn)
+		{
+			if(isRemoveMode($table))
+			{
+				setRemoveMode($table, 'false');
+				$rembtn.removeClass('CswLayoutTable_removeEnabled');
+			}
+			else
+			{
+				setRemoveMode($table, 'true');
+				$rembtn.addClass('CswLayoutTable_removeEnabled');
+			}
+		}
+        function _toggleConfig($table, $addbtn, $rembtn)
         {
             if(isConfigMode($table))
             {
+				$addbtn.hide();
+				$rembtn.hide();
                 $table.CswTable('findCell', '.CswLayoutTable_cell')
                     .removeClass('CswLayoutTable_configcell');
 
                 setConfigMode($table, 'false');
             } else {
+				$addbtn.show();
+				$rembtn.show();
                 var cellsetrows = parseInt($table.attr('cellset_rows'));
                 var cellsetcolumns = parseInt($table.attr('cellset_columns'));
                 var tablemaxrows = $table.CswTable('maxrows');
@@ -162,6 +220,7 @@
                  .attr('column', column)
                  .attr('cellsetrow', cellsetrow)
                  .attr('cellsetcolumn', cellsetcolumn)
+				 .click(function(ev, dd) { onClick(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
                  .drag(function(ev, dd) { onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
                  .drop(function(ev, dd) { onDrop(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
                  .hover(function(ev, dd) { onHoverIn(ev, dd, $table, $(this)); },
@@ -172,12 +231,23 @@
         {
             if(isConfigMode($table))
                 $cell.addClass('CswLayoutTable_hover');
-        }
+			if(isRemoveMode($table))
+			{
+				var $cellset = $table.CswTable('findCell', '[row="'+ $cell.attr('row') +'"][column="'+ $cell.attr('column') +'"]');
+				$cellset.addClass('CswLayoutTable_remove');
+			}
+		} // onHoverIn()
+
         function onHoverOut(ev, dd, $table, $cell)
         {
             if(isConfigMode($table))
                 $cell.removeClass('CswLayoutTable_hover');
-        }
+			if(isRemoveMode($table))
+			{
+				var $cellset = $table.CswTable('findCell', '[row="'+ $cell.attr('row') +'"][column="'+ $cell.attr('column') +'"]');
+				$cellset.removeClass('CswLayoutTable_remove');
+	        }
+		} // onHoverOut()
 
         function onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns) 
         {
@@ -236,11 +306,30 @@
                             $tempdiv.contents().appendTo($swapcell);
                         }
                     }
-                    
+                } // if($swapcells.length > 0)
+            } // if(isConfigMode($table))
+        } // onDrop()
 
-                }
-            }
-        } // onDrop
+        function onClick(ev, dd, $table, row, column, cellsetrows, cellsetcolumns)
+		{
+			if(isRemoveMode($table))
+			{
+				var $removecells = $('.CswLayoutTable_remove');
+				if($removecells.length > 0)
+				{
+					var row = $removecells.attr('row');
+					var column = $removecells.attr('column');
+					$table.trigger('CswLayoutTable_onRemove', { 
+                                            table: $table,
+                                            cellset: _getCellSet($table, row, column),
+                                            row: $removecells.attr('row'),
+                                            column: $removecells.attr('column')
+                                        });
+				}
+				$removecells.contents().hide();
+				$removecells.removeClass('CswLayoutTable_remove');
+			} // if(isRemoveMode($table))
+		} // onClick()
         
         function getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd)
         {
@@ -260,7 +349,8 @@
 //            return $table.find('td[row="'+ newrow +'"][column="'+ newcol +'"]');
             var $hovercell = $('.CswLayoutTable_hover');
             return $table.CswTable('findCell', '[row="'+ $hovercell.attr('row') +'"][column="'+ $hovercell.attr('column') +'"]');
-        }
+        } // getSwapCells()
+
 
         // Method calling logic
         if (methods[method]) {

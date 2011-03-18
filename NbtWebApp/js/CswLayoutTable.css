@@ -22,3 +22,11 @@
     width: 50px;
     height: 15px;
 }
+.CswLayoutTable_remove
+{
+	background-color: #ff0000;	
+}
+.CswLayoutTable_removeEnabled
+{
+	border: 1px solid red;
+}

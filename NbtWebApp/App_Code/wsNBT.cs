@@ -694,7 +694,6 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string addWelcomeItem( string RoleId, string Type, string ViewId, string NodeTypeId, string Text, string IconFileName )
 		{
-			bool ret = false;
 			string ReturnVal = string.Empty;
 			try
 			{
@@ -715,6 +714,31 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return ( ReturnVal );
 		} // addWelcomeItem()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string deleteWelcomeItem( string RoleId, string WelcomeId )
+		{
+			bool ret = false;
+			string ReturnVal = string.Empty;
+			try
+			{
+				start();
+				CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
+				// Only administrators can add welcome content to other roles
+				string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
+				if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+					UseRoleId = RoleId;
+				ret = ws.DeleteWelcomeItem( UseRoleId, CswConvert.ToInt32( WelcomeId ) );
+				ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = error( ex );
+			}
+			return ( ReturnVal );
+		} // deleteWelcomeItem()
 
 
 		#endregion Web Methods
