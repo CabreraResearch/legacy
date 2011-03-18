@@ -1,45 +1,64 @@
 ﻿; (function ($)
 {
-	$.fn.CswNodeTypeSelect = function (options)
-	{
+	var PluginName = "CswNodeTypeSelect";
 
-		var o = {
-			ID: '',
-			ViewUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
-			nodetypeid: '',
-			onSelect: function (nodetypeid) {},
-			onSuccess: function () {},
-		};
+	var methods = {
+		'init': function(options) 
+			{
+				var o = {
+					ID: '',
+					ViewUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
+					nodetypeid: '',
+					onSelect: function (nodetypeid) {},
+					onSuccess: function () {},
+				};
 
-		if (options)
-		{
-			$.extend(o, options);
-		}
-
-		var $parent = $(this);
-		$parent.contents().remove();
-
-		var $select = $('<select id="'+ o.ID +'_sel" />')
-						.appendTo($parent);
-		$select.change(function(event) { o.onSelect( $select.val() ); });
-
-		CswAjaxXml({
-				url: o.ViewUrl,
-				data: '',
-				success: function ($xml)
+				if (options)
 				{
-					$xml.children('nodetype').each(function() {
-						var $nodetype = $(this);
-						$select.append('<option value="'+ $nodetype.attr('id') +'">'+ $nodetype.attr('name') +'</option>');
-					});
-
-					o.onSuccess();
+					$.extend(o, options);
 				}
-		});
 
-		// For proper chaining support
-		return this;
+				var $parent = $(this);
+				$parent.contents().remove();
 
-	}; // function(options) {
+				var $select = $('<select id="'+ o.ID +'_sel" />')
+								.appendTo($parent);
+				$select.change(function(event) { o.onSelect( $select.val() ); });
+
+				CswAjaxXml({
+						url: o.ViewUrl,
+						data: '',
+						success: function ($xml)
+						{
+							$xml.children('nodetype').each(function() {
+								var $nodetype = $(this);
+								$select.append('<option value="'+ $nodetype.attr('id') +'">'+ $nodetype.attr('name') +'</option>');
+							});
+
+							o.onSuccess();
+						}
+				});
+
+				return $select;
+			},
+		'value': function()
+			{
+				var $select = $(this);
+				return $select.val();
+			}
+	};
+		// Method calling logic
+	$.fn.CswNodeTypeSelect = function (method) {
+		
+		if ( methods[method] ) {
+		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+		} else if ( typeof method === 'object' || ! method ) {
+		  return methods.init.apply( this, arguments );
+		} else {
+		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		}    
+  
+	};
+
 })(jQuery);
 

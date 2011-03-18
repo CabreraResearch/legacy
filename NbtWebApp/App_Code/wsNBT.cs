@@ -689,6 +689,34 @@ namespace ChemSW.Nbt.WebServices
 			return ( ReturnVal );
 		} // getWelcomeButtonIconList()
 
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string addWelcomeItem( string RoleId, string Type, string ViewId, string NodeTypeId, string Text, string IconFileName )
+		{
+			bool ret = false;
+			string ReturnVal = string.Empty;
+			try
+			{
+				start();
+				CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
+				// Only administrators can add welcome content to other roles
+				string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
+				if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+					UseRoleId = RoleId;
+				CswNbtWebServiceWelcomeItems.WelcomeComponentType ComponentType = (CswNbtWebServiceWelcomeItems.WelcomeComponentType) Enum.Parse( typeof( CswNbtWebServiceWelcomeItems.WelcomeComponentType ), Type );
+				ws.AddWelcomeItem( ComponentType, NbtWebControls.CswViewListTree.ViewType.View, CswConvert.ToInt32( ViewId ), CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
+				ReturnVal = "{ \"Succeeded\": \"true\" }";
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = error( ex );
+			}
+			return ( ReturnVal );
+		} // addWelcomeItem()
+
+
 		#endregion Web Methods
 
 	}//wsNBT
