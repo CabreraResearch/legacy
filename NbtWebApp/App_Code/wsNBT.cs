@@ -570,6 +570,65 @@ namespace ChemSW.Nbt.WebServices
             return SearchNode;
         } // getSearch()
 
+        private XElement _getClientXmlFromView( CswNbtView View)
+        {
+            var RenderElement = new XElement( "tree" );
+            switch (View.ViewMode)
+            {
+                //case NbtViewRenderingMode.Grid:
+                //    RenderElement = getGrid( View.ViewId.ToString(), string.Empty );
+                //    break;
+                default:
+                    RenderElement = getTree( View.ViewId.ToString(), string.Empty );
+                    break;
+            }
+            return RenderElement;
+        }
+
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement doViewSearch( string SearchXml, string ViewIdNum )
+        {
+            var SearchResults = new XElement( "search" );
+            try
+            {
+                start();
+
+                var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                CswNbtView ResultsView = ws.doViewBasedSearch( SearchXml, ViewIdNum );
+                SearchResults = _getClientXmlFromView( ResultsView );
+                end();
+            }
+            catch( Exception ex )
+            {
+                SearchResults = xError( ex );
+            }
+
+            return SearchResults;
+        } // getSearch()
+
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement doNodeTypeSearch( string SearchXml )
+        {
+            var SearchResults = new XElement( "search" );
+            try
+            {
+                start();
+
+                var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                CswNbtView ResultsView = ws.doNodesSearch( SearchXml );
+                SearchResults = _getClientXmlFromView( ResultsView );
+                end();
+            }
+            catch( Exception ex )
+            {
+                SearchResults = xError( ex );
+            }
+
+            return SearchResults;
+        } // getSearch()
+
         #endregion
 
         [WebMethod( EnableSession = true )]
