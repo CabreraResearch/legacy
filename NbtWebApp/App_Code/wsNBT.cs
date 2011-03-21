@@ -362,9 +362,12 @@ namespace ChemSW.Nbt.WebServices
 			return ReturnJson.ToString();
 		} // getGrid()
 
+		/// <summary>
+		/// Generates a tree of nodes from the view
+		/// </summary>
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getTree( string ViewNum, string IDPrefix )
+		public XElement getTree( string ViewNum, string NodePk, string IDPrefix )
 		{
 			var TreeNode = new XElement( "tree" );
 
@@ -372,15 +375,26 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 				Int32 ViewId = CswConvert.ToInt32( ViewNum );
+				CswNbtView View = null;
+				
 				if( Int32.MinValue != ViewId )
 				{
-					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-					if( null != View )
-					{
-						var ws = new CswNbtWebServiceTree( _CswNbtResources );
-						TreeNode = ws.getTree( View, IDPrefix );
-						CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
-					}
+					View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				}
+				else if( string.Empty != NodePk )
+				{
+					CswPrimaryKey NodeId = new CswPrimaryKey();
+					NodeId.FromString(NodePk);
+					CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
+					View = Node.NodeType.CreateDefaultView();
+					View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
+				}
+
+				if( null != View )
+				{
+					var ws = new CswNbtWebServiceTree( _CswNbtResources );
+					TreeNode = ws.getTree( View, IDPrefix );
+					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
 				}
 				end();
 			}
@@ -470,27 +484,27 @@ namespace ChemSW.Nbt.WebServices
 		} // getProps()
 
 		[WebMethod( EnableSession = true )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement saveProps( string EditMode, string SafeNodeKey, string NewPropsXml, string NodeTypeId )
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string saveProps( string EditMode, string SafeNodeKey, string NewPropsXml, string NodeTypeId )
 		{
-			XElement ReturnVal = new XElement( "saveprops" );
+			JObject ReturnVal = new JObject();
 			try
 			{
 				start();
 				string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-				if( !string.IsNullOrEmpty( ParsedNodeKey ) )
-				{
+				//if( !string.IsNullOrEmpty( ParsedNodeKey ) )
+				//{
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					ReturnVal = XElement.Parse( ws.saveProps( RealEditMode, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) ) );
-				}
+					ReturnVal = JObject.Parse( ws.saveProps( RealEditMode, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) ) );
+				//}
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = xError( ex );
+				ReturnVal.Add( jError( ex ) );
 			}
-			return ( ReturnVal );
+			return ( ReturnVal.ToString() );
 		} // saveProps()
 
 		[WebMethod( EnableSession = true )]

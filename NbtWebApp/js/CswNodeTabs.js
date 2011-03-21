@@ -13,7 +13,7 @@
 			cswnbtnodekey: '',
 			nodetypeid: '',
 			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
-			onSave: function () { }
+			onSave: function (nodeid) { }
 		};
 
 		if (options)
@@ -241,11 +241,7 @@
 				data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', NewPropsXml: '" + xmlToString($propsxml) + "' }",
 				success: function (data)
 				{
-					var dataOpt = {
-						nodeid: data.nodeid,
-						cswnbtnodekey: data.cswnbtnodekey
-					};
-					o.onSave(dataOpt);
+					o.onSave(data.nodeid);
 				}
 			});
 

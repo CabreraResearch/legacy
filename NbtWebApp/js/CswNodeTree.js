@@ -8,9 +8,9 @@
 			var o = {
 				ID: '', 
 				TreeUrl: '/NbtWebApp/wsNBT.asmx/getTree',
-				viewid: '',
+				viewid: '',       // loads an arbitrary view
 				viewmode: '',
-				nodeid: '',
+				nodeid: '',       // if viewid is not supplied, loads a view of this node
 				cswnbtnodekey: '',
 				onSelectNode: function(optSelect) {
 										var o =  {
@@ -34,7 +34,7 @@
 
 			CswAjaxXml({
 				url: o.TreeUrl,
-				data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix,
+				data: 'NodePk=' + o.nodeid + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix,
 				success: function ($xml) {
 					var selectid;
 					var treePlugins = ["themes", "xml_data", "ui", "types"];

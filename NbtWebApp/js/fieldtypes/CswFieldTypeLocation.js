@@ -33,7 +33,7 @@
 																onSelectNode: function(optSelect)
 																				{ 
 																					onTreeSelect($selectdiv, optSelect.itemid, optSelect.text, optSelect.iconurl ); 
-																					onchange(); 
+																					o.onchange(); 
 																				}, 
 																SelectFirstChild: false
 																});
@@ -66,9 +66,9 @@
 	
 		function onTreeSelect($selectdiv, itemid, text, iconurl)
 		{
-			$selectdiv.attr('value', o.itemid);
-			$selectdiv.CswComboBox( 'TopContent', o.text );
-			setTimeout(function() { o.$selectdiv.CswComboBox( 'close'); }, 300);
+			$selectdiv.attr('value', itemid);
+			$selectdiv.CswComboBox( 'TopContent', text );
+			setTimeout(function() { $selectdiv.CswComboBox( 'close'); }, 300);
 		}
 		
 		function onAdd($ImageDiv)

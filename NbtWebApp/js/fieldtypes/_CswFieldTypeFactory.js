@@ -6,7 +6,7 @@ $.CswFieldTypeFactory = function (method)
 		fieldtype: '',
 		'$propdiv': '',
 		'$propxml': '',
-		onchange: '',
+		onchange: function () { },
 		cswnbtnodekey: '',
 		'ID': '',
 		'Required': '',
@@ -232,4 +232,4 @@ $.CswFieldTypeFactory = function (method)
 	{
 		$.error('Method ' + method + ' does not exist on ' + PluginName);
 	}
-}       // $.CswFieldTypeFactory
+}        // $.CswFieldTypeFactory

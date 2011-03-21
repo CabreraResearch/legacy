@@ -29,7 +29,7 @@
 		'AddNodeDialog': function (options) {
 							var o = {
 								'nodetypeid': '', 
-								'onAddNode': function(nodeid, nodekey) { }
+								'onAddNode': function(nodeid) { }
 								};
 
 							if (options) {
@@ -40,9 +40,9 @@
 							$div.CswNodeTabs({
 								'nodetypeid': o.nodetypeid,
 								'EditMode': 'AddInPopup',
-								'onSave': function (nodeid,cswnbtnodekey) {
+								'onSave': function (nodeid) {
 									$div.dialog('close');
-									o.onAddNode(nodeid,cswnbtnodekey);
+									o.onAddNode(nodeid);
 								}
 							});
 							$div.dialog({ 'modal': true,

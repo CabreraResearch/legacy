@@ -248,14 +248,21 @@ namespace ChemSW.Nbt.WebServices
 				}
 			}
 
-			foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
+			if( Node != null )
 			{
-				_applyPropXml( Node, PropNode );
+				foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
+				{
+					_applyPropXml( Node, PropNode );
+				}
+
+				Node.postChanges( false );
+
+				return "{ \"result\": \"Succeeded\", \"nodeid\": \"" + Node.NodeId.ToString() + "\" }";
 			}
-
-			Node.postChanges( false );
-
-			return "{ \"result\": \"Succeeded\", \"nodeid\": \"" + Node.NodeId.ToString() + "\" }";
+			else
+			{
+				return "{ \"result\": \"Failed\" }";
+			}
 		} // saveProps()
 
         private Int32 _getPropIdFromAttribute( string PropIdAttr )

@@ -35,8 +35,7 @@
 						</td>
 					</tr>
 										  
-					<tr>
-						<td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
+					<tr>						<td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
 							<div id="CenterDiv"></div>
 						</td>
 					</tr>
@@ -49,6 +48,7 @@
 
 
 <script type="text/javascript">
+
 	var debug = false;
 	
 	initAll();
@@ -107,7 +107,6 @@
 		});  // CswLogin
 	} // initAll()
 
-
 	function clear(options)
 	{
 		var o = {
@@ -143,9 +142,20 @@
 	function refreshWelcome()
 	{
 		clear({ all: true });
-		$('#CenterDiv').CswWelcome('initTable', { 
+		$('#CenterDiv').CswWelcome('initTable', {
 			'onLinkClick': handleItemSelect,
-			'onAddComponent': refreshWelcome 
+			'onAddClick': function (nodetypeid)
+			{
+				$.CswDialog('AddNodeDialog', {
+					'nodetypeid': nodetypeid,
+					'onAddNode': function (nodeid)
+					{
+						clear({ all: true });
+						getNodesTree({ 'nodeid': nodeid });
+					}
+				});
+			},
+			'onAddComponent': refreshWelcome
 		});
 	} // refreshWelcome()
 
@@ -272,9 +282,10 @@
 
 	function getNodesTree(options) {
 		var o = {
+			'ID': 'main',
 		    'viewid': '',
             'viewmode': 'tree',
-			'ID': 'main',
+			'nodeid': ''
 		};
 
 		if (options) {
@@ -288,8 +299,9 @@
 
 		$('#LeftDiv').CswNodeTree('init', {
 											'ID': o.ID, 
-											'viewid': o.viewid, 
+											'viewid': o.viewid,
 											'viewmode': o.viewmode, 
+											'nodeid': o.nodeid,
 											'onSelectNode': function(optSelect) { 
 													onSelectTreeNode({ 'viewid': optSelect.viewid,
 																		'nodeid': optSelect.id,
