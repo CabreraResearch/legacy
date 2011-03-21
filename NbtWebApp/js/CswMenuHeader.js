@@ -3,7 +3,8 @@
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getHeaderMenu',
-            onLogout: function() { }
+            onLogout: function() { },
+			onSuccess: function() { }
         };
 
         if (options) {
@@ -39,6 +40,8 @@
                 });
 
                 $ul.CswMenu();
+
+				o.onSuccess();
 
             } // success{}
         }); // $.ajax({

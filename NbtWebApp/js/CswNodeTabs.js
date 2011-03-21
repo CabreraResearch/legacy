@@ -125,11 +125,6 @@
 			});
 		} // getProps()
 
-		//        function Config($layouttable, $configbutton)
-		//        {
-		//            $layouttable.CswLayoutTable('toggleConfig');
-		//        }
-
 		function onSwap(onSwapData)
 		{
 			_moveProp(_getPropertyCell(onSwapData.cellset).children('div').first(), onSwapData.swaprow, onSwapData.swapcolumn);

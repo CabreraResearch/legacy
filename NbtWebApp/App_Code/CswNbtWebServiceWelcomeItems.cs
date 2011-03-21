@@ -12,6 +12,7 @@ using ChemSW.Nbt.Actions;
 using System.Xml;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Xml.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -325,27 +326,77 @@ namespace ChemSW.Nbt.WebServices
 		} // _AddWelcomeItem()
 
 
-        public bool MoveWelcomeItems( string strRoleId, Int32 WelcomeId, Int32 NewRow, Int32 NewColumn )
-        {
-            bool ret = false;
+		public bool MoveWelcomeItems( string strRoleId, Int32 WelcomeId, Int32 NewRow, Int32 NewColumn )
+		{
+			bool ret = false;
 
-            CswPrimaryKey RolePk = new CswPrimaryKey();
-            RolePk.FromString( strRoleId );
-            Int32 RoleId = RolePk.PrimaryKey;
+			CswPrimaryKey RolePk = new CswPrimaryKey();
+			RolePk.FromString( strRoleId );
+			Int32 RoleId = RolePk.PrimaryKey;
 
-            if( WelcomeId != Int32.MinValue )
-            {
-                CswTableUpdate WelcomeUpdate = _CswNbtResources.makeCswTableUpdate( "AddWelcomeItem_Update", "welcome" );
-                DataTable WelcomeTable = WelcomeUpdate.getTable("welcomeid", WelcomeId);
-                DataRow WelcomeRow = WelcomeTable.Rows[0];
-                WelcomeRow["display_row"] = CswConvert.ToDbVal(NewRow);
-                WelcomeRow["display_col"] = CswConvert.ToDbVal(NewColumn);
-                WelcomeUpdate.update( WelcomeTable );
-                ret = true;
-            } // if( WelcomeId != Int32.MinValue ) 
-           
-            return ret;
-        } // MoveWelcomeItems
+			if( WelcomeId != Int32.MinValue )
+			{
+				CswTableUpdate WelcomeUpdate = _CswNbtResources.makeCswTableUpdate( "AddWelcomeItem_Update", "welcome" );
+				DataTable WelcomeTable = WelcomeUpdate.getTable( "welcomeid", WelcomeId );
+				if( WelcomeTable.Rows.Count > 0 )
+				{
+					DataRow WelcomeRow = WelcomeTable.Rows[0];
+					WelcomeRow["display_row"] = CswConvert.ToDbVal( NewRow );
+					WelcomeRow["display_col"] = CswConvert.ToDbVal( NewColumn );
+					WelcomeUpdate.update( WelcomeTable );
+					ret = true;
+				}
+			} // if( WelcomeId != Int32.MinValue ) 
+
+			return ret;
+		} // MoveWelcomeItems
+
+		public bool DeleteWelcomeItem( string strRoleId, Int32 WelcomeId )
+		{
+			bool ret = false;
+
+			CswPrimaryKey RolePk = new CswPrimaryKey();
+			RolePk.FromString( strRoleId );
+			Int32 RoleId = RolePk.PrimaryKey;
+
+			if( WelcomeId != Int32.MinValue )
+			{
+				CswTableUpdate WelcomeUpdate = _CswNbtResources.makeCswTableUpdate( "AddWelcomeItem_Update", "welcome" );
+				DataTable WelcomeTable = WelcomeUpdate.getTable( "welcomeid", WelcomeId );
+				if( WelcomeTable.Rows.Count > 0 )
+				{
+					DataRow WelcomeRow = WelcomeTable.Rows[0];
+					WelcomeRow.Delete();
+					WelcomeUpdate.update( WelcomeTable );
+					ret = true;
+				}
+			} // if( WelcomeId != Int32.MinValue ) 
+
+			return ret;
+		} // MoveWelcomeItems
+
+		public XElement getButtonIconList()
+		{
+			XElement ret = new XElement( "buttonicons" );
+
+			//ret.Add( new XElement( "icon", new XAttribute( "filename", "blank.gif" ) ) );
+
+			System.IO.DirectoryInfo d = new System.IO.DirectoryInfo( System.Web.HttpContext.Current.Request.PhysicalApplicationPath + CswWelcomeTable.IconImageRoot );
+			System.IO.FileInfo[] IconFiles = d.GetFiles();
+			foreach( System.IO.FileInfo IconFile in IconFiles )
+			{
+				if( //IconFile.Name != "blank.gif" &&
+					( IconFile.Name.EndsWith( ".gif" ) || IconFile.Name.EndsWith( ".jpg" ) || IconFile.Name.EndsWith( ".png" ) ) )
+				{
+					ret.Add( new XElement( "icon", new XAttribute( "filename", IconFile.Name ) ) );
+
+					//ListItem IconItem = new ListItem( IconFile.Name, IconFile.Name );
+					//IconList.Items.Add( IconItem );
+				}
+			}
+			return ret;
+		} // _initButtonIconList()
+
 
 	} // class CswNbtWebServiceWelcomeItems
 } // namespace ChemSW.Nbt.WebServices

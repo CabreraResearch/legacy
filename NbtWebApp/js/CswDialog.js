@@ -6,6 +6,26 @@
 
 		// Specialized
 
+		'AddWelcomeItemDialog': function(options) {
+							var o = {
+								'onAdd': function() { }
+								};
+
+							if (options) {
+								$.extend(o, options);
+							}
+
+							var $div = $('<div></div>');
+							
+							$div.CswWelcome('getAddItemForm', { 'onAdd': function() { $div.dialog('close'); o.onAdd(); } } );
+
+							$div.dialog({ 'modal': true,
+								'width': 400,
+								'height': 400
+							});
+
+						}, // AddWelcomeItemDialog
+
 		'AddNodeDialog': function (options) {
 							var o = {
 								'nodetypeid': '', 

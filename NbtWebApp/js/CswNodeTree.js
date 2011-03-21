@@ -12,7 +12,15 @@
 				viewmode: '',
 				nodeid: '',
 				cswnbtnodekey: '',
-				onSelectNode: function(optSelect) { },
+				onSelectNode: function(optSelect) {
+										var o =  {
+											nodeid: '', 
+											nodename: '', 
+											iconurl: '', 
+											cswnbtnodekey: '',
+											viewid: ''
+										};
+							 },
 				SelectFirstChild: true
 			};
 
@@ -89,10 +97,10 @@
 									function (e, data) {
 										var Selected = jsTreeGetSelected($treediv, IDPrefix);
 										var optSelect =  {
-											nodeid: Selected.SelectedId, 
-											nodename: Selected.SelectedText, 
-											iconurl: Selected.SelectedIconUrl, 
-											cswnbtnodekey: Selected.SelectedCswNbtNodeKey,
+											nodeid: Selected.id, 
+											nodename: Selected.text, 
+											iconurl: Selected.iconurl, 
+											cswnbtnodekey: Selected.$item.attr('cswnbtnodekey'),
 											viewid: o.viewid
 										};
 										o.onSelectNode(optSelect);
