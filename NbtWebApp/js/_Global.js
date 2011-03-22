@@ -120,9 +120,7 @@ function CswAjaxJSON(options) {
 			o.success($.parseJSON(data.d));
 
 		}, // success{}
-		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-		}
+		error: _handleAjaxError
 	});      // $.ajax({
 } // CswAjaxXml()
 
@@ -164,10 +162,7 @@ function CswAjaxXml(options) {
 				}
 
 			}, // success{}
-			error: function (XMLHttpRequest, textStatus, errorThrown)
-			{
-				_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-			}
+			error: _handleAjaxError
 		});            // $.ajax({
 	} // if(o.url != '')
 } // CswAjaxXml()

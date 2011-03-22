@@ -198,6 +198,39 @@
 						});
 					},
 
+		'FileUploadDialog': function (options) {
+						var o = {
+							url: '',
+							params: {},
+							onSuccess: function() { }
+						};
+						if(options) {
+							$.extend(o, options);
+						}
+
+						var $div = $('<div></div>');
+								
+						var uploader = new qq.FileUploader({
+							element: $div.get(0),
+							action: o.url,
+							params: o.params,
+							debug: true
+						});
+
+						$('<input type="button" id="fileupload_cancel" name="fileupload_cancel" value="Done" />')
+							.appendTo($div)
+							.click(function () {
+								$div.dialog('close');
+							});
+
+						$div.dialog({ 'modal': true,
+							'width': 400,
+							'height': 300
+						});
+
+
+					},
+
 		// Generic
 
 		'OpenPopup': function(url) { 

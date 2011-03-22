@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -7,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.DB;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -265,12 +267,23 @@ namespace ChemSW.Nbt.WebServices
 			}
 		} // saveProps()
 
-        private Int32 _getPropIdFromAttribute( string PropIdAttr )
+		private Int32 _getPropIdFromAttribute( string PropIdAttr )
 		{
-            string[] SplitNodePropId = PropIdAttr.Split( PropIdDelim );
-            Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[SplitNodePropId.Length - 1] );
-            return NodeTypePropId;
-        }
+			CswDelimitedString ds = new CswDelimitedString( PropIdDelim );
+			ds.FromString( PropIdAttr );
+			Int32 NodeTypePropId = CswConvert.ToInt32( ds[ds.Count - 1] );
+			return NodeTypePropId;
+		}
+		private CswPrimaryKey _getNodePkFromAttribute( string PropIdAttr )
+		{
+			CswDelimitedString ds = new CswDelimitedString( PropIdDelim );
+			ds.FromString( PropIdAttr );
+			ds.RemoveAt( ds.Count - 1 );
+			string NodePkStr = ds.ToString();
+			CswPrimaryKey NodePk = new CswPrimaryKey();
+			NodePk.FromString( NodePkStr );
+			return NodePk;
+		}
 
         private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
         {
@@ -291,6 +304,45 @@ namespace ChemSW.Nbt.WebServices
 
 		} // _applyPropXml
 
+
+		public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr )
+		{
+			CswPrimaryKey NodePk = _getNodePkFromAttribute( PropIdAttr );
+			Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdAttr );
+			
+			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+			if( Int32.MinValue != NodePk.PrimaryKey )
+			{
+				CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
+				CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
+
+				// Do the update directly
+				CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Blobber_save_update", "jct_nodes_props" );
+				JctUpdate.AllowBlobColumns = true;
+				if( PropWrapper.JctNodePropId > 0 )
+				{
+					DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
+					JctTable.Rows[0]["blobdata"] = Data;
+					JctTable.Rows[0]["field1"] = FileName;
+					JctTable.Rows[0]["field2"] = ContentType;
+					JctUpdate.update( JctTable );
+				}
+				else
+				{
+					DataTable JctTable = JctUpdate.getEmptyTable();
+					DataRow JRow = JctTable.NewRow();
+					JRow["nodetypepropid"] = CswConvert.ToDbVal( NodeTypePropId );
+					JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
+					JRow["nodeidtablename"] = Node.NodeId.TableName;
+					JRow["blobdata"] = Data;
+					JRow["field1"] = FileName;
+					JRow["field2"] = ContentType;
+					JctTable.Rows.Add( JRow );
+					JctUpdate.update( JctTable );
+				}
+			} // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
+			return true;
+		} // SetPropBlobValue()
 
 	} // class CswNbtWebServiceTabsAndProps
 

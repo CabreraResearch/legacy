@@ -19,9 +19,12 @@
             var $cell22 = $table.CswTable('cell', 2, 2).attr('align', 'right');
             var $cell23 = $table.CswTable('cell', 2, 3).attr('align', 'right');
 
-            var $TextBox = $('<a href="'+ Href +'" target="_blank"><img src="' + Href + '" alt="' + FileName + '" width="'+ Width +'" height="'+ Height +'"/></a>')
-                                .appendTo($cell11);
-            $cell21.append('<a href="'+ Href +'" target="_blank">'+ FileName +'</a>');
+			if(FileName != '')
+			{
+				var $TextBox = $('<a href="'+ Href +'" target="_blank"><img src="' + Href + '" alt="' + FileName + '" width="'+ Width +'" height="'+ Height +'"/></a>')
+									.appendTo($cell11);
+				$cell21.append('<a href="'+ Href +'" target="_blank">'+ FileName +'</a>');
+			}
 
             if(!o.ReadOnly)
             {
@@ -31,7 +34,19 @@
                                         ButtonType: CswImageButton_ButtonType.Edit,
                                         AlternateText: 'Edit',
                                         ID: o.ID + '_edit',
-                                        onClick: function (alttext) { alert('this function has not yet been implemented!'); return CswImageButton_ButtonType.None; }
+                                        onClick: function (alttext) { 
+											$.CswDialog( 'FileUploadDialog', {
+												'url': '/NbtWebApp/wsNBT.asmx/fileForProp',
+												'params': { 
+															'PropId': o.$propxml.attr('id')
+														  },
+												'onSuccess': function()
+													{
+													
+													}
+												});
+											return CswImageButton_ButtonType.None; 
+										}
                                     });
                 var $clearButton = $('<div/>')
                     .appendTo($cell23)
@@ -39,7 +54,10 @@
                                         ButtonType: CswImageButton_ButtonType.Clear,
                                         AlternateText: 'Clear',
                                         ID: o.ID + '_clr',
-                                        onClick: function (alttext) { alert('this function has not yet been implemented!'); return CswImageButton_ButtonType.None; }
+                                        onClick: function (alttext) { 
+											alert('this function has not yet been implemented!'); 
+											return CswImageButton_ButtonType.None; 
+										}
                                     });
             }
 
