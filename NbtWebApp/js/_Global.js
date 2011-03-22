@@ -136,34 +136,40 @@ function CswAjaxXml(options) {
 	if (options) {
 		$.extend(o, options);
 	}
+	if (o.url != '')
+	{
+		var starttime = new Date();
+		$.ajax({
+			type: 'POST',
+			url: o.url,
+			dataType: "xml",
+			//contentType: 'application/json; charset=utf-8',
+			data: o.data,     // should be 'field1=value&field2=value'
+			success: function (data, textStatus, XMLHttpRequest)
+			{
 
-	var starttime = new Date();
-	$.ajax({
-		type: 'POST',
-		url: o.url,
-		dataType: "xml",
-		//contentType: 'application/json; charset=utf-8',
-		data: o.data,     // should be 'field1=value&field2=value'
-		success: function (data, textStatus, XMLHttpRequest) {
+				var endtime = new Date();
+				$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-			var endtime = new Date();
-			$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+				// this is IE compliant
+				var $xml = $(XMLHttpRequest.responseXML);
+				var $realxml = $xml.children().first();
+				if ($realxml.first().get(0).nodeName == "error")
+				{
+					_handleAjaxError(XMLHttpRequest, $realxml.text().trim(), '');
+				}
+				else
+				{
+					o.success($realxml);
+				}
 
-			// this is IE compliant
-			var $xml = $(XMLHttpRequest.responseXML);
-			var $realxml = $xml.children().first();
-			if ($realxml.first().get(0).nodeName == "error") {
-				_handleAjaxError(XMLHttpRequest, $realxml.text().trim(), '');
+			}, // success{}
+			error: function (XMLHttpRequest, textStatus, errorThrown)
+			{
+				_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
 			}
-			else {
-				o.success($realxml);
-			}
-
-		}, // success{}
-		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-		}
-	});            // $.ajax({
+		});            // $.ajax({
+	} // if(o.url != '')
 } // CswAjaxXml()
 		
 function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown) 
@@ -205,6 +211,35 @@ function xmlToString($xmlnode) {
 	return xmlstring;
 }
 
+// ------------------------------------------------------------------------------------
+// User permissions
+// ------------------------------------------------------------------------------------
+
+function IsAdministrator(options)
+{
+	var o = { 
+		'Yes': function() { }, 
+		'No': function() { }
+	};
+	if (options)
+	{
+		$.extend(o, options);
+	}
+
+	CswAjaxJSON({
+		url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
+		success: function (data)
+		{
+			if (data.Administrator == "true")
+			{
+				o.Yes();
+			} else
+			{
+				o.No();
+			}
+		}
+	});
+} // IsAdministrator()
 
 // ------------------------------------------------------------------------------------
 // Node interactions

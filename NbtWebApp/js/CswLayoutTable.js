@@ -20,6 +20,8 @@
                                     };
 								},
 							onAddClick: function() { },
+							onConfigOn: function($buttontable) { },
+							onConfigOff: function($buttontable) { },
                             onRemove: function(event, onRemoveData)
 								{ 
 									var r = { 
@@ -104,7 +106,7 @@
                                                     ID: o.ID + 'configbtn',
                                                     onClick: function (alttext) 
 													{ 
-                                                        _toggleConfig($table, $addbtn, $rembtn);
+                                                        _toggleConfig($table, $buttontable, $addbtn, $rembtn, o.onConfigOn, o.onConfigOff);
                                                         return CswImageButton_ButtonType.None; 
                                                     }
                                                 });
@@ -171,7 +173,7 @@
 				$rembtn.addClass('CswLayoutTable_removeEnabled');
 			}
 		}
-        function _toggleConfig($table, $addbtn, $rembtn)
+        function _toggleConfig($table, $buttontable, $addbtn, $rembtn, onConfigOn, onConfigOff)
         {
             if(isConfigMode($table))
             {
@@ -181,6 +183,7 @@
                     .removeClass('CswLayoutTable_configcell');
 
                 setConfigMode($table, 'false');
+				onConfigOff($buttontable);
             } else {
 				$addbtn.show();
 				$rembtn.show();
@@ -198,6 +201,7 @@
                     .addClass('CswLayoutTable_configcell');
 
                 setConfigMode($table, 'true');
+				onConfigOn($buttontable);
             }
         } // _toggleConfig()
 
@@ -326,7 +330,9 @@
                                             column: $removecells.attr('column')
                                         });
 				}
-				$removecells.contents().hide();
+				// contents().hide() doesn't work, jQuery ticket #8586: http://bugs.jquery.com/ticket/8586
+				$removecells.children().hide();
+				
 				$removecells.removeClass('CswLayoutTable_remove');
 			} // if(isRemoveMode($table))
 		} // onClick()

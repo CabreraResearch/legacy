@@ -755,6 +755,28 @@ namespace ChemSW.Nbt.WebServices
 		} // deleteWelcomeItem()
 
 
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string isAdministrator()
+		{
+			JObject ReturnVal = new JObject();
+			try
+			{
+				start();
+				ReturnVal.Add(new JProperty("Administrator", _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower()));
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal.Add( jError( ex ) );
+			}
+			return ( ReturnVal.ToString() );
+		} // isAdministrator()
+
+
+
+
 		#endregion Web Methods
 
 	}//wsNBT

@@ -98,7 +98,7 @@
 									$imagecell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
 									break;
 								case 'Text':
-									$textcell.text(optSelect.text);
+									$textcell.append('<span>' + optSelect.text + '</span>');
 									break;
 								case 'Add': 
 									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
