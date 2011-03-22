@@ -1,13 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Text;
-using System.Data;
-using System.Xml;
-using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.DB;
+using System.Linq;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -110,7 +103,13 @@ namespace ChemSW.Nbt.MetaData
         }
 
         public CswNbtPropFilterSql.PropertyFilterMode FilterModes;
-        public CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode = CswNbtPropFilterSql.PropertyFilterMode.Begins;
+        public CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode
+        {
+            get
+            {
+                return SupportedFilterModes.First(); //CswNbtPropFilterSql.PropertyFilterMode.Begins;      
+            }
+        }
 
         public Collection<CswNbtPropFilterSql.PropertyFilterMode> SupportedFilterModes
         {

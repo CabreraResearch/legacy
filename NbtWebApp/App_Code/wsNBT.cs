@@ -141,9 +141,9 @@ namespace ChemSW.Nbt.WebServices
 
 		#endregion
 
+        #region Render Core UI
 
-
-		[WebMethod( EnableSession = true )]
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XElement getWelcomeItems( string RoleId )
 		{
@@ -172,32 +172,7 @@ namespace ChemSW.Nbt.WebServices
 			return ReturnVal;
 		} // getWelcomeItems()
 
-		[WebMethod( EnableSession = true )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string moveWelcomeItems( string RoleId, string WelcomeId, string NewRow, string NewColumn )
-		{
-			bool ret = false;
-			string ReturnVal = string.Empty;
-			try
-			{
-				start();
-				CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
-				// Only administrators can move welcome content for other roles
-				string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
-				if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-					UseRoleId = RoleId;
-				ret = ws.MoveWelcomeItems( UseRoleId, CswConvert.ToInt32( WelcomeId ), CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
-				ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
-				end();
-			}
-			catch( Exception ex )
-			{
-				ReturnVal = error( ex );
-			}
-			return ( ReturnVal );
-		} // moveWelcomeItems()
-
-		[WebMethod( EnableSession = true )]
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XElement getQuickLaunchItems()
 		{
@@ -223,30 +198,7 @@ namespace ChemSW.Nbt.WebServices
 			return QuickLaunchItems;
 		} // getQuickLaunchItems()
 
-
-		//[WebMethod( EnableSession = true )]
-		//public XmlDocument getViews()
-		//{
-		//    CswTimer Timer = new CswTimer();
-		//    string ReturnVal = string.Empty;
-		//    try
-		//    {
-		//        start();
-		//        CswNbtWebServiceTreeView ws = new CswNbtWebServiceTreeView( _CswNbtResources );
-		//        ReturnVal = ws.getViews();
-		//        end();
-		//    }
-		//    catch( Exception ex )
-		//    {
-		//        ReturnVal = error( ex );
-		//    }
-		//    //return ( ReturnVal );
-		//    XmlDocument Doc = new XmlDocument();
-		//    Doc.LoadXml( ReturnVal );
-		//    return Doc;
-		//} // getViews()
-
-		[WebMethod( EnableSession = true )]
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XElement getViewTree()
 		{
@@ -392,8 +344,11 @@ namespace ChemSW.Nbt.WebServices
 			return TreeNode;
 		} // getTree()
 
+        #endregion Render Core UI
 
-		[WebMethod( EnableSession = true )]
+        #region Tabs and Props
+
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XElement getTabs( string EditMode, string SafeNodeKey, string NodeTypeId )
 		{
@@ -492,8 +447,11 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return ( ReturnVal );
 		} // saveProps()
+        #endregion Tabs and Props
 
-		[WebMethod( EnableSession = true )]
+        #region Misc
+        
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getAbout()
 		{
@@ -514,27 +472,58 @@ namespace ChemSW.Nbt.WebServices
 			return Doc;
 		} // getAbout()
 
-		#region Search
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement getNodeTypes()
+        {
+            XElement ReturnVal = new XElement( "nodetypes" );
+            try
+            {
+                start();
+                var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
+                ReturnVal = ws.getNodeTypes();
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = xError( ex );
+            }
+            return ( ReturnVal );
+        } // getNodeTypes()
 
-		[WebMethod( EnableSession = true )]
+        #endregion Misc
+
+        #region Search
+
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement getClientSearchXml(string ViewIdNum, string SelectedNodeTypeIdNum)
+        {
+            XElement SearchNode = new XElement( "search" );
+            try
+            {
+                start();
+                var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                SearchNode = ws.getSearchXml(ViewIdNum,SelectedNodeTypeIdNum);
+                end();
+            }
+            catch(Exception ex)
+            {
+                SearchNode = xError( ex );
+            }
+            return SearchNode;
+        }
+
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getSearchProps( string ViewNum, string SelectedSubField, string FilterValue )
+        public XElement getNodeTypeSearchProps( string RelatedIdType, string ObjectPk )
 		{
-			var SearchNode = new XElement( "search" );
-			var ConstrainToObjectClass = Int32.MinValue;
+			XElement SearchNode = new XElement( "search" );
 			try
 			{
 				start();
-				Int32 ViewId = CswConvert.ToInt32( ViewNum );
-				if( Int32.MinValue != ViewId )
-				{
-					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-					if( null != View )
-					{
-						var ws = new CswNbtWebServiceSearch( _CswNbtResources, ConstrainToObjectClass );
-						ws.getSearchProps( View, SelectedSubField, FilterValue );
-					}
-				}
+				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+			    ws.getNodeTypeProps( RelatedIdType, ObjectPk );
 				end();
 			}
 			catch( Exception ex )
@@ -547,7 +536,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getSearchViews( string IsMobile, string OrderBy = null )
+		public XElement getSearchableViews( string IsMobile, string OrderBy = null )
 		{
 			var SearchNode = new XElement( "search" );
 			try
@@ -558,7 +547,7 @@ namespace ChemSW.Nbt.WebServices
 				bool ForMobile = CswConvert.ToBoolean( IsMobile );
 
 				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-				SearchNode = ws.getSearchViews( UserId, ForMobile, OrderBy );
+				SearchNode = ws.getSearchableViews( UserId, ForMobile, OrderBy );
 
 				end();
 			}
@@ -629,9 +618,10 @@ namespace ChemSW.Nbt.WebServices
             return SearchResults;
         } // getSearch()
 
-		#endregion
+        #endregion Search
 
-		[WebMethod( EnableSession = true )]
+        #region Node DML
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string DeleteNode( string NodePk )
 		{
@@ -709,27 +699,11 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return ( ReturnVal.ToString() );
 		} // MoveProp()
+        #endregion Node DML
+        
+        #region Welcome Region
 
-		[WebMethod( EnableSession = true )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getNodeTypes()
-		{
-			XElement ReturnVal = new XElement( "nodetypes" );
-			try
-			{
-				start();
-				var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-				ReturnVal = ws.getNodeTypes();
-				end();
-			}
-			catch( Exception ex )
-			{
-				ReturnVal = xError( ex );
-			}
-			return ( ReturnVal );
-		} // getNodeTypes()
-
-		[WebMethod( EnableSession = true )]
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XElement getWelcomeButtonIconList()
 		{
@@ -799,9 +773,35 @@ namespace ChemSW.Nbt.WebServices
 			return ( ReturnVal );
 		} // deleteWelcomeItem()
 
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string moveWelcomeItems( string RoleId, string WelcomeId, string NewRow, string NewColumn )
+        {
+            bool ret = false;
+            string ReturnVal = string.Empty;
+            try
+            {
+                start();
+                CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
+                // Only administrators can move welcome content for other roles
+                string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
+                if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    UseRoleId = RoleId;
+                ret = ws.MoveWelcomeItems( UseRoleId, CswConvert.ToInt32( WelcomeId ), CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
+                ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
+                end();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = error( ex );
+            }
+            return ( ReturnVal );
+        } // moveWelcomeItems()
 
-		#endregion Web Methods
+        #endregion Welcome Region
 
-	}//wsNBT
+        #endregion Web Methods
+
+    }//wsNBT
 
 } // namespace ChemSW.WebServices

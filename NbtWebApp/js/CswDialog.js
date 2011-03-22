@@ -183,16 +183,22 @@
 							});
 						},
 
-		'SearchDialog': function (viewid, onSearchSubmit, props) {
-						var $div = $('<div></div>');
-						CswAjaxXml({
-							url: '/NbtWebApp/wsNBT.asmx/getSearch',
-							data: 'ViewNum: ' + viewid ,
-							success: function ($xml) {
-									
-							}
-						});
-						$div.dialog({ 'modal': true,
+		'SearchDialog': function (options) {
+						var o = {
+                            viewid: '',
+                            nodetypeid: '',
+                            onSearch: function() { }
+                        }
+                        if(options) $.extend(o,options);
+                        
+                        var $div = $('<div></div>');
+						$div.CswSearch('getSearchForm', {
+                                viewid: o.viewid,
+                                nodetypeid: o.nodetypeid,
+                                onSearch: o.onSearch
+                            });
+						
+                        $div.dialog({ 'modal': true,
 							'width': 800,
 							'height': 600
 						});

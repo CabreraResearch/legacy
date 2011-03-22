@@ -20,16 +20,47 @@
 				if(options) {
 					$.extend(o, options);
 				}
+                var $parent = $(this);
                 CswAjaxXml({ 
 			        'url': o.RenderSearchUrl,
 			        'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeid,
                     'success': function($xml) { 
-						        log($xml);
-                                debugger;
-                                $xml.children().each(function() {
+                                    log($xml);
+                                    var $table = $parent.CswTable('init', { ID: 'search_tbl' });
+                                    var searchtype = $xml.attr('searchtype');
+                                    switch(searchtype)
+                                    {
+                                        case 'nodetypesearch':
+                                        {
+                                            //Row 1, Column 1: nodetypeselect picklist
+                                            var $typeselect = $table.CswTable('cell', 1, 1);
+                                            var $option = $xml.children('select');
+                                            var optionList = xmlToString($option);
+                                            $typeselect.html(optionList);
+                                            $('#node_type_select').hyjack_select({offset: ''});
+                                            
+                                            //Row 1, Column 2: properties picklist
+                                            var $propselect = $table.CswTable('cell', 1, 2);
+                                            var props = $xml.children('searchcriteria').children('properties');
+                                            var propList = xmlToString($propselect);
+                                            $propselect.html(propList);
+                                            $propselect.hyjack_select({offset: ''});
+
+                                            //Row 1, Column 3: default subfield
+                                            var subfield = $xml.children('searchcriteria').children('properties').attr('defaultprop');
+                                            var $staticsubfield = $table.CswTable('cell', 1, 3);
+                                            $staticsubfield.html('<span>'+subfield+'</span>');
+                                        }
+                                        case 'viewsearch':
+                                        {
+
+
+                                        }
+
+                                    }
 							        
-						        }); // each
-					        } // success
+						        } // each
+					         // success
 			        }); // CswAjaxXml
 
 				/*var $parent = $(this);

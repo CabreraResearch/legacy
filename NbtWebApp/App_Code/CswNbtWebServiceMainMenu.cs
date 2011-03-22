@@ -42,26 +42,29 @@ namespace ChemSW.Nbt.WebServices
 
 			string NodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
 			CswNbtNode Node = null;
-			if( NodeKey != string.Empty )
+		    Int32 NodeTypeId = Int32.MinValue;
+		    Int32 NodeId = Int32.MinValue;
+            if( NodeKey != string.Empty )
 			{
 				CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
 				Node = _CswNbtResources.Nodes[NbtNodeKey];
+			    NodeId = Node.NodeId.PrimaryKey;
+			    NodeTypeId = Node.NodeTypeId;
 			}
 
 			// SEARCH
-			string SearchHref = "Search.aspx?viewid=" + ViewId;
-			if( null != Node )
-			{
-				SearchHref += "&nodeid=" + Node.NodeId.PrimaryKey;
-			}
+
 			MenuNode.Add( new XElement( "item",
 										new XAttribute( "text", "Search" ),
-										new XAttribute( "href", SearchHref ) ) );
+                                        new XAttribute( "nodeid", NodeId ),
+                                        new XAttribute( "nodetypeid", NodeTypeId ),
+                                        new XAttribute( "viewid", ViewId ),
+										new XAttribute( "action", "Search" ) ) );
 
 			// ADD
 			XElement AddNode = new XElement( "item",
 											new XAttribute( "text", "Add" ) );
-			if( View != null && View.ViewId <= 0 )
+			if( View != null && View.ViewId >= 0 )
 			{
 				foreach( XElement AddNodeType in View.Root.AllowedChildNodeTypes()
 												 .Select( Entry => new XElement( "item",

@@ -281,7 +281,8 @@ function HandleMenuItem(options) {
 		'$ul': '',
 		'$this': '',
 		'onLogout': function () { },
-		'onAlterNode': function (nodeid, nodekey) { }
+		'onAlterNode': function (nodeid, nodekey) { },
+        'onSearch': function (treexml, viewid, nodetypeid) { }
 	};
 	if (options) {
 		$.extend(o, options);
@@ -353,6 +354,19 @@ function HandleMenuItem(options) {
 			case 'Logout':
 				$a.click(function () { o.onLogout(); return false; });
 				break;
+
+            case 'Search':
+                $a.click(function ()
+                {
+                    $.CswDialog('SearchDialog', {
+                        'viewid': o.$this.attr('viewid'),
+                        'nodetypeid': o.$this.attr('nodetypeid'),
+                        'onSearch': o.onSearch
+                    });
+                    
+                    return false;
+                });
+                break;
 		}
 	}
 	else {
