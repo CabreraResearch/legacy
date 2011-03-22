@@ -71,8 +71,8 @@ namespace ChemSW.Nbt.WebServices
 				{
 					AddNode.Add( AddNodeType );
 				}
+				MenuNode.Add( AddNode );
 			}
-			MenuNode.Add( AddNode );
 
 			// COPY
 			if( Node.NodeSpecies == NodeSpecies.Plain &&
@@ -136,34 +136,37 @@ namespace ChemSW.Nbt.WebServices
 			// EXPORT
 			XElement ExportNode = new XElement( "item",
 												new XAttribute( "text", "Export" ) );
-			if( NbtViewRenderingMode.Grid == View.ViewMode )
+			if( View != null )
 			{
-
-				foreach( XElement ExportType in from ExportOutputFormat FormatType
-													in Enum.GetValues( typeof( ExportOutputFormat ) )
-												where ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile )
-												select new XElement( "item",
-													new XAttribute( "text", FormatType ),
-													new XAttribute( "popup", "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode ) ) )
+				if( NbtViewRenderingMode.Grid == View.ViewMode )
 				{
-					ExportNode.Add( ExportType );
+
+					foreach( XElement ExportType in from ExportOutputFormat FormatType
+														in Enum.GetValues( typeof( ExportOutputFormat ) )
+													where ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile )
+													select new XElement( "item",
+														new XAttribute( "text", FormatType ),
+														new XAttribute( "popup", "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode ) ) )
+					{
+						ExportNode.Add( ExportType );
+					}
+
 				}
-
-			}
-			else  // tree or list
-			{
-				ExportNode.Add( new XElement( "item",
-												new XAttribute( "text", "Report XML" ) ) );
-				if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+				else  // tree or list
 				{
-					string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" +
-									ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
 					ExportNode.Add( new XElement( "item",
-													new XAttribute( "text", "Mobile XML" ),
-													new XAttribute( "popup", PopUp ) ) );
+													new XAttribute( "text", "Report XML" ) ) );
+					if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+					{
+						string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" +
+										ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+						ExportNode.Add( new XElement( "item",
+														new XAttribute( "text", "Mobile XML" ),
+														new XAttribute( "popup", PopUp ) ) );
+					}
 				}
+				MenuNode.Add( ExportNode );
 			}
-			MenuNode.Add( ExportNode );
 
 			// MOBILE
 			if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
@@ -188,7 +191,7 @@ namespace ChemSW.Nbt.WebServices
 			if( ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Edit_View ) )
 			{
 				string EditViewHref = "EditView.aspx?viewid=" + ViewId;
-				if( View.Visibility == NbtViewVisibility.Property )
+				if( View != null && View.Visibility == NbtViewVisibility.Property )
 				{
 					EditViewHref += "&step=2";
 				}
