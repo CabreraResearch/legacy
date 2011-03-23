@@ -42,7 +42,7 @@
 														  },
 												'onSuccess': function()
 													{
-													
+														o.onReload();
 													}
 												});
 											return CswImageButton_ButtonType.None; 

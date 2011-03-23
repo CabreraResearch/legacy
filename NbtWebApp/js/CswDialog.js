@@ -214,10 +214,15 @@
 							element: $div.get(0),
 							action: o.url,
 							params: o.params,
-							debug: true
+							debug: false,
+							onComplete: function() 
+								{ 
+									$div.dialog('close'); 
+									o.onSuccess(); 
+								}
 						});
 
-						$('<input type="button" id="fileupload_cancel" name="fileupload_cancel" value="Done" />')
+						$('<input type="button" id="fileupload_cancel" name="fileupload_cancel" value="Cancel" />')
 							.appendTo($div)
 							.click(function () {
 								$div.dialog('close');
