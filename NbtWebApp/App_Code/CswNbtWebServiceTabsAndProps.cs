@@ -305,11 +305,32 @@ namespace ChemSW.Nbt.WebServices
 		} // _applyPropXml
 
 
-		public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr )
+		public bool ClearPropValue( string PropIdAttr, bool IncludeBlob )
 		{
+			bool ret = false;
 			CswPrimaryKey NodePk = _getNodePkFromAttribute( PropIdAttr );
 			Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdAttr );
-			
+			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+			if( Int32.MinValue != NodePk.PrimaryKey )
+			{
+				CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
+				CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
+				PropWrapper.ClearValue();
+				if( IncludeBlob )
+				{
+					PropWrapper.ClearBlob();
+				}
+				Node.postChanges( false );
+				ret = true;
+			}
+			return ret;
+		} // ClearPropValue()
+
+		public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr )
+		{
+			bool ret = false;
+			CswPrimaryKey NodePk = _getNodePkFromAttribute( PropIdAttr );
+			Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdAttr );
 			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 			if( Int32.MinValue != NodePk.PrimaryKey )
 			{
@@ -340,8 +361,9 @@ namespace ChemSW.Nbt.WebServices
 					JctTable.Rows.Add( JRow );
 					JctUpdate.update( JctTable );
 				}
+				ret = true;
 			} // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-			return true;
+			return ret;
 		} // SetPropBlobValue()
 
 	} // class CswNbtWebServiceTabsAndProps

@@ -35,6 +35,7 @@
                                         AlternateText: 'Edit',
                                         ID: o.ID + '_edit',
                                         onClick: function (alttext) { 
+											
 											$.CswDialog( 'FileUploadDialog', {
 												'url': '/NbtWebApp/wsNBT.asmx/fileForProp',
 												'params': { 
@@ -55,7 +56,15 @@
                                         AlternateText: 'Clear',
                                         ID: o.ID + '_clr',
                                         onClick: function (alttext) { 
-											alert('this function has not yet been implemented!'); 
+											
+											if(confirm("Are you sure you want to clear this image?"))
+											{
+												CswAjaxJSON({
+													'url': '/NbtWebApp/wsNBT.asmx/clearProp',
+													'data': '{ "PropId": "' + o.$propxml.attr('id') + '", "IncludeBlob": "true" }',
+													'success': function() { o.onReload(); }
+												});
+											}
 											return CswImageButton_ButtonType.None; 
 										}
                                     });

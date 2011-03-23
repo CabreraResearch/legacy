@@ -840,6 +840,28 @@ namespace ChemSW.Nbt.WebServices
 		} // fileForProp()
 
 
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string clearProp( string PropId, bool IncludeBlob )
+		{
+			JObject ReturnVal = new JObject( new JProperty( "Succeeded", false.ToString().ToLower() ) );
+			try
+			{
+				start();
+
+				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+				bool ret = ws.ClearPropValue( PropId, IncludeBlob );
+				ReturnVal = new JObject( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
+
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal.Add( jError( ex ) );
+			}
+			return ( ReturnVal.ToString() );
+		} // clearProp()
+
 		#endregion Web Methods
 
 	}//wsNBT
