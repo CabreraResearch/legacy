@@ -26,7 +26,20 @@
                                             ButtonType: CswImageButton_ButtonType.Edit,
                                             AlternateText: 'Edit',
                                             ID: o.ID + '_edit',
-                                            onClick: function (alttext) { alert('this function has not yet been implemented!'); return CswImageButton_ButtonType.None; }
+                                            onClick: function (alttext) 
+												{ 
+													$.CswDialog( 'FileUploadDialog', {
+														'url': '/NbtWebApp/wsNBT.asmx/fileForProp',
+														'params': { 
+																	'PropId': o.$propxml.attr('id')
+																  },
+														'onSuccess': function()
+															{
+																o.onReload();
+															}
+														});
+													return CswImageButton_ButtonType.None; 
+												}
                                         });
                     var $clearButton = $('<div/>')
                         .appendTo($cell13)
@@ -34,7 +47,18 @@
                                             ButtonType: CswImageButton_ButtonType.Clear,
                                             AlternateText: 'Clear',
                                             ID: o.ID + '_clr',
-                                            onClick: function (alttext) { alert('this function has not yet been implemented!'); return CswImageButton_ButtonType.None; }
+                                            onClick: function (alttext) 
+												{ 
+													if(confirm("Are you sure you want to clear this file?"))
+													{
+														CswAjaxJSON({
+															'url': '/NbtWebApp/wsNBT.asmx/clearProp',
+															'data': '{ "PropId": "' + o.$propxml.attr('id') + '", "IncludeBlob": "true" }',
+															'success': function() { o.onReload(); }
+														});
+													}
+													return CswImageButton_ButtonType.None; 
+												}
                                         });
                 }
 
