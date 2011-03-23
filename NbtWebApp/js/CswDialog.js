@@ -238,11 +238,11 @@
 
 		// Generic
 
-		'OpenPopup': function(url) { 
-							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
-							popup.focus();
-							return popup;
-						},
+//		'OpenPopup': function(url) { 
+//							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
+//							popup.focus();
+//							return popup;
+//						},
 		'OpenDialog': function (id, url) {
 							var $dialogdiv = $('<div id="' + id + '"></div>');
 							$dialogdiv.load(url,
