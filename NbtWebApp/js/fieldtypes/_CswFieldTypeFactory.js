@@ -126,6 +126,9 @@ $.CswFieldTypeFactory = function (method)
 			{
 				$.extend(m, options);
 			}
+			m.ID = m.$propxml.attr('id');
+			m.Required = (m.$propxml.attr('required') == "true");
+			m.ReadOnly = (m.$propxml.attr('readonly') == "true");
 
 			switch (m.fieldtype)
 			{
