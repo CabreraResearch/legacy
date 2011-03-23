@@ -37,9 +37,13 @@
             }
         },
         save: function(o) { //$propdiv, $xml
-                var $TextBox = $propdiv.find('input#' + o.ID + '_pwd1');
-                o.$propxml.children('newpassword').text($TextBox.val());
-            }
+                var $TextBox = o.$propdiv.find('input#' + o.ID + '_pwd1');
+                var newpw = $TextBox.val();
+				if(newpw != '')
+				{
+					o.$propxml.children('newpassword').text(newpw);
+				}
+			}
     };
     
     // Method calling logic
