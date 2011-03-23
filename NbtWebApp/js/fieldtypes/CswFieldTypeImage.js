@@ -63,8 +63,7 @@
 
         },
         save: function(o) { //$propdiv, o.$propxml
-//                var $TextBox = $propdiv.find('input');
-//                o.$propxml.children('text').text($TextBox.val());
+				// nothing to do here
             }
     };
     

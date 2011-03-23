@@ -1217,10 +1217,14 @@ qq.extend(qq.UploadHandlerXhr.prototype, {
             this.log("responseText = " + xhr.responseText);
                         
             var response;
-                    
-            try {
-                response = eval("(" + xhr.responseText + ")");
-            } catch(err){
+
+            try
+            {
+            	// added by sds, because .NET webservices return XML, 3/23/2011
+            	//response = eval("(" + xhr.responseText + ")");
+                response = eval("(" + $(xhr.responseText).text() + ")");
+            } catch (err)
+            {
                 response = {};
             }
             

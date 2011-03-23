@@ -776,57 +776,68 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string fileForProp() // string FileName, string NodeKey, string PropId )
+		public string fileForProp()
 		{
-			JObject ReturnVal = new JObject();
+			JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
 			try
 			{
 				start();
 
 				// putting these in the param list causes the webservice to fail with
-				// System.InvalidOperationException: Request format is invalid: application/octet-stream
+				// "System.InvalidOperationException: Request format is invalid: application/octet-stream"
 				string FileName = Context.Request["qqfile"];
 				string PropId = Context.Request["propid"];
 
-				// Unfortunately, Context.Request.ContentType is always application/octet-stream
-				// So we have to detect the content type
-				string[] SplitFileName = FileName.Split('.');
-				string Extension = SplitFileName[SplitFileName.Length - 1];
-				string ContentType = "application/" + Extension;
-				switch( Extension )
+				if( !string.IsNullOrEmpty( FileName ) && !string.IsNullOrEmpty( PropId ) )
 				{
-					case "jpg":
-					case "jpeg":
-						ContentType = "image/pjpeg";
-						break;
-					case "gif":
-						ContentType = "image/gif";
-						break;
-					case "png":
-						ContentType = "image/png";
-						break;
-				}
+					// Unfortunately, Context.Request.ContentType is always application/octet-stream
+					// So we have to detect the content type
+					string[] SplitFileName = FileName.Split( '.' );
+					string Extension = SplitFileName[SplitFileName.Length - 1];
+					string ContentType = "application/" + Extension;
+					switch( Extension )
+					{
+						case "jpg":
+						case "jpeg":
+							ContentType = "image/pjpeg";
+							break;
+						case "gif":
+							ContentType = "image/gif";
+							break;
+						case "png":
+							ContentType = "image/png";
+							break;
+					}
 
-				BinaryReader br = new BinaryReader( Context.Request.InputStream );
-				long Length = Context.Request.InputStream.Length;
-				byte[] FileData = new byte[Length];
-				for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
-				{
-					FileData[CurrentIndex] = br.ReadByte();
-				}
+					if( Context.Request.InputStream != null )
+					{
+						// Read the binary data
+						BinaryReader br = new BinaryReader( Context.Request.InputStream );
+						long Length = Context.Request.InputStream.Length;
+						byte[] FileData = new byte[Length];
+						for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
+						{
+							FileData[CurrentIndex] = br.ReadByte();
+						}
 
-				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId );
+						// Save the binary data
+						CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+						bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId );
 
-				ReturnVal.Add( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
+						ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
+
+					} // if( Context.Request.InputStream != null )
+				} // if( FileName != string.Empty && PropId != string.Empty )
+
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				//ReturnVal.Add( jError( ex ) );
+				ReturnVal = new JObject( new JProperty( "error", ex.Message ) );
 			}
 			return ( ReturnVal.ToString() );
-		}
+		} // fileForProp()
 
 
 		#endregion Web Methods
