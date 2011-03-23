@@ -61,7 +61,6 @@
 			'onAuthenticate': function (u)
 			{
 				var view = GetCurrentView();
-
 				$('#header_username').text(u);
 				$('#header_dashboard').CswDashboard({ 
 					'onSuccess': function() 
@@ -379,7 +378,7 @@
 			}
 			default: //tree
 			{
-				refreshNodesTree( {'ID': o.ID, 'viewid': view.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'nodename': o.nodename} );
+				refreshNodesTree({ 'ID': o.ID, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'nodename': o.nodename });
 				break;
 			}
 		}
