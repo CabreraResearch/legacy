@@ -397,6 +397,27 @@ function HandleMenuItem(options) {
 // Validation
 // ------------------------------------------------------------------------------------
 
+function validateTime(value)
+{
+	var isValid = true;
+	var regex = /^(\d?\d):(\d\d)\s?([APap][Mm])?$/g;
+	var match = regex.exec(value);
+	if (match == null)
+	{
+		isValid = false;
+	}
+	else
+	{
+		var hour = parseInt(match[1]);
+		var minute = parseInt(match[2]);
+		if (hour < 0 || hour >= 24 || minute < 0 || minute >= 60)
+		{
+			isValid = false;
+		}
+	}
+	return isValid;
+} // validateTime()
+
 function validateFloatMinValue(value, minvalue) {
 	var nValue = parseFloat(value);
 	var nMinValue = parseFloat(minvalue);
@@ -456,6 +477,26 @@ function validateInteger(value) {
 function startsWith(source, search) 
 {
 	return (source.substr(0, search.length) == search);
+}
+
+function getTimeString(date)
+{
+	var ret = '';
+	var hours = date.getHours()
+	var minutes = date.getMinutes()
+	if (minutes < 10)
+	{
+		minutes = "0" + minutes
+	}
+	ret = (hours % 12) + ":" + minutes + " ";
+	if (hours > 11)
+	{
+		ret += "PM";
+	} else
+	{
+		ret += "AM";
+	}
+	return ret;
 }
 
 // ------------------------------------------------------------------------------------
