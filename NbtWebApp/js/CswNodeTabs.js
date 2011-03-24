@@ -88,7 +88,8 @@
 						'onSwap': function (e, onSwapData)
 						{
 							onSwap(onSwapData);
-						}
+						},
+						'showConfigButton': true
 					});
 
 					var i = 0;

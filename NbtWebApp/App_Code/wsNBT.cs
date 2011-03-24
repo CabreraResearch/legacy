@@ -649,18 +649,18 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string MoveProp( string PropId, string NewRow, string NewColumn )
 		{
-			var ReturnVal = new JProperty( "moveprop" );
+			var ReturnVal = new JObject();
 			try
 			{
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 				bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
-				ReturnVal.Value = ret.ToString().ToLower();
+				ReturnVal.Add( new JProperty( "moveprop", ret.ToString().ToLower() ) );
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = jError( ex );
+				ReturnVal.Add( jError( ex ) );
 			}
 			return ( ReturnVal.ToString() );
 		} // MoveProp()

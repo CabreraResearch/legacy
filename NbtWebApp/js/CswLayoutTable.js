@@ -179,16 +179,20 @@
         {
             if(isConfigMode($table))
             {
-				$addbtn.hide();
-				$rembtn.hide();
+				if($addbtn != undefined)
+					$addbtn.hide();
+				if($rembtn != undefined)
+					$rembtn.hide();
                 $table.CswTable('findCell', '.CswLayoutTable_cell')
                     .removeClass('CswLayoutTable_configcell');
 
                 setConfigMode($table, 'false');
 				onConfigOff($buttontable);
             } else {
-				$addbtn.show();
-				$rembtn.show();
+				if($addbtn != undefined)
+					$addbtn.show();
+				if($rembtn != undefined)
+					$rembtn.show();
                 var cellsetrows = parseInt($table.attr('cellset_rows'));
                 var cellsetcolumns = parseInt($table.attr('cellset_columns'));
                 var tablemaxrows = $table.CswTable('maxrows');

@@ -40,7 +40,7 @@
 						$table.attr('border', '0');
 						$table.attr('cellalign', o.cellalign);
 						$table.attr('cellvalign', o.cellvalign);
-						$table.attr('cellcssclass', o.cellcssclass);
+						$table.attr('cellcssclass', o.CellCssClass);
 						$table.attr('FirstCellRightAlign', o.FirstCellRightAlign);
 						$table.attr('OddCellRightAlign', o.OddCellRightAlign);
 
