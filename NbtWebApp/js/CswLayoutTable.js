@@ -39,7 +39,8 @@
                             align: '',
 							showConfigButton: false,
 							showAddButton: false,
-							showRemoveButton: false
+							showRemoveButton: false,
+							OddCellRightAlign: false
 						};
                         if (options) {
                             $.extend(o, options);
@@ -56,6 +57,7 @@
                                                   'CellCssClass': o.CellCssClass + ' CswLayoutTable_cell',
                                                   'cellpadding': o.cellpadding,
                                                   'cellspacing': o.cellspacing,
+												  'OddCellRightAlign': o.OddCellRightAlign,
                                                   'width': o.width,
                                                   'align': o.align,
                                                   'onCreateCell': function(ev, $table, $newcell, realrow, realcolumn) { 

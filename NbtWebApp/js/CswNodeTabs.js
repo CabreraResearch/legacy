@@ -80,11 +80,12 @@
 
 					var $layouttable = $form.CswLayoutTable('init', {
 						'ID': o.ID + '_props',
-						cellset: {
+						'OddCellRightAlign': true,
+						'cellset': {
 							rows: 1,
 							columns: 2
 						},
-						onSwap: function (e, onSwapData)
+						'onSwap': function (e, onSwapData)
 						{
 							onSwap(onSwapData);
 						}
