@@ -97,10 +97,12 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             EncryptedPassword = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _EncryptedPasswordSubField.ToXmlNodeName() );
-            Password = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" );
+            string NewPw = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" );
+			if( NewPw != string.Empty )
+				Password = NewPw;
         }
 
-        public override void ToXElement( XElement ParentNode )
+		public override void ToXElement( XElement ParentNode )
         {
             throw new NotImplementedException();
         }
