@@ -106,13 +106,18 @@
 						highlight: function (element, errorClass)
 						{
 							var $elm = $(element);
+							$elm.attr('csw_invalid', '1');
 							$elm.animate({ backgroundColor: '#ff6666' });
 						},
 						unhighlight: function (element, errorClass)
 						{
 							var $elm = $(element);
-							$elm.css('background-color', '#66ff66');
-							setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+							if($elm.attr('csw_invalid') == '1')  // only unhighlight where we highlighted
+							{
+								$elm.css('background-color', '#66ff66');
+								$elm.attr('csw_invalid', '0')
+								setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+							}
 						}
 					});
 				} // success{}
