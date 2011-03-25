@@ -33,7 +33,10 @@
 					$table.CswTable('cell', 1, 1).append('Answer');
 					var splitAnswers = AllowedAnswers.split(',');
 					var $AnswerSel = $('<select id="'+ o.ID +'_ans" />')
-										.appendTo($table.CswTable('cell', 1, 2));
+										.appendTo($table.CswTable('cell', 1, 2))
+										.change(function() { 
+											checkCompliance(CompliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
+										});
 					var $thisOpt = $('<option value=""></option>').appendTo($AnswerSel);
 					for(var i = 0; i < splitAnswers.length; i++)
 					{
@@ -43,15 +46,20 @@
 							$thisOpt.attr('selected', 'true');
 					}
 
-					$table.CswTable('cell', 2, 1).append('Corrective Action');
+					var $CorrectiveActionLabel = $table.CswTable('cell', 2, 1).append('Corrective Action');
 					var $CorrectiveActionTextBox = $('<textarea id="'+ o.ID +'_cor" />')
 										.appendTo($table.CswTable('cell', 2, 2))
-										.text(CorrectiveAction);
+										.text(CorrectiveAction)
+										.change(function() { 
+											checkCompliance(CompliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
+										});
 
 					$table.CswTable('cell', 3, 1).append('Comments');
 					var $CommentsTextBox = $('<textarea id="'+ o.ID +'_com" />')
 										.appendTo($table.CswTable('cell', 3, 2))
 										.text(Comments);
+
+					checkCompliance(CompliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
                 }
             },
         save: function(o) {
@@ -65,6 +73,40 @@
             }
     };
     
+	function checkCompliance(CompliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox)
+	{
+		var splitCompliantAnswers = CompliantAnswers.split(',');
+		var isCompliant = true;
+		var SelectedAnswer = $AnswerSel.val();
+		var CorrectiveAction = $CorrectiveActionTextBox.val();
+
+		if(SelectedAnswer != '' && CorrectiveAction == '')
+		{
+			isCompliant = false;
+			for(var i = 0; i < splitCompliantAnswers.length; i++)
+			{
+				if(splitCompliantAnswers[i] == SelectedAnswer)
+				{
+					isCompliant = true;
+				}
+			}
+		}
+		if(isCompliant)
+		{
+			$AnswerSel.removeClass('CswFieldTypeQuestion_OOC')
+			if(CorrectiveAction == '')
+			{
+				$CorrectiveActionLabel.hide();
+				$CorrectiveActionTextBox.hide();
+			}
+		} else {
+			$AnswerSel.addClass('CswFieldTypeQuestion_OOC')
+			$CorrectiveActionLabel.show();
+			$CorrectiveActionTextBox.show();
+		}
+
+	} // checkCompliance()
+
     // Method calling logic
     $.fn.CswFieldTypeQuestion = function (method) {
         
