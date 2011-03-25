@@ -20,7 +20,7 @@
         //$Div.contents().remove();
 
 
-        var $ImageDiv = $('<div id="' + o.ID + '" class="divbutton" alt="' + o.AlternateText + '" />"')
+        var $ImageDiv = $('<div id="' + o.ID + '" class="divbutton" title="' + o.AlternateText + '" />"')
                       .appendTo($Div)
                       .click(function () { onClick(); });
 
