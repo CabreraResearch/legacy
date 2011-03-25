@@ -110,9 +110,9 @@ namespace ChemSW.Nbt.PropTypes
 		public DataTable getUserOptions()
 		{
 			DataTable Data = new CswDataTable( "Userselectdatatable", "" );
-			Data.Columns.Add( "User Name", typeof( string ) );
-			Data.Columns.Add( "userid", typeof( int ) );
-			Data.Columns.Add( "Include", typeof( bool ) );
+			Data.Columns.Add( NameColumn, typeof( string ) );
+			Data.Columns.Add( KeyColumn, typeof( int ) );
+			Data.Columns.Add( ValueColumn, typeof( bool ) );
 
 			bool first = true;
 			ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
@@ -148,15 +148,15 @@ namespace ChemSW.Nbt.PropTypes
 
 				XmlNode UserNameNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
 				CswXmlDocument.AppendXmlAttribute( UserNameNode, "field", NameColumn );
-				CswXmlDocument.AppendXmlAttribute( UserNameNode, "value", UserRow["User Name"].ToString() );
+				CswXmlDocument.AppendXmlAttribute( UserNameNode, "value", UserRow[NameColumn].ToString() );
 
 				XmlNode UserIdNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
 				CswXmlDocument.AppendXmlAttribute( UserIdNode, "field", KeyColumn );
-				CswXmlDocument.AppendXmlAttribute( UserIdNode, "value", UserRow["userid"].ToString() );
+				CswXmlDocument.AppendXmlAttribute( UserIdNode, "value", UserRow[KeyColumn].ToString() );
 
 				XmlNode IncludeNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
 				CswXmlDocument.AppendXmlAttribute( IncludeNode, "field", ValueColumn );
-				CswXmlDocument.AppendXmlAttribute( IncludeNode, "value", UserRow["Include"].ToString() );
+				CswXmlDocument.AppendXmlAttribute( IncludeNode, "value", UserRow[ValueColumn].ToString() );
 			}
         } // ToXml()
 
