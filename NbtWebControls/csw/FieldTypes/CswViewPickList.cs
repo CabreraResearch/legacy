@@ -72,33 +72,35 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 //    Views = ViewsCaddy.Table;
                 ////}
 
-                _ViewsForCBA = new CswDataTable( "viewpicklistdatatable", "" );
-                _ViewsForCBA.Columns.Add( "nodeviewid", typeof( Int32 ) );
-                _ViewsForCBA.Columns.Add( "View Name", typeof( string ) );
-                _ViewsForCBA.Columns.Add( "Include", typeof( bool ) );
+				//_ViewsForCBA = new CswDataTable( "viewpicklistdatatable", "" );
+				//_ViewsForCBA.Columns.Add( "nodeviewid", typeof( Int32 ) );
+				//_ViewsForCBA.Columns.Add( "View Name", typeof( string ) );
+				//_ViewsForCBA.Columns.Add( "Include", typeof( bool ) );
 
-                if( SelectMode != PropertySelectMode.Multiple && !Required )
-                {
-                    DataRow NoneRow = _ViewsForCBA.NewRow();
-                    NoneRow["View Name"] = "[none]";
-                    NoneRow["nodeviewid"] = CswConvert.ToDbVal( Int32.MinValue );
-                    NoneRow["Include"] = ( Prop.AsViewPickList.SelectedViewIds.Count == 0 );
-                    _ViewsForCBA.Rows.Add( NoneRow );
-                }
+				//if( SelectMode != PropertySelectMode.Multiple && !Required )
+				//{
+				//    DataRow NoneRow = _ViewsForCBA.NewRow();
+				//    NoneRow["View Name"] = "[none]";
+				//    NoneRow["nodeviewid"] = CswConvert.ToDbVal( Int32.MinValue );
+				//    NoneRow["Include"] = ( Prop.AsViewPickList.SelectedViewIds.Count == 0 );
+				//    _ViewsForCBA.Rows.Add( NoneRow );
+				//}
 
-                string searchstr = CswNbtNodePropViewPickList.delimiter.ToString() + Prop.AsViewPickList.SelectedViewIds + CswNbtNodePropViewPickList.delimiter.ToString();
-                bool first = true;
-                foreach( DataRow ViewRow in Views.Rows )
-                {
-                    DataRow NewViewRow = _ViewsForCBA.NewRow();
-                    NewViewRow["View Name"] = ViewRow["viewname"].ToString();
-                    NewViewRow["nodeviewid"] = ViewRow["nodeviewid"].ToString();
-                    NewViewRow["Include"] = ( searchstr.IndexOf( CswNbtNodePropViewPickList.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropViewPickList.delimiter.ToString() ) >= 0 );
-                    NewViewRow["Include"] = ( ( searchstr.IndexOf( CswNbtNodePropNodeTypeSelect.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropNodeTypeSelect.delimiter.ToString() ) >= 0 ) ||
-                                              ( first && Required && Prop.AsViewPickList.SelectedViewIds.Count == 0 ) );
-                    first = false;
-                    _ViewsForCBA.Rows.Add( NewViewRow );
-                }
+				//string searchstr = CswNbtNodePropViewPickList.delimiter.ToString() + Prop.AsViewPickList.SelectedViewIds + CswNbtNodePropViewPickList.delimiter.ToString();
+				//bool first = true;
+				//foreach( DataRow ViewRow in Views.Rows )
+				//{
+				//    DataRow NewViewRow = _ViewsForCBA.NewRow();
+				//    NewViewRow["View Name"] = ViewRow["viewname"].ToString();
+				//    NewViewRow["nodeviewid"] = ViewRow["nodeviewid"].ToString();
+				//    NewViewRow["Include"] = ( searchstr.IndexOf( CswNbtNodePropViewPickList.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropViewPickList.delimiter.ToString() ) >= 0 );
+				//    NewViewRow["Include"] = ( ( searchstr.IndexOf( CswNbtNodePropNodeTypeSelect.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropNodeTypeSelect.delimiter.ToString() ) >= 0 ) ||
+				//                              ( first && Required && Prop.AsViewPickList.SelectedViewIds.Count == 0 ) );
+				//    first = false;
+				//    _ViewsForCBA.Rows.Add( NewViewRow );
+				//}
+
+				_ViewsForCBA = Prop.AsViewPickList.ViewsForCBA();
 
                 if( _AllowEditValue )
                 {

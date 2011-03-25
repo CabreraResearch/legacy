@@ -203,16 +203,98 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+		public const string NameColumn = "View Name";
+		public const string KeyColumn = "nodeviewid";
+		public const string ValueColumn = "Include";
+
+		public DataTable ViewsForCBA()
+		{
+			DataTable ViewsTable = Views;
+
+			DataTable _ViewsForCBA = new CswDataTable( "viewpicklistdatatable", "" );
+			_ViewsForCBA.Columns.Add( KeyColumn, typeof( Int32 ) );
+			_ViewsForCBA.Columns.Add( NameColumn, typeof( string ) );
+			_ViewsForCBA.Columns.Add( ValueColumn, typeof( bool ) );
+
+			//if( SelectMode != PropertySelectMode.Multiple && !Required )
+			//{
+			//    DataRow NoneRow = _ViewsForCBA.NewRow();
+			//    NoneRow[NameColumn] = "[none]";
+			//    NoneRow[KeyColumn] = CswConvert.ToDbVal( Int32.MinValue );
+			//    NoneRow[ValueColumn] = ( SelectedViewIds.Count == 0 );
+			//    _ViewsForCBA.Rows.Add( NoneRow );
+			//}
+
+			string searchstr = CswNbtNodePropViewPickList.delimiter.ToString() + SelectedViewIds + CswNbtNodePropViewPickList.delimiter.ToString();
+			bool first = true;
+			foreach( DataRow ViewRow in Views.Rows )
+			{
+				DataRow NewViewRow = _ViewsForCBA.NewRow();
+				NewViewRow[NameColumn] = ViewRow["viewname"].ToString();
+				NewViewRow[KeyColumn] = ViewRow["nodeviewid"].ToString();
+				//NewViewRow[ValueColumn] = ( searchstr.IndexOf( CswNbtNodePropViewPickList.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropViewPickList.delimiter.ToString() ) >= 0 );
+				NewViewRow[ValueColumn] = ( ( searchstr.IndexOf( CswNbtNodePropNodeTypeSelect.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropNodeTypeSelect.delimiter.ToString() ) >= 0 ) ||
+										  ( first && Required && SelectedViewIds.Count == 0 ) );
+				first = false;
+				_ViewsForCBA.Rows.Add( NewViewRow );
+			}
+			return _ViewsForCBA;
+		} // ViewsForCBA
+
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode SelectedViewIdsNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedViewIdsSubField.ToXmlNodeName(), SelectedViewIds.ToString() );
-            XmlNode CachedViewNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedViewNameSubField.ToXmlNodeName(), CachedViewNames.ToString() );
-        }
+			CswXmlDocument.AppendXmlAttribute( SelectedViewIdsNode, "SelectMode", SelectMode.ToString() );
+			XmlNode CachedViewNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedViewNameSubField.ToXmlNodeName(), CachedViewNames.ToString() );
+			XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
+			DataTable ViewsTable = ViewsForCBA();
+			foreach(DataRow ViewRow in ViewsTable.Rows)
+			{
+				XmlNode ViewNode = CswXmlDocument.AppendXmlNode( OptionsNode, "user" );
+
+				XmlNode NameNode = CswXmlDocument.AppendXmlNode( ViewNode, "column" );
+				CswXmlDocument.AppendXmlAttribute( NameNode, "field", NameColumn );
+				CswXmlDocument.AppendXmlAttribute( NameNode, "value", ViewRow[NameColumn].ToString() );
+
+				XmlNode KeyNode = CswXmlDocument.AppendXmlNode( ViewNode, "column" );
+				CswXmlDocument.AppendXmlAttribute( KeyNode, "field", KeyColumn );
+				CswXmlDocument.AppendXmlAttribute( KeyNode, "value", ViewRow[KeyColumn].ToString() );
+
+				XmlNode IncludeNode = CswXmlDocument.AppendXmlNode( ViewNode, "column" );
+				CswXmlDocument.AppendXmlAttribute( IncludeNode, "field", ValueColumn );
+				CswXmlDocument.AppendXmlAttribute( IncludeNode, "value", ViewRow[ValueColumn].ToString() );
+			}
+		}
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            SelectedViewIds.FromString( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedViewIdsSubField.ToXmlNodeName() ) );
-            PendingUpdate = true;
+			//SelectedViewIds.FromString( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedViewIdsSubField.ToXmlNodeName() ) );
+			//PendingUpdate = true;
+
+			CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
+
+			foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "options" ).ChildNodes )
+			{
+				string key = string.Empty;
+				string name = string.Empty;
+				bool value = false;
+				foreach( XmlNode ColumnNode in ItemNode.ChildNodes )
+				{
+					if( KeyColumn == ColumnNode.Attributes["field"].Value )
+						key = ColumnNode.Attributes["value"].Value;
+					if( NameColumn == ColumnNode.Attributes["field"].Value )
+						name = ColumnNode.Attributes["value"].Value;
+					if( ValueColumn == ColumnNode.Attributes["field"].Value )
+						value = CswConvert.ToBoolean( ColumnNode.Attributes["value"].Value );
+				}
+				if( value )
+				{
+					NewSelectedViewIds.Add( key );
+				}
+			} // foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "Options" ).ChildNodes )
+
+			SelectedViewIds = NewSelectedViewIds;
+			RefreshViewName();
         }
 
         public override void ToXElement( XElement ParentNode )
