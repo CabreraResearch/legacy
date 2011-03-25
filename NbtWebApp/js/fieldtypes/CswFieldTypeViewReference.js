@@ -8,21 +8,39 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var Value = o.$propxml.children('value').text().trim();
+                var ViewId = o.$propxml.children('viewid').text().trim();
+                var ViewMode = o.$propxml.children('viewmode').text().trim();
+                var ViewName = o.$propxml.children('name').text().trim();
 
-                $Div.append('[Not Implemented Yet]');
-//                if(ReadOnly)
-//                {
-//                    $Div.append(Value);
-//                }
-//                else 
-//                {
-//                    
-//                }
+				var $table = $Div.CswTable('init', { 'ID': o.ID + '_tbl' });
+
+                $table.CswTable('cell', 1, 1).CswImageButton({
+					'ID': o.ID + '_view',
+					'ButtonType': CswImageButton_ButtonType.View,
+					'AlternateText': 'View',
+					'Required': o.Required,
+					'onClick': function (alttext) {
+						SetCurrentView({ 'viewid': ViewId, 'viewmode': ViewMode });
+						window.location = "NewMain.html";
+						return CswImageButton_ButtonType.None; 
+					}
+				});
+                if(!o.ReadOnly)
+                {
+					$table.CswTable('cell', 1, 2).CswImageButton({
+						'ID': o.ID + '_edit',
+						'ButtonType': CswImageButton_ButtonType.Edit,
+						'AlternateText': 'Edit',
+						'Required': o.Required,
+						'onClick': function (alttext) {
+							window.location = "EditView.aspx?step=2&return=NewMain.html&viewid=" + ViewId;
+							return CswImageButton_ButtonType.None; 
+						}
+					});
+				}
             },
         save: function(o) {
-//                var $TextBox = $propdiv.find('input');
-//                $xml.children('barcode').text($TextBox.val());
+				// nothing to save
             }
     };
     
