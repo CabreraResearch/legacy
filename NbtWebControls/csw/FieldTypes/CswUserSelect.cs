@@ -42,29 +42,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 {
                     if( _AllowEditValue )
                     {
-                        DataTable Data = new CswDataTable( "Userselectdatatable", "" );
-                        Data.Columns.Add( "User Name", typeof( string ) );
-                        Data.Columns.Add( "userid", typeof( int ) );
-                        Data.Columns.Add( "Include", typeof( bool ) );
-
-                        bool first = true;
-                        ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                        for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
-                        {
-                            UsersTree.goToNthChild( c );
-
-                            DataRow NTRow = Data.NewRow();
-                            NTRow["User Name"] = UsersTree.getNodeNameForCurrentPosition();
-                            NTRow["userid"] = UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
-                            NTRow["Include"] = ( ( Prop.AsUserSelect.SelectedUserIds.Contains( UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() ) ) ||
-                                                 ( first && Required && Prop.AsUserSelect.SelectedUserIds.Count == 0 ) );
-                            Data.Rows.Add( NTRow );
-                            first = false;
-
-                            UsersTree.goToParentNode();
-                        }
-
-                        _CBArray.UseRadios = false;
+                        DataTable Data = Prop.AsUserSelect.getUserOptions();
+                    
+						_CBArray.UseRadios = false;
                         _CBArray.CreateCheckBoxes( Data, "User Name", "userid" );
                     }
                 }

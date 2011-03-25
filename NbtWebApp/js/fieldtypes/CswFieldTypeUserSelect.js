@@ -1,6 +1,9 @@
 ﻿; (function ($) {
         
     var PluginName = 'CswFieldTypeUserSelect';
+	var NameCol = "User Name";
+    var KeyCol = "UserId";
+    var ValueCol = "Include";
 
     var methods = {
         'init': function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
@@ -8,21 +11,48 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var Value = o.$propxml.children('value').text().trim();
+                var SelectedUserIds = o.$propxml.children('NodeId').text().trim();
+				var $OptionsXml = o.$propxml.children('options');
 
-                $Div.append('[Not Implemented Yet]');
-//                if(ReadOnly)
-//                {
-//                    $Div.append(Value);
-//                }
-//                else 
-//                {
-//                    
-//                }
+				var $CBADiv = $('<div />')
+								.appendTo($Div);
+
+				// get data
+				var data = new Array();
+				var d = 0;
+				$OptionsXml.children().each(function () {
+					var $user = $(this);
+					var $elm = { 
+								 'label': $user.children('column[field="' + NameCol + '"]').attr('value'),
+								 'key': $user.children('column[field="' + KeyCol + '"]').attr('value'),
+								 'values': [ ($user.children('column[field="' + ValueCol + '"]').attr('value') == "True") ]
+							   };
+					data[d] = $elm;
+					d++;
+				});
+
+				$CBADiv.CswCheckBoxArray('init', {
+					'ID': o.ID + '_cba',
+					'cols': [ ValueCol ],
+					'data': data,
+					'UseRadios': false,
+					'Required': o.Required,
+					'onchange': o.onchange
+				});
             },
         'save': function(o) {
-//                var $TextBox = $propdiv.find('input');
-//                $xml.children('barcode').text($TextBox.val());
+				var $OptionsXml = o.$propxml.children('options');
+				var $CBADiv = o.$propdiv.children('div').first();
+				var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+				for (var r = 0; r < formdata.length; r++) {
+					var checkitem = formdata[r][0];
+					var $xmlitem = $OptionsXml.find('user:has(column[field="' + KeyCol + '"][value="' + checkitem.key + '"])');
+					var $xmlvaluecolumn = $xmlitem.find('column[field="' + ValueCol + '"]');
+					if (checkitem.checked && $xmlvaluecolumn.attr('value') == "False")
+						$xmlvaluecolumn.attr('value', 'True');
+					else if (!checkitem.checked && $xmlvaluecolumn.attr('value') == "True")
+						$xmlvaluecolumn.attr('value', 'False');
+				} // for( var r = 0; r < formdata.length; r++)
             }
     };
     
