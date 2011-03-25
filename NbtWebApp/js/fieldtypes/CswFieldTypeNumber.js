@@ -6,60 +6,21 @@
         init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
             var $Div = $(this);
-            $Div.contents().remove();
 
-            var Value = o.$propxml.children('value').text().trim();
-            if(Value == "NaN") Value = '';
-            var MinValue = o.$propxml.children('value').attr('minvalue');
-            var MaxValue = o.$propxml.children('value').attr('maxvalue');
-            var Precision = o.$propxml.children('value').attr('precision');
+			$Div.CswNumberTextBox({
+				'ID': o.ID,
+				'Value': o.$propxml.children('value').text().trim(),
+				'MinValue': o.$propxml.children('value').attr('minvalue'),
+				'MaxValue': o.$propxml.children('value').attr('maxvalue'),
+				'Precision': o.$propxml.children('value').attr('precision'),
+				'ReadOnly': o.ReadOnly,
+				'Required': o.Required,
+				'onchange': o.onchange
+			});
 
-            if(o.ReadOnly)
-            {
-                $Div.append(Value);
-            }
-            else 
-            {
-                var $TextBox = $('<input type="text" class="textinput number" id="'+ o.ID +'" name="' + o.ID + '" value="'+ Value +'" />"' )
-                                    .appendTo($Div)
-                                    .change(o.onchange);
-                    
-                if(MinValue != undefined)
-                {
-                    jQuery.validator.addMethod( o.ID + "_validateFloatMinValue", function(value, element) { 
-                            return (this.optional(element) || validateFloatMinValue($(element).val(), MinValue));
-                        }, 'Number must be greater than or equal to ' + MinValue);
-                    $TextBox.addClass( o.ID + "_validateFloatMinValue" );
-                }
-                if(MaxValue != undefined)
-                {
-                    jQuery.validator.addMethod( o.ID + "_validateFloatMaxValue", function(value, element) { 
-                            return (this.optional(element) || validateFloatMaxValue($(element).val(), MaxValue));
-                        }, 'Number must be less than or equal to ' + MaxValue);
-                    $TextBox.addClass( o.ID + "_validateFloatMaxValue" );
-                }
-                if(Precision == undefined || Precision <= 0)
-                {
-                    jQuery.validator.addMethod( o.ID + "_validateInteger", function(value, element) { 
-                            return (this.optional(element) || validateInteger($(element).val()));
-                        }, 'Value must be an integer');
-                    $TextBox.addClass( o.ID + "_validateInteger" );
-                } else {
-                    jQuery.validator.addMethod( o.ID + "_validateFloatPrecision", function(value, element) { 
-                            return (this.optional(element) || validateFloatPrecision($(element).val(), Precision));
-                        }, 'Value must be numeric');
-                    $TextBox.addClass( o.ID + "_validateFloatPrecision" );
-                }
-
-                if(o.Required)
-                {
-                    $TextBox.addClass("required");
-                }
-            }
         },
         save: function(o) { //$propdiv, $xml
-                var $TextBox = o.$propdiv.find('input');
-                o.$propxml.children('value').text($TextBox.val());
+				o.$propxml.children('value').text(o.$propdiv.CswNumberTextBox('value'));
             }
     };
     
