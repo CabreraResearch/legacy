@@ -19,19 +19,46 @@
             $cell11.append(Value + '&nbsp;' + Units);
             if(!o.ReadOnly)
             {
-                var $EditButton = $('<div />')
-                                    .appendTo($cell12);
-                $EditButton.CswImageButton({
+                var $EditButton = $cell12.CswImageButton({
                                                 ButtonType: CswImageButton_ButtonType.Edit,
                                                 AlternateText: 'Edit',
                                                 'ID': o.ID,
-                                                onClick: function (alttext) { alert('This is not implemented yet'); return CswImageButton_ButtonType.None; }
+                                                onClick: function (alttext) { 
+													$edittable.show();
+												}
                                             });
+				
+				var $edittable = $table.CswTable('cell', 2, 2).CswTable('init', { 'ID': o.ID + '_edittbl' });
+				$edittable.CswTable('cell', 1, 1).append('Start Date');
+                var $StartDateBox = $('<input type="text" class="textinput date" id="'+ o.ID +'_sd" name="' + o.ID + '_sd" value="'+ StartDate +'" />"' )
+									.appendTo($edittable.CswTable('cell', 1, 2))
+                                    .change(o.onchange)
+                                    .datepicker();
+				
+//				$edittable.CswTable('cell', 2, 1).append('End Date');
+//                var $EndDateBox = $('<input type="text" class="textinput date" id="'+ o.ID +'_ed" name="' + o.ID + '_ed" value="" />"' )
+//									.appendTo($edittable.CswTable('cell', 2, 2))
+//                                    .datepicker();
+				
+				$edittable.CswTable('cell', 3, 1).append('Units');
+				var $UnitsSelect = $('<select id="'+ o.ID + '_units" />')
+									.appendTo($edittable.CswTable('cell', 3, 2));
+				var $hoursopt = $('<option value="hours">hours</option>').appendTo($UnitsSelect);
+				if(Units == 'hours') $hoursopt.attr('selected', 'true');
+				var $daysopt = $('<option value="days">days</option>').appendTo($UnitsSelect);
+				if(Units == 'days') $daysopt.attr('selected', 'true');
+
+//				var $refreshbtn = $('<input type="button" id="'+ o.ID + '_refresh" value="Refresh">')
+//									.appendTo($edittable.CswTable('cell', 4, 2));
+
+				$edittable.hide();
             }
         },
         save: function(o) { //$propdiv, $xml
-                var $StartDateTextBox = o.$propdiv.find('input#'+ o.ID +'_sd');
-                o.$propxml.children('startdatetime').text($StartDateTextBox.val());
+                var StartDate = o.$propdiv.find('#'+ o.ID +'_sd').val();
+                var Units = o.$propdiv.find('#'+ o.ID +'_units').val();
+                o.$propxml.children('startdatetime').text(StartDate);
+                o.$propxml.children('units').text(Units);
             }
     };
     
