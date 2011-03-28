@@ -1,5 +1,9 @@
-﻿(function ($)
-{
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+
+(function ($) { /// <param name="$" type="jQuery" />
+
 	var PluginName = "CswButton";
 
 	var methods = {
@@ -67,8 +71,7 @@
 	};
 
 	// Method calling logic
-	$.fn.CswButton = function (method)
-	{
+	$.fn.CswButton = function (method) { /// <param name="$" type="jQuery" />
 
 		if (methods[method])
 		{

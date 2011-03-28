@@ -1,4 +1,9 @@
-﻿// for CswInput
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
+// for CswInput
 var CswInput_Types = {
     button: { id: 0, name: 'button', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
     checkbox: { id: 1, name: 'checkbox', placeholder: false, autocomplete: false, value: { required: true, allowed: true} },
@@ -25,7 +30,7 @@ var CswInput_Types = {
     week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true} }
 };
 
-; (function ($) {
+; (function ($) { /// <param name="$" type="jQuery" />
 	
     var PluginName = "CswInput";
     
@@ -141,7 +146,7 @@ var CswInput_Types = {
 
     };
     	// Method calling logic
-	$.fn.CswInput = function (method) {
+	$.fn.CswInput = function (method) { /// <param name="$" type="jQuery" />
 		
 		if ( methods[method] ) {
 		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));

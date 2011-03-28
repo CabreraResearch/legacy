@@ -1,15 +1,19 @@
-﻿// ------------------------------------------------------------------------------------
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+
+// ------------------------------------------------------------------------------------
 // Ajax
 // ------------------------------------------------------------------------------------
 
-function CswAjaxJSON(options) {
+function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
 	var o = {
 		url: '',
 		data: '',
 		success: function (result) { },
 		error: function () { }
 	};
-
+    
 	if (options) {
 		$.extend(o, options);
 	}
@@ -45,7 +49,7 @@ function CswAjaxJSON(options) {
 	});    // $.ajax({
 } // CswAjaxXml()
 
-function CswAjaxXml(options) {
+function CswAjaxXml(options) { /// <param name="$" type="jQuery" />
 	var o = {
 		url: '',
 		data: '',
@@ -91,9 +95,8 @@ function CswAjaxXml(options) {
 		});   // $.ajax({
 	} // if(o.url != '')
 } // CswAjaxXml()
-		
-function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown) 
-{
+
+function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown) { /// <param name="$" type="jQuery" />
 	//	ErrorMessage = "A WebServices Error Occurred: " + textStatus;
 	//	if (null != errorThrown) {
 	//		ErrorMessage += "; Exception: " + errorThrown.toString()
@@ -126,7 +129,7 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
 //    return ret;
 //}
 
-function xmlToString($xmlnode) {
+function xmlToString($xmlnode) { /// <param name="$" type="jQuery" />
 	var xmlstring = '';
 	if ($xmlnode != '' && $xmlnode != undefined)
 	{
@@ -144,8 +147,7 @@ function xmlToString($xmlnode) {
 	return xmlstring;
 }
 
-function jsonToString(j)
-{
+function jsonToString(j) {
 	if(typeof j == "object")
 	{
 		var ret = "{";
@@ -170,8 +172,7 @@ function jsonToString(j)
 	return ret;
 } // jsonToString
 
-function safeJsonParam(str)
-{
+function safeJsonParam(str) {
     var ret = '';
     if (str !== undefined)
     {
@@ -188,8 +189,7 @@ function safeJsonParam(str)
 var changed = 0;
 var checkChangesEnabled = true;
 
-function setChanged()
-{
+function setChanged() {
 	if (checkChangesEnabled)
 	{
 		changed = 1;
@@ -209,8 +209,7 @@ function setChanged()
 	}
 }
 
-function unsetChanged()
-{
+function unsetChanged() {
 	if (checkChangesEnabled)
 	{
 		//        var statusimage = getMainStatusImage();
@@ -230,16 +229,14 @@ function unsetChanged()
 	}
 }
 
-function checkChanges()
-{
+function checkChanges() {
 	if (checkChangesEnabled && changed == 1)
 	{
 		return 'If you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.';
 	}
 }
 
-function manuallyCheckChanges()
-{
+function manuallyCheckChanges() {
 	var ret = true;
 	if (checkChangesEnabled && changed == 1)
 	{
@@ -256,8 +253,7 @@ function manuallyCheckChanges()
 	return ret;
 }
 
-function initCheckChanges()
-{
+function initCheckChanges() {
 	// Assign the checkchanges event to happen onbeforeunload
 	if ((window.onbeforeunload !== null) && (window.onbeforeunload !== undefined))
 	{
@@ -310,8 +306,7 @@ if ((window.onload !== null) && (window.onload !== undefined))
 // User permissions
 // ------------------------------------------------------------------------------------
 
-function IsAdministrator(options)
-{
+function IsAdministrator(options) {
 	var o = { 
 		'Yes': function() { }, 
 		'No': function() { }
@@ -339,8 +334,7 @@ function IsAdministrator(options)
 // ------------------------------------------------------------------------------------
 // Node interactions
 // ------------------------------------------------------------------------------------
-function copyNode(options)
-{
+function copyNode(options) {
 	var o = {
 		'nodeid': '',
 		'nodekey': '',
@@ -360,7 +354,7 @@ function copyNode(options)
 	});
 }
 
-function deleteNodes(options) {
+function deleteNodes(options) { /// <param name="$" type="jQuery" />
 	var o = {
 		'nodeids': [],
 		'onSuccess': function (nodeid, nodekey) { }
@@ -393,8 +387,7 @@ function deleteNodes(options) {
 // jsTree
 // ------------------------------------------------------------------------------------
 
-function jsTreeGetSelected($treediv)
-{
+function jsTreeGetSelected($treediv) { /// <param name="$" type="jQuery" />
 	var IDPrefix = $treediv.attr('id');
 	$SelectedItem = $treediv.jstree('get_selected');
 	var ret = { 
@@ -411,14 +404,13 @@ function jsTreeGetSelected($treediv)
 // Menu
 // ------------------------------------------------------------------------------------
 
-function GoHome() 
-{
+function GoHome() { /// <param name="$" type="jQuery" />
 	$.CswCookie('clear', CswCookieName.CurrentView.ViewId);
 	$.CswCookie('clear', CswCookieName.CurrentView.ViewMode);
 	window.location = "NewMain.html";
 }
 
-function HandleMenuItem(options) {
+function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
 	var o = {
 		'$ul': '',
 		'$itemxml': '',
@@ -568,8 +560,7 @@ function openPopup(url, height, width) {
 // Validation
 // ------------------------------------------------------------------------------------
 
-function validateTime(value)
-{
+function validateTime(value) {
 	var isValid = true;
 	var regex = /^(\d?\d):(\d\d)\s?([APap][Mm])?$/g;
 	var match = regex.exec(value);
@@ -645,13 +636,11 @@ function validateInteger(value) {
 // strings
 // ------------------------------------------------------------------------------------
 
-function startsWith(source, search) 
-{
+function startsWith(source, search) {
 	return (source.substr(0, search.length) == search);
 }
 
-function getTimeString(date)
-{
+function getTimeString(date) {
 	var ret = '';
 	var hours = date.getHours()
 	var minutes = date.getMinutes()
@@ -670,8 +659,7 @@ function getTimeString(date)
 	return ret;
 }
 
-function makeId(options)
-{
+function makeId(options) { /// <param name="$" type="jQuery" />
     var o = {
         'ID': '',
         'prefix': '',
@@ -709,8 +697,7 @@ function iterate(obj) {
 }
 
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
-function log(s)
-{
+function log(s) {
 	try
 	{
 		console.log(s);
