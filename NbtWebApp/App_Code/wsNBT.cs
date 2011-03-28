@@ -536,19 +536,17 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getSearchableViews( string IsMobile, string OrderBy = null )
+		public XElement getSearchableViews( string IsMobile, string OrderBy )
 		{
-			var SearchNode = new XElement( "search" );
+            var SearchNode = new XElement( "searchableviews" );
 			try
 			{
 				start();
 
 				ICswNbtUser UserId = _CswNbtResources.CurrentNbtUser;
 				bool ForMobile = CswConvert.ToBoolean( IsMobile );
-
-				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-				SearchNode = ws.getSearchableViews( UserId, ForMobile, OrderBy );
-
+                XElement Views = _CswNbtResources.ViewSelect.getSearchableViews( UserId, ForMobile, OrderBy ); ;
+			    SearchNode.Add( Views );
 				end();
 			}
 			catch( Exception ex )

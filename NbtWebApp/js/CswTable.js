@@ -20,6 +20,7 @@
                             CellCssClass: '',
                             cellpadding: 0,
                             cellspacing: 0,
+                            cellalign: 'top',
                             width: '',
                             align: '',
                             onCreateCell: function(e, $table, $cell, row, column) {}
@@ -27,7 +28,7 @@
                         if (options) {
                             $.extend(o, options);
                         }
-                        var $table = $('<table id="'+ o.ID +'" class="'+ o.TableCssClass +'" align="'+ o.align +'" width="'+ o.width +'" cellcssclass="'+ o.CellCssClass +'" cellpadding="'+ o.cellpadding +'" cellspacing="'+ o.cellspacing +'" border="0"><tr><td class="'+ o.CellCssClass + '"></td></tr></table>');
+                        var $table = $('<table id="'+ o.ID +'" class="'+ o.TableCssClass +'" align="'+ o.align +'" width="'+ o.width +'" cellcssclass="'+ o.CellCssClass +'" cellpadding="'+ o.cellpadding +'" cellspacing="'+ o.cellspacing +'" border="0" cellalign="' + o.cellalign + '"><tr><td class="'+ o.CellCssClass + '"></td></tr></table>');
                         $table.bind('CswTable_onCreateCell', function(e, $table, $cell, row, column) { 
                                                                 o.onCreateCell(e, $table, $cell, row, column); 
                                                                 e.stopPropagation();  // prevents events from triggering in nested tables
@@ -147,7 +148,7 @@
 		        }
 		        var $row = $($table.children('tbody').children('tr')[row-1]);
 		        while (col > $row.children('td').length) {
-			        var $newcell = $('<td class="'+ $table.attr('cellcssclass') +'" valign="top"></td>')
+			        var $newcell = $('<td class="'+ $table.attr('cellcssclass') +'" valign="'+ $table.attr('cellalign') +'"></td>')
                                         .appendTo($row);
                     $table.trigger('CswTable_onCreateCell', [ $table, $newcell, row, $row.children('td').length ]);
 		        }

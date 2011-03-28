@@ -37,8 +37,6 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         private XElement _getNodeTypeBasedSearch( Int32 SelectedNodeTypeId )
         {
-            XElement NodeTypeSearch = new XElement( "search", new XAttribute("searchtype", "nodetypesearch") );
-            XElement SelectOptions = new XElement( "select", new XAttribute( "id", "node_type_select" ), new XAttribute( "name", "node_type_select" ) );
             Int32 SelectWidth = 0;
             var SelectedNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
             CswNbtMetaDataObjectClass SearchOC = null;
@@ -95,7 +93,7 @@ namespace ChemSW.Nbt.WebServices
                 ThisOption.Value = NodeType.NodeTypeName;
                 NodeTypeSelect.Add( ThisOption );
             }
-            SelectOptions.Add( NodeTypeSelect );
+            //SelectOptions.Add( NodeTypeSelect );
 
             XElement ObjectClassSelect = new XElement( "optgroup", new XAttribute( "label", "Generic Types" ) );
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses.Cast<CswNbtMetaDataObjectClass>()
@@ -118,9 +116,11 @@ namespace ChemSW.Nbt.WebServices
                 ThisOption.Value = "All " + ObjectClass.ObjectClass;
                 ObjectClassSelect.Add( ThisOption );
             }
-            SelectOptions.Add( ObjectClassSelect );
+            //SelectOptions.Add( ObjectClassSelect );
+
+            
             //SelectOptions.Add( new XAttribute( "style", "width: " + (SelectWidth*7) + "px;" ) );
-            NodeTypeSearch.Add( SelectOptions );
+            //NodeTypeSearch.Add( SelectOptions );
 
             XElement NodeTypeProps;
             if( null != SelectedNodeType )
@@ -132,8 +132,15 @@ namespace ChemSW.Nbt.WebServices
                 NodeTypeProps = getNodeTypeProps( "objectclass", SearchOC.ObjectClassId.ToString() );
             }
 
-            NodeTypeSearch.Add( NodeTypeProps );
-
+            XElement NodeTypeSearch = new XElement( "search", 
+                                            new XAttribute( "searchtype", "nodetypesearch" ), 
+                                            new XElement( "nodetypes", 
+                                                new XElement( "select", 
+                                                    new XAttribute( "id", "node_type_select" ), 
+                                                    new XAttribute( "name", "node_type_select" ),
+                                                        NodeTypeSelect,
+                                                        ObjectClassSelect)),
+                                            NodeTypeProps);
             return NodeTypeSearch;
         } // getNodeTypeBasedSearch()
 
@@ -180,11 +187,37 @@ namespace ChemSW.Nbt.WebServices
         } // _getObjectClassProps()
 
         /// <summary>
-        /// In the context of a NodeType based 
+        /// In the context of a NodeType based, retuns as:
+        ///     <nodetypeprops>
+        ///         <properties>
+        ///             <select>
+        ///                 <optgroup label="Specific Properties">
+        ///                     <option value="1">Barcode</option>
+        ///                 </optgroup>
+        ///             </select>
+        ///         </properties>
+        ///         <propertyfilters>
+        ///             <property propname="Barcode" fieldtype="Barcode">
+        ///                 <defaultsubfield propname="Barcode>Equals</defaultsubfield>
+        ///                 <subfields>
+        ///                     <select id="filter_select">
+        ///                         <option value="Equals">Equals</option>
+        ///                     </select>
+        ///                 </subfields>
+        ///                 <filters>
+        ///                     <subfield propname="Barcode">Field1
+        ///                         <select id="filter_select">
+        ///                             <option value="Equals">Equals</option>
+        ///                         </select>
+        ///                     </subfield>
+        ///                 </filters>
+        ///             </property>   
+        ///         </propertyfilters>
+        ///     </nodetypeprops>
         /// </summary>
         public XElement getNodeTypeProps( string RelatedIdType, string ObjectPk )
         {
-            XElement SearchCriteriaNode = new XElement( "searchcriteria" );
+            XElement NodeTypePropsNode = new XElement( "nodetypeprops" );
             Int32 ObjectId = CswConvert.ToInt32( ObjectPk );
             if( Int32.MinValue != ObjectId )
             {
@@ -201,8 +234,8 @@ namespace ChemSW.Nbt.WebServices
                     NodeTypeProps = _getObjectClassProps( ObjectClass );
                 }
 
-                XElement AllPropsNode = new XElement( "properties" );
-                XElement FiltersNode = new XElement( "filters" );
+                string DefaultPropName = string.Empty;
+                XElement FiltersNode = new XElement( "propertyfilters" );
                 XElement NodeTypePropsGroup = new XElement( "optgroup", new XAttribute( "label", "Specific Properties" ) );
                 XElement ObjectClassPropsGroup = new XElement( "optgroup", new XAttribute( "label", "Generic Properties" ) );
 
@@ -217,7 +250,7 @@ namespace ChemSW.Nbt.WebServices
                         if( Prop == NodeTypeProps.First() )
                         {
                             PropNode.Add( new XAttribute( "selected", "selected" ) );
-                            AllPropsNode.Add(new XAttribute( "defaultprop", Prop.PropName ) );
+                            DefaultPropName = Prop.PropName;
                         }
                         if( Int32.MinValue != Prop.FirstPropVersionId && "nodetype" == RelatedIdType )
                         {
@@ -232,43 +265,49 @@ namespace ChemSW.Nbt.WebServices
 
                         _getPropSubFields( ref FiltersNode, Prop );
                     }
-                    if( NodeTypePropsGroup.HasElements )
-                    {
-                        AllPropsNode.Add( NodeTypePropsGroup );
-                    }
-                    if( ObjectClassPropsGroup.HasElements )
-                    {
-                        AllPropsNode.Add( ObjectClassPropsGroup );
-                    }
-
-                    SearchCriteriaNode.Add( AllPropsNode );
-                    SearchCriteriaNode.Add( FiltersNode );
+                    
+                    NodeTypePropsNode.Add( new XElement("properties",
+                                                new XAttribute( "defaultprop", DefaultPropName),
+                                                new XElement( "select",
+                                                    new XAttribute( "id", "properties_select" ),
+                                                    new XAttribute( "name", "properties_select" ),
+                                                    ( NodeTypePropsGroup.HasElements ) ? NodeTypePropsGroup : new XElement( "optgroup" ),
+                                                    ( ObjectClassPropsGroup.HasElements ) ? ObjectClassPropsGroup : new XElement( "optgroup" ) ) ), 
+                                                FiltersNode );
                 }
             }
-            return SearchCriteriaNode;
+            return NodeTypePropsNode;
         } // getNodeTypeProps()
 
         /// <summary>
-        /// Returns the Subfields XML for a SubFields collection
+        /// Returns the Subfields XML for a SubFields collection as:
+        ///     <propertyfilters>
+        ///         <property propname="Barcode" fieldtype="Barcode">
+        ///             <defaultsubfield propname="Barcode>Equals</defaultsubfield>
+        ///             <subfields>
+        ///                 <select id="filter_select">
+        ///                     <option value="Equals">Equals</option>
+        ///                 </select>
+        ///             </subfields>
+        ///             <filters>
+        ///                 <subfield propname="Barcode">Field1
+        ///                     <select id="filter_select">
+        ///                         <option value="Equals">Equals</option>
+        ///                     </select>
+        ///                 </subfield>
+        ///             </filters>
+        ///          </property>   
+        ///      </propertyfilters>
         /// </summary>
         private void _getPropSubFields( ref XElement ParentNode, CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             CswNbtSubFieldColl SubFields = NodeTypeProp.FieldTypeRule.SubFields;
             CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = NodeTypeProp.FieldType.FieldType;
 
-
-            XElement DefaultSubFieldNode = new XElement( "defaultsubfield",
-                                                        new XAttribute( "propname", NodeTypeProp.PropName ),
-                                                        new XAttribute( "fieldtype", NodeTypeProp.FieldType.FieldType ) ) 
-                                           { Value = NodeTypeProp.FieldTypeRule.SubFields.Default.Name.ToString() };
-            XElement AllSubFieldsNode = new XElement( "allsubfields", 
-                                            new XAttribute( "propname", NodeTypeProp.PropName ),
-                                            new XAttribute( "fieldtype", NodeTypeProp.FieldType.FieldType ) ) 
-                                        { Value = NodeTypeProp.PropName };
-            XElement SubFieldsNode = new XElement( "subfields" );
-            
-            XElement FiltersNode = new XElement( "filters" ) { Value = NodeTypeProp.PropName };
-            
+            XElement SubfieldSelect = new XElement( "select", new XAttribute( "id", "subfield_select" ), new XAttribute( "name", "subfield_select" ) );
+            string DefaultFilter = NodeTypeProp.FieldTypeRule.SubFields.Default.Name.ToString();
+            string DefaultSubfield = NodeTypeProp.FieldTypeRule.SubFields.Default.Column.ToString();
+            XElement FiltersNode = new XElement( "propertyfilters" ) { Value = NodeTypeProp.PropName };
 
             foreach( CswNbtSubField Field in SubFields )
             {
@@ -282,38 +321,58 @@ namespace ChemSW.Nbt.WebServices
                     FieldNode.Add( new XAttribute( "selected", "selected" ) );
                 }
 
-                if( !string.IsNullOrEmpty(DefaultSubFieldNode.Value))
+                if( !string.IsNullOrEmpty( DefaultFilter ) )
                 {
-                    DefaultSubFieldNode.Value = Field.DefaultFilterMode.ToString();
+                    DefaultFilter = Field.DefaultFilterMode.ToString();
                 }
                 
                 _getSubFieldFilters( ref FiltersNode, Field, NodeTypeProp );
-                SubFieldsNode.Add( FieldNode );
+                SubfieldSelect.Add( FieldNode );
             }
 
-            AllSubFieldsNode.Add( SubFieldsNode );
-            AllSubFieldsNode.Add( FiltersNode );
-
+            XElement FiltersOptionsNode = new XElement( "filtersoptions" );
             if( NodeTypeProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
             {
-                XElement FiltersOptionsNode = new XElement( "filtersoptions" ) { Value = NodeTypeProp.PropName };
-                FiltersOptionsNode.Add( _getFilterOptions( NodeTypeProp ) );
-                AllSubFieldsNode.Add( FiltersOptionsNode );
+                FiltersOptionsNode.Value = NodeTypeProp.PropName;
+                FiltersOptionsNode.Add( new XElement( "select",
+                                                      new XAttribute( "id", "filtersoptions_select" ),
+                                                      new XAttribute( "name", "filtersoptions_select" ),
+                                                      _getFilterOptions( NodeTypeProp ) ) );
             }
 
-            ParentNode.Add( AllSubFieldsNode );
-            ParentNode.Add( DefaultSubFieldNode );
+
+
+            XElement ThisProp = new XElement( "property" ) { Value = NodeTypeProp.PropName };
+            ThisProp.Add( new XAttribute( "propname", NodeTypeProp.PropName ),
+                            new XAttribute( "fieldtype", NodeTypeProp.FieldType.FieldType ),
+                            new XElement( "defaultsubfield",
+                                        new XAttribute( "filter", DefaultFilter ),
+                                        new XAttribute( "subfield", DefaultSubfield ) ),
+                            new XElement( "subfields",
+                                        SubfieldSelect ),
+                            FiltersNode,
+                            FiltersOptionsNode
+                          );
+            ParentNode.Add( ThisProp );
             
 
         } // _getPropSubFields()
 
         /// <summary>
-        /// Returns the XML for For SubFields Filters
+        /// Returns the XML for For SubFields Filters as:
+        ///     <filters>
+        ///         <subfield propname="Barcode">Field1
+        ///             <select id="filter_select">
+        ///                 <option value="Equals">Equals</option>
+        ///             </select>
+        ///         </subfield>
+        ///      </filters>
         /// </summary>
         private void _getSubFieldFilters( ref XElement FiltersNode, CswNbtSubField SubField, CswNbtMetaDataNodeTypeProp SelectedProp )
         {
             CswNbtPropFilterSql.PropertyFilterMode FilterModeToSelect = SubField.DefaultFilterMode;
-            
+            XElement SubFieldNode = new XElement( "subfield", new XAttribute( "column", SubField.Column ), new XAttribute( "name", SubField.Name ) );
+            XElement FiltersSelect = new XElement( "select", new XAttribute( "id", "filter_select" ), new XAttribute( "name", "filter_select" ) );
             foreach(  CswNbtPropFilterSql.PropertyFilterMode FilterModeOpt  in SubField.SupportedFilterModes )
             {
                 XElement ThisFilter = new XElement( "option",
@@ -324,8 +383,10 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ThisFilter.Add( new XAttribute( "selected", "selected" ) );
                 }
-                FiltersNode.Add( ThisFilter );
+                FiltersSelect.Add( ThisFilter );
             }
+            SubFieldNode.Add( FiltersSelect );
+            FiltersNode.Add( SubFieldNode );
         } // _getSubFieldFilters()
 
         /// <summary>
@@ -401,21 +462,7 @@ namespace ChemSW.Nbt.WebServices
             }
             return SearchNode;
         } // getViewBasedSearch()
-
-        /// <summary>
-        /// Returns an XElement of Views which are searchable. 
-        /// For rendering a picklist of searchable Views.
-        /// </summary>
-        public XElement getSearchableViews(ICswNbtUser Userid, bool ForMobile, string OrderBy)
-        {
-            var ReturnNode = new XElement( "search" );
-            if( null != Userid )
-            {
-                ReturnNode = _CswNbtResources.ViewSelect.getSearchableViews( Userid, ForMobile, OrderBy);
-            }
-            return ReturnNode;
-        } // getSearchableViews()
-
+        
         #endregion Get Search XML
 
         #region Execute Search

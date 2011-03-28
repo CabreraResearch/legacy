@@ -210,9 +210,9 @@ namespace ChemSW.Nbt
         {
             DataTable ViewsTable = null;
             var SearchableViewsTimer = new CswTimer();
-            XElement SearchNode = new XElement( "search" );
+            XElement SearchNode = new XElement( "select", new XAttribute( "id", "view_select" ), new XAttribute( "name", "view_select" ) );
 
-            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getSearchableViews_select", "getSearchableViewsInfo" );
+            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getSearchableViews_select", "getVisibleViewInfo" );
             ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
             ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
             if( MobileOnly )
@@ -242,10 +242,10 @@ namespace ChemSW.Nbt
                                                         User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ).Count() &&
                                                 ( ThisView.IsFullyEnabled() ) ) )
             {
-                SearchNode.Add( new XElement( "view",
-                                            new XAttribute( "viewname", ThisView.ViewName ),
-                                            new XAttribute( "viewmode", ThisView.ViewMode ),
-                                            new XAttribute( "viewid", ThisView.ViewId ) ) );
+                SearchNode.Add( new XElement( "option",
+                                            new XAttribute( "label", ThisView.ViewMode ),
+                                            new XAttribute( "value", ThisView.ViewId ) ) { Value = ThisView.ViewName } );
+
             }
             _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() finished", SearchableViewsTimer.ElapsedDurationInSecondsAsString );
 
