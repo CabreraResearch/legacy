@@ -12,6 +12,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Session;
 using ChemSW.Security;
 using ChemSW.NbtWebControls;
@@ -212,9 +213,9 @@ namespace ChemSW.Nbt.WebServices
                 string EuphemisticAuthenticationStatus = string.Empty;
                 if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
                 {
-
+                    ICswNbtUser CuurentUser = _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser;
                     CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtWebServiceResources, ForMobile );
-                    ReturnVal = result( wsView.Run( ParentId ) );
+                    ReturnVal = result( wsView.Run( ParentId, CuurentUser ) );
 
                     end();
                 }
