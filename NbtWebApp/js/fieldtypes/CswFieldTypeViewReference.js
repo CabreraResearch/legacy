@@ -19,7 +19,7 @@
 					'ButtonType': CswImageButton_ButtonType.View,
 					'AlternateText': 'View',
 					'Required': o.Required,
-					'onClick': function (alttext) {
+					'onClick': function ($ImageDiv) {
 						$.CswCookie('set', CswCookieName.CurrentView.ViewId, ViewId);
 						$.CswCookie('set', CswCookieName.CurrentView.ViewMode, ViewMode);
 						window.location = "NewMain.html";
@@ -33,7 +33,7 @@
 						'ButtonType': CswImageButton_ButtonType.Edit,
 						'AlternateText': 'Edit',
 						'Required': o.Required,
-						'onClick': function (alttext) {
+						'onClick': function ($ImageDiv) {
 							window.location = "EditView.aspx?step=2&return=NewMain.html&viewid=" + ViewId;
 							return CswImageButton_ButtonType.None; 
 						}

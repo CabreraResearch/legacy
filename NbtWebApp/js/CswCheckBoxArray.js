@@ -66,7 +66,7 @@
                         var checkid = o.ID + '_none';
                         var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
                                        .appendTo($cell)
-                                       .change(o.onchange);
+                                       .click(o.onchange);
                         $check.attr('key', '');
                         $check.attr('rowlabel', '[none]');
                         $check.attr('collabel', o.cols[c]);
@@ -94,7 +94,8 @@
                         $cell.addClass('cbarraycell');
                         var checkid = o.ID + '_' + r + '_' + c;
                         var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
-                                       .appendTo($cell);
+                                       .appendTo($cell)
+                                       .click(o.onchange);
                         $check.attr('key', row.key);
                         $check.attr('rowlabel', row.label);
                         $check.attr('collabel', o.cols[c]);

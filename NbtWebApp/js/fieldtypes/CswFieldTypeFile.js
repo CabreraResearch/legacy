@@ -26,7 +26,7 @@
                                             ButtonType: CswImageButton_ButtonType.Edit,
                                             AlternateText: 'Edit',
                                             ID: o.ID + '_edit',
-                                            onClick: function (alttext) 
+                                            onClick: function ($ImageDiv) 
 												{ 
 													$.CswDialog( 'FileUploadDialog', {
 														'url': '/NbtWebApp/wsNBT.asmx/fileForProp',
@@ -47,7 +47,7 @@
                                             ButtonType: CswImageButton_ButtonType.Clear,
                                             AlternateText: 'Clear',
                                             ID: o.ID + '_clr',
-                                            onClick: function (alttext) 
+                                            onClick: function ($ImageDiv) 
 												{ 
 													if(confirm("Are you sure you want to clear this file?"))
 													{

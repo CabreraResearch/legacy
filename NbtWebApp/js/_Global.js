@@ -2,7 +2,6 @@
 // Ajax
 // ------------------------------------------------------------------------------------
 
-
 function CswAjaxJSON(options) {
 	var o = {
 		url: '',
@@ -113,6 +112,132 @@ function xmlToString($xmlnode) {
 	}
 	return xmlstring;
 }
+
+// ------------------------------------------------------------------------------------
+// Check Changes
+// ------------------------------------------------------------------------------------
+
+var changed = 0;
+var checkChangesEnabled = true;
+
+function setChanged()
+{
+	if (checkChangesEnabled)
+	{
+		changed = 1;
+		//        var statusimage = getMainStatusImage();
+		//var savebutton = $('#SaveTab');
+		//        if (statusimage != null) {
+		//            statusimage.style.backgroundPosition = "0px -210px";
+		//            statusimage.onmouseover = function() { this.style.backgroundPosition = "-15px -210px"; }
+		//            statusimage.onmouseout = function() { this.style.backgroundPosition = "0px -210px"; }
+		//            statusimage.title = "There are unsaved changes";
+		//        } 
+//		if (savebutton != null)
+//		{
+//			savebutton.value = "Save Changes";
+//			savebutton.disabled = false;
+//		}
+	}
+}
+
+function unsetChanged()
+{
+	if (checkChangesEnabled)
+	{
+		//        var statusimage = getMainStatusImage();
+		//        if(statusimage != null)
+		//            statusimage.style.backgroundPosition = "0px -195px";
+		//        statusimage.onmouseover = function() { this.style.backgroundPosition = "-15px -195px"; }
+		//        statusimage.onmouseout = function() { this.style.backgroundPosition = "0px -195px"; }
+		//        statusimage.title = "There are no changes";
+//		var savebutton = $('#SaveTab');
+//		if (savebutton != null)
+//		{
+//			if (changed != 0)
+//				savebutton.value = "Changes Saved";
+//			savebutton.disabled = true;
+//		}
+		changed = 0;
+	}
+}
+
+function checkChanges()
+{
+	if (checkChangesEnabled && changed == 1)
+	{
+		return 'If you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.';
+	}
+}
+
+function manuallyCheckChanges()
+{
+	log('manuallycheckchanged: changed == ' + changed);
+	var ret = true;
+	if (checkChangesEnabled && changed == 1)
+	{
+		ret = confirm('Are you sure you want to navigate away from this page?\n\nIf you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.\n\nPress OK to continue, or Cancel to stay on the current page.');
+
+		// this serves several purposes:
+		// 1. after you've been prompted to lose this change, you won't be prompted again for the same change later
+		// 2. multiple calls to manuallyCheckChanges() in the same event won't prompt more than once
+		if (ret)
+		{
+			changed = 0;
+		}
+	}
+	return ret;
+}
+
+function initCheckChanges()
+{
+	// Assign the checkchanges event to happen onbeforeunload
+	if ((window.onbeforeunload !== null) && (window.onbeforeunload !== undefined))
+	{
+		window.onbeforeunload = function ()
+		{
+			var f = window.onbeforeunload;
+			var ret = f();
+			if (ret)
+			{
+				return checkChanges();
+			} else
+			{
+				return false;
+			}
+		};
+	} else
+	{
+		window.onbeforeunload = function ()
+		{
+			return checkChanges();
+		};
+	}
+
+	// IE6 has this annoying habit of throwing unspecified errors if we prevent
+	// the navigation with onbeforeunload after clicking a button.
+	// So we're going to trap this error and prevent it from being shown.
+	window.onerror = function (strError, uri, line)
+	{
+		if (strError.toLowerCase().indexOf('unspecified error') >= 0)
+		{
+			window.event.returnValue = true;
+		} else
+		{
+			window.event.returnValue = false;
+		}
+	}
+}
+
+if ((window.onload !== null) && (window.onload !== undefined))
+{
+	window.onload = new Function('initCheckChanges(); var f=' + window.onload + '; return f();');
+} else
+{
+	window.onload = function () { initCheckChanges(); };
+}
+
+
 
 // ------------------------------------------------------------------------------------
 // User permissions

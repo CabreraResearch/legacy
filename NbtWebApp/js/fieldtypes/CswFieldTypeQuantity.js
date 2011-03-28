@@ -21,7 +21,8 @@
 			
 			var selectedUnit = o.$propxml.children('units').contents().first().text();
 			var $unitsel = $('<select id="'+ o.ID + '_units" />')
-							.appendTo($Div);
+							.appendTo($Div)
+							.change(o.onchange);
 			o.$propxml.children('units').children().each(function() {
 				var unit = $(this).attr('value');
 				var $option = $('<option value="' + unit + '">' + unit + '</option>')

@@ -51,7 +51,7 @@
 <script type="text/javascript">
 
 	var debug = false;
-	
+
 	initAll();
 
 	function initAll()
@@ -107,7 +107,7 @@
 					} // onSuccess
 				}); // CswDashboard
 			} // onAuthenticate
-		});    // CswLogin
+		}); // CswLogin
 	} // initAll()
 
 	function clear(options)
@@ -162,80 +162,84 @@
 		});
 	} // refreshWelcome()
 
-	function handleItemSelect(options) 
+	function handleItemSelect(options)
 	{
-		clear({ all: true });
-		var o = {
-					type: 'view',
-					viewmode: 'tree',
-					itemid: '', 
-					text: '', 
-					iconurl: '',
-					viewid: '',
-					actionid: '',
-					reportid: '',
-					linktype: '',
-					nodeid: '',
-					cswnbtnodekey: ''
-				 };
-		if (options) {
-			$.extend(o, options);
-		}
-		if (o.viewid != undefined && o.viewid != '') //&& o.viewmode != undefined && o.viewmode != ''
+		if (manuallyCheckChanges())
 		{
-			$.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
-			$.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
-
-			switch (o.viewmode) //webservice converts to lower case
-		    {
-			    case 'grid':
-			    {
-				    if (debug) log('handleItemSelect() called getViewGrid()');
-                    getViewGrid( { 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey } );
-				    break;
-			    }
-			   case 'list':
-			   	{
-			   		if (debug) log('handleItemSelect() called getNodesTree() for ' + o.viewmode);
-			   		getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-			   		break;
-			   	}
-			    case 'tree': 
-			    {
-                    if(debug) log('handleItemSelect() called getNodesTree() for ' + o.viewmode);
-                    getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-				    break;
-			    }
-                default:
-                {
-                    if (debug) log('handleItemSelect() called getNodesTree() for ' + o.viewmode);
-                    getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-                    break;
-                }
-            }
-        }
-		else if(o.type != undefined && o.type != '')
-		{
-			switch(o.type)
+			clear({ all: true });
+			var o = {
+				type: 'view',
+				viewmode: 'tree',
+				itemid: '',
+				text: '',
+				iconurl: '',
+				viewid: '',
+				actionid: '',
+				reportid: '',
+				linktype: '',
+				nodeid: '',
+				cswnbtnodekey: ''
+			};
+			if (options)
 			{
-				case 'action':
+				$.extend(o, options);
+			}
+			if (o.viewid != undefined && o.viewid != '') //&& o.viewmode != undefined && o.viewmode != ''
+			{
+				$.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
+				$.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
+
+				switch (o.viewmode) //webservice converts to lower case
 				{
-					alert('Actions are not yet handled!');
-					break;
-				}
-				case 'report':
-				{
-					alert('Reports are not yet handled!');
-					break;
-				}
-				default:
-				{
-					alert('Handling for link type ' + o.linktype + ' is not implemented yet.');
-					break;
+					case 'grid':
+						{
+							if (debug) log('handleItemSelect() called getViewGrid()');
+							getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+							break;
+						}
+					case 'list':
+						{
+							if (debug) log('handleItemSelect() called getNodesTree() for ' + o.viewmode);
+							getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+							break;
+						}
+					case 'tree':
+						{
+							if (debug) log('handleItemSelect() called getNodesTree() for ' + o.viewmode);
+							getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+							break;
+						}
+					default:
+						{
+							if (debug) log('handleItemSelect() called getNodesTree() for ' + o.viewmode);
+							getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+							break;
+						}
 				}
 			}
-		}
-	}
+			else if (o.type != undefined && o.type != '')
+			{
+				switch (o.type)
+				{
+					case 'action':
+						{
+							alert('Actions are not yet handled!');
+							break;
+						}
+					case 'report':
+						{
+							alert('Reports are not yet handled!');
+							break;
+						}
+					default:
+						{
+							alert('Handling for link type ' + o.linktype + ' is not implemented yet.');
+							break;
+						}
+				}
+			}
+		} // if (manuallyCheckChanges())
+	} // handleItemSelect()
 	
 	function refreshMainMenu(options) {
 		var o = {
@@ -318,35 +322,38 @@
 										});
 	}
 
-	function onSelectTreeNode(options) {
-		var o = {
-			viewid: '', 
-			nodeid: '', 
-			cswnbtnodekey: ''
-		};
-		if (options)
+	function onSelectTreeNode(options)
+	{
+		if (manuallyCheckChanges())
 		{
-			$.extend(o, options);
+			var o = {
+				viewid: '',
+				nodeid: '',
+				cswnbtnodekey: ''
+			};
+			if (options)
+			{
+				$.extend(o, options);
+			}
+
+			$.CswCookie('set', CswCookieName.CurrentNode.NodeId, o.nodeid);
+			$.CswCookie('set', CswCookieName.CurrentNode.NodeKey, o.cswnbtnodekey);
+
+			if (debug)
+			{
+				log('NewMain.onSelectTreeNode()');
+			}
+
+			getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 		}
-
-		$.CswCookie('set', CswCookieName.CurrentNode.NodeId, o.nodeid);
-		$.CswCookie('set', CswCookieName.CurrentNode.NodeKey, o.cswnbtnodekey);
-
-		if (debug)
-		{
-			log('NewMain.onSelectTreeNode()');
-		}
-
-		getTabs( {'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey} );
-		refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-	}
+	} // onSelectTreeNode()
 
 	function getTabs(options)
 	{
 		var o = {
 			nodeid: '',
-			cswnbtnodekey: '',
-			onSave: refreshSelected
+			cswnbtnodekey: ''
 		};
 		if (options)
 		{
@@ -363,47 +370,61 @@
 		$('#RightDiv').CswNodeTabs({
 			'nodeid': o.nodeid,
 			'cswnbtnodekey': o.cswnbtnodekey,
-			'onSave': o.onSave,
+			'onSave': function ()
+			{
+				unsetChanged();
+				refreshSelected();
+			},
 			'tabid': $.CswCookie('get', CswCookieName.CurrentTabId),
+			'onBeforeTabSelect': function (tabid)
+			{
+				return manuallyCheckChanges();
+			},
 			'onTabSelect': function (tabid)
 			{
 				$.CswCookie('set', CswCookieName.CurrentTabId, tabid);
+			},
+			'onPropertyChange': function ()
+			{
+				setChanged();
 			}
 		});
 	}
 
 	function refreshSelected(options)
 	{
-		var o = {
-			type: 'tree',
-			nodeid: '',
-			cswnbtnodekey: '',
-			'ID': 'main',
-			nodename: '', 
-			iconurl: ''
-		};
-		if(options) $.extend(o,options);
-		
-		switch (o.type)
+		if (manuallyCheckChanges())
 		{
-			case 'grid':
-			{
-				alert('Grid not implemented yet!');
-				break;
-			}
-			case 'list':
-			{
-				alert('List not implemented yet!');
-				break;
-			}
-			default: //tree
-			{
-				refreshNodesTree({ 'ID': o.ID, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'nodename': o.nodename });
-				break;
-			}
-		}
+			var o = {
+				type: 'tree',
+				nodeid: '',
+				cswnbtnodekey: '',
+				'ID': 'main',
+				nodename: '',
+				iconurl: ''
+			};
+			if (options) $.extend(o, options);
 
-	}
+			switch (o.type)
+			{
+				case 'grid':
+					{
+						alert('Grid not implemented yet!');
+						break;
+					}
+				case 'list':
+					{
+						alert('List not implemented yet!');
+						break;
+					}
+				default: //tree
+					{
+						refreshNodesTree({ 'ID': o.ID, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'nodename': o.nodename });
+						break;
+					}
+			}
+		} // if (manuallyCheckChanges())
+	} // refreshSelected()
 
 	function refreshNodesTree(options)
 	{

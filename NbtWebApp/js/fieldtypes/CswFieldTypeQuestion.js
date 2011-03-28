@@ -36,6 +36,7 @@
 										.appendTo($table.CswTable('cell', 1, 2))
 										.change(function() { 
 											checkCompliance(CompliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
+											o.onchange();
 										});
 					var $thisOpt = $('<option value=""></option>').appendTo($AnswerSel);
 					for(var i = 0; i < splitAnswers.length; i++)
@@ -52,12 +53,14 @@
 										.text(CorrectiveAction)
 										.change(function() { 
 											checkCompliance(CompliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
+											o.onchange();
 										});
 
 					$table.CswTable('cell', 3, 1).append('Comments');
 					var $CommentsTextBox = $('<textarea id="'+ o.ID +'_com" />')
 										.appendTo($table.CswTable('cell', 3, 2))
-										.text(Comments);
+										.text(Comments)
+										.change(o.onchange);
 
 					checkCompliance(CompliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
                 }

@@ -43,7 +43,7 @@ var CswImageButton_ButtonType = {
             AlternateText: '',
             ID: '',
             Required: false,
-            onClick: function (alttext) { return CswImageButton_ButtonType.None; }
+            onClick: function ($ImageDiv) { return CswImageButton_ButtonType.None; }
         };
 
         if (options) {
@@ -53,19 +53,18 @@ var CswImageButton_ButtonType = {
         $Div = $(this);
         //$Div.contents().remove();
 
+		//using 'title' instead of 'alt' does make the alternate text appear in Chrome, 
+		//but it also screws up clicking.
 
-        var $ImageDiv = $('<div id="' + o.ID + '" class="divbutton" title="' + o.AlternateText + '" />"')
+        var $ImageDiv = $('<div id="' + o.ID + '" class="divbutton" alt="' + o.AlternateText + '" />"')
                       .appendTo($Div)
-                      .click(function () { onClick(); });
+                      .click(function () { 
+								var NewButtonType = o.onClick($ImageDiv);
+								setButton(NewButtonType);
+								return false;
+							});
 
         setButton(o.ButtonType);
-
-
-        function onClick() {
-            var NewButtonType = o.onClick($ImageDiv);
-            setButton(NewButtonType);
-            return false;
-        } // onClick()
 
         function setButton(NewButtonType) {
             var Multiplier = -18;

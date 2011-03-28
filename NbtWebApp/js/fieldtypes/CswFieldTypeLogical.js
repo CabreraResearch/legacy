@@ -30,31 +30,31 @@
 
 				$Div.CswImageButton({ ButtonType: thisButtonType, 
 										AlternateText: Checked,
-										onClick: function(o) { //$ImageDiv
-													onClick(o); //$ImageDiv, Required
-													onchange(); 
-													return false;
+										onClick: function($ImageDiv) {
+													var newvalue = onClick($ImageDiv, o.Required);
+													o.onchange(); 
+													return newvalue;
 												}
 									});
 			}
 		},
 		save: function(o) { //$propdiv, $xml
 				var $CheckboxImage = o.$propdiv.find('div');
-				o.$propxml.children('checked').text($CheckboxImage.attr('alt'));
+				o.$propxml.children('checked').text($CheckboxImage.attr('title'));
 			}
 	};
 	
 
-	function onClick(o) //$ImageDiv, Required
+	function onClick($ImageDiv, Required)
 	{
-		var currentValue = o.$ImageDiv.attr('alt');
+		var currentValue = $ImageDiv.attr('alt');
 		var newValue = CswImageButton_ButtonType.CheckboxNull;
 		var newAltText = "null";
 		if (currentValue == "null") {
 			newValue = CswImageButton_ButtonType.CheckboxTrue;
 			newAltText = "true";
 		} else if (currentValue == "false") {
-			if (o.Required == "true") {
+			if (Required == "true") {
 				newValue = CswImageButton_ButtonType.CheckboxTrue;
 				newAltText = "true";
 			} else {
@@ -65,7 +65,7 @@
 			newValue = CswImageButton_ButtonType.CheckboxFalse;
 			newAltText = "false";
 		}
-		o.$ImageDiv.attr('alt', newAltText);
+		$ImageDiv.attr('alt', newAltText);
 		return newValue;
 	} // onClick()
 

@@ -15,7 +15,9 @@
 			nodetypeid: '',
 			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
 			onSave: function (nodeid) { },
-			onTabSelect: function (tabid) { }
+			onBeforeTabSelect: function (tabid) { return true; },
+			onTabSelect: function (tabid) { },
+			onPropertyChange: function() { }
 		};
 
 		if (options)
@@ -60,9 +62,14 @@
 						'selected': selectedtabno,
 						'select': function (event, ui)
 						{
-							var tabid = $($tabdiv.children('div')[ui.index]).attr('id');
-							getProps(tabid);
-							o.onTabSelect(tabid);
+							if(o.onBeforeTabSelect(tabid))
+							{
+								var tabid = $($tabdiv.children('div')[ui.index]).attr('id');
+								getProps(tabid);
+								o.onTabSelect(tabid);
+							} else {
+								return false;
+							}
 						}
 					});
 					var selectedtabid = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]).attr('id');
@@ -102,7 +109,7 @@
 
 					_handleProps($layouttable, $xml, tabid);
 
-					$('<input type="button" id="SaveTab" name="SaveTab" value="Save"/>')
+					$('<input type="button" id="SaveTab" name="SaveTab" value="Save Changes"/>')
                                   .appendTo($form)
 								  .click(function () { Save($layouttable, $xml) });
 
@@ -197,19 +204,19 @@
 					'propid': $propxml.attr('id'),
 					'$propdiv': $('<div/>').appendTo($propcell),
 					'$propxml': $propxml,
-					'onchange': onchange,
+					'onchange': function() { },
 					'onReload': function() { getProps(tabid); },
-					'cswnbtnodekey': o.cswnbtnodekey
+					'cswnbtnodekey': o.cswnbtnodekey					
 				};
 
 				fieldOpt.$propdiv.attr('nodeid', fieldOpt.nodeid);
 				fieldOpt.$propdiv.attr('propid', fieldOpt.propid);
 				fieldOpt.$propdiv.attr('cswnbtnodekey', fieldOpt.cswnbtnodekey);
 
-				var onchange = function () { };
+				fieldOpt.onchange = function () { o.onPropertyChange(); };
 				if ($propxml.attr('hassubprops') == "true")
 				{
-					onchange = function ()
+					fieldOpt.onchange = function ()
 					{
 						// do a fake 'save' to update the xml with the current value
 						$.CswFieldTypeFactory('save', fieldOpt);
@@ -222,6 +229,7 @@
 								_makeProp($propcell, $xml.children().first(), tabid);
 							}
 						});
+						o.onPropertyChange();
 					};
 				}
 

@@ -23,7 +23,7 @@
                                                 ButtonType: CswImageButton_ButtonType.Edit,
                                                 AlternateText: 'Edit',
                                                 'ID': o.ID,
-                                                onClick: function (alttext) { 
+                                                onClick: function ($ImageDiv) { 
 													$edittable.show();
 												}
                                             });
@@ -42,7 +42,8 @@
 				
 				$edittable.CswTable('cell', 3, 1).append('Units');
 				var $UnitsSelect = $('<select id="'+ o.ID + '_units" />')
-									.appendTo($edittable.CswTable('cell', 3, 2));
+									.appendTo($edittable.CswTable('cell', 3, 2))
+									.change(o.onchange);
 				var $hoursopt = $('<option value="hours">hours</option>').appendTo($UnitsSelect);
 				if(Units == 'hours') $hoursopt.attr('selected', 'true');
 				var $daysopt = $('<option value="days">days</option>').appendTo($UnitsSelect);

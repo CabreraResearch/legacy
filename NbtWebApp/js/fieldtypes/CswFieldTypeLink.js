@@ -29,7 +29,7 @@
                                                 AlternateText: 'Edit',
                                                 ID: o.ID + '_edit',
                                                 Required: o.Required,
-                                                onClick: function (alttext) 
+                                                onClick: function ($ImageDiv) 
 													{ 
 														$edittable.show();
 														return CswImageButton_ButtonType.None; 
@@ -43,13 +43,15 @@
                                 .appendTo($edittable.CswTable('cell', 1, 1));
                 
                 var $edittext = $('<input type="text" id="'+ o.ID +'_text" value="'+ Text +'" />' )
-                                .appendTo($edittable.CswTable('cell', 1, 2));
+                                .appendTo($edittable.CswTable('cell', 1, 2))
+								.change(o.onchange);
                 
                 var $edithref_label = $( '<span>URL</span>' )
                                 .appendTo($edittable.CswTable('cell', 2, 1));
                 
 				var $edithref = $('<input type="text" id="'+ o.ID +'_href" value="'+ Href +'" />' )
-                                .appendTo($edittable.CswTable('cell', 2, 2));
+                                .appendTo($edittable.CswTable('cell', 2, 2))
+								.change(o.onchange);
 
                 if(o.Required && Href == '')
                 {

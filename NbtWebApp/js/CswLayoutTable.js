@@ -80,7 +80,7 @@
                         							ButtonType: CswImageButton_ButtonType.Add,
                         							AlternateText: 'Add',
                         							ID: o.ID + 'addbtn',
-                        							onClick: function (alttext)
+                        							onClick: function ($ImageDiv)
                         							{
                         								o.onAddClick();
 														return CswImageButton_ButtonType.None;
@@ -93,7 +93,7 @@
                         							ButtonType: CswImageButton_ButtonType.Delete,
                         							AlternateText: 'Remove',
                         							ID: o.ID + 'rembtn',
-                        							onClick: function (alttext)
+                        							onClick: function ($ImageDiv)
                         							{
 														_toggleRemove($table, $rembtn);
 														return CswImageButton_ButtonType.None;
@@ -106,7 +106,7 @@
                                                     ButtonType: CswImageButton_ButtonType.Configure,
                                                     AlternateText: 'Configure',
                                                     ID: o.ID + 'configbtn',
-                                                    onClick: function (alttext) 
+                                                    onClick: function ($ImageDiv) 
 													{ 
                                                         _toggleConfig($table, $buttontable, $addbtn, $rembtn, o.onConfigOn, o.onConfigOff);
                                                         return CswImageButton_ButtonType.None; 
