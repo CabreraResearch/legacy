@@ -40,7 +40,7 @@
 		},
 		save: function(o) { //$propdiv, $xml
 				var $CheckboxImage = o.$propdiv.find('div');
-				o.$propxml.children('checked').text($CheckboxImage.attr('title'));
+				o.$propxml.children('checked').text($CheckboxImage.attr('alt'));
 			}
 	};
 	
