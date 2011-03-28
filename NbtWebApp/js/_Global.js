@@ -172,7 +172,6 @@ function checkChanges()
 
 function manuallyCheckChanges()
 {
-	log('manuallycheckchanged: changed == ' + changed);
 	var ret = true;
 	if (checkChangesEnabled && changed == 1)
 	{
