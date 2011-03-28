@@ -10,10 +10,12 @@
 			PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
 			MovePropUrl: '/NbtWebApp/wsNBT.asmx/moveProp',
 			nodeid: '',
+			tabid: '',
 			cswnbtnodekey: '',
 			nodetypeid: '',
 			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
-			onSave: function (nodeid) { }
+			onSave: function (nodeid) { },
+			onTabSelect: function (tabid) { }
 		};
 
 		if (options)
@@ -41,27 +43,31 @@
 					clearTabs();
 					var $tabdiv = $("<div><ul></ul></div>");
 					$outertabdiv.append($tabdiv);
-					//var firsttabid = null;
+					var selectedtabno = 0;
+					var tabno = 0;
 					$xml.children().each(function ()
 					{
 						$tab = $(this);
 						$tabdiv.children('ul').append('<li><a href="#' + $tab.attr('id') + '">' + $tab.attr('name') + '</a></li>');
 						$tabdiv.append('<div id="' + $tab.attr('id') + '"><form id="' + $tab.attr('id') + '_form" /></div>');
-						//if(null == firsttabid) 
-						//    firsttabid = $tab.attr('id');
+						if($tab.attr('id') == o.tabid)
+						{
+							selectedtabno = tabno;
+						}
+						tabno++;
 					});
-					var optSelect = {
-						tabid: ''
-					};
 					$tabdiv.tabs({
-						select: function (event, ui)
+						'selected': selectedtabno,
+						'select': function (event, ui)
 						{
 							var tabid = $($tabdiv.children('div')[ui.index]).attr('id');
 							getProps(tabid);
+							o.onTabSelect(tabid);
 						}
 					});
-					var tabid = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]).attr('id');
-					getProps(tabid);
+					var selectedtabid = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]).attr('id');
+					getProps(selectedtabid);
+					o.onTabSelect(selectedtabid);
 				} // success{}
 			});
 		} // getTabs()

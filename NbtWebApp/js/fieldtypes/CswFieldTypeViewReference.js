@@ -20,7 +20,8 @@
 					'AlternateText': 'View',
 					'Required': o.Required,
 					'onClick': function (alttext) {
-						SetCurrentView({ 'viewid': ViewId, 'viewmode': ViewMode });
+						$.CswCookie('set', CswCookieName.CurrentView.ViewId, ViewId);
+						$.CswCookie('set', CswCookieName.CurrentView.ViewMode, ViewMode);
 						window.location = "NewMain.html";
 						return CswImageButton_ButtonType.None; 
 					}

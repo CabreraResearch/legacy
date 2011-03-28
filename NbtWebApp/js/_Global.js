@@ -1,96 +1,4 @@
 ﻿// ------------------------------------------------------------------------------------
-// Enum definitions
-// ------------------------------------------------------------------------------------
-
-// For CswImageButton
-var CswImageButton_ButtonType = {
-	None: -1,
-	Add: 27,
-	ArrowNorth: 28,
-	ArrowEast: 29,
-	ArrowSouth: 30,
-	ArrowWest: 31,
-	Calendar: 6,
-	CheckboxFalse: 18,
-	CheckboxNull: 19,
-	CheckboxTrue: 20,
-	Clear: 4,
-	Clock: 10,
-	ClockGrey: 11,
-	Configure: 26,
-	Delete: 4,
-	Edit: 3,
-	Fire: 5,
-	PageFirst: 23,
-	PagePrevious: 24,
-	PageNext: 25,
-	PageLast: 22,
-	PinActive: 17,
-	PinInactive: 15,
-	Print: 2,
-	Refresh: 9,
-	SaveStatus: 13,
-	Select: 32,
-	ToggleActive: 1,
-	ToggleInactive: 0,
-	View: 8
-}
-
-// ------------------------------------------------------------------------------------
-// Cookies
-// ------------------------------------------------------------------------------------
-
-//function SetSessionId(SessionId) {
-//    $.cookie('CswSessionId', SessionId);
-//}
-function GetSessionId() {
-	return $.cookie('CswSessionId');
-}
-function ClearSessionId() {
-	$.cookie('CswSessionId', null);
-}
-
-function SetUsername(Username) {
-	$.cookie('csw_username', Username);
-}
-function GetUsername() {
-	return $.cookie('csw_username');
-}
-function ClearUsername() {
-	$.cookie('csw_username', null);
-}
-
-function SetCurrentView(options) {
-	var o = {
-		viewid: '',
-		viewmode: ''
-	};
-	if (options)
-	{
-		$.extend(o, options);
-	}
-	$.cookie('csw_currentviewid', o.viewid);
-	$.cookie('csw_currentviewmode', o.viewmode);
-}
-
-function GetCurrentView()
-{
-	var view = {
-		viewid: $.cookie('csw_currentviewid'),
-		viewmode: $.cookie('csw_currentviewmode')
-	};
-	return view;
-}
-
-function ClearCurrentView()
-{
-	$.cookie('csw_currentviewid', null);
-	$.cookie('csw_currentviewmode', null);
-}
-
-
-
-// ------------------------------------------------------------------------------------
 // Ajax
 // ------------------------------------------------------------------------------------
 
@@ -302,7 +210,8 @@ function jsTreeGetSelected($treediv, IDPrefix)
 
 function GoHome() 
 {
-	ClearCurrentView();
+	$.CswCookie('clear', CswCookieName.CurrentView.ViewId);
+	$.CswCookie('clear', CswCookieName.CurrentView.ViewMode);
 	window.location = "NewMain.html";
 }
 
