@@ -221,19 +221,19 @@ function initCheckChanges()
 		};
 	}
 
-	// IE6 has this annoying habit of throwing unspecified errors if we prevent
-	// the navigation with onbeforeunload after clicking a button.
-	// So we're going to trap this error and prevent it from being shown.
-	window.onerror = function (strError, uri, line)
-	{
-		if (strError.toLowerCase().indexOf('unspecified error') >= 0)
-		{
-			window.event.returnValue = true;
-		} else
-		{
-			window.event.returnValue = false;
-		}
-	}
+//	// IE6 has this annoying habit of throwing unspecified errors if we prevent
+//	// the navigation with onbeforeunload after clicking a button.
+//	// So we're going to trap this error and prevent it from being shown.
+//	window.onerror = function (strError, uri, line)
+//	{
+//		if (strError.toLowerCase().indexOf('unspecified error') >= 0)
+//		{
+//			window.event.returnValue = true;
+//		} else
+//		{
+//			window.event.returnValue = false;
+//		}
+//	}
 }
 
 if ((window.onload !== null) && (window.onload !== undefined))
