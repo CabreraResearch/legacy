@@ -20,15 +20,24 @@ function CswAjaxJSON(options) {
 		dataType: "json",
 		contentType: 'application/json; charset=utf-8',
 		data: o.data,
-		success: function (data, textStatus, XMLHttpRequest) {
+		success: function (data, textStatus, XMLHttpRequest)
+		{
 			var endtime = new Date();
 			$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-			o.success($.parseJSON(data.d));
+			var result = $.parseJSON(data.d);
 
+			if (result.error != undefined)
+			{
+				_handleAjaxError(XMLHttpRequest, result.error, '');
+			}
+			else
+			{
+				o.success(result);
+			}
 		}, // success{}
 		error: _handleAjaxError
-	});      // $.ajax({
+	}); // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options) {
@@ -52,7 +61,6 @@ function CswAjaxXml(options) {
 			data: o.data,     // should be 'field1=value&field2=value'
 			success: function (data, textStatus, XMLHttpRequest)
 			{
-
 				var endtime = new Date();
 				$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
@@ -70,7 +78,7 @@ function CswAjaxXml(options) {
 
 			}, // success{}
 			error: _handleAjaxError
-		});            // $.ajax({
+		}); // $.ajax({
 	} // if(o.url != '')
 } // CswAjaxXml()
 		
