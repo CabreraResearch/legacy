@@ -115,8 +115,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode ViewIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _ViewIdSubField.ToXmlNodeName(), ViewId.ToString() );
-            XmlNode CachedViewNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedViewNameSubField.ToXmlNodeName(), CachedViewName.ToString() );
+			CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+			XmlNode ViewIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _ViewIdSubField.ToXmlNodeName(), ViewId.ToString() );
+			XmlNode ViewModeNode = CswXmlDocument.AppendXmlNode( ParentNode, "viewmode", View.ViewMode.ToString() );
+			XmlNode CachedViewNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedViewNameSubField.ToXmlNodeName(), CachedViewName.ToString() );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

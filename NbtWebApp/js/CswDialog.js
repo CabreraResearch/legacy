@@ -29,7 +29,7 @@
 		'AddNodeDialog': function (options) {
 							var o = {
 								'nodetypeid': '', 
-								'onAddNode': function(nodeid, nodekey) { }
+								'onAddNode': function(nodeid) { }
 								};
 
 							if (options) {
@@ -40,9 +40,9 @@
 							$div.CswNodeTabs({
 								'nodetypeid': o.nodetypeid,
 								'EditMode': 'AddInPopup',
-								'onSave': function (nodeid,cswnbtnodekey) {
+								'onSave': function (nodeid) {
 									$div.dialog('close');
-									o.onAddNode(nodeid,cswnbtnodekey);
+									o.onAddNode(nodeid);
 								}
 							});
 							$div.dialog({ 'modal': true,
@@ -204,13 +204,52 @@
 						});
 					},
 
+
+		'FileUploadDialog': function (options) {
+						var o = {
+							url: '',
+							params: {},
+							onSuccess: function() { }
+						};
+						if(options) {
+							$.extend(o, options);
+						}
+
+						var $div = $('<div></div>');
+								
+						var uploader = new qq.FileUploader({
+							element: $div.get(0),
+							action: o.url,
+							params: o.params,
+							debug: false,
+							onComplete: function() 
+								{ 
+									$div.dialog('close'); 
+									o.onSuccess(); 
+								}
+						});
+
+						$('<input type="button" id="fileupload_cancel" name="fileupload_cancel" value="Cancel" />')
+							.appendTo($div)
+							.click(function () {
+								$div.dialog('close');
+							});
+
+                        $div.dialog({ 'modal': true,
+							'width': 400,
+							'height': 300
+						});
+
+
+					},
+
 		// Generic
 
-		'OpenPopup': function(url) { 
-							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
-							popup.focus();
-							return popup;
-						},
+//		'OpenPopup': function(url) { 
+//							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
+//							popup.focus();
+//							return popup;
+//						},
 		'OpenDialog': function (id, url) {
 							var $dialogdiv = $('<div id="' + id + '"></div>');
 							$dialogdiv.load(url,

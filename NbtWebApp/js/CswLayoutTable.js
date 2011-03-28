@@ -20,6 +20,8 @@
                                     };
 								},
 							onAddClick: function() { },
+							onConfigOn: function($buttontable) { },
+							onConfigOff: function($buttontable) { },
                             onRemove: function(event, onRemoveData)
 								{ 
 									var r = { 
@@ -37,7 +39,8 @@
                             align: '',
 							showConfigButton: false,
 							showAddButton: false,
-							showRemoveButton: false
+							showRemoveButton: false,
+							OddCellRightAlign: false
 						};
                         if (options) {
                             $.extend(o, options);
@@ -54,6 +57,7 @@
                                                   'CellCssClass': o.CellCssClass + ' CswLayoutTable_cell',
                                                   'cellpadding': o.cellpadding,
                                                   'cellspacing': o.cellspacing,
+												  'OddCellRightAlign': o.OddCellRightAlign,
                                                   'width': o.width,
                                                   'align': o.align,
                                                   'onCreateCell': function(ev, $table, $newcell, realrow, realcolumn) { 
@@ -76,7 +80,7 @@
                         							ButtonType: CswImageButton_ButtonType.Add,
                         							AlternateText: 'Add',
                         							ID: o.ID + 'addbtn',
-                        							onClick: function (alttext)
+                        							onClick: function ($ImageDiv)
                         							{
                         								o.onAddClick();
 														return CswImageButton_ButtonType.None;
@@ -89,7 +93,7 @@
                         							ButtonType: CswImageButton_ButtonType.Delete,
                         							AlternateText: 'Remove',
                         							ID: o.ID + 'rembtn',
-                        							onClick: function (alttext)
+                        							onClick: function ($ImageDiv)
                         							{
 														_toggleRemove($table, $rembtn);
 														return CswImageButton_ButtonType.None;
@@ -102,9 +106,9 @@
                                                     ButtonType: CswImageButton_ButtonType.Configure,
                                                     AlternateText: 'Configure',
                                                     ID: o.ID + 'configbtn',
-                                                    onClick: function (alttext) 
+                                                    onClick: function ($ImageDiv) 
 													{ 
-                                                        _toggleConfig($table, $addbtn, $rembtn);
+                                                        _toggleConfig($table, $buttontable, $addbtn, $rembtn, o.onConfigOn, o.onConfigOff);
                                                         return CswImageButton_ButtonType.None; 
                                                     }
                                                 });
@@ -171,19 +175,24 @@
 				$rembtn.addClass('CswLayoutTable_removeEnabled');
 			}
 		}
-        function _toggleConfig($table, $addbtn, $rembtn)
+        function _toggleConfig($table, $buttontable, $addbtn, $rembtn, onConfigOn, onConfigOff)
         {
             if(isConfigMode($table))
             {
-				$addbtn.hide();
-				$rembtn.hide();
+				if($addbtn != undefined)
+					$addbtn.hide();
+				if($rembtn != undefined)
+					$rembtn.hide();
                 $table.CswTable('findCell', '.CswLayoutTable_cell')
                     .removeClass('CswLayoutTable_configcell');
 
                 setConfigMode($table, 'false');
+				onConfigOff($buttontable);
             } else {
-				$addbtn.show();
-				$rembtn.show();
+				if($addbtn != undefined)
+					$addbtn.show();
+				if($rembtn != undefined)
+					$rembtn.show();
                 var cellsetrows = parseInt($table.attr('cellset_rows'));
                 var cellsetcolumns = parseInt($table.attr('cellset_columns'));
                 var tablemaxrows = $table.CswTable('maxrows');
@@ -198,6 +207,7 @@
                     .addClass('CswLayoutTable_configcell');
 
                 setConfigMode($table, 'true');
+				onConfigOn($buttontable);
             }
         } // _toggleConfig()
 
@@ -326,7 +336,9 @@
                                             column: $removecells.attr('column')
                                         });
 				}
-				$removecells.contents().hide();
+				// contents().hide() doesn't work, jQuery ticket #8586: http://bugs.jquery.com/ticket/8586
+				$removecells.children().hide();
+				
 				$removecells.removeClass('CswLayoutTable_remove');
 			} // if(isRemoveMode($table))
 		} // onClick()

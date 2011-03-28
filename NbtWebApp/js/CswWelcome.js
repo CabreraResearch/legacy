@@ -11,7 +11,7 @@
 					RemoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/deleteWelcomeItem',
 					onLinkClick: function(optSelect) { }, //viewid, actionid, reportid
 					onSearchClick: function(optSelect) { }, //viewid
-					onAddClick: function(optSelect) { }, //nodetypeid
+					onAddClick: function(nodetypeid) { },
 					onAddComponent: function() { }
 				};
 
@@ -81,7 +81,7 @@
 								viewid: $item.attr('viewid'),
 								actionid: $item.attr('actionid'),
 								reportid: $item.attr('reportid'),
-								nodetypeid: $item.attr('nodetypeid'),
+								//nodetypeid: $item.attr('nodetypeid'),
 								linktype: $item.attr('linktype')
 							};
 
@@ -98,12 +98,12 @@
 									$imagecell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
 									break;
 								case 'Text':
-									$textcell.text(optSelect.text);
+									$textcell.append('<span>' + optSelect.text + '</span>');
 									break;
 								case 'Add': 
 									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
-									$textcell.find('a').click(function() { o.onAddClick(optSelect); return false; }); //nodetypeid
-									$imagecell.find('a').click(function() { o.onAddClick(optSelect); return false; }); //nodetypeid
+									$textcell.find('a').click(function() { o.onAddClick($item.attr('nodetypeid')); return false; }); 
+									$imagecell.find('a').click(function() { o.onAddClick($item.attr('nodetypeid')); return false; });
 									break;
 							}
 
@@ -127,37 +127,44 @@
 				var $parent = $(this);
 				var $table = $parent.CswTable('init', { ID: 'addwelcomeitem_tbl' });
 
-				$table.CswTable('cell', 1, 1).append('Type:');
+				var $typeselect_label = $('<span>Type:</span>')
+										.appendTo($table.CswTable('cell', 1, 1));
 				var $typeselect = $('<select id="welcome_type" name="welcome_type"></select>')
-									.appendTo($table.CswTable('cell', 1, 2));
-				$typeselect.append('<option value="Add">Add</option>');
+										.appendTo($table.CswTable('cell', 1, 2));
+				$typeselect.append('<option value="Add" selected>Add</option>');
 				$typeselect.append('<option value="Link">Link</option>');
 				$typeselect.append('<option value="Search">Search</option>');
 				$typeselect.append('<option value="Text">Text</option>');
-						
-				$table.CswTable('cell', 2, 1).append('View:');
+
+				var $viewselect_label = $('<span>View:</span>')
+										.appendTo($table.CswTable('cell', 2, 1))
+										.hide();
 				var $viewselect = $table.CswTable('cell', 2, 2).CswViewSelect({
 																				'ID': 'welcome_viewsel',
 																				//'viewid': '',
 																				//'onSelect': function(optSelect) { },
-																			});
+																			})
+										.hide();
 
-				$table.CswTable('cell', 3, 1).append('Add New:');
+				var $ntselect_label = $('<span>Add New:</span>')
+										.appendTo($table.CswTable('cell', 3, 1))
 				var $ntselect = $table.CswTable('cell', 3, 2).CswNodeTypeSelect({
-																'ID': 'welcome_ntsel'
+																	'ID': 'welcome_ntsel'
 																});
 
-				$table.CswTable('cell', 4, 1).append('Text:');
+				var $welcometext_label = $('<span>Text:</span>')
+										.appendTo($table.CswTable('cell', 4, 1))
 				var $welcometext = $('<input type="text" id="welcome_text" value="" />')
-									.appendTo($table.CswTable('cell', 4, 2));
+										.appendTo($table.CswTable('cell', 4, 2));
 
-				$table.CswTable('cell', 5, 1).append('Use Button:');
+				var $buttonsel_label = $('<span>Use Button:</span>')
+										.appendTo($table.CswTable('cell', 5, 1))
 				var $buttonsel = $('<select id="welcome_button" />')
-									.appendTo($table.CswTable('cell', 5, 2));
+										.appendTo($table.CswTable('cell', 5, 2));
 				$buttonsel.append('<option value="blank.gif"></option>');
 
 				var $buttonimg = $('<img id="welcome_btnimg" />')
-									.appendTo( $table.CswTable('cell', 6, 2) );
+										.appendTo( $table.CswTable('cell', 6, 2) );
 
 				var $addbutton = $('<input type="button" id="welcome_add" name="welcome_add" value="Add" />')
 									.appendTo( $table.CswTable('cell', 7, 2) )
@@ -176,6 +183,25 @@
 				$buttonsel.change(function(event) { 
 					$buttonimg.attr('src', 'Images/biggerbuttons/' + $buttonsel.val()); 
 				});
+
+				$typeselect.change(function() 
+									{ 
+										_onTypeChange({
+											//'$table': $table,
+											//'$typeselect_label': $typeselect_label,
+											'$typeselect': $typeselect,
+											'$viewselect_label': $viewselect_label,
+											'$viewselect': $viewselect,
+											'$ntselect_label': $ntselect_label,
+											'$ntselect': $ntselect,
+//											'$welcometext_label': $welcometext_label,
+//											'$welcometext': $welcometext,
+											'$buttonsel_label': $buttonsel_label,
+											'$buttonsel': $buttonsel,
+											'$buttonimg': $buttonimg, 
+//											'$addbutton': $addbutton
+										});
+									});
 
 				CswAjaxXml({ 
 							'url': '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
@@ -296,6 +322,65 @@
             });
         }
     } // _moveItem()
+
+	function _onTypeChange(options)
+	{
+		var o = {
+			//$table: '',
+			//$typeselect_label: '',
+			$typeselect: '',
+			$viewselect_label: '', 
+			$viewselect: '',
+			$ntselect_label: '',
+			$ntselect: '',
+//			$welcometext_label: '',
+//			$welcometext: '',
+			$buttonsel_label: '',
+			$buttonsel: '',
+			$buttonimg: ''//,
+//			$addbutton: '',
+		};
+		if(options) {
+			$.extend(o, options);
+		}
+
+		switch(o.$typeselect.val())
+		{
+			case "Add":
+				o.$viewselect_label.hide();
+				o.$viewselect.hide();
+				o.$ntselect_label.show();
+				o.$ntselect.show();
+				o.$buttonsel_label.show();
+				o.$buttonsel.show();
+				break;
+			case "Link":
+				o.$viewselect_label.show();
+				o.$viewselect.show();
+				o.$ntselect_label.hide();
+				o.$ntselect.hide();
+				o.$buttonsel_label.show();
+				o.$buttonsel.show();
+				break;
+			case "Search":
+				o.$viewselect_label.show();
+				o.$viewselect.show();
+				o.$ntselect_label.hide();
+				o.$ntselect.hide();
+				o.$buttonsel_label.show();
+				o.$buttonsel.show();
+				break;
+			case "Text":
+				o.$viewselect_label.hide();
+				o.$viewselect.hide();
+				o.$ntselect_label.hide();
+				o.$ntselect.hide();
+				o.$buttonsel_label.hide();
+				o.$buttonsel.hide();
+				break;
+		} // switch
+
+	} // _onTypeChange()
 
 })(jQuery);
 

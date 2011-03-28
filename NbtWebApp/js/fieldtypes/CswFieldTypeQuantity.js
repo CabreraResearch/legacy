@@ -7,22 +7,37 @@
 
             var $Div = $(this);
             $Div.contents().remove();
+            
+			$Div.CswNumberTextBox({
+				'ID': o.ID + '_qty',
+				'Value': o.$propxml.children('value').text().trim(),
+				'MinValue': o.$propxml.children('value').attr('minvalue'),
+				'MaxValue': o.$propxml.children('value').attr('maxvalue'),
+				'Precision': o.$propxml.children('value').attr('precision'),
+				'ReadOnly': o.ReadOnly,
+				'Required': o.Required,
+				'onchange': o.onchange
+			});
+			
+			var selectedUnit = o.$propxml.children('units').contents().first().text();
+			var $unitsel = $('<select id="'+ o.ID + '_units" />')
+							.appendTo($Div)
+							.change(o.onchange);
+			o.$propxml.children('units').children().each(function() {
+				var unit = $(this).attr('value');
+				var $option = $('<option value="' + unit + '">' + unit + '</option>')
+								.appendTo($unitsel);
+				if(selectedUnit == unit)
+				{
+					$option.attr('selected', 'true');
+				}
+			});
 
-            var Value = o.$propxml.children('value').text().trim();
-
-            $Div.append('[Not Implemented Yet]');
-//                if(o.ReadOnly)
-//                {
-//                    $Div.append(Value);
-//                }
-//                else 
-//                {
-//                    
-//                }
         },
-        save: function(o) { //$propdiv, $xml
-//                var $TextBox = $propdiv.find('input');
-//                $xml.children('barcode').text($TextBox.val());
+        save: function(o) {
+				o.$propxml.children('value').text(o.$propdiv.CswNumberTextBox('value'));
+				var unit = o.$propdiv.find('#' + o.ID + '_units').val();
+				o.$propxml.children('units').text(unit);
             }
     };
     

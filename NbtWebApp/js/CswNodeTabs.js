@@ -10,10 +10,14 @@
 			PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
 			MovePropUrl: '/NbtWebApp/wsNBT.asmx/moveProp',
 			nodeid: '',
+			tabid: '',
 			cswnbtnodekey: '',
 			nodetypeid: '',
 			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
-			onSave: function () { }
+			onSave: function (nodeid) { },
+			onBeforeTabSelect: function (tabid) { return true; },
+			onTabSelect: function (tabid) { },
+			onPropertyChange: function() { }
 		};
 
 		if (options)
@@ -41,68 +45,71 @@
 					clearTabs();
 					var $tabdiv = $("<div><ul></ul></div>");
 					$outertabdiv.append($tabdiv);
-					//var firsttabid = null;
+					var selectedtabno = 0;
+					var tabno = 0;
 					$xml.children().each(function ()
 					{
 						$tab = $(this);
 						$tabdiv.children('ul').append('<li><a href="#' + $tab.attr('id') + '">' + $tab.attr('name') + '</a></li>');
 						$tabdiv.append('<div id="' + $tab.attr('id') + '"><form id="' + $tab.attr('id') + '_form" /></div>');
-						//if(null == firsttabid) 
-						//    firsttabid = $tab.attr('id');
-					});
-					var optSelect = {
-						tabid: ''
-					};
-					$tabdiv.tabs({
-						select: function (event, ui)
+						if($tab.attr('id') == o.tabid)
 						{
-							optSelect.tabid = $($tabdiv.children('div')[ui.index]).attr('id');
-							getProps(optSelect);
+							selectedtabno = tabno;
+						}
+						tabno++;
+					});
+					$tabdiv.tabs({
+						'selected': selectedtabno,
+						'select': function (event, ui)
+						{
+							if(o.onBeforeTabSelect(tabid))
+							{
+								var tabid = $($tabdiv.children('div')[ui.index]).attr('id');
+								getProps(tabid);
+								o.onTabSelect(tabid);
+							} else {
+								return false;
+							}
 						}
 					});
-					optSelect.tabid = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]).attr('id');
-					getProps(optSelect);
+					var selectedtabid = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]).attr('id');
+					getProps(selectedtabid);
+					o.onTabSelect(selectedtabid);
 				} // success{}
 			});
 		} // getTabs()
 
-		function getProps(optSelect) //tabid
+		function getProps(tabid)
 		{
-			var p = {
-				tabid: ''
-			};
-			if (optSelect)
-			{
-				$.extend(p, optSelect);
-			}
-
 			CswAjaxXml({
 				url: o.PropsUrl,
-				data: 'EditMode=' + o.EditMode + '&SafeNodeKey=' + o.cswnbtnodekey + '&TabId=' + p.tabid + '&NodeTypeId=' + o.nodetypeid,
+				data: 'EditMode=' + o.EditMode + '&SafeNodeKey=' + o.cswnbtnodekey + '&TabId=' + tabid + '&NodeTypeId=' + o.nodetypeid,
 				success: function ($xml)
 				{
-					$div = $("#" + p.tabid);
+					$div = $("#" + tabid);
 
 					var $form = $div.children('form');
 					$form.contents().remove();
 
 					var $layouttable = $form.CswLayoutTable('init', {
 						'ID': o.ID + '_props',
-						cellset: {
+						'OddCellRightAlign': true,
+						'cellset': {
 							rows: 1,
 							columns: 2
 						},
-						onSwap: function (e, onSwapData)
+						'onSwap': function (e, onSwapData)
 						{
 							onSwap(onSwapData);
-						}
+						},
+						'showConfigButton': true
 					});
 
 					var i = 0;
 
-					_handleProps($layouttable, $xml);
+					_handleProps($layouttable, $xml, tabid);
 
-					$('<input type="button" id="SaveTab" name="SaveTab" value="Save"/>')
+					$('<input type="button" id="SaveTab" name="SaveTab" value="Save Changes"/>')
                                   .appendTo($form)
 								  .click(function () { Save($layouttable, $xml) });
 
@@ -112,13 +119,18 @@
 						highlight: function (element, errorClass)
 						{
 							var $elm = $(element);
+							$elm.attr('csw_invalid', '1');
 							$elm.animate({ backgroundColor: '#ff6666' });
 						},
 						unhighlight: function (element, errorClass)
 						{
 							var $elm = $(element);
-							$elm.css('background-color', '#66ff66');
-							setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+							if($elm.attr('csw_invalid') == '1')  // only unhighlight where we highlighted
+							{
+								$elm.css('background-color', '#66ff66');
+								$elm.attr('csw_invalid', '0')
+								setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+							}
 						}
 					});
 				} // success{}
@@ -156,7 +168,7 @@
 			return $cellset[1][2];
 		}
 
-		function _handleProps($layouttable, $xml)
+		function _handleProps($layouttable, $xml, tabid)
 		{
 			$xml.children().each(function ()
 			{
@@ -176,12 +188,12 @@
 				var $propcell = _getPropertyCell($cellset);
 				$propcell.addClass('propertyvaluecell');
 
-				_makeProp($propcell, $propxml);
+				_makeProp($propcell, $propxml, tabid);
 
 			});
 		} // _handleProps()
 
-		function _makeProp($propcell, $propxml)
+		function _makeProp($propcell, $propxml, tabid)
 		{
 			$propcell.contents().remove();
 			if ($propxml.attr('display') != 'false')
@@ -192,18 +204,19 @@
 					'propid': $propxml.attr('id'),
 					'$propdiv': $('<div/>').appendTo($propcell),
 					'$propxml': $propxml,
-					'onchange': onchange,
-					'cswnbtnodekey': o.cswnbtnodekey
+					'onchange': function() { },
+					'onReload': function() { getProps(tabid); },
+					'cswnbtnodekey': o.cswnbtnodekey					
 				};
 
 				fieldOpt.$propdiv.attr('nodeid', fieldOpt.nodeid);
 				fieldOpt.$propdiv.attr('propid', fieldOpt.propid);
 				fieldOpt.$propdiv.attr('cswnbtnodekey', fieldOpt.cswnbtnodekey);
 
-				var onchange = function () { };
+				fieldOpt.onchange = function () { o.onPropertyChange(); };
 				if ($propxml.attr('hassubprops') == "true")
 				{
-					onchange = function ()
+					fieldOpt.onchange = function ()
 					{
 						// do a fake 'save' to update the xml with the current value
 						$.CswFieldTypeFactory('save', fieldOpt);
@@ -213,9 +226,10 @@
 							data: 'EditMode=' + o.EditMode + '&SafeNodeKey=' + o.cswnbtnodekey + '&PropId=' + $propxml.attr('id') + '&NodeTypeId=' + o.nodetypeid + '&NewPropXml=' + xmlToString($propxml),
 							success: function ($xml)
 							{
-								_makeProp($propcell, $xml.children().first());
+								_makeProp($propcell, $xml.children().first(), tabid);
 							}
 						});
+						o.onPropertyChange();
 					};
 				}
 
@@ -226,7 +240,7 @@
 				if ($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 				{
 					var $subtable = $propcell.CswTable('init', { ID: $propxml.attr('id') + '_subproptable' });
-					_handleProps($subtable, $subprops);
+					_handleProps($subtable, $subprops, tabid);
 				}
 			}
 		} // _makeProp()
@@ -241,11 +255,7 @@
 				data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', NewPropsXml: '" + xmlToString($propsxml) + "' }",
 				success: function (data)
 				{
-					var dataOpt = {
-						nodeid: data.nodeid,
-						cswnbtnodekey: data.cswnbtnodekey
-					};
-					o.onSave(dataOpt);
+					o.onSave(data.nodeid);
 				}
 			});
 

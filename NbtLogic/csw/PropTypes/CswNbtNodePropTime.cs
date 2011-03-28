@@ -72,8 +72,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode TimeNode = CswXmlDocument.AppendXmlNode( ParentNode, _TimeValueSubField.ToXmlNodeName(), TimeValue.ToString() );
-        }
+			XmlNode TimeNode = CswXmlDocument.AppendXmlNode( ParentNode, _TimeValueSubField.ToXmlNodeName() );
+			if( TimeValue != DateTime.MinValue )
+			{
+				TimeNode.InnerText = TimeValue.ToShortTimeString();
+			}
+        } // ToXml()
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

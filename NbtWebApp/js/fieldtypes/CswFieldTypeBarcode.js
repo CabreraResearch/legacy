@@ -29,7 +29,7 @@
                                         .CswImageButton({  ButtonType: CswImageButton_ButtonType.Print,
                                                         AlternateText: '',
                                                         ID: o.ID + '_print',
-                                                        onClick: function (alttext) { 
+                                                        onClick: function ($ImageDiv) { 
                                                             $.CswDialog('OpenDialog', o.ID + '_dialog', 'Popup_PrintLabel.aspx?nodeid=' + o.nodeid + '&propid=' + o.ID); 
                                                             return CswImageButton_ButtonType.None; 
                                                         }

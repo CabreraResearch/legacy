@@ -47,7 +47,7 @@
 			cswnbtnodekey: '',
 			gridTable: "_gridOuter",
 			gridPager: "_gridPager",
-			onAddNode: function(nodeid,cswnbtnodekey){},
+			onAddNode: function(nodeid){},
 			onEditNode: function(nodeid,cswnbtnodekey){},
 			onDeleteNode: function(nodeid,cswnbtnodekey){}
 		};

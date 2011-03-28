@@ -1,99 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------
-// Enum definitions
-// ------------------------------------------------------------------------------------
-
-// For CswImageButton
-var CswImageButton_ButtonType = {
-	None: -1,
-	Add: 27,
-	ArrowNorth: 28,
-	ArrowEast: 29,
-	ArrowSouth: 30,
-	ArrowWest: 31,
-	Calendar: 6,
-	CheckboxFalse: 18,
-	CheckboxNull: 19,
-	CheckboxTrue: 20,
-	Clear: 4,
-	Clock: 10,
-	ClockGrey: 11,
-	Configure: 26,
-	Delete: 4,
-	Edit: 3,
-	Fire: 5,
-	PageFirst: 23,
-	PagePrevious: 24,
-	PageNext: 25,
-	PageLast: 22,
-	PinActive: 17,
-	PinInactive: 15,
-	Print: 2,
-	Refresh: 9,
-	SaveStatus: 13,
-	Select: 32,
-	ToggleActive: 1,
-	ToggleInactive: 0,
-	View: 8
-}
-
-// ------------------------------------------------------------------------------------
-// Cookies
-// ------------------------------------------------------------------------------------
-
-//function SetSessionId(SessionId) {
-//    $.cookie('CswSessionId', SessionId);
-//}
-function GetSessionId() {
-	return $.cookie('CswSessionId');
-}
-function ClearSessionId() {
-	$.cookie('CswSessionId', null);
-}
-
-function SetUsername(Username) {
-	$.cookie('csw_username', Username);
-}
-function GetUsername() {
-	return $.cookie('csw_username');
-}
-function ClearUsername() {
-	$.cookie('csw_username', null);
-}
-
-function SetCurrentView(options) {
-	var o = {
-		viewid: '',
-		viewmode: ''
-	};
-	if (options)
-	{
-		$.extend(o, options);
-	}
-	$.cookie('csw_currentviewid', o.viewid);
-	$.cookie('csw_currentviewmode', o.viewmode);
-}
-
-function GetCurrentView()
-{
-	var view = {
-		viewid: $.cookie('csw_currentviewid'),
-		viewmode: $.cookie('csw_currentviewmode')
-	};
-	return view;
-}
-
-function ClearCurrentView()
-{
-	$.cookie('csw_currentviewid', null);
-	$.cookie('csw_currentviewmode', null);
-}
-
-
-
-// ------------------------------------------------------------------------------------
 // Ajax
 // ------------------------------------------------------------------------------------
-
 
 function CswAjaxJSON(options) {
 	var o = {
@@ -120,9 +27,7 @@ function CswAjaxJSON(options) {
 			o.success($.parseJSON(data.d));
 
 		}, // success{}
-		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-		}
+		error: _handleAjaxError
 	});      // $.ajax({
 } // CswAjaxXml()
 
@@ -136,34 +41,37 @@ function CswAjaxXml(options) {
 	if (options) {
 		$.extend(o, options);
 	}
+	if (o.url != '')
+	{
+		var starttime = new Date();
+		$.ajax({
+			type: 'POST',
+			url: o.url,
+			dataType: "xml",
+			//contentType: 'application/json; charset=utf-8',
+			data: o.data,     // should be 'field1=value&field2=value'
+			success: function (data, textStatus, XMLHttpRequest)
+			{
 
-	var starttime = new Date();
-	$.ajax({
-		type: 'POST',
-		url: o.url,
-		dataType: "xml",
-		//contentType: 'application/json; charset=utf-8',
-		data: o.data,     // should be 'field1=value&field2=value'
-		success: function (data, textStatus, XMLHttpRequest) {
+				var endtime = new Date();
+				$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-			var endtime = new Date();
-			$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+				// this is IE compliant
+				var $xml = $(XMLHttpRequest.responseXML);
+				var $realxml = $xml.children().first();
+				if ($realxml.first().get(0).nodeName == "error")
+				{
+					_handleAjaxError(XMLHttpRequest, $realxml.text().trim(), '');
+				}
+				else
+				{
+					o.success($realxml);
+				}
 
-			// this is IE compliant
-			var $xml = $(XMLHttpRequest.responseXML);
-			var $realxml = $xml.children().first();
-			if ($realxml.first().get(0).nodeName == "error") {
-				_handleAjaxError(XMLHttpRequest, $realxml.text().trim(), '');
-			}
-			else {
-				o.success($realxml);
-			}
-
-		}, // success{}
-		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
-		}
-	});            // $.ajax({
+			}, // success{}
+			error: _handleAjaxError
+		});            // $.ajax({
+	} // if(o.url != '')
 } // CswAjaxXml()
 		
 function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown) 
@@ -205,6 +113,161 @@ function xmlToString($xmlnode) {
 	return xmlstring;
 }
 
+// ------------------------------------------------------------------------------------
+// Check Changes
+// ------------------------------------------------------------------------------------
+
+var changed = 0;
+var checkChangesEnabled = true;
+
+function setChanged()
+{
+	if (checkChangesEnabled)
+	{
+		changed = 1;
+		//        var statusimage = getMainStatusImage();
+		//var savebutton = $('#SaveTab');
+		//        if (statusimage != null) {
+		//            statusimage.style.backgroundPosition = "0px -210px";
+		//            statusimage.onmouseover = function() { this.style.backgroundPosition = "-15px -210px"; }
+		//            statusimage.onmouseout = function() { this.style.backgroundPosition = "0px -210px"; }
+		//            statusimage.title = "There are unsaved changes";
+		//        } 
+//		if (savebutton != null)
+//		{
+//			savebutton.value = "Save Changes";
+//			savebutton.disabled = false;
+//		}
+	}
+}
+
+function unsetChanged()
+{
+	if (checkChangesEnabled)
+	{
+		//        var statusimage = getMainStatusImage();
+		//        if(statusimage != null)
+		//            statusimage.style.backgroundPosition = "0px -195px";
+		//        statusimage.onmouseover = function() { this.style.backgroundPosition = "-15px -195px"; }
+		//        statusimage.onmouseout = function() { this.style.backgroundPosition = "0px -195px"; }
+		//        statusimage.title = "There are no changes";
+//		var savebutton = $('#SaveTab');
+//		if (savebutton != null)
+//		{
+//			if (changed != 0)
+//				savebutton.value = "Changes Saved";
+//			savebutton.disabled = true;
+//		}
+		changed = 0;
+	}
+}
+
+function checkChanges()
+{
+	if (checkChangesEnabled && changed == 1)
+	{
+		return 'If you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.';
+	}
+}
+
+function manuallyCheckChanges()
+{
+	log('manuallycheckchanged: changed == ' + changed);
+	var ret = true;
+	if (checkChangesEnabled && changed == 1)
+	{
+		ret = confirm('Are you sure you want to navigate away from this page?\n\nIf you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.\n\nPress OK to continue, or Cancel to stay on the current page.');
+
+		// this serves several purposes:
+		// 1. after you've been prompted to lose this change, you won't be prompted again for the same change later
+		// 2. multiple calls to manuallyCheckChanges() in the same event won't prompt more than once
+		if (ret)
+		{
+			changed = 0;
+		}
+	}
+	return ret;
+}
+
+function initCheckChanges()
+{
+	// Assign the checkchanges event to happen onbeforeunload
+	if ((window.onbeforeunload !== null) && (window.onbeforeunload !== undefined))
+	{
+		window.onbeforeunload = function ()
+		{
+			var f = window.onbeforeunload;
+			var ret = f();
+			if (ret)
+			{
+				return checkChanges();
+			} else
+			{
+				return false;
+			}
+		};
+	} else
+	{
+		window.onbeforeunload = function ()
+		{
+			return checkChanges();
+		};
+	}
+
+	// IE6 has this annoying habit of throwing unspecified errors if we prevent
+	// the navigation with onbeforeunload after clicking a button.
+	// So we're going to trap this error and prevent it from being shown.
+	window.onerror = function (strError, uri, line)
+	{
+		if (strError.toLowerCase().indexOf('unspecified error') >= 0)
+		{
+			window.event.returnValue = true;
+		} else
+		{
+			window.event.returnValue = false;
+		}
+	}
+}
+
+if ((window.onload !== null) && (window.onload !== undefined))
+{
+	window.onload = new Function('initCheckChanges(); var f=' + window.onload + '; return f();');
+} else
+{
+	window.onload = function () { initCheckChanges(); };
+}
+
+
+
+// ------------------------------------------------------------------------------------
+// User permissions
+// ------------------------------------------------------------------------------------
+
+function IsAdministrator(options)
+{
+	var o = { 
+		'Yes': function() { }, 
+		'No': function() { }
+	};
+	if (options)
+	{
+		$.extend(o, options);
+	}
+
+	CswAjaxJSON({
+		url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
+		success: function (data)
+		{
+			if (data.Administrator == "true")
+			{
+				o.Yes();
+			} else
+			{
+				o.No();
+			}
+		}
+	});
+} // IsAdministrator()
 
 // ------------------------------------------------------------------------------------
 // Node interactions
@@ -272,7 +335,8 @@ function jsTreeGetSelected($treediv, IDPrefix)
 
 function GoHome() 
 {
-	ClearCurrentView();
+	$.CswCookie('clear', CswCookieName.CurrentView.ViewId);
+	$.CswCookie('clear', CswCookieName.CurrentView.ViewMode);
 	window.location = "NewMain.html";
 }
 
@@ -381,6 +445,27 @@ function HandleMenuItem(options) {
 // Validation
 // ------------------------------------------------------------------------------------
 
+function validateTime(value)
+{
+	var isValid = true;
+	var regex = /^(\d?\d):(\d\d)\s?([APap][Mm])?$/g;
+	var match = regex.exec(value);
+	if (match == null)
+	{
+		isValid = false;
+	}
+	else
+	{
+		var hour = parseInt(match[1]);
+		var minute = parseInt(match[2]);
+		if (hour < 0 || hour >= 24 || minute < 0 || minute >= 60)
+		{
+			isValid = false;
+		}
+	}
+	return isValid;
+} // validateTime()
+
 function validateFloatMinValue(value, minvalue) {
 	var nValue = parseFloat(value);
 	var nMinValue = parseFloat(minvalue);
@@ -440,6 +525,26 @@ function validateInteger(value) {
 function startsWith(source, search) 
 {
 	return (source.substr(0, search.length) == search);
+}
+
+function getTimeString(date)
+{
+	var ret = '';
+	var hours = date.getHours()
+	var minutes = date.getMinutes()
+	if (minutes < 10)
+	{
+		minutes = "0" + minutes
+	}
+	ret = (hours % 12) + ":" + minutes + " ";
+	if (hours > 11)
+	{
+		ret += "PM";
+	} else
+	{
+		ret += "AM";
+	}
+	return ret;
 }
 
 // ------------------------------------------------------------------------------------

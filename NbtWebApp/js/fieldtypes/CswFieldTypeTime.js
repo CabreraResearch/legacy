@@ -10,19 +10,32 @@
 
             var Value = o.$propxml.children('value').text().trim();
 
-            $Div.append('[Not Implemented Yet]');
-//                if(ReadOnly)
-//                {
-//                    $Div.append(Value);
-//                }
-//                else 
-//                {
-//                    
-//                }
+            if(o.ReadOnly)
+            {
+                $Div.append(Value);
+            }
+            else 
+            {
+                var $TextBox = $('<input type="text" class="textinput validateTime" id="'+ o.ID +'" name="' + o.ID + '" value="'+ Value +'" />"' )
+                                    .appendTo($Div)
+                                    .change(o.onchange);
+                var $nowbutton = $('<input type="button" id="'+ o.ID +'_now" value="Now" />"' )
+                                    .appendTo($Div)
+                                    .click(function() { $TextBox.val(getTimeString(new Date())); });
+                
+				jQuery.validator.addMethod( "validateTime", function(value, element) { 
+                            return (this.optional(element) || validateTime($(element).val()));
+                        }, 'Enter a valid time (e.g. 12:30 PM)');
+
+				if(o.Required)
+                {
+                    $TextBox.addClass("required");
+                }
+            }
         },
         save: function(o) {
-//                var $TextBox = $propdiv.find('input');
-//                $xml.children('barcode').text($TextBox.val());
+                var $TextBox = o.$propdiv.find('input');
+                o.$propxml.children('value').text($TextBox.val());
             }
     };
     

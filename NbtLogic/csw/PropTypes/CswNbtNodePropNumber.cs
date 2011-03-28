@@ -93,8 +93,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName(), Value.ToString() );
-            CswXmlDocument.AppendXmlAttribute( ValueNode, "minvalue", MinValue.ToString() );
+            XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName() );
+			if( !Double.IsNaN( Value ) )
+			{
+				ValueNode.InnerText = Value.ToString();
+			}
+			CswXmlDocument.AppendXmlAttribute( ValueNode, "minvalue", MinValue.ToString() );
             CswXmlDocument.AppendXmlAttribute( ValueNode, "maxvalue", MaxValue.ToString() );
             CswXmlDocument.AppendXmlAttribute( ValueNode, "precision", Precision.ToString() );
         }

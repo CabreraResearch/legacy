@@ -70,8 +70,8 @@ namespace ChemSW.Nbt.WebServices
 		} // _getWelcomeTable()
 
 
-        public string GetWelcomeItems( string strRoleId )
-        {
+		public string GetWelcomeItems( string strRoleId )
+		{
 			string ret = string.Empty;
 			var ReturnXML = new XmlDocument();
 			XmlNode WelcomeNode = CswXmlDocument.SetDocumentElement( ReturnXML, "welcome" );
@@ -93,61 +93,78 @@ namespace ChemSW.Nbt.WebServices
 			foreach( DataRow WelcomeRow in WelcomeTable.Rows )
 			{
 				XmlNode ItemNode = CswXmlDocument.AppendXmlNode( WelcomeNode, "item" );
-                CswXmlDocument.AppendXmlAttribute( ItemNode, "welcomeid", WelcomeRow["welcomeid"].ToString() );
+				CswXmlDocument.AppendXmlAttribute( ItemNode, "welcomeid", WelcomeRow["welcomeid"].ToString() );
 
+				WelcomeComponentType ThisType = (WelcomeComponentType) Enum.Parse( typeof( WelcomeComponentType ), WelcomeRow["componenttype"].ToString(), true );
 				string LinkText = string.Empty;
-				if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
+
+				switch( ThisType )
 				{
-					CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
-					if( ThisView.IsFullyEnabled() )
-					{
-						if( WelcomeRow["displaytext"].ToString() != string.Empty )
-							LinkText = WelcomeRow["displaytext"].ToString();
-						else
-							LinkText = ThisView.ViewName;
-						CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", WelcomeRow["nodeviewid"].ToString() );
-						CswXmlDocument.AppendXmlAttribute( ItemNode, "viewmode", ThisView.ViewMode.ToString().ToLower() );
-						CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "view" );
-					}
-				}
-				if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
-				{
-					CswNbtAction ThisAction = _CswNbtResources.Actions[CswConvert.ToInt32( WelcomeRow["actionid"] )];
-					if( _CswNbtResources.CurrentNbtUser.CheckActionPermission( ThisAction.Name ) )
-					{
-						if( WelcomeRow["displaytext"].ToString() != string.Empty )
-							LinkText = WelcomeRow["displaytext"].ToString();
-						else
-							LinkText = ThisAction.Name.ToString();
-					}
-					CswXmlDocument.AppendXmlAttribute( ItemNode, "actionid", WelcomeRow["actionid"].ToString() );
-					CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "action" );
-				}
-				if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )
-				{
-					CswNbtNode ThisReportNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", CswConvert.ToInt32( WelcomeRow["reportid"] ) )];
-					if( WelcomeRow["displaytext"].ToString() != string.Empty )
+					case WelcomeComponentType.Add:
+						if( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) != Int32.MinValue )
+						{
+							CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) );
+							if( WelcomeRow["displaytext"].ToString() != string.Empty )
+								LinkText = WelcomeRow["displaytext"].ToString();
+							else
+								LinkText = "Add New " + NodeType.NodeTypeName;
+							CswXmlDocument.AppendXmlAttribute( ItemNode, "nodetypeid", WelcomeRow["nodetypeid"].ToString() );
+							CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "add_new_nodetype" );
+						}
+						break;
+
+					case WelcomeComponentType.Link:
+					case WelcomeComponentType.Search:
+						if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
+						{
+							CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
+							if( ThisView.IsFullyEnabled() )
+							{
+								if( WelcomeRow["displaytext"].ToString() != string.Empty )
+									LinkText = WelcomeRow["displaytext"].ToString();
+								else
+									LinkText = ThisView.ViewName;
+								CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", WelcomeRow["nodeviewid"].ToString() );
+								CswXmlDocument.AppendXmlAttribute( ItemNode, "viewmode", ThisView.ViewMode.ToString().ToLower() );
+								CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "view" );
+							}
+						}
+						if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
+						{
+							CswNbtAction ThisAction = _CswNbtResources.Actions[CswConvert.ToInt32( WelcomeRow["actionid"] )];
+							if( _CswNbtResources.CurrentNbtUser.CheckActionPermission( ThisAction.Name ) )
+							{
+								if( WelcomeRow["displaytext"].ToString() != string.Empty )
+									LinkText = WelcomeRow["displaytext"].ToString();
+								else
+									LinkText = ThisAction.Name.ToString();
+							}
+							CswXmlDocument.AppendXmlAttribute( ItemNode, "actionid", WelcomeRow["actionid"].ToString() );
+							CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "action" );
+						}
+						if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )
+						{
+							CswNbtNode ThisReportNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", CswConvert.ToInt32( WelcomeRow["reportid"] ) )];
+							if( WelcomeRow["displaytext"].ToString() != string.Empty )
+								LinkText = WelcomeRow["displaytext"].ToString();
+							else
+								LinkText = ThisReportNode.NodeName;
+							CswXmlDocument.AppendXmlAttribute( ItemNode, "reportid", WelcomeRow["reportid"].ToString() );
+							CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "report" );
+						}
+						break;
+
+					case WelcomeComponentType.Text:
 						LinkText = WelcomeRow["displaytext"].ToString();
-					else
-						LinkText = ThisReportNode.NodeName;
-					CswXmlDocument.AppendXmlAttribute( ItemNode, "reportid", WelcomeRow["reportid"].ToString() );
-					CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "report" );
-				}
-				if( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) != Int32.MinValue )
-				{
-					CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) );
-					if( WelcomeRow["displaytext"].ToString() != string.Empty )
-						LinkText = WelcomeRow["displaytext"].ToString();
-					else
-						LinkText = "Add New " + NodeType.NodeTypeName;
-					CswXmlDocument.AppendXmlAttribute( ItemNode, "nodetypeid", WelcomeRow["nodetypeid"].ToString() );
-					CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "add_new_nodetype" );
-				}
+						break;
+
+				} // switch( ThisType )
 
 				if( LinkText != string.Empty )
 				{
 					CswXmlDocument.AppendXmlAttribute( ItemNode, "linktype", WelcomeRow["componenttype"].ToString() );
-					CswXmlDocument.AppendXmlAttribute( ItemNode, "buttonicon", IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() );
+					if(WelcomeRow["buttonicon"].ToString() != string.Empty)
+						CswXmlDocument.AppendXmlAttribute( ItemNode, "buttonicon", IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() );
 					CswXmlDocument.AppendXmlAttribute( ItemNode, "text", LinkText );
 					CswXmlDocument.AppendXmlAttribute( ItemNode, "displayrow", WelcomeRow["display_row"].ToString() );
 					CswXmlDocument.AppendXmlAttribute( ItemNode, "displaycol", WelcomeRow["display_col"].ToString() );

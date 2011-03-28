@@ -13,11 +13,11 @@
                             $.extend(o, options);
                         }
 
-                        var ThisSessionId = GetSessionId();
+                        var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
                         if(ThisSessionId != undefined && ThisSessionId != '' && ThisSessionId != null)
                         {
 
-                            o.onAuthenticate( GetUsername() );
+                            o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
 
                         } else {
                             var $LoginDiv = $( '<div id="logindiv" align="center" />' +
@@ -58,7 +58,7 @@
                                                     auth = data.AuthenticationStatus;
                                                     if(auth == 'Authenticated')
                                                     {
-                                                        SetUsername(UserName);
+                                                        $.CswCookie('set', CswCookieName.Username, UserName);
                                                         $LoginDiv.remove();
                                                         o.onAuthenticate(UserName);
                                                     }
@@ -86,7 +86,7 @@
                                         url: o.DeauthenticateUrl,
                                         data: "",
                                         success: function (data) {
-                                            ClearUsername();
+                                            $.CswCookie('clear', CswCookieName.Username);
                                             o.onDeauthenticate();
                                         } // success{}
                                     });                        

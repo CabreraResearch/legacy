@@ -8,9 +8,9 @@
 			var o = {
 				ID: '', 
 				TreeUrl: '/NbtWebApp/wsNBT.asmx/getTree',
-				viewid: '',
+				viewid: '',       // loads an arbitrary view
 				viewmode: '',
-				nodeid: '',
+				nodeid: '',       // if viewid is not supplied, loads a view of this node
 				cswnbtnodekey: '',
 				onSelectNode: function(optSelect) {
 										var o =  {
@@ -34,7 +34,7 @@
 
 			CswAjaxXml({
 				url: o.TreeUrl,
-				data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix,
+				data: 'NodePk=' + o.nodeid + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix,
 				success: function ($xml) {
 					var selectid;
 					var treePlugins = ["themes", "xml_data", "ui", "types"];
@@ -74,41 +74,46 @@
 					var strTypes = $xml.find('types').text();
 					var jsonTypes = $.parseJSON(strTypes);
 					var $treexml = $xml.find('tree').children('root')
-					var treexmlstring = xmlToString($treexml);
+					if($treexml.length > 0)
+					{
+						var treexmlstring = xmlToString($treexml);
 				
-					$treediv.jstree({
-						"xml_data": {
-							"data": treexmlstring,
-							"xsl": "nest"
-						},
-						"ui": {
-							"select_limit": 1,
-							"initially_select": selectid
-						},
-						"themes": treeThemes,
-						"core": {
-							"initially_open": initiallyOpen
-						},
-						"types": {
-							"types": jsonTypes
-						},
-						"plugins": treePlugins
-					}).bind('select_node.jstree', 
-									function (e, data) {
-										var Selected = jsTreeGetSelected($treediv, IDPrefix);
-										var optSelect =  {
-											nodeid: Selected.id, 
-											nodename: Selected.text, 
-											iconurl: Selected.iconurl, 
-											cswnbtnodekey: Selected.$item.attr('cswnbtnodekey'),
-											viewid: o.viewid
-										};
-										o.onSelectNode(optSelect);
-									});
-					// DO NOT define an onSuccess() function here that interacts with the tree.
-					// The tree has initalization events that appear to happen asynchronously,
-					// and thus having an onSuccess() function that changes the selected node will
-					// cause a race condition.
+						$treediv.jstree({
+							"xml_data": {
+								"data": treexmlstring,
+								"xsl": "nest"
+							},
+							"ui": {
+								"select_limit": 1,
+								"initially_select": selectid
+							},
+							"themes": treeThemes,
+							"core": {
+								"initially_open": initiallyOpen
+							},
+							"types": {
+								"types": jsonTypes
+							},
+							"plugins": treePlugins
+						}).bind('select_node.jstree', 
+										function (e, data) {
+											var Selected = jsTreeGetSelected($treediv, IDPrefix);
+											var optSelect =  {
+												nodeid: Selected.id, 
+												nodename: Selected.text, 
+												iconurl: Selected.iconurl, 
+												cswnbtnodekey: Selected.$item.attr('cswnbtnodekey'),
+												viewid: o.viewid
+											};
+											o.onSelectNode(optSelect);
+										});
+						// DO NOT define an onSuccess() function here that interacts with the tree.
+						// The tree has initalization events that appear to happen asynchronously,
+						// and thus having an onSuccess() function that changes the selected node will
+						// cause a race condition.
+					} else {
+						$treediv.append('No Results');
+					}
 
 				} // success{}
 			});

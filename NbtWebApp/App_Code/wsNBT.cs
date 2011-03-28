@@ -314,9 +314,12 @@ namespace ChemSW.Nbt.WebServices
 			return ReturnJson.ToString();
 		} // getGrid()
 
+		/// <summary>
+		/// Generates a tree of nodes from the view
+		/// </summary>
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getTree( string ViewNum, string IDPrefix )
+		public XElement getTree( string ViewNum, string NodePk, string IDPrefix )
 		{
 			var TreeNode = new XElement( "tree" );
 
@@ -324,15 +327,26 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 				Int32 ViewId = CswConvert.ToInt32( ViewNum );
+				CswNbtView View = null;
+
 				if( Int32.MinValue != ViewId )
 				{
-					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-					if( null != View )
-					{
-						var ws = new CswNbtWebServiceTree( _CswNbtResources );
-						TreeNode = ws.getTree( View, IDPrefix );
-						CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
-					}
+					View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				}
+				else if( string.Empty != NodePk )
+				{
+					CswPrimaryKey NodeId = new CswPrimaryKey();
+					NodeId.FromString( NodePk );
+					CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
+					View = Node.NodeType.CreateDefaultView();
+					View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
+				}
+
+				if( null != View )
+				{
+					var ws = new CswNbtWebServiceTree( _CswNbtResources );
+					TreeNode = ws.getTree( View, IDPrefix );
+					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
 				}
 				end();
 			}
@@ -425,27 +439,27 @@ namespace ChemSW.Nbt.WebServices
 		} // getProps()
 
 		[WebMethod( EnableSession = true )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement saveProps( string EditMode, string SafeNodeKey, string NewPropsXml, string NodeTypeId )
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string saveProps( string EditMode, string SafeNodeKey, string NewPropsXml, string NodeTypeId )
 		{
-			XElement ReturnVal = new XElement( "saveprops" );
+			JObject ReturnVal = new JObject();
 			try
 			{
 				start();
 				string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-				if( !string.IsNullOrEmpty( ParsedNodeKey ) )
-				{
-					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					ReturnVal = XElement.Parse( ws.saveProps( RealEditMode, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) ) );
-				}
+				//if( !string.IsNullOrEmpty( ParsedNodeKey ) )
+				//{
+				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+				ReturnVal = JObject.Parse( ws.saveProps( RealEditMode, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) ) );
+				//}
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = xError( ex );
+				ReturnVal.Add( jError( ex ) );
 			}
-			return ( ReturnVal );
+			return ( ReturnVal.ToString() );
 		} // saveProps()
         #endregion Tabs and Props
 
@@ -682,18 +696,18 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string MoveProp( string PropId, string NewRow, string NewColumn )
 		{
-			var ReturnVal = new JProperty( "moveprop" );
+			var ReturnVal = new JObject();
 			try
 			{
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 				bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
-				ReturnVal.Value = ret.ToString().ToLower();
+				ReturnVal.Add( new JProperty( "moveprop", ret.ToString().ToLower() ) );
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = jError( ex );
+				ReturnVal.Add( jError( ex ) );
 			}
 			return ( ReturnVal.ToString() );
 		} // MoveProp()
@@ -771,6 +785,8 @@ namespace ChemSW.Nbt.WebServices
 			return ( ReturnVal );
 		} // deleteWelcomeItem()
 
+
+
         [WebMethod( EnableSession = true )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string moveWelcomeItems( string RoleId, string WelcomeId, string NewRow, string NewColumn )
@@ -797,6 +813,112 @@ namespace ChemSW.Nbt.WebServices
         } // moveWelcomeItems()
 
         #endregion Welcome Region
+        
+                [WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string isAdministrator()
+		{
+			JObject ReturnVal = new JObject();
+			try
+			{
+				start();
+				ReturnVal.Add( new JProperty( "Administrator", _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower() ) );
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal.Add( jError( ex ) );
+			}
+			return ( ReturnVal.ToString() );
+		} // isAdministrator()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string fileForProp()
+		{
+			JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
+			try
+			{
+				start();
+
+				// putting these in the param list causes the webservice to fail with
+				// "System.InvalidOperationException: Request format is invalid: application/octet-stream"
+				string FileName = Context.Request["qqfile"];
+				string PropId = Context.Request["propid"];
+
+				if( !string.IsNullOrEmpty( FileName ) && !string.IsNullOrEmpty( PropId ) )
+				{
+					// Unfortunately, Context.Request.ContentType is always application/octet-stream
+					// So we have to detect the content type
+					string[] SplitFileName = FileName.Split( '.' );
+					string Extension = SplitFileName[SplitFileName.Length - 1];
+					string ContentType = "application/" + Extension;
+					switch( Extension )
+					{
+						case "jpg":
+						case "jpeg":
+							ContentType = "image/pjpeg";
+							break;
+						case "gif":
+							ContentType = "image/gif";
+							break;
+						case "png":
+							ContentType = "image/png";
+							break;
+					}
+
+					if( Context.Request.InputStream != null )
+					{
+						// Read the binary data
+						BinaryReader br = new BinaryReader( Context.Request.InputStream );
+						long Length = Context.Request.InputStream.Length;
+						byte[] FileData = new byte[Length];
+						for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
+						{
+							FileData[CurrentIndex] = br.ReadByte();
+						}
+
+						// Save the binary data
+						CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+						bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId );
+
+						ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
+
+					} // if( Context.Request.InputStream != null )
+				} // if( FileName != string.Empty && PropId != string.Empty )
+
+				end();
+			}
+			catch( Exception ex )
+			{
+				//ReturnVal.Add( jError( ex ) );
+				ReturnVal = new JObject( new JProperty( "error", ex.Message ) );
+			}
+			return ( ReturnVal.ToString() );
+		} // fileForProp()
+
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string clearProp( string PropId, bool IncludeBlob )
+		{
+			JObject ReturnVal = new JObject( new JProperty( "Succeeded", false.ToString().ToLower() ) );
+			try
+			{
+				start();
+
+				CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+				bool ret = ws.ClearPropValue( PropId, IncludeBlob );
+				ReturnVal = new JObject( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
+
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal.Add( jError( ex ) );
+			}
+			return ( ReturnVal.ToString() );
+		} // clearProp()
 
         #endregion Web Methods
 

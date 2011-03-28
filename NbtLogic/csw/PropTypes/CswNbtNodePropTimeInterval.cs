@@ -84,21 +84,22 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode RateIntervalNode = CswXmlDocument.AppendXmlNode( ParentNode, _IntervalSubField.ToXmlNodeName() );
-            CswXmlDocument.SetInnerTextAsCData( RateIntervalNode, RateInterval.ToXmlString() );
-            //RateInterval.ToXml( RateIntervalNode );
+			XmlNode RateIntervalNode = CswXmlDocument.AppendXmlNode( ParentNode, _IntervalSubField.ToXmlNodeName() );
+			CswXmlDocument.AppendXmlAttribute( RateIntervalNode, "text", RateInterval.ToString() );
+			//CswXmlDocument.SetInnerTextAsCData( RateIntervalNode, RateInterval.ToXmlString() );
+            RateInterval.ToXml( RateIntervalNode );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             //RateInterval = new CswRateInterval( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _IntervalSubField.ToXmlNodeName() ) );
-            string IntervalXmlAsString = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _IntervalSubField.ToXmlNodeName() );
-            XmlDocument Doc = new XmlDocument();
-            XmlNode IntervalNode = CswXmlDocument.SetDocumentElement( Doc, _IntervalSubField.ToXmlNodeName() );
-            IntervalNode.InnerXml = IntervalXmlAsString;
+			//string IntervalXmlAsString = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _IntervalSubField.ToXmlNodeName() );
+			//XmlDocument Doc = new XmlDocument();
+			//XmlNode IntervalNode = CswXmlDocument.SetDocumentElement( Doc, _IntervalSubField.ToXmlNodeName() );
+			//IntervalNode.InnerXml = IntervalXmlAsString;
 
             CswRateInterval NewRateInterval = new CswRateInterval();
-            NewRateInterval.ReadXml( IntervalNode );
+            NewRateInterval.ReadXml( XmlNode.FirstChild.FirstChild );
             // Setting RateInterval triggers the change to the property value -- don't skip this step
             RateInterval = NewRateInterval;
         }

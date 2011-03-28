@@ -23,12 +23,28 @@
                             cellalign: 'top',
                             width: '',
                             align: '',
-                            onCreateCell: function(e, $table, $cell, row, column) {}
+                            cellalign: '',
+							cellvalign: 'top',
+                            onCreateCell: function (e, $table, $cell, row, column) { },
+                            FirstCellRightAlign: false,
+							OddCellRightAlign: false
                         };
                         if (options) {
                             $.extend(o, options);
                         }
-                        var $table = $('<table id="'+ o.ID +'" class="'+ o.TableCssClass +'" align="'+ o.align +'" width="'+ o.width +'" cellcssclass="'+ o.CellCssClass +'" cellpadding="'+ o.cellpadding +'" cellspacing="'+ o.cellspacing +'" border="0" cellalign="' + o.cellalign + '"><tr><td class="'+ o.CellCssClass + '"></td></tr></table>');
+                        var $table = $('<table id="'+ o.ID +'"></table>');
+						$table.addClass(o.TableCssClass);
+						$table.attr('width', o.width);
+						$table.attr('align', o.align);
+						$table.attr('cellpadding', o.cellpadding);
+						$table.attr('cellspacing', o.cellspacing);
+						$table.attr('border', '0');
+						$table.attr('cellalign', o.cellalign);
+						$table.attr('cellvalign', o.cellvalign);
+						$table.attr('cellcssclass', o.CellCssClass);
+						$table.attr('FirstCellRightAlign', o.FirstCellRightAlign);
+						$table.attr('OddCellRightAlign', o.OddCellRightAlign);
+
                         $table.bind('CswTable_onCreateCell', function(e, $table, $cell, row, column) { 
                                                                 o.onCreateCell(e, $table, $cell, row, column); 
                                                                 e.stopPropagation();  // prevents events from triggering in nested tables
@@ -143,12 +159,20 @@
 			        col = 1;
 		        }
 
-		        while (row > $table.children('tbody').children('tr').length) {
+		        while (row > $table.children('tbody').children('tr').length) 
+				{
 			        $table.append('<tr></tr>');
 		        }
 		        var $row = $($table.children('tbody').children('tr')[row-1]);
-		        while (col > $row.children('td').length) {
-			        var $newcell = $('<td class="'+ $table.attr('cellcssclass') +'" valign="'+ $table.attr('cellalign') +'"></td>')
+		        while (col > $row.children('td').length) 
+				{
+					var align = $table.attr('cellalign');
+					if((col == 1 && $table.attr('FirstCellRightAlign') == 'true') ||
+					   (col % 2 == 1 && $table.attr('OddCellRightAlign') == 'true'))
+					{
+						align = 'right';
+			        }
+					var $newcell = $('<td class="'+ $table.attr('cellcssclass') +'" align="'+ align +'" valign="'+ $table.attr('cellvalign') +'"></td>')
                                         .appendTo($row);
                     $table.trigger('CswTable_onCreateCell', [ $table, $newcell, row, $row.children('td').length ]);
 		        }

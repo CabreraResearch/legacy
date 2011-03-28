@@ -308,33 +308,35 @@ namespace ChemSW.Nbt.PropTypes
 
         private CswPrimaryKey _HandleReference( string LocationNodeIdStr, string LocationBarcode ) //, Dictionary<Int32, Int32> NodeMap )
         {
-            //Int32 ret = Int32.MinValue;
-            CswPrimaryKey LocationNodeId = new CswPrimaryKey();
-            LocationNodeId.FromString( LocationNodeIdStr );
-            if( LocationNodeId.PrimaryKey == Int32.MinValue && LocationBarcode != string.Empty )
-            {
-                // Find the location with this barcode value
-                CswNbtMetaDataObjectClass LocationObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-                CswNbtMetaDataObjectClassProp BarcodeObjectClassProp = LocationObjectClass.getObjectClassProp( CswNbtObjClassLocation.BarcodePropertyName );
+			CswPrimaryKey LocationNodeId = new CswPrimaryKey();
+			if( !string.IsNullOrEmpty( LocationNodeIdStr ) )
+			{
+				LocationNodeId.FromString( LocationNodeIdStr );
+				if( LocationNodeId.PrimaryKey == Int32.MinValue && LocationBarcode != string.Empty )
+				{
+					// Find the location with this barcode value
+					CswNbtMetaDataObjectClass LocationObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+					CswNbtMetaDataObjectClassProp BarcodeObjectClassProp = LocationObjectClass.getObjectClassProp( CswNbtObjClassLocation.BarcodePropertyName );
 
-                CswNbtView LocationView = new CswNbtView( _CswNbtResources );
-                // All locations..
-                CswNbtViewRelationship LocationRelationship = LocationView.AddViewRelationship( LocationObjectClass, false );
-                // ..with barcodes
-                CswNbtViewProperty BarcodeViewProperty = LocationView.AddViewProperty( LocationRelationship, BarcodeObjectClassProp );
-                // ..equal to the given barcode
-                CswNbtViewPropertyFilter BarcodeViewPropertyFilter = LocationView.AddViewPropertyFilter( BarcodeViewProperty, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Equals, LocationBarcode, false );
+					CswNbtView LocationView = new CswNbtView( _CswNbtResources );
+					// All locations..
+					CswNbtViewRelationship LocationRelationship = LocationView.AddViewRelationship( LocationObjectClass, false );
+					// ..with barcodes
+					CswNbtViewProperty BarcodeViewProperty = LocationView.AddViewProperty( LocationRelationship, BarcodeObjectClassProp );
+					// ..equal to the given barcode
+					CswNbtViewPropertyFilter BarcodeViewPropertyFilter = LocationView.AddViewPropertyFilter( BarcodeViewProperty, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Equals, LocationBarcode, false );
 
-                ICswNbtTree LocationTree = _CswNbtResources.Trees.getTreeFromView( LocationView, true, true, false, false );
-                if( LocationTree.getChildNodeCount() > 0 )
-                {
-                    LocationTree.goToNthChild( 0 );
-                    CswNbtNode LocationNode = LocationTree.getNodeForCurrentPosition();
-                    LocationNodeId = LocationNode.NodeId;
-                }
-            }
+					ICswNbtTree LocationTree = _CswNbtResources.Trees.getTreeFromView( LocationView, true, true, false, false );
+					if( LocationTree.getChildNodeCount() > 0 )
+					{
+						LocationTree.goToNthChild( 0 );
+						CswNbtNode LocationNode = LocationTree.getNodeForCurrentPosition();
+						LocationNodeId = LocationNode.NodeId;
+					}
+				}
+			} // if(!string.IsNullOrEmpty(LocationNodeIdStr))
             return LocationNodeId;
-        }
+		} // _HandleReference()
 
     }//CswNbtNodePropLocation
 }//namespace ChemSW.Nbt.PropTypes
