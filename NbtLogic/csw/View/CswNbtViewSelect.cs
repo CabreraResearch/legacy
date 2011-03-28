@@ -137,17 +137,17 @@ namespace ChemSW.Nbt
                 CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
                 ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
                 ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
-				string AddClause = " ";
+                string AddClause = " ";
                 if( MobileOnly )
-				{
-					AddClause += "and formobile = '" + CswConvert.ToDbVal( true ) + "'";
-				}
-				if( ViewRenderingMode != NbtViewRenderingMode.Any )
-				{
-					AddClause += "and viewmode = '" + ViewRenderingMode.ToString() + "'";
-				}
-				ViewsSelect.S4Parameters.Add( "addclause", AddClause );
-				if( OrderBy != string.Empty )
+                {
+                    AddClause += "and formobile = '" + CswConvert.ToDbVal( true ) + "'";
+                }
+                if( ViewRenderingMode != NbtViewRenderingMode.Any )
+                {
+                    AddClause += "and viewmode = '" + ViewRenderingMode.ToString() + "'";
+                }
+                ViewsSelect.S4Parameters.Add( "addclause", AddClause );
+                if( OrderBy != string.Empty )
                     ViewsSelect.S4Parameters.Add( "orderbyclause", OrderBy );
                 else
                     ViewsSelect.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );
@@ -166,17 +166,17 @@ namespace ChemSW.Nbt
                         // Case 20452 - Remove views associated with disabled nodetypes/objectclasses
                         if( ThisView.IsFullyEnabled() )
                         {
-							//if( NbtViewRenderingMode.Any == ViewRenderingMode ||
-							//    ThisView.ViewMode == ViewRenderingMode )
-							//{
-                                foreach( CswNbtViewRelationship R in ThisView.Root.ChildRelationships )
+                            //if( NbtViewRenderingMode.Any == ViewRenderingMode ||
+                            //    ThisView.ViewMode == ViewRenderingMode )
+                            //{
+                            foreach( CswNbtViewRelationship R in ThisView.Root.ChildRelationships )
+                            {
+                                if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+                                    User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) )
                                 {
-                                    if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                        User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) )
-                                    {
-                                        skipme = false;
-                                    }
+                                    skipme = false;
                                 }
+                            }
                             //}
                         }
                         if( skipme )
@@ -210,16 +210,12 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Get an XElement of all views searchable by the current user
+        /// Returns an XElement of all views visible by the current user, filtered according to Mobile and IsSearchable
         /// </summary>
-        public XElement getSearchableViews( ICswNbtUser User, bool MobileOnly, string OrderBy, string IdPrefix )
+        public XElement getVisibleViewsXml( ICswNbtUser User, bool MobileOnly, bool SearchableOnly, string OrderBy )
         {
-            DataTable ViewsTable = null;
             CswTimer SearchableViewsTimer = new CswTimer();
-            string ElementId = IdPrefix + "_" + "view_select";
-            XElement SearchNode = new XElement( "select",
-                                    new XAttribute( "id", ElementId ),
-                                    new XAttribute( "name", ElementId ) );
+            XElement ViewsElement = new XElement( "views" );
 
             CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getSearchableViews_select", "getVisibleViewInfo" );
             ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
@@ -240,26 +236,31 @@ namespace ChemSW.Nbt
             {
                 ViewsSelect.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );
             }
-            ViewsTable = ViewsSelect.getTable();
+            DataTable ViewsTable = ViewsSelect.getTable();
 
             _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() data fetched", SearchableViewsTimer.ElapsedDurationInSecondsAsString );
-
+            bool HasAtLeastOneResult = false;
             foreach( CswNbtView ThisView in ViewsTable.Rows.Cast<DataRow>()
                                             .Select( Row => CswNbtViewFactory.restoreView( _CswNbtResources, Row["viewxml"].ToString() ) )
                                             .Where( ThisView => 0 < ThisView.Root.ChildRelationships
                                                 .Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
                                                         User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ).Count() &&
-                                                ( ThisView.IsSearchable() ) ) )
+                                                ( !SearchableOnly || ThisView.IsSearchable() ) ) )
             {
-                SearchNode.Add( new XElement( "option", ThisView.ViewName, //Add() doesn't return an object, therefore initializer won't work
-                                            new XAttribute( "title", ThisView.ViewMode ),
-                                            new XAttribute( "label", ThisView.ViewName ),
-                                            new XAttribute( "value", ThisView.ViewId ) ) );
-
+                ViewsElement.Add( new XElement( "view",
+                                            new XAttribute( "id", ThisView.ViewId ),
+                                            new XAttribute( "name", ThisView.ViewName ) ) );
+                HasAtLeastOneResult = true;
+            }
+            if( !HasAtLeastOneResult )
+            {
+                ViewsElement.Add( new XElement( "view",
+                                            new XAttribute( "id", Int32.MinValue ),
+                                            new XAttribute( "name", "No Results" ) ) );
             }
             _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() finished", SearchableViewsTimer.ElapsedDurationInSecondsAsString );
 
-            return SearchNode;
+            return ViewsElement;
         }
     }
 }
