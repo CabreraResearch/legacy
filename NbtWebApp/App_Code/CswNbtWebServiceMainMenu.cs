@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.WebServices
 			// ADD
 			XElement AddNode = new XElement( "item",
 											new XAttribute( "text", "Add" ) );
-			if( View != null && View.ViewId <= 0 )
+			if( View != null )
 			{
 				foreach( XElement AddNodeType in View.Root.AllowedChildNodeTypes()
 												 .Select( Entry => new XElement( "item",
