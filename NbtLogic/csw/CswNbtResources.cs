@@ -370,6 +370,7 @@ namespace ChemSW.Nbt
         public void BeforeStoreInCache()
         {
             this.CswEventLinker = null;
+			_CswNbtNodeCollection = null;        // case 21246
             _CswResources.BeforeStoreInCache();
         }
         /// <summary>
@@ -379,6 +380,7 @@ namespace ChemSW.Nbt
         {
             _CswResources.AfterRestoreFromCache();
             CswEventLinker = new CswEventLinker();
+			_CswNbtNodeCollection = new CswNbtNodeCollection( this );  // case 21246
         }
 
 

@@ -20,15 +20,24 @@ function CswAjaxJSON(options) {
 		dataType: "json",
 		contentType: 'application/json; charset=utf-8',
 		data: o.data,
-		success: function (data, textStatus, XMLHttpRequest) {
+		success: function (data, textStatus, XMLHttpRequest)
+		{
 			var endtime = new Date();
 			$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-			o.success($.parseJSON(data.d));
+			var result = $.parseJSON(data.d);
 
+			if (result.error != undefined)
+			{
+				_handleAjaxError(XMLHttpRequest, result.error, '');
+			}
+			else
+			{
+				o.success(result);
+			}
 		}, // success{}
 		error: _handleAjaxError
-	});      // $.ajax({
+	}); // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options) {
@@ -52,7 +61,6 @@ function CswAjaxXml(options) {
 			data: o.data,     // should be 'field1=value&field2=value'
 			success: function (data, textStatus, XMLHttpRequest)
 			{
-
 				var endtime = new Date();
 				$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
@@ -70,7 +78,7 @@ function CswAjaxXml(options) {
 
 			}, // success{}
 			error: _handleAjaxError
-		});            // $.ajax({
+		}); // $.ajax({
 	} // if(o.url != '')
 } // CswAjaxXml()
 		
@@ -172,7 +180,6 @@ function checkChanges()
 
 function manuallyCheckChanges()
 {
-	log('manuallycheckchanged: changed == ' + changed);
 	var ret = true;
 	if (checkChangesEnabled && changed == 1)
 	{
@@ -214,19 +221,19 @@ function initCheckChanges()
 		};
 	}
 
-	// IE6 has this annoying habit of throwing unspecified errors if we prevent
-	// the navigation with onbeforeunload after clicking a button.
-	// So we're going to trap this error and prevent it from being shown.
-	window.onerror = function (strError, uri, line)
-	{
-		if (strError.toLowerCase().indexOf('unspecified error') >= 0)
-		{
-			window.event.returnValue = true;
-		} else
-		{
-			window.event.returnValue = false;
-		}
-	}
+//	// IE6 has this annoying habit of throwing unspecified errors if we prevent
+//	// the navigation with onbeforeunload after clicking a button.
+//	// So we're going to trap this error and prevent it from being shown.
+//	window.onerror = function (strError, uri, line)
+//	{
+//		if (strError.toLowerCase().indexOf('unspecified error') >= 0)
+//		{
+//			window.event.returnValue = true;
+//		} else
+//		{
+//			window.event.returnValue = false;
+//		}
+//	}
 }
 
 if ((window.onload !== null) && (window.onload !== undefined))

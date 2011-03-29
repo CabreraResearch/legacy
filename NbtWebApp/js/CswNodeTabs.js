@@ -9,6 +9,7 @@
 			SinglePropUrl: '/NbtWebApp/wsNBT.asmx/getSingleProp',
 			PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
 			MovePropUrl: '/NbtWebApp/wsNBT.asmx/moveProp',
+			SavePropUrl: '/NbtWebApp/wsNBT.asmx/SaveProps',
 			nodeid: '',
 			tabid: '',
 			cswnbtnodekey: '',
@@ -168,7 +169,7 @@
 			return $cellset[1][2];
 		}
 
-		function _handleProps($layouttable, $xml, tabid)
+		function _handleProps($layouttable, $xml, tabid, ConfigMode)
 		{
 			$xml.children().each(function ()
 			{
@@ -176,7 +177,7 @@
 				var fieldtype = $propxml.attr('fieldtype');
 				var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.attr('displayrow'), $propxml.attr('displaycol'));
 
-				if ($propxml.attr('display') != 'false' &&
+				if (($propxml.attr('display') != 'false' || ConfigMode ) &&
 					fieldtype != 'Image' &&
 					fieldtype != 'Grid')
 				{
@@ -188,15 +189,15 @@
 				var $propcell = _getPropertyCell($cellset);
 				$propcell.addClass('propertyvaluecell');
 
-				_makeProp($propcell, $propxml, tabid);
+				_makeProp($propcell, $propxml, tabid, ConfigMode);
 
 			});
 		} // _handleProps()
 
-		function _makeProp($propcell, $propxml, tabid)
+		function _makeProp($propcell, $propxml, tabid, ConfigMode)
 		{
 			$propcell.contents().remove();
-			if ($propxml.attr('display') != 'false')
+			if ($propxml.attr('display') != 'false' || ConfigMode )
 			{
 				var fieldOpt = {
 					'fieldtype': $propxml.attr('fieldtype'),
@@ -218,20 +219,10 @@
 				{
 					fieldOpt.onchange = function ()
 					{
-						// do a fake 'save' to update the xml with the current value
-						$.CswFieldTypeFactory('save', fieldOpt);
-						// update the propxml from the server
-						CswAjaxXml({
-							url: o.SinglePropUrl,
-							data: 'EditMode=' + o.EditMode + '&SafeNodeKey=' + o.cswnbtnodekey + '&PropId=' + $propxml.attr('id') + '&NodeTypeId=' + o.nodetypeid + '&NewPropXml=' + xmlToString($propxml),
-							success: function ($xml)
-							{
-								_makeProp($propcell, $xml.children().first(), tabid);
-							}
-						});
+						_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, false);
 						o.onPropertyChange();
 					};
-				}
+				} // if ($propxml.attr('hassubprops') == "true")
 
 				$.CswFieldTypeFactory('make', fieldOpt);
 
@@ -239,19 +230,54 @@
 				var $subprops = $propxml.children('subprops');
 				if ($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 				{
-					var $subtable = $propcell.CswTable('init', { ID: $propxml.attr('id') + '_subproptable' });
-					_handleProps($subtable, $subprops, tabid);
+					//var $subtable = $propcell.CswTable('init', { ID: $propxml.attr('id') + '_subproptable' });
+
+					var $subtable = $propcell.CswLayoutTable('init', {
+						'ID': fieldOpt.propid + '_subproptable',
+						'OddCellRightAlign': true,
+						'cellset': {
+							rows: 1,
+							columns: 2
+						},
+						'onSwap': function (e, onSwapData)
+						{
+							onSwap(onSwapData);
+						},
+						'showConfigButton': false,
+						'onConfigOn': function($buttontable) { 
+							_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, true);
+						},
+						'onConfigOff': function($buttontable) { 
+							_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, false);
+						}
+					});
+					_handleProps($subtable, $subprops, tabid, ConfigMode);
 				}
 			}
 		} // _makeProp()
 
+		function _updateSubProps(fieldOpt, SinglePropUrl, EditMode, cswnbtnodekey, PropId, nodetypeid, $propxml, $propcell, tabid, ConfigMode)
+		{
+			// do a fake 'save' to update the xml with the current value
+			$.CswFieldTypeFactory('save', fieldOpt);
+
+			// update the propxml from the server
+			CswAjaxXml({
+				url: SinglePropUrl,
+				data: 'EditMode=' + EditMode + '&SafeNodeKey=' + cswnbtnodekey + '&PropId=' + PropId + '&NodeTypeId=' + nodetypeid + '&NewPropXml=' + xmlToString($propxml),
+				success: function ($xml)
+				{
+					_makeProp($propcell, $xml.children().first(), tabid, ConfigMode);
+				}
+			});
+		} // _updateSubProps()
 
 		function Save($layouttable, $propsxml)
 		{
 			_updatePropXmlFromForm($layouttable, $propsxml);
 
 			CswAjaxJSON({
-				url: '/NbtWebApp/wsNBT.asmx/SaveProps',
+				url: o.SavePropUrl,
 				data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', NewPropsXml: '" + xmlToString($propsxml) + "' }",
 				success: function (data)
 				{
@@ -286,12 +312,8 @@
 					var $subprops = propOpt.$propxml.children('subprops');
 					if ($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 					{
-						var $subtable = propOpt.$propcell.children('#' + propOpt.$propxml.attr('id') + '_subproptable').first();
-						recOpt = {
-							'$table': $subtable,
-							'$propsxml': $subprops
-						};
-						_updatePropXmlFromForm(recOpt);
+						var $subtable = propOpt.$propcell.children('#' + propOpt.$propxml.attr('id') + '_subproptable_tbl').first();
+						_updatePropXmlFromForm($subtable, $subprops);
 					}
 				}
 			}); // each()

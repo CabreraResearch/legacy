@@ -10,7 +10,7 @@
 				var $Div = $(this);
 				$Div.contents().remove();
 
-				//var NodeId = $xml.children('nodeid').text().trim();
+				var NodeId = o.$propxml.children('nodeid').text().trim();
 				var Name = o.$propxml.children('name').text().trim();
 				var Path = o.$propxml.children('path').text().trim();
 				var ViewId = o.$propxml.children('viewid').text().trim();
@@ -24,24 +24,24 @@
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
 					var $selectcell = $table.CswTable('cell', 1, 1);
-					var $selectdiv = $('<div class="locationselect" value="'+ o.nodeid +'"/>' )
+					var $selectdiv = $('<div class="locationselect" value="'+ NodeId +'"/>' )
 										.appendTo($selectcell);
 
 					var $locationtree = $('<div />').CswNodeTree('init', { 'ID': o.ID,
-																viewid: ViewId,
-																nodeid: o.nodeid,
-																onSelectNode: function(optSelect)
-																				{ 
-																					onTreeSelect($selectdiv, optSelect.itemid, optSelect.text, optSelect.iconurl ); 
-																					o.onchange(); 
-																				}, 
-																SelectFirstChild: false
-																});
-
-					$selectdiv.CswComboBox('init', { 'ID': o.ID + '_combo', 
-											'TopContent': Name,
-											'SelectContent': $locationtree,
-											'Width': '266px' });
+																			viewid: ViewId,
+																			nodeid: NodeId,
+																			onSelectNode: function(optSelect)
+																							{
+																								onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onchange); 
+																							}, 
+																			SelectFirstChild: false
+																		});
+	
+					$selectdiv.CswComboBox( 'init', {	'ID': o.ID + '_combo', 
+														'TopContent': Name,
+														'SelectContent': $locationtree,
+														'Width': '266px' 
+													});
 
 					var $addcell = $table.CswTable('cell', 1, 2);
 					var $AddButton = $('<div />').appendTo($addcell);
@@ -64,10 +64,14 @@
 		};
 	
 	
-		function onTreeSelect($selectdiv, itemid, text, iconurl)
+		function onTreeSelect($selectdiv, itemid, text, iconurl, onchange)
 		{
-			$selectdiv.attr('value', itemid);
 			$selectdiv.CswComboBox( 'TopContent', text );
+			if($selectdiv.attr('value') != itemid)
+			{
+				$selectdiv.attr('value', itemid);
+				onchange();
+			}
 			setTimeout(function() { $selectdiv.CswComboBox( 'close'); }, 300);
 		}
 		

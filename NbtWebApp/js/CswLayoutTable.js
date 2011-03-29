@@ -138,8 +138,10 @@
                 for(var c = 1; c <= cellsetcolumns; c++)
                 {
                     if(cellset[r] == undefined) 
-                    cellset[r] = new Array();
-                    cellset[r][c] = getCell( $table, row, column, r, c, cellsetrows, cellsetcolumns);
+					{
+						cellset[r] = new Array();
+                    }
+					cellset[r][c] = getCell( $table, row, column, r, c, cellsetrows, cellsetcolumns);
                 }
             }
             return cellset;

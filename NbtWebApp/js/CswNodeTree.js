@@ -36,14 +36,16 @@
 				url: o.TreeUrl,
 				data: 'NodePk=' + o.nodeid + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix,
 				success: function ($xml) {
-					var selectid;
+					var selectid = '';
 					var treePlugins = ["themes", "xml_data", "ui", "types"];
 					var treeThemes;
 					if(o.nodeid != undefined && o.nodeid != '') 
 					{
 						selectid = IDPrefix + o.nodeid;
 					}
-					else
+
+					var $selecteditem = $xml.find('item[id="'+ selectid + '"]');
+					if(selectid == '' || $selecteditem.length == 0)
 					{
 						if(o.SelectFirstChild)
 						{	
@@ -117,6 +119,8 @@
 
 				} // success{}
 			});
+
+			return $treediv;
 		},
 
 		'selectNode': function(optSelect) { //newnodeid, newcswnbtnodekey
