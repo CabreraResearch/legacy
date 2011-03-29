@@ -52,7 +52,7 @@
                                             .css({ 'float': 'right' });
 
                         var $table = $parent.CswTable('init', { 
-                                                  'ID': o.ID + '_tbl', 
+                                                  'ID': o.ID, 
                                                   'TableCssClass': o.TableCssClass + ' CswLayoutTable_table',
                                                   'CellCssClass': o.CellCssClass + ' CswLayoutTable_cell',
                                                   'cellpadding': o.cellpadding,
@@ -68,10 +68,12 @@
                                        .attr('cellset_columns', o.cellset.columns);
 
                         setConfigMode($table, 'false');
-                        $table.bind('CswLayoutTable_onSwap', o.onSwap);
-						$table.bind('CswLayoutTable_onRemove', o.onRemove);
+                        $table.bind(o.ID + 'CswLayoutTable_onSwap', o.onSwap);
+						$table.bind(o.ID + 'CswLayoutTable_onRemove', o.onRemove);
+						$table.bind(o.ID + 'CswLayoutTable_onConfigOn', o.onConfigOn);
+						$table.bind(o.ID + 'CswLayoutTable_onConfigOff', o.onConfigOff);
 
-						var $buttontable = $buttondiv.CswTable('init', { ID: 'welcome_buttontbl' });
+						var $buttontable = $buttondiv.CswTable('init', { ID: o.ID + '_buttontbl' });
 						var $addbtn;
 						var $rembtn;
 						if(o.showAddButton)
@@ -108,7 +110,7 @@
                                                     ID: o.ID + 'configbtn',
                                                     onClick: function ($ImageDiv) 
 													{ 
-                                                        _toggleConfig($table, $buttontable, $addbtn, $rembtn, o.onConfigOn, o.onConfigOff);
+														_toggleConfig($table, $buttontable, $addbtn, $rembtn);
                                                         return CswImageButton_ButtonType.None; 
                                                     }
                                                 });
@@ -117,14 +119,43 @@
                         return $table;
                     },
 
-            'cellset': function(row, column) {
+            'cellset': function(row, column) 
+					{
                         var $table = $(this);
                         return _getCellSet($table, row, column);
                     },
 
-            'isConfig': function() {
+			'isConfig': function ()
+					{
+						var $table = $(this);
+						return isConfigMode($table);
+					},
+
+			'toggleConfig': function() 
+					{
                         var $table = $(this);
-                        return isConfigMode($table);
+                        var $buttontable = $('#' + $table.attr('id') + '_buttontbl');
+						var $addbtn = $buttontable.CswTable('cell', 1, 1).children().first();
+						var $rembtn = $buttontable.CswTable('cell', 1, 2).children().first();
+						_toggleConfig($table, $buttontable, $addbtn, $rembtn);
+                    },
+            
+			'ConfigOn': function() 
+					{
+                        var $table = $(this);
+                        var $buttontable = $('#' + $table.attr('id') + '_buttontbl');
+						var $addbtn = $buttontable.CswTable('cell', 1, 1).children().first();
+						var $rembtn = $buttontable.CswTable('cell', 1, 2).children().first();
+						_configOn($table, $buttontable, $addbtn, $rembtn);
+                    },
+            
+			'ConfigOff': function() 
+					{
+                        var $table = $(this);
+                        var $buttontable = $('#' + $table.attr('id') + '_buttontbl');
+						var $addbtn = $buttontable.CswTable('cell', 1, 1).children().first();
+						var $rembtn = $buttontable.CswTable('cell', 1, 2).children().first();
+						_configOff($table, $buttontable, $addbtn, $rembtn);
                     }
         };
 
@@ -177,41 +208,51 @@
 				$rembtn.addClass('CswLayoutTable_removeEnabled');
 			}
 		}
-        function _toggleConfig($table, $buttontable, $addbtn, $rembtn, onConfigOn, onConfigOff)
+        function _toggleConfig($table, $buttontable, $addbtn, $rembtn)
         {
             if(isConfigMode($table))
             {
-				if($addbtn != undefined)
-					$addbtn.hide();
-				if($rembtn != undefined)
-					$rembtn.hide();
-                $table.CswTable('findCell', '.CswLayoutTable_cell')
-					.removeClass('CswLayoutTable_configcell');
+				_configOff($table, $buttontable, $addbtn, $rembtn);
+			} else {
+				_configOn($table, $buttontable, $addbtn, $rembtn);
+			}
+		}
 
-                setConfigMode($table, 'false');
-				onConfigOff($buttontable);
-            } else {
-				if($addbtn != undefined)
-					$addbtn.show();
-				if($rembtn != undefined)
-					$rembtn.show();
-                var cellsetrows = parseInt($table.attr('cellset_rows'));
-                var cellsetcolumns = parseInt($table.attr('cellset_columns'));
-                var tablemaxrows = $table.CswTable('maxrows');
-                var tablemaxcolumns = $table.CswTable('maxcolumns');
+		function _configOff($table, $buttontable, $addbtn, $rembtn)
+		{
+			if($addbtn != undefined)
+				$addbtn.hide();
+			if($rembtn != undefined)
+				$rembtn.hide();
+            $table.CswTable('findCell', '.CswLayoutTable_cell')
+				.removeClass('CswLayoutTable_configcell');
 
-                // add an extra row and column
-                //var $newcell = getCell($table, (tablemaxrows / cellsetrows ) + 1, (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
+            setConfigMode($table, 'false');
+            $table.trigger($table.attr('id') + 'CswLayoutTable_onConfigOff', $buttontable);
+        } // _configOff()
+		
+		function _configOn($table, $buttontable, $addbtn, $rembtn)
+		{
+			if($addbtn != undefined)
+				$addbtn.show();
+			if($rembtn != undefined)
+				$rembtn.show();
+            var cellsetrows = parseInt($table.attr('cellset_rows'));
+            var cellsetcolumns = parseInt($table.attr('cellset_columns'));
+            var tablemaxrows = $table.CswTable('maxrows');
+            var tablemaxcolumns = $table.CswTable('maxcolumns');
 
-                $table.CswTable('finish', null);
+            // add an extra row and column
+            //var $newcell = getCell($table, (tablemaxrows / cellsetrows ) + 1, (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
 
-                $table.CswTable('findCell', '.CswLayoutTable_cell')
-					.addClass('CswLayoutTable_configcell');
+            $table.CswTable('finish', null);
 
-                setConfigMode($table, 'true');
-				onConfigOn($buttontable);
-            }
-        } // _toggleConfig()
+            $table.CswTable('findCell', '.CswLayoutTable_cell')
+				.addClass('CswLayoutTable_configcell');
+
+            setConfigMode($table, 'true');
+            $table.trigger($table.attr('id') + 'CswLayoutTable_onConfigOn', $buttontable);
+        } // _configOn()
 
         function getCell($table, row, column, cellsetrow, cellsetcolumn, cellsetrows, cellsetcolumns)
         {
@@ -293,7 +334,7 @@
                 if($swapcells.length > 0)
                 {
                     // This must happen BEFORE we do the swap, in case the caller relies on the contents of the div being where it was
-                    $table.trigger('CswLayoutTable_onSwap', { 
+                    $table.trigger($table.attr('id') + 'CswLayoutTable_onSwap', { 
                                             table: $table,
                                             cellset: _getCellSet($table, row, column),
                                             swapcellset: _getCellSet($table, $swapcells.first().attr('row'), $swapcells.first().attr('column')),
@@ -331,7 +372,7 @@
 				{
 					var row = $removecells.attr('row');
 					var column = $removecells.attr('column');
-					$table.trigger('CswLayoutTable_onRemove', { 
+					$table.trigger($table.attr('id') + 'CswLayoutTable_onRemove', { 
                                             table: $table,
                                             cellset: _getCellSet($table, row, column),
                                             row: $removecells.attr('row'),

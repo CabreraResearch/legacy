@@ -103,7 +103,60 @@
 						{
 							onSwap(onSwapData);
 						},
-						'showConfigButton': true
+						'showConfigButton': true,
+						'onConfigOn': function($buttontable) { 
+							$xml.children().each(function ()
+							{
+								var $propxml = $(this);
+								var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.attr('displayrow'), $propxml.attr('displaycol'));
+								var $propcell = _getPropertyCell($cellset);
+								var $subtable = $propcell.children('#' + $propxml.attr('id') + '_subproptable');
+								
+								var fieldOpt = {
+									'fieldtype': $propxml.attr('fieldtype'),
+									'nodeid': o.nodeid,
+									'propid': $propxml.attr('id'),
+									'$propdiv': $propcell.children('div'),
+									'$propxml': $propxml,
+									'onchange': function() { },
+									'onReload': function() { getProps(tabid); },
+									'cswnbtnodekey': o.cswnbtnodekey
+								};
+								
+								if($subtable.length > 0)
+								{
+									//$subtable.CswLayoutTable('ConfigOn');
+									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, true);
+								}
+							});
+						},
+						'onConfigOff': function($buttontable) { 
+							$xml.children().each(function ()
+							{
+								var $propxml = $(this);
+								var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.attr('displayrow'), $propxml.attr('displaycol'));
+								var $propcell = _getPropertyCell($cellset);
+								var $subtable = $propcell.children('#' + $propxml.attr('id') + '_subproptable');
+
+								var fieldOpt = {
+									'fieldtype': $propxml.attr('fieldtype'),
+									'nodeid': o.nodeid,
+									'propid': $propxml.attr('id'),
+									'$propdiv': $propcell.children('div'),
+									'$propxml': $propxml,
+									'onchange': function() { },
+									'onReload': function() { getProps(tabid); },
+									'cswnbtnodekey': o.cswnbtnodekey
+								};
+								
+								if($subtable.length > 0)
+								{
+									//$subtable.CswLayoutTable('ConfigOff');
+									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, false);
+								}
+							});
+						}
+
 					});
 
 					var i = 0;
@@ -207,7 +260,7 @@
 					'$propxml': $propxml,
 					'onchange': function() { },
 					'onReload': function() { getProps(tabid); },
-					'cswnbtnodekey': o.cswnbtnodekey					
+					'cswnbtnodekey': o.cswnbtnodekey
 				};
 
 				fieldOpt.$propdiv.attr('nodeid', fieldOpt.nodeid);
@@ -243,17 +296,16 @@
 						{
 							onSwap(onSwapData);
 						},
-						'showConfigButton': false,
-						'onConfigOn': function($buttontable) { 
-							_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, true);
-						},
-						'onConfigOff': function($buttontable) { 
-							_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, false);
-						}
+						'showConfigButton': false
 					});
 					_handleProps($subtable, $subprops, tabid, ConfigMode);
+					if(ConfigMode) {
+						$subtable.CswLayoutTable('ConfigOn');
+					} else {
+						$subtable.CswLayoutTable('ConfigOff');
+					}
 				}
-			}
+			} // if ($propxml.attr('display') != 'false' || ConfigMode )
 		} // _makeProp()
 
 		function _updateSubProps(fieldOpt, SinglePropUrl, EditMode, cswnbtnodekey, PropId, nodetypeid, $propxml, $propcell, tabid, ConfigMode)
@@ -312,7 +364,7 @@
 					var $subprops = propOpt.$propxml.children('subprops');
 					if ($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 					{
-						var $subtable = propOpt.$propcell.children('#' + propOpt.$propxml.attr('id') + '_subproptable_tbl').first();
+						var $subtable = propOpt.$propcell.children('#' + propOpt.$propxml.attr('id') + '_subproptable').first();
 						_updatePropXmlFromForm($subtable, $subprops);
 					}
 				}
