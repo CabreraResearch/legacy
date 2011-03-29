@@ -97,7 +97,9 @@ namespace ChemSW.Nbt.WebServices
 
 		#region Web Methods
 
-		#region Background Tasks
+	    private static readonly string _IDPrefix = string.Empty;
+
+	    #region Background Tasks
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -518,7 +520,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 start();
                 var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-                SearchNode = ws.getSearchXml(ViewIdNum,SelectedNodeTypeIdNum);
+                SearchNode = ws.getSearchXml(ViewIdNum, SelectedNodeTypeIdNum);
                 end();
             }
             catch(Exception ex)
@@ -580,7 +582,7 @@ namespace ChemSW.Nbt.WebServices
                 //    RenderElement = getGrid( View.ViewId.ToString(), string.Empty );
                 //    break;
                 default:
-                    RenderElement = getTree( View.ViewId.ToString(), string.Empty );
+                    RenderElement = getTree( View.ViewId.ToString(), string.Empty, _IDPrefix );
                     break;
             }
             return RenderElement;
@@ -814,7 +816,7 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Welcome Region
         
-                [WebMethod( EnableSession = true )]
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string isAdministrator()
 		{

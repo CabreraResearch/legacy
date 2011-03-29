@@ -533,8 +533,7 @@ namespace ChemSW.Nbt.WebServices
             if( !string.IsNullOrEmpty( SearchXml ) )
             {
                 NodesSearch = XElement.Parse( SearchXml );
-                SearchView = new CswNbtView( _CswNbtResources );
-                SearchView.ViewMode = NbtViewRenderingMode.Tree;
+                SearchView = new CswNbtView( _CswNbtResources ) {ViewMode = NbtViewRenderingMode.Tree};
 
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
