@@ -15,6 +15,8 @@
 				var Path = o.$propxml.children('path').text().trim();
 				var ViewId = o.$propxml.children('viewid').text().trim();
 
+				if(NodeId == '') NodeId = 'root';
+
 				if(o.ReadOnly)
 				{
 					$Div.append(Path);
