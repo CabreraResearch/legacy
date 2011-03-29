@@ -219,7 +219,7 @@
 				{
 					fieldOpt.onchange = function ()
 					{
-						_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, xmlToString($propxml), $propcell, tabid, false);
+						_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, false);
 						o.onPropertyChange();
 					};
 				} // if ($propxml.attr('hassubprops') == "true")
@@ -245,10 +245,10 @@
 						},
 						'showConfigButton': false,
 						'onConfigOn': function($buttontable) { 
-							_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, xmlToString($propxml), $propcell, tabid, true);
+							_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, true);
 						},
 						'onConfigOff': function($buttontable) { 
-							_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, xmlToString($propxml), $propcell, tabid, false);
+							_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, false);
 						}
 					});
 					_handleProps($subtable, $subprops, tabid, ConfigMode);
@@ -256,7 +256,7 @@
 			}
 		} // _makeProp()
 
-		function _updateSubProps(fieldOpt, SinglePropUrl, EditMode, cswnbtnodekey, PropId, nodetypeid, propxml, $propcell, tabid, ConfigMode)
+		function _updateSubProps(fieldOpt, SinglePropUrl, EditMode, cswnbtnodekey, PropId, nodetypeid, $propxml, $propcell, tabid, ConfigMode)
 		{
 			// do a fake 'save' to update the xml with the current value
 			$.CswFieldTypeFactory('save', fieldOpt);
@@ -264,7 +264,7 @@
 			// update the propxml from the server
 			CswAjaxXml({
 				url: SinglePropUrl,
-				data: 'EditMode=' + EditMode + '&SafeNodeKey=' + cswnbtnodekey + '&PropId=' + PropId + '&NodeTypeId=' + nodetypeid + '&NewPropXml=' + propxml,
+				data: 'EditMode=' + EditMode + '&SafeNodeKey=' + cswnbtnodekey + '&PropId=' + PropId + '&NodeTypeId=' + nodetypeid + '&NewPropXml=' + xmlToString($propxml),
 				success: function ($xml)
 				{
 					_makeProp($propcell, $xml.children().first(), tabid, ConfigMode);
