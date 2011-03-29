@@ -119,6 +119,8 @@
 
 				} // success{}
 			});
+
+			return $treediv;
 		},
 
 		'selectNode': function(optSelect) { //newnodeid, newcswnbtnodekey
