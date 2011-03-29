@@ -75,6 +75,7 @@
 								$('#CenterDiv').CswLogin('logout', {
 									onDeauthenticate: function ()
 									{
+										$.CswCookie('clearAll');
 										window.location = 'NewMain.html';
 									}
 								});
