@@ -75,7 +75,8 @@
 					$MonthlyDiv.append(' Month(s)<br/>');
 
 					var $MonthlyByDateRadio = $('<input type="radio" id="'+ o.ID +'_monthly_by_date" name="'+ o.ID +'_monthly_by" value="MonthlyByDate" />')
-									.appendTo($MonthlyDiv);
+									.appendTo($MonthlyDiv)
+									.click(o.onchange);
 					$MonthlyDiv.append('On Day of Month:&nbsp;');
 					var $MonthlyDateSelect = $('<select id="'+ o.ID +'_monthly_date" />')
 									.appendTo($MonthlyDiv)
@@ -87,8 +88,8 @@
 					$MonthlyDiv.append('<br/>');
 
 					var $MonthlyByDayRadio = $('<input type="radio" id="'+ o.ID +'_monthly_by_day" name="'+ o.ID +'_monthly_by" value="MonthlyByWeekAndDay" />')
-						.appendTo($MonthlyDiv)
-						.change(o.onchange);
+									.appendTo($MonthlyDiv)
+									.change(o.onchange);
 					$MonthlyDiv.append('Every&nbsp;');
 					var $MonthlyWeekSelect = $('<select id="'+ o.ID +'_monthly_week" />')
 									.appendTo($MonthlyDiv);
@@ -150,28 +151,40 @@
 					switch(RateType)
 					{
 						case "WeeklyByDay":
-							$weeklyradio.click();
+							$weeklyradio.attr('checked', 'true');
+							$WeeklyDiv.show(); 
+							$MonthlyDiv.hide(); 
+							$YearlyDiv.hide();
 							setWeekDayChecked( o.ID + '_weeklyday', $RateIntervalXml.children('weeklyday').text());
 							$WeeklyStartDate.val($RateIntervalXml.children('startingdate').text());
 							break;
 						case "MonthlyByDate":
-							$monthlyradio.click();
-							$MonthlyByDateRadio.click();
+							$monthlyradio.attr('checked', 'true');
+							$WeeklyDiv.hide(); 
+							$MonthlyDiv.show(); 
+							$YearlyDiv.hide();
+							$MonthlyByDateRadio.attr('checked', 'true');
 							$MonthlyRateSelect.val($RateIntervalXml.children('monthlyfrequency').text());
 							$MonthlyDateSelect.val($RateIntervalXml.children('monthlydate').text());
 							$MonthlyStartMonthSelect.val($RateIntervalXml.children('startingmonth').text());
 							$MonthlyStartYearSelect.val($RateIntervalXml.children('startingyear').text());
 							break;
 						case "MonthlyByWeekAndDay":
-							$monthlyradio.click();
-							$MonthlyByDayRadio.click();
+							$monthlyradio.attr('checked', 'true');
+							$WeeklyDiv.hide(); 
+							$MonthlyDiv.show(); 
+							$YearlyDiv.hide();
+							$MonthlyByDayRadio.attr('checked', 'true');
 							$MonthlyWeekSelect.val($RateIntervalXml.children('monthlyweek').text());
 							setWeekDayChecked( o.ID + '_monthly_day', $RateIntervalXml.children('monthlyday').text());
 							$MonthlyStartMonthSelect.val($RateIntervalXml.children('startingmonth').text());
 							$MonthlyStartYearSelect.val($RateIntervalXml.children('startingyear').text());
 							break;
 						case "YearlyByDate":
-							$yearlyradio.click();
+							$yearlyradio.attr('checked', 'true');
+							$WeeklyDiv.hide(); 
+							$MonthlyDiv.show(); 
+							$YearlyDiv.hide();
 							$YearlyStartDate.val($RateIntervalXml.children('yearlydate').text());
 							break;
 					} // switch(RateType)
