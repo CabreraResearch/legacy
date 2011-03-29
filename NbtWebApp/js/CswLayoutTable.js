@@ -186,7 +186,7 @@
 				if($rembtn != undefined)
 					$rembtn.hide();
                 $table.CswTable('findCell', '.CswLayoutTable_cell')
-                    .removeClass('CswLayoutTable_configcell');
+					.removeClass('CswLayoutTable_configcell');
 
                 setConfigMode($table, 'false');
 				onConfigOff($buttontable);
@@ -199,14 +199,14 @@
                 var cellsetcolumns = parseInt($table.attr('cellset_columns'));
                 var tablemaxrows = $table.CswTable('maxrows');
                 var tablemaxcolumns = $table.CswTable('maxcolumns');
-                        
+
                 // add an extra row and column
                 //var $newcell = getCell($table, (tablemaxrows / cellsetrows ) + 1, (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
-                            
+
                 $table.CswTable('finish', null);
-                            
+
                 $table.CswTable('findCell', '.CswLayoutTable_cell')
-                    .addClass('CswLayoutTable_configcell');
+					.addClass('CswLayoutTable_configcell');
 
                 setConfigMode($table, 'true');
 				onConfigOn($buttontable);
