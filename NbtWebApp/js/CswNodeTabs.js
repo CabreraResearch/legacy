@@ -18,7 +18,7 @@
 			onSave: function (nodeid) { },
 			onBeforeTabSelect: function (tabid) { return true; },
 			onTabSelect: function (tabid) { },
-			onPropertyChange: function() { }
+			onPropertyChange: function(propid, propname) { }
 		};
 
 		if (options)
@@ -214,13 +214,13 @@
 				fieldOpt.$propdiv.attr('propid', fieldOpt.propid);
 				fieldOpt.$propdiv.attr('cswnbtnodekey', fieldOpt.cswnbtnodekey);
 
-				fieldOpt.onchange = function () { o.onPropertyChange(); };
+				fieldOpt.onchange = function () { o.onPropertyChange(fieldOpt.propid, $propxml.attr('name')); };
 				if ($propxml.attr('hassubprops') == "true")
 				{
 					fieldOpt.onchange = function ()
 					{
 						_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, false);
-						o.onPropertyChange();
+						o.onPropertyChange(fieldOpt.propid, $propxml.attr('name'));
 					};
 				} // if ($propxml.attr('hassubprops') == "true")
 
@@ -228,7 +228,7 @@
 
 				// recurse on sub-props
 				var $subprops = $propxml.children('subprops');
-				if ($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
+				if (($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0) || ConfigMode)
 				{
 					//var $subtable = $propcell.CswTable('init', { ID: $propxml.attr('id') + '_subproptable' });
 

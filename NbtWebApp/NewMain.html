@@ -384,8 +384,9 @@
 			{
 				$.CswCookie('set', CswCookieName.CurrentTabId, tabid);
 			},
-			'onPropertyChange': function ()
+			'onPropertyChange': function (propid, propname)
 			{
+				if(debug) log('Property Changed: propid = ' + propid + ', propname = ' + propname);
 				setChanged();
 			}
 		});
