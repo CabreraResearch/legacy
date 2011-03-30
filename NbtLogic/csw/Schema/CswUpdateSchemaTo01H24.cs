@@ -47,6 +47,27 @@ namespace ChemSW.Nbt.Schema
 			}
 			JctUpdate.update( JctTable );
 
+
+			// case 21250
+			// User Page Size property
+			//_CswNbtSchemaModTrnsctn.addObjectClassPropRow
+			CswNbtMetaDataObjectClass UserClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+			CswTableUpdate OCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H-24_OCP_Update", "object_class_props" );
+			DataTable OCPTable = OCPUpdate.getEmptyTable();
+
+			DataRow PageSizeRow = _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, 
+															UserClass.ObjectClassId, 
+															CswNbtObjClassUser.PageSizePropertyName, 
+															CswNbtMetaDataFieldType.NbtFieldType.Number, 
+															Int32.MinValue, Int32.MinValue );
+			PageSizeRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberprecision.ToString()] = CswConvert.ToDbVal( 0 );
+			PageSizeRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberminvalue.ToString()] = CswConvert.ToDbVal( 1 );
+			PageSizeRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numbermaxvalue.ToString()] = CswConvert.ToDbVal( 1000 );
+
+			OCPUpdate.update( OCPTable );
+
+			_CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+
 		} // update()
 
 	}//class CswUpdateSchemaTo01H24
