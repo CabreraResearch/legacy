@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery/jquery-1.5.js" />
+﻿/// <reference path="../jquery/jquery-1.5.1.js" />
 
 ; (function ($) {
 	var PluginName = "CswSearch";
@@ -42,7 +42,7 @@
     function renderNodeTypeSearchContent(options)
     {
         var o = {
-            '$bottomspandiv': '',
+            '$topspandiv': '',
             '$parent': '',
             '$searchXml': '',
             '$searchTable': '',
@@ -65,9 +65,10 @@
         var $typeSelectCell = o.$searchTable.CswTable('cell', 1, 1);
         var $nodeTypes = $(xmlToString(o.$searchXml.children('nodetypes').children('select')));
         $nodeTypes.change( function() {
+                           o.$parent.empty();
                            initOptions.viewid = '';
                            initOptions.nodetypeid = $(this).val();
-                           init(true,initOptions,o);
+                           init(initOptions);
                       });
         $typeSelectCell.append($nodeTypes);
                                                                                         
@@ -75,13 +76,14 @@
         var $propSelectCell = o.$searchTable.CswTable('cell', 1, 2);
         var $props = $(xmlToString(o.$searchXml.children('nodetypeprops').children('properties').children('select')))
                      .change(function() {
-                        var reInit = {};   
-                        $.extend(reInit,o);
-                        reInit.$property = '';
-                        reInit.$filter = '';
-                        reInit.$subfield = '';
-                        reInit.$fieldType = '';
-                        init(false, {viewid: '', nodetypeid: $nodeTypes.val()}, reInit);
+                            var opt = {};   
+                            $.extend(opt,o);
+                            opt.$property = '';
+                            opt.$filter = '';
+                            opt.$subfield = '';
+                            opt.$fieldType = '';
+                            opt.nodeTypeId = $nodeTypes.val()
+                            reInit(opt);
                      });
         $propSelectCell.append($props);
 
@@ -125,9 +127,14 @@
         var $clearButtonCell = $splitCellTable.CswTable('cell', 1, 1);
         var $clearButton = $('<input type="button" name="clear_button" id="clear_button" value="Clear" />')
                            .click(function() {
-                                initOptions.viewid = '';
-                                initOptions.nodetypeid = $nodeTypes.val();
-                                init(initOptions);
+                                var opt = {};   
+                                $.extend(opt,o);
+                                opt.$property = '';
+                                opt.$filter = '';
+                                opt.$subfield = '';
+                                opt.$fieldType = '';
+                                opt.nodeTypeId = $nodeTypes.val()
+                                reInit(opt);
                            });
 
         $clearButtonCell.append($clearButton);
@@ -151,41 +158,55 @@
         var $searchButton = $('<input type="button" name="search_button" id="search_button" value="Search" />');
         $searchButtonCell.append($searchButton);
 
-        //Bottom Span
-        var $bottomTable = o.$bottomspandiv.CswTable('init', {ID: 'change_search_tbl', 
-                                                            cellpadding: 1,
-                                                            cellspacing: 1,
-                                                            cellalign: 'center',
-                                                            align: 'right'});
-        //Row 1, Column 1: load a search
-        var $loadTableCell = $bottomTable.CswTable('cell', 1, 1);
-        $loadTableCell.html('Load a Search:');
-                                                                                        
-        CswAjaxXml({ 
-			'url': initOptions.SearchableViewsUrl,
-			'data': "IsMobile=" + false + "&OrderBy=",
-            'success': function($views) { 
-                    log($views);                                    
-                    //Row 1, Column 2: view select
-                    var $viewSelectCell = $bottomTable.CswTable('cell', 1, 2);
-                    var $viewSelect = $(xmlToString($views));
-                    $viewSelectCell.append($viewSelect);
-                }
-            });
-
-        //Row 1, Column 3: load button
-        var $loadButtonCell = $bottomTable.CswTable('cell', 1, 3);
-        var $loadButton = $('<input type="button" name="load_button" id="load_button" value="Load" />');
-        $loadButtonCell.append($loadButton);
-
-        //Row 2, Column 2: new custom search
-        var $customSearchCell = $bottomTable.CswTable('cell', 2, 2);
-        var $customSearch = $('<a href="#customsearch">New Custom Search</a>');
-        $customSearchCell.append($customSearch);
-
     }
 
-    function init(options)
+    function reInit(options)
+    {
+        if(options) 
+        {
+            var defaultProp = options.$searchXml.children('nodetypeprops').children('properties').attr('defaultprop');
+            var $defaultCriteria = options.$searchXml.children('nodetypeprops').children('propertyfilters').children('property[propname='+ defaultProp +']');
+            var o = {
+                '$parent': '',
+                '$searchXml': '',
+                '$searchTable': '',
+                '$topspandiv': '',
+                'nodeTypeId': '',
+                '$property': '',
+                '$filter': $defaultCriteria.children('defaultsubfield').attr('filter'),
+                '$subfield': $defaultCriteria.children('defaultsubfield').attr('subfield'),
+                '$fieldType': $defaultCriteria.attr('fieldtype'),
+                'initOptions': ''
+            };
+        
+            $.extend(o,options);
+
+            o.$topspandiv.empty();
+        
+            $searchTable = $topspandiv.CswTable('init', { 
+                                            ID: 'search_tbl', 
+                                            cellpadding: 1,
+                                            cellspacing: 1,
+                                            cellalign: 'center',
+                                            align: 'center'
+                                            });
+
+            renderNodeTypeSearchContent({
+                '$parent': o.$parent,
+                '$searchXml': o.$searchXml,
+                '$searchTable': $searchTable,
+                '$topspandiv': o.$topspandiv,
+                'nodeTypeId': o.nodeTypeId,
+                '$property': o.$property,
+                '$filter': o.$filter,
+                '$subfield': o.$subfield,
+                '$fieldType': o.$fieldType,
+                'initOptions': o.initOptions
+            });
+        }
+    }
+
+    function init(options,doFullRefresh)
     {
         var o = { 
 			'RenderSearchUrl': '',
@@ -203,12 +224,24 @@
 		if(options) {
 			$.extend(o, options);
 		}
-        var $titlespan = o.$parent.html('<span style="align: center;">Search</span>');
-        var $topspan = o.$parent.html('<span></span>');
-        var $topspandiv = $topspan.html('<div id="search_criteria_div"></div>');
-        var $padding = o.$parent.html('<br/><br/><br/><br/><br/>');
-        var $bottomspan = o.$parent.html('<span></span>');
-        var $bottomspandiv = $bottomspan.html('<div id="change_search_div"></div>');
+        
+        //var $titlespan = $('<span style="align: center;">Search</span>');
+        //o.$parent.append( $titlespan );
+        
+        var $topspan = $('<span></span>');
+        o.$parent.append( $topspan );
+
+        var $topspandiv = $('<div id="search_criteria_div"></div>');
+        $topspan.append( $topspandiv );
+
+        var $padding = $('<br/><br/><br/><br/><br/>');
+        o.$parent.append( $padding );
+        
+        var $bottomspan = $('<span></span>');
+        o.$parent.append($bottomspan);
+        
+        var $bottomspandiv = $('<div id="change_search_div"></div>');
+        $bottomspan.append($bottomspandiv);
 
         CswAjaxXml({ 
 		    'url': o.RenderSearchUrl,
@@ -239,7 +272,7 @@
                             '$parent': o.$parent,
                             '$searchXml': $xml,
                             '$searchTable': $searchTable,
-                            '$bottomspandiv': $bottomspandiv,
+                            '$topspandiv': $topspandiv,
                             'nodeTypeId': nodeTypeId,
                             '$property': $property,
                             '$filter': $filter,
@@ -247,6 +280,7 @@
                             '$fieldType': $fieldType,
                             'initOptions': o
                         });
+                        if(doFullRefresh) getBottomSpan({'$bottomspandiv': $bottomspandiv});
 
                     }
                     case 'viewsearch':
@@ -262,6 +296,48 @@
 		}); // CswAjaxXml
     }
 
+    function getBottomSpan(options)
+    {
+        var o = {
+            '$bottomspandiv': '',
+            'SearchableViewsUrl': '/NbtWebApp/wsNBT.asmx/getSearchableViews',
+        };
+        
+        if(options) $.extend(o,options);
+
+        //Bottom Span
+        var $bottomTable = o.$bottomspandiv.CswTable('init', {ID: 'change_search_tbl', 
+                                                            cellpadding: 1,
+                                                            cellspacing: 1,
+                                                            cellalign: 'center',
+                                                            align: 'right'});
+        //Row 1, Column 1: load a search
+        var $loadTableCell = $bottomTable.CswTable('cell', 1, 1);
+        $loadTableCell.html('Load a Search:');
+                                                                                        
+        CswAjaxXml({ 
+			'url': o.SearchableViewsUrl,
+			'data': "IsMobile=" + false + "&OrderBy=",
+            'success': function($views) { 
+                    log($views);                                    
+                    //Row 1, Column 2: view select
+                    var $viewSelectCell = $bottomTable.CswTable('cell', 1, 2);
+                    var $viewSelect = $(xmlToString($views));
+                    $viewSelectCell.append($viewSelect);
+                }
+            });
+
+        //Row 1, Column 3: load button
+        var $loadButtonCell = $bottomTable.CswTable('cell', 1, 3);
+        var $loadButton = $('<input type="button" name="load_button" id="load_button" value="Load" />');
+        $loadButtonCell.append($loadButton);
+
+        //Row 2, Column 2: new custom search
+        var $customSearchCell = $bottomTable.CswTable('cell', 2, 2);
+        var $customSearch = $('<a href="#customsearch">New Custom Search</a>');
+        $customSearchCell.append($customSearch);
+    }
+
 	var methods = {
 	
 		'getSearchForm': function(options) 
@@ -270,7 +346,6 @@
 				'RenderSearchUrl': '/NbtWebApp/wsNBT.asmx/getClientSearchXml',
 				'ExecViewSearchUrl': '/NbtWebApp/wsNBT.asmx/doViewSearch',
                 'ExecNodeSearchUrl': '/NbtWebApp/wsNBT.asmx/doNodeTypeSearch',
-                'SearchableViewsUrl': '/NbtWebApp/wsNBT.asmx/getSearchableViews',
                 viewid: '',
                 nodetypeid: '',
                 relatedidtype: '',
@@ -280,7 +355,7 @@
 			if(options) {
 				$.extend(o, options);
 			}
-            init(o);
+            init(o, true);
         }
 	};
 	
