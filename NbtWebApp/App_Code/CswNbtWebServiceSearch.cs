@@ -305,8 +305,14 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = NodeTypeProp.FieldType.FieldType;
 
             XElement SubfieldSelect = new XElement( "select", new XAttribute( "id", "subfield_select" ), new XAttribute( "name", "subfield_select" ) );
-            string DefaultFilter = NodeTypeProp.FieldTypeRule.SubFields.Default.Name.ToString();
-            string DefaultSubfield = NodeTypeProp.FieldTypeRule.SubFields.Default.Column.ToString();
+            
+            string DefaultFilter = string.Empty;  
+            string DefaultSubfield = string.Empty; 
+            if(null != NodeTypeProp.FieldTypeRule.SubFields.Default)
+            {
+                DefaultFilter = NodeTypeProp.FieldTypeRule.SubFields.Default.Name.ToString();
+                DefaultSubfield = NodeTypeProp.FieldTypeRule.SubFields.Default.Column.ToString();
+            }
             XElement FiltersNode = new XElement( "propertyfilters" ) { Value = NodeTypeProp.PropName };
 
             foreach( CswNbtSubField Field in SubFields )
@@ -344,7 +350,8 @@ namespace ChemSW.Nbt.WebServices
 
             XElement ThisProp = new XElement( "property" ) { Value = NodeTypeProp.PropName };
             ThisProp.Add( new XAttribute( "propname", NodeTypeProp.PropName ),
-                            new XAttribute( "fieldtype", NodeTypeProp.FieldType.FieldType ),
+                          new XAttribute( "propid", NodeTypeProp.PropId ),
+                          new XAttribute( "fieldtype", NodeTypeProp.FieldType.FieldType ),
                             new XElement( "defaultsubfield",
                                         new XAttribute( "filter", DefaultFilter ),
                                         new XAttribute( "subfield", DefaultSubfield ) ),
