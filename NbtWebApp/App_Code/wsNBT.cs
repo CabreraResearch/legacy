@@ -367,7 +367,7 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getTree( string ViewNum, string NodePk, string IDPrefix )
+		public XElement getTreeOfView( string ViewNum, string IDPrefix, string ParentNodeKey )
 		{
 			var TreeNode = new XElement( "tree" );
 
@@ -375,25 +375,16 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 				Int32 ViewId = CswConvert.ToInt32( ViewNum );
-				CswNbtView View = null;
-
 				if( Int32.MinValue != ViewId )
 				{
-					View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-				}
-				else if( string.Empty != NodePk )
-				{
-					CswPrimaryKey NodeId = new CswPrimaryKey();
-					NodeId.FromString( NodePk );
-					CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
-					View = Node.NodeType.CreateDefaultView();
-					View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
-				}
-
-				if( null != View )
-				{
+					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
 					var ws = new CswNbtWebServiceTree( _CswNbtResources );
-					TreeNode = ws.getTree( View, IDPrefix );
+
+					CswNbtNodeKey RealParentNodeKey = null;
+					if( !string.IsNullOrEmpty( ParentNodeKey ) )
+						RealParentNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( ParentNodeKey ) );
+					TreeNode = ws.getTree( View, IDPrefix, RealParentNodeKey, 1 );
+
 					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
 				}
 				end();
@@ -404,7 +395,42 @@ namespace ChemSW.Nbt.WebServices
 			}
 
 			return TreeNode;
-		} // getTree()
+		} // getTreeOfView()
+
+		/// <summary>
+		/// Generates a tree of nodes from the view
+		/// </summary>
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement getTreeOfNode( string IDPrefix, string NodePk )
+		{
+			var TreeNode = new XElement( "tree" );
+
+			try
+			{
+				start();
+
+				if( string.Empty != NodePk )
+				{
+					CswPrimaryKey NodeId = new CswPrimaryKey();
+					NodeId.FromString( NodePk );
+					CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
+					CswNbtView View = Node.NodeType.CreateDefaultView();
+					View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
+
+					var ws = new CswNbtWebServiceTree( _CswNbtResources );
+					TreeNode = ws.getTree( View, IDPrefix, null, 1 );
+					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
+				}
+				end();
+			}
+			catch( Exception ex )
+			{
+				TreeNode = xError( ex );
+			}
+
+			return TreeNode;
+		} // getTreeOfNode()
 
 
 		[WebMethod( EnableSession = true )]
