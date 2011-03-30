@@ -148,8 +148,9 @@
         {
 	        var $cell = null;
 	        if ($table.length > 0 &&
-		            row != undefined && row != '' &&
-		            col != undefined && col != '') {
+		        row != undefined && row != '' &&
+		        col != undefined && col != '') 
+			{
 		        if (row <= 0) {
 			        log("error: row must be greater than 1, got: " + row);
 			        row = 1;
@@ -173,7 +174,7 @@
 						align = 'right';
 			        }
 					var $newcell = $('<td class="'+ $table.attr('cellcssclass') +'" align="'+ align +'" valign="'+ $table.attr('cellvalign') +'"></td>')
-                                        .appendTo($row);
+										.appendTo($row);
                     $table.trigger('CswTable_onCreateCell', [ $table, $newcell, row, $row.children('td').length ]);
 		        }
 		        $cell = $($row.children('td')[col-1]);

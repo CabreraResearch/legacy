@@ -28,11 +28,28 @@ var CswCookieName = {
 				{
 					$.cookie(cookiename, value);
 				},
-			'clear': function(cookiename) 
+			'clear': function (cookiename)
 				{
 					$.cookie(cookiename, null);
-				}
-		};
+				},
+			'clearAll': function() 
+				{
+					for(var CookieName in CswCookieName) 
+					{
+						if(CswCookieName.hasOwnProperty(CookieName))
+						{
+							$.cookie(CswCookieName[CookieName], null);
+							for(var SubCookieName in CswCookieName[CookieName]) 
+							{
+								if( CswCookieName[CookieName].hasOwnProperty(SubCookieName))
+								{
+									$.cookie(CswCookieName[CookieName][SubCookieName], null);
+								}
+							}
+						}
+					}
+				} // clearAll
+			};
 
 		// Method calling logic
         if ( methods[method] ) {

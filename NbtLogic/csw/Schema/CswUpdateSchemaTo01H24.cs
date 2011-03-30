@@ -47,6 +47,44 @@ namespace ChemSW.Nbt.Schema
 			}
 			JctUpdate.update( JctTable );
 
+
+			// case 21250
+			// User Page Size property
+			//_CswNbtSchemaModTrnsctn.addObjectClassPropRow
+			CswNbtMetaDataObjectClass UserClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+			CswTableUpdate OCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H-24_OCP_Update", "object_class_props" );
+			DataTable OCPTable = OCPUpdate.getEmptyTable();
+
+			DataRow PageSizeRow = _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, 
+															UserClass.ObjectClassId, 
+															CswNbtObjClassUser.PageSizePropertyName, 
+															CswNbtMetaDataFieldType.NbtFieldType.Number, 
+															Int32.MinValue, Int32.MinValue );
+			PageSizeRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberprecision.ToString()] = CswConvert.ToDbVal( 0 );
+			PageSizeRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberminvalue.ToString()] = CswConvert.ToDbVal( 1 );
+			PageSizeRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numbermaxvalue.ToString()] = CswConvert.ToDbVal( 1000 );
+			PageSizeRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired.ToString()] = CswConvert.ToDbVal( true );
+
+			OCPUpdate.update( OCPTable );
+
+			// this does a refreshAll()
+			_CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+
+			// default value is 50
+			CswNbtMetaDataObjectClassProp PageSizeOCP = UserClass.getObjectClassProp(CswNbtObjClassUser.PageSizePropertyName);
+			_CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( PageSizeOCP, CswNbtSubField.SubFieldName.Value, 50 );
+
+			foreach( CswNbtMetaDataNodeType NodeType in UserClass.NodeTypes )
+			{
+				CswNbtMetaDataNodeTypeProp PageSizeNTP = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassUser.PageSizePropertyName );
+				foreach(CswNbtNode Node in NodeType.getNodes(true, true))
+				{
+					CswNbtObjClassUser UserNode = CswNbtNodeCaster.AsUser(Node);
+					UserNode.PageSizeProperty.Value = 50;
+					UserNode.postChanges(false);
+				}
+			} // foreach( CswNbtMetaDataNodeType NodeType in UserClass.NodeTypes )
+
 		} // update()
 
 	}//class CswUpdateSchemaTo01H24
