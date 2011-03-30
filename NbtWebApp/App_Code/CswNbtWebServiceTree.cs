@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Core;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -19,23 +20,23 @@ namespace ChemSW.Nbt.WebServices
 		}
 
 
-		public XElement getTree( CswNbtView View, string IDPrefix, CswNbtNodeKey ParentNodeKey, Int32 PageNo )
+		public XElement getTree( CswNbtView View, string IDPrefix, CswNbtNodeKey ParentNodeKey, Int32 PageNo, CswNbtNodeKey IncludeNodeKey )
 		{
             var ReturnNode = new XElement( "root" );
             string EmptyOrInvalid = "";
 			
-			bool IsTopLevel = true;
-			if( ParentNodeKey != null )
-				IsTopLevel = false;
+			bool IsFirstLoad = true;
+			if( ParentNodeKey != null || IncludeNodeKey != null )
+				IsFirstLoad = false;
 
             if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, _CswNbtResources.CurrentNbtUser.PageSize, false, false, null, false );
+				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, _CswNbtResources.CurrentNbtUser.PageSize, false, false, IncludeNodeKey, false );
                 if( Tree.getChildNodeCount() > 0 )
                 {
 
                     var RootNode = new XElement( "root" );
-					if( IsTopLevel && View.ViewMode == NbtViewRenderingMode.Tree )
+					if( IsFirstLoad && View.ViewMode == NbtViewRenderingMode.Tree )
                     {
 						var RootItemNode = new XElement( "item",
 											new XAttribute( "id", IDPrefix + "root" ),
@@ -50,7 +51,7 @@ namespace ChemSW.Nbt.WebServices
                         _runTreeNodesRecursive( Tree, IDPrefix, RootNode );
                     }
 
-					if( IsTopLevel )
+					if( IsFirstLoad )
 					{
 						ReturnNode = new XElement( "result",
 										new XElement( "tree", RootNode ),
@@ -61,7 +62,7 @@ namespace ChemSW.Nbt.WebServices
 				} // if( Tree.getChildNodeCount() > 0 )
                 else 
                 {
-					if( IsTopLevel )
+					if( IsFirstLoad )
 					{
 						EmptyOrInvalid = "No Results";
 					}

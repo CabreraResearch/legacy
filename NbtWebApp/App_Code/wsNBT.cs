@@ -367,7 +367,7 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getTreeOfView( string ViewNum, string IDPrefix, string ParentNodeKey )
+		public XElement getTreeOfView( string ViewNum, string IDPrefix, string ParentNodeKey, string IncludeNodeKey )
 		{
 			var TreeNode = new XElement( "tree" );
 
@@ -383,7 +383,12 @@ namespace ChemSW.Nbt.WebServices
 					CswNbtNodeKey RealParentNodeKey = null;
 					if( !string.IsNullOrEmpty( ParentNodeKey ) )
 						RealParentNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( ParentNodeKey ) );
-					TreeNode = ws.getTree( View, IDPrefix, RealParentNodeKey, 1 );
+
+					CswNbtNodeKey RealIncludeNodeKey = null;
+					if( !string.IsNullOrEmpty( IncludeNodeKey ) )
+						RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( IncludeNodeKey ) );
+
+					TreeNode = ws.getTree( View, IDPrefix, RealParentNodeKey, 1, RealIncludeNodeKey );
 
 					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
 				}
@@ -419,7 +424,7 @@ namespace ChemSW.Nbt.WebServices
 					View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
 
 					var ws = new CswNbtWebServiceTree( _CswNbtResources );
-					TreeNode = ws.getTree( View, IDPrefix, null, 1 );
+					TreeNode = ws.getTree( View, IDPrefix, null, 1, null );
 					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
 				}
 				end();

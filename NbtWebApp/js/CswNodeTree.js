@@ -31,7 +31,7 @@
 								.appendTo($(this));
 
 				var url = o.ViewTreeUrl;
-				var data = 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&ParentNodeKey=';
+				var data = 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&ParentNodeKey=&IncludeNodeKey=';
 				if(o.viewid == '' || o.viewid == undefined)
 				{
 					url = o.NodeTreeUrl;
@@ -73,7 +73,7 @@
 						}
 
 						// make sure selected item is visible
-						var $selecteditem = $xml.find('item[id="'+ selectid + '"]');
+						$selecteditem = $xml.find('item[id="'+ selectid + '"]');
 						var $itemparents = $selecteditem.parents('item').andSelf();
 						var initiallyOpen = new Array();
 						var i = 0;
@@ -99,7 +99,7 @@
 												"data": function($nodeOpening) 
 													{
 														var nodekey = $nodeOpening.attr('cswnbtnodekey');
-														return data + nodekey;
+														return 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&ParentNodeKey=' + nodekey + '&IncludeNodeKey=';
 													}
 											}
 									},
@@ -129,7 +129,17 @@
 												if(optSelect.nodename == "More...")
 												{
 													// get next page of nodes
-
+													CswAjaxXml({
+														url: url,
+														data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&ParentNodeKey=&IncludeNodeKey=' + optSelect.cswnbtnodekey,
+														success: function ($xml) 
+															{
+																$xml.children().each(function() {
+																	var $item = $(this);
+																	$treediv.jstree('create', $('#' + IDPrefix + optSelect.nodeid), 'after', { 'data': $item.attr('id') });
+																});
+															}
+														});
 												}
 												else 
 												{
