@@ -33,7 +33,8 @@ namespace ChemSW.Nbt.Security
         string LastName { get; }
         string Email { get; }
         CswNbtNodePropText EmailProperty { get; }
+		Int32 PageSize { get; }
 
-    }//ICswNbtUser
+	}//ICswNbtUser
 }//namespace ChemSW.Nbt
 
