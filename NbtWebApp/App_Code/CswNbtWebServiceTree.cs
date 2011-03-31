@@ -32,7 +32,6 @@ namespace ChemSW.Nbt.WebServices
             if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
             {
 				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, _CswNbtResources.CurrentNbtUser.PageSize, false, false, IncludeNodeKey, false );
-				ICswNbtTree TreeTest = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, 100, false, false, IncludeNodeKey, false );
 				if( Tree.getChildNodeCount() > 0 )
                 {
 
