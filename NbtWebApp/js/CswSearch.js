@@ -42,6 +42,7 @@
             '$nodeTypesXml': '',
             '$propsXml': '',
             '$searchTable': '',
+            '$nodeTypesSelect': '',
             'initOptions': {}
         };
 
@@ -54,29 +55,31 @@
         var $typeSelectCell = o.$searchTable.CswTable('cell', 1, 1);
         var $nodeTypesSelect = $(xmlToString(o.$nodeTypesXml.children('select')))
                                .change( function() {
-                                   getNewProps( $(this).valueOf(), $(this).find(':selected').attr('label'), {'$parent': $searchTable, '$nodeTypesSelect': $(this)}, o);
+                                   o.$parent = o.$searchTable; 
+                                   o.$nodeTypesSelect = $(this);
+                                   getNewProps( $(this).val(), $(this).find(':selected').attr('label'), o);
                                 });
+        o.$nodeTypesSelect = $nodeTypesSelect;
         $typeSelectCell.append($nodeTypesSelect);
-       
+        
+        o.$parent = $searchTable;
         //row 1-2, Columns 2-6
-        renderPropsAndControls({'$propsXml': o.$propsXml, '$parent': $searchTable}, o);
+        renderPropsAndControls(o);
     }
 
-    function getNewProps(objectPk,relatedIdType,renderOpts,reInitOpts)
+    function getNewProps(objectPk,relatedIdType,options)
     {
         CswAjaxXml({ 
 		            'url': '/NbtWebApp/wsNBT.asmx/getNodeTypeSearchProps',
 		            'data': "RelatedIdType=" + relatedIdType + "&ObjectPk=" + objectPk,
                     'success': function($xml) { 
-                            log($xml);
-                            renderOpts.$propsXml = $xml;
-                            reInitOpts.$propsXml = $xml;
-                            renderPropsAndControls(renderOpts, reInitOpts);
+                            options.$propsXml = $xml;
+                            renderPropsAndControls(options);
                     }
                 });
     }
 
-    function renderPropsAndControls(options, reInitOpt)
+    function renderPropsAndControls(options)
     {
         var o = {
             '$propsXml': '',
@@ -88,11 +91,9 @@
             'isHidden': true
         };
         if(options) $.extend(o,options);
-
         
-
-        //var nodeTypeId =  o.$nodeTypesSelect.val();
-        //var relatedIdType = o.$nodeTypesSelect.val(nodeTypeId).attr('label');
+        var nodeTypeId =  o.$nodeTypesSelect.val();
+        var relatedIdType = o.$nodeTypesSelect.find(':selected').attr('label');
                 
         //Row 1, Column 2: properties picklist
         var $propSelectCell = o.$parent.CswTable('cell', 1, 2)
@@ -178,7 +179,12 @@
         }
         else
         {
-            $searchInput = $('<input type="text" name="search_input" id="search_input" autocomplete="on" autofocus="true" placeholder="' + $subfieldsOptions.find(':selected').text() + ' search" width="200px" />');
+            var searchSuggest = $props.find(':selected').text();
+            if(searchSuggest != $subfieldsOptions.find(':selected').text() )
+            {
+                searchSuggest += "'s " +  $subfieldsOptions.find(':selected').text();
+            }  
+            $searchInput = $('<input type="text" name="search_input" id="search_input" autocomplete="on" autofocus="true" placeholder="' + searchSuggest + '" width="200px" />');
         }
          $searchBoxCell.append($searchInput);
                                             
@@ -196,7 +202,7 @@
                                .empty();
         var $clearButton = $('<input type="button" name="clear_button" id="clear_button" value="Clear" />')
                            .click(function() {
-                                reInit(reInitOpt);
+                                reInit(o);
                            });
 
         $clearButtonCell.append($clearButton);
@@ -215,11 +221,24 @@
                             });
         $advancedLinkCell.append($advancedLink);
                                                     
-        //Row 2, Column 6: search button
-        var $searchButtonCell = o.$parent.CswTable('cell', 2, 6)
+        //Row 2, Column 5: search button
+        var $searchButtonCell = o.$parent.CswTable('cell', 2, 5)
                                 .attr({align:"right"})
                                 .empty();
-        var $searchButton = $('<input type="button" name="search_button" id="search_button" value="Search" />');
+        var $searchButton = $('<input type="button" name="search_button" id="search_button" value="Search" />')
+                            .click(function() {
+                                    var searchOpt = {
+                                            nodetypeprop: {
+                                                objectpk: nodeTypeId,
+                                                relatedidtype: relatedIdType,
+                                                propid: $props.val(),
+                                                subfield: $subfieldsOptions.find(':selected').text(),
+                                                filter: $filtersOptions.val(),
+                                                searchtext: $searchInput.text()  
+                                                }
+                                    };
+                                    doNodesSearch(searchOpt);
+                            });
         $searchButtonCell.append($searchButton);
     }
 
@@ -232,6 +251,7 @@
                 '$nodeTypesXml': '',
                 '$propsXml': '',
                 '$searchTable': '',
+                '$topspandiv': '',
                 'initOptions': ''
             };
             $.extend(o,options);
@@ -260,7 +280,6 @@
     function init(options)
     {
         var o = { 
-			'RenderSearchUrl': '',
             '$parent': '',
             '$nodeTypesXml': '',
             '$propsXml': '',
@@ -292,10 +311,10 @@
         $bottomspan.append($bottomspandiv);
 
         CswAjaxXml({ 
-		    'url': o.RenderSearchUrl,
+		    'url': '/NbtWebApp/wsNBT.asmx/getClientSearchXml',
 		    'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeid,
             'success': function($xml) { 
- log($xml);                
+
                 var $nodeTypesXml = $xml.children('nodetypes');
                 var $propsXml = $xml.children('nodetypeprops');
                 $searchTable = $topspandiv.CswTable('init', { 
@@ -313,7 +332,7 @@
                     {
                         renderNodeTypeSearchContent({
                             '$parent': o.$parent,
-                            '$nodeTypesXml': $nodeTypesXml,
+                            '$nodeTypesXml': $nodeTypesXml, 
                             '$propsXml': $propsXml,
                             '$searchTable': $searchTable,
                             '$topspandiv': $topspandiv,
@@ -339,7 +358,7 @@
     {
         var o = {
             '$bottomspandiv': '',
-            'SearchableViewsUrl': '/NbtWebApp/wsNBT.asmx/getSearchableViews',
+            'SearchableViewsUrl': '/NbtWebApp/wsNBT.asmx/getSearchableViews'
         };
         
         if(options) $.extend(o,options);
@@ -358,7 +377,6 @@
 			'url': o.SearchableViewsUrl,
 			'data': "IsMobile=" + false + "&OrderBy=",
             'success': function($views) { 
-                    log($views);                                    
                     //Row 1, Column 2: view select
                     var $viewSelectCell = $bottomTable.CswTable('cell', 1, 2);
                     var $viewSelect = $(xmlToString($views));
@@ -377,15 +395,37 @@
         $customSearchCell.append($customSearch);
     }
 
+    function doNodesSearch(options)
+    {
+         var o = {
+            nodetypeprop: {
+                objectpk: '',
+                relatedidtype: '',
+                propid: '',
+                subfield: '',
+                filter: '',
+                searchtext: ''
+                }
+        };
+        
+        if(options) $.extend(o,options);
+        log(JSON.stringify(o));                                                                                       
+        CswAjaxJSON({ 
+			'url': '/NbtWebApp/wsNBT.asmx/doNodeTypeSearch',
+			'data': '{"SearchJson": "' + $.param(o) + '"}',
+            'success': function($viewid) { 
+                    alert('hey');
+                    //load the view
+                }
+            });
+    }
+
 	var methods = {
 	
 		'getSearchForm': function(options) 
 		{
 			var o = { 
-				'RenderSearchUrl': '/NbtWebApp/wsNBT.asmx/getClientSearchXml',
-				//'ExecViewSearchUrl': '/NbtWebApp/wsNBT.asmx/doViewSearch',
-                //'ExecNodeSearchUrl': '/NbtWebApp/wsNBT.asmx/doNodeTypeSearch',
-                viewid: '',
+				viewid: '',
                 nodetypeid: '',
                 relatedidtype: '',
                 'onSearch': function() { },

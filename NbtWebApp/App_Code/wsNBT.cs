@@ -539,7 +539,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-			    ws.getNodeTypeProps( RelatedIdType, ObjectPk );
+                SearchNode = ( ws.getNodeTypeProps( RelatedIdType, ObjectPk ) );
 				end();
 			}
 			catch( Exception ex )
@@ -612,7 +612,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = true )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement doNodeTypeSearch( string SearchXml )
+        public XElement doNodeTypeSearch( string SearchJson )
         {
             var SearchResults = new XElement( "search" );
             try
@@ -620,7 +620,7 @@ namespace ChemSW.Nbt.WebServices
                 start();
 
                 var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-                CswNbtView ResultsView = ws.doNodesSearch( SearchXml );
+                CswNbtView ResultsView = ws.doNodesSearch( SearchJson );
                 SearchResults = _getClientXmlFromView( ResultsView );
                 end();
             }

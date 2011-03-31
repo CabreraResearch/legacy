@@ -75,8 +75,10 @@ namespace ChemSW.Nbt.WebServices
 
             XElement NodeTypeSelect = new XElement( "optgroup", new XAttribute( "label", "Specific Types" ) );
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes.Cast<CswNbtMetaDataNodeType>()
-                                                        .Where( NodeType => _ConstrainToObjectClassId == Int32.MinValue || 
-                                                                NodeType.ObjectClass.ObjectClassId == _ConstrainToObjectClassId ) )
+                                                        .Where( NodeType => ( ( _ConstrainToObjectClassId == Int32.MinValue || 
+                                                                                NodeType.ObjectClass.ObjectClassId == _ConstrainToObjectClassId ) 
+                                                                                && NodeType.NodeTypeProps.Count > 0 ) ) )
+                                                                  
             {
                 XElement ThisOption = new XElement( "option",
                                             new XAttribute( "label", "nodetype" ), 
@@ -99,7 +101,9 @@ namespace ChemSW.Nbt.WebServices
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses.Cast<CswNbtMetaDataObjectClass>()
                                                               .Where( ObjectClass => ( _ConstrainToObjectClassId == Int32.MinValue || 
                                                                       ObjectClass.ObjectClassId == _ConstrainToObjectClassId ) &&
-                                                                      CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass != ObjectClass.ObjectClass) )
+                                                                      CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass != ObjectClass.ObjectClass &&
+                                                                      ( ObjectClass.ObjectClassProps.Count > 0 &&
+                                                                        ObjectClass.NodeTypes.Count > 0 ) ) )
             {
                 XElement ThisOption = new XElement( "option",
                                             new XAttribute( "label", "objectclass" ),
@@ -146,7 +150,7 @@ namespace ChemSW.Nbt.WebServices
 
         private IEnumerable<CswNbtMetaDataNodeTypeProp> _getNodeTypeProps( CswNbtMetaDataNodeType NodeType, ref Dictionary<Int32, string> UniqueProps )
         {
-            var NtProps = new LinkedList<CswNbtMetaDataNodeTypeProp>();
+            var NtProps = new List<CswNbtMetaDataNodeTypeProp>();
             // "??" == if(null == UniqueProps)
             var Props = UniqueProps ?? new Dictionary<int, string>();
             if( null != NodeType)
@@ -159,7 +163,7 @@ namespace ChemSW.Nbt.WebServices
                                                                             && !Props.ContainsKey( ThisProp.FirstPropVersionId ) ) )
                     {
                         Props.Add( ThisProp.FirstPropVersionId, ThisProp.PropNameWithQuestionNo.ToLower() );
-                        NtProps.AddLast( ThisProp );
+                        NtProps.Add( ThisProp );
                     }
                     ThisVersionNodeType = ThisVersionNodeType.PriorVersionNodeType;
                 }
@@ -170,7 +174,7 @@ namespace ChemSW.Nbt.WebServices
 
         private IEnumerable<CswNbtMetaDataNodeTypeProp> _getObjectClassProps( CswNbtMetaDataObjectClass ObjectClass )
         {
-            var OcProps = new LinkedList<CswNbtMetaDataNodeTypeProp>();
+            var OcProps = new List<CswNbtMetaDataNodeTypeProp>();
             Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
             if( null != ObjectClass )
             {
@@ -179,11 +183,11 @@ namespace ChemSW.Nbt.WebServices
                                                                             in ObjectClass.NodeTypes 
                                                                             select _getNodeTypeProps( NodeType, ref UniqueProps ) )
                 {
-                    OcProps.Concat( NtProps );
+                    OcProps.AddRange( NtProps );
                 }
             }
-            
-            return OcProps;
+            var ReturnProps = from Prop in OcProps group Prop by Prop into PropGroup where PropGroup.Count() == 1 select PropGroup.Key;
+            return ReturnProps;
         } // _getObjectClassProps()
 
         /// <summary>
@@ -241,7 +245,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != NodeTypeProps )
                 {
-                    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeProps )
+                    foreach( CswNbtMetaDataNodeTypeProp Prop in from Ntp in NodeTypeProps orderby Ntp.PropName select Ntp )
                     {
                         var PropNode = new XElement( "option",
                                                      new XAttribute( "label", RelatedIdType ),
@@ -252,14 +256,13 @@ namespace ChemSW.Nbt.WebServices
                             PropNode.Add( new XAttribute( "selected", "selected" ) );
                             DefaultPropName = Prop.PropName;
                         }
+                        PropNode.Add( new XAttribute( "value", Prop.FirstPropVersionId ) );
                         if( Int32.MinValue != Prop.FirstPropVersionId && "nodetype" == RelatedIdType )
                         {
-                            PropNode.Add( new XAttribute( "value", Prop.FirstPropVersionId ) );
                             NodeTypePropsGroup.Add( PropNode );
                         }
                         else if( Int32.MinValue != Prop.ObjectClassPropId && "objectclass" == RelatedIdType )
                         {
-                            PropNode.Add( new XAttribute( "value", Prop.ObjectClassPropId ) );
                             ObjectClassPropsGroup.Add( PropNode );
                         }
 
@@ -478,10 +481,10 @@ namespace ChemSW.Nbt.WebServices
         /// Takes a View and applies search parameters as ViewPropertyFilters.
         /// Returns the modified View for processing as Tree/Grid/List.
         /// </summary>
-        public CswNbtView doViewBasedSearch( string SearchXml, string ViewIdNum)
+        public CswNbtView doViewBasedSearch( string SearchJson, string ViewIdNum)
         {
             CswNbtView SearchView = null;
-            if( !string.IsNullOrEmpty( SearchXml ) && null != ViewIdNum )
+            if( !string.IsNullOrEmpty( SearchJson ) && null != ViewIdNum )
             {
                 Int32 ViewId = CswConvert.ToInt32( ViewIdNum );
                 CswNbtView InitialView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
@@ -489,19 +492,19 @@ namespace ChemSW.Nbt.WebServices
                 SearchView.LoadXml( InitialView.ToXml() );
                 SearchView.ViewName = "Search " + InitialView.ViewName;
 
-                var ViewSearch = XElement.Parse( SearchXml );
-                foreach( XElement Prop in ViewSearch.Elements("viewprop") )
+                JObject ViewSearch = JObject.Parse( SearchJson );
+                foreach( JProperty Prop in ViewSearch.SelectToken("viewprop") )
                 {
                     var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
-                    CswNbtViewProperty.CswNbtPropType.TryParse( Prop.Attribute( "propidtype" ).Value, true, out PropType );
+                    CswNbtViewProperty.CswNbtPropType.TryParse( (string)Prop.SelectToken( "propidtype" ), true, out PropType );
                     Int32 PropId = Int32.MinValue;
                     switch( PropType )
                     {
                         case CswNbtViewProperty.CswNbtPropType.NodeTypePropId:
-                            PropId = CswConvert.ToInt32(Prop.Attribute( "nodetypepropid" ).Value );
+                            PropId = CswConvert.ToInt32( (string) Prop.SelectToken( "nodetypepropid" ) );
                             break;
                         case CswNbtViewProperty.CswNbtPropType.ObjectClassPropId:
-                            PropId = CswConvert.ToInt32(Prop.Attribute( "objectclasspropid" ).Value );
+                            PropId = CswConvert.ToInt32( (string) Prop.SelectToken( "objectclasspropid" ) );
                             break;
                     }
                     if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown &&
@@ -518,13 +521,13 @@ namespace ChemSW.Nbt.WebServices
             return SearchView;
         }
 
-        private void _addViewPropFilter( XElement SearchNode, ref CswNbtView SearchView, CswNbtViewProperty ViewProp )
+        private void _addViewPropFilter( JProperty SearchProp, ref CswNbtView SearchView, CswNbtViewProperty ViewProp )
         {
             var FieldName = CswNbtSubField.SubFieldName.Unknown;
-            CswNbtSubField.SubFieldName.TryParse( SearchNode.Attribute( "subfieldname" ).Value, true, out FieldName );
+            CswNbtSubField.SubFieldName.TryParse( (string)SearchProp.SelectToken( "subfield" ), true, out FieldName );
             var FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
-            CswNbtPropFilterSql.PropertyFilterMode.TryParse( SearchNode.Attribute( "filtermode" ).Value, true, out FilterMode );
-            string SearchTerm = SearchNode.Attribute( "value" ).Value;
+            CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) SearchProp.SelectToken( "filter" ), true, out FilterMode );
+            string SearchTerm = (string) SearchProp.SelectToken( "searchtext" );
 
             SearchView.AddViewPropertyFilter( ViewProp, FieldName, FilterMode, SearchTerm, false );
         }
@@ -533,49 +536,32 @@ namespace ChemSW.Nbt.WebServices
         /// If the search is based on NodeType/ObjectClass, construct a View with the included search terms as Property Filters.
         /// Return the View for processing as a Tree
         /// </summary>
-        public CswNbtView doNodesSearch( string SearchXml )
+        public CswNbtView doNodesSearch( string SearchJson )
         {
-            var NodesSearch = new XElement( "search" );
+            JObject NodesSearch = new JObject();
             CswNbtView SearchView = null;
-            if( !string.IsNullOrEmpty( SearchXml ) )
+            if( !string.IsNullOrEmpty( SearchJson ) )
             {
-                NodesSearch = XElement.Parse( SearchXml );
+                NodesSearch = JObject.Parse( SearchJson );
+                //NodesSearch = XElement.Parse( SearchJson );
                 SearchView = new CswNbtView( _CswNbtResources ) {ViewMode = NbtViewRenderingMode.Tree};
 
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
                 
-                foreach( XElement NT in NodesSearch.Elements("prop") )
+                foreach( JProperty Ntp in NodesSearch.SelectToken("nodetypeprop") )
                 {
                     var PropType = CswNbtViewRelationship.RelatedIdType.Unknown;
-                    CswNbtViewRelationship.RelatedIdType.TryParse( NT.Attribute( "relatedidtype" ).Value, true, out PropType );
-                    switch( PropType )
+                    CswNbtViewRelationship.RelatedIdType.TryParse( (string)Ntp.SelectToken( "relatedidtype" ), true, out PropType );
+                    Int32 ObjectPk = CswConvert.ToInt32( (string) Ntp.SelectToken( "objectpk" ) );
+                    Int32 PropId = CswConvert.ToInt32( (string) Ntp.SelectToken( "propid" ) );
+                    CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
+                    if( PropType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+                        Int32.MinValue != NodeTypeProp.ObjectClassPropId )
                     {
-                        case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                            Int32 NodeTypeId = CswConvert.ToInt32( NT.Attribute( "nodetypeid" ).Value );
-                            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                            
-                            CswNbtViewRelationship NtRelationship;
-                            if( !ViewNtRelationships.ContainsKey( NodeType ) )
-                            {
-                                NtRelationship = SearchView.AddViewRelationship( NodeType, false );
-                                ViewNtRelationships.Add( NodeType, NtRelationship );
-                            }
-                            else
-                            {
-                                ViewNtRelationships.TryGetValue( NodeType, out NtRelationship );
-                            }
-
-                            Int32 NodeTypePropId = CswConvert.ToInt32( NT.Attribute( "nodetypepropid" ).Value );
-                            CswNbtMetaDataNodeTypeProp NodeTypeProp = NodeType.getNodeTypePropByFirstVersionId( NodeTypePropId );
-                            
-                            CswNbtViewProperty ViewNtProperty = SearchView.AddViewProperty(NtRelationship, NodeTypeProp);
-                            _addViewPropFilter( NT, ref SearchView, ViewNtProperty );
-                            
-                            break;
-                        case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                            Int32 ObjectClassId = CswConvert.ToInt32( NT.Attribute( "nodetypeid" ).Value );
-                            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
+                        CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectPk );
+                        if( NodeTypeProp.NodeType.ObjectClass == ObjectClass )
+                        {
 
                             CswNbtViewRelationship OcRelationship;
                             if( !ViewOcRelationships.ContainsKey( ObjectClass ) )
@@ -588,15 +574,31 @@ namespace ChemSW.Nbt.WebServices
                                 ViewOcRelationships.TryGetValue( ObjectClass, out OcRelationship );
                             }
 
-                            Int32 ObjectClassPropId = CswConvert.ToInt32( NT.Attribute( "objectclasspropid" ).Value );
-                            CswNbtMetaDataObjectClassProp ObjectClassProp = ObjectClass.getObjectClassProp( ObjectClassPropId );
-
+                            CswNbtMetaDataObjectClassProp ObjectClassProp = NodeTypeProp.ObjectClassProp;
                             CswNbtViewProperty ViewOcProperty = SearchView.AddViewProperty( OcRelationship, ObjectClassProp );
-                            _addViewPropFilter( NT, ref SearchView, ViewOcProperty );
-
-                            break;
+                            _addViewPropFilter( Ntp, ref SearchView, ViewOcProperty );
+                        }
                     }
+                    else
+                    {
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( ObjectPk );
+                        if(NodeTypeProp.NodeType == NodeType)
+                        {
+                            CswNbtViewRelationship NtRelationship;
+                            if( !ViewNtRelationships.ContainsKey( NodeType ) )
+                            {
+                                NtRelationship = SearchView.AddViewRelationship( NodeType, false );
+                                ViewNtRelationships.Add( NodeType, NtRelationship );
+                            }
+                            else
+                            {
+                                ViewNtRelationships.TryGetValue( NodeType, out NtRelationship );
+                            }
 
+                            CswNbtViewProperty ViewNtProperty = SearchView.AddViewProperty( NtRelationship, NodeTypeProp );
+                            _addViewPropFilter( Ntp, ref SearchView, ViewNtProperty );
+                        }
+                    }
                 }
 
             }
