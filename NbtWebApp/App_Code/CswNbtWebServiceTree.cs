@@ -32,7 +32,8 @@ namespace ChemSW.Nbt.WebServices
             if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
             {
 				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, _CswNbtResources.CurrentNbtUser.PageSize, false, false, IncludeNodeKey, false );
-                if( Tree.getChildNodeCount() > 0 )
+				ICswNbtTree TreeTest = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, 100, false, false, IncludeNodeKey, false );
+				if( Tree.getChildNodeCount() > 0 )
                 {
 
                     var RootNode = new XElement( "root" );
@@ -151,11 +152,15 @@ namespace ChemSW.Nbt.WebServices
 				string ThisNodeName = Tree.getNodeNameForCurrentPosition();
 				string ThisNodeId = IDPrefix + ThisNode.NodeId.ToString();
 				string ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
+				
+				string ThisNodeState = "closed";
+				if( ThisNodeKey.NodeSpecies == NodeSpecies.More )
+					ThisNodeState = "leaf";
 
 				var ParentNode = ( new XElement( "item",
 										new XAttribute( "id", ThisNodeId ),
 										new XAttribute( "rel", ThisNodeRel ),
-										new XAttribute( "state", "closed" ),
+										new XAttribute( "state", ThisNodeState ),
 										new XAttribute( "cswnbtnodekey", ThisNodeKeyString ), 
 											new XElement( "content" ,
 												new XElement( "name" , ThisNodeName )

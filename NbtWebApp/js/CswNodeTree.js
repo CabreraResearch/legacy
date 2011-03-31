@@ -43,7 +43,7 @@
 					data: data,
 					success: function ($xml) {
 						var selectid = '';
-						var treePlugins = ["themes", "xml_data", "ui", "types"];
+						var treePlugins = ["themes", "xml_data", "ui", "types", "crrm"];
 						var treeThemes;
 						if(o.nodeid != undefined && o.nodeid != '') 
 						{
@@ -85,7 +85,6 @@
 						if($treexml.length > 0)
 						{
 							var treexmlstring = xmlToString($treexml);
-				
 							$treediv.jstree({
 								"xml_data": 
 									{
@@ -105,14 +104,17 @@
 									},
 								"ui": {
 									"select_limit": 1,
-									"initially_select": selectid
+									"initially_select": selectid,
+									"select_prev_on_delete": true    // needed for "More..." nodes
 								},
 								"themes": treeThemes,
 								"core": {
 									"initially_open": initiallyOpen
 								},
 								"types": {
-									"types": jsonTypes
+									"types": jsonTypes,
+									"max_children": -2,
+									"max_depth": -2
 								},
 								"plugins": treePlugins
 							}).bind('select_node.jstree', 
@@ -125,21 +127,60 @@
 													cswnbtnodekey: Selected.$item.attr('cswnbtnodekey'),
 													viewid: o.viewid
 												};
-
 												if(optSelect.nodename == "More...")
 												{
+													var ParentNodeKey = '';
+													var Parent = data.inst._get_parent(data.rslt.obj);
+													if(Parent != -1)
+														ParentNodeKey = Parent.attr('cswnbtnodekey');
+													if(ParentNodeKey == undefined)
+														ParentNodeKey = '';
+
 													// get next page of nodes
 													CswAjaxXml({
 														url: url,
-														data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&ParentNodeKey=&IncludeNodeKey=' + optSelect.cswnbtnodekey,
+														data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&ParentNodeKey='+ ParentNodeKey +'&IncludeNodeKey=' + optSelect.cswnbtnodekey,
 														success: function ($xml) 
 															{
-																$xml.children().each(function() {
-																	var $item = $(this);
-																	$treediv.jstree('create', $('#' + IDPrefix + optSelect.nodeid), 'after', { 'data': $item.attr('id') });
-																});
-															}
-														});
+																// remove 'More' node
+																$treediv.jstree('remove', '#' + IDPrefix + optSelect.nodeid );
+
+																// get prior sibling (now selected)
+																var NewSelected = jsTreeGetSelected($treediv, IDPrefix);
+																var AfterNodeId = IDPrefix + NewSelected.id;
+																var $itemxml = $xml.children().first();
+																	
+																// we have to do these one at a time in successive OnSuccess callbacks, 
+																// or else they won't end up in the right place on the tree
+																_continue();
+
+																function _continue()
+																{
+																	if($itemxml.length > 0)
+																	{
+																		$treediv.jstree('create', '#' + AfterNodeId, 'after',
+																						{ 
+																							'attr': {
+																										'id': $itemxml.attr('id'), 
+																										'rel': $itemxml.attr('rel'),
+																										'cswnbtnodekey': $itemxml.attr('cswnbtnodekey')
+																									},
+																							'data': $itemxml.children('content').children('name').text(), 
+																							'state': $itemxml.attr('state') 
+																						}, 
+																						function() 
+																						{
+																							AfterNodeId = $itemxml.attr('id');
+																							$itemxml = $itemxml.next();
+																							_continue();
+																						}, 
+																						true, true);
+
+																	} // if($itemxml.length > 0)
+																} // _continue()
+
+															} // success
+														}); // ajax
 												}
 												else 
 												{
