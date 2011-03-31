@@ -613,7 +613,7 @@ namespace ChemSW.Nbt.WebServices
                 //    RenderElement = getGrid( View.ViewId.ToString(), string.Empty );
                 //    break;
                 default:
-                    RenderElement = getTree( View.ViewId.ToString(), string.Empty, _IDPrefix );
+                    RenderElement = getTreeOfView( View.ViewId.ToString(), _IDPrefix, string.Empty, string.Empty );
                     break;
             }
             return RenderElement;

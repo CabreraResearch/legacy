@@ -409,10 +409,10 @@
         };
         
         if(options) $.extend(o,options);
-        log(JSON.stringify(o));                                                                                       
+                                                                                  
         CswAjaxJSON({ 
 			'url': '/NbtWebApp/wsNBT.asmx/doNodeTypeSearch',
-			'data': '{"SearchJson": "' + $.param(o) + '"}',
+			'data': '{"SearchJson": "' + jsonToString(o) + '"}',
             'success': function($viewid) { 
                     alert('hey');
                     //load the view
