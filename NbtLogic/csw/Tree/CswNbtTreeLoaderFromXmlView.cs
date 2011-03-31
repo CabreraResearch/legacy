@@ -20,7 +20,7 @@ namespace ChemSW.Nbt
 {
     public class CswNbtTreeLoaderFromXmlView : CswNbtTreeLoader
     {
-        public Int32 ResultLimit = 300;  // BZ 8460
+        public Int32 ResultLimit = 1001;  // BZ 8460
 
         private CswNbtResources _CswNbtResources = null;
         private CswNbtView _View;
