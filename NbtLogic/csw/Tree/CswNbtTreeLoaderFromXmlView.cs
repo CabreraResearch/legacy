@@ -165,10 +165,11 @@ namespace ChemSW.Nbt
                 else
                 {
 					// Only increase the page if we haven't moved on to another relationship
-					if( ( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
-						_CswNbtResources.MetaData.getNodeType( IncludedKey.NodeTypeId).ObjectClass.ObjectClassId == Relationship.SecondId ) ||
+					if( IncludedKey == null || 
+						( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+						  _CswNbtResources.MetaData.getNodeType( IncludedKey.NodeTypeId).ObjectClass.ObjectClassId == Relationship.SecondId ) ||
 						( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
- 						IncludedKey.NodeTypeId == Relationship.SecondId ) )
+ 						  IncludedKey.NodeTypeId == Relationship.SecondId ) )
 					{
 						while( NodeCountUpperBoundInclusive < FindThisNodeCount )
 							NodeCountUpperBoundInclusive += PageSize;
