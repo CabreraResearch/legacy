@@ -121,6 +121,32 @@ function xmlToString($xmlnode) {
 	return xmlstring;
 }
 
+function jsonToString(j)
+{
+	if(typeof j == "object")
+	{
+	 	var ret = '{';
+	 	var first = true;
+		for (var property in j)
+		{
+			if (j.hasOwnProperty(property))
+			{
+				if (!first)
+					ret += ',';
+				ret += ' "' + property + '": ';
+				ret += jsonToString(j[property]);
+				first = false;
+			}
+		}
+		ret += '}';
+	} 
+	else
+	{
+		ret = '"' + j + '"';
+	}
+	return ret;
+} // jsonToString
+
 // ------------------------------------------------------------------------------------
 // Check Changes
 // ------------------------------------------------------------------------------------

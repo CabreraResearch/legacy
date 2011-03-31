@@ -12,10 +12,10 @@
 
 		var $MenuUl = $(this);
 
-		$("ul.topnav").children('li')
+		$MenuUl.children('li')
 					  .click(TopMenuClick)
 					  .hover(TopMenuClick, HideAllSubMenus);
-		$("ul.subnav").children('li').click(SubMenuClick);
+		$MenuUl.find(".subnav").children('li').click(SubMenuClick);
 
 		function TopMenuClick()
 		{
@@ -38,6 +38,7 @@
 		
 		function HideAllSubMenus()
 		{
+			 $MenuUl.find('ul').stop(true, true);
 			 $MenuUl.find("ul.subnav").slideUp('fast');
 		}
 

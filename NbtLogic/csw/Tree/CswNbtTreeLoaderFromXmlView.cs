@@ -20,7 +20,7 @@ namespace ChemSW.Nbt
 {
     public class CswNbtTreeLoaderFromXmlView : CswNbtTreeLoader
     {
-        public Int32 ResultLimit = 300;  // BZ 8460
+        public Int32 ResultLimit = 1001;  // BZ 8460
 
         private CswNbtResources _CswNbtResources = null;
         private CswNbtView _View;
@@ -164,10 +164,17 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    while( NodeCountUpperBoundInclusive < FindThisNodeCount )
-                        NodeCountUpperBoundInclusive += PageSize;
-                    if( !FetchAllPrior )
-                        NodeCountLowerBoundExclusive = NodeCountUpperBoundInclusive - PageSize;
+					// Only increase the page if we haven't moved on to another relationship
+					if( ( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+						_CswNbtResources.MetaData.getNodeType( IncludedKey.NodeTypeId).ObjectClass.ObjectClassId == Relationship.SecondId ) ||
+						( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+ 						IncludedKey.NodeTypeId == Relationship.SecondId ) )
+					{
+						while( NodeCountUpperBoundInclusive < FindThisNodeCount )
+							NodeCountUpperBoundInclusive += PageSize;
+						if( !FetchAllPrior )
+							NodeCountLowerBoundExclusive = NodeCountUpperBoundInclusive - PageSize;
+					}
                 }
             }
 
