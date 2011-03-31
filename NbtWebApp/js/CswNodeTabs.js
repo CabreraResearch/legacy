@@ -65,31 +65,32 @@
 						{
 							if(o.onBeforeTabSelect(tabid))
 							{
-								var tabid = $($tabdiv.children('div')[ui.index]).attr('id');
-								getProps(tabid);
+								var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
+								var tabid = $tabcontentdiv.attr('id');
+								getProps($tabcontentdiv, tabid);
+
 								o.onTabSelect(tabid);
 							} else {
 								return false;
 							}
 						}
 					});
-					var selectedtabid = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]).attr('id');
-					getProps(selectedtabid);
+					var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
+					var selectedtabid = $tabcontentdiv.attr('id');
+					getProps($tabcontentdiv, selectedtabid);
 					o.onTabSelect(selectedtabid);
 				} // success{}
 			});
 		} // getTabs()
 
-		function getProps(tabid)
+		function getProps($tabcontentdiv, tabid)
 		{
 			CswAjaxXml({
 				url: o.PropsUrl,
 				data: 'EditMode=' + o.EditMode + '&SafeNodeKey=' + o.cswnbtnodekey + '&TabId=' + tabid + '&NodeTypeId=' + o.nodetypeid,
 				success: function ($xml)
 				{
-					$div = $("#" + tabid);
-
-					var $form = $div.children('form');
+					var $form = $tabcontentdiv.children('form');
 					$form.contents().remove();
 
 					var $layouttable = $form.CswLayoutTable('init', {
