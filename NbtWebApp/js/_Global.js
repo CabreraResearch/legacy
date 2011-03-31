@@ -133,7 +133,7 @@ function jsonToString(j)
 			{
 				if (!first)
 					ret += ',';
-				ret += ' "' + property + '": ';
+				ret += ' \'' + property + '\': ';
 				ret += jsonToString(j[property]);
 				first = false;
 			}
@@ -142,7 +142,7 @@ function jsonToString(j)
 	} 
 	else
 	{
-		ret = '"' + j + '"';
+		ret = '\'' + j + '\'';
 	}
 	return ret;
 } // jsonToString

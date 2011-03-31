@@ -642,26 +642,27 @@ namespace ChemSW.Nbt.WebServices
         } // getSearch()
 
         [WebMethod( EnableSession = true )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement doNodeTypeSearch( string SearchJson )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string doNodeTypeSearch( string SearchJson )
         {
-            var SearchResults = new XElement( "search" );
+            JObject SessionViewId = new JObject();
             try
             {
                 start();
 
                 var ws = new CswNbtWebServiceSearch( _CswNbtResources );
                 CswNbtView ResultsView = ws.doNodesSearch( SearchJson );
-                SearchResults = _getClientXmlFromView( ResultsView );
+                _CswNbtResources.ViewCache.putView( ResultsView );
+                //SearchResults = _getClientXmlFromView( ResultsView );
+                SessionViewId.Add(new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
                 end();
             }
             catch( Exception ex )
             {
-                SearchResults = xError( ex );
+                SessionViewId.Add( jError( ex ) );
             }
-
-            return SearchResults;
-        } // getSearch()
+            return SessionViewId.ToString();
+        }
 
         #endregion Search
 

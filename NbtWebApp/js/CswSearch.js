@@ -228,14 +228,14 @@
         var $searchButton = $('<input type="button" name="search_button" id="search_button" value="Search" />')
                             .click(function() {
                                     var searchOpt = {
-                                            nodetypeprop: {
+                                            nodetypeprop: [{
                                                 objectpk: nodeTypeId,
                                                 relatedidtype: relatedIdType,
                                                 propid: $props.val(),
                                                 subfield: $subfieldsOptions.find(':selected').text(),
                                                 filter: $filtersOptions.val(),
-                                                searchtext: $searchInput.text()  
-                                                }
+                                                searchtext: $searchInput.val()  
+                                                }]
                                     };
                                     doNodesSearch(searchOpt);
                             });
@@ -398,21 +398,21 @@
     function doNodesSearch(options)
     {
          var o = {
-            nodetypeprop: {
+            nodetypeprop: [{
                 objectpk: '',
                 relatedidtype: '',
                 propid: '',
                 subfield: '',
                 filter: '',
                 searchtext: ''
-                }
+                }]
         };
         
         if(options) $.extend(o,options);
                                                                                   
         CswAjaxJSON({ 
 			'url': '/NbtWebApp/wsNBT.asmx/doNodeTypeSearch',
-			'data': '{"SearchJson": "' + jsonToString(o) + '"}',
+			'data': "{SearchJson: \"" + jsonToString(o) + "\"}",
             'success': function($viewid) { 
                     alert('hey');
                     //load the view

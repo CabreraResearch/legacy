@@ -493,7 +493,7 @@ namespace ChemSW.Nbt.WebServices
                 SearchView.ViewName = "Search " + InitialView.ViewName;
 
                 JObject ViewSearch = JObject.Parse( SearchJson );
-                foreach( JProperty Prop in ViewSearch.SelectToken("viewprop") )
+                foreach( JObject Prop in ViewSearch.SelectToken("viewprop") )
                 {
                     var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
                     CswNbtViewProperty.CswNbtPropType.TryParse( (string)Prop.SelectToken( "propidtype" ), true, out PropType );
@@ -521,13 +521,13 @@ namespace ChemSW.Nbt.WebServices
             return SearchView;
         }
 
-        private void _addViewPropFilter( JProperty SearchProp, ref CswNbtView SearchView, CswNbtViewProperty ViewProp )
+        private void _addViewPropFilter( JToken SearchProp, ref CswNbtView SearchView, CswNbtViewProperty ViewProp )
         {
             var FieldName = CswNbtSubField.SubFieldName.Unknown;
-            CswNbtSubField.SubFieldName.TryParse( (string)SearchProp.SelectToken( "subfield" ), true, out FieldName );
+            CswNbtSubField.SubFieldName.TryParse( (string)SearchProp.First["subfield"], true, out FieldName );
             var FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
-            CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) SearchProp.SelectToken( "filter" ), true, out FilterMode );
-            string SearchTerm = (string) SearchProp.SelectToken( "searchtext" );
+            CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) SearchProp.First["filter"], true, out FilterMode );
+            string SearchTerm = (string) SearchProp.First["searchtext"];
 
             SearchView.AddViewPropertyFilter( ViewProp, FieldName, FilterMode, SearchTerm, false );
         }
@@ -548,13 +548,14 @@ namespace ChemSW.Nbt.WebServices
 
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
-                
-                foreach( JProperty Ntp in NodesSearch.SelectToken("nodetypeprop") )
+
+                foreach( var Ntp in NodesSearch["nodetypeprop"].Children() )
                 {
                     var PropType = CswNbtViewRelationship.RelatedIdType.Unknown;
-                    CswNbtViewRelationship.RelatedIdType.TryParse( (string)Ntp.SelectToken( "relatedidtype" ), true, out PropType );
-                    Int32 ObjectPk = CswConvert.ToInt32( (string) Ntp.SelectToken( "objectpk" ) );
-                    Int32 PropId = CswConvert.ToInt32( (string) Ntp.SelectToken( "propid" ) );
+                    string relatedidtype = (string) Ntp.First["relatedidtype"];
+                    CswNbtViewRelationship.RelatedIdType.TryParse( (string)Ntp.First["relatedidtype"], true, out PropType );
+                    Int32 ObjectPk = CswConvert.ToInt32( (string) Ntp.First["objectpk"] );
+                    Int32 PropId = CswConvert.ToInt32( (string) Ntp.First["propid"] );
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
                     if( PropType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
                         Int32.MinValue != NodeTypeProp.ObjectClassPropId )
