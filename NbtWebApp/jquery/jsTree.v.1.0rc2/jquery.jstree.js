@@ -1091,7 +1091,7 @@
 					f.call(this, { "obj" : obj, "new_name" : new_name, "old_name" : old_name });
 				});
 			},
-			create : function (obj, position, js, callback, skip_rename) {
+			create : function (obj, position, js, callback, skip_rename, is_loaded) {
 				var t, _this = this;
 				obj = this._get_node(obj);
 				if(!obj) { obj = -1; }
@@ -1107,7 +1107,7 @@
 						});
 					}
 					else { _this.__callback({ "obj" : t, "name" : this.get_text(t), "parent" : p, "position" : pos }); }
-				});
+				}, is_loaded);
 				return t;
 			},
 			remove : function (obj) {
