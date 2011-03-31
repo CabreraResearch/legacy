@@ -292,17 +292,14 @@
             'nodeid': $.CswCookie('get', CswCookieName.CurrentNode.NodeId),
 			'nodekey': $.CswCookie('get', CswCookieName.CurrentNode.NodeKey)
            };
-
-		if (options) {
-			$.extend(o, options);
-		}
+		if (options) $.extend(o, options);
 
 		$('#LeftDiv').CswNodeTree('init', {
 											'ID': o.ID, 
 											'viewid': o.viewid,
 											'viewmode': o.viewmode,
 											'nodeid': o.nodeid,
-											'nodekey': o.nodekey,
+											'cswnbtnodekey': o.nodekey,
 											'onSelectNode': function (optSelect)
 											{ 
 													onSelectTreeNode({ 'viewid': optSelect.viewid,
@@ -330,7 +327,7 @@
 			{
 				$.extend(o, options);
 			}
-
+		
 			$.CswCookie('set', CswCookieName.CurrentNode.NodeId, o.nodeid);
 			$.CswCookie('set', CswCookieName.CurrentNode.NodeKey, o.cswnbtnodekey);
 
@@ -426,32 +423,27 @@
 			cswnbtnodekey: '',
 			nodename: '', 
 			iconurl: ''
-		};
-		var onSelectNode = function (opt) { //nodeid, nodename, iconurl, cswnbtnodekey
-			   onSelectTreeNode(opt); } //viewid, nodeid, cswnbtnodekey
-		
-		if (options)
-		{
-			$.extend(o, options);
-		}
+		};		
+		if (options) $.extend(o, options);
 
 		var view = {
 			'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
 			'viewmode': $.CswCookie('get', CswCookieName.CurrentView.ViewMode)
 		};
 
-
 		clear({ left: true });
 		$('#LeftDiv').CswNodeTree('init', {'ID': o.ID, 'viewid': view.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 
-										   'nodename': o.nodename, 
-										   'onSelectNode': function(optSelect) { 
-													onSelectTreeNode({ 'viewid': optSelect.viewid,
-																		'nodeid': optSelect.id,
+										   'nodename': o.nodename,
+										   'onSelectNode': function (optSelect)
+												{
+										   			onSelectTreeNode({
+																		'viewid': optSelect.viewid,
+																		'nodeid': optSelect.nodeid,
 																		'cswnbtnodekey': optSelect.cswnbtnodekey
 																	});
 												}
-										});
-	}
+										}); // CswNodesTree
+	} // refreshNodesTree()
 
 </script>
 
