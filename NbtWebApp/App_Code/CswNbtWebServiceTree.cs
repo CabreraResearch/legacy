@@ -20,18 +20,18 @@ namespace ChemSW.Nbt.WebServices
 		}
 
 
-		public XElement getTree( CswNbtView View, string IDPrefix, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey )
+		public XElement getTree( CswNbtView View, string IDPrefix, bool IsFirstLoad, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey )
 		{
             var ReturnNode = new XElement( "root" );
             string EmptyOrInvalid = "";
 			
-			bool IsFirstLoad = true;
-			if( ParentNodeKey != null || IncludeNodeKey != null )
-				IsFirstLoad = false;
+			//bool IsFirstLoad = true;
+			//if( ParentNodeKey != null || IncludeNodeKey != null )
+			//    IsFirstLoad = false;
 
             if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
             {
-				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, _CswNbtResources.CurrentNbtUser.PageSize, false, false, IncludeNodeKey, false );
+				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, _CswNbtResources.CurrentNbtUser.PageSize, false, true, IncludeNodeKey, false );
 				if( Tree.getChildNodeCount() > 0 )
                 {
 
@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.WebServices
 				if( Tree.getChildNodeCount() > 0 )
 				{
 					// XElement ChildNode = _runTreeNodesRecursive()
-					//_runTreeNodesRecursive( Tree, IDPrefix, ParentNode );
+					_runTreeNodesRecursive( Tree, IDPrefix, ParentNode );
 				}
 				
 				GrandParentNode.Add( ParentNode );

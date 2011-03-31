@@ -31,7 +31,11 @@
 								.appendTo($(this));
 
 				var url = o.ViewTreeUrl;
-				var data = 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&ParentNodeKey=&IncludeNodeKey=';
+				var data = 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=true&ParentNodeKey=&IncludeNodeKey=';
+				if(o.cswnbtnodekey != undefined)
+				{
+					data += o.cswnbtnodekey;
+				}
 				if(o.viewid == '' || o.viewid == undefined)
 				{
 					url = o.NodeTreeUrl;
@@ -98,7 +102,7 @@
 												"data": function($nodeOpening) 
 													{
 														var nodekey = $nodeOpening.attr('cswnbtnodekey');
-														return 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&ParentNodeKey=' + nodekey + '&IncludeNodeKey=';
+														return 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey=' + nodekey + '&IncludeNodeKey=';
 													}
 											}
 									},
@@ -139,7 +143,7 @@
 													// get next page of nodes
 													CswAjaxXml({
 														url: url,
-														data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&ParentNodeKey='+ ParentNodeKey +'&IncludeNodeKey=' + optSelect.cswnbtnodekey,
+														data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey='+ ParentNodeKey +'&IncludeNodeKey=' + optSelect.cswnbtnodekey,
 														success: function ($xml) 
 															{
 																// remove 'More' node
