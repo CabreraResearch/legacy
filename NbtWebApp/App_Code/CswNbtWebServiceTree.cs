@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.WebServices
 		}
 
 
-		public XElement getTree( CswNbtView View, string IDPrefix, CswNbtNodeKey ParentNodeKey, Int32 PageNo, CswNbtNodeKey IncludeNodeKey )
+		public XElement getTree( CswNbtView View, string IDPrefix, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey )
 		{
             var ReturnNode = new XElement( "root" );
             string EmptyOrInvalid = "";

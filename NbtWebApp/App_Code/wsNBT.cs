@@ -388,7 +388,7 @@ namespace ChemSW.Nbt.WebServices
 					if( !string.IsNullOrEmpty( IncludeNodeKey ) )
 						RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( IncludeNodeKey ) );
 
-					TreeNode = ws.getTree( View, IDPrefix, RealParentNodeKey, 1, RealIncludeNodeKey );
+					TreeNode = ws.getTree( View, IDPrefix, RealParentNodeKey, RealIncludeNodeKey );
 
 					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
 				}
@@ -424,7 +424,7 @@ namespace ChemSW.Nbt.WebServices
 					View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
 
 					var ws = new CswNbtWebServiceTree( _CswNbtResources );
-					TreeNode = ws.getTree( View, IDPrefix, null, 1, null );
+					TreeNode = ws.getTree( View, IDPrefix, null, null );
 					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
 				}
 				end();
