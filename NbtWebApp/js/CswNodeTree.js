@@ -13,6 +13,7 @@
 					viewmode: '',
 					nodeid: '',       // if viewid is not supplied, loads a view of this node
 					cswnbtnodekey: '',
+					IncludeNodeRequired: false,
 					onSelectNode: function(optSelect) {
 											var o =  {
 												nodeid: '', 
@@ -22,6 +23,7 @@
 												viewid: ''
 											};
 									},
+					onViewChange: function(newviewid) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
 					SelectFirstChild: true
 				};
 				if(options) $.extend(o, options);
@@ -31,7 +33,7 @@
 								.appendTo($(this));
 
 				var url = o.ViewTreeUrl;
-				var data = 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=true&ParentNodeKey=&IncludeNodeKey=';
+				var data = 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=true&ParentNodeKey=&IncludeNodeRequired='+ o.IncludeNodeRequired +'&IncludeNodeKey=';
 				if(o.cswnbtnodekey != undefined)
 				{
 					data += o.cswnbtnodekey;
@@ -52,6 +54,13 @@
 						if(o.nodeid != undefined && o.nodeid != '') 
 						{
 							selectid = IDPrefix + o.nodeid;
+						}
+
+						var newviewid = $xml.children('viewid').text()
+						if(o.viewid != newviewid)
+						{
+							o.onViewChange(newviewid);
+							o.viewid = newviewid;
 						}
 
 						var $selecteditem = $xml.find('item[id="'+ selectid + '"]');
@@ -102,7 +111,7 @@
 												"data": function($nodeOpening) 
 													{
 														var nodekey = $nodeOpening.attr('cswnbtnodekey');
-														return 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey=' + nodekey + '&IncludeNodeKey=';
+														return 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey=' + nodekey + '&IncludeNodeRequired=false&IncludeNodeKey=';
 													}
 											}
 									},
@@ -143,7 +152,7 @@
 													// get next page of nodes
 													CswAjaxXml({
 														url: url,
-														data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey='+ ParentNodeKey +'&IncludeNodeKey=' + optSelect.cswnbtnodekey,
+														data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey='+ ParentNodeKey +'&IncludeNodeRequired=false&IncludeNodeKey=' + optSelect.cswnbtnodekey,
 														success: function ($xml) 
 															{
 																// remove 'More' node

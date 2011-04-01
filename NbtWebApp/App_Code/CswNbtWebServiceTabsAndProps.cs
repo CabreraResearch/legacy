@@ -270,6 +270,14 @@ namespace ChemSW.Nbt.WebServices
 					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
 					ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
 					NbtNodeKey = Tree.getNodeKeyByNodeId( Node.NodeId );
+					if( NbtNodeKey == null )
+					{
+						// Make a nodekey from the default view
+						View = Node.NodeType.CreateDefaultView();
+						View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Node.NodeId );
+						Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+						NbtNodeKey = Tree.getNodeKeyByNodeId( Node.NodeId );
+					}
 				}
 				string NodeKeyString = string.Empty;
 				if( NbtNodeKey != null )

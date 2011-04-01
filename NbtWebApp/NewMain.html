@@ -314,6 +314,10 @@
 											'viewmode': o.viewmode,
 											'nodeid': o.nodeid,
 											'cswnbtnodekey': o.nodekey,
+											'onViewChange': function (newviewid)
+											{
+												$.CswCookie('set', CswCookieName.CurrentView.ViewId, newviewid);
+											},
 											'onSelectNode': function (optSelect)
 											{ 
 													onSelectTreeNode({ 'viewid': optSelect.viewid,
@@ -446,9 +450,17 @@
 		};
 
 		clear({ left: true });
-		$('#LeftDiv').CswNodeTree('init', {'ID': o.ID, 'viewid': view.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 
-										   'nodename': o.nodename,
-										   'onSelectNode': function (optSelect)
+		$('#LeftDiv').CswNodeTree('init', { 'ID': o.ID,
+											'viewid': view.viewid,
+											'nodeid': o.nodeid, 
+											'cswnbtnodekey': o.cswnbtnodekey,
+											'nodename': o.nodename,
+											'IncludeNodeRequired': true,
+											'onViewChange': function(newviewid)
+												{
+													$.CswCookie('set', CswCookieName.CurrentView.ViewId, newviewid);
+												},
+											'onSelectNode': function (optSelect)
 												{
 										   			onSelectTreeNode({
 																		'viewid': optSelect.viewid,
