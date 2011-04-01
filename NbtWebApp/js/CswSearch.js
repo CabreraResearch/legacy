@@ -7,32 +7,66 @@
     {
         var isHidden;
         var o = {
-                '$link': '',
-                '$filtersOptions': '',
-                '$subfieldCell': '',
-                '$defaultSubfield': '',
-                '$subfieldsOptions': ''
+                '$link': ''
         };
         if(options) $.extend(o,options);
         
         if('Advanced' == o.$link.text())
         {
-            o.$filtersOptions.show();
-            o.$defaultSubfield.hide();
-            o.$subfieldsOptions.show();
+            $('#subfield_select\\S*').each(function() { $(this).show(); });
+            $('#filter_select\\S*').each(function() { $(this).show(); });
+            $('#default_filter\\S*').each(function() { $(this).hide(); });
             o.$link.text('Hide');
             isHidden = false;
         }
         else
         {
-            o.$filtersOptions.hide();
-            o.$defaultSubfield.show();
-            o.$subfieldsOptions.hide();
+            $('#subfield_select\\S*').each(function() { $(this).hide(); });
+            $('#filter_select\\S*').each(function() { $(this).hide(); });
+            $('#default_filter\\S*').each(function() { $(this).show(); });
             o.$link.text('Advanced');
             isHidden = true;
         }
         return isHidden; 
     } 
+
+    function renderViewBasedSearchContent(options)
+    {
+        var o = {
+            '$topspandiv': '',
+            '$parent': '',
+            '$propsXml': '',
+            '$searchTable': '',
+            'propsCount': 1,
+            'initOptions': {}
+        };
+
+        if(options) $.extend(o,options);
+        
+        var initOptions = o.initOptions;
+        
+        //skip cell 1,1
+        var and = 2;
+        while(and <= o.propsCount)        
+        {
+            //Row i, Column 1: and
+            var $andCell = o.$searchTable.CswTable('cell', and, 1);
+            var $andText = $('<span>&nbsp;and&nbsp;</span>');
+            $andCell.append($andText);
+            and++;
+        }
+        
+        var prop = 1;
+        o.$propsXml.children('property').each( function() {
+                var $nodeType = $(this).attr('nodetypename');
+                var $nodeTypeCell = o.$searchTable.CswTable('cell', prop, 2)
+                                    .append($nodeType);
+                prop++;
+            });
+        
+        o.$parent = $searchTable;
+        renderPropsAndControls(o);
+    }
 
     function renderNodeTypeSearchContent(options)
     {
@@ -50,9 +84,9 @@
         
         var initOptions = o.initOptions;
         
-        
-        //Row 1, Column 1: nodetypeselect picklist
-        var $typeSelectCell = o.$searchTable.CswTable('cell', 1, 1);
+        //Row 1, Column 1: empty (contains 'and' for View search)
+        //Row 1, Column 2: nodetypeselect picklist
+        var $typeSelectCell = o.$searchTable.CswTable('cell', 1, 2);
         var $nodeTypesSelect = $(xmlToString(o.$nodeTypesXml.children('select')))
                                .change( function() {
                                    o.$parent = o.$searchTable; 
@@ -63,7 +97,7 @@
         $typeSelectCell.append($nodeTypesSelect);
         
         o.$parent = $searchTable;
-        //row 1-2, Columns 2-6
+        //prop row(s) 1-?, Columns 2-6
         renderPropsAndControls(o);
     }
 
@@ -88,107 +122,113 @@
             'selectedPropVal': '',
             'selectedSubfieldVal': '',
             'selectedFilterVal': '',
-            'isHidden': true
+            'isHidden': true,
+            'propsCount': 1
         };
         if(options) $.extend(o,options);
         
-        var nodeTypeId =  o.$nodeTypesSelect.val();
-        var relatedIdType = o.$nodeTypesSelect.find(':selected').attr('label');
-                
-        //Row 1, Column 2: properties picklist
-        var $propSelectCell = o.$parent.CswTable('cell', 1, 2)
-                              .empty();
-        
-        var $props = $(xmlToString(o.$propsXml.children('properties').children('select')))
-                     .change(function() {
-                                o.selectedPropVal = $(this).val();
-                                o.selectedSubfieldVal = '';
-                                o.selectedFilterVal  = '';
-                                renderPropsAndControls(o);
-                     });
-        if(o.selectedPropVal != '' )
+        var propRow = 1;
+        while(i <= o.propsCount)        
         {
-            $props.val(o.selectedPropVal).attr('selected',true);
-        }
-        $propSelectCell.append($props);
-        var propertyId = $props.find(':selected').val();
-        var $selectedProp = o.$propsXml.children('propertyfilters').children('property[propid='+ propertyId +']');
+            //Row i, Column 3: properties picklist
+            var $propSelectCell = o.$parent.CswTable('cell', propRow, 3)
+                                    .empty();
         
-        var $defaultFilter = $selectedProp.children('defaultsubfield').attr('filter');
-        var fieldtype = $selectedProp.attr('fieldtype');
+            var $props = $(xmlToString(o.$propsXml.children('properties').children('select')))
+                            .change(function() {
+                                    o.selectedPropVal = $(this).val();
+                                    o.selectedSubfieldVal = '';
+                                    o.selectedFilterVal  = '';
+                                    renderPropsAndControls(o);
+                            });
+            if(o.selectedPropVal != '' )
+            {
+                $props.val(o.selectedPropVal).attr('selected',true);
+            }
+            $propSelectCell.append($props);
+            var propertyId = $props.find(':selected').val();
+            var $selectedProp = o.$propsXml.children('propertyfilters').children('property[propid='+ propertyId +']');
+        
+            var $defaultFilter = $selectedProp.children('defaultsubfield').attr('filter');
+            var fieldtype = $selectedProp.attr('fieldtype');
 
-        //Row 1, Column 3: default filter
-        var $subfieldCell = o.$parent.CswTable('cell', 1, 3)
-                            .empty();
+            //Row i, Column 4: default filter
+            var $subfieldCell = o.$parent.CswTable('cell', propRow, 4)
+                                .empty();
         
-        var $defaultSubField = $('<span>' + $defaultFilter + '</span>')
-                               .attr({align:"center"});
-        if(!o.isHidden)
-        {
-            $defaultSubField.hide()
-        }
-        $subfieldCell.append($defaultSubField);
+            var $defaultSubField = $('<span id="default_filter_' + i + '" name="default_filter_' + i + '">' + $defaultFilter + '</span>')
+                                    .attr({align:"center"});
+            if(!o.isHidden)
+            {
+                $defaultSubField.hide()
+            }
+            $subfieldCell.append($defaultSubField);
                     
 
-        //Row 1, Column 3: subfield picklist (visible on 'advanced' click)
-        var $subfieldsOptions = $(xmlToString($selectedProp.children('subfields').children('select')))
-                                .change(function() {
-                                    o.selectedPropVal = $props.val();
-                                    o.selectedSubfieldVal = $(this).val();
-                                    o.selectedFilterVal  = '';
-                                    renderPropsAndControls(o) });
-        if(o.isHidden)
-        {
-            $subfieldsOptions.hide();
-        }
-        if(o.selectedSubfieldVal != '')
-        {
-            $subfieldsOptions.val(o.selectedSubfieldVal).attr('selected',true);
-        }
-        $subfieldCell.append($subfieldsOptions);
-        var $subfield = $subfieldsOptions.find(':selected').val();
-
-        //Row 1, Column 4: filter picklist
-        var $filtersCell = o.$parent.CswTable('cell', 1, 4)
-                           .empty();
-
-        var $filtersOptions =  $(xmlToString($selectedProp.children('propertyfilters').children('subfield[column=' + $subfield + ']').children('select')))
-                               .change(function() {
-                                    o.selectedPropVal = $props.val();
-                                    o.selectedSubfieldVal = $subfieldsOptions.val();
-                                    o.selectedFilterVal  = $(this).val;
-                                    renderPropsAndControls(o) });
-        if(o.isHidden)
-        {
-            $filtersOptions.hide();
-        }
-        if(o.selectedFilterVal != '')
-        {
-            $filtersOptions.val(o.selectedFilterVal).attr('selected',true);
-        }
-        $filtersCell.append($filtersOptions);
-        var $filter = $filtersOptions.find(':selected').val();
-
-        //Row 1, Column 5: search input
-        var $searchBoxCell = o.$parent.CswTable('cell', 1, 5)
-                        .empty();
-        var $searchInput;
-        if( fieldtype == 'List' )
-        {
-            $searchInput = $(xmlToString($selectedProp.children('filtersoptions').children('select')));
-        }
-        else
-        {
-            var searchSuggest = $props.find(':selected').text();
-            if(searchSuggest != $subfieldsOptions.find(':selected').text() )
+            //Row i, Column 4: subfield picklist (visible on 'advanced' click)
+            var $subfieldsOptions = $(xmlToString($selectedProp.children('subfields').children('select')))
+                                    .change(function() {
+                                        o.selectedPropVal = $props.val();
+                                        o.selectedSubfieldVal = $(this).val();
+                                        o.selectedFilterVal  = '';
+                                        renderPropsAndControls(o) });
+            if(o.isHidden)
             {
-                searchSuggest += "'s " +  $subfieldsOptions.find(':selected').text();
-            }  
-            $searchInput = $('<input type="text" name="search_input" id="search_input" autocomplete="on" autofocus="true" placeholder="' + searchSuggest + '" width="200px" />');
+                $subfieldsOptions.hide();
+            }
+            if(o.selectedSubfieldVal != '')
+            {
+                $subfieldsOptions.val(o.selectedSubfieldVal).attr('selected',true);
+            }
+            $subfieldCell.append($subfieldsOptions);
+            var $subfield = $subfieldsOptions.find(':selected').val();
+
+            //Row i, Column 5: filter picklist
+            var $filtersCell = o.$parent.CswTable('cell', propRow, 5)
+                                .empty();
+
+            var $filtersOptions =  $(xmlToString($selectedProp.children('propertyfilters').children('subfield[column=' + $subfield + ']').children('select')))
+                                    .change(function() {
+                                        o.selectedPropVal = $props.val();
+                                        o.selectedSubfieldVal = $subfieldsOptions.val();
+                                        o.selectedFilterVal  = $(this).val;
+                                        renderPropsAndControls(o) });
+            if(o.isHidden)
+            {
+                $filtersOptions.hide();
+            }
+            if(o.selectedFilterVal != '')
+            {
+                $filtersOptions.val(o.selectedFilterVal).attr('selected',true);
+            }
+            $filtersCell.append($filtersOptions);
+            var $filter = $filtersOptions.find(':selected').val();
+
+            //Row 1, Column 6: search input
+            var $searchBoxCell = o.$parent.CswTable('cell', propRow, 6)
+                            .empty();
+            var $searchInput;
+            if( fieldtype == 'List' )
+            {
+                $searchInput = $(xmlToString($selectedProp.children('filtersoptions').children('select')));
+            }
+            else
+            {
+                var searchSuggest = $props.find(':selected').text();
+                if(searchSuggest != $subfieldsOptions.find(':selected').text() )
+                {
+                    searchSuggest += "'s " +  $subfieldsOptions.find(':selected').text();
+                }  
+                $searchInput = $('<input type="text" name="search_input_' + i + '" id="search_input_' + i + '" autocomplete="on" autofocus="true" placeholder="' + searchSuggest + '" width="200px" />');
+            }
+            $searchBoxCell.append($searchInput);
+            
+            i++;
         }
-         $searchBoxCell.append($searchInput);
-                                            
-        var $splitCell = o.$parent.CswTable('cell', 2, 1)
+
+        bottomRow = (o.propsCount + 1);
+        //Row i, Column 1: cell for clear/advanced                                            
+        var $splitCell = o.$parent.CswTable('cell', bottomRow, 2)
                          .empty();
         
         var $splitCellTable = $splitCell.CswTable('init',{ID: 'split_cell_table', 
@@ -197,7 +237,7 @@
                                                             cellalign: 'center',
                                                             align: 'left'
                                                             });
-        //Row 2, Column 1 (1/1): clear button
+        //Row i, Column 1 (1/1): clear button
         var $clearButtonCell = $splitCellTable.CswTable('cell', 1, 1)
                                .empty();
         var $clearButton = $('<input type="button" name="clear_button" id="clear_button" value="Clear" />')
@@ -207,37 +247,24 @@
 
         $clearButtonCell.append($clearButton);
                                             
-        //Row 2, Column 1 (1/2): advanced link
+        //Row i, Column 1 (1/2): advanced link
         var $advancedLinkCell = $splitCellTable.CswTable('cell', 1, 2)
                                 .empty();
         var $advancedLink = $('<a href="#advanced">Advanced</a>')
                             .click(function() {
                                 o.isHidden = modAdvanced({
-                                    '$link': $advancedLink,
-                                    '$filtersOptions': $filtersOptions,
-                                    '$defaultSubfield': $defaultSubField,
-                                    '$subfieldsOptions': $subfieldsOptions
+                                    '$link': $advancedLink
                                     });
                             });
         $advancedLinkCell.append($advancedLink);
                                                     
-        //Row 2, Column 5: search button
-        var $searchButtonCell = o.$parent.CswTable('cell', 2, 5)
+        //Row i, Column 5: search button
+        var $searchButtonCell = o.$parent.CswTable('cell', bottomRow, 6)
                                 .attr({align:"right"})
                                 .empty();
         var $searchButton = $('<input type="button" name="search_button" id="search_button" value="Search" />')
                             .click(function() {
-                                    var searchOpt = {
-                                            nodetypeprop: [{
-                                                objectpk: nodeTypeId,
-                                                relatedidtype: relatedIdType,
-                                                propid: $props.val(),
-                                                subfield: $subfieldsOptions.find(':selected').text(),
-                                                filter: $filtersOptions.val(),
-                                                searchtext: $searchInput.val()  
-                                                }]
-                                    };
-                                    doNodesSearch(searchOpt);
+                                    doSearch(searchOpt);
                             });
         $searchButtonCell.append($searchButton);
     }
@@ -286,6 +313,7 @@
             '$searchTable': '',
             '$topspandiv': '',
             viewid: '',
+            'searchtype': '',
             'onSearch': function() { }
 		};
 		if(options) {
@@ -314,9 +342,7 @@
 		    'url': '/NbtWebApp/wsNBT.asmx/getClientSearchXml',
 		    'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeid,
             'success': function($xml) { 
-
-                var $nodeTypesXml = $xml.children('nodetypes');
-                var $propsXml = $xml.children('nodetypeprops');
+                log($xml);
                 $searchTable = $topspandiv.CswTable('init', { 
                                         ID: 'search_tbl', 
                                         cellpadding: 1,
@@ -325,30 +351,38 @@
                                         align: 'center'
                                         });
 
-                var searchtype = $xml.attr('searchtype');
-                switch(searchtype)
+                o.searchtype = $xml.attr('searchtype');
+                switch(o.searchtype)
                 {
                     case 'nodetypesearch':
                     {
+                        var $nodePropsXml = $xml.children('nodetypeprops');
+                        var $nodeTypesXml = $xml.children('nodetypes');
                         renderNodeTypeSearchContent({
                             '$parent': o.$parent,
                             '$nodeTypesXml': $nodeTypesXml, 
-                            '$propsXml': $propsXml,
+                            '$propsXml': $nodePropsXml,
                             '$searchTable': $searchTable,
                             '$topspandiv': $topspandiv,
+                            'propsCount': 1, //only one NodeTypeProp by default
                             'initOptions': o
                         });
-                        getBottomSpan({'$bottomspandiv': $bottomspandiv});
-
                     }
                     case 'viewsearch':
                     {
-
-
+                        var $viewPropsXml = $xml.children('properties');
+                        renderViewBasedSearchContent({
+                            '$parent': o.$parent,
+                            '$propsXml': $viewPropsXml,
+                            '$searchTable': $searchTable,
+                            '$topspandiv': $topspandiv,
+                            'propsCount': $xml.children('properties').children('property').size(),
+                            'initOptions': o
+                        });
                     }
 
                 }
-							        
+                getBottomSpan({'$bottomspandiv': $bottomspandiv});							        
 			} // success
 					
 		}); // CswAjaxXml
@@ -395,29 +429,80 @@
         $customSearchCell.append($customSearch);
     }
 
-    function doNodesSearch(options)
+    function doSearch(options)
     {
-         var o = {
-            nodetypeprop: [{
-                objectpk: '',
-                relatedidtype: '',
-                propid: '',
-                subfield: '',
-                filter: '',
-                searchtext: ''
-                }]
+        var o = {
+            'doSearchUrl': ''
         };
-        
+
+        var searchOpt;
+
         if(options) $.extend(o,options);
-                                                                                  
-        CswAjaxJSON({ 
-			'url': '/NbtWebApp/wsNBT.asmx/doNodeTypeSearch',
-			'data': "{SearchJson: \"" + jsonToString(o) + "\"}",
-            'success': function($viewid) { 
-                    alert('hey');
-                    //load the view
+        
+        var props = [];
+        var propno = 1;
+        switch(o.searchtype)
+        {
+            case 'nodetypesearch':
+            {
+                o.doSearchUrl = '/NbtWebApp/wsNBT.asmx/doNodeTypeSearch';
+                while( propno <= o.propsCount )
+                {
+                    if( '' != $('#search_input_' + i).val() )
+                    {
+                        var thisNodeProp = {
+                                objectpk: o.$nodeTypesSelect.val(),                                relatedidtype: o.$nodeTypesSelect.find(':selected').attr('label'),
+                                propid: $('#property_name_' + propno).val(),
+                                subfield: $('#subfield_select_' + propno).find(':selected').text(),
+                                filter: $('#filter_select_' + propno).val(),
+                                searchtext: $('#search_input_' + propno).val()  
+                                };
+                        props.push( thisNodeProp );
+                    }
+                    i++;
+                }
+                searchOpt = {
+                    'nodetypeprops' : props
+                };
+                break;
+            }
+            case 'viewsearch':
+            {
+                o.doSearchUrl = '/NbtWebApp/wsNBT.asmx/doViewSearch';
+                while( propno <= o.propsCount )
+                {
+                    if( '' != $('#search_input_' + i).val() )
+                    {
+                        var thisViewProp = {
+                                propid: $('#property_name_' + propno).val(),
+                                subfield: $('#subfield_select_' + propno).find(':selected').text(),
+                                filter: $('#filter_select_' + propno).val(),
+                                searchtext: $('#search_input_' + propno).val()  
+                        };
+                        props.push( thisViewProp );
+                    }
+                    i++;
+                }
+                searchOpt = { 
+                        viewprops: props,
+                        viewid: o.viewid
+                };
+                break;
+            }
+        }
+
+        if(searchOpt)
+        {
+            CswAjaxJSON({ 
+			'url': o.doSearchUrl,
+			'data': "{SearchJson: \"" + jsonToString(searchOpt) + "\"}",
+            'success': function(view) { 
+                    $.CswCookie('set', CswCookieName.CurrentView.ViewId, view.sessionviewid);
+                    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, view.viewmode);
+                    window.location.replace('NewMain.html');
                 }
             });
+        }
     }
 
 	var methods = {

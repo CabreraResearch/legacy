@@ -1,11 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using System.Data;
-using System.Xml;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -48,6 +43,10 @@ namespace ChemSW.Nbt.MetaData
             add( SubField, false );
         }
 
+        public void remove( CswNbtSubField SubField )
+        {
+            _SubFields.Remove( SubField );
+        }
 
         public IEnumerator GetEnumerator()
         {

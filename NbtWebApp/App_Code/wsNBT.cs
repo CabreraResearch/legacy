@@ -652,9 +652,10 @@ namespace ChemSW.Nbt.WebServices
 
                 var ws = new CswNbtWebServiceSearch( _CswNbtResources );
                 CswNbtView ResultsView = ws.doNodesSearch( SearchJson );
-                _CswNbtResources.ViewCache.putView( ResultsView );
-                //SearchResults = _getClientXmlFromView( ResultsView );
-                SessionViewId.Add(new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
+                ResultsView.SaveToCache();
+                //var RenderElement = getTreeOfView( ResultsView.SessionViewId.ToString(), _IDPrefix, string.Empty, string.Empty );
+                SessionViewId.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
+                SessionViewId.Add( new JProperty( "viewmode", ResultsView.ViewMode ) );
                 end();
             }
             catch( Exception ex )
