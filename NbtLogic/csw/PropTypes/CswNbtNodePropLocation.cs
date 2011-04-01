@@ -254,15 +254,15 @@ namespace ChemSW.Nbt.PropTypes
             if( NodeMap != null && NodeMap.ContainsKey( LocationNodeId.PrimaryKey ) )
                 LocationNodeId = new CswPrimaryKey( "nodes", NodeMap[LocationNodeId.PrimaryKey] );
             SelectedNodeId = LocationNodeId;
-            if( SelectedNodeId != null )
-            {
-                CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", SelectedNodeId.PrimaryKey.ToString() );
-                SelectedRow = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _RowSubField.ToXmlNodeName() );
-                SelectedColumn = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ColumnSubField.ToXmlNodeName() );
-                //PendingUpdate = true;
-				RefreshNodeName();
-            }
-        }
+			if( SelectedNodeId != null )
+			{
+				CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", SelectedNodeId.PrimaryKey.ToString() );
+				SelectedRow = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _RowSubField.ToXmlNodeName() );
+				SelectedColumn = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ColumnSubField.ToXmlNodeName() );
+				//PendingUpdate = true;
+			}
+			RefreshNodeName();
+		} // ReadXml()
 
         public override void ToXElement( XElement ParentNode )
         {

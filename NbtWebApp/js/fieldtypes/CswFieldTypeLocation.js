@@ -16,8 +16,6 @@
 				var Path = o.$propxml.children('path').text().trim();
 				var ViewId = o.$propxml.children('viewid').text().trim();
 
-				if(NodeId == '') NodeId = 'root';
-
 				if(o.ReadOnly)
 				{
 					$Div.append(Path);
@@ -75,6 +73,7 @@
 	
 		function onTreeSelect($selectdiv, itemid, text, iconurl, onchange)
 		{
+			if(itemid == 'root') itemid = '';   // case 21046
 			$selectdiv.CswComboBox( 'TopContent', text );
 			if($selectdiv.attr('value') != itemid)
 			{
