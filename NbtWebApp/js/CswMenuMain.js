@@ -6,7 +6,7 @@
 			viewid: '',
 			nodeid: '',
 			cswnbtnodekey: '',
-			onAddNode: function(optSelect) { } //newnodeid,newcswnbtnodekey
+			onAddNode: function(nodeid, cswnbtnodekey) { }
 		};
 
 		if (options) {

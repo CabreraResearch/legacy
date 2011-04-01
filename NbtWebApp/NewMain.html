@@ -150,10 +150,10 @@
 			{
 				$.CswDialog('AddNodeDialog', {
 					'nodetypeid': nodetypeid,
-					'onAddNode': function (nodeid)
+					'onAddNode': function (nodeid, cswnbtnodekey)
 					{
 						clear({ all: true });
-						getNodesTree({ 'nodeid': nodeid });
+						getNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
 					}
 				});
 			},
@@ -253,7 +253,15 @@
 			$.extend(o, options);
 		}
 
-		$('#MainMenuDiv').CswMenuMain( {'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'onAddNode': refreshSelected} );
+		$('#MainMenuDiv').CswMenuMain({
+			'viewid': o.viewid,
+			'nodeid': o.nodeid,
+			'cswnbtnodekey': o.cswnbtnodekey,
+			'onAddNode': function (nodeid, cswnbtnodekey)
+			{
+				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+			}
+		});
 	}
 
 	function getViewGrid(options)
@@ -274,7 +282,13 @@
 			$.extend(o, options);
 		}
 
-		o.onAddNode = function() { getViewGrid(o); };
+		o.onAddNode = function (nodeid, cswnbtnodekey)
+			{
+				var ocopy = o;
+				var x = { 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey };
+				$.extend(ocopy, x);
+				getViewGrid(ocopy);
+			};
         o.onEditNode = function() { getViewGrid(o); };
         o.onDeleteNode = function() { getViewGrid(o); };
 		
@@ -354,10 +368,10 @@
 			'ID': 'nodetabs',
 			'nodeid': o.nodeid,
 			'cswnbtnodekey': o.cswnbtnodekey,
-			'onSave': function ()
+			'onSave': function (nodeid, cswnbtnodekey)
 			{
 				unsetChanged();
-				refreshSelected();
+				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
 			},
 			'tabid': $.CswCookie('get', CswCookieName.CurrentTabId),
 			'onBeforeTabSelect': function (tabid)
@@ -391,7 +405,7 @@
 				iconurl: ''
 			};
 			if (options) $.extend(o, options);
-
+	
 			switch (o.type)
 			{
 				case 'grid':

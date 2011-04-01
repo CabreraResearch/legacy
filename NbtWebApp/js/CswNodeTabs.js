@@ -15,7 +15,7 @@
 			cswnbtnodekey: '',
 			nodetypeid: '',
 			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
-			onSave: function (nodeid) { },
+			onSave: function (nodeid, cswnbtnodekey) { },
 			onBeforeTabSelect: function (tabid) { return true; },
 			onTabSelect: function (tabid) { },
 			onPropertyChange: function(propid, propname) { }
@@ -331,10 +331,10 @@
 
 			CswAjaxJSON({
 				url: o.SavePropUrl,
-				data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', NewPropsXml: '" + xmlToString($propsxml) + "' }",
+				data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', ViewId: '"+ $.CswCookie('get', CswCookieName.CurrentView.ViewId) +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",
 				success: function (data)
 				{
-					o.onSave(data.nodeid);
+					o.onSave(data.nodeid, data.cswnbtnodekey);
 				}
 			});
 

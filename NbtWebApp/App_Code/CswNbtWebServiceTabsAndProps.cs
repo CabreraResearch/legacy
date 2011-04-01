@@ -9,6 +9,9 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.DB;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -226,12 +229,14 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // moveProp()
 
-		public string saveProps( NodeEditMode EditMode, string NodeKey, string NewPropsXml, Int32 NodeTypeId )
+		public JObject saveProps( NodeEditMode EditMode, string NodeKey, string NewPropsXml, Int32 NodeTypeId, Int32 ViewId )
 		{
+			JObject ret = null;
 			XmlDocument XmlDoc = new XmlDocument();
 			XmlDoc.LoadXml( NewPropsXml );
 
 			CswNbtNode Node = null;
+			CswNbtNodeKey NbtNodeKey = null;
 			if( EditMode == NodeEditMode.AddInPopup )
 			{
 				Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
@@ -242,7 +247,7 @@ namespace ChemSW.Nbt.WebServices
 				//NodePk.FromString( NodePkString );
 				if(!string.IsNullOrEmpty(NodeKey))
 				{
-				    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey(_CswNbtResources, NodeKey);
+				    NbtNodeKey = new CswNbtNodeKey(_CswNbtResources, NodeKey);
 				    if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
 				    {
 				        Node = _CswNbtResources.Nodes[NbtNodeKey];
@@ -259,12 +264,26 @@ namespace ChemSW.Nbt.WebServices
 
 				Node.postChanges( false );
 
-				return "{ \"result\": \"Succeeded\", \"nodeid\": \"" + Node.NodeId.ToString() + "\" }";
+				if( NbtNodeKey == null )
+				{
+					// Get the nodekey of this node in the current view
+					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+					ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+					NbtNodeKey = Tree.getNodeKeyByNodeId( Node.NodeId );
+				}
+				string NodeKeyString = string.Empty;
+				if( NbtNodeKey != null )
+					NodeKeyString = wsTools.ToSafeJavaScriptParam( NbtNodeKey.ToString() );
+
+				ret = new JObject( new JProperty( "result", "Succeeded" ),
+									new JProperty( "nodeid", Node.NodeId.ToString() ),
+									new JProperty( "cswnbtnodekey", NodeKeyString ) );
 			}
 			else
 			{
-				return "{ \"result\": \"Failed\" }";
+				ret = new JObject( new JProperty( "result", "Failed" ) );
 			}
+			return ret;
 		} // saveProps()
 
 		private Int32 _getPropIdFromAttribute( string PropIdAttr )
