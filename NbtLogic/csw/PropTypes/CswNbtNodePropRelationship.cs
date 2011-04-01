@@ -212,9 +212,15 @@ namespace ChemSW.Nbt.PropTypes
             XmlNode RelatedNodeIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _NodeIDSubField.ToXmlNodeName() );
             if( RelatedNodeId != null )
                 RelatedNodeIdNode.InnerText = RelatedNodeId.PrimaryKey.ToString();
-            XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
+			
+			XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
 
-            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
+			if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+			{
+				XmlNode NodeTypeNode = CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
+			}
+
+			XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
             Dictionary<CswPrimaryKey, string> Options = getOptions();
             foreach( CswPrimaryKey NodePk in Options.Keys )
             {

@@ -50,12 +50,15 @@
 														'Width': '266px' 
 													});
 
-					var $addcell = $table.CswTable('cell', 2, 2);
-					var $AddButton = $('<div />').appendTo($addcell);
-					$AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
-												AlternateText: "Add New",
-												onClick: onAdd 
-												});
+//					var $addcell = $table.CswTable('cell', 2, 2);
+//					var $AddButton = $('<div />').appendTo($addcell);
+//					$AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
+//												AlternateText: "Add New",
+//												onClick: function($ImageDiv) { 
+//														onAdd();
+//														return CswImageButton_ButtonType.None;
+//													}
+//												});
 
 //                        if(o.Required)
 //                        {
@@ -83,10 +86,10 @@
 			setTimeout(function() { $selectdiv.CswComboBox( 'close'); }, 300);
 		}
 		
-		function onAdd($ImageDiv)
-		{
-			alert('This function has not been implemented yet.');
-		}
+//		function onAdd()
+//		{
+//			alert('This function has not been implemented yet.');
+//		}
 
 		// Method calling logic
 		if ( methods[method] ) {

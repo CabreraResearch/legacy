@@ -12,6 +12,7 @@
 
                 var SelectedNodeId = o.$propxml.children('nodeid').text().trim();
                 var SelectedName = o.$propxml.children('name').text().trim();
+                var NodeTypeId = o.$propxml.children('nodetypeid').text().trim();
                 var $Options = o.$propxml.children('options');
 
                 if(o.ReadOnly)
@@ -34,12 +35,21 @@
 
                     $SelectBox.val( SelectedNodeId );
 
-                    var $addcell = $table.CswTable('cell', 1, 2);
-                    var $AddButton = $('<div />').appendTo($addcell);
-                    $AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
-                                                AlternateText: "Add New",
-                                                onClick: onAdd 
-                                                });
+                    if(NodeTypeId != '')
+					{
+						var $addcell = $table.CswTable('cell', 1, 2);
+						var $AddButton = $('<div />').appendTo($addcell);
+						$AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
+													AlternateText: "Add New",
+													onClick: function($ImageDiv) { 
+															$.CswDialog('AddNodeDialog', {
+																							'nodetypeid': NodeTypeId, 
+																							'onAddNode': function(nodeid, cswnbtnodekey) { o.onReload(); }
+																						});
+															return CswImageButton_ButtonType.None;
+														}
+													});
+					}
 
                     if(o.Required)
                     {
@@ -54,12 +64,6 @@
                 }
         };
     
-
-        function onAdd($ImageDiv)
-        {
-            alert('This function has not been implemented yet.');
-        }
-
         // Method calling logic
         if ( methods[method] ) {
             return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
