@@ -21,7 +21,8 @@
 
 							$div.dialog({ 'modal': true,
 								'width': 400,
-								'height': 400
+								'height': 400,
+								'close': function(event, ui) { $div.remove(); } 
 							});
 
 						}, // AddWelcomeItemDialog
@@ -47,7 +48,8 @@
 							});
 							$div.dialog({ 'modal': true,
 								'width': 800,
-								'height': 600
+								'height': 600,
+								'close': function(event, ui) { $div.remove(); } 
 							});
 						},        
 		
@@ -74,7 +76,8 @@
 							});
 							$div.dialog({ 'modal': true,
 								'width': 800,
-								'height': 600
+								'height': 600,
+								'close': function(event, ui) { $div.remove(); } 
 							});
 						},
 
@@ -112,7 +115,8 @@
 							
 							$div.dialog({ 'modal': true,
 								'width': 400,
-								'height': 300
+								'height': 300,
+								'close': function(event, ui) { $div.remove(); } 
 							});
 						},        
 		
@@ -149,7 +153,8 @@
 
 							$div.dialog({ 'modal': true,
 								'width': 400,
-								'height': 200
+								'height': 200,
+								'close': function(event, ui) { $div.remove(); } 
 							});
 						},
 
@@ -179,62 +184,65 @@
 							});
 							$div.dialog({ 'modal': true,
 								'width': 600,
-								'height': 400
+								'height': 400,
+								'close': function(event, ui) { $div.remove(); } 
 							});
 						},
 
 		'SearchDialog': function (viewid, onSearchSubmit, props) {
-						var $div = $('<div></div>');
-						CswAjaxXml({
-							url: '/NbtWebApp/wsNBT.asmx/getSearch',
-							data: 'ViewNum: ' + viewid ,
-							success: function ($xml) {
+							var $div = $('<div></div>');
+							CswAjaxXml({
+								url: '/NbtWebApp/wsNBT.asmx/getSearch',
+								data: 'ViewNum: ' + viewid ,
+								success: function ($xml) {
 									
-							}
-						});
-						$div.dialog({ 'modal': true,
-							'width': 800,
-							'height': 600
-						});
-					},
+								}
+							});
+							$div.dialog({ 'modal': true,
+								'width': 800,
+								'height': 600,
+								'close': function(event, ui) { $div.remove(); } 
+							});
+						},
 
 		'FileUploadDialog': function (options) {
-						var o = {
-							url: '',
-							params: {},
-							onSuccess: function() { }
-						};
-						if(options) {
-							$.extend(o, options);
-						}
+							var o = {
+								url: '',
+								params: {},
+								onSuccess: function() { }
+							};
+							if(options) {
+								$.extend(o, options);
+							}
 
-						var $div = $('<div></div>');
+							var $div = $('<div></div>');
 								
-						var uploader = new qq.FileUploader({
-							element: $div.get(0),
-							action: o.url,
-							params: o.params,
-							debug: false,
-							onComplete: function() 
-								{ 
-									$div.dialog('close'); 
-									o.onSuccess(); 
-								}
-						});
-
-						$('<input type="button" id="fileupload_cancel" name="fileupload_cancel" value="Cancel" />')
-							.appendTo($div)
-							.click(function () {
-								$div.dialog('close');
+							var uploader = new qq.FileUploader({
+								element: $div.get(0),
+								action: o.url,
+								params: o.params,
+								debug: false,
+								onComplete: function() 
+									{ 
+										$div.dialog('close'); 
+										o.onSuccess(); 
+									}
 							});
 
-						$div.dialog({ 'modal': true,
-							'width': 400,
-							'height': 300
-						});
+							$('<input type="button" id="fileupload_cancel" name="fileupload_cancel" value="Cancel" />')
+								.appendTo($div)
+								.click(function () {
+									$div.dialog('close');
+								});
+
+							$div.dialog({ 'modal': true,
+								'width': 400,
+								'height': 300,
+								'close': function(event, ui) { $div.remove(); } 
+							});
 
 
-					},
+						},
 
 		// Generic
 
