@@ -14,6 +14,7 @@
 					nodeid: '',       // if viewid is not supplied, loads a view of this node
 					cswnbtnodekey: '',
 					IncludeNodeRequired: false,
+					UsePaging: true,
 					onSelectNode: function(optSelect) {
 											var o =  {
 												nodeid: '', 
@@ -33,7 +34,7 @@
 								.appendTo($(this));
 
 				var url = o.ViewTreeUrl;
-				var data = 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=true&ParentNodeKey=&IncludeNodeRequired='+ o.IncludeNodeRequired +'&IncludeNodeKey=';
+				var data = 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=true&ParentNodeKey=&IncludeNodeRequired='+ o.IncludeNodeRequired +'&IncludeNodeKey=';
 				if(o.cswnbtnodekey != undefined)
 				{
 					data += o.cswnbtnodekey;
@@ -111,7 +112,7 @@
 												"data": function($nodeOpening) 
 													{
 														var nodekey = $nodeOpening.attr('cswnbtnodekey');
-														return 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey=' + nodekey + '&IncludeNodeRequired=false&IncludeNodeKey=';
+														return 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey=' + nodekey + '&IncludeNodeRequired=false&IncludeNodeKey=';
 													}
 											}
 									},
@@ -152,7 +153,7 @@
 													// get next page of nodes
 													CswAjaxXml({
 														url: url,
-														data: 'ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey='+ ParentNodeKey +'&IncludeNodeRequired=false&IncludeNodeKey=' + optSelect.cswnbtnodekey,
+														data: 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey='+ ParentNodeKey +'&IncludeNodeRequired=false&IncludeNodeKey=' + optSelect.cswnbtnodekey,
 														success: function ($xml) 
 															{
 																// remove 'More' node

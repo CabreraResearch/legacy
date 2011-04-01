@@ -228,8 +228,16 @@ namespace ChemSW.Nbt.PropTypes
             XmlNode CachedPathNode = CswXmlDocument.AppendXmlNode( ParentNode, _PathSubField.ToXmlNodeName(), CachedPath );
             XmlNode CachedBarcodeNode = CswXmlDocument.AppendXmlNode( ParentNode, _BarcodeSubField.ToXmlNodeName(), CachedBarcode );
             View.SaveToCache();
-            XmlNode ViewIdNode = CswXmlDocument.AppendXmlNode( ParentNode, "viewid", View.SessionViewId.ToString() );
-
+			XmlNode ViewIdNode = CswXmlDocument.AppendXmlNode( ParentNode, "viewid", View.SessionViewId.ToString() );
+			if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
+			{
+				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+				CswNbtNodeKey NodeKey = Tree.getNodeKeyByNodeId( NodeId );
+				if( NodeKey != null )
+				{
+					XmlNode NodeKeyNode = CswXmlDocument.AppendXmlNode( ParentNode, "nodekey", NodeKey.ToString() );
+				}
+			}
             if( SelectedNodeId != null )
                 SelectedNodeNode.InnerText = SelectedNodeId.ToString();
             if( SelectedColumn != Int32.MinValue )
@@ -251,7 +259,8 @@ namespace ChemSW.Nbt.PropTypes
                 CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", SelectedNodeId.PrimaryKey.ToString() );
                 SelectedRow = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _RowSubField.ToXmlNodeName() );
                 SelectedColumn = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ColumnSubField.ToXmlNodeName() );
-                PendingUpdate = true;
+                //PendingUpdate = true;
+				RefreshNodeName();
             }
         }
 
