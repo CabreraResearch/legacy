@@ -14,7 +14,7 @@
             $('.csw_search_subfield_select').each(function() { $(this).show(); });
             $('.csw_search_filter_select').each(function() { $(this).show(); });
             $('.csw_search_default_filter').each(function() { $(this).hide(); });
-            o.$link.text('Hide');
+            o.$link.text('Simple');
             isHidden = false;
         }
         else
