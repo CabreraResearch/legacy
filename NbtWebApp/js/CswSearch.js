@@ -174,7 +174,7 @@
                 $props.val(o.selectedPropVal).attr('selected',true);
             }
             $propSelectCell.append($props);
-            var propertyId = $props.find(':selected').val();
+            var propertyId = $props.val(); //$props.find(':selected').val();
             var $selectedProp = o.$propsXml.children('propertyfilters').children('property[propid='+ propertyId +']');
         
             var $defaultFilter = $selectedProp.children('defaultsubfield').attr('filter');
