@@ -242,9 +242,10 @@ namespace ChemSW.Nbt
                                                         User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ).Count() &&
                                                 ( ThisView.IsFullyEnabled() ) ) )
             {
-                SearchNode.Add( new XElement( "option",
-                                            new XAttribute( "label", ThisView.ViewMode ),
-                                            new XAttribute( "value", ThisView.ViewId ) ) { Value = ThisView.ViewName } );
+                SearchNode.Add( new XElement( "option", ThisView.ViewName, //Add() doesn't return an object, therefore initializer won't work
+                                            new XAttribute( "title", ThisView.ViewMode ),
+                                            new XAttribute( "label", ThisView.ViewName ),
+                                            new XAttribute( "value", ThisView.ViewId ) ) );
 
             }
             _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() finished", SearchableViewsTimer.ElapsedDurationInSecondsAsString );

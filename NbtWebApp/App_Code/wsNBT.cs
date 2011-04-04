@@ -604,41 +604,29 @@ namespace ChemSW.Nbt.WebServices
 			return SearchNode;
 		} // getSearch()
 
-        private XElement _getClientXmlFromView( CswNbtView View)
-        {
-            var RenderElement = new XElement( "tree" );
-            switch (View.ViewMode)
-            {
-                //case NbtViewRenderingMode.Grid:
-                //    RenderElement = getGrid( View.ViewId.ToString(), string.Empty );
-                //    break;
-                default:
-                    RenderElement = getTreeOfView( View.ViewId.ToString(), _IDPrefix, string.Empty, string.Empty );
-                    break;
-            }
-            return RenderElement;
-        }
-
         [WebMethod( EnableSession = true )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement doViewSearch( string SearchXml, string ViewIdNum )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string doViewSearch( string SearchJson )
         {
-            var SearchResults = new XElement( "search" );
+            JObject SearchResultView = new JObject();
             try
             {
                 start();
 
                 var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-                CswNbtView ResultsView = ws.doViewBasedSearch( SearchXml, ViewIdNum );
-                SearchResults = _getClientXmlFromView( ResultsView );
+                CswNbtView ResultsView = ws.doViewBasedSearch( SearchJson );
+                ResultsView.SaveToCache();
+
+                SearchResultView.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
+                SearchResultView.Add( new JProperty( "viewmode", ResultsView.ViewMode ) );
                 end();
             }
             catch( Exception ex )
             {
-                SearchResults = xError( ex );
+                SearchResultView.Add( jError( ex ) );
             }
 
-            return SearchResults;
+            return SearchResultView.ToString();
         } // getSearch()
 
         [WebMethod( EnableSession = true )]
