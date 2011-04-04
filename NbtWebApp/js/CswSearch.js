@@ -57,16 +57,17 @@
         
         var propRow = 1;
         o.$propsXml.children('property').each( function() {
-                var $nodeType = $('<span>' +  $(this).attr('nodetypename') + '</span>')
-                                .attr('id','nodetypepropid_' + $(this).attr('propid') )
-                                .attr('name','nodetypepropid_' + $(this).attr('propid') )
+                var $thisProp = $(this);
+                var $nodeType = $('<span>' +  $thisProp.attr('nodetypename') + '</span>')
+                                .attr('id','nodetypepropid_' + $thisProp.attr('propid') )
+                                .attr('name','nodetypepropid_' + $thisProp.attr('propid') )
                                 .attr('class','csw_search_nodetype_static' );
                 
                 var $nodeTypeCell = o.$searchTable.CswTable('cell', propRow, 2)
                                     .append($nodeType);
                 renderViewPropsAndControls({
                                 '$parent': o.$searchTable,
-                                '$thisProp': $(this),
+                                '$thisProp': $thisProp,
                                 'propRow': propRow,
                                 'selectedSubfieldVal': '',
                                 'selectedFilterVal': '',
@@ -107,9 +108,10 @@
         var $typeSelectCell = o.$searchTable.CswTable('cell', 1, 2);
         var $nodeTypesSelect = $(xmlToString(o.$nodeTypesXml.children('select')))
                                .change( function() {
+                                   var $thisSelect = $(this);
                                    o.$parent = o.$searchTable; 
-                                   o.$nodeTypesSelect = $(this);
-                                   getNewProps( $(this).val(), $(this).find(':selected').attr('title'), o);
+                                   o.$nodeTypesSelect = $thisSelect;
+                                   getNewProps( $thisSelect.val(), $thisSelect.find(':selected').attr('title'), o);
                                 });
         o.$nodeTypesSelect = $nodeTypesSelect;
         $typeSelectCell.append($nodeTypesSelect);
@@ -616,8 +618,9 @@
                 var relatedIdType = o.$nodeTypesSelect.find(':selected').attr('title');
 
                 $('.csw_search_properties_select').each(function() {
-                        var propName = $(this).text();
-                        var propId = $(this).val();
+                        var $thisProp = $(this);
+                        var propName = $thisProp.text();
+                        var propId = $thisProp.val();
                         var subField = $('#subfield_select_nodetypepropid_' + propId).find(':selected').text();
                         var filter = $('#filter_select_nodetypepropid_' + propId).find(':selected').val();
                         var searchText = $('#search_input_nodetypepropid_' + propId).val();
@@ -641,14 +644,15 @@
             {
                 o.doSearchUrl = '/NbtWebApp/wsNBT.asmx/doViewSearch';
                 o.$propsXml.children('property').each(function() {
-                        var propName = $(this).val();
-                        var propId = $(this).attr('propid');
+                        var $thisProp = $(this);
+                        var propName = $thisProp.val();
+                        var propId = $thisProp.attr('propid');
                         var searchText = $('#search_input_nodetypepropid_' + propId).val();
                         if(searchText != '')
                         {
                             var subField = $('#subfield_select_nodetypepropid_' + propId).find(':selected').text();
                             var filter = $('#filter_select_nodetypepropid_' + propId).find(':selected').val();
-                            var viewPropType = $(this).attr('viewproptype');
+                            var viewPropType = $thisProp.attr('viewproptype');
                             var thisNodeProp = {
                                     viewproptype: viewPropType,
                                     propid: propId,
