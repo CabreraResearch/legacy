@@ -115,7 +115,8 @@
 				case 'Unknown': txt = "An Unknown Error Occurred"; break;
 			}
 			$('#loginmsg').text(txt);
-			
+			$('#login_password').val('');   // case 21303
+
             $('#login_button').val('Login')
                               .attr('disabled', '');
             //Logout();
