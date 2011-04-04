@@ -71,7 +71,8 @@ namespace ChemSW.Nbt.WebServices
 					if( ( ( Prop.IsRequired && Prop.DefaultValue.Empty ) ||
 						  Node.Properties[Prop].TemporarilyRequired ||
 						  Prop.SetValueOnAdd ) &&
-						Prop.FilterNodeTypePropId == Int32.MinValue )
+						Prop.FilterNodeTypePropId == Int32.MinValue &&
+						! ( Node.Properties[Prop].Hidden ) )
 					{
 						_addProp( PropXmlDoc, EditMode, Node, Prop );
 					}
@@ -92,7 +93,7 @@ namespace ChemSW.Nbt.WebServices
 
                         foreach (CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder)
                         {
-                            if (!Prop.hasFilter())
+                            if (!Prop.hasFilter() && !Node.Properties[Prop].Hidden)
                             {
                                 _addProp(PropXmlDoc, EditMode, Node, Prop);
                             }
