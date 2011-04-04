@@ -164,10 +164,12 @@
                                     .empty();
             var $props = $(xmlToString(o.$propsXml.children('properties').children('select')))
                             .change(function() {
-                                    o.selectedPropVal = $(this).val();
-                                    o.selectedSubfieldVal = '';
-                                    o.selectedFilterVal  = '';
-                                    renderPropsAndControls(o);
+                                    var r = {};
+                                    $.extend(r,o);
+                                    r.selectedPropVal = $(this).val();
+                                    r.selectedSubfieldVal = '';
+                                    r.selectedFilterVal  = '';
+                                    renderPropsAndControls(r);
                             });
             if(o.selectedPropVal != '' )
             {
@@ -196,11 +198,13 @@
             //Row propRow, Column 4: subfield picklist (visible on 'advanced' click)
             var $subfieldsOptions = $(xmlToString($selectedProp.children('subfields').children('select')))
                                     .change(function() {
-                                        o.selectedPropVal = $props.val();
-                                        o.selectedSubfieldVal = $(this).val();
-                                        o.selectedFilterVal  = '';
-                                        o.isHidden = false;
-                                        renderPropsAndControls(o) });
+                                        var r = {};
+                                        $.extend(r,o);
+                                        r.selectedPropVal = $props.val();
+                                        r.selectedSubfieldVal = $(this).val();
+                                        r.selectedFilterVal  = '';
+                                        r.isHidden = false;
+                                        renderPropsAndControls(r) });
             if(o.isHidden)
             {
                 $subfieldsOptions.hide();
@@ -218,11 +222,13 @@
 
             var $filtersOptions =  $(xmlToString($selectedProp.children('propertyfilters').children('subfield[column=' + $subfield + ']').children('select')))
                                     .change(function() {
-                                        o.selectedPropVal = $props.val();
-                                        o.selectedSubfieldVal = $subfieldsOptions.val();
-                                        o.selectedFilterVal  = $(this).val;
-                                        o.isHidden = false;
-                                        renderPropsAndControls(o) });
+                                        var r = {};
+                                        $.extend(r,o);
+                                        r.selectedPropVal = $props.val();
+                                        r.selectedSubfieldVal = $subfieldsOptions.val();
+                                        r.selectedFilterVal  = $(this).val;
+                                        r.isHidden = false;
+                                        renderPropsAndControls(r) });
             if(o.isHidden)
             {
                 $filtersOptions.hide();
@@ -306,11 +312,13 @@
         //Row propRow, Column 4: subfield picklist (visible on 'advanced' click)
         var $subfieldsOptions = $(xmlToString($selectedProp.children('subfields').children('select')))
                                 .change(function() {
-                                    o.$thisProp = $selectedProp;
-                                    o.selectedSubfieldVal = $(this).val();
-                                    o.selectedFilterVal  = '';
-                                    o.isHidden = false;
-                                    renderViewPropsAndControls(o) });
+                                    var r = {};
+                                    $.extend(r,o);
+                                    r.$thisProp = $selectedProp;
+                                    r.selectedSubfieldVal = $(this).val();
+                                    r.selectedFilterVal  = '';
+                                    r.isHidden = false;
+                                    renderViewPropsAndControls(r) });
         if(o.isHidden)
         {
             $subfieldsOptions.hide();
@@ -328,11 +336,13 @@
 
         var $filtersOptions =  $(xmlToString($selectedProp.children('propertyfilters').children('subfield[column=' + $subfield + ']').children('select')))
                                 .change(function() {
-                                    o.$thisProp = $selectedProp;
-                                    o.isHidden = false;
-                                    o.selectedSubfieldVal = $subfieldsOptions.val();
-                                    o.selectedFilterVal  = $filtersOptions.val();
-                                    renderViewPropsAndControls(o) });
+                                    var r = {};
+                                    $.extend(r,o);
+                                    r.$thisProp = $selectedProp;
+                                    r.isHidden = false;
+                                    r.selectedSubfieldVal = $subfieldsOptions.val();
+                                    r.selectedFilterVal  = $filtersOptions.val();
+                                    renderViewPropsAndControls(r) });
         if(o.isHidden)
         {
             $filtersOptions.hide();
