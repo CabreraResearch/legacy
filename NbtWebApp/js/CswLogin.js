@@ -36,15 +36,21 @@
                                                 '    </tr>' +
                                                 '    <tr>' +
                                                 '      <td align="right"></td>' +
-                                                '      <td><input type="button" id="login_button" name="Login" value="Login" /></td>' +
+                                                '      <td><input type="button" id="login_button" name="Login" value="Login" />' +
+												'          <span id="loginmsg" class="errorcontent" display="none"></span></td>' +
                                                 '    </tr>' +
+                                                '    <tr>' +
+                                                '      <td></td>' +
+												'      <td></td>' +
+                                                '    </tr>' + 
                                                 '  </table>')
                                                 .appendTo($(this));
 
                             $('#login_accessid').focus();
 
                             $('#login_button').click( function() {
-                                $(this).val('Logging in...')
+                                $('#loginmsg').text('');
+								$(this).val('Logging in...')
                                        .attr('disabled', 'true');
 
                                 var AccessId = $('#login_accessid').val();
@@ -95,7 +101,19 @@
 
         function _handleAuthenticationStatus(status)
         {
-            alert(status);
+			var txt = '';
+            switch(status)
+			{
+				case 'Failed': txt = "Login Failed"; break;
+				case 'Locked': txt = "Your account is locked.  Please see your account administrator."; break;
+				case 'Deactivated': txt = "Your account is deactivated.  Please see your account administrator."; break;
+				case 'TooManyUsers': txt = "Too many users are currently connected.  Try again later."; break;
+				case 'NonExistentAccessId': txt = "Login Failed"; break;
+				case 'NonExistentSession': txt = "Login Failed"; break;
+				case 'Unknown': txt = "An Unknown Error Occurred"; break;
+			}
+			$('#loginmsg').text(txt);
+			
             $('#login_button').val('Login')
                               .attr('disabled', '');
             //Logout();

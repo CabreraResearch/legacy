@@ -13,6 +13,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Statistics;
+using ChemSW.Exceptions;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -107,7 +108,15 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				_SessionResources.CswSessionManager.setAccessId( AccessId );
+				try
+				{
+					_SessionResources.CswSessionManager.setAccessId( AccessId );
+				}
+				catch( CswDniException ex )
+				{
+					if( !ex.Message.Contains( "There is no configuration information for this AccessId" ) )
+						throw ex;
+				}
 				AuthenticationStatus AuthenticationStatus = _SessionResources.CswSessionManager.Authenticate( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
 				ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
 				end();
