@@ -23,7 +23,7 @@
 
 			if (o.ReadOnly)
 			{
-				$Div.append(Value);
+				$Div.append(o.Value);
 			}
 			else
 			{
