@@ -13,7 +13,7 @@ function CswAjaxJSON(options) {
 		$.extend(o, options);
 	}
 	
-	var starttime = new Date();
+	//var starttime = new Date();
 	$.ajax({
 		type: 'POST',
 		url: o.url,
@@ -22,8 +22,8 @@ function CswAjaxJSON(options) {
 		data: o.data,
 		success: function (data, textStatus, XMLHttpRequest)
 		{
-			var endtime = new Date();
-			$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+			//var endtime = new Date();
+			//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
 			var result = $.parseJSON(data.d);
 
@@ -52,7 +52,7 @@ function CswAjaxXml(options) {
 	}
 	if (o.url != '')
 	{
-		var starttime = new Date();
+		//var starttime = new Date();
 		$.ajax({
 			type: 'POST',
 			url: o.url,
@@ -61,8 +61,8 @@ function CswAjaxXml(options) {
 			data: o.data,     // should be 'field1=value&field2=value'
 			success: function (data, textStatus, XMLHttpRequest)
 			{
-				var endtime = new Date();
-				$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+				//var endtime = new Date();
+				//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
 				// this is IE compliant
 				var $xml = $(XMLHttpRequest.responseXML);
