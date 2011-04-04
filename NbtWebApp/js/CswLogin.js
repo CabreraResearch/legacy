@@ -43,10 +43,12 @@
                                                 '      <td></td>' +
 												'      <td></td>' +
                                                 '    </tr>' + 
-                                                '  </table>')
+                                                '  </table></div><br/><br/><br/><div id="assemblydiv" width="100%" align="right"></div>')
                                                 .appendTo($(this));
 
-                            $('#login_accessid').focus();
+                            $('#assemblydiv').load('_Assembly.txt');
+							
+							$('#login_accessid').focus();
 
                             $('#login_button').click( function() {
                                 $('#loginmsg').text('');
