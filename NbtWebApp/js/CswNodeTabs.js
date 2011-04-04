@@ -166,7 +166,7 @@
 
 					$('<input type="button" id="SaveTab" name="SaveTab" value="Save Changes"/>')
                                   .appendTo($form)
-								  .click(function () { Save($layouttable, $xml) });
+								  .click(function () { Save($form, $layouttable, $xml) });
 
 
 					// Validation
@@ -325,19 +325,21 @@
 			});
 		} // _updateSubProps()
 
-		function Save($layouttable, $propsxml)
+		function Save($form, $layouttable, $propsxml)
 		{
-			_updatePropXmlFromForm($layouttable, $propsxml);
+			if($form.valid())
+			{
+				_updatePropXmlFromForm($layouttable, $propsxml);
 
-			CswAjaxJSON({
-				url: o.SavePropUrl,
-				data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', ViewId: '"+ $.CswCookie('get', CswCookieName.CurrentView.ViewId) +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",
-				success: function (data)
-				{
-					o.onSave(data.nodeid, data.cswnbtnodekey);
-				}
-			});
-
+				CswAjaxJSON({
+					url: o.SavePropUrl,
+					data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', ViewId: '"+ $.CswCookie('get', CswCookieName.CurrentView.ViewId) +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",
+					success: function (data)
+					{
+						o.onSave(data.nodeid, data.cswnbtnodekey);
+					}
+				});
+			} // if($form.valid())
 		} // Save()
 
 		function _updatePropXmlFromForm($layouttable, $propsxml)
