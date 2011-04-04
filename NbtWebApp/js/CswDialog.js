@@ -19,11 +19,7 @@
 							
 							$div.CswWelcome('getAddItemForm', { 'onAdd': function() { $div.dialog('close'); o.onAdd(); } } );
 
-							$div.dialog({ 'modal': true,
-								'width': 400,
-								'height': 400,
-								'close': function(event, ui) { $div.remove(); } 
-							});
+							_openDiv($div, 400, 400);
 
 						}, // AddWelcomeItemDialog
 
@@ -46,42 +42,39 @@
 									o.onAddNode(nodeid, cswnbtnodekey);
 								}
 							});
-							$div.dialog({ 'modal': true,
-								'width': 800,
-								'height': 600,
-								'close': function(event, ui) { $div.remove(); } 
-							});
-						},        
-		
-		'EditNodeDialog': function (options) {
+
+							_openDiv($div, 800, 600);
+						},
+
+		'EditNodeDialog': function (options)
+						{
 							var o = {
 								'nodeid': '',
-								'nodekey': '', 
-								'onEditNode': function(nodeid, nodekey) { }
-								};
-
-							if (options) {
-								$.extend(o, options);
-							}
-
+								'cswnbtnodekey': '',
+								'filterToPropId': '',
+								'onEditNode': function (nodeid, nodekey) { }
+							};
+							if (options) $.extend(o, options);
 							var $div = $('<div></div>');
 							$div.CswNodeTabs({
 								'nodeid': o.nodeid,
-								'nodekey': o.nodekey,
+								'cswnbtnodekey': o.cswnbtnodekey,
+								'filterToPropId': o.filterToPropId,
 								'EditMode': 'EditInPopup',
-								'onSave': function (nodeid,nodekey) {
+								'onSave': function (nodeid, nodekey)
+								{
 									$div.dialog('close');
-									o.onEditNode(nodeid,nodekey);
+									o.onEditNode(nodeid, nodekey);
 								}
 							});
-							$div.dialog({ 'modal': true,
-								'width': 800,
-								'height': 600,
-								'close': function(event, ui) { $div.remove(); } 
-							});
+							if(o.filterToPropId != '')
+								_openDiv($div, 600, 400);
+							else
+								_openDiv($div, 800, 600);
 						},
 
-		'CopyNodeDialog': function (options) {
+		'CopyNodeDialog': function (options)
+						{
 							var o = {
 								'nodename': '',
 								'nodeid': '',
@@ -113,11 +106,7 @@
 								});
 
 							
-							$div.dialog({ 'modal': true,
-								'width': 400,
-								'height': 300,
-								'close': function(event, ui) { $div.remove(); } 
-							});
+							_openDiv($div, 400, 300);
 						},        
 		
 		'DeleteNodeDialog': function (options) {
@@ -151,11 +140,7 @@
 									$div.dialog('close');
 								});
 
-							$div.dialog({ 'modal': true,
-								'width': 400,
-								'height': 200,
-								'close': function(event, ui) { $div.remove(); } 
-							});
+							_openDiv($div, 400, 200);
 						},
 
 		'AboutDialog': function () {
@@ -182,11 +167,7 @@
 									});
 								}
 							});
-							$div.dialog({ 'modal': true,
-								'width': 600,
-								'height': 400,
-								'close': function(event, ui) { $div.remove(); } 
-							});
+							_openDiv($div, 600, 400);
 						},
 
 		'SearchDialog': function (viewid, onSearchSubmit, props) {
@@ -198,11 +179,7 @@
 									
 								}
 							});
-							$div.dialog({ 'modal': true,
-								'width': 800,
-								'height': 600,
-								'close': function(event, ui) { $div.remove(); } 
-							});
+							_openDiv($div, 800, 600);
 						},
 
 		'FileUploadDialog': function (options) {
@@ -235,13 +212,7 @@
 									$div.dialog('close');
 								});
 
-							$div.dialog({ 'modal': true,
-								'width': 400,
-								'height': 300,
-								'close': function(event, ui) { $div.remove(); } 
-							});
-
-
+							_openDiv($div, 400, 300);
 						},
 
 		// Generic
@@ -266,6 +237,16 @@
 								.remove();
 						}
 	};
+
+
+	function _openDiv($div, width, height)
+	{
+		$div.dialog({ 'modal': true,
+			'width': width,
+			'height': height,
+			'close': function (event, ui) { $div.remove(); }
+		});
+	}
 	
 	// Method calling logic
 	$.CswDialog = function (method) {

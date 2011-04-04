@@ -20,6 +20,7 @@ using Newtonsoft.Json.Linq;
 using Formatting = Newtonsoft.Json.Formatting;
 using System.Xml.Linq;
 using System.Collections.Generic;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -117,7 +118,35 @@ namespace ChemSW.Nbt.WebServices
 					if( !ex.Message.Contains( "There is no configuration information for this AccessId" ) )
 						throw ex;
 				}
+
 				AuthenticationStatus AuthenticationStatus = _SessionResources.CswSessionManager.Authenticate( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
+
+				// case 21211
+				if( AuthenticationStatus == AuthenticationStatus.Authenticated )
+				{
+					CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
+					Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "passwordexpiry_days" ) );
+					
+					if( _CswNbtResources.CurrentNbtUser.PasswordProperty.ChangedDate == DateTime.MinValue ||
+						_CswNbtResources.CurrentNbtUser.PasswordProperty.ChangedDate.AddDays( PasswordExpiryDays ).Date <= DateTime.Now.Date )
+					{
+						// BZ 9077 - Password expired
+						AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
+						ReturnVal.Add( new JProperty( "nodeid", _CswNbtResources.CurrentNbtUser.UserNode.NodeId.ToString() ) );
+						CswNbtNodeKey FakeKey = new CswNbtNodeKey( _CswNbtResources );
+						FakeKey.NodeId = _CswNbtResources.CurrentNbtUser.UserNode.NodeId;
+						FakeKey.NodeSpecies = _CswNbtResources.CurrentNbtUser.UserNode.Node.NodeSpecies;
+						FakeKey.NodeTypeId = _CswNbtResources.CurrentNbtUser.UserNode.NodeTypeId;
+						FakeKey.ObjectClassId = _CswNbtResources.CurrentNbtUser.UserNode.ObjectClass.ObjectClassId;
+						ReturnVal.Add( new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( FakeKey.ToString() ) ) );
+						ReturnVal.Add( new JProperty( "passwordpropid", CswNbtWebServiceTabsAndProps.makePropIdAttribute( _CswNbtResources.CurrentNbtUser.UserNode.Node, _CswNbtResources.CurrentNbtUser.PasswordProperty.NodeTypeProp ) ) );
+					}
+					else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
+					{
+						// BZ 8133 - make sure they've seen the License
+						AuthenticationStatus = AuthenticationStatus.ShowLicense;
+					}
+				}
 				ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
 				end();
 			}

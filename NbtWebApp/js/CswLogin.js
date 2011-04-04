@@ -66,20 +66,29 @@
                                                     auth = data.AuthenticationStatus;
                                                     if(auth == 'Authenticated')
                                                     {
-                                                        $.CswCookie('set', CswCookieName.Username, UserName);
-                                                        $LoginDiv.remove();
-                                                        o.onAuthenticate(UserName);
+														_handleAuthenticated()
                                                     }
                                                     else 
                                                     {
-                                                        _handleAuthenticationStatus(auth);
+                                                        _handleAuthenticationStatus(data, function(nodeid, nodekey) {
+															_handleAuthenticated();
+														});
                                                     }
                                                 } // success{}
-                                           });
+                                           }); // ajax
+
+								function _handleAuthenticated()
+								{
+                                    $.CswCookie('set', CswCookieName.Username, UserName);
+									$LoginDiv.remove();
+									o.onAuthenticate(UserName);
+								}
+
                             }); // login_button click()
 
                         } // if-else(ThisSessionId != null)
                     },  // login
+
             'logout': function(options) {
                         var o = {
                             DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
@@ -101,10 +110,10 @@
                     } // logout
         };
 
-        function _handleAuthenticationStatus(status)
+        function _handleAuthenticationStatus(data, onEditProp)
         {
 			var txt = '';
-            switch(status)
+            switch(data.AuthenticationStatus)
 			{
 				case 'Failed': txt = "Login Failed"; break;
 				case 'Locked': txt = "Your account is locked.  Please see your account administrator."; break;
@@ -113,6 +122,15 @@
 				case 'NonExistentAccessId': txt = "Login Failed"; break;
 				case 'NonExistentSession': txt = "Login Failed"; break;
 				case 'Unknown': txt = "An Unknown Error Occurred"; break;
+				case 'ExpiredPassword': 
+					$.CswDialog('EditNodeDialog', { 
+						'nodeid': data.nodeid,
+						'cswnbtnodekey': data.cswnbtnodekey,
+						'filterToPropId': data.passwordpropid, 
+						'onEditNode': function(nodeid, nodekey) { onEditProp(nodeid, nodekey); } 
+					}); 
+					break;
+				case 'ShowLicense': $.CswDialog('ShowLicenseDialog'); break;
 			}
 			$('#loginmsg').text(txt);
 			$('#login_password').val('');   // case 21303

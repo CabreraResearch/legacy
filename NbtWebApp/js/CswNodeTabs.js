@@ -10,10 +10,11 @@
 			PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
 			MovePropUrl: '/NbtWebApp/wsNBT.asmx/moveProp',
 			SavePropUrl: '/NbtWebApp/wsNBT.asmx/SaveProps',
-			nodeid: '',
-			tabid: '',
-			cswnbtnodekey: '',
-			nodetypeid: '',
+			nodeid: '',               
+			tabid: '',                
+			cswnbtnodekey: '',        
+			nodetypeid: '',           
+			filterToPropId: '',       
 			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
 			onSave: function (nodeid, cswnbtnodekey) { },
 			onBeforeTabSelect: function (tabid) { return true; },
@@ -80,7 +81,7 @@
 					getProps($tabcontentdiv, selectedtabid);
 					o.onTabSelect(selectedtabid);
 				} // success{}
-			});
+			}); // ajax
 		} // getTabs()
 
 		function getProps($tabcontentdiv, tabid)
@@ -104,7 +105,7 @@
 						{
 							onSwap(onSwapData);
 						},
-						'showConfigButton': true,
+						'showConfigButton': (o.filterToPropId == ''),
 						'onConfigOn': function($buttontable) { 
 							$xml.children().each(function ()
 							{
@@ -233,7 +234,8 @@
 
 				if (($propxml.attr('display') != 'false' || ConfigMode ) &&
 					fieldtype != 'Image' &&
-					fieldtype != 'Grid')
+					fieldtype != 'Grid' &&
+					(o.filterToPropId == '' || o.filterToPropId == $propxml.attr('id')))
 				{
 					var $labelcell = _getLabelCell($cellset);
 					$labelcell.addClass('propertylabel');
@@ -251,7 +253,8 @@
 		function _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode)
 		{
 			$propcell.contents().remove();
-			if ($propxml.attr('display') != 'false' || ConfigMode )
+			if (($propxml.attr('display') != 'false' || ConfigMode ) &&
+				(o.filterToPropId == '' || o.filterToPropId == $propxml.attr('id')))
 			{
 				var fieldOpt = {
 					'fieldtype': $propxml.attr('fieldtype'),
