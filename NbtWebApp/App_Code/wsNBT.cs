@@ -687,14 +687,15 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string MoveProp( string PropId, string NewRow, string NewColumn )
+		public string MoveProp( string PropId, string NewRow, string NewColumn, string EditMode )
 		{
 			var ReturnVal = new JObject();
 			try
 			{
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
+				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+				bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ), RealEditMode );
 				ReturnVal.Add( new JProperty( "moveprop", ret.ToString().ToLower() ) );
 				end();
 			}

@@ -205,7 +205,7 @@
 				var propid = $propdiv.attr('propid');
 				CswAjaxJSON({
 					url: o.MovePropUrl,
-					data: '{ "PropId": "' + propid + '", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '" }',
+					data: '{ "PropId": "' + propid + '", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '", "EditMode": "'+ o.EditMode +'" }',
 					success: function (result)
 					{
 

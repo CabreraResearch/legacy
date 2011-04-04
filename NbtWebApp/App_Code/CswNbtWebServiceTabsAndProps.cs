@@ -216,16 +216,24 @@ namespace ChemSW.Nbt.WebServices
 			return PropXmlNode;
         } // _makePropXml()
 
-        public bool moveProp( string PropIdAttr, Int32 NewRow, Int32 NewColumn )
+        public bool moveProp( string PropIdAttr, Int32 NewRow, Int32 NewColumn, NodeEditMode EditMode )
         {
             bool ret = false;
             Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdAttr );
             if( NodeTypePropId != Int32.MinValue && NewRow > 0 && NewColumn > 0 )
             {
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                Prop.DisplayColumn = NewColumn;
-                Prop.DisplayRow = NewRow;
-                ret = true;
+				if( EditMode == NodeEditMode.AddInPopup )
+				{
+					Prop.DisplayColAdd = NewColumn;
+					Prop.DisplayRowAdd = NewRow;
+				}
+				else
+				{
+					Prop.DisplayColumn = NewColumn;
+					Prop.DisplayRow = NewRow;
+				}
+				ret = true;
             }
             return ret;
         } // moveProp()
