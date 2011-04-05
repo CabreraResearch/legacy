@@ -575,6 +575,46 @@ namespace ChemSW.Nbt.WebServices
             }
             return ( ReturnVal );
         } // getNodeTypes()
+		
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getLicense()
+		{
+			JObject ReturnVal = new JObject();
+			try
+			{
+				start();
+				CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
+				ReturnVal.Add( new JProperty( "license", LicenseManager.LatestLicenseText ) );
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal.Add( jError( ex ) );
+			}
+			return ( ReturnVal.ToString() );
+		}
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string acceptLicense()
+		{
+			JObject ReturnVal = new JObject();
+			try
+			{
+				start();
+				CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
+				LicenseManager.RecordLicenseAcceptance( _CswNbtResources.CurrentUser );
+				ReturnVal.Add( new JProperty( "result", "succeeded" ) );
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal.Add( jError( ex ) );
+			}
+			return ( ReturnVal.ToString() );
+		}
 
         #endregion Misc
 

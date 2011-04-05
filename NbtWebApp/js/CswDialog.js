@@ -52,6 +52,7 @@
 								'nodeid': '',
 								'cswnbtnodekey': '',
 								'filterToPropId': '',
+								'title': '',
 								'onEditNode': function (nodeid, nodekey) { }
 							};
 							if (options) $.extend(o, options);
@@ -61,6 +62,7 @@
 								'cswnbtnodekey': o.cswnbtnodekey,
 								'filterToPropId': o.filterToPropId,
 								'EditMode': 'EditInPopup',
+								'title': o.title,
 								'onSave': function (nodeid, nodekey)
 								{
 									$div.dialog('close');
@@ -171,22 +173,22 @@
 						},
 
 		'SearchDialog': function (options) {
-						var $div = $('<div></div>');
-						CswAjaxXml({
-							url: '/NbtWebApp/wsNBT.asmx/getSearch',
-							data: 'ViewNum: ' + viewid ,
-							success: function ($xml) {
-                        if(options) $.extend(o,options);
-							}
-						});
-						$div.CswSearch('getSearchForm', {
-                                viewid: o.viewid,
-                                nodetypeid: o.nodetypeid,
-                                onSearch: o.onSearch
-                            });
+							var $div = $('<div></div>');
+							CswAjaxXml({
+								url: '/NbtWebApp/wsNBT.asmx/getSearch',
+								data: 'ViewNum: ' + viewid ,
+								success: function ($xml) {
+									if(options) $.extend(o,options);
+								}
+							});
+							$div.CswSearch('getSearchForm', {
+									viewid: o.viewid,
+									nodetypeid: o.nodetypeid,
+									onSearch: o.onSearch
+								});
 						
-						_openDiv($div, 800, 600);
-
+							_openDiv($div, 800, 600);
+						},
 		'FileUploadDialog': function (options) {
 							var o = {
 								url: '',
@@ -220,6 +222,51 @@
 							_openDiv($div, 400, 300);
 						},
 
+		'ShowLicenseDialog': function (options) {
+							var o = {
+								'GetLicenseUrl': '/NbtWebApp/wsNBT.asmx/getLicense',
+								'AcceptLicenseUrl': '/NbtWebApp/wsNBT.asmx/acceptLicense',
+								'onAccept': function() {},
+								'onDecline': function() {}
+							};
+							if(options) $.extend(o, options);
+							var $div = $('<div align="center"></div>');
+							$div.append('Service Level Agreement<br/>');
+							var $licensetextarea = $('<textarea id="license" disabled="true" rows="30" cols="80"></textarea>')
+													.appendTo($div);
+							$div.append('<br/>');
+
+							CswAjaxJSON({
+								url: o.GetLicenseUrl,
+								success: function(data)
+								{
+									$licensetextarea.text(data.license);
+								}
+							});
+
+							$('<input type="button" id="license_accept" name="license_accept" value="I Accept" />')
+								.appendTo($div)
+								.click(function () {
+									CswAjaxJSON({
+										url: o.AcceptLicenseUrl,
+										success: function(data) 
+											{
+												$div.dialog('close');
+												o.onAccept();
+											}
+									}); // ajax
+								}); // click
+
+							$('<input type="button" id="license_decline" name="license_decline" value="I Decline" />')
+								.appendTo($div)
+								.click(function () {
+									$div.dialog('close');
+									o.onDecline();
+								});
+
+							_openDiv($div, 800, 600);
+						},
+
 		// Generic
 
 //		'OpenPopup': function(url) { 
@@ -249,7 +296,9 @@
 		$div.dialog({ 'modal': true,
 			'width': width,
 			'height': height,
-			'close': function (event, ui) { $div.remove(); }
+			'close': function (event, ui) { 
+				$div.remove(); 
+			}
 		});
 	}
 	

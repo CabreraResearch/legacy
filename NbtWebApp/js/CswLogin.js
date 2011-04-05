@@ -70,9 +70,7 @@
                                                     }
                                                     else 
                                                     {
-                                                        _handleAuthenticationStatus(data, function(nodeid, nodekey) {
-															_handleAuthenticated();
-														});
+                                                        _handleAuthenticationStatus(data, _handleAuthenticated);
                                                     }
                                                 } // success{}
                                            }); // ajax
@@ -89,28 +87,31 @@
                         } // if-else(ThisSessionId != null)
                     },  // login
 
-            'logout': function(options) {
-                        var o = {
-                            DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
-                            onDeauthenticate: function() {}
-                        };
+            'logout': function(options) { _Logout(options); },
+		};
 
-                        if (options) {
-                            $.extend(o, options);
-                        }
+
+		function _Logout(options) {
+			var o = {
+				DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
+				onDeauthenticate: function() {}
+			};
+
+			if (options) {
+				$.extend(o, options);
+			}
                         
-                        CswAjaxJSON({
-                                        url: o.DeauthenticateUrl,
-                                        data: "",
-                                        success: function (data) {
-                                            $.CswCookie('clear', CswCookieName.Username);
-                                            o.onDeauthenticate();
-                                        } // success{}
-                                    });                        
-                    } // logout
-        };
+			CswAjaxJSON({
+							url: o.DeauthenticateUrl,
+							data: "",
+							success: function (data) {
+								$.CswCookie('clear', CswCookieName.Username);
+								o.onDeauthenticate();
+							} // success{}
+						});                        
+		} // logout
 
-        function _handleAuthenticationStatus(data, onEditProp)
+        function _handleAuthenticationStatus(data, onAuthenticated)
         {
 			var txt = '';
             switch(data.AuthenticationStatus)
@@ -127,10 +128,16 @@
 						'nodeid': data.nodeid,
 						'cswnbtnodekey': data.cswnbtnodekey,
 						'filterToPropId': data.passwordpropid, 
-						'onEditNode': function(nodeid, nodekey) { onEditProp(nodeid, nodekey); } 
+						'title': 'Your password has expired.  Please change it now:',
+						'onEditNode': function(nodeid, nodekey) { onAuthenticated(); } 
 					}); 
 					break;
-				case 'ShowLicense': $.CswDialog('ShowLicenseDialog'); break;
+				case 'ShowLicense': 
+					$.CswDialog('ShowLicenseDialog', {
+						'onAccept': function() { onAuthenticated(); },
+						'onDecline': function() { _Logout(); },
+					}); 
+					break;
 			}
 			$('#loginmsg').text(txt);
 			$('#login_password').val('');   // case 21303

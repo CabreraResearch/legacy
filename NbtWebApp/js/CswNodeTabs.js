@@ -15,6 +15,7 @@
 			cswnbtnodekey: '',        
 			nodetypeid: '',           
 			filterToPropId: '',       
+			title: '',
 			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
 			onSave: function (nodeid, cswnbtnodekey) { },
 			onBeforeTabSelect: function (tabid) { return true; },
@@ -93,6 +94,9 @@
 				{
 					var $form = $tabcontentdiv.children('form');
 					$form.contents().remove();
+
+					if(o.title != '')
+						$form.append(o.title);
 
 					var $layouttable = $form.CswLayoutTable('init', {
 						'ID': o.ID + '_props',
