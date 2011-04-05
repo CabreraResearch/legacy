@@ -51,7 +51,6 @@ namespace ChemSW.Nbt.WebServices
             return TabsNode;
 		} // getTabs()
 
-		private const char PropIdDelim = '_';
 
 		/// <summary>
 		/// Returns XML for all properties in a given tab
@@ -194,11 +193,11 @@ namespace ChemSW.Nbt.WebServices
 
             if( Node.NodeId != null )
             {
-                CswXmlDocument.AppendXmlAttribute(PropXmlNode, "id", Node.NodeId.ToString() + PropIdDelim + Prop.PropId);
+				CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", makePropIdAttribute( Node, Prop ) );
             }
             else
             {
-                CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", "new" + PropIdDelim + Prop.PropId );
+				CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", makePropIdAttribute( null, Prop ) );
             }
 		    CswXmlDocument.AppendXmlAttribute( PropXmlNode, "name", Prop.PropNameWithQuestionNo );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "fieldtype", Prop.FieldType.FieldType.ToString() );
@@ -312,6 +311,20 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return ret;
 		} // saveProps()
+
+		private const char PropIdDelim = '_';
+
+		public static string makePropIdAttribute( CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
+		{
+			string ret = string.Empty;
+			if( Node != null )
+				ret = Node.NodeId.ToString();
+			else
+				ret = "new";
+			ret += PropIdDelim + Prop.PropId.ToString();
+			return ret;
+		} // _makePropId()
+
 
 		private Int32 _getPropIdFromAttribute( string PropIdAttr )
 		{
