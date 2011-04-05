@@ -190,25 +190,24 @@
 						},
 
 		'SearchDialog': function (options) {
-						var $div = $('<div></div>');
-						CswAjaxXml({
-							url: '/NbtWebApp/wsNBT.asmx/getSearch',
-							data: 'ViewNum: ' + viewid ,
-							success: function ($xml) {
+						var o = {
+                            viewid: '',
+                            nodetypeid: '',
+                            onSearch: function() { }
+                        }
                         if(options) $.extend(o,options);
-							}
-						});
+                        
+                        var $div = $('<div></div>');
 						$div.CswSearch('getSearchForm', {
                                 viewid: o.viewid,
                                 nodetypeid: o.nodetypeid,
                                 onSearch: o.onSearch
                             });
 						
-						$div.dialog({ 'modal': true,
-								'width': 800,
-								'height': 600,
-								'close': function(event, ui) { $div.remove(); } 
-							});
+                        $div.dialog({ 'modal': true,
+							'width': 800,
+							'height': 600
+						    });
 						},
 
 
