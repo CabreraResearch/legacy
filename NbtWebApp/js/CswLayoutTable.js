@@ -74,11 +74,9 @@
 						$table.bind(o.ID + 'CswLayoutTable_onConfigOff', o.onConfigOff);
 
 						var $buttontable = $buttondiv.CswTable('init', { ID: o.ID + '_buttontbl' });
-						var $addbtn;
-						var $rembtn;
 						if(o.showAddButton)
 						{
-							$addbtn = $buttontable.CswTable('cell', 1, 1).CswImageButton({
+							$buttontable.CswTable('cell', 1, 1).CswImageButton({
                         							ButtonType: CswImageButton_ButtonType.Add,
                         							AlternateText: 'Add',
                         							ID: o.ID + 'addbtn',
@@ -91,7 +89,7 @@
                         }
                         if(o.showRemoveButton)
 						{
-							$rembtn = $buttontable.CswTable('cell', 1, 2).CswImageButton({
+							$buttontable.CswTable('cell', 1, 2).CswImageButton({
                         							ButtonType: CswImageButton_ButtonType.Delete,
                         							AlternateText: 'Remove',
                         							ID: o.ID + 'rembtn',
@@ -105,12 +103,32 @@
 						if(o.showConfigButton)
 						{
 							$buttontable.CswTable('cell', 1, 3).CswImageButton({
+                                                    ButtonType: CswImageButton_ButtonType.ArrowEast,
+                                                    AlternateText: 'Add Column',
+                                                    ID: o.ID + 'addcolumnbtn',
+                                                    onClick: function ($ImageDiv) 
+													{ 
+														_addColumn($table);
+                                                        return CswImageButton_ButtonType.None; 
+                                                    }
+                                                }).hide();
+							$buttontable.CswTable('cell', 1, 4).CswImageButton({
+                                                    ButtonType: CswImageButton_ButtonType.ArrowSouth,
+                                                    AlternateText: 'Add Row',
+                                                    ID: o.ID + 'addrowbtn',
+                                                    onClick: function ($ImageDiv) 
+													{ 
+														_addRow($table);
+                                                        return CswImageButton_ButtonType.None; 
+                                                    }
+                                                }).hide();
+							$buttontable.CswTable('cell', 1, 5).CswImageButton({
                                                     ButtonType: CswImageButton_ButtonType.Configure,
                                                     AlternateText: 'Configure',
                                                     ID: o.ID + 'configbtn',
                                                     onClick: function ($ImageDiv) 
 													{ 
-														_toggleConfig($table, $buttontable, $addbtn, $rembtn);
+														_toggleConfig($table, $buttontable);
                                                         return CswImageButton_ButtonType.None; 
                                                     }
                                                 });
@@ -135,27 +153,21 @@
 					{
                         var $table = $(this);
                         var $buttontable = $('#' + $table.attr('id') + '_buttontbl');
-						var $addbtn = $buttontable.CswTable('cell', 1, 1).children().first();
-						var $rembtn = $buttontable.CswTable('cell', 1, 2).children().first();
-						_toggleConfig($table, $buttontable, $addbtn, $rembtn);
+						_toggleConfig($table, $buttontable);
                     },
             
 			'ConfigOn': function() 
 					{
                         var $table = $(this);
                         var $buttontable = $('#' + $table.attr('id') + '_buttontbl');
-						var $addbtn = $buttontable.CswTable('cell', 1, 1).children().first();
-						var $rembtn = $buttontable.CswTable('cell', 1, 2).children().first();
-						_configOn($table, $buttontable, $addbtn, $rembtn);
+						_configOn($table, $buttontable); 
                     },
             
 			'ConfigOff': function() 
 					{
                         var $table = $(this);
                         var $buttontable = $('#' + $table.attr('id') + '_buttontbl');
-						var $addbtn = $buttontable.CswTable('cell', 1, 1).children().first();
-						var $rembtn = $buttontable.CswTable('cell', 1, 2).children().first();
-						_configOff($table, $buttontable, $addbtn, $rembtn);
+						_configOff($table, $buttontable);
                     }
         };
 
@@ -208,22 +220,23 @@
 				$rembtn.addClass('CswLayoutTable_removeEnabled');
 			}
 		}
-        function _toggleConfig($table, $buttontable, $addbtn, $rembtn)
+        function _toggleConfig($table, $buttontable)
         {
             if(isConfigMode($table))
             {
-				_configOff($table, $buttontable, $addbtn, $rembtn);
+				_configOff($table, $buttontable);
 			} else {
-				_configOn($table, $buttontable, $addbtn, $rembtn);
+				_configOn($table, $buttontable);
 			}
 		}
 
-		function _configOff($table, $buttontable, $addbtn, $rembtn)
+		function _configOff($table, $buttontable)
 		{
-			if($addbtn != undefined)
-				$addbtn.hide();
-			if($rembtn != undefined)
-				$rembtn.hide();
+			$buttontable.find('#' + $table.attr('id') + 'addbtn').hide();
+			$buttontable.find('#' + $table.attr('id') + 'rembtn').hide();
+			$buttontable.find('#' + $table.attr('id') + 'addcolumnbtn').hide();
+			$buttontable.find('#' + $table.attr('id') + 'addrowbtn').hide();
+
             $table.CswTable('findCell', '.CswLayoutTable_cell')
 				.removeClass('CswLayoutTable_configcell');
 
@@ -231,19 +244,15 @@
             $table.trigger($table.attr('id') + 'CswLayoutTable_onConfigOff', $buttontable);
         } // _configOff()
 		
-		function _configOn($table, $buttontable, $addbtn, $rembtn)
+		function _configOn($table, $buttontable)
 		{
-			if($addbtn != undefined)
-				$addbtn.show();
-			if($rembtn != undefined)
-				$rembtn.show();
+			$buttontable.find('#' + $table.attr('id') + 'addbtn').show();
+			$buttontable.find('#' + $table.attr('id') + 'rembtn').show();
+			$buttontable.find('#' + $table.attr('id') + 'addcolumnbtn').show();
+			$buttontable.find('#' + $table.attr('id') + 'addrowbtn').show();
+
             var cellsetrows = parseInt($table.attr('cellset_rows'));
             var cellsetcolumns = parseInt($table.attr('cellset_columns'));
-            var tablemaxrows = $table.CswTable('maxrows');
-            var tablemaxcolumns = $table.CswTable('maxcolumns');
-
-            // add an extra row and column
-            //var $newcell = getCell($table, (tablemaxrows / cellsetrows ) + 1, (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
 
             $table.CswTable('finish', null);
 
@@ -253,6 +262,42 @@
             setConfigMode($table, 'true');
             $table.trigger($table.attr('id') + 'CswLayoutTable_onConfigOn', $buttontable);
         } // _configOn()
+
+		function _addRow($table)
+		{
+            var cellsetrows = parseInt($table.attr('cellset_rows'));
+            var cellsetcolumns = parseInt($table.attr('cellset_columns'));
+            var tablemaxrows = $table.CswTable('maxrows');
+            var tablemaxcolumns = $table.CswTable('maxcolumns');
+
+            // add a row and column
+            var $newcell = getCell($table, (tablemaxrows / cellsetrows ) + 1, (tablemaxcolumns / cellsetcolumns), cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
+            $table.CswTable('finish', null);
+
+            if(isConfigMode($table))
+			{
+				$table.CswTable('findCell', '.CswLayoutTable_cell')
+					.addClass('CswLayoutTable_configcell');
+			}
+		} // _addRowAndColumn()
+
+		function _addColumn($table)
+		{
+            var cellsetrows = parseInt($table.attr('cellset_rows'));
+            var cellsetcolumns = parseInt($table.attr('cellset_columns'));
+            var tablemaxrows = $table.CswTable('maxrows');
+            var tablemaxcolumns = $table.CswTable('maxcolumns');
+
+            // add a row and column
+            var $newcell = getCell($table, (tablemaxrows / cellsetrows ), (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
+            $table.CswTable('finish', null);
+
+            if(isConfigMode($table))
+			{
+				$table.CswTable('findCell', '.CswLayoutTable_cell')
+					.addClass('CswLayoutTable_configcell');
+			}
+		} // _addRowAndColumn()
 
         function getCell($table, row, column, cellsetrow, cellsetcolumn, cellsetrows, cellsetcolumns)
         {

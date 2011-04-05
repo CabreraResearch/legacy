@@ -15,7 +15,7 @@
 			cswnbtnodekey: '',
 			nodetypeid: '',
 			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
-			onSave: function (nodeid) { },
+			onSave: function (nodeid, cswnbtnodekey) { },
 			onBeforeTabSelect: function (tabid) { return true; },
 			onTabSelect: function (tabid) { },
 			onPropertyChange: function(propid, propname) { }
@@ -65,31 +65,32 @@
 						{
 							if(o.onBeforeTabSelect(tabid))
 							{
-								var tabid = $($tabdiv.children('div')[ui.index]).attr('id');
-								getProps(tabid);
+								var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
+								var tabid = $tabcontentdiv.attr('id');
+								getProps($tabcontentdiv, tabid);
+
 								o.onTabSelect(tabid);
 							} else {
 								return false;
 							}
 						}
 					});
-					var selectedtabid = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]).attr('id');
-					getProps(selectedtabid);
+					var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
+					var selectedtabid = $tabcontentdiv.attr('id');
+					getProps($tabcontentdiv, selectedtabid);
 					o.onTabSelect(selectedtabid);
 				} // success{}
 			});
 		} // getTabs()
 
-		function getProps(tabid)
+		function getProps($tabcontentdiv, tabid)
 		{
 			CswAjaxXml({
 				url: o.PropsUrl,
 				data: 'EditMode=' + o.EditMode + '&SafeNodeKey=' + o.cswnbtnodekey + '&TabId=' + tabid + '&NodeTypeId=' + o.nodetypeid,
 				success: function ($xml)
 				{
-					$div = $("#" + tabid);
-
-					var $form = $div.children('form');
+					var $form = $tabcontentdiv.children('form');
 					$form.contents().remove();
 
 					var $layouttable = $form.CswLayoutTable('init', {
@@ -119,14 +120,14 @@
 									'$propdiv': $propcell.children('div'),
 									'$propxml': $propxml,
 									'onchange': function() { },
-									'onReload': function() { getProps(tabid); },
+									'onReload': function() { getProps($tabcontentdiv, tabid); },
 									'cswnbtnodekey': o.cswnbtnodekey
 								};
 								
 								if($subtable.length > 0)
 								{
 									//$subtable.CswLayoutTable('ConfigOn');
-									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, true);
+									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, true);
 								}
 							});
 						},
@@ -145,14 +146,14 @@
 									'$propdiv': $propcell.children('div'),
 									'$propxml': $propxml,
 									'onchange': function() { },
-									'onReload': function() { getProps(tabid); },
+									'onReload': function() { getProps($tabcontentdiv, tabid); },
 									'cswnbtnodekey': o.cswnbtnodekey
 								};
 								
 								if($subtable.length > 0)
 								{
 									//$subtable.CswLayoutTable('ConfigOff');
-									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, false);
+									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false);
 								}
 							});
 						}
@@ -161,11 +162,11 @@
 
 					var i = 0;
 
-					_handleProps($layouttable, $xml, tabid);
+					_handleProps($layouttable, $xml, $tabcontentdiv, tabid);
 
 					$('<input type="button" id="SaveTab" name="SaveTab" value="Save Changes"/>')
                                   .appendTo($form)
-								  .click(function () { Save($layouttable, $xml) });
+								  .click(function () { Save($form, $layouttable, $xml) });
 
 
 					// Validation
@@ -204,7 +205,7 @@
 				var propid = $propdiv.attr('propid');
 				CswAjaxJSON({
 					url: o.MovePropUrl,
-					data: '{ "PropId": "' + propid + '", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '" }',
+					data: '{ "PropId": "' + propid + '", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '", "EditMode": "'+ o.EditMode +'" }',
 					success: function (result)
 					{
 
@@ -222,7 +223,7 @@
 			return $cellset[1][2];
 		}
 
-		function _handleProps($layouttable, $xml, tabid, ConfigMode)
+		function _handleProps($layouttable, $xml, $tabcontentdiv, tabid, ConfigMode)
 		{
 			$xml.children().each(function ()
 			{
@@ -242,12 +243,12 @@
 				var $propcell = _getPropertyCell($cellset);
 				$propcell.addClass('propertyvaluecell');
 
-				_makeProp($propcell, $propxml, tabid, ConfigMode);
+				_makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode);
 
 			});
 		} // _handleProps()
 
-		function _makeProp($propcell, $propxml, tabid, ConfigMode)
+		function _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode)
 		{
 			$propcell.contents().remove();
 			if ($propxml.attr('display') != 'false' || ConfigMode )
@@ -259,7 +260,7 @@
 					'$propdiv': $('<div/>').appendTo($propcell),
 					'$propxml': $propxml,
 					'onchange': function() { },
-					'onReload': function() { getProps(tabid); },
+					'onReload': function() { getProps($tabcontentdiv, tabid); },
 					'cswnbtnodekey': o.cswnbtnodekey
 				};
 
@@ -272,7 +273,7 @@
 				{
 					fieldOpt.onchange = function ()
 					{
-						_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, tabid, false);
+						_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false);
 						o.onPropertyChange(fieldOpt.propid, $propxml.attr('name'));
 					};
 				} // if ($propxml.attr('hassubprops') == "true")
@@ -298,7 +299,7 @@
 						},
 						'showConfigButton': false
 					});
-					_handleProps($subtable, $subprops, tabid, ConfigMode);
+					_handleProps($subtable, $subprops, $tabcontentdiv, tabid, ConfigMode);
 					if(ConfigMode) {
 						$subtable.CswLayoutTable('ConfigOn');
 					} else {
@@ -308,7 +309,7 @@
 			} // if ($propxml.attr('display') != 'false' || ConfigMode )
 		} // _makeProp()
 
-		function _updateSubProps(fieldOpt, SinglePropUrl, EditMode, cswnbtnodekey, PropId, nodetypeid, $propxml, $propcell, tabid, ConfigMode)
+		function _updateSubProps(fieldOpt, SinglePropUrl, EditMode, cswnbtnodekey, PropId, nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, ConfigMode)
 		{
 			// do a fake 'save' to update the xml with the current value
 			$.CswFieldTypeFactory('save', fieldOpt);
@@ -319,24 +320,26 @@
 				data: 'EditMode=' + EditMode + '&SafeNodeKey=' + cswnbtnodekey + '&PropId=' + PropId + '&NodeTypeId=' + nodetypeid + '&NewPropXml=' + xmlToString($propxml),
 				success: function ($xml)
 				{
-					_makeProp($propcell, $xml.children().first(), tabid, ConfigMode);
+					_makeProp($propcell, $xml.children().first(), $tabcontentdiv, tabid, ConfigMode);
 				}
 			});
 		} // _updateSubProps()
 
-		function Save($layouttable, $propsxml)
+		function Save($form, $layouttable, $propsxml)
 		{
-			_updatePropXmlFromForm($layouttable, $propsxml);
+			if($form.valid())
+			{
+				_updatePropXmlFromForm($layouttable, $propsxml);
 
-			CswAjaxJSON({
-				url: o.SavePropUrl,
-				data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', NewPropsXml: '" + xmlToString($propsxml) + "' }",
-				success: function (data)
-				{
-					o.onSave(data.nodeid);
-				}
-			});
-
+				CswAjaxJSON({
+					url: o.SavePropUrl,
+					data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', ViewId: '"+ $.CswCookie('get', CswCookieName.CurrentView.ViewId) +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",
+					success: function (data)
+					{
+						o.onSave(data.nodeid, data.cswnbtnodekey);
+					}
+				});
+			} // if($form.valid())
 		} // Save()
 
 		function _updatePropXmlFromForm($layouttable, $propsxml)

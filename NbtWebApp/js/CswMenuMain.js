@@ -6,7 +6,7 @@
 			viewid: '',
 			nodeid: '',
 			cswnbtnodekey: '',
-			onAddNode: function(optSelect) { } //newnodeid,newcswnbtnodekey
+			onAddNode: function(nodeid, cswnbtnodekey) { }
 		};
 
 		if (options) {
@@ -30,7 +30,7 @@
 					{
 						var $li = HandleMenuItem({ '$ul': $ul, '$this': $this, 'onAlterNode': o.onAddNode });
 						
-						if($this.children().length > 1) {
+						if($this.children().length >= 1) {
 							var $subul = $('<ul class="subnav"></ul>')
 											.appendTo($li);
 							$this.children().each(function() {

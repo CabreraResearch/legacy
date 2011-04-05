@@ -11,11 +11,10 @@
 				$Div.contents().remove();
 
 				var NodeId = o.$propxml.children('nodeid').text().trim();
+				var NodeKey = o.$propxml.children('nodekey').text().trim();
 				var Name = o.$propxml.children('name').text().trim();
 				var Path = o.$propxml.children('path').text().trim();
 				var ViewId = o.$propxml.children('viewid').text().trim();
-
-				if(NodeId == '') NodeId = 'root';
 
 				if(o.ReadOnly)
 				{
@@ -25,18 +24,24 @@
 				{
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
-					var $selectcell = $table.CswTable('cell', 1, 1);
+					var $pathcell = $table.CswTable('cell', 1, 1);
+					$pathcell.attr('colspan', '2');
+					$pathcell.append(Path + "<br/>");
+
+					var $selectcell = $table.CswTable('cell', 2, 1);
 					var $selectdiv = $('<div class="locationselect" value="'+ NodeId +'"/>' )
 										.appendTo($selectcell);
 
 					var $locationtree = $('<div />').CswNodeTree('init', { 'ID': o.ID,
 																			viewid: ViewId,
 																			nodeid: NodeId,
+																			cswnbtnodekey: NodeKey,
 																			onSelectNode: function(optSelect)
 																							{
 																								onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onchange); 
 																							}, 
-																			SelectFirstChild: false
+																			SelectFirstChild: false,
+																			UsePaging: false
 																		});
 	
 					$selectdiv.CswComboBox( 'init', {	'ID': o.ID + '_combo', 
@@ -45,12 +50,15 @@
 														'Width': '266px' 
 													});
 
-					var $addcell = $table.CswTable('cell', 1, 2);
-					var $AddButton = $('<div />').appendTo($addcell);
-					$AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
-												AlternateText: "Add New",
-												onClick: onAdd 
-												});
+//					var $addcell = $table.CswTable('cell', 2, 2);
+//					var $AddButton = $('<div />').appendTo($addcell);
+//					$AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
+//												AlternateText: "Add New",
+//												onClick: function($ImageDiv) { 
+//														onAdd();
+//														return CswImageButton_ButtonType.None;
+//													}
+//												});
 
 //                        if(o.Required)
 //                        {
@@ -68,6 +76,7 @@
 	
 		function onTreeSelect($selectdiv, itemid, text, iconurl, onchange)
 		{
+			if(itemid == 'root') itemid = '';   // case 21046
 			$selectdiv.CswComboBox( 'TopContent', text );
 			if($selectdiv.attr('value') != itemid)
 			{
@@ -77,10 +86,10 @@
 			setTimeout(function() { $selectdiv.CswComboBox( 'close'); }, 300);
 		}
 		
-		function onAdd($ImageDiv)
-		{
-			alert('This function has not been implemented yet.');
-		}
+//		function onAdd()
+//		{
+//			alert('This function has not been implemented yet.');
+//		}
 
 		// Method calling logic
 		if ( methods[method] ) {

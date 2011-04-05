@@ -85,6 +85,15 @@ namespace ChemSW.Nbt.Schema
 				}
 			} // foreach( CswNbtMetaDataNodeType NodeType in UserClass.NodeTypes )
 
+
+			// case 21242
+			CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+			foreach( CswNbtMetaDataNodeType MailReportNT in MailReportOC.NodeTypes )
+			{
+				CswNbtMetaDataNodeTypeProp NextDueDateNTP = MailReportNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassMailReport.NextDueDatePropertyName );
+				NextDueDateNTP.SetValueOnAdd = false;
+			}
+
 		} // update()
 
 	}//class CswUpdateSchemaTo01H24

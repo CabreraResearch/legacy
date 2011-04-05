@@ -254,8 +254,11 @@ namespace ChemSW.Nbt.Schema
 
             // Rename "Mount Points by Location"
             CswNbtView MPBLView = _CswNbtSchemaModTrnsctn.restoreView( "Mount Points by Location" );
-            MPBLView.ViewName = "FE Inspection Points By Location";
-            MPBLView.save();
+			if( MPBLView != null )
+			{
+				MPBLView.ViewName = "FE Inspection Points By Location";
+				MPBLView.save();
+			}
 
         } // update()
 

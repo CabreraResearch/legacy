@@ -13,6 +13,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Statistics;
+using ChemSW.Exceptions;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -109,7 +110,15 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				_SessionResources.CswSessionManager.setAccessId( AccessId );
+				try
+				{
+					_SessionResources.CswSessionManager.setAccessId( AccessId );
+				}
+				catch( CswDniException ex )
+				{
+					if( !ex.Message.Contains( "There is no configuration information for this AccessId" ) )
+						throw ex;
+				}
 				AuthenticationStatus AuthenticationStatus = _SessionResources.CswSessionManager.Authenticate( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
 				ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
 				end();
@@ -321,7 +330,7 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getTreeOfView( string ViewNum, string IDPrefix, string ParentNodeKey, string IncludeNodeKey )
+		public XElement getTreeOfView( string ViewNum, string IDPrefix, bool IsFirstLoad, string ParentNodeKey, string IncludeNodeKey, bool IncludeNodeRequired, bool UsePaging )
 		{
 			var TreeNode = new XElement( "tree" );
 
@@ -342,7 +351,7 @@ namespace ChemSW.Nbt.WebServices
 					if( !string.IsNullOrEmpty( IncludeNodeKey ) )
 						RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( IncludeNodeKey ) );
 
-					TreeNode = ws.getTree( View, IDPrefix, RealParentNodeKey, RealIncludeNodeKey );
+					TreeNode = ws.getTree( View, IDPrefix, IsFirstLoad, RealParentNodeKey, RealIncludeNodeKey, IncludeNodeRequired, UsePaging );
 
 					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
 				}
@@ -378,7 +387,7 @@ namespace ChemSW.Nbt.WebServices
 					View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
 
 					var ws = new CswNbtWebServiceTree( _CswNbtResources );
-					TreeNode = ws.getTree( View, IDPrefix, null, null );
+					TreeNode = ws.getTree( View, IDPrefix, true, null, null, false, false );
 					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View, Session );
 				}
 				end();
@@ -473,7 +482,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string saveProps( string EditMode, string SafeNodeKey, string NewPropsXml, string NodeTypeId )
+		public string saveProps( string EditMode, string SafeNodeKey, string NewPropsXml, string NodeTypeId, string ViewId )
 		{
 			JObject ReturnVal = new JObject();
 			try
@@ -484,7 +493,7 @@ namespace ChemSW.Nbt.WebServices
 				//{
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-				ReturnVal = JObject.Parse( ws.saveProps( RealEditMode, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ) ) );
+				ReturnVal = ws.saveProps( RealEditMode, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ViewId ) );
 				//}
 				end();
 			}
@@ -717,14 +726,15 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string MoveProp( string PropId, string NewRow, string NewColumn )
+		public string MoveProp( string PropId, string NewRow, string NewColumn, string EditMode )
 		{
 			var ReturnVal = new JObject();
 			try
 			{
 				start();
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-				bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
+				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+				bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ), RealEditMode );
 				ReturnVal.Add( new JProperty( "moveprop", ret.ToString().ToLower() ) );
 				end();
 			}

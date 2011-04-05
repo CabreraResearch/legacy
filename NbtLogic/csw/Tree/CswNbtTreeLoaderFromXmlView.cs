@@ -241,9 +241,10 @@ namespace ChemSW.Nbt
                                             GroupName = "[blank]";
                                     }
 
-                                    if( FindThisNodeCount != Int32.MinValue )
-                                        ChildKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, CurrentRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, FindThisNodeCount );
-                                    else
+									// I don't know what this was originally for, but I took it out for case 21288
+									//if( FindThisNodeCount != Int32.MinValue )
+									//    ChildKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, CurrentRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, FindThisNodeCount );
+									//else
                                         ChildKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, CurrentRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ThisLevelNodeCount + NodeCountLowerBoundExclusive );
 
                                     CswNbtNodeKey priorkey = _CswNbtTree.getNodeKeyForCurrentPosition();
