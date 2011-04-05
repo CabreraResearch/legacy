@@ -438,14 +438,11 @@ namespace ChemSW.Nbt.WebServices
             var CswNbtNodeTypePropListOptions = new PropTypes.CswNbtNodeTypePropListOptions( _CswNbtResources, SelectedProp.PropId );
             foreach( var Option in CswNbtNodeTypePropListOptions.Options )
             {
-                XElement OptionNode = new XElement( "option",
+                FilterOptions.Add( new XElement( "option", Option.Text,
                                     new XAttribute( "value", Option.Value ),
-                                    new XAttribute( "id", Option.Text ));
-                OptionNode.Value = Option.Text;
-                if( SelectedProp.DefaultValue.AsList.Value == Option.Value )
-                {
-                    OptionNode.Add( new XAttribute( "selected", "selected" ) );
-                }
+                                    new XAttribute( "id", Option.Text ),
+                                    (SelectedProp.DefaultValue.AsList.Value == Option.Value) ? new XAttribute( "selected", "selected" ) : null) 
+                                  );
             }
             return FilterOptions;
 
