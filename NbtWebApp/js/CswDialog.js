@@ -96,6 +96,7 @@
 							var $div = $('<div>Copying: ' + o.nodename + '<br/><br/></div>');
 
 							$('<input type="button" id="copynode_submit" name="copynode_submit" value="Copy" />')
+                                .button()
 								.appendTo($div)
 								.click(function () {
 									$div.dialog('close');
@@ -107,6 +108,7 @@
 								});
 
 							$('<input type="button" id="copynode_cancel" name="copynode_cancel" value="Cancel" />')
+                                .button()
 								.appendTo($div)
 								.click(function () {
 									$div.dialog('close');
@@ -135,7 +137,8 @@
 							var $div = $('<div>Are you sure you want to delete: ' + o.nodename + '?<br/><br/></div>');
 
 							$('<input type="button" id="deletenode_submit" name="deletenode_submit" value="Delete" />')
-								.appendTo($div)
+								.button()
+                                .appendTo($div)
 								.click(function () {
 									$div.dialog('close');
 									deleteNode({
@@ -146,7 +149,8 @@
 								});
 
 							$('<input type="button" id="deletenode_cancel" name="deletenode_cancel" value="Cancel" />')
-								.appendTo($div)
+								.button()
+                                .appendTo($div)
 								.click(function () {
 									$div.dialog('close');
 								});
@@ -236,7 +240,8 @@
 							});
 
 							$('<input type="button" id="fileupload_cancel" name="fileupload_cancel" value="Cancel" />')
-								.appendTo($div)
+								.button()
+                                .appendTo($div)
 								.click(function () {
 									$div.dialog('close');
 								});

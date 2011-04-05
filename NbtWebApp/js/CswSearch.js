@@ -405,6 +405,7 @@
         var $clearButtonCell = $splitCellTable.CswTable('cell', 1, 1)
                                .empty();
         var $clearButton = $('<input type="button" name="clear_button" id="clear_button" value="Clear" />')
+                           .button()
                            .click(function() {
                                 reInit(o);
                            });
@@ -427,6 +428,7 @@
                                 .attr({align:"right"})
                                 .empty();
         var $searchButton = $('<input type="button" name="search_button" id="search_button" value="Search" />')
+                            .button()
                             .click(function() {
                                     doSearch({
                                         '$nodeTypesSelect': o.$nodeTypesSelect,
@@ -598,6 +600,7 @@
         //Row 1, Column 3: load button
         var $loadButtonCell = $bottomTable.CswTable('cell', 1, 3);
         var $loadButton = $('<input type="button" name="load_button" id="load_button" value="Load" />')
+                          .button()
                           .click(function() {
                                     var r = {
                                         'viewid': ''

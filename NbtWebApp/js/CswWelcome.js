@@ -167,7 +167,8 @@
 										.appendTo( $table.CswTable('cell', 6, 2) );
 
 				var $addbutton = $('<input type="button" id="welcome_add" name="welcome_add" value="Add" />')
-									.appendTo( $table.CswTable('cell', 7, 2) )
+									.button()
+                                    .appendTo( $table.CswTable('cell', 7, 2) )
 									.click(function() { 
 										_addItem({ 
 													'AddWelcomeItemUrl': o.AddWelcomeItemUrl,

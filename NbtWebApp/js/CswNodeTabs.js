@@ -165,6 +165,7 @@
 					_handleProps($layouttable, $xml, $tabcontentdiv, tabid);
 
 					$('<input type="button" id="SaveTab" name="SaveTab" value="Save Changes"/>')
+                                  .button()
                                   .appendTo($form)
 								  .click(function () { Save($form, $layouttable, $xml) });
 

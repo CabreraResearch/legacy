@@ -50,32 +50,33 @@
 							
 							$('#login_accessid').focus();
 
-                            $('#login_button').click( function() {
-                                $('#loginmsg').text('');
-								$(this).val('Logging in...')
-                                       .attr('disabled', 'true');
+                            $('#login_button').button()
+                                .click( function() {
+                                        $('#loginmsg').text('');
+								        $(this).val('Logging in...')
+                                               .attr('disabled', 'true');
 
-                                var AccessId = $('#login_accessid').val();
-                                var UserName = $('#login_username').val();
-                                var Password = $('#login_password').val();
+                                        var AccessId = $('#login_accessid').val();
+                                        var UserName = $('#login_username').val();
+                                        var Password = $('#login_password').val();
 
-                                CswAjaxJSON({
-                                                url: o.AuthenticateUrl,
-                                                data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
-                                                success: function (data) {
-                                                    auth = data.AuthenticationStatus;
-                                                    if(auth == 'Authenticated')
-                                                    {
-                                                        $.CswCookie('set', CswCookieName.Username, UserName);
-                                                        $LoginDiv.remove();
-                                                        o.onAuthenticate(UserName);
-                                                    }
-                                                    else 
-                                                    {
-                                                        _handleAuthenticationStatus(auth);
-                                                    }
-                                                } // success{}
-                                           });
+                                        CswAjaxJSON({
+                                                        url: o.AuthenticateUrl,
+                                                        data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
+                                                        success: function (data) {
+                                                            auth = data.AuthenticationStatus;
+                                                            if(auth == 'Authenticated')
+                                                            {
+                                                                $.CswCookie('set', CswCookieName.Username, UserName);
+                                                                $LoginDiv.remove();
+                                                                o.onAuthenticate(UserName);
+                                                            }
+                                                            else 
+                                                            {
+                                                                _handleAuthenticationStatus(auth);
+                                                            }
+                                                        } // success{}
+                                                   });
                             }); // login_button click()
 
                         } // if-else(ThisSessionId != null)
