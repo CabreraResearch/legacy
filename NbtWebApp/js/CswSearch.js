@@ -76,7 +76,7 @@
                 propRow++;
             });
         var bottomRow = propRow;
-        o.$parent = $searchTable;
+        o.$parent = o.$searchTable;
         renderSearchButtons({
                 'bottomRow': bottomRow, 
                 'bottomCell': 1, 
@@ -116,7 +116,7 @@
         o.$nodeTypesSelect = $nodeTypesSelect;
         $typeSelectCell.append($nodeTypesSelect);
         
-        o.$parent = $searchTable;
+        o.$parent = o.$searchTable;
         
         //prop row(s) 1-?, Columns 3-6
         renderNodePropsAndControls(o);
@@ -453,7 +453,7 @@
 
             o.$topspandiv.empty();
         
-            $searchTable = o.$topspandiv.CswTable('init', { 
+            o.$searchTable = o.$topspandiv.CswTable('init', { 
                                             ID: 'search_tbl', 
                                             cellpadding: 1,
                                             cellspacing: 1,
@@ -465,7 +465,7 @@
                 '$parent': o.$parent,
                 '$nodeTypesXml': o.$nodeTypesXml,
                 '$propsXml': o.$propsXml,
-                '$searchTable': $searchTable,
+                '$searchTable': o.$searchTable,
                 '$topspandiv': o.$topspandiv,
                 'initOptions': o.initOptions
             });
@@ -515,7 +515,7 @@
                 {
                     case 'nodetypesearch':
                     {
-                        $searchTable = $topspandiv.CswTable('init', { 
+                        o.$searchTable = $topspandiv.CswTable('init', { 
                                 ID: 'search_tbl', 
                                 cellpadding: 1,
                                 cellspacing: 1,
@@ -528,7 +528,7 @@
                             '$parent': o.$parent,
                             '$nodeTypesXml': $nodeTypesXml, 
                             '$propsXml': $nodePropsXml,
-                            '$searchTable': $searchTable,
+                            '$searchTable': o.$searchTable,
                             '$topspandiv': $topspandiv,
                             'propsCount': 1, //only one NodeTypeProp by default
                             'initOptions': o
@@ -537,7 +537,7 @@
                     }
                     case 'viewsearch':
                     {
-                        $searchTable = $topspandiv.CswTable('init', { 
+                        o.$searchTable = $topspandiv.CswTable('init', { 
                                 ID: 'search_tbl', 
                                 cellpadding: 1,
                                 cellspacing: 1,
@@ -548,7 +548,7 @@
                         renderViewBasedSearchContent({
                             '$parent': o.$parent,
                             '$propsXml': $viewPropsXml,
-                            '$searchTable': $searchTable,
+                            '$searchTable': o.$searchTable,
                             '$topspandiv': $topspandiv,
                             'propsCount': $xml.children('properties').children('property').size(),
                             'initOptions': o
@@ -557,7 +557,7 @@
                     }
 
                 }
-                getBottomSpan({'$bottomspandiv': $bottomspandiv});							        
+                getBottomSpan({'$bottomspandiv': $bottomspandiv, 'initOptions': o});							        
 			} // success
 					
 		}); // CswAjaxXml
@@ -567,7 +567,7 @@
     {
         var o = {
             '$bottomspandiv': '',
-            'SearchableViewsUrl': '/NbtWebApp/wsNBT.asmx/getSearchableViews'
+            'initOptions': o
         };
         
         if(options) $.extend(o,options);
@@ -581,21 +581,32 @@
         //Row 1, Column 1: load a search
         var $loadTableCell = $bottomTable.CswTable('cell', 1, 1);
         $loadTableCell.html('Load a Search:');
-                                                                                        
+        
+        var $viewSelect;
+                                                                                                
         CswAjaxXml({ 
-			'url': o.SearchableViewsUrl,
+			'url': '/NbtWebApp/wsNBT.asmx/getSearchableViews',
 			'data': "IsMobile=" + false + "&OrderBy=",
             'success': function($views) { 
                     //Row 1, Column 2: view select
                     var $viewSelectCell = $bottomTable.CswTable('cell', 1, 2);
-                    var $viewSelect = $(xmlToString($views));
+                    $viewSelect = $(xmlToString($views));
                     $viewSelectCell.append($viewSelect);
                 }
             });
 
         //Row 1, Column 3: load button
         var $loadButtonCell = $bottomTable.CswTable('cell', 1, 3);
-        var $loadButton = $('<input type="button" name="load_button" id="load_button" value="Load" />');
+        var $loadButton = $('<input type="button" name="load_button" id="load_button" value="Load" />')
+                          .click(function() {
+                                    var r = {
+                                        'viewid': ''
+                                    };
+                                    $.extend(r,o.initOptions);
+                                    r.$parent.empty();
+                                    r.viewid = $viewSelect.find(':selected').val();
+                                    init(r,true);
+                          });
         $loadButtonCell.append($loadButton);
 
         //Row 2, Column 2: new custom search
