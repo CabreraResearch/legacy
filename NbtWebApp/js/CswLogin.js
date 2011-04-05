@@ -8,10 +8,7 @@
                             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/authenticate',
                             onAuthenticate: function(Username) {}
                         };
-
-                        if (options) {
-                            $.extend(o, options);
-                        }
+                        if (options) $.extend(o, options);
 
                         var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
                         if(ThisSessionId != undefined && ThisSessionId != '' && ThisSessionId != null)
@@ -20,7 +17,7 @@
                             o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
 
                         } else {
-                            var $LoginDiv = $( '<div id="logindiv" align="center" />' +
+                            var $LoginDiv = $( '<div id="logindiv" align="center">' +
                                                 '  <table>' +
                                                 '    <tr>' +
                                                 '      <td align="right">Customer ID:</td>' +
