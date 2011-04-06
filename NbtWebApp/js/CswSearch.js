@@ -357,10 +357,15 @@
         //Row propRow, Column 6: search input
         var $searchBoxCell = o.$parent.CswTable('cell', propRow, 6)
                         .empty();
-        var $searchInput;
+        var $searchInput = $('<div></div>');
         if( fieldtype == 'List' )
         {
             $searchInput = $(xmlToString($selectedProp.children('filtersoptions').children('select')));
+            $searchBoxCell.append($searchInput);
+        }
+        else if( fieldtype == 'Logical' )
+        {
+            $searchBoxCell.CswTristateCheckBox('init',{'ID': 'search_input_nodetypepropid_' + propertyId}); 
         }
         else
         {
@@ -374,8 +379,13 @@
                             .attr('autofocus','true')
                             .attr('placeholder', searchSuggest)
                             .attr({width:"200px"});
+            if( fieldtype == 'Date' )
+            {
+                $searchInput.datepicker(); //define the dt format later if necessary
+            }
+            $searchBoxCell.append($searchInput);
         }
-        $searchBoxCell.append($searchInput);
+        
     }
 
     function renderSearchButtons(options)
@@ -512,6 +522,7 @@
 		    'url': '/NbtWebApp/wsNBT.asmx/getClientSearchXml',
 		    'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeid,
             'success': function($xml) { 
+                log($xml);
                 o.searchtype = $xml.attr('searchtype');
                 switch(o.searchtype)
                 {
@@ -670,7 +681,16 @@
                         var $thisProp = $(this);
                         var propName = $thisProp.val();
                         var propId = $thisProp.attr('propid');
-                        var searchText = $('#search_input_nodetypepropid_' + propId).val();
+                        var fieldtype = $thisProp.attr('fieldtype');
+                        var searchText;
+                        if( fieldtype == 'Logical' )
+                        {
+                            searchText = $('#search_input_nodetypepropid_' + propId).CswTristateCheckBox('value');
+                        }
+                        else
+                        {
+                            searchText = $('#search_input_nodetypepropid_' + propId).val();
+                        }
                         if(searchText != '')
                         {
                             var subField = $('#subfield_select_nodetypepropid_' + propId).find(':selected').text();
