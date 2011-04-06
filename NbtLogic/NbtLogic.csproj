@@ -203,17 +203,22 @@
     <Compile Include="csw\PropTypes\CswNbtNodePropWrapper.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodeTypePropListOption.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodeTypePropListOptions.cs" />
-    <Compile Include="csw\Sched\CswNbtDbBasedSchdEvents.cs" />
-    <Compile Include="csw\Sched\CswNbtEmulateCatastrophicError.cs" />
-    <Compile Include="csw\Sched\CswNbtMailReportStatus.cs" />
-    <Compile Include="csw\Sched\CswNbtSchdItem.cs" />
-    <Compile Include="csw\Sched\CswNbtSchdItemFactory.cs" />
-    <Compile Include="csw\Sched\CswNbtSchdItemGenerateEmailReport.cs" />
-    <Compile Include="csw\Sched\CswNbtSchdItemGenerateNode.cs" />
-    <Compile Include="csw\Sched\CswNbtSchdItemRunner.cs" />
-    <Compile Include="csw\Sched\CswNbtSchdItemUpdateInspectionStatus.cs" />
-    <Compile Include="csw\Sched\CswNbtSchdItemUpdateMTBF.cs" />
-    <Compile Include="csw\Sched\CswNbtSchdItemUpdatePropertyValues.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceNbt.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceFactoryNbt.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicFactoryNbt.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicInfoNbt.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicParamNbt.cs" />
+    <Compile Include="csw\Sched\runner\CswNbtDbBasedSchdEvents.cs" />
+    <Compile Include="csw\Sched\runner\CswNbtEmulateCatastrophicError.cs" />
+    <Compile Include="csw\Sched\runner\CswNbtMailReportStatus.cs" />
+    <Compile Include="csw\Sched\runner\CswNbtSchdItem.cs" />
+    <Compile Include="csw\Sched\runner\CswNbtSchdItemFactory.cs" />
+    <Compile Include="csw\Sched\logic\CswNbtSchdItemGenerateEmailReport.cs" />
+    <Compile Include="csw\Sched\logic\CswNbtSchdItemGenerateNode.cs" />
+    <Compile Include="csw\Sched\runner\CswNbtSchdItemRunner.cs" />
+    <Compile Include="csw\Sched\logic\CswNbtSchdItemUpdateInspectionStatus.cs" />
+    <Compile Include="csw\Sched\logic\CswNbtSchdItemUpdateMTBF.cs" />
+    <Compile Include="csw\Sched\logic\CswNbtSchdItemUpdatePropertyValues.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H24.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H21.cs" />
     <Compile Include="csw\Schema\CswUpdateSchemaTo01H20.cs" />
@@ -330,6 +335,7 @@
       <Name>NbtConfig</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
