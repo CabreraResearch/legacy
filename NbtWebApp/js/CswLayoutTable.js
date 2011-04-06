@@ -301,6 +301,8 @@
 
         function getCell($table, row, column, cellsetrow, cellsetcolumn, cellsetrows, cellsetcolumns)
         {
+            if(row < 1) row = 1;
+            if(column < 1) column = 1;
             var realrow = ((row - 1) * cellsetrows) + cellsetrow;
             var realcolumn = ((column - 1) * cellsetcolumns) + cellsetcolumn;
             var $cell = $table.CswTable('cell', realrow, realcolumn);

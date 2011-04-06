@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.WebServices
 			CswNbtNode Node = null;
 		    Int32 NodeTypeId = Int32.MinValue;
 		    Int32 NodeId = Int32.MinValue;
-            if( NodeKey != string.Empty )
+            if( !string.IsNullOrEmpty(NodeKey) )
 			{
 				CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
 				Node = _CswNbtResources.Nodes[NbtNodeKey];
@@ -78,7 +78,8 @@ namespace ChemSW.Nbt.WebServices
 			}
 
 			// COPY
-			if( Node.NodeSpecies == NodeSpecies.Plain &&
+			if( null != Node && 
+                Node.NodeSpecies == NodeSpecies.Plain &&
 				_CswNbtResources.CurrentNbtUser.CheckCreatePermission( Node.NodeTypeId ) )
 			{
 				string BadPropertyName = string.Empty;

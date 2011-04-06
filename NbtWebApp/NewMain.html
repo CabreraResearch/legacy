@@ -184,7 +184,8 @@
 			if (options)
 			{
 				$.extend(o, options);
-			}
+            }
+            log(o);
 			if (o.viewid != undefined && o.viewid != '') //&& o.viewmode != undefined && o.viewmode != ''
 			{
 				$.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
@@ -291,8 +292,9 @@
 			};
         o.onEditNode = function() { getViewGrid(o); };
         o.onDeleteNode = function() { getViewGrid(o); };
-		
-		$('#CenterDiv').CswNodeGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'id': o.id });
+
+        $('#CenterDiv').CswNodeGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'id': o.id });
+        refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 	}
 
 	function getNodesTree(options) 
