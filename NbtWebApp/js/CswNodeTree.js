@@ -110,6 +110,8 @@
 
 							function _treeXmlToHtml($itemxml)
 							{
+								var nodeid = $itemxml.attr('id').substring(IDPrefix.length);
+								var nodename = $itemxml.children('content').children('name').text();
 								var treestr = '<li id="'+ $itemxml.attr('id') +'" ';
 								treestr += '    rel="'+ $itemxml.attr('rel') +'" ';
 								treestr += '    class="jstree-'+ $itemxml.attr('state') +'" ';
@@ -119,9 +121,9 @@
 								}
 								if(o.ShowCheckboxes)
 								{
-									treestr += '  <input type="checkbox" class="'+ IDPrefix +'check" id="check_'+ $itemxml.attr('id') +'" rel="'+ $itemxml.attr('rel') +'"></input>';
+									treestr += '  <input type="checkbox" class="'+ IDPrefix +'check" id="check_'+ nodeid +'" rel="'+ $itemxml.attr('rel') +'" nodeid="'+ nodeid +'" nodename="'+ nodename +'"></input>';
 								}
-								treestr += '  <a href="#">'+ $itemxml.children('content').children('name').text() +'</a>';
+								treestr += '  <a href="#">'+ nodename +'</a>';
 								if($itemxml.children('item').length > 0)
 								{
 									// recurse

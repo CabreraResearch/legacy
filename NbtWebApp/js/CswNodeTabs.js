@@ -236,20 +236,21 @@
 			$xml.children().each(function ()
 			{
 				var $propxml = $(this);
+				var propid = $propxml.attr('id');
 				var fieldtype = $propxml.attr('fieldtype');
 				var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.attr('displayrow'), $propxml.attr('displaycol'));
 
 				if (($propxml.attr('display') != 'false' || ConfigMode ) &&
 					fieldtype != 'Image' &&
 					fieldtype != 'Grid' &&
-					(o.filterToPropId == '' || o.filterToPropId == $propxml.attr('id')))
+					(o.filterToPropId == '' || o.filterToPropId == propid))
 				{
 					var $labelcell = _getLabelCell($cellset);
 					$labelcell.addClass('propertylabel');
 					$labelcell.append($propxml.attr('name'));
 					if(o.ShowCheckboxes && $propxml.attr('copyable') == "true")
 					{
-						var $propcheck = $('<input type="checkbox" id="check_'+ $propxml.attr('id') +'" class="'+ o.ID +'_check"></input>')
+						var $propcheck = $('<input type="checkbox" id="check_'+ propid +'" class="'+ o.ID +'_check" propid="'+ propid +'"></input>')
 							.appendTo($labelcell);
 					}
 				}
@@ -353,7 +354,7 @@
 					{
 						if(o.ShowCheckboxes)
 						{
-							// apply the checked property values to the checked nodes
+							// apply the newly saved checked property values on this node to the checked nodes
 							var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
 							var $propchecks = $('.' + o.ID + '_check:checked');
 							if($nodechecks.length > 0 && $propchecks.length > 0)
@@ -361,7 +362,7 @@
 								var datastr = "{ SourceNodeKey: '" + o.cswnbtnodekey + "', CopyNodeIds: [";
 								var first = true;
 								$nodechecks.each(function() { 
-									var nodeid = $(this).attr('id').substring(('check_' + o.NodeCheckTreeId + '_').length);
+									var nodeid = $(this).attr('nodeid');
 									if(!first) datastr += ',';
 									datastr += "'" + nodeid + "'"; 
 									first = false;
@@ -369,7 +370,7 @@
 								datastr += '], PropIds: [';
 								first = true;
 								$propchecks.each(function() { 
-									var propid = $(this).attr('id').substring('check_'.length);
+									var propid = $(this).attr('propid');
 									if(!first) datastr += ',';
 									datastr += "'" + propid + "'"; 
 									first = false;

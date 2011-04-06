@@ -760,20 +760,24 @@ namespace ChemSW.Nbt.WebServices
 		#region Node DML
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string DeleteNode( string NodePk )
+		public string DeleteNodes( string[] NodePks )
 		{
 			var ReturnVal = new JObject();
+			bool ret = true;
 			try
 			{
 				start();
-				CswPrimaryKey RealNodePk = new CswPrimaryKey();
-				RealNodePk.FromString( NodePk );
-				if( RealNodePk.PrimaryKey != Int32.MinValue )
+				foreach( string NodePk in NodePks )
 				{
-					CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-					bool ret = ws.DeleteNode( RealNodePk );
-					ReturnVal.Add( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
+					CswPrimaryKey RealNodePk = new CswPrimaryKey();
+					RealNodePk.FromString( NodePk );
+					if( RealNodePk.PrimaryKey != Int32.MinValue )
+					{
+						CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+						ret = ret && ws.DeleteNode( RealNodePk );
+					}
 				}
+				ReturnVal.Add( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
 				end();
 			}
 			catch( Exception ex )

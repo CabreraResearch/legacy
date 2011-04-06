@@ -99,7 +99,6 @@ namespace ChemSW.Nbt.WebServices
 				_CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Delete, Node.NodeTypeId, Node, null ) )
 			{
 
-				string PopUp = "Popup_DeleteNode.aspx?nodekey=" + Node.NodeId.PrimaryKey + "&checkednodeids=";
 				MenuNode.Add( new XElement( "item",
 											new XAttribute( "text", "Delete" ),
 											new XAttribute( "nodeid", Node.NodeId.ToString() ),

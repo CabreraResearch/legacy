@@ -54,6 +54,9 @@
 
 	initAll();
 
+	var MainTreeId = 'main';
+	var MainGridId = 'CswNodeGrid';
+
 	function initAll()
 	{
 		if (debug) log('NewMain.initAll()');
@@ -263,7 +266,9 @@
 			{
 				multi = !multi;
 				refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-			}
+			},
+			'Multi': multi,
+			'NodeCheckTreeId': MainTreeId
 		});
 	}
 
@@ -275,7 +280,6 @@
 			viewid: '',
 			nodeid: '',
 			cswnbtnodekey: '',
-			id: 'CswNodeGrid',
             onAddNode: '',
             onEditNode: '',
             onDeleteNode: ''
@@ -295,7 +299,7 @@
         o.onEditNode = function() { getViewGrid(o); };
         o.onDeleteNode = function() { getViewGrid(o); };
 		
-		$('#CenterDiv').CswNodeGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'id': o.id });
+		$('#CenterDiv').CswNodeGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'id': MainGridId });
 	}
 
 	function onSelectTreeNode(options)
@@ -369,7 +373,7 @@
 				setChanged();
 			},
 			'ShowCheckboxes': multi,
-			'NodeCheckTreeId': 'main'
+			'NodeCheckTreeId': MainTreeId
 		});
 	}
 
@@ -383,7 +387,6 @@
 				type: 'tree',
 				nodeid: '',
 				cswnbtnodekey: '',
-				'ID': 'main',
 				nodename: '',
 				iconurl: ''
 			};
@@ -404,7 +407,6 @@
 				default: //tree
 					{
 						refreshNodesTree({
-							'ID': o.ID,
 							'nodeid': o.nodeid,
 							'cswnbtnodekey': o.cswnbtnodekey,
 							'nodename': o.nodename 
@@ -422,7 +424,6 @@
 		if (debug) log('NewMain.refreshNodesTree()');
 
 		var o = {
-			'ID': 'main',
 			'nodeid': $.CswCookie('get', CswCookieName.CurrentNode.NodeId),
 			'cswnbtnodekey': $.CswCookie('get', CswCookieName.CurrentNode.NodeKey),
 			'nodename': '', 
@@ -434,7 +435,7 @@
 
 		clear({ left: true });
 
-		$('#LeftDiv').CswNodeTree('init', { 'ID': o.ID,
+		$('#LeftDiv').CswNodeTree('init', { 'ID': MainTreeId,
 											'viewid': o.viewid,
 											'viewmode': o.viewmode,
 											'nodeid': o.nodeid, 

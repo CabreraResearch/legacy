@@ -116,31 +116,48 @@
 								'nodename': '',
 								'nodeid': '',
 								'nodekey': '', 
-								'onDeleteNode': function(nodeid, nodekey) { }
+								'onDeleteNode': function(nodeid, nodekey) { },
+								'Multi': false,
+								'NodeCheckTreeId': ''
 								};
 
 							if (options) {
 								$.extend(o, options);
 							}
 
-							var $div = $('<div>Are you sure you want to delete: ' + o.nodename + '?<br/><br/></div>');
+							var $div = $('<div><span>Are you sure you want to delete:</span></div>');
 
-							$('<input type="button" id="deletenode_submit" name="deletenode_submit" value="Delete" />')
-								.appendTo($div)
-								.click(function () {
-									$div.dialog('close');
-									deleteNode({
-												'nodeid': o.nodeid, 
-												'nodekey': o.nodekey, 
-												'onSuccess': o.onDeleteNode 
-											   });
+							var nodeids = [];
+							if(o.Multi)
+							{
+								var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+								$nodechecks.each(function() {
+									var $nodecheck = $(this);
+									nodeids[nodeids.length] = $nodecheck.attr('nodeid');
+									$div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.attr('nodename') + '</span>');
 								});
+							} else {
+								$div.append('<span>' + o.nodename + '?</span>');
+								nodeids[0] = o.nodeid;
+							}
+							$div.append('<br/><br/>');
+	
+							var $deletebtn = $('<input type="button" id="deletenode_submit" name="deletenode_submit" value="Delete" />')
+												.appendTo($div)
+												.click(function () 
+													{
+														$div.dialog('close');
+														deleteNodes({
+																	'nodeids': nodeids, 
+																	'onSuccess': o.onDeleteNode 
+																	});
+													});
 
-							$('<input type="button" id="deletenode_cancel" name="deletenode_cancel" value="Cancel" />')
-								.appendTo($div)
-								.click(function () {
-									$div.dialog('close');
-								});
+							var $cancelbtn = $('<input type="button" id="deletenode_cancel" name="deletenode_cancel" value="Cancel" />')
+												.appendTo($div)
+												.click(function () {
+													$div.dialog('close');
+												});
 
 							_openDiv($div, 400, 200);
 						},
