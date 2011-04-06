@@ -349,8 +349,9 @@ function deleteNode(options) {
 // jsTree
 // ------------------------------------------------------------------------------------
 
-function jsTreeGetSelected($treediv, IDPrefix) 
+function jsTreeGetSelected($treediv)
 {
+	var IDPrefix = $treediv.attr('id');
 	$SelectedItem = $treediv.jstree('get_selected');
 	var ret = { 
 		'iconurl': $SelectedItem.children('a').children('ins').css('background-image'),
@@ -379,7 +380,8 @@ function HandleMenuItem(options) {
 		'$this': '',
 		'onLogout': function () { },
 		'onAlterNode': function (nodeid, nodekey) { },
-        'onSearch': function (treexml, viewid, nodetypeid) { }
+		'onSearch': function (treexml, viewid, nodetypeid) { },
+		'onMultiEdit': function () { }
 	};
 	if (options) {
 		$.extend(o, options);
@@ -463,7 +465,11 @@ function HandleMenuItem(options) {
                     
                     return false;
                 });
-                break;
+				break;
+			case 'multiedit':
+				$a.click(o.onMultiEdit);
+				break;
+
 		}
 	}
 	else {

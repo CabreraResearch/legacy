@@ -153,7 +153,7 @@
 					'onAddNode': function (nodeid, cswnbtnodekey)
 					{
 						clear({ all: true });
-						getNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+						refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
 					}
 				});
 			},
@@ -181,10 +181,8 @@
 				nodeid: '',
 				cswnbtnodekey: ''
 			};
-			if (options)
-			{
-				$.extend(o, options);
-			}
+			if (options) $.extend(o, options);
+
 			if (o.viewid != undefined && o.viewid != '') //&& o.viewmode != undefined && o.viewmode != ''
 			{
 				$.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
@@ -199,17 +197,17 @@
 						}
 					case 'list':
 						{
-							getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+							refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 							break;
 						}
 					case 'tree':
 						{
-							getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+							refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 							break;
 						}
 					default:
 						{
-							getNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+							refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 							break;
 						}
 				}
@@ -260,6 +258,11 @@
 			'onAddNode': function (nodeid, cswnbtnodekey)
 			{
 				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+			},
+			'onMultiEdit': function ()
+			{
+				multi = !multi;
+				refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 			}
 		});
 	}
@@ -293,39 +296,6 @@
         o.onDeleteNode = function() { getViewGrid(o); };
 		
 		$('#CenterDiv').CswNodeGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'id': o.id });
-	}
-
-	function getNodesTree(options) 
-	{
-		if (debug) log('NewMain.getNodesTree()');
-
-		var o = {
-			'ID': 'main',
-		    'viewid': '',
-            'viewmode': 'tree',
-            'nodeid': $.CswCookie('get', CswCookieName.CurrentNode.NodeId),
-			'nodekey': $.CswCookie('get', CswCookieName.CurrentNode.NodeKey)
-           };
-		if (options) $.extend(o, options);
-
-		$('#LeftDiv').CswNodeTree('init', {
-											'ID': o.ID, 
-											'viewid': o.viewid,
-											'viewmode': o.viewmode,
-											'nodeid': o.nodeid,
-											'cswnbtnodekey': o.nodekey,
-											'onViewChange': function (newviewid)
-											{
-												$.CswCookie('set', CswCookieName.CurrentView.ViewId, newviewid);
-											},
-											'onSelectNode': function (optSelect)
-											{ 
-													onSelectTreeNode({ 'viewid': optSelect.viewid,
-																		'nodeid': optSelect.nodeid,
-																		'cswnbtnodekey': optSelect.cswnbtnodekey
-																	});
-												}
-										});
 	}
 
 	function onSelectTreeNode(options)
@@ -430,12 +400,19 @@
 					}
 				default: //tree
 					{
-						refreshNodesTree({ 'ID': o.ID, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'nodename': o.nodename });
+						refreshNodesTree({
+							'ID': o.ID,
+							'nodeid': o.nodeid,
+							'cswnbtnodekey': o.cswnbtnodekey,
+							'nodename': o.nodename 
+						});
 						break;
 					}
-			}
+			} // switch
 		} // if (manuallyCheckChanges())
 	} // refreshSelected()
+
+	var multi = false;
 
 	function refreshNodesTree(options)
 	{
@@ -443,21 +420,20 @@
 
 		var o = {
 			'ID': 'main',
-			nodeid: '',
-			cswnbtnodekey: '',
-			nodename: '', 
-			iconurl: ''
+			'nodeid': $.CswCookie('get', CswCookieName.CurrentNode.NodeId),
+			'cswnbtnodekey': $.CswCookie('get', CswCookieName.CurrentNode.NodeKey),
+			'nodename': '', 
+			'iconurl': '',
+			'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+			'viewmode': 'tree'
 		};		
 		if (options) $.extend(o, options);
 
-		var view = {
-			'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
-			'viewmode': $.CswCookie('get', CswCookieName.CurrentView.ViewMode)
-		};
-
 		clear({ left: true });
+
 		$('#LeftDiv').CswNodeTree('init', { 'ID': o.ID,
-											'viewid': view.viewid,
+											'viewid': o.viewid,
+											'viewmode': o.viewmode,
 											'nodeid': o.nodeid, 
 											'cswnbtnodekey': o.cswnbtnodekey,
 											'nodename': o.nodename,
@@ -473,7 +449,8 @@
 																		'nodeid': optSelect.nodeid,
 																		'cswnbtnodekey': optSelect.cswnbtnodekey
 																	});
-												}
+												},
+											'Multi': multi
 										}); // CswNodesTree
 	} // refreshNodesTree()
 

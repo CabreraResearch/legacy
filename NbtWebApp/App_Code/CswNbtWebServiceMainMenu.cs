@@ -204,11 +204,15 @@ namespace ChemSW.Nbt.WebServices
 			}
 
 			// MULTI-EDIT
-			MenuNode.Add( new XElement( "item",
-										new XAttribute( "text", "Multi-Edit" ),
-										new XAttribute( "action", "multiedit" ) ) );
+			if( View != null && ( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List ) )
+			{
+				MenuNode.Add( new XElement( "item",
+											new XAttribute( "text", "Multi-Edit" ),
+											new XAttribute( "action", "multiedit" ) ) );
+			}
+
 			return MenuNode;
-		}
+		} // getMenu()
 
 	} // class CswNbtWebServiceMainMenu
 

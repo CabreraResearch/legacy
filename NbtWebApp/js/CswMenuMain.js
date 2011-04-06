@@ -6,7 +6,8 @@
 			viewid: '',
 			nodeid: '',
 			cswnbtnodekey: '',
-			onAddNode: function(nodeid, cswnbtnodekey) { }
+			onAddNode: function(nodeid, cswnbtnodekey) { },
+			onMultiEdit: function() { }
 		};
 
 		if (options) {
@@ -28,13 +29,13 @@
 					var $this = $(this);
 					if($this.attr('text') != undefined)
 					{
-						var $li = HandleMenuItem({ '$ul': $ul, '$this': $this, 'onAlterNode': o.onAddNode });
+						var $li = HandleMenuItem({ '$ul': $ul, '$this': $this, 'onAlterNode': o.onAddNode, 'onMultiEdit': o.onMultiEdit });
 						
 						if($this.children().length >= 1) {
 							var $subul = $('<ul class="subnav"></ul>')
 											.appendTo($li);
 							$this.children().each(function() {
-								HandleMenuItem({ '$ul': $subul, '$this': $(this), 'onAlterNode': o.onAddNode });
+								HandleMenuItem({ '$ul': $subul, '$this': $(this), 'onAlterNode': o.onAddNode, 'onMultiEdit': o.onMultiEdit });
 							});
 						}
 					}
