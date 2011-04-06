@@ -82,6 +82,7 @@ namespace ChemSW.Nbt.WebServices
 
 			// COPY
 			if( null != Node && 
+                View.ViewMode != NbtViewRenderingMode.Grid &&
                 Node.NodeSpecies == NodeSpecies.Plain &&
 				_CswNbtResources.CurrentNbtUser.CheckCreatePermission( Node.NodeTypeId ) )
 			{
@@ -99,6 +100,7 @@ namespace ChemSW.Nbt.WebServices
 			// DELETE
 			if( !string.IsNullOrEmpty( NodeKey ) &&
 				null != Node &&
+                View.ViewMode != NbtViewRenderingMode.Grid &&
 				Node.NodeSpecies == NodeSpecies.Plain &&
 				_CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Delete, Node.NodeTypeId, Node, null ) )
 			{
