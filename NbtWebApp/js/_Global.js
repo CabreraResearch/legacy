@@ -384,7 +384,6 @@ function HandleMenuItem(options) {
 	if (options) {
 		$.extend(o, options);
 	}
-
 	var $li;
 	if (o.$this.attr('href') != undefined && o.$this.attr('href') != '')
 	{
@@ -414,7 +413,8 @@ function HandleMenuItem(options) {
 				{
 					$.CswDialog('AddNodeDialog', {
 						'nodetypeid': o.$this.attr('nodetypeid'),
-						'onAddNode': o.onAlterNode
+						'relatednodeid': o.$this.attr('relatednodeid'), //for Grid Props
+                        'onAddNode': o.onAlterNode
 					}); 
 					return false;
 				});

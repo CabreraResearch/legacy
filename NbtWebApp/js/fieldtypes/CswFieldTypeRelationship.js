@@ -11,6 +11,11 @@
                 $Div.contents().remove();
 
                 var SelectedNodeId = o.$propxml.children('nodeid').text().trim();
+                if( o.relatednodeid != '' && o.relatednodeid != undefined && 
+                    ( SelectedNodeId == '' || SelectedNodeId == undefined ) )
+                {
+                    SelectedNodeId = o.relatednodeid;
+                }
                 var SelectedName = o.$propxml.children('name').text().trim();
                 var NodeTypeId = o.$propxml.children('nodetypeid').text().trim();
                 var $Options = o.$propxml.children('options');

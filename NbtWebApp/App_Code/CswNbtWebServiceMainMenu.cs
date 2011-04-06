@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 
 			string NodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
+		    string NodeIdNum = string.Empty;
 			CswNbtNode Node = null;
 		    Int32 NodeTypeId = Int32.MinValue;
 		    Int32 NodeId = Int32.MinValue;
@@ -50,6 +51,7 @@ namespace ChemSW.Nbt.WebServices
 				Node = _CswNbtResources.Nodes[NbtNodeKey];
 			    NodeId = Node.NodeId.PrimaryKey;
 			    NodeTypeId = Node.NodeTypeId;
+			    NodeIdNum = NodeId.ToString();
 			}
 
 			// SEARCH
@@ -70,6 +72,7 @@ namespace ChemSW.Nbt.WebServices
 												 .Select( Entry => new XElement( "item",
 																				new XAttribute( "text", Entry.NodeType.NodeTypeName ),
 																				new XAttribute( "nodetypeid", Entry.NodeType.NodeTypeId ),
+                                                                                new XAttribute( "relatednodeid", NodeIdNum ), //for Grid Props
 																				new XAttribute( "action", "AddNode" ) ) ) )
 				{
 					AddNode.Add( AddNodeType );

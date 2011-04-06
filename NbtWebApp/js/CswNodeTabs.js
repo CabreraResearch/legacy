@@ -11,6 +11,7 @@
 			MovePropUrl: '/NbtWebApp/wsNBT.asmx/moveProp',
 			SavePropUrl: '/NbtWebApp/wsNBT.asmx/SaveProps',
 			nodeid: '',
+            relatednodeid: '',
 			tabid: '',
 			cswnbtnodekey: '',
 			nodetypeid: '',
@@ -116,6 +117,7 @@
 								var fieldOpt = {
 									'fieldtype': $propxml.attr('fieldtype'),
 									'nodeid': o.nodeid,
+                                    'relatednodeid': o.relatednodeid,
 									'propid': $propxml.attr('id'),
 									'$propdiv': $propcell.children('div'),
 									'$propxml': $propxml,
@@ -142,6 +144,7 @@
 								var fieldOpt = {
 									'fieldtype': $propxml.attr('fieldtype'),
 									'nodeid': o.nodeid,
+                                    'relatednodeid': o.relatednodeid,
 									'propid': $propxml.attr('id'),
 									'$propdiv': $propcell.children('div'),
 									'$propxml': $propxml,
@@ -251,12 +254,13 @@
 
 		function _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode)
 		{
-			$propcell.contents().remove();
+			$propcell.empty();
 			if ($propxml.attr('display') != 'false' || ConfigMode )
 			{
 				var fieldOpt = {
 					'fieldtype': $propxml.attr('fieldtype'),
 					'nodeid': o.nodeid,
+                    'relatednodeid': o.relatednodeid,
 					'propid': $propxml.attr('id'),
 					'$propdiv': $('<div/>').appendTo($propcell),
 					'$propxml': $propxml,

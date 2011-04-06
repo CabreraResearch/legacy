@@ -4,14 +4,26 @@
 
 	var methods = {
 		init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
-
+            log(o);
 			var $Div = $(this);
-			$Div.contents().remove();
+			$Div.empty();
 
-			var ViewId = o.$propxml.children('viewid').text().trim();
+            var $MenuDiv = $('<div id="grid_as_fieldtype_menu" name="grid_as_fieldtype_menu"></div>');
+            var $GridDiv = $('<div id="grid_as_fieldtype" name="grid_as_fieldtype"></div>');
 
-			$($Div).CswNodeGrid({'viewid': ViewId, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly} );
-
+            var ViewId = o.$propxml.children('viewid').text().trim();
+            
+			$GridDiv.CswNodeGrid({'viewid': ViewId, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly} );
+            $MenuDiv.CswMenuMain({
+			        'viewid': ViewId,
+			        'nodeid': o.nodeid,
+			        'cswnbtnodekey': o.cswnbtnodekey,
+			        'onAddNode': function (nodeid, cswnbtnodekey)
+			        {
+                        refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			        }
+		    });
+			$Div.append($MenuDiv, $('<br/><br/>'), $GridDiv);
 		},
 		save: function(o) {
 //                var $TextBox = $propdiv.find('input');

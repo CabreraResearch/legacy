@@ -30,6 +30,7 @@
 		'AddNodeDialog': function (options) {
 							var o = {
 								'nodetypeid': '', 
+                                'relatednodeid': '',
 								'onAddNode': function(nodeid, cswnbtnodekey) { }
 								};
 
@@ -40,6 +41,7 @@
 							var $div = $('<div></div>');
 							$div.CswNodeTabs({
 								'nodetypeid': o.nodetypeid,
+                                'relatednodeid': o.relatednodeid,
 								'EditMode': 'AddInPopup',
 								'onSave': function (nodeid, cswnbtnodekey) {
 									$div.dialog('close');
