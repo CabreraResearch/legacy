@@ -551,8 +551,19 @@ namespace ChemSW.Nbt.WebServices
             var FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
             CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) SearchProp.First["filter"], true, out FilterMode );
             string SearchTerm = (string) SearchProp.First["searchtext"];
-
-            SearchView.AddViewPropertyFilter( ViewProp, FieldName, FilterMode, SearchTerm, false );
+            bool FilterExists = false;
+            
+            foreach( CswNbtViewPropertyFilter Filt in ViewProp.Filters.Cast<CswNbtViewPropertyFilter>()
+                                                        .Where( Filt => Filt.FilterMode == FilterMode && 
+                                                                Filt.SubfieldName == FieldName ) )
+            {
+                FilterExists = true;
+                Filt.Value = SearchTerm;
+            }
+            if( !FilterExists )
+            {
+                SearchView.AddViewPropertyFilter( ViewProp, FieldName, FilterMode, SearchTerm, false );
+            }
         }
 
         /// <summary>

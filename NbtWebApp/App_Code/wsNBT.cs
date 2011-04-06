@@ -627,7 +627,7 @@ namespace ChemSW.Nbt.WebServices
                 ResultsView.SaveToCache();
 
                 SearchResultView.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
-                SearchResultView.Add( new JProperty( "viewmode", ResultsView.ViewMode ) );
+                SearchResultView.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
                 end();
             }
             catch( Exception ex )
