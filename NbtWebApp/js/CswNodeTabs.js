@@ -9,7 +9,8 @@
 			SinglePropUrl: '/NbtWebApp/wsNBT.asmx/getSingleProp',
 			PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
 			MovePropUrl: '/NbtWebApp/wsNBT.asmx/moveProp',
-			SavePropUrl: '/NbtWebApp/wsNBT.asmx/SaveProps',
+			SavePropUrl: '/NbtWebApp/wsNBT.asmx/saveProps',
+			CopyPropValuesUrl: '/NbtWebApp/wsNBT.asmx/copyPropValues',
 			nodeid: '',               
 			tabid: '',                
 			cswnbtnodekey: '',        
@@ -21,7 +22,8 @@
 			onBeforeTabSelect: function (tabid) { return true; },
 			onTabSelect: function (tabid) { },
 			onPropertyChange: function(propid, propname) { },
-			ShowCheckboxes: false
+			ShowCheckboxes: false,
+			NodeCheckTreeId: ''
 		};
 
 		if (options)
@@ -349,9 +351,41 @@
 					data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', ViewId: '"+ $.CswCookie('get', CswCookieName.CurrentView.ViewId) +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",
 					success: function (data)
 					{
+						if(o.ShowCheckboxes)
+						{
+							// apply the checked property values to the checked nodes
+							var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+							var $propchecks = $('.' + o.ID + '_check:checked');
+							if($nodechecks.length > 0 && $propchecks.length > 0)
+							{
+								var datastr = "{ SourceNodeKey: '" + o.cswnbtnodekey + "', CopyNodeIds: [";
+								var first = true;
+								$nodechecks.each(function() { 
+									var nodeid = $(this).attr('id').substring(('check_' + o.NodeCheckTreeId + '_').length);
+									if(!first) datastr += ',';
+									datastr += "'" + nodeid + "'"; 
+									first = false;
+								});
+								datastr += '], PropIds: [';
+								first = true;
+								$propchecks.each(function() { 
+									var propid = $(this).attr('id').substring('check_'.length);
+									if(!first) datastr += ',';
+									datastr += "'" + propid + "'"; 
+									first = false;
+								});
+								datastr += '] }';
+
+								CswAjaxJSON({
+									url: o.CopyPropValuesUrl,
+									data: datastr
+								}); // ajax
+							} // if($nodechecks.length > 0 && $propchecks.length > 0)
+						} // if(o.ShowCheckboxes)
+
 						o.onSave(data.nodeid, data.cswnbtnodekey);
-					}
-				});
+					} // success
+				}); // ajax
 			} // if($form.valid())
 		} // Save()
 

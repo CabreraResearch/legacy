@@ -313,6 +313,37 @@ namespace ChemSW.Nbt.WebServices
 			return ret;
 		} // saveProps()
 
+
+		public bool copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] PropIds )
+		{
+			CswNbtNodeKey SourceNodeKey = new CswNbtNodeKey( _CswNbtResources, SourceNodeKeyStr );
+			if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
+			{
+				CswNbtNode SourceNode = _CswNbtResources.Nodes[SourceNodeKey];
+				if( SourceNode != null )
+				{
+					foreach( string NodeIdStr in CopyNodeIds )
+					{
+						CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
+						CopyToNodePk.FromString( NodeIdStr );
+						CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
+						if( CopyToNode != null )
+						{
+							foreach( string PropIdAttr in PropIds )
+							{
+								Int32 PropId = _getPropIdFromAttribute( PropIdAttr );
+								CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
+								CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
+							} // foreach( string PropIdAttr in PropIds )
+
+							CopyToNode.postChanges( false );
+						} // if( CopyToNode != null )
+					} // foreach( string NodeIdStr in CopyNodeIds )
+				} // if(SourceNode != null)
+			} // if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
+			return true;
+		} // copyPropValues()
+
 		private const char PropIdDelim = '_';
 
 		public static string makePropIdAttribute( CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )

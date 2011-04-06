@@ -532,6 +532,30 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return ( ReturnVal.ToString() );
 		} // saveProps()
+
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string copyPropValues( string SourceNodeKey, string[] CopyNodeIds, string[] PropIds )
+		{
+			JObject ReturnVal = new JObject();
+			try
+			{
+				start();
+				string ParsedSourceNodeKey = wsTools.FromSafeJavaScriptParam( SourceNodeKey );
+				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+				bool ret = ws.copyPropValues( ParsedSourceNodeKey, CopyNodeIds, PropIds );
+				ReturnVal.Add( new JProperty( "succeeded", ret.ToString().ToLower() ) );
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal.Add( jError( ex ) );
+			}
+			return ( ReturnVal.ToString() );
+		} // copyPropValue()	
+		
+		
 		#endregion Tabs and Props
 
 		#region Misc
