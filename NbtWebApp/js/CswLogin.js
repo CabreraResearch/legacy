@@ -44,7 +44,12 @@
 												'      <td></td>' +
                                                 '    </tr>' + 
                                                 '  </table></div><br/><br/><br/><div id="assemblydiv" width="100%" align="right"></div>')
-                                                .appendTo($(this));
+                                                .appendTo($(this))
+                                                .bind('keypress', function(e){
+                                                           if(e.which === 13) { // return
+                                                              $('#login_button').trigger('click');
+                                                           }
+                                                        });
 
                             $('#assemblydiv').load('_Assembly.txt');
 							
