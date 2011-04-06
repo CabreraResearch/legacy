@@ -318,6 +318,7 @@
 
 			$.CswCookie('set', CswCookieName.CurrentNode.NodeId, o.nodeid);
 			$.CswCookie('set', CswCookieName.CurrentNode.NodeKey, o.cswnbtnodekey);
+
 			if (o.nodeid != '' && o.nodeid != 'root')
 			{
 				getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
@@ -366,7 +367,8 @@
 			{
 				//if(debug) log('Property Changed: propid = ' + propid + ', propname = ' + propname);
 				setChanged();
-			}
+			},
+			'ShowCheckboxes': multi
 		});
 	}
 
@@ -450,7 +452,7 @@
 																		'cswnbtnodekey': optSelect.cswnbtnodekey
 																	});
 												},
-											'Multi': multi
+											'ShowCheckboxes': multi
 										}); // CswNodesTree
 	} // refreshNodesTree()
 

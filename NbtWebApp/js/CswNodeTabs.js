@@ -20,7 +20,8 @@
 			onSave: function (nodeid, cswnbtnodekey) { },
 			onBeforeTabSelect: function (tabid) { return true; },
 			onTabSelect: function (tabid) { },
-			onPropertyChange: function(propid, propname) { }
+			onPropertyChange: function(propid, propname) { },
+			ShowCheckboxes: false
 		};
 
 		if (options)
@@ -244,6 +245,11 @@
 					var $labelcell = _getLabelCell($cellset);
 					$labelcell.addClass('propertylabel');
 					$labelcell.append($propxml.attr('name'));
+					if(o.ShowCheckboxes && $propxml.attr('copyable') == "true")
+					{
+						var $propcheck = $('<input type="checkbox" id="check_'+ $propxml.attr('id') +'" class="'+ o.ID +'_check"></input>')
+							.appendTo($labelcell);
+					}
 				}
 
 				var $propcell = _getPropertyCell($cellset);

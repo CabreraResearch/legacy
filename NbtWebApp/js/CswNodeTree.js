@@ -26,7 +26,7 @@
 									},
 					onViewChange: function(newviewid) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
 					SelectFirstChild: true,
-					Multi: false
+					ShowCheckboxes: false
 				};
 				if(options) $.extend(o, options);
 
@@ -117,9 +117,9 @@
 								{
 									treestr += '    cswnbtnodekey="'+ $itemxml.attr('cswnbtnodekey').replace(/"/g, '&quot;') +'">';
 								}
-								if(o.Multi)
+								if(o.ShowCheckboxes)
 								{
-									treestr += '  <input type="checkbox" class="'+ IDPrefix +'check" id="chk_'+ $itemxml.attr('id') +'" rel="'+ $itemxml.attr('rel') +'"></input>';
+									treestr += '  <input type="checkbox" class="'+ IDPrefix +'check" id="check_'+ $itemxml.attr('id') +'" rel="'+ $itemxml.attr('rel') +'"></input>';
 								}
 								treestr += '  <a href="#">'+ $itemxml.children('content').children('name').text() +'</a>';
 								if($itemxml.children('item').length > 0)
