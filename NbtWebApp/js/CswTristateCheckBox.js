@@ -51,7 +51,6 @@
 		{
 			var $CheckboxImage = $(this);
 			var Checked = $CheckboxImage.attr('alt');
-			debugger;
             return Checked;
 		}
  
