@@ -247,7 +247,15 @@
 				{
 					var $labelcell = _getLabelCell($cellset);
 					$labelcell.addClass('propertylabel');
-					$labelcell.append($propxml.attr('name'));
+					if($propxml.attr('helptext') != '')
+					{
+						$('<a href="#" title="'+ $propxml.attr('helptext') + '" onclick="return false;">'+ $propxml.attr('name') +'</a>')
+							.appendTo($labelcell);
+					}
+					else
+					{
+						$labelcell.append($propxml.attr('name'));
+					}
 					if(o.ShowCheckboxes && $propxml.attr('copyable') == "true")
 					{
 						var $propcheck = $('<input type="checkbox" id="check_'+ propid +'" class="'+ o.ID +'_check" propid="'+ propid +'"></input>')
