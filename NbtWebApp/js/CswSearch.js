@@ -137,7 +137,7 @@
 		            'data': "RelatedIdType=" + relatedIdType + "&ObjectPk=" + objectPk,
                     'success': function($xml) { 
                             options.$propsXml = $xml;
-                            renderPropsAndControls(options);
+                            renderNodePropsAndControls(options);
                     }
                 });
     }
@@ -169,7 +169,7 @@
                                     r.selectedPropVal = $(this).val();
                                     r.selectedSubfieldVal = '';
                                     r.selectedFilterVal  = '';
-                                    renderPropsAndControls(r);
+                                    renderNodePropsAndControls(r);
                             });
             if(o.selectedPropVal != '' )
             {
@@ -204,7 +204,7 @@
                                         r.selectedSubfieldVal = $(this).val();
                                         r.selectedFilterVal  = '';
                                         r.isHidden = false;
-                                        renderPropsAndControls(r) });
+                                        renderNodePropsAndControls(r) });
             if(o.isHidden)
             {
                 $subfieldsOptions.hide();
@@ -228,7 +228,7 @@
                                         r.selectedSubfieldVal = $subfieldsOptions.val();
                                         r.selectedFilterVal  = $(this).val;
                                         r.isHidden = false;
-                                        renderPropsAndControls(r) });
+                                        renderNodePropsAndControls(r) });
             if(o.isHidden)
             {
                 $filtersOptions.hide();
@@ -414,11 +414,15 @@
         //Row i, Column 1 (1/1): clear button
         var $clearButtonCell = $splitCellTable.CswTable('cell', 1, 1)
                                .empty();
-        var $clearButton = $('<input type="button" name="clear_button" id="clear_button" value="Clear" />')
-                           .button()
-                           .click(function() {
-                                reInit(o);
-                           });
+        var $clearButton = $('<input type="button"/>');
+        $clearButton.CswButton('init', {ID: 'clear_button', 
+                                        enabledText: 'Clear', 
+                                        disabledText: 'Clear',
+                                        disableOnClick: false, 
+                                        onclick: function() {
+                                                    reInit(o);
+                                                }
+                                        });
 
         $clearButtonCell.append($clearButton);
                                             
@@ -437,15 +441,18 @@
         var $searchButtonCell = o.$parent.CswTable('cell', o.bottomRow, o.searchBtnCell)
                                 .attr({align:"right"})
                                 .empty();
-        var $searchButton = $('<input type="button" name="search_button" id="search_button" value="Search" />')
-                            .button()
-                            .click(function() {
-                                    doSearch({
-                                        '$nodeTypesSelect': o.$nodeTypesSelect,
-                                        '$propsXml': o.$propsXml,
-                                        'searchtype': o.searchtype
-                                    });
-                            });
+        var $searchButton = $('<input type="button" name="search_button" id="search_button" value="Search" />');
+        $searchButton.CswButton('init', {ID: 'search_button', 
+                                            enabledText: 'Search', 
+                                            disabledText: 'Searching', 
+                                            onclick: function() {
+                                                        doSearch({
+                                                            '$nodeTypesSelect': o.$nodeTypesSelect,
+                                                            '$propsXml': o.$propsXml,
+                                                            'searchtype': o.searchtype
+                                                        });
+                                                }
+                                            });
         $searchButtonCell.append($searchButton);
     }
 
@@ -610,17 +617,21 @@
 
         //Row 1, Column 3: load button
         var $loadButtonCell = $bottomTable.CswTable('cell', 1, 3);
-        var $loadButton = $('<input type="button" name="load_button" id="load_button" value="Load" />')
-                          .button()
-                          .click(function() {
-                                    var r = {
-                                        'viewid': ''
-                                    };
-                                    $.extend(r,o.initOptions);
-                                    r.$parent.empty();
-                                    r.viewid = $viewSelect.find(':selected').val();
-                                    init(r,true);
-                          });
+        var $loadButton = $('<input type="button"/>');
+        $loadButton.CswButton('init', {ID: 'load_button', 
+                                            enabledText: 'Load', 
+                                            disabledText: 'Loading', 
+                                            onclick: function() {
+                                                    var r = {
+                                                        'viewid': ''
+                                                    };
+                                                    $.extend(r,o.initOptions);
+                                                    r.$parent.empty();
+                                                    r.viewid = $viewSelect.find(':selected').val();
+                                                    init(r,true);
+                                                }
+                                            });
+
         $loadButtonCell.append($loadButton);
 
         //Row 2, Column 2: new custom search
