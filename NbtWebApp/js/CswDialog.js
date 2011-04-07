@@ -152,10 +152,11 @@
 							}
 							$div.append('<br/><br/>');
 	
-							var $deletebtn = $('<input type="button" id="deletenode_submit" name="deletenode_submit" value="Delete" />')
-												.appendTo($div)
-												.click(function () 
-													{
+							var $deletebtn = $('<input type="button" id="" name="deletenode_submit" value="" />');
+                            $deletebtn.CswButton('init', {ID: 'deletenode_submit', 
+                                            enabledText: 'Delete', 
+                                            disabledText: 'Deleting', 
+                                            onclick: function() {
 														$div.dialog('close');
 														deleteNodes({
 																	'nodeids': nodeids, 
@@ -163,18 +164,18 @@
 																	});
 
                                                 }
-													});
-                            $div.append($deletenode);
+                                            });
+							$div.append($deletebtn);
 
-							var $cancelbtn = $('<input type="button" id="deletenode_cancel" name="deletenode_cancel" value="Cancel" />')
-												.appendTo($div)
-												.click(function () {
+							var $cancelbtn = $('<input type="button" id="" name="deletenode_cancel" value="" />');
+                            $cancelbtn.CswButton('init', {ID: 'deletenode_cancel', 
+                                            enabledText: 'Cancel', 
                                             disabledText: 'Canceling', 
                                             onclick: function() {
-													$div.dialog('close');
+                                                        $div.dialog('close');
                                                 }
-												});
-                            $div.append($deletecancel);
+                                            });
+                            $div.append($cancelbtn);
 
 							_openDiv($div, 400, 200);
 						},
@@ -256,13 +257,14 @@
 									}
 							});
 
-							var $fileuploadcancel = $('<input type="button" id="" name="fileupload_cancel" value="" />');
+							var $fileuploadcancel = $('<input type="button" />');
 							$fileuploadcancel.CswButton('init', {ID: 'fileupload_cancel', 
                                             enabledText: 'Cancel', 
                                             disabledText: 'Canceling', 
                                             onclick: function() {
                                                         $div.dialog('close');
-								});
+                                            }
+						    });
 
 							_openDiv($div, 400, 300);
 						},
@@ -289,25 +291,35 @@
 								}
 							});
 
-							$('<input type="button" id="license_accept" name="license_accept" value="I Accept" />')
-								.appendTo($div)
-								.click(function () {
-									CswAjaxJSON({
-										url: o.AcceptLicenseUrl,
-										success: function(data) 
-											{
-												$div.dialog('close');
-												o.onAccept();
-											}
-									}); // ajax
-								}); // click
+							var $acceptbtn = $('<input type="button" />');
+                            $acceptbtn.CswButton('init', {ID: 'license_accept', 
+                                            enabledText: 'I Accept', 
+                                            disabledText: 'Accepting...', 
+                                            onclick: function() {
+									                CswAjaxJSON({
+										                url: o.AcceptLicenseUrl,
+										                success: function(data) 
+											                {
+												                $div.dialog('close');
+												                o.onAccept();
+											                }
+									                }); // ajax
+								                }
+                                            });
+                            $div.append($acceptbtn);
 
-							$('<input type="button" id="license_decline" name="license_decline" value="I Decline" />')
-								.appendTo($div)
-								.click(function () {
-									$div.dialog('close');
-									o.onDecline();
-								});
+							var $declinebtn = ('<input type="button" />');
+							$declinebtn.CswButton('init', {ID: 'license_decline', 
+                                            enabledText: 'I Decline', 
+                                            disabledText: 'Declining...', 
+                                            onclick: function() {
+                                                        $div.dialog('close');
+									                    o.onDecline();
+                                                }
+                                            });
+                            
+                            $div.append($declinebtn);
+
 							_openDiv($div, 800, 600);
 						},
 

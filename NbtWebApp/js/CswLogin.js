@@ -16,7 +16,9 @@
 
                             o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
 
-                        } else {
+                        } 
+                        else 
+                        {
                             var $LoginDiv = $( '<div id="logindiv" align="center">' +
                                                 '  <table>' +
                                                 '    <tr>' +
@@ -55,40 +57,38 @@
                             var $loginbutton = $('#login_button');
                             $loginbutton.CswButton('init', {ID: 'login_button', 
                                             enabledText: 'Login', 
-                                            disabledText: 'Loading...', 
+                                            disabledText: 'Logging in...', 
                                             onclick: function() {
                                                             $('#loginmsg').text('');
-								                            $(this).val('Logging in...')
-                                                                   .attr('disabled', 'true');
 
                                                             var AccessId = $('#login_accessid').val();
                                                             var UserName = $('#login_username').val();
                                                             var Password = $('#login_password').val();
 
+                                                            function _handleAuthenticated(UserName)
+                                                            {
+                                                                $.CswCookie('set', CswCookieName.Username, UserName);
+								                                $LoginDiv.remove();
+								                                o.onAuthenticate(UserName);
+                                                            }
+
                                                             CswAjaxJSON({
-                                                                            url: o.AuthenticateUrl,
-                                                                            data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
-                                                                            success: function (data) {
-                                                                                auth = data.AuthenticationStatus;
-                                                                                if(auth == 'Authenticated')
-                                                                                {
-														_handleAuthenticated()
-                                                                                }
-                                                                                else 
-                                                                                {
-                                                        _handleAuthenticationStatus(data, _handleAuthenticated);
-                                                                                }
-                                                                            } // success{}
-                                           }); // ajax
-
-								function _handleAuthenticated()
-								{
-                                    $.CswCookie('set', CswCookieName.Username, UserName);
-									$LoginDiv.remove();
-									o.onAuthenticate(UserName);
-								}
-
-
+                                                                        url: o.AuthenticateUrl,
+                                                                        data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
+                                                                        success: function (data) {
+                                                                            auth = data.AuthenticationStatus;
+                                                                            if(auth == 'Authenticated')
+                                                                            {
+														                        _handleAuthenticated(UserName);
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                _handleAuthenticationStatus(data, _handleAuthenticated);
+                                                                            }
+                                                                        } // success{}
+                                                            }); // ajax
+                                            } // onclick
+                            }); // button
                         } // if-else(ThisSessionId != null)
                     },  // login
 

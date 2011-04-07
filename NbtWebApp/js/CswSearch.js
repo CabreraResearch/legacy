@@ -441,7 +441,7 @@
         var $searchButtonCell = o.$parent.CswTable('cell', o.bottomRow, o.searchBtnCell)
                                 .attr({align:"right"})
                                 .empty();
-        var $searchButton = $('<input type="button" name="search_button" id="search_button" value="Search" />');
+        var $searchButton = $('<input type="button" />');
         $searchButton.CswButton('init', {ID: 'search_button', 
                                             enabledText: 'Search', 
                                             disabledText: 'Searching', 
