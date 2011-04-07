@@ -1,12 +1,10 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 //using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -171,7 +169,7 @@ namespace ChemSW.Nbt
                 //{
                 //    PropertyString.Add( String.Empty );
                 //}
-                
+
                 if( PropertyString[1] != String.Empty )
                     Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropertyString[1], true );
                 if( PropertyString[2] != String.Empty )
@@ -393,11 +391,11 @@ namespace ChemSW.Nbt
             this.Name = Prop.PropNameWithQuestionNo;
         }
 
-		
 
-		#region IComparable
 
-		public int CompareTo( object obj )
+        #region IComparable
+
+        public int CompareTo( object obj )
         {
             if( obj is CswNbtViewProperty )
                 return CompareTo( (CswNbtViewProperty) obj );
