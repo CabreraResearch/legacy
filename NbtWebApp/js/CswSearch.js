@@ -529,7 +529,6 @@
 		    'url': '/NbtWebApp/wsNBT.asmx/getClientSearchXml',
 		    'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeid,
             'success': function($xml) { 
-                log($xml);
                 o.searchtype = $xml.attr('searchtype');
                 switch(o.searchtype)
                 {
