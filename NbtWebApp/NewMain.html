@@ -130,15 +130,19 @@
 
 		if (o.all || o.left)
 		{
-			$('#LeftDiv').contents().remove();
+			$('#LeftDiv').empty();
 		}
 		if (o.all || o.right)
 		{
-			$('#RightDiv').contents().remove();
+			$('#RightDiv').empty();
 		}
 		if (o.all || o.center)
 		{
-			$('#CenterDiv').contents().remove();
+			$('#CenterDiv').empty();
+		}
+		if (o.all)
+		{
+			$('#MainMenuDiv').empty();
 		}
 	}
 
@@ -266,6 +270,11 @@
 			{
 				multi = !multi;
 				refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			},
+			'onEditView': function (viewid)
+			{
+				clear({ 'all': true });
+				$('#CenterDiv').CswViewEditor('init');
 			},
 			'Multi': multi,
 			'NodeCheckTreeId': MainTreeId

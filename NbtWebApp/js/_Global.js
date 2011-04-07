@@ -387,11 +387,12 @@ function GoHome()
 function HandleMenuItem(options) {
 	var o = {
 		'$ul': '',
-		'$this': '',
+		'$itemxml': '',
 		'onLogout': function () { },
 		'onAlterNode': function (nodeid, nodekey) { },
 		'onSearch': function (treexml, viewid, nodetypeid) { },
 		'onMultiEdit': function () { },
+		'onEditView': function (viewid) { },
 		'Multi': false,
 		'NodeCheckTreeId': ''
 	};
@@ -400,23 +401,23 @@ function HandleMenuItem(options) {
 	}
 
 	var $li;
-	if (o.$this.attr('href') != undefined && o.$this.attr('href') != '')
+	if (o.$itemxml.attr('href') != undefined && o.$itemxml.attr('href') != '')
 	{
-		$li = $('<li><a href="' + o.$this.attr('href') + '">' + o.$this.attr('text') + '</a></li>')
+		$li = $('<li><a href="' + o.$itemxml.attr('href') + '">' + o.$itemxml.attr('text') + '</a></li>')
 						.appendTo(o.$ul)
 	}
-	else if (o.$this.attr('popup') != undefined && o.$this.attr('popup') != '')
+	else if (o.$itemxml.attr('popup') != undefined && o.$itemxml.attr('popup') != '')
 	{
-		$li = $('<li class="headermenu_dialog">' + o.$this.attr('text') + '</li>')
+		$li = $('<li class="headermenu_dialog">' + o.$itemxml.attr('text') + '</li>')
 						.appendTo(o.$ul)
-						.click(function () { OpenDialog(o.$this.attr('text'), o.$this.attr('popup')); });
+						.click(function () { OpenDialog(o.$itemxml.attr('text'), o.$itemxml.attr('popup')); });
 	}
-	else if (o.$this.attr('action') != undefined && o.$this.attr('action') != '')
+	else if (o.$itemxml.attr('action') != undefined && o.$itemxml.attr('action') != '')
 	{
-		$li = $('<li><a href="#">' + o.$this.attr('text') + '</a></li>')
+		$li = $('<li><a href="#">' + o.$itemxml.attr('text') + '</a></li>')
 						.appendTo(o.$ul);
 		var $a = $li.children('a');
-		switch (o.$this.attr('action'))
+		switch (o.$itemxml.attr('action'))
 		{
 
 			case 'About':
@@ -427,7 +428,7 @@ function HandleMenuItem(options) {
 				$a.click(function ()
 				{
 					$.CswDialog('AddNodeDialog', {
-						'nodetypeid': o.$this.attr('nodetypeid'),
+						'nodetypeid': o.$itemxml.attr('nodetypeid'),
 						'onAddNode': o.onAlterNode
 					}); 
 					return false;
@@ -438,8 +439,8 @@ function HandleMenuItem(options) {
 				$a.click(function ()
 				{
 					$.CswDialog('DeleteNodeDialog', {
-						'nodename': o.$this.attr('nodename'),
-						'nodeid': o.$this.attr('nodeid'),
+						'nodename': o.$itemxml.attr('nodename'),
+						'nodeid': o.$itemxml.attr('nodeid'),
 						'onDeleteNode': o.onAlterNode,
 						'NodeCheckTreeId': o.NodeCheckTreeId,
 						'Multi': o.Multi
@@ -448,12 +449,16 @@ function HandleMenuItem(options) {
 				});
 				break;
 
+			case 'editview':
+				$a.click(function () { o.onEditView(o.$itemxml.attr('viewid')); return false; });
+				break;
+
 			case 'CopyNode':
 				$a.click(function ()
 				{
 					$.CswDialog('CopyNodeDialog', {
-						'nodename': o.$this.attr('nodename'),
-						'nodeid': o.$this.attr('nodeid'),
+						'nodename': o.$itemxml.attr('nodename'),
+						'nodeid': o.$itemxml.attr('nodeid'),
 						'onCopyNode': o.onAlterNode
 					});
 					return false;
@@ -472,8 +477,8 @@ function HandleMenuItem(options) {
                 $a.click(function ()
                 {
                     $.CswDialog('SearchDialog', {
-                        'viewid': o.$this.attr('viewid'),
-                        'nodetypeid': o.$this.attr('nodetypeid'),
+                    	'viewid': o.$itemxml.attr('viewid'),
+                    	'nodetypeid': o.$itemxml.attr('nodetypeid'),
                         'onSearch': o.onSearch
                     });
                     
@@ -487,7 +492,7 @@ function HandleMenuItem(options) {
 		}
 	}
 	else {
-		$li = $('<li>' + o.$this.attr('text') + '</li>')
+		$li = $('<li>' + o.$itemxml.attr('text') + '</li>')
 						.appendTo(o.$ul)
 	}
 	return $li;

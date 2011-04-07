@@ -17,7 +17,7 @@
                             o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
 
                         } else {
-                            var $LoginDiv = $( '<div id="logindiv" align="center">' +
+                            var $LoginDiv = $( '<form><div id="logindiv" align="center">' +
                                                 '  <table>' +
                                                 '    <tr>' +
                                                 '      <td align="right">Customer ID:</td>' +
@@ -33,14 +33,14 @@
                                                 '    </tr>' +
                                                 '    <tr>' +
                                                 '      <td align="right"></td>' +
-                                                '      <td><input type="button" id="login_button" name="Login" value="Login" />' +
+                                                '      <td><input type="submit" id="login_button" name="Login" value="Login" />' +
 												'          <span id="loginmsg" class="errorcontent" display="none"></span></td>' +
                                                 '    </tr>' +
                                                 '    <tr>' +
                                                 '      <td></td>' +
 												'      <td></td>' +
                                                 '    </tr>' + 
-                                                '  </table></div><br/><br/><br/><div id="assemblydiv" width="100%" align="right"></div>')
+                                                '  </table></div></form><br/><br/><br/><div id="assemblydiv" width="100%" align="right"></div>')
                                                 .appendTo($(this));
 
                             $('#assemblydiv').load('_Assembly.txt');
