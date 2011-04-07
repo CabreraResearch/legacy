@@ -263,6 +263,7 @@ namespace ChemSW.Nbt.WebPages
         {
             if( NewView.Visibility != NbtViewVisibility.Property )
                 CswViewListTree.ClearCache( Session );
+			Master.CswNbtResources.ViewCache.clearFromCache( NewView );
         }
 
         public void OnBeforeDeleteView( CswNbtView ViewToDelete )

@@ -209,7 +209,7 @@ namespace ChemSW.Nbt.WebServices
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displayrow", Row.ToString() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displaycol", Column.ToString() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "required", Prop.IsRequired.ToString().ToLower() );
-			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", Prop.ReadOnly.ToString().ToLower() );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", (Prop.ReadOnly || PropWrapper.ReadOnly).ToString().ToLower() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "gestalt", PropWrapper.Gestalt.Replace( "\"", "&quot;" ) );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "copyable", Prop.IsCopyable().ToString().ToLower() );
 			
