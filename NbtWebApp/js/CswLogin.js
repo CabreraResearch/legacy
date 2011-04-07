@@ -16,11 +16,8 @@
 
                             o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
 
-                        } 
-                        else 
-                        {
-                            var $LoginDiv = $( '<div id="logindiv" align="center">' +
-                                                '  <form>' +  
+						}						else 						{							var $LoginDiv = $( '<form><div id="logindiv" align="center">' +                                                '  <table>' +
+												'  <form>' +  
                                                 '    <table>' +
                                                 '    <tr>' +
                                                 '      <td align="right">Customer ID:</td>' +

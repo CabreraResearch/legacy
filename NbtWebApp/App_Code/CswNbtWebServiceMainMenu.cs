@@ -198,14 +198,17 @@ namespace ChemSW.Nbt.WebServices
 			// EDIT VIEW
 			if( ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Edit_View ) )
 			{
-				string EditViewHref = "EditView.aspx?viewid=" + ViewId;
-				if( View != null && View.Visibility == NbtViewVisibility.Property )
-				{
-					EditViewHref += "&step=2";
-				}
+				//string EditViewHref = "EditView.aspx?viewid=" + ViewId;
+				//if( View != null && View.Visibility == NbtViewVisibility.Property )
+				//{
+				//    EditViewHref += "&step=2";
+				//}
+				//MenuNode.Add( new XElement( "item",
+				//                            new XAttribute( "text", "Edit View" ),
+				//                            new XAttribute( "href", EditViewHref ) ) );
 				MenuNode.Add( new XElement( "item",
 											new XAttribute( "text", "Edit View" ),
-											new XAttribute( "href", EditViewHref ) ) );
+											new XAttribute( "action", "editview" ) ) );
 			}
 
 			// MULTI-EDIT

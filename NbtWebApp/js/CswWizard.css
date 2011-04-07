@@ -1,0 +1,52 @@
+﻿.CswWizard_WizardTable
+{
+	border: 1px solid #99ccff;
+	margin: 10px 0px 0px 10px;
+}
+.CswWizard_TitleCell
+{
+	background-color: #bbddff;
+	font-weight: bold;
+	font-size: 1.2em;
+	padding: 0px 0px 0px 10px;
+}
+.CswWizard_IndexCell
+{
+	background-color: #ddeeff;
+	width: 150px;
+	height: 400px;
+	padding: 10px;
+}
+.CswWizard_StepsCell
+{
+	border: 10px solid #ddeeff;
+	width: 600px;
+	height: 380px;
+}
+.CswWizard_ButtonsCell
+{
+	background-color: #ddeeff;
+	width: 600px;
+	height: 20px;
+	padding: 0px 10px 10px 10px;
+}
+.CswWizard_StepLinkDiv
+{
+}
+.CswWizard_StepLinkDivSelected
+{
+	background-color: #ffff00;
+}
+.CswWizard_StepDiv
+{
+	border: 1px solid #99ccff;
+	padding: 10px;
+	width: 580px;
+	height: 360px;
+	display: none;
+	background: #ffffff;
+}
+.CswWizard_StepTitle
+{
+	font-weight: bold;
+}
