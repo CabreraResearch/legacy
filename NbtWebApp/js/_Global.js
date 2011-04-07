@@ -326,18 +326,28 @@ function copyNode(options)
 	});
 }
 
-function deleteNode(options) {
+function deleteNodes(options) {
 	var o = {
-		'nodeid': '',
+		'nodeids': [],
 		'onSuccess': function (nodeid, nodekey) { }
 	};
 	if (options) {
 		$.extend(o, options);
 	}
 
+	var datastr = '{ "NodePks": [';
+	var first = true;
+	for (var n in o.nodeids)
+	{
+		if (!first) datastr += ',';
+		datastr += '"' + o.nodeids[n] + '"';
+		first = false;
+	}
+	datastr += '] }';
+
 	CswAjaxJSON({
-		url: '/NbtWebApp/wsNBT.asmx/DeleteNode',
-		data: '{ "NodePk":"' + o.nodeid + '" }',
+		url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',
+		data: datastr,
 		success: function (result) {
 			o.onSuccess('', '');  // returning '' will reselect the first node in the tree
 		}
@@ -349,8 +359,9 @@ function deleteNode(options) {
 // jsTree
 // ------------------------------------------------------------------------------------
 
-function jsTreeGetSelected($treediv, IDPrefix) 
+function jsTreeGetSelected($treediv)
 {
+	var IDPrefix = $treediv.attr('id');
 	$SelectedItem = $treediv.jstree('get_selected');
 	var ret = { 
 		'iconurl': $SelectedItem.children('a').children('ins').css('background-image'),
@@ -379,7 +390,10 @@ function HandleMenuItem(options) {
 		'$this': '',
 		'onLogout': function () { },
 		'onAlterNode': function (nodeid, nodekey) { },
-        'onSearch': function (treexml, viewid, nodetypeid) { }
+		'onSearch': function (treexml, viewid, nodetypeid) { },
+		'onMultiEdit': function () { },
+		'Multi': false,
+		'NodeCheckTreeId': ''
 	};
 	if (options) {
 		$.extend(o, options);
@@ -426,7 +440,9 @@ function HandleMenuItem(options) {
 					$.CswDialog('DeleteNodeDialog', {
 						'nodename': o.$this.attr('nodename'),
 						'nodeid': o.$this.attr('nodeid'),
-						'onDeleteNode': o.onAlterNode
+						'onDeleteNode': o.onAlterNode,
+						'NodeCheckTreeId': o.NodeCheckTreeId,
+						'Multi': o.Multi
 					});
 					return false;
 				});
@@ -463,7 +479,11 @@ function HandleMenuItem(options) {
                     
                     return false;
                 });
-                break;
+				break;
+			case 'multiedit':
+				$a.click(o.onMultiEdit);
+				break;
+
 		}
 	}
 	else {

@@ -50,7 +50,7 @@
 						"plugins": ["themes", "xml_data", "ui", "types"]
 					}).bind('select_node.jstree', 
 								function (e, data) {
-									var Selected = jsTreeGetSelected($viewsdiv, ''); 
+									var Selected = jsTreeGetSelected($viewsdiv); 
 									var optSelect = {
 												iconurl: Selected.iconurl,
 												type: Selected.$item.attr('type'),

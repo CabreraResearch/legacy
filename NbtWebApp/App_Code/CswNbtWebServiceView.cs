@@ -196,16 +196,25 @@ namespace ChemSW.Nbt.WebServices
 			string[] types = { "action", "category", "report", "viewtree", "viewgrid", "viewlist" };
 			foreach( string type in types )
 			{
+				bool Selectable = true;
+				if( type == "category" )
+					Selectable = false;
 				ReturnObj.Add( new JProperty( type, 
-									new JObject( 
-										new JProperty( "icon", 
-											new JObject( 
-												new JProperty( "image", "Images/view/" + type + @".gif" ) 
-														) 
-													) 
-												) 
-											)
-										);
+											  JObject.Parse( "{ \"icon\": { \"image\": \"Images/view/" + type + ".gif\" }, " +
+															 "\"hover_node\": "+ Selectable.ToString().ToLower()+", " +
+															 "\"select_node\": "+ Selectable.ToString().ToLower()+" } }" )));
+									// this puts quotes around the boolean values
+									//new JObject( 
+									//    new JProperty( "icon", 
+									//        new JObject( 
+									//            new JProperty( "image", "Images/view/" + type + @".gif" ) 
+									//        ) 
+									//    ),
+									//    new JProperty( "hover_node", Selectable.ToString().ToLower() )
+									//    new JProperty( "select_node", Selectable.ToString().ToLower() )
+									//) 
+							//    )
+							//);
 			}
 			string ret = ReturnObj.ToString();
 			return ret;

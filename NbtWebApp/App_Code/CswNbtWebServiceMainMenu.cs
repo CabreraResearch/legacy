@@ -105,7 +105,6 @@ namespace ChemSW.Nbt.WebServices
 				_CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Delete, Node.NodeTypeId, Node, null ) )
 			{
 
-				string PopUp = "Popup_DeleteNode.aspx?nodekey=" + Node.NodeId.PrimaryKey + "&checkednodeids=";
 				MenuNode.Add( new XElement( "item",
 											new XAttribute( "text", "Delete" ),
 											new XAttribute( "nodeid", Node.NodeId.ToString() ),
@@ -210,11 +209,15 @@ namespace ChemSW.Nbt.WebServices
 			}
 
 			// MULTI-EDIT
-			MenuNode.Add( new XElement( "item",
-										new XAttribute( "text", "Multi-Edit" ),
-										new XAttribute( "action", "multiedit" ) ) );
+			if( View != null && ( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List ) )
+			{
+				MenuNode.Add( new XElement( "item",
+											new XAttribute( "text", "Multi-Edit" ),
+											new XAttribute( "action", "multiedit" ) ) );
+			}
+
 			return MenuNode;
-		}
+		} // getMenu()
 
 	} // class CswNbtWebServiceMainMenu
 

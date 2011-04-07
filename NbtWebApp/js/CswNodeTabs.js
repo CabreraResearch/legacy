@@ -9,17 +9,22 @@
 			SinglePropUrl: '/NbtWebApp/wsNBT.asmx/getSingleProp',
 			PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
 			MovePropUrl: '/NbtWebApp/wsNBT.asmx/moveProp',
-			SavePropUrl: '/NbtWebApp/wsNBT.asmx/SaveProps',
-			nodeid: '',
+			SavePropUrl: '/NbtWebApp/wsNBT.asmx/saveProps',
+			CopyPropValuesUrl: '/NbtWebApp/wsNBT.asmx/copyPropValues',
+			nodeid: '',               
             relatednodeid: '',
-			tabid: '',
-			cswnbtnodekey: '',
-			nodetypeid: '',
+			tabid: '',                
+			cswnbtnodekey: '',        
+			nodetypeid: '',           
+			filterToPropId: '',       
+			title: '',
 			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
 			onSave: function (nodeid, cswnbtnodekey) { },
 			onBeforeTabSelect: function (tabid) { return true; },
 			onTabSelect: function (tabid) { },
-			onPropertyChange: function(propid, propname) { }
+			onPropertyChange: function(propid, propname) { },
+			ShowCheckboxes: false,
+			NodeCheckTreeId: ''
 		};
 
 		if (options)
@@ -81,7 +86,7 @@
 					getProps($tabcontentdiv, selectedtabid);
 					o.onTabSelect(selectedtabid);
 				} // success{}
-			});
+			}); // ajax
 		} // getTabs()
 
 		function getProps($tabcontentdiv, tabid)
@@ -94,6 +99,9 @@
 					var $form = $tabcontentdiv.children('form');
 					$form.contents().remove();
 
+					if(o.title != '')
+						$form.append(o.title);
+
 					var $layouttable = $form.CswLayoutTable('init', {
 						'ID': o.ID + '_props',
 						'OddCellRightAlign': true,
@@ -105,7 +113,7 @@
 						{
 							onSwap(onSwapData);
 						},
-						'showConfigButton': true,
+						'showConfigButton': (o.filterToPropId == ''),
 						'onConfigOn': function($buttontable) { 
 							$xml.children().each(function ()
 							{
@@ -234,16 +242,31 @@
 			$xml.children().each(function ()
 			{
 				var $propxml = $(this);
+				var propid = $propxml.attr('id');
 				var fieldtype = $propxml.attr('fieldtype');
 				var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.attr('displayrow'), $propxml.attr('displaycol'));
 
 				if (($propxml.attr('display') != 'false' || ConfigMode ) &&
 					fieldtype != 'Image' &&
-					fieldtype != 'Grid')
+					fieldtype != 'Grid' &&
+					(o.filterToPropId == '' || o.filterToPropId == propid))
 				{
 					var $labelcell = _getLabelCell($cellset);
 					$labelcell.addClass('propertylabel');
-					$labelcell.append($propxml.attr('name'));
+					if($propxml.attr('helptext') != '')
+					{
+						$('<a href="#" title="'+ $propxml.attr('helptext') + '" onclick="return false;">'+ $propxml.attr('name') +'</a>')
+							.appendTo($labelcell);
+					}
+					else
+					{
+						$labelcell.append($propxml.attr('name'));
+					}
+					if(o.ShowCheckboxes && $propxml.attr('copyable') == "true")
+					{
+						var $propcheck = $('<input type="checkbox" id="check_'+ propid +'" class="'+ o.ID +'_check" propid="'+ propid +'"></input>')
+							.appendTo($labelcell);
+					}
 				}
 
 				var $propcell = _getPropertyCell($cellset);
@@ -257,7 +280,8 @@
 		function _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode)
 		{
 			$propcell.empty();
-			if ($propxml.attr('display') != 'false' || ConfigMode )
+			if (($propxml.attr('display') != 'false' || ConfigMode ) &&
+				(o.filterToPropId == '' || o.filterToPropId == $propxml.attr('id')))
 			{
 				var fieldOpt = {
 					'fieldtype': $propxml.attr('fieldtype'),
@@ -343,9 +367,41 @@
 					data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', ViewId: '"+ $.CswCookie('get', CswCookieName.CurrentView.ViewId) +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",
 					success: function (data)
 					{
+						if(o.ShowCheckboxes)
+						{
+							// apply the newly saved checked property values on this node to the checked nodes
+							var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+							var $propchecks = $('.' + o.ID + '_check:checked');
+							if($nodechecks.length > 0 && $propchecks.length > 0)
+							{
+								var datastr = "{ SourceNodeKey: '" + o.cswnbtnodekey + "', CopyNodeIds: [";
+								var first = true;
+								$nodechecks.each(function() { 
+									var nodeid = $(this).attr('nodeid');
+									if(!first) datastr += ',';
+									datastr += "'" + nodeid + "'"; 
+									first = false;
+								});
+								datastr += '], PropIds: [';
+								first = true;
+								$propchecks.each(function() { 
+									var propid = $(this).attr('propid');
+									if(!first) datastr += ',';
+									datastr += "'" + propid + "'"; 
+									first = false;
+								});
+								datastr += '] }';
+
+								CswAjaxJSON({
+									url: o.CopyPropValuesUrl,
+									data: datastr
+								}); // ajax
+							} // if($nodechecks.length > 0 && $propchecks.length > 0)
+						} // if(o.ShowCheckboxes)
+
 						o.onSave(data.nodeid, data.cswnbtnodekey);
-					}
-				});
+					} // success
+				}); // ajax
 			} // if($form.valid())
 		} // Save()
 

@@ -25,7 +25,8 @@
 											};
 									},
 					onViewChange: function(newviewid) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
-					SelectFirstChild: true
+					SelectFirstChild: true,
+					ShowCheckboxes: false
 				};
 				if(options) $.extend(o, options);
 
@@ -50,7 +51,9 @@
 					data: data,
 					success: function ($xml) {
 						var selectid = '';
-						var treePlugins = ["themes", "xml_data", "ui", "types", "crrm"];
+						//var treePlugins = ["themes", "xml_data", "ui", "types", "crrm"];
+						var treePlugins = ["themes", "html_data", "ui", "types", "crrm"];
+
 						var treeThemes;
 						if(o.nodeid != undefined && o.nodeid != '') 
 						{
@@ -98,13 +101,61 @@
 						var $treexml = $xml.find('tree').children('root')
 						if($treexml.length > 0)
 						{
-							var treexmlstring = xmlToString($treexml);
+							//var treexmlstring = xmlToString($treexml);
+
+							//var $ul = $('<ul></ul>').appendTo($treediv);
+							var treehtmlstring = '<ul>';
+							$treexml.children().each(function() { treehtmlstring += _treeXmlToHtml($(this)); });
+							treehtmlstring += '</ul>';
+
+							function _treeXmlToHtml($itemxml)
+							{
+								var nodeid = $itemxml.attr('id').substring(IDPrefix.length);
+								var nodename = $itemxml.children('content').children('name').text();
+								var treestr = '<li id="'+ $itemxml.attr('id') +'" ';
+								treestr += '    rel="'+ $itemxml.attr('rel') +'" ';
+								treestr += '    class="jstree-'+ $itemxml.attr('state') +'" ';
+								if($itemxml.attr('cswnbtnodekey') != undefined)
+								{
+									treestr += '    cswnbtnodekey="'+ $itemxml.attr('cswnbtnodekey').replace(/"/g, '&quot;') +'">';
+								}
+								if(o.ShowCheckboxes)
+								{
+									treestr += '  <input type="checkbox" class="'+ IDPrefix +'check" id="check_'+ nodeid +'" rel="'+ $itemxml.attr('rel') +'" nodeid="'+ nodeid +'" nodename="'+ nodename +'"></input>';
+								}
+								treestr += '  <a href="#">'+ nodename +'</a>';
+								if($itemxml.children('item').length > 0)
+								{
+									// recurse
+									treestr += '<ul>';
+									$itemxml.children('item').each(function() { treestr += _treeXmlToHtml($(this)); });
+									treestr += '</ul>';
+								}
+								treestr += '</li>';
+								return treestr;
+							} // _treeXmlToHtml()
+
 							$treediv.jstree({
-								"xml_data": 
+//								"xml_data": 
+//									{
+//										"data": treexmlstring,
+//										"xsl": "nest",
+//										"ajax":
+//											{
+//												"type": 'POST',
+//												"url": url,
+//												"dataType": "xml",
+//												"data": function($nodeOpening) 
+//													{
+//														var nodekey = $nodeOpening.attr('cswnbtnodekey');
+//														return 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey=' + nodekey + '&IncludeNodeRequired=false&IncludeNodeKey=';
+//													}
+//											}
+//									},
+								"html_data":
 									{
-										"data": treexmlstring,
-										"xsl": "nest",
-										"ajax": 
+										"data": treehtmlstring,
+										"ajax":
 											{
 												"type": 'POST',
 												"url": url,
@@ -113,6 +164,15 @@
 													{
 														var nodekey = $nodeOpening.attr('cswnbtnodekey');
 														return 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey=' + nodekey + '&IncludeNodeRequired=false&IncludeNodeKey=';
+													},
+												"success": function(data, textStatus, XMLHttpRequest) 
+													{
+														// this is IE compliant
+														var $outerxml = $(XMLHttpRequest.responseXML);
+														var $xml = $outerxml.children().first();
+														var childhtmlstr = '';
+														$xml.children().each(function() { childhtmlstr = _treeXmlToHtml($(this)); });
+														return childhtmlstr;
 													}
 											}
 									},
@@ -131,9 +191,12 @@
 									"max_depth": -2
 								},
 								"plugins": treePlugins
+							}).bind('load_node.jstree', function(e, data) {
+								$('.'+ IDPrefix +'check').unbind('click');
+								$('.'+ IDPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
 							}).bind('select_node.jstree', 
 											function (e, data) {
-												var Selected = jsTreeGetSelected($treediv, IDPrefix);
+												var Selected = jsTreeGetSelected($treediv);
 												var optSelect =  {
 													nodeid: Selected.id, 
 													nodename: Selected.text, 
@@ -160,7 +223,7 @@
 																$treediv.jstree('remove', '#' + IDPrefix + optSelect.nodeid );
 
 																// get prior sibling (now selected)
-																var NewSelected = jsTreeGetSelected($treediv, IDPrefix);
+																var NewSelected = jsTreeGetSelected($treediv);
 																var AfterNodeId = IDPrefix + NewSelected.id;
 																var $itemxml = $xml.children().first();
 																	
@@ -198,6 +261,7 @@
 												}
 												else 
 												{
+													_clearChecks(IDPrefix);
 													o.onSelectNode(optSelect);
 												}
 											});
@@ -205,6 +269,9 @@
 							// The tree has initalization events that appear to happen asynchronously,
 							// and thus having an onSuccess() function that changes the selected node will
 							// cause a race condition.
+							
+							$('.'+ IDPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
+
 						} else {
 							$treediv.append('No Results');
 						}
@@ -229,6 +296,17 @@
 				$treediv.jstree('select_node', '#' + IDPrefix + o.newnodeid);
 			}
 	};
+
+	function _handleCheck($treediv, $checkbox)
+	{
+		var $selected = jsTreeGetSelected($treediv);
+		return ($selected.$item.attr('rel') == $checkbox.attr('rel'));
+	}
+
+	function _clearChecks(IDPrefix)
+	{
+		$('.'+ IDPrefix +'check').attr('checked', '');
+	}
 
 	// Method calling logic
 	$.fn.CswNodeTree = function (method) {

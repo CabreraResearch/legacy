@@ -8,10 +8,7 @@
                             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/authenticate',
                             onAuthenticate: function(Username) {}
                         };
-
-                        if (options) {
-                            $.extend(o, options);
-                        }
+                        if (options) $.extend(o, options);
 
                         var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
                         if(ThisSessionId != undefined && ThisSessionId != '' && ThisSessionId != null)
@@ -20,7 +17,7 @@
                             o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
 
                         } else {
-                            var $LoginDiv = $( '<div id="logindiv" align="center" />' +
+                            var $LoginDiv = $( '<div id="logindiv" align="center">' +
                                                 '  <table>' +
                                                 '    <tr>' +
                                                 '      <td align="right">Customer ID:</td>' +
@@ -75,46 +72,54 @@
                                                                                 auth = data.AuthenticationStatus;
                                                                                 if(auth == 'Authenticated')
                                                                                 {
-                                                                                    $.CswCookie('set', CswCookieName.Username, UserName);
-                                                                                    $LoginDiv.remove();
-                                                                                    o.onAuthenticate(UserName);
+														_handleAuthenticated()
                                                                                 }
                                                                                 else 
                                                                                 {
-                                                                                    _handleAuthenticationStatus(auth);
+                                                        _handleAuthenticationStatus(data, _handleAuthenticated);
                                                                                 }
                                                                             } // success{}
-                                                                       });
-                                                }
-                                            });
+                                           }); // ajax
+
+								function _handleAuthenticated()
+								{
+                                    $.CswCookie('set', CswCookieName.Username, UserName);
+									$LoginDiv.remove();
+									o.onAuthenticate(UserName);
+								}
+
 
                         } // if-else(ThisSessionId != null)
                     },  // login
-            'logout': function(options) {
-                        var o = {
-                            DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
-                            onDeauthenticate: function() {}
-                        };
 
-                        if (options) {
-                            $.extend(o, options);
-                        }
+            'logout': function(options) { _Logout(options); },
+		};
+
+
+		function _Logout(options) {
+			var o = {
+				DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
+				onDeauthenticate: function() {}
+			};
+
+			if (options) {
+				$.extend(o, options);
+			}
                         
-                        CswAjaxJSON({
-                                        url: o.DeauthenticateUrl,
-                                        data: "",
-                                        success: function (data) {
-                                            $.CswCookie('clear', CswCookieName.Username);
-                                            o.onDeauthenticate();
-                                        } // success{}
-                                    });                        
-                    } // logout
-        };
+			CswAjaxJSON({
+							url: o.DeauthenticateUrl,
+							data: "",
+							success: function (data) {
+								$.CswCookie('clear', CswCookieName.Username);
+								o.onDeauthenticate();
+							} // success{}
+						});                        
+		} // logout
 
-        function _handleAuthenticationStatus(status)
+        function _handleAuthenticationStatus(data, onAuthenticated)
         {
 			var txt = '';
-            switch(status)
+            switch(data.AuthenticationStatus)
 			{
 				case 'Failed': txt = "Login Failed"; break;
 				case 'Locked': txt = "Your account is locked.  Please see your account administrator."; break;
@@ -123,6 +128,21 @@
 				case 'NonExistentAccessId': txt = "Login Failed"; break;
 				case 'NonExistentSession': txt = "Login Failed"; break;
 				case 'Unknown': txt = "An Unknown Error Occurred"; break;
+				case 'ExpiredPassword': 
+					$.CswDialog('EditNodeDialog', { 
+						'nodeid': data.nodeid,
+						'cswnbtnodekey': data.cswnbtnodekey,
+						'filterToPropId': data.passwordpropid, 
+						'title': 'Your password has expired.  Please change it now:',
+						'onEditNode': function(nodeid, nodekey) { onAuthenticated(); } 
+					}); 
+					break;
+				case 'ShowLicense': 
+					$.CswDialog('ShowLicenseDialog', {
+						'onAccept': function() { onAuthenticated(); },
+						'onDecline': function() { _Logout(); },
+					}); 
+					break;
 			}
 			$('#loginmsg').text(txt);
 			$('#login_password').val('');   // case 21303

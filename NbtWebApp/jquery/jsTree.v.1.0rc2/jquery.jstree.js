@@ -3315,7 +3315,7 @@
 						};
 						success_func = function (d, t, x) {
 							var sf = this.get_settings().html_data.ajax.success; 
-							if(sf) { d = sf.call(this,d,t,x) || d; }
+							if(sf) { d = sf.call(this,d,t,x); } //|| d; }    sds for case 20798
 							if(d == "") {
 								return error_func.call(this, x, t, "");
 							}
