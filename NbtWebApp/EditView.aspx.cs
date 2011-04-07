@@ -101,9 +101,6 @@ namespace ChemSW.Nbt.WebPages
                 if( _ViewEditorWizard.SelectedView.Visibility != NbtViewVisibility.Property )
                     setViewId( _ViewEditorWizard.SelectedView.ViewId, true );
 
-                // BZ 8686 - Clear the view loader cache
-                Page.Session.Remove( CswViewListTree.SessionCachedXmlName );
-
                 if( ReturnTo != string.Empty )
                     Master.Redirect( ReturnTo );
                 else

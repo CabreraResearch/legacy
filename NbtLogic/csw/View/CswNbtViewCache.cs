@@ -77,17 +77,27 @@ namespace ChemSW.Nbt
         /// <param name="View">View to remove</param>
         public void clearFromCache( CswNbtView View )
         {
-            string ViewToClear = View.ToString();
-            ArrayList KeysToRemove = new ArrayList();
-            foreach (Int32 Key in ViewHash.Keys)
-            {
-                string ThisView = ViewHash[Key].ToString();
-                if (ThisView == ViewToClear)
-                    KeysToRemove.Add(Key);
-            }
-            foreach (Int32 Key in KeysToRemove)
-                ViewHash.Remove(Key);
-        }
+			// case 21181 - this did not clear changed views
+			//string ViewToClear = View.ToString();
+			//ArrayList KeysToRemove = new ArrayList();
+			//foreach( Int32 Key in ViewHash.Keys )
+			//{
+			//    string ThisView = ViewHash[Key].ToString();
+			//    if( ThisView == ViewToClear )
+			//        KeysToRemove.Add( Key );
+			//}
+			//foreach( Int32 Key in KeysToRemove )
+			//    ViewHash.Remove( Key );
+
+			if( View.SessionViewId != Int32.MinValue && ViewHash.ContainsKey( View.SessionViewId ) )
+			{
+				ViewHash.Remove( View.SessionViewId );
+			}
+			if( View.ViewId != Int32.MinValue && ViewHash.ContainsKey( View.ViewId ) )
+			{
+				ViewHash.Remove( View.ViewId );
+			}
+		} // clearFromCache()
 
 
         private string delim1 = "^^^";    // it's important that these delimiters are not the same delimiter
