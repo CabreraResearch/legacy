@@ -104,9 +104,6 @@
 							//var treexmlstring = xmlToString($treexml);
 
 							//var $ul = $('<ul></ul>').appendTo($treediv);
-							var treehtmlstring = '<ul>';
-							$treexml.children().each(function() { treehtmlstring += _treeXmlToHtml($(this)); });
-							treehtmlstring += '</ul>';
 
 							function _treeXmlToHtml($itemxml)
 							{
@@ -134,6 +131,10 @@
 								treestr += '</li>';
 								return treestr;
 							} // _treeXmlToHtml()
+
+							var treehtmlstring = '<ul>';
+							$treexml.children().each(function() { treehtmlstring += _treeXmlToHtml($(this)); });
+							treehtmlstring += '</ul>';
 
 							$treediv.jstree({
 //								"xml_data": 
