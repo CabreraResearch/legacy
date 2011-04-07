@@ -798,9 +798,26 @@ namespace ChemSW.Nbt.WebPages
                     {
                         throw new CswDniException( "Compliant Answer is a required field", "Value option string is null" );
                     }
-                    PropToSave.ValueOptions = ValueOptionsString;
 
-                    PropToSave.PropName = getPropAttributeValue( "EditProp_NameValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+					// case 21178 - trim options
+					CswCommaDelimitedString ValueOptionsCDS = new CswCommaDelimitedString();
+					ValueOptionsCDS.FromString( ValueOptionsString );
+					for( Int32 i = 0; i < ValueOptionsCDS.Count; i++ )
+					{
+						ValueOptionsCDS[i] = ValueOptionsCDS[i].Trim();
+					}
+					PropToSave.ValueOptions = ValueOptionsCDS.ToString();
+
+					string ListOptionsString = getPropAttributeValue( "EditProp_OptionsValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+					CswCommaDelimitedString ListOptionsCDS = new CswCommaDelimitedString();
+					ListOptionsCDS.FromString( ListOptionsString );
+					for( Int32 i = 0; i < ListOptionsCDS.Count; i++ )
+					{
+						ListOptionsCDS[i] = ListOptionsCDS[i].Trim();
+					}
+					PropToSave.ListOptions = ListOptionsCDS.ToString();
+					
+					PropToSave.PropName = getPropAttributeValue( "EditProp_NameValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.NodeTypeTab = SelectedNodeType.getNodeTypeTab( EditPropTabSelect.SelectedValue.ToString() );   // BZ 8014 - need to use tabname, not tabid, for versioning
                     PropToSave.DisplayRow = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.DisplayColumn = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
@@ -816,7 +833,6 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.MinValue = Convert.ToDouble( getPropAttributeValue( "EditProp_MinValue" + OldSelectedNodeTypePropId.ToString(), typeof( Double ), EditPropPlaceHolder ) );
                     PropToSave.MaxValue = Convert.ToDouble( getPropAttributeValue( "EditProp_MaxValue" + OldSelectedNodeTypePropId.ToString(), typeof( Double ), EditPropPlaceHolder ) );
                     PropToSave.IsUnique = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsUnique" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
-                    PropToSave.ListOptions = getPropAttributeValue( "EditProp_OptionsValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.StaticText = getPropAttributeValue( "EditProp_TextValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.ReadOnly = Convert.ToBoolean( getPropAttributeValue( "EditProp_ReadOnlyValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.UseNumbering = Convert.ToBoolean( getPropAttributeValue( "EditProp_UseNumbering" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
