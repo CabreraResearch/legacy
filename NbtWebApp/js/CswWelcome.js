@@ -166,20 +166,23 @@
 				var $buttonimg = $('<img id="welcome_btnimg" />')
 										.appendTo( $table.CswTable('cell', 6, 2) );
 
-				var $addbutton = $('<input type="button" id="welcome_add" name="welcome_add" value="Add" />')
-									.button()
-                                    .appendTo( $table.CswTable('cell', 7, 2) )
-									.click(function() { 
-										_addItem({ 
-													'AddWelcomeItemUrl': o.AddWelcomeItemUrl,
-													'type': $typeselect.val(),
-													'viewid': $viewselect.CswViewSelect('value'),
-													'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
-													'text': $welcometext.val(),
-													'iconfilename': $buttonsel.val(),
-													'onSuccess': o.onAdd
-												});
-									});
+				var $addbutton = $('<input type="button" />')
+                $addbutton.CswButton('init', {ID: 'welcome_add', 
+                                            enabledText: 'Add', 
+                                            disabledText: 'Adding', 
+                                            onclick: function() { 
+										            _addItem({ 
+													            'AddWelcomeItemUrl': o.AddWelcomeItemUrl,
+													            'type': $typeselect.val(),
+													            'viewid': $viewselect.CswViewSelect('value'),
+													            'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
+													            'text': $welcometext.val(),
+													            'iconfilename': $buttonsel.val(),
+													            'onSuccess': o.onAdd
+												            });
+									            }
+                                            });
+                $table.CswTable('cell', 7, 2).append($addbutton);
 
 				$buttonsel.change(function(event) { 
 					$buttonimg.attr('src', 'Images/biggerbuttons/' + $buttonsel.val()); 

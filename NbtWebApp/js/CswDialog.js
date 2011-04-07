@@ -97,24 +97,30 @@
 
 							var $div = $('<div>Copying: ' + o.nodename + '<br/><br/></div>');
 
-							$('<input type="button" id="copynode_submit" name="copynode_submit" value="Copy" />')
-                                .button()
-								.appendTo($div)
-								.click(function () {
-									$div.dialog('close');
-									copyNode({
-												'nodeid': o.nodeid, 
-												'nodekey': o.nodekey, 
-												'onSuccess': o.onCopyNode 
-											   });
-								});
+							var $copynode = $('<input type="button"/>');
+                            $copynode.CswButton('init', {ID: 'copynode_submit', 
+                                            enabledText: 'Copy', 
+                                            disabledText: 'Copying', 
+                                            onclick: function() {
+									                $div.dialog('close');
+									                copyNode({
+												                'nodeid': o.nodeid, 
+												                'nodekey': o.nodekey, 
+												                'onSuccess': o.onCopyNode 
+											                   });
+								                }
+                                            });
+                            $div.append($copynode);                                
 
-							$('<input type="button" id="copynode_cancel" name="copynode_cancel" value="Cancel" />')
-                                .button()
-								.appendTo($div)
-								.click(function () {
-									$div.dialog('close');
-								});
+							var $cancelcopy = $('<input type="button"/>');
+                            $cancelcopy.CswButton('init', {ID: 'copynode_cancel', 
+                                            enabledText: 'Cancel', 
+                                            disabledText: 'Canceling', 
+                                            onclick: function() {
+                                                        $div.dialog('close');
+                                                 }
+                                            });    
+                            $div.append($cancelcopy);
 
 							
 							$div.dialog({ 'modal': true,
@@ -138,24 +144,31 @@
 
 							var $div = $('<div>Are you sure you want to delete: ' + o.nodename + '?<br/><br/></div>');
 
-							$('<input type="button" id="deletenode_submit" name="deletenode_submit" value="Delete" />')
-								.button()
-                                .appendTo($div)
-								.click(function () {
-									$div.dialog('close');
-									deleteNode({
-												'nodeid': o.nodeid, 
-												'nodekey': o.nodekey, 
-												'onSuccess': o.onDeleteNode 
-											   });
-								});
+							var $deletenode = $('<input type="button" id="" name="deletenode_submit" value="" />');
+                            $deletenode.CswButton('init', {ID: 'deletenode_submit', 
+                                            enabledText: 'Delete', 
+                                            disabledText: 'Deleting', 
+                                            onclick: function() {
+                                                        $div.dialog('close');
+									                    deleteNode({
+												            'nodeid': o.nodeid, 
+												            'nodekey': o.nodekey, 
+												            'onSuccess': o.onDeleteNode 
+										                });
 
-							$('<input type="button" id="deletenode_cancel" name="deletenode_cancel" value="Cancel" />')
-								.button()
-                                .appendTo($div)
-								.click(function () {
-									$div.dialog('close');
-								});
+                                                }
+                                            });
+                            $div.append($deletenode);
+
+							var $deletecancel = $('<input type="button" />');
+							$deletecancel.CswButton('init', {ID: 'deletenode_cancel', 
+                                            enabledText: 'Cancel', 
+                                            disabledText: 'Canceling', 
+                                            onclick: function() {
+                                                        $div.dialog('close');
+                                                }
+                                            });	
+                            $div.append($deletecancel);
 
 							$div.dialog({ 'modal': true,
 								'width': 400,
@@ -241,20 +254,21 @@
 									}
 							});
 
-							$('<input type="button" id="fileupload_cancel" name="fileupload_cancel" value="Cancel" />')
-								.button()
-                                .appendTo($div)
-								.click(function () {
-									$div.dialog('close');
-								});
-
-						$div.dialog({ 'modal': true,
-								'width': 400,
-								'height': 300,
-								'close': function(event, ui) { $div.remove(); } 
-							});
-
-
+							var $fileuploadcancel = $('<input type="button" id="" name="fileupload_cancel" value="" />');
+							$fileuploadcancel.CswButton('init', {ID: 'fileupload_cancel', 
+                                            enabledText: 'Cancel', 
+                                            disabledText: 'Canceling', 
+                                            onclick: function() {
+                                                        $div.dialog('close');
+                                                }
+                                            });	
+                            $div.append($fileuploadcancel);                                
+                            
+						    $div.dialog({ 'modal': true,
+								    'width': 400,
+								    'height': 300,
+								    'close': function(event, ui) { $div.remove(); } 
+							    });
 						},
 
 		// Generic
