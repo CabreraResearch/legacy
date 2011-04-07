@@ -8,17 +8,17 @@
 			$Div = $(this);
 			var checkOpt = {
                     Checked: o.$propxml.children('checked').text().trim(),
-                    '$propxml': o.$propxml
+                    Required: o.Required,
+                    ReadOnly: o.ReadOnly,
+                    onchange: o.onchange
             };
 
 			$Div.CswTristateCheckBox('init',checkOpt);
 		},
 		save: function(o) { //$propdiv, $xml
-			$Div = $(this);
-            var checkOpt = {
-                    '$propxml': o.$propxml
-            };
-            $Div.CswTristateCheckBox('save',checkOpt);
+			$Div = o.$propdiv.find('div');
+			var Checked = $Div.CswTristateCheckBox('value');
+			o.$propxml.children('checked').text(Checked);
 		}
 	};
 	

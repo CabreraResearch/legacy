@@ -9,7 +9,6 @@
 			var o = {
 				'ID': '',
 				'Checked': '',
-                '$propxml': '',
 				'ReadOnly': false,
 				'Required': false,
 				'onchange': function() { }
@@ -48,17 +47,14 @@
 									});
 			}
 		},
-		value: function (o)
+		value: function ()
 		{
 			var $CheckboxImage = $(this);
 			var Checked = $CheckboxImage.attr('alt');
-			return Checked;
-		},
-        save: function(o) { //$propxml
-			var $CheckboxImage = $(this);
-            var Checked = $CheckboxImage.attr('alt');
-			o.$propxml.children('checked').text(Checked);
+			debugger;
+            return Checked;
 		}
+ 
 	};
 
     function onClick($ImageDiv, Required)
