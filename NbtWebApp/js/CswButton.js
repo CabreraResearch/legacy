@@ -12,6 +12,7 @@
                 'disabledText': '',
                 'hasText': true,
                 'disableOnClick': true,
+                'enableAfterClick': false,
                 'primaryicon': '',
                 'secondaryicon': '',
 				'ReadOnly': false,
@@ -40,7 +41,7 @@
                         $thisButton = $(this);
                         if(o.disableOnClick) $thisButton.button({label: o.disabledText, disabled: true});
                         o.onclick();
-                        if(o.disableOnClick) $thisButton.button({label: o.enabledText, disabled: false});
+                        if(o.enableAfterClick) $thisButton.button({label: o.enabledText, disabled: false});
                    })
                    .attr('id',o.ID)
                    .attr('name',o.ID);
