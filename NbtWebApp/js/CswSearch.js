@@ -586,7 +586,7 @@
     {
         var o = {
             '$bottomspandiv': '',
-            '$parent': ''
+            'initOptions': ''
         };
         
         if(options) $.extend(o,options);
@@ -622,10 +622,9 @@
                                             disabledText: 'Loading', 
                                             onclick: function() {
                                                     var r = {
-                                                        'viewid': '',
-                                                        '$parent': ''
+                                                        'viewid': ''
                                                     };
-                                                    r.$parent = o.$parent;
+                                                    $.extend(r,o.initOptions);                                                    
                                                     r.$parent.empty();
                                                     r.viewid = $viewSelect.find(':selected').val();
                                                     init(r,true);
