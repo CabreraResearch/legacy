@@ -37,18 +37,16 @@
 				var $buttonscell = $table.CswTable('cell', 3, 1)
 									.addClass('CswWizard_ButtonsCell');
 
-				var steplinks = [];
-				var stepdivs = [];
 				for(var s = 1; s <= o.StepCount; s++)
 				{
-					var title = o.Steps[s];
+					var steptitle = o.Steps[s];
 
-					steplinks[s] = $( '<div class="CswWizard_StepLinkDiv" stepno="' + s + '"><a href="#">' + s + '.&nbsp;' + title + '</a></div>')
+					$('<div class="CswWizard_StepLinkDiv" stepno="' + s + '"><a href="#">' + s + '.&nbsp;' + steptitle + '</a></div>')
 										.appendTo($indexcell)
 										.children('a')
 										.click( function(stepno) { return function() { _selectStep($table, stepno, o.onStepChange); return false; }; }(s) );
 
-					stepdivs[s] = $('<div class="CswWizard_StepDiv" id="' + o.ID + '_' + s + '" stepno="' + s + '" ></div>')
+					$('<div class="CswWizard_StepDiv" id="' + o.ID + '_' + s + '" stepno="' + s + '" ><span class="CswWizard_StepTitle">'+ steptitle +'</span><br/></br><div id="' + o.ID + '_' + s + '_content"></div></div>')
 										.appendTo($stepscell);
 				}
 
@@ -86,7 +84,7 @@
 
 		'div': function(stepno) {
 				var $table = $(this);
-				return $table.find('.CswWizard_StepDiv[stepno=' + stepno + ']');
+				return $table.find('.CswWizard_StepDiv[stepno=' + stepno + '] div');
 			}
 	};
 

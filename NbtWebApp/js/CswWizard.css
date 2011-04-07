@@ -46,3 +46,7 @@
 	display: none;
 	background: #ffffff;
 }
+.CswWizard_StepTitle
+{
+	font-weight: bold;
+}
