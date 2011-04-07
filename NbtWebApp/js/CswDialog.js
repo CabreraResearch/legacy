@@ -92,31 +92,26 @@
 
 							var $div = $('<div>Copying: ' + o.nodename + '<br/><br/></div>');
 
-							var $copynode = $('<input type="button"/>');
-                            $copynode.CswButton('init', {ID: 'copynode_submit', 
-                                            enabledText: 'Copy', 
-                                            disabledText: 'Copying', 
-                                            onclick: function() {
-									                $div.dialog('close');
-									                copyNode({
-												                'nodeid': o.nodeid, 
-												                'nodekey': o.nodekey, 
-												                'onSuccess': o.onCopyNode 
-											                   });
-								                }
-                                            });
-                            $div.append($copynode);                                
+							var $copybtn = $div.CswButton({ID: 'copynode_submit', 
+                                                                    enabledText: 'Copy', 
+                                                                    disabledText: 'Copying', 
+                                                                    onclick: function() {
+									                                        $div.dialog('close');
+									                                        copyNode({
+												                                        'nodeid': o.nodeid, 
+												                                        'nodekey': o.nodekey, 
+												                                        'onSuccess': o.onCopyNode 
+											                                           });
+								                                        }
+                                                                    });
 
-							var $cancelcopy = $('<input type="button"/>');
-                            $cancelcopy.CswButton('init', {ID: 'copynode_cancel', 
-                                            enabledText: 'Cancel', 
-                                            disabledText: 'Canceling', 
-                                            onclick: function() {
-                                                        $div.dialog('close');
-                                                 }
-                                            });    
-                            $div.append($cancelcopy);
-
+							var $cancelbtn = $div.CswButton({ID: 'copynode_cancel', 
+                                                                        enabledText: 'Cancel', 
+                                                                        disabledText: 'Canceling', 
+                                                                        onclick: function() {
+                                                                                    $div.dialog('close');
+                                                                             }
+                                                                        });    
 							
 							_openDiv($div, 400, 300);
 						},        
@@ -152,31 +147,26 @@
 							}
 							$div.append('<br/><br/>');
 	
-							var $deletebtn = $('<input type="button" id="" name="deletenode_submit" value="" />');
-                            $deletebtn.CswButton('init', {ID: 'deletenode_submit', 
-                                            enabledText: 'Delete', 
-                                            disabledText: 'Deleting', 
-                                            onclick: function() {
-														$div.dialog('close');
-														deleteNodes({
-																	'nodeids': nodeids, 
-																	'onSuccess': o.onDeleteNode 
-																	});
+							var $deletebtn = $div.CswButton({ID: 'deletenode_submit', 
+                                                                        enabledText: 'Delete', 
+                                                                        disabledText: 'Deleting', 
+                                                                        onclick: function() {
+														                            $div.dialog('close');
+														                            deleteNodes({
+																	                            'nodeids': nodeids, 
+																	                            'onSuccess': o.onDeleteNode 
+																	                            });
 
-                                                }
-                                            });
-							$div.append($deletebtn);
+                                                                            }
+                                                                        });
 
-							var $cancelbtn = $('<input type="button" id="" name="deletenode_cancel" value="" />');
-                            $cancelbtn.CswButton('init', {ID: 'deletenode_cancel', 
-                                            enabledText: 'Cancel', 
-                                            disabledText: 'Canceling', 
-                                            onclick: function() {
-                                                        $div.dialog('close');
-                                                }
-                                            });
-                            $div.append($cancelbtn);
-
+							var $cancelbtn = $div.CswButton({ID: 'deletenode_cancel', 
+                                                                        enabledText: 'Cancel', 
+                                                                        disabledText: 'Canceling', 
+                                                                        onclick: function() {
+                                                                                    $div.dialog('close');
+                                                                            }
+                                                                        });
 							_openDiv($div, 400, 200);
 						},
 
@@ -257,13 +247,12 @@
 									}
 							});
 
-							var $fileuploadcancel = $('<input type="button" />');
-							$fileuploadcancel.CswButton('init', {ID: 'fileupload_cancel', 
-                                            enabledText: 'Cancel', 
-                                            disabledText: 'Canceling', 
-                                            onclick: function() {
-                                                        $div.dialog('close');
-                                            }
+							var $fileuploadcancel = $div.CswButton({ID: 'fileupload_cancel', 
+                                                                    enabledText: 'Cancel', 
+                                                                    disabledText: 'Canceling', 
+                                                                    onclick: function() {
+                                                                                $div.dialog('close');
+                                                                    }
 						    });
 
 							_openDiv($div, 400, 300);
@@ -291,34 +280,29 @@
 								}
 							});
 
-							var $acceptbtn = $('<input type="button" />');
-                            $acceptbtn.CswButton('init', {ID: 'license_accept', 
-                                            enabledText: 'I Accept', 
-                                            disabledText: 'Accepting...', 
-                                            onclick: function() {
-									                CswAjaxJSON({
-										                url: o.AcceptLicenseUrl,
-										                success: function(data) 
-											                {
-												                $div.dialog('close');
-												                o.onAccept();
-											                }
-									                }); // ajax
-								                }
-                                            });
-                            $div.append($acceptbtn);
+							var $acceptbtn = $div.CswButton({ID: 'license_accept', 
+                                                            enabledText: 'I Accept', 
+                                                            disabledText: 'Accepting...', 
+                                                            onclick: function() {
+									                                CswAjaxJSON({
+										                                url: o.AcceptLicenseUrl,
+										                                success: function(data) 
+											                                {
+												                                $div.dialog('close');
+												                                o.onAccept();
+											                                }
+									                                }); // ajax
+								                                }
+                                                            });
 
-							var $declinebtn = ('<input type="button" />');
-							$declinebtn.CswButton('init', {ID: 'license_decline', 
-                                            enabledText: 'I Decline', 
-                                            disabledText: 'Declining...', 
-                                            onclick: function() {
-                                                        $div.dialog('close');
-									                    o.onDecline();
-                                                }
-                                            });
-                            
-                            $div.append($declinebtn);
+							var $declinebtn = $div.CswButton({ID: 'license_decline', 
+                                                                enabledText: 'I Decline', 
+                                                                disabledText: 'Declining...', 
+                                                                onclick: function() {
+                                                                            $div.dialog('close');
+									                                        o.onDecline();
+                                                                    }
+                                                                });
 
 							_openDiv($div, 800, 600);
 						},

@@ -175,13 +175,11 @@
 
 					_handleProps($layouttable, $xml, $tabcontentdiv, tabid);
 
-					var $savetab = $('<input type="button" />');
-                    $savetab.CswButton('init', {ID: 'SaveTab', 
+					var $savetab = $form.CswButton({ID: 'SaveTab', 
                                             enabledText: 'Save Changes', 
                                             disabledText: 'Saving...', 
                                             onclick: function () { Save($form, $layouttable, $xml) }
                                             });
-                    $form.append($savetab);
 
 					// Validation
 					$form.validate({

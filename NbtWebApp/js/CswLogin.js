@@ -36,7 +36,7 @@
                                                 '    </tr>' +
                                                 '    <tr>' +
                                                 '      <td align="right"></td>' +
-                                                '      <td><input type="submit" id="login_button" name="Login" value="Login" />' +
+                                                '      <td id="login_button_cell"> '+ //<input type="submit" id="login_button" name="Login" value="Login" />' +
 												'          <span id="loginmsg" class="errorcontent" display="none"></span></td>' +
                                                 '    </tr>' +
                                                 '    <tr>' +
@@ -50,11 +50,10 @@
 							
 							$('#login_accessid').focus();
 
-                            var $loginbutton = $('#login_button');
-                            $loginbutton.CswButton('init', {ID: 'login_button', 
-                                            enabledText: 'Login', 
-                                            disabledText: 'Logging in...', 
-                                            onclick: function() {
+                            var $loginbutton = $('#login_button_cell').CswButton({ID: 'login_button', 
+                                                        enabledText: 'Login', 
+                                                        disabledText: 'Logging in...', 
+                                                        onclick: function() {
                                                             $('#loginmsg').text('');
 
                                                             var AccessId = $('#login_accessid').val();

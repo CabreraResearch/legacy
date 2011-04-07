@@ -166,22 +166,21 @@
 				var $buttonimg = $('<img id="welcome_btnimg" />')
 										.appendTo( $table.CswTable('cell', 6, 2) );
 
-				var $addbutton = $('<input type="button" />')
-                $addbutton.CswButton('init', {ID: 'welcome_add', 
-                                            enabledText: 'Add', 
-                                            disabledText: 'Adding', 
-                                            onclick: function() { 
-										            _addItem({ 
-													            'AddWelcomeItemUrl': o.AddWelcomeItemUrl,
-													            'type': $typeselect.val(),
-													            'viewid': $viewselect.CswViewSelect('value'),
-													            'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
-													            'text': $welcometext.val(),
-													            'iconfilename': $buttonsel.val(),
-													            'onSuccess': o.onAdd
-												            });
-									            }
-                                            });
+				var $addbutton = $table.CswTable('cell', 7, 2).CswButton({ID: 'welcome_add', 
+                                                        enabledText: 'Add', 
+                                                        disabledText: 'Adding', 
+                                                        onclick: function() { 
+										                        _addItem({ 
+													                    'AddWelcomeItemUrl': o.AddWelcomeItemUrl,
+													                    'type': $typeselect.val(),
+													                    'viewid': $viewselect.CswViewSelect('value'),
+													                    'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
+													                    'text': $welcometext.val(),
+													                    'iconfilename': $buttonsel.val(),
+													                    'onSuccess': o.onAdd
+												                    });
+									                            }
+                                                    });
                 $table.CswTable('cell', 7, 2).append($addbutton);
 
 				$buttonsel.change(function(event) { 

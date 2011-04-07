@@ -414,8 +414,7 @@
         //Row i, Column 1 (1/1): clear button
         var $clearButtonCell = $splitCellTable.CswTable('cell', 1, 1)
                                .empty();
-        var $clearButton = $('<input type="button"/>');
-        $clearButton.CswButton('init', {ID: 'clear_button', 
+        var $clearButton = $clearButtonCell.CswButton({ID: 'clear_button', 
                                         enabledText: 'Clear', 
                                         disabledText: 'Clear',
                                         disableOnClick: false, 
@@ -423,8 +422,6 @@
                                                     reInit(o);
                                                 }
                                         });
-
-        $clearButtonCell.append($clearButton);
                                             
         //Row i, Column 1 (1/2): advanced link
         var $advancedLinkCell = $splitCellTable.CswTable('cell', 1, 2)
@@ -441,8 +438,7 @@
         var $searchButtonCell = o.$parent.CswTable('cell', o.bottomRow, o.searchBtnCell)
                                 .attr({align:"right"})
                                 .empty();
-        var $searchButton = $('<input type="button" />');
-        $searchButton.CswButton('init', {ID: 'search_button', 
+        var $searchButton = $searchButtonCell.CswButton({ID: 'search_button', 
                                             enabledText: 'Search', 
                                             disabledText: 'Searching', 
                                             onclick: function() {
@@ -453,7 +449,6 @@
                                                         });
                                                 }
                                             });
-        $searchButtonCell.append($searchButton);
     }
 
     function reInit(options)
@@ -616,8 +611,7 @@
 
         //Row 1, Column 3: load button
         var $loadButtonCell = $bottomTable.CswTable('cell', 1, 3);
-        var $loadButton = $('<input type="button"/>');
-        $loadButton.CswButton('init', {ID: 'load_button', 
+        var $loadButton = $loadButtonCell.CswButton({ID: 'load_button', 
                                             enabledText: 'Load', 
                                             disabledText: 'Loading', 
                                             onclick: function() {
@@ -630,8 +624,6 @@
                                                     init(r,true);
                                                 }
                                             });
-
-        $loadButtonCell.append($loadButton);
 
         //Row 2, Column 2: new custom search
         var $customSearchCell = $bottomTable.CswTable('cell', 2, 2);
