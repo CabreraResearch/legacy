@@ -1,10 +1,13 @@
 using System;
 using System.Collections;
 using System.Text;
+using System.Data;
 using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
 using ChemSW.MtSched.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -14,60 +17,111 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { throw new NotImplementedException(); }
+            get { return ( "NbtUpdtInspection" ); }
         }
 
         public bool doesItemRunNow()
         {
-            throw new NotImplementedException();
-        }
+            bool ReturnVal = false;
 
+            _InspectionNode = null; //WE NEED TO QUERY FOR NODE HERE; IT USED TO BE PASE
+
+            if( null != _InspectionNode )
+            {
+                DateTime DueDate = _InspectionNode.Date.DateValue;
+                CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( _InspectionNode.Generator.RelatedNodeId );
+                if( null != GeneratorNode &&
+                    _Pending == _InspectionNode.Status.Value &&
+                    DateTime.Today >= DueDate &&
+                    Tristate.True != _InspectionNode.IsFuture.Checked )
+                {
+                    ReturnVal = true;
+                }
+            }
+
+            return ( ReturnVal );
+
+        }//doesItemRunNow()
+
+        private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set { _LogicRunStatus = value; }
+            get { return ( _LogicRunStatus ); }
         }
 
+        private string _CompletionMessage = string.Empty;
         public string CompletionMessage
         {
-            get { throw new NotImplementedException(); }
+            get { return ( _CompletionMessage ); }
         }
 
+
+        private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
-            get { throw new NotImplementedException(); }
+            get { return ( _CswScheduleLogicDetail ); }
         }
 
+
+        private CswNbtResources _CswNbtResources = null;
         public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
         {
-            throw new NotImplementedException();
+            _CswNbtResources = (CswNbtResources) RuleResources;
+            _CswScheduleLogicDetail = CswScheduleLogicDetail;
         }
 
+        private CswNbtNode _CswNbtNodeGenerator;
+        private CswNbtObjClassInspectionDesign _InspectionNode;
+        private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending );
+        private string _Overdue = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Overdue );
         public void threadCallBack()
         {
-            throw new NotImplementedException();
-        }
+            _LogicRunStatus = LogicRunStatus.Running;
+
+            if( LogicRunStatus.Stopping != _LogicRunStatus )
+            {
+
+                try
+                {
+                    if( null != _InspectionNode )
+                    {
+                        _InspectionNode.Status.Value = _Overdue;
+                        _InspectionNode.postChanges( true );
+                    }
+                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
+
+                }//try
+
+                catch( Exception Exception )
+                {
+
+                    _CompletionMessage = "Csw3ETasks::GetUpdatedItems() exception: " + Exception.Message;
+                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
+                    _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
+
+                }//catch
+
+            }//if we're not shutting down
+
+        }//threadCallBack()
+
 
         public void stop()
         {
-            throw new NotImplementedException();
+            _LogicRunStatus = LogicRunStatus.Stopping;
         }
 
         public void reset()
         {
-            throw new NotImplementedException();
+            _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
         }
 
         public void releaseResources()
         {
-            throw new NotImplementedException();
+            _CswNbtResources.release();
         }
+
 
     }//CswScheduleLogicNbtUpdtInspection
 

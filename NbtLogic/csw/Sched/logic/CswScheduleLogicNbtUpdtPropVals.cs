@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { throw new NotImplementedException(); }
+            get { return ( "NbtUpdtPropVals" ); }
         }
 
         public bool doesItemRunNow()
