@@ -26,7 +26,7 @@
             isHidden = true;
         }
         return isHidden; 
-    } 
+    } // modAdvanced()
 
     function renderViewBasedSearchContent(options)
     {
@@ -36,6 +36,7 @@
             '$propsXml': '',
             '$searchTable': '',
             'propsCount': 1,
+            'viewid': '',
             'initOptions': {}
         };
 
@@ -58,10 +59,11 @@
         var propRow = 1;
         o.$propsXml.children('property').each( function() {
                 var $thisProp = $(this);
-                var $nodeType = $('<span>' +  $thisProp.attr('nodetypename') + '</span>')
-                                .attr('id','nodetypepropid_' + $thisProp.attr('propid') )
-                                .attr('name','nodetypepropid_' + $thisProp.attr('propid') )
-                                .attr('class','csw_search_nodetype_static' );
+                var $nodeType = $('<span>' +  $thisProp.attr('metadatatypename') + '</span>')
+                                .attr('id','searchpropid_' + $thisProp.attr('propid') )
+                                .attr('name','searchpropid_' + $thisProp.attr('propid') )
+                                .attr('relatedidtype',$thisProp.attr('relatedidtype') )
+                                .attr('class','csw_search_metadatatype_static' );
                 
                 var $nodeTypeCell = o.$searchTable.CswTable('cell', propRow, 2)
                                     .append($nodeType);
@@ -82,9 +84,10 @@
                 'bottomCell': 1, 
                 '$parent': o.$parent,
                 '$propsXml': o.$propsXml,
-                'searchtype': 'viewsearch'
+                'searchtype': 'viewsearch',
+                'viewid': o.viewid
         });
-    }
+    } // renderViewBasedSearchContent()
 
     function renderNodeTypeSearchContent(options)
     {
@@ -128,7 +131,7 @@
                 '$propsXml': o.$propsXml,
                 'searchtype': 'nodetypesearch'
         });
-    }
+    } // renderNodeTypeSearchContent()
 
     function getNewProps(objectPk,relatedIdType,options)
     {
@@ -140,7 +143,7 @@
                             renderNodePropsAndControls(options);
                     }
                 });
-    }
+    } // getNewProps()
 
     function renderNodePropsAndControls(options)
     {
@@ -215,6 +218,7 @@
             }
             $subfieldCell.append($subfieldsOptions);
             var $subfield = $subfieldsOptions.find(':selected').val();
+            var defaultValue = $subfieldsOptions.find(':selected').attr('defaultvalue');
 
             //Row propRow, Column 5: filter picklist
             var $filtersCell = o.$parent.CswTable('cell', propRow, 5)
@@ -248,16 +252,28 @@
             {
                 $searchInput = $(xmlToString($selectedProp.children('filtersoptions').children('select')));
             }
+            else if( fieldtype == 'Logical' )
+            {
+                $searchBoxCell.CswTristateCheckBox('init',{'ID': 'search_input_searchpropid_' + propertyId}); 
+            }
             else
             {
-                var searchSuggest = $props.find(':selected').text();
-                if(searchSuggest != $subfieldsOptions.find(':selected').text() )
+                var searchSuggest;
+                if( defaultValue != '' && defaultValue != undefined )
                 {
-                    searchSuggest += "'s " +  $subfieldsOptions.find(':selected').text();
-                }  
+                    searchSuggest = defaultValue;
+                }
+                else
+                {
+                    searchSuggest = $props.find(':selected').text();
+                    if(searchSuggest != $subfieldsOptions.find(':selected').text() )
+                    {
+                        searchSuggest += "'s " +  $subfieldsOptions.find(':selected').text();
+                    }  
+                }
                 $searchInput = $('<input type="text" />')
-                                .attr('name', 'search_input_nodetypepropid_' + propertyId )
-                                .attr('id', 'search_input_nodetypepropid_' + propertyId )
+                                .attr('name', 'search_input_searchpropid_' + propertyId )
+                                .attr('id', 'search_input_searchpropid_' + propertyId )
                                 .attr('class', 'csw_search_input' )
                                 .attr('autocomplete','on')
                                 .attr('autofocus','true')
@@ -268,7 +284,7 @@
             
             propRow++;
         }
-    }
+    } // renderNodePropsAndControls()
 
     function renderViewPropsAndControls(options)
     {
@@ -285,11 +301,12 @@
         var $selectedProp = o.$thisProp;            
         var propRow = o.propRow;
         var propertyId = o.$thisProp.attr('propid');
+        var propertyName = o.$thisProp.attr('propname');
                 
         //Row propRow, Column 3: property
         var $propSelectCell = o.$parent.CswTable('cell', propRow, 3)
                                 .empty();
-        var $props = $('<span id="nodetypepropid_' + propertyId + '">' + o.$thisProp.attr('propname') + '</span>');
+        var $props = $('<span id="searchpropid_' + propertyId + '">' + propertyName + '</span>');
         $propSelectCell.append($props);
 
         
@@ -329,6 +346,7 @@
         }
         $subfieldCell.append($subfieldsOptions);
         var $subfield = $subfieldsOptions.find(':selected').val();
+        var defaultValue = $subfieldsOptions.find(':selected').attr('defaultvalue');
 
         //Row propRow, Column 5: filter picklist
         var $filtersCell = o.$parent.CswTable('cell', propRow, 5)
@@ -365,15 +383,26 @@
         }
         else if( fieldtype == 'Logical' )
         {
-            $searchBoxCell.CswTristateCheckBox('init',{'ID': 'search_input_nodetypepropid_' + propertyId}); 
+            $searchBoxCell.CswTristateCheckBox('init',{'ID': 'search_input_searchpropid_' + propertyId}); 
         }
         else
         {
-            var searchSuggest = o.$thisProp.attr('nodetypename');
-            searchSuggest += "'s " +  $subfieldsOptions.find(':selected').text();
+            var searchSuggest;
+            if( defaultValue != '' && defaultValue != undefined )
+            {
+                searchSuggest = defaultValue;
+            }
+            else
+            {
+                searchSuggest = propertyName;
+                if(searchSuggest != $subfieldsOptions.find(':selected').text() )
+                {
+                    searchSuggest += "'s " +  $subfieldsOptions.find(':selected').text();
+                }
+            }
             $searchInput = $('<input type="text" />')
-                            .attr('name', 'search_input_nodetypepropid_' + propertyId )
-                            .attr('id', 'search_input_nodetypepropid_' + propertyId )
+                            .attr('name', 'search_input_searchpropid_' + propertyId )
+                            .attr('id', 'search_input_searchpropid_' + propertyId )
                             .attr('class', 'csw_search_input' )
                             .attr('autocomplete','on')
                             .attr('autofocus','true')
@@ -386,7 +415,7 @@
             $searchBoxCell.append($searchInput);
         }
         
-    }
+    } // renderViewPropsAndControls()
 
     function renderSearchButtons(options)
     {
@@ -397,7 +426,8 @@
             '$parent': '',
             '$nodeTypesSelect': '',
             '$propsXml': '',
-            'searchtype': ''
+            'searchtype': '',
+            'viewid': ''
         };
         if(options) $.extend(o,options);
 
@@ -445,11 +475,12 @@
                                                         doSearch({
                                                             '$nodeTypesSelect': o.$nodeTypesSelect,
                                                             '$propsXml': o.$propsXml,
-                                                            'searchtype': o.searchtype
+                                                            'searchtype': o.searchtype,
+                                                            'viewid': o.viewid
                                                         });
                                                 }
                                             });
-    }
+    } // renderSearchButtons()
 
     function reInit(options)
     {
@@ -484,7 +515,7 @@
                 'initOptions': o.initOptions
             });
         }
-    }
+    } // reInit()
 
     function init(options)
     {
@@ -524,6 +555,7 @@
 		    'url': '/NbtWebApp/wsNBT.asmx/getClientSearchXml',
 		    'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeid,
             'success': function($xml) { 
+                log($xml);
                 o.searchtype = $xml.attr('searchtype');
                 switch(o.searchtype)
                 {
@@ -565,6 +597,7 @@
                             '$searchTable': o.$searchTable,
                             '$topspandiv': $topspandiv,
                             'propsCount': $xml.children('properties').children('property').size(),
+                            'viewid': o.viewid,
                             'initOptions': o
                         });
                         break;
@@ -575,7 +608,7 @@
 			} // success
 					
 		}); // CswAjaxXml
-    }
+    } // init()
 
     function getBottomSpan(options)
     {
@@ -629,14 +662,15 @@
         var $customSearchCell = $bottomTable.CswTable('cell', 2, 2);
         var $customSearch = $('<a href="#customsearch">New Custom Search</a>');
         $customSearchCell.append($customSearch);
-    }
+    } // getBottomSpan()
 
     function doSearch(options)
     {
         var o = {
             '$nodeTypesSelect': '',
             '$propsXml': '',
-            'searchtype': ''
+            'searchtype': '',
+            'viewid': ''
         };
 
         var searchOpt;
@@ -657,9 +691,9 @@
                         var $thisProp = $(this);
                         var propName = $thisProp.text();
                         var propId = $thisProp.val();
-                        var subField = $('#subfield_select_nodetypepropid_' + propId).find(':selected').text();
-                        var filter = $('#filter_select_nodetypepropid_' + propId).find(':selected').val();
-                        var searchText = $('#search_input_nodetypepropid_' + propId).val();
+                        var subField = $('#subfield_select_searchpropid_' + propId).find(':selected').text();
+                        var filter = $('#filter_select_searchpropid_' + propId).find(':selected').val();
+                        var searchText = $('#search_input_searchpropid_' + propId).val();
                         
                         var thisNodeProp = {
                                 objectpk: objectPk,
@@ -687,20 +721,28 @@
                         var searchText;
                         if( fieldtype == 'Logical' )
                         {
-                            searchText = $('#search_input_nodetypepropid_' + propId).CswTristateCheckBox('value');
+                            searchText = $('#search_input_searchpropid_' + propId).CswTristateCheckBox('value');
+                        }
+                        else if( fieldtype == 'List' )
+                        {
+                            searchText = $('#filtersoptions_select_searchpropid_' + propId).find(':selected').val();
                         }
                         else
                         {
-                            searchText = $('#search_input_nodetypepropid_' + propId).val();
+                            searchText = $('#search_input_searchpropid_' + propId).val();
                         }
                         if(searchText != '')
                         {
-                            var subField = $('#subfield_select_nodetypepropid_' + propId).find(':selected').text();
-                            var filter = $('#filter_select_nodetypepropid_' + propId).find(':selected').val();
-                            var viewPropType = $thisProp.attr('viewproptype');
+                            var subField = $('#subfield_select_searchpropid_' + propId).find(':selected').text();
+                            var filter = $('#filter_select_searchpropid_' + propId).find(':selected').val();
+                            var relatedidtype = $thisProp.attr('relatedidtype');
+                            var propType = $thisProp.attr('proptype');
+                            var arbitraryId = $thisProp.attr('arbitraryid');
                             var thisNodeProp = {
-                                    viewproptype: viewPropType,
+                                    proptype: propType,
                                     propid: propId,
+                                    arbitraryid: arbitraryId,
+                                    relatedidtype: relatedidtype,
                                     subfield: subField,
                                     filter: filter,
                                     searchtext: searchText  
@@ -710,7 +752,7 @@
                     });
                 searchOpt = { 
                         viewprops: props,
-                        viewid: $.CswCookie('get', CswCookieName.CurrentView.ViewId)
+                        viewid: o.viewid
                 };
                 break;
             }
@@ -728,7 +770,7 @@
                 }
             });
         }
-    }
+    } // doSearch()
 
 	var methods = {
 	

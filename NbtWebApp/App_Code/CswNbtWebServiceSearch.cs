@@ -266,16 +266,17 @@ namespace ChemSW.Nbt.WebServices
                             DefaultPropName = Prop.MetaDataPropName;
                         }
                         PropNode.Add( new XAttribute( "value", Prop.MetaDataPropId ) );
-                        if( "nodetype" == RelatedIdType )
+                        switch( RelatedIdType )
                         {
-                            NodeTypePropsGroup.Add( PropNode );
-                        }
-                        else if( "objectclass" == RelatedIdType )
-                        {
-                            ObjectClassPropsGroup.Add( PropNode );
+                            case "nodetype":
+                                NodeTypePropsGroup.Add( PropNode );
+                                break;
+                            case "objectclass":
+                                ObjectClassPropsGroup.Add( PropNode );
+                                break;
                         }
 
-                        _getSearchPropSubFields( ref FiltersNode, Prop, new ArrayList() );
+                        _getSearchPropSubFields( ref FiltersNode, Prop );
                     }
                     
                     NodeTypePropsNode.Add( new XElement("properties",
@@ -312,19 +313,9 @@ namespace ChemSW.Nbt.WebServices
         ///          </property>   
         ///      </propertyfilters>
         /// </summary>
-        private void _getSearchPropSubFields( ref XElement ParentNode, CswSearchProp SearchProp, ArrayList LimitToSubfields )
+        private void _getSearchPropSubFields( ref XElement ParentNode, CswSearchProp SearchProp )
         {
             CswNbtSubFieldColl SubFields = SearchProp.FieldTypeRule.SubFields;
-            if( LimitToSubfields.Count > 0 )
-            {
-                foreach( CswNbtSubField Field in SubFields )
-                {
-                    if( !LimitToSubfields.Contains( Field.Name ) )
-                    {
-                        SubFields.remove( Field );
-                    }
-                }
-            }
             CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = SearchProp.FieldType.FieldType;
 
             XElement SubfieldSelect = new XElement( "select",
@@ -371,14 +362,15 @@ namespace ChemSW.Nbt.WebServices
                                                       new XAttribute( "id", "filtersoptions_select_searchpropid_" + SearchProp.MetaDataPropId ),
                                                       new XAttribute( "name", "filtersoptions_select_searchpropid_" + SearchProp.MetaDataPropId ),
                                                       new XAttribute( "class", "csw_search_filtersoptions_select" ),
-                                                      _getFilterOptions( SearchProp ) ) );
+                                                      _getFilterOptions( SearchProp, string.Empty ) ) );
             }
 
             ParentNode.Add( new XElement( "property", SearchProp.MetaDataPropName,
                                       new XAttribute( "propname", SearchProp.MetaDataPropName ),
                                       new XAttribute( "propid", SearchProp.MetaDataPropId ),
+                                      new XAttribute( "relatedidtype", SearchProp.RelatedIdType ),
                                       new XAttribute( "proptype", SearchProp.Type ),
-                                      new XAttribute( "proptypetypename", SearchProp.MetaDataTypeName ),
+                                      new XAttribute( "metadatatypename", SearchProp.MetaDataTypeName ),
                                       new XAttribute( "fieldtype", SearchProp.FieldType.FieldType ),
                                         new XElement( "defaultsubfield",
                                                     new XAttribute( "filter", DefaultFilter ),
@@ -389,6 +381,79 @@ namespace ChemSW.Nbt.WebServices
                                         FiltersOptionsNode )
                           );
             
+
+        } // _getPropSubFields()
+
+        private void _getSearchPropSubFields( ref XElement ParentNode, CswSearchProp SearchProp, ArrayList PropFilters )
+        {
+            CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = SearchProp.FieldType.FieldType;
+
+            XElement SubfieldSelect = new XElement( "select",
+                                        new XAttribute( "id", "subfield_select_searchpropid_" + SearchProp.MetaDataPropId ),
+                                        new XAttribute( "name", "subfield_select_searchpropid_" + SearchProp.MetaDataPropId ),
+                                        new XAttribute( "class", "csw_search_subfield_select" ) );
+
+            string DefaultFilter = string.Empty;
+            string DefaultSubfield = string.Empty;
+            if( null != SearchProp.FieldTypeRule.SubFields.Default )
+            {
+                DefaultFilter = SearchProp.FieldTypeRule.SubFields.Default.Name.ToString();
+                DefaultSubfield = SearchProp.FieldTypeRule.SubFields.Default.Column.ToString();
+            }
+            XElement FiltersNode = new XElement( "propertyfilters", SearchProp.MetaDataPropName );
+
+            foreach( CswNbtViewPropertyFilter Filter in PropFilters )
+            {
+                XElement FieldNode = new XElement( "option",
+                                                   new XAttribute( "title", SelectedFieldType ),
+                                                   new XAttribute( "label", Filter.SubfieldName ), // for Chrome
+                                                   new XAttribute( "value", Field.Column ),
+                                                   new XAttribute( "defaultvalue", FilterValueFromView ),
+                                                   new XAttribute( "id", Field.Column ) );
+                FieldNode.Value = Field.Name.ToString();
+                if( Field.Name == SearchProp.FieldTypeRule.SubFields.Default.Name )
+                {
+                    FieldNode.Add( new XAttribute( "selected", "selected" ) );
+                }
+
+                if( !string.IsNullOrEmpty( DefaultFilter ) )
+                {
+                    DefaultFilter = Field.DefaultFilterMode.ToString();
+                }
+
+                _getSubFieldFilters( ref FiltersNode, Field, SearchProp );
+                SubfieldSelect.Add( FieldNode );
+            }
+
+            XElement FiltersOptionsNode = new XElement( "filtersoptions" );
+            if( SearchProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
+            {
+                string FilterSelected = string.Empty;
+                LimitToSubfields.TryGetValue( CswNbtSubField.SubFieldName.Value, out FilterSelected );
+                FiltersOptionsNode.Value = SearchProp.MetaDataPropName;
+                FiltersOptionsNode.Add( new XElement( "select",
+                                                      new XAttribute( "id", "filtersoptions_select_searchpropid_" + SearchProp.MetaDataPropId ),
+                                                      new XAttribute( "name", "filtersoptions_select_searchpropid_" + SearchProp.MetaDataPropId ),
+                                                      new XAttribute( "class", "csw_search_filtersoptions_select" ),
+                                                      _getFilterOptions( SearchProp, FilterSelected ) ) );
+            }
+
+            ParentNode.Add( new XElement( "property", SearchProp.MetaDataPropName,
+                                      new XAttribute( "propname", SearchProp.MetaDataPropName ),
+                                      new XAttribute( "propid", SearchProp.MetaDataPropId ),
+                                      new XAttribute( "relatedidtype", SearchProp.RelatedIdType ),
+                                      new XAttribute( "proptype", SearchProp.Type ),
+                                      new XAttribute( "metadatatypename", SearchProp.MetaDataTypeName ),
+                                      new XAttribute( "fieldtype", SearchProp.FieldType.FieldType ),
+                                        new XElement( "defaultsubfield",
+                                                    new XAttribute( "filter", DefaultFilter ),
+                                                    new XAttribute( "subfield", DefaultSubfield ) ),
+                                        new XElement( "subfields",
+                                                    SubfieldSelect ),
+                                        FiltersNode,
+                                        FiltersOptionsNode )
+                          );
+
 
         } // _getPropSubFields()
 
@@ -416,6 +481,7 @@ namespace ChemSW.Nbt.WebServices
                                                     new XAttribute( "value", FilterModeOpt ),
                                                     new XAttribute( "title", SearchProp.MetaDataPropName ),
                                                     new XAttribute( "label", FilterModeOpt ) ); // for Chrome
+                
                 ThisFilter.Value = FilterModeOpt.ToString();                                                    
                 if( FilterModeOpt == FilterModeToSelect )
                 {
@@ -430,16 +496,17 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Sets fieldtype attributes on the Filter node and appends an XElement containing extended attributes, such as an options picklist
         /// </summary>
-        private XElement _getFilterOptions( CswSearchProp SearchProp )
+        private XElement _getFilterOptions( CswSearchProp SearchProp, string FilterSelected )
         {
             XElement FilterOptions = new XElement( "options", new XAttribute( "propname", SearchProp.MetaDataPropName.ToLower() ) );
 
-            var CswNbtNodeTypePropListOptions = new PropTypes.CswNbtNodeTypePropListOptions( _CswNbtResources, SearchProp.MetaDataPropId );
-            foreach( var Option in CswNbtNodeTypePropListOptions.Options )
+            foreach( string Option in SearchProp.ListOptions )
             {
-                FilterOptions.Add( new XElement( "option", Option.Text,
-                                    new XAttribute( "value", Option.Value ),
-                                    new XAttribute( "id", Option.Text ) ) );
+                FilterOptions.Add( new XElement( "option", Option,
+                                    new XAttribute( "value", Option ),
+                                    new XAttribute( "id", SearchProp.MetaDataPropName + "_" + Option ),
+                                    (Option == FilterSelected) ? new XAttribute( "selected","selected" ) : null ) 
+                                  );
             }
             return FilterOptions;
 
@@ -475,12 +542,12 @@ namespace ChemSW.Nbt.WebServices
                                                      .Where( Prop => Prop.Filters.Count > 0 )
                                                      .Select( Prop => new CswSearchProp( Prop ) ) )
                 {
-                    ArrayList ViewSubFieldNames = new ArrayList();
+                    ArrayList ViewPropFilters = new ArrayList();
                     foreach( CswNbtViewPropertyFilter Filt in SearchProp.Filters )
                     {
-                        ViewSubFieldNames.Add( Filt.SubfieldName );
+                        ViewPropFilters.Add( Filt );
                     }
-                    _getSearchPropSubFields( ref PropNode, SearchProp, ViewSubFieldNames );
+                    _getSearchPropSubFields( ref PropNode, SearchProp, ViewPropFilters );
                 }
                 SearchNode.Add( PropNode );
             }
@@ -514,7 +581,7 @@ namespace ChemSW.Nbt.WebServices
                     foreach( var Prop in ViewSearch["viewprops"].Children() )
                     {
                         var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
-                        CswNbtViewProperty.CswNbtPropType.TryParse( (string) Prop.First["viewproptype"], true, out PropType );
+                        CswNbtViewProperty.CswNbtPropType.TryParse( (string) Prop.First["proptype"], true, out PropType );
                         Int32 PropId = Int32.MinValue;
 
                         PropId = CswConvert.ToInt32( (string) Prop.First["propid"] );
@@ -525,7 +592,7 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtViewProperty ViewProp = SearchView.findPropertyById( PropType, PropId );
                             if( null != ViewProp )
                             {
-                                _addViewPropFilter( Prop, ref SearchView, ViewProp );
+                                _addViewPropFilter( Prop, ViewProp );
                             }
                         }
                     }
@@ -534,7 +601,7 @@ namespace ChemSW.Nbt.WebServices
             return SearchView;
         }
 
-        private void _addViewPropFilter( JToken JProp, ref CswNbtView SearchView, CswNbtViewProperty ViewProp )
+        private void _addViewPropFilter( JToken JProp, CswNbtViewProperty ViewProp )
         {
             var FieldName = CswNbtSubField.SubFieldName.Unknown;
             CswNbtSubField.SubFieldName.TryParse( (string)JProp.First["subfield"], true, out FieldName );
@@ -542,7 +609,6 @@ namespace ChemSW.Nbt.WebServices
             CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) JProp.First["filter"], true, out FilterMode );
             string ArbitraryId = (string) JProp.First["arbitraryid"];
             string SearchTerm = (string) JProp.First["searchtext"];
-            bool FilterExists = false;
             
             foreach( CswNbtViewPropertyFilter Filt in ViewProp.Filters.Cast<CswNbtViewPropertyFilter>()
                                                         .Where( Filt => Filt.ArbitraryId == ArbitraryId ) )
@@ -571,7 +637,7 @@ namespace ChemSW.Nbt.WebServices
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
 
-                foreach( var Ntp in NodesSearch["nodetypeprops"].Children() )
+                foreach( JToken Ntp in NodesSearch["nodetypeprops"].Children() )
                 {
                     var PropType = CswNbtViewRelationship.RelatedIdType.Unknown;
                     CswNbtViewRelationship.RelatedIdType.TryParse( (string)Ntp.First["relatedidtype"], true, out PropType );
@@ -599,7 +665,7 @@ namespace ChemSW.Nbt.WebServices
 
                             CswNbtMetaDataObjectClassProp ObjectClassProp = NodeTypeProp.ObjectClassProp;
                             CswNbtViewProperty ViewOcProperty = SearchView.AddViewProperty( OcRelationship, ObjectClassProp );
-                            _addViewPropFilter( Ntp, ref SearchView, ViewOcProperty );
+                            _addViewPropFilter( Ntp, ViewOcProperty );
                         }
                     }
                     else
@@ -620,7 +686,7 @@ namespace ChemSW.Nbt.WebServices
                             }
 
                             CswNbtViewProperty ViewNtProperty = SearchView.AddViewProperty( NtRelationship, NodeTypeProp );
-                            _addViewPropFilter( Ntp, ref SearchView, ViewNtProperty );
+                            _addViewPropFilter( Ntp, ViewNtProperty );
                         }
                     }
                 }
@@ -639,6 +705,12 @@ namespace ChemSW.Nbt.WebServices
             public Int32 MetaDataPropId
             {
                 get { return _MetaDataPropId; }
+            }
+
+            private CswNbtViewProperty _ViewProp = null;
+            public CswNbtViewProperty ViewProp
+            {
+                get { return _ViewProp; }
             }
 
             private string _MetaDataPropName = string.Empty;
@@ -677,10 +749,8 @@ namespace ChemSW.Nbt.WebServices
                 get { return _ListOptions; }
             }
 
-            public enum SearchPropType { NodeTypeProp, ObjectClassProp, ViewProp, Unknown }
-
-            private SearchPropType _Type = SearchPropType.Unknown;
-            public SearchPropType Type
+            private CswNbtViewProperty.CswNbtPropType _Type = CswNbtViewProperty.CswNbtPropType.Unknown;
+            public CswNbtViewProperty.CswNbtPropType Type
             {
                 get { return _Type; }
             }
@@ -706,7 +776,7 @@ namespace ChemSW.Nbt.WebServices
                 _MetaDataPropName = NodeTypeProp.PropName;
                 _MetaDataTypeName = NodeTypeProp.NodeType.NodeTypeName;
                 _FieldTypeRule = NodeTypeProp.FieldTypeRule;
-                _Type = SearchPropType.NodeTypeProp;
+                _Type = CswNbtViewProperty.CswNbtPropType.NodeTypePropId;
             } //ctor Ntp
 
             public CswSearchProp( CswNbtViewProperty ViewProp )
@@ -732,12 +802,13 @@ namespace ChemSW.Nbt.WebServices
                     _MetaDataPropNameWithQuestionNo = ViewProp.ObjectClassProp.PropNameWithQuestionNo;
                     _MetaDataPropId = ViewProp.ObjectClassProp.ObjectClassPropId;
                     _MetaDataPropName = ViewProp.ObjectClassProp.PropName;
-                    _MetaDataTypeName = ViewProp.ObjectClassProp.ObjectClass.ObjectClass.ToString();
+                    _MetaDataTypeName = ViewProp.ObjectClassProp.ObjectClass.ObjectClass.ToString().Replace( "Class", "" );
                     _FieldTypeRule = ViewProp.ObjectClassProp.FieldTypeRule;
                 }
+                _ViewProp = ViewProp;
                 _FieldType = ViewProp.FieldType;
                 _Filters = ViewProp.Filters;
-                _Type = SearchPropType.ViewProp;                    
+                _Type = ViewProp.Type;                    
             } //ctor Vp
 
         }

@@ -240,7 +240,7 @@ namespace ChemSW.Nbt
                                             .Where( ThisView => 0 < ThisView.Root.ChildRelationships
                                                 .Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
                                                         User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ).Count() &&
-                                                ( ThisView.IsFullyEnabled() ) ) )
+                                                ( ThisView.IsSearchable() ) ) )
             {
                 SearchNode.Add( new XElement( "option", ThisView.ViewName, //Add() doesn't return an object, therefore initializer won't work
                                             new XAttribute( "title", ThisView.ViewMode ),
