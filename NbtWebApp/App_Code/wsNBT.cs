@@ -646,14 +646,14 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getClientSearchXml( string ViewIdNum, string SelectedNodeTypeIdNum )
+		public XElement getClientSearchXml( string ViewIdNum, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
 		{
 			XElement SearchNode = new XElement( "search" );
 			try
 			{
 				start();
-				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-				SearchNode = ws.getSearchXml( ViewIdNum, SelectedNodeTypeIdNum );
+                var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
+                SearchNode = ws.getSearchXml( ViewIdNum, SelectedNodeTypeIdNum, NodeKey );
 				end();
 			}
 			catch( Exception ex )
@@ -665,14 +665,14 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getNodeTypeSearchProps( string RelatedIdType, string ObjectPk )
+		public XElement getNodeTypeSearchProps( string RelatedIdType, string ObjectPk, string IdPrefix, string NodeKey )
 		{
 			XElement SearchNode = new XElement( "search" );
 			try
 			{
 				start();
-				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-				SearchNode = ( ws.getNodeTypeProps( RelatedIdType, ObjectPk ) );
+				var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
+				SearchNode = ( ws.getSearchProps( RelatedIdType, ObjectPk, NodeKey ) );
 				end();
 			}
 			catch( Exception ex )
@@ -685,7 +685,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getSearchableViews( string IsMobile, string OrderBy )
+		public XElement getSearchableViews( string IsMobile, string OrderBy, string IdPrefix )
 		{
 			var SearchNode = new XElement( "searchableviews" );
 			try
@@ -694,7 +694,7 @@ namespace ChemSW.Nbt.WebServices
 
 				ICswNbtUser UserId = _CswNbtResources.CurrentNbtUser;
 				bool ForMobile = CswConvert.ToBoolean( IsMobile );
-				XElement Views = _CswNbtResources.ViewSelect.getSearchableViews( UserId, ForMobile, OrderBy ); ;
+				XElement Views = _CswNbtResources.ViewSelect.getSearchableViews( UserId, ForMobile, OrderBy, IdPrefix ); ;
 				SearchNode.Add( Views );
 				end();
 			}

@@ -24,6 +24,13 @@
 							<div id="ErrorDiv" class="ErrorContent" style="display: none;"></div>
 						</td>
 					</tr>
+
+                    <tr>
+                        <td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
+                            <div id="CenterDiv">
+                            </div>
+                        </td>
+                    </tr>
 		  
 					<tr>
 						<td id="Td2" class="PageTable_LeftCell" valign="top">
@@ -32,12 +39,6 @@
 						</td>
 						<td id="Td3" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
 							<div id="RightDiv"></div>
-						</td>
-					</tr>
-										  
-					<tr>
-						<td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
-							<div id="CenterDiv"></div>
 						</td>
 					</tr>
 					
@@ -186,55 +187,49 @@
 			};
 			if (options) $.extend(o, options);
 
-			if (o.viewid != undefined && o.viewid != '') //&& o.viewmode != undefined && o.viewmode != ''
+			if (o.viewid != undefined && o.viewid != '')
 			{
-				$.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
-				$.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
+			    $.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
+			    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
 
-				switch (o.viewmode) //webservice converts to lower case
-				{
-					case 'grid':
-						{
-							getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-							break;
-						}
-					case 'list':
-						{
-							refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-							break;
-						}
-					case 'tree':
-						{
-							refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-							break;
-						}
-					default:
-						{
-							refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-							break;
-						}
-				}
+			    switch (o.viewmode) //webservice converts to lower case
+			    {
+			        case 'grid':
+			            {
+			                getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			                break;
+			            }
+			        default:
+			            {
+			                refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });
+			                break;
+			            }
+			    }
 			}
 			else if (o.type != undefined && o.type != '')
 			{
-				switch (o.type)
-				{
-					case 'action':
-						{
-							alert('Actions are not yet handled!');
-							break;
-						}
-					case 'report':
-						{
-							alert('Reports are not yet handled!');
-							break;
-						}
-					default:
-						{
-							alert('Handling for link type ' + o.linktype + ' is not implemented yet.');
-							break;
-						}
-				}
+			    switch (o.type)
+			    {
+			        case 'action':
+			            {
+			                alert('Actions are not yet handled!');
+			                break;
+			            }
+			        case 'report':
+			            {
+			                alert('Reports are not yet handled!');
+			                break;
+			            }
+			        default:
+			            {
+			                alert('Handling for link type ' + o.linktype + ' is not implemented yet.');
+			                break;
+			            }
+			    }
+			}
+			else
+			{
+			    alert('Handling for this action is not yet implemented');
 			}
 		} // if (manuallyCheckChanges())
 	} // handleItemSelect()
@@ -255,21 +250,52 @@
 		}
 
 		$('#MainMenuDiv').CswMenuMain({
-			'viewid': o.viewid,
-			'nodeid': o.nodeid,
-			'cswnbtnodekey': o.cswnbtnodekey,
-			'onAddNode': function (nodeid, cswnbtnodekey)
-			{
-				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
-			},
-			'onMultiEdit': function ()
-			{
-				multi = !multi;
-				refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-			},
-			'Multi': multi,
-			'NodeCheckTreeId': MainTreeId
-		});
+			    'viewid': o.viewid,
+			    'nodeid': o.nodeid,
+			    'cswnbtnodekey': o.cswnbtnodekey,
+			    'onAddNode': function (nodeid, cswnbtnodekey)
+			    {
+				    refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+			    },
+			    'onMultiEdit': function ()
+			    {
+				    multi = !multi;
+				    refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			    },
+			    'Multi': multi,
+			    'NodeCheckTreeId': MainTreeId
+			});
+		
+        refreshSearchPanel({ viewid: o.viewid, cswnbtnodekey: o.cswnbtnodekey });
+	}
+
+	function refreshSearchPanel(options)
+	{
+	    if (debug) log('NewMain.refreshMainMenu()');
+	    var o = {
+	        viewid: '',
+	        nodetypeid: '',
+	        cswnbtnodekey: '',
+            idprefix: 'main'
+	    };
+        
+	    if (options) $.extend(o, options);
+	    
+	    if ($('#' + o.idprefix + 'CswSearchForm').length == 0 ||
+            $('#' + o.idprefix + 'CswSearchForm') == undefined)
+	    {
+	        clear({ center: true });
+
+	        var $search = $('#CenterDiv')
+                            .CswSearch('getSearchForm', {
+                                viewid: o.viewid,
+                                cswnbtnodekey: o.cswnbtnodekey,
+                                nodetypeid: o.nodetypeid,
+                                idprefix: o.idprefix
+                            })
+                            .hide();
+            log($search);
+	    }
 	}
 
 	function getViewGrid(options)

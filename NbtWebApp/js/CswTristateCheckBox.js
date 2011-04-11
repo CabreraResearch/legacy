@@ -8,6 +8,7 @@
 		{
 			var o = {
 				'ID': '',
+                'prefix': '',
 				'Checked': '',
 				'ReadOnly': false,
 				'Required': false,
@@ -17,7 +18,7 @@
 
 			var $parent = $(this);
             $parent.empty();
-
+            var elementId = o.prefix + '_' + o.ID;
 			if(o.ReadOnly)
 			{
 				switch(o.Checked)
@@ -36,7 +37,7 @@
 					default: thisButtonType = CswImageButton_ButtonType.CheckboxNull; break;
 				}
 
-				$parent.CswImageButton({ ID: o.ID,  
+				$parent.CswImageButton({ ID: elementId,  
                                         ButtonType: thisButtonType, 
 										AlternateText: o.Checked,
 										onClick: function($ImageDiv) {

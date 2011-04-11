@@ -200,16 +200,14 @@
 		'SearchDialog': function (options) {
 						var o = {
                             viewid: '',
-                            nodetypeid: '',
-                            onSearch: function() { }
+                            nodetypeid: ''
                         }
                         if(options) $.extend(o,options);
                         
                         var $div = $('<div></div>');
 						$div.CswSearch('getSearchForm', {
                                 viewid: o.viewid,
-                                nodetypeid: o.nodetypeid,
-                                onSearch: o.onSearch
+                                nodetypeid: o.nodetypeid
                             });
 						
                         $div.dialog({ 'modal': true,

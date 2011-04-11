@@ -471,11 +471,20 @@ function HandleMenuItem(options) {
             case 'Search':
                 $a.click(function ()
                 {
-                    $.CswDialog('SearchDialog', {
-                        'viewid': o.$this.attr('viewid'),
-                        'nodetypeid': o.$this.attr('nodetypeid'),
-                        'onSearch': o.onSearch
-                    });
+                    var $searchdiv = $('#main_CswSearchForm'); //how to get prefix here?
+                    if ($searchdiv.is(':hidden'))
+                    {
+                        $searchdiv.show();
+                    }
+                    else
+                    {
+                        $searchdiv.hide();
+                    }
+//                    $.CswDialog('SearchDialog', {
+//                        'viewid': o.$this.attr('viewid'),
+//                        'nodetypeid': o.$this.attr('nodetypeid'),
+//                        'onSearch': o.onSearch
+//                    });
                     
                     return false;
                 });
