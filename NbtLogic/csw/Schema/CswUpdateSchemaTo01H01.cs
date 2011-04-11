@@ -106,8 +106,10 @@ namespace ChemSW.Nbt.Schema
             //20533
             _CswNbtSchemaModTrnsctn.addBooleanColumn( "sessionlist", "ismobile", "Identifies whether the sesssion record is for a mobile column or a regular web app column", false, false );
 
+			// 21364 (see 01H-26)
+			_CswNbtSchemaModTrnsctn.addStringColumn( "node_views", "viewmode", "Tree, List, or Grid", false, false, 10 );
 
-        }//Update()
+		}//Update()
 
     }//class CswUpdateSchemaTo01H01
 

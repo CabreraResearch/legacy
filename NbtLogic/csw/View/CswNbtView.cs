@@ -384,8 +384,9 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["category"] = Category;
             ViewTable.Rows[0]["viewxml"] = this.ToString();
             ViewTable.Rows[0]["formobile"] = CswConvert.ToDbVal( ForMobile );
-            ViewTable.Rows[0]["visibility"] = Visibility.ToString();
-            if( Visibility == NbtViewVisibility.Role )
+			ViewTable.Rows[0]["visibility"] = Visibility.ToString();
+			ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
+			if( Visibility == NbtViewVisibility.Role )
                 ViewTable.Rows[0]["roleid"] = CswConvert.ToDbVal( VisibilityRoleId.PrimaryKey );
             else
                 ViewTable.Rows[0]["roleid"] = DBNull.Value;
@@ -468,7 +469,7 @@ namespace ChemSW.Nbt
             NewRow["viewname"] = ViewName;
             NewRow["formobile"] = CswConvert.ToDbVal( ForMobile );
             NewRow["visibility"] = Visibility.ToString();
-
+			NewRow["viewmode"] = ViewMode.ToString();
             NewRow["userid"] = CswConvert.ToDbVal( Int32.MinValue );
             if( UserId != null )
                 NewRow["userid"] = CswConvert.ToDbVal( UserId.PrimaryKey );
