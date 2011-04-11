@@ -50,32 +50,38 @@
 										.appendTo($stepscell);
 				}
 
-				var $prevbtn = $('<input type="button" id="' + o.ID + '_prev" value="&lt;&nbsp;Previous" />')
-									.click(function() { 
-												var currentStepNo = _getCurrentStepNo($table);
-												_selectStep($table, currentStepNo - 1, o.onStepChange);
-											});
-				var $nextbtn = $('<input type="button" id="' + o.ID + '_next" value="Next&nbsp;&gt;" />')
-									.click(function() { 
-												var currentStepNo = _getCurrentStepNo($table);
-												_selectStep($table, currentStepNo + 1, o.onStepChange);
-											});
-				var $finishbtn = $('<input type="button" id="' + o.ID + '_finish" value="'+ o.FinishText +'" />')
-									.click(o.onFinish);
-				var $cancelbtn = $('<input type="button" id="' + o.ID + '_cancel" value="Cancel" />')
-									.click(o.onCancel);
-
-				$buttontbl = $buttonscell.CswTable({ ID: o.ID + '_btntbl', width: '100%' });
-				$buttontbl.CswTable('cell', 1, 1)
-							.append($prevbtn)
-							.append($nextbtn)
-							.append($finishbtn)
+				var $buttontbl = $buttonscell.CswTable({ ID: o.ID + '_btntbl', width: '100%' });
+				var $bcell11 = $buttontbl.CswTable('cell', 1, 1)
 							.attr('align', 'right')
 							.attr('width', '65%');
-				$buttontbl.CswTable('cell', 1, 2)
-							.append($cancelbtn)
+				var $bcell12 = $buttontbl.CswTable('cell', 1, 2)
 							.attr('align', 'right')
 							.attr('width', '35%');
+
+				var $prevbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_prev',
+															'enabledText': '< Previous',
+															'disableOnClick': false,
+															'onclick': function() { 
+																	var currentStepNo = _getCurrentStepNo($table);
+																	_selectStep($table, currentStepNo - 1, o.onStepChange);
+																}
+															});
+				var $nextbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_next',
+															'enabledText': 'Next >',
+															'disableOnClick': false,
+															'onclick': function() { 
+																	var currentStepNo = _getCurrentStepNo($table);
+																	_selectStep($table, currentStepNo + 1, o.onStepChange);
+																}
+															});
+				var $finishbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_finish',
+															'enabledText': o.FinishText,
+															'onclick': o.onFinish
+															});
+				var $cancelbtn = $bcell12.CswButton('init', { 'ID': o.ID + '_cancel',
+															'enabledText': 'Cancel',
+															'onclick': o.onCancel
+															});
 
 				_selectStep($table, o.SelectedStep, o.onStepChange);
 
