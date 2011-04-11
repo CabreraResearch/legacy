@@ -40,14 +40,13 @@
 		$div1.append('Select a View to Edit:');
 
 		var $viewgrid_div = $('<div></div>').appendTo($div1);
-		var gridwidth = 550;
 		var $viewgrid;
 		function onViewGridSuccess($vg) { 
 			$viewgrid = $vg; 
 		}
 		_getViewsGrid(onViewGridSuccess, o.viewid);
 
-		var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: gridwidth+'px' });
+		var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: '100%' });
 		var $div1_btntbl_cell11 = $div1_btntbl.CswTable('cell', 1, 1)
 		var $div1_btntbl_cell12 = $div1_btntbl.CswTable('cell', 1, 2)
 		$div1_btntbl_cell12.attr('align', 'right');
@@ -141,8 +140,8 @@
 										.appendTo($viewgrid_div);
 
 					var mygridopts = {
-						'width': gridwidth,
-						'height': 200,
+						'autowidth': true,
+						'height': 180,
 						'onSelectRow': function(id, selected) {
 							if(selected) 
 							{
