@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ChemSW.MtSched.Core;
 
-namespace ChemSW.Cis.Sched
+namespace ChemSW.Nbt.Sched
 {
 
     public class CswScheduleLogicFactoryNbt : ICswScheduleLogicFactory
@@ -12,11 +12,11 @@ namespace ChemSW.Cis.Sched
         {
             List<ICswScheduleLogic> ReturnVal = new List<ICswScheduleLogic>();
 
-            //ReturnVal.Add( new CswScheduleLogicCis3eFetchDocuments() );
-            //ReturnVal.Add( new CswScheduleLogicCis3eGetUpdatedItems() );
-            //ReturnVal.Add( new CswScheduleLogicCis3eNukeCatalogue() );
-            //ReturnVal.Add( new CswScheduleLogicCis3eSynchTypes() );
-            //ReturnVal.Add( new CswScheduleLogicCis3eUpdatePackageInfo() );
+            ReturnVal.Add( new CswScheduleLogicNbtGenEmailRpt() );
+            ReturnVal.Add( new CswScheduleLogicNbtGenNode() );
+            ReturnVal.Add( new CswScheduleLogicNbtUpdtInspection() );
+            ReturnVal.Add( new CswScheduleLogicNbtUpdtMTBF() );
+            ReturnVal.Add( new CswScheduleLogicNbtUpdtPropVals() );
 
             return ( ReturnVal );
 

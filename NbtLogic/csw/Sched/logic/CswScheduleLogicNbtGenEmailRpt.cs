@@ -7,10 +7,11 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
 using ChemSW.MtSched.Core;
+using ChemSW.MtSched.Sched;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Security;
-using ChemSW.Mail; 
+using ChemSW.Mail;
 namespace ChemSW.Nbt.Sched
 {
 
@@ -19,48 +20,52 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { return ( "NbtGenEmailRpt" ); }
+            get { return ( NbtScheduleRuleNames.GenEmailRpt.ToString() ); }
         }
 
-        CswNbtNode _CswNbtNodeMailReport = null; 
+        CswNbtNode _CswNbtNodeMailReport = null;
         public bool doesItemRunNow()
         {
-            bool ReturnVal = false;
+            bool ReturnVal = _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrance, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow();
 
-            _CswNbtNodeMailReport = null; //THIS MUST BE QUERIED FOR (USED TO BE PASSED INTO CTOR)
-            CswNbtObjClassMailReport MailReportNode = CswNbtNodeCaster.AsMailReport( _CswNbtNodeMailReport );
-            if( MailReportNode.Enabled.Checked == Tristate.True )
+            if( ReturnVal )
             {
-                DateTime ThisDueDateValue = MailReportNode.NextDueDate.DateValue.Date;
-                DateTime InitialDueDateValue = MailReportNode.DueDateInterval.getStartDate().Date;
-                DateTime FinalDueDateValue = MailReportNode.FinalDueDate.DateValue.Date;
 
-                // BZ 7866
-                if( ThisDueDateValue != DateTime.MinValue )
+                _CswNbtNodeMailReport = null; //THIS MUST BE QUERIED FOR (USED TO BE PASSED INTO CTOR)
+                CswNbtObjClassMailReport MailReportNode = CswNbtNodeCaster.AsMailReport( _CswNbtNodeMailReport );
+                if( MailReportNode.Enabled.Checked == Tristate.True )
                 {
-                    // BZ 7124 - set runtime
-                    if( MailReportNode.RunTime.TimeValue != DateTime.MinValue )
-                        ThisDueDateValue = ThisDueDateValue.AddTicks( MailReportNode.RunTime.TimeValue.TimeOfDay.Ticks );
+                    DateTime ThisDueDateValue = MailReportNode.NextDueDate.DateValue.Date;
+                    DateTime InitialDueDateValue = MailReportNode.DueDateInterval.getStartDate().Date;
+                    DateTime FinalDueDateValue = MailReportNode.FinalDueDate.DateValue.Date;
 
-                    Int32 WarnDays = (Int32) MailReportNode.WarningDays.Value;
-                    if( WarnDays > 0 )
+                    // BZ 7866
+                    if( ThisDueDateValue != DateTime.MinValue )
                     {
-                        TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
-                        ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
-                        InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
-                    }
+                        // BZ 7124 - set runtime
+                        if( MailReportNode.RunTime.TimeValue != DateTime.MinValue )
+                            ThisDueDateValue = ThisDueDateValue.AddTicks( MailReportNode.RunTime.TimeValue.TimeOfDay.Ticks );
 
-                    // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
-                    if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
-                        ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
-                        ( DateTime.Now >= ThisDueDateValue ) )
-                    {
-                        ReturnVal = true;
-                    }
+                        Int32 WarnDays = (Int32) MailReportNode.WarningDays.Value;
+                        if( WarnDays > 0 )
+                        {
+                            TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
+                            ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
+                            InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
+                        }
 
-                } // if( ThisDueDateValue != DateTime.MinValue )
+                        // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
+                        if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
+                            ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
+                            ( DateTime.Now >= ThisDueDateValue ) )
+                        {
+                            ReturnVal = true;
+                        }
 
-            } // if( MailReportNode.Enabled.Checked == Tristate.True )
+                    } // if( ThisDueDateValue != DateTime.MinValue )
+
+                } // if( MailReportNode.Enabled.Checked == Tristate.True )
+            }
 
             return ( ReturnVal );
 
@@ -88,6 +93,7 @@ namespace ChemSW.Nbt.Sched
 
 
         private CswNbtResources _CswNbtResources = null;
+        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswNbtResources = (CswNbtResources) RuleResources;
@@ -239,7 +245,7 @@ namespace ChemSW.Nbt.Sched
                     //{
                     //    OnScheduleItemWasRun( this, _CswNbtNodeMailReport );
                     //} 
-                    
+
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
 
                 }//try

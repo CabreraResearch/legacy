@@ -9,8 +9,9 @@ using ChemSW.DB;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt;
 
-namespace ChemSW.Cis.Sched
+namespace ChemSW.Nbt.Sched
 {
+    public enum NbtScheduleRuleNames { UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt }
     public abstract class CswScheduleLogicDetailAddendum
     {
         /// <summary>
@@ -21,18 +22,12 @@ namespace ChemSW.Cis.Sched
         /// multi-threaded schedule service will be read/written from the class to which 
         /// the methods in this classes are addended (i.e., CswScheduleLogicDetailPersistenceNbt).
         /// </summary>
-        CswNbtResources _CswNbtResources = null;
-        public CswScheduleLogicDetailAddendum( CswNbtResources CswNbtResources )
-        {
-            _CswNbtResources = CswNbtResources;
-        }//ctor
-
         abstract public void read( CswScheduleLogicDetail CswScheduleLogicDetail );
 
-        abstract public void write( CswScheduleLogicDetail CswScheduleLogicDetail ); 
+        abstract public void write( CswScheduleLogicDetail CswScheduleLogicDetail );
 
-    }//CswScheduleLogicDetailPersistenceCis
+    }//CswScheduleLogicDetailAddendum
 
-}//namespace ChemSW.MtSched
+}//namespace ChemSW.Nbt.Sched
 
 

@@ -8,7 +8,7 @@ using ChemSW.Config;
 using ChemSW.DB;
 using ChemSW.MtSched.Core;
 
-namespace ChemSW.Cis.Sched
+namespace ChemSW.Nbt.Sched
 {
     public class CswScheduleLogicParamNbt : ICswScheduleLogicPersistedDetailParam
     {

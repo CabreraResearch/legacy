@@ -6,6 +6,7 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
 using ChemSW.MtSched.Core;
+using ChemSW.MtSched.Sched;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -19,47 +20,51 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { return ( "NbtGenNode" );  }
+            get { return ( NbtScheduleRuleNames.GenNode.ToString() ); }
         }
 
         CswNbtNode _CswNbtNodeGenerator = null;
         public bool doesItemRunNow()
         {
-            bool ReturnVal = false;
+            bool ReturnVal = _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrance, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow();
 
-
-            _CswNbtNodeGenerator = null; //MUST BE QUIERED FOR ; USED TO PASSED IN TO CTOR
-            CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( _CswNbtNodeGenerator );
-            if( GeneratorNode.Enabled.Checked == Tristate.True )
+            if( ReturnVal )
             {
-                DateTime ThisDueDateValue = GeneratorNode.NextDueDate.DateValue.Date;
-                DateTime InitialDueDateValue = GeneratorNode.DueDateInterval.getStartDate().Date;
-                DateTime FinalDueDateValue = GeneratorNode.FinalDueDate.DateValue.Date;
 
-                // BZ 7866
-                if( ThisDueDateValue != DateTime.MinValue )
+                _CswNbtNodeGenerator = null; //MUST BE QUIERED FOR ; USED TO PASSED IN TO CTOR
+                CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( _CswNbtNodeGenerator );
+                if( GeneratorNode.Enabled.Checked == Tristate.True )
                 {
-                    // BZ 7124 - set runtime
-                    if( GeneratorNode.RunTime.TimeValue != DateTime.MinValue )
-                        ThisDueDateValue = ThisDueDateValue.AddTicks( GeneratorNode.RunTime.TimeValue.TimeOfDay.Ticks );
+                    DateTime ThisDueDateValue = GeneratorNode.NextDueDate.DateValue.Date;
+                    DateTime InitialDueDateValue = GeneratorNode.DueDateInterval.getStartDate().Date;
+                    DateTime FinalDueDateValue = GeneratorNode.FinalDueDate.DateValue.Date;
 
-                    Int32 WarnDays = (Int32) GeneratorNode.WarningDays.Value;
-                    if( WarnDays > 0 )
+                    // BZ 7866
+                    if( ThisDueDateValue != DateTime.MinValue )
                     {
-                        TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
-                        ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
-                        InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
-                    }
+                        // BZ 7124 - set runtime
+                        if( GeneratorNode.RunTime.TimeValue != DateTime.MinValue )
+                            ThisDueDateValue = ThisDueDateValue.AddTicks( GeneratorNode.RunTime.TimeValue.TimeOfDay.Ticks );
 
-                    // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
-                    if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
-                        ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
-                        ( DateTime.Now >= ThisDueDateValue ) )
-                    {
-                        ReturnVal = true;
-                    }
-                } // if( ThisDueDateValue != DateTime.MinValue )
-            } // if( GeneratorNode.Enabled.Checked == Tristate.True )
+                        Int32 WarnDays = (Int32) GeneratorNode.WarningDays.Value;
+                        if( WarnDays > 0 )
+                        {
+                            TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
+                            ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
+                            InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
+                        }
+
+                        // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
+                        if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
+                            ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
+                            ( DateTime.Now >= ThisDueDateValue ) )
+                        {
+                            ReturnVal = true;
+                        }
+                    } // if( ThisDueDateValue != DateTime.MinValue )
+                } // if( GeneratorNode.Enabled.Checked == Tristate.True )
+
+            }
 
             return ( ReturnVal );
         }
@@ -79,6 +84,7 @@ namespace ChemSW.Nbt.Sched
 
 
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
+        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
             get { return ( _CswScheduleLogicDetail ); }

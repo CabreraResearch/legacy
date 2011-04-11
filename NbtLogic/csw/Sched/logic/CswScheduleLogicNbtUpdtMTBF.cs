@@ -6,6 +6,7 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
 using ChemSW.MtSched.Core;
+using ChemSW.MtSched.Sched;
 using ChemSW.DB;
 using ChemSW.Exceptions;    
 
@@ -17,18 +18,12 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { return ( "NbtUpdtMTBF" ); }
+            get { return ( NbtScheduleRuleNames.UpdtMTBF.ToString() ); }
         }
 
         public bool doesItemRunNow()
         {
-            throw new NotImplementedException(); 
-            /*
-            CswTableSelect SchedItemSelect = _CswNbtResources.makeCswTableSelect( "UpdateMTBF_doesItemRunNow_Select", "schedule_items" );
-            DataTable SchedItemTable = SchedItemSelect.getTable( "where itemname = '" + this.SchedItemName + "'" );
-            return ( SchedItemTable.Rows.Count == 0 ||
-                     DateTime.Now.Subtract( CswConvert.ToDateTime( SchedItemTable.Rows[0]["lastrun"] ) ).TotalHours >= 24 );
-             */
+            return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrance, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
         }
 
 
@@ -47,6 +42,7 @@ namespace ChemSW.Nbt.Sched
         }
 
 
+        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {

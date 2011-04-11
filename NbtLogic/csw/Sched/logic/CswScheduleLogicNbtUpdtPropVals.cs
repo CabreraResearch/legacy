@@ -8,6 +8,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.MtSched.Core;
+using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Sched
@@ -18,15 +19,17 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { return ( "NbtUpdtPropVals" ); }
+
+            get { return ( NbtScheduleRuleNames.UpdtPropVals.ToString() ); }
         }
 
         public bool doesItemRunNow()
         {
-            throw new NotImplementedException();
+            return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrance, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
         }
 
 
+        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {

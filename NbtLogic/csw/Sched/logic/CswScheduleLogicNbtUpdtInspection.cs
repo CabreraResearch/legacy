@@ -6,6 +6,7 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
 using ChemSW.MtSched.Core;
+using ChemSW.MtSched.Sched;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 
@@ -17,25 +18,29 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { return ( "NbtUpdtInspection" ); }
+            get { return ( NbtScheduleRuleNames.UpdtInspection.ToString() ); }
         }
 
         public bool doesItemRunNow()
         {
-            bool ReturnVal = false;
+            bool ReturnVal = _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrance, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow();
 
-            _InspectionNode = null; //WE NEED TO QUERY FOR NODE HERE; IT USED TO BE PASE
-
-            if( null != _InspectionNode )
+            if( ReturnVal )
             {
-                DateTime DueDate = _InspectionNode.Date.DateValue;
-                CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( _InspectionNode.Generator.RelatedNodeId );
-                if( null != GeneratorNode &&
-                    _Pending == _InspectionNode.Status.Value &&
-                    DateTime.Today >= DueDate &&
-                    Tristate.True != _InspectionNode.IsFuture.Checked )
+
+                _InspectionNode = null; //WE NEED TO QUERY FOR NODE HERE; IT USED TO BE PASE
+
+                if( null != _InspectionNode )
                 {
-                    ReturnVal = true;
+                    DateTime DueDate = _InspectionNode.Date.DateValue;
+                    CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( _InspectionNode.Generator.RelatedNodeId );
+                    if( null != GeneratorNode &&
+                        _Pending == _InspectionNode.Status.Value &&
+                        DateTime.Today >= DueDate &&
+                        Tristate.True != _InspectionNode.IsFuture.Checked )
+                    {
+                        ReturnVal = true;
+                    }
                 }
             }
 
@@ -64,6 +69,7 @@ namespace ChemSW.Nbt.Sched
         }
 
 
+        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswNbtResources _CswNbtResources = null;
         public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
         {

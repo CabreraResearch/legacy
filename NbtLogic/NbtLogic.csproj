@@ -203,6 +203,10 @@
     <Compile Include="csw\PropTypes\CswNbtNodePropWrapper.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodeTypePropListOption.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodeTypePropListOptions.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleResourceFactoryNbt.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicDetailAddendumGenEmailRpts.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicDetailAddendumGenNode.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicDetailAddendumUpdtInspections.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailAddendum.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceFactoryNbt.cs" />

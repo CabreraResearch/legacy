@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
         {
             string TableName = "scheduledrules";
             string ColName_RuleName = "rulename";
-            string ColName_MaxRunTime = "maxruntimems";
+            string ColName_MaxRunTimeMs = "maxruntimems";
             string ColName_ThreadId = "threadid";
             string ColName_ReprobateThreshold = "reprobatethreshold";
             string ColName_TotalRogueCount = "totalroguecount";
@@ -43,102 +43,59 @@ namespace ChemSW.Nbt.Schema
 
 
 
-
-
-
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "schemaupdate_" + SchemaVersion, TableName );
             DataTable DataTable = CswTableUpdate.getEmptyTable();
-            
+
 
             //Update Prop Vals
             DataRow NewRow = DataTable.NewRow();
-            NewRow[ColName_RuleName] = "";
-            NewRow[ColName_MaxRunTime] = "";
-            NewRow[ColName_ThreadId] = "";
-            NewRow[ColName_ReprobateThreshold] = "";
-            NewRow[ColName_TotalRogueCount] = "";
-            NewRow[ColName_FailedCount] = "";
-            NewRow[ColName_Reprobate] = "";
-            NewRow[ColName_Disabled] = "";
-            NewRow[ColName_StatusMessage] = "";
-            NewRow[ColName_Recurrence] = "";
-            NewRow[ColName_Interval] = "";
-            NewRow[ColName_RunStartTime] = "";
-            NewRow[ColName_RunEndTime] = "";
-            NewRow[ColName_LastRun] = "";
+            NewRow[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtPropVals.ToString(); 
+            NewRow[ColName_MaxRunTimeMs] = 2000;
+            NewRow[ColName_ReprobateThreshold] = 3;
+            NewRow[ColName_Disabled] = 0;
+            NewRow[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRow[ColName_Interval] = 5;
             DataTable.Rows.Add( NewRow );
 
             //Update MBTF
             NewRow = DataTable.NewRow();
-            NewRow[ColName_RuleName] = "";
-            NewRow[ColName_MaxRunTime] = "";
-            NewRow[ColName_ThreadId] = "";
-            NewRow[ColName_ReprobateThreshold] = "";
-            NewRow[ColName_TotalRogueCount] = "";
-            NewRow[ColName_FailedCount] = "";
-            NewRow[ColName_Reprobate] = "";
-            NewRow[ColName_Disabled] = "";
-            NewRow[ColName_StatusMessage] = "";
-            NewRow[ColName_Recurrence] = "";
-            NewRow[ColName_Interval] = "";
-            NewRow[ColName_RunStartTime] = "";
-            NewRow[ColName_RunEndTime] = "";
-            NewRow[ColName_LastRun] = "";
+            NewRow[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtMTBF.ToString(); 
+            NewRow[ColName_MaxRunTimeMs] = 5000;
+            NewRow[ColName_ReprobateThreshold] = 3;
+            NewRow[ColName_Disabled] = 0;
+            NewRow[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRow[ColName_Interval] = 5;
             DataTable.Rows.Add( NewRow );
 
             //Update Inspection
             NewRow = DataTable.NewRow();
-            NewRow[ColName_RuleName] = "";
-            NewRow[ColName_MaxRunTime] = "";
-            NewRow[ColName_ThreadId] = "";
-            NewRow[ColName_ReprobateThreshold] = "";
-            NewRow[ColName_TotalRogueCount] = "";
-            NewRow[ColName_FailedCount] = "";
-            NewRow[ColName_Reprobate] = "";
-            NewRow[ColName_Disabled] = "";
-            NewRow[ColName_StatusMessage] = "";
-            NewRow[ColName_Recurrence] = "";
-            NewRow[ColName_Interval] = "";
-            NewRow[ColName_RunStartTime] = "";
-            NewRow[ColName_RunEndTime] = "";
-            NewRow[ColName_LastRun] = "";
+            NewRow[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtInspection.ToString(); 
+            NewRow[ColName_MaxRunTimeMs] = 5000;
+            NewRow[ColName_ReprobateThreshold] = 3;
+            NewRow[ColName_Disabled] = 0;
+            NewRow[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRow[ColName_Interval] = 5;
             DataTable.Rows.Add( NewRow );
 
             //Gen Node
             NewRow = DataTable.NewRow();
-            NewRow[ColName_RuleName] = "";
-            NewRow[ColName_MaxRunTime] = "";
-            NewRow[ColName_ThreadId] = "";
-            NewRow[ColName_ReprobateThreshold] = "";
-            NewRow[ColName_TotalRogueCount] = "";
-            NewRow[ColName_FailedCount] = "";
-            NewRow[ColName_Reprobate] = "";
-            NewRow[ColName_Disabled] = "";
-            NewRow[ColName_StatusMessage] = "";
-            NewRow[ColName_Recurrence] = "";
-            NewRow[ColName_Interval] = "";
-            NewRow[ColName_RunStartTime] = "";
-            NewRow[ColName_RunEndTime] = "";
-            NewRow[ColName_LastRun] = "";
+            NewRow[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenNode.ToString(); 
+            NewRow[ColName_MaxRunTimeMs] = 5000;
+            NewRow[ColName_ReprobateThreshold] = 3;
+            NewRow[ColName_Disabled] = 0;
+            NewRow[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRow[ColName_Interval] = 5;
             DataTable.Rows.Add( NewRow );
 
             //Gen Email Rpt
             NewRow = DataTable.NewRow();
-            NewRow[ColName_RuleName] = "";
-            NewRow[ColName_MaxRunTime] = "";
-            NewRow[ColName_ThreadId] = "";
-            NewRow[ColName_ReprobateThreshold] = "";
-            NewRow[ColName_TotalRogueCount] = "";
-            NewRow[ColName_FailedCount] = "";
-            NewRow[ColName_Reprobate] = "";
-            NewRow[ColName_Disabled] = "";
-            NewRow[ColName_StatusMessage] = "";
-            NewRow[ColName_Recurrence] = "";
-            NewRow[ColName_Interval] = "";
-            NewRow[ColName_RunStartTime] = "";
-            NewRow[ColName_RunEndTime] = "";
-            NewRow[ColName_LastRun] = "";
-            DataTable.Rows.Add( NewRow ); 
+            NewRow[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenEmailRpt.ToString(); 
+            NewRow[ColName_MaxRunTimeMs] = 5000;
+            NewRow[ColName_ReprobateThreshold] = 3;
+            NewRow[ColName_Disabled] = 0;
+            NewRow[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRow[ColName_Interval] = 5;
+            DataTable.Rows.Add( NewRow );
 
 
 
