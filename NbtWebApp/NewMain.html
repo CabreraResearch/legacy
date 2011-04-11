@@ -274,7 +274,7 @@
 			'onEditView': function (viewid)
 			{
 				clear({ 'all': true });
-				$('#CenterDiv').CswViewEditor('init');
+				$('#CenterDiv').CswViewEditor({ 'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId) });
 			},
 			'Multi': multi,
 			'NodeCheckTreeId': MainTreeId

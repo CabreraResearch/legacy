@@ -23,6 +23,18 @@
 
 						}, // AddWelcomeItemDialog
 
+		'AddViewDialog': function (options)
+						{
+							var o = {
+								'onAddView': function () { }
+							};
+							if (options) $.extend(o, options);
+
+							var $div = $('<div></div>');
+							
+							_openDiv($div, 400, 300);
+						},
+
 		'AddNodeDialog': function (options) {
 							var o = {
 								'nodetypeid': '', 

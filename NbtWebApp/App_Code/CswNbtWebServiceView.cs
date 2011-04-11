@@ -117,11 +117,11 @@ namespace ChemSW.Nbt.WebServices
 
 					ReportTree.goToParentNode();
 				}
-				
+
 				Session[ViewTreeSessionKey] = TreeXmlDoc;
 
 			}
-			
+
 			string ret = "<result>" +
 						 "  <tree>" + TreeXmlDoc.InnerXml + "</tree>" +
 						 "  <types> " + _getTypes() + " </types>" +
@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.WebServices
 
 		public string _getTypes()
 		{
-			JObject ReturnObj = new JObject( new JProperty("default", "") );
+			JObject ReturnObj = new JObject( new JProperty( "default", "" ) );
 
 			string[] types = { "action", "category", "report", "viewtree", "viewgrid", "viewlist" };
 			foreach( string type in types )
@@ -199,28 +199,74 @@ namespace ChemSW.Nbt.WebServices
 				bool Selectable = true;
 				if( type == "category" )
 					Selectable = false;
-				ReturnObj.Add( new JProperty( type, 
+				ReturnObj.Add( new JProperty( type,
 											  JObject.Parse( "{ \"icon\": { \"image\": \"Images/view/" + type + ".gif\" }, " +
-															 "\"hover_node\": "+ Selectable.ToString().ToLower()+", " +
-															 "\"select_node\": "+ Selectable.ToString().ToLower()+" } }" )));
-									// this puts quotes around the boolean values
-									//new JObject( 
-									//    new JProperty( "icon", 
-									//        new JObject( 
-									//            new JProperty( "image", "Images/view/" + type + @".gif" ) 
-									//        ) 
-									//    ),
-									//    new JProperty( "hover_node", Selectable.ToString().ToLower() )
-									//    new JProperty( "select_node", Selectable.ToString().ToLower() )
-									//) 
-							//    )
-							//);
+															 "\"hover_node\": " + Selectable.ToString().ToLower() + ", " +
+															 "\"select_node\": " + Selectable.ToString().ToLower() + " } }" ) ) );
+				// this puts quotes around the boolean values
+				//new JObject( 
+				//    new JProperty( "icon", 
+				//        new JObject( 
+				//            new JProperty( "image", "Images/view/" + type + @".gif" ) 
+				//        ) 
+				//    ),
+				//    new JProperty( "hover_node", Selectable.ToString().ToLower() )
+				//    new JProperty( "select_node", Selectable.ToString().ToLower() )
+				//) 
+				//    )
+				//);
 			}
 			string ret = ReturnObj.ToString();
 			return ret;
 		}
 
 
+		public JObject getViewGrid( bool All )
+		{
+			JObject ReturnVal = new JObject();
+			bool IsAdmin = _CswNbtResources.CurrentNbtUser.IsAdministrator();
+			DataTable ViewsTable;
+			if( IsAdmin )
+			{
+				if( All )
+				{
+					ViewsTable = _CswNbtResources.ViewSelect.getAllViews();
+				}
+				else
+				{
+					ViewsTable = _CswNbtResources.ViewSelect.getVisibleViews( true );
+				}
+			}
+			else
+			{
+				ViewsTable = _CswNbtResources.ViewSelect.getUserViews();
+			}
+
+			if( ViewsTable.Columns.Contains( "viewxml" ) )
+				ViewsTable.Columns.Remove( "viewxml" );
+			if( ViewsTable.Columns.Contains( "roleid" ) )
+				ViewsTable.Columns.Remove( "roleid" );
+			if( ViewsTable.Columns.Contains( "userid" ) )
+				ViewsTable.Columns.Remove( "userid" );
+			if( ViewsTable.Columns.Contains( "mssqlorder" ) )
+				ViewsTable.Columns.Remove( "mssqlorder" );
+
+			if( !IsAdmin )
+			{
+				if( ViewsTable.Columns.Contains( "visibility" ) )
+					ViewsTable.Columns.Remove( "visibility" );
+				if( ViewsTable.Columns.Contains( "username" ) )
+					ViewsTable.Columns.Remove( "username" );
+				if( ViewsTable.Columns.Contains( "rolename" ) )
+					ViewsTable.Columns.Remove( "rolename" );
+			}
+
+			CswGridData gd = new CswGridData( _CswNbtResources );
+			gd.PkColumn = "nodeviewid";
+			ReturnVal = gd.DataTableToJSON( ViewsTable );
+
+			return ReturnVal;
+		} // getViewGrid()
 
 
 	} // class CswNbtWebServiceView

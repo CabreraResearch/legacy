@@ -354,6 +354,83 @@ namespace ChemSW.Nbt.WebServices
 			return ReturnJson.ToString();
 		} // getGrid()
 
+		#region Views
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getViewGrid( bool All )
+		{
+			JObject ReturnJson = new JObject();
+			try
+			{
+				start();
+				CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
+				ReturnJson = ws.getViewGrid( All );
+				end();
+			}
+			catch( Exception Ex )
+			{
+				ReturnJson.Add( jError( Ex ) );
+			}
+
+			return ReturnJson.ToString();
+		} // getViewGrid()
+
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string copyView( string ViewId )
+		{
+			JObject ReturnJson = new JObject();
+			try
+			{
+				start();
+				Int32 nViewId = CswConvert.ToInt32( ViewId );
+				if( nViewId != Int32.MinValue )
+				{
+					CswNbtView SourceView = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					CswNbtView NewView = new CswNbtView( _CswNbtResources );
+					NewView.makeNew( SourceView.ViewName + " - Copy", SourceView.Visibility, SourceView.VisibilityRoleId, SourceView.VisibilityUserId, SourceView );
+					NewView.save();
+					ReturnJson.Add( new JProperty( "copyviewid", NewView.ViewId.ToString() ) );
+				}
+				end();
+			}
+			catch( Exception Ex )
+			{
+				ReturnJson.Add( jError( Ex ) );
+			}
+
+			return ReturnJson.ToString();
+		} // copyView()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string deleteView( string ViewId )
+		{
+			JObject ReturnJson = new JObject();
+			try
+			{
+				start();
+				Int32 nViewId = CswConvert.ToInt32( ViewId );
+				if( nViewId != Int32.MinValue )
+				{
+					CswNbtView DoomedView = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					DoomedView.Delete();
+					ReturnJson.Add( new JProperty( "succeeded", "true" ) );
+				}
+				end();
+			}
+			catch( Exception Ex )
+			{
+				ReturnJson.Add( jError( Ex ) );
+			}
+
+			return ReturnJson.ToString();
+		} // copyView()
+
+		#endregion Views
+
 		/// <summary>
 		/// Generates a tree of nodes from the view
 		/// </summary>
