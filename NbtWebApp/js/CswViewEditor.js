@@ -7,7 +7,9 @@
 			CopyViewUrl: '/NbtWebApp/wsNBT.asmx/copyView',
 			DeleteViewUrl: '/NbtWebApp/wsNBT.asmx/deleteView',
 			viewid: '',
-			ID: 'vieweditor'
+			ID: 'vieweditor',
+			ColumnViewName: 'VIEWNAME',
+			ColumnViewId: 'NODEVIEWID',
 		};
 		if(options) $.extend(o, options);
 
@@ -37,8 +39,9 @@
 							"This wizard will take you step by step through the process of creating a new View or "+
 							"editing an existing View.<br/><br/>";
 		$div1.append(instructions);
-		$div1.append('Select a View to Edit:');
-
+		$div1.append('Select a View to Edit:&nbsp;');
+		var $selview_span = $('<span id="'+ o.ID +'_selviewname" style="font-weight: bold"></span>')
+								.appendTo($div1);
 		var $viewgrid_div = $('<div></div>').appendTo($div1);
 		var $viewgrid;
 		function onViewGridSuccess($vg) { 
@@ -67,7 +70,7 @@
 			'enabledText': 'Copy View',
 			'disableOnClick': true,
 			'onclick': function() {
-				var viewid = _getSelectedRowValue($viewgrid, 'NODEVIEWID');
+				var viewid = _getSelectedRowValue($viewgrid, o.ColumnViewId);
 				if(viewid != '' && viewid != undefined)
 				{
 					CswAjaxJSON({
@@ -87,10 +90,10 @@
 			'enabledText': 'Delete View',
 			'disableOnClick': true,
 			'onclick': function() {
-			    var viewid = _getSelectedRowValue($viewgrid, 'NODEVIEWID');
+			    var viewid = _getSelectedRowValue($viewgrid, o.ColumnViewId);
 				if(viewid != '' && viewid != undefined)
 				{
-					if(confirm("Are you sure you want to delete: " + _getSelectedRowValue($viewgrid, 'VIEWNAME')))
+					if(confirm("Are you sure you want to delete: " + _getSelectedRowValue($viewgrid, o.ColumnViewName)))
 					{
 						CswAjaxJSON({
 							url: o.DeleteViewUrl,
@@ -153,6 +156,7 @@
 								$copyviewbtn.CswButton('disable');
 								$deleteviewbtn.CswButton('disable');
 							}
+							$selview_span.text(_getSelectedRowValue($viewgrid, o.ColumnViewName));
 						},
 						//'toppager': true,
 						'pager': $gridPager
@@ -160,7 +164,7 @@
 					$.extend(gridJson, mygridopts);
 
 					$viewgrid.jqGrid(gridJson)
-								.hideCol('NODEVIEWID');
+								.hideCol(o.ColumnViewId);
 
 					if(selectedrowpk != undefined)
 					{
@@ -179,7 +183,7 @@
 		}
 		function _getRowForPk($viewgrid, selectedpk)
 		{
-			var pks = $viewgrid.jqGrid('getCol', 'NODEVIEWID', true);
+			var pks = $viewgrid.jqGrid('getCol', o.ColumnViewId, true);
 			var rowid = 0;
 			for(var i in pks)
 			{
