@@ -26,13 +26,98 @@
 		'AddViewDialog': function (options)
 						{
 							var o = {
-								'onAddView': function () { }
+								'ID': 'addviewdialog',
+								'onAddView': function (newviewid) { }
 							};
 							if (options) $.extend(o, options);
 
 							var $div = $('<div></div>');
-							
-							_openDiv($div, 400, 300);
+							var $table = $div.CswTable('init', { 'ID': o.ID + '_tbl', 'FirstCellRightAlign': true });
+
+							$table.CswTable('cell', 1, 1).append('Name:');
+							var $nametextbox = $('<input type="text" id="' + o.ID + '_nametb" value="" />')
+													.appendTo($table.CswTable('cell', 1, 2));
+
+							$table.CswTable('cell', 2, 1).append('Display Mode:');
+							var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />')
+														.appendTo($table.CswTable('cell', 2, 2));
+							$displaymodeselect.append('<option value="List">List</option>');
+							$displaymodeselect.append('<option value="Tree">Tree</option>');
+							$displaymodeselect.append('<option value="Grid">Grid</option>');
+
+							var $visibilityselect;
+							var $visroleselect;
+							var $visuserselect;
+							IsAdministrator({
+								'Yes': function() {
+										$table.CswTable('cell', 3, 1).append('Available to:');
+										$visibilityselect = $('<select id="' + o.ID + '_vissel" />')
+																	.appendTo($table.CswTable('cell', 3, 2));
+										$visibilityselect.append('<option value="User">User:</option>');
+										$visibilityselect.append('<option value="Role">Role:</option>');
+										$visibilityselect.append('<option value="Everyone">Everyone</option>');
+
+										$visroleselect = $table.CswTable('cell', 3, 2).CswNodeSelect('init', {
+																									'ID': o.ID + '_visrolesel', 
+																									'objectclass': 'RoleClass',
+																									}).hide();
+										$visuserselect = $table.CswTable('cell', 3, 2).CswNodeSelect('init', {
+																									'ID': o.ID + '_visusersel', 
+																									'objectclass': 'UserClass'
+																									})
+
+										$visibilityselect.change(function() {
+											var val = $visibilityselect.val();
+											if(val == 'Role')
+											{
+												$visroleselect.show();
+												$visuserselect.hide();
+											}
+											else if(val == 'User')
+											{
+												$visroleselect.hide();
+												$visuserselect.show();
+											}
+											else
+											{
+												$visroleselect.hide();
+												$visuserselect.hide();
+											}
+										});
+									}
+							});
+
+							var $copybtn = $div.CswButton({ID: o.ID + '_submit', 
+                                                                    enabledText: 'Create View', 
+                                                                    disabledText: 'Creating View', 
+                                                                    onclick: function() {
+									                                        
+																			var createData = {};
+																			createData.ViewName = $nametextbox.val();
+																			createData.ViewMode = $displaymodeselect.val();
+																			createData.Visibility = $visibilityselect.val();
+																			createData.VisibilityRoleId = $visroleselect.val();
+																			createData.VisibilityUserId = $visuserselect.val();
+																			CswAjaxJSON({
+																				url: '/NbtWebApp/wsNBT.asmx/createView',
+																				data: jsonToString(createData),
+																				success: function(data) {
+											                                        $div.dialog('close');
+																					o.onAddView(data.newviewid);
+																				}
+																			});
+								                                        }
+                                                                    });
+
+							var $cancelbtn = $div.CswButton({ID: o.ID + '_cancel', 
+                                                                        enabledText: 'Cancel', 
+                                                                        disabledText: 'Canceling', 
+                                                                        onclick: function() {
+																				$div.dialog('close');
+                                                                             }
+                                                                        });    
+
+							_openDiv($div, 400, 200);
 						},
 
 		'AddNodeDialog': function (options) {

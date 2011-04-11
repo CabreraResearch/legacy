@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Web.Script.Serialization;
 using System.Xml;
@@ -427,7 +428,48 @@ namespace ChemSW.Nbt.WebServices
 			}
 
 			return ReturnJson.ToString();
-		} // copyView()
+		} // deleteView()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string createView( string ViewName, string ViewMode, string Visibility, string VisibilityRoleId, string VisibilityUserId )
+		{
+			JObject ReturnJson = new JObject();
+			try
+			{
+				start();
+
+				NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
+				Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
+				NbtViewVisibility RealVisibility = NbtViewVisibility.Unknown;
+				Enum.TryParse<NbtViewVisibility>( ViewMode, out RealVisibility );
+				CswPrimaryKey RealVisibilityRoleId = null;
+				CswPrimaryKey RealVisibilityUserId = null;
+				if( RealVisibility == NbtViewVisibility.Role )
+				{
+					RealVisibilityRoleId = new CswPrimaryKey();
+					RealVisibilityRoleId.FromString( VisibilityRoleId );
+				}
+				else if( RealVisibility == NbtViewVisibility.User )
+				{
+					RealVisibilityUserId = new CswPrimaryKey();
+					RealVisibilityUserId.FromString( VisibilityUserId );
+				}
+
+				CswNbtView NewView = new CswNbtView( _CswNbtResources );
+				NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, null );
+				NewView.ViewMode = RealViewMode;
+				NewView.save();
+				ReturnJson.Add(new JProperty("newviewid", NewView.ViewId));
+				end();
+			}
+			catch( Exception Ex )
+			{
+				ReturnJson.Add( jError( Ex ) );
+			}
+
+			return ReturnJson.ToString();
+		} // createView()
 
 		#endregion Views
 
@@ -505,6 +547,55 @@ namespace ChemSW.Nbt.WebServices
 
 			return TreeNode;
 		} // getTreeOfNode()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement getNodes( string NodeTypeId, string ObjectClassId, string ObjectClass )
+		{
+			var ResultXml = new XElement( "nodes" );
+
+			try
+			{
+				start();
+				
+				Int32 RealNodeTypeId = CswConvert.ToInt32( NodeTypeId );
+				Int32 RealObjectClassId = CswConvert.ToInt32( ObjectClassId );
+				CswNbtMetaDataObjectClass.NbtObjectClass RealObjectClass = CswNbtMetaDataObjectClass.NbtObjectClass.Unknown;
+				Enum.TryParse < CswNbtMetaDataObjectClass.NbtObjectClass>( ObjectClass, true, out RealObjectClass );
+
+				Collection<CswNbtNode> Nodes = null;
+				if( RealNodeTypeId != Int32.MinValue )
+				{
+					CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( RealNodeTypeId );
+					Nodes = MetaDataNodeType.getNodes( true, false );
+				}
+				else
+				{
+					CswNbtMetaDataObjectClass MetaDataObjectClass = null;
+					if( RealObjectClassId != Int32.MinValue )
+						MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( RealObjectClassId );
+					else if( RealObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+						MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( RealObjectClass );
+					Nodes = MetaDataObjectClass.getNodes( true, false );
+				}
+
+				foreach( CswNbtNode Node in Nodes )
+				{
+					ResultXml.Add( 
+						new XElement( "node", 
+							new XAttribute( "id", Node.NodeId.ToString() ),
+							new XAttribute( "name", Node.NodeName ) ) );
+				}
+
+				end();
+			}
+			catch( Exception ex )
+			{
+				ResultXml = xError( ex );
+			}
+
+			return ResultXml;
+		} // getNodes()
 
 		#endregion Render Core UI
 
