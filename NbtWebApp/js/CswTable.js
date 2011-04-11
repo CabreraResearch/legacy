@@ -168,7 +168,7 @@
 		        while (col > $row.children('td').length) 
 				{
 					var align = $table.attr('cellalign');
-					if(($row.children('td').length == 1 && $table.attr('FirstCellRightAlign') == 'true') ||
+					if(($row.children('td').length == 0 && $table.attr('FirstCellRightAlign') == 'true') ||
 					   ($row.children('td').length % 2 == 0 && $table.attr('OddCellRightAlign') == 'true'))
 					{
 						align = 'right';
