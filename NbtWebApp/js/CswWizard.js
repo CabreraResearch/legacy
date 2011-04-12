@@ -11,7 +11,8 @@
 					Steps: { 1: 'Default' },
 					SelectedStep: 1,
 					FinishText: 'Finish',
-					onStepChange: function(newstepno) {},
+					onNext: function(newstepno) {},
+					onPrevious: function(newstepno) {},
 					onFinish: function() {},
 					onCancel: function() {}
 				};
@@ -41,10 +42,12 @@
 				{
 					var steptitle = o.Steps[s];
 
-					$('<div class="CswWizard_StepLinkDiv" stepno="' + s + '"><a href="#">' + s + '.&nbsp;' + steptitle + '</a></div>')
-										.appendTo($indexcell)
-										.children('a')
-										.click( function(stepno) { return function() { _selectStep($table, stepno, o.onStepChange); return false; }; }(s) );
+//					$('<div class="CswWizard_StepLinkDiv" stepno="' + s + '"><a href="#">' + s + '.&nbsp;' + steptitle + '</a></div>')
+//										.appendTo($indexcell)
+//										.children('a')
+//										.click( function(stepno) { return function() { _selectStep($table, stepno); return false; }; }(s) );
+					$('<div class="CswWizard_StepLinkDiv" stepno="' + s + '">' + s + '.&nbsp;' + steptitle + '</div>')
+										.appendTo($indexcell);
 
 					$('<div class="CswWizard_StepDiv" id="' + o.ID + '_' + s + '" stepno="' + s + '" ><span class="CswWizard_StepTitle">'+ steptitle +'</span><br/></br><div id="' + o.ID + '_' + s + '_content"></div></div>')
 										.appendTo($stepscell);
@@ -63,7 +66,8 @@
 															'disableOnClick': false,
 															'onclick': function() { 
 																	var currentStepNo = _getCurrentStepNo($table);
-																	_selectStep($table, currentStepNo - 1, o.onStepChange);
+																	_selectStep($table, currentStepNo - 1);
+																	o.onPrevious(currentStepNo - 1);
 																}
 															});
 				var $nextbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_next',
@@ -71,7 +75,8 @@
 															'disableOnClick': false,
 															'onclick': function() { 
 																	var currentStepNo = _getCurrentStepNo($table);
-																	_selectStep($table, currentStepNo + 1, o.onStepChange);
+																	_selectStep($table, currentStepNo + 1);
+																	o.onNext(currentStepNo + 1);
 																}
 															});
 				var $finishbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_finish',
@@ -83,7 +88,7 @@
 															'onclick': o.onCancel
 															});
 
-				_selectStep($table, o.SelectedStep, o.onStepChange);
+				_selectStep($table, o.SelectedStep);
 
 				return $table;
 			}, // init()
@@ -121,7 +126,7 @@
 		return parseInt($table.find('.CswWizard_StepLinkDivSelected').attr('stepno'));
 	}
 	
-	function _selectStep($table, stepno, onStepChange)
+	function _selectStep($table, stepno)
 	{
 		var stepcount = $table.attr("stepcount");
 		if(stepno > 0 && stepno <= stepcount)
@@ -144,7 +149,6 @@
 			else
 				$nextbtn.CswButton('enable');
 
-			onStepChange(stepno);
 		} // if(stepno <= stepcount)
 	} // _selectStep()
 	

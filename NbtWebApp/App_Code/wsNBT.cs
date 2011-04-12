@@ -377,6 +377,31 @@ namespace ChemSW.Nbt.WebServices
 			return ReturnJson.ToString();
 		} // getViewGrid()
 
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XmlDocument getViewInfo(string ViewId)
+		{
+			XmlDocument ReturnXml = null;
+			try
+			{
+				start();
+				Int32 nViewId = CswConvert.ToInt32(ViewId);
+				if( nViewId != Int32.MinValue )
+				{
+					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					ReturnXml = View.ToXml();
+				}
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnXml = new XmlDocument();
+				ReturnXml.LoadXml( "<error>" + error( ex ) + "</error>" );
+			}
+
+			return ReturnXml;
+		} // getViewInfo()
+
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]

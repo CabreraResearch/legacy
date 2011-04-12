@@ -27,7 +27,8 @@
 						{
 							var o = {
 								'ID': 'addviewdialog',
-								'onAddView': function (newviewid) { }
+								'onAddView': function (newviewid) { },
+								'makeVisibilitySelect': function(id, $parent) { }
 							};
 							if (options) $.extend(o, options);
 
@@ -45,47 +46,8 @@
 							$displaymodeselect.append('<option value="Tree">Tree</option>');
 							$displaymodeselect.append('<option value="Grid">Grid</option>');
 
-							var $visibilityselect;
-							var $visroleselect;
-							var $visuserselect;
-							IsAdministrator({
-								'Yes': function() {
-										$table.CswTable('cell', 3, 1).append('Available to:');
-										$visibilityselect = $('<select id="' + o.ID + '_vissel" />')
-																	.appendTo($table.CswTable('cell', 3, 2));
-										$visibilityselect.append('<option value="User">User:</option>');
-										$visibilityselect.append('<option value="Role">Role:</option>');
-										$visibilityselect.append('<option value="Everyone">Everyone</option>');
-
-										$visroleselect = $table.CswTable('cell', 3, 2).CswNodeSelect('init', {
-																									'ID': o.ID + '_visrolesel', 
-																									'objectclass': 'RoleClass',
-																									}).hide();
-										$visuserselect = $table.CswTable('cell', 3, 2).CswNodeSelect('init', {
-																									'ID': o.ID + '_visusersel', 
-																									'objectclass': 'UserClass'
-																									})
-
-										$visibilityselect.change(function() {
-											var val = $visibilityselect.val();
-											if(val == 'Role')
-											{
-												$visroleselect.show();
-												$visuserselect.hide();
-											}
-											else if(val == 'User')
-											{
-												$visroleselect.hide();
-												$visuserselect.show();
-											}
-											else
-											{
-												$visroleselect.hide();
-												$visuserselect.hide();
-											}
-										});
-									}
-							});
+							$table.CswTable('cell', 3, 1).append('Available to:');
+							var v = o.makeVisibilitySelect($table.attr('id'), $table.CswTable('cell', 3, 2));
 
 							var $copybtn = $div.CswButton({ID: o.ID + '_submit', 
                                                                     enabledText: 'Create View', 
@@ -95,9 +57,9 @@
 																			var createData = {};
 																			createData.ViewName = $nametextbox.val();
 																			createData.ViewMode = $displaymodeselect.val();
-																			createData.Visibility = $visibilityselect.val();
-																			createData.VisibilityRoleId = $visroleselect.val();
-																			createData.VisibilityUserId = $visuserselect.val();
+																			createData.Visibility = v.getvisibilityselect().val();
+																			createData.VisibilityRoleId = v.getvisroleselect().val();
+																			createData.VisibilityUserId = v.getvisuserselect().val();
 																			CswAjaxJSON({
 																				url: '/NbtWebApp/wsNBT.asmx/createView',
 																				data: jsonToString(createData),

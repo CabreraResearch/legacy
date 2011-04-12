@@ -4,6 +4,7 @@
 	{
 		var o = {
 			ViewGridUrl: '/NbtWebApp/wsNBT.asmx/getViewGrid',
+			ViewInfoUrl: '/NbtWebApp/wsNBT.asmx/getViewInfo',
 			CopyViewUrl: '/NbtWebApp/wsNBT.asmx/copyView',
 			DeleteViewUrl: '/NbtWebApp/wsNBT.asmx/deleteView',
 			viewid: '',
@@ -32,6 +33,8 @@
 					5: 'Set Filters'
 				},
 				'FinishText': 'Save and Finish',
+				'onNext': _handleNext,
+				//'onPrevious': _handlePrevious,
 				'onCancel': o.onCancel,
 				'onFinish': _handleFinish 
 			});
@@ -121,10 +124,11 @@
 				$.CswDialog('AddViewDialog', { 
 					'onAddView': function(newviewid) {
 						$viewgrid = _getViewsGrid(onViewGridSuccess, newviewid); 
-					},  // onAddView
+					},
 					'onClose': function() {
 						$newviewbtn.CswButton('enable');
-					}  // onClose
+					},
+					'makeVisibilitySelect': _makeVisibilitySelect
 				}); // CswDialog
 			} // onclick
 		})
@@ -132,9 +136,100 @@
 		$wizard.CswWizard('button', 'next', 'disable');
 
 
+		// Step 2 - Edit View Attributes
+
+		var $div2 = $wizard.CswWizard('div', 2);
+		var $table2 = $div2.CswTable({ 
+				'ID': o.ID + '_tbl2', 
+				'FirstCellRightAlign': true 
+		});
+
+		$table2.CswTable('cell', 1, 1).append('View Name:');
+		var $viewnametextbox = $('<input type="textbox" id="' + o.ID + '_viewname" />')
+								.appendTo($table2.CswTable('cell', 1, 2));
+
+		$table2.CswTable('cell', 2, 1).append('Category:');
+		var $categorytextbox = $('<input type="textbox" id="' + o.ID + '_category" />')
+								.appendTo($table2.CswTable('cell', 2, 2));
+
+		$table2.CswTable('cell', 3, 1).append('View Visibility:');
+		var v = _makeVisibilitySelect($table2.attr('id'), $table2.CswTable('cell', 3, 2));
+		$table2.CswTable('cell', 4, 1).append('For Mobile:');
+		var $formobilecheckbox = $('<input type="checkbox" id="' + o.ID + '_formobile" />')
+								.appendTo($table2.CswTable('cell', 4, 2));
+
+		$table2.CswTable('cell', 5, 1).append('Display Mode:');
+		var $displaymodespan = $table2.CswTable('cell', 5, 2).append('<span id="'+ o.ID +'_displaymode"></span>');
+		
+		var $gridwidthlabelcell = $table2.CswTable('cell', 6, 1)
+								.append('Grid Width (in characters):');
+		var $gridwidthtextboxcell = $table2.CswTable('cell', 6, 2);
+		$gridwidthtextboxcell.CswNumberTextBox('init', {
+				'ID': o.ID + '_gridwidth',
+				'Value': '',
+				'MinValue': '1',
+				'MaxValue': '',
+				'Precision': '0',
+				'onchange': function() { }
+		});
+
+		// Step 3 - Add Relationships
+
+		var $div3 = $wizard.CswWizard('div', 3);
+
+		// Step 4 - Select Properties
+
+		var $div4 = $wizard.CswWizard('div', 4);
+
+		// Step 5 - Set Filters
+
+		var $div5 = $wizard.CswWizard('div', 5);
 
 
+		var $currentviewxml;
 
+		function _handleNext(newstepno)
+		{
+			switch(newstepno)
+			{
+				case 1:
+					break;
+				case 2:
+					CswAjaxXml({
+						url: o.ViewInfoUrl,
+						data: 'ViewId='+ _getSelectedRowValue($viewgrid, o.ColumnViewId),
+						success: function($xml) {
+							$currentviewxml = $xml;
+
+							$viewnametextbox.val($currentviewxml.attr('viewname'));
+							$categorytextbox.val($currentviewxml.attr('category'));
+							v.getvisibilityselect().val($currentviewxml.attr('visibility')).trigger('change');
+							v.getvisroleselect().val('nodes_' + $currentviewxml.attr('visibilityroleid'));
+							v.getvisuserselect().val('nodes_' + $currentviewxml.attr('visibilityuserid'));
+							if($currentviewxml.attr('formobile') == 'true') {
+								$formobilecheckbox.attr('checked', 'true');
+							}
+							var mode = $currentviewxml.attr('mode')
+							$displaymodespan.text(mode);
+							$gridwidthtextboxcell.CswNumberTextBox('setValue', $currentviewxml.attr('width'));
+							if(mode == "Grid") {
+								$gridwidthlabelcell.show();
+								$gridwidthtextboxcell.show();
+							} else {
+								$gridwidthlabelcell.hide();
+								$gridwidthtextboxcell.hide();
+							}
+						} // success
+					}); // ajax
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+				case 5:
+					break;
+			} // switch(newstepno)
+		} // _handleStepChange()
 
 
 		function _getViewsGrid(onSuccess, selectedrowpk)
@@ -154,7 +249,7 @@
 					$viewgrid_div.empty();
 					var $gridPager = $('<div id="' + o.ID + '_gp" style="width:100%; height:20px;" />')
 									 .appendTo($viewgrid_div);
-					var $viewgrid = $('<table id="'+ o.ID + '" />')
+					var $viewgrid = $('<table id="'+ o.ID + '_gt" />')
 										.appendTo($viewgrid_div);
 
 					var mygridopts = {
@@ -214,6 +309,56 @@
 			o.onFinish();
 		}
 
+		function _makeVisibilitySelect(id, $parent)
+		{
+			var $visibilityselect;
+			var $visroleselect;
+			var $visuserselect;
+			IsAdministrator({
+				'Yes': function() {
+						
+						$visibilityselect = $('<select id="' + id + '_vissel" />')
+													.appendTo($parent);
+						$visibilityselect.append('<option value="User">User:</option>');
+						$visibilityselect.append('<option value="Role">Role:</option>');
+						$visibilityselect.append('<option value="Global">Global</option>');
+
+						$visroleselect = $parent.CswNodeSelect('init', {
+																			'ID': id + '_visrolesel', 
+																			'objectclass': 'RoleClass',
+																		}).hide();
+						$visuserselect = $parent.CswNodeSelect('init', {
+																			'ID': id + '_visusersel', 
+																			'objectclass': 'UserClass'
+																		})
+
+						$visibilityselect.change(function() {
+							var val = $visibilityselect.val();
+							if(val == 'Role')
+							{
+								$visroleselect.show();
+								$visuserselect.hide();
+							}
+							else if(val == 'User')
+							{
+								$visroleselect.hide();
+								$visuserselect.show();
+							}
+							else
+							{
+								$visroleselect.hide();
+								$visuserselect.hide();
+							}
+						}); // change
+					} // yes
+			}); // IsAdministrator
+
+			return {
+				'getvisibilityselect': function() { return $visibilityselect; },
+				'getvisroleselect': function() { return $visroleselect; },
+				'getvisuserselect': function() { return $visuserselect; }
+			}
+		} // _makeVisibilitySelect()
 
 		return $div;
 
