@@ -28,7 +28,7 @@
 							var o = {
 								'ID': 'addviewdialog',
 								'onAddView': function (newviewid) { },
-								'makeVisibilitySelect': function(id, $parent) { }
+								'makeVisibilitySelect': function($table, rownum, label) { }
 							};
 							if (options) $.extend(o, options);
 
@@ -46,8 +46,7 @@
 							$displaymodeselect.append('<option value="Tree">Tree</option>');
 							$displaymodeselect.append('<option value="Grid">Grid</option>');
 
-							$table.CswTable('cell', 3, 1).append('Available to:');
-							var v = o.makeVisibilitySelect($table.attr('id'), $table.CswTable('cell', 3, 2));
+							var v = o.makeVisibilitySelect($table, 3, 'Available to:');
 
 							var $copybtn = $div.CswButton({ID: o.ID + '_submit', 
                                                                     enabledText: 'Create View', 

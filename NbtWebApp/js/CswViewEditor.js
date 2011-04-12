@@ -154,8 +154,8 @@
 		var $categorytextbox = $('<input type="textbox" id="' + o.ID + '_category" />')
 								.appendTo($table2.CswTable('cell', 2, 2));
 
-		$table2.CswTable('cell', 3, 1).append('View Visibility:');
-		var v = _makeVisibilitySelect($table2.attr('id'), $table2.CswTable('cell', 3, 2));
+		var v = _makeVisibilitySelect($table2, 3, 'View Visibility:');
+
 		$table2.CswTable('cell', 4, 1).append('For Mobile:');
 		var $formobilecheckbox = $('<input type="checkbox" id="' + o.ID + '_formobile" />')
 								.appendTo($table2.CswTable('cell', 4, 2));
@@ -205,9 +205,12 @@
 
 							$viewnametextbox.val($currentviewxml.attr('viewname'));
 							$categorytextbox.val($currentviewxml.attr('category'));
-							v.getvisibilityselect().val($currentviewxml.attr('visibility')).trigger('change');
-							v.getvisroleselect().val('nodes_' + $currentviewxml.attr('visibilityroleid'));
-							v.getvisuserselect().val('nodes_' + $currentviewxml.attr('visibilityuserid'));
+							if(v.getvisibilityselect() != undefined)
+							{
+								v.getvisibilityselect().val($currentviewxml.attr('visibility')).trigger('change');
+								v.getvisroleselect().val('nodes_' + $currentviewxml.attr('visibilityroleid'));
+								v.getvisuserselect().val('nodes_' + $currentviewxml.attr('visibilityuserid'));
+							}
 							if($currentviewxml.attr('formobile') == 'true') {
 								$formobilecheckbox.attr('checked', 'true');
 							}
@@ -344,7 +347,7 @@
 			return rowid;
 		}
 
-		function _makeVisibilitySelect(id, $parent)
+		function _makeVisibilitySelect($table, rownum, label)
 		{
 			var $visibilityselect;
 			var $visroleselect;
@@ -352,6 +355,10 @@
 			IsAdministrator({
 				'Yes': function() {
 						
+						$table.CswTable('cell', rownum, 1).append(label);
+						var $parent = $table.CswTable('cell', rownum, 2);
+						var id = $table.attr('id');
+
 						$visibilityselect = $('<select id="' + id + '_vissel" />')
 													.appendTo($parent);
 						$visibilityselect.append('<option value="User">User:</option>');
