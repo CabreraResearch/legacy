@@ -435,6 +435,32 @@ namespace ChemSW.Nbt.WebServices
 		} // saveViewInfo()
 
 
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement getViewChildOptions( string ViewId, string ArbitraryId )
+		{
+			XElement ReturnXml = new XElement( "result" );
+			try
+			{
+				start();
+				Int32 nViewId = CswConvert.ToInt32( ViewId );
+				if( nViewId != Int32.MinValue )
+				{
+					CswNbtWebServiceView ws = new CswNbtWebServiceView(_CswNbtResources);
+					ReturnXml = ws.getViewChildOptions( nViewId, ArbitraryId );
+				}
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnXml.Add( xError( ex ) );
+			}
+
+			return ReturnXml;
+		} // saveViewInfo()
+
+
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string copyView( string ViewId )

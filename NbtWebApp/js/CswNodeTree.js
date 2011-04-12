@@ -114,8 +114,9 @@
 								treestr += '    class="jstree-'+ $itemxml.attr('state') +'" ';
 								if($itemxml.attr('cswnbtnodekey') != undefined)
 								{
-									treestr += '    cswnbtnodekey="'+ $itemxml.attr('cswnbtnodekey').replace(/"/g, '&quot;') +'">';
+									treestr += '    cswnbtnodekey="'+ $itemxml.attr('cswnbtnodekey').replace(/"/g, '&quot;') +'"';
 								}
+								treestr += '>';
 								if(o.ShowCheckboxes)
 								{
 									treestr += '  <input type="checkbox" class="'+ IDPrefix +'check" id="check_'+ nodeid +'" rel="'+ $itemxml.attr('rel') +'" nodeid="'+ nodeid +'" nodename="'+ nodename +'"></input>';

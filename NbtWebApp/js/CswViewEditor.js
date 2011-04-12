@@ -8,6 +8,7 @@
 			SaveViewUrl: '/NbtWebApp/wsNBT.asmx/saveViewInfo',
 			CopyViewUrl: '/NbtWebApp/wsNBT.asmx/copyView',
 			DeleteViewUrl: '/NbtWebApp/wsNBT.asmx/deleteView',
+			ChildOptionsUrl: '/NbtWebApp/wsNBT.asmx/getViewChildOptions',
 			viewid: '',
 			ID: 'vieweditor',
 			ColumnViewName: 'VIEWNAME',
@@ -228,7 +229,10 @@
 					}); // ajax
 					break;
 				case 3:
-					_saveAll();					
+					_saveAll();
+					
+					_makeViewTree($div3);
+
 					break;
 				case 4:
 					_saveAll();
@@ -401,6 +405,102 @@
 				'getvisuserselect': function() { return $visuserselect; }
 			}
 		} // _makeVisibilitySelect()
+
+		
+		function _makeViewTree($div)
+		{
+			var treecontent = _viewXmlToHtml($currentviewxml);
+			$div.jstree({
+						"html_data":
+							{
+								"data": treecontent.htmlstring
+							},
+						"ui": {
+							"select_limit": 1 //,
+							//"initially_select": selectid,
+						},
+						"types": {
+							"types": treecontent.types,
+							"max_children": -2,
+							"max_depth": -2
+						},
+						"plugins": ["themes", "html_data", "ui", "types", "crrm"]
+			}); // tree
+		} // _makeViewTree()
+
+
+		function _viewXmlToHtml($itemxml)
+		{
+			var types = {};
+			var arbid = $itemxml.attr('arbitraryid');
+			var nodename = $itemxml.get(0).nodeName;
+			var name;
+			var rel;
+			var childoptions;
+
+			if(nodename == 'TreeView')
+			{
+				arbid = "root";
+				name = $itemxml.attr('viewname');
+				rel = "root";
+				types.root = { icon: { image: $itemxml.attr('iconfilename') } };
+			} // if(nodename == 'TreeView')
+			if(nodename == 'Relationship')
+			{
+				name = $itemxml.attr('secondname');
+				var propname = $itemxml.attr('propname');
+                if( propname != '' && propname != undefined)
+                {
+                    if( $itemxml.attr('propowner') == "First" )
+                        name += " (by " + $itemxml.attr('firstname') + "'s " + propname + ")";
+                    else
+                        name += " (by " + propname + ")";
+                }
+				rel = $itemxml.attr('secondtype') + '_' + $itemxml.attr('secondid');
+				types[rel] = { icon: { image: $itemxml.attr('secondiconfilename') } };
+
+				childoptions = '<select id="' + arbid + '_child"></select>';
+				CswAjaxXml({
+					url: o.ChildOptionsUrl,
+					data: "ViewId=" + $itemxml.attr('viewid') + "&ArbitraryId=" + arbid,
+					success: function($xml) 
+					{
+						log($xml);
+					} // success
+				}); // ajax
+			} // if(nodename == 'Relationship')
+			else if(nodename == 'Property')
+			{
+			}
+			else if(nodename == 'PropertyFilter')
+			{
+			}
+			
+			var treestr = '<li id="'+ arbid +'" ';
+			treestr += '    rel="'+ rel +'" ';
+			treestr += '    class="jstree-open" ';
+			treestr += '>';
+			treestr += '  <a href="#">'+ name +'</a>';
+
+			if($itemxml.children().length > 0)
+			{
+				// recurse
+				treestr += '<ul>';
+				$itemxml.children().each(function() { 
+					var childcontent = _viewXmlToHtml($(this)); 
+					treestr += childcontent.htmlstring;
+					$.extend(types, childcontent.types);
+				});
+				treestr += '</ul>';
+			}
+			treestr += '</li>';
+
+			return {
+						'htmlstring': treestr,
+						'types': types
+					};
+		} // _viewXmlToHtml()
+
 
 		return $div;
 
