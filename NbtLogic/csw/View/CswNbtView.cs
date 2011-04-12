@@ -637,11 +637,13 @@ namespace ChemSW.Nbt
             }
         } // Delete()
 
+		public const Int32 ViewNameLength = 30;
+
 		public static bool ViewIsUnique( CswNbtResources CswNbtResources, Int32 ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
         {
 			// truncate the name
-			if(ViewName.Length > 30)
-				ViewName = ViewName.Substring( 0, 30 );
+			if( ViewName.Length > ViewNameLength )
+				ViewName = ViewName.Substring( 0, ViewNameLength );
 
 			if( Visibility != NbtViewVisibility.Property )
             {

@@ -392,9 +392,12 @@ namespace ChemSW.Nbt.WebServices
 					CswNbtView SourceView = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
 					CswNbtView NewView = new CswNbtView( _CswNbtResources );
 					string NewViewNameOrig = SourceView.ViewName;
-					if(!NewViewNameOrig.EndsWith(" - Copy") && NewViewNameOrig.Length < 21)
-						NewViewNameOrig = NewViewNameOrig + " - Copy";
+					string Suffix = " Copy";
+					if( !NewViewNameOrig.EndsWith( Suffix) && NewViewNameOrig.Length < (CswNbtView.ViewNameLength - Suffix.Length - 2 ))
+						NewViewNameOrig = NewViewNameOrig + Suffix;
 					string NewViewName = NewViewNameOrig;
+					if( NewViewNameOrig.Length > ( CswNbtView.ViewNameLength - 2 ) )
+						NewViewNameOrig = NewViewNameOrig.Substring( 0, ( CswNbtView.ViewNameLength - 2 ) );
 					Int32 Increment = 1;
 					while(!CswNbtView.ViewIsUnique(_CswNbtResources, Int32.MinValue, NewViewName, SourceView.Visibility, SourceView.VisibilityUserId, SourceView.VisibilityRoleId))
 					{
