@@ -37,6 +37,7 @@ namespace ChemSW.Nbt.Schema
         {
             try
             {
+                _CswNbtSchemaModTrnsctn.refreshDataDictionary(); 
                 _CswNbtSchemaModTrnsctn.beginTransaction();
                 _CswUpdateSchemaTo.update();
                 _CswNbtSchemaModTrnsctn.commitTransaction();
