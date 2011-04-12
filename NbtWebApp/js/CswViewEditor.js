@@ -10,6 +10,8 @@
 			ID: 'vieweditor',
 			ColumnViewName: 'VIEWNAME',
 			ColumnViewId: 'NODEVIEWID',
+			onCancel: function() {},
+			onFinish: function() {}
 		};
 		if(options) $.extend(o, options);
 
@@ -29,7 +31,9 @@
 					4: 'Select Properties',
 					5: 'Set Filters'
 				},
-				'FinishText': 'Save and Finish'
+				'FinishText': 'Save and Finish',
+				'onCancel': o.onCancel,
+				'onFinish': _handleFinish 
 			});
 
 		// Step 1 - Choose a View
@@ -125,6 +129,14 @@
 			} // onclick
 		})
 
+		$wizard.CswWizard('button', 'next', 'disable');
+
+
+
+
+
+
+
 		function _getViewsGrid(onSuccess, selectedrowpk)
 		{
 			var all = false;
@@ -132,6 +144,7 @@
 				all = true;
 
 			$selview_span.text('');
+			$wizard.CswWizard('button', 'next', 'disable');
 
 			CswAjaxJSON({
 				url: o.ViewGridUrl,
@@ -159,8 +172,8 @@
 								$deleteviewbtn.CswButton('disable');
 							}
 							$selview_span.text(_getSelectedRowValue($viewgrid, o.ColumnViewName));
+							$wizard.CswWizard('button', 'next', 'enable');
 						},
-						//'toppager': true,
 						'pager': $gridPager
 					};
 					$.extend(gridJson, mygridopts);
@@ -194,6 +207,13 @@
 			}
 			return rowid;
 		}
+
+
+		function _handleFinish()
+		{
+			o.onFinish();
+		}
+
 
 		return $div;
 

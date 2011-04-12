@@ -88,11 +88,32 @@
 				return $table;
 			}, // init()
 
-		'div': function(stepno) {
+		'div': function (stepno)
+			{
 				var $table = $(this);
 				return $table.find('.CswWizard_StepDiv[stepno=' + stepno + '] div');
+			},
+
+		// e.g. $wizard.CswWizard('button', 'next', 'disable');
+		'button': function(button, action) {
+				var $table = $(this);
+				switch(button)
+				{
+					case 'previous':
+						$('#' + $table.attr('id') + '_prev').CswButton(action);
+						break;
+					case 'next':
+						$('#' + $table.attr('id') + '_next').CswButton(action);
+						break;
+					case 'finish':
+						$('#' + $table.attr('id') + '_finish').CswButton(action);
+						break;
+					case 'cancel':
+						$('#' + $table.attr('id') + '_cancel').CswButton(action);
+						break;
+				}
 			}
-	};
+		};
 
 
 	function _getCurrentStepNo($table)
@@ -113,15 +134,15 @@
 
 			var $prevbtn = $('#' + $table.attr('id') + '_prev');
 			if(stepno == 1) 
-				$prevbtn.css('visibility', 'hidden');
+				$prevbtn.CswButton('disable');
 			else
-				$prevbtn.css('visibility', '');
+				$prevbtn.CswButton('enable');
 
 			var $nextbtn = $('#' + $table.attr('id') + '_next');
 			if(stepno >= stepcount)
-				$nextbtn.css('visibility', 'hidden');
+				$nextbtn.CswButton('disable');
 			else
-				$nextbtn.css('visibility', '');
+				$nextbtn.CswButton('enable');
 
 			onStepChange(stepno);
 		} // if(stepno <= stepcount)
