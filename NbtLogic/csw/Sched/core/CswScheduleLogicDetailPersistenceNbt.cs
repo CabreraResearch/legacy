@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.RuleName = RuleName;
 
             CswTableSelect CswTableSelectBgTasks = _CswResources.makeCswTableSelect( "CswScheduleLogicDetail_read", _TableName );
-            DataTable DataTableBgTasks = CswTableSelectBgTasks.getTable( " where lower(taskname)='" + RuleName.ToLower() + "'", true );
+            DataTable DataTableBgTasks = CswTableSelectBgTasks.getTable( " where lower(rulename)='" + RuleName.ToLower() + "'", true );
             DataRow DataRowBgTasks = DataTableBgTasks.Rows[0];
 
 

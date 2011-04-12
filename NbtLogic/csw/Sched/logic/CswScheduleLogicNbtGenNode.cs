@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using ChemSW.Nbt;
@@ -23,50 +24,9 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.GenNode.ToString() ); }
         }
 
-        CswNbtNode _CswNbtNodeGenerator = null;
         public bool doesItemRunNow()
         {
-            bool ReturnVal = _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrance, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow();
-
-            if( ReturnVal )
-            {
-
-                _CswNbtNodeGenerator = null; //MUST BE QUIERED FOR ; USED TO PASSED IN TO CTOR
-                CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( _CswNbtNodeGenerator );
-                if( GeneratorNode.Enabled.Checked == Tristate.True )
-                {
-                    DateTime ThisDueDateValue = GeneratorNode.NextDueDate.DateValue.Date;
-                    DateTime InitialDueDateValue = GeneratorNode.DueDateInterval.getStartDate().Date;
-                    DateTime FinalDueDateValue = GeneratorNode.FinalDueDate.DateValue.Date;
-
-                    // BZ 7866
-                    if( ThisDueDateValue != DateTime.MinValue )
-                    {
-                        // BZ 7124 - set runtime
-                        if( GeneratorNode.RunTime.TimeValue != DateTime.MinValue )
-                            ThisDueDateValue = ThisDueDateValue.AddTicks( GeneratorNode.RunTime.TimeValue.TimeOfDay.Ticks );
-
-                        Int32 WarnDays = (Int32) GeneratorNode.WarningDays.Value;
-                        if( WarnDays > 0 )
-                        {
-                            TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
-                            ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
-                            InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
-                        }
-
-                        // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
-                        if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
-                            ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
-                            ( DateTime.Now >= ThisDueDateValue ) )
-                        {
-                            ReturnVal = true;
-                        }
-                    } // if( ThisDueDateValue != DateTime.MinValue )
-                } // if( GeneratorNode.Enabled.Checked == Tristate.True )
-
-            }
-
-            return ( ReturnVal );
+            return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrance, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
         }
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
@@ -90,13 +50,17 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-
+        private CswScheduleNodeUpdater _CswScheduleNodeUpdater = null;
+        private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
         private CswNbtResources _CswNbtResources = null;
         public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-        }
+            _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
+            _CswScheduleNodeUpdater = new CswScheduleNodeUpdater( _CswNbtResources ); 
+
+        }//init()
 
         public void threadCallBack()
         {
@@ -108,37 +72,49 @@ namespace ChemSW.Nbt.Sched
                 try
                 {
 
-                    CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
-                    CswNbtActGenerateNodes.makeNode( _CswNbtNodeGenerator );
+                    List<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
 
-                    // EQUIVALENT OF THIS EVENT NEEDS TO BE RUN HERE
-                    /*
-                    if( null != OnScheduleItemWasRun )
+                    for( Int32 idx = 0; ( idx < ObjectGenerators.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
-                        OnScheduleItemWasRun( this, _CswNbtNodeGenerator );
-                    }
 
+                        CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
+                        if( CurrentGenerator.Enabled.Checked == Tristate.True )
+                        {
+                            DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateValue.Date;
+                            DateTime InitialDueDateValue = CurrentGenerator.DueDateInterval.getStartDate().Date;
+                            DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateValue.Date;
 
-            public void handleOnSchdItemWasRun( CswNbtSchdItem CswNbtSchdItem, CswNbtNode CswNbtSchedulerNode )
-            {
-                ICswNbtPropertySetScheduler SchedulerNode = CswNbtNodeCaster.AsPropertySetScheduler( CswNbtSchedulerNode );
-                SchedulerNode.RunStatus.StaticText = CswNbtSchdItem.StatusMessage;
-                if( CswNbtSchdItem.Succeeded )
-                {
-                    DateTime CandidateNextDueDate = SchedulerNode.DueDateInterval.getNextOccuranceAfter( SchedulerNode.NextDueDate.DateValue );
-                    if( SchedulerNode.FinalDueDate.DateValue.Date != DateTime.MinValue &&
-                        ( SchedulerNode.FinalDueDate.DateValue.Date < DateTime.Now.Date ||
-                          CandidateNextDueDate > SchedulerNode.FinalDueDate.DateValue.Date ) )
-                    {
-                        CandidateNextDueDate = DateTime.MinValue;
-                    }
-                    SchedulerNode.NextDueDate.DateValue = CandidateNextDueDate;
-                }
-                CswNbtSchedulerNode.postChanges( false );
+                            // BZ 7866
+                            if( ThisDueDateValue != DateTime.MinValue )
+                            {
+                                // BZ 7124 - set runtime
+                                if( CurrentGenerator.RunTime.TimeValue != DateTime.MinValue )
+                                    ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.TimeValue.TimeOfDay.Ticks );
 
-            }//handleOnSchdItemWasRun
-                     */
+                                Int32 WarnDays = (Int32) CurrentGenerator.WarningDays.Value;
+                                if( WarnDays > 0 )
+                                {
+                                    TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
+                                    ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
+                                    InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
+                                }
 
+                                // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
+                                if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
+                                    ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
+                                    ( DateTime.Now >= ThisDueDateValue ) )
+                                {
+                                    CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
+                                    if( CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node ) )
+                                    {
+                                        _CswScheduleNodeUpdater.update( CurrentGenerator.Node, "Created node from generator " + CurrentGenerator.Node.NodeName  );
+                                    }
+                                }
+                            } // if( ThisDueDateValue != DateTime.MinValue )
+
+                        } // if( CurrentGenerator.Enabled.Checked == Tristate.True )
+
+                    }//iterate generators
 
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
 

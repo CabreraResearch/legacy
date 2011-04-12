@@ -24,6 +24,8 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
+
+            ///*******************  Schedule rule table entries             
             string TableName = "scheduledrules";
             string ColName_RuleName = "rulename";
             string ColName_MaxRunTimeMs = "maxruntimems";
@@ -43,80 +45,316 @@ namespace ChemSW.Nbt.Schema
 
 
 
-            CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "schemaupdate_" + SchemaVersion, TableName );
-            DataTable DataTable = CswTableUpdate.getEmptyTable();
+            CswTableUpdate CswTableUpdateScheduledRules = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "schemaupdate_" + SchemaVersion, TableName );
+            DataTable DataTableScheduledRules = CswTableUpdateScheduledRules.getEmptyTable();
 
 
             //Update Prop Vals
-            DataRow NewRow = DataTable.NewRow();
-            NewRow[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtPropVals.ToString(); 
-            NewRow[ColName_MaxRunTimeMs] = 2000;
-            NewRow[ColName_ReprobateThreshold] = 3;
-            NewRow[ColName_Disabled] = 0;
-            NewRow[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRow[ColName_Interval] = 5;
-            DataTable.Rows.Add( NewRow );
+            DataRow NewRowScheduledRules = DataTableScheduledRules.NewRow();
+            NewRowScheduledRules[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtPropVals.ToString();
+            NewRowScheduledRules[ColName_MaxRunTimeMs] = 2000;
+            NewRowScheduledRules[ColName_ReprobateThreshold] = 3;
+            NewRowScheduledRules[ColName_Disabled] = 0;
+            NewRowScheduledRules[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[ColName_Interval] = 5;
+            DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
             //Update MBTF
-            NewRow = DataTable.NewRow();
-            NewRow[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtMTBF.ToString(); 
-            NewRow[ColName_MaxRunTimeMs] = 5000;
-            NewRow[ColName_ReprobateThreshold] = 3;
-            NewRow[ColName_Disabled] = 0;
-            NewRow[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRow[ColName_Interval] = 5;
-            DataTable.Rows.Add( NewRow );
+            NewRowScheduledRules = DataTableScheduledRules.NewRow();
+            NewRowScheduledRules[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtMTBF.ToString();
+            NewRowScheduledRules[ColName_MaxRunTimeMs] = 5000;
+            NewRowScheduledRules[ColName_ReprobateThreshold] = 3;
+            NewRowScheduledRules[ColName_Disabled] = 0;
+            NewRowScheduledRules[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[ColName_Interval] = 5;
+            DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
             //Update Inspection
-            NewRow = DataTable.NewRow();
-            NewRow[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtInspection.ToString(); 
-            NewRow[ColName_MaxRunTimeMs] = 5000;
-            NewRow[ColName_ReprobateThreshold] = 3;
-            NewRow[ColName_Disabled] = 0;
-            NewRow[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRow[ColName_Interval] = 5;
-            DataTable.Rows.Add( NewRow );
+            NewRowScheduledRules = DataTableScheduledRules.NewRow();
+            NewRowScheduledRules[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtInspection.ToString();
+            NewRowScheduledRules[ColName_MaxRunTimeMs] = 5000;
+            NewRowScheduledRules[ColName_ReprobateThreshold] = 3;
+            NewRowScheduledRules[ColName_Disabled] = 0;
+            NewRowScheduledRules[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[ColName_Interval] = 5;
+            DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
             //Gen Node
-            NewRow = DataTable.NewRow();
-            NewRow[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenNode.ToString(); 
-            NewRow[ColName_MaxRunTimeMs] = 5000;
-            NewRow[ColName_ReprobateThreshold] = 3;
-            NewRow[ColName_Disabled] = 0;
-            NewRow[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRow[ColName_Interval] = 5;
-            DataTable.Rows.Add( NewRow );
+            NewRowScheduledRules = DataTableScheduledRules.NewRow();
+            NewRowScheduledRules[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenNode.ToString();
+            NewRowScheduledRules[ColName_MaxRunTimeMs] = 5000;
+            NewRowScheduledRules[ColName_ReprobateThreshold] = 3;
+            NewRowScheduledRules[ColName_Disabled] = 0;
+            NewRowScheduledRules[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[ColName_Interval] = 5;
+            DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
             //Gen Email Rpt
-            NewRow = DataTable.NewRow();
-            NewRow[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenEmailRpt.ToString(); 
-            NewRow[ColName_MaxRunTimeMs] = 5000;
-            NewRow[ColName_ReprobateThreshold] = 3;
-            NewRow[ColName_Disabled] = 0;
-            NewRow[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRow[ColName_Interval] = 5;
-            DataTable.Rows.Add( NewRow );
+            NewRowScheduledRules = DataTableScheduledRules.NewRow();
+            NewRowScheduledRules[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenEmailRpt.ToString();
+            NewRowScheduledRules[ColName_MaxRunTimeMs] = 5000;
+            NewRowScheduledRules[ColName_ReprobateThreshold] = 3;
+            NewRowScheduledRules[ColName_Disabled] = 0;
+            NewRowScheduledRules[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[ColName_Interval] = 5;
+            DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
+
+            CswTableUpdateScheduledRules.update( DataTableScheduledRules );
 
 
 
 
+            ///******************  STATIC SQL SELECT UPDATES
+            string TableNameStaticSqlSelects = "static_sql_selects";
+            string ColName_QueryId = "queryid";
+            string ColName_QueryText = "querytext";
+
+
+            CswTableUpdate CswTableUpdateStaticSqlSelects = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "schemaupdate_" + SchemaVersion + ": partitionrules", TableNameStaticSqlSelects );
+            DataTable DataTableStaticSqlSelects = CswTableUpdateStaticSqlSelects.getEmptyTable();
 
 
 
-            //_CswNbtSchemaModTrnsctn.addStringColumn( TableName, "rulename", "corresponds to specific rule class", false, true, 50 );
-            //_CswNbtSchemaModTrnsctn.addLongColumn( TableName, "maxruntimems", "maximum number of milliseconds the rule is allowed to run before it gets halted by the schedule service", false, true );
-            //_CswNbtSchemaModTrnsctn.addLongColumn( TableName, "threadid", "updated by system only: threadid of most recent thread in which the rule is allowed to run", false, false );
-            //_CswNbtSchemaModTrnsctn.addLongColumn( TableName, "reprobatethreshold", "Number of times the rule is allowed to go rogue before it is marked reprobate", false, true );
-            //_CswNbtSchemaModTrnsctn.addLongColumn( TableName, "totalroguecount", "updated by system only: number of times the rule exceeded its maxruntime ms -- this value is reset when reprobate is set to true by the user", false, false );
-            //_CswNbtSchemaModTrnsctn.addLongColumn( TableName, "failedcount", "Total number of times that the rule has failed", false, false );
-            //_CswNbtSchemaModTrnsctn.addBooleanColumn( TableName, "reprobate", "marked true if the number of times the rule exceeded maxruntimems was greater than the repropbate threshold; user can reset this value to true to cause the rule to be run again", false, false );
-            //_CswNbtSchemaModTrnsctn.addBooleanColumn( TableName, "disabled", "", false, false );
-            //_CswNbtSchemaModTrnsctn.addStringColumn( TableName, "statusmessage", "Indicates how the rule terminated the last time it was run", false, false, 512 );
-            //_CswNbtSchemaModTrnsctn.addStringColumn( TableName, "recurrence", "The case-insensitive values are: Never, Always, NSeconds, Hourly, Daily, DayOfWeek, DayOfMonth, DayOfYear", false, true, 512 );
-            //_CswNbtSchemaModTrnsctn.addLongColumn( TableName, "interval", "Frequency interpreted in terms of recurrence", false, true );
-            //_CswNbtSchemaModTrnsctn.addDateColumn( TableName, "runstarttime", "the time at which the rule started running in the most recent run cycle", false, false );
-            //_CswNbtSchemaModTrnsctn.addDateColumn( TableName, "runendtime", "the time at which the rule stopped running in the most recent run cycle", false, false );
-            //_CswNbtSchemaModTrnsctn.addDateColumn( TableName, "lastrun", "the date-time the rule was run -- does not imply a succesfull run", false, false );
+
+            DataRow NewRowStaticSqlSelects = DataTableStaticSqlSelects.NewRow();
+            NewRowStaticSqlSelects[ColName_QueryId] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenEmailRpt.ToString();
+            NewRowStaticSqlSelects[ColName_QueryText] = @"select n.nodeid, t.nodetypename
+                                                          from nodes n
+                                                          join nodetypes t on n.nodetypeid = t.nodetypeid
+                                                          join object_class o on t.objectclassid = o.objectclassid
+                                                          join (select op.objectclassid,
+                                                                       p.nodetypeid,
+                                                                       j.nodeid,
+                                                                       p.propname,
+                                                                       j.field1 enabled
+                                                                  from object_class_props op
+                                                                  join nodetype_props p on op.objectclasspropid =
+                                                                                           p.objectclasspropid
+                                                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                                                 where op.propname = 'Enabled') e on (e.objectclassid =
+                                                                                                     o.objectclassid and
+                                                                                                     e.nodeid = n.nodeid and
+                                                                                                     e.nodetypeid = t.nodetypeid)
+
+                                                          left outer join (select op.objectclassid,
+                                                                                  p.nodetypeid,
+                                                                                  j.nodeid,
+                                                                                  p.propname,
+                                                                                  j.field1_date finalduedate
+                                                                             from object_class_props op
+                                                                             join nodetype_props p on op.objectclasspropid =
+                                                                                                      p.objectclasspropid
+                                                                             join jct_nodes_props j on j.nodetypepropid =
+                                                                                                       p.nodetypepropid
+                                                                            where op.propname = 'Final Due Date') fdd on (fdd.objectclassid =
+                                                                                                                         o.objectclassid and
+                                                                                                                         fdd.nodeid =
+                                                                                                                         n.nodeid and
+                                                                                                                         fdd.nodetypeid =
+                                                                                                                         t.nodetypeid)
+
+                                                          join (select op.objectclassid,
+                                                                       p.nodetypeid,
+                                                                       j.nodeid,
+                                                                       p.propname,
+                                                                       j.field1_date nextduedate
+                                                                  from object_class_props op
+                                                                  join nodetype_props p on op.objectclasspropid =
+                                                                                           p.objectclasspropid
+                                                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                                                 where op.propname = 'Next Due Date') ndd on (ndd.objectclassid =
+                                                                                                             o.objectclassid and
+                                                                                                             ndd.nodeid = n.nodeid and
+                                                                                                             ndd.nodetypeid =
+                                                                                                             t.nodetypeid)
+
+                                                          join (select op.objectclassid,
+                                                                       p.nodetypeid,
+                                                                       j.nodeid,
+                                                                       p.propname,
+                                                                       j.field1_numeric warningdays
+                                                                  from object_class_props op
+                                                                  join nodetype_props p on op.objectclasspropid =
+                                                                                           p.objectclasspropid
+                                                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                                                 where op.propname = 'Warning Days') wd on (wd.objectclassid =
+                                                                                                           o.objectclassid and
+                                                                                                           wd.nodeid = n.nodeid and
+                                                                                                           wd.nodetypeid =
+                                                                                                           t.nodetypeid)
+
+                                                          join (select op.objectclassid,
+                                                                       p.nodetypeid,
+                                                                       j.nodeid,
+                                                                       p.propname,
+                                                                       j.field1_date initialduedate,
+                                                                       j.field1,
+                                                                       j.field2,
+                                                                       j.field3,
+                                                                       j.field4,
+                                                                       j.field5,
+                                                                       j.field1_date
+                                                                  from object_class_props op
+                                                                  join nodetype_props p on op.objectclasspropid =
+                                                                                           p.objectclasspropid
+                                                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                                                 where op.propname = 'Due Date Interval') ddi on (ddi.objectclassid =
+                                                                                                                 o.objectclassid and
+                                                                                                                 ddi.nodeid =
+                                                                                                                 n.nodeid and
+                                                                                                                 ddi.nodetypeid =
+                                                                                                                 t.nodetypeid)
+
+                                                         where ((o.objectclass = 'MailReportClass' and e.enabled = '1' and
+                                                               (sysdate >= (ddi.initialduedate - wd.warningdays) and
+                                                               sysdate >= (ndd.nextduedate - wd.warningdays)) and
+                                                               (fdd.finalduedate is null or sysdate <= fdd.finalduedate)))";
+
+            DataTableStaticSqlSelects.Rows.Add( DataTableStaticSqlSelects );
+
+
+            NewRowStaticSqlSelects = DataTableStaticSqlSelects.NewRow();
+            NewRowStaticSqlSelects[ColName_QueryId] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenNode.ToString();
+            NewRowStaticSqlSelects[ColName_QueryText] = @"select n.nodeid,n.nodename
+                                                          from nodes n
+                                                          join nodetypes t on n.nodetypeid = t.nodetypeid
+                                                          join object_class o on t.objectclassid = o.objectclassid
+
+                                                          join (select op.objectclassid,
+                                                                       p.nodetypeid,
+                                                                       j.nodeid,
+                                                                       p.propname,
+                                                                       j.field1 enabled
+                                                                  from object_class_props op
+                                                                  join nodetype_props p on op.objectclasspropid =
+                                                                                           p.objectclasspropid
+                                                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                                                 where op.propname = 'Enabled') e on (e.objectclassid =
+                                                                                                     o.objectclassid and
+                                                                                                     e.nodeid = n.nodeid and
+                                                                                                     e.nodetypeid = t.nodetypeid)
+
+                                                          left outer join (select op.objectclassid,
+                                                                                  p.nodetypeid,
+                                                                                  j.nodeid,
+                                                                                  p.propname,
+                                                                                  j.field1_date finalduedate
+                                                                             from object_class_props op
+                                                                             join nodetype_props p on op.objectclasspropid =
+                                                                                                      p.objectclasspropid
+                                                                             join jct_nodes_props j on j.nodetypepropid =
+                                                                                                       p.nodetypepropid
+                                                                            where op.propname = 'Final Due Date') fdd on (fdd.objectclassid =
+                                                                                                                         o.objectclassid and
+                                                                                                                         fdd.nodeid =
+                                                                                                                         n.nodeid and
+                                                                                                                         fdd.nodetypeid =
+                                                                                                                         t.nodetypeid)
+
+                                                          join (select op.objectclassid,
+                                                                       p.nodetypeid,
+                                                                       j.nodeid,
+                                                                       p.propname,
+                                                                       j.field1_date nextduedate
+                                                                  from object_class_props op
+                                                                  join nodetype_props p on op.objectclasspropid =
+                                                                                           p.objectclasspropid
+                                                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                                                 where op.propname = 'Next Due Date') ndd on (ndd.objectclassid =
+                                                                                                             o.objectclassid and
+                                                                                                             ndd.nodeid = n.nodeid and
+                                                                                                             ndd.nodetypeid =
+                                                                                                             t.nodetypeid)
+
+                                                          join (select op.objectclassid,
+                                                                       p.nodetypeid,
+                                                                       j.nodeid,
+                                                                       p.propname,
+                                                                       j.field1_numeric warningdays
+                                                                  from object_class_props op
+                                                                  join nodetype_props p on op.objectclasspropid =
+                                                                                           p.objectclasspropid
+                                                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                                                 where op.propname = 'Warning Days') wd on (wd.objectclassid =
+                                                                                                           o.objectclassid and
+                                                                                                           wd.nodeid = n.nodeid and
+                                                                                                           wd.nodetypeid =
+                                                                                                           t.nodetypeid)
+
+                                                          join (select op.objectclassid,
+                                                                       p.nodetypeid,
+                                                                       j.nodeid,
+                                                                       p.propname,
+                                                                       j.field1_date initialduedate,
+                                                                       j.field1,
+                                                                       j.field2,
+                                                                       j.field3,
+                                                                       j.field4,
+                                                                       j.field5,
+                                                                       j.field1_date
+                                                                  from object_class_props op
+                                                                  join nodetype_props p on op.objectclasspropid =
+                                                                                           p.objectclasspropid
+                                                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                                                 where op.propname = 'Due Date Interval') ddi on (ddi.objectclassid =
+                                                                                                                 o.objectclassid and
+                                                                                                                 ddi.nodeid =
+                                                                                                                 n.nodeid and
+                                                                                                                 ddi.nodetypeid =
+                                                                                                                 t.nodetypeid)
+
+                                                         where ((o.objectclass = 'GeneratorClass' and e.enabled = '1' and
+                                                               (sysdate >= (ddi.initialduedate - wd.warningdays) and
+                                                               sysdate >= (ndd.nextduedate - wd.warningdays)) and
+                                                               (fdd.finalduedate is null or sysdate <= fdd.finalduedate)))";
+
+            DataTableStaticSqlSelects.Rows.Add( DataTableStaticSqlSelects );
+
+            NewRowStaticSqlSelects = DataTableStaticSqlSelects.NewRow();
+            NewRowStaticSqlSelects[ColName_QueryId] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtInspection.ToString();
+            NewRowStaticSqlSelects[ColName_QueryText] = @"select n.nodeid
+                                                          from nodes n
+                                                          join nodetypes t on n.nodetypeid = t.nodetypeid
+                                                          join object_class o on t.objectclassid = o.objectclassid
+
+                                                          join (select op.objectclassid,
+                                                                       p.nodetypeid,
+                                                                       j.nodeid,
+                                                                       p.propname,
+                                                                       j.field1_date duedate,
+                                                                       j.field1_numeric warningdays
+                                                                  from object_class_props op
+                                                                  join nodetype_props p on op.objectclasspropid =
+                                                                                           p.objectclasspropid
+                                                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                                                 where op.propname like 'Due Date') dd on (dd.objectclassid =
+                                                                                                          o.objectclassid and
+                                                                                                          dd.nodeid = n.nodeid and
+                                                                                                          dd.nodetypeid =
+                                                                                                          t.nodetypeid)
+
+                                                          join (select op.objectclassid,
+                                                                       p.nodetypeid,
+                                                                       j.nodeid,
+                                                                       p.propname,
+                                                                       j.field1 status
+                                                                  from object_class_props op
+                                                                  join nodetype_props p on op.objectclasspropid =
+                                                                                           p.objectclasspropid
+                                                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                                                 where op.propname like 'Status') s on (s.objectclassid =
+                                                                                                       o.objectclassid and
+                                                                                                       s.nodeid = n.nodeid and
+                                                                                                       s.nodetypeid = t.nodetypeid)
+
+                                                         where o.objectclass = 'InspectionDesignClass'
+                                                           and sysdate >= (dd.duedate)
+                                                           and s.status = 'Pending'";
+            DataTableStaticSqlSelects.Rows.Add( DataTableStaticSqlSelects );
+
+            CswTableUpdateStaticSqlSelects.update( DataTableStaticSqlSelects );
+
+
 
         } // update()
 

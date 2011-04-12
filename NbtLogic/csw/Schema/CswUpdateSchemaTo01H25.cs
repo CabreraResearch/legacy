@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addDateColumn( TableName, "lastrun", "the date-time the rule was run -- does not imply a succesfull run", false, false );
 
 
-//            _CswNbtSchemaModTrnsctn.dropTable( "schedule_items" ); //did not know this existed when above table was created; whatever
+            _CswNbtSchemaModTrnsctn.dropTable( "schedule_items" ); //did not know this existed when above table was created; whatever
 
         } // update()
 
