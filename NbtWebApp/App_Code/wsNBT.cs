@@ -391,7 +391,18 @@ namespace ChemSW.Nbt.WebServices
 				{
 					CswNbtView SourceView = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
 					CswNbtView NewView = new CswNbtView( _CswNbtResources );
-					NewView.makeNew( SourceView.ViewName + " - Copy", SourceView.Visibility, SourceView.VisibilityRoleId, SourceView.VisibilityUserId, SourceView );
+					string NewViewNameOrig = SourceView.ViewName;
+					if(!NewViewNameOrig.EndsWith(" - Copy") && NewViewNameOrig.Length < 21)
+						NewViewNameOrig = NewViewNameOrig + " - Copy";
+					string NewViewName = NewViewNameOrig;
+					Int32 Increment = 1;
+					while(!CswNbtView.ViewIsUnique(_CswNbtResources, Int32.MinValue, NewViewName, SourceView.Visibility, SourceView.VisibilityUserId, SourceView.VisibilityRoleId))
+					{
+						Increment++;
+						NewViewName = NewViewNameOrig + " " + Increment.ToString();
+					}
+
+					NewView.makeNew( NewViewName, SourceView.Visibility, SourceView.VisibilityRoleId, SourceView.VisibilityUserId, SourceView );
 					NewView.save();
 					ReturnJson.Add( new JProperty( "copyviewid", NewView.ViewId.ToString() ) );
 				}
@@ -460,7 +471,7 @@ namespace ChemSW.Nbt.WebServices
 				NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, null );
 				NewView.ViewMode = RealViewMode;
 				NewView.save();
-				ReturnJson.Add(new JProperty("newviewid", NewView.ViewId));
+				ReturnJson.Add( new JProperty( "newviewid", NewView.ViewId ) );
 				end();
 			}
 			catch( Exception Ex )
@@ -557,11 +568,11 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				
+
 				Int32 RealNodeTypeId = CswConvert.ToInt32( NodeTypeId );
 				Int32 RealObjectClassId = CswConvert.ToInt32( ObjectClassId );
 				CswNbtMetaDataObjectClass.NbtObjectClass RealObjectClass = CswNbtMetaDataObjectClass.NbtObjectClass.Unknown;
-				Enum.TryParse < CswNbtMetaDataObjectClass.NbtObjectClass>( ObjectClass, true, out RealObjectClass );
+				Enum.TryParse<CswNbtMetaDataObjectClass.NbtObjectClass>( ObjectClass, true, out RealObjectClass );
 
 				Collection<CswNbtNode> Nodes = null;
 				if( RealNodeTypeId != Int32.MinValue )
@@ -581,8 +592,8 @@ namespace ChemSW.Nbt.WebServices
 
 				foreach( CswNbtNode Node in Nodes )
 				{
-					ResultXml.Add( 
-						new XElement( "node", 
+					ResultXml.Add(
+						new XElement( "node",
 							new XAttribute( "id", Node.NodeId.ToString() ),
 							new XAttribute( "name", Node.NodeName ) ) );
 				}
@@ -722,8 +733,8 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return ( ReturnVal.ToString() );
 		} // copyPropValue()	
-		
-		
+
+
 		#endregion Tabs and Props
 
 		#region Misc
@@ -888,7 +899,7 @@ namespace ChemSW.Nbt.WebServices
 				ResultsView.SaveToCache();
 
 				SearchResultView.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
-                SearchResultView.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
+				SearchResultView.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
 				end();
 			}
 			catch( Exception ex )
