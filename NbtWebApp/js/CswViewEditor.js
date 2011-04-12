@@ -5,14 +5,16 @@
 		var o = {
 			ViewGridUrl: '/NbtWebApp/wsNBT.asmx/getViewGrid',
 			ViewInfoUrl: '/NbtWebApp/wsNBT.asmx/getViewInfo',
+			SaveViewUrl: '/NbtWebApp/wsNBT.asmx/saveViewInfo',
 			CopyViewUrl: '/NbtWebApp/wsNBT.asmx/copyView',
 			DeleteViewUrl: '/NbtWebApp/wsNBT.asmx/deleteView',
 			viewid: '',
 			ID: 'vieweditor',
 			ColumnViewName: 'VIEWNAME',
 			ColumnViewId: 'NODEVIEWID',
+			ColumnViewMode: 'VIEWMODE',
 			onCancel: function() {},
-			onFinish: function() {}
+			onFinish: function(viewid, viewmode) {}
 		};
 		if(options) $.extend(o, options);
 
@@ -223,14 +225,53 @@
 					}); // ajax
 					break;
 				case 3:
+					_saveAll();					
 					break;
 				case 4:
+					_saveAll();
 					break;
 				case 5:
+					_saveAll();
 					break;
 			} // switch(newstepno)
-		} // _handleStepChange()
+		} // _handleNext()
 
+		function _saveAll()
+		{
+			if($currentviewxml != undefined)
+			{
+				$currentviewxml.attr('viewname', $viewnametextbox.val());
+				$currentviewxml.attr('category', $categorytextbox.val());
+				$currentviewxml.attr('visibility', v.getvisibilityselect().val());
+				
+				// temporary workaround
+				var rolenodeid = v.getvisroleselect().val();
+				if(rolenodeid != '' && rolenodeid != undefined)
+					rolenodeid = rolenodeid.substr('nodes_'.length)
+				var usernodeid = v.getvisuserselect().val();
+				if(usernodeid != '' && usernodeid != undefined)
+					usernodeid = usernodeid.substr('nodes_'.length)
+				$currentviewxml.attr('visibilityroleid', rolenodeid);
+				$currentviewxml.attr('visibilityuserid', usernodeid);
+				
+				$currentviewxml.attr('formobile', ($formobilecheckbox.attr('checked') == 'true'));
+				$currentviewxml.attr('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
+			} // if($currentviewxml != undefined)
+		} // _saveAll()
+
+		function _handleFinish()
+		{
+			var viewid = _getSelectedRowValue($viewgrid, o.ColumnViewId);
+			_saveAll();
+
+			CswAjaxXml({
+				url: o.SaveViewUrl,
+				data: 'ViewId='+ viewid +'&ViewXml='+ xmlToString($currentviewxml),
+				success: function ($xml) {
+					o.onFinish(viewid, _getSelectedRowValue($viewgrid, o.ColumnViewMode));
+				} // success
+			}); // ajax
+		} //_handleFinish
 
 		function _getViewsGrid(onSuccess, selectedrowpk)
 		{
@@ -301,12 +342,6 @@
 					rowid = pks[i].id;
 			}
 			return rowid;
-		}
-
-
-		function _handleFinish()
-		{
-			o.onFinish();
 		}
 
 		function _makeVisibilitySelect(id, $parent)

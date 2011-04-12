@@ -274,7 +274,17 @@
 			'onEditView': function (viewid)
 			{
 				clear({ 'all': true });
-				$('#CenterDiv').CswViewEditor({ 'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId) });
+				$('#CenterDiv').CswViewEditor({
+					'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+					'onCancel': function() {
+						clear({ 'all': true });
+						refreshSelected();
+					},
+					'onFinish': function(viewid, viewmode) {
+						clear({ 'all': true });
+						handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+					}
+				});
 			},
 			'Multi': multi,
 			'NodeCheckTreeId': MainTreeId

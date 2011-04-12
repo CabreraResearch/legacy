@@ -379,13 +379,13 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XmlDocument getViewInfo(string ViewId)
+		public XmlDocument getViewInfo( string ViewId )
 		{
 			XmlDocument ReturnXml = null;
 			try
 			{
 				start();
-				Int32 nViewId = CswConvert.ToInt32(ViewId);
+				Int32 nViewId = CswConvert.ToInt32( ViewId );
 				if( nViewId != Int32.MinValue )
 				{
 					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
@@ -401,6 +401,38 @@ namespace ChemSW.Nbt.WebServices
 
 			return ReturnXml;
 		} // getViewInfo()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement saveViewInfo( string ViewId, string ViewXml )
+		{
+			XElement ReturnXml = new XElement("result");
+			try
+			{
+				start();
+				Int32 nViewId = CswConvert.ToInt32( ViewId );
+				if( nViewId != Int32.MinValue )
+				{
+					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					View.LoadXml( ViewXml );
+					View.save();
+
+					//if( View.Visibility != NbtViewVisibility.Property )
+					//    CswViewListTree.ClearCache( Session );
+					_CswNbtResources.ViewCache.clearFromCache( View );
+					_CswNbtResources.ViewSelect.clearCache();
+
+					ReturnXml.Add(new XAttribute("succeeded", "true"));
+				}
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnXml.Add( xError( ex ) );
+			}
+
+			return ReturnXml;
+		} // saveViewInfo()
 
 
 		[WebMethod( EnableSession = true )]
