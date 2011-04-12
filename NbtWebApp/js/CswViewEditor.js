@@ -131,6 +131,8 @@
 			if($('#'+ o.ID + '_all:checked').length > 0)
 				all = true;
 
+			$selview_span.text('');
+
 			CswAjaxJSON({
 				url: o.ViewGridUrl,
 				data: "{ All: "+ all +" }",
