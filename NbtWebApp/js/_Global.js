@@ -471,14 +471,14 @@ function HandleMenuItem(options) {
             case 'Search':
                 $a.click(function ()
                 {
-                    var $searchdiv = $('#main_CswSearchForm'); //how to get prefix here?
-                    if ($searchdiv.is(':hidden'))
+                    var $search = $('#CenterDiv').CswDOM('getchildren', { ID: 'CswSearchForm', prefix: 'csw' }); ; //how to get prefix here?
+                    if ($search.is(':hidden'))
                     {
-                        $searchdiv.show();
+                        $search.show();
                     }
                     else
                     {
-                        $searchdiv.hide();
+                        $search.hide();
                     }
 //                    $.CswDialog('SearchDialog', {
 //                        'viewid': o.$this.attr('viewid'),

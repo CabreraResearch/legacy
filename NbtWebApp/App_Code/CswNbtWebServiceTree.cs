@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.WebServices
 		{
 			var ReturnNode = new XElement( "root" );
 			string EmptyOrInvalid = "";
-
+		    string ViewName = string.Empty;
 			//bool IsFirstLoad = true;
 			//if( ParentNodeKey != null || IncludeNodeKey != null )
 			//    IsFirstLoad = false;
@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.WebServices
 			if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
 			{
 				Int32 PageSize = Int32.MinValue;
+			    ViewName = View.ViewName;
 				if( UsePaging )
 					PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
 
@@ -88,7 +89,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				EmptyOrInvalid = "Not a Tree or List view.";
 			}
-
+            if( string.IsNullOrEmpty( ViewName ) ) ViewName = "No View Selected";
 			if( !string.IsNullOrEmpty( EmptyOrInvalid ) )
 			{
 				ReturnNode = new XElement( "root",
@@ -96,7 +97,12 @@ namespace ChemSW.Nbt.WebServices
 										new XAttribute( "id", "-1" ),
 										new XAttribute( "rel", "root" ),
 											new XElement( "content",
-												new XElement( "name", EmptyOrInvalid ) ) ) );
+												new XElement( "name", ViewName ) ),
+                                        new XElement( "item",
+										new XAttribute( "id", "-1" ),
+										new XAttribute( "rel", "child" ),
+											new XElement( "content",
+												new XElement( "name", EmptyOrInvalid ) ) ) ) );
 			}
 			return ReturnNode;
 		} // getTree()

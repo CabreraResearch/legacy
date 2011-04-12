@@ -410,8 +410,8 @@ namespace ChemSW.Nbt.WebServices
                 {
                     DefaultFilter = Field.DefaultFilterMode.ToString();
                 }
-
-                _getSubFieldFilters( ref FiltersNode, Field, SearchProp, CswNbtPropFilterSql.PropertyFilterMode.Undefined );
+                string UniqueId = "filter_select_searchpropid_" + SearchProp.MetaDataPropId;
+                _getSubFieldFilters( ref FiltersNode, Field, SearchProp, CswNbtPropFilterSql.PropertyFilterMode.Undefined, UniqueId );
                 SubfieldSelect.Add( FieldNode );
             }
 
@@ -449,7 +449,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = SearchProp.FieldType.FieldType;
             foreach( CswNbtViewPropertyFilter Filter in PropFilters )
             {
-                string SubFieldElementId = _IdPrefix + _Delimiter + "subfield_select_searchpropid_" + SearchProp.MetaDataPropId;
+                string SubFieldElementId = _IdPrefix + _Delimiter + "subfield_select_filtarbitraryid_" + Filter.ArbitraryId;
 
                 XElement SubfieldSelect = new XElement( "select",
                                                         new XAttribute( "id", SubFieldElementId ),
@@ -476,8 +476,8 @@ namespace ChemSW.Nbt.WebServices
                     {
                         FieldNode.Add( new XAttribute( "selected", "selected" ) );
                     }
-
-                    _getSubFieldFilters( ref FiltersNode, Field, SearchProp, DefaultFilterMode );
+                    string UniqueId = "filter_select_filtarbitraryid_" + Filter.ArbitraryId;
+                    _getSubFieldFilters( ref FiltersNode, Field, SearchProp, DefaultFilterMode, UniqueId );
                     SubfieldSelect.Add( FieldNode );
                 }
 
@@ -485,7 +485,7 @@ namespace ChemSW.Nbt.WebServices
                 XElement FiltersOptionsNode = new XElement( "filtersoptions" );
                 if( SearchProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
                 {
-                    string FiltOptElementId = _IdPrefix + _Delimiter + "filtersoptions_select_searchpropid_" + SearchProp.MetaDataPropId;
+                    string FiltOptElementId = _IdPrefix + _Delimiter + "filtersoptions_select_filtarbitraryid_" + Filter.ArbitraryId;
                     FiltersOptionsNode.Value = SearchProp.MetaDataPropName;
                     FiltersOptionsNode.Add( new XElement( "select",
                                                           new XAttribute( "id", FiltOptElementId ),
@@ -526,13 +526,13 @@ namespace ChemSW.Nbt.WebServices
         ///         </subfield>
         ///      </filters>
         /// </summary>
-        private void _getSubFieldFilters( ref XElement FiltersNode, CswNbtSubField SubField, CswSearchProp SearchProp, CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode )
+        private void _getSubFieldFilters( ref XElement FiltersNode, CswNbtSubField SubField, CswSearchProp SearchProp, CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode, string UniqueId )
         {
             if( DefaultFilterMode == CswNbtPropFilterSql.PropertyFilterMode.Undefined )
             {
                 DefaultFilterMode = SubField.DefaultFilterMode;
             }
-            string SubFieldElementId = _IdPrefix + _Delimiter + "filter_select_searchpropid_" + SearchProp.MetaDataPropId;
+            string SubFieldElementId = _IdPrefix + _Delimiter + UniqueId;
             XElement SubFieldNode = new XElement( "subfield", new XAttribute( "column", SubField.Column ), new XAttribute( "name", SubField.Name ) );
             XElement FiltersSelect = new XElement( "select",
                                         new XAttribute( "id", SubFieldElementId ),
@@ -653,8 +653,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView InitialView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
                 SearchView = new CswNbtView( _CswNbtResources );
                 SearchView.LoadXml( InitialView.ToXml() );
-                if( InitialView.SessionViewId != Int32.MinValue &&
-                    !InitialView.ViewName.StartsWith( "Search " ) )
+                if( !InitialView.ViewName.StartsWith( "Search " ) && !InitialView.ViewName.EndsWith( " Search" ))
                 {
                     SearchView.ViewName = "Search " + InitialView.ViewName;
                 }
@@ -665,16 +664,16 @@ namespace ChemSW.Nbt.WebServices
                     {
                         var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
                         CswNbtViewProperty.CswNbtPropType.TryParse( (string) Prop.First["proptype"], true, out PropType );
-                        Int32 PropId = Int32.MinValue;
-
-                        PropId = CswConvert.ToInt32( (string) Prop.First["propid"] );
-
+                        string PropArbitraryId = (string) Prop.First["proparbitraryid"];
+                        string FiltArbitraryId = (string) Prop.First["filtarbitraryid"];
+                        
                         if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown &&
-                            PropId != Int32.MinValue )
+                            !string.IsNullOrEmpty( PropArbitraryId ) &&
+                            !string.IsNullOrEmpty( FiltArbitraryId ))
                         {
-                            CswNbtViewProperty ViewProp = SearchView.findPropertyById( PropType, PropId );
-                            CswNbtViewPropertyFilter ViewPropFilt = (CswNbtViewPropertyFilter) SearchView.FindViewNodeByArbitraryId( (string) Prop.First["arbitraryid"] );
-                            if( null != ViewProp )
+                            CswNbtViewProperty ViewProp = (CswNbtViewProperty) SearchView.FindViewNodeByArbitraryId( PropArbitraryId );
+                            CswNbtViewPropertyFilter ViewPropFilt = (CswNbtViewPropertyFilter) SearchView.FindViewNodeByArbitraryId( FiltArbitraryId );
+                            if( null != ViewPropFilt )
                             {
                                 _addViewPropFilter( Prop, ref ViewPropFilt );
                             }

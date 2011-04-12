@@ -1319,6 +1319,7 @@ namespace ChemSW.Nbt
         public Int32 SessionViewId
         {
             get { return _SessionViewId; }
+            set { _SessionViewId = value; }
         }
 
         #endregion View Cache functions

@@ -271,30 +271,40 @@
 
 	function refreshSearchPanel(options)
 	{
-	    if (debug) log('NewMain.refreshMainMenu()');
+	    if (debug) log('NewMain.refreshSearchPanel()');
 	    var o = {
 	        viewid: '',
 	        nodetypeid: '',
 	        cswnbtnodekey: '',
-            idprefix: 'main'
+            idprefix: 'csw',
 	    };
         
 	    if (options) $.extend(o, options);
-	    
-	    if ($('#' + o.idprefix + 'CswSearchForm').length == 0 ||
-            $('#' + o.idprefix + 'CswSearchForm') == undefined)
+
+        var $search = $('#CenterDiv').CswDOM('getchildren', { ID: 'CswSearchForm', prefix: o.idprefix });
+	    if( $search == undefined || $search.length == 0 )
 	    {
 	        clear({ center: true });
-
-	        var $search = $('#CenterDiv')
-                            .CswSearch('getSearchForm', {
-                                viewid: o.viewid,
-                                cswnbtnodekey: o.cswnbtnodekey,
-                                nodetypeid: o.nodetypeid,
-                                idprefix: o.idprefix
+            
+            var onSearchSubmit = function(view) {
+                    $.CswCookie('set', CswCookieName.CurrentView.ViewId, view.viewid);
+                    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, view.viewmode);
+                    refreshSelected({
+                        viewmode: view.viewmode,
+                        viewid: view.viewid,
+                        cswnbtnodekey: '', //do not want a view of only this node
+                        nodeid: ''
+                    });
+            };    
+	        $search = $('#CenterDiv')
+                            .CswSearch({
+                                'viewid': o.viewid,
+                                'cswnbtnodekey': o.cswnbtnodekey,
+                                'nodetypeid': o.nodetypeid,
+                                'idprefix': o.idprefix,
+                                'onSearchSubmit': onSearchSubmit
                             })
                             .hide();
-            log($search);
 	    }
 	}
 
@@ -308,7 +318,8 @@
 			cswnbtnodekey: '',
             onAddNode: '',
             onEditNode: '',
-            onDeleteNode: ''
+            onDeleteNode: '',
+            doMenuRefresh: true
 		};
 		if (options)
 		{
@@ -326,7 +337,7 @@
         o.onDeleteNode = function() { getViewGrid(o); };
 
 		$('#CenterDiv').CswNodeGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'id': MainGridId });
-        refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+        if(o.doMenuRefresh) refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 	}
 
 	function onSelectTreeNode(options)
@@ -411,11 +422,12 @@
 		if (manuallyCheckChanges())
 		{
 			var o = {
-				type: 'tree',
-				nodeid: '',
-				cswnbtnodekey: '',
+				nodeid: $.CswCookie('get', CswCookieName.CurrentNode.NodeId),
+				cswnbtnodekey: $.CswCookie('get', CswCookieName.CurrentNode.NodeKey),
 				nodename: '',
-				iconurl: ''
+				iconurl: '',
+                viewid: $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+			    viewmode: 'tree'
 			};
 			if (options) $.extend(o, options);
 	
@@ -423,12 +435,11 @@
 			{
 				case 'grid':
 					{
-						alert('Grid not implemented yet!');
-						break;
-					}
-				case 'list':
-					{
-						alert('List not implemented yet!');
+						getViewGrid({
+                            'viewid': o.viewid,
+			                'nodeid': o.nodeid,
+			                'cswnbtnodekey': o.cswnbtnodekey
+                        });
 						break;
 					}
 				default: //tree
@@ -436,7 +447,9 @@
 						refreshNodesTree({
 							'nodeid': o.nodeid,
 							'cswnbtnodekey': o.cswnbtnodekey,
-							'nodename': o.nodename 
+							'nodename': o.nodename,
+                            'viewid': o.viewid,
+                            'viewmode': o.viewmode
 						});
 						break;
 					}

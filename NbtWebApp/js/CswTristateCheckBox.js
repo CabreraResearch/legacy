@@ -19,7 +19,8 @@
 			var $parent = $(this);
             $parent.empty();
             var elementId = o.prefix + '_' + o.ID;
-			if(o.ReadOnly)
+			if(o.Checked == '' || o.Checked == undefined || o.Checked == null) o.Checked = "null";
+            if(o.ReadOnly)
 			{
 				switch(o.Checked)
 				{
