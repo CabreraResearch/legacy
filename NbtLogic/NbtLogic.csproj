@@ -206,10 +206,6 @@
     <Compile Include="csw\Sched\core\CswScheduleNodeUpdater.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicNodes.cs" />
     <Compile Include="csw\Sched\core\CswScheduleResourceFactoryNbt.cs" />
-    <Compile Include="csw\Sched\core\CswScheduleLogicDetailAddendumGenEmailRpts.cs" />
-    <Compile Include="csw\Sched\core\CswScheduleLogicDetailAddendumGenNode.cs" />
-    <Compile Include="csw\Sched\core\CswScheduleLogicDetailAddendumUpdtInspections.cs" />
-    <Compile Include="csw\Sched\core\CswScheduleLogicDetailAddendum.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceFactoryNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicFactoryNbt.cs" />

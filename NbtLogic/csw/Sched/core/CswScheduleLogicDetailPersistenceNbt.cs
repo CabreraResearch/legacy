@@ -10,29 +10,14 @@ using ChemSW.MtSched.Core;
 
 namespace ChemSW.Nbt.Sched
 {
+    public enum NbtScheduleRuleNames { UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt, BaseSleepNSeconds }
+    public enum NbtScheduledRuleColumns { ScheduledRuleId, RuleName, MaxRunTimeMs, ThreadId, ReprobateThreshold, TotalRogueCount, FailedCount, Reprobate, Disabled, StatusMessage, Recurrence, Interval, RunStartTime, RunEndTime, LastRun }
+    public enum NbtScheduledRuleParamsColumns { ScheduledRuleParamId, ParamName, ParamVal }
     public class CswScheduleLogicDetailPersistenceNbt : ICswScheduleLogicDetailPersistence
     {
 
-        private string _TableName = "scheduledrules";
-        private string _ColName_RuleName = "rulename";
-        private string _ColName_MaxRunTimeMs = "maxruntimems";
-        private string _ColName_ThreadId = "threadid";
-        private string _ColName_ReprobateThreshold = "reprobatethreshold";
-        private string _ColName_TotalRogueCount = "totalroguecount";
-        private string _ColName_FailedCount = "failedcount";
-        private string _ColName_Reprobate = "reprobate";
-        private string _ColName_Disabled = "disabled";
-        private string _ColName_StatusMessage = "statusmessage";
-        private string _ColName_Recurrence = "recurrence";
-        private string _ColName_Interval = "interval";
-        private string _ColName_RunStartTime = "runstarttime";
-        private string _ColName_RunEndTime = "runendtime";
-        private string _ColName_LastRun = "lastrun";
-
-
-
-        private Dictionary<NbtScheduleRuleNames, CswScheduleLogicDetailAddendum> _ScheduleLogicAddenda = new Dictionary<NbtScheduleRuleNames, CswScheduleLogicDetailAddendum>(); 
-
+        private string _TableNameScheduledRules = "scheduledrules";
+        private string _TableNameScheduledRuleParams = "scheduledruleparams";
 
         public CswScheduleLogicDetailPersistenceNbt()
         {
@@ -42,9 +27,7 @@ namespace ChemSW.Nbt.Sched
         public void init( ICswResources CswResources )
         {
             _CswResources = CswResources;
-            _ScheduleLogicAddenda.Add( NbtScheduleRuleNames.UpdtInspection, new CswScheduleLogicDetailAddendumUpdtInspections( (CswNbtResources) _CswResources ) );
-            _ScheduleLogicAddenda.Add( NbtScheduleRuleNames.GenNode, new CswScheduleLogicDetailAddendumGenNode( (CswNbtResources) _CswResources ) );
-            _ScheduleLogicAddenda.Add( NbtScheduleRuleNames.GenEmailRpt, new CswScheduleLogicDetailAddendumGenEmailRpts( (CswNbtResources) _CswResources ) );
+
 
         }//init() 
 
@@ -55,82 +38,82 @@ namespace ChemSW.Nbt.Sched
 
             ReturnVal.RuleName = RuleName;
 
-            CswTableSelect CswTableSelectBgTasks = _CswResources.makeCswTableSelect( "CswScheduleLogicDetail_read", _TableName );
-            DataTable DataTableBgTasks = CswTableSelectBgTasks.getTable( " where lower(rulename)='" + RuleName.ToLower() + "'", true );
-            DataRow DataRowBgTasks = DataTableBgTasks.Rows[0];
+            CswTableSelect CswTableSelectScheduledRules = _CswResources.makeCswTableSelect( "CswScheduleLogicDetail_read", _TableNameScheduledRules );
+            DataTable DataTableScheduledRules = CswTableSelectScheduledRules.getTable( " where lower(rulename)='" + RuleName.ToLower() + "'", true );
+            DataRow DataRowScheduledRules = DataTableScheduledRules.Rows[0];
 
+            CswTableSelect CswTableSelectScheduledRuleParams = _CswResources.makeCswTableSelect( "CswScheduleLogicDetail_read", _TableNameScheduledRuleParams );
+            DataTable DataTableScheduledRuleParams = CswTableSelectScheduledRuleParams.getTable( " where scheduledruleid=" + DataRowScheduledRules[NbtScheduledRuleColumns.ScheduledRuleId.ToString()].ToString(), true );
 
-            if( false == DataRowBgTasks.IsNull( _ColName_MaxRunTimeMs ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.MaxRunTimeMs.ToString() ) )
             {
-                ReturnVal.MaxRunTimeMs = CswConvert.ToInt32( DataRowBgTasks[_ColName_MaxRunTimeMs] );
+                ReturnVal.MaxRunTimeMs = CswConvert.ToInt32( DataRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] );
             }
 
 
-            if( false == DataRowBgTasks.IsNull( _ColName_ThreadId ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.ThreadId.ToString() ) )
             {
-                ReturnVal.ThreadId = CswConvert.ToInt32( DataRowBgTasks[_ColName_ThreadId] );
+                ReturnVal.ThreadId = CswConvert.ToInt32( DataRowScheduledRules[NbtScheduledRuleColumns.ThreadId.ToString()] );
             }
 
-            if( false == DataRowBgTasks.IsNull( _ColName_Reprobate ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.Reprobate.ToString() ) )
             {
-                ReturnVal.Reprobate = CswConvert.ToBoolean( DataRowBgTasks[_ColName_Reprobate] );
+                ReturnVal.Reprobate = CswConvert.ToBoolean( DataRowScheduledRules[NbtScheduledRuleColumns.Reprobate.ToString()] );
             }
 
-            if( false == DataRowBgTasks.IsNull( _ColName_TotalRogueCount ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.TotalRogueCount.ToString() ) )
             {
-                ReturnVal.TotalRoqueCount = CswConvert.ToInt32( DataRowBgTasks[_ColName_TotalRogueCount] );
+                ReturnVal.TotalRoqueCount = CswConvert.ToInt32( DataRowScheduledRules[NbtScheduledRuleColumns.TotalRogueCount.ToString()] );
             }
 
-            if( false == DataRowBgTasks.IsNull( _ColName_StatusMessage ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.StatusMessage.ToString() ) )
             {
-                ReturnVal.StatusMessage = DataRowBgTasks[_ColName_StatusMessage].ToString();
+                ReturnVal.StatusMessage = DataRowScheduledRules[NbtScheduledRuleColumns.StatusMessage.ToString()].ToString();
             }
 
-            if( false == DataRowBgTasks.IsNull( _ColName_StatusMessage ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.StatusMessage.ToString() ) )
             {
-                ReturnVal.StatusMessage = DataRowBgTasks[_ColName_StatusMessage].ToString();
+                ReturnVal.StatusMessage = DataRowScheduledRules[NbtScheduledRuleColumns.StatusMessage.ToString()].ToString();
             }
 
-            if( false == DataRowBgTasks.IsNull( _ColName_Recurrence ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.Recurrence.ToString() ) )
             {
-                Enum.TryParse<Recurrance>( DataRowBgTasks[_ColName_Recurrence].ToString(), true, out ReturnVal.Recurrance );
+                Enum.TryParse<Recurrance>( DataRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()].ToString(), true, out ReturnVal.Recurrance );
             }
 
-            if( false == DataRowBgTasks.IsNull( _ColName_Interval ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.Interval.ToString() ) )
             {
-                ReturnVal.Interval = CswConvert.ToInt32( DataRowBgTasks[_ColName_Interval] );
+                ReturnVal.Interval = CswConvert.ToInt32( DataRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] );
             }
 
-            if( false == DataRowBgTasks.IsNull( _ColName_ReprobateThreshold ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.ReprobateThreshold.ToString() ) )
             {
-                ReturnVal.ReprobateThreshold = CswConvert.ToInt32( DataRowBgTasks[_ColName_ReprobateThreshold] );
+                ReturnVal.ReprobateThreshold = CswConvert.ToInt32( DataRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] );
             }
 
-            if( false == DataRowBgTasks.IsNull( _ColName_RunStartTime ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.RunStartTime.ToString() ) )
             {
-                ReturnVal.RunStartTime = CswConvert.ToDateTime( DataRowBgTasks[_ColName_RunStartTime] );
+                ReturnVal.RunStartTime = CswConvert.ToDateTime( DataRowScheduledRules[NbtScheduledRuleColumns.RunStartTime.ToString()] );
             }
 
-            if( false == DataRowBgTasks.IsNull( _ColName_RunEndTime ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.RunEndTime.ToString() ) )
             {
-                ReturnVal.RunEndTime = CswConvert.ToDateTime( DataRowBgTasks[_ColName_RunEndTime] );
+                ReturnVal.RunEndTime = CswConvert.ToDateTime( DataRowScheduledRules[NbtScheduledRuleColumns.RunEndTime.ToString()] );
             }
 
-            if( false == DataRowBgTasks.IsNull( _ColName_Disabled ) )
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.Disabled.ToString() ) )
             {
-                ReturnVal.Disabled = CswConvert.ToBoolean( DataRowBgTasks[_ColName_Disabled] );
+                ReturnVal.Disabled = CswConvert.ToBoolean( DataRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] );
             }
 
 
-            //foreach( DataRow CurrentRow in DataTableBgTasksInfo.Rows )
-            //{
-            //    ReturnVal.RunParams.Add( CurrentRow[_ColName_ParameterName].ToString(), CurrentRow[_ColName_ParameterValue] );
-            //}
+            foreach( DataRow CurrentRow in DataTableScheduledRuleParams.Rows )
+            {
+                ReturnVal.RunParams.Add( CurrentRow[NbtScheduledRuleParamsColumns.ParamName.ToString()].ToString(), CurrentRow[NbtScheduledRuleParamsColumns.ParamVal.ToString()] );
+            }
 
-            NbtScheduleRuleNames RuleEnum; 
-            Enum.TryParse<NbtScheduleRuleNames>( RuleName,true,out RuleEnum );
-            _ScheduleLogicAddenda[RuleEnum].read( ReturnVal ); 
-            
+
+
 
             return ( ReturnVal );
 
@@ -139,40 +122,39 @@ namespace ChemSW.Nbt.Sched
         public void write( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
 
-            if( false == string.IsNullOrEmpty( CswScheduleLogicDetail.RuleName ) )
+            if( false == string.IsNullOrEmpty( CswScheduleLogicDetail.RuleName.ToString() ) )
             {
                 try
                 {
                     _CswResources.beginTransaction();
 
-                    CswTableUpdate CswTableUpdateBgTasks = _CswResources.makeCswTableUpdate( "CswScheduleLogicInfo_Update", "background_tasks" );
-                    DataTable BgTasksDataTable = CswTableUpdateBgTasks.getTable( " where lower(taskname)='" + CswScheduleLogicDetail.RuleName.ToLower() + "'" );
-                    DataRow BgTasksDataRow = BgTasksDataTable.Rows[0];
+                    CswTableUpdate CswTableUpdateScheduledRules = _CswResources.makeCswTableUpdate( _TableNameScheduledRules + "_Update", _TableNameScheduledRules );
+                    DataTable DataTableScheduledRules = CswTableUpdateScheduledRules.getTable( " where lower(rulename)='" + CswScheduleLogicDetail.RuleName.ToLower() + "'" );
+                    DataRow DataRowScheduledRules = DataTableScheduledRules.Rows[0];
 
-                    BgTasksDataRow[_ColName_MaxRunTimeMs] = CswScheduleLogicDetail.MaxRunTimeMs;
-                    BgTasksDataRow[_ColName_ThreadId] = CswScheduleLogicDetail.ThreadId;
-                    BgTasksDataRow[_ColName_Reprobate] = CswConvert.ToDbVal( CswScheduleLogicDetail.Reprobate );
-                    BgTasksDataRow[_ColName_TotalRogueCount] = CswScheduleLogicDetail.TotalRoqueCount;
-                    BgTasksDataRow[_ColName_StatusMessage] = CswScheduleLogicDetail.StatusMessage;
-                    BgTasksDataRow[_ColName_Recurrence] = CswScheduleLogicDetail.Recurrance.ToString();
-                    BgTasksDataRow[_ColName_Interval] = CswScheduleLogicDetail.Interval;
-                    BgTasksDataRow[_ColName_ReprobateThreshold] = CswScheduleLogicDetail.ReprobateThreshold;
-                    BgTasksDataRow[_ColName_RunStartTime] = CswScheduleLogicDetail.RunStartTime;
-                    BgTasksDataRow[_ColName_RunEndTime] = CswScheduleLogicDetail.RunEndTime;
-                    BgTasksDataRow[_ColName_FailedCount] = CswScheduleLogicDetail.FailedCount;
-                    BgTasksDataRow[_ColName_Disabled] = CswConvert.ToDbVal( CswScheduleLogicDetail.Disabled );
+                    DataRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = CswScheduleLogicDetail.MaxRunTimeMs;
+                    DataRowScheduledRules[NbtScheduledRuleColumns.ThreadId.ToString()] = CswScheduleLogicDetail.ThreadId;
+                    DataRowScheduledRules[NbtScheduledRuleColumns.Reprobate.ToString()] = CswConvert.ToDbVal( CswScheduleLogicDetail.Reprobate );
+                    DataRowScheduledRules[NbtScheduledRuleColumns.TotalRogueCount.ToString()] = CswScheduleLogicDetail.TotalRoqueCount;
+                    DataRowScheduledRules[NbtScheduledRuleColumns.StatusMessage.ToString()] = CswScheduleLogicDetail.StatusMessage;
+                    DataRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = CswScheduleLogicDetail.Recurrance.ToString();
+                    DataRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = CswScheduleLogicDetail.Interval;
+                    DataRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = CswScheduleLogicDetail.ReprobateThreshold;
+                    DataRowScheduledRules[NbtScheduledRuleColumns.RunStartTime.ToString()] = CswScheduleLogicDetail.RunStartTime;
+                    DataRowScheduledRules[NbtScheduledRuleColumns.RunEndTime.ToString()] = CswScheduleLogicDetail.RunEndTime;
+                    DataRowScheduledRules[NbtScheduledRuleColumns.FailedCount.ToString()] = CswScheduleLogicDetail.FailedCount;
+                    DataRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = CswConvert.ToDbVal( CswScheduleLogicDetail.Disabled );
 
-                    CswTableUpdateBgTasks.update( BgTasksDataTable );
+                    CswTableUpdateScheduledRules.update( DataTableScheduledRules );
 
-                    /*
                     if( CswScheduleLogicDetail.RunParams.Count > 0 )
                     {
 
-                        CswTableUpdate CswTableUpdateBgTasksInfo = _CswResources.makeCswTableUpdate( "CswScheduleLogicInfoParams_Update", "background_tasks_info" );
+                        CswTableUpdate CswTableUpdateScheduledRuleParams = _CswResources.makeCswTableUpdate( _TableNameScheduledRuleParams + "_update", _TableNameScheduledRuleParams );
 
                         CswCommaDelimitedString CswCommaDelimitedStringSelectCols = new CswCommaDelimitedString();
-                        CswCommaDelimitedStringSelectCols.Add( _ColName_ParameterName );
-                        CswCommaDelimitedStringSelectCols.Add( _ColName_ParameterValue );
+                        CswCommaDelimitedStringSelectCols.Add( NbtScheduledRuleParamsColumns.ParamName.ToString() );
+                        CswCommaDelimitedStringSelectCols.Add( NbtScheduledRuleParamsColumns.ParamVal.ToString() );
 
 
                         CswCommaDelimitedString CswCommaDelimitedStringParams = new CswCommaDelimitedString( CswScheduleLogicDetail.RunParams.Keys.Count, true );
@@ -183,23 +165,18 @@ namespace ChemSW.Nbt.Sched
 
 
 
-                        string WhereClause = " where backgroundtaskid = (select backgroundtaskid from background_tasks where lower(taskname)='" + CswScheduleLogicDetail.RuleName.ToLower() + "') and lower(" + _ColName_ParameterName + ") in (" + CswCommaDelimitedStringParams + ")";
-                        DataTable BgTasksInfoDataTable = CswTableUpdateBgTasksInfo.getTable( CswCommaDelimitedStringSelectCols, "", Int32.MinValue, WhereClause, false );
+                        string WhereClause = " where " + NbtScheduledRuleColumns.ScheduledRuleId.ToString() + " = (select " + NbtScheduledRuleColumns.ScheduledRuleId.ToString() + " from " + _TableNameScheduledRules + " where lower(" + NbtScheduledRuleColumns.RuleName.ToString() + ")='" + CswScheduleLogicDetail.RuleName.ToLower() + "') and lower(" + NbtScheduledRuleParamsColumns.ParamName + ") in (" + CswCommaDelimitedStringParams + ")";
+                        DataTable DataTableScheduledRuleParams = CswTableUpdateScheduledRuleParams.getTable( CswCommaDelimitedStringSelectCols, "", Int32.MinValue, WhereClause, false );
 
-                        foreach( DataRow CurrentRow in BgTasksInfoDataTable.Rows )
+                        foreach( DataRow CurrentRow in DataTableScheduledRuleParams.Rows )
                         {
-                            CurrentRow[_ColName_ParameterValue] = CswScheduleLogicDetail.RunParams[CurrentRow[_ColName_ParameterName].ToString()];
+                            CurrentRow[NbtScheduledRuleParamsColumns.ParamVal.ToString()] = CswScheduleLogicDetail.RunParams[CurrentRow[NbtScheduledRuleParamsColumns.ParamVal.ToString()].ToString()];
                         }//iterate rolws
 
-                        CswTableUpdateBgTasksInfo.update( BgTasksInfoDataTable );
+                        CswTableUpdateScheduledRuleParams.update( DataTableScheduledRuleParams );
 
                     }//if we have run params to update
-                     */
 
-
-                    NbtScheduleRuleNames RuleEnum;
-                    Enum.TryParse<NbtScheduleRuleNames>( CswScheduleLogicDetail.RuleName, true, out RuleEnum );
-                    _ScheduleLogicAddenda[RuleEnum].write( CswScheduleLogicDetail ); 
 
                     _CswResources.commitTransaction();
 
@@ -209,7 +186,7 @@ namespace ChemSW.Nbt.Sched
                 {
                     _CswResources.Rollback();
                     string Message = "Error writing rule meta data: " + Exception.Message;
-                    _CswResources.CswLogger.reportError( new Exception( Message ) );
+                    _CswResources.CswLogger.reportError( new Exception( Message.ToString() ) );
                 }
 
             }//if string has data

@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Sched;
 using System.IO;
 
 namespace ChemSW.Nbt.Schema
@@ -26,99 +27,122 @@ namespace ChemSW.Nbt.Schema
         {
 
             ///*******************  Schedule rule table entries             
-            string TableName = "scheduledrules";
-            string ColName_RuleName = "rulename";
-            string ColName_MaxRunTimeMs = "maxruntimems";
-            string ColName_ThreadId = "threadid";
-            string ColName_ReprobateThreshold = "reprobatethreshold";
-            string ColName_TotalRogueCount = "totalroguecount";
-            string ColName_FailedCount = "failedcount";
-            string ColName_Reprobate = "reprobate";
-            string ColName_Disabled = "disabled";
-            string ColName_StatusMessage = "statusmessage";
-            string ColName_Recurrence = "recurrence";
-            string ColName_Interval = "interval";
-            string ColName_RunStartTime = "runstarttime";
-            string ColName_RunEndTime = "runendtime";
-            string ColName_LastRun = "lastrun";
-
-
-
-
-            CswTableUpdate CswTableUpdateScheduledRules = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "schemaupdate_" + SchemaVersion, TableName );
+            string TableNameScheduledRules = "scheduledrules";
+            CswTableUpdate CswTableUpdateScheduledRules = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "schemaupdate_" + SchemaVersion, TableNameScheduledRules );
             DataTable DataTableScheduledRules = CswTableUpdateScheduledRules.getEmptyTable();
+
 
 
             //Update Prop Vals
             DataRow NewRowScheduledRules = DataTableScheduledRules.NewRow();
-            NewRowScheduledRules[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtPropVals.ToString();
-            NewRowScheduledRules[ColName_MaxRunTimeMs] = 2000;
-            NewRowScheduledRules[ColName_ReprobateThreshold] = 3;
-            NewRowScheduledRules[ColName_Disabled] = 0;
-            NewRowScheduledRules[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRowScheduledRules[ColName_Interval] = 5;
+            NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtPropVals.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 2000;
+            NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
+
+            Int32 PropValRulePk = Convert.ToInt32( NewRowScheduledRules[NbtScheduledRuleColumns.ScheduledRuleId.ToString()] );
+
 
             //Update MBTF
             NewRowScheduledRules = DataTableScheduledRules.NewRow();
-            NewRowScheduledRules[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtMTBF.ToString();
-            NewRowScheduledRules[ColName_MaxRunTimeMs] = 5000;
-            NewRowScheduledRules[ColName_ReprobateThreshold] = 3;
-            NewRowScheduledRules[ColName_Disabled] = 0;
-            NewRowScheduledRules[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRowScheduledRules[ColName_Interval] = 5;
+            NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtMTBF.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
+            NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
             //Update Inspection
             NewRowScheduledRules = DataTableScheduledRules.NewRow();
-            NewRowScheduledRules[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtInspection.ToString();
-            NewRowScheduledRules[ColName_MaxRunTimeMs] = 5000;
-            NewRowScheduledRules[ColName_ReprobateThreshold] = 3;
-            NewRowScheduledRules[ColName_Disabled] = 0;
-            NewRowScheduledRules[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRowScheduledRules[ColName_Interval] = 5;
+            NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtInspection.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
+            NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
             //Gen Node
             NewRowScheduledRules = DataTableScheduledRules.NewRow();
-            NewRowScheduledRules[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenNode.ToString();
-            NewRowScheduledRules[ColName_MaxRunTimeMs] = 5000;
-            NewRowScheduledRules[ColName_ReprobateThreshold] = 3;
-            NewRowScheduledRules[ColName_Disabled] = 0;
-            NewRowScheduledRules[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRowScheduledRules[ColName_Interval] = 5;
+            NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenNode.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
+            NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
             //Gen Email Rpt
             NewRowScheduledRules = DataTableScheduledRules.NewRow();
-            NewRowScheduledRules[ColName_RuleName] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenEmailRpt.ToString();
-            NewRowScheduledRules[ColName_MaxRunTimeMs] = 5000;
-            NewRowScheduledRules[ColName_ReprobateThreshold] = 3;
-            NewRowScheduledRules[ColName_Disabled] = 0;
-            NewRowScheduledRules[ColName_Recurrence] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRowScheduledRules[ColName_Interval] = 5;
+            NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenEmailRpt.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
+            NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
             CswTableUpdateScheduledRules.update( DataTableScheduledRules );
 
+            //BaseSleepNSeconds
+            NewRowScheduledRules = DataTableScheduledRules.NewRow();
+            NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.BaseSleepNSeconds.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
+            NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
+            DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
+
+            Int32 BaseSleepNSeconcsRulePk = Convert.ToInt32( NewRowScheduledRules[NbtScheduledRuleColumns.ScheduledRuleId.ToString()] );
+
+
+            CswTableUpdateScheduledRules.update( DataTableScheduledRules );
+
+            //Params table
+            string TableNameScheduledRuleParams = "ScheduledRuleParams";
+            CswTableUpdate CswTableUpdateScheduledRuleParams = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "schemaupdate_" + SchemaVersion, TableNameScheduledRuleParams );
+            DataTable DataTableScheduledRuleParams = CswTableUpdateScheduledRuleParams.getEmptyTable();
+
+            //Params: PropVals
+            DataRow NewParamRow = DataTableScheduledRuleParams.NewRow();
+            NewParamRow[NbtScheduledRuleParamsColumns.ScheduledRuleParamId.ToString()] = PropValRulePk;
+            NewParamRow[NbtScheduledRuleParamsColumns.ParamName.ToString()] = "ProcessChunkSize";
+            NewParamRow[NbtScheduledRuleParamsColumns.ParamVal.ToString()] = "5";
+            DataTableScheduledRuleParams.Rows.Add( NewParamRow );
+
+            //Params: Base SleepNSeconds
+            NewParamRow = DataTableScheduledRuleParams.NewRow();
+            NewParamRow[NbtScheduledRuleColumns.ScheduledRuleId.ToString()] = BaseSleepNSeconcsRulePk;
+            NewParamRow[NbtScheduledRuleParamsColumns.ParamName.ToString()] = "sleepsecs_even";
+            NewParamRow[NbtScheduledRuleParamsColumns.ParamVal.ToString()] = "5";
+            DataTableScheduledRuleParams.Rows.Add( NewParamRow );
+
+            NewParamRow = DataTableScheduledRuleParams.NewRow();
+            NewParamRow[NbtScheduledRuleColumns.ScheduledRuleId.ToString()] = BaseSleepNSeconcsRulePk;
+            NewParamRow[NbtScheduledRuleParamsColumns.ParamName.ToString()] = "sleepsecs_odd";
+            NewParamRow[NbtScheduledRuleParamsColumns.ParamVal.ToString()] = "15";
+            DataTableScheduledRuleParams.Rows.Add( NewParamRow );
+
+            CswTableUpdateScheduledRuleParams.update( DataTableScheduledRuleParams );
 
 
 
             ///******************  STATIC SQL SELECT UPDATES
             string TableNameStaticSqlSelects = "static_sql_selects";
-            string ColName_QueryId = "queryid";
-            string ColName_QueryText = "querytext";
-
+            string QueryId = "queryid";
+            string QueryText = "querytext";
 
             CswTableUpdate CswTableUpdateStaticSqlSelects = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "schemaupdate_" + SchemaVersion + ": partitionrules", TableNameStaticSqlSelects );
             DataTable DataTableStaticSqlSelects = CswTableUpdateStaticSqlSelects.getEmptyTable();
 
-
-
-
             DataRow NewRowStaticSqlSelects = DataTableStaticSqlSelects.NewRow();
-            NewRowStaticSqlSelects[ColName_QueryId] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenEmailRpt.ToString();
-            NewRowStaticSqlSelects[ColName_QueryText] = @"select n.nodeid, t.nodetypename
+            NewRowStaticSqlSelects[QueryId.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenEmailRpt.ToString();
+            NewRowStaticSqlSelects[QueryText] = @"select n.nodeid, t.nodetypename
                                                           from nodes n
                                                           join nodetypes t on n.nodetypeid = t.nodetypeid
                                                           join object_class o on t.objectclassid = o.objectclassid
@@ -210,12 +234,12 @@ namespace ChemSW.Nbt.Schema
                                                                sysdate >= (ndd.nextduedate - wd.warningdays)) and
                                                                (fdd.finalduedate is null or sysdate <= fdd.finalduedate)))";
 
-            DataTableStaticSqlSelects.Rows.Add( DataTableStaticSqlSelects );
+            DataTableStaticSqlSelects.Rows.Add( NewRowStaticSqlSelects );
 
 
             NewRowStaticSqlSelects = DataTableStaticSqlSelects.NewRow();
-            NewRowStaticSqlSelects[ColName_QueryId] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenNode.ToString();
-            NewRowStaticSqlSelects[ColName_QueryText] = @"select n.nodeid,n.nodename
+            NewRowStaticSqlSelects[QueryId] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenNode.ToString();
+            NewRowStaticSqlSelects[QueryText] = @"select n.nodeid,n.nodename
                                                           from nodes n
                                                           join nodetypes t on n.nodetypeid = t.nodetypeid
                                                           join object_class o on t.objectclassid = o.objectclassid
@@ -308,11 +332,11 @@ namespace ChemSW.Nbt.Schema
                                                                sysdate >= (ndd.nextduedate - wd.warningdays)) and
                                                                (fdd.finalduedate is null or sysdate <= fdd.finalduedate)))";
 
-            DataTableStaticSqlSelects.Rows.Add( DataTableStaticSqlSelects );
+            DataTableStaticSqlSelects.Rows.Add( NewRowStaticSqlSelects );
 
             NewRowStaticSqlSelects = DataTableStaticSqlSelects.NewRow();
-            NewRowStaticSqlSelects[ColName_QueryId] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtInspection.ToString();
-            NewRowStaticSqlSelects[ColName_QueryText] = @"select n.nodeid
+            NewRowStaticSqlSelects[QueryId] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtInspection.ToString();
+            NewRowStaticSqlSelects[QueryText] = @"select n.nodeid
                                                           from nodes n
                                                           join nodetypes t on n.nodetypeid = t.nodetypeid
                                                           join object_class o on t.objectclassid = o.objectclassid
@@ -350,7 +374,7 @@ namespace ChemSW.Nbt.Schema
                                                          where o.objectclass = 'InspectionDesignClass'
                                                            and sysdate >= (dd.duedate)
                                                            and s.status = 'Pending'";
-            DataTableStaticSqlSelects.Rows.Add( DataTableStaticSqlSelects );
+            DataTableStaticSqlSelects.Rows.Add( NewRowStaticSqlSelects );
 
             CswTableUpdateStaticSqlSelects.update( DataTableStaticSqlSelects );
 

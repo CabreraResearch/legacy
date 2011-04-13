@@ -4,6 +4,7 @@ using ChemSW.MtSched.Core;
 using ChemSW.Core;
 using ChemSW.Config;
 using ChemSW.Nbt;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -14,7 +15,9 @@ namespace ChemSW.Nbt.Sched
 
         public ICswResources make()
         {
-            return ( CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, new Config.CswSetupVblsNbt( SetupMode.Executable ), new Config.CswDbCfgInfoNbt( SetupMode.Executable ), CswTools.getConfigurationFilePath(SetupMode.Executable), true, false ) );
+            CswNbtResources ReturnVal = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, new Config.CswSetupVblsNbt( SetupMode.Executable ), new Config.CswDbCfgInfoNbt( SetupMode.Executable ), CswTools.getConfigurationFilePath( SetupMode.Executable ), true, false );
+            ReturnVal.CurrentUser = new CswNbtSystemUser( ReturnVal, "NbtScheduleServiceUser" );
+            return ( ReturnVal );
         }
     }//CswReportTimingDaily
 
