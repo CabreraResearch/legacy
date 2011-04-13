@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		private XElement _getGridTree()
 		{
-			XElement RawXml = null;
+			XElement RawXml;
 
 			if( _ParentNodeKey != null && _View.Root.ChildRelationships.Count > 0 )
 			{
@@ -227,6 +227,20 @@ namespace ChemSW.Nbt.WebServices
 			if( NodeCount > 0 )
 			{
 				RawXml = XElement.Parse( Tree.getRawTreeXml() );
+			}
+			else
+			{
+			    RawXml = new XElement( "root",
+			                           new XElement( "item",
+			                                new XAttribute( "id", "-1" ),
+			                                new XAttribute( "rel", "root" ),
+			                                new XElement( "content",
+			                                    new XElement( "name", _View.ViewName ) ),
+			                                new XElement( "item",
+			                                    new XAttribute( "id", "-1" ),
+			                                    new XAttribute( "rel", "child" ),
+			                                    new XElement( "content",
+			                                        new XElement( "name", "No Results" ) ) ) ) );
 			}
 		
 
