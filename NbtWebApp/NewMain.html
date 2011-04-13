@@ -127,7 +127,8 @@
 		var o = {
 			left: false, 
 			right: false, 
-			center: false,
+			centertop: false,
+            centerbottom: false,
 			all: false
 		};
 		if(options) {
@@ -142,10 +143,13 @@
 		{
 			$('#RightDiv').empty();
 		}
-		if (o.all || o.center)
+		if (o.all || o.centertop)
 		{
-			$('#CenterBottomDiv').empty();
             $('#CenterTopDiv').empty();
+		}
+        if (o.all || o.centerbottom)
+		{
+    		$('#CenterBottomDiv').empty();
 		}
 	}
 
@@ -290,7 +294,7 @@
         var $search = $('#CenterTopDiv').CswDOM('getchildren', { ID: 'CswSearchForm', prefix: o.idprefix });
 	    if( $search == undefined || $search.length == 0 )
 	    {
-	        clear({ center: true });
+	        clear({ centertop: true });
             
             var onSearchSubmit = function(view) {
                     $.CswCookie('set', CswCookieName.CurrentView.ViewId, view.viewid);
@@ -322,15 +326,12 @@
 			viewid: '',
 			nodeid: '',
 			cswnbtnodekey: '',
+            doMenuRefresh: true,
             onAddNode: '',
             onEditNode: '',
-            onDeleteNode: '',
-            doMenuRefresh: true
+            onDeleteNode: ''
 		};
-		if (options)
-		{
-			$.extend(o, options);
-		}
+		if (options) $.extend(o, options);
 
 		o.onAddNode = function (nodeid, cswnbtnodekey)
 			{
@@ -339,10 +340,18 @@
 				$.extend(ocopy, x);
 				getViewGrid(ocopy);
 			};
-        o.onEditNode = function() { getViewGrid(o); };
-        o.onDeleteNode = function() { getViewGrid(o); };
-
-		$('#CenterBottomDiv').CswNodeGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'id': MainGridId });
+        o.onEditNode = function() { getViewGrid(o); };        o.onDeleteNode = function() { getViewGrid(o); };
+        
+        clear({ centerbottom: true});
+        
+        $('#CenterBottomDiv').CswNodeGrid({ 
+                                'viewid': o.viewid, 
+                                'nodeid': o.nodeid, 
+                                'cswnbtnodekey': o.cswnbtnodekey, 
+                                'prefix': MainGridId, 
+                                'onAddNode': o.onAddNode,
+                                'onEditNode': o.onEditNode,
+                                'onDeleteNode': o.onDeleteNode });
         if(o.doMenuRefresh) refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 	}
 
@@ -436,8 +445,8 @@
 			    viewmode: 'tree'
 			};
 			if (options) $.extend(o, options);
-	
-			switch (o.type)
+	        
+			switch (o.viewmode)
 			{
 				case 'grid':
 					{

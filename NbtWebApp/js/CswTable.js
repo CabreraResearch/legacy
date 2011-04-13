@@ -8,6 +8,27 @@
     //     var $cell12 = $table.CswTable('cell', 1, 2);
 
     var PluginName = "CswTable";
+    var Delimiter = '_';
+
+    function getElementId(options)
+    {
+        var o = {
+                'ID': '',
+                'prefix': '',
+                'suffix': ''
+        };
+        if (options) $.extend(o, options);
+        var elementId = o.ID;
+        if( o.prefix !== '' )
+        {
+            elementId = o.prefix + Delimiter + elementId;
+        }
+        if( o.suffix !== '' )
+        {
+            elementId += Delimiter + o.suffix;
+        }
+        return elementId;
+    }
 
     $.fn.CswTable = function (method) {
         
@@ -16,6 +37,8 @@
             'init': function (options) {
                         var o = {
                             ID: '',
+                            prefix: '',
+                            suffix: '',
                             TableCssClass: '',
                             CellCssClass: '',
                             cellpadding: 0,
@@ -32,7 +55,8 @@
                         if (options) {
                             $.extend(o, options);
                         }
-                        var $table = $('<table id="'+ o.ID +'"></table>');
+                        var elementId = getElementId({ID: o.ID, prefix: o.prefix, suffix: o.suffix});
+                        var $table = $('<table id="'+ elementId +'"></table>');
 						$table.addClass(o.TableCssClass);
 						$table.attr('width', o.width);
 						$table.attr('align', o.align);

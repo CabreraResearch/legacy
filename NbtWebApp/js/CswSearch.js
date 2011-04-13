@@ -73,7 +73,7 @@
             };
             if(options) $.extend(o,options);
     
-            if('Advanced' == o.$link.text())
+            if('Advanced' === o.$link.text())
             {
                 $('.csw_search_subfield_select').each(function() { $(this).show(); });
                 $('.csw_search_filter_select').each(function() { $(this).show(); });
@@ -198,7 +198,7 @@
                                         $.extend(o,r);
                                         renderNodePropsAndControls(); });
                                 
-                if(o.selectedPropVal != '' )
+                if(o.selectedPropVal !== '' )
                 {
                     $props.val(o.selectedPropVal).attr('selected',true);
                 }
@@ -241,7 +241,7 @@
                 {
                     $subfieldsOptions.hide();
                 }
-                if(o.selectedSubfieldVal != '')
+                if(o.selectedSubfieldVal !== '')
                 {
                     $subfieldsOptions.val(o.selectedSubfieldVal).attr('selected',true);
                 }
@@ -268,7 +268,7 @@
                 {
                     $filtersOptions.hide();
                 }
-                if(o.selectedFilterVal != '')
+                if(o.selectedFilterVal !== '')
                 {
                     $filtersOptions.val(o.selectedFilterVal).attr('selected',true);
                 }
@@ -279,25 +279,25 @@
                 var $searchBoxCell = o.$parent.CswTable('cell', propRow, 6)
                                 .empty();
             
-                if( fieldtype == 'List' )
+                if( fieldtype === 'List' )
                 {
                     $searchBoxCell.append( $(xmlToString($selectedProp.children('filtersoptions').children('select'))) );
                 }
-                else if( fieldtype == 'Logical' )
+                else if( fieldtype === 'Logical' )
                 {
                     $searchBoxCell.CswTristateCheckBox('init',{'ID': 'search_input_searchpropid_' + propertyId, 'prefix': o.idprefix}); 
                 }
                 else
                 {
                     var searchSuggest;
-                    if( defaultValue != '' && defaultValue != undefined )
+                    if( defaultValue !== '' && defaultValue != undefined )
                     {
                         searchSuggest = defaultValue;
                     }
                     else
                     {
                         searchSuggest = $props.find(':selected').text();
-                        if(searchSuggest != $subfieldsOptions.find(':selected').text() )
+                        if(searchSuggest !== $subfieldsOptions.find(':selected').text() )
                         {
                             searchSuggest += "'s " +  $subfieldsOptions.find(':selected').text();
                         }  
@@ -372,7 +372,7 @@
             {
                 $subfieldsOptions.hide();
             }
-            if(o.selectedSubfieldVal != '')
+            if(o.selectedSubfieldVal !== '')
             {
                 $subfieldsOptions.val(o.selectedSubfieldVal).attr('selected',true);
             }
@@ -398,7 +398,7 @@
             {
                 $filtersOptions.hide();
             }
-            if(o.selectedFilterVal != '')
+            if(o.selectedFilterVal !== '')
             {
                 $filtersOptions.val(o.selectedFilterVal).attr('selected',true);
             }
@@ -409,25 +409,25 @@
             var $searchBoxCell = o.$parent.CswTable('cell', propRow, 6)
                             .empty();
          
-            if( fieldtype == 'List' )
+            if( fieldtype === 'List' )
             {
                 $searchBoxCell.append( $(xmlToString($selectedProp.children('filtersoptions').children('select'))) );
             }
-            else if( fieldtype == 'Logical' )
+            else if( fieldtype === 'Logical' )
             {
                 $searchBoxCell.CswTristateCheckBox('init',{'ID': 'search_input_filtarbitraryid_' + filtArbitraryId, 'prefix': o.idprefix, 'Checked': defaultValue}); 
             }
             else
             {
                 var searchSuggest;
-                if( defaultValue != '' && defaultValue != undefined )
+                if( defaultValue !== '' && defaultValue !== undefined )
                 {
                     searchSuggest = defaultValue;
                 }
                 else
                 {
                     searchSuggest = propertyName;
-                    if(searchSuggest != $subfieldsOptions.find(':selected').text() )
+                    if(searchSuggest !== $subfieldsOptions.find(':selected').text() )
                     {
                         searchSuggest += "'s " +  $subfieldsOptions.find(':selected').text();
                     }
@@ -442,7 +442,7 @@
                                         .attr('autocomplete','on')
                                         .attr('autofocus','true')
                                         .attr({width:"200px"});
-                if( fieldtype == 'Date' )
+                if( fieldtype === 'Date' )
                 {
                     $searchInput.datepicker(); //define the dt format later if necessary
                 }
@@ -456,7 +456,7 @@
             var clearCellNumber = o.bottomCell;
             var advancedCellNumber = clearCellNumber + 1;
             var cellRow = o.bottomRow;
-            if(o.searchtype == 'nodetypesearch')
+            if(o.searchtype === 'nodetypesearch')
             {
                 //Row i, Column 1: cell for clear/advanced                                            
                 var $splitCell = o.$parent.CswTable('cell', o.bottomRow, o.bottomCell)
@@ -667,11 +667,11 @@
                         
                             var $searchInput = o.$parent.CswDOM('findelement',{ID: 'search_input_searchpropid_' + propId, prefix: o.idprefix});
                             var searchText;
-                            if( fieldtype == 'Logical' )
+                            if( fieldtype === 'Logical' )
                             {
                                 searchText = $searchInput.CswTristateCheckBox('value');
                             }
-                            else if( fieldtype == 'List' )
+                            else if( fieldtype === 'List' )
                             {
                                 $searchList = o.$parent.CswDOM('findelement',{ID: 'filtersoptions_select_searchpropid_' + propId, prefix: o.idprefix});
                                 searchText = $searchList.find(':selected').val();
@@ -708,11 +708,11 @@
                             var fieldtype = $thisProp.attr('fieldtype');
                             var $searchInput = o.$parent.CswDOM('findelement',{ID: 'search_input_filtarbitraryid_' + filtArbitraryId, prefix: o.idprefix});
                             var searchText;
-                            if( fieldtype == 'Logical' )
+                            if( fieldtype === 'Logical' )
                             {
                                 searchText = $searchInput.CswTristateCheckBox('value');
                             }
-                            else if( fieldtype == 'List' )
+                            else if( fieldtype === 'List' )
                             {
                                 $searchList = o.$parent.CswDOM('findelement',{ID: 'filtersoptions_select_filtarbitraryid_' + filtArbitraryId, prefix: o.idprefix});
                                 searchText = $searchList.find(':selected').val();
@@ -721,7 +721,7 @@
                             {
                                 searchText = $searchInput.val();
                             }
-                            if(searchText != '')
+                            if(searchText !== '')
                             {
                                 var $subField = o.$parent.CswDOM('findelement',{ID: 'subfield_select_filtarbitraryid_' + filtArbitraryId, prefix: o.idprefix});
                                 var subFieldText = $subField.find(':selected').text();

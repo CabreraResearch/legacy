@@ -29,6 +29,26 @@
             week: {value: 22, name: 'week'}
     };
     
+    function getElementId(options)
+    {
+        var o = {
+                'ID': '',
+                'prefix': '',
+                'suffix': ''
+        };
+        if (options) $.extend(o, options);
+        var elementId = o.ID;
+        if( o.prefix !== '' )
+        {
+            elementId = o.prefix + Delimiter + elementId;
+        }
+        if( o.suffix !== '' )
+        {
+            elementId += Delimiter + o.suffix;
+        }
+        return elementId;
+    }
+
     var methods = {
 	
 		'div': function(options) 
@@ -36,21 +56,23 @@
             var o = {
                 'ID': '',
                 'prefix': '',
+                'suffix': '',
                 'value': '',
                 'cssclass': ''
             };
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-            var elementId = o.prefix + Delimiter + o.ID;
+            
             var $div = $('<div></div>');
-            if( elementId != Delimiter ) 
+            var elementId = getElementId(o);
+            if( elementId !== '' ) 
             {
                 $div.attr('id',elementId);
                 $div.attr('name',elementId);
             }
-            if( o.cssclass != '' ) $div.attr('class',o.cssclass);
-            if( o.value != '' ) $div.text( o.value );
+            if( o.cssclass !== '' ) $div.attr('class',o.cssclass);
+            if( o.value !== '' ) $div.text( o.value );
                     
             $parent.append($div);
             return $div;
@@ -60,21 +82,22 @@
             var o = {
                 'ID': '',
                 'prefix': '',
+                'suffix': '',
                 'value': '',
                 'cssclass': ''
             };
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-            var elementId = o.prefix + Delimiter + o.ID;
             var $span = $('<span></span>');
-            if( elementId != Delimiter ) 
+            var elementId = getElementId(o);
+            if( elementId !== '' ) 
             {
                 $span.attr('id',elementId);
                 $span.attr('name',elementId);
             }
-            if( o.cssclass != '' ) $span.attr('class',o.cssclass);
-            if( o.value != '' ) $span.text( o.value );
+            if( o.cssclass !== '' ) $span.attr('class',o.cssclass);
+            if( o.value !== '' ) $span.text( o.value );
                     
             $parent.append($span);
             return $span;
@@ -84,6 +107,7 @@
             var o = {
                 'ID': '',
                 'prefix': '',
+                'suffix': '',
                 'type': '',
                 'placeholder': '',
                 'cssclass': '',
@@ -92,16 +116,16 @@
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-            var elementId = o.prefix + Delimiter + o.ID;
             var $input = $('<input />');
-            if( elementId != Delimiter ) 
+            var elementId = getElementId(o);
+            if( elementId !== '' ) 
             {
                 $input.attr('id',elementId);
                 $input.attr('name',elementId);
             }
-            if( o.type != '' ) $input.attr('type', o.type);
-            if( o.cssclass != '' ) $input.attr('class',o.cssclass)
-            if( o.placeholder != '' ) $input.attr('placeholder',o.placeholder);
+            if( o.type !== '' ) $input.attr('type', o.type);
+            if( o.cssclass !== '' ) $input.attr('class',o.cssclass)
+            if( o.placeholder !== '' ) $input.attr('placeholder',o.placeholder);
                     
             $parent.append($input);
             return $input;
@@ -111,6 +135,7 @@
             var o = {
                 'ID': '',
                 'prefix': '',
+                'suffix': '',
                 'value': '',
                 'type': '', //MIME type
                 'media': 'all',
@@ -122,18 +147,18 @@
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-            var elementId = o.prefix + Delimiter + o.ID;
             var $link = $('<a></a>');
             
-            if( elementId != Delimiter ) $link.attr('id',elementId);
-            if( o.href != '' ) $link.attr('href', o.href);
-            if( o.value != '' ) $link.text(o.value);
-            if( o.cssclass != '' ) $link.attr('class',o.cssclass);
-            if( o.type != '' ) $link.attr('type',o.type);
-            if( o.rel != '' ) $link.attr('rel',o.rel);
-            if( o.media != '' ) $link.attr('media',o.media);
-            if( o.target != '' ) $link.attr('target',o.target);
-            if( o.onClick != undefined ) 
+            var elementId = getElementId(o);
+            if( elementId !== '' ) $link.attr('id',elementId);
+            if( o.href !== '' ) $link.attr('href', o.href);
+            if( o.value !== '' ) $link.text(o.value);
+            if( o.cssclass !== '' ) $link.attr('class',o.cssclass);
+            if( o.type !== '' ) $link.attr('type',o.type);
+            if( o.rel !== '' ) $link.attr('rel',o.rel);
+            if( o.media !== '' ) $link.attr('media',o.media);
+            if( o.target !== '' ) $link.attr('target',o.target);
+            if( o.onClick !== undefined ) 
             {
                 $link.click( function() {
                              o.onClick();
@@ -163,14 +188,16 @@
         {
             var o = {
                 ID: '',
-                prefix: ''
+                prefix: '',
+                suffix: ''
             };
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-            var elementId = '#' + o.prefix + Delimiter + o.ID;
             var $children;
-            if( elementId != '#' + Delimiter )
+
+            var elementId = '#' + getElementId(o);
+            if( elementId !== '#' )
             {
                 $children = $parent.children(elementId);
             }
@@ -180,14 +207,16 @@
         {
             var o = {
                 ID: '',
-                prefix: ''
+                prefix: '',
+                suffix: ''
             };
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-            var elementId = '#' + o.prefix + Delimiter + o.ID;
             var $element;
-            if( elementId != '#' + Delimiter )
+            
+            var elementId = '#' + getElementId(o);
+            if( elementId !== '#' )
             {
                 $element = $parent.find(elementId);
             }
