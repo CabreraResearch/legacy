@@ -1,29 +1,8 @@
-﻿/// <reference path="../jquery/jquery-1.5.1.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.treegrid.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.celledit.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.common.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.custom.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.formedit.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.grouping.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.import.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.inlinedit.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.jqueryui.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.loader.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.postext.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.setcolumns.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.subgrid.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.tbltogrid.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/grid.base.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/JsonXml.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/jqDnR.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/jqModal.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/jquery.fmatter.js" />
-/// <reference path="../jquery/jquery.jqGrid-3.8.2/src/jquery.searchFilter.js" />
+﻿/// <reference path="../jquery/jquery-1.5.2.js" />
 
 ; (function ($) {
 	$.fn.CswNodeGrid = function (optJqGrid, optCswNodeGrid) {
 
-		
 		var o = {
 			// jqGrid properties
 			datatype: "local", 
