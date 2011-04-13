@@ -434,6 +434,7 @@
 						"plugins": ["themes", "html_data", "ui", "types", "crrm"]
 			}); // tree
 
+			// tree events
 			$div.find('.vieweditor_childselect').change(function() {
 				var $select = $(this);
 				var childxml = $select.find('option:selected').data('optionviewxml');
@@ -444,6 +445,21 @@
 					$(childxml).appendTo($currentviewxml.find('[arbitraryid="' + $select.attr('arbid') +'"]'));
 				}
 				_makeViewTree($div);
+			});
+
+			$div.find('.vieweditor_deletespan').each(function() {
+				var $td = $(this); 
+				$td.CswImageButton({
+					ButtonType: CswImageButton_ButtonType.Delete,
+					AlternateText: 'Delete',
+					ID: $td.attr('arbid') + '_delete',
+					onClick: function ($ImageDiv) { 
+						var $span = $ImageDiv.parent();
+						$currentviewxml.find('[arbitraryid="' + $span.attr('arbid') +'"]').remove();
+						_makeViewTree($div);
+						return CswImageButton_ButtonType.None; 
+					}
+				});
 			});
 
 		} // _makeViewTree()
@@ -488,7 +504,9 @@
 			treestr += '    rel="'+ rel +'" ';
 			treestr += '    class="jstree-open" ';
 			treestr += '>';
-			treestr += '  <a href="#">'+ name +'</a>';
+			treestr += ' <a href="#" class="vieweditor_nodelink" arbid="'+ arbid +'">'+ name +'</a>';
+			if(arbid != "root")
+				treestr += ' <span style="" class="vieweditor_deletespan" arbid="'+ arbid +'"></span>';
 
 //			if($itemxml.children().length > 0)
 //			{
