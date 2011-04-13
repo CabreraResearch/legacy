@@ -252,7 +252,9 @@
 		var o = {
 			viewid: '',
 			nodeid: '',
-			cswnbtnodekey: ''
+			cswnbtnodekey: '',
+            prefix: 'csw',
+            ID: 'CswSearchForm'
 		};
 
 		if (options)
@@ -273,11 +275,23 @@
 				    multi = !multi;
 				    refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 			    },
+                'onSearch': function()
+                {
+                    var $search = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': o.ID, 'prefix': o.prefix });
+                    if ($search.is(':hidden'))
+                    {
+                        $search.show();
+                    }
+                    else
+                    {
+                        $search.hide();
+                    }
+                },
 			    'Multi': multi,
 			    'NodeCheckTreeId': MainTreeId
 			});
 		
-        refreshSearchPanel({ viewid: o.viewid, cswnbtnodekey: o.cswnbtnodekey });
+        refreshSearchPanel({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'prefix': o.prefix, 'ID': o.ID });
 	}
 
 	function refreshSearchPanel(options)
@@ -287,12 +301,13 @@
 	        viewid: '',
 	        nodetypeid: '',
 	        cswnbtnodekey: '',
-            idprefix: 'csw',
+            prefix: '',
+            ID: ''
 	    };
         
 	    if (options) $.extend(o, options);
 
-        var $search = $('#CenterTopDiv').CswDOM('getchildren', { ID: 'CswSearchForm', prefix: o.idprefix });
+        var $search = $('#CenterTopDiv').CswDOM('getchildren', { ID: 'CswSearchForm', prefix: o.prefix });
 	    if( $search == undefined || $search.length == 0 )
 	    {
 	        clear({ centertop: true });

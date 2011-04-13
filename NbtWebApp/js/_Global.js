@@ -390,7 +390,7 @@ function HandleMenuItem(options) {
 		'$this': '',
 		'onLogout': function () { },
 		'onAlterNode': function (nodeid, nodekey) { },
-		'onSearch': function (treexml, viewid, nodetypeid) { },
+		'onSearch': function () { },
 		'onMultiEdit': function () { },
 		'Multi': false,
 		'NodeCheckTreeId': ''
@@ -471,22 +471,14 @@ function HandleMenuItem(options) {
             case 'Search':
                 $a.click(function ()
                 {
-                    var $search = $('#CenterTopDiv').CswDOM('getchildren', { ID: 'CswSearchForm', prefix: 'csw' }); ; //how to get prefix here?
-                    if ($search.is(':hidden'))
-                    {
-                        $search.show();
-                    }
-                    else
-                    {
-                        $search.hide();
-                    }
+                    o.onSearch();
 //                    $.CswDialog('SearchDialog', {
 //                        'viewid': o.$this.attr('viewid'),
 //                        'nodetypeid': o.$this.attr('nodetypeid'),
 //                        'onSearch': o.onSearch
 //                    });
                     
-                    return false;
+                    
                 });
 				break;
 			case 'multiedit':
