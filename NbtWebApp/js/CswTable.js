@@ -8,28 +8,7 @@
     //     var $cell12 = $table.CswTable('cell', 1, 2);
 
     var PluginName = "CswTable";
-    var Delimiter = '_';
-
-    function getElementId(options)
-    {
-        var o = {
-                'ID': '',
-                'prefix': '',
-                'suffix': ''
-        };
-        if (options) $.extend(o, options);
-        var elementId = o.ID;
-        if( o.prefix !== '' )
-        {
-            elementId = o.prefix + Delimiter + elementId;
-        }
-        if( o.suffix !== '' )
-        {
-            elementId += Delimiter + o.suffix;
-        }
-        return elementId;
-    }
-
+    
     $.fn.CswTable = function (method) {
         
         var methods = {

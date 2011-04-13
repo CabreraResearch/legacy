@@ -601,6 +601,29 @@ function getTimeString(date)
 	return ret;
 }
 
+function getElementId(options)
+{
+    var o = {
+        'ID': '',
+        'prefix': '',
+        'suffix': '',
+        'Delimiter': '_'
+    };
+    if (options) $.extend(o, options);
+    
+    var elementId = o.ID;
+    
+    if( o.prefix !== '' && elementId !== '' )
+    {
+        elementId = o.prefix + o.Delimiter + elementId;
+    }
+    if (o.suffix !== '' && elementId !== '')
+    {
+        elementId += o.Delimiter + o.suffix;
+    }
+    return elementId;
+}
+
 // ------------------------------------------------------------------------------------
 // for debug
 // ------------------------------------------------------------------------------------
