@@ -16,7 +16,7 @@
 							</table>
 						</td>
 
-						<td id="Td7" class="PageTable_RightColumn" rowspan="5"></td>
+						<td id="Td6" class="PageTable_RightColumn" rowspan="5"></td>
 					</tr>
 
 					<tr>
@@ -26,24 +26,29 @@
 					</tr>
 
                     <tr>
-                        <td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
-                            <div id="CenterDiv">
-                            </div>
+                        <td id="Td7" class="PageTable_CenterCell" colspan="2" valign="top">
+                            <div id="CenterTopDiv"></div>
                         </td>
                     </tr>
 		  
 					<tr>
-						<td id="Td2" class="PageTable_LeftCell" valign="top">
+						<td id="Td8" class="PageTable_LeftCell" valign="top">
 							<div id="ViewSelectDiv"></div>
 							<div id="LeftDiv"></div>
 						</td>
-						<td id="Td3" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
+						<td id="Td9" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
 							<div id="RightDiv"></div>
 						</td>
 					</tr>
-					
+                    
+                    <tr>
+                        <td id="Td10" class="PageTable_CenterCell" colspan="2" valign="top">
+                            <div id="CenterBottomDiv"></div>
+                        </td>
+                    </tr>
+
 					<tr>
-						<td id="Td8" class="PageTable_CenterCell" colspan="2" valign="top">
+						<td id="Td11" class="PageTable_CenterCell" colspan="2" valign="top">
 							<div id="QuickLaunch"></div>
 						</td>
 					</tr>
@@ -62,7 +67,7 @@
 	{
 		if (debug) log('NewMain.initAll()');
 
-		$('#CenterDiv').CswLogin('login', {
+		$('#CenterBottomDiv').CswLogin('login', {
 			'onAuthenticate': function (u)
 			{
 				var view = {
@@ -76,7 +81,7 @@
 						$('#header_menu').CswMenuHeader({
 							'onLogout': function ()
 							{
-								$('#CenterDiv').CswLogin('logout', {
+								$('#CenterBottomDiv').CswLogin('logout', {
 									onDeauthenticate: function ()
 									{
 										$.CswCookie('clearAll');
@@ -131,15 +136,16 @@
 
 		if (o.all || o.left)
 		{
-			$('#LeftDiv').contents().remove();
+			$('#LeftDiv').empty();
 		}
 		if (o.all || o.right)
 		{
-			$('#RightDiv').contents().remove();
+			$('#RightDiv').empty();
 		}
 		if (o.all || o.center)
 		{
-			$('#CenterDiv').contents().remove();
+			$('#CenterBottomDiv').empty();
+            $('#CenterTopDiv').empty();
 		}
 	}
 
@@ -148,7 +154,7 @@
 		if (debug) log('NewMain.refreshWelcome()');
 
 		clear({ all: true });
-		$('#CenterDiv').CswWelcome('initTable', {
+		$('#CenterBottomDiv').CswWelcome('initTable', {
 			'onLinkClick': handleItemSelect,
 			'onAddClick': function (nodetypeid)
 			{
@@ -281,7 +287,7 @@
         
 	    if (options) $.extend(o, options);
 
-        var $search = $('#CenterDiv').CswDOM('getchildren', { ID: 'CswSearchForm', prefix: o.idprefix });
+        var $search = $('#CenterTopDiv').CswDOM('getchildren', { ID: 'CswSearchForm', prefix: o.idprefix });
 	    if( $search == undefined || $search.length == 0 )
 	    {
 	        clear({ center: true });
@@ -296,7 +302,7 @@
                         nodeid: ''
                     });
             };    
-	        $search = $('#CenterDiv')
+	        $search = $('#CenterTopDiv')
                             .CswSearch({
                                 'viewid': o.viewid,
                                 'cswnbtnodekey': o.cswnbtnodekey,
@@ -336,7 +342,7 @@
         o.onEditNode = function() { getViewGrid(o); };
         o.onDeleteNode = function() { getViewGrid(o); };
 
-		$('#CenterDiv').CswNodeGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'id': MainGridId });
+		$('#CenterBottomDiv').CswNodeGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'id': MainGridId });
         if(o.doMenuRefresh) refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 	}
 

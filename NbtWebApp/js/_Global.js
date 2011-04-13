@@ -471,7 +471,7 @@ function HandleMenuItem(options) {
             case 'Search':
                 $a.click(function ()
                 {
-                    var $search = $('#CenterDiv').CswDOM('getchildren', { ID: 'CswSearchForm', prefix: 'csw' }); ; //how to get prefix here?
+                    var $search = $('#CenterTopDiv').CswDOM('getchildren', { ID: 'CswSearchForm', prefix: 'csw' }); ; //how to get prefix here?
                     if ($search.is(':hidden'))
                     {
                         $search.show();
