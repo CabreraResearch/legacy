@@ -236,42 +236,39 @@
 					}); // ajax
 					break;
 				case 3:
-					_saveAll();
-					
-					_makeViewTree($div3);
 
+					// save step 2 content to $currentviewxml
+					if($currentviewxml != undefined)
+					{
+						$currentviewxml.attr('viewname', $viewnametextbox.val());
+						$currentviewxml.attr('category', $categorytextbox.val());
+						$currentviewxml.attr('visibility', v.getvisibilityselect().val());
+				
+						// temporary workaround
+						var rolenodeid = v.getvisroleselect().val();
+						if(rolenodeid != '' && rolenodeid != undefined)
+							rolenodeid = rolenodeid.substr('nodes_'.length)
+						var usernodeid = v.getvisuserselect().val();
+						if(usernodeid != '' && usernodeid != undefined)
+							usernodeid = usernodeid.substr('nodes_'.length)
+						$currentviewxml.attr('visibilityroleid', rolenodeid);
+						$currentviewxml.attr('visibilityuserid', usernodeid);
+				
+						$currentviewxml.attr('formobile', ($formobilecheckbox.attr('checked') == 'true'));
+						$currentviewxml.attr('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
+					} // if($currentviewxml != undefined)
+
+					// make step 3 tree
+					_makeViewTree(3, $div3);
 					break;
 				case 4:
-					_saveAll();
+					_makeViewTree(4, $div4);
 					break;
 				case 5:
-					_saveAll();
+					_makeViewTree(5, $div5);
 					break;
 			} // switch(newstepno)
 		} // _handleNext()
-
-		function _saveAll()
-		{
-			if($currentviewxml != undefined)
-			{
-				$currentviewxml.attr('viewname', $viewnametextbox.val());
-				$currentviewxml.attr('category', $categorytextbox.val());
-				$currentviewxml.attr('visibility', v.getvisibilityselect().val());
-				
-				// temporary workaround
-				var rolenodeid = v.getvisroleselect().val();
-				if(rolenodeid != '' && rolenodeid != undefined)
-					rolenodeid = rolenodeid.substr('nodes_'.length)
-				var usernodeid = v.getvisuserselect().val();
-				if(usernodeid != '' && usernodeid != undefined)
-					usernodeid = usernodeid.substr('nodes_'.length)
-				$currentviewxml.attr('visibilityroleid', rolenodeid);
-				$currentviewxml.attr('visibilityuserid', usernodeid);
-				
-				$currentviewxml.attr('formobile', ($formobilecheckbox.attr('checked') == 'true'));
-				$currentviewxml.attr('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
-			} // if($currentviewxml != undefined)
-		} // _saveAll()
 
 		function _handleFinish()
 		{
@@ -414,9 +411,9 @@
 		} // _makeVisibilitySelect()
 
 		
-		function _makeViewTree($div)
+		function _makeViewTree(stepno, $div)
 		{
-			var treecontent = _viewXmlToHtml($currentviewxml);
+			var treecontent = _viewXmlToHtml(stepno, $currentviewxml);
 			$div.jstree({
 						"html_data":
 							{
@@ -444,7 +441,7 @@
 				} else {
 					$(childxml).appendTo($currentviewxml.find('[arbitraryid="' + $select.attr('arbid') +'"]'));
 				}
-				_makeViewTree($div);
+				_makeViewTree(stepno, $div);
 			});
 
 			$div.find('.vieweditor_deletespan').each(function() {
@@ -456,7 +453,7 @@
 					onClick: function ($ImageDiv) { 
 						var $span = $ImageDiv.parent();
 						$currentviewxml.find('[arbitraryid="' + $span.attr('arbid') +'"]').remove();
-						_makeViewTree($div);
+						_makeViewTree(stepno, $div);
 						return CswImageButton_ButtonType.None; 
 					}
 				});
@@ -464,23 +461,29 @@
 
 		} // _makeViewTree()
 
-		function _viewXmlToHtml($itemxml)
+		function _viewXmlToHtml(stepno, $itemxml)
 		{
 			var types = {};
 			var arbid = $itemxml.attr('arbitraryid');
 			var nodename = $itemxml.get(0).nodeName;
 			var name;
 			var rel;
-
+			var skipme = false;
+			var skipchildoptions = true;
 			if(nodename.toLowerCase() == 'treeview')
 			{
+				if(stepno == 3) skipchildoptions = false;
+
 				arbid = "root";
 				name = $itemxml.attr('viewname');
 				rel = "root";
 				types.root = { icon: { image: $itemxml.attr('iconfilename') } };
-			} // if(nodename == 'TreeView')
+			}
 			else if(nodename.toLowerCase() == 'relationship')
 			{
+				if(stepno == 3) skipchildoptions = false;
+				if(stepno == 4) skipchildoptions = false;
+
 				name = $itemxml.attr('secondname');
 				var propname = $itemxml.attr('propname');
                 if( propname != '' && propname != undefined)
@@ -492,56 +495,70 @@
                 }
 				rel = $itemxml.attr('secondtype') + '_' + $itemxml.attr('secondid');
 				types[rel] = { icon: { image: $itemxml.attr('secondiconfilename') } };
-			} // if(nodename == 'Relationship')
+			}
 			else if(nodename.toLowerCase() == 'property')
 			{
+				if(stepno <= 3) skipme = true;
+				if(stepno == 5) skipchildoptions = false;
+
+				name = $itemxml.attr('name');
+				rel = "property";
+				types.property = { icon: { image: "Images/view/property.gif" } };
 			}
-			else if(nodename.toLowerCase() == 'propertyfilter')
+			else if(nodename.toLowerCase() == 'filter')
 			{
+				if(stepno <= 4) skipme = true;
+				//if(stepno == 5) skipchildoptions = false;
+
+				name = $itemxml.attr('subfieldname') + ' ' + $itemxml.attr('filtermode') + ' ' + $itemxml.attr('value');
+				rel = "filter";
+				types.filter = { icon: { image: "Images/view/filter.gif" } };
 			}
 			
-			var treestr = '<li id="'+ arbid +'" ';
-			treestr += '    rel="'+ rel +'" ';
-			treestr += '    class="jstree-open" ';
-			treestr += '>';
-			treestr += ' <a href="#" class="vieweditor_nodelink" arbid="'+ arbid +'">'+ name +'</a>';
-			if(arbid != "root")
-				treestr += ' <span style="" class="vieweditor_deletespan" arbid="'+ arbid +'"></span>';
+			var treestr = '';
+			if(!skipme)
+			{
+				treestr = '<li id="'+ arbid +'" ';
+				treestr += '    rel="'+ rel +'" ';
+				treestr += '    class="jstree-open" ';
+				treestr += '>';
+				treestr += ' <a href="#" class="vieweditor_nodelink" arbid="'+ arbid +'">'+ name +'</a>';
+				if(arbid != "root")
+					treestr += ' <span style="" class="vieweditor_deletespan" arbid="'+ arbid +'"></span>';
 
-//			if($itemxml.children().length > 0)
-//			{
-				// recurse
 				treestr += '<ul>';
 				$itemxml.children().each(function() { 
-					var childcontent = _viewXmlToHtml($(this)); 
+					var childcontent = _viewXmlToHtml(stepno, $(this)); 
 					treestr += childcontent.htmlstring;
 					$.extend(types, childcontent.types);
 				});
 
+				if(!skipchildoptions) 
+				{
+					treestr += '<li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li>';
+					CswAjaxXml({
+						url: o.ChildOptionsUrl,
+						data: "StepNo=" + stepno + "&ArbitraryId=" + arbid + "&ViewXml=" + xmlToString($currentviewxml),
+						success: function($xml) 
+						{
+							var $select = $('#' + stepno + '_' + arbid + '_child');
+							$select.empty();
+							$select.append('<option value="">Select...</option>');
+							$xml.children().each(function() {
+								var $optionxml = $(this);
+								var $optionviewxml = $($optionxml.attr('value'));
+								var $option = $('<option value="'+ $optionviewxml.attr('arbitraryid') +'">'+ $optionxml.attr('name') +'</option>')
+												.appendTo($select);
+								$option.data('optionviewxml', $optionxml.attr('value'));
+							});
 
-				treestr += '<li><select id="' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li>';
-				CswAjaxXml({
-					url: o.ChildOptionsUrl,
-					data: "ArbitraryId=" + arbid + "&ViewXml=" + xmlToString($currentviewxml),
-					success: function($xml) 
-					{
-						var $select = $('#' + arbid + '_child');
-						$select.empty();
-						$select.append('<option value="">Select...</option>');
-						$xml.children().each(function() {
-							var $optionxml = $(this);
-							var $optionviewxml = $($optionxml.attr('value'));
-							var $option = $('<option value="'+ $optionviewxml.attr('arbitraryid') +'">'+ $optionxml.attr('name') +'</option>')
-											.appendTo($select);
-							$option.data('optionviewxml', $optionxml.attr('value'));
-						});
-
-					} // success
-				}); // ajax
+						} // success
+					}); // ajax
+				}
 
 				treestr += '</ul>';
-//			}
-			treestr += '</li>';
+				treestr += '</li>';
+			}
 
 			return {
 						'htmlstring': treestr,

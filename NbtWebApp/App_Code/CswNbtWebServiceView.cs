@@ -271,7 +271,7 @@ namespace ChemSW.Nbt.WebServices
 			return ReturnVal;
 		} // getViewGrid()
 
-		public XElement getViewChildOptions( string ViewXml, string ArbitraryId )
+		public XElement getViewChildOptions( string ViewXml, string ArbitraryId, Int32 StepNo )
 		{
 			XElement ret = new XElement( "options" );
 
@@ -287,59 +287,108 @@ namespace ChemSW.Nbt.WebServices
                 {
 					if( SelectedViewNode is CswNbtViewRelationship )
                     {
-						CswNbtViewRelationship CurrentRelationship = (CswNbtViewRelationship) SelectedViewNode;
-                        Int32 CurrentLevel = 0;
-                        CswNbtViewNode Parent = CurrentRelationship;
-                        while( !( Parent is CswNbtViewRoot ) )
-                        {
-                            CurrentLevel++;
-                            Parent = Parent.Parent;
-                        }
+						if( StepNo == 3 )
+						{
+							// Potential child relationships
 
-						// Child options are all relations to this nodetype
-                        Int32 CurrentId = CurrentRelationship.SecondId;
+							CswNbtViewRelationship CurrentRelationship = (CswNbtViewRelationship) SelectedViewNode;
+							Int32 CurrentLevel = 0;
+							CswNbtViewNode Parent = CurrentRelationship;
+							while( !( Parent is CswNbtViewRoot ) )
+							{
+								CurrentLevel++;
+								Parent = Parent.Parent;
+							}
 
-                        ArrayList Relationships = null;
-                        if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
-                        {
-                            Relationships = getObjectClassRelatedNodeTypesAndObjectClasses( CurrentId, View, CurrentLevel );
-                        }
-                        else if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
-                        {
-                            Relationships = getNodeTypeRelatedNodeTypesAndObjectClasses( CurrentId, View, CurrentLevel );
-                        }
-						//else
-						//    throw new CswDniException( "A Data Misconfiguration has occurred", "CswViewEditor2._initNextOptions() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
+							// Child options are all relations to this nodetype
+							Int32 CurrentId = CurrentRelationship.SecondId;
 
-                        foreach( CswNbtViewRelationship R in Relationships )
-                        {
-							if( !CurrentRelationship.ChildRelationships.Contains( R ) )
-                            {
-								R.Parent = CurrentRelationship;
-								string Label = String.Empty;
+							ArrayList Relationships = null;
+							if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+							{
+								Relationships = getObjectClassRelatedNodeTypesAndObjectClasses( CurrentId, View, CurrentLevel );
+							}
+							else if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+							{
+								Relationships = getNodeTypeRelatedNodeTypesAndObjectClasses( CurrentId, View, CurrentLevel );
+							}
+							//else
+							//    throw new CswDniException( "A Data Misconfiguration has occurred", "CswViewEditor2._initNextOptions() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
 
-                                if( R.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
-                                {
-                                    Label = R.SecondName + " (by " + R.PropName + ")";
-                                }
-                                else if( R.PropOwner == CswNbtViewRelationship.PropOwnerType.Second )
-                                {
-                                    Label = R.SecondName + " (by " + R.SecondName + "'s " + R.PropName + ")";
-                                }
+							foreach( CswNbtViewRelationship R in Relationships )
+							{
+								if( !CurrentRelationship.ChildRelationships.Contains( R ) )
+								{
+									R.Parent = CurrentRelationship;
+									string Label = String.Empty;
 
-								//if( isSelectable( R.SecondType, R.SecondId ) )
-								//    R.Selectable = true;
-								//else
-								//    R.Selectable = false;
+									if( R.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
+									{
+										Label = R.SecondName + " (by " + R.PropName + ")";
+									}
+									else if( R.PropOwner == CswNbtViewRelationship.PropOwnerType.Second )
+									{
+										Label = R.SecondName + " (by " + R.SecondName + "'s " + R.PropName + ")";
+									}
 
-								XmlNode RNode = R.ToXml( RDoc );
-								ret.Add(
-										new XElement( "option",
-											new XAttribute( "value", RNode.OuterXml ),
-											new XAttribute( "name", Label ) ) );
+									//if( isSelectable( R.SecondType, R.SecondId ) )
+									//    R.Selectable = true;
+									//else
+									//    R.Selectable = false;
 
-                            } //  if( !CurrentRelationship.ChildRelationships.Contains( R ) )
-                        } // foreach( CswNbtViewRelationship R in Relationships )
+									XmlNode RNode = R.ToXml( RDoc );
+									ret.Add(
+											new XElement( "option",
+												new XAttribute( "value", RNode.OuterXml ),
+												new XAttribute( "name", Label ) ) );
+
+								} //  if( !CurrentRelationship.ChildRelationships.Contains( R ) )
+							} // foreach( CswNbtViewRelationship R in Relationships )
+						} // if( StepNo == 3)
+						else
+						{
+							// Potential child properties
+
+							CswNbtViewRelationship CurrentRelationship = (CswNbtViewRelationship) SelectedViewNode;
+
+							ICollection PropsCollection = null;
+							if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+							{
+								PropsCollection = _getObjectClassPropsCollection( CurrentRelationship.SecondId );
+							}
+							else if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+							{
+								PropsCollection = _getNodeTypePropsCollection( CurrentRelationship.SecondId );
+							}
+							else
+							{
+								throw new CswDniException( "A Data Misconfiguration has occurred", "CswViewEditor.initPropDataTable() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
+							}
+
+							foreach( CswNbtMetaDataNodeTypeProp ThisProp in PropsCollection )
+							{
+								// BZs 7085, 6651, 6644, 7092
+								if( ThisProp.FieldTypeRule.SearchAllowed )
+								{
+									CswNbtViewProperty ViewProp = View.AddViewProperty( null, (CswNbtMetaDataNodeTypeProp) ThisProp );
+									if( !CurrentRelationship.Properties.Contains( ViewProp ) )
+									{
+										ViewProp.Parent = CurrentRelationship;
+
+										string PropName = ViewProp.Name;
+										if( !ThisProp.NodeType.IsLatestVersion )
+											PropName += "&nbsp;(v" + ThisProp.NodeType.VersionNo + ")";
+
+										XmlNode PropNode = ViewProp.ToXml( RDoc );
+										ret.Add(
+												new XElement( "option",
+													new XAttribute( "value", PropNode.OuterXml ),
+													new XAttribute( "name", PropName ) ) );
+
+									} // if( !CurrentRelationship.Properties.Contains( ViewProp ) )
+								} // if( ThisProp.FieldTypeRule.SearchAllowed )
+							} // foreach (DataRow Row in Props.Rows)
+						} // if-else(StepNo == 3)
 					} // if( SelectedViewNode is CswNbtViewRelationship )
 					else if( SelectedViewNode is CswNbtViewRoot )
                     {
@@ -396,6 +445,16 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
 					} // else if( SelectedViewNode is CswNbtViewRoot )
+					else if( SelectedViewNode is CswNbtViewProperty )
+					{
+						ret.Add(
+								new XElement( "option",
+									new XAttribute( "value", "" ),
+									new XAttribute( "name", "Filters" ) ) );
+					}
+					else if( SelectedViewNode is CswNbtViewPropertyFilter )
+					{
+					}
 
                 } // if( _View.ViewMode != NbtViewRenderingMode.List || _View.Root.ChildRelationships.Count == 0 )
             } // if( _View != null )
@@ -633,6 +692,51 @@ namespace ChemSW.Nbt.WebServices
 			}
 
 			return Relationships;
+		}
+
+
+		private ICollection _getNodeTypePropsCollection( Int32 NodeTypeId )
+		{
+			// Need to generate a set of all Props, including latest version props and
+			// all historical ones from previous versions that are no longer included in the latest.
+			SortedList PropsByName = new SortedList();
+			SortedList PropsById = new SortedList();
+
+			CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+			CswNbtMetaDataNodeType ThisVersionNodeType = _CswNbtResources.MetaData.getLatestVersion( NodeType );
+			while( ThisVersionNodeType != null )
+			{
+				foreach( CswNbtMetaDataNodeTypeProp ThisProp in ThisVersionNodeType.NodeTypeProps )
+				{
+					//string ThisKey = ThisProp.PropName.ToLower(); //+ "_" + ThisProp.FirstPropVersionId.ToString();
+					if( !PropsByName.ContainsKey( ThisProp.PropNameWithQuestionNo.ToLower() ) &&
+						!PropsById.ContainsKey( ThisProp.FirstPropVersionId ) )
+					{
+						PropsByName.Add( ThisProp.PropNameWithQuestionNo.ToLower(), ThisProp );
+						PropsById.Add( ThisProp.FirstPropVersionId, ThisProp );
+					}
+				}
+				ThisVersionNodeType = ThisVersionNodeType.PriorVersionNodeType;
+			}
+			return PropsByName.Values;
+		}
+
+		private ICollection _getObjectClassPropsCollection( Int32 ObjectClassId )
+		{
+			// Need to generate all properties on all nodetypes of this object class
+			SortedList AllProps = new SortedList();
+			CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
+			foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
+			{
+				ICollection NodeTypeProps = _getNodeTypePropsCollection( NodeType.NodeTypeId );
+				foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeProps )
+				{
+					string ThisKey = NodeTypeProp.PropName.ToLower(); //+ "_" + NodeTypeProp.FirstPropVersionId.ToString();
+					if( !AllProps.ContainsKey( ThisKey ) )
+						AllProps.Add( ThisKey, NodeTypeProp );
+				}
+			}
+			return AllProps.Values;
 		}
 
 		#endregion Helper Functions

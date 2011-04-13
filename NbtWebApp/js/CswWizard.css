@@ -43,6 +43,7 @@
 	height: 360px;
 	display: none;
 	background: #ffffff;
+	overflow: auto;
 }
 .CswWizard_StepTitle
 {
