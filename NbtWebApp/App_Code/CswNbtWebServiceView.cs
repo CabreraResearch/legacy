@@ -271,10 +271,14 @@ namespace ChemSW.Nbt.WebServices
 			return ReturnVal;
 		} // getViewGrid()
 
-		public XElement getViewChildOptions( Int32 ViewId, string ArbitraryId )
+		public XElement getViewChildOptions( string ViewXml, string ArbitraryId )
 		{
-			CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-			XElement ret = new XElement("options");
+			XElement ret = new XElement( "options" );
+
+			CswNbtView View = new CswNbtView( _CswNbtResources );
+			View.LoadXml( ViewXml );
+
+			XmlDocument RDoc = new XmlDocument();
 
 			if( View != null )
             {
@@ -309,9 +313,10 @@ namespace ChemSW.Nbt.WebServices
 
                         foreach( CswNbtViewRelationship R in Relationships )
                         {
-                            if( !CurrentRelationship.ChildRelationships.Contains( R ) )
+							if( !CurrentRelationship.ChildRelationships.Contains( R ) )
                             {
-                                string Label = String.Empty;
+								R.Parent = CurrentRelationship;
+								string Label = String.Empty;
 
                                 if( R.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
                                 {
@@ -327,10 +332,11 @@ namespace ChemSW.Nbt.WebServices
 								//else
 								//    R.Selectable = false;
 
-								ret.Add( 
-									new XElement( "option", 
-										new XAttribute( "value", R.ToString() ),
-										new XAttribute( "name", Label ) ) );
+								XmlNode RNode = R.ToXml( RDoc );
+								ret.Add(
+										new XElement( "option",
+											new XAttribute( "value", RNode.OuterXml ),
+											new XAttribute( "name", Label ) ) );
 
                             } //  if( !CurrentRelationship.ChildRelationships.Contains( R ) )
                         } // foreach( CswNbtViewRelationship R in Relationships )
@@ -344,7 +350,8 @@ namespace ChemSW.Nbt.WebServices
                             {
                                 // This is purposefully not the typical way of creating CswNbtViewRelationships.
                                 CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, LatestNodeType.FirstVersionNodeType, false );
-                                
+                                R.Parent = SelectedViewNode;
+								
 								//if( isSelectable( R.SecondType, R.SecondId ) )
 								//    R.Selectable = true;
 								//else
@@ -359,10 +366,11 @@ namespace ChemSW.Nbt.WebServices
 
                                 if( !IsChildAlready )
                                 {
+									XmlNode RNode = R.ToXml( RDoc );
 									ret.Add(
-										new XElement( "option",
-											new XAttribute( "value", R.ToString() ),
-											new XAttribute( "name", LatestNodeType.NodeTypeName ) ) );
+											new XElement( "option",
+												new XAttribute( "value", RNode.OuterXml ),
+												new XAttribute( "name", LatestNodeType.NodeTypeName ) ) );
                                 }
                             }
                         }
@@ -371,8 +379,8 @@ namespace ChemSW.Nbt.WebServices
                         {
                             // This is purposefully not the typical way of creating CswNbtViewRelationships.
                             CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, ObjectClass, false );
-                            //R.ArbitraryId = "OC_" + R.SecondId.ToString();
-
+							R.Parent = SelectedViewNode;
+							
 							//if( isSelectable( R.SecondType, R.SecondId ) )
 							//    R.Selectable = true;
 							//else
@@ -380,10 +388,11 @@ namespace ChemSW.Nbt.WebServices
 
 							if( !( (CswNbtViewRoot) SelectedViewNode ).ChildRelationships.Contains( R ) )
                             {
+								XmlNode RNode = R.ToXml( RDoc );
 								ret.Add(
-									new XElement( "option",
-										new XAttribute( "value", R.ToString() ),
-										new XAttribute( "name", "Any " + ObjectClass.ObjectClass ) ) );
+										new XElement( "option",
+											new XAttribute( "value", RNode.OuterXml ),
+											new XAttribute( "name", "Any " + ObjectClass.ObjectClass ) ) );
                             }
                         }
 					} // else if( SelectedViewNode is CswNbtViewRoot )

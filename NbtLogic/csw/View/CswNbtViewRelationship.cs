@@ -502,12 +502,12 @@ namespace ChemSW.Nbt
             {
                 foreach( XmlNode ChildNode in RelationshipNode.ChildNodes )
                 {
-                    if( ChildNode.Name == CswNbtViewXmlNodeName.Relationship.ToString() )
+					if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Relationship.ToString().ToLower() )
                     {
                         CswNbtViewRelationship ChildRelationshipNode = new CswNbtViewRelationship( CswNbtResources, _View, ChildNode );
                         this.addChildRelationship( ChildRelationshipNode );
                     }
-                    if( ChildNode.Name == CswNbtViewXmlNodeName.Property.ToString() )
+					if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Property.ToString().ToLower() )
                     {
                         CswNbtViewProperty ChildProp = new CswNbtViewProperty( CswNbtResources, _View, ChildNode );
                         this.addProperty( ChildProp );

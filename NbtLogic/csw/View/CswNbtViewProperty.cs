@@ -241,7 +241,7 @@ namespace ChemSW.Nbt
             {
                 foreach( XmlNode ChildNode in PropNode.ChildNodes )
                 {
-                    if( ChildNode.Name == CswNbtViewXmlNodeName.Filter.ToString() )
+                    if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Filter.ToString().ToLower() )
                     {
                         CswNbtViewPropertyFilter Filter = new CswNbtViewPropertyFilter( CswNbtResources, _View, ChildNode );
                         this.addFilter( Filter );

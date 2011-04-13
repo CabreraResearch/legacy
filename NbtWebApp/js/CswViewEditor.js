@@ -37,7 +37,7 @@
 				},
 				'FinishText': 'Save and Finish',
 				'onNext': _handleNext,
-				//'onPrevious': _handlePrevious,
+				'onBeforePrevious': _onBeforePrevious,
 				'onCancel': o.onCancel,
 				'onFinish': _handleFinish 
 			});
@@ -190,6 +190,13 @@
 
 
 		var $currentviewxml;
+
+
+		function _onBeforePrevious(stepno)
+		{
+			return (stepno != 2 || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
+		}
+
 
 		function _handleNext(newstepno)
 		{
@@ -426,8 +433,20 @@
 						},
 						"plugins": ["themes", "html_data", "ui", "types", "crrm"]
 			}); // tree
-		} // _makeViewTree()
 
+			$div.find('.vieweditor_childselect').change(function() {
+				var $select = $(this);
+				var childxml = $select.find('option:selected').data('optionviewxml');
+				if($select.attr('arbid') == "root")
+				{
+					$(childxml).appendTo($currentviewxml);
+				} else {
+					$(childxml).appendTo($currentviewxml.find('[arbitraryid="' + $select.attr('arbid') +'"]'));
+				}
+				_makeViewTree($div);
+			});
+
+		} // _makeViewTree()
 
 		function _viewXmlToHtml($itemxml)
 		{
@@ -436,16 +455,15 @@
 			var nodename = $itemxml.get(0).nodeName;
 			var name;
 			var rel;
-			var childoptions;
 
-			if(nodename == 'TreeView')
+			if(nodename.toLowerCase() == 'treeview')
 			{
 				arbid = "root";
 				name = $itemxml.attr('viewname');
 				rel = "root";
 				types.root = { icon: { image: $itemxml.attr('iconfilename') } };
 			} // if(nodename == 'TreeView')
-			if(nodename == 'Relationship')
+			else if(nodename.toLowerCase() == 'relationship')
 			{
 				name = $itemxml.attr('secondname');
 				var propname = $itemxml.attr('propname');
@@ -458,21 +476,11 @@
                 }
 				rel = $itemxml.attr('secondtype') + '_' + $itemxml.attr('secondid');
 				types[rel] = { icon: { image: $itemxml.attr('secondiconfilename') } };
-
-				childoptions = '<select id="' + arbid + '_child"></select>';
-				CswAjaxXml({
-					url: o.ChildOptionsUrl,
-					data: "ViewId=" + $itemxml.attr('viewid') + "&ArbitraryId=" + arbid,
-					success: function($xml) 
-					{
-						log($xml);
-					} // success
-				}); // ajax
 			} // if(nodename == 'Relationship')
-			else if(nodename == 'Property')
+			else if(nodename.toLowerCase() == 'property')
 			{
 			}
-			else if(nodename == 'PropertyFilter')
+			else if(nodename.toLowerCase() == 'propertyfilter')
 			{
 			}
 			
@@ -482,8 +490,8 @@
 			treestr += '>';
 			treestr += '  <a href="#">'+ name +'</a>';
 
-			if($itemxml.children().length > 0)
-			{
+//			if($itemxml.children().length > 0)
+//			{
 				// recurse
 				treestr += '<ul>';
 				$itemxml.children().each(function() { 
@@ -491,8 +499,30 @@
 					treestr += childcontent.htmlstring;
 					$.extend(types, childcontent.types);
 				});
+
+
+				treestr += '<li><select id="' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li>';
+				CswAjaxXml({
+					url: o.ChildOptionsUrl,
+					data: "ArbitraryId=" + arbid + "&ViewXml=" + xmlToString($currentviewxml),
+					success: function($xml) 
+					{
+						var $select = $('#' + arbid + '_child');
+						$select.empty();
+						$select.append('<option value="">Select...</option>');
+						$xml.children().each(function() {
+							var $optionxml = $(this);
+							var $optionviewxml = $($optionxml.attr('value'));
+							var $option = $('<option value="'+ $optionviewxml.attr('arbitraryid') +'">'+ $optionxml.attr('name') +'</option>')
+											.appendTo($select);
+							$option.data('optionviewxml', $optionxml.attr('value'));
+						});
+
+					} // success
+				}); // ajax
+
 				treestr += '</ul>';
-			}
+//			}
 			treestr += '</li>';
 
 			return {

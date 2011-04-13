@@ -438,18 +438,14 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getViewChildOptions( string ViewId, string ArbitraryId )
+		public XElement getViewChildOptions( string ViewXml, string ArbitraryId )
 		{
 			XElement ReturnXml = new XElement( "result" );
 			try
 			{
 				start();
-				Int32 nViewId = CswConvert.ToInt32( ViewId );
-				if( nViewId != Int32.MinValue )
-				{
-					CswNbtWebServiceView ws = new CswNbtWebServiceView(_CswNbtResources);
-					ReturnXml = ws.getViewChildOptions( nViewId, ArbitraryId );
-				}
+				CswNbtWebServiceView ws = new CswNbtWebServiceView(_CswNbtResources);
+				ReturnXml = ws.getViewChildOptions( ViewXml, ArbitraryId );
 				end();
 			}
 			catch( Exception ex )

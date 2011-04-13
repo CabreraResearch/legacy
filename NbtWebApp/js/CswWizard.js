@@ -11,9 +11,11 @@
 					Steps: { 1: 'Default' },
 					SelectedStep: 1,
 					FinishText: 'Finish',
-					onNext: function(newstepno) {},
-					onPrevious: function(newstepno) {},
-					onFinish: function() {},
+					onNext: function (newstepno) { },
+					onPrevious: function (newstepno) { },
+					onBeforeNext: function(stepno) { return true; },
+					onBeforePrevious: function(stepno) { return true; },
+					onFinish: function () { },
 					onCancel: function() {}
 				};
 				if(options) $.extend(o, options);
@@ -66,8 +68,11 @@
 															'disableOnClick': false,
 															'onclick': function() { 
 																	var currentStepNo = _getCurrentStepNo($table);
-																	_selectStep($table, currentStepNo - 1);
-																	o.onPrevious(currentStepNo - 1);
+																	if(o.onBeforePrevious(currentStepNo))
+																	{
+																		_selectStep($table, currentStepNo - 1);
+																		o.onPrevious(currentStepNo - 1);
+																	}
 																}
 															});
 				var $nextbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_next',
@@ -75,8 +80,11 @@
 															'disableOnClick': false,
 															'onclick': function() { 
 																	var currentStepNo = _getCurrentStepNo($table);
-																	_selectStep($table, currentStepNo + 1);
-																	o.onNext(currentStepNo + 1);
+																	if(o.onBeforeNext(currentStepNo))
+																	{
+																		_selectStep($table, currentStepNo + 1);
+																		o.onNext(currentStepNo + 1);
+																	}
 																}
 															});
 				var $finishbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_finish',
