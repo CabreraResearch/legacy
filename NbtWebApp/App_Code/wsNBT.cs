@@ -305,10 +305,7 @@ namespace ChemSW.Nbt.WebServices
 				start();
 				var ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
 				Int32 ViewId = CswConvert.ToInt32( ViewNum );
-				if( Int32.MinValue != ViewId || !string.IsNullOrEmpty( SafeNodeKey ) )
-				{
-					ReturnNode = ws.getMenu( ViewId, SafeNodeKey );
-				}
+				ReturnNode = ws.getMenu( ViewId, SafeNodeKey );
 				end();
 			}
 			catch( Exception ex )
