@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Schema
                 SetupTabId = PhysicalInspectionNT.getFirstNodeTypeTab().TabId;
 
             CswNbtMetaDataNodeTypeProp LocationProp = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.LocationPropertyName );
-            CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.FE_Inspection_Point ) );
+            CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point ) );
             CswNbtMetaDataNodeTypeProp TargetNTP = PhysicalInspectionNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
             CswNbtMetaDataNodeTypeProp LocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
             LocationProp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), TargetNTP.PropId, CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString(), LocationNTP.PropId );

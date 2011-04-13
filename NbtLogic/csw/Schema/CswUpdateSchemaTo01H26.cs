@@ -1,32 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Collections.ObjectModel;
-using ChemSW.Core;
+﻿using System.Collections.Generic;
 using ChemSW.Nbt.MetaData;
-using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
-using System.IO;
 
 namespace ChemSW.Nbt.Schema
 {
-	/// <summary>
-	/// Updates the schema to version 01H-26
-	/// </summary>
-	public class CswUpdateSchemaTo01H26 : ICswUpdateSchemaTo
-	{
-		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+    /// <summary>
+    /// Updates the schema to version 01H-26
+    /// </summary>
+    public class CswUpdateSchemaTo01H26 : ICswUpdateSchemaTo
+    {
+        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-		public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'H', 26 ); } }
-		public CswUpdateSchemaTo01H26( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-		{
-			_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-		}
+        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'H', 26 ); } }
+        public CswUpdateSchemaTo01H26( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        {
+            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+        }
 
-		public void update()
-		{
-			// case 20871
-		    List<CswNbtView> AllMountPoints = _CswNbtSchemaModTrnsctn.restoreViews( "All FE Inspection Points" );
+        public void update()
+        {
+            // case 20871
+            List<CswNbtView> AllMountPoints = _CswNbtSchemaModTrnsctn.restoreViews( "All FE Inspection Points" );
             CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.FE_Inspection_Point ) );
             if( null != MountPointNT )
             {
@@ -61,9 +55,9 @@ namespace ChemSW.Nbt.Schema
                 }
             }
             //No else, just leave the OC-based views
-		} // update()
+        } // update()
 
-	}//class CswUpdateSchemaTo01H26
+    }//class CswUpdateSchemaTo01H26
 
 }//namespace ChemSW.Nbt.Schema
 

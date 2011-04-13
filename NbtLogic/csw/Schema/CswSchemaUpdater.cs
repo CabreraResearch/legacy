@@ -22,13 +22,15 @@ namespace ChemSW.Nbt.Schema
         public enum HamletNodeTypes
         {
             Fire_Extinguisher,
-            FE_Inspection_Point,
-            Inspection_Group,
+            Mount_Point,
+            Mount_Point_Group,
             Physical_Inspection,
             Physical_Inspection_Schedule,
             Physical_Inspection_Route,
             Notification,
-            Floor
+            Floor,
+            FE_Inspection_Point,
+            Inspection_Group
         }
         public static string HamletNodeTypesAsString( HamletNodeTypes NodeType )
         {
