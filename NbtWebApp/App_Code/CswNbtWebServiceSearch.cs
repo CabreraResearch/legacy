@@ -93,8 +93,10 @@ namespace ChemSW.Nbt.WebServices
                     SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass );
                 }
 
-                var NodeTypes = (IEnumerable<CswNbtMetaDataNodeType>) SearchOC.NodeTypes;
-                SelectedNodeType = NodeTypes.First().LatestVersionNodeType;
+                if( null != SearchOC.NodeTypes )
+                {
+                    SelectedNodeType = SearchOC.NodeTypes.OfType<CswNbtMetaDataNodeType>().First().LatestVersionNodeType;
+                }
             }
 
             XElement NodeTypeSelect = new XElement( "optgroup", new XAttribute( "label", "Specific Types" ) );
