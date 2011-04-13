@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.Schema
 	   
 			// case 20104
 			CswNbtMetaDataNodeType FireExtinguisherNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Fire_Extinguisher ) );
-			CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point ) );
+			CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.FE_Inspection_Point ) );
 			CswNbtView FireExtinguisherView = _CswNbtSchemaModTrnsctn.makeView();
 			FireExtinguisherView.makeNew( "All Fire Extinguishers", NbtViewVisibility.Global, null, null, null );
 			FireExtinguisherView.Category = "Search";
