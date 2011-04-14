@@ -6,7 +6,8 @@ function CswAjaxJSON(options) {
 	var o = {
 		url: '',
 		data: '',
-		success: function (result) { }
+		success: function (result) { },
+		error: function () { }
 	};
 
 	if (options) {
@@ -36,15 +37,20 @@ function CswAjaxJSON(options) {
 				o.success(result);
 			}
 		}, // success{}
-		error: _handleAjaxError
-	}); // $.ajax({
+		error: function (XMLHttpRequest, textStatus, errorThrown)
+		{
+			_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+			o.error();
+		}
+	});  // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options) {
 	var o = {
 		url: '',
 		data: '',
-		success: function ($xml) { }
+		success: function ($xml) { },
+		error: function () { }
 	};
 
 	if (options) {
@@ -77,7 +83,11 @@ function CswAjaxXml(options) {
 				}
 
 			}, // success{}
-			error: _handleAjaxError
+			error: function (XMLHttpRequest, textStatus, errorThrown)
+			{
+				_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+				o.error();
+			}
 		}); // $.ajax({
 	} // if(o.url != '')
 } // CswAjaxXml()

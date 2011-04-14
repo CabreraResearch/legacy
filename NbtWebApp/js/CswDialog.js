@@ -48,7 +48,7 @@
 
 							var v = o.makeVisibilitySelect($table, 3, 'Available to:');
 
-							var $copybtn = $div.CswButton({ID: o.ID + '_submit', 
+							var $savebtn = $div.CswButton({ID: o.ID + '_submit', 
                                                                     enabledText: 'Create View', 
                                                                     disabledText: 'Creating View', 
                                                                     onclick: function() {
@@ -65,6 +65,9 @@
 																				success: function(data) {
 											                                        $div.dialog('close');
 																					o.onAddView(data.newviewid);
+																				}, 
+																				error: function() {
+																					$savebtn.CswButton('enable'); 
 																				}
 																			});
 								                                        }
