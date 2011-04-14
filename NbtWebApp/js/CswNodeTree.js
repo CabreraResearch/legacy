@@ -172,7 +172,7 @@
 														var $outerxml = $(XMLHttpRequest.responseXML);
 														var $xml = $outerxml.children().first();
 														var childhtmlstr = '';
-														$xml.children().each(function() { childhtmlstr = _treeXmlToHtml($(this)); });
+														$xml.children().each(function() { childhtmlstr += _treeXmlToHtml($(this)); });
 														return childhtmlstr;
 													}
 											}
