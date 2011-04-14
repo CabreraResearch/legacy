@@ -5,7 +5,18 @@ namespace ChemSW.Nbt.WebServices
 
 	public class wsTools : System.Web.Services.WebService
 	{
-		#region Conversion
+        private static string _Delimiter = "_";
+		public wsTools( string Delimiter)
+		{
+		    _Delimiter = Delimiter;
+		} //ctor
+
+        public wsTools()
+        {
+            
+        } //ctor
+
+        #region Conversion
 
         /// <summary>
         /// Serializes a string into a safe JavaScript string 
@@ -29,6 +40,26 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
+        #region Client
+        
+        public static string makeId(string Prefix, string ID, string Suffix)
+        {
+            string ElementId = string.Empty;
+            if( !string.IsNullOrEmpty( ID ) )
+            {
+                ElementId = ID;
+            }
+            if( !string.IsNullOrEmpty( ElementId ) && !string.IsNullOrEmpty( Prefix ) )
+            {
+                ElementId = Prefix + _Delimiter + ElementId;
+            }
+            if( !string.IsNullOrEmpty( ElementId ) && !string.IsNullOrEmpty( Suffix ) )
+            {
+                ElementId += ( _Delimiter + Suffix );
+            }
+            return ElementId;
+        }
+        #endregion
     }//wsNBT
 
 } // namespace ChemSW.WebServices
