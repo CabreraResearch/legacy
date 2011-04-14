@@ -637,6 +637,24 @@ namespace ChemSW.Nbt.WebServices
 			return ( ReturnVal.ToString() );
 		}
 
+        [WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement getViewPropFilter(string ViewXml, string PropArbitraryId)
+        {
+            XElement PropsNode = new XElement( "nodetypeprops" );
+            try
+            {
+                start();
+                var ws = new wsViewBuilder( _CswNbtResources );
+                PropsNode = ws.getViewBuilderProps( ViewXml, PropArbitraryId );
+                end();
+            }
+            catch( Exception ex )
+            {
+                PropsNode = xError( ex );
+            }
+            return PropsNode;
+        }
 		#endregion Misc
 
 		#region Search
