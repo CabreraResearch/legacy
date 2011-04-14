@@ -1,12 +1,13 @@
 ﻿using System.Web.Script.Serialization;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.WebServices
 {
 
 	public class wsTools : System.Web.Services.WebService
 	{
-        private static string _Delimiter = "_";
-		public wsTools( string Delimiter)
+        private static char _Delimiter = '_';
+        public wsTools( char Delimiter )
 		{
 		    _Delimiter = Delimiter;
 		} //ctor
@@ -44,20 +45,20 @@ namespace ChemSW.Nbt.WebServices
         
         public static string makeId(string Prefix, string ID, string Suffix)
         {
-            string ElementId = string.Empty;
+            CswDelimitedString ElementId = new CswDelimitedString( _Delimiter );
+            if( !string.IsNullOrEmpty( ID ) && !string.IsNullOrEmpty( Prefix ) )
+            {
+                ElementId.Add( Prefix );
+            }
             if( !string.IsNullOrEmpty( ID ) )
             {
-                ElementId = ID;
+                ElementId.Add( ID );
             }
-            if( !string.IsNullOrEmpty( ElementId ) && !string.IsNullOrEmpty( Prefix ) )
+            if( !string.IsNullOrEmpty( ID ) && !string.IsNullOrEmpty( Suffix ) )
             {
-                ElementId = Prefix + _Delimiter + ElementId;
+                ElementId.Add( Suffix );
             }
-            if( !string.IsNullOrEmpty( ElementId ) && !string.IsNullOrEmpty( Suffix ) )
-            {
-                ElementId += ( _Delimiter + Suffix );
-            }
-            return ElementId;
+            return ElementId.ToString( false );
         }
         #endregion
     }//wsNBT
