@@ -416,7 +416,7 @@ namespace ChemSW.Nbt.WebServices
         ///         </propertyfilters>
         ///     </nodetypeprops>
         /// </summary>
-        public XElement _getViewBuilderProps( CswNbtViewRelationship.RelatedIdType Relationship, Int32 ObjectId )
+        private XElement _getViewBuilderProps( CswNbtViewRelationship.RelatedIdType Relationship, Int32 ObjectId )
         {
             XElement Props = new XElement( "nodetypeprops" );
             
