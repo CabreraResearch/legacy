@@ -44,7 +44,7 @@
             var $parent = $(this);
             
             var $div = $('<div></div>');
-            var elementId = getElementId(o);
+            var elementId = makeId(o);
             if( elementId !== '' ) 
             {
                 $div.attr('id',elementId);
@@ -69,7 +69,7 @@
 
             var $parent = $(this);
             var $span = $('<span></span>');
-            var elementId = getElementId(o);
+            var elementId = makeId(o);
             if( elementId !== '' ) 
             {
                 $span.attr('id',elementId);
@@ -96,7 +96,7 @@
 
             var $parent = $(this);
             var $input = $('<input />');
-            var elementId = getElementId(o);
+            var elementId = makeId(o);
             if( elementId !== '' ) 
             {
                 $input.attr('id',elementId);
@@ -128,7 +128,7 @@
             var $parent = $(this);
             var $link = $('<a></a>');
             
-            var elementId = getElementId(o);
+            var elementId = makeId(o);
             if( elementId !== '' ) $link.attr('id',elementId);
             if( o.href !== '' ) $link.attr('href', o.href);
             if( o.value !== '' ) $link.text(o.value);
@@ -175,7 +175,7 @@
             var $parent = $(this);
             var $children;
 
-            var elementId = '#' + getElementId(o);
+            var elementId = '#' + makeId(o);
             if( elementId !== '#' )
             {
                 $children = $parent.children(elementId);
@@ -194,7 +194,7 @@
             var $parent = $(this);
             var $element;
             
-            var elementId = '#' + getElementId(o);
+            var elementId = '#' + makeId(o);
             if( elementId !== '#' )
             {
                 $element = $parent.find(elementId);

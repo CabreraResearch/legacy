@@ -601,7 +601,7 @@ function getTimeString(date)
 	return ret;
 }
 
-function getElementId(options)
+function makeId(options)
 {
     var o = {
         'ID': '',

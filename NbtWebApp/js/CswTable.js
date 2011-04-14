@@ -34,7 +34,7 @@
                         if (options) {
                             $.extend(o, options);
                         }
-                        var elementId = getElementId({ID: o.ID, prefix: o.prefix, suffix: o.suffix});
+                        var elementId = makeId({ID: o.ID, prefix: o.prefix, suffix: o.suffix});
                         var $table = $('<table id="'+ elementId +'"></table>');
 						$table.addClass(o.TableCssClass);
 						$table.attr('width', o.width);
