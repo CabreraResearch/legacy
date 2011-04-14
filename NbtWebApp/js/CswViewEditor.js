@@ -26,14 +26,15 @@
 		var $wizard = $div.CswWizard('init', { 
 				'ID': o.ID + '_wizard',
 				'Title': 'Edit View',
-				'StepCount': 5,
+				'StepCount': 6,
 				'Steps': 
 				{ 
 					1: 'Choose a View',
 					2: 'Edit View Attributes',
 					3: 'Add Relationships',
 					4: 'Select Properties',
-					5: 'Set Filters'
+					5: 'Set Filters',
+					6: 'Fine Tuning'
 				},
 				'FinishText': 'Save and Finish',
 				'onNext': _handleNext,
@@ -179,15 +180,26 @@
 		// Step 3 - Add Relationships
 
 		var $div3 = $wizard.CswWizard('div', 3);
+		$div3.append('Add relationships from the select boxes below:<br/><br/>');
+		var $treediv3 = $('<div />').appendTo($div3);
 
 		// Step 4 - Select Properties
 
 		var $div4 = $wizard.CswWizard('div', 4);
+		$div4.append('Add properties from the select boxes below:<br/><br/>');
+		var $treediv4 = $('<div />').appendTo($div4);
 
 		// Step 5 - Set Filters
 
 		var $div5 = $wizard.CswWizard('div', 5);
+		$div5.append('Add filters by selecting properties from the tree:<br/><br/>');
+		var $treediv5 = $('<div />').appendTo($div5);
 
+		// Step 6 - Fine Tuning
+
+		var $div6 = $wizard.CswWizard('div', 6);
+		$div6.append('Select what you want to edit from the tree:<br/><br/>');
+		var $table6 = $div6.CswTable({ 'ID': o.ID + '_6_tbl' });
 
 		var $currentviewxml;
 
@@ -259,13 +271,16 @@
 					} // if($currentviewxml != undefined)
 
 					// make step 3 tree
-					_makeViewTree(3, $div3);
+					_makeViewTree(3, $treediv3);
 					break;
 				case 4:
-					_makeViewTree(4, $div4);
+					_makeViewTree(4, $treediv4);
 					break;
 				case 5:
-					_makeViewTree(5, $div5);
+					_makeViewTree(5, $treediv5);
+					break;
+				case 6:
+					_makeViewTree(6, $table6.CswTable('cell', 1, 1));
 					break;
 			} // switch(newstepno)
 		} // _handleNext()
@@ -432,6 +447,7 @@
 			}); // tree
 
 			// tree events
+
 			$div.find('.vieweditor_childselect').change(function() {
 				var $select = $(this);
 				var childxml = $select.find('option:selected').data('optionviewxml');
@@ -442,7 +458,7 @@
 					$(childxml).appendTo($currentviewxml.find('[arbitraryid="' + $select.attr('arbid') +'"]'));
 				}
 				_makeViewTree(stepno, $div);
-			});
+			}); // child select
 
 			$div.find('.vieweditor_deletespan').each(function() {
 				var $td = $(this); 
@@ -457,8 +473,140 @@
 						return CswImageButton_ButtonType.None; 
 					}
 				});
-			});
+			}); // delete
 
+			if(stepno == 5)
+			{
+				$div.find('.vieweditor_viewproplink').click(function() {
+					$('.vieweditor_addfilter').hide();
+					var $a = $(this);
+					var $li = $a.parent();
+					var $span = $li.children('ul').children('li').children('span.vieweditor_addfilter');
+					$span.show();
+				}); // property click
+			}
+
+			if(stepno == 6)
+			{
+				var $cell = $table6.CswTable('cell', 1, 2);
+				var viewmode = _getSelectedRowValue($viewgrid, o.ColumnViewMode);
+
+				// Root
+				$div.find('.vieweditor_viewrootlink').click(function() {
+					$cell.empty();
+				});
+
+				// Relationship
+				$div.find('.vieweditor_viewrellink').click(function() {
+					$a = $(this);
+					$cell.empty();
+					//$cell.append('For ' + $a.text());
+
+					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.attr('arbid') +'"]')
+
+					var $table = $cell.CswTable({ 'ID': o.ID + '_editrel', 'FirstCellRightAlign': true });
+					$table.CswTable('cell', 1, 1).append('Allow Deleting');
+					var $allowdeletingcheck = $('<input type="checkbox" id="' + o.ID + '_adcb" />')
+												.appendTo($table.CswTable('cell', 1, 2));
+					if($viewnodexml.attr('allowdelete').toLowerCase() == 'true') {
+						$allowdeletingcheck.attr('checked', 'true');
+					}
+
+//					$table.CswTable('cell', 2, 1).append('Group By');
+//					var $groupbyselect = $('<select id="' + o.ID + '_gbs" />')
+//												.appendTo($table.CswTable('cell', 2, 2));
+
+					var $showtreecheck;
+					if(viewmode == "Tree")
+					{
+						$table.CswTable('cell', 3, 1).append('Show In Tree');
+						$showtreecheck = $('<input type="checkbox" id="' + o.ID + '_stcb" />')
+												.appendTo($table.CswTable('cell', 3, 2));
+						if($viewnodexml.attr('showintree').toLowerCase() == 'true') {
+							$showtreecheck.attr('checked', 'true');
+						}
+					}
+
+					$table.CswTable('cell', 4, 2).CswButton({ 
+						'ID': o.ID + '_saverel',
+						'enabledText': 'Save',
+						'disableOnClick': false,
+						'onclick': function() {
+							if($showtreecheck != undefined)
+								$viewnodexml.attr('showintree', ($showtreecheck.is(':checked')))
+							$viewnodexml.attr('allowdelete', ($allowdeletingcheck.is(':checked')))
+						} // onClick
+					}); // CswButton
+				});
+
+				// Property
+				$div.find('.vieweditor_viewproplink').click(function() {
+					$a = $(this);
+					$cell.empty();
+
+					if(viewmode == "Grid")
+					{
+						var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.attr('arbid') +'"]')
+
+						//$cell.append('For ' + $a.text());
+						var $table = $cell.CswTable({ 'ID': o.ID + '_editprop', 'FirstCellRightAlign': true });
+
+						$table.CswTable('cell', 1, 1).append('Sort By');
+						var $sortbycheck = $('<input type="checkbox" id="' + o.ID + '_sortcb" />')
+												.appendTo($table.CswTable('cell', 1, 2));
+						if($viewnodexml.attr('sortby').toLowerCase() == 'true') {
+							$sortbycheck.attr('checked', 'true');
+						}
+
+						$table.CswTable('cell', 2, 1).append('Grid Column Order');
+						var $colordertextbox = $('<input type="text" id="' + o.ID + '_gcotb" />')
+												.appendTo($table.CswTable('cell', 2, 2));
+						$colordertextbox.val($viewnodexml.attr('order'));
+
+						$table.CswTable('cell', 3, 1).append('Grid Column Width (in characters)');
+						var $colwidthtextbox = $('<input type="text" id="' + o.ID + '_gcwtb" />')
+												.appendTo($table.CswTable('cell', 3, 2));
+						$colwidthtextbox.val($viewnodexml.attr('width'));
+
+						$table.CswTable('cell', 4, 2).CswButton({ 
+							'ID': o.ID + '_saveprop',
+							'enabledText': 'Save',
+							'disableOnClick': false,
+							'onclick': function() {
+								$viewnodexml.attr('sortby', ($sortbycheck.is(':checked')))
+								$viewnodexml.attr('order', $colordertextbox.val());
+								$viewnodexml.attr('width', $colwidthtextbox.val());
+							} // onClick
+						}); // CswButton
+					}
+				});
+
+				// Filter
+				$div.find('.vieweditor_viewfilterlink').click(function() {
+					$a = $(this);
+					$cell.empty();
+					//$cell.append('For ' + $a.text());
+
+					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.attr('arbid') +'"]')
+
+					var $table = $cell.CswTable({ 'ID': o.ID + '_editfilt', 'FirstCellRightAlign': true });
+					$table.CswTable('cell', 1, 1).append('Case Sensitive');
+					var $casecheck = $('<input type="checkbox" id="' + o.ID + '_casecb" />')
+											.appendTo($table.CswTable('cell', 1, 2));
+					if($viewnodexml.attr('casesensitive').toLowerCase() == 'true') {
+						$casecheck.attr('checked', 'true');
+					}
+
+					$table.CswTable('cell', 4, 2).CswButton({ 
+						'ID': o.ID + '_saveprop',
+						'enabledText': 'Save',
+						'disableOnClick': false,
+						'onclick': function() {
+							$viewnodexml.attr('casesensitive', ($casecheck.is(':checked')))
+						} // onClick
+					}); // CswButton
+				});
+			} // if(stepno == 6)
 		} // _makeViewTree()
 
 		function _viewXmlToHtml(stepno, $itemxml)
@@ -470,6 +618,8 @@
 			var rel;
 			var skipme = false;
 			var skipchildoptions = true;
+			var linkclass;
+
 			if(nodename.toLowerCase() == 'treeview')
 			{
 				if(stepno == 3) skipchildoptions = false;
@@ -478,6 +628,7 @@
 				name = $itemxml.attr('viewname');
 				rel = "root";
 				types.root = { icon: { image: $itemxml.attr('iconfilename') } };
+				linkclass = 'vieweditor_viewrootlink';
 			}
 			else if(nodename.toLowerCase() == 'relationship')
 			{
@@ -495,6 +646,7 @@
                 }
 				rel = $itemxml.attr('secondtype') + '_' + $itemxml.attr('secondid');
 				types[rel] = { icon: { image: $itemxml.attr('secondiconfilename') } };
+				linkclass = 'vieweditor_viewrellink';
 			}
 			else if(nodename.toLowerCase() == 'property')
 			{
@@ -504,15 +656,16 @@
 				name = $itemxml.attr('name');
 				rel = "property";
 				types.property = { icon: { image: "Images/view/property.gif" } };
+				linkclass = "vieweditor_viewproplink";
 			}
 			else if(nodename.toLowerCase() == 'filter')
 			{
 				if(stepno <= 4) skipme = true;
-				//if(stepno == 5) skipchildoptions = false;
 
 				name = $itemxml.attr('subfieldname') + ' ' + $itemxml.attr('filtermode') + ' ' + $itemxml.attr('value');
 				rel = "filter";
 				types.filter = { icon: { image: "Images/view/filter.gif" } };
+				linkclass = 'vieweditor_viewfilterlink';
 			}
 			
 			var treestr = '';
@@ -522,9 +675,11 @@
 				treestr += '    rel="'+ rel +'" ';
 				treestr += '    class="jstree-open" ';
 				treestr += '>';
-				treestr += ' <a href="#" class="vieweditor_nodelink" arbid="'+ arbid +'">'+ name +'</a>';
+				treestr += ' <a href="#" class="' + linkclass + '" arbid="'+ arbid +'">'+ name +'</a>';
 				if(arbid != "root")
+				{
 					treestr += ' <span style="" class="vieweditor_deletespan" arbid="'+ arbid +'"></span>';
+				}
 
 				treestr += '<ul>';
 				$itemxml.children().each(function() { 
@@ -535,26 +690,36 @@
 
 				if(!skipchildoptions) 
 				{
-					treestr += '<li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li>';
-					CswAjaxXml({
-						url: o.ChildOptionsUrl,
-						data: "StepNo=" + stepno + "&ArbitraryId=" + arbid + "&ViewXml=" + xmlToString($currentviewxml),
-						success: function($xml) 
-						{
-							var $select = $('#' + stepno + '_' + arbid + '_child');
-							$select.empty();
-							$select.append('<option value="">Select...</option>');
-							$xml.children().each(function() {
-								var $optionxml = $(this);
-								var $optionviewxml = $($optionxml.attr('value'));
-								var $option = $('<option value="'+ $optionviewxml.attr('arbitraryid') +'">'+ $optionxml.attr('name') +'</option>')
-												.appendTo($select);
-								$option.data('optionviewxml', $optionxml.attr('value'));
-							});
+					if(stepno == 5)
+					{ 
+						// view filters
+						treestr += '<li><span class="vieweditor_addfilter" style="display: none"></span></li>';
+					}
+					else 
+					{
+						// relationships or properties
+						treestr += '<li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li>';
+						CswAjaxXml({
+							url: o.ChildOptionsUrl,
+							data: "StepNo=" + stepno + "&ArbitraryId=" + arbid + "&ViewXml=" + xmlToString($currentviewxml),
+							success: function($xml) 
+							{
+								var $select = $('#' + stepno + '_' + arbid + '_child');
+								$select.empty();
+								$select.append('<option value="">Select...</option>');
+								$xml.children().each(function() {
+									var $optionxml = $(this);
+									var $optionviewxml = $($optionxml.attr('value'));
+									var $option = $('<option value="'+ $optionviewxml.attr('arbitraryid') +'">'+ $optionxml.attr('name') +'</option>')
+													.appendTo($select);
+									$option.data('optionviewxml', $optionxml.attr('value'));
+								});
 
-						} // success
-					}); // ajax
-				}
+							} // success
+						}); // ajax
+
+					} // if-else(stepno == 5)
+				} // if(!skipchildoptions) 
 
 				treestr += '</ul>';
 				treestr += '</li>';
