@@ -536,7 +536,7 @@ namespace ChemSW.Nbt.WebServices
 				NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
 				Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
 				NbtViewVisibility RealVisibility = NbtViewVisibility.Unknown;
-				Enum.TryParse<NbtViewVisibility>( ViewMode, out RealVisibility );
+				Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
 				CswPrimaryKey RealVisibilityRoleId = null;
 				CswPrimaryKey RealVisibilityUserId = null;
 				if( RealVisibility == NbtViewVisibility.Role )
