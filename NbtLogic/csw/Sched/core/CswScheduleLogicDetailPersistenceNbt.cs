@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.Sched
 
                         foreach( DataRow CurrentRow in DataTableScheduledRuleParams.Rows )
                         {
-                            CurrentRow[NbtScheduledRuleParamsColumns.ParamVal.ToString()] = CswScheduleLogicDetail.RunParams[CurrentRow[NbtScheduledRuleParamsColumns.ParamVal.ToString()].ToString()];
+                            CurrentRow[NbtScheduledRuleParamsColumns.ParamName.ToString()] = CswScheduleLogicDetail.RunParams[CurrentRow[NbtScheduledRuleParamsColumns.ParamName.ToString()].ToString()];
                         }//iterate rolws
 
                         CswTableUpdateScheduledRuleParams.update( DataTableScheduledRuleParams );

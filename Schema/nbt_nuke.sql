@@ -47,6 +47,7 @@ drop table welcome;
 drop table jct_modules_nodetypes;
 drop table schedule_items;
 drop table scheduledrules;
+drop table scheduledruleparams;
 commit;
 
 exec drop_sequences;
