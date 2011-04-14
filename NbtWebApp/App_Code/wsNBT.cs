@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -406,7 +407,7 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XElement saveViewInfo( string ViewId, string ViewXml )
 		{
-			XElement ReturnXml = new XElement("result");
+			XElement ReturnXml = new XElement( "result" );
 			try
 			{
 				start();
@@ -422,13 +423,13 @@ namespace ChemSW.Nbt.WebServices
 					_CswNbtResources.ViewCache.clearFromCache( View );
 					_CswNbtResources.ViewSelect.clearCache();
 
-					ReturnXml.Add(new XAttribute("succeeded", "true"));
+					ReturnXml.Add( new XAttribute( "succeeded", "true" ) );
 				}
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnXml.Add( xError( ex ) );
+				ReturnXml = xError( ex );
 			}
 
 			return ReturnXml;
@@ -444,13 +445,13 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtWebServiceView ws = new CswNbtWebServiceView(_CswNbtResources);
-				ReturnXml = ws.getViewChildOptions( ViewXml, ArbitraryId, CswConvert.ToInt32(StepNo) );
+				CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
+				ReturnXml = ws.getViewChildOptions( ViewXml, ArbitraryId, CswConvert.ToInt32( StepNo ) );
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnXml.Add( xError( ex ) );
+				ReturnXml = xError( ex );
 			}
 
 			return ReturnXml;
@@ -472,13 +473,13 @@ namespace ChemSW.Nbt.WebServices
 					CswNbtView NewView = new CswNbtView( _CswNbtResources );
 					string NewViewNameOrig = SourceView.ViewName;
 					string Suffix = " Copy";
-					if( !NewViewNameOrig.EndsWith( Suffix) && NewViewNameOrig.Length < (CswNbtView.ViewNameLength - Suffix.Length - 2 ))
+					if( !NewViewNameOrig.EndsWith( Suffix ) && NewViewNameOrig.Length < ( CswNbtView.ViewNameLength - Suffix.Length - 2 ) )
 						NewViewNameOrig = NewViewNameOrig + Suffix;
 					string NewViewName = NewViewNameOrig;
 					if( NewViewNameOrig.Length > ( CswNbtView.ViewNameLength - 2 ) )
 						NewViewNameOrig = NewViewNameOrig.Substring( 0, ( CswNbtView.ViewNameLength - 2 ) );
 					Int32 Increment = 1;
-					while(!CswNbtView.ViewIsUnique(_CswNbtResources, Int32.MinValue, NewViewName, SourceView.Visibility, SourceView.VisibilityUserId, SourceView.VisibilityRoleId))
+					while( !CswNbtView.ViewIsUnique( _CswNbtResources, Int32.MinValue, NewViewName, SourceView.Visibility, SourceView.VisibilityUserId, SourceView.VisibilityRoleId ) )
 					{
 						Increment++;
 						NewViewName = NewViewNameOrig + " " + Increment.ToString();
@@ -768,7 +769,55 @@ namespace ChemSW.Nbt.WebServices
 				ReturnXml.LoadXml( "<error>" + error( ex ) + "</error>" );
 			}
 			return ReturnXml;
-		} // getProps()
+		} // getSingleProp()
+
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement getPropNames( string Type, string Id )
+		{
+			XElement ReturnXml = new XElement( "properties" );
+			try
+			{
+				start();
+
+				Int32 nId = CswConvert.ToInt32( Id );
+
+				if( nId != Int32.MinValue )
+				{
+					ICollection Props = null;
+					string PropType = string.Empty;
+					if( Type == "NodeTypeId" )
+					{
+						CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( nId );
+						Props = NodeType.NodeTypeProps;
+						PropType = CswNbtViewProperty.CswNbtPropType.NodeTypePropId.ToString();
+					}
+					else if( Type == "ObjectClassId" )
+					{
+						CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( nId );
+						Props = ObjectClass.ObjectClassProps;
+						PropType = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId.ToString();
+					}
+
+					foreach( ICswNbtMetaDataProp Prop in Props )
+					{
+						ReturnXml.Add(
+							new XElement( "prop",
+								new XAttribute( "proptype", PropType ),
+								new XAttribute( "propname", Prop.PropNameWithQuestionNo ),
+								new XAttribute( "propid", Prop.PropId.ToString() ) ) );
+					}
+				} // if( nId != Int32.MinValue )
+
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnXml = xError( ex );
+			}
+			return ReturnXml;
+		} // getPropNames()
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]

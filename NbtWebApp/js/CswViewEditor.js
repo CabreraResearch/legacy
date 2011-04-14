@@ -9,6 +9,7 @@
 			CopyViewUrl: '/NbtWebApp/wsNBT.asmx/copyView',
 			DeleteViewUrl: '/NbtWebApp/wsNBT.asmx/deleteView',
 			ChildOptionsUrl: '/NbtWebApp/wsNBT.asmx/getViewChildOptions',
+			PropNamesUrl: '/NbtWebApp/wsNBT.asmx/getPropNames',
 			viewid: '',
 			ID: 'vieweditor',
 			ColumnViewName: 'VIEWNAME',
@@ -288,7 +289,6 @@
 		function _handleFinish()
 		{
 			var viewid = _getSelectedRowValue($viewgrid, o.ColumnViewId);
-			_saveAll();
 
 			CswAjaxXml({
 				url: o.SaveViewUrl,
@@ -512,9 +512,30 @@
 						$allowdeletingcheck.attr('checked', 'true');
 					}
 
-//					$table.CswTable('cell', 2, 1).append('Group By');
-//					var $groupbyselect = $('<select id="' + o.ID + '_gbs" />')
-//												.appendTo($table.CswTable('cell', 2, 2));
+					$table.CswTable('cell', 2, 1).append('Group By');
+					var $groupbyselect = $('<select id="' + o.ID + '_gbs" />')
+												.appendTo($table.CswTable('cell', 2, 2));
+					CswAjaxXml({
+						url: o.PropNamesUrl,
+						data: "Type=" + $viewnodexml.attr('secondtype') + "&Id=" + $viewnodexml.attr('secondid'),
+						success: function($xml) {
+							$groupbyselect.empty();
+							$('<option value="">[None]</option>')
+								.appendTo($groupbyselect);
+							$xml.children().each(function() {
+								var $prop = $(this);
+								var $option = $('<option value="'+ $prop.attr('propid') +'">'+ $prop.attr('propname') +'</option>')
+									.appendTo($groupbyselect)
+									.data('propxml', $prop);
+								if($viewnodexml.attr('groupbypropid') == $prop.attr('propid') &&
+								    $viewnodexml.attr('groupbyproptype') == $prop.attr('proptype') &&
+								    $viewnodexml.attr('groupbypropname') == $prop.attr('propname'))
+								{
+									$option.attr('selected', 'true');
+								}
+							}); // each
+						} // success
+					}); // ajax
 
 					var $showtreecheck;
 					if(viewmode == "Tree")
@@ -529,12 +550,22 @@
 
 					$table.CswTable('cell', 4, 2).CswButton({ 
 						'ID': o.ID + '_saverel',
-						'enabledText': 'Save',
+						'enabledText': 'Apply',
 						'disableOnClick': false,
 						'onclick': function() {
 							if($showtreecheck != undefined)
 								$viewnodexml.attr('showintree', ($showtreecheck.is(':checked')))
 							$viewnodexml.attr('allowdelete', ($allowdeletingcheck.is(':checked')))
+							if($groupbyselect.val() != '') {
+								var $propxml = $groupbyselect.find(':selected').data('propxml');
+								$viewnodexml.attr('groupbypropid', $propxml.attr('propid'));
+								$viewnodexml.attr('groupbyproptype', $propxml.attr('proptype'));
+								$viewnodexml.attr('groupbypropname', $propxml.attr('propname'));
+							} else {
+								$viewnodexml.attr('groupbypropid', '');
+								$viewnodexml.attr('groupbyproptype', '');
+								$viewnodexml.attr('groupbypropname', '');
+							}
 						} // onClick
 					}); // CswButton
 				});
@@ -570,7 +601,7 @@
 
 						$table.CswTable('cell', 4, 2).CswButton({ 
 							'ID': o.ID + '_saveprop',
-							'enabledText': 'Save',
+							'enabledText': 'Apply',
 							'disableOnClick': false,
 							'onclick': function() {
 								$viewnodexml.attr('sortby', ($sortbycheck.is(':checked')))
@@ -598,8 +629,8 @@
 					}
 
 					$table.CswTable('cell', 4, 2).CswButton({ 
-						'ID': o.ID + '_saveprop',
-						'enabledText': 'Save',
+						'ID': o.ID + '_savefilt',
+						'enabledText': 'Apply',
 						'disableOnClick': false,
 						'onclick': function() {
 							$viewnodexml.attr('casesensitive', ($casecheck.is(':checked')))
