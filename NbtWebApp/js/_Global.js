@@ -120,13 +120,19 @@ function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
 //}
 
 function xmlToString($xmlnode) {
-	var xmlstring = $xmlnode.get(0).xml; // IE
-	if (!xmlstring) {            // FF, Chrome, Safari
-		var s = new XMLSerializer();
-		xmlstring = s.serializeToString($xmlnode.get(0));
-	}
-	if (!xmlstring) {
-		$.error("Browser does not support XML operations necessary to convert to string");
+	var xmlstring = '';
+	if ($xmlnode != '' && $xmlnode != undefined)
+	{
+		xmlstring = $xmlnode.get(0).xml; // IE
+		if (!xmlstring)
+		{            // FF, Chrome, Safari
+			var s = new XMLSerializer();
+			xmlstring = s.serializeToString($xmlnode.get(0));
+		}
+		if (!xmlstring)
+		{
+			$.error("Browser does not support XML operations necessary to convert to string");
+		}
 	}
 	return xmlstring;
 }
