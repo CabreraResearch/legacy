@@ -45,19 +45,8 @@ namespace ChemSW.Nbt.WebServices
         
         public static string makeId(string Prefix, string ID, string Suffix)
         {
-            CswDelimitedString ElementId = new CswDelimitedString( _Delimiter );
-            if( !string.IsNullOrEmpty( ID ) && !string.IsNullOrEmpty( Prefix ) )
-            {
-                ElementId.Add( Prefix );
-            }
-            if( !string.IsNullOrEmpty( ID ) )
-            {
-                ElementId.Add( ID );
-            }
-            if( !string.IsNullOrEmpty( ID ) && !string.IsNullOrEmpty( Suffix ) )
-            {
-                ElementId.Add( Suffix );
-            }
+            CswDelimitedString ElementId = new CswDelimitedString( _Delimiter ) {{Prefix, false}, {ID, false}, {Suffix, false}};
+
             return ElementId.ToString( false );
         }
         #endregion
