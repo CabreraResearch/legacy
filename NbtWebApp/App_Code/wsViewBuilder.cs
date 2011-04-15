@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.WebServices
                                                      new XElement( "select",
                                                                    new XAttribute( "id", ElementId ),
                                                                    new XAttribute( "name", ElementId ),
-                                                                   new XAttribute( "class", "csw_search_properties_select" ),
+                                                                   new XAttribute( "class", "csw_viewbuilder_properties_select" ),
                                                                    ( NodeTypePropsGroup.HasElements ) ? NodeTypePropsGroup : null,
                                                                    ( ObjectClassPropsGroup.HasElements ) ? ObjectClassPropsGroup : null ) ),
                                        FiltersNode );
@@ -166,11 +166,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = ViewBuilderProp.FieldType.FieldType;
                 CswNbtSubFieldColl SubFields = ViewBuilderProp.FieldTypeRule.SubFields;
-                string SubFieldsElementId = wsTools.makeId( _Prefix, "subfield_select_ViewBuilderPropid", ViewBuilderProp.MetaDataPropId.ToString() );
+                string SubFieldsElementId = wsTools.makeId( _Prefix, "subfield_select_viewbuilderpropid", ViewBuilderProp.MetaDataPropId.ToString() );
                 XElement SubfieldSelect = new XElement( "select",
                                                         new XAttribute( "id", SubFieldsElementId ),
                                                         new XAttribute( "name", SubFieldsElementId ),
-                                                        new XAttribute( "class", "csw_search_subfield_select" ) );
+                                                        new XAttribute( "class", "csw_viewbuilder_subfield_select" ) );
 
                 string DefaultFilter = string.Empty;
                 string DefaultSubfield = string.Empty;
@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         DefaultFilter = Field.DefaultFilterMode.ToString();
                     }
-                    string UniqueId = "filter_select_ViewBuilderPropid_" + ViewBuilderProp.MetaDataPropId;
+                    string UniqueId = "filter_select_viewbuilderpropid_" + ViewBuilderProp.MetaDataPropId;
                     _getSubFieldFilters( ref FiltersNode, Field, ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode.Undefined, UniqueId );
                     SubfieldSelect.Add( FieldNode );
                 }
@@ -206,12 +206,12 @@ namespace ChemSW.Nbt.WebServices
                 XElement FiltersOptionsNode = new XElement( "filtersoptions" );
                 if( ViewBuilderProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
                 {
-                    string FiltOptElementId = wsTools.makeId( _Prefix, "filtersoptions_select_ViewBuilderPropid", ViewBuilderProp.MetaDataPropId.ToString() );
+                    string FiltOptElementId = wsTools.makeId( _Prefix, "filtersoptions_select_viewbuilderpropid", ViewBuilderProp.MetaDataPropId.ToString() );
                     FiltersOptionsNode.Value = ViewBuilderProp.MetaDataPropName;
                     FiltersOptionsNode.Add( new XElement( "select",
                                                           new XAttribute( "id", FiltOptElementId ),
                                                           new XAttribute( "name", FiltOptElementId ),
-                                                          new XAttribute( "class", "csw_search_filtersoptions_select" ),
+                                                          new XAttribute( "class", "csw_viewbuilder_filtersoptions_select" ),
                                                           _getFilterOptions( ViewBuilderProp, string.Empty ) ) );
                 }
 
@@ -265,7 +265,7 @@ namespace ChemSW.Nbt.WebServices
                     XElement SubfieldSelect = new XElement( "select",
                                                             new XAttribute( "id", SubFieldElementId ),
                                                             new XAttribute( "name", SubFieldElementId ),
-                                                            new XAttribute( "class", "csw_search_subfield_select" ) );
+                                                            new XAttribute( "class", "csw_viewbuilder_subfield_select" ) );
 
                     CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode = Filter.FilterMode;
                     string DefaultSubfield = Filter.SubfieldName.ToString();
@@ -301,7 +301,7 @@ namespace ChemSW.Nbt.WebServices
                         FiltersOptionsNode.Add( new XElement( "select",
                                                               new XAttribute( "id", FiltOptElementId ),
                                                               new XAttribute( "name", FiltOptElementId ),
-                                                              new XAttribute( "class", "csw_search_filtersoptions_select" ),
+                                                              new XAttribute( "class", "csw_viewbuilder_filtersoptions_select" ),
                                                               _getFilterOptions( ViewBuilderProp, ValueSubfieldVal ) ) );
                     }
 
@@ -346,7 +346,7 @@ namespace ChemSW.Nbt.WebServices
             XElement FiltersSelect = new XElement( "select",
                                         new XAttribute( "id", SubFieldElementId ),
                                         new XAttribute( "name", SubFieldElementId ),
-                                        new XAttribute( "class", "csw_search_filter_select" ) );
+                                        new XAttribute( "class", "csw_viewbuilder_filter_select" ) );
             foreach( CswNbtPropFilterSql.PropertyFilterMode FilterModeOpt in SubField.SupportedFilterModes )
             {
                 XElement ThisFilter = new XElement( "option", FilterModeOpt.ToString(),

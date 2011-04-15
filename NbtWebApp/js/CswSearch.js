@@ -59,7 +59,7 @@
         //var $bottomspan = $cswSearchForm.CswDOM('span');
         
         //var $bottomspandiv = $bottomspan.CswDOM('div',{
-        //                            ID: 'change_search_div',
+        //                            ID: 'change_viewbuilder_div',
         //                            prefix: o.idprefix });
 
 
@@ -75,17 +75,17 @@
     
             if('Advanced' === o.$link.text())
             {
-                $('.csw_search_subfield_select').each(function() { $(this).show(); });
-                $('.csw_search_filter_select').each(function() { $(this).show(); });
-                $('.csw_search_default_filter').each(function() { $(this).hide(); });
+                $('.csw_viewbuilder_subfield_select').each(function() { $(this).show(); });
+                $('.csw_viewbuilder_filter_select').each(function() { $(this).show(); });
+                $('.csw_viewbuilder_default_filter').each(function() { $(this).hide(); });
                 o.$link.text('Simple');
                 isHidden = false;
             }
             else
             {
-                $('.csw_search_subfield_select').each(function() { $(this).hide(); });
-                $('.csw_search_filter_select').each(function() { $(this).hide(); });
-                $('.csw_search_default_filter').each(function() { $(this).show(); });
+                $('.csw_viewbuilder_subfield_select').each(function() { $(this).hide(); });
+                $('.csw_viewbuilder_filter_select').each(function() { $(this).hide(); });
+                $('.csw_viewbuilder_default_filter').each(function() { $(this).show(); });
                 o.$link.text('Advanced');
                 isHidden = true;
             }
@@ -110,11 +110,11 @@
             o.$propsXml.children('property').each( function() {
                     var $thisProp = $(this);
                     var $nodeTypeCell = o.$searchTable.CswTable('cell', propRow, 2);
+                    var nodeTypeId = makeId({ID: 'viewbuilderpropid', suffix: $thisProp.attr('propid'), prefix: o.idprefix});
                     var $nodeType = $nodeTypeCell.CswDOM('span',{
-                                                                ID: 'searchpropid_' + $thisProp.attr('propid'),
-                                                                prefix: o.idprefix,
+                                                                ID: nodeTypeId,
                                                                 value: $thisProp.attr('metadatatypename'),
-                                                                cssclass: 'csw_search_metadatatype_static'})
+                                                                cssclass: 'csw_viewbuilder_metadatatype_static'})
                                                   .attr('relatedidtype',$thisProp.attr('relatedidtype') );
                     o.$parent = o.$searchTable;
                     o.selectedSubfieldVal = ''; 
@@ -217,7 +217,7 @@
                                                                 ID: 'default_filter_' + propRow,
                                                                 prefix: o.idprefix,
                                                                 value: $defaultFilter,
-                                                                cssclass: 'csw_search_default_filter'
+                                                                cssclass: 'csw_viewbuilder_default_filter'
                                                             })
                                         .attr({align:"center"});
                 if(!o.isHidden)
@@ -278,14 +278,14 @@
                 //Row propRow, Column 6: search input
                 var $searchBoxCell = o.$parent.CswTable('cell', propRow, 6)
                                 .empty();
-            
+                var searchInputId = makeId({'ID': 'search_input_viewbuilderpropid', 'suffix': propertyId, 'prefix': o.idprefix});
                 if( fieldtype === 'List' )
                 {
                     $searchBoxCell.append( $(xmlToString($selectedProp.children('filtersoptions').children('select'))) );
                 }
                 else if( fieldtype === 'Logical' )
                 {
-                    $searchBoxCell.CswTristateCheckBox('init',{'ID': 'search_input_searchpropid_' + propertyId, 'prefix': o.idprefix}); 
+                    $searchBoxCell.CswTristateCheckBox('init',{'ID': searchInputId}); 
                 }
                 else
                 {
@@ -303,10 +303,9 @@
                         }  
                     }
                     var $searchInput = $searchBoxCell.CswDOM('input',{
-                                                            ID: 'search_input_searchpropid_' + propertyId,
-                                                            prefix: o.idprefix,
+                                                            ID: searchInputId,
                                                             type: 'text',
-                                                            cssclass: 'csw_search_input',
+                                                            cssclass: 'csw_viewbuilder_input',
                                                             placeholder: searchSuggest })
                                                     .attr('autocomplete','on')
                                                     .attr('autofocus','true')
@@ -334,9 +333,9 @@
             //Row propRow, Column 3: property
             var $propSelectCell = o.$parent.CswTable('cell', propRow, 3)
                                     .empty();
+            var propId = makeId({ID: propertyId, prefix: o.idprefix});
             var $props = $propSelectCell.CswDOM('span',{
-                                                    ID: propertyId,
-                                                    prefix: o.idprefix,
+                                                    ID: propId,
                                                     value: propertyName});
         
             var $defaultFilter = $selectedProp.children('defaultsubfield').attr('filter');
@@ -345,12 +344,11 @@
             //Row propRow, Column 4: default filter
             var $subfieldCell = o.$parent.CswTable('cell', propRow, 4)
                                 .empty();
-        
+            var defaultSubFieldId = makeId({ID: 'default_filter', suffix: filtArbitraryId, prefix: o.idprefix});
             var $defaultSubField = $subfieldCell.CswDOM('span', {
-                                                    ID: 'default_filter_' + filtArbitraryId,
-                                                    prefix: o.idprefix,
+                                                    ID: defaultSubFieldId,
                                                     value: $defaultFilter,
-                                                    cssclass: 'csw_search_default_filter' })
+                                                    cssclass: 'csw_viewbuilder_default_filter' })
                                                 .attr({align:"center"});
             if(!o.isHidden)
             {
@@ -415,7 +413,8 @@
             }
             else if( fieldtype === 'Logical' )
             {
-                $searchBoxCell.CswTristateCheckBox('init',{'ID': 'search_input_filtarbitraryid_' + filtArbitraryId, 'prefix': o.idprefix, 'Checked': defaultValue}); 
+                var searchBoxCellId = makeId({'ID': 'search_input_filtarbitraryid', suffix: filtArbitraryId, 'prefix': o.idprefix});
+                $searchBoxCell.CswTristateCheckBox('init',{'ID': searchBoxCellId, 'Checked': defaultValue}); 
             }
             else
             {
@@ -432,11 +431,11 @@
                         searchSuggest += "'s " +  $subfieldsOptions.find(':selected').text();
                     }
                 }
+                var searchInputId = makeId({ID: 'search_input_filtarbitraryid', suffix: filtArbitraryId, prefix: o.idprefix});
                 var $searchInput = $searchBoxCell.CswDOM('input',{
-                                                        ID: 'search_input_filtarbitraryid_' + filtArbitraryId,
-                                                        prefix: o.idprefix,
+                                                        ID: searchInputId,
                                                         type: 'text',
-                                                        cssclass: 'csw_search_input',
+                                                        cssclass: 'csw_viewbuilder_input',
                                                         placeholder: searchSuggest
                                         })
                                         .attr('autocomplete','on')
@@ -461,8 +460,8 @@
                 //Row i, Column 1: cell for clear/advanced                                            
                 var $splitCell = o.$parent.CswTable('cell', o.bottomRow, o.bottomCell)
                                     .empty();
-        
-                var $splitCellTable = $splitCell.CswTable('init',{ID: o.idprefix + '_split_cell_table', 
+                var splitCellTableId = makeId({prefix: o.idprefix, ID: 'split_cell_table'});
+                var $splitCellTable = $splitCell.CswTable('init',{ID: splitCellTableId, 
                                                                     cellpadding: 1,
                                                                     cellspacing: 1,
                                                                     cellalign: 'left',
@@ -477,8 +476,8 @@
             //Row i, Column 1 (1/1): clear button
             var $clearButtonCell = $clearPosition.CswTable('cell', cellRow, clearCellNumber)
                                     .empty();
-            var $clearButton = $clearButtonCell.CswButton({ID: 'clear_button', 
-                                                            prefix: o.idprefix,
+            var clearButtonId = makeId({ID: 'clear_button', prefix: o.idprefix});
+            var $clearButton = $clearButtonCell.CswButton({ID: clearButtonId,
                                                             enabledText: 'Clear', 
                                                             disabledText: 'Clear',
                                                             disableOnClick: false, 
@@ -488,9 +487,9 @@
             //Row i, Column 1 (1/2): advanced link
             var $advancedLinkCell = $clearPosition.CswTable('cell', cellRow, advancedCellNumber)
                                     .empty();
+            var advancedLinkId = makeId({ID: 'advanced_options', prefix: o.idprefix});
             var $advancedLink = $advancedLinkCell.CswDOM('link',{
-                                                    ID: 'advanced_options',
-                                                    prefix: o.idprefix,
+                                                    ID: advancedLinkId,
                                                     href: '#advanced',
                                                     value: 'Advanced' })
                                                     .click(function() {
@@ -501,8 +500,8 @@
             var $searchButtonCell = o.$parent.CswTable('cell', o.bottomRow, o.searchBtnCell)
                                     .attr({align:"right"})
                                     .empty();
-            var $searchButton = $searchButtonCell.CswButton({ID: 'search_button',
-                                                            prefix: o.idprefix, 
+            var searchButtonId = makeId({ID: 'search_button', prefix: o.idprefix});
+            var $searchButton = $searchButtonCell.CswButton({ID: searchButtonId, 
                                                             enabledText: 'Search', 
                                                             disabledText: 'Searching', 
                                                             enableAfterClick: true,
@@ -513,9 +512,9 @@
         function reInit()
         {
             $topspandiv.empty();
-        
+            var searchTableId = makeId({prefix: o.idprefix, ID: 'search_tbl'});
             o.$searchTable = $topspandiv.CswTable('init', { 
-                                            ID: o.idprefix + '_search_tbl', 
+                                            ID: searchTableId, 
                                             cellpadding: 1,
                                             cellspacing: 1,
                                             cellalign: 'center',
@@ -544,13 +543,13 @@
 		        'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeid + "&IdPrefix=" + o.idprefix + "&NodeKey=" + o.cswnbtnodekey,
                 'success': function($xml) { 
                     o.searchtype = $xml.attr('searchtype');
-
+                    var searchTableId = makeId({prefix: o.idprefix, ID: 'search_tbl'});
                     switch(o.searchtype)
                     {
                         case 'nodetypesearch':
                         {
                             o.$searchTable = $topspandiv.CswTable('init', { 
-                                    ID: o.idprefix + '_search_tbl', 
+                                    ID: searchTableId, 
                                     cellpadding: 1,
                                     cellspacing: 1,
                                     cellalign: 'center',
@@ -564,7 +563,7 @@
                         case 'viewsearch':
                         {
                             o.$searchTable = $topspandiv.CswTable('init', { 
-                                    ID: o.idprefix + '_search_tbl', 
+                                    ID: searchTableId, 
                                     cellpadding: 1,
                                     cellspacing: 1,
                                     cellalign: 'left',
@@ -585,7 +584,7 @@
 
 //        function getBottomSpan()
 //        {                                                                                                                                                                                                                                            {
-//            var $bottomTable = o.$bottomspandiv.CswTable('init', {ID: o.idprefix + '_change_search_tbl', 
+//            var $bottomTable = o.$bottomspandiv.CswTable('init', {ID: o.idprefix + '_change_viewbuilder_tbl', 
 //                                                                cellpadding: 1,
 //                                                                cellspacing: 1,
 //                                                                cellalign: 'center',
@@ -631,7 +630,7 @@
 //            //Row 2, Column 2: new custom search
 //            var $customSearchCell = $bottomTable.CswTable('cell', 2, 2);
 //            var $customSearch = $customSearchCell.CswDOM('link',{
-//                                                            ID: 'new_custom_search',
+//                                                            ID: 'new_custom_viewbuilder',
 //                                                            prefix: o.idprefix,
 //                                                            href: '#customsearch',
 //                                                            value: 'New Custom Search' }); 
@@ -652,20 +651,20 @@
                     var objectPk = o.$nodeTypesSelect.val();
                     var relatedIdType = o.$nodeTypesSelect.find(':selected').attr('title');
 
-                    $('.csw_search_properties_select').each(function() {
+                    $('.csw_viewbuilder_properties_select').each(function() {
                             var $thisProp = $(this);
                             var propName = $thisProp.text();
                             var propId = $thisProp.val();
                         
-                            var $subField = o.$parent.CswDOM('findelement',{ID: 'subfield_select_searchpropid_' + propId, prefix: o.idprefix});
+                            var $subField = o.$parent.CswDOM('findelement',{ID: 'subfield_select_viewbuilderpropid_' + propId, prefix: o.idprefix});
                             var subFieldText = $subField.find(':selected').text();
                         
-                            var $filter = o.$parent.CswDOM('findelement',{ID: 'filter_select_searchpropid_' + propId, prefix: o.idprefix});
+                            var $filter = o.$parent.CswDOM('findelement',{ID: 'filter_select_viewbuilderpropid_' + propId, prefix: o.idprefix});
                             var filterText = $filter.find(':selected').val();
 
                             var fieldtype = o.$propsXml.children('propertyfilters').children('property[propname="' + propName + '"][propid="' + propId + '"]').attr('fieldtype');
                         
-                            var $searchInput = o.$parent.CswDOM('findelement',{ID: 'search_input_searchpropid_' + propId, prefix: o.idprefix});
+                            var $searchInput = o.$parent.CswDOM('findelement',{ID: 'search_input_viewbuilderpropid_' + propId, prefix: o.idprefix});
                             var searchText;
                             if( fieldtype === 'Logical' )
                             {
@@ -673,7 +672,7 @@
                             }
                             else if( fieldtype === 'List' )
                             {
-                                $searchList = o.$parent.CswDOM('findelement',{ID: 'filtersoptions_select_searchpropid_' + propId, prefix: o.idprefix});
+                                $searchList = o.$parent.CswDOM('findelement',{ID: 'filtersoptions_select_viewbuilderpropid_' + propId, prefix: o.idprefix});
                                 searchText = $searchList.find(':selected').val();
                             }
                             else
