@@ -9,7 +9,7 @@
 			onAddNode: function(nodeid, cswnbtnodekey) { },
 			onMultiEdit: function() { },
             onSearch: function() {},
-onEditView: function(viewid) { },
+			onEditView: function(viewid) { },
 			Multi: false,
 			NodeCheckTreeId: ''
 		};
