@@ -12,7 +12,7 @@
 					objectclassid: '',
 					objectclass: '',
 					onSelect: function (nodeid) {},
-					onSuccess: function () {},
+					onSuccess: function () {}
 				};
 
 				if (options)

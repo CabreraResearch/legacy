@@ -15,7 +15,8 @@ sub checkContinue
 sub runCommand
 {
 	printf("$_[0]\n");
-	my $result = `$_[0] 2>&1`;
+#	my $result = `$_[0] 2>&1`;
+	my $result = `$_[0]`;
 	printf $result;
 }
 

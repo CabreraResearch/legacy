@@ -10,7 +10,7 @@
 					NodeTypesUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
 					nodetypeid: '',
 					onSelect: function (nodetypeid) {},
-					onSuccess: function () {},
+					onSuccess: function () {}
 				};
 
 				if (options)

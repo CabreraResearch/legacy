@@ -16,7 +16,11 @@
 
                             o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
 
-						}						else 						{							var $LoginDiv = $( '<form><div id="logindiv" align="center">' +                                                '  <table>' +
+						}
+						else 
+						{
+							var $LoginDiv = $( '<form><div id="logindiv" align="center">' +
+                                                '  <table>' +
 												'  <form>' +  
                                                 '    <table>' +
                                                 '    <tr>' +
@@ -84,7 +88,7 @@
                         } // if-else(ThisSessionId != null)
                     },  // login
 
-            'logout': function(options) { _Logout(options); },
+            'logout': function(options) { _Logout(options); }
 		};
 
 
@@ -132,7 +136,7 @@
 				case 'ShowLicense': 
 					$.CswDialog('ShowLicenseDialog', {
 						'onAccept': function() { onAuthenticated(); },
-						'onDecline': function() { _Logout(); },
+						'onDecline': function() { _Logout(); }
 					}); 
 					break;
 			}

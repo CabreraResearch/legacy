@@ -390,7 +390,7 @@
 
 						$visroleselect = $parent.CswNodeSelect('init', {
 																			'ID': id + '_visrolesel', 
-																			'objectclass': 'RoleClass',
+																			'objectclass': 'RoleClass'
 																		}).hide();
 						$visuserselect = $parent.CswNodeSelect('init', {
 																			'ID': id + '_visusersel', 
@@ -725,6 +725,12 @@
 					{ 
 						// view filters
 						treestr += '<li><span class="vieweditor_addfilter" style="display: none"></span></li>';
+
+//						var $filttable = $('.vieweditor_addfilter').CswViewPropFilter({
+//							'viewxml': xmlToString($currentviewxml),
+//							'proparbitraryid': arbid
+//						});
+//						var filterxml = $filttable.CswViewPropFilter('getSelected');
 					}
 					else 
 					{
