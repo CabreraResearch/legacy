@@ -1,11 +1,23 @@
 ﻿using System.Web.Script.Serialization;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.WebServices
 {
 
 	public class wsTools : System.Web.Services.WebService
 	{
-		#region Conversion
+        private static char _Delimiter = '_';
+        public wsTools( char Delimiter )
+		{
+		    _Delimiter = Delimiter;
+		} //ctor
+
+        public wsTools()
+        {
+            
+        } //ctor
+
+        #region Conversion
 
         /// <summary>
         /// Serializes a string into a safe JavaScript string 
@@ -29,6 +41,15 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
+        #region Client
+        
+        public static string makeId(string Prefix, string ID, string Suffix)
+        {
+            CswDelimitedString ElementId = new CswDelimitedString( _Delimiter ) {{Prefix, false}, {ID, false}, {Suffix, false}};
+
+            return ElementId.ToString( false );
+        }
+        #endregion
     }//wsNBT
 
 } // namespace ChemSW.WebServices

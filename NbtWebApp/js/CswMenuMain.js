@@ -8,7 +8,8 @@
 			cswnbtnodekey: '',
 			onAddNode: function(nodeid, cswnbtnodekey) { },
 			onMultiEdit: function() { },
-			onEditView: function(viewid) { },
+            onSearch: function() {},
+onEditView: function(viewid) { },
 			Multi: false,
 			NodeCheckTreeId: ''
 		};
@@ -38,6 +39,7 @@
 							'onAlterNode': o.onAddNode, 
 							'onMultiEdit': o.onMultiEdit, 
 							'onEditView': o.onEditView,
+							'onSearch': o.onSearch,
 							'Multi': o.Multi, 
 							'NodeCheckTreeId': o.NodeCheckTreeId 
 						}

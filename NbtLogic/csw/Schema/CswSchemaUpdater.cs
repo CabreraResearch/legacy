@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Data;
-using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -28,7 +28,9 @@ namespace ChemSW.Nbt.Schema
             Physical_Inspection_Schedule,
             Physical_Inspection_Route,
             Notification,
-            Floor
+            Floor,
+            FE_Inspection_Point,
+            Inspection_Group
         }
         public static string HamletNodeTypesAsString( HamletNodeTypes NodeType )
         {
@@ -44,7 +46,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
 
             // This is where you manually set to the last version of the previous release
-            MinimumVersion = new CswSchemaVersion( 1, 'G', 32 ); 
+            MinimumVersion = new CswSchemaVersion( 1, 'G', 32 );
 
             // This is where you add new versions.
             CswSchemaUpdateDriver Schema01H01Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H01( _CswNbtSchemaModTrnsctn ) );
@@ -91,14 +93,14 @@ namespace ChemSW.Nbt.Schema
             _UpdateDrivers.Add( Schema01H21Driver.SchemaVersion, Schema01H21Driver );
             CswSchemaUpdateDriver Schema01H22Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H22( _CswNbtSchemaModTrnsctn ) );
             _UpdateDrivers.Add( Schema01H22Driver.SchemaVersion, Schema01H22Driver );
-			CswSchemaUpdateDriver Schema01H23Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H23( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H23Driver.SchemaVersion, Schema01H23Driver );
-			CswSchemaUpdateDriver Schema01H24Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H24( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H24Driver.SchemaVersion, Schema01H24Driver );
-			CswSchemaUpdateDriver Schema01H25Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H25( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H25Driver.SchemaVersion, Schema01H25Driver );
-			CswSchemaUpdateDriver Schema01H26Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H26( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H26Driver.SchemaVersion, Schema01H26Driver );
+            CswSchemaUpdateDriver Schema01H23Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H23( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H23Driver.SchemaVersion, Schema01H23Driver );
+            CswSchemaUpdateDriver Schema01H24Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H24( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H24Driver.SchemaVersion, Schema01H24Driver );
+            CswSchemaUpdateDriver Schema01H25Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H25( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H25Driver.SchemaVersion, Schema01H25Driver );
+            CswSchemaUpdateDriver Schema01H26Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H26( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H26Driver.SchemaVersion, Schema01H26Driver );
 
             // This automatically detects the latest version
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys )

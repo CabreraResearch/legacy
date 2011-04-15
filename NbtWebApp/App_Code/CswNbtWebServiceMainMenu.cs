@@ -63,11 +63,12 @@ namespace ChemSW.Nbt.WebServices
                                         new XAttribute( "viewid", ViewId ),
 										new XAttribute( "action", "Search" ) ) );
 
-			// ADD
-			XElement AddNode = new XElement( "item",
-											new XAttribute( "text", "Add" ) );
 			if( View != null )
 			{
+                // ADD
+                XElement AddNode = new XElement( "item",
+                                                new XAttribute( "text", "Add" ) );
+
 				foreach( XElement AddNodeType in View.Root.AllowedChildNodeTypes()
 												 .Select( Entry => new XElement( "item",
 																				new XAttribute( "text", Entry.NodeType.NodeTypeName ),
@@ -141,11 +142,13 @@ namespace ChemSW.Nbt.WebServices
 											 new XAttribute( "text", "Print" ),
 											 new XAttribute( "popup", "PrintGrid.aspx?sessionviewid=" + View.SessionViewId ) ) );
 			}
-			// EXPORT
-			XElement ExportNode = new XElement( "item",
-												new XAttribute( "text", "Export" ) );
+			
+            // EXPORT
 			if( View != null )
 			{
+                XElement ExportNode = new XElement( "item",
+                                                new XAttribute( "text", "Export" ) );
+
 				if( NbtViewRenderingMode.Grid == View.ViewMode )
 				{
 
@@ -196,7 +199,7 @@ namespace ChemSW.Nbt.WebServices
 			//ret += "<item text=\"Switch View\" popup=\"Popup_ChangeView.aspx\"/>";
 
 			// EDIT VIEW
-			if( ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Edit_View ) )
+			if( null != View && ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Edit_View ) )
 			{
 				//string EditViewHref = "EditView.aspx?viewid=" + ViewId;
 				//if( View != null && View.Visibility == NbtViewVisibility.Property )

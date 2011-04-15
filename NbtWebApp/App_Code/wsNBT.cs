@@ -307,10 +307,7 @@ namespace ChemSW.Nbt.WebServices
 				start();
 				var ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
 				Int32 ViewId = CswConvert.ToInt32( ViewNum );
-				if( Int32.MinValue != ViewId || !string.IsNullOrEmpty( SafeNodeKey ) )
-				{
-					ReturnNode = ws.getMenu( ViewId, SafeNodeKey );
-				}
+				ReturnNode = ws.getMenu( ViewId, SafeNodeKey );
 				end();
 			}
 			catch( Exception ex )
@@ -704,7 +701,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 				string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-				if( !string.IsNullOrEmpty( ParsedNodeKey ) || EditMode == "AddInPopup" )
+				if( !string.IsNullOrEmpty( ParsedNodeKey ) || ( EditMode == "AddInPopup" && !string.IsNullOrEmpty( NodeTypeId ) ) )
 				{
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
@@ -950,20 +947,38 @@ namespace ChemSW.Nbt.WebServices
 			return ( ReturnVal.ToString() );
 		}
 
+        [WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement getViewPropFilter(string ViewXml, string PropArbitraryId)
+        {
+            XElement PropsNode = new XElement( "nodetypeprops" );
+            try
+            {
+                start();
+                var ws = new wsViewBuilder( _CswNbtResources );
+                PropsNode = ws.getViewBuilderProps( ViewXml, PropArbitraryId );
+                end();
+            }
+            catch( Exception ex )
+            {
+                PropsNode = xError( ex );
+            }
+            return PropsNode;
+        }
 		#endregion Misc
 
 		#region Search
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getClientSearchXml( string ViewIdNum, string SelectedNodeTypeIdNum )
+		public XElement getClientSearchXml( string ViewIdNum, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
 		{
 			XElement SearchNode = new XElement( "search" );
 			try
 			{
 				start();
-				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-				SearchNode = ws.getSearchXml( ViewIdNum, SelectedNodeTypeIdNum );
+                var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
+                SearchNode = ws.getSearchXml( ViewIdNum, SelectedNodeTypeIdNum, NodeKey );
 				end();
 			}
 			catch( Exception ex )
@@ -975,14 +990,14 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getNodeTypeSearchProps( string RelatedIdType, string ObjectPk )
+		public XElement getNodeTypeSearchProps( string RelatedIdType, string ObjectPk, string IdPrefix, string NodeKey )
 		{
 			XElement SearchNode = new XElement( "search" );
 			try
 			{
 				start();
-				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-				SearchNode = ( ws.getNodeTypeProps( RelatedIdType, ObjectPk ) );
+				var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
+				SearchNode = ( ws.getSearchProps( RelatedIdType, ObjectPk, NodeKey ) );
 				end();
 			}
 			catch( Exception ex )
@@ -995,7 +1010,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getSearchableViews( string IsMobile, string OrderBy )
+		public XElement getSearchableViews( string IsMobile, string OrderBy, string IdPrefix )
 		{
 			var SearchNode = new XElement( "searchableviews" );
 			try
@@ -1004,7 +1019,7 @@ namespace ChemSW.Nbt.WebServices
 
 				ICswNbtUser UserId = _CswNbtResources.CurrentNbtUser;
 				bool ForMobile = CswConvert.ToBoolean( IsMobile );
-				XElement Views = _CswNbtResources.ViewSelect.getSearchableViews( UserId, ForMobile, OrderBy ); ;
+				XElement Views = _CswNbtResources.ViewSelect.getSearchableViews( UserId, ForMobile, OrderBy, IdPrefix ); ;
 				SearchNode.Add( Views );
 				end();
 			}
@@ -1027,7 +1042,8 @@ namespace ChemSW.Nbt.WebServices
 
 				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
 				CswNbtView ResultsView = ws.doViewBasedSearch( SearchJson );
-				ResultsView.SaveToCache();
+			    ResultsView.SessionViewId = Int32.MinValue;
+                ResultsView.SaveToCache();
 
 				SearchResultView.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
 				SearchResultView.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
@@ -1053,9 +1069,8 @@ namespace ChemSW.Nbt.WebServices
 				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
 				CswNbtView ResultsView = ws.doNodesSearch( SearchJson );
 				ResultsView.SaveToCache();
-				//var RenderElement = getTreeOfView( ResultsView.SessionViewId.ToString(), _IDPrefix, string.Empty, string.Empty );
 				SessionViewId.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
-				SessionViewId.Add( new JProperty( "viewmode", ResultsView.ViewMode ) );
+				SessionViewId.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
 				end();
 			}
 			catch( Exception ex )

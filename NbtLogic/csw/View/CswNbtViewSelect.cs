@@ -212,11 +212,14 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get an XElement of all views searchable by the current user
         /// </summary>
-        public XElement getSearchableViews( ICswNbtUser User, bool MobileOnly, string OrderBy = null )
+        public XElement getSearchableViews( ICswNbtUser User, bool MobileOnly, string OrderBy, string IdPrefix )
         {
             DataTable ViewsTable = null;
-            var SearchableViewsTimer = new CswTimer();
-            XElement SearchNode = new XElement( "select", new XAttribute( "id", "view_select" ), new XAttribute( "name", "view_select" ) );
+            CswTimer SearchableViewsTimer = new CswTimer();
+            string ElementId = IdPrefix + "_" + "view_select";
+            XElement SearchNode = new XElement( "select",
+                                    new XAttribute( "id", ElementId ),
+                                    new XAttribute( "name", ElementId ) );
 
             CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getSearchableViews_select", "getVisibleViewInfo" );
             ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
@@ -246,7 +249,7 @@ namespace ChemSW.Nbt
                                             .Where( ThisView => 0 < ThisView.Root.ChildRelationships
                                                 .Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
                                                         User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ).Count() &&
-                                                ( ThisView.IsFullyEnabled() ) ) )
+                                                ( ThisView.IsSearchable() ) ) )
             {
                 SearchNode.Add( new XElement( "option", ThisView.ViewName, //Add() doesn't return an object, therefore initializer won't work
                                             new XAttribute( "title", ThisView.ViewMode ),

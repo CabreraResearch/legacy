@@ -8,6 +8,7 @@
 
 			var o = {
 				'ID': '',
+            'prefix': '',
 				'enabledText': '',
 				'disabledText': '',
 				'hasText': true,
@@ -23,10 +24,13 @@
 			if (options) $.extend(o, options);
 
 			var $parent = $(this);
-
-			var $button = $('<input type="' + o.inputType + '" id="' + o.ID + '" name="' + o.ID + '" />');
+        var elementId = o.prefix + '_' + o.ID;
+        var $button = $('<input />').attr('type', o.inputType)
+                                    .attr('id', elementId)
+                                    .attr('name', elementId);
 			$button.attr('enabledText', o.enabledText);
 			$button.attr('disabledText', o.disabledText);
+
 
 			var buttonOpt = {
 				text: (o.hasText),

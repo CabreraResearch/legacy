@@ -400,7 +400,7 @@ function HandleMenuItem(options) {
 		'$itemxml': '',
 		'onLogout': function () { },
 		'onAlterNode': function (nodeid, nodekey) { },
-		'onSearch': function (treexml, viewid, nodetypeid) { },
+		'onSearch': function () { },
 		'onMultiEdit': function () { },
 		'onEditView': function (viewid) { },
 		'Multi': false,
@@ -486,13 +486,14 @@ function HandleMenuItem(options) {
             case 'Search':
                 $a.click(function ()
                 {
-                    $.CswDialog('SearchDialog', {
-                    	'viewid': o.$itemxml.attr('viewid'),
-                    	'nodetypeid': o.$itemxml.attr('nodetypeid'),
-                        'onSearch': o.onSearch
-                    });
+                    o.onSearch();
+//                    $.CswDialog('SearchDialog', {
+//                        'viewid': o.$itemxml.attr('viewid'),
+//                        'nodetypeid': o.$itemxml.attr('nodetypeid'),
+//                        'onSearch': o.onSearch
+//                    });
                     
-                    return false;
+                    
                 });
 				break;
 			case 'multiedit':
@@ -613,6 +614,29 @@ function getTimeString(date)
 		ret += "AM";
 	}
 	return ret;
+}
+
+function makeId(options)
+{
+    var o = {
+        'ID': '',
+        'prefix': '',
+        'suffix': '',
+        'Delimiter': '_'
+    };
+    if (options) $.extend(o, options);
+    
+    var elementId = o.ID;
+    
+    if( o.prefix !== '' && elementId !== '' )
+    {
+        elementId = o.prefix + o.Delimiter + elementId;
+    }
+    if (o.suffix !== '' && elementId !== '')
+    {
+        elementId += o.Delimiter + o.suffix;
+    }
+    return elementId;
 }
 
 // ------------------------------------------------------------------------------------

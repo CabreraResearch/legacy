@@ -16,7 +16,7 @@
 							</table>
 						</td>
 
-						<td id="Td7" class="PageTable_RightColumn" rowspan="5"></td>
+						<td id="Td6" class="PageTable_RightColumn" rowspan="5"></td>
 					</tr>
 
 					<tr>
@@ -24,25 +24,31 @@
 							<div id="ErrorDiv" class="ErrorContent" style="display: none;"></div>
 						</td>
 					</tr>
+
+                    <tr>
+                        <td id="Td7" class="PageTable_CenterCell" colspan="2" valign="top">
+                            <div id="CenterTopDiv"></div>
+                        </td>
+                    </tr>
 		  
 					<tr>
-						<td id="Td2" class="PageTable_LeftCell" valign="top">
+						<td id="Td8" class="PageTable_LeftCell" valign="top">
 							<div id="ViewSelectDiv"></div>
 							<div id="LeftDiv"></div>
 						</td>
-						<td id="Td3" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
+						<td id="Td9" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
 							<div id="RightDiv"></div>
 						</td>
 					</tr>
-										  
+                    
+                    <tr>
+                        <td id="Td10" class="PageTable_CenterCell" colspan="2" valign="top">
+                            <div id="CenterBottomDiv"></div>
+                        </td>
+                    </tr>
+
 					<tr>
-						<td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
-							<div id="CenterDiv"></div>
-						</td>
-					</tr>
-					
-					<tr>
-						<td id="Td8" class="PageTable_CenterCell" colspan="2" valign="top">
+						<td id="Td11" class="PageTable_CenterCell" colspan="2" valign="top">
 							<div id="QuickLaunch"></div>
 						</td>
 					</tr>
@@ -56,12 +62,13 @@
 
 	var MainTreeId = 'main';
 	var MainGridId = 'CswNodeGrid';
+	var MainSearchId = 'CswSearchForm';
 
 	function initAll()
 	{
 		if (debug) log('NewMain.initAll()');
 
-		$('#CenterDiv').CswLogin('login', {
+		$('#CenterBottomDiv').CswLogin('login', {
 			'onAuthenticate': function (u)
 			{
 				var view = {
@@ -75,7 +82,7 @@
 						$('#header_menu').CswMenuHeader({
 							'onLogout': function ()
 							{
-								$('#CenterDiv').CswLogin('logout', {
+								$('#CenterBottomDiv').CswLogin('logout', {
 									onDeauthenticate: function ()
 									{
 										$.CswCookie('clearAll');
@@ -121,7 +128,8 @@
 		var o = {
 			left: false, 
 			right: false, 
-			center: false,
+			centertop: false,
+            centerbottom: false,
 			all: false
 		};
 		if(options) {
@@ -136,9 +144,13 @@
 		{
 			$('#RightDiv').empty();
 		}
-		if (o.all || o.center)
+		if (o.all || o.centertop)
 		{
-			$('#CenterDiv').empty();
+            $('#CenterTopDiv').empty();
+		}
+        	if (o.all || o.centerbottom)
+		{
+    		$('#CenterBottomDiv').empty();
 		}
 		if (o.all)
 		{
@@ -151,7 +163,7 @@
 		if (debug) log('NewMain.refreshWelcome()');
 
 		clear({ all: true });
-		$('#CenterDiv').CswWelcome('initTable', {
+		$('#CenterBottomDiv').CswWelcome('initTable', {
 			'onLinkClick': handleItemSelect,
 			'onAddClick': function (nodetypeid)
 			{
@@ -166,6 +178,7 @@
 			},
 			'onAddComponent': refreshWelcome
 		});
+        refreshMainMenu();
 	} // refreshWelcome()
 
 	function handleItemSelect(options)
@@ -190,55 +203,49 @@
 			};
 			if (options) $.extend(o, options);
 
-			if (o.viewid != undefined && o.viewid != '') //&& o.viewmode != undefined && o.viewmode != ''
+			if (o.viewid != undefined && o.viewid != '')
 			{
-				$.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
-				$.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
+			    $.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
+			    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
 
-				switch (o.viewmode) //webservice converts to lower case
-				{
-					case 'grid':
-						{
-							getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-							break;
-						}
-					case 'list':
-						{
-							refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-							break;
-						}
-					case 'tree':
-						{
-							refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-							break;
-						}
-					default:
-						{
-							refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });  //, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-							break;
-						}
-				}
+			    switch (o.viewmode) //webservice converts to lower case
+			    {
+			        case 'grid':
+			            {
+			                getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			                break;
+			            }
+			        default:
+			            {
+			                refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });
+			                break;
+			            }
+			    }
 			}
 			else if (o.type != undefined && o.type != '')
 			{
-				switch (o.type)
-				{
-					case 'action':
-						{
-							alert('Actions are not yet handled!');
-							break;
-						}
-					case 'report':
-						{
-							alert('Reports are not yet handled!');
-							break;
-						}
-					default:
-						{
-							alert('Handling for link type ' + o.linktype + ' is not implemented yet.');
-							break;
-						}
-				}
+			    switch (o.type)
+			    {
+			        case 'action':
+			            {
+			                alert('Actions are not yet handled!');
+			                break;
+			            }
+			        case 'report':
+			            {
+			                alert('Reports are not yet handled!');
+			                break;
+			            }
+			        default:
+			            {
+			                alert('Handling for link type ' + o.linktype + ' is not implemented yet.');
+			                break;
+			            }
+			    }
+			}
+			else
+			{
+			    alert('Handling for this action is not yet implemented');
 			}
 		} // if (manuallyCheckChanges())
 	} // handleItemSelect()
@@ -250,7 +257,8 @@
 		var o = {
 			viewid: '',
 			nodeid: '',
-			cswnbtnodekey: ''
+			cswnbtnodekey: '',
+            prefix: 'csw'
 		};
 
 		if (options)
@@ -259,18 +267,30 @@
 		}
 
 		$('#MainMenuDiv').CswMenuMain({
-			'viewid': o.viewid,
-			'nodeid': o.nodeid,
-			'cswnbtnodekey': o.cswnbtnodekey,
-			'onAddNode': function (nodeid, cswnbtnodekey)
-			{
-				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+			    'viewid': o.viewid,
+			    'nodeid': o.nodeid,
+			    'cswnbtnodekey': o.cswnbtnodekey,
+			    'onAddNode': function (nodeid, cswnbtnodekey)
+			    {
+				    refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+			    },
+			    'onMultiEdit': function ()
+			    {
+				    multi = !multi;
+				    refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 			},
-			'onMultiEdit': function ()
-			{
-				multi = !multi;
-				refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-			},
+			'onSearch': function()
+                {
+                    var $search = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': MainSearchId, 'prefix': o.prefix });
+                    if ($search.is(':hidden'))
+                    {
+                        $search.show();
+                    }
+                    else
+                    {
+                        $search.hide();
+                    }
+                },
 			'onEditView': function (viewid)
 			{
 				clear({ 'all': true });
@@ -285,10 +305,51 @@
 						handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
 					}
 				});
-			},
-			'Multi': multi,
-			'NodeCheckTreeId': MainTreeId
-		});
+                },
+			    'Multi': multi,
+			    'NodeCheckTreeId': MainTreeId
+			});
+		
+        refreshSearchPanel({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'prefix': o.prefix });
+	}
+
+	function refreshSearchPanel(options)
+	{
+	    if (debug) log('NewMain.refreshSearchPanel()');
+	    var o = {
+	        viewid: '',
+	        nodetypeid: '',
+	        cswnbtnodekey: '',
+            prefix: ''
+	    };
+        
+	    if (options) $.extend(o, options);
+
+        var $search = $('#CenterTopDiv').CswDOM('getchildren', { ID: MainSearchId, prefix: o.prefix });
+	    if( $search == undefined || $search.length == 0 )
+	    {
+	        clear({ centertop: true });
+            
+            var onSearchSubmit = function(view) {
+                    $.CswCookie('set', CswCookieName.CurrentView.ViewId, view.viewid);
+                    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, view.viewmode);
+                    refreshSelected({
+                        viewmode: view.viewmode,
+                        viewid: view.viewid,
+                        cswnbtnodekey: '', //do not want a view of only this node
+                        nodeid: ''
+                    });
+            };    
+	        $search = $('#CenterTopDiv')
+                            .CswSearch({
+                                'viewid': o.viewid,
+                                'cswnbtnodekey': o.cswnbtnodekey,
+                                'nodetypeid': o.nodetypeid,
+                                'idprefix': o.idprefix,
+                                'onSearchSubmit': onSearchSubmit
+                            })
+                            .hide();
+	    }
 	}
 
 	function getViewGrid(options)
@@ -299,14 +360,12 @@
 			viewid: '',
 			nodeid: '',
 			cswnbtnodekey: '',
+            doMenuRefresh: true,
             onAddNode: '',
             onEditNode: '',
             onDeleteNode: ''
 		};
-		if (options)
-		{
-			$.extend(o, options);
-		}
+		if (options) $.extend(o, options);
 
 		o.onAddNode = function (nodeid, cswnbtnodekey)
 			{
@@ -317,9 +376,18 @@
 			};
         o.onEditNode = function() { getViewGrid(o); };
         o.onDeleteNode = function() { getViewGrid(o); };
-
-		$('#CenterDiv').CswNodeGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'id': MainGridId });
-        refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+        
+        clear({ centerbottom: true});
+        
+        $('#CenterBottomDiv').CswNodeGrid({ 
+                                'viewid': o.viewid, 
+                                'nodeid': o.nodeid, 
+                                'cswnbtnodekey': o.cswnbtnodekey, 
+                                'prefix': MainGridId, 
+                                'onAddNode': o.onAddNode,
+                                'onEditNode': o.onEditNode,
+                                'onDeleteNode': o.onDeleteNode });
+        if(o.doMenuRefresh) refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 	}
 
 	function onSelectTreeNode(options)
@@ -404,24 +472,24 @@
 		if (manuallyCheckChanges())
 		{
 			var o = {
-				type: 'tree',
-				nodeid: '',
-				cswnbtnodekey: '',
+				nodeid: $.CswCookie('get', CswCookieName.CurrentNode.NodeId),
+				cswnbtnodekey: $.CswCookie('get', CswCookieName.CurrentNode.NodeKey),
 				nodename: '',
-				iconurl: ''
+				iconurl: '',
+                viewid: $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+			    viewmode: 'tree'
 			};
 			if (options) $.extend(o, options);
-	
-			switch (o.type)
+	        
+			switch (o.viewmode)
 			{
 				case 'grid':
 					{
-						alert('Grid not implemented yet!');
-						break;
-					}
-				case 'list':
-					{
-						alert('List not implemented yet!');
+						getViewGrid({
+                            'viewid': o.viewid,
+			                'nodeid': o.nodeid,
+			                'cswnbtnodekey': o.cswnbtnodekey
+                        });
 						break;
 					}
 				default: //tree
@@ -429,7 +497,9 @@
 						refreshNodesTree({
 							'nodeid': o.nodeid,
 							'cswnbtnodekey': o.cswnbtnodekey,
-							'nodename': o.nodename 
+							'nodename': o.nodename,
+                            'viewid': o.viewid,
+                            'viewmode': o.viewmode
 						});
 						break;
 					}

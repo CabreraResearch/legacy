@@ -160,7 +160,7 @@ namespace ChemSW.Nbt
         {
             bool IsSearchable = false;
             ArrayList PropFilters = Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter );
-            IsSearchable = PropFilters.Cast<CswNbtViewPropertyFilter>().Any( Filter => Filter.SubfieldName != CswNbtSubField.SubFieldName.NodeID );
+            IsSearchable = ( IsFullyEnabled() && PropFilters.Cast<CswNbtViewPropertyFilter>().Any( Filter => Filter.SubfieldName != CswNbtSubField.SubFieldName.NodeID ) );
             return IsSearchable;
         }
 
@@ -1022,30 +1022,28 @@ namespace ChemSW.Nbt
             ViewRelationships = getAllNbtViewRelationships( Root );
             var ViewProps = new Collection<CswNbtViewProperty>();
 
-            foreach( CswNbtViewRelationship Relationship in ViewRelationships )
+            foreach( CswNbtViewProperty ChildProp in ViewRelationships
+                                                     .Select( Relationship => Relationship.Properties )
+                                                     .SelectMany( ChildProps => ChildProps ) )
             {
-                Collection<CswNbtViewProperty> ChildProps = Relationship.Properties;
-                foreach( CswNbtViewProperty ChildProp in ChildProps )
-                {
-                    ViewProps.Add( ChildProp );
-                }
+                ViewProps.Add( ChildProp );
             }
 
             // Add View props with defined order to the stack in ascending ViewProp.Order order
             foreach( var ViewProperty in from NbtViewProperty
-                                           in (IEnumerable<CswNbtViewProperty>) ViewProps
-                                         where Int32.MinValue != NbtViewProperty.Order
-                                         orderby NbtViewProperty.Order descending
+                                           in ViewProps
+                                         where NbtViewProperty.Order > 0
+                                         orderby NbtViewProperty.Order descending, NbtViewProperty.Name ascending
                                          select NbtViewProperty )
             {
                 OrderedViewProps.AddFirst( ViewProperty );
+                ViewProps.Remove( ViewProperty );
             }
 
             // Add View props with undefined order to the end of the stack in ascending ViewProp.NbtNodeTypeProp.PropName order
             foreach( var ViewProperty in from NbtViewProperty
-                                           in (IEnumerable<CswNbtViewProperty>) ViewProps
-                                         where Int32.MinValue == NbtViewProperty.Order
-                                         orderby NbtViewProperty.NodeTypeProp.PropName ascending
+                                           in ViewProps
+                                         orderby NbtViewProperty.Name ascending
                                          select NbtViewProperty )
             {
                 OrderedViewProps.AddLast( ViewProperty );
@@ -1328,6 +1326,7 @@ namespace ChemSW.Nbt
         public Int32 SessionViewId
         {
             get { return _SessionViewId; }
+            set { _SessionViewId = value; }
         }
 
         #endregion View Cache functions

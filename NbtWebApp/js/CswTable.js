@@ -8,7 +8,7 @@
     //     var $cell12 = $table.CswTable('cell', 1, 2);
 
     var PluginName = "CswTable";
-
+    
     $.fn.CswTable = function (method) {
         
         var methods = {
@@ -16,6 +16,8 @@
             'init': function (options) {
                         var o = {
                             ID: '',
+                            prefix: '',
+                            suffix: '',
                             TableCssClass: '',
                             CellCssClass: '',
                             cellpadding: 0,
@@ -32,7 +34,8 @@
                         if (options) {
                             $.extend(o, options);
                         }
-                        var $table = $('<table id="'+ o.ID +'"></table>');
+                        var elementId = makeId({ID: o.ID, prefix: o.prefix, suffix: o.suffix});
+                        var $table = $('<table id="'+ elementId +'"></table>');
 						$table.addClass(o.TableCssClass);
 						$table.attr('width', o.width);
 						$table.attr('align', o.align);
