@@ -10,7 +10,7 @@ using ChemSW.MtSched.Core;
 
 namespace ChemSW.Nbt.Sched
 {
-    public enum NbtScheduleRuleNames { UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt, BaseSleepNSeconds }
+    public enum NbtScheduleRuleNames { UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt }
     public enum NbtScheduledRuleColumns { ScheduledRuleId, RuleName, MaxRunTimeMs, ThreadId, ReprobateThreshold, TotalRogueCount, FailedCount, Reprobate, Disabled, StatusMessage, Recurrence, Interval, RunStartTime, RunEndTime, LastRun }
     public enum NbtScheduledRuleParamsColumns { ScheduledRuleParamId, ParamName, ParamVal }
     public class CswScheduleLogicDetailPersistenceNbt : ICswScheduleLogicDetailPersistence
@@ -64,6 +64,11 @@ namespace ChemSW.Nbt.Sched
             if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.TotalRogueCount.ToString() ) )
             {
                 ReturnVal.TotalRoqueCount = CswConvert.ToInt32( DataRowScheduledRules[NbtScheduledRuleColumns.TotalRogueCount.ToString()] );
+            }
+
+            if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.FailedCount.ToString() ) )
+            {
+                ReturnVal.FailedCount = CswConvert.ToInt32( DataRowScheduledRules[NbtScheduledRuleColumns.FailedCount.ToString()] );
             }
 
             if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.StatusMessage.ToString() ) )

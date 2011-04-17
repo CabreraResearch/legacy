@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.DB;
+using ChemSW.MtSched.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 using System.IO;
@@ -38,7 +39,7 @@ namespace ChemSW.Nbt.Schema
             NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtPropVals.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 2000;
             NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
-            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = '0';
             NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
@@ -51,7 +52,7 @@ namespace ChemSW.Nbt.Schema
             NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtMTBF.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
             NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
-            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = '0';
             NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
@@ -61,7 +62,7 @@ namespace ChemSW.Nbt.Schema
             NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.UpdtInspection.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
             NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
-            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = '0';
             NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
@@ -71,7 +72,7 @@ namespace ChemSW.Nbt.Schema
             NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenNode.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
             NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
-            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = '0';
             NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
@@ -81,7 +82,7 @@ namespace ChemSW.Nbt.Schema
             NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.GenEmailRpt.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
             NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
-            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = '0';
             NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
@@ -90,15 +91,37 @@ namespace ChemSW.Nbt.Schema
 
             //BaseSleepNSeconds
             NewRowScheduledRules = DataTableScheduledRules.NewRow();
-            NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.Nbt.Sched.NbtScheduleRuleNames.BaseSleepNSeconds.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.MtSched.Core.BaseScheduleRuleNames.BaseSleepNSeconds.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
             NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
-            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = 0;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = '1';
             NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
             NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
             Int32 BaseSleepNSeconcsRulePk = Convert.ToInt32( NewRowScheduledRules[NbtScheduledRuleColumns.ScheduledRuleId.ToString()] );
+
+
+            //CswScheduleLogicThrowRogueException
+            NewRowScheduledRules = DataTableScheduledRules.NewRow();
+            NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.MtSched.Core.BaseScheduleRuleNames.ThrowRogueException.ToString(); 
+            NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 3000;
+            NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = '1';
+            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
+            DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
+
+
+            //CswScheduleLogicSelfFailed
+            NewRowScheduledRules = DataTableScheduledRules.NewRow();
+            NewRowScheduledRules[NbtScheduledRuleColumns.RuleName.ToString()] = ChemSW.MtSched.Core.BaseScheduleRuleNames.SelfFailed.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 3000;
+            NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = '1';
+            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
+            DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
 
             CswTableUpdateScheduledRules.update( DataTableScheduledRules );
@@ -127,6 +150,8 @@ namespace ChemSW.Nbt.Schema
             NewParamRow[NbtScheduledRuleParamsColumns.ParamName.ToString()] = "sleepsecs_odd";
             NewParamRow[NbtScheduledRuleParamsColumns.ParamVal.ToString()] = "15";
             DataTableScheduledRuleParams.Rows.Add( NewParamRow );
+
+
 
             CswTableUpdateScheduledRuleParams.update( DataTableScheduledRuleParams );
 
