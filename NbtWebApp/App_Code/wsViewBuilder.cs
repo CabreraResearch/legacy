@@ -8,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -530,6 +531,45 @@ namespace ChemSW.Nbt.WebServices
         public void getViewBuilderPropSubfields(ref XElement ParentNode, CswViewBuilderProp ViewBuilderProp, ArrayList PropFilters)
         {
             _getViewBuilderPropSubFields( ref ParentNode, ViewBuilderProp, PropFilters );
+        }
+
+        public XElement makeViewPropFilter(string ViewXml, JToken FilterProp )
+        {
+            CswNbtView View = new CswNbtView( _CswNbtResources );
+            View.LoadXml( ViewXml );
+            return makeViewPropFilter( View, FilterProp );
+        }
+        public XElement makeViewPropFilter( CswNbtView View, JToken FilterProp )
+        {
+            XElement PropFilterXml = new XElement( "propfilter" );
+            var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
+            CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp.First["proptype"], true, out PropType );
+            string PropArbitraryId = (string) FilterProp.First["proparbitraryid"];
+            string FiltArbitraryId = (string) FilterProp.First["filtarbitraryid"];
+
+            if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown &&
+                !string.IsNullOrEmpty( PropArbitraryId ) &&
+                !string.IsNullOrEmpty( FiltArbitraryId ) )
+            {
+                CswNbtViewProperty ViewProp = (CswNbtViewProperty) View.FindViewNodeByArbitraryId( PropArbitraryId );
+                CswNbtViewPropertyFilter ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
+                if( null != ViewPropFilt )
+                {
+                    var FieldName = CswNbtSubField.SubFieldName.Unknown;
+                    CswNbtSubField.SubFieldName.TryParse( (string) FilterProp.First["subfield"], true, out FieldName );
+                    var FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+                    CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) FilterProp.First["filter"], true, out FilterMode );
+                    string SearchTerm = (string) FilterProp.First["searchtext"];
+
+                    ViewPropFilt.FilterMode = FilterMode;
+                    ViewPropFilt.SubfieldName = FieldName;
+                    ViewPropFilt.Value = SearchTerm;
+
+                    PropFilterXml = ViewPropFilt.ToXElement();
+                }
+            }
+
+            return PropFilterXml;
         }
 
         #endregion Public Methods

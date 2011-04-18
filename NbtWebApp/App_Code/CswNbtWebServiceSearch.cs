@@ -267,41 +267,13 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != ViewSearch.Property( "viewprops" ) )
                 {
-                    foreach( var Prop in ViewSearch["viewprops"].Children() )
+                    foreach( JToken FilterProp in ViewSearch["viewprops"].Children() )
                     {
-                        var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
-                        CswNbtViewProperty.CswNbtPropType.TryParse( (string) Prop.First["proptype"], true, out PropType );
-                        string PropArbitraryId = (string) Prop.First["proparbitraryid"];
-                        string FiltArbitraryId = (string) Prop.First["filtarbitraryid"];
-                        
-                        if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown &&
-                            !string.IsNullOrEmpty( PropArbitraryId ) &&
-                            !string.IsNullOrEmpty( FiltArbitraryId ))
-                        {
-                            CswNbtViewProperty ViewProp = (CswNbtViewProperty) SearchView.FindViewNodeByArbitraryId( PropArbitraryId );
-                            CswNbtViewPropertyFilter ViewPropFilt = (CswNbtViewPropertyFilter) SearchView.FindViewNodeByArbitraryId( FiltArbitraryId );
-                            if( null != ViewPropFilt )
-                            {
-                                _addViewPropFilter( Prop, ref ViewPropFilt );
-                            }
-                        }
+                        _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
                     }
                 }
             }
             return SearchView;
-        }
-
-        private void _addViewPropFilter( JToken JProp, ref CswNbtViewPropertyFilter ViewPropFilt )
-        {
-            var FieldName = CswNbtSubField.SubFieldName.Unknown;
-            CswNbtSubField.SubFieldName.TryParse( (string)JProp.First["subfield"], true, out FieldName );
-            var FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
-            CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) JProp.First["filter"], true, out FilterMode );
-            string SearchTerm = (string) JProp.First["searchtext"];
-            
-            ViewPropFilt.FilterMode = FilterMode;
-            ViewPropFilt.SubfieldName = FieldName;
-            ViewPropFilt.Value = SearchTerm;
         }
 
         /// <summary>

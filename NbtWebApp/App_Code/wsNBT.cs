@@ -637,9 +637,13 @@ namespace ChemSW.Nbt.WebServices
 			return ( ReturnVal.ToString() );
 		}
 
+		#endregion Misc
+
+        #region Views
+
         [WebMethod( EnableSession = true )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getViewPropFilter(string ViewXml, string PropArbitraryId)
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement getViewPropFilterUI( string ViewXml, string PropArbitraryId )
         {
             XElement PropsNode = new XElement( "nodetypeprops" );
             try
@@ -655,11 +659,31 @@ namespace ChemSW.Nbt.WebServices
             }
             return PropsNode;
         }
-		#endregion Misc
 
-		#region Search
 
-		[WebMethod( EnableSession = true )]
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement makeViewPropFilter( string ViewXml, string PropFiltJson )
+        {
+            XElement PropsNode = new XElement( "nodetypeprops" );
+            try
+            {
+                start();
+                var ws = new wsViewBuilder( _CswNbtResources );
+                PropsNode = ws.makeViewPropFilter( ViewXml, PropFiltJson );
+                end();
+            }
+            catch( Exception ex )
+            {
+                PropsNode = xError( ex );
+            }
+            return PropsNode;
+        }
+        #endregion Views
+
+        #region Search
+
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XElement getClientSearchXml( string ViewIdNum, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
 		{
