@@ -54,6 +54,34 @@ namespace ChemSW.Nbt.Schema
                     View.save();
                 }
             }
+
+            // case 20924
+            CswNbtView MyProblems = _CswNbtSchemaModTrnsctn.restoreView( "My Problems" );
+            if( null != MyProblems )
+            {
+                MyProblems.Root.ChildRelationships.Clear();
+
+                CswNbtMetaDataObjectClass ProblemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ProblemClass );
+                CswNbtMetaDataObjectClass EquipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
+                CswNbtMetaDataObjectClass AssemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass );
+                foreach( CswNbtMetaDataNodeType Problem in ProblemOC.NodeTypes )
+                {
+                    CswNbtMetaDataNodeTypeProp ReportedByNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ReportedByPropertyName );
+                    CswNbtMetaDataNodeTypeProp ClosedNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ClosedPropertyName );
+                    CswNbtMetaDataNodeTypeProp DateOpenedNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.DateOpenedPropertyName );
+                    //CswNbtMetaDataNodeTypeProp OwnerNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.OwnerPropertyName );
+                    CswNbtMetaDataNodeTypeProp ParentRelationshipNtp = null;
+                    foreach( CswNbtMetaDataNodeType Equip in EquipmentOC.NodeTypes )
+                    {
+                       if( null != Problem.NodeTypeProps.)
+                    }
+                    //CswNbtMetaDataNodeTypeProp ReportedByNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ReportedByPropertyName );
+                    //CswNbtMetaDataNodeTypeProp ReportedByNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ReportedByPropertyName );
+                }
+
+            }
+
+
             //No else, just leave the OC-based views
         } // update()
 
