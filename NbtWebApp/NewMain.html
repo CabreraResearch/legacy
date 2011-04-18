@@ -13,6 +13,10 @@
 									<td><img id="headerblank4" src="Images/pagelayout/blank.gif" alt="X" width="1" height="30"/></td>
 									<td><div id="MainMenuDiv"></div></td>
 								</tr>
+                                <tr>
+                                    <td></td>
+                                    <td><div id="ViewSelectDiv"></div></td>
+                                </tr>
 							</table>
 						</td>
 
@@ -33,7 +37,7 @@
 		  
 					<tr>
 						<td id="Td8" class="PageTable_LeftCell" valign="top">
-							<div id="ViewSelectDiv"></div>
+							
 							<div id="LeftDiv"></div>
 						</td>
 						<td id="Td9" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
@@ -355,7 +359,8 @@
 				$.extend(ocopy, x);
 				getViewGrid(ocopy);
 			};
-        o.onEditNode = function() { getViewGrid(o); };        o.onDeleteNode = function() { getViewGrid(o); };
+        o.onEditNode = function() { getViewGrid(o); };
+        o.onDeleteNode = function() { getViewGrid(o); };
         
         clear({ centerbottom: true});
         
