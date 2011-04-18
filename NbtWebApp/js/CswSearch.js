@@ -652,41 +652,11 @@
                     var relatedIdType = o.$nodeTypesSelect.find(':selected').attr('title');
 
                     $('.csw_viewbuilder_properties_select').each(function() {
-                            var $thisProp = $(this);
-                            var propName = $thisProp.text();
-                            var propId = $thisProp.val();
-                        
-                            var $subField = o.$parent.CswDOM('findelement',{ID: 'subfield_select_viewbuilderpropid_' + propId, prefix: o.idprefix});
-                            var subFieldText = $subField.find(':selected').text();
-                        
-                            var $filter = o.$parent.CswDOM('findelement',{ID: 'filter_select_viewbuilderpropid_' + propId, prefix: o.idprefix});
-                            var filterText = $filter.find(':selected').val();
-
                             var fieldtype = o.$propsXml.children('propertyfilters').children('property[propname="' + propName + '"][propid="' + propId + '"]').attr('fieldtype');
-                        
-                            var $searchInput = o.$parent.CswDOM('findelement',{ID: 'search_input_viewbuilderpropid_' + propId, prefix: o.idprefix});
-                            var searchText;
-                            if( fieldtype === 'Logical' )
-                            {
-                                searchText = $searchInput.CswTristateCheckBox('value');
-                            }
-                            else if( fieldtype === 'List' )
-                            {
-                                $searchList = o.$parent.CswDOM('findelement',{ID: 'filtersoptions_select_viewbuilderpropid_' + propId, prefix: o.idprefix});
-                                searchText = $searchList.find(':selected').val();
-                            }
-                            else
-                            {
-                                searchText = $searchInput.val();
-                            }
-                            var thisNodeProp = {
-                                    objectpk: objectPk,
-                                    relatedidtype: relatedIdType,
-                                    propid: propId,
-                                    subfield: subFieldText,
-                                    filter: filterText,
-                                    searchtext: searchText  
-                                    };
+                            var thisNodeProp = $(this).CswViewPropFilter('getFilterJson',{objectpk: objectPk,
+                                                                                          relatedidtype: relatedIdType,  
+                                                                                          fieldtype: fieldtype
+                                                                        }); 
                             props.push( thisNodeProp );
                         });
                     searchOpt = {
