@@ -31,6 +31,15 @@ namespace ChemSW.Nbt
         /// </summary>
         public string MD5Seed { get { return "52978"; } }
 
+
+        /// <summary>
+        /// Returns whether or not the resource's database connection is still working
+        /// </summary>
+        /// <param name="ErrorMessage"></param>
+        /// <returns></returns>
+        public bool IsDbConnectionHealthy( ref string ErrorMessage ) { return ( _CswResources.IsDbConnectionHealthy( ref ErrorMessage ) ); }
+
+
         private CswResources _CswResources;
         private CswNbtNodeCollection _CswNbtNodeCollection = null;
         private CswNbtActionCollection _ActionCollection;
@@ -370,7 +379,7 @@ namespace ChemSW.Nbt
         public void BeforeStoreInCache()
         {
             this.CswEventLinker = null;
-			_CswNbtNodeCollection = null;        // case 21246
+            _CswNbtNodeCollection = null;        // case 21246
             _CswResources.BeforeStoreInCache();
         }
         /// <summary>
@@ -380,7 +389,7 @@ namespace ChemSW.Nbt
         {
             _CswResources.AfterRestoreFromCache();
             CswEventLinker = new CswEventLinker();
-			_CswNbtNodeCollection = new CswNbtNodeCollection( this );  // case 21246
+            _CswNbtNodeCollection = new CswNbtNodeCollection( this );  // case 21246
         }
 
 
@@ -496,6 +505,15 @@ namespace ChemSW.Nbt
         /// Commit atomistic transaction
         /// </summary>
         public void commitTransaction() { _CswResources.commitTransaction(); }
+
+
+        /// <summary>
+        /// Puts the database resources back into the resource pool
+        /// </summary>
+        public void releaseDbResources() { _CswResources.releaseDbResources(); }
+
+
+
 
         /// <summary>
         /// Sets whether the transaction is atomistic
@@ -631,6 +649,17 @@ namespace ChemSW.Nbt
         /// <param name="UniqueName">Any arbitrary unique name, used to identify this query for debugging</param>
         /// <param name="TableName">Name of table in schema</param>
         public CswTableUpdate makeCswTableUpdate( string UniqueName, string TableName ) { return _CswResources.makeCswTableUpdate( UniqueName, TableName ); }
+
+
+
+        /// <summary>
+        /// Directly executes a select command against the datbase connection
+        /// </summary>
+        /// <param name="UniqueName"></param>
+        /// <param name="SqlText"></param>
+        /// <returns></returns>
+        public DataTable execArbitraryPlatformNeutralSqlSelect( string UniqueName, string SqlText ) { return ( _CswResources.execArbitraryPlatformNeutralSqlSelect( UniqueName, SqlText ) ); }
+
 
         /// <summary>
         /// Allows you to get a value from one of the setup variables (located in CswSetupVbls.xml)
