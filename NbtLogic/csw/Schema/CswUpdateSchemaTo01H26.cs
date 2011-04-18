@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeProp ParentRelationshipNtp = null;
                     foreach( CswNbtMetaDataNodeType Equip in EquipmentOC.NodeTypes )
                     {
-                       if( null != Problem.NodeTypeProps.)
+                        //if( null != Problem.NodeTypeProps.)
                     }
                     //CswNbtMetaDataNodeTypeProp ReportedByNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ReportedByPropertyName );
                     //CswNbtMetaDataNodeTypeProp ReportedByNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ReportedByPropertyName );
