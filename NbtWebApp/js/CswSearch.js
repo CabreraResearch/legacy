@@ -699,50 +699,8 @@
                 {
                     searchUrl = o.doViewSearchUrl;
                     o.$propsXml.children('property').each(function() {
-                            var $thisProp = $(this);
-                            var propName = $thisProp.val();
-                            var filtArbitraryId = $thisProp.attr('filtarbitraryid');
-                            var propArbitraryId = $thisProp.attr('proparbitraryid');
-                            var propId = $thisProp.attr('propid');
-                            var fieldtype = $thisProp.attr('fieldtype');
-                            var $searchInput = o.$parent.CswDOM('findelement',{ID: 'search_input_filtarbitraryid_' + filtArbitraryId, prefix: o.idprefix});
-                            var searchText;
-                            if( fieldtype === 'Logical' )
-                            {
-                                searchText = $searchInput.CswTristateCheckBox('value');
-                            }
-                            else if( fieldtype === 'List' )
-                            {
-                                $searchList = o.$parent.CswDOM('findelement',{ID: 'filtersoptions_select_filtarbitraryid_' + filtArbitraryId, prefix: o.idprefix});
-                                searchText = $searchList.find(':selected').val();
-                            }
-                            else
-                            {
-                                searchText = $searchInput.val();
-                            }
-                            if(searchText !== '')
-                            {
-                                var $subField = o.$parent.CswDOM('findelement',{ID: 'subfield_select_filtarbitraryid_' + filtArbitraryId, prefix: o.idprefix});
-                                var subFieldText = $subField.find(':selected').text();
-
-                                var $filter = o.$parent.CswDOM('findelement',{ID: 'filter_select_filtarbitraryid_' + filtArbitraryId, prefix: o.idprefix});
-                                var filterText = $filter.find(':selected').val();
-
-                                var relatedidtype = $thisProp.attr('relatedidtype');
-                                var propType = $thisProp.attr('proptype');
-                                
-                                var thisNodeProp = {
-                                        proptype: propType,
-                                        propid: propId,
-                                        filtarbitraryid: filtArbitraryId,
-                                        proparbitraryid: propArbitraryId,
-                                        relatedidtype: relatedidtype,
-                                        subfield: subFieldText,
-                                        filter: filterText,
-                                        searchtext: searchText  
-                                        };
-                                props.push( thisNodeProp );
-                            }
+                            var PropFilter = $(this).CswViewPropFilter('getFilterJson');
+                            props.push(PropFilter);
                         });
                     searchOpt = { 
                             viewprops: props,

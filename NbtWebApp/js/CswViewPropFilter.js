@@ -1,31 +1,36 @@
 ﻿; (function ($) {
-	$.fn.CswViewPropFilter = function (options) {
+	
+    var PluginName = "CswViewPropFilter";
 
-        var o = { 
-            //URLs
-            'getNewPropsUrl': '/NbtWebApp/wsNBT.asmx/getViewPropFilter',
+    var methods = {
 
-            //options
-			'viewid': '',
-            'viewxml': '',
-            'proparbitraryid': '',
-            'idprefix': 'csw',
+        'init': function(options) 
+		{
+            var o = { 
+                //URLs
+                'getNewPropsUrl': '/NbtWebApp/wsNBT.asmx/getViewPropFilter',
 
-            'selectedSubfieldVal': '',
-            'selectedFilterVal': ''
-		};
+                //options
+			    'viewid': '',
+                'viewxml': '',
+                'proparbitraryid': '',
+                'idprefix': 'csw',
+
+                'selectedSubfieldVal': '',
+                'selectedFilterVal': ''
+		    };
 		
-        if(options) $.extend(o, options);
+            if(options) $.extend(o, options);
         
-        var $parent = $(this);
-        var $cswPropFilterRow = $parent.CswDOM('span',{ID: 'cswPropFilterRow', prefix: o.idprefix});
-        var $propsXml;
-        var $propFilterTable;
+            var $parent = $(this);
+            var $cswPropFilterRow = $parent.CswDOM('span',{ID: 'cswPropFilterRow', prefix: o.idprefix});
+            var $propsXml;
+            var $propFilterTable;
 
-        init();
+            init();
 
-        function init()
-        {
+            function init()
+                                                                                {
             CswAjaxXml({ 
 		        'url': o.getNewPropsUrl,
 		        'data': "ViewXml=" + o.viewxml + "&PropArbitraryId=" + o.proparbitraryid,
@@ -45,8 +50,8 @@
             }); //ajax
         }
 
-        function renderPropFiltRow()
-        {
+            function renderPropFiltRow()
+                                                                                                                                                                                                                                                                                                                                                                        {
             var propertyId = $propsXml.attr('propid');
             var propertyName = $propsXml.attr('propname');
             var filtArbitraryId = $propsXml.attr('filtarbitraryid');
@@ -141,10 +146,110 @@
 			   
         } // renderPropFiltRow()
 
-        return $cswPropFilterRow;
+            return $cswPropFilterRow;
+        }, // 'init': function(options) {
+        'getFilterJson': function(options)
+        {
+            var o = {
+                objectpk: '',
+                relatedidtype: '',
+                fieldtype: $thisProp.attr('fieldtype'),
+                propId: $thisProp.attr('propid')
+            };
+            if(options) $.extend(o,options);
 
-	 // function(options) {
-    };
+            var $thisProp = $(this);
+            var thisNodeProp = {}; //to return
+            var propName = $thisProp.val();
+            var filtArbitraryId = $thisProp.attr('filtarbitraryid');
+            var propArbitraryId = $thisProp.attr('proparbitraryid');
+            
+            var searchInputId = makeId({ID: 'search_input_filtarbitraryid', suffix: filtArbitraryId, prefix: o.idprefix});
+            var $searchInput = o.$parent.CswDOM('findelement',{ID: searchInputId});
+            var searchText;
+            switch( o.fieldtype )
+            { 
+                case 'Logical': 
+                {
+                    searchText = $searchInput.CswTristateCheckBox('value');
+                    break;
+                }
+                case 'List':
+                {
+                    var searchListId = makeId({ID: 'filtersoptions_select_filtarbitraryid', suffix: filtArbitraryId, prefix: o.idprefix});
+                    var $searchList = o.$parent.CswDOM('findelement',{ID: searchListId});
+                    searchText = $searchList.find(':selected').val();
+                    break;
+                }
+                default:
+                {
+                    searchText = $searchInput.val();
+                    break;
+                }
+            }
+            if(searchText !== '')
+            {
+                var $subField = o.$parent.CswDOM('findelement',{ID: 'subfield_select_filtarbitraryid_' + filtArbitraryId, prefix: o.idprefix});
+                var subFieldText = $subField.find(':selected').text();
+
+                var $filter = o.$parent.CswDOM('findelement',{ID: 'filter_select_filtarbitraryid_' + filtArbitraryId, prefix: o.idprefix});
+                var filterText = $filter.find(':selected').val();
+
+                var relatedidtype = $thisProp.attr('relatedidtype');
+                var propType = $thisProp.attr('proptype');
+                                
+                thisNodeProp = {
+                    objectpk: o.objectpk, // for NodeType filters
+                    relatedidtype: o.relatedidtype, // for NodeType filters
+                    proptype: propType,
+                    propid: o.propId,
+                    filtarbitraryid: filtArbitraryId,
+                    proparbitraryid: propArbitraryId,
+                    relatedidtype: relatedidtype,
+                    subfield: subFieldText,
+                    filter: filterText,
+                    searchtext: searchText  
+                };
+                
+            }
+            return thisNodeProp;
+        }, // 'getFilterJson': function(options) { 
+        'makefilter': function(options)
+        {
+            var o = {
+                url: '/NbtWebApp/wsNBT.asmx/makeViewPropFilter',
+                viewxml: '',
+                filtJson: '',
+                onSuccess: function() {}
+            };
+            if(options) $.extend(o,options);
+
+            var $filterXml;
+
+            CswAjaxXml({ 
+			'url': o.url,
+			'data': "ViewXml="  + o.viewxml + "&PropFiltJson=" + jsonToString(o.filtJson),
+            'success': function($filter) { 
+                    $filterXml = $filter;
+                    o.onSuccess();
+                }
+            });
+
+            return $filterXml;
+        } // 'makefilter': function(options)
+    } // methods 
+	 
+    $.fn.CswViewPropFilter = function (method) {
+		
+		if ( methods[method] ) {
+		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+		} else if ( typeof method === 'object' || ! method ) {
+		  return methods.init.apply( this, arguments );
+		} else {
+		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		}    
+  
+	};
 })(jQuery);
 
 
