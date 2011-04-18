@@ -367,6 +367,14 @@
 		};
 		if (options) $.extend(o, options);
 
+		// Defaults
+		if (o.nodeid == '' || o.nodeid == undefined)
+			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
+		if (o.cswnbtnodekey == '')
+			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
+		if (o.viewid != '')
+			$.CswCookie('get', CswCookieName.CurrentView.ViewId);
+
 		o.onAddNode = function (nodeid, cswnbtnodekey)
 			{
 				var ocopy = o;
@@ -472,15 +480,15 @@
 		if (manuallyCheckChanges())
 		{
 			var o = {
-				nodeid: $.CswCookie('get', CswCookieName.CurrentNode.NodeId),
-				cswnbtnodekey: $.CswCookie('get', CswCookieName.CurrentNode.NodeKey),
+				nodeid: '',
+				cswnbtnodekey: '',
 				nodename: '',
 				iconurl: '',
-                viewid: $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+                viewid: '',
 			    viewmode: 'tree'
 			};
 			if (options) $.extend(o, options);
-	        
+			
 			switch (o.viewmode)
 			{
 				case 'grid':
@@ -514,14 +522,21 @@
 		if (debug) log('NewMain.refreshNodesTree()');
 
 		var o = {
-			'nodeid': $.CswCookie('get', CswCookieName.CurrentNode.NodeId),
-			'cswnbtnodekey': $.CswCookie('get', CswCookieName.CurrentNode.NodeKey),
+			'nodeid': '',
+			'cswnbtnodekey': '',
 			'nodename': '', 
 			'iconurl': '',
-			'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+			'viewid': '',
 			'viewmode': 'tree'
 		};		
 		if (options) $.extend(o, options);
+
+		if (o.nodeid == '' || o.nodeid == undefined)
+			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
+		if (o.cswnbtnodekey == '')
+			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
+		if (o.viewid != '')
+			$.CswCookie('get', CswCookieName.CurrentView.ViewId);
 
 		clear({ left: true });
 
