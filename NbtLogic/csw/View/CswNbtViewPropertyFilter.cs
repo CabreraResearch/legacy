@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
+using System.Xml.Linq;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -196,6 +195,18 @@ namespace ChemSW.Nbt
             PropFilterNode.Attributes.Append( SubfieldNameAttribute );
 
             return PropFilterNode;
+        }
+
+        public XElement ToXElement()
+        {
+            XElement PropFilter = new XElement( CswNbtViewXmlNodeName.Filter.ToString(),
+                                     new XAttribute( "value", Value ),
+                                     new XAttribute( "filtermode", FilterMode.ToString() ),
+                                     new XAttribute( "casesensitive", CaseSensitive.ToString() ),
+                                     new XAttribute( "arbitraryid", ArbitraryId ),
+                                     new XAttribute( "subfieldname", SubfieldName.ToString() )
+                );
+            return PropFilter;
         }
 
         public override string ToString()
