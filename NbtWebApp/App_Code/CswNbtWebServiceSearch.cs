@@ -294,12 +294,12 @@ namespace ChemSW.Nbt.WebServices
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
 
-                foreach( JToken Ntp in NodesSearch["nodetypeprops"].Children() )
+                foreach( JToken FilterProp in NodesSearch["nodetypeprops"].Children() )
                 {
                     var PropType = CswNbtViewRelationship.RelatedIdType.Unknown;
-                    CswNbtViewRelationship.RelatedIdType.TryParse( (string)Ntp.First["relatedidtype"], true, out PropType );
-                    Int32 ObjectPk = CswConvert.ToInt32( (string) Ntp.First["objectpk"] );
-                    Int32 PropId = CswConvert.ToInt32( (string) Ntp.First["propid"] );
+                    CswNbtViewRelationship.RelatedIdType.TryParse( (string) FilterProp.First["relatedidtype"], true, out PropType );
+                    Int32 ObjectPk = CswConvert.ToInt32( (string) FilterProp.First["objectpk"] );
+                    Int32 PropId = CswConvert.ToInt32( (string) FilterProp.First["propid"] );
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
                     if( PropType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
                         Int32.MinValue != NodeTypeProp.ObjectClassPropId )
@@ -323,7 +323,7 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtMetaDataObjectClassProp ObjectClassProp = NodeTypeProp.ObjectClassProp;
                             CswNbtViewProperty ViewOcProperty = SearchView.AddViewProperty( OcRelationship, ObjectClassProp );
                             CswNbtViewPropertyFilter ViewOcPropFilt = SearchView.AddViewPropertyFilter( ViewOcProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
-                            _addViewPropFilter( Ntp, ref ViewOcPropFilt );
+                            _ViewBuilder.makeViewPropFilter( ViewOcPropFilt, FilterProp );
                         }
                     }
                     else
@@ -345,7 +345,7 @@ namespace ChemSW.Nbt.WebServices
 
                             CswNbtViewProperty ViewNtProperty = SearchView.AddViewProperty( NtRelationship, NodeTypeProp );
                             CswNbtViewPropertyFilter ViewNtPropFilt = SearchView.AddViewPropertyFilter( ViewNtProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
-                            _addViewPropFilter( Ntp, ref ViewNtPropFilt );
+                            _ViewBuilder.makeViewPropFilter( ViewNtPropFilt, FilterProp );
                         }
                     }
                 }

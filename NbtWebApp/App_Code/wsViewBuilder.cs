@@ -551,27 +551,30 @@ namespace ChemSW.Nbt.WebServices
                 !string.IsNullOrEmpty( PropArbitraryId ) &&
                 !string.IsNullOrEmpty( FiltArbitraryId ) )
             {
-                CswNbtViewProperty ViewProp = (CswNbtViewProperty) View.FindViewNodeByArbitraryId( PropArbitraryId );
                 CswNbtViewPropertyFilter ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
-                if( null != ViewPropFilt )
-                {
-                    var FieldName = CswNbtSubField.SubFieldName.Unknown;
-                    CswNbtSubField.SubFieldName.TryParse( (string) FilterProp.First["subfield"], true, out FieldName );
-                    var FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
-                    CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) FilterProp.First["filter"], true, out FilterMode );
-                    string SearchTerm = (string) FilterProp.First["searchtext"];
-
-                    ViewPropFilt.FilterMode = FilterMode;
-                    ViewPropFilt.SubfieldName = FieldName;
-                    ViewPropFilt.Value = SearchTerm;
-
-                    PropFilterXml = ViewPropFilt.ToXElement();
-                }
+                PropFilterXml = makeViewPropFilter( ViewPropFilt, FilterProp );
             }
-
             return PropFilterXml;
         }
+        public XElement makeViewPropFilter( CswNbtViewPropertyFilter ViewPropFilt, JToken FilterProp )
+        {
+            XElement PropFilterXml = new XElement( "propfilter" );
+            if( null != ViewPropFilt )
+            {
+                var FieldName = CswNbtSubField.SubFieldName.Unknown;
+                CswNbtSubField.SubFieldName.TryParse( (string) FilterProp.First["subfield"], true, out FieldName );
+                var FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+                CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) FilterProp.First["filter"], true, out FilterMode );
+                string SearchTerm = (string) FilterProp.First["searchtext"];
 
+                ViewPropFilt.FilterMode = FilterMode;
+                ViewPropFilt.SubfieldName = FieldName;
+                ViewPropFilt.Value = SearchTerm;
+
+                PropFilterXml = ViewPropFilt.ToXElement();
+            }
+            return PropFilterXml;
+        }
         #endregion Public Methods
     }
     #endregion wsViewBuilder
