@@ -517,6 +517,17 @@ function HandleMenuItem(options) {
 
 
 // ------------------------------------------------------------------------------------
+// Popups
+// ------------------------------------------------------------------------------------
+
+function openPopup(url, height, width) {
+	var popup = window.open(url, null, 'height=' + height + ', width=' + width + ', status=no, resizable=yes, scrollbars=yes, toolbar=yes, location=no, menubar=yes');
+	popup.focus();
+	return popup;
+}
+
+
+// ------------------------------------------------------------------------------------
 // Validation
 // ------------------------------------------------------------------------------------
 

@@ -31,11 +31,21 @@
 		{
 			$.extend(o, options);
 		}
+		var $parent = $(this);
 
 		var $outertabdiv = $('<div id="' + o.ID + '_tabdiv" />')
-						.appendTo($(this));
+						.appendTo($parent);
 
 		getTabs(o);
+
+		if(o.EditMode != 'PrintReport')
+		{
+			var $linkdiv = $('<div id="' + o.ID + '_linkdiv" align="right"/>')
+							.appendTo($parent);
+			var $AsReportLink = $('<a href="#">As Report</a>')
+							.appendTo($linkdiv)
+							.click(function() { openPopup('NewNodeReport.html?nodeid=' + o.nodeid + '&cswnbtnodekey=' + o.cswnbtnodekey, 600, 800); });
+		}
 
 		function clearTabs()
 		{
@@ -50,13 +60,19 @@
 				success: function ($xml)
 				{
 					clearTabs();
-					var $tabdiv = $("<div><ul></ul></div>");
-					$outertabdiv.append($tabdiv);
+					var tabdivs = [];
 					var selectedtabno = 0;
 					var tabno = 0;
+
 					$xml.children().each(function ()
 					{
 						$tab = $(this);
+						if(o.EditMode == 'PrintReport' || tabdivs.length == 0)
+						{
+							// For PrintReports, we're going to make a separate tabstrip for each tab
+							tabdivs[tabdivs.length] = $("<div><ul></ul></div>").appendTo($outertabdiv);
+						}
+						var $tabdiv = tabdivs[tabdivs.length - 1];
 						$tabdiv.children('ul').append('<li><a href="#' + $tab.attr('id') + '">' + $tab.attr('name') + '</a></li>');
 						$tabdiv.append('<div id="' + $tab.attr('id') + '"><form id="' + $tab.attr('id') + '_form" /></div>');
 						if($tab.attr('id') == o.tabid)
@@ -64,27 +80,33 @@
 							selectedtabno = tabno;
 						}
 						tabno++;
-					});
-					$tabdiv.tabs({
-						'selected': selectedtabno,
-						'select': function (event, ui)
-						{
-							if(o.onBeforeTabSelect(tabid))
-							{
-								var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
-								var tabid = $tabcontentdiv.attr('id');
-								getProps($tabcontentdiv, tabid);
+					});  // $xml.children().each(function ()
 
-								o.onTabSelect(tabid);
-							} else {
-								return false;
+					for(var t in tabdivs)
+					{
+						var $tabdiv = tabdivs[t];
+						$tabdiv.tabs({
+							'selected': selectedtabno,
+							'select': function (event, ui)
+							{
+								if(o.onBeforeTabSelect(tabid))
+								{
+									var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
+									var tabid = $tabcontentdiv.attr('id');
+									getProps($tabcontentdiv, tabid);
+
+									o.onTabSelect(tabid);
+								} else {
+									return false;
+								}
 							}
-						}
-					});
-					var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
-					var selectedtabid = $tabcontentdiv.attr('id');
-					getProps($tabcontentdiv, selectedtabid);
-					o.onTabSelect(selectedtabid);
+						});
+						var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
+						var selectedtabid = $tabcontentdiv.attr('id');
+						getProps($tabcontentdiv, selectedtabid);
+						o.onTabSelect(selectedtabid);
+					} // for(var t in tabdivs)
+
 				} // success{}
 			}); // ajax
 		} // getTabs()
@@ -105,6 +127,7 @@
 					var $layouttable = $form.CswLayoutTable('init', {
 						'ID': o.ID + '_props',
 						'OddCellRightAlign': true,
+						'ReadOnly': (o.EditMode == 'PrintReport'),
 						'cellset': {
 							rows: 1,
 							columns: 2
@@ -175,11 +198,14 @@
 
 					_handleProps($layouttable, $xml, $tabcontentdiv, tabid);
 
-					var $savetab = $form.CswButton({ID: 'SaveTab', 
-                                            enabledText: 'Save Changes', 
-                                            disabledText: 'Saving...', 
-                                            onclick: function () { Save($form, $layouttable, $xml) }
-                                            });
+					if(o.EditMode != 'PrintReport')
+					{
+						var $savetab = $form.CswButton({ID: 'SaveTab', 
+												enabledText: 'Save Changes', 
+												disabledText: 'Saving...', 
+												onclick: function () { Save($form, $layouttable, $xml) }
+												});
+					}
 
 					// Validation
 					$form.validate({
@@ -290,7 +316,8 @@
 					'$propxml': $propxml,
 					'onchange': function() { },
 					'onReload': function() { getProps($tabcontentdiv, tabid); },
-					'cswnbtnodekey': o.cswnbtnodekey
+					'cswnbtnodekey': o.cswnbtnodekey,
+					'EditMode': o.EditMode
 				};
 
 				fieldOpt.$propdiv.attr('nodeid', fieldOpt.nodeid);
@@ -318,6 +345,7 @@
 					var $subtable = $propcell.CswLayoutTable('init', {
 						'ID': fieldOpt.propid + '_subproptable',
 						'OddCellRightAlign': true,
+						'ReadOnly': (o.EditMode == 'PrintReport'),
 						'cellset': {
 							rows: 1,
 							columns: 2
