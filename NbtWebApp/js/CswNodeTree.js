@@ -273,6 +273,12 @@
 							// cause a race condition.
 							
 							$('.'+ IDPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
+							
+							// case 21424 - Manufacture unique IDs on the expand <ins> for automated testing
+							$treediv.find('li').each(function() {
+								var $li = $(this);
+								$li.children('ins').attr('id', $li.attr('id') + '_expand');
+							});
 
 						} else {
 							$treediv.append('No Results');
