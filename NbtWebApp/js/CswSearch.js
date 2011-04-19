@@ -73,7 +73,7 @@
             };
             if(options) $.extend(o,options);
     
-            if('Simple' === o.$link.text())
+            if('Advanced' === o.$link.text())
             {
                 $('.csw_viewbuilder_subfield_select').each(function() { $(this).show(); });
                 $('.csw_viewbuilder_filter_select').each(function() { $(this).show(); });
@@ -120,13 +120,15 @@
                     o.selectedSubfieldVal = ''; 
                     o.selectedFilterVal = '';
                     o.isHidden = true;               
-                    
+                    var filtArbitraryId = $thisProp.attr('filtarbitraryid');
                     var $propFilterRow = o.$parent.CswViewPropFilter('init', {
                                                     'idprefix': 'csw',
                                                     'propRow': propRow,
                                                     'firstColumn': 3,
                                                     'includePropertyName': true,
-                                                    '$propsXml': $thisProp
+                                                    '$propsXml': $thisProp,
+                                                    propIdName: 'filtarbitraryid',
+                                                    propIdSuffix: filtArbitraryId
                                                 });
                     propRow++;
             });
@@ -164,42 +166,38 @@
             o.$parent = o.$searchTable;
         
             //prop row(s) 1-?, Columns 3-6
-            renderNodePropsAndControls();
             var propRow = 1;
-            while(propRow <= o.propsCount) //in case we want to add multiple rows later       
-            {
-                //Row propRow, Column 3: properties 
-                var $propSelectCell = o.$parent.CswTable('cell', propRow, 3)
-                                        .empty();
-                var $props = $(xmlToString(o.$propsXml.children('properties').children('select')))
-                                .change(function() {
-                                        var $this = $(this);
-                                        var r = {
-                                            'selectedPropVal': $this.val(),
-                                            'selectedSubfieldVal': '',
-                                            'selectedFilterVal': ''
-                                        };
-                                        $.extend(o,r);
-                                        renderNodePropsAndControls(); });
+            //Row propRow, Column 3: properties 
+            var $propSelectCell = o.$parent.CswTable('cell', propRow, 3)
+                                    .empty();
+            var $props = $(xmlToString(o.$propsXml.children('properties').children('select')))
+                            .change(function() {
+                                    var $this = $(this);
+                                    var r = {
+                                        'selectedPropVal': $this.val(),
+                                        'selectedSubfieldVal': '',
+                                        'selectedFilterVal': ''
+                                    };
+                                    $.extend(o,r);
+                                    renderNodePropsAndControls(); });
                                 
-                if(o.selectedPropVal !== '' )
-                {
-                    $props.val(o.selectedPropVal).attr('selected',true);
-                }
-                $propSelectCell.append($props);
-                var propertyId = $props.find(':selected').val();
-                var $selectedProp = o.$propsXml.children('propertyfilters').children('property[propid='+ propertyId +']');
-        
-                var $propFilter = o.$parent.CswViewPropFilter('init', {
-                                                    'idprefix': 'csw',
-                                                    'propRow': propRow,
-                                                    'firstColumn': 3,
-                                                    'includePropertyName': false,
-                                                    '$propsXml': $selectedProp
-                                                });
-
-                propRow++;
+            if(o.selectedPropVal !== '' )
+            {
+                $props.val(o.selectedPropVal).attr('selected',true);
             }
+            $propSelectCell.append($props);
+            var propertyId = $props.find(':selected').val();
+            var $selectedProp = o.$propsXml.children('propertyfilters').children('property[propid='+ propertyId +']');
+        
+            var $propFilter = o.$parent.CswViewPropFilter('init', {
+                                                'idprefix': 'csw',
+                                                'propRow': propRow,
+                                                'firstColumn': 3,
+                                                'includePropertyName': false,
+                                                '$propsXml': $selectedProp,
+                                                propIdName: 'viewbuilderpropid',
+                                                propIdSuffix: propertyId
+                                            });
             
             o.bottomRow = (o.propsCount + 1);
             o.bottomCell = 2;
@@ -261,7 +259,7 @@
             var $advancedLink = $advancedLinkCell.CswDOM('link',{
                                                     ID: advancedLinkId,
                                                     href: '#advanced',
-                                                    value: 'Advanced' })
+                                                    value: 'init' })
                                                     .click(function() {
                                                             o.isHidden = modAdvanced({'$link': $advancedLink });
                                                     });  
@@ -352,59 +350,7 @@
 		    }); // CswAjaxXml
         } // init()
 
-//        function getBottomSpan()
-//        {                                                                                                                                                                                                                                            {
-//            var $bottomTable = o.$bottomspandiv.CswTable('init', {ID: o.idprefix + '_change_viewbuilder_tbl', 
-//                                                                cellpadding: 1,
-//                                                                cellspacing: 1,
-//                                                                cellalign: 'center',
-//                                                                align: 'right'});
-//            //Row 1, Column 1: load a search
-//            var $loadTableCell = $bottomTable.CswTable('cell', 1, 1);
-//            $loadTableCell.html('Load a Search:');
 //        
-//            var $viewSelect;
-//                                                                                                
-//            CswAjaxXml({ 
-//			    'url': o.getSearchableViewsUrl,
-//			    'data': "IsMobile=" + false + "&OrderBy=" + "&IdPrefix=" + o.idprefix,
-//                'success': function($views) { 
-//                        //Row 1, Column 2: view select
-//                        var $viewSelectCell = $bottomTable.CswTable('cell', 1, 2);
-//                        $viewSelect = $(xmlToString($views));
-//                        $viewSelectCell.append($viewSelect);
-//                    }
-//                });
-
-//            //Row 1, Column 3: load button
-//            var $loadButtonCell = $bottomTable.CswTable('cell', 1, 3);
-//            var $loadButton = $loadButtonCell.CswButton({ID: 'load_button', 
-//                                                prefix: o.idprefix,
-//                                                enabledText: 'Load', 
-//                                                disabledText: 'Loading', 
-//                                                onclick: function() {
-//                                                        var r = {
-//                                                            'viewid': $viewSelect.find(':selected').val(),
-//                                                            'viewmode': $viewSelect.find(':selected').attr('title'),
-//                                                        };
-//                                                        $.extend(o,r);                                                    
-//                                                        o.$cswSearchForm.empty();
-//                                                        
-//                                                        //$.CswCookie('set', CswCookieName.CurrentView.ViewId, r.viewid);
-//                                                        //$.CswCookie('set', CswCookieName.CurrentView.ViewMode, r.viewmode);
-//                                                        init();
-//                                                        window.location.replace('NewMain.html');
-//                                                    }
-//                                                });
-
-//            //Row 2, Column 2: new custom search
-//            var $customSearchCell = $bottomTable.CswTable('cell', 2, 2);
-//            var $customSearch = $customSearchCell.CswDOM('link',{
-//                                                            ID: 'new_custom_viewbuilder',
-//                                                            prefix: o.idprefix,
-//                                                            href: '#customsearch',
-//                                                            value: 'New Custom Search' }); 
-//        } // getBottomSpan()
 
         function doSearch()
         {
@@ -480,3 +426,56 @@
 })(jQuery);
 
 
+//function getBottomSpan()
+//        {                                                                                                                                                                                                                                            {
+//            var $bottomTable = o.$bottomspandiv.CswTable('init', {ID: o.idprefix + '_change_viewbuilder_tbl', 
+//                                                                cellpadding: 1,
+//                                                                cellspacing: 1,
+//                                                                cellalign: 'center',
+//                                                                align: 'right'});
+//            //Row 1, Column 1: load a search
+//            var $loadTableCell = $bottomTable.CswTable('cell', 1, 1);
+//            $loadTableCell.html('Load a Search:');
+//        
+//            var $viewSelect;
+//                                                                                                
+//            CswAjaxXml({ 
+//			    'url': o.getSearchableViewsUrl,
+//			    'data': "IsMobile=" + false + "&OrderBy=" + "&IdPrefix=" + o.idprefix,
+//                'success': function($views) { 
+//                        //Row 1, Column 2: view select
+//                        var $viewSelectCell = $bottomTable.CswTable('cell', 1, 2);
+//                        $viewSelect = $(xmlToString($views));
+//                        $viewSelectCell.append($viewSelect);
+//                    }
+//                });
+
+//            //Row 1, Column 3: load button
+//            var $loadButtonCell = $bottomTable.CswTable('cell', 1, 3);
+//            var $loadButton = $loadButtonCell.CswButton({ID: 'load_button', 
+//                                                prefix: o.idprefix,
+//                                                enabledText: 'Load', 
+//                                                disabledText: 'Loading', 
+//                                                onclick: function() {
+//                                                        var r = {
+//                                                            'viewid': $viewSelect.find(':selected').val(),
+//                                                            'viewmode': $viewSelect.find(':selected').attr('title'),
+//                                                        };
+//                                                        $.extend(o,r);                                                    
+//                                                        o.$cswSearchForm.empty();
+//                                                        
+//                                                        //$.CswCookie('set', CswCookieName.CurrentView.ViewId, r.viewid);
+//                                                        //$.CswCookie('set', CswCookieName.CurrentView.ViewMode, r.viewmode);
+//                                                        init();
+//                                                        window.location.replace('NewMain.html');
+//                                                    }
+//                                                });
+
+//            //Row 2, Column 2: new custom search
+//            var $customSearchCell = $bottomTable.CswTable('cell', 2, 2);
+//            var $customSearch = $customSearchCell.CswDOM('link',{
+//                                                            ID: 'new_custom_viewbuilder',
+//                                                            prefix: o.idprefix,
+//                                                            href: '#customsearch',
+//                                                            value: 'New Custom Search' }); 
+//        } // getBottomSpan()
