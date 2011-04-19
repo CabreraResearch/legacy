@@ -47,7 +47,7 @@
         var $parent = $(this);
         o.$searchTable = $parent.CswDOM('div',{ID: 'CswSearchForm', prefix: o.idprefix});
         
-        var $topspan = $cswSearchForm.CswDOM('span');
+        var $topspan = o.$searchTable.CswDOM('span');
 
         var $topspandiv = $topspan.CswDOM('div',{
                                     ID: 'search_criteria_div',
@@ -60,7 +60,6 @@
         //var $bottomspandiv = $bottomspan.CswDOM('div',{
         //                            ID: 'change_viewbuilder_div',
         //                            prefix: o.idprefix });
-
 
         init();
 
@@ -422,7 +421,7 @@
             }
         } // doSearch()
 
-    return $cswSearchForm;
+    return o.$searchTable;
 
 	 // function(options) {
     };
