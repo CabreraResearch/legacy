@@ -49,7 +49,7 @@
             }
 
             function renderPropFiltRow()
-            {                                                                                                                                                                                                                                                                                                                                                            {
+            {
                 var propertyId = o.$propsXml.attr('propid');
                 var propertyName = o.$propsXml.attr('propname');
                 var filtArbitraryId = o.$propsXml.attr('filtarbitraryid');
@@ -145,9 +145,9 @@
                                                     .attr('autofocus','true')
                                                     .attr({width:"200px"});
                 }
-            } //who owns this "}" ??
+            }
             return $propFilterTable;
-        }}, // 'init': function(options) {
+        }, // 'init': function(options) {
         'getFilterJson': function(options)
         {
             var $thisProp = $(this);
