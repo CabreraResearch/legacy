@@ -108,15 +108,17 @@
                     } // for(var c = 0; c < o.cols.length; c++)
                 } // for(var r = 0; r < o.data.length; r++)
 
-                var CheckAllLinkText = "Check All";
-                if($('.CBACheckBox_' + o.ID).not(':checked').length == 0)
-                    CheckAllLinkText = "Uncheck All";
+				if(!o.UseRadios)
+				{
+					var CheckAllLinkText = "Check All";
+					if($('.CBACheckBox_' + o.ID).not(':checked').length == 0)
+						CheckAllLinkText = "Uncheck All";
 
-                var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ CheckAllLinkText +'</a></div>')
-                                     .appendTo($Div);
-                var $checkalllink = $checkalldiv.children('a');
-                $checkalllink.click(function() { ToggleCheckAll($checkalllink, o.ID); return false; });
-
+					var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ CheckAllLinkText +'</a></div>')
+										 .appendTo($Div);
+					var $checkalllink = $checkalldiv.children('a');
+					$checkalllink.click(function() { ToggleCheckAll($checkalllink, o.ID); return false; });
+				}
             }, // init
 
             getdata: function (options) {
