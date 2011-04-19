@@ -68,7 +68,7 @@ var ViewBuilder_CssClasses = {
                 'proparbitraryid': '',
                 'filtarbitraryid': '',
                 'viewbuilderpropid': '',
-                'idprefix': 'csw',
+                'idprefix': '',
                 'propRow': 1,
                 'firstColumn': 3,
                 'includePropertyName': false,
@@ -97,7 +97,7 @@ var ViewBuilder_CssClasses = {
 		            'url': o.getNewPropsUrl,
 		            'data': "ViewXml=" + o.viewxml + "&PropArbitraryId=" + o.proparbitraryid,
                     'success': function($xml) { 
-                                o.$propsXml = $xml.children('viewbuilderprops').children('property');
+                                o.$propsXml = $xml.children('propertyfilters').children('property');
                                 filtOpt.filtarbitraryid = o.$propsXml.attr('filtarbitraryid');
                                 renderPropFiltRow(filtOpt);
                     } //success
@@ -127,7 +127,7 @@ var ViewBuilder_CssClasses = {
                 var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, 4)                                                    .empty();                var defaultSubFieldId = makePropFilterId('default_filter', filtOpt);                var $defaultSubField = $subfieldCell.CswDOM('span', {                                                    ID: defaultSubFieldId,                                                    value: $defaultFilter,                                                    cssclass: ViewBuilder_CssClasses.default_filter.name })                                                .attr({align:"center"});
                 $defaultSubField.hide(); //for Search
                 //Row propRow, Column 4: subfield picklist 
-                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)) //4
+                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)); //4
                 var $subfieldsOptions = $(xmlToString(o.$propsXml.children('subfields').children('select')))
                                         .change(function() {
                                             var $this = $(this);
