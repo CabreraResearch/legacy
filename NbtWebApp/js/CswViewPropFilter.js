@@ -37,7 +37,7 @@
 		            'url': o.getNewPropsUrl,
 		            'data': "ViewXml=" + o.viewxml + "&PropArbitraryId=" + o.proparbitraryid,
                     'success': function($xml) { 
-                                o.$propsXml = $xml.children('nodetypeprops').children('properties');
+                                o.$propsXml = $xml.children('propertyfilters').children('property');
                                 renderPropFiltRow();
                     } //success
                 }); //ajax

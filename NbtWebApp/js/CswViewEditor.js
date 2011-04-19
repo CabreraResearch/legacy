@@ -483,39 +483,32 @@
 					var $li = $a.parent();
 					var $span = $li.children('ul').children('li').children('span.vieweditor_addfilter');
 
-//					var $filttable = $('.vieweditor_addfilter').CswViewPropFilter({
-//						'viewxml': xmlToString($currentviewxml),
-//						'proparbitraryid': arbid
-//					});
-//					var filterxml = $filttable.CswViewPropFilter('getSelected');
-
+					$span.empty();
 					var $tbl = $span.CswTable({ 'ID': o.ID + '_propfilttbl' });
 					$tbl.CswViewPropFilter('init', {
                                                     'idprefix': o.ID,
                                                     'propRow': 1, 
                                                     'firstColumn': 1, 
                                                     'includePropertyName': true,
-                                                    'propIdName': 'filtarbitraryid',
+                                                    'propIdName': '',
+                                                    'propIdSuffix': '',
                                                     'proparbitraryid': $span.attr('proparbid'),
 													'viewxml': xmlToString($currentviewxml)
                                                 });
+					
+					$tbl.CswTable('cell', 1, 5).CswButton('init', {
+						'ID':	'addfiltbtn',
+						'prefix': o.ID,
+						'enabledText': 'Add',
+						'disabledText': 'Adding',
+						'onclick': function () { 
+							var Json = $tbl.CswViewPropFilter('getFilterJson', { idprefix: o.ID, $parent: $span })
+							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 'viewxml': xmlToString($currentviewxml), 'filtJson': Json });
+							$currentviewxml.find('[arbitraryid="' + $span.attr('arbid') +'"]').append(filterxml);
+							_makeViewTree(stepno, $div);
+						}
+					});
 					$span.show();
-
-
-//1. On a table element, call: $mytable.CswViewPropFilter('init', {
-//                                                    'idprefix': 'csw',
-//                                                    'propRow': 1, 
-//                                                    'firstColumn': 3, 
-//                                                    'includePropertyName': true,
-//                                                    propIdName: 'filtarbitraryid',
-//                                                    propIdSuffix: filtArbitraryId
-//                                                });
-//2. When ready to submit, get a JSON formatted string from the propfilter:
-
-//var Json = $mytable.CswViewPropFilter('getFilterJson',{idprefix: o.idprefix, $parent: o.$parent})
-//[9:09:26 AM] Christopher Froehlich: 3. Submit that to the webservice to create viewpropfilter and return the filter XML:
-
-//$mytable.CswViewPropFilter('makeFilter',{viewxml: somexml, filtJson: Json});
 
 				}); // property click
 			}
