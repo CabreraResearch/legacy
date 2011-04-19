@@ -1,4 +1,10 @@
-﻿; (function ($) {
+﻿// for CswSearch
+var CswSearch_CssClasses = {
+    nodetype_select: { name: 'csw_search_nodetype_select' },
+    property_select: { name: 'csw_search_property_select' }
+};
+
+;  (function ($) {
 	$.fn.CswSearch = function (options) {
 
         var o = { 
@@ -146,7 +152,7 @@
             var $nodeTypesSelect = $(xmlToString(o.$nodeTypesXml.children('select')))
                                     .attr('id', nodeTypeSelectId)
                                     .attr('name', nodeTypeSelectId)
-                                    .attr('class','csw_search_nodetype_select')
+                                    .attr('class',CswSearch_CssClasses.nodetype_select.name)
                                     .change( function() {
                                        var $thisSelect = $(this);
                                        var r = {
@@ -172,7 +178,7 @@
             var $props = $(xmlToString(o.$propsXml.children('properties').children('select')))
                             .attr('id', propSelectId)
                             .attr('name', propSelectId)
-                            .attr('class','csw_search_property_select')
+                            .attr('class',CswSearch_CssClasses.property_select.name)
                             .change(function() {
                                     var $this = $(this);
                                     var r = {
@@ -367,6 +373,7 @@
             var props = [];
             var propno = 1;
             var searchUrl;
+
             switch(o.searchtype)
             {
                 case 'nodetypesearch':
@@ -375,7 +382,7 @@
                     var objectPk = o.$nodeTypesSelect.val();
                     var relatedIdType = o.$nodeTypesSelect.find(':selected').attr('title');
 
-                    $('.csw_viewbuilder_properties_select').each(function() {
+                    $('.' + CswSearch_CssClasses.property_select.name).each(function() {
                             var $thisProp = $(this);
                             var propName = $thisProp.text();
                             var viewbuildpropid = $thisProp.val();
@@ -401,7 +408,12 @@
                 {
                     searchUrl = o.doViewSearchUrl;
                     o.$propsXml.children('property').each(function() {
-                            var PropFilter = $(this).CswViewPropFilter('getFilterJson',{idprefix: o.idprefix, $parent: o.$searchTable});
+                            var $thisProp = $(this);
+                            var filterarbitraryid = $thisProp.attr('filtarbitraryid');
+                            var PropFilter = $thisProp.CswViewPropFilter('getFilterJson',{idprefix: o.idprefix, 
+                                                                                          $parent: o.$searchTable,
+                                                                                          filterarbitraryid: filterarbitraryid
+                                                                                          });
                             props.push(PropFilter);
                         });
                     searchOpt = { 
