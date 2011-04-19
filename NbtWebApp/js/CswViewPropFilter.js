@@ -8,7 +8,7 @@
 		{
             var o = { 
                 //URLs
-                'getNewPropsUrl': '/NbtWebApp/wsNBT.asmx/getViewPropFilter',
+                'getNewPropsUrl': '/NbtWebApp/wsNBT.asmx/getViewPropFilterUI',
 
                 //options
 			    'viewid': '',
