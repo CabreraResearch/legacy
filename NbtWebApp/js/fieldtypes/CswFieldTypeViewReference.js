@@ -9,7 +9,7 @@
                 $Div.contents().remove();
 
                 var ViewId = o.$propxml.children('viewid').text().trim();
-                var ViewMode = o.$propxml.children('viewmode').text().trim();
+                var ViewMode = o.$propxml.children('viewmode').text().trim().toLowerCase();
                 var ViewName = o.$propxml.children('name').text().trim();
 
 				var $table = $Div.CswTable('init', { 'ID': o.ID + '_tbl' });
@@ -22,6 +22,11 @@
 					'onClick': function ($ImageDiv) {
 						$.CswCookie('set', CswCookieName.CurrentView.ViewId, ViewId);
 						$.CswCookie('set', CswCookieName.CurrentView.ViewMode, ViewMode);
+						
+						// case 20958 - so that it doesn't treat the view as a Grid Property view
+						$.CswCookie('clear', CswCookieName.CurrentNode.NodeId, o.viewid);
+						$.CswCookie('clear', CswCookieName.CurrentNode.NodeKey, o.viewmode);
+						
 						window.location = "NewMain.html";
 						return CswImageButton_ButtonType.None; 
 					}
