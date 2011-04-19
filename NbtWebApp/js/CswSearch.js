@@ -45,8 +45,7 @@
         if(options) $.extend(o, options);
         
         var $parent = $(this);
-        var $cswSearchForm = $parent.CswDOM('div',{ID: 'CswSearchForm', prefix: o.idprefix});
-        o.$parent = $cswSearchForm; //refactor $parent for name clarity
+        o.$searchTable = $parent.CswDOM('div',{ID: 'CswSearchForm', prefix: o.idprefix});
         
         var $topspan = $cswSearchForm.CswDOM('span');
 
@@ -116,12 +115,11 @@
                                                                 value: $thisProp.attr('metadatatypename'),
                                                                 cssclass: 'csw_viewbuilder_metadatatype_static'})
                                                   .attr('relatedidtype',$thisProp.attr('relatedidtype') );
-                    o.$parent = o.$searchTable;
                     o.selectedSubfieldVal = ''; 
                     o.selectedFilterVal = '';
                     o.isHidden = true;               
                     var filtArbitraryId = $thisProp.attr('filtarbitraryid');
-                    var $propFilterRow = o.$parent.CswViewPropFilter('init', {
+                    var $propFilterRow = o.$searchTable.CswViewPropFilter('init', {
                                                     'idprefix': 'csw',
                                                     'propRow': propRow,
                                                     'firstColumn': 3,
@@ -136,7 +134,6 @@
             o.bottomRow = propRow;
             o.bottomCell = 1;
             o.searchtype = 'viewsearch';
-            o.$parent = o.$searchTable;
             
             renderSearchButtons();
         } // renderViewBasedSearchContent()
@@ -163,12 +160,10 @@
             o.$nodeTypesSelect = $nodeTypesSelect;
             $typeSelectCell.append($nodeTypesSelect);
         
-            o.$parent = o.$searchTable;
-        
             //prop row(s) 1-?, Columns 3-6
             var propRow = 1;
             //Row propRow, Column 3: properties 
-            var $propSelectCell = o.$parent.CswTable('cell', propRow, 3)
+            var $propSelectCell = o.$searchTable.CswTable('cell', propRow, 3)
                                     .empty();
             var $props = $(xmlToString(o.$propsXml.children('properties').children('select')))
                             .change(function() {
@@ -179,7 +174,7 @@
                                         'selectedFilterVal': ''
                                     };
                                     $.extend(o,r);
-                                    o.$parent.CswViewPropFilter('init', {
+                                    o.$searchTable.CswViewPropFilter('init', {
                                                 'idprefix': 'csw',
                                                 'propRow': propRow,
                                                 'firstColumn': 3,
@@ -198,7 +193,7 @@
             var propertyId = $props.find(':selected').val();
             var $selectedProp = o.$propsXml.children('propertyfilters').children('property[propid='+ propertyId +']');
         
-            var $propFilter = o.$parent.CswViewPropFilter('init', {
+            var $propFilter = o.$searchTable.CswViewPropFilter('init', {
                                                 'idprefix': 'csw',
                                                 'propRow': propRow,
                                                 'firstColumn': 3,
@@ -221,7 +216,7 @@
 		                'data': "RelatedIdType=" + o.relatedIdType + "&ObjectPk=" + o.nodetypeid + "&IdPrefix=" + o.idprefix + "&NodeKey=" + o.cswnbtnodekey,
                         'success': function($xml) { 
                                 o.$propsXml = $xml;
-                                o.$parent.CswViewPropFilter('init', {
+                                o.$searchTable.CswViewPropFilter('init', {
                                                 'idprefix': 'csw',
                                                 'propRow': propRow,
                                                 'firstColumn': 3,
@@ -236,14 +231,14 @@
 
         function renderSearchButtons()
         {
-            var $clearPosition = o.$parent;
+            var $clearPosition = o.$searchTable;
             var clearCellNumber = o.bottomCell;
             var advancedCellNumber = clearCellNumber + 1;
             var cellRow = o.bottomRow;
             if(o.searchtype === 'nodetypesearch')
             {
                 //Row i, Column 1: cell for clear/advanced                                            
-                var $splitCell = o.$parent.CswTable('cell', o.bottomRow, o.bottomCell)
+                var $splitCell = o.$searchTable.CswTable('cell', o.bottomRow, o.bottomCell)
                                     .empty();
                 var splitCellTableId = makeId({prefix: o.idprefix, ID: 'split_cell_table'});
                 var $splitCellTable = $splitCell.CswTable('init',{ID: splitCellTableId, 
@@ -282,7 +277,7 @@
                                                     });  
             modAdvanced({$link: $advancedLink});                                   
             //Row i, Column 5: search button
-            var $searchButtonCell = o.$parent.CswTable('cell', o.bottomRow, o.searchBtnCell)
+            var $searchButtonCell = o.$searchTable.CswTable('cell', o.bottomRow, o.searchBtnCell)
                                     .attr({align:"right"})
                                     .empty();
             var searchButtonId = makeId({ID: 'search_button', prefix: o.idprefix});
@@ -321,7 +316,6 @@
         function init()
         {
             //var $titlespan = $('<span style="align: center;">Search</span>');
-            //o.$parent.append( $titlespan );
             $topspandiv.empty();
             CswAjaxXml({ 
 		        'url': o.getClientSearchXmlUrl,
@@ -385,7 +379,7 @@
                                                                                           relatedidtype: relatedIdType,  
                                                                                           fieldtype: fieldtype,
                                                                                           idprefix: o.idprefix,
-                                                                                          $parent: o.$parent,
+                                                                                          $parent: o.$searchTable,
                                                                                           propId: propId,
                                                                                           propIdName: 'viewbuilderpropid',
                                                                                           propIdSuffix: propId
@@ -402,7 +396,7 @@
                 {
                     searchUrl = o.doViewSearchUrl;
                     o.$propsXml.children('property').each(function() {
-                            var PropFilter = $(this).CswViewPropFilter('getFilterJson',{idprefix: o.idprefix, $parent: o.$parent});
+                            var PropFilter = $(this).CswViewPropFilter('getFilterJson',{idprefix: o.idprefix, $parent: o.$searchTable});
                             props.push(PropFilter);
                         });
                     searchOpt = { 
