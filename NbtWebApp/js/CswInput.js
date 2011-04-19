@@ -58,7 +58,7 @@ var inputTypes = {
             
             if( o.type !== '' && o.type !== undefined ) 
             {
-                $input.attr('type', o.type);
+                $input.attr('type', o.type.name);
                 //cannot style placeholder across all browsers yet. Ignore for now.
                 //if( o.type.placeholder === true && o.placeholder !== '')
                 //{
