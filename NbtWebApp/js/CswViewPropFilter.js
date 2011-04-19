@@ -136,7 +136,7 @@
                             filtValue += "'s " +  $subfieldsOptions.find(':selected').text();
                         }  
                     }
-                    var $filtValInput = $propFilterValueCell.CswDOM('input',{
+                    var $filtValInput = $propFilterValueCell.CswInput('init',{
                                                             ID: filtValInputId,
                                                             type: 'text',
                                                             cssclass: 'csw_search_input',
@@ -172,7 +172,7 @@
 
             var thisNodeProp = {}; //to return
             
-            var $searchInput = o.$parent.CswDOM('findelement',{ID: searchInputId});
+            var $searchInput = o.$parent.CswInput('get',{ID: searchInputId});
             var searchText;
             switch( o.fieldtype )
             { 
