@@ -200,6 +200,31 @@
 											});
 			} // success{} 
 		});
+		
+		
+		// Adapted from 
+		// http://stackoverflow.com/questions/2549466/is-there-a-way-to-make-jqgrid-scroll-to-the-bottom-when-a-new-row-is-added/2549654#2549654
+
+		function getGridRowHeight (targetGrid) {
+			var height = null; // Default
+
+			try{
+				height = jQuery(targetGrid).find('tbody').find('tr:first').outerHeight();
+			}
+			catch(e){
+			 //catch and just suppress error
+			}
+
+			return height;
+		}
+
+		function scrollToRow (targetGrid, id) {
+			var rowHeight = getGridRowHeight(targetGrid) || 23; // Default height
+			var index = jQuery(targetGrid).getInd(id);
+			jQuery(targetGrid).closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * index);
+		}
+		
+		
 		// For proper chaining support
 		return this;
 
