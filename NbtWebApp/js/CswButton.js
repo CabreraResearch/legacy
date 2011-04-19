@@ -24,7 +24,7 @@
 			if (options) $.extend(o, options);
 
 			var $parent = $(this);
-			var elementId = o.prefix + '_' + o.ID;
+			var elementId = makeId({ prefix: o.prefix, ID: o.ID });
 			var $button = $('<input />').attr('type', o.inputType)
 										.attr('id', elementId)
 										.attr('name', elementId);
