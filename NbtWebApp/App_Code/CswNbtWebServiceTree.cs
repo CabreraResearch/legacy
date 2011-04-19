@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.WebServices
 
 		public XElement getTree( CswNbtView View, string IDPrefix, bool IsFirstLoad, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool UsePaging )
 		{
-			var ReturnNode = new XElement( "root" );
+			var ReturnNode = new XElement( "result" );
 			string EmptyOrInvalid = "";
 		    string ViewName = string.Empty;
 			//bool IsFirstLoad = true;
@@ -67,8 +67,7 @@ namespace ChemSW.Nbt.WebServices
 
 					if( IsFirstLoad )
 					{
-						ReturnNode = new XElement( "result",
-										new XElement( "tree", RootNode ),
+						ReturnNode.Add( new XElement( "tree", RootNode ),
 										new XElement( "viewid", View.SessionViewId ),
 										new XElement( "types", getTypes( View ).ToString() ) );
 					}
@@ -92,17 +91,22 @@ namespace ChemSW.Nbt.WebServices
             if( string.IsNullOrEmpty( ViewName ) ) ViewName = "No View Selected";
 			if( !string.IsNullOrEmpty( EmptyOrInvalid ) )
 			{
-				ReturnNode = new XElement( "root",
-									new XElement( "item",
-										new XAttribute( "id", "-1" ),
-										new XAttribute( "rel", "root" ),
-											new XElement( "content",
-												new XElement( "name", ViewName ) ),
-                                        new XElement( "item",
-										new XAttribute( "id", "-1" ),
-										new XAttribute( "rel", "child" ),
-											new XElement( "content",
-												new XElement( "name", EmptyOrInvalid ) ) ) ) );
+                ReturnNode.Add( new XElement( "tree",
+                    new XElement( "root",
+                                    new XElement( "item",
+                                        new XAttribute( "id", "-1" ),
+                                        new XAttribute( "rel", "root" ),
+                                            new XElement( "content",
+                                                new XElement( "name", ViewName ) ),
+
+                                            new XElement( "item",
+                                            new XAttribute( "id", "-1" ),
+                                            new XAttribute( "rel", "child" ),
+                                                new XElement( "content",
+                                                    new XElement( "name", EmptyOrInvalid ) ) ) ) )
+                                        ),
+                                new XElement( "viewid", View.SessionViewId ),
+                                new XElement( "types", getTypes( View ).ToString() ) );
 			}
 			return ReturnNode;
 		} // getTree()
