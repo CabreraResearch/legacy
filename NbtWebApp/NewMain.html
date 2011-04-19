@@ -152,9 +152,13 @@
 		{
             $('#CenterTopDiv').empty();
 		}
-        if (o.all || o.centerbottom)
+        	if (o.all || o.centerbottom)
 		{
     		$('#CenterBottomDiv').empty();
+		}
+		if (o.all)
+		{
+			$('#MainMenuDiv').empty();
 		}
 	}
 
@@ -278,8 +282,8 @@
 			    {
 				    multi = !multi;
 				    refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-			    },
-                'onSearch': function()
+			},
+			'onSearch': function()
                 {
                     var $search = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': MainSearchId, 'prefix': o.prefix });
                     if ($search.is(':hidden'))
@@ -290,6 +294,21 @@
                     {
                         $search.hide();
                     }
+                },
+			'onEditView': function (viewid)
+			{
+				clear({ 'all': true });
+				$('#CenterTopDiv').CswViewEditor({
+					'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+					'onCancel': function() {
+						clear({ 'all': true });
+						refreshSelected();
+					},
+					'onFinish': function(viewid, viewmode) {
+						clear({ 'all': true });
+						handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+					}
+				});
                 },
 			    'Multi': multi,
 			    'NodeCheckTreeId': MainTreeId
@@ -352,6 +371,14 @@
             onDeleteNode: ''
 		};
 		if (options) $.extend(o, options);
+
+		// Defaults
+		if (o.nodeid == '' || o.nodeid == undefined)
+			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
+		if (o.cswnbtnodekey == '')
+			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
+		if (o.viewid != '')
+			$.CswCookie('get', CswCookieName.CurrentView.ViewId);
 
 		o.onAddNode = function (nodeid, cswnbtnodekey)
 			{
@@ -458,15 +485,15 @@
 		if (manuallyCheckChanges())
 		{
 			var o = {
-				nodeid: $.CswCookie('get', CswCookieName.CurrentNode.NodeId),
-				cswnbtnodekey: $.CswCookie('get', CswCookieName.CurrentNode.NodeKey),
+				nodeid: '',
+				cswnbtnodekey: '',
 				nodename: '',
 				iconurl: '',
-                viewid: $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+                viewid: '',
 			    viewmode: 'tree'
 			};
 			if (options) $.extend(o, options);
-	        
+			
 			switch (o.viewmode)
 			{
 				case 'grid':
@@ -500,14 +527,21 @@
 		if (debug) log('NewMain.refreshNodesTree()');
 
 		var o = {
-			'nodeid': $.CswCookie('get', CswCookieName.CurrentNode.NodeId),
-			'cswnbtnodekey': $.CswCookie('get', CswCookieName.CurrentNode.NodeKey),
+			'nodeid': '',
+			'cswnbtnodekey': '',
 			'nodename': '', 
 			'iconurl': '',
-			'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+			'viewid': '',
 			'viewmode': 'tree'
 		};		
 		if (options) $.extend(o, options);
+
+		if (o.nodeid == '' || o.nodeid == undefined)
+			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
+		if (o.cswnbtnodekey == '')
+			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
+		if (o.viewid != '')
+			$.CswCookie('get', CswCookieName.CurrentView.ViewId);
 
 		clear({ left: true });
 

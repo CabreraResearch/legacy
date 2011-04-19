@@ -397,7 +397,7 @@ namespace ChemSW.Nbt
                     //if( StringRelationship[14] != String.Empty )
                     //    ShowInGrid = Convert.ToBoolean( StringRelationship[14] );
                     if( StringRelationship[15] != String.Empty )
-                        AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), StringRelationship[15] );
+                        AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), StringRelationship[15], true );
                     if( StringRelationship[16] != String.Empty )
                         AllowDelete = Convert.ToBoolean( StringRelationship[16] );
                     if( StringRelationship[17] != String.Empty )
@@ -460,12 +460,19 @@ namespace ChemSW.Nbt
                                RelationshipNode.Attributes[SecondNameAttrName].Value,
                                icon );
                 }
-                if( RelationshipNode.Attributes[GroupByPropIdAttrName] != null )
-                {
-                    setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), RelationshipNode.Attributes[GroupByPropTypeAttrName].Value, true ),
-                                    CswConvert.ToInt32( RelationshipNode.Attributes[GroupByPropIdAttrName].Value ),
-                                    RelationshipNode.Attributes[GroupByPropNameAttrName].Value );
-                }
+				if( RelationshipNode.Attributes[GroupByPropIdAttrName] != null )
+				{
+					if( RelationshipNode.Attributes[GroupByPropTypeAttrName].Value != string.Empty )
+					{
+						setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), RelationshipNode.Attributes[GroupByPropTypeAttrName].Value, true ),
+										CswConvert.ToInt32( RelationshipNode.Attributes[GroupByPropIdAttrName].Value ),
+										RelationshipNode.Attributes[GroupByPropNameAttrName].Value );
+					}
+					else
+					{
+						clearGroupBy();
+					}
+				} 
 
                 if( RelationshipNode.Attributes[SelectableAttrName] != null )
                     Selectable = Convert.ToBoolean( RelationshipNode.Attributes[SelectableAttrName].Value );
@@ -502,12 +509,12 @@ namespace ChemSW.Nbt
             {
                 foreach( XmlNode ChildNode in RelationshipNode.ChildNodes )
                 {
-                    if( ChildNode.Name == CswNbtViewXmlNodeName.Relationship.ToString() )
+					if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Relationship.ToString().ToLower() )
                     {
                         CswNbtViewRelationship ChildRelationshipNode = new CswNbtViewRelationship( CswNbtResources, _View, ChildNode );
                         this.addChildRelationship( ChildRelationshipNode );
                     }
-                    if( ChildNode.Name == CswNbtViewXmlNodeName.Property.ToString() )
+					if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Property.ToString().ToLower() )
                     {
                         CswNbtViewProperty ChildProp = new CswNbtViewProperty( CswNbtResources, _View, ChildNode );
                         this.addProperty( ChildProp );

@@ -85,7 +85,7 @@
 				viewname: '',
 				viewmode: '',
 				onSelect: function() { },
-				$selectdiv: '',
+				$selectdiv: ''
 				};
 		if(optSelect){
 			$.extend(x, optSelect);
