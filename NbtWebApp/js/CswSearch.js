@@ -123,7 +123,7 @@ var CswSearch_CssClasses = {
                                                   .attr('relatedidtype',$thisProp.attr('relatedidtype') );
                     o.selectedSubfieldVal = ''; 
                     o.selectedFilterVal = '';
-                    o.isHidden = true;               
+                    //o.isHidden = true;               
                     var filtArbitraryId = $thisProp.attr('filtarbitraryid');
                     var $propFilterRow = o.$searchTable.CswViewPropFilter('init', {
                                                     'idprefix': o.idprefix,
@@ -281,11 +281,11 @@ var CswSearch_CssClasses = {
             var $advancedLink = $advancedLinkCell.CswDOM('link',{
                                                     ID: advancedLinkId,
                                                     href: '#advanced',
-                                                    value: 'init' })
+                                                    value: 'Simple' })
                                                     .click(function() {
                                                             o.isHidden = modAdvanced({'$link': $advancedLink });
                                                     });  
-            modAdvanced({$link: $advancedLink});                                   
+            if(o.isHidden) o.isHidden = modAdvanced({$link: $advancedLink});                                   
             //Row i, Column 5: search button
             var $searchButtonCell = o.$searchTable.CswTable('cell', o.bottomRow, o.searchBtnCell)
                                     .attr({align:"right"})
