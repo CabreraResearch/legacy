@@ -313,12 +313,12 @@
         var $search = $('#CenterTopDiv').CswDOM('getchildren', { ID: MainSearchId, prefix: o.prefix });
 	    if( $search == undefined || $search.length == 0 )
 	    {
-	        //clear({ centertop: true });
+	        clear({ centertop: true });
             
             var onSearchSubmit = function(view) {
+                    clear({ right: true });
                     $.CswCookie('set', CswCookieName.CurrentView.ViewId, view.viewid);
                     $.CswCookie('set', CswCookieName.CurrentView.ViewMode, view.viewmode);
-                    clear({ centertop: true });
                     refreshSelected({
                         viewmode: view.viewmode,
                         viewid: view.viewid,
