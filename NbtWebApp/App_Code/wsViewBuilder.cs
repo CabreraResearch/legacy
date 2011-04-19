@@ -44,6 +44,9 @@ namespace ChemSW.Nbt.WebServices
 
         #region Private Assembly Methods
 
+        /// <summary>
+        /// Returns enumarable collection of all properties on a node type
+        /// </summary>
         private IEnumerable<CswViewBuilderProp> _getNodeTypeProps( CswNbtMetaDataNodeType NodeType, ref Dictionary<Int32, string> UniqueProps )
         {
             var NtProps = new List<CswViewBuilderProp>();
@@ -69,6 +72,9 @@ namespace ChemSW.Nbt.WebServices
             return NtProps;
         } // _getNodeTypeProps()
 
+        /// <summary>
+        /// Returns enumarable collection of all properties on all node types of the object class
+        /// </summary>
         private IEnumerable<CswViewBuilderProp> _getObjectClassProps( CswNbtMetaDataObjectClass ObjectClass )
         {
             var OcProps = new List<CswViewBuilderProp>();
@@ -90,7 +96,36 @@ namespace ChemSW.Nbt.WebServices
             return ReturnProps;
         } // _getObjectClassProps()
 
-        private XElement _getViewBuilderProps( IEnumerable<CswViewBuilderProp> ViewBuilderProperties, CswNbtViewRelationship.RelatedIdType RelatedIdType, Int32 ObjectPk )
+        /// <summary>
+        /// Fetches all props and all prop fiters for a ViewProp collection
+        ///     <nodetypeprops>
+        ///         <properties>
+        ///             <select>
+        ///                 <optgroup label="Specific Properties">
+        ///                     <option value="1">Barcode</option>
+        ///                 </optgroup>
+        ///             </select>
+        ///         </properties>
+        ///         <propertyfilters>
+        ///             <property propname="Barcode" fieldtype="Barcode">
+        ///                 <defaultsubfield propname="Barcode>Equals</defaultsubfield>
+        ///                 <subfields>
+        ///                     <select id="filter_select">
+        ///                         <option value="Equals">Equals</option>
+        ///                     </select>
+        ///                 </subfields>
+        ///                 <filters>
+        ///                     <subfield propname="Barcode">Field1
+        ///                         <select id="filter_select">
+        ///                             <option value="Equals">Equals</option>
+        ///                         </select>
+        ///                     </subfield>
+        ///                 </filters>
+        ///             </property>   
+        ///         </propertyfilters>
+        ///     </nodetypeprops>
+        /// </summary>
+        private XElement _getViewBuilderProps( IEnumerable<CswViewBuilderProp> ViewBuilderProperties, CswNbtViewRelationship.RelatedIdType RelatedIdType, Int32 NodeTypeOrObjectClassId )
         {
             XElement NodeTypePropsNode = new XElement( "nodetypeprops" );
             string DefaultPropName = string.Empty;
@@ -127,7 +162,7 @@ namespace ChemSW.Nbt.WebServices
 
                     _getViewBuilderPropSubFields( ref FiltersNode, Prop );
                 }
-                string ElementId = wsTools.makeId( _Prefix, "properties_select_nodetypeid", ObjectPk.ToString() );
+                string ElementId = wsTools.makeId( _Prefix, "properties_select_nodetypeid", NodeTypeOrObjectClassId.ToString() );
                 NodeTypePropsNode.Add( new XElement( "properties",
                                                      new XAttribute( "defaultprop", DefaultPropName ),
                                                      new XElement( "select",
@@ -140,6 +175,65 @@ namespace ChemSW.Nbt.WebServices
             }
             return NodeTypePropsNode;
         }
+
+        /// <summary>
+        /// Fetches all props and all prop fiters for a NodeType
+        ///     <nodetypeprops>
+        ///         <properties>
+        ///             <select>
+        ///                 <optgroup label="Specific Properties">
+        ///                     <option value="1">Barcode</option>
+        ///                 </optgroup>
+        ///             </select>
+        ///         </properties>
+        ///         <propertyfilters>
+        ///             <property propname="Barcode" fieldtype="Barcode">
+        ///                 <defaultsubfield propname="Barcode>Equals</defaultsubfield>
+        ///                 <subfields>
+        ///                     <select id="filter_select">
+        ///                         <option value="Equals">Equals</option>
+        ///                     </select>
+        ///                 </subfields>
+        ///                 <filters>
+        ///                     <subfield propname="Barcode">Field1
+        ///                         <select id="filter_select">
+        ///                             <option value="Equals">Equals</option>
+        ///                         </select>
+        ///                     </subfield>
+        ///                 </filters>
+        ///             </property>   
+        ///         </propertyfilters>
+        ///     </nodetypeprops>
+        /// </summary>
+        private XElement _getViewBuilderProps( CswNbtViewRelationship.RelatedIdType Relationship, Int32 NodeTypeOrObjectClassId )
+        {
+            XElement Props = new XElement( "nodetypeprops" );
+
+
+            if( Int32.MinValue != NodeTypeOrObjectClassId )
+            {
+                IEnumerable<CswViewBuilderProp> ViewBuilderProperties = null;
+                switch( Relationship )
+                {
+                    case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
+                        {
+                            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );
+                            Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
+                            ViewBuilderProperties = _getNodeTypeProps( NodeType, ref UniqueProps );
+                            break;
+                        }
+
+                    case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
+                        {
+                            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeOrObjectClassId );
+                            ViewBuilderProperties = _getObjectClassProps( ObjectClass );
+                            break;
+                        }
+                }
+                Props = _getViewBuilderProps( ViewBuilderProperties, Relationship, NodeTypeOrObjectClassId );
+            }
+            return Props;
+        } // getViewBuilderProps()
 
         /// <summary>
         /// Returns the Subfields XML for a NodeTypeProp/ObjectClassProp's SubFields collection as:
@@ -388,65 +482,6 @@ namespace ChemSW.Nbt.WebServices
 
         #region Public Methods
         
-        /// <summary>
-        /// In the context of a NodeType based, retuns as:
-        ///     <nodetypeprops>
-        ///         <properties>
-        ///             <select>
-        ///                 <optgroup label="Specific Properties">
-        ///                     <option value="1">Barcode</option>
-        ///                 </optgroup>
-        ///             </select>
-        ///         </properties>
-        ///         <propertyfilters>
-        ///             <property propname="Barcode" fieldtype="Barcode">
-        ///                 <defaultsubfield propname="Barcode>Equals</defaultsubfield>
-        ///                 <subfields>
-        ///                     <select id="filter_select">
-        ///                         <option value="Equals">Equals</option>
-        ///                     </select>
-        ///                 </subfields>
-        ///                 <filters>
-        ///                     <subfield propname="Barcode">Field1
-        ///                         <select id="filter_select">
-        ///                             <option value="Equals">Equals</option>
-        ///                         </select>
-        ///                     </subfield>
-        ///                 </filters>
-        ///             </property>   
-        ///         </propertyfilters>
-        ///     </nodetypeprops>
-        /// </summary>
-        private XElement _getViewBuilderProps( CswNbtViewRelationship.RelatedIdType Relationship, Int32 ObjectId )
-        {
-            XElement Props = new XElement( "nodetypeprops" );
-            
-
-            if( Int32.MinValue != ObjectId )
-            {
-                IEnumerable<CswViewBuilderProp> ViewBuilderProperties = null;
-                switch( Relationship )
-                {
-                    case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                        {
-                            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( ObjectId );
-                            Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
-                            ViewBuilderProperties = _getNodeTypeProps( NodeType, ref UniqueProps );
-                            break;
-                        }
-
-                    case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                        {
-                            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectId );
-                            ViewBuilderProperties = _getObjectClassProps( ObjectClass );
-                            break;
-                        }
-                }
-                Props = _getViewBuilderProps( ViewBuilderProperties, Relationship, ObjectId );
-            }
-            return Props; 
-        } // getViewBuilderProps()
-        
         public XElement getViewBuilderProps( string ViewXml, string ViewPropArbitraryId )
         {
             XElement ViewBuilderProps = new XElement( "viewbuilderprops" );
@@ -459,50 +494,58 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswViewBuilderProp VbProp = new CswViewBuilderProp( ThisProp );
                     CswNbtViewRelationship.RelatedIdType Relationship = VbProp.RelatedIdType;
-                    Int32 ObjectId = VbProp.MetaDataPropId;
-                    if( Int32.MinValue != ObjectId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
+                    Int32 NodeTypeOrObjectClassId = VbProp.MetaDataPropId;
+                    if( Int32.MinValue != NodeTypeOrObjectClassId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
                     {
-                        ViewBuilderProps = _getViewBuilderProps( Relationship, ObjectId );
+                        List<CswViewBuilderProp> ViewBuilderProp = new List<CswViewBuilderProp>() {VbProp};
+                        
+                        ViewBuilderProps = _getViewBuilderProps( ViewBuilderProp, Relationship, NodeTypeOrObjectClassId );
                     }
                 }
             }
             return ViewBuilderProps;
         }
 
-        public XElement getViewBuilderProps( string RelatedIdType, string ObjectPk, string NodeKey )
+        /// <summary>
+        /// Returns all props and prop filters for a NodeType or ObjectClass
+        /// </summary>
+        public XElement getViewBuilderProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
         {
             XElement ViewBuilderProps = new XElement( "nodetypeprops" );
-            if( (!string.IsNullOrEmpty( RelatedIdType ) && !string.IsNullOrEmpty( ObjectPk )  ) || !string.IsNullOrEmpty( NodeKey ) )
+            if( (!string.IsNullOrEmpty( RelatedIdType ) && !string.IsNullOrEmpty( NodeTypeOrObjectClassId )  ) || !string.IsNullOrEmpty( NodeKey ) )
             {
-                Int32 ObjectId = Int32.MinValue;
+                Int32 TypeOrObjectClassId = Int32.MinValue;
                 CswNbtViewRelationship.RelatedIdType Relationship = CswNbtViewRelationship.RelatedIdType.Unknown;
-                if( string.IsNullOrEmpty( ObjectPk ) && !string.IsNullOrEmpty( NodeKey ) )
+                if( string.IsNullOrEmpty( NodeTypeOrObjectClassId ) && !string.IsNullOrEmpty( NodeKey ) )
                 {
                     string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
                     CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
                     CswNbtNode Node = _CswNbtResources.Nodes[NbtNodeKey];
                     if( null != Node.NodeType )
                     {
-                        ObjectId = Node.NodeTypeId;
+                        TypeOrObjectClassId = Node.NodeTypeId;
                         Relationship = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
                     }
                     else if( null != Node.ObjectClass )
                     {
-                        ObjectId = Node.ObjectClassId;
+                        TypeOrObjectClassId = Node.ObjectClassId;
                         Relationship = CswNbtViewRelationship.RelatedIdType.ObjectClassId;
                     }
                 }
-                else if( !string.IsNullOrEmpty( ObjectPk ) )
+                else if( !string.IsNullOrEmpty( NodeTypeOrObjectClassId ) )
                 {
-                    ObjectId = CswConvert.ToInt32( ObjectPk );
+                    TypeOrObjectClassId = CswConvert.ToInt32( NodeTypeOrObjectClassId );
                     CswNbtViewRelationship.RelatedIdType.TryParse( RelatedIdType, out Relationship );
                 }
-                ViewBuilderProps = _getViewBuilderProps( Relationship, ObjectId );
+                ViewBuilderProps = _getViewBuilderProps( Relationship, TypeOrObjectClassId );
             }
             return ViewBuilderProps;
 
         }
-        
+
+        /// <summary>
+        /// Returns all props and prop filters for a NodeType
+        /// </summary>
         public XElement getNodeTypeProps(CswNbtMetaDataNodeType NodeType)
         {
             XElement NodeTypeProps = new XElement( "properties", "none" );
@@ -516,6 +559,9 @@ namespace ChemSW.Nbt.WebServices
             return NodeTypeProps;
         }
 
+        /// <summary>
+        /// Returns all props and prop filters for all NodeTypes of an ObjectClass
+        /// </summary>
         public XElement getNodeTypeProps(CswNbtMetaDataObjectClass ObjectClass )
         {
             XElement NodeTypeProps = new XElement( "properties", "none" );
@@ -528,17 +574,28 @@ namespace ChemSW.Nbt.WebServices
             return NodeTypeProps;
         }
 
+        /// <summary>
+        /// Returns all prop filters for a CswNbtViewProperty
+        /// </summary>
         public void getViewBuilderPropSubfields(ref XElement ParentNode, CswViewBuilderProp ViewBuilderProp, ArrayList PropFilters)
         {
             _getViewBuilderPropSubFields( ref ParentNode, ViewBuilderProp, PropFilters );
         }
 
+        /// <summary>
+        /// Uses View XML to construct a view and create a CswNbtViewPropertyFilter. and r
+        /// Returns filter's XML
+        /// </summary>
         public XElement makeViewPropFilter(string ViewXml, JToken FilterProp )
         {
             CswNbtView View = new CswNbtView( _CswNbtResources );
             View.LoadXml( ViewXml );
             return makeViewPropFilter( View, FilterProp );
         }
+        
+        /// <summary>
+        /// Creates a CswNbtViewPropertyFilter and returns its XML
+        /// </summary>
         public XElement makeViewPropFilter( CswNbtView View, JToken FilterProp )
         {
             XElement PropFilterXml = new XElement( "propfilter" );
@@ -556,6 +613,10 @@ namespace ChemSW.Nbt.WebServices
             }
             return PropFilterXml;
         }
+
+        /// <summary>
+        /// Modifies an existing CswNbtViewPropertyFilter and returns its XML 
+        /// </summary>
         public XElement makeViewPropFilter( CswNbtViewPropertyFilter ViewPropFilt, JToken FilterProp )
         {
             XElement PropFilterXml = new XElement( "propfilter" );
