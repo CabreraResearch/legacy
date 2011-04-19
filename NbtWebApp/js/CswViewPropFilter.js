@@ -232,9 +232,9 @@ var ViewBuilder_CssClasses = {
                 fieldtype: $thisProp.attr('fieldtype'),
                 idprefix: '',
                 $parent: '',
-                proparbitraryid: $thisProp.attr('proparbitraryid'),
+                proparbitraryid: '',
                 filtarbitraryid: $thisProp.attr('filtarbitraryid'),
-                viewbuilderpropid: $thisProp.attr('viewbuilderpropid')
+                viewbuilderpropid: ''
             };
             if(options) $.extend(o,options);
 

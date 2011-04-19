@@ -559,11 +559,18 @@ namespace ChemSW.Nbt.WebServices
         /// Uses View XML to construct a view and create a CswNbtViewPropertyFilter. and r
         /// Returns filter's XML
         /// </summary>
-        public XElement makeViewPropFilter(string ViewXml, JToken FilterProp )
+        public XElement makeViewPropFilter(string ViewXml, string PropFilterJson )
         {
+            XElement PropFilterXml = new XElement( "propfilter" );
             CswNbtView View = new CswNbtView( _CswNbtResources );
             View.LoadXml( ViewXml );
-            return makeViewPropFilter( View, FilterProp );
+            JObject PropBuilder = JObject.Parse( PropFilterJson );
+            if( PropBuilder["propbuilder"].Count() == 1 )
+            {
+                JToken PropFilter = PropBuilder["propbuilder"].First();
+                PropFilterXml = makeViewPropFilter( View, PropFilter );
+            }
+            return PropFilterXml;
         }
         
         /// <summary>
