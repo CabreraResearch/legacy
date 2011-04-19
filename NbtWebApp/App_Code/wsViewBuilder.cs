@@ -166,9 +166,6 @@ namespace ChemSW.Nbt.WebServices
                 ViewBuilderPropsNode.Add( new XElement( "properties",
                                                      new XAttribute( "defaultprop", DefaultPropName ),
                                                      new XElement( "select",
-                                                                   new XAttribute( "id", ElementId ),
-                                                                   new XAttribute( "name", ElementId ),
-                                                                   new XAttribute( "class", "csw_viewbuilder_properties_select" ),
                                                                    ( NodeTypePropsGroup.HasElements ) ? NodeTypePropsGroup : null,
                                                                    ( ObjectClassPropsGroup.HasElements ) ? ObjectClassPropsGroup : null ) ),
                                        FiltersNode );
@@ -260,11 +257,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = ViewBuilderProp.FieldType.FieldType;
                 CswNbtSubFieldColl SubFields = ViewBuilderProp.FieldTypeRule.SubFields;
-                string SubFieldsElementId = wsTools.makeId( _Prefix, "subfield_select_viewbuilderpropid", ViewBuilderProp.MetaDataPropId.ToString() );
-                XElement SubfieldSelect = new XElement( "select",
-                                                        new XAttribute( "id", SubFieldsElementId ),
-                                                        new XAttribute( "name", SubFieldsElementId ),
-                                                        new XAttribute( "class", "csw_viewbuilder_subfield_select" ) );
+                XElement SubfieldSelect = new XElement( "select" );
 
                 string DefaultFilter = string.Empty;
                 string DefaultSubfield = string.Empty;
@@ -292,20 +285,15 @@ namespace ChemSW.Nbt.WebServices
                     {
                         DefaultFilter = Field.DefaultFilterMode.ToString();
                     }
-                    string UniqueId = "filter_select_viewbuilderpropid_" + ViewBuilderProp.MetaDataPropId;
-                    _getSubFieldFilters( ref FiltersNode, Field, ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode.Undefined, UniqueId );
+                    _getSubFieldFilters( ref FiltersNode, Field, ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode.Undefined );
                     SubfieldSelect.Add( FieldNode );
                 }
 
                 XElement FiltersOptionsNode = new XElement( "filtersoptions" );
                 if( ViewBuilderProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
                 {
-                    string FiltOptElementId = wsTools.makeId( _Prefix, "filtersoptions_select_viewbuilderpropid", ViewBuilderProp.MetaDataPropId.ToString() );
                     FiltersOptionsNode.Value = ViewBuilderProp.MetaDataPropName;
-                    FiltersOptionsNode.Add( new XElement( "select",
-                                                          new XAttribute( "id", FiltOptElementId ),
-                                                          new XAttribute( "name", FiltOptElementId ),
-                                                          new XAttribute( "class", "csw_viewbuilder_filtersoptions_select" ),
+                    FiltersOptionsNode.Add( new XElement( "select", 
                                                           _getFilterOptions( ViewBuilderProp, string.Empty ) ) );
                 }
 
@@ -354,12 +342,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = ViewBuilderProp.FieldType.FieldType;
                 foreach( CswNbtViewPropertyFilter Filter in PropFilters )
                 {
-                    string SubFieldElementId = wsTools.makeId( _Prefix, "subfield_select_filtarbitraryid", Filter.ArbitraryId );
-
-                    XElement SubfieldSelect = new XElement( "select",
-                                                            new XAttribute( "id", SubFieldElementId ),
-                                                            new XAttribute( "name", SubFieldElementId ),
-                                                            new XAttribute( "class", "csw_viewbuilder_subfield_select" ) );
+                    XElement SubfieldSelect = new XElement( "select" );
 
                     CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode = Filter.FilterMode;
                     string DefaultSubfield = Filter.SubfieldName.ToString();
@@ -381,8 +364,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             FieldNode.Add( new XAttribute( "selected", "selected" ) );
                         }
-                        string UniqueId = "filter_select_filtarbitraryid_" + Filter.ArbitraryId;
-                        _getSubFieldFilters( ref FiltersNode, Field, ViewBuilderProp, DefaultFilterMode, UniqueId );
+                        _getSubFieldFilters( ref FiltersNode, Field, ViewBuilderProp, DefaultFilterMode );
                         SubfieldSelect.Add( FieldNode );
                     }
 
@@ -390,12 +372,8 @@ namespace ChemSW.Nbt.WebServices
                     XElement FiltersOptionsNode = new XElement( "filtersoptions" );
                     if( ViewBuilderProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
                     {
-                        string FiltOptElementId = wsTools.makeId( _Prefix, "filtersoptions_select_filtarbitraryid", Filter.ArbitraryId );
                         FiltersOptionsNode.Value = ViewBuilderProp.MetaDataPropName;
                         FiltersOptionsNode.Add( new XElement( "select",
-                                                              new XAttribute( "id", FiltOptElementId ),
-                                                              new XAttribute( "name", FiltOptElementId ),
-                                                              new XAttribute( "class", "csw_viewbuilder_filtersoptions_select" ),
                                                               _getFilterOptions( ViewBuilderProp, ValueSubfieldVal ) ) );
                     }
 
@@ -429,18 +407,14 @@ namespace ChemSW.Nbt.WebServices
         ///         </subfield>
         ///      </filters>
         /// </summary>
-        private void _getSubFieldFilters( ref XElement FiltersNode, CswNbtSubField SubField, CswViewBuilderProp ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode, string UniqueId )
+        private void _getSubFieldFilters( ref XElement FiltersNode, CswNbtSubField SubField, CswViewBuilderProp ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode )
         {
             if( DefaultFilterMode == CswNbtPropFilterSql.PropertyFilterMode.Undefined )
             {
                 DefaultFilterMode = SubField.DefaultFilterMode;
             }
-            string SubFieldElementId = wsTools.makeId( _Prefix, UniqueId, string.Empty );
             XElement SubFieldNode = new XElement( "subfield", new XAttribute( "column", SubField.Column ), new XAttribute( "name", SubField.Name ) );
-            XElement FiltersSelect = new XElement( "select",
-                                        new XAttribute( "id", SubFieldElementId ),
-                                        new XAttribute( "name", SubFieldElementId ),
-                                        new XAttribute( "class", "csw_viewbuilder_filter_select" ) );
+            XElement FiltersSelect = new XElement( "select" );
             foreach( CswNbtPropFilterSql.PropertyFilterMode FilterModeOpt in SubField.SupportedFilterModes )
             {
                 XElement ThisFilter = new XElement( "option", FilterModeOpt.ToString(),
