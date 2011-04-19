@@ -40,7 +40,8 @@
 							showConfigButton: false,
 							showAddButton: false,
 							showRemoveButton: false,
-							OddCellRightAlign: false
+							OddCellRightAlign: false,
+							ReadOnly: false
 						};
                         if (options) {
                             $.extend(o, options);
@@ -50,6 +51,8 @@
                         var $buttondiv = $('<div />')
                                             .appendTo($parent)
                                             .css({ 'float': 'right' });
+
+						if(o.ReadOnly) $buttondiv.hide();
 
                         var $table = $parent.CswTable('init', { 
                                                   'ID': o.ID, 
@@ -95,7 +98,7 @@
                         							ID: o.ID + 'rembtn',
                         							onClick: function ($ImageDiv)
                         							{
-														_toggleRemove($table, $rembtn);
+														_toggleRemove($table, $(this));
 														return CswImageButton_ButtonType.None;
                         							}
 												}).hide();
@@ -417,8 +420,8 @@
 				var $removecells = $('.CswLayoutTable_remove');
 				if($removecells.length > 0)
 				{
-					var row = $removecells.attr('row');
-					var column = $removecells.attr('column');
+//					var row = $removecells.attr('row');
+//					var column = $removecells.attr('column');
 					$table.trigger($table.attr('id') + 'CswLayoutTable_onRemove', { 
                                             table: $table,
                                             cellset: _getCellSet($table, row, column),

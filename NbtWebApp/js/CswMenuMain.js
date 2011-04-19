@@ -9,6 +9,7 @@
 			onAddNode: function(nodeid, cswnbtnodekey) { },
 			onMultiEdit: function() { },
             onSearch: function() {},
+			onEditView: function(viewid) { },
 			Multi: false,
 			NodeCheckTreeId: ''
 		};
@@ -32,13 +33,29 @@
 					var $this = $(this);
 					if($this.attr('text') != undefined)
 					{
-						var $li = HandleMenuItem({ '$ul': $ul, '$this': $this, 'onAlterNode': o.onAddNode, 'onMultiEdit': o.onMultiEdit, 'onSearch': o.onSearch, 'Multi': o.Multi, 'NodeCheckTreeId': o.NodeCheckTreeId });
+						var menuItemOpts = { 
+							'$ul': $ul, 
+							'$itemxml': $this, 
+							'onAlterNode': o.onAddNode, 
+							'onMultiEdit': o.onMultiEdit, 
+							'onEditView': o.onEditView,
+							'onSearch': o.onSearch,
+							'Multi': o.Multi, 
+							'NodeCheckTreeId': o.NodeCheckTreeId 
+						}
+
+						var $li = HandleMenuItem(menuItemOpts);
 						
 						if($this.children().length >= 1) {
 							var $subul = $('<ul class="subnav"></ul>')
 											.appendTo($li);
 							$this.children().each(function() {
-								HandleMenuItem({ '$ul': $subul, '$this': $(this), 'onAlterNode': o.onAddNode, 'onMultiEdit': o.onMultiEdit, 'onSearch': o.onSearch, 'Multi': o.Multi, 'NodeCheckTreeId': o.NodeCheckTreeId });
+								var subMenuItemOpts = {
+									'$ul': $subul, 
+									'$itemxml': $(this)
+								};
+								$.extend(menuItemOpts, subMenuItemOpts);
+								HandleMenuItem(subMenuItemOpts);
 							});
 						}
 					}

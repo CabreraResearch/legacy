@@ -114,8 +114,9 @@
 								treestr += '    class="jstree-'+ $itemxml.attr('state') +'" ';
 								if($itemxml.attr('cswnbtnodekey') != undefined)
 								{
-									treestr += '    cswnbtnodekey="'+ $itemxml.attr('cswnbtnodekey').replace(/"/g, '&quot;') +'">';
+									treestr += '    cswnbtnodekey="'+ $itemxml.attr('cswnbtnodekey').replace(/"/g, '&quot;') +'"';
 								}
+								treestr += '>';
 								if(o.ShowCheckboxes)
 								{
 									treestr += '  <input type="checkbox" class="'+ IDPrefix +'check" id="check_'+ nodeid +'" rel="'+ $itemxml.attr('rel') +'" nodeid="'+ nodeid +'" nodename="'+ nodename +'"></input>';
@@ -272,6 +273,12 @@
 							// cause a race condition.
 							
 							$('.'+ IDPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
+							
+							// case 21424 - Manufacture unique IDs on the expand <ins> for automated testing
+							$treediv.find('li').each(function() {
+								var $li = $(this);
+								$li.children('ins').attr('id', $li.attr('id') + '_expand');
+							});
 
 						} else {
 							$treediv.append('No Results');

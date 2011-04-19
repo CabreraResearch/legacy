@@ -140,7 +140,7 @@
 										.appendTo($table.CswTable('cell', 2, 1))
 										.hide();
 				var $viewselect = $table.CswTable('cell', 2, 2).CswViewSelect({
-																				'ID': 'welcome_viewsel',
+																				'ID': 'welcome_viewsel'
 																				//'viewid': '',
 																				//'onSelect': function(optSelect) { },
 																			})
@@ -201,7 +201,7 @@
 //											'$welcometext': $welcometext,
 											'$buttonsel_label': $buttonsel_label,
 											'$buttonsel': $buttonsel,
-											'$buttonimg': $buttonimg, 
+											'$buttonimg': $buttonimg
 //											'$addbutton': $addbutton
 										});
 									});

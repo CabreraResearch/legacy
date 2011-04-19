@@ -74,6 +74,12 @@
 			var $Div = $(this);
 			var $TextBox = $Div.find('input');
 			return $TextBox.val();
+		},
+		setValue: function (newvalue)
+		{
+			var $Div = $(this);
+			var $TextBox = $Div.find('input');
+			$TextBox.val(newvalue);
 		}
 	};
 

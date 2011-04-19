@@ -327,7 +327,7 @@ namespace ChemSW.Nbt
             {
                 foreach( XmlNode ChildNode in Node.ChildNodes )
                 {
-                    if( ChildNode.Name == CswNbtViewXmlNodeName.Relationship.ToString() )
+					if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Relationship.ToString().ToLower() )
                     {
                         CswNbtViewRelationship ChildRelationship = new CswNbtViewRelationship( CswNbtResources, _View, ChildNode );
                         this.addChildRelationship( ChildRelationship );

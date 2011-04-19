@@ -175,10 +175,10 @@
             var $parent = $(this);
             var $children;
 
-            var elementId = '#' + makeId(o);
-            if( elementId !== '#' )
+            var elementId = makeId(o);
+            if( elementId !== '' )
             {
-                $children = $parent.children(elementId);
+                $children = $parent.children('#' + elementId);
             }
             return $children;
         },
@@ -194,10 +194,10 @@
             var $parent = $(this);
             var $element;
             
-            var elementId = '#' + makeId(o);
-            if( elementId !== '#' )
+            var elementId = makeId(o);
+            if( elementId !== '' )
             {
-                $element = $parent.find(elementId);
+                $children = $parent.find('#' + elementId);
             }
             return $element;
         }

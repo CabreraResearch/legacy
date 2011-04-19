@@ -1,15 +1,17 @@
 ﻿; (function ($)
 {
-	var PluginName = "CswNodeTypeSelect";
+	var PluginName = "CswNodeSelect";
 
 	var methods = {
 		'init': function(options) 
 			{
 				var o = {
 					ID: '',
-					NodeTypesUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
+					NodesUrl: '/NbtWebApp/wsNBT.asmx/getNodes',
 					nodetypeid: '',
-					onSelect: function (nodetypeid) {},
+					objectclassid: '',
+					objectclass: '',
+					onSelect: function (nodeid) {},
 					onSuccess: function () {}
 				};
 
@@ -19,20 +21,19 @@
 				}
 
 				var $parent = $(this);
-				$parent.contents().remove();
 
-				var $select = $('<select id="'+ o.ID +'_sel" />')
+				var $select = $('<select id="'+ o.ID +'_nodeselect" />')
 								.appendTo($parent);
 				$select.change(function(event) { o.onSelect( $select.val() ); });
 
 				CswAjaxXml({
-						url: o.NodeTypesUrl,
-						data: '',
+						url: o.NodesUrl,
+						data: 'NodeTypeId=' + o.nodetypeid + '&ObjectClassId=' + o.objectclassid + '&ObjectClass=' + o.objectclass,
 						success: function ($xml)
 						{
-							$xml.children('nodetype').each(function() {
-								var $nodetype = $(this);
-								$select.append('<option value="'+ $nodetype.attr('id') +'">'+ $nodetype.attr('name') +'</option>');
+							$xml.children('node').each(function() {
+								var $node = $(this);
+								$select.append('<option value="'+ $node.attr('id') +'">'+ $node.attr('name') +'</option>');
 							});
 
 							o.onSuccess();
@@ -48,7 +49,7 @@
 			}
 	};
 		// Method calling logic
-	$.fn.CswNodeTypeSelect = function (method) {
+	$.fn.CswNodeSelect = function (method) {
 		
 		if ( methods[method] ) {
 		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
