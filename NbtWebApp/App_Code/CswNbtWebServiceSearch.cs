@@ -165,10 +165,7 @@ namespace ChemSW.Nbt.WebServices
             XElement NodeTypeSearch = new XElement( "search", 
                                             new XAttribute( "searchtype", "nodetypesearch" ), 
                                             new XElement( "nodetypes", 
-                                                new XElement( "select", 
-                                                    new XAttribute( "id", "node_type_select" ), 
-                                                    new XAttribute( "name", "node_type_select" ),
-                                                    new XAttribute( "class", "csw_search_node_type_select" ),
+                                                new XElement( "select",
                                                         NodeTypeSelect,
                                                         ObjectClassSelect)),
                                             NodeTypeProps);

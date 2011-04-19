@@ -68,7 +68,7 @@ var ViewBuilder_CssClasses = {
                 'proparbitraryid': '',
                 'filtarbitraryid': '',
                 'viewbuilderpropid': '',
-                'idprefix': 'csw',
+                'idprefix': '',
                 'propRow': 1,
                 'firstColumn': 3,
                 'includePropertyName': false,
@@ -137,8 +137,12 @@ var ViewBuilder_CssClasses = {
                 $defaultSubField.hide(); //for Search
 
                 //Row propRow, Column 4: subfield picklist 
-                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)) //4
+                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)); //4
+                var subfieldOptionsId = makePropFilterId('subfield_select', filtOpt);
                 var $subfieldsOptions = $(xmlToString(o.$propsXml.children('subfields').children('select')))
+                                        .attr('id', subfieldOptionsId)
+                                        .attr('name', subfieldOptionsId)
+                                        .attr('class',ViewBuilder_CssClasses.subfield_select.name)
                                         .change(function() {
                                             var $this = $(this);
                                             var r = {
@@ -159,8 +163,11 @@ var ViewBuilder_CssClasses = {
                 //Row propRow, Column 5: filter picklist
                 var $filtersCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 2)) //5
                                                    .empty();
-
+                var filtersOptionsId = makePropFilterId('filter_select', filtOpt);
                 var $filtersOptions =  $(xmlToString(o.$propsXml.children('propertyfilters').children('subfield[column=' + $subfield + ']').children('select')))
+                                        .attr('id', filtersOptionsId)
+                                        .attr('name', filtersOptionsId)
+                                        .attr('class',ViewBuilder_CssClasses.filter_select.name)
                                         .change(function() {
                                             var $this = $(this);
                                             var r = {
@@ -175,7 +182,6 @@ var ViewBuilder_CssClasses = {
                     $filtersOptions.val(o.selectedFilterVal).attr('selected',true);
                 }
                 $filtersCell.append($filtersOptions);
-                var $filter = $filtersOptions.find(':selected').val();
 
                 //Row propRow, Column 6: filter input
                 var $propFilterValueCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 3)) //6

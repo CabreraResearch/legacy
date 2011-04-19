@@ -120,7 +120,7 @@
                     o.isHidden = true;               
                     var filtArbitraryId = $thisProp.attr('filtarbitraryid');
                     var $propFilterRow = o.$searchTable.CswViewPropFilter('init', {
-                                                    'idprefix': 'csw',
+                                                    'idprefix': o.idprefix,
                                                     'propRow': propRow,
                                                     'firstColumn': 3,
                                                     'includePropertyName': true,
@@ -142,8 +142,12 @@
             //Row 1, Column 1: empty (contains 'and' for View search)
             //Row 1, Column 2: nodetypeselect picklist
             var $typeSelectCell = o.$searchTable.CswTable('cell', 1, 2);
+            var nodeTypeSelectId = makeId({ID: 'nodetype_select',prefix: o.idprefix});
             var $nodeTypesSelect = $(xmlToString(o.$nodeTypesXml.children('select')))
-                                   .change( function() {
+                                    .attr('id', nodeTypeSelectId)
+                                    .attr('name', nodeTypeSelectId)
+                                    .attr('class','csw_search_nodetype_select')
+                                    .change( function() {
                                        var $thisSelect = $(this);
                                        var r = {
                                             'objectPk': $thisSelect.val(),
@@ -164,7 +168,11 @@
             //Row propRow, Column 3: properties 
             var $propSelectCell = o.$searchTable.CswTable('cell', propRow, 3)
                                     .empty();
+            var propSelectId = makeId({ID: 'property_select', prefix: o.idprefix});
             var $props = $(xmlToString(o.$propsXml.children('properties').children('select')))
+                            .attr('id', propSelectId)
+                            .attr('name', propSelectId)
+                            .attr('class','csw_search_property_select')
                             .change(function() {
                                     var $this = $(this);
                                     var r = {
@@ -174,7 +182,7 @@
                                     };
                                     $.extend(o,r);
                                     o.$searchTable.CswViewPropFilter('init', {
-                                                'idprefix': 'csw',
+                                                'idprefix': o.idprefix,
                                                 'propRow': propRow,
                                                 'firstColumn': 3,
                                                 'includePropertyName': false,
@@ -192,7 +200,7 @@
             var $selectedProp = o.$propsXml.children('propertyfilters').children('property[viewbuilderpropid='+ propertyId +']');
         
             var $propFilter = o.$searchTable.CswViewPropFilter('init', {
-                                                'idprefix': 'csw',
+                                                'idprefix': o.idprefix,
                                                 'propRow': propRow,
                                                 'firstColumn': 3,
                                                 'includePropertyName': false,
@@ -214,7 +222,7 @@
                         'success': function($xml) { 
                                 o.$propsXml = $xml;
                                 o.$searchTable.CswViewPropFilter('init', {
-                                                'idprefix': 'csw',
+                                                'idprefix': o.idprefix,
                                                 'propRow': propRow,
                                                 'firstColumn': 3,
                                                 'includePropertyName': false,
