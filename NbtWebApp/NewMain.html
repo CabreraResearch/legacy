@@ -176,7 +176,7 @@
 					'onAddNode': function (nodeid, cswnbtnodekey)
 					{
 						clear({ all: true });
-						refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+						refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
 					}
 				});
 			},
@@ -532,7 +532,8 @@
 			'nodename': '', 
 			'iconurl': '',
 			'viewid': '',
-			'viewmode': 'tree'
+			'viewmode': 'tree',
+			'IncludeNodeRequired': false
 		};		
 		if (options) $.extend(o, options);
 
@@ -551,8 +552,8 @@
 											'nodeid': o.nodeid, 
 											'cswnbtnodekey': o.cswnbtnodekey,
 											'nodename': o.nodename,
-											'IncludeNodeRequired': true,
-											'onViewChange': function(newviewid)
+											'IncludeNodeRequired': o.IncludeNodeRequired,
+											'onViewChange': function (newviewid)
 												{
 													$.CswCookie('set', CswCookieName.CurrentView.ViewId, newviewid);
 												},
