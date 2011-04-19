@@ -8,7 +8,7 @@
 		{
             var o = { 
                 //URLs
-                'getNewPropsUrl': '/NbtWebApp/wsNBT.asmx/getViewPropFilter',
+                'getNewPropsUrl': '/NbtWebApp/wsNBT.asmx/getViewPropFilterUI',
 
                 //options
 			    'viewid': '',
@@ -37,8 +37,7 @@
 		            'url': o.getNewPropsUrl,
 		            'data': "ViewXml=" + o.viewxml + "&PropArbitraryId=" + o.proparbitraryid,
                     'success': function($xml) { 
-
-                                o.$propsXml = $xml.children('nodetypeprops').children('property');
+                                o.$propsXml = $xml.children('nodetypeprops').children('properties');
                                 renderPropFiltRow();
                     } //success
                 }); //ajax
@@ -65,8 +64,17 @@
                 
                 var fieldtype = o.$propsXml.attr('fieldtype');
                 var $defaultFilter = o.$propsXml.children('defaultsubfield').attr('filter');
-                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, 4)                                                    .empty();                var defaultSubFieldId = makeId({ID: 'default_filter_' + o.propIdName, suffix: o.propIdSuffix, prefix: o.idprefix});                var $defaultSubField = $subfieldCell.CswDOM('span', {                                                    ID: defaultSubFieldId,                                                    value: $defaultFilter,                                                    cssclass: 'csw_viewbuilder_default_filter' })                                                .attr({align:"center"});
-                $defaultSubField.hide(); //for Search
+                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, 4)
+                                                    .empty();
+                var defaultSubFieldId = makeId({ID: 'default_filter_' + o.propIdName, suffix: o.propIdSuffix, prefix: o.idprefix});
+                var $defaultSubField = $subfieldCell.CswDOM('span', {
+                                                    ID: defaultSubFieldId,
+                                                    value: $defaultFilter,
+                                                    cssclass: 'csw_viewbuilder_default_filter' })
+                                                .attr({align:"center"});
+
+                $defaultSubField.hide(); //for Search
+
                 //Row propRow, Column 4: subfield picklist 
                 var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)) //4
                 var $subfieldsOptions = $(xmlToString(o.$propsXml.children('subfields').children('select')))

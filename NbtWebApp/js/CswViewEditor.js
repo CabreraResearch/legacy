@@ -482,7 +482,41 @@
 					var $a = $(this);
 					var $li = $a.parent();
 					var $span = $li.children('ul').children('li').children('span.vieweditor_addfilter');
+
+//					var $filttable = $('.vieweditor_addfilter').CswViewPropFilter({
+//						'viewxml': xmlToString($currentviewxml),
+//						'proparbitraryid': arbid
+//					});
+//					var filterxml = $filttable.CswViewPropFilter('getSelected');
+
+					var $tbl = $span.CswTable({ 'ID': o.ID + '_propfilttbl' });
+					$tbl.CswViewPropFilter('init', {
+                                                    'idprefix': o.ID,
+                                                    'propRow': 1, 
+                                                    'firstColumn': 1, 
+                                                    'includePropertyName': true,
+                                                    'propIdName': 'filtarbitraryid',
+                                                    'proparbitraryid': $span.attr('proparbid'),
+													'viewxml': xmlToString($currentviewxml)
+                                                });
 					$span.show();
+
+
+//1. On a table element, call: $mytable.CswViewPropFilter('init', {
+//                                                    'idprefix': 'csw',
+//                                                    'propRow': 1, 
+//                                                    'firstColumn': 3, 
+//                                                    'includePropertyName': true,
+//                                                    propIdName: 'filtarbitraryid',
+//                                                    propIdSuffix: filtArbitraryId
+//                                                });
+//2. When ready to submit, get a JSON formatted string from the propfilter:
+
+//var Json = $mytable.CswViewPropFilter('getFilterJson',{idprefix: o.idprefix, $parent: o.$parent})
+//[9:09:26 AM] Christopher Froehlich: 3. Submit that to the webservice to create viewpropfilter and return the filter XML:
+
+//$mytable.CswViewPropFilter('makeFilter',{viewxml: somexml, filtJson: Json});
+
 				}); // property click
 			}
 
@@ -724,13 +758,7 @@
 					if(stepno == 5)
 					{ 
 						// view filters
-						treestr += '<li><span class="vieweditor_addfilter" style="display: none"></span></li>';
-
-//						var $filttable = $('.vieweditor_addfilter').CswViewPropFilter({
-//							'viewxml': xmlToString($currentviewxml),
-//							'proparbitraryid': arbid
-//						});
-//						var filterxml = $filttable.CswViewPropFilter('getSelected');
+						treestr += '<li><span class="vieweditor_addfilter" style="display: none" proparbid="' + arbid + '"></span></li>';
 					}
 					else 
 					{
