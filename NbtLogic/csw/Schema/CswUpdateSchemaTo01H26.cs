@@ -62,21 +62,63 @@ namespace ChemSW.Nbt.Schema
                 MyProblems.Root.ChildRelationships.Clear();
 
                 CswNbtMetaDataObjectClass ProblemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ProblemClass );
-                CswNbtMetaDataObjectClass EquipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
-                CswNbtMetaDataObjectClass AssemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass );
-                foreach( CswNbtMetaDataNodeType Problem in ProblemOC.NodeTypes )
+                if( 0 < ProblemOC.NodeTypes.Count )
                 {
-                    CswNbtMetaDataNodeTypeProp ReportedByNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ReportedByPropertyName );
-                    CswNbtMetaDataNodeTypeProp ClosedNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ClosedPropertyName );
-                    CswNbtMetaDataNodeTypeProp DateOpenedNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.DateOpenedPropertyName );
-                    //CswNbtMetaDataNodeTypeProp OwnerNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.OwnerPropertyName );
-                    CswNbtMetaDataNodeTypeProp ParentRelationshipNtp = null;
-                    foreach( CswNbtMetaDataNodeType Equip in EquipmentOC.NodeTypes )
+                    foreach( CswNbtMetaDataNodeType Problem in ProblemOC.NodeTypes )
                     {
-                        //if( null != Problem.NodeTypeProps.)
+                        CswNbtViewRelationship ProblemRelationship = MyProblems.AddViewRelationship( Problem, false );
+
+                        CswNbtMetaDataNodeTypeProp ReportedByNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ReportedByPropertyName );
+                        CswNbtViewProperty ReportedByVp = MyProblems.AddViewProperty( ProblemRelationship, ReportedByNtp );
+                        ReportedByVp.Order = 1;
+
+                        CswNbtMetaDataNodeTypeProp ClosedNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ClosedPropertyName );
+                        CswNbtViewProperty ClosedVp = MyProblems.AddViewProperty( ProblemRelationship, ClosedNtp );
+                        ClosedVp.Order = 2;
+                        MyProblems.AddViewPropertyFilter( ClosedVp, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "false", false );
+
+                        CswNbtMetaDataNodeTypeProp DateOpenedNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.DateOpenedPropertyName );
+                        CswNbtViewProperty DateOpenedVp = MyProblems.AddViewProperty( ProblemRelationship, DateOpenedNtp );
+                        DateOpenedVp.Order = 3;
+
+                        CswNbtMetaDataNodeTypeProp EquipmentNtp = Problem.getNodeTypeProp( "Equipment" );
+                        if( null != EquipmentNtp )
+                        {
+                            CswNbtViewProperty EquipmentVp = MyProblems.AddViewProperty( ProblemRelationship, EquipmentNtp );
+                            EquipmentVp.Order = 4;
+                        }
+
+                        CswNbtMetaDataNodeTypeProp AssemblyNtp = Problem.getNodeTypeProp( "Assembly" );
+                        if( null != AssemblyNtp )
+                        {
+                            CswNbtViewProperty AssemblyVp = MyProblems.AddViewProperty( ProblemRelationship, AssemblyNtp );
+                            AssemblyVp.Order = 5;
+                        }
+
+                        CswNbtMetaDataNodeTypeProp LocationNtp = Problem.getNodeTypeProp( "Location" );
+                        if( null != LocationNtp )
+                        {
+                            CswNbtViewProperty LocationVp = MyProblems.AddViewProperty( ProblemRelationship, LocationNtp );
+                            LocationVp.Order = 6;
+                        }
+
+                        CswNbtMetaDataNodeTypeProp SummaryNtp = Problem.getNodeTypeProp( "Summary" );
+                        if( null != SummaryNtp )
+                        {
+                            CswNbtViewProperty SummaryVp = MyProblems.AddViewProperty( ProblemRelationship, SummaryNtp );
+                            SummaryVp.Order = 7;
+                        }
+
+                        CswNbtMetaDataNodeTypeProp TechnicianNtp = Problem.getNodeTypeProp( "Technician" );
+                        if( null != TechnicianNtp )
+                        {
+                            CswNbtViewProperty TechnicianVp = MyProblems.AddViewProperty( ProblemRelationship, TechnicianNtp );
+                            TechnicianVp.Order = 8;
+                            MyProblems.AddViewPropertyFilter( TechnicianVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, "me", false );
+                        }
+
                     }
-                    //CswNbtMetaDataNodeTypeProp ReportedByNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ReportedByPropertyName );
-                    //CswNbtMetaDataNodeTypeProp ReportedByNtp = Problem.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ReportedByPropertyName );
+                    MyProblems.save();
                 }
 
             }
