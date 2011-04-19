@@ -487,14 +487,17 @@
 					$span.empty();
 					var $tbl = $span.CswTable({ 'ID': o.ID + '_propfilttbl' });
 					$tbl.CswViewPropFilter('init', {
-                                                    'idprefix': o.ID,
-                                                    'propRow': 1, 
-                                                    'firstColumn': 1, 
-                                                    'includePropertyName': true,
-                                                    'propIdName': '',
-                                                    'propIdSuffix': '',
-                                                    'proparbitraryid': $span.attr('proparbid'),
-													'viewxml': xmlToString($currentviewxml)
+														'viewxml': xmlToString($currentviewxml),
+														'proparbitraryid': $span.attr('proparbid'),
+														'filtarbitraryid': '',
+														'viewbuilderpropid': '',
+														'idprefix': o.ID,
+														'propRow': 1,
+														'firstColumn': 1,
+														'includePropertyName': false,
+														'selectedSubfieldVal': '',
+														'selectedFilterVal': '',
+														'autoFocusInput': false
                                                 });
 					
 					$tbl.CswTable('cell', 1, 5).CswButton('init', {
@@ -503,16 +506,25 @@
 						'enabledText': 'Add',
 						'disabledText': 'Adding',
 						'onclick': function () { 
-							var Json = $tbl.CswViewPropFilter('getFilterJson', { idprefix: o.ID, $parent: $span })
-							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 'viewxml': xmlToString($currentviewxml), 'filtJson': Json });
-							$currentviewxml.find('[arbitraryid="' + $span.attr('arbid') +'"]').append(filterxml);
-							_makeViewTree(stepno, $div);
-						}
-					});
+							var Json = $tbl.CswViewPropFilter('getFilterJson', { 
+											idprefix: o.ID,
+											$parent: $span,
+											proparbitraryid: $span.attr('proparbid')
+										});
+							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 
+								'viewxml': xmlToString($currentviewxml), 
+								'filtJson': Json, 
+								'onSuccess': function($filterxml) {
+									$currentviewxml.find('[arbitraryid="' + $span.attr('arbid') +'"]').append($filterxml);
+									_makeViewTree(stepno, $div);
+								} // onSuccess
+							}); // CswViewPropFilter
+						} // onClick
+					}); // CswButton
 					$span.show();
 
 				}); // property click
-			}
+			} // if(stepno == 5)
 
 			if(stepno == 6)
 			{

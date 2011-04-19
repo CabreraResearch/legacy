@@ -97,7 +97,7 @@ var ViewBuilder_CssClasses = {
 		            'url': o.getNewPropsUrl,
 		            'data': "ViewXml=" + o.viewxml + "&PropArbitraryId=" + o.proparbitraryid,
                     'success': function($xml) { 
-                                o.$propsXml = $xml.children('viewbuilderprops').children('property');
+                                o.$propsXml = $xml.children('propertyfilters').children('property');
                                 filtOpt.filtarbitraryid = o.$propsXml.attr('filtarbitraryid');
                                 renderPropFiltRow(filtOpt);
                     } //success
@@ -125,7 +125,8 @@ var ViewBuilder_CssClasses = {
                 var fieldtype = o.$propsXml.attr('fieldtype');
                 var $defaultFilter = o.$propsXml.children('defaultsubfield').attr('filter');
                 var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, 4)
-                                                    .empty();
+                                                    .empty();
+
                 var defaultSubFieldId = makePropFilterId('default_filter', filtOpt);
                 var $defaultSubField = $subfieldCell.CswDOM('span', {
                                                     ID: defaultSubFieldId,
@@ -268,7 +269,6 @@ var ViewBuilder_CssClasses = {
             }
             if(filterValue !== '')
             {
-                
                 var $subField = o.$parent.CswDOM('findelement',{ID: subFieldId});
                 var subFieldText = $subField.find(':selected').text();
 
@@ -291,7 +291,7 @@ var ViewBuilder_CssClasses = {
                     filtervalue: filterValue  
                 };
                 
-            }
+            } // if(filterValue !== '')
             return thisNodeProp;
         }, // 'getFilterJson': function(options) { 
         'makeFilter': function(options)
@@ -300,22 +300,22 @@ var ViewBuilder_CssClasses = {
                 url: '/NbtWebApp/wsNBT.asmx/makeViewPropFilter',
                 viewxml: '',
                 filtJson: '',
-                onSuccess: function() {}
+                onSuccess: function($filterXml) {}
             };
             if(options) $.extend(o,options);
 
-            var $filterXml;
+            //var $filterXml;
 
             CswAjaxXml({ 
 			'url': o.url,
 			'data': "ViewXml="  + o.viewxml + "&PropFiltJson=" + jsonToString(o.filtJson),
             'success': function($filter) { 
-                    $filterXml = $filter;
-                    o.onSuccess();
+                    //$filterXml = $filter;
+                    o.onSuccess($filter);
                 }
             });
 
-            return $filterXml;
+            //return $filterXml;
         } // 'makefilter': function(options)
     } // methods 
 	 
