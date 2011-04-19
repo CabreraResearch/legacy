@@ -329,7 +329,7 @@
                                     cellalign: 'left',
                                     align: 'center'
                                     });
-					o.$searchTable.css("background-color", "red");
+					o.$searchTable.css("background-color", "0099FF");
 					o.$searchTable.attr('frame', 'border');
                     switch(o.searchtype)
                     {
