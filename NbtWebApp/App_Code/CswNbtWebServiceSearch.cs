@@ -264,7 +264,11 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != ViewSearch.Property( "viewprops" ) )
                 {
-                    foreach( JToken FilterProp in ViewSearch["viewprops"].Children() )
+                    foreach( JObject FilterProp in ViewSearch["viewprops"].Children()
+                                                                            .Where( FilterToken => FilterToken.Type == JTokenType.Property )
+                                                                            .Cast<JProperty>()
+                                                                            .SelectMany( FilterGroup => FilterGroup.Children()
+                                                                            .Cast<JObject>() ) )
                     {
                         _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
                     }
@@ -291,58 +295,64 @@ namespace ChemSW.Nbt.WebServices
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
 
-                foreach( JToken FilterProp in NodesSearch["viewbuilderprops"].Children() )
+                foreach( JProperty FilterGroup in NodesSearch["viewbuilderprops"].Children()
+                                                                            .Where( FilterToken => FilterToken.Type == JTokenType.Property )
+                                                                            .Cast<JProperty>() )
                 {
-                    var PropType = CswNbtViewRelationship.RelatedIdType.Unknown;
-                    CswNbtViewRelationship.RelatedIdType.TryParse( (string) FilterProp.First["relatedidtype"], true, out PropType );
-                    Int32 ObjectPk = CswConvert.ToInt32( (string) FilterProp.First["objectpk"] );
-                    Int32 PropId = CswConvert.ToInt32( (string) FilterProp.First["viewbuilderpropid"] );
-                    CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
-                    if( PropType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
-                        Int32.MinValue != NodeTypeProp.ObjectClassPropId )
+                    foreach( JObject FilterProp in FilterGroup.Children().Where( FilterToken => FilterToken.Type == JTokenType.Object )
+                                                                            .Cast<JObject>() )
                     {
-                        CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectPk );
-                        if( string.IsNullOrEmpty( ViewName ) ) ViewName = ObjectClass.ObjectClass + " Search";
-                        if( NodeTypeProp.NodeType.ObjectClass == ObjectClass )
+                        var PropType = CswNbtViewRelationship.RelatedIdType.Unknown;
+                        CswNbtViewRelationship.RelatedIdType.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );
+                        Int32 NodeTypeOrObjectClassId = CswConvert.ToInt32( (string) FilterProp["objectpk"] );
+                        Int32 PropId = CswConvert.ToInt32( (string) FilterProp["viewbuilderpropid"] );
+                        CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
+                        if( PropType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+                            Int32.MinValue != NodeTypeProp.ObjectClassPropId )
                         {
-
-                            CswNbtViewRelationship OcRelationship;
-                            if( !ViewOcRelationships.ContainsKey( ObjectClass ) )
+                            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeOrObjectClassId );
+                            if( string.IsNullOrEmpty( ViewName ) ) ViewName = ObjectClass.ObjectClass + " Search";
+                            if( NodeTypeProp.NodeType.ObjectClass == ObjectClass )
                             {
-                                OcRelationship = SearchView.AddViewRelationship( ObjectClass, false );
-                                ViewOcRelationships.Add( ObjectClass, OcRelationship );
-                            }
-                            else
-                            {
-                                ViewOcRelationships.TryGetValue( ObjectClass, out OcRelationship );
-                            }
 
-                            CswNbtMetaDataObjectClassProp ObjectClassProp = NodeTypeProp.ObjectClassProp;
-                            CswNbtViewProperty ViewOcProperty = SearchView.AddViewProperty( OcRelationship, ObjectClassProp );
-                            CswNbtViewPropertyFilter ViewOcPropFilt = SearchView.AddViewPropertyFilter( ViewOcProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
-                            _ViewBuilder.makeViewPropFilter( ViewOcPropFilt, FilterProp );
+                                CswNbtViewRelationship OcRelationship;
+                                if( !ViewOcRelationships.ContainsKey( ObjectClass ) )
+                                {
+                                    OcRelationship = SearchView.AddViewRelationship( ObjectClass, false );
+                                    ViewOcRelationships.Add( ObjectClass, OcRelationship );
+                                }
+                                else
+                                {
+                                    ViewOcRelationships.TryGetValue( ObjectClass, out OcRelationship );
+                                }
+
+                                CswNbtMetaDataObjectClassProp ObjectClassProp = NodeTypeProp.ObjectClassProp;
+                                CswNbtViewProperty ViewOcProperty = SearchView.AddViewProperty( OcRelationship, ObjectClassProp );
+                                CswNbtViewPropertyFilter ViewOcPropFilt = SearchView.AddViewPropertyFilter( ViewOcProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+                                _ViewBuilder.makeViewPropFilter( ViewOcPropFilt, FilterProp );
+                            }
                         }
-                    }
-                    else
-                    {
-                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( ObjectPk );
-                        if( string.IsNullOrEmpty( ViewName ) ) ViewName = NodeType.NodeTypeName + " Search";
-                        if(NodeTypeProp.NodeType == NodeType)
+                        else
                         {
-                            CswNbtViewRelationship NtRelationship;
-                            if( !ViewNtRelationships.ContainsKey( NodeType ) )
+                            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );
+                            if( string.IsNullOrEmpty( ViewName ) ) ViewName = NodeType.NodeTypeName + " Search";
+                            if( NodeTypeProp.NodeType == NodeType )
                             {
-                                NtRelationship = SearchView.AddViewRelationship( NodeType, false );
-                                ViewNtRelationships.Add( NodeType, NtRelationship );
-                            }
-                            else
-                            {
-                                ViewNtRelationships.TryGetValue( NodeType, out NtRelationship );
-                            }
+                                CswNbtViewRelationship NtRelationship;
+                                if( !ViewNtRelationships.ContainsKey( NodeType ) )
+                                {
+                                    NtRelationship = SearchView.AddViewRelationship( NodeType, false );
+                                    ViewNtRelationships.Add( NodeType, NtRelationship );
+                                }
+                                else
+                                {
+                                    ViewNtRelationships.TryGetValue( NodeType, out NtRelationship );
+                                }
 
-                            CswNbtViewProperty ViewNtProperty = SearchView.AddViewProperty( NtRelationship, NodeTypeProp );
-                            CswNbtViewPropertyFilter ViewNtPropFilt = SearchView.AddViewPropertyFilter( ViewNtProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
-                            _ViewBuilder.makeViewPropFilter( ViewNtPropFilt, FilterProp );
+                                CswNbtViewProperty ViewNtProperty = SearchView.AddViewProperty( NtRelationship, NodeTypeProp );
+                                CswNbtViewPropertyFilter ViewNtPropFilt = SearchView.AddViewPropertyFilter( ViewNtProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+                                _ViewBuilder.makeViewPropFilter( ViewNtPropFilt, FilterProp );
+                            }
                         }
                     }
                 }

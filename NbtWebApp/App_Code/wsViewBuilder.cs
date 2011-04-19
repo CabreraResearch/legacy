@@ -567,7 +567,7 @@ namespace ChemSW.Nbt.WebServices
             JObject PropBuilder = JObject.Parse( PropFilterJson );
             if( PropBuilder["propbuilder"].Count() == 1 )
             {
-                JToken PropFilter = PropBuilder["propbuilder"].First();
+                JObject PropFilter = (JObject) PropBuilder["propbuilder"].First();
                 PropFilterXml = makeViewPropFilter( View, PropFilter );
             }
             return PropFilterXml;
@@ -576,16 +576,16 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Creates a CswNbtViewPropertyFilter and returns its XML
         /// </summary>
-        public XElement makeViewPropFilter( CswNbtView View, JToken FilterProp )
+        public XElement makeViewPropFilter( CswNbtView View, JObject FilterProp )
         {
             XElement PropFilterXml = new XElement( "propfilter" );
+            
             var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
-            CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp.First["proptype"], true, out PropType );
-            string PropArbitraryId = (string) FilterProp.First["proparbitraryid"];
-            string FiltArbitraryId = (string) FilterProp.First["filtarbitraryid"];
+            CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
+            
+            string FiltArbitraryId = (string) FilterProp["filtarbitraryid"];
 
             if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown &&
-                !string.IsNullOrEmpty( PropArbitraryId ) &&
                 !string.IsNullOrEmpty( FiltArbitraryId ) )
             {
                 CswNbtViewPropertyFilter ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
@@ -597,16 +597,16 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Modifies an existing CswNbtViewPropertyFilter and returns its XML 
         /// </summary>
-        public XElement makeViewPropFilter( CswNbtViewPropertyFilter ViewPropFilt, JToken FilterProp )
+        public XElement makeViewPropFilter( CswNbtViewPropertyFilter ViewPropFilt, JObject FilterProp )
         {
             XElement PropFilterXml = new XElement( "propfilter" );
             if( null != ViewPropFilt )
             {
                 var FieldName = CswNbtSubField.SubFieldName.Unknown;
-                CswNbtSubField.SubFieldName.TryParse( (string) FilterProp.First["subfield"], true, out FieldName );
+                CswNbtSubField.SubFieldName.TryParse( (string) FilterProp["subfield"], true, out FieldName );
                 var FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
-                CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) FilterProp.First["filter"], true, out FilterMode );
-                string SearchTerm = (string) FilterProp.First["filtervalue"];
+                CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) FilterProp["filter"], true, out FilterMode );
+                string SearchTerm = (string) FilterProp["filtervalue"];
 
                 ViewPropFilt.FilterMode = FilterMode;
                 ViewPropFilt.SubfieldName = FieldName;
