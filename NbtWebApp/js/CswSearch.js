@@ -179,7 +179,16 @@
                                         'selectedFilterVal': ''
                                     };
                                     $.extend(o,r);
-                                    renderNodePropsAndControls(); });
+                                    o.$parent.CswViewPropFilter('init', {
+                                                'idprefix': 'csw',
+                                                'propRow': propRow,
+                                                'firstColumn': 3,
+                                                'includePropertyName': false,
+                                                '$propsXml': $selectedProp,
+                                                propIdName: 'viewbuilderpropid',
+                                                propIdSuffix: propertyId
+                                            }); 
+                                   });
                                 
             if(o.selectedPropVal !== '' )
             {
@@ -212,7 +221,15 @@
 		                'data': "RelatedIdType=" + o.relatedIdType + "&ObjectPk=" + o.nodetypeid + "&IdPrefix=" + o.idprefix + "&NodeKey=" + o.cswnbtnodekey,
                         'success': function($xml) { 
                                 o.$propsXml = $xml;
-                                renderNodePropsAndControls();
+                                o.$parent.CswViewPropFilter('init', {
+                                                'idprefix': 'csw',
+                                                'propRow': propRow,
+                                                'firstColumn': 3,
+                                                'includePropertyName': false,
+                                                '$propsXml': $selectedProp,
+                                                propIdName: 'viewbuilderpropid',
+                                                propIdSuffix: propertyId
+                                            });
                         }
                     });
         } // getNewProps()
@@ -312,17 +329,19 @@
                 'success': function($xml) { 
                     o.searchtype = $xml.attr('searchtype');
                     var searchTableId = makeId({prefix: o.idprefix, ID: 'search_tbl'});
+                    o.$searchTable = $topspandiv.CswTable('init', { 
+                                    ID: searchTableId, 
+                                    cellpadding: 1,
+                                    cellspacing: 1,
+                                    cellalign: 'left',
+                                    align: 'center'
+                                    });
+					o.$searchTable.css("background-color", "red");
+					o.$searchTable.attr('frame', 'border');
                     switch(o.searchtype)
                     {
                         case 'nodetypesearch':
                         {
-                            o.$searchTable = $topspandiv.CswTable('init', { 
-                                    ID: searchTableId, 
-                                    cellpadding: 1,
-                                    cellspacing: 1,
-                                    cellalign: 'center',
-                                    align: 'center'
-                                    });
                             o.$nodeTypesXml = $xml.children('nodetypes');
                             o.$propsXml = $xml.children('nodetypeprops');
                             renderNodeTypeSearchContent();
@@ -330,16 +349,8 @@
                         }
                         case 'viewsearch':
                         {
-                            o.$searchTable = $topspandiv.CswTable('init', { 
-                                    ID: searchTableId, 
-                                    cellpadding: 1,
-                                    cellspacing: 1,
-                                    cellalign: 'left',
-                                    align: 'center'
-                                    });
                             o.$propsXml = $xml.children('properties');
                             o.propsCount = $xml.children('properties').children('property').size();
-                            
                             renderViewBasedSearchContent();
                             break;
                         }
@@ -349,8 +360,6 @@
 					
 		    }); // CswAjaxXml
         } // init()
-
-//        
 
         function doSearch()
         {
