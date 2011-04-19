@@ -143,7 +143,7 @@
             var elementId = makeId(o);
             if( elementId !== '' )
             {
-                $children = $parent.find('#' + elementId);
+                $element = $parent.find('#' + elementId);
             }
             return $element;
         }
