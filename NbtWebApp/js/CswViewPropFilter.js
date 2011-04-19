@@ -24,7 +24,8 @@
                 'selectedFilterVal': '',
 
                 'propIdName': 'filtarbitraryid',
-                'propIdSuffix': ''
+                'propIdSuffix': '',
+                'autoFocusInput': false
 		    };
 		
             if(options) $.extend(o, options);
@@ -123,27 +124,27 @@
                 }
                 else
                 {
-                    var filtValue;
-                    if( defaultValue !== '' && defaultValue != undefined )
+                    var inputOpt = {
+                        value: defaultValue,
+                        placeholder: ''
+                    };
+                    if( inputOpt.value === '' || inputOpt.value === undefined )
                     {
-                        filtValue = defaultValue;
-                    }
-                    else
-                    {
-                        filtValue = propertyName;
-                        if(filtValue !== $subfieldsOptions.find(':selected').text() )
+                        o.placeholder = propertyName;
+                        if(o.placeholder !== $subfieldsOptions.find(':selected').text() )
                         {
-                            filtValue += "'s " +  $subfieldsOptions.find(':selected').text();
+                            o.placeholder += "'s " +  $subfieldsOptions.find(':selected').text();
                         }  
                     }
-                    var $filtValInput = $propFilterValueCell.CswInput('init',{
-                                                            ID: filtValInputId,
-                                                            type: 'text',
-                                                            cssclass: 'csw_search_input',
-                                                            text: filtValue })
-                                                    .attr('autocomplete','on')
-                                                    .attr('autofocus','true')
-                                                    .attr({width:"200px"});
+                    var $filtValInput = $propFilterValueCell.CswInput('init', {ID: filtValInputId,
+                                                                                type: inputTypes.text,
+                                                                                cssclass: 'csw_search_input',
+                                                                                value: inputOpt.value,
+                                                                                placeholder: inputOpt.placeholder,
+                                                                                width: "200px",
+                                                                                autofocus: o.autoFocusInput,
+                                                                                autocomplete: 'on'
+                                                                       });
                 }
             }
             return $propFilterTable;

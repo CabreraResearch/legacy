@@ -1,32 +1,33 @@
-﻿; (function ($) {
+﻿// for CswInput
+var inputTypes = {
+    button: { id: 0, name: 'button', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
+    checkbox: { id: 1, name: 'checkbox', placeholder: false, autocomplete: false, value: { required: true, allowed: true} },
+    color: { id: 2, name: 'color', placeholder: false, autocomplete: true, value: { required: false, allowed: true} },
+    date: { id: 3, name: 'date', placeholder: false, autocomplete: true, value: { required: false, allowed: true} },
+    datetime: { id: 4, name: 'datetime', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
+    'datetime-local': { value: 5, name: 'datetime-local', placeholder: false, autocomplete: true, value: { required: false, allowed: true} },
+    email: { id: 6, name: 'email', placeholder: true, autocomplete: true, value: { required: false, allowed: true} },
+    file: { id: 7, name: 'file', placeholder: false, autocomplete: false, value: { required: false, allowed: false} },
+    hidden: { id: 8, name: 'hidden', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
+    image: { id: 9, name: 'image', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
+    month: { id: 10, name: 'month', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
+    number: { id: 11, name: 'number', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
+    password: { id: 12, name: 'password', placeholder: true, value: { required: false, allowed: true} },
+    radio: { id: 13, name: 'radio', placeholder: false, autocomplete: false, value: { required: true, allowed: true} },
+    range: { id: 14, name: 'range', placeholder: false, autocomplete: true, value: { required: false, allowed: true} },
+    reset: { id: 15, name: 'reset', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
+    search: { id: 16, name: 'search', placeholder: true, autocomplete: true, value: { required: false, allowed: true} },
+    submit: { id: 17, name: 'submit', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
+    tel: { id: 18, name: 'button', placeholder: true, autocomplete: true, value: { required: false, allowed: true} },
+    text: { id: 19, name: 'text', placeholder: true, autocomplete: true, value: { required: false, allowed: true} },
+    time: { id: 20, name: 'time', placeholder: false, autocomplete: true, value: { required: false, allowed: true} },
+    url: { id: 21, name: 'url', placeholder: true, autocomplete: true, value: { required: false, allowed: true} },
+    week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true} }
+};
+
+; (function ($) {
 	
     var PluginName = "CswInput";
-    
-    var inputTypes = {
-            button: {value: 0, name: 'button'},
-            checkbox: {value: 1, name: 'checkbox'},
-            color: {value: 2, name: 'color'},
-            date: {value: 3, name: 'date'}, 
-            datetime: {value: 4, name: 'datetime'}, 
-            'datetime-local': {value: 5, name: 'datetime-local'}, 
-            email: {value: 6, name: 'email'}, 
-            file: {value: 7, name: 'file'},
-            hidden: {value: 8, name: 'hidden'},
-            image: {value: 9, name: 'image'},
-            month: {value: 10, name: 'month'}, 
-            number: {value: 11, name: 'number'}, 
-            password: {value: 12, name: 'password'},
-            radio: {value: 13, name: 'radio'},
-            range: {value: 14, name: 'range'}, 
-            reset: {value: 15, name: 'reset'},
-            search: {value: 16, name: 'search'},
-            submit: {value: 17, name: 'submit'},
-            tel: {value: 18, name: 'button'},
-            text: {value: 19, name: 'text'},
-            time: {value: 20, name: 'time'}, 
-            url: {value: 21, name: 'url'},
-            week: {value: 22, name: 'week'}
-    };
     
     var methods = {
 	
@@ -36,10 +37,13 @@
                 'ID': '',
                 'prefix': '',
                 'suffix': '',
-                'type': '',
+                'type': inputTypes.text,
                 'placeholder': '',
                 'cssclass': '',
-                'text': ''
+                'value': '',
+                'width': "200px",
+                'autofocus': false,
+                'autocomplete': 'on'
             };
             if (options) $.extend(o, options);
 
@@ -51,13 +55,33 @@
                 $input.attr('id',elementId);
                 $input.attr('name',elementId);
             }
-            if( o.type !== '' ) $input.attr('type', o.type);
-            if( o.cssclass !== '' ) $input.attr('class',o.cssclass)
-            if( o.placeholder !== '' ) $input.attr('placeholder',o.placeholder);
-                    
+            
+            if( o.type !== '' && o.type !== undefined ) 
+            {
+                $input.attr('type', o.type);
+                //cannot style placeholder across all browsers yet. Ignore for now.
+                //if( o.type.placeholder === true && o.placeholder !== '')
+                //{
+                //    $input.attr('placeholder',o.placeholder);
+                //}
+                if( o.type.autocomplete === true && o.autocomplete === 'on' )
+                {
+                    $input.attr('autocomplete','on');
+                }
+                if( o.type.value.required === true || ( o.value !== '' && o.value !== undefined ) )
+                {
+                    if( o.value === undefined ) o.value = '';
+                    $input.attr('value',o.value);
+                }
+            }
+            
+            if( o.cssclass !== '' ) $input.attr('class',o.cssclass);
+            if( o.width !== '' ) $input.attr({width: o.width});
+            if( o.autofocus === true ) $input.attr('autofocus');
+                                
             $parent.append($input);
             return $input;
-       },
+        },
         'get': function(options)
         {
             var o = {
@@ -79,7 +103,7 @@
         }
     };
     	// Method calling logic
-	$.fn.CswDOM = function (method) {
+	$.fn.CswInput = function (method) {
 		
 		if ( methods[method] ) {
 		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
@@ -88,8 +112,7 @@
 		} else {
 		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
 		}    
-  
-	};
+    };
 
 
 })(jQuery);
