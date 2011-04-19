@@ -346,6 +346,7 @@
 					if(selectedrowpk != undefined)
 					{
 						$viewgrid.setSelection(_getRowForPk($viewgrid, selectedrowpk));
+						$viewgrid.CswNodeGrid('scrollToSelectedRow');
 					}
 					onSuccess($viewgrid);
 				} // success
