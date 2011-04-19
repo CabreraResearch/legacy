@@ -511,9 +511,12 @@
 											$parent: $span,
 											proparbitraryid: $span.attr('proparbid')
 										});
+
+							var Json2 = { propbuilder: Json };
+
 							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 
 								'viewxml': xmlToString($currentviewxml), 
-								'filtJson': Json, 
+								'filtJson': Json2, 
 								'onSuccess': function($filterxml) {
 									$currentviewxml.find('[arbitraryid="' + $span.attr('arbid') +'"]').append($filterxml);
 									_makeViewTree(stepno, $div);

@@ -276,7 +276,7 @@ var ViewBuilder_CssClasses = {
             if(filterValue !== '')
             {
                 var $subField = o.$parent.CswDOM('findelement',{ID: subFieldId});
-                var subFieldText = $subField.find(':selected').text();
+				var subFieldText = $subField.find(':selected').text();
 
                 var $filter = o.$parent.CswDOM('findelement',{ID: filterId});
                 var filterText = $filter.find(':selected').val();
