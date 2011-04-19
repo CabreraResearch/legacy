@@ -72,18 +72,19 @@
             if(options) $.extend(o,options);
     
             if('Advanced' === o.$link.text())
-            {
-                $('.csw_viewbuilder_subfield_select').each(function() { $(this).show(); });
-                $('.csw_viewbuilder_filter_select').each(function() { $(this).show(); });
-                $('.csw_viewbuilder_default_filter').each(function() { $(this).hide(); });
+            {   
+                
+                $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function() { $(this).show(); });
+                $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).show(); });
+                $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).hide(); });
                 o.$link.text('Simple');
                 isHidden = false;
             }
             else
             {
-                $('.csw_viewbuilder_subfield_select').each(function() { $(this).hide(); });
-                $('.csw_viewbuilder_filter_select').each(function() { $(this).hide(); });
-                $('.csw_viewbuilder_default_filter').each(function() { $(this).show(); });
+                $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function() { $(this).hide(); });
+                $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).hide(); });
+                $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).show(); });
                 o.$link.text('Advanced');
                 isHidden = true;
             }
@@ -108,11 +109,11 @@
             o.$propsXml.children('property').each( function() {
                     var $thisProp = $(this);
                     var $nodeTypeCell = o.$searchTable.CswTable('cell', propRow, 2);
-                    var nodeTypeId = makeId({ID: 'viewbuilderpropid', suffix: $thisProp.attr('propid'), prefix: o.idprefix});
+                    var nodeTypeId = makeId({ID: 'viewbuilderpropid', suffix: $thisProp.attr('viewbuilderpropid'), prefix: o.idprefix});
                     var $nodeType = $nodeTypeCell.CswDOM('span',{
                                                                 ID: nodeTypeId,
                                                                 value: $thisProp.attr('metadatatypename'),
-                                                                cssclass: 'csw_viewbuilder_metadatatype_static'})
+                                                                cssclass: ViewBuilder_CssClasses.metadatatype_static.name})
                                                   .attr('relatedidtype',$thisProp.attr('relatedidtype') );
                     o.selectedSubfieldVal = ''; 
                     o.selectedFilterVal = '';
@@ -124,8 +125,7 @@
                                                     'firstColumn': 3,
                                                     'includePropertyName': true,
                                                     '$propsXml': $thisProp,
-                                                    propIdName: 'filtarbitraryid',
-                                                    propIdSuffix: filtArbitraryId
+                                                    'filtarbitraryid': filtArbitraryId
                                                 });
                     propRow++;
             });
@@ -179,8 +179,7 @@
                                                 'firstColumn': 3,
                                                 'includePropertyName': false,
                                                 '$propsXml': $selectedProp,
-                                                propIdName: 'viewbuilderpropid',
-                                                propIdSuffix: propertyId
+                                                viewbuilderpropid: propertyId
                                             }); 
                                    });
                                 
@@ -190,7 +189,7 @@
             }
             $propSelectCell.append($props);
             var propertyId = $props.find(':selected').val();
-            var $selectedProp = o.$propsXml.children('propertyfilters').children('property[propid='+ propertyId +']');
+            var $selectedProp = o.$propsXml.children('propertyfilters').children('property[viewbuilderpropid='+ propertyId +']');
         
             var $propFilter = o.$searchTable.CswViewPropFilter('init', {
                                                 'idprefix': 'csw',
@@ -198,8 +197,7 @@
                                                 'firstColumn': 3,
                                                 'includePropertyName': false,
                                                 '$propsXml': $selectedProp,
-                                                propIdName: 'viewbuilderpropid',
-                                                propIdSuffix: propertyId
+                                                'viewbuilderpropid': propertyId
                                             });
             
             o.bottomRow = (o.propsCount + 1);
@@ -221,8 +219,7 @@
                                                 'firstColumn': 3,
                                                 'includePropertyName': false,
                                                 '$propsXml': $selectedProp,
-                                                propIdName: 'viewbuilderpropid',
-                                                propIdSuffix: propertyId
+                                                'viewbuilderpropid': propertyId
                                             });
                         }
                     });
@@ -315,11 +312,12 @@
         function init()
         {
             //var $titlespan = $('<span style="align: center;">Search</span>');
-            $topspandiv.empty();
+            
             CswAjaxXml({ 
 		        'url': o.getClientSearchXmlUrl,
 		        'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeid + "&IdPrefix=" + o.idprefix + "&NodeKey=" + o.cswnbtnodekey,
                 'success': function($xml) { 
+                    $topspandiv.empty();
                     o.searchtype = $xml.attr('searchtype');
                     var searchTableId = makeId({prefix: o.idprefix, ID: 'search_tbl'});
                     o.$searchTable = $topspandiv.CswTable('init', { 
@@ -336,7 +334,7 @@
                         case 'nodetypesearch':
                         {
                             o.$nodeTypesXml = $xml.children('nodetypes');
-                            o.$propsXml = $xml.children('nodetypeprops');
+                            o.$propsXml = $xml.children('viewbuilderprops');
                             renderNodeTypeSearchContent();
                             break;
                         }
@@ -372,21 +370,21 @@
                     $('.csw_viewbuilder_properties_select').each(function() {
                             var $thisProp = $(this);
                             var propName = $thisProp.text();
-                            var propId = $thisProp.val();
-                            var fieldtype = o.$propsXml.children('propertyfilters').children('property[propname="' + propName + '"][propid="' + propId + '"]').attr('fieldtype');
+                            var viewbuildpropid = $thisProp.val();
+                            var fieldtype = o.$propsXml.children('propertyfilters')
+                                                       .children('property[propname="' + propName + '"][viewbuilderpropid="' + viewbuildpropid + '"]')
+                                                       .attr('fieldtype');
                             var thisNodeProp = $thisProp.CswViewPropFilter('getFilterJson',{objectpk: objectPk,
                                                                                           relatedidtype: relatedIdType,  
                                                                                           fieldtype: fieldtype,
                                                                                           idprefix: o.idprefix,
                                                                                           $parent: o.$searchTable,
-                                                                                          propId: propId,
-                                                                                          propIdName: 'viewbuilderpropid',
-                                                                                          propIdSuffix: propId
+                                                                                          'viewbuilderpropid': viewbuildpropid
                                                                         }); 
                             props.push( thisNodeProp );
                         });
                     searchOpt = {
-                        'nodetypeprops' : props
+                        'viewbuilderprops' : props
                     };
                     
                     break;
