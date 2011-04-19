@@ -21,7 +21,10 @@
                 'includePropertyName': false,
 
                 'selectedSubfieldVal': '',
-                'selectedFilterVal': ''
+                'selectedFilterVal': '',
+
+                'propIdName': 'filtarbitraryid',
+                'propIdSuffix': ''
 		    };
 		
             if(options) $.extend(o, options);
@@ -62,7 +65,7 @@
                 
                 var fieldtype = o.$propsXml.attr('fieldtype');
                 var $defaultFilter = o.$propsXml.children('defaultsubfield').attr('filter');
-                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, 4)                                                    .empty();                var defaultSubFieldId = makeId({ID: 'default_filter', suffix: filtArbitraryId, prefix: o.idprefix});                var $defaultSubField = $subfieldCell.CswDOM('span', {                                                    ID: defaultSubFieldId,                                                    value: $defaultFilter,                                                    cssclass: 'csw_viewbuilder_default_filter' })                                                .attr({align:"center"});
+                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, 4)                                                    .empty();                var defaultSubFieldId = makeId({ID: 'default_filter_' + o.propIdName, suffix: o.propIdSuffix, prefix: o.idprefix});                var $defaultSubField = $subfieldCell.CswDOM('span', {                                                    ID: defaultSubFieldId,                                                    value: $defaultFilter,                                                    cssclass: 'csw_viewbuilder_default_filter' })                                                .attr({align:"center"});
                 $defaultSubField.hide(); //for Search
                 //Row propRow, Column 4: subfield picklist 
                 var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)) //4
@@ -108,15 +111,15 @@
                 //Row propRow, Column 6: filter input
                 var $propFilterValueCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 3)) //6
                                                            .empty();
-            
+                
+                var filtValInputId = makeId({'ID': 'search_input_' + o.propIdName, suffix: o.propIdSuffix, 'prefix': o.idprefix});
                 if( fieldtype === 'List' )
                 {
                     $propFilterValueCell.append( $(xmlToString($propsXml.children('filtersoptions').children('select'))) );
                 }
                 else if( fieldtype === 'Logical' )
                 {
-                    var propFilterCellId = makeId({'ID': 'search_input_searchpropid',suffix: propertyId, 'prefix': o.idprefix});
-                    $propFilterValueCell.CswTristateCheckBox('init',{'ID': propFilterCellId}); 
+                    $propFilterValueCell.CswTristateCheckBox('init',{'ID': filtValInputId, 'Checked': defaultValue}); 
                 }
                 else
                 {
@@ -133,7 +136,6 @@
                             filtValue += "'s " +  $subfieldsOptions.find(':selected').text();
                         }  
                     }
-                    var filtValInputId = makeId({ID: 'search_input_searchpropid', prefix: o.idprefix, suffix: propertyId});
                     var $filtValInput = $propFilterValueCell.CswDOM('input',{
                                                             ID: filtValInputId,
                                                             type: 'text',
