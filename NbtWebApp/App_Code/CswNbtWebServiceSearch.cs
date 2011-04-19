@@ -294,12 +294,12 @@ namespace ChemSW.Nbt.WebServices
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
 
-                foreach( JToken FilterProp in NodesSearch["nodetypeprops"].Children() )
+                foreach( JToken FilterProp in NodesSearch["viewbuilderprops"].Children() )
                 {
                     var PropType = CswNbtViewRelationship.RelatedIdType.Unknown;
                     CswNbtViewRelationship.RelatedIdType.TryParse( (string) FilterProp.First["relatedidtype"], true, out PropType );
                     Int32 ObjectPk = CswConvert.ToInt32( (string) FilterProp.First["objectpk"] );
-                    Int32 PropId = CswConvert.ToInt32( (string) FilterProp.First["propid"] );
+                    Int32 PropId = CswConvert.ToInt32( (string) FilterProp.First["viewbuilderpropid"] );
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
                     if( PropType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
                         Int32.MinValue != NodeTypeProp.ObjectClassPropId )
