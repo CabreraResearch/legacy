@@ -12,7 +12,7 @@ using System.IO;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01H-26
+    /// Updates the schema to version 01H-28
     /// </summary>
     public class CswUpdateSchemaTo01H28 : ICswUpdateSchemaTo
     {
@@ -53,8 +53,8 @@ namespace ChemSW.Nbt.Schema
             NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
             NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
             NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = '0';
-            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.Daily.ToString(); 
+            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 1;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
             //Update Inspection
@@ -63,8 +63,8 @@ namespace ChemSW.Nbt.Schema
             NewRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = 20000;
             NewRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = 3;
             NewRowScheduledRules[NbtScheduledRuleColumns.Disabled.ToString()] = '0';
-            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.NSeconds.ToString();
-            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 5;
+            NewRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = ChemSW.MtSched.Core.Recurrance.Daily.ToString();
+            NewRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = 1;
             DataTableScheduledRules.Rows.Add( NewRowScheduledRules );
 
             //Gen Node
