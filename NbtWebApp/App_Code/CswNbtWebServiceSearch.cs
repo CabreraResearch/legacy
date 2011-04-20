@@ -38,7 +38,6 @@ namespace ChemSW.Nbt.WebServices
                 InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Grid ) );
 	            return InvalidFieldTypes;
 	        }
-
 	    }
 
         public CswNbtWebServiceSearch( CswNbtResources CswNbtResources, string Prefix )
@@ -231,10 +230,10 @@ namespace ChemSW.Nbt.WebServices
 
             return SearchNode;
         } // getViewBasedSearch()
-        
-        public XElement getSearchProps( string RelatedIdType, string ObjectPk, string NodeKey )
+
+        public XElement getSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
         {
-            XElement SearchProps = _ViewBuilder.getViewBuilderProps( RelatedIdType, ObjectPk, NodeKey );
+            XElement SearchProps = _ViewBuilder.getViewBuilderProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey );
             return SearchProps;
         }
 
@@ -304,7 +303,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         var PropType = CswNbtViewRelationship.RelatedIdType.Unknown;
                         CswNbtViewRelationship.RelatedIdType.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );
-                        Int32 NodeTypeOrObjectClassId = CswConvert.ToInt32( (string) FilterProp["objectpk"] );
+                        Int32 NodeTypeOrObjectClassId = CswConvert.ToInt32( (string) FilterProp["nodetypeorobjectclassid"] );
                         Int32 PropId = CswConvert.ToInt32( (string) FilterProp["viewbuilderpropid"] );
                         CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
                         if( PropType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&

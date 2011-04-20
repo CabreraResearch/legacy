@@ -227,7 +227,7 @@ var ViewBuilder_CssClasses = {
         {
             var $thisProp = $(this);
             var o = {
-                objectpk: '',
+                nodetypeorobjectclassid: '',
                 relatedidtype: '',
                 fieldtype: $thisProp.attr('fieldtype'),
                 idprefix: '',
@@ -286,7 +286,7 @@ var ViewBuilder_CssClasses = {
                 var propType = $thisProp.attr('proptype');
                                 
                 thisNodeProp = {
-                    objectpk: o.objectpk, // for NodeType filters
+                    nodetypeorobjectclassid: o.nodetypeorobjectclassid, // for NodeType filters
                     relatedidtype: o.relatedidtype, // for NodeType filters
                     proptype: propType,
                     viewbuilderpropid: o.viewbuilderpropid,
