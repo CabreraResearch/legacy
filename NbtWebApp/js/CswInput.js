@@ -35,8 +35,6 @@ var inputTypes = {
 		{
             var o = {
                 'ID': '',
-                'prefix': '',
-                'suffix': '',
                 'type': inputTypes.text,
                 'placeholder': '',
                 'cssclass': '',
@@ -49,11 +47,10 @@ var inputTypes = {
 
             var $parent = $(this);
             var $input = $('<input />');
-            var elementId = makeId(o);
-            if( elementId !== '' ) 
+            if( o.ID !== '' ) 
             {
-                $input.attr('id',elementId);
-                $input.attr('name',elementId);
+                $input.attr('id',o.ID);
+                $input.attr('name',o.ID);
             }
             
             if( o.type !== '' && o.type !== undefined ) 
@@ -85,19 +82,16 @@ var inputTypes = {
         'get': function(options)
         {
             var o = {
-                ID: '',
-                prefix: '',
-                suffix: ''
+                ID: ''
             };
             if (options) $.extend(o, options);
 
             var $parent = $(this);
             var $element;
-            
-            var elementId = makeId(o);
-            if( elementId !== '' && elementId !== undefined)
+
+            if( o.ID !== '' && o.ID !== undefined)
             {
-                $element = $parent.find('#' + elementId);
+                $element = $parent.find('#' + o.ID);
             }
             return $element;
         }
