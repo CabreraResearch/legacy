@@ -7,10 +7,10 @@
 			{
 				var o = {
 					ID: '',
-					ViewUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
+					NodeTypesUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
 					nodetypeid: '',
 					onSelect: function (nodetypeid) {},
-					onSuccess: function () {},
+					onSuccess: function () {}
 				};
 
 				if (options)
@@ -26,7 +26,7 @@
 				$select.change(function(event) { o.onSelect( $select.val() ); });
 
 				CswAjaxXml({
-						url: o.ViewUrl,
+						url: o.NodeTypesUrl,
 						data: '',
 						success: function ($xml)
 						{

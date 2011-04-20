@@ -368,7 +368,7 @@ namespace ChemSW.Nbt
             if( Visibility == NbtViewVisibility.Unknown )
                 throw new CswDniException( "View visibility is Unknown", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Unknown" );
 
-            if( !ViewIsUnique( ViewId, ViewName, Visibility, VisibilityUserId, VisibilityRoleId ) )
+            if( !ViewIsUnique( _CswNbtResources, ViewId, ViewName, Visibility, VisibilityUserId, VisibilityRoleId ) )
                 throw new CswDniException( "View name is already in use", "There is already a view with name: " + ViewName + " and visibility setting: " + Visibility.ToString() );
 
             // Before Edit View Events
@@ -384,8 +384,9 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["category"] = Category;
             ViewTable.Rows[0]["viewxml"] = this.ToString();
             ViewTable.Rows[0]["formobile"] = CswConvert.ToDbVal( ForMobile );
-            ViewTable.Rows[0]["visibility"] = Visibility.ToString();
-            if( Visibility == NbtViewVisibility.Role )
+			ViewTable.Rows[0]["visibility"] = Visibility.ToString();
+			ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
+			if( Visibility == NbtViewVisibility.Role )
                 ViewTable.Rows[0]["roleid"] = CswConvert.ToDbVal( VisibilityRoleId.PrimaryKey );
             else
                 ViewTable.Rows[0]["roleid"] = DBNull.Value;
@@ -448,8 +449,8 @@ namespace ChemSW.Nbt
             if( ViewName == string.Empty )
                 throw new CswDniException( "View name cannot be blank", "CswNbtView.makeNew() called with empty ViewName parameter" );
 
-            // Enforce name-visibility compound unique constraint
-            if( !ViewIsUnique( Int32.MinValue, ViewName, Visibility, UserId, RoleId ) )
+			// Enforce name-visibility compound unique constraint
+            if( !ViewIsUnique( _CswNbtResources, Int32.MinValue, ViewName, Visibility, UserId, RoleId ) )
                 throw new CswDniException( "View name is already in use", "There is already a view with conflicting name and visibility settings" );
 
             // Before New View Events
@@ -463,12 +464,12 @@ namespace ChemSW.Nbt
             // Insert a new view
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "ViewTableUpdate", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getEmptyTable();
-
+			
             DataRow NewRow = ViewTable.NewRow();
             NewRow["viewname"] = ViewName;
             NewRow["formobile"] = CswConvert.ToDbVal( ForMobile );
             NewRow["visibility"] = Visibility.ToString();
-
+			NewRow["viewmode"] = ViewMode.ToString();
             NewRow["userid"] = CswConvert.ToDbVal( Int32.MinValue );
             if( UserId != null )
                 NewRow["userid"] = CswConvert.ToDbVal( UserId.PrimaryKey );
@@ -636,11 +637,17 @@ namespace ChemSW.Nbt
             }
         } // Delete()
 
-        private bool ViewIsUnique( Int32 ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
+		public const Int32 ViewNameLength = 30;
+
+		public static bool ViewIsUnique( CswNbtResources CswNbtResources, Int32 ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
         {
-            if( Visibility != NbtViewVisibility.Property )
+			// truncate the name
+			if( ViewName.Length > ViewNameLength )
+				ViewName = ViewName.Substring( 0, ViewNameLength );
+
+			if( Visibility != NbtViewVisibility.Property )
             {
-                CswTableSelect CheckViewTableSelect = _CswNbtResources.makeCswTableSelect( "ViewIsUnique_select", "node_views" );
+                CswTableSelect CheckViewTableSelect = CswNbtResources.makeCswTableSelect( "ViewIsUnique_select", "node_views" );
                 string WhereClause = "where viewname = '" + CswTools.SafeSqlParam( ViewName ) + "'";
                 if( ViewId > 0 )
                     WhereClause += " and nodeviewid <> " + ViewId.ToString();

@@ -56,7 +56,7 @@
 												type: Selected.$item.attr('type'),
 												viewid: Selected.$item.attr('viewid'),
 												viewname: Selected.text, 
-												viewmode: Selected.$item.attr('viewmode'),
+												viewmode: Selected.$item.attr('viewmode')
 											 };
 									o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
 								});

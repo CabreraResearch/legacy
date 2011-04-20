@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Web.Script.Serialization;
 using System.Xml;
@@ -351,6 +353,217 @@ namespace ChemSW.Nbt.WebServices
 			return ReturnJson.ToString();
 		} // getGrid()
 
+		#region Views
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getViewGrid( bool All )
+		{
+			JObject ReturnJson = new JObject();
+			try
+			{
+				start();
+				CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
+				ReturnJson = ws.getViewGrid( All );
+				end();
+			}
+			catch( Exception Ex )
+			{
+				ReturnJson.Add( jError( Ex ) );
+			}
+
+			return ReturnJson.ToString();
+		} // getViewGrid()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XmlDocument getViewInfo( string ViewId )
+		{
+			XmlDocument ReturnXml = null;
+			try
+			{
+				start();
+				Int32 nViewId = CswConvert.ToInt32( ViewId );
+				if( nViewId != Int32.MinValue )
+				{
+					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					ReturnXml = View.ToXml();
+				}
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnXml = new XmlDocument();
+				ReturnXml.LoadXml( "<error>" + error( ex ) + "</error>" );
+			}
+
+			return ReturnXml;
+		} // getViewInfo()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement saveViewInfo( string ViewId, string ViewXml )
+		{
+			XElement ReturnXml = new XElement( "result" );
+			try
+			{
+				start();
+				Int32 nViewId = CswConvert.ToInt32( ViewId );
+				if( nViewId != Int32.MinValue )
+				{
+					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					View.LoadXml( ViewXml );
+					View.save();
+
+					//if( View.Visibility != NbtViewVisibility.Property )
+					//    CswViewListTree.ClearCache( Session );
+					_CswNbtResources.ViewCache.clearFromCache( View );
+					_CswNbtResources.ViewSelect.clearCache();
+
+					ReturnXml.Add( new XAttribute( "succeeded", "true" ) );
+				}
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnXml = xError( ex );
+			}
+
+			return ReturnXml;
+		} // saveViewInfo()
+
+
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement getViewChildOptions( string ViewXml, string ArbitraryId, string StepNo )
+		{
+			XElement ReturnXml = new XElement( "result" );
+			try
+			{
+				start();
+				CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
+				ReturnXml = ws.getViewChildOptions( ViewXml, ArbitraryId, CswConvert.ToInt32( StepNo ) );
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnXml = xError( ex );
+			}
+
+			return ReturnXml;
+		} // getViewChildOptions()
+
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string copyView( string ViewId )
+		{
+			JObject ReturnJson = new JObject();
+			try
+			{
+				start();
+				Int32 nViewId = CswConvert.ToInt32( ViewId );
+				if( nViewId != Int32.MinValue )
+				{
+					CswNbtView SourceView = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					CswNbtView NewView = new CswNbtView( _CswNbtResources );
+					string NewViewNameOrig = SourceView.ViewName;
+					string Suffix = " Copy";
+					if( !NewViewNameOrig.EndsWith( Suffix ) && NewViewNameOrig.Length < ( CswNbtView.ViewNameLength - Suffix.Length - 2 ) )
+						NewViewNameOrig = NewViewNameOrig + Suffix;
+					string NewViewName = NewViewNameOrig;
+					if( NewViewNameOrig.Length > ( CswNbtView.ViewNameLength - 2 ) )
+						NewViewNameOrig = NewViewNameOrig.Substring( 0, ( CswNbtView.ViewNameLength - 2 ) );
+					Int32 Increment = 1;
+					while( !CswNbtView.ViewIsUnique( _CswNbtResources, Int32.MinValue, NewViewName, SourceView.Visibility, SourceView.VisibilityUserId, SourceView.VisibilityRoleId ) )
+					{
+						Increment++;
+						NewViewName = NewViewNameOrig + " " + Increment.ToString();
+					}
+
+					NewView.makeNew( NewViewName, SourceView.Visibility, SourceView.VisibilityRoleId, SourceView.VisibilityUserId, SourceView );
+					NewView.save();
+					ReturnJson.Add( new JProperty( "copyviewid", NewView.ViewId.ToString() ) );
+				}
+				end();
+			}
+			catch( Exception Ex )
+			{
+				ReturnJson.Add( jError( Ex ) );
+			}
+
+			return ReturnJson.ToString();
+		} // copyView()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string deleteView( string ViewId )
+		{
+			JObject ReturnJson = new JObject();
+			try
+			{
+				start();
+				Int32 nViewId = CswConvert.ToInt32( ViewId );
+				if( nViewId != Int32.MinValue )
+				{
+					CswNbtView DoomedView = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					DoomedView.Delete();
+					ReturnJson.Add( new JProperty( "succeeded", "true" ) );
+				}
+				end();
+			}
+			catch( Exception Ex )
+			{
+				ReturnJson.Add( jError( Ex ) );
+			}
+
+			return ReturnJson.ToString();
+		} // deleteView()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string createView( string ViewName, string ViewMode, string Visibility, string VisibilityRoleId, string VisibilityUserId )
+		{
+			JObject ReturnJson = new JObject();
+			try
+			{
+				start();
+
+				NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
+				Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
+				NbtViewVisibility RealVisibility = NbtViewVisibility.Unknown;
+				Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
+				CswPrimaryKey RealVisibilityRoleId = null;
+				CswPrimaryKey RealVisibilityUserId = null;
+				if( RealVisibility == NbtViewVisibility.Role )
+				{
+					RealVisibilityRoleId = new CswPrimaryKey();
+					RealVisibilityRoleId.FromString( VisibilityRoleId );
+				}
+				else if( RealVisibility == NbtViewVisibility.User )
+				{
+					RealVisibilityUserId = new CswPrimaryKey();
+					RealVisibilityUserId.FromString( VisibilityUserId );
+				}
+
+				CswNbtView NewView = new CswNbtView( _CswNbtResources );
+				NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, null );
+				NewView.ViewMode = RealViewMode;
+				NewView.save();
+				ReturnJson.Add( new JProperty( "newviewid", NewView.ViewId ) );
+				end();
+			}
+			catch( Exception Ex )
+			{
+				ReturnJson.Add( jError( Ex ) );
+			}
+
+			return ReturnJson.ToString();
+		} // createView()
+
+		#endregion Views
+
 		/// <summary>
 		/// Generates a tree of nodes from the view
 		/// </summary>
@@ -425,6 +638,55 @@ namespace ChemSW.Nbt.WebServices
 
 			return TreeNode;
 		} // getTreeOfNode()
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement getNodes( string NodeTypeId, string ObjectClassId, string ObjectClass )
+		{
+			var ResultXml = new XElement( "nodes" );
+
+			try
+			{
+				start();
+
+				Int32 RealNodeTypeId = CswConvert.ToInt32( NodeTypeId );
+				Int32 RealObjectClassId = CswConvert.ToInt32( ObjectClassId );
+				CswNbtMetaDataObjectClass.NbtObjectClass RealObjectClass = CswNbtMetaDataObjectClass.NbtObjectClass.Unknown;
+				Enum.TryParse<CswNbtMetaDataObjectClass.NbtObjectClass>( ObjectClass, true, out RealObjectClass );
+
+				Collection<CswNbtNode> Nodes = null;
+				if( RealNodeTypeId != Int32.MinValue )
+				{
+					CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( RealNodeTypeId );
+					Nodes = MetaDataNodeType.getNodes( true, false );
+				}
+				else
+				{
+					CswNbtMetaDataObjectClass MetaDataObjectClass = null;
+					if( RealObjectClassId != Int32.MinValue )
+						MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( RealObjectClassId );
+					else if( RealObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+						MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( RealObjectClass );
+					Nodes = MetaDataObjectClass.getNodes( true, false );
+				}
+
+				foreach( CswNbtNode Node in Nodes )
+				{
+					ResultXml.Add(
+						new XElement( "node",
+							new XAttribute( "id", Node.NodeId.ToString() ),
+							new XAttribute( "name", Node.NodeName ) ) );
+				}
+
+				end();
+			}
+			catch( Exception ex )
+			{
+				ResultXml = xError( ex );
+			}
+
+			return ResultXml;
+		} // getNodes()
 
 		#endregion Render Core UI
 
@@ -504,7 +766,55 @@ namespace ChemSW.Nbt.WebServices
 				ReturnXml.LoadXml( "<error>" + error( ex ) + "</error>" );
 			}
 			return ReturnXml;
-		} // getProps()
+		} // getSingleProp()
+
+
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement getPropNames( string Type, string Id )
+		{
+			XElement ReturnXml = new XElement( "properties" );
+			try
+			{
+				start();
+
+				Int32 nId = CswConvert.ToInt32( Id );
+
+				if( nId != Int32.MinValue )
+				{
+					ICollection Props = null;
+					string PropType = string.Empty;
+					if( Type == "NodeTypeId" )
+					{
+						CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( nId );
+						Props = NodeType.NodeTypeProps;
+						PropType = CswNbtViewProperty.CswNbtPropType.NodeTypePropId.ToString();
+					}
+					else if( Type == "ObjectClassId" )
+					{
+						CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( nId );
+						Props = ObjectClass.ObjectClassProps;
+						PropType = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId.ToString();
+					}
+
+					foreach( ICswNbtMetaDataProp Prop in Props )
+					{
+						ReturnXml.Add(
+							new XElement( "prop",
+								new XAttribute( "proptype", PropType ),
+								new XAttribute( "propname", Prop.PropNameWithQuestionNo ),
+								new XAttribute( "propid", Prop.PropId.ToString() ) ) );
+					}
+				} // if( nId != Int32.MinValue )
+
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnXml = xError( ex );
+			}
+			return ReturnXml;
+		} // getPropNames()
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -551,8 +861,8 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return ( ReturnVal.ToString() );
 		} // copyPropValue()	
-		
-		
+
+
 		#endregion Tabs and Props
 
 		#region Misc
@@ -637,9 +947,13 @@ namespace ChemSW.Nbt.WebServices
 			return ( ReturnVal.ToString() );
 		}
 
+		#endregion Misc
+
+        #region Views
+
         [WebMethod( EnableSession = true )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getViewPropFilter(string ViewXml, string PropArbitraryId)
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement getViewPropFilterUI( string ViewXml, string PropArbitraryId )
         {
             XElement PropsNode = new XElement( "nodetypeprops" );
             try
@@ -655,11 +969,31 @@ namespace ChemSW.Nbt.WebServices
             }
             return PropsNode;
         }
-		#endregion Misc
 
-		#region Search
 
-		[WebMethod( EnableSession = true )]
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement makeViewPropFilter( string ViewXml, string PropFiltJson )
+        {
+            XElement PropsNode = new XElement( "nodetypeprops" );
+            try
+            {
+                start();
+                var ws = new wsViewBuilder( _CswNbtResources );
+                PropsNode = ws.makeViewPropFilter( ViewXml, PropFiltJson );
+                end();
+            }
+            catch( Exception ex )
+            {
+                PropsNode = xError( ex );
+            }
+            return PropsNode;
+        }
+        #endregion Views
+
+        #region Search
+
+        [WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XElement getClientSearchXml( string ViewIdNum, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
 		{
@@ -680,14 +1014,14 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getNodeTypeSearchProps( string RelatedIdType, string ObjectPk, string IdPrefix, string NodeKey )
+		public XElement getNodeTypeSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string IdPrefix, string NodeKey )
 		{
 			XElement SearchNode = new XElement( "search" );
 			try
 			{
 				start();
 				var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
-				SearchNode = ( ws.getSearchProps( RelatedIdType, ObjectPk, NodeKey ) );
+                SearchNode = ( ws.getSearchProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey ) );
 				end();
 			}
 			catch( Exception ex )
@@ -736,7 +1070,7 @@ namespace ChemSW.Nbt.WebServices
                 ResultsView.SaveToCache();
 
 				SearchResultView.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
-                SearchResultView.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
+				SearchResultView.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
 				end();
 			}
 			catch( Exception ex )

@@ -58,6 +58,7 @@ var CswImageButton_ButtonType = {
 
         var $ImageDiv = $('<div id="' + o.ID + '" class="divbutton" alt="' + o.AlternateText + '" />"')
                       .appendTo($Div)
+					  .css('display', 'inline-block')
                       .click(function () { 
 								var NewButtonType = o.onClick($ImageDiv);
 								setButton(NewButtonType);

@@ -4,7 +4,7 @@
 	var PluginName = 'CswTristateCheckBox';
 
 	var methods = {
-		init: function (options)
+		'init': function (options)
 		{
 			var o = {
 				'ID': '',
@@ -18,7 +18,7 @@
 
 			var $parent = $(this);
             $parent.empty();
-            var elementId = o.prefix + '_' + o.ID;
+            var elementId = makeId({prefix: o.prefix, ID: o.ID});
 			if(o.Checked == '' || o.Checked == undefined || o.Checked == null) o.Checked = "null";
             if(o.ReadOnly)
 			{
@@ -49,7 +49,7 @@
 									});
 			}
 		},
-		value: function ()
+		'value': function ()
 		{
 			var $CheckboxImage = $(this);
 			var Checked = $CheckboxImage.attr('alt');

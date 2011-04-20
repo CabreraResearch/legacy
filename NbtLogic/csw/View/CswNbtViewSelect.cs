@@ -137,11 +137,17 @@ namespace ChemSW.Nbt
                 CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
                 ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
                 ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
+				string AddClause = " ";
                 if( MobileOnly )
-                    ViewsSelect.S4Parameters.Add( "addclause", "and formobile = '" + CswConvert.ToDbVal( true ) + "'" );
-                else
-                    ViewsSelect.S4Parameters.Add( "addclause", " " );
-                if( OrderBy != string.Empty )
+				{
+					AddClause += "and formobile = '" + CswConvert.ToDbVal( true ) + "'";
+				}
+				if( ViewRenderingMode != NbtViewRenderingMode.Any )
+				{
+					AddClause += "and viewmode = '" + ViewRenderingMode.ToString() + "'";
+				}
+				ViewsSelect.S4Parameters.Add( "addclause", AddClause );
+				if( OrderBy != string.Empty )
                     ViewsSelect.S4Parameters.Add( "orderbyclause", OrderBy );
                 else
                     ViewsSelect.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );
@@ -160,9 +166,9 @@ namespace ChemSW.Nbt
                         // Case 20452 - Remove views associated with disabled nodetypes/objectclasses
                         if( ThisView.IsFullyEnabled() )
                         {
-                            if( NbtViewRenderingMode.Any == ViewRenderingMode ||
-                                ThisView.ViewMode == ViewRenderingMode )
-                            {
+							//if( NbtViewRenderingMode.Any == ViewRenderingMode ||
+							//    ThisView.ViewMode == ViewRenderingMode )
+							//{
                                 foreach( CswNbtViewRelationship R in ThisView.Root.ChildRelationships )
                                 {
                                     if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
@@ -171,7 +177,7 @@ namespace ChemSW.Nbt
                                         skipme = false;
                                     }
                                 }
-                            }
+                            //}
                         }
                         if( skipme )
                         {

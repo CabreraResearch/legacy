@@ -23,6 +23,67 @@
 
 						}, // AddWelcomeItemDialog
 
+		'AddViewDialog': function (options)
+						{
+							var o = {
+								'ID': 'addviewdialog',
+								'onAddView': function (newviewid) { },
+								'makeVisibilitySelect': function($table, rownum, label) { }
+							};
+							if (options) $.extend(o, options);
+
+							var $div = $('<div></div>');
+							var $table = $div.CswTable('init', { 'ID': o.ID + '_tbl', 'FirstCellRightAlign': true });
+
+							$table.CswTable('cell', 1, 1).append('Name:');
+							var $nametextbox = $('<input type="text" id="' + o.ID + '_nametb" value="" />')
+													.appendTo($table.CswTable('cell', 1, 2));
+
+							$table.CswTable('cell', 2, 1).append('Display Mode:');
+							var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />')
+														.appendTo($table.CswTable('cell', 2, 2));
+							$displaymodeselect.append('<option value="List">List</option>');
+							$displaymodeselect.append('<option value="Tree">Tree</option>');
+							$displaymodeselect.append('<option value="Grid">Grid</option>');
+
+							var v = o.makeVisibilitySelect($table, 3, 'Available to:');
+
+							var $savebtn = $div.CswButton({ID: o.ID + '_submit', 
+                                                                    enabledText: 'Create View', 
+                                                                    disabledText: 'Creating View', 
+                                                                    onclick: function() {
+									                                        
+																			var createData = {};
+																			createData.ViewName = $nametextbox.val();
+																			createData.ViewMode = $displaymodeselect.val();
+																			createData.Visibility = v.getvisibilityselect().val();
+																			createData.VisibilityRoleId = v.getvisroleselect().val();
+																			createData.VisibilityUserId = v.getvisuserselect().val();
+																			CswAjaxJSON({
+																				url: '/NbtWebApp/wsNBT.asmx/createView',
+																				data: jsonToString(createData),
+																				success: function(data) {
+											                                        $div.dialog('close');
+																					o.onAddView(data.newviewid);
+																				}, 
+																				error: function() {
+																					$savebtn.CswButton('enable'); 
+																				}
+																			});
+								                                        }
+                                                                    });
+
+							var $cancelbtn = $div.CswButton({ID: o.ID + '_cancel', 
+                                                                        enabledText: 'Cancel', 
+                                                                        disabledText: 'Canceling', 
+                                                                        onclick: function() {
+																				$div.dialog('close');
+                                                                             }
+                                                                        });    
+
+							_openDiv($div, 400, 200);
+						},
+
 		'AddNodeDialog': function (options) {
 							var o = {
 								'nodetypeid': '', 

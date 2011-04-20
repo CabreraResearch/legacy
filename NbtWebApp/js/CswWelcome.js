@@ -140,7 +140,7 @@
 										.appendTo($table.CswTable('cell', 2, 1))
 										.hide();
 				var $viewselect = $table.CswTable('cell', 2, 2).CswViewSelect({
-																				'ID': 'welcome_viewsel',
+																				'ID': 'welcome_viewsel'
 																				//'viewid': '',
 																				//'onSelect': function(optSelect) { },
 																			})
@@ -201,7 +201,7 @@
 //											'$welcometext': $welcometext,
 											'$buttonsel_label': $buttonsel_label,
 											'$buttonsel': $buttonsel,
-											'$buttonimg': $buttonimg, 
+											'$buttonimg': $buttonimg
 //											'$addbutton': $addbutton
 										});
 									});
@@ -356,6 +356,7 @@
 				o.$ntselect.show();
 				o.$buttonsel_label.show();
 				o.$buttonsel.show();
+				o.$buttonimg.show();
 				break;
 			case "Link":
 				o.$viewselect_label.show();
@@ -364,6 +365,7 @@
 				o.$ntselect.hide();
 				o.$buttonsel_label.show();
 				o.$buttonsel.show();
+				o.$buttonimg.show();
 				break;
 			case "Search":
 				o.$viewselect_label.show();
@@ -372,6 +374,7 @@
 				o.$ntselect.hide();
 				o.$buttonsel_label.show();
 				o.$buttonsel.show();
+				o.$buttonimg.show();
 				break;
 			case "Text":
 				o.$viewselect_label.hide();
@@ -380,6 +383,7 @@
 				o.$ntselect.hide();
 				o.$buttonsel_label.hide();
 				o.$buttonsel.hide();
+				o.$buttonimg.hide();
 				break;
 		} // switch
 

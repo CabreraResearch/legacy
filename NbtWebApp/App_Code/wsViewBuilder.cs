@@ -8,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -43,6 +44,9 @@ namespace ChemSW.Nbt.WebServices
 
         #region Private Assembly Methods
 
+        /// <summary>
+        /// Returns enumarable collection of all properties on a node type
+        /// </summary>
         private IEnumerable<CswViewBuilderProp> _getNodeTypeProps( CswNbtMetaDataNodeType NodeType, ref Dictionary<Int32, string> UniqueProps )
         {
             var NtProps = new List<CswViewBuilderProp>();
@@ -68,6 +72,9 @@ namespace ChemSW.Nbt.WebServices
             return NtProps;
         } // _getNodeTypeProps()
 
+        /// <summary>
+        /// Returns enumarable collection of all properties on all node types of the object class
+        /// </summary>
         private IEnumerable<CswViewBuilderProp> _getObjectClassProps( CswNbtMetaDataObjectClass ObjectClass )
         {
             var OcProps = new List<CswViewBuilderProp>();
@@ -89,9 +96,38 @@ namespace ChemSW.Nbt.WebServices
             return ReturnProps;
         } // _getObjectClassProps()
 
-        private XElement _getViewBuilderProps( IEnumerable<CswViewBuilderProp> ViewBuilderProperties, CswNbtViewRelationship.RelatedIdType RelatedIdType, Int32 ObjectPk )
+        /// <summary>
+        /// Fetches all props and all prop fiters for a ViewProp collection
+        ///     <viewbuilderprops>
+        ///         <properties>
+        ///             <select>
+        ///                 <optgroup label="Specific Properties">
+        ///                     <option value="1">Barcode</option>
+        ///                 </optgroup>
+        ///             </select>
+        ///         </properties>
+        ///         <propertyfilters>
+        ///             <property propname="Barcode" fieldtype="Barcode">
+        ///                 <defaultsubfield propname="Barcode>Equals</defaultsubfield>
+        ///                 <subfields>
+        ///                     <select id="filter_select">
+        ///                         <option value="Equals">Equals</option>
+        ///                     </select>
+        ///                 </subfields>
+        ///                 <filters>
+        ///                     <subfield propname="Barcode">Field1
+        ///                         <select id="filter_select">
+        ///                             <option value="Equals">Equals</option>
+        ///                         </select>
+        ///                     </subfield>
+        ///                 </filters>
+        ///             </property>   
+        ///         </propertyfilters>
+        ///     </viewbuilderprops>
+        /// </summary>
+        private XElement _getViewBuilderProps( IEnumerable<CswViewBuilderProp> ViewBuilderProperties, CswNbtViewRelationship.RelatedIdType RelatedIdType, Int32 NodeTypeOrObjectClassId )
         {
-            XElement NodeTypePropsNode = new XElement( "nodetypeprops" );
+            XElement ViewBuilderPropsNode = new XElement( "viewbuilderprops" );
             string DefaultPropName = string.Empty;
             XElement FiltersNode = new XElement( "propertyfilters" );
             XElement NodeTypePropsGroup = new XElement( "optgroup", new XAttribute( "label", "Specific Properties" ) );
@@ -126,24 +162,79 @@ namespace ChemSW.Nbt.WebServices
 
                     _getViewBuilderPropSubFields( ref FiltersNode, Prop );
                 }
-                string ElementId = wsTools.makeId( _Prefix, "properties_select_nodetypeid", ObjectPk.ToString() );
-                NodeTypePropsNode.Add( new XElement( "properties",
+                string ElementId = wsTools.makeId( _Prefix, "properties_select_nodetypeid", NodeTypeOrObjectClassId.ToString() );
+                ViewBuilderPropsNode.Add( new XElement( "properties",
                                                      new XAttribute( "defaultprop", DefaultPropName ),
                                                      new XElement( "select",
-                                                                   new XAttribute( "id", ElementId ),
-                                                                   new XAttribute( "name", ElementId ),
-                                                                   new XAttribute( "class", "csw_viewbuilder_properties_select" ),
                                                                    ( NodeTypePropsGroup.HasElements ) ? NodeTypePropsGroup : null,
                                                                    ( ObjectClassPropsGroup.HasElements ) ? ObjectClassPropsGroup : null ) ),
                                        FiltersNode );
             }
-            return NodeTypePropsNode;
+            return ViewBuilderPropsNode;
         }
+
+        /// <summary>
+        /// Fetches all props and all prop fiters for a NodeType
+        ///     <viewbuilderprops>
+        ///         <properties>
+        ///             <select>
+        ///                 <optgroup label="Specific Properties">
+        ///                     <option value="1">Barcode</option>
+        ///                 </optgroup>
+        ///             </select>
+        ///         </properties>
+        ///         <propertyfilters>
+        ///             <property propname="Barcode" fieldtype="Barcode">
+        ///                 <defaultsubfield propname="Barcode>Equals</defaultsubfield>
+        ///                 <subfields>
+        ///                     <select id="filter_select">
+        ///                         <option value="Equals">Equals</option>
+        ///                     </select>
+        ///                 </subfields>
+        ///                 <filters>
+        ///                     <subfield propname="Barcode">Field1
+        ///                         <select id="filter_select">
+        ///                             <option value="Equals">Equals</option>
+        ///                         </select>
+        ///                     </subfield>
+        ///                 </filters>
+        ///             </property>   
+        ///         </propertyfilters>
+        ///     </viewbuilderprops>
+        /// </summary>
+        private XElement _getViewBuilderProps( CswNbtViewRelationship.RelatedIdType Relationship, Int32 NodeTypeOrObjectClassId )
+        {
+            XElement ViewBuilderProps = new XElement( "viewbuilderprops" );
+
+            if( Int32.MinValue != NodeTypeOrObjectClassId )
+            {
+                IEnumerable<CswViewBuilderProp> ViewBuilderProperties = null;
+                switch( Relationship )
+                {
+                    case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
+                        {
+                            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );
+                            Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
+                            ViewBuilderProperties = _getNodeTypeProps( NodeType, ref UniqueProps );
+                            break;
+                        }
+
+                    case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
+                        {
+                            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeOrObjectClassId );
+                            ViewBuilderProperties = _getObjectClassProps( ObjectClass );
+                            break;
+                        }
+                }
+                ViewBuilderProps = _getViewBuilderProps( ViewBuilderProperties, Relationship, NodeTypeOrObjectClassId );
+            }
+            return ViewBuilderProps;
+        } // getViewBuilderProps()
 
         /// <summary>
         /// Returns the Subfields XML for a NodeTypeProp/ObjectClassProp's SubFields collection as:
         ///     <propertyfilters>
-        ///         <property propname="Barcode" fieldtype="Barcode" relatedidtype="nodetypeprop" propid="1">
+        ///         <property propname="Barcode" fieldtype="Barcode" relatedidtype="nodetypeprop" viewbuilderpropid="1">
         ///             <defaultsubfield propname="Barcode>Equals</defaultsubfield>
         ///             <subfields>
         ///                 <select id="filter_select">
@@ -166,11 +257,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = ViewBuilderProp.FieldType.FieldType;
                 CswNbtSubFieldColl SubFields = ViewBuilderProp.FieldTypeRule.SubFields;
-                string SubFieldsElementId = wsTools.makeId( _Prefix, "subfield_select_viewbuilderpropid", ViewBuilderProp.MetaDataPropId.ToString() );
-                XElement SubfieldSelect = new XElement( "select",
-                                                        new XAttribute( "id", SubFieldsElementId ),
-                                                        new XAttribute( "name", SubFieldsElementId ),
-                                                        new XAttribute( "class", "csw_viewbuilder_subfield_select" ) );
+                XElement SubfieldSelect = new XElement( "select" );
 
                 string DefaultFilter = string.Empty;
                 string DefaultSubfield = string.Empty;
@@ -198,26 +285,21 @@ namespace ChemSW.Nbt.WebServices
                     {
                         DefaultFilter = Field.DefaultFilterMode.ToString();
                     }
-                    string UniqueId = "filter_select_viewbuilderpropid_" + ViewBuilderProp.MetaDataPropId;
-                    _getSubFieldFilters( ref FiltersNode, Field, ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode.Undefined, UniqueId );
+                    _getSubFieldFilters( ref FiltersNode, Field, ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode.Undefined );
                     SubfieldSelect.Add( FieldNode );
                 }
 
                 XElement FiltersOptionsNode = new XElement( "filtersoptions" );
                 if( ViewBuilderProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
                 {
-                    string FiltOptElementId = wsTools.makeId( _Prefix, "filtersoptions_select_viewbuilderpropid", ViewBuilderProp.MetaDataPropId.ToString() );
                     FiltersOptionsNode.Value = ViewBuilderProp.MetaDataPropName;
-                    FiltersOptionsNode.Add( new XElement( "select",
-                                                          new XAttribute( "id", FiltOptElementId ),
-                                                          new XAttribute( "name", FiltOptElementId ),
-                                                          new XAttribute( "class", "csw_viewbuilder_filtersoptions_select" ),
+                    FiltersOptionsNode.Add( new XElement( "select", 
                                                           _getFilterOptions( ViewBuilderProp, string.Empty ) ) );
                 }
 
                 ParentNode.Add( new XElement( "property", ViewBuilderProp.MetaDataPropName,
                                               new XAttribute( "propname", ViewBuilderProp.MetaDataPropName ),
-                                              new XAttribute( "propid", ViewBuilderProp.MetaDataPropId ),
+                                              new XAttribute( "viewbuilderpropid", ViewBuilderProp.MetaDataPropId ),
                                               new XAttribute( "relatedidtype", ViewBuilderProp.RelatedIdType ),
                                               new XAttribute( "proptype", ViewBuilderProp.Type ),
                                               new XAttribute( "metadatatypename", ViewBuilderProp.MetaDataTypeName ),
@@ -236,7 +318,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns the Subfields XML for a CswNbtViewProp's SubFields collection as:
         ///     <propertyfilters>
-        ///         <property propname="Barcode" fieldtype="Barcode" relatedidtype="nodetypeprop" propid="1">
+        ///         <property propname="Barcode" fieldtype="Barcode" relatedidtype="nodetypeprop" viewbuilderpropid="1">
         ///             <defaultsubfield propname="Barcode>Equals</defaultsubfield>
         ///             <subfields>
         ///                 <select id="filter_select">
@@ -260,12 +342,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = ViewBuilderProp.FieldType.FieldType;
                 foreach( CswNbtViewPropertyFilter Filter in PropFilters )
                 {
-                    string SubFieldElementId = wsTools.makeId( _Prefix, "subfield_select_filtarbitraryid", Filter.ArbitraryId );
-
-                    XElement SubfieldSelect = new XElement( "select",
-                                                            new XAttribute( "id", SubFieldElementId ),
-                                                            new XAttribute( "name", SubFieldElementId ),
-                                                            new XAttribute( "class", "csw_viewbuilder_subfield_select" ) );
+                    XElement SubfieldSelect = new XElement( "select" );
 
                     CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode = Filter.FilterMode;
                     string DefaultSubfield = Filter.SubfieldName.ToString();
@@ -287,8 +364,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             FieldNode.Add( new XAttribute( "selected", "selected" ) );
                         }
-                        string UniqueId = "filter_select_filtarbitraryid_" + Filter.ArbitraryId;
-                        _getSubFieldFilters( ref FiltersNode, Field, ViewBuilderProp, DefaultFilterMode, UniqueId );
+                        _getSubFieldFilters( ref FiltersNode, Field, ViewBuilderProp, DefaultFilterMode );
                         SubfieldSelect.Add( FieldNode );
                     }
 
@@ -296,18 +372,14 @@ namespace ChemSW.Nbt.WebServices
                     XElement FiltersOptionsNode = new XElement( "filtersoptions" );
                     if( ViewBuilderProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
                     {
-                        string FiltOptElementId = wsTools.makeId( _Prefix, "filtersoptions_select_filtarbitraryid", Filter.ArbitraryId );
                         FiltersOptionsNode.Value = ViewBuilderProp.MetaDataPropName;
                         FiltersOptionsNode.Add( new XElement( "select",
-                                                              new XAttribute( "id", FiltOptElementId ),
-                                                              new XAttribute( "name", FiltOptElementId ),
-                                                              new XAttribute( "class", "csw_viewbuilder_filtersoptions_select" ),
                                                               _getFilterOptions( ViewBuilderProp, ValueSubfieldVal ) ) );
                     }
 
                     ParentNode.Add( new XElement( "property", ViewBuilderProp.MetaDataPropName,
                                                new XAttribute( "propname", ViewBuilderProp.MetaDataPropName ),
-                                               new XAttribute( "propid", ViewBuilderProp.MetaDataPropId ),
+                                               new XAttribute( "viewbuilderpropid", ViewBuilderProp.MetaDataPropId ),
                                                new XAttribute( "relatedidtype", ViewBuilderProp.RelatedIdType ),
                                                new XAttribute( "proptype", ViewBuilderProp.Type ),
                                                new XAttribute( "metadatatypename", ViewBuilderProp.MetaDataTypeName ),
@@ -335,18 +407,14 @@ namespace ChemSW.Nbt.WebServices
         ///         </subfield>
         ///      </filters>
         /// </summary>
-        private void _getSubFieldFilters( ref XElement FiltersNode, CswNbtSubField SubField, CswViewBuilderProp ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode, string UniqueId )
+        private void _getSubFieldFilters( ref XElement FiltersNode, CswNbtSubField SubField, CswViewBuilderProp ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode )
         {
             if( DefaultFilterMode == CswNbtPropFilterSql.PropertyFilterMode.Undefined )
             {
                 DefaultFilterMode = SubField.DefaultFilterMode;
             }
-            string SubFieldElementId = wsTools.makeId( _Prefix, UniqueId, string.Empty );
             XElement SubFieldNode = new XElement( "subfield", new XAttribute( "column", SubField.Column ), new XAttribute( "name", SubField.Name ) );
-            XElement FiltersSelect = new XElement( "select",
-                                        new XAttribute( "id", SubFieldElementId ),
-                                        new XAttribute( "name", SubFieldElementId ),
-                                        new XAttribute( "class", "csw_viewbuilder_filter_select" ) );
+            XElement FiltersSelect = new XElement( "select" );
             foreach( CswNbtPropFilterSql.PropertyFilterMode FilterModeOpt in SubField.SupportedFilterModes )
             {
                 XElement ThisFilter = new XElement( "option", FilterModeOpt.ToString(),
@@ -387,65 +455,6 @@ namespace ChemSW.Nbt.WebServices
 
         #region Public Methods
         
-        /// <summary>
-        /// In the context of a NodeType based, retuns as:
-        ///     <nodetypeprops>
-        ///         <properties>
-        ///             <select>
-        ///                 <optgroup label="Specific Properties">
-        ///                     <option value="1">Barcode</option>
-        ///                 </optgroup>
-        ///             </select>
-        ///         </properties>
-        ///         <propertyfilters>
-        ///             <property propname="Barcode" fieldtype="Barcode">
-        ///                 <defaultsubfield propname="Barcode>Equals</defaultsubfield>
-        ///                 <subfields>
-        ///                     <select id="filter_select">
-        ///                         <option value="Equals">Equals</option>
-        ///                     </select>
-        ///                 </subfields>
-        ///                 <filters>
-        ///                     <subfield propname="Barcode">Field1
-        ///                         <select id="filter_select">
-        ///                             <option value="Equals">Equals</option>
-        ///                         </select>
-        ///                     </subfield>
-        ///                 </filters>
-        ///             </property>   
-        ///         </propertyfilters>
-        ///     </nodetypeprops>
-        /// </summary>
-        private XElement _getViewBuilderProps( CswNbtViewRelationship.RelatedIdType Relationship, Int32 ObjectId )
-        {
-            XElement Props = new XElement( "nodetypeprops" );
-            
-
-            if( Int32.MinValue != ObjectId )
-            {
-                IEnumerable<CswViewBuilderProp> ViewBuilderProperties = null;
-                switch( Relationship )
-                {
-                    case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                        {
-                            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( ObjectId );
-                            Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
-                            ViewBuilderProperties = _getNodeTypeProps( NodeType, ref UniqueProps );
-                            break;
-                        }
-
-                    case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                        {
-                            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectId );
-                            ViewBuilderProperties = _getObjectClassProps( ObjectClass );
-                            break;
-                        }
-                }
-                Props = _getViewBuilderProps( ViewBuilderProperties, Relationship, ObjectId );
-            }
-            return Props; 
-        } // getViewBuilderProps()
-        
         public XElement getViewBuilderProps( string ViewXml, string ViewPropArbitraryId )
         {
             XElement ViewBuilderProps = new XElement( "viewbuilderprops" );
@@ -458,50 +467,58 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswViewBuilderProp VbProp = new CswViewBuilderProp( ThisProp );
                     CswNbtViewRelationship.RelatedIdType Relationship = VbProp.RelatedIdType;
-                    Int32 ObjectId = VbProp.MetaDataPropId;
-                    if( Int32.MinValue != ObjectId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
+                    Int32 NodeTypeOrObjectClassId = VbProp.MetaDataPropId;
+                    if( Int32.MinValue != NodeTypeOrObjectClassId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
                     {
-                        ViewBuilderProps = _getViewBuilderProps( Relationship, ObjectId );
+                        List<CswViewBuilderProp> ViewBuilderProp = new List<CswViewBuilderProp>() {VbProp};
+                        
+                        ViewBuilderProps = _getViewBuilderProps( ViewBuilderProp, Relationship, NodeTypeOrObjectClassId );
                     }
                 }
             }
             return ViewBuilderProps;
         }
 
-        public XElement getViewBuilderProps( string RelatedIdType, string ObjectPk, string NodeKey )
+        /// <summary>
+        /// Returns all props and prop filters for a NodeType or ObjectClass
+        /// </summary>
+        public XElement getViewBuilderProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
         {
-            XElement ViewBuilderProps = new XElement( "nodetypeprops" );
-            if( (!string.IsNullOrEmpty( RelatedIdType ) && !string.IsNullOrEmpty( ObjectPk )  ) || !string.IsNullOrEmpty( NodeKey ) )
+            XElement ViewBuilderProps = new XElement( "viewbuilderprops" );
+            if( (!string.IsNullOrEmpty( RelatedIdType ) && !string.IsNullOrEmpty( NodeTypeOrObjectClassId )  ) || !string.IsNullOrEmpty( NodeKey ) )
             {
-                Int32 ObjectId = Int32.MinValue;
+                Int32 TypeOrObjectClassId = Int32.MinValue;
                 CswNbtViewRelationship.RelatedIdType Relationship = CswNbtViewRelationship.RelatedIdType.Unknown;
-                if( string.IsNullOrEmpty( ObjectPk ) && !string.IsNullOrEmpty( NodeKey ) )
+                if( string.IsNullOrEmpty( NodeTypeOrObjectClassId ) && !string.IsNullOrEmpty( NodeKey ) )
                 {
                     string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
                     CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
                     CswNbtNode Node = _CswNbtResources.Nodes[NbtNodeKey];
                     if( null != Node.NodeType )
                     {
-                        ObjectId = Node.NodeTypeId;
+                        TypeOrObjectClassId = Node.NodeTypeId;
                         Relationship = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
                     }
                     else if( null != Node.ObjectClass )
                     {
-                        ObjectId = Node.ObjectClassId;
+                        TypeOrObjectClassId = Node.ObjectClassId;
                         Relationship = CswNbtViewRelationship.RelatedIdType.ObjectClassId;
                     }
                 }
-                else if( !string.IsNullOrEmpty( ObjectPk ) )
+                else if( !string.IsNullOrEmpty( NodeTypeOrObjectClassId ) )
                 {
-                    ObjectId = CswConvert.ToInt32( ObjectPk );
-                    CswNbtViewRelationship.RelatedIdType.TryParse( RelatedIdType, out Relationship );
+                    TypeOrObjectClassId = CswConvert.ToInt32( NodeTypeOrObjectClassId );
+                    CswNbtViewRelationship.RelatedIdType.TryParse( RelatedIdType, true, out Relationship );
                 }
-                ViewBuilderProps = _getViewBuilderProps( Relationship, ObjectId );
+                ViewBuilderProps = _getViewBuilderProps( Relationship, TypeOrObjectClassId );
             }
             return ViewBuilderProps;
 
         }
-        
+
+        /// <summary>
+        /// Returns all props and prop filters for a NodeType
+        /// </summary>
         public XElement getNodeTypeProps(CswNbtMetaDataNodeType NodeType)
         {
             XElement NodeTypeProps = new XElement( "properties", "none" );
@@ -515,6 +532,9 @@ namespace ChemSW.Nbt.WebServices
             return NodeTypeProps;
         }
 
+        /// <summary>
+        /// Returns all props and prop filters for all NodeTypes of an ObjectClass
+        /// </summary>
         public XElement getNodeTypeProps(CswNbtMetaDataObjectClass ObjectClass )
         {
             XElement NodeTypeProps = new XElement( "properties", "none" );
@@ -527,11 +547,87 @@ namespace ChemSW.Nbt.WebServices
             return NodeTypeProps;
         }
 
+        /// <summary>
+        /// Returns all prop filters for a CswNbtViewProperty
+        /// </summary>
         public void getViewBuilderPropSubfields(ref XElement ParentNode, CswViewBuilderProp ViewBuilderProp, ArrayList PropFilters)
         {
             _getViewBuilderPropSubFields( ref ParentNode, ViewBuilderProp, PropFilters );
         }
 
+        /// <summary>
+        /// Uses View XML to construct a view and create a CswNbtViewPropertyFilter. and r
+        /// Returns filter's XML
+        /// </summary>
+        public XElement makeViewPropFilter(string ViewXml, string PropFilterJson )
+        {
+            XElement PropFilterXml = new XElement( "propfilter" );
+            CswNbtView View = new CswNbtView( _CswNbtResources );
+            View.LoadXml( ViewXml );
+			JObject PropFilter = JObject.Parse( PropFilterJson );
+			PropFilterXml = makeViewPropFilter( View, PropFilter );
+
+            return PropFilterXml;
+        }
+        
+        /// <summary>
+        /// Creates a CswNbtViewPropertyFilter and returns its XML
+        /// </summary>
+        public XElement makeViewPropFilter( CswNbtView View, JObject FilterProp )
+        {
+            XElement PropFilterXml = new XElement( "propfilter" );
+            
+            var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
+            CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
+
+			string FiltArbitraryId = (string) FilterProp["filtarbitraryid"];
+			string PropArbitraryId = (string) FilterProp["proparbitraryid"];
+			if( FiltArbitraryId == "undefined" ) FiltArbitraryId = string.Empty;
+			if( PropArbitraryId == "undefined" ) PropArbitraryId = string.Empty;
+
+			CswNbtViewPropertyFilter ViewPropFilt = null;
+			if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown )
+			{
+				if( !string.IsNullOrEmpty( FiltArbitraryId ) )
+				{
+					ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
+				}
+				else if( !string.IsNullOrEmpty( PropArbitraryId ) )
+				{
+					CswNbtViewProperty ViewProp = (CswNbtViewProperty) View.FindViewNodeByArbitraryId( PropArbitraryId );
+					ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+				}
+			}
+			
+			if( ViewPropFilt != null )
+			{
+				PropFilterXml = makeViewPropFilter( ViewPropFilt, FilterProp );
+			}
+			return PropFilterXml;
+        }
+
+        /// <summary>
+        /// Modifies an existing CswNbtViewPropertyFilter and returns its XML 
+        /// </summary>
+        public XElement makeViewPropFilter( CswNbtViewPropertyFilter ViewPropFilt, JObject FilterProp )
+        {
+            XElement PropFilterXml = new XElement( "propfilter" );
+            if( null != ViewPropFilt )
+            {
+                var FieldName = CswNbtSubField.SubFieldName.Unknown;
+                CswNbtSubField.SubFieldName.TryParse( (string) FilterProp["subfield"], true, out FieldName );
+                var FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+                CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) FilterProp["filter"], true, out FilterMode );
+                string SearchTerm = (string) FilterProp["filtervalue"];
+
+                ViewPropFilt.FilterMode = FilterMode;
+                ViewPropFilt.SubfieldName = FieldName;
+                ViewPropFilt.Value = SearchTerm;
+
+                PropFilterXml = ViewPropFilt.ToXElement();
+            }
+            return PropFilterXml;
+        }
         #endregion Public Methods
     }
     #endregion wsViewBuilder

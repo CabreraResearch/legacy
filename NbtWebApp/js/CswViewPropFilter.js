@@ -1,150 +1,340 @@
-﻿; (function ($) {
-	$.fn.CswViewPropFilter = function (options) {
+﻿// for CswViewPropFilter
+var ViewBuilder_CssClasses = {
+    subfield_select: { name: 'csw_viewbuilder_subfield_select' },
+    filter_select: { name: 'csw_viewbuilder_filter_select' },
+    default_filter: { name: 'csw_viewbuilder_default_filter' },
+    filter_value: { name: 'csw_viewbuilder_filter_value' },
+    metadatatype_static: { name: 'csw_viewbuilder_metadatatype_static' }
+};
 
-        var o = { 
-            //URLs
-            'getNewPropsUrl': '/NbtWebApp/wsNBT.asmx/getViewPropFilter',
+;  (function ($) {
+	
+    var PluginName = "CswViewPropFilter";
 
-            //options
-			'viewid': '',
-            'viewxml': '',
+    function makePropFilterId(ID, options)
+    {
+        var FilterId = '';
+        var Delimiter = '_';
+        var o = {
             'proparbitraryid': '',
-            'idprefix': 'csw',
-
-            'selectedSubfieldVal': '',
-            'selectedFilterVal': ''
-		};
-		
-        if(options) $.extend(o, options);
+            'filtarbitraryid': '',
+            'viewbuilderpropid': '',
+            'idprefix': ''
+        };
+        if(options) $.extend(o,options);
         
-        var $parent = $(this);
-        var $cswPropFilterRow = $parent.CswDOM('span',{ID: 'cswPropFilterRow', prefix: o.idprefix});
-        var $propsXml;
-        var $propFilterTable;
-
-        init();
-
-        function init()
+        if( o.filtarbitraryid !== '' && o.filtarbitraryid !== undefined )
         {
-            CswAjaxXml({ 
-		        'url': o.getNewPropsUrl,
-		        'data': "ViewXml=" + o.viewxml + "&PropArbitraryId=" + o.proparbitraryid,
-                'success': function($xml) { 
-
-                            $propFilterTable = $cswPropFilterRow.CswTable('init', { 
-                                        ID: makeId({prefix: o.idprefix, ID: 'search_tbl'}), 
-                                        cellpadding: 1,
-                                        cellspacing: 1,
-                                        cellalign: 'center',
-                                        align: 'center'
-                                    });
-                            
-                            $propsXml = $xml.children('nodetypeprops').children('property');
-                            renderPropFiltRow();
-                } //success
-            }); //ajax
+            FilterId = makeId({ 'ID': ID + Delimiter + 'filtarbitraryid', 
+                                'prefix': o.idprefix, 
+                                'suffix': o.filtarbitraryid });
         }
-
-        function renderPropFiltRow()
+        else if( o.viewbuilderpropid !== '' && o.viewbuilderpropid !== undefined )
         {
-            var propertyId = $propsXml.attr('propid');
-            var propertyName = $propsXml.attr('propname');
-            var filtArbitraryId = $propsXml.attr('filtarbitraryid');
-                
-            //Row propRow, Column 3: property
-            var $propSelectCell = $propFilterTable.CswTable('cell', propRow, 3)
-                                                    .empty();
-            var propCellId = makeId({ID: propertyId,prefix: o.idprefix});
-            var $props = $propSelectCell.CswDOM('span',{ID: propCellId, value: propertyName});
+            FilterId = makeId({ 'ID': ID + Delimiter + 'viewbuilderpropid', 
+                                'prefix': o.idprefix, 
+                                'suffix': o.viewbuilderpropid });
+        }
+        else if( o.proparbitraryid !== '' && o.proparbitraryid !== undefined )
+        {
+            FilterId = makeId({ 'ID': ID + Delimiter + 'proparbitraryid', 
+                                'prefix': o.idprefix, 
+                                'suffix': o.proparbitraryid });
+        }
+        else if( o.idprefix !== '' && o.idprefix !== undefined )
+        {
+            FilterId = makeId({ 'ID': ID, 
+                                'prefix': o.idprefix });
+        }
+        else
+        {
+            FilterId = ID;
+        }
+        return FilterId;
+    }
+
+    var methods = {
+
+        'init': function(options) 
+		{
+            var o = { 
+                //URLs
+                'getNewPropsUrl': '/NbtWebApp/wsNBT.asmx/getViewPropFilterUI',
+
+                //options
+			    'viewid': '',
+                'viewxml': '',
+                '$propsXml': '',
+                'proparbitraryid': '',
+                'filtarbitraryid': '',
+                'viewbuilderpropid': '',
+                'idprefix': '',
+                'propRow': 1,
+                'firstColumn': 3,
+                'includePropertyName': false,
+
+                'selectedSubfieldVal': '',
+                'selectedFilterVal': '',
+
+                'autoFocusInput': false
+		    };
+		
+            if(options) $.extend(o, options);
         
-            var $defaultFilter = $propsXml.children('defaultsubfield').attr('filter');
-            var fieldtype = $propsXml.attr('fieldtype');
-
-            //Row propRow, Column 4: subfield picklist 
-            var $subfieldsOptions = $(xmlToString($propsXml.children('subfields').children('select')))
-                                    .change(function() {
-                                        var $this = $(this);
-                                        var r = {
-                                            'selectedSubfieldVal': $this.val(),
-                                            'selectedFilterVal': ''
-                                        };
-                                        $.extend(o,r);
-                                        renderPropFiltRow() });
-
-            if(o.selectedSubfieldVal !== '')
-            {
-                $subfieldsOptions.val(o.selectedSubfieldVal).attr('selected',true);
-            }
-            $subfieldCell.append($subfieldsOptions);
-            var $subfield = $subfieldsOptions.find(':selected').val();
-            var defaultValue = $subfieldsOptions.find(':selected').attr('defaultvalue');
-
-            //Row propRow, Column 5: filter picklist
-            var $filtersCell = $propFilterTable.CswTable('cell', propRow, 5)
-                                .empty();
-
-            var $filtersOptions =  $(xmlToString($propsXml.children('propertyfilters').children('subfield[column=' + $subfield + ']').children('select')))
-                                    .change(function() {
-                                        var $this = $(this);
-                                        var r = {
-                                            'selectedSubfieldVal': $subfieldsOptions.val(),
-                                            'selectedFilterVal': $this.val()
-                                        };
-                                        $.extend(o,r);
-                                        renderPropFiltRow() });
-
-            if(o.selectedFilterVal !== '')
-            {
-                $filtersOptions.val(o.selectedFilterVal).attr('selected',true);
-            }
-            $filtersCell.append($filtersOptions);
-            var $filter = $filtersOptions.find(':selected').val();
-
-            //Row propRow, Column 6: search input
-            var $propFilterValueCell = $propFilterTable.CswTable('cell', propRow, 6)
-                            .empty();
+            var $propFilterTable = $(this); //must call on a table
             
-            if( fieldtype === 'List' )
+            var filtOpt = {
+                'proparbitraryid': o.proparbitraryid,
+                'filtarbitraryid': o.filtarbitraryid,
+                'viewbuilderpropid': o.viewbuilderpropid,
+                'idprefix': o.idprefix
+            };
+                       
+            if( ( o.$propsXml === '' || o.$propsXml === undefined ) &&
+                o.proparbitraryid !== '' && o.proparbitraryid !== undefined )
             {
-                $propFilterValueCell.append( $(xmlToString($propsXml.children('filtersoptions').children('select'))) );
-            }
-            else if( fieldtype === 'Logical' )
-            {
-                $propFilterValueCell.CswTristateCheckBox('init',{'ID': 'search_input_searchpropid_' + propertyId, 'prefix': o.idprefix}); 
+                CswAjaxXml({ 
+		            'url': o.getNewPropsUrl,
+		            'data': "ViewXml=" + o.viewxml + "&PropArbitraryId=" + o.proparbitraryid,
+                    'success': function($xml) { 
+                                o.$propsXml = $xml.children('propertyfilters').children('property');
+                                filtOpt.filtarbitraryid = o.$propsXml.attr('filtarbitraryid');
+                                renderPropFiltRow(filtOpt);
+                    } //success
+                }); //ajax
             }
             else
             {
-                var filtValueSuggest;
-                if( defaultValue !== '' && defaultValue != undefined )
+                renderPropFiltRow(filtOpt);
+            }
+
+            function renderPropFiltRow(filtOpt)
+            {
+                var propertyId = o.$propsXml.attr('viewbuilderpropid');
+                var propertyName = o.$propsXml.attr('propname');
+                
+                if( o.includePropertyName )
                 {
-                    filtValueSuggest = defaultValue;
+                    //Row propRow, Column 3: property
+                    var $propSelectCell = $propFilterTable.CswTable('cell', o.propRow, o.firstColumn) //3
+                                                          .empty();
+                    var propCellId = makePropFilterId(propertyName,filtOpt);
+                    var $props = $propSelectCell.CswDOM('span',{ID: propCellId, value: propertyName});
+                }
+                
+                var fieldtype = o.$propsXml.attr('fieldtype');
+                var $defaultFilter = o.$propsXml.children('defaultsubfield').attr('filter');
+                
+                //Row propRow, Column 4: subfield default value (hidden) 
+                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)) //4
+                                                    .empty();
+                var defaultSubFieldId = makePropFilterId('default_filter', filtOpt);
+                var $defaultSubField = $subfieldCell.CswDOM('span', {
+                                                    ID: defaultSubFieldId,
+                                                    value: $defaultFilter,
+                                                    cssclass: ViewBuilder_CssClasses.default_filter.name })
+                                                .attr({align:"center"});
+
+                $defaultSubField.hide(); //for Search
+
+                //Row propRow, Column 4: subfield picklist 
+                var subfieldOptionsId = makePropFilterId('subfield_select', filtOpt);
+                var $subfieldsOptions = $(xmlToString(o.$propsXml.children('subfields').children('select')))
+                                        .attr('id', subfieldOptionsId)
+                                        .attr('name', subfieldOptionsId)
+                                        .attr('class',ViewBuilder_CssClasses.subfield_select.name)
+                                        .change(function() {
+                                            var $this = $(this);
+                                            var r = {
+                                                'selectedSubfieldVal': $this.val(),
+                                                'selectedFilterVal': ''
+                                            };
+                                            $.extend(o,r);
+                                            renderPropFiltRow(filtOpt) });
+
+                if(o.selectedSubfieldVal !== '')
+                {
+                    $subfieldsOptions.val(o.selectedSubfieldVal).attr('selected',true);
+                }
+                $subfieldCell.append($subfieldsOptions);
+                var subfield = $subfieldsOptions.find(':selected').val();
+                var defaultValue = $subfieldsOptions.find(':selected').attr('defaultvalue');
+
+                //Row propRow, Column 5: filter picklist
+                var $filtersCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 2)) //5
+                                                   .empty();
+                var filtersOptionsId = makePropFilterId('filter_select', filtOpt);
+                var $filtersOptions =  $(xmlToString(o.$propsXml.children('propertyfilters').children('subfield[column=' + subfield + ']').children('select')))
+                                        .attr('id', filtersOptionsId)
+                                        .attr('name', filtersOptionsId)
+                                        .attr('class',ViewBuilder_CssClasses.filter_select.name)
+                                        .change(function() {
+                                            var $this = $(this);
+                                            var r = {
+                                                'selectedSubfieldVal': $subfieldsOptions.val(),
+                                                'selectedFilterVal': $this.val()
+                                            };
+                                            $.extend(o,r);
+                                            renderPropFiltRow(filtOpt) });
+
+                if(o.selectedFilterVal !== '')
+                {
+                    $filtersOptions.val(o.selectedFilterVal).attr('selected',true);
+                }
+                $filtersCell.append($filtersOptions);
+
+                //Row propRow, Column 6: filter input
+                var $propFilterValueCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 3)) //6
+                                                           .empty();
+                
+                var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
+                if( fieldtype === 'List' )
+                {
+                    $propFilterValueCell.append( $(xmlToString($propsXml.children('filtersoptions').children('select'))) );
+                }
+                else if( fieldtype === 'Logical' )
+                {
+                    $propFilterValueCell.CswTristateCheckBox('init',{'ID': filtValInputId, 'Checked': defaultValue}); 
                 }
                 else
                 {
-                    filtValueSuggest = $props.find(':selected').text();
-                    if(filtValueSuggest !== $subfieldsOptions.find(':selected').text() )
+                    var inputOpt = {
+                        value: defaultValue,
+                        placeholder: ''
+                    };
+                    if( inputOpt.value === '' || inputOpt.value === undefined )
                     {
-                        filtValueSuggest += "'s " +  $subfieldsOptions.find(':selected').text();
-                    }  
+                        o.placeholder = propertyName;
+                        if(o.placeholder !== $subfieldsOptions.find(':selected').text() )
+                        {
+                            o.placeholder += "'s " +  $subfieldsOptions.find(':selected').text();
+                        }  
+                    }
+                    var $filtValInput = $propFilterValueCell.CswInput('init', {ID: filtValInputId,
+                                                                                type: CswInput_Types.text,
+                                                                                cssclass: ViewBuilder_CssClasses.filter_value.name,
+                                                                                value: inputOpt.value,
+                                                                                placeholder: inputOpt.placeholder,
+                                                                                width: "200px",
+                                                                                autofocus: o.autoFocusInput,
+                                                                                autocomplete: 'on'
+                                                                       });
                 }
-                var filtValInputId = makeId({ID: 'search_input_searchpropid', prefix: o.idprefix, suffix:propertyId});
-                var $filtValInput = $propFilterValueCell.CswDOM('input',{
-                                                        ID: filtValInputId,
-                                                        type: 'text',
-                                                        cssclass: 'csw_search_input',
-                                                        placeholder: filtValueSuggest })
-                                                .attr('autocomplete','on')
-                                                .attr('autofocus','true')
-                                                .attr({width:"200px"});
             }
-                            
-			   
-        } // renderPropFiltRow()
+            return $propFilterTable;
+        }, // 'init': function(options) {
+        'getFilterJson': function(options)
+        {
+            var $thisProp = $(this);
+            var o = {
+                nodetypeorobjectclassid: '',
+                relatedidtype: '',
+                fieldtype: $thisProp.attr('fieldtype'),
+                idprefix: '',
+                $parent: '',
+                proparbitraryid: '',
+                filtarbitraryid: $thisProp.attr('filtarbitraryid'),
+                viewbuilderpropid: ''
+            };
+            if(options) $.extend(o,options);
 
-        return $cswPropFilterRow;
+            var filtOpt = {
+                'proparbitraryid': o.proparbitraryid,
+                'filtarbitraryid': o.filtarbitraryid,
+                'viewbuilderpropid': o.viewbuilderpropid,
+                'idprefix': o.idprefix
+            };
 
-	 // function(options) {
-    };
+            var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
+            var filtValListId = makePropFilterId('filtersoptions_select',filtOpt);
+            var subFieldId = makePropFilterId('subfield_select',filtOpt);
+            var filterId = makePropFilterId('filter_select',filtOpt);
+
+            var thisNodeProp = {}; //to return
+            
+            var $filtInput = o.$parent.CswInput('get',{ID: filtValInputId});
+            var filterValue;
+            switch( o.fieldtype )
+            { 
+                case 'Logical': 
+                {
+                    filterValue = $filtInput.CswTristateCheckBox('value');
+                    break;
+                }
+                case 'List':
+                {
+                    var $filtList = o.$parent.CswDOM('findelement',{ID: filtValListId});
+                    filterValue = $filtList.find(':selected').val();
+                    break;
+                }
+                default:
+                {
+                    filterValue = $filtInput.val();
+                    break;
+                }
+            }
+            if(filterValue !== '')
+            {
+                var $subField = o.$parent.CswDOM('findelement',{ID: subFieldId});
+				var subFieldText = $subField.find(':selected').text();
+
+                var $filter = o.$parent.CswDOM('findelement',{ID: filterId});
+                var filterText = $filter.find(':selected').val();
+
+                var propType = $thisProp.attr('proptype');
+                                
+                thisNodeProp = {
+                    nodetypeorobjectclassid: o.nodetypeorobjectclassid, // for NodeType filters
+                    relatedidtype: o.relatedidtype, // for NodeType filters
+                    proptype: propType,
+                    viewbuilderpropid: o.viewbuilderpropid,
+                    filtarbitraryid: o.filtarbitraryid,
+                    proparbitraryid: o.proparbitraryid,
+                    relatedidtype: o.relatedidtype,
+                    subfield: subFieldText,
+                    filter: filterText,
+                    filtervalue: filterValue  
+                };
+                
+            } // if(filterValue !== '')
+            return thisNodeProp;
+        }, // 'getFilterJson': function(options) { 
+        'makeFilter': function(options)
+        {
+            var o = {
+                url: '/NbtWebApp/wsNBT.asmx/makeViewPropFilter',
+                viewxml: '',
+                filtJson: '',
+                onSuccess: function($filterXml) {}
+            };
+            if(options) $.extend(o,options);
+
+            //var $filterXml;
+
+            CswAjaxXml({ 
+			'url': o.url,
+			'data': "ViewXml="  + o.viewxml + "&PropFiltJson=" + jsonToString(o.filtJson),
+            'success': function($filter) { 
+                    //$filterXml = $filter;
+                    o.onSuccess($filter);
+                }
+            });
+
+            //return $filterXml;
+        } // 'makefilter': function(options)
+    } // methods 
+	 
+    $.fn.CswViewPropFilter = function (method) {
+		
+		if ( methods[method] ) {
+		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+		} else if ( typeof method === 'object' || ! method ) {
+		  return methods.init.apply( this, arguments );
+		} else {
+		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		}    
+  
+	};
 })(jQuery);
 
 
