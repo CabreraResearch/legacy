@@ -84,6 +84,10 @@ foreach my $component (keys %versions)
 		{
 			$file = "c:/kiln/Common/$component/$component/Properties/AssemblyInfo.cs";
 		}
+		else
+		{
+			$file = "c:/kiln/Common/$component/Properties/AssemblyInfo.cs";
+		}
 		
 		if(open( FIN, "< $file" ) )
 		{
