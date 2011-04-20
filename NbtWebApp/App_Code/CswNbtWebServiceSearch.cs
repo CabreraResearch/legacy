@@ -331,7 +331,8 @@ namespace ChemSW.Nbt.WebServices
                                 _ViewBuilder.makeViewPropFilter( ViewOcPropFilt, FilterProp );
                             }
                         }
-                        else
+                        else if( PropType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+                            Int32.MinValue != NodeTypeProp.PropId )
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );
                             if( string.IsNullOrEmpty( ViewName ) ) ViewName = NodeType.NodeTypeName + " Search";
