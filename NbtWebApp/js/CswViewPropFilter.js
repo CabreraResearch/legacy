@@ -124,8 +124,18 @@ var ViewBuilder_CssClasses = {
                 
                 var fieldtype = o.$propsXml.attr('fieldtype');
                 var $defaultFilter = o.$propsXml.children('defaultsubfield').attr('filter');
-                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, 4)                                                    .empty();                var defaultSubFieldId = makePropFilterId('default_filter', filtOpt);                var $defaultSubField = $subfieldCell.CswDOM('span', {                                                    ID: defaultSubFieldId,                                                    value: $defaultFilter,                                                    cssclass: ViewBuilder_CssClasses.default_filter.name })                                                .attr({align:"center"});
-                $defaultSubField.hide(); //for Search
+                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, 4)
+                                                    .empty();
+
+                var defaultSubFieldId = makePropFilterId('default_filter', filtOpt);
+                var $defaultSubField = $subfieldCell.CswDOM('span', {
+                                                    ID: defaultSubFieldId,
+                                                    value: $defaultFilter,
+                                                    cssclass: ViewBuilder_CssClasses.default_filter.name })
+                                                .attr({align:"center"});
+
+                $defaultSubField.hide(); //for Search
+
                 //Row propRow, Column 4: subfield picklist 
                 var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)); //4
                 var subfieldOptionsId = makePropFilterId('subfield_select', filtOpt);
