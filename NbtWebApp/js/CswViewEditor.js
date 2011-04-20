@@ -39,6 +39,7 @@
 				},
 				'FinishText': 'Save and Finish',
 				'onNext': _handleNext,
+				'onPrevious': _handlePrevious,
 				'onBeforePrevious': _onBeforePrevious,
 				'onCancel': o.onCancel,
 				'onFinish': _handleFinish 
@@ -285,6 +286,30 @@
 					break;
 			} // switch(newstepno)
 		} // _handleNext()
+
+		function _handlePrevious(newstepno)
+		{
+			switch(newstepno)
+			{
+				case 1: 
+					break;
+				case 2: 
+					break;
+				case 3:
+					_makeViewTree(3, $treediv3);
+					break;
+				case 4:
+					_makeViewTree(4, $treediv4);
+					break;
+				case 5:
+					_makeViewTree(5, $treediv5);
+					break;
+				case 6:
+					_makeViewTree(6, $table6.CswTable('cell', 1, 1));
+					break;
+			}
+		}
+
 
 		function _handleFinish()
 		{
