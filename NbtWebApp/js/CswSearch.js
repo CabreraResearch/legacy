@@ -167,6 +167,10 @@ var CswSearch_CssClasses = {
                                            getNewProps();  
                                     });
             o.$nodeTypesSelect = $nodeTypesSelect;
+            if(o.nodetypeorobjectclassid !== '' )
+            {
+                $nodeTypesSelect.val(o.nodetypeorobjectclassid).attr('selected',true);
+            }
             $typeSelectCell.append($nodeTypesSelect);
         
             //prop row(s) 1-?, Columns 3-6
@@ -226,7 +230,6 @@ var CswSearch_CssClasses = {
 		                'url': o.getNewPropsUrl,
 		                'data': "RelatedIdType=" + o.relatedIdType + "&NodeTypeOrObjectClassId=" + o.nodetypeorobjectclassid + "&IdPrefix=" + o.idprefix + "&NodeKey=" + o.cswnbtnodekey,
                         'success': function($xml) { 
-                                log($xml);
                                 o.$propsXml = $xml;
                                 renderNodeTypeSearchContent();
 //                                o.$searchTable.CswViewPropFilter('init', {
