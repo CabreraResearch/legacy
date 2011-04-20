@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Schema
         public void update()
         {
 
-            // case 20924
+            // case 20971
             CswNbtView AllProblems = _CswNbtSchemaModTrnsctn.restoreView( "All Problems" );
             if( null == AllProblems )
             {
