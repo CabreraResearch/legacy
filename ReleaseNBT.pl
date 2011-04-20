@@ -26,6 +26,7 @@ printf("Step 1: Pull and Update from Main\n");
 &runCommand("hg pull -R c:/kiln/Common/CswCommon -u main");
 &runCommand("hg pull -R c:/kiln/Common/CswConfigUI -u main");
 &runCommand("hg pull -R c:/kiln/Common/CswWebControls -u main");
+&runCommand("hg pull -R c:/kiln/Common/CswLogService -u main");
 &runCommand("hg pull -R c:/kiln/nbt/nbt -u main");
 &runCommand("hg pull -R c:/kiln/Install/nbt -u main");
 
@@ -79,9 +80,9 @@ foreach my $component (keys %versions)
 		{
 			$file = "c:/kiln/Nbt/Nbt/$component/Properties/AssemblyInfo.cs";
 		}
-		else
+		elsif($component =~ /^CswLogService/)
 		{
-			$file = "c:/kiln/Common/$component/Properties/AssemblyInfo.cs";
+			$file = "c:/kiln/Common/$component/$component/Properties/AssemblyInfo.cs";
 		}
 		
 		if(open( FIN, "< $file" ) )
@@ -157,6 +158,10 @@ printf("Step 5: Commit, Label, and Push to Main\n");
 &runCommand("hg commit -R c:/kiln/Common/CswWebControls -m \"Automated commit for release: $assemblyno\"");
 &runCommand("hg tag -R c:/kiln/Common/CswWebControls \"CswWebControls ".$versions{"CswWebControls"}."\"");
 &runCommand("hg push -R c:/kiln/Common/CswWebControls main");
+
+&runCommand("hg commit -R c:/kiln/Common/CswLogService -m \"Automated commit for release: $assemblyno\"");
+&runCommand("hg tag -R c:/kiln/Common/CswLogService \"CswLogService ".$versions{"CswLogService"}."\"");
+&runCommand("hg push -R c:/kiln/Common/CswLogService main");
 
 &runCommand("hg commit -R c:/kiln/nbt/nbt -m \"Automated commit for release: $assemblyno\"");
 &runCommand("hg tag -R c:/kiln/nbt/nbt \"Nbt ".$versions{"NbtLogic"}."\"");
