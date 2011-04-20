@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtWebServiceSearch( CswNbtResources CswNbtResources, string Prefix )
         {
 			_CswNbtResources = CswNbtResources;
-            _ViewBuilder = new wsViewBuilder( _CswNbtResources, Prefix );  
+            _ViewBuilder = new wsViewBuilder( _CswNbtResources, _ProhibittedFieldTypes, Prefix );  
             //wsViewBuilder.CswViewBuilderProp 
 
 		}//ctor
@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtWebServiceSearch( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            _ViewBuilder = new wsViewBuilder( _CswNbtResources );
+            _ViewBuilder = new wsViewBuilder( _CswNbtResources, _ProhibittedFieldTypes );
             //wsViewBuilder.CswViewBuilderProp 
         }//ctor
 
