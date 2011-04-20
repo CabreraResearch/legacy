@@ -281,7 +281,6 @@ var ViewBuilder_CssClasses = {
                 var $filter = o.$parent.CswDOM('findelement',{ID: filterId});
                 var filterText = $filter.find(':selected').val();
 
-                var relatedidtype = $thisProp.attr('relatedidtype');
                 var propType = $thisProp.attr('proptype');
                                 
                 thisNodeProp = {
@@ -291,7 +290,7 @@ var ViewBuilder_CssClasses = {
                     viewbuilderpropid: o.viewbuilderpropid,
                     filtarbitraryid: o.filtarbitraryid,
                     proparbitraryid: o.proparbitraryid,
-                    relatedidtype: relatedidtype,
+                    relatedidtype: o.relatedidtype,
                     subfield: subFieldText,
                     filter: filterText,
                     filtervalue: filterValue  
