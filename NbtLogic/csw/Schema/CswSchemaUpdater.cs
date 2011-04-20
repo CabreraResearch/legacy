@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Data;
-using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
 
             // This is where you manually set to the last version of the previous release
-            MinimumVersion = new CswSchemaVersion( 1, 'G', 32 ); 
+            MinimumVersion = new CswSchemaVersion( 1, 'G', 32 );
 
             // This is where you add new versions.
             CswSchemaUpdateDriver Schema01H01Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H01( _CswNbtSchemaModTrnsctn ) );
@@ -105,7 +105,8 @@ namespace ChemSW.Nbt.Schema
             _UpdateDrivers.Add( Schema01H27Driver.SchemaVersion, Schema01H27Driver );
             CswSchemaUpdateDriver Schema01H28Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H28( _CswNbtSchemaModTrnsctn ) );
             _UpdateDrivers.Add( Schema01H28Driver.SchemaVersion, Schema01H28Driver );
-
+            CswSchemaUpdateDriver Schema01H29Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H28( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H29Driver.SchemaVersion, Schema01H29Driver );
             // This automatically detects the latest version
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys )
             {
