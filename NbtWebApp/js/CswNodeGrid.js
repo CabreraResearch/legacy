@@ -38,9 +38,12 @@
 
 		var gridData = [];
 		var gridRows = [];
-
-		var $gridTable = $parent.CswTable('init', { ID: o.gridTableID, prefix: o.prefix });
-		var $gridPager = $parent.CswDOM('div',{ID: o.gridPagerID, prefix: o.prefix})
+        
+        var gridTableId = makeId({ ID: o.gridTableID, prefix: o.prefix });
+		var $gridTable = $parent.CswTable('init', { ID: gridTableId });
+		
+        var gridPagedId = makeId({ID: o.gridPagerID, prefix: o.prefix});
+        var $gridPager = $parent.CswDOM('div',{ID: gridPagedId})
                                  .css('width','100%')
                                  .css('height','20px');
 		
