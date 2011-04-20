@@ -22,6 +22,7 @@ var CswSearch_CssClasses = {
             //options
 			'viewid': '',
             'nodetypeorobjectclassid': '',
+            'propertyid': '',
             'cswnbtnodekey': '',
             'relatedidtype': '',
             'idprefix': 'csw',
@@ -30,6 +31,7 @@ var CswSearch_CssClasses = {
                 
             //XML to persist
             '$propsXml': '',
+            '$selectedPropXml': '',
             '$nodeTypesXml': '',
             '$nodeTypesSelect': '',
 
@@ -173,22 +175,23 @@ var CswSearch_CssClasses = {
             }
             $typeSelectCell.append($nodeTypesSelect);
         
-            //prop row(s) 1-?, Columns 3-6
             var propRow = 1;
             //Row propRow, Column 3: properties 
             var $propSelectCell = o.$searchTable.CswTable('cell', propRow, 3)
                                     .empty();
             var propSelectId = makeId({ID: 'property_select', prefix: o.idprefix});
-            var $props = $(xmlToString(o.$propsXml.children('properties').children('select')))
+            var $propSelect = $(xmlToString(o.$propsXml.children('properties').children('select')))
                             .attr('id', propSelectId)
                             .attr('name', propSelectId)
                             .attr('class',CswSearch_CssClasses.property_select.name)
                             .change(function() {
                                     var $this = $(this);
+                                    var thisPropId = $this.val();
                                     var r = {
-                                        'selectedPropVal': $this.val(),
+                                        'propertyid': thisPropId,
                                         'selectedSubfieldVal': '',
-                                        'selectedFilterVal': ''
+                                        'selectedFilterVal': '',
+                                        '$selectedPropXml': o.$propsXml.children('propertyfilters').children('property[viewbuilderpropid='+ thisPropId +']')
                                     };
                                     $.extend(o,r);
                                     o.$searchTable.CswViewPropFilter('init', {
@@ -196,26 +199,27 @@ var CswSearch_CssClasses = {
                                                 'propRow': propRow,
                                                 'firstColumn': 3,
                                                 'includePropertyName': false,
-                                                '$propsXml': $selectedProp,
-                                                viewbuilderpropid: propertyId
+                                                '$propsXml': o.$selectedPropXml,
+                                                'viewbuilderpropid': thisPropId
                                             }); 
                                    });
                                 
-            if(o.selectedPropVal !== '' )
+            if(o.propertyid !== '' )
             {
-                $props.val(o.selectedPropVal).attr('selected',true);
+                $propSelect.val(o.propertyid).attr('selected',true);
             }
-            $propSelectCell.append($props);
-            var propertyId = $props.find(':selected').val();
-            var $selectedProp = o.$propsXml.children('propertyfilters').children('property[viewbuilderpropid='+ propertyId +']');
+            $propSelectCell.append($propSelect);
+            
+            o.propertyid = $propSelect.find(':selected').val();
+            o.$selectedPropXml = o.$propsXml.children('propertyfilters').children('property[viewbuilderpropid='+ o.propertyid +']');
         
             var $propFilter = o.$searchTable.CswViewPropFilter('init', {
                                                 'idprefix': o.idprefix,
                                                 'propRow': propRow,
                                                 'firstColumn': 3,
                                                 'includePropertyName': false,
-                                                '$propsXml': $selectedProp,
-                                                'viewbuilderpropid': propertyId
+                                                '$propsXml': o.$selectedPropXml,
+                                                'viewbuilderpropid': o.propertyid
                                             });
             
             o.bottomRow = (o.propsCount + 1);
