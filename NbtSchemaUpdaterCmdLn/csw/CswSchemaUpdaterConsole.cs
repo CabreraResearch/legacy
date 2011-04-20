@@ -36,9 +36,11 @@ namespace ChemSW.Nbt.Schema.CmdLn
             {
                 if( "all" != _args[0].ToString().ToLower() )
                 {
+                    ReturnVal = "This is not implemented yet"; 
                 }
                 else
                 {
+                    ReturnVal = "This is not implemented yet";
                 }
             }
             else

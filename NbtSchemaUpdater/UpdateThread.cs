@@ -67,22 +67,7 @@ namespace ChemSW.Nbt.Schema
                 _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Executable );
                 _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Executable );
 
-                //_CswNbtObjClassFactory = new CswNbtObjClassFactory();
-
                 _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ) ,false , false );
-                //                _CswNbtResources = new CswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, false, false );
-
-
-                //_CswNbtResources.SetDbResources( new CswNbtTreeFactory( _ConfigurationFilesFQPN ) );
-
-                //_CswNbtMetaDataEvents = new CswNbtMetaDataEvents( _CswNbtResources );
-                //_CswNbtResources.OnMakeNewNodeType += new CswNbtResources.NewNodeTypeEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeType );
-                //_CswNbtResources.OnCopyNodeType += new CswNbtResources.CopyNodeTypeEventHandler( _CswNbtMetaDataEvents.OnCopyNodeType );
-                //_CswNbtResources.OnMakeNewNodeTypeProp += new CswNbtResources.NewNodeTypePropEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeTypeProp );
-                //_CswNbtResources.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypePropName );
-                //_CswNbtResources.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( _CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
-                //_CswNbtResources.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypeName );
-
                 _CswLogger = _CswNbtResources.CswLogger;
 
                 _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
@@ -322,5 +307,6 @@ namespace ChemSW.Nbt.Schema
         #endregion DoUpdate
 
     } // class UpdateThread
+
 } // namespace ChemSW.Nbt.Schema
 
