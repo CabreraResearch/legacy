@@ -508,7 +508,7 @@ namespace ChemSW.Nbt.WebServices
                 else if( !string.IsNullOrEmpty( NodeTypeOrObjectClassId ) )
                 {
                     TypeOrObjectClassId = CswConvert.ToInt32( NodeTypeOrObjectClassId );
-                    CswNbtViewRelationship.RelatedIdType.TryParse( RelatedIdType, out Relationship );
+                    CswNbtViewRelationship.RelatedIdType.TryParse( RelatedIdType, true, out Relationship );
                 }
                 ViewBuilderProps = _getViewBuilderProps( Relationship, TypeOrObjectClassId );
             }
