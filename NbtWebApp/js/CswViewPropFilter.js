@@ -211,7 +211,7 @@ var ViewBuilder_CssClasses = {
                         }  
                     }
                     var $filtValInput = $propFilterValueCell.CswInput('init', {ID: filtValInputId,
-                                                                                type: inputTypes.text,
+                                                                                type: CswInput_Types.text,
                                                                                 cssclass: ViewBuilder_CssClasses.filter_value.name,
                                                                                 value: inputOpt.value,
                                                                                 placeholder: inputOpt.placeholder,

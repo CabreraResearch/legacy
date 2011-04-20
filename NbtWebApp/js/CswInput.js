@@ -1,5 +1,5 @@
 ﻿// for CswInput
-var inputTypes = {
+var CswInput_Types = {
     button: { id: 0, name: 'button', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
     checkbox: { id: 1, name: 'checkbox', placeholder: false, autocomplete: false, value: { required: true, allowed: true} },
     color: { id: 2, name: 'color', placeholder: false, autocomplete: true, value: { required: false, allowed: true} },
@@ -35,7 +35,7 @@ var inputTypes = {
 		{
             var o = {
                 'ID': '',
-                'type': inputTypes.text,
+                'type': CswInput_Types.text,
                 'placeholder': '',
                 'cssclass': '',
                 'value': '',
