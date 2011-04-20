@@ -150,7 +150,7 @@ var ViewBuilder_CssClasses = {
                                                 'selectedFilterVal': ''
                                             };
                                             $.extend(o,r);
-                                            renderPropFiltRow() });
+                                            renderPropFiltRow(filtOpt) });
 
                 if(o.selectedSubfieldVal !== '')
                 {
@@ -175,7 +175,7 @@ var ViewBuilder_CssClasses = {
                                                 'selectedFilterVal': $this.val()
                                             };
                                             $.extend(o,r);
-                                            renderPropFiltRow() });
+                                            renderPropFiltRow(filtOpt) });
 
                 if(o.selectedFilterVal !== '')
                 {
