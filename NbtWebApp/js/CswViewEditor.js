@@ -478,14 +478,10 @@
 
 			if(stepno == 5)
 			{
-				$div.find('.vieweditor_viewproplink').click(function() {
-					$('.vieweditor_addfilter').hide();
-					var $a = $(this);
-					var $li = $a.parent();
-					var $span = $li.children('ul').children('li').children('span.vieweditor_addfilter');
-
-					$span.empty();
+				$div.find('.vieweditor_addfilter').each(function() {
+					var $span = $(this);
 					var $tbl = $span.CswTable({ 'ID': o.ID + '_propfilttbl' });
+					$tbl.css('display', 'inline-table');
 					$tbl.CswViewPropFilter('init', {
 														'viewxml': xmlToString($currentviewxml),
 														'proparbitraryid': $span.attr('proparbid'),
@@ -512,20 +508,17 @@
 											proparbitraryid: $span.attr('proparbid')
 										});
 
-							var Json2 = { propbuilder: Json };
-
 							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 
 								'viewxml': xmlToString($currentviewxml), 
-								'filtJson': Json2, 
+								'filtJson': Json, 
 								'onSuccess': function($filterxml) {
-									$currentviewxml.find('[arbitraryid="' + $span.attr('arbid') +'"]').append($filterxml);
+									var $propxml = $currentviewxml.find('[arbitraryid="' + $span.attr('proparbid') +'"]');
+									$(xmlToString($filterxml)).appendTo($propxml);
 									_makeViewTree(stepno, $div);
 								} // onSuccess
 							}); // CswViewPropFilter
 						} // onClick
 					}); // CswButton
-					$span.show();
-
 				}); // property click
 			} // if(stepno == 5)
 
@@ -767,7 +760,7 @@
 					if(stepno == 5)
 					{ 
 						// view filters
-						treestr += '<li><span class="vieweditor_addfilter" style="display: none" proparbid="' + arbid + '"></span></li>';
+						treestr += '<li><span class="vieweditor_addfilter" proparbid="' + arbid + '"></span></li>';
 					}
 					else 
 					{

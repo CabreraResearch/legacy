@@ -564,12 +564,9 @@ namespace ChemSW.Nbt.WebServices
             XElement PropFilterXml = new XElement( "propfilter" );
             CswNbtView View = new CswNbtView( _CswNbtResources );
             View.LoadXml( ViewXml );
-            JObject PropBuilder = JObject.Parse( PropFilterJson );
-            if( PropBuilder["propbuilder"].Count() == 1 )
-            {
-                JObject PropFilter = (JObject) PropBuilder["propbuilder"].First();
-                PropFilterXml = makeViewPropFilter( View, PropFilter );
-            }
+			JObject PropFilter = JObject.Parse( PropFilterJson );
+			PropFilterXml = makeViewPropFilter( View, PropFilter );
+
             return PropFilterXml;
         }
         
@@ -582,16 +579,31 @@ namespace ChemSW.Nbt.WebServices
             
             var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
             CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
-            
-            string FiltArbitraryId = (string) FilterProp["filtarbitraryid"];
 
-            if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown &&
-                !string.IsNullOrEmpty( FiltArbitraryId ) )
-            {
-                CswNbtViewPropertyFilter ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
-                PropFilterXml = makeViewPropFilter( ViewPropFilt, FilterProp );
-            }
-            return PropFilterXml;
+			string FiltArbitraryId = (string) FilterProp["filtarbitraryid"];
+			string PropArbitraryId = (string) FilterProp["proparbitraryid"];
+			if( FiltArbitraryId == "undefined" ) FiltArbitraryId = string.Empty;
+			if( PropArbitraryId == "undefined" ) PropArbitraryId = string.Empty;
+
+			CswNbtViewPropertyFilter ViewPropFilt = null;
+			if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown )
+			{
+				if( !string.IsNullOrEmpty( FiltArbitraryId ) )
+				{
+					ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
+				}
+				else if( !string.IsNullOrEmpty( PropArbitraryId ) )
+				{
+					CswNbtViewProperty ViewProp = (CswNbtViewProperty) View.FindViewNodeByArbitraryId( PropArbitraryId );
+					ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+				}
+			}
+			
+			if( ViewPropFilt != null )
+			{
+				PropFilterXml = makeViewPropFilter( ViewPropFilt, FilterProp );
+			}
+			return PropFilterXml;
         }
 
         /// <summary>
