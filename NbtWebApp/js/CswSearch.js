@@ -21,7 +21,7 @@ var CswSearch_CssClasses = {
 
             //options
 			'viewid': '',
-            'nodetypeid': '',
+            'nodetypeorobjectclassid': '',
             'cswnbtnodekey': '',
             'relatedidtype': '',
             'idprefix': 'csw',
@@ -147,25 +147,25 @@ var CswSearch_CssClasses = {
         {
             //Row 1, Column 1: empty (contains 'and' for View search)
             //Row 1, Column 2: nodetypeselect picklist
-            var $typeSelectCell = o.$searchTable.CswTable('cell', 1, 2);
+            var $typeSelectCell = o.$searchTable.CswTable('cell', 1, 2)
+                                                .empty();
             var nodeTypeSelectId = makeId({ID: 'nodetype_select',prefix: o.idprefix});
             var $nodeTypesSelect = $(xmlToString(o.$nodeTypesXml.children('select')))
                                     .attr('id', nodeTypeSelectId)
                                     .attr('name', nodeTypeSelectId)
                                     .attr('class',CswSearch_CssClasses.nodetype_select.name)
                                     .change( function() {
-                                       var $thisSelect = $(this);
-                                       var r = {
-                                            'objectPk': $thisSelect.val(),
-                                            'relatedIdType': $thisSelect.find(':selected').attr('title'),
-                                            'cswnbtnodekey': '',
-                                            'idprefix': '',
-                                            '$propsXml': '',
-                                            '$parent': o.$searchTable,
-                                            '$nodeTypesSelect': $thisSelect 
-                                       };
-                                       $.extend(o,r);
-                                       getNewProps();  });
+                                           var $thisSelect = $(this);
+                                           var r = {
+                                                'nodetypeorobjectclassid': $thisSelect.val(),
+                                                'relatedIdType': $thisSelect.find(':selected').attr('title'),
+                                                'cswnbtnodekey': '',
+                                                '$parent': o.$searchTable,
+                                                '$nodeTypesSelect': $thisSelect 
+                                           };
+                                           $.extend(o,r);
+                                           getNewProps();  
+                                    });
             o.$nodeTypesSelect = $nodeTypesSelect;
             $typeSelectCell.append($nodeTypesSelect);
         
@@ -224,17 +224,19 @@ var CswSearch_CssClasses = {
         {
             CswAjaxXml({ 
 		                'url': o.getNewPropsUrl,
-		                'data': "RelatedIdType=" + o.relatedIdType + "&ObjectPk=" + o.nodetypeid + "&IdPrefix=" + o.idprefix + "&NodeKey=" + o.cswnbtnodekey,
+		                'data': "RelatedIdType=" + o.relatedIdType + "&NodeTypeOrObjectClassId=" + o.nodetypeorobjectclassid + "&IdPrefix=" + o.idprefix + "&NodeKey=" + o.cswnbtnodekey,
                         'success': function($xml) { 
+                                log($xml);
                                 o.$propsXml = $xml;
-                                o.$searchTable.CswViewPropFilter('init', {
-                                                'idprefix': o.idprefix,
-                                                'propRow': propRow,
-                                                'firstColumn': 3,
-                                                'includePropertyName': false,
-                                                '$propsXml': $selectedProp,
-                                                'viewbuilderpropid': propertyId
-                                            });
+                                renderNodeTypeSearchContent();
+//                                o.$searchTable.CswViewPropFilter('init', {
+//                                                'idprefix': o.idprefix,
+//                                                'propRow': g.propRow,
+//                                                'firstColumn': 3,
+//                                                'includePropertyName': false,
+//                                                '$propsXml': o.$propsXml,
+//                                                'viewbuilderpropid': g.viewbuilderpropid
+//                                            });
                         }
                     });
         } // getNewProps()
@@ -329,7 +331,7 @@ var CswSearch_CssClasses = {
             
             CswAjaxXml({ 
 		        'url': o.getClientSearchXmlUrl,
-		        'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeid + "&IdPrefix=" + o.idprefix + "&NodeKey=" + o.cswnbtnodekey,
+		        'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeorobjectclassid + "&IdPrefix=" + o.idprefix + "&NodeKey=" + o.cswnbtnodekey,
                 'success': function($xml) { 
                     $topspandiv.empty();
                     o.searchtype = $xml.attr('searchtype');
@@ -379,7 +381,7 @@ var CswSearch_CssClasses = {
                 case 'nodetypesearch':
                 {
                     searchUrl = o.doNodeSearchUrl;
-                    var objectPk = o.$nodeTypesSelect.val();
+                    var nodetypeorobjectclassid = o.$nodeTypesSelect.val();
                     var relatedIdType = o.$nodeTypesSelect.find(':selected').attr('title');
 
                     $('.' + CswSearch_CssClasses.property_select.name).each(function() {
@@ -389,7 +391,7 @@ var CswSearch_CssClasses = {
                             var fieldtype = o.$propsXml.children('propertyfilters')
                                                        .children('property[propname="' + propName + '"][viewbuilderpropid="' + viewbuildpropid + '"]')
                                                        .attr('fieldtype');
-                            var thisNodeProp = $thisProp.CswViewPropFilter('getFilterJson',{objectpk: objectPk,
+                            var thisNodeProp = $thisProp.CswViewPropFilter('getFilterJson',{nodetypeorobjectclassid: nodetypeorobjectclassid,
                                                                                           relatedidtype: relatedIdType,  
                                                                                           fieldtype: fieldtype,
                                                                                           idprefix: o.idprefix,

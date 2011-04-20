@@ -1014,14 +1014,14 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getNodeTypeSearchProps( string RelatedIdType, string ObjectPk, string IdPrefix, string NodeKey )
+		public XElement getNodeTypeSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string IdPrefix, string NodeKey )
 		{
 			XElement SearchNode = new XElement( "search" );
 			try
 			{
 				start();
 				var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
-				SearchNode = ( ws.getSearchProps( RelatedIdType, ObjectPk, NodeKey ) );
+                SearchNode = ( ws.getSearchProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey ) );
 				end();
 			}
 			catch( Exception ex )

@@ -124,9 +124,10 @@ var ViewBuilder_CssClasses = {
                 
                 var fieldtype = o.$propsXml.attr('fieldtype');
                 var $defaultFilter = o.$propsXml.children('defaultsubfield').attr('filter');
-                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, 4)
+                
+                //Row propRow, Column 4: subfield default value (hidden) 
+                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)) //4
                                                     .empty();
-
                 var defaultSubFieldId = makePropFilterId('default_filter', filtOpt);
                 var $defaultSubField = $subfieldCell.CswDOM('span', {
                                                     ID: defaultSubFieldId,
@@ -137,7 +138,6 @@ var ViewBuilder_CssClasses = {
                 $defaultSubField.hide(); //for Search
 
                 //Row propRow, Column 4: subfield picklist 
-                var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)); //4
                 var subfieldOptionsId = makePropFilterId('subfield_select', filtOpt);
                 var $subfieldsOptions = $(xmlToString(o.$propsXml.children('subfields').children('select')))
                                         .attr('id', subfieldOptionsId)
@@ -150,21 +150,21 @@ var ViewBuilder_CssClasses = {
                                                 'selectedFilterVal': ''
                                             };
                                             $.extend(o,r);
-                                            renderPropFiltRow() });
+                                            renderPropFiltRow(filtOpt) });
 
                 if(o.selectedSubfieldVal !== '')
                 {
                     $subfieldsOptions.val(o.selectedSubfieldVal).attr('selected',true);
                 }
                 $subfieldCell.append($subfieldsOptions);
-                var $subfield = $subfieldsOptions.find(':selected').val();
+                var subfield = $subfieldsOptions.find(':selected').val();
                 var defaultValue = $subfieldsOptions.find(':selected').attr('defaultvalue');
 
                 //Row propRow, Column 5: filter picklist
                 var $filtersCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 2)) //5
                                                    .empty();
                 var filtersOptionsId = makePropFilterId('filter_select', filtOpt);
-                var $filtersOptions =  $(xmlToString(o.$propsXml.children('propertyfilters').children('subfield[column=' + $subfield + ']').children('select')))
+                var $filtersOptions =  $(xmlToString(o.$propsXml.children('propertyfilters').children('subfield[column=' + subfield + ']').children('select')))
                                         .attr('id', filtersOptionsId)
                                         .attr('name', filtersOptionsId)
                                         .attr('class',ViewBuilder_CssClasses.filter_select.name)
@@ -175,7 +175,7 @@ var ViewBuilder_CssClasses = {
                                                 'selectedFilterVal': $this.val()
                                             };
                                             $.extend(o,r);
-                                            renderPropFiltRow() });
+                                            renderPropFiltRow(filtOpt) });
 
                 if(o.selectedFilterVal !== '')
                 {
@@ -227,7 +227,7 @@ var ViewBuilder_CssClasses = {
         {
             var $thisProp = $(this);
             var o = {
-                objectpk: '',
+                nodetypeorobjectclassid: '',
                 relatedidtype: '',
                 fieldtype: $thisProp.attr('fieldtype'),
                 idprefix: '',
@@ -285,7 +285,7 @@ var ViewBuilder_CssClasses = {
                 var propType = $thisProp.attr('proptype');
                                 
                 thisNodeProp = {
-                    objectpk: o.objectpk, // for NodeType filters
+                    nodetypeorobjectclassid: o.nodetypeorobjectclassid, // for NodeType filters
                     relatedidtype: o.relatedidtype, // for NodeType filters
                     proptype: propType,
                     viewbuilderpropid: o.viewbuilderpropid,

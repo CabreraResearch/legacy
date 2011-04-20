@@ -1,11 +1,9 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Xml;
-using ChemSW.Exceptions;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -16,7 +14,7 @@ namespace ChemSW.Nbt
     {
         public override NbtViewNodeType ViewNodeType { get { return NbtViewNodeType.CswNbtViewRelationship; } }
 
-        public enum RelatedIdType { NodeTypeId, ObjectClassId, Unknown };
+        public enum RelatedIdType { Unknown, NodeTypeId, ObjectClassId };
         public enum PropIdType { NodeTypePropId, ObjectClassPropId, Unknown };
         public enum PropOwnerType { First, Second, Unknown };
 
