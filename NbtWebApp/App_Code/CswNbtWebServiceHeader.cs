@@ -105,13 +105,16 @@ namespace ChemSW.Nbt.WebServices
             string ret = string.Empty;
 
             ret += "<item text=\"Home\" action=\"Home\" />";
-            ret += "<item text=\"Admin\">";
-            ret += "  <item text=\"Current User List\" href=\"\" />";
-            ret += "  <item text=\"View Log\" href=\"\" />";
-            ret += "  <item text=\"Edit Config Vars\" href=\"\" />";
-            ret += "  <item text=\"Statistics\" href=\"\" />";
-            ret += "</item>";
-            ret += "<item text=\"Preferences\">";
+			if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+			{
+				ret += "<item text=\"Admin\">";
+				ret += "  <item text=\"Current User List\" href=\"\" />";
+				ret += "  <item text=\"View Log\" href=\"\" />";
+				ret += "  <item text=\"Edit Config Vars\" href=\"\" />";
+				ret += "  <item text=\"Statistics\" href=\"\" />";
+				ret += "</item>";
+			}
+			ret += "<item text=\"Preferences\">";
             ret += "  <item text=\"Profile\" href=\"\" />";
             ret += "  <item text=\"Subscriptions\" href=\"\" />";
             ret += "</item>";
