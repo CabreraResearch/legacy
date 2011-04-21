@@ -512,7 +512,7 @@
 														'proparbitraryid': $span.attr('proparbid'),
 														'filtarbitraryid': '',
 														'viewbuilderpropid': '',
-														'idprefix': o.ID,
+														'ID': o.ID,
 														'propRow': 1,
 														'firstColumn': 1,
 														'includePropertyName': false,
@@ -528,7 +528,7 @@
 						'disabledText': 'Adding',
 						'onclick': function () { 
 							var Json = $tbl.CswViewPropFilter('getFilterJson', { 
-											idprefix: o.ID,
+											ID: o.ID,
 											$parent: $span,
 											proparbitraryid: $span.attr('proparbid')
 										});
