@@ -132,7 +132,6 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassEquipmentAssembly.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassEquipmentType.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassFactory.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassFireExtinguisher.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassGenerator.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassGeneric.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionDesign.cs" />

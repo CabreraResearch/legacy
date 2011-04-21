@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -41,11 +41,9 @@ namespace ChemSW.Nbt.Schema
             Int32 FEModuleId = _CswNbtSchemaModTrnsctn.createModule( "Fire Extinguisher", "FE", true );
             CswNbtMetaDataObjectClass InspectionTargetOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( FEModuleId, InspectionTargetOC.ObjectClassId );
-            CswNbtMetaDataObjectClass FireExtinguisherOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.FireExtinguisherClass );
-            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( FEModuleId, FireExtinguisherOC.ObjectClassId );
             CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClass InspectionTargetGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
-            
+
             // Case 20062
             Int32 FEImportActionid = _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Import_Fire_Extinguisher_Data, true, "Act_ImportFireExtinguisher.aspx", "System" );
 
@@ -58,8 +56,8 @@ namespace ChemSW.Nbt.Schema
             for( Int32 i = 0; i < ActionsDT.Rows.Count; i++ )
             {
                 Actionid = CswConvert.ToInt32( ActionsDT.Rows[i]["actionid"].ToString() );
-                if ( Int32.MinValue != Actionid )
-                    _CswNbtSchemaModTrnsctn.createModuleActionJunction(FEModuleId, Actionid);
+                if( Int32.MinValue != Actionid )
+                    _CswNbtSchemaModTrnsctn.createModuleActionJunction( FEModuleId, Actionid );
                 Actionid = Int32.MinValue;
             }
 
@@ -90,26 +88,9 @@ namespace ChemSW.Nbt.Schema
                                                            false, false, true, "ObjectClassId", InspectionTargetGroupOC.ObjectClassId, true, false, false, false, string.Empty,
                                                            Int32.MinValue, Int32.MinValue );
 
-            //FE OC Props
-
-            //FE: Last Inspection Date
-            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC, CswNbtObjClassFireExtinguisher.LastInspectionDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Date,
-                                                           false, true, false, string.Empty, Int32.MinValue, false, false, false, true, string.Empty,
-                                                           Int32.MinValue, Int32.MinValue );
-            //FE: Status
-            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC, CswNbtObjClassFireExtinguisher.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List,
-                                                           false, true, false, string.Empty, Int32.MinValue, false, false, false, true, Status,
-                                                           Int32.MinValue, Int32.MinValue );
-            //FE: Inspection Target
-            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC, CswNbtObjClassFireExtinguisher.InspectionTargetPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship,
-                                                           false, false, true, "ObjectClassId", InspectionTargetOC.ObjectClassId, false, false, false, false, string.Empty,
-                                                           Int32.MinValue, Int32.MinValue );
-
             // Case 20058
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, InspectionTargetOC.ObjectClassId, "Description", CswNbtMetaDataFieldType.NbtFieldType.Text, Int32.MinValue, Int32.MinValue );
-            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC.ObjectClassId, "Description", CswNbtMetaDataFieldType.NbtFieldType.Text, Int32.MinValue, Int32.MinValue );
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, InspectionTargetOC.ObjectClassId, "Type", CswNbtMetaDataFieldType.NbtFieldType.List, Int32.MinValue, Int32.MinValue );
-            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( NewOCPTable, FireExtinguisherOC.ObjectClassId, "Type", CswNbtMetaDataFieldType.NbtFieldType.List, Int32.MinValue, Int32.MinValue );
 
             // Last DT Op
             OCPUpdate.update( NewOCPTable );
@@ -119,14 +100,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( InspectionTargetOC.getObjectClassProp( CswNbtObjClassInspectionTarget.StatusPropertyName ),
                                                                  CswNbtSubField.SubFieldName.Value,
                                                                  "Not Inspected" );
-
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.StatusPropertyName ),
-                                                                 CswNbtSubField.SubFieldName.Value,
-                                                                 "Not Inspected" );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.InspectionTargetPropertyName ), CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.TypePropertyName ), CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( InspectionTargetOC.getObjectClassProp( CswNbtObjClassInspectionTarget.TypePropertyName ), CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.DescriptionPropertyName ), CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( InspectionTargetOC.getObjectClassProp( CswNbtObjClassInspectionTarget.DescriptionPropertyName ), CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
 
         }//Update()

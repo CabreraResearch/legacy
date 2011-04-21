@@ -7,7 +7,7 @@ using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataObjectClass :  ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataObjectClass>
+    public class CswNbtMetaDataObjectClass : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataObjectClass>
     {
         public enum NbtObjectClass
         {
@@ -18,7 +18,6 @@ namespace ChemSW.Nbt.MetaData
             EquipmentAssemblyClass,
             EquipmentClass,
             EquipmentTypeClass,
-            FireExtinguisherClass,
             GeneratorClass,
             GenericClass,
             InventoryGroupClass,
@@ -55,9 +54,9 @@ namespace ChemSW.Nbt.MetaData
             //return ( ( CswNbtMetaDataObjectClass.NbtObjectClass )Enum.Parse( typeof( CswNbtMetaDataObjectClass.NbtObjectClass ), ObjectClassName, true ) );
             NbtObjectClass ReturnVal = NbtObjectClass.Unknown;
             //bz # 7815 -- Should not care if the requested object class doesn't exist anymore
-            if ( Enum.IsDefined( typeof( NbtObjectClass ), ObjectClassName ) )
+            if( Enum.IsDefined( typeof( NbtObjectClass ), ObjectClassName ) )
             {
-                ReturnVal = ( CswNbtMetaDataObjectClass.NbtObjectClass )Enum.Parse( typeof( CswNbtMetaDataObjectClass.NbtObjectClass ), ObjectClassName, true );
+                ReturnVal = (CswNbtMetaDataObjectClass.NbtObjectClass) Enum.Parse( typeof( CswNbtMetaDataObjectClass.NbtObjectClass ), ObjectClassName, true );
             }
             return ( ReturnVal );
         }
@@ -94,7 +93,7 @@ namespace ChemSW.Nbt.MetaData
 
         public Int32 ObjectClassId
         {
-            get { return CswConvert.ToInt32( _ObjectClassRow[ "objectclassid" ].ToString() ); }
+            get { return CswConvert.ToInt32( _ObjectClassRow["objectclassid"].ToString() ); }
         }
         //public string TableName
         //{
@@ -102,11 +101,11 @@ namespace ChemSW.Nbt.MetaData
         //}
         public NbtObjectClass ObjectClass
         {
-            get { return getObjectClassFromString( _ObjectClassRow[ "objectclass" ].ToString() ); }
+            get { return getObjectClassFromString( _ObjectClassRow["objectclass"].ToString() ); }
         }
         public string IconFileName
         {
-            get { return _ObjectClassRow[ "iconfilename" ].ToString(); }
+            get { return _ObjectClassRow["iconfilename"].ToString(); }
         }
 
         public ICollection NodeTypes
@@ -116,7 +115,7 @@ namespace ChemSW.Nbt.MetaData
 
         //private Hashtable _ObjectClassPropsByPropId;
         //private SortedList _ObjectClassPropsByPropName;
-        
+
         //public delegate void AddPropEventHandler( CswNbtMetaDataObjectClassProp NewProp );
         //public event AddPropEventHandler OnAddProp = null;
 
@@ -192,19 +191,19 @@ namespace ChemSW.Nbt.MetaData
         public static bool operator ==( CswNbtMetaDataObjectClass oc1, CswNbtMetaDataObjectClass oc2 )
         {
             // If both are null, or both are same instance, return true.
-            if ( System.Object.ReferenceEquals( oc1, oc2 ) )
+            if( System.Object.ReferenceEquals( oc1, oc2 ) )
             {
                 return true;
             }
 
             // If one is null, but not both, return false.
-            if ( ( ( object )oc1 == null ) || ( ( object )oc2 == null ) )
+            if( ( (object) oc1 == null ) || ( (object) oc2 == null ) )
             {
                 return false;
             }
 
             // Now we know neither are null.  Compare values.
-            if ( oc1.UniqueId == oc2.UniqueId )
+            if( oc1.UniqueId == oc2.UniqueId )
                 return true;
             else
                 return false;
@@ -217,14 +216,14 @@ namespace ChemSW.Nbt.MetaData
 
         public override bool Equals( object obj )
         {
-            if ( !( obj is CswNbtMetaDataObjectClass ) )
+            if( !( obj is CswNbtMetaDataObjectClass ) )
                 return false;
-            return this == ( CswNbtMetaDataObjectClass )obj;
+            return this == (CswNbtMetaDataObjectClass) obj;
         }
 
         public bool Equals( CswNbtMetaDataObjectClass obj )
         {
-            return this == ( CswNbtMetaDataObjectClass )obj;
+            return this == (CswNbtMetaDataObjectClass) obj;
         }
 
         public override int GetHashCode()

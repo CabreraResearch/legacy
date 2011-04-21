@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Collections.ObjectModel;
 using System.Data;
-using System.Text;
 using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
 using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -182,21 +174,19 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataNodeType RoomNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Room" );
             CswNbtMetaDataNodeType MountPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Mount_Point ) );
-            CswNbtMetaDataNodeType FireExtinguisherNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Fire_Extinguisher ) );
             CswNbtMetaDataNodeTypeProp RoomParent = null;
 
             //FE Locations View
-            if( null != BuildingNT && null != FloorNT && null != RoomNT && null != MountPointNT && null != FireExtinguisherNT )
+            if( null != BuildingNT && null != FloorNT && null != RoomNT && null != MountPointNT )
             {
                 RoomParent = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
                 CswNbtMetaDataNodeTypeProp MountPointParent = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
-                CswNbtMetaDataNodeTypeProp FireExtinguisherParent = FireExtinguisherNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.InspectionTargetPropertyName );
                 CswNbtMetaDataNodeTypeProp BuildingNameNTP = BuildingNT.getNodeTypeProp( "Name" );
                 CswNbtMetaDataNodeTypeProp BuildingBarcodeNTP = BuildingNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.BarcodePropertyName );
                 CswNbtMetaDataNodeTypeProp FloorBarcodeNTP = FloorNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.BarcodePropertyName );
                 CswNbtMetaDataNodeTypeProp RoomNameNTP = RoomNT.getNodeTypeProp( "Name" );
                 CswNbtMetaDataNodeTypeProp RoomBarcodeNTP = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.BarcodePropertyName );
-                
+
                 CswNbtView FELocationsView = _CswNbtSchemaModTrnsctn.makeView();
                 FELocationsView.makeNew( "Mount Points", NbtViewVisibility.Global, null, null, null );
                 FELocationsView.Category = string.Empty;
@@ -209,7 +199,6 @@ namespace ChemSW.Nbt.Schema
                 CswNbtViewProperty BuildingBarcodeVP = FELocationsView.AddViewProperty( BuildingRelationship, BuildingBarcodeNTP );
                 FELocationsView.AddViewPropertyFilter( BuildingBarcodeVP, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
                 CswNbtViewRelationship MP1Relationship = FELocationsView.AddViewRelationship( BuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, MountPointParent, false );
-                CswNbtViewRelationship FE1Relationship = FELocationsView.AddViewRelationship( MP1Relationship, CswNbtViewRelationship.PropOwnerType.Second, FireExtinguisherParent, false );
 
                 CswNbtViewRelationship FloorRelationship = FELocationsView.AddViewRelationship( BuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, FloorParent, false );
                 CswNbtViewProperty FloorNameVP = FELocationsView.AddViewProperty( FloorRelationship, FloorNameNTP );
@@ -217,7 +206,6 @@ namespace ChemSW.Nbt.Schema
                 FELocationsView.AddViewPropertyFilter( FloorNameVP, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
                 FELocationsView.AddViewPropertyFilter( FloorBarcodeVP, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
                 CswNbtViewRelationship MP2Relationship = FELocationsView.AddViewRelationship( FloorRelationship, CswNbtViewRelationship.PropOwnerType.Second, MountPointParent, false );
-                CswNbtViewRelationship FE2Relationship = FELocationsView.AddViewRelationship( MP2Relationship, CswNbtViewRelationship.PropOwnerType.Second, FireExtinguisherParent, false );
 
                 CswNbtViewRelationship RoomRelationship = FELocationsView.AddViewRelationship( FloorRelationship, CswNbtViewRelationship.PropOwnerType.Second, RoomParent, false );
                 if( null != RoomNameNTP )
@@ -228,11 +216,9 @@ namespace ChemSW.Nbt.Schema
                 CswNbtViewProperty RoomBarcodeVP = FELocationsView.AddViewProperty( RoomRelationship, RoomBarcodeNTP );
                 FELocationsView.AddViewPropertyFilter( RoomBarcodeVP, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
                 CswNbtViewRelationship MP3Relationship = FELocationsView.AddViewRelationship( RoomRelationship, CswNbtViewRelationship.PropOwnerType.Second, MountPointParent, false );
-                CswNbtViewRelationship FE3Relationship = FELocationsView.AddViewRelationship( MP3Relationship, CswNbtViewRelationship.PropOwnerType.Second, FireExtinguisherParent, false );
 
                 CswNbtViewRelationship Room2Relationship = FELocationsView.AddViewRelationship( BuildingRelationship, CswNbtViewRelationship.PropOwnerType.Second, RoomParent, false );
                 CswNbtViewRelationship MP4Relationship = FELocationsView.AddViewRelationship( Room2Relationship, CswNbtViewRelationship.PropOwnerType.Second, MountPointParent, false );
-                CswNbtViewRelationship FE4Relationship = FELocationsView.AddViewRelationship( MP4Relationship, CswNbtViewRelationship.PropOwnerType.Second, FireExtinguisherParent, false );
 
                 FELocationsView.save();
             }

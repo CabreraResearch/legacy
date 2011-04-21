@@ -64,10 +64,6 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassEquipmentType( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.FireExtinguisherClass:
-                    ReturnVal = new CswNbtObjClassFireExtinguisher( CswNbtResources, Node );
-                    break;
-
                 case CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass:
                     ReturnVal = new CswNbtObjClassGeneric( CswNbtResources, Node );
                     break;
@@ -79,11 +75,11 @@ namespace ChemSW.Nbt.ObjClasses
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass:
                     ReturnVal = new CswNbtObjClassInspectionRoute( CswNbtResources, Node );
                     break;
-                
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass:
                     ReturnVal = new CswNbtObjClassInventoryGroup( CswNbtResources, Node );
                     break;
-                
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
                     break;
@@ -228,10 +224,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentTypeClass:
                     ReturnVal = new CswNbtObjClassEquipmentType( CswNbtResources );
-                    break;
-
-                case CswNbtMetaDataObjectClass.NbtObjectClass.FireExtinguisherClass:
-                    ReturnVal = new CswNbtObjClassFireExtinguisher( CswNbtResources );
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass:

@@ -1,5 +1,5 @@
-using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -51,12 +51,6 @@ namespace ChemSW.Nbt.ObjClasses
             return ( (CswNbtObjClassEquipmentType) Node.ObjClass );
         }//AsEquipment
 
-        public static CswNbtObjClassFireExtinguisher AsFireExtinguisher( CswNbtNode Node )
-        {
-            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.FireExtinguisherClass );
-            return ( (CswNbtObjClassFireExtinguisher) Node.ObjClass );
-        }//AsFireExtinguisher
-
         public static CswNbtObjClassGenerator AsGenerator( CswNbtNode Node )
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
@@ -98,7 +92,7 @@ namespace ChemSW.Nbt.ObjClasses
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
             return ( (CswNbtObjClassInspectionTargetGroup) Node.ObjClass );
         }//AsInspectionTarget
-        
+
         public static CswNbtObjClassNotification AsNotification( CswNbtNode Node )
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
@@ -177,7 +171,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Node != null )
             {
                 if( !( Node.ObjClass is ICswNbtPropertySetGeneratorTarget ) )
-                    throw ( new CswDniException( "Invalid cast", "Can't cast current object class as ICswNbtPropertySetGeneratorTarget; Current object class is " + Node.ObjectClass.ObjectClass.ToString() ) ); 
+                    throw ( new CswDniException( "Invalid cast", "Can't cast current object class as ICswNbtPropertySetGeneratorTarget; Current object class is " + Node.ObjectClass.ObjectClass.ToString() ) );
                 return ( (ICswNbtPropertySetGeneratorTarget) Node.ObjClass );
             }
             else

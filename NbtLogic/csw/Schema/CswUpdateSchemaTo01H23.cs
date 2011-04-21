@@ -59,9 +59,6 @@ namespace ChemSW.Nbt.Schema
 
             //CswNbtMetaDataNodeType RouteNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Physical_Inspection_Route ) );
 
-            CswNbtMetaDataNodeType FireExtNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Fire_Extinguisher ) );
-            CswNbtMetaDataNodeTypeProp FireExt_MountPointNTP = FireExtNT.getNodeTypeProp( "Mount Point" );
-
 
             // case 21093
 
@@ -80,9 +77,6 @@ namespace ChemSW.Nbt.Schema
 
             if( MountPointGroup_MountPointLocationsNTP != null )
                 MountPointGroup_MountPointLocationsNTP.PropName = "FE Inspection Point Locations";
-
-            if( FireExt_MountPointNTP != null )
-                FireExt_MountPointNTP.PropName = "FE Inspection Point";
 
             CswNbtMetaDataNodeTypeProp PhysInsp_Question1NTP = PhysInspNT.getNodeTypeProp( "Mount Point is Located in the Designated Place?" );
             if( PhysInsp_Question1NTP != null )
