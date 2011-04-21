@@ -190,7 +190,7 @@ var ViewBuilder_CssClasses = {
                 var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
                 if( fieldtype === 'List' )
                 {
-                    $propFilterValueCell.append( $(xmlToString($propsXml.children('filtersoptions').children('select'))) );
+                    $propFilterValueCell.append( $(xmlToString(o.$propsXml.children('filtersoptions').children('select'))) );
                 }
                 else if( fieldtype === 'Logical' )
                 {
