@@ -186,6 +186,7 @@ namespace ChemSW.Nbt.WebServices
 										new XAttribute( "id", ThisNodeId ),
 										new XAttribute( "rel", ThisNodeRel ),
 										new XAttribute( "state", ThisNodeState ),
+										new XAttribute( "species", ThisNodeKey.NodeSpecies.ToString() ),
 										new XAttribute( "cswnbtnodekey", ThisNodeKeyString ),
 											new XElement( "content",
 												new XElement( "name", ThisNodeName )
