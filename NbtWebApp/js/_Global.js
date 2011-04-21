@@ -13,7 +13,7 @@ function CswAjaxJSON(options) {
 	if (options) {
 		$.extend(o, options);
 	}
-log(o.data);	
+
 	//var starttime = new Date();
 	$.ajax({
 		type: 'POST',
