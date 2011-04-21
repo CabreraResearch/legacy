@@ -388,9 +388,18 @@
 			{
 				_updatePropXmlFromForm($layouttable, $propsxml);
 
+				var data = {
+					'EditMode': o.EditMode,
+					'SafeNodeKey': o.cswnbtnodekey,
+					'NodeTypeId': o.nodetypeid,
+					'ViewId': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+					'NewPropsXml': xmlToString($propsxml)
+				};
+
 				CswAjaxJSON({
 					url: o.SavePropUrl,
-					data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', ViewId: '"+ $.CswCookie('get', CswCookieName.CurrentView.ViewId) +"', NewPropsXml: '" + xmlToString($propsxml) + "' }",
+					//data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', ViewId: '"+ $.CswCookie('get', CswCookieName.CurrentView.ViewId) +"', NewPropsXml: '" + safeJsonParam(xmlToString($propsxml)) + "' }",
+					data: jsonToString(data),
 					success: function (data)
 					{
 						if(o.ShowCheckboxes)

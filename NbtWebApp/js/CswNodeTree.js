@@ -111,6 +111,7 @@
 								var nodename = $itemxml.children('content').children('name').text();
 								var treestr = '<li id="'+ $itemxml.attr('id') +'" ';
 								treestr += '    rel="'+ $itemxml.attr('rel') +'" ';
+								treestr += '    species="'+ $itemxml.attr('species') +'" ';
 								treestr += '    class="jstree-'+ $itemxml.attr('state') +'" ';
 								if($itemxml.attr('cswnbtnodekey') != undefined)
 								{
@@ -180,8 +181,7 @@
 									},
 								"ui": {
 									"select_limit": 1,
-									"initially_select": selectid,
-									"select_prev_on_delete": true    // needed for "More..." nodes
+									"initially_select": selectid
 								},
 								"themes": treeThemes,
 								"core": {
@@ -204,9 +204,11 @@
 													nodename: Selected.text, 
 													iconurl: Selected.iconurl, 
 													cswnbtnodekey: Selected.$item.attr('cswnbtnodekey'),
+													nodespecies: Selected.$item.attr('species'),
 													viewid: o.viewid
 												};
-												if(optSelect.nodename == "More...")
+												
+												if(optSelect.nodespecies == "More")
 												{
 													var ParentNodeKey = '';
 													var Parent = data.inst._get_parent(data.rslt.obj);
@@ -221,14 +223,9 @@
 														data: 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey='+ ParentNodeKey +'&IncludeNodeRequired=false&IncludeNodeKey=' + optSelect.cswnbtnodekey,
 														success: function ($xml) 
 															{
-																// remove 'More' node
-																$treediv.jstree('remove', '#' + IDPrefix + optSelect.nodeid );
-
-																// get prior sibling (now selected)
-																var NewSelected = jsTreeGetSelected($treediv);
-																var AfterNodeId = IDPrefix + NewSelected.id;
+																var AfterNodeId = IDPrefix + optSelect.nodeid;
 																var $itemxml = $xml.children().first();
-																	
+																
 																// we have to do these one at a time in successive OnSuccess callbacks, 
 																// or else they won't end up in the right place on the tree
 																_continue();
@@ -242,13 +239,20 @@
 																							'attr': {
 																										'id': $itemxml.attr('id'), 
 																										'rel': $itemxml.attr('rel'),
-																										'cswnbtnodekey': $itemxml.attr('cswnbtnodekey')
+																										'cswnbtnodekey': $itemxml.attr('cswnbtnodekey'),
+																										'species': $itemxml.attr('species')
 																									},
 																							'data': $itemxml.children('content').children('name').text(), 
 																							'state': $itemxml.attr('state') 
 																						}, 
 																						function() 
 																						{
+																							// remove 'More' node
+																							if(AfterNodeId == $itemxml.attr('id'))
+																							{
+																								$treediv.jstree('remove', '#' + IDPrefix + optSelect.nodeid + '[species="More"]' );
+																							}
+
 																							AfterNodeId = $itemxml.attr('id');
 																							$itemxml = $itemxml.next();
 																							_continue();

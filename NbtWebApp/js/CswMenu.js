@@ -29,11 +29,12 @@
 					.show();
 		}
 
-		function SubMenuClick()
+		function SubMenuClick(event)
 		{
 			HideAllSubMenus();
 			// Prevent subnav elements from triggering topnav click
-			event.stopPropagation();
+			if(event)
+				event.stopPropagation();
 		}
 		
 		function HideAllSubMenus()

@@ -13,7 +13,7 @@ function CswAjaxJSON(options) {
 	if (options) {
 		$.extend(o, options);
 	}
-	
+
 	//var starttime = new Date();
 	$.ajax({
 		type: 'POST',
@@ -141,27 +141,33 @@ function jsonToString(j)
 {
 	if(typeof j == "object")
 	{
-	 	var ret = '{';
+		var ret = "{";
 	 	var first = true;
 		for (var property in j)
 		{
 			if (j.hasOwnProperty(property))
 			{
 				if (!first)
-					ret += ',';
-				ret += ' \'' + property + '\': ';
+					ret += ",";
+				ret += " '" + property + "': ";
 				ret += jsonToString(j[property]);
 				first = false;
 			}
 		}
-		ret += '}';
+		ret += "}";
 	} 
 	else
 	{
-		ret = '\'' + j + '\'';
+		ret = "'" + safeJsonParam(j) + "'";
 	}
 	return ret;
 } // jsonToString
+
+function safeJsonParam(str)
+{
+	return str.replace(/'/g, "\\'");
+}
+
 
 // ------------------------------------------------------------------------------------
 // Check Changes
@@ -673,9 +679,16 @@ function iterate(obj) {
 }
 
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
-function log(s) {
-	try { console.log(s) } catch (e) { alert(s) }
-};
+function log(s)
+{
+	try
+	{
+		console.log(s);
+	} catch (e)
+	{
+		alert(s);
+	}
+}
 
 
 // ------------------------------------------------------------------------------------
