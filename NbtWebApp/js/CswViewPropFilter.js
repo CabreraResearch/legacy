@@ -19,32 +19,32 @@ var ViewBuilder_CssClasses = {
             'proparbitraryid': '',
             'filtarbitraryid': '',
             'viewbuilderpropid': '',
-            'idprefix': ''
+            'ID': ''
         };
         if(options) $.extend(o,options);
         
         if( o.filtarbitraryid !== '' && o.filtarbitraryid !== undefined )
         {
             FilterId = makeId({ 'ID': ID + Delimiter + 'filtarbitraryid', 
-                                'prefix': o.idprefix, 
+                                'prefix': o.ID, 
                                 'suffix': o.filtarbitraryid });
         }
         else if( o.viewbuilderpropid !== '' && o.viewbuilderpropid !== undefined )
         {
             FilterId = makeId({ 'ID': ID + Delimiter + 'viewbuilderpropid', 
-                                'prefix': o.idprefix, 
+                                'prefix': o.ID, 
                                 'suffix': o.viewbuilderpropid });
         }
         else if( o.proparbitraryid !== '' && o.proparbitraryid !== undefined )
         {
             FilterId = makeId({ 'ID': ID + Delimiter + 'proparbitraryid', 
-                                'prefix': o.idprefix, 
+                                'prefix': o.ID, 
                                 'suffix': o.proparbitraryid });
         }
-        else if( o.idprefix !== '' && o.idprefix !== undefined )
+        else if( o.ID !== '' && o.ID !== undefined )
         {
             FilterId = makeId({ 'ID': ID, 
-                                'prefix': o.idprefix });
+                                'prefix': o.ID });
         }
         else
         {
@@ -68,7 +68,7 @@ var ViewBuilder_CssClasses = {
                 'proparbitraryid': '',
                 'filtarbitraryid': '',
                 'viewbuilderpropid': '',
-                'idprefix': '',
+                'ID': '',
                 'propRow': 1,
                 'firstColumn': 3,
                 'includePropertyName': false,
@@ -87,7 +87,7 @@ var ViewBuilder_CssClasses = {
                 'proparbitraryid': o.proparbitraryid,
                 'filtarbitraryid': o.filtarbitraryid,
                 'viewbuilderpropid': o.viewbuilderpropid,
-                'idprefix': o.idprefix
+                'ID': o.ID
             };
                        
             if( ( o.$propsXml === '' || o.$propsXml === undefined ) &&
@@ -230,7 +230,7 @@ var ViewBuilder_CssClasses = {
                 nodetypeorobjectclassid: '',
                 relatedidtype: '',
                 fieldtype: $thisProp.attr('fieldtype'),
-                idprefix: '',
+                ID: '',
                 $parent: '',
                 proparbitraryid: '',
                 filtarbitraryid: $thisProp.attr('filtarbitraryid'),
@@ -242,7 +242,7 @@ var ViewBuilder_CssClasses = {
                 'proparbitraryid': o.proparbitraryid,
                 'filtarbitraryid': o.filtarbitraryid,
                 'viewbuilderpropid': o.viewbuilderpropid,
-                'idprefix': o.idprefix
+                'ID': o.ID
             };
 
             var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
