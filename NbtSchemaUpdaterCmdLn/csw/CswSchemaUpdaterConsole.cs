@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Threading;
 using System.Reflection;
 using System.Text;
@@ -11,6 +12,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.Config;
 using ChemSW.Nbt.Schema;
 using ChemSW.Nbt;
+using ChemSW.DB;
 
 
 namespace ChemSW.Nbt.Schema.CmdLn
@@ -103,7 +105,10 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 else if( "all" == Arg1.ToLower() )
                 {
 
-                    ReturnVal = "This is not implemented yet";
+                    foreach( string CurrentAccessId in _CswDbCfgInfoNbt.AccessIds )
+                    {
+                        _updateAccessId( CurrentAccessId ); 
+                    }
                 }
                 else
                 {
@@ -124,19 +129,40 @@ namespace ChemSW.Nbt.Schema.CmdLn
             string ReturnVal = string.Empty;
 
             _CswNbtResources.AccessId = AccessId;
+            Console.WriteLine( "Updating AccessId " + AccessId + " from to schema version " + _CswSchemaUpdater.TargetVersion.ToString() + " to schema version " + _CswSchemaUpdater.LatestVersion.ToString() );
+
 
             if( _CswSchemaUpdater.LatestVersion != _CswSchemaUpdater.TargetVersion )
             {
-                Console.WriteLine( "Updating AccessId " + AccessId + " from to schema version " + _CswSchemaUpdater.TargetVersion.ToString() + " to schema version " + _CswSchemaUpdater.LatestVersion.ToString() );
-                _CswSchemaUpdateThread.start();
-                while( UpdateState.Complete != _CswSchemaUpdateThread.UpdateState )
-                {
-                    Console.Write( " ." );
-                    Thread.Sleep( 1000 );
-                }
-                Console.Write( NuLine );
 
-                ReturnVal = _CswSchemaUpdateThread.Message;
+                bool UpdateSucceeded = true;
+                CswSchemaVersion CurrentVersion = new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ).ToString() );
+                while( UpdateSucceeded && CurrentVersion != _CswSchemaUpdater.LatestVersion )
+                {
+                    CswSchemaVersion UpdateFromVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
+                    CswSchemaVersion UpdateToVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 2 );
+                    Console.Write( "Updating AccessId " + AccessId + " to schema version " + UpdateToVersion.ToString() );
+                    _CswSchemaUpdateThread.start();
+                    while( UpdateState.Running == _CswSchemaUpdateThread.UpdateState )
+                    {
+                        Console.Write( " ." );
+                        Thread.Sleep( 1000 );
+                    }
+
+                    UpdateSucceeded = ( UpdateState.Succeeded == _CswSchemaUpdateThread.UpdateState );
+                    string MessageStem = "Update of AccessId " + AccessId + " from schema version " + UpdateFromVersion.ToString() + " to schema version " + UpdateToVersion.ToString();
+                    if( UpdateSucceeded )
+                    {
+                        Console.WriteLine( NuLine + MessageStem + " succeeded." + NuLine );
+                    }
+                    else
+                    {
+                        Console.WriteLine( NuLine + MessageStem + " failed: " + _CswSchemaUpdateThread.Message + NuLine );
+                    }
+
+                    CurrentVersion = new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ).ToString() );
+
+                }//iterate updates
 
             }
             else

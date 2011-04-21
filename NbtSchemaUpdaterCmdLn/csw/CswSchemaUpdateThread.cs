@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public enum UpdateState { Idle, Running, Complete };
+    public enum UpdateState { Idle, Running, Succeeded, Failed };
     public class CswSchemaUpdateThread
     {
         private CswSchemaUpdater _CswSchemaUpdater = null;
@@ -49,8 +49,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         public void start()
         {
-            _Message = string.Empty;
             _UpdateState = UpdateState.Running;
+            _Message = string.Empty;
             _UpdateThread = new Thread( new ThreadStart( _doUpdate ) );
             _UpdateThread.Start();
 
@@ -61,14 +61,17 @@ namespace ChemSW.Nbt.Schema.CmdLn
         private Thread _UpdateThread = null;
         private void _doUpdate()
         {
+            CmdLn.UpdateState FinalState;
             try
             {
                 if( _CswSchemaUpdater.Update() )
                 {
-                    _Message = "Update to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + " is complete";
+                    FinalState = CmdLn.UpdateState.Succeeded;
+
                 }
                 else
                 {
+                    FinalState = CmdLn.UpdateState.Failed;
                     _Message = _CswSchemaUpdater.ErrorMessage;
                 }
 
@@ -76,13 +79,13 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
             catch( Exception Exception )
             {
+                FinalState = CmdLn.UpdateState.Failed;
                 _Message = "Update to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + " failed: " + Exception.Message;
             }
 
-            _UpdateState = CmdLn.UpdateState.Complete;
+            _UpdateState = FinalState;
 
         }//_doUpdate()
-
 
     }//CswSchemaUpdateThread
 
