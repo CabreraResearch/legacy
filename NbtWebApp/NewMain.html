@@ -352,18 +352,10 @@
 	    {
 	        case 'generic':
 	            {
-	                //if present, hide view search on view search click
-	                var doClear = true;
-	                if ($viewSearch !== undefined || $viewSearch.size() > 0)
-	                {
-	                    $viewSearch.hide();
-	                    doClear = false;
-	                }
-
 	                if ($genericSearch === undefined || $genericSearch.size() === 0)
 	                {
 	                    //supplying no viewid guarantees a generic search
-	                    $genericSearch = makeSearchForm({ 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.genericSearchId, 'doClear': doClear });
+	                    $genericSearch = makeSearchForm({ 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.genericSearchId });
 	                }
 	                else if ($genericSearch.is(':hidden'))
 	                {
@@ -378,17 +370,9 @@
 	            }
 	        case 'view':
 	            {
-	                //if present, hide generic search on view search click
-	                var doClear = true;
-	                if ($genericSearch !== undefined || $genericSearch.size() > 0)
-	                {
-	                    $genericSearch.hide();
-	                    doClear = false;
-	                }
-
 	                if ($viewSearch === undefined || $viewSearch.size() === 0)
 	                {
-	                    $viewSearch = makeSearchForm({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.viewSearchId, 'doClear': doClear });
+	                    $viewSearch = makeSearchForm({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.viewSearchId });
 	                }
 	                else if ($viewSearch.is(':hidden'))
 	                {
@@ -411,12 +395,11 @@
             viewid: '',
             nodetypeid: '',
             cswnbtnodekey: '',
-            'doClear': true,
             ID: ''
         }
         if (options) $.extend(o, options);
 
-        if(o.doClear) clear({ centertop: true });
+        clear({ centertop: true });
 
         var onSearchSubmit = function (view)
         {
