@@ -266,7 +266,7 @@ namespace ChemSW.Nbt.WebPages
                     CswNbtMetaDataNodeTypeProp FloorLocationNTP = FloorNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
                     CswNbtMetaDataNodeTypeProp RoomLocationNTP = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
                     CswNbtMetaDataNodeTypeProp MountPointLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
-                    CswNbtMetaDataNodeTypeProp FEMountPointNTP = FireExtNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassFireExtinguisher.InspectionTargetPropertyName );
+                    CswNbtMetaDataNodeTypeProp FEMountPointNTP = FireExtNT.getNodeTypeProp( "Mount Point" );
                     CswNbtMetaDataNodeTypeProp MountPointGroupNameNTP = MountPointGroupNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTargetGroup.NamePropertyName );
 
                     DataTable ExcelData = _getUploadedData();
@@ -477,7 +477,7 @@ namespace ChemSW.Nbt.WebPages
                                 } // if( FireExtNT != null && ( FEDescription != string.Empty || FEBarcode != string.Empty || FEManufacturer != string.Empty || FEModel != string.Empty || FESize != string.Empty ) )
 
                                 FENode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( FireExtNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                                CswNbtObjClassFireExtinguisher FENodeAsFE = CswNbtNodeCaster.AsFireExtinguisher( FENode );
+                                CswNbtObjClassInspectionTarget FENodeAsFE = CswNbtNodeCaster.AsInspectionTarget( FENode );
 
                                 if( feBarcodeExists )
                                 {
@@ -492,7 +492,7 @@ namespace ChemSW.Nbt.WebPages
                                 FENodeAsFE.Description.Text = FEDescription;
                                 FENodeAsFE.LastInspectionDate.DateValue = LastInspectionDate;
                                 FENodeAsFE.Status.Value = TargetStatusString;
-                                FENodeAsFE.InspectionTarget.RelatedNodeId = MountPointNode.NodeId;
+                                //FENodeAsFE.InspectionTarget.RelatedNodeId = MountPointNode.NodeId;
                                 FENodeAsFE.Type.Value = Type;
 
                                 CswNbtMetaDataNodeTypeProp ManufacturerNTP = FENode.NodeType.getNodeTypeProp( "Manufacturer" );
