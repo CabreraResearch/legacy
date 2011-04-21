@@ -20,10 +20,10 @@
 
                 var $TextBox1 = $('<input type="password" class="textinput" id="'+ o.ID +'_pwd1" name="' + o.ID + '" />"' )
                                     .appendTo($cell11)
-                                    .change(onchange);
+                                    .change(o.onchange);
                 var $TextBox2 = $('<input type="password" class="textinput password2" id="'+ o.ID +'_pwd2" name="' + o.ID + '" />"' )
                                     .appendTo($cell21)
-                                    .change(onchange);
+                                    .change(o.onchange);
 //                    if(o.Required)
 //                    {
 //                        $TextBox.addClass("required");

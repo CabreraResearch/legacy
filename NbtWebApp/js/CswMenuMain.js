@@ -13,10 +13,7 @@
 			Multi: false,
 			NodeCheckTreeId: ''
 		};
-
-		if (options) {
-			$.extend(o, options);
-		}
+		if (options) $.extend(o, options);
 
 		var $MenuDiv = $(this);
 
@@ -43,7 +40,6 @@
 							'Multi': o.Multi, 
 							'NodeCheckTreeId': o.NodeCheckTreeId 
 						}
-
 						var $li = HandleMenuItem(menuItemOpts);
 						
 						if($this.children().length >= 1) {
@@ -55,7 +51,7 @@
 									'$itemxml': $(this)
 								};
 								$.extend(menuItemOpts, subMenuItemOpts);
-								HandleMenuItem(subMenuItemOpts);
+								HandleMenuItem(menuItemOpts);
 							});
 						}
 					}

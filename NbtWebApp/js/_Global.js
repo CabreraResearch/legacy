@@ -444,7 +444,7 @@ function HandleMenuItem(options) {
 				{
 					$.CswDialog('AddNodeDialog', {
 						'nodetypeid': o.$itemxml.attr('nodetypeid'),
-						'relatednodeid': o.$this.attr('relatednodeid'), //for Grid Props
+						'relatednodeid': o.$itemxml.attr('relatednodeid'), //for Grid Props
                         'onAddNode': o.onAlterNode
 					}); 
 					return false;
