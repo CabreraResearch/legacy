@@ -87,24 +87,6 @@ namespace ChemSW.Nbt.Schema
                 }
                 AllProblems.save();
             }
-
-            CswNbtMetaDataNodeType PhysicalInspectionScheduleNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.Physical_Inspection_Schedule ) );
-            CswNbtMetaDataNodeType InspectionPointNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswSchemaUpdater.HamletNodeTypesAsString( CswSchemaUpdater.HamletNodeTypes.FE_Inspection_Point ) );
-
-            CswNbtMetaDataNodeTypeProp OwnerNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
-            CswNbtMetaDataNodeTypeProp InspectionGroupNTP = InspectionPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
-
-            CswNbtMetaDataNodeTypeProp ParentViewNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentViewPropertyName );
-            CswNbtView NullView = CswNbtViewFactory.restoreView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources, ParentViewNTP.DefaultValue.AsViewReference.ViewId );
-
-            CswNbtView ParentView = _CswNbtSchemaModTrnsctn.makeView();
-            ParentView.makeNew( "PI Schedule ParentView", NbtViewVisibility.Property, null, null, null );
-            CswNbtViewRelationship ParentRelationship = ParentView.AddViewRelationship( PhysicalInspectionScheduleNT, true );
-            CswNbtViewRelationship MountPointGroupChild = ParentView.AddViewRelationship( ParentRelationship, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );
-            CswNbtViewRelationship MountPointChild = ParentView.AddViewRelationship( MountPointGroupChild, CswNbtViewRelationship.PropOwnerType.Second, InspectionGroupNTP, true );
-            NullView = ParentView;
-            NullView.save();
-
         } // update()
 
     }//class CswUpdateSchemaTo01H29
