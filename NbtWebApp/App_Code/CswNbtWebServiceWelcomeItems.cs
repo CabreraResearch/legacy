@@ -118,13 +118,17 @@ namespace ChemSW.Nbt.WebServices
 						if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
 						{
 							CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
-							if( ThisView.IsFullyEnabled() )
+							if( null != ThisView && ThisView.IsFullyEnabled() )
 							{
-								if( WelcomeRow["displaytext"].ToString() != string.Empty )
-									LinkText = WelcomeRow["displaytext"].ToString();
-								else
-									LinkText = ThisView.ViewName;
-								CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", WelcomeRow["nodeviewid"].ToString() );
+                                if( WelcomeRow["displaytext"].ToString() != string.Empty )
+                                {
+                                    LinkText = WelcomeRow["displaytext"].ToString();
+                                }
+                                else
+                                {
+                                    LinkText = ThisView.ViewName;
+                                }
+							    CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", WelcomeRow["nodeviewid"].ToString() );
 								CswXmlDocument.AppendXmlAttribute( ItemNode, "viewmode", ThisView.ViewMode.ToString().ToLower() );
 								CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "view" );
 							}
