@@ -72,6 +72,7 @@ var ViewBuilder_CssClasses = {
                 'propRow': 1,
                 'firstColumn': 3,
                 'includePropertyName': false,
+                'advancedIsHidden': false,
 
                 'selectedSubfieldVal': '',
                 'selectedFilterVal': '',
@@ -134,8 +135,10 @@ var ViewBuilder_CssClasses = {
                                                     value: $defaultFilter,
                                                     cssclass: ViewBuilder_CssClasses.default_filter.name })
                                                 .attr({align:"center"});
-
-                $defaultSubField.hide(); //for Search
+                if( !o.advancedIsHidden )
+                {
+                    $defaultSubField.hide();
+                }
 
                 //Row propRow, Column 4: subfield picklist 
                 var subfieldOptionsId = makePropFilterId('subfield_select', filtOpt);
@@ -157,6 +160,10 @@ var ViewBuilder_CssClasses = {
                     $subfieldsOptions.val(o.selectedSubfieldVal).attr('selected',true);
                 }
                 $subfieldCell.append($subfieldsOptions);
+                if( o.advancedIsHidden )
+                {
+                    $subfieldsOptions.hide();
+                }
                 var subfield = $subfieldsOptions.find(':selected').val();
                 var defaultValue = $subfieldsOptions.find(':selected').attr('defaultvalue');
 
@@ -182,7 +189,10 @@ var ViewBuilder_CssClasses = {
                     $filtersOptions.val(o.selectedFilterVal).attr('selected',true);
                 }
                 $filtersCell.append($filtersOptions);
-
+                if( o.advancedIsHidden )
+                {
+                    $filtersOptions.hide();
+                }
                 //Row propRow, Column 6: filter input
                 var $propFilterValueCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 3)) //6
                                                            .empty();

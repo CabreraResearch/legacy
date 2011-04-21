@@ -27,7 +27,7 @@ var CswSearch_CssClasses = {
             'relatedidtype': '',
             'ID': '',
             'propsCount': 1,
-            'isHidden': true,
+            'advancedIsHidden': true,
                 
             //XML to persist
             '$propsXml': '',
@@ -73,30 +73,30 @@ var CswSearch_CssClasses = {
 
         function modAdvanced(options)
         {
-            var isHidden;
             var o = {
-                '$link': ''
+                '$link': '',
+                'advancedIsHidden': false
             };
             if(options) $.extend(o,options);
     
-            if('Advanced' === o.$link.text())
+            if('Advanced' === o.$link.text() || ( !o.advancedIsHidden ) )
             {   
                 
                 $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function() { $(this).show(); });
                 $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).show(); });
                 $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).hide(); });
                 o.$link.text('Simple');
-                isHidden = false;
+                o.advancedIsHidden = true;
             }
-            else
+            else if('Simple' === o.$link.text() || ( o.advancedIsHidden ) )
             {
                 $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function() { $(this).hide(); });
                 $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).hide(); });
                 $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).show(); });
                 o.$link.text('Advanced');
-                isHidden = true;
+                o.advancedIsHidden = false;
             }
-            return isHidden; 
+            return o.advancedIsHidden; 
         } // modAdvanced()
 
         function renderViewBasedSearchContent()
@@ -125,7 +125,7 @@ var CswSearch_CssClasses = {
                                                   .attr('relatedidtype',$thisProp.attr('relatedidtype') );
                     o.selectedSubfieldVal = ''; 
                     o.selectedFilterVal = '';
-                    //o.isHidden = true;               
+  
                     var filtArbitraryId = $thisProp.attr('filtarbitraryid');
                     var $propFilterRow = o.$searchTable.CswViewPropFilter('init', {
                                                     'ID': o.ID,
@@ -133,7 +133,8 @@ var CswSearch_CssClasses = {
                                                     'firstColumn': 3,
                                                     'includePropertyName': true,
                                                     '$propsXml': $thisProp,
-                                                    'filtarbitraryid': filtArbitraryId
+                                                    'filtarbitraryid': filtArbitraryId,
+                                                    'advancedIsHidden': o.advancedIsHidden
                                                 });
                     propRow++;
             });
@@ -201,7 +202,8 @@ var CswSearch_CssClasses = {
                                                 'firstColumn': 3,
                                                 'includePropertyName': false,
                                                 '$propsXml': o.$selectedPropXml,
-                                                'viewbuilderpropid': thisPropId
+                                                'viewbuilderpropid': thisPropId,
+                                                'advancedIsHidden': o.advancedIsHidden
                                             }); 
                                    });
                                 
@@ -220,7 +222,8 @@ var CswSearch_CssClasses = {
                                                 'firstColumn': 3,
                                                 'includePropertyName': false,
                                                 '$propsXml': o.$selectedPropXml,
-                                                'viewbuilderpropid': o.propertyid
+                                                'viewbuilderpropid': o.propertyid,
+                                                'advancedIsHidden': o.advancedIsHidden
                                             });
             
             o.bottomRow = (o.propsCount + 1);
@@ -291,11 +294,10 @@ var CswSearch_CssClasses = {
             var $advancedLink = $advancedLinkCell.CswDOM('link',{
                                                     ID: advancedLinkId,
                                                     href: '#advanced',
-                                                    value: 'Simple' })
+                                                    value: 'Advanced' })
                                                     .click(function() {
-                                                            o.isHidden = modAdvanced({'$link': $advancedLink });
+                                                            o.advancedIsHidden = modAdvanced({'$link': $advancedLink, advancedIsHidden: o.advancedIsHidden });
                                                     });  
-            if(o.isHidden) o.isHidden = modAdvanced({$link: $advancedLink});                                   
             //Row i, Column 5: search button
             var $searchButtonCell = o.$searchTable.CswTable('cell', o.bottomRow, o.searchBtnCell)
                                     .attr({align:"right"})
@@ -404,7 +406,8 @@ var CswSearch_CssClasses = {
                                                                                           fieldtype: fieldtype,
                                                                                           ID: o.ID,
                                                                                           $parent: o.$searchTable,
-                                                                                          'viewbuilderpropid': viewbuildpropid
+                                                                                          'viewbuilderpropid': viewbuildpropid,
+                                                                                          'advancedIsHidden': o.advancedIsHidden
                                                                         }); 
                             props.push( thisNodeProp );
                         });
