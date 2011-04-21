@@ -287,35 +287,24 @@
                 {
                     'onViewSearch': function ()
                     {
-                        var $search = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': MainSearchId, 'prefix': o.prefix });
-                        if ($search === undefined)
-                        {
-                            refreshSearchPanel({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'prefix': o.prefix });
-                        }
-                        else if ($search.is(':hidden'))
-                        {
-                            $search.show();
-                        }
-                        else
-                        {
-                            $search.hide();
-                        }
+                        var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
+                        var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
+                        var $searchForm = refreshSearchPanel({ 'genericSearchId': genericSearchId,
+                                                               'viewSearchId': viewSearchId,
+                                                               'searchType': 'view',
+                                                               'cswnbtnodekey': o.cswnbtnodekey,
+                                                               'viewid': o.viewid
+                                                            });
                     },
                     'onGenericSearch': function ()
                     {
-                        var $search = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': MainSearchId, 'prefix': o.prefix });
-                        if ($search === undefined)
-                        {
-                            refreshSearchPanel({ 'cswnbtnodekey': o.cswnbtnodekey, 'prefix': o.prefix });
-                        }
-                        else if ($search.is(':hidden'))
-                        {
-                            $search.show();
-                        }
-                        else
-                        {
-                            $search.hide();
-                        }
+                        var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
+                        var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
+                        var $searchForm = refreshSearchPanel({ 'genericSearchId': genericSearchId,
+                                                               'viewSearchId': viewSearchId,
+                                                               'searchType': 'generic',
+                                                               'cswnbtnodekey': o.cswnbtnodekey
+                                                           });
                     }
                 },
 		    'onEditView': function (viewid)
@@ -343,42 +332,113 @@
 	function refreshSearchPanel(options)
 	{
 	    if (debug) log('NewMain.refreshSearchPanel()');
-	    var o = {
+	    
+        var o = {
 	        viewid: '',
 	        nodetypeid: '',
 	        cswnbtnodekey: '',
-            prefix: ''
+	        viewSearchId: '',
+	        genericSearchId: '',
+            searchType: 'generic'
 	    };
         
 	    if (options) $.extend(o, options);
 
-        var $search = $('#CenterTopDiv').CswDOM('getchildren', { ID: MainSearchId, prefix: o.prefix });
-	    if( $search == undefined || $search.length == 0 )
+	    var $viewSearch = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': o.viewSearchId });
+	    var $genericSearch = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': o.genericSearchId });
+        var $thisSearchForm;
+
+	    switch (o.searchType)
 	    {
-	        clear({ centertop: true });
-            
-            var onSearchSubmit = function(view) {
-                    clear({ right: true });
-                    $.CswCookie('set', CswCookieName.CurrentView.ViewId, view.viewid);
-                    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, view.viewmode);
-                    refreshSelected({
-                        viewmode: view.viewmode,
-                        viewid: view.viewid,
-                        cswnbtnodekey: '', //do not want a view of only this node
-                        nodeid: ''
-                    });
-            };    
-	        $search = $('#CenterTopDiv')
-                            .CswSearch({
-                                'viewid': o.viewid,
-                                'cswnbtnodekey': o.cswnbtnodekey,
-                                'nodetypeid': o.nodetypeid,
-                                'ID': o.idprefix,
-                                'onSearchSubmit': onSearchSubmit
-                            })
-                            .hide();
+	        case 'generic':
+	            {
+	                //if present, hide view search on view search click
+	                var doClear = true;
+	                if ($viewSearch !== undefined || $viewSearch.size() > 0)
+	                {
+	                    $viewSearch.hide();
+	                    doClear = false;
+	                }
+
+	                if ($genericSearch === undefined || $genericSearch.size() === 0)
+	                {
+	                    //supplying no viewid guarantees a generic search
+	                    $genericSearch = makeSearchForm({ 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.genericSearchId, 'doClear': doClear });
+	                }
+	                else if ($genericSearch.is(':hidden'))
+	                {
+	                    $genericSearch.show();
+	                }
+	                else
+	                {
+	                    $genericSearch.hide();
+	                }
+	                $thisSearchForm = $genericSearch;
+	                break;
+	            }
+	        case 'view':
+	            {
+	                //if present, hide generic search on view search click
+	                var doClear = true;
+	                if ($genericSearch !== undefined || $genericSearch.size() > 0)
+	                {
+	                    $genericSearch.hide();
+	                    doClear = false;
+	                }
+
+	                if ($viewSearch === undefined || $viewSearch.size() === 0)
+	                {
+	                    $viewSearch = makeSearchForm({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.viewSearchId, 'doClear': doClear });
+	                }
+	                else if ($viewSearch.is(':hidden'))
+	                {
+	                    $viewSearch.show();
+	                }
+	                else
+	                {
+	                    $viewSearch.hide();
+	                }
+	                $thisSearchForm = $viewSearch;
+	                break;
+	            }
 	    }
-	}
+        return $thisSearchForm;
+    }
+
+    function makeSearchForm(options)
+    {
+        var o = {
+            viewid: '',
+            nodetypeid: '',
+            cswnbtnodekey: '',
+            'doClear': true,
+            ID: ''
+        }
+        if (options) $.extend(o, options);
+
+        if(o.doClear) clear({ centertop: true });
+
+        var onSearchSubmit = function (view)
+        {
+            clear({ right: true });
+            $.CswCookie('set', CswCookieName.CurrentView.ViewId, view.viewid);
+            $.CswCookie('set', CswCookieName.CurrentView.ViewMode, view.viewmode);
+            refreshSelected({
+                viewmode: view.viewmode,
+                viewid: view.viewid,
+                cswnbtnodekey: '', //do not want a view of only this node
+                nodeid: ''
+            });
+        };
+        var $search = $('#CenterTopDiv').CswSearch({
+                                    'viewid': o.viewid,
+                                    'cswnbtnodekey': o.cswnbtnodekey,
+                                    'nodetypeid': o.nodetypeid,
+                                    'ID': o.ID,
+                                    'onSearchSubmit': onSearchSubmit
+                                });
+        return $search;
+    }
 
 	function getViewGrid(options)
 	{

@@ -53,7 +53,7 @@ var CswSearch_CssClasses = {
         if(options) $.extend(o, options);
         
         var $parent = $(this);
-        o.$searchTable = $parent.CswDOM('div',{ID: 'CswSearchForm', prefix: o.ID});
+        o.$searchTable = $parent.CswDOM('div',{ID: o.ID});
         
         var $topspan = o.$searchTable.CswDOM('span');
 
