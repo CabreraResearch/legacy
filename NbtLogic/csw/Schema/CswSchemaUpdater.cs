@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
-        /// The latest schema version
+        /// The highest schema version number defined in the updater
         /// </summary>
         public CswSchemaVersion LatestVersion = null;
         /// <summary>
@@ -134,6 +134,9 @@ namespace ChemSW.Nbt.Schema
             get { return new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ) ); }
         }
 
+        /// <summary>
+        /// Schema version of the currently targeted schema
+        /// </summary>
         public CswSchemaVersion TargetVersion
         {
             get
@@ -146,6 +149,11 @@ namespace ChemSW.Nbt.Schema
                 return ret;
             }
         }
+
+        private string _ErrorMessage = string.Empty;
+        public string ErrorMessage { get { return ( _ErrorMessage ); } }
+
+
 
         /// <summary>
         /// Update the schema to the next version
@@ -175,6 +183,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     // Belt and suspenders.
                     _CswNbtResources.logError( new CswDniException( "Schema Updater encountered a problem: " + CurrentUpdateDriver.Message ) );
+                    _ErrorMessage = "Error updating to schema version " + CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Message;
                 }
                 else
                 {

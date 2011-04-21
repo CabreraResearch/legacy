@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                 ReturnVal = NuLine + "ChemSW NBT SchemaUpdater version " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-                if( null != _CswSchemaUpdater )
+                if( ( null != _CswSchemaUpdater ) && ( string.Empty != _CswNbtResources.AccessId ) )
                 {
                     ReturnVal += NuLine + NuLine + "Minimum schema version: " + _CswSchemaUpdater.MinimumVersion;
                     ReturnVal += NuLine + "Latest schema version: " + _CswSchemaUpdater.TargetVersion;
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
             {
                 string Arg1 = _args[0].ToString();
 
-                if( "all" != Arg1.ToLower() )
+                if( "help" != Arg1.ToLower() )
                 {
                     if( _CswDbCfgInfoNbt.AccessIds.Contains( Arg1 ) )
                     {
@@ -100,10 +100,14 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         ReturnVal = "AccessId " + Arg1 + " unknown";
                     }
                 }
-                else
+                else if( "all" == Arg1.ToLower() )
                 {
 
                     ReturnVal = "This is not implemented yet";
+                }
+                else
+                {
+                    ReturnVal = _Help;
                 }
             }
             else
@@ -123,13 +127,14 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
             if( _CswSchemaUpdater.LatestVersion != _CswSchemaUpdater.TargetVersion )
             {
-                Console.WriteLine( "Updating AccessId " + AccessId + " to schema " + _CswSchemaUpdater.TargetVersion.ToString() );
+                Console.WriteLine( "Updating AccessId " + AccessId + " from to schema version " + _CswSchemaUpdater.TargetVersion.ToString() + " to schema version " + _CswSchemaUpdater.LatestVersion.ToString() );
                 _CswSchemaUpdateThread.start();
                 while( UpdateState.Complete != _CswSchemaUpdateThread.UpdateState )
                 {
                     Console.Write( " ." );
                     Thread.Sleep( 1000 );
                 }
+                Console.Write( NuLine );
 
                 ReturnVal = _CswSchemaUpdateThread.Message;
 

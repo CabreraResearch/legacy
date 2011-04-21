@@ -63,14 +63,20 @@ namespace ChemSW.Nbt.Schema.CmdLn
         {
             try
             {
-                _CswSchemaUpdater.Update();
-                _Message = "Update to schema version " + _CswSchemaUpdater.TargetVersion.ToString() + " is complete";
+                if( _CswSchemaUpdater.Update() )
+                {
+                    _Message = "Update to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + " is complete";
+                }
+                else
+                {
+                    _Message = _CswSchemaUpdater.ErrorMessage;
+                }
 
             }
 
             catch( Exception Exception )
             {
-                _Message = "Update to schema version " + _CswSchemaUpdater.TargetVersion.ToString() + " failed: " + Exception.Message;
+                _Message = "Update to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + " failed: " + Exception.Message;
             }
 
             _UpdateState = CmdLn.UpdateState.Complete;
