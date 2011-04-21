@@ -271,50 +271,73 @@
 		}
 
 		$('#MainMenuDiv').CswMenuMain({
-			    'viewid': o.viewid,
-			    'nodeid': o.nodeid,
-			    'cswnbtnodekey': o.cswnbtnodekey,
-			    'onAddNode': function (nodeid, cswnbtnodekey)
-			    {
-				    refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
-			    },
-			    'onMultiEdit': function ()
-			    {
-				    multi = !multi;
-				    refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-			},
-			'onSearch': function()
+		    'viewid': o.viewid,
+		    'nodeid': o.nodeid,
+		    'cswnbtnodekey': o.cswnbtnodekey,
+		    'onAddNode': function (nodeid, cswnbtnodekey)
+		    {
+		        refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+		    },
+		    'onMultiEdit': function ()
+		    {
+		        multi = !multi;
+		        refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+		    },
+		    'onSearch':
                 {
-                    var $search = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': MainSearchId, 'prefix': o.prefix });
-                    if ($search.is(':hidden'))
+                    'onViewSearch': function ()
                     {
-                        $search.show();
-                    }
-                    else
+                        var $search = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': MainSearchId, 'prefix': o.prefix });
+                        if ($search === undefined)
+                        {
+                            refreshSearchPanel({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'prefix': o.prefix });
+                        }
+                        else if ($search.is(':hidden'))
+                        {
+                            $search.show();
+                        }
+                        else
+                        {
+                            $search.hide();
+                        }
+                    },
+                    'onGenericSearch': function ()
                     {
-                        $search.hide();
+                        var $search = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': MainSearchId, 'prefix': o.prefix });
+                        if ($search === undefined)
+                        {
+                            refreshSearchPanel({ 'cswnbtnodekey': o.cswnbtnodekey, 'prefix': o.prefix });
+                        }
+                        else if ($search.is(':hidden'))
+                        {
+                            $search.show();
+                        }
+                        else
+                        {
+                            $search.hide();
+                        }
                     }
                 },
-			'onEditView': function (viewid)
-			{
-				clear({ 'all': true });
-				$('#CenterTopDiv').CswViewEditor({
-					'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
-					'onCancel': function() {
-						clear({ 'all': true });
-						refreshSelected();
-					},
-					'onFinish': function(viewid, viewmode) {
-						clear({ 'all': true });
-						handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
-					}
-				});
-                },
-			    'Multi': multi,
-			    'NodeCheckTreeId': MainTreeId
-			});
-		
-        refreshSearchPanel({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'prefix': o.prefix });
+		    'onEditView': function (viewid)
+		    {
+		        clear({ 'all': true });
+		        $('#CenterTopDiv').CswViewEditor({
+		            'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+		            'onCancel': function ()
+		            {
+		                clear({ 'all': true });
+		                refreshSelected();
+		            },
+		            'onFinish': function (viewid, viewmode)
+		            {
+		                clear({ 'all': true });
+		                handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+		            }
+		        });
+		    },
+		    'Multi': multi,
+		    'NodeCheckTreeId': MainTreeId
+		});
 	}
 
 	function refreshSearchPanel(options)

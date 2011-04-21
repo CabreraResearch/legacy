@@ -8,7 +8,7 @@
 			cswnbtnodekey: '',
 			onAddNode: function(nodeid, cswnbtnodekey) { },
 			onMultiEdit: function() { },
-            onSearch: function() {},
+            onSearch: { onViewSearch: function() {}, onGenericSearch: function() {} },
 			onEditView: function(viewid) { },
 			Multi: false,
 			NodeCheckTreeId: ''
@@ -42,7 +42,7 @@
 							'onSearch': o.onSearch,
 							'Multi': o.Multi, 
 							'NodeCheckTreeId': o.NodeCheckTreeId 
-						}
+						};
 
 						var $li = HandleMenuItem(menuItemOpts);
 						
