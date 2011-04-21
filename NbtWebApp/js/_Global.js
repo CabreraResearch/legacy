@@ -165,7 +165,12 @@ function jsonToString(j)
 
 function safeJsonParam(str)
 {
-	return str.replace(/'/g, "\\'");
+    var ret = '';
+    if (str !== undefined)
+    {
+        ret = str.replace(/'/g, "\\'");
+    }
+	return ret;
 }
 
 
