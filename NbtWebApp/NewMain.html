@@ -541,8 +541,8 @@
 			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
 		if (o.cswnbtnodekey == '')
 			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
-		if (o.viewid != '')
-			$.CswCookie('get', CswCookieName.CurrentView.ViewId);
+		if (o.viewid == '')
+			o.viewid = $.CswCookie('get', CswCookieName.CurrentView.ViewId);
 
 		clear({ left: true });
 
