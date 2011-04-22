@@ -151,7 +151,9 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                EnsureChildControls();
+				Master.Redirect( "NewMain.html" );
+
+				EnsureChildControls();
             }
             catch( Exception ex )
             {
