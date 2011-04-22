@@ -56,7 +56,7 @@
 		{
 			CswAjaxXml({
 				url: o.TabsUrl,
-				data: 'EditMode=' + o.EditMode + '&SafeNodeKey=' + o.cswnbtnodekey + '&NodeTypeId=' + o.nodetypeid,
+				data: 'EditMode=' + o.EditMode + '&NodeId=' + o.nodeid + '&SafeNodeKey=' + o.cswnbtnodekey + '&NodeTypeId=' + o.nodetypeid,
 				success: function ($xml)
 				{
 					clearTabs();
@@ -115,7 +115,7 @@
 		{
 			CswAjaxXml({
 				url: o.PropsUrl,
-				data: 'EditMode=' + o.EditMode + '&SafeNodeKey=' + o.cswnbtnodekey + '&TabId=' + tabid + '&NodeTypeId=' + o.nodetypeid,
+				data: 'EditMode=' + o.EditMode + '&NodeId=' + o.nodeid + '&SafeNodeKey=' + o.cswnbtnodekey + '&TabId=' + tabid + '&NodeTypeId=' + o.nodetypeid,
 				success: function ($xml)
 				{
 					var $form = $tabcontentdiv.children('form');
@@ -374,7 +374,7 @@
 			// update the propxml from the server
 			CswAjaxXml({
 				url: SinglePropUrl,
-				data: 'EditMode=' + EditMode + '&SafeNodeKey=' + cswnbtnodekey + '&PropId=' + PropId + '&NodeTypeId=' + nodetypeid + '&NewPropXml=' + xmlToString($propxml),
+				data: 'EditMode=' + EditMode + '&NodeId=' + o.nodeid + '&SafeNodeKey=' + cswnbtnodekey + '&PropId=' + PropId + '&NodeTypeId=' + nodetypeid + '&NewPropXml=' + xmlToString($propxml),
 				success: function ($xml)
 				{
 					_makeProp($propcell, $xml.children().first(), $tabcontentdiv, tabid, ConfigMode);
@@ -387,9 +387,9 @@
 			if($form.valid())
 			{
 				_updatePropXmlFromForm($layouttable, $propsxml);
-
 				var data = {
 					'EditMode': o.EditMode,
+					'NodeId': o.nodeid,
 					'SafeNodeKey': o.cswnbtnodekey,
 					'NodeTypeId': o.nodetypeid,
 					'ViewId': $.CswCookie('get', CswCookieName.CurrentView.ViewId),

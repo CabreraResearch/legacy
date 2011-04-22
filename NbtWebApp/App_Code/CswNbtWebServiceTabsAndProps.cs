@@ -25,10 +25,27 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 		}
 
-		public XElement getTabs( NodeEditMode EditMode, string NodeKey, Int32 NodeTypeId )
+		private CswNbtNode _getNode( string NodeId, string NodeKey )
+		{
+			CswNbtNode Node = null;
+			if( !string.IsNullOrEmpty( NodeKey ) )
+			{
+				CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+				Node = _CswNbtResources.Nodes[RealNodeKey];
+			}
+			else if( !string.IsNullOrEmpty( NodeId ) )
+			{
+				CswPrimaryKey RealNodeId = new CswPrimaryKey();
+				RealNodeId.FromString( NodeId );
+				Node = _CswNbtResources.Nodes[RealNodeId];
+			}
+			return Node;
+		} // _getNode()
+
+		public XElement getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId )
 		{
 			XElement TabsNode = new XElement( "tabs" );
-			if( EditMode == NodeEditMode.AddInPopup )
+			if( EditMode == NodeEditMode.AddInPopup && NodeTypeId != Int32.MinValue )
 			{
 				CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
 				TabsNode.Add( new XElement( "tab",
@@ -37,28 +54,28 @@ namespace ChemSW.Nbt.WebServices
 			}
 			else
 			{
-				//CswPrimaryKey NodePk = new CswPrimaryKey();
-				CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey(_CswNbtResources,NodeKey);
-			    CswNbtNode Node = _CswNbtResources.Nodes[NbtNodeKey];
-
-				foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
+				CswNbtNode Node = _getNode( NodeId, NodeKey );
+				if( Node != null )
 				{
-					TabsNode.Add( new XElement("tab", 
-										new XAttribute( "id", Tab.TabId ),
-										new XAttribute( "name", Tab.TabName ) ) );
-				}
-			}
-            return TabsNode;
+					foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
+					{
+						TabsNode.Add( new XElement( "tab",
+											new XAttribute( "id", Tab.TabId ),
+											new XAttribute( "name", Tab.TabName ) ) );
+					}
+				} // if( Node != null )
+			} // if-else( EditMode == NodeEditMode.AddInPopup )
+			return TabsNode;
 		} // getTabs()
 
 
 		/// <summary>
 		/// Returns XML for all properties in a given tab
 		/// </summary>
-		public XmlDocument getProps( NodeEditMode EditMode, string NodeKey, string TabId, Int32 NodeTypeId )
+		public XmlDocument getProps( NodeEditMode EditMode, string NodeId, string NodeKey, string TabId, Int32 NodeTypeId )
 		{
 			XmlDocument PropXmlDoc = new XmlDocument();
-			XElement PropsElement = new XElement("props");
+			XElement PropsElement = new XElement( "props" );
 			CswXmlDocument.SetDocumentElement( PropXmlDoc, "props" );
 
 			if( EditMode == NodeEditMode.AddInPopup )
@@ -71,7 +88,7 @@ namespace ChemSW.Nbt.WebServices
 						  Node.Properties[Prop].TemporarilyRequired ||
 						  Prop.SetValueOnAdd ) &&
 						Prop.FilterNodeTypePropId == Int32.MinValue &&
-						! ( Node.Properties[Prop].Hidden ) )
+						!( Node.Properties[Prop].Hidden ) )
 					{
 						_addProp( PropXmlDoc, EditMode, Node, Prop );
 					}
@@ -79,26 +96,28 @@ namespace ChemSW.Nbt.WebServices
 			}
 			else
 			{
-                //CswPrimaryKey NodePk = new CswPrimaryKey();
-                //NodePk.FromString( NodePkString );
-                if( !string.IsNullOrEmpty( NodeKey ) )
-                {
-                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey(_CswNbtResources, NodeKey);
-                    if (Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey)
-                    {
-                        CswNbtNode Node = _CswNbtResources.Nodes[NbtNodeKey];
+				//CswPrimaryKey NodePk = new CswPrimaryKey();
+				//NodePk.FromString( NodePkString );
+				//if( !string.IsNullOrEmpty( NodeKey ) )
+				//{
+				//    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+				//    if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
+				//    {
+				//        CswNbtNode Node = _CswNbtResources.Nodes[NbtNodeKey];
 
-                        CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab(CswConvert.ToInt32(TabId));
-
-                        foreach (CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder)
-                        {
-                            if (!Prop.hasFilter() && !Node.Properties[Prop].Hidden)
-                            {
-                                _addProp(PropXmlDoc, EditMode, Node, Prop);
-                            }
-                        }
-                    }
-                }
+				CswNbtNode Node = _getNode( NodeId, NodeKey );
+				if( Node != null )
+				{
+					CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
+					foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
+					{
+						if( !Prop.hasFilter() && !Node.Properties[Prop].Hidden )
+						{
+							_addProp( PropXmlDoc, EditMode, Node, Prop );
+						}
+					}
+				}
+				//}
 			} // if-else( EditMode == NodeEditMode.AddInPopup )
 			return PropXmlDoc;
 		} // getProps()
@@ -107,7 +126,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Returns XML for a single property and its conditional properties
 		/// </summary>
-        public XmlDocument getSingleProp( NodeEditMode EditMode, string NodeKey, string PropIdFromXml, Int32 NodeTypeId, string NewPropXml )
+		public XmlDocument getSingleProp( NodeEditMode EditMode, string NodeId, string NodeKey, string PropIdFromXml, Int32 NodeTypeId, string NewPropXml )
 		{
 			XmlDocument PropXmlDoc = new XmlDocument();
 			CswXmlDocument.SetDocumentElement( PropXmlDoc, "props" );
@@ -118,16 +137,17 @@ namespace ChemSW.Nbt.WebServices
 			}
 			else
 			{
-                //CswPrimaryKey NodePk = new CswPrimaryKey();
-                //NodePk.FromString( NodePkString );
-                if( !string.IsNullOrEmpty( NodeKey ) )
-                {
-                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-                    if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-                    {
-                        Node = _CswNbtResources.Nodes[NbtNodeKey];
-                    }
-                }
+				//CswPrimaryKey NodePk = new CswPrimaryKey();
+				//NodePk.FromString( NodePkString );
+				//if( !string.IsNullOrEmpty( NodeKey ) )
+				//{
+				//    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+				//    if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
+				//    {
+				//        Node = _CswNbtResources.Nodes[NbtNodeKey];
+				//    }
+				//}
+				Node = _getNode( NodeId, NodeKey );
 			}
 
 			if( NewPropXml != string.Empty )
@@ -138,7 +158,7 @@ namespace ChemSW.Nbt.WebServices
 				_applyPropXml( Node, XmlDoc.DocumentElement );
 			}
 
-            Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdFromXml );
+			Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdFromXml );
 
 			CswNbtMetaDataNodeTypeProp Prop = Node.NodeType.getNodeTypeProp( NodeTypePropId );
 			_addProp( PropXmlDoc, EditMode, Node, Prop );
@@ -191,14 +211,14 @@ namespace ChemSW.Nbt.WebServices
 
 			CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
 
-            if( Node.NodeId != null )
-            {
+			if( Node.NodeId != null )
+			{
 				CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", makePropIdAttribute( Node, Prop ) );
-            }
-            else
-            {
+			}
+			else
+			{
 				CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", makePropIdAttribute( null, Prop ) );
-            }
+			}
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "name", Prop.PropNameWithQuestionNo );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "helptext", Prop.HelpText );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "fieldtype", Prop.FieldType.FieldType.ToString() );
@@ -209,22 +229,22 @@ namespace ChemSW.Nbt.WebServices
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displayrow", Row.ToString() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displaycol", Column.ToString() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "required", Prop.IsRequired.ToString().ToLower() );
-			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", (Prop.ReadOnly || PropWrapper.ReadOnly).ToString().ToLower() );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", ( Prop.ReadOnly || PropWrapper.ReadOnly ).ToString().ToLower() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "gestalt", PropWrapper.Gestalt.Replace( "\"", "&quot;" ) );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "copyable", Prop.IsCopyable().ToString().ToLower() );
-			
+
 			PropWrapper.ToXml( PropXmlNode );
 
 			return PropXmlNode;
-        } // _makePropXml()
+		} // _makePropXml()
 
-        public bool moveProp( string PropIdAttr, Int32 NewRow, Int32 NewColumn, NodeEditMode EditMode )
-        {
-            bool ret = false;
-            Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdAttr );
-            if( NodeTypePropId != Int32.MinValue && NewRow > 0 && NewColumn > 0 )
-            {
-                CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+		public bool moveProp( string PropIdAttr, Int32 NewRow, Int32 NewColumn, NodeEditMode EditMode )
+		{
+			bool ret = false;
+			Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdAttr );
+			if( NodeTypePropId != Int32.MinValue && NewRow > 0 && NewColumn > 0 )
+			{
+				CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 				if( EditMode == NodeEditMode.AddInPopup )
 				{
 					Prop.DisplayColAdd = NewColumn;
@@ -236,11 +256,11 @@ namespace ChemSW.Nbt.WebServices
 					Prop.DisplayRow = NewRow;
 				}
 				ret = true;
-            }
-            return ret;
-        } // moveProp()
+			}
+			return ret;
+		} // moveProp()
 
-		public JObject saveProps( NodeEditMode EditMode, string NodeKey, string NewPropsXml, Int32 NodeTypeId, Int32 ViewId )
+		public JObject saveProps( NodeEditMode EditMode, string NodeId, string NodeKey, string NewPropsXml, Int32 NodeTypeId, Int32 ViewId )
 		{
 			JObject ret = null;
 			XmlDocument XmlDoc = new XmlDocument();
@@ -256,14 +276,16 @@ namespace ChemSW.Nbt.WebServices
 			{
 				//CswPrimaryKey NodePk = new CswPrimaryKey();
 				//NodePk.FromString( NodePkString );
-				if(!string.IsNullOrEmpty(NodeKey))
-				{
-				    NbtNodeKey = new CswNbtNodeKey(_CswNbtResources, NodeKey);
-				    if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-				    {
-				        Node = _CswNbtResources.Nodes[NbtNodeKey];
-				    }
-				}
+				//if( !string.IsNullOrEmpty( NodeKey ) )
+				//{
+				//    NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+				//    if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
+				//    {
+				//        Node = _CswNbtResources.Nodes[NbtNodeKey];
+				//    }
+				//}
+
+				Node = _getNode( NodeId, NodeKey );
 			}
 
 			if( Node != null )
@@ -281,7 +303,7 @@ namespace ChemSW.Nbt.WebServices
 				// case 21267 
 				if( Node.NodeId == _CswNbtResources.CurrentNbtUser.UserNode.NodeId )
 				{
-					_CswNbtResources.CurrentUser = CswNbtNodeCaster.AsUser(Node);
+					_CswNbtResources.CurrentUser = CswNbtNodeCaster.AsUser( Node );
 				}
 
 				if( NbtNodeKey == null )
@@ -377,9 +399,9 @@ namespace ChemSW.Nbt.WebServices
 			return NodePk;
 		}
 
-        private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
-        {
-            Int32 NodeTypePropId = _getPropIdFromAttribute(PropNode.Attributes["id"].Value);
+		private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
+		{
+			Int32 NodeTypePropId = _getPropIdFromAttribute( PropNode.Attributes["id"].Value );
 
 			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 			Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
