@@ -434,9 +434,13 @@ function HandleMenuItem(options) {
 	}
 	else if (o.$itemxml.attr('popup') != undefined && o.$itemxml.attr('popup') != '')
 	{
-		$li = $('<li class="headermenu_dialog">' + o.$itemxml.attr('text') + '</li>')
+		$li = $('<li class="headermenu_dialog"><a href="#">' + o.$itemxml.attr('text') + '</a></li>')
 						.appendTo(o.$ul)
-						.click(function () { OpenDialog(o.$itemxml.attr('text'), o.$itemxml.attr('popup')); });
+						.click(function ()
+						{
+							$.CswDialog('OpenDialog', o.$itemxml.attr('text'), o.$itemxml.attr('popup'));
+							return false; 
+						});
 	}
 	else if (o.$itemxml.attr('action') != undefined && o.$itemxml.attr('action') != '')
 	{
