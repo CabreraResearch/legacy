@@ -23,6 +23,16 @@ namespace ChemSW.Nbt.WebServices
 			Json
 		};
 
+		private static string _getViewPropName(CswNbtViewProperty ViewProp)
+		{
+			string ret = ViewProp.Name;
+			if( ViewProp.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+				ret = ViewProp.NodeTypeProp.PropName;
+			else if( ViewProp.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
+				ret = ViewProp.ObjectClassProp.PropName;
+			return ret;
+		}
+
 		public CswNbtWebServiceGrid( CswNbtResources CswNbtResources, CswNbtView View, CswNbtNodeKey ParentNodeKey )
 		{
 			_CswNbtResources = CswNbtResources;
@@ -31,7 +41,7 @@ namespace ChemSW.Nbt.WebServices
 		} //ctor
 
 		#region StringConstants for jqGrid
-		
+
 		/// <summary>
 		/// rows
 		/// </summary>
@@ -115,7 +125,7 @@ namespace ChemSW.Nbt.WebServices
 
 		public JObject getGrid()
 		{
-			return _getGridOuterJson(); 
+			return _getGridOuterJson();
 		} // getGrid()
 
 		/// <summary>
@@ -126,25 +136,25 @@ namespace ChemSW.Nbt.WebServices
 			JObject GridShellJObj = null;
 			IEnumerable<XElement> GridNodes = _getGridXElements();
 			IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps();
-			
+
 			JProperty GridRows = null;
-			if(GridNodes.Count() > 0 )
+			if( GridNodes.Count() > 0 )
 			{
 				GridRows = _getGridRowsJson( GridNodes );
 			}
 			else
 			{
-				GridRows = new JProperty("grid");
+				GridRows = new JProperty( "grid" );
 			}
 
 			JProperty GridOrderedColumnDisplayNames = _getGridColumnNamesJson( ColumnCollection );
 			JProperty GridColumnDefinitions = _getGridColumnDefinitionJson( ColumnCollection );
-			string Width =  ( _View.Width*7 ).ToString() ;
+			string Width = ( _View.Width * 7 ).ToString();
 
 			GridShellJObj = new JObject(
 				new JProperty( GridViewName, _View.ViewName ),
 				new JProperty( GridViewWidth, Width ),
-                new JProperty( "nodetypeid", _View.ViewNodeTypeId),
+				new JProperty( "nodetypeid", _View.ViewNodeTypeId ),
 				GridOrderedColumnDisplayNames,
 				GridColumnDefinitions,
 				GridRows
@@ -156,18 +166,18 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Generates a JSON property of an array of friendly Column Names
 		/// </summary>
-		private static JProperty _getGridColumnNamesJson(IEnumerable<CswNbtViewProperty> PropCollection)
+		private static JProperty _getGridColumnNamesJson( IEnumerable<CswNbtViewProperty> PropCollection )
 		{
-			JArray ColumnArray = new JArray(
-										from ViewProp in  PropCollection
-										//where !string.IsNullOrEmpty(ViewProp.Name)  
-										select new JValue( ViewProp.NodeTypeProp.PropName )
-										);
+			JArray ColumnArray = new JArray();
+			foreach( CswNbtViewProperty ViewProp in PropCollection )
+			{
+				ColumnArray.Add(_getViewPropName(ViewProp));
+			}
 
-            ColumnArray.AddFirst( new JValue( "nodename" ) ); //better to use int for jqGrid key
+			ColumnArray.AddFirst( new JValue( "nodename" ) ); //better to use int for jqGrid key
 			ColumnArray.AddFirst( new JValue( "cswnbtnodekey" ) ); //we'll want CswNbtNodeKey for add/edit/delete
-            ColumnArray.AddFirst( new JValue( "nodeid" ) ); //better to use int for jqGrid key
-            var ColumnNames = new JProperty( GridColumnNames, ColumnArray );
+			ColumnArray.AddFirst( new JValue( "nodeid" ) ); //better to use int for jqGrid key
+			var ColumnNames = new JProperty( GridColumnNames, ColumnArray );
 			return ColumnNames;
 
 		} // getGridColumnNamesJson()
@@ -179,30 +189,30 @@ namespace ChemSW.Nbt.WebServices
 		{
 
 			JArray ColumnArray = new JArray(
-										from JqGridProp in PropCollection 
+										from JqGridProp in PropCollection
 										where JqGridProp != null
-										select JqGridViewProperty.getJqGridAttributesForViewProp(JqGridProp)
+										select JqGridViewProperty.getJqGridAttributesForViewProp( JqGridProp )
 										);
 
-            //we'll want NodeName for edit/delete
-            ColumnArray.AddFirst( new JObject(
-                                new JProperty( GridName, "nodename" ),
-                                new JProperty( "index", "nodename" )
-                                ) );
-            
-            //we'll want CswNbtNodeKey for add/edit/delete
-            ColumnArray.AddFirst( new JObject(
-                                new JProperty( GridName, "cswnbtnodekey" ),
-                                new JProperty( "index", "cswnbtnodekey" )
-                                ) );
-            
-            //better to use int for jqGrid key
+			//we'll want NodeName for edit/delete
+			ColumnArray.AddFirst( new JObject(
+								new JProperty( GridName, "nodename" ),
+								new JProperty( "index", "nodename" )
+								) );
+
+			//we'll want CswNbtNodeKey for add/edit/delete
+			ColumnArray.AddFirst( new JObject(
+								new JProperty( GridName, "cswnbtnodekey" ),
+								new JProperty( "index", "cswnbtnodekey" )
+								) );
+
+			//better to use int for jqGrid key
 			ColumnArray.AddFirst( new JObject(
 								new JProperty( GridName, "nodeid" ),
 								new JProperty( "index", "nodeid" ),
 								new JProperty( "key", "true" )
 								) );
-            
+
 			JProperty ColumnDefinition = new JProperty( GridColumnDefinition, ColumnArray );
 
 			return ColumnDefinition;
@@ -220,7 +230,7 @@ namespace ChemSW.Nbt.WebServices
 				// This is a Grid Property
 				( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
 			}
-			
+
 			ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );
 			Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, Int32.MinValue, true, false, null, false );
 			Int32 NodeCount = Tree.getChildNodeCount();
@@ -230,19 +240,19 @@ namespace ChemSW.Nbt.WebServices
 			}
 			else
 			{
-			    RawXml = new XElement( "root",
-			                           new XElement( "item",
-			                                new XAttribute( "id", "-1" ),
-			                                new XAttribute( "rel", "root" ),
-			                                new XElement( "content",
-			                                    new XElement( "name", _View.ViewName ) ),
-			                                new XElement( "item",
-			                                    new XAttribute( "id", "-1" ),
-			                                    new XAttribute( "rel", "child" ),
-			                                    new XElement( "content",
-			                                        new XElement( "name", "No Results" ) ) ) ) );
+				RawXml = new XElement( "root",
+									   new XElement( "item",
+											new XAttribute( "id", "-1" ),
+											new XAttribute( "rel", "root" ),
+											new XElement( "content",
+												new XElement( "name", _View.ViewName ) ),
+											new XElement( "item",
+												new XAttribute( "id", "-1" ),
+												new XAttribute( "rel", "child" ),
+												new XElement( "content",
+													new XElement( "name", "No Results" ) ) ) ) );
 			}
-		
+
 
 			return RawXml;
 		} // getGridColumnsJson()
@@ -296,7 +306,7 @@ namespace ChemSW.Nbt.WebServices
 		{
 			JProperty GridJObj = null;
 
-			GridJObj = new JProperty("grid",
+			GridJObj = new JProperty( "grid",
 							new JObject(
 								new JProperty( GridTotal, "1" ),
 								new JProperty( GridPage, "1" ),
@@ -306,28 +316,28 @@ namespace ChemSW.Nbt.WebServices
 												from Element in NodesInGrid
 												select new JObject(
 													new JProperty( GridId, Element.Attribute( GridNodeId ).Value ),
-													new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam(Element.Attribute( "key" ).Value) ),
-                                                    new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
-                                                    from DirtyElement in Element.Elements()
+													new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( Element.Attribute( "key" ).Value ) ),
+													new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
+													from DirtyElement in Element.Elements()
 													where DirtyElement.Name == ( GridNbtNodeProp )
-													select _massageGridCell( DirtyElement ) 
+													select _massageGridCell( DirtyElement )
 													)
 												)
 											)
 										)
 								);
-			
+
 			return GridJObj;
 		} // getGridRowsJson()
 
-		private static JProperty _massageGridCell(XElement DirtyElement)
+		private static JProperty _massageGridCell( XElement DirtyElement )
 		{
 			string CleanPropName = DirtyElement.Attribute( GridName ).Value.ToLower().Replace( " ", "_" );
 			string CleanValue = string.Empty;
 			string DirtyValue = DirtyElement.Attribute( GridGestalt ).Value;
 			string PropFieldTypeString = DirtyElement.Attribute( GridFieldType ).Value;
 			var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
-			switch (PropFieldType)
+			switch( PropFieldType )
 			{
 				case CswNbtMetaDataFieldType.NbtFieldType.Logical:
 					CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
@@ -350,7 +360,7 @@ namespace ChemSW.Nbt.WebServices
 			private readonly CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
 			private readonly CswNbtMetaDataNodeTypeProp NbtMetaDataNodeTypeProp;
 			private readonly CswNbtMetaDataObjectClassProp NbtMetaDataObjectClassProp;
-			private readonly bool _DoCssOverride = false; 
+			private readonly bool _DoCssOverride = false;
 			public enum JqFieldType
 			{
 				date,
@@ -367,7 +377,7 @@ namespace ChemSW.Nbt.WebServices
 				actions
 			} ;
 
-			public JqGridViewProperty( CswNbtViewProperty ViewProperty, bool DoCssOverride = false)
+			public JqGridViewProperty( CswNbtViewProperty ViewProperty, bool DoCssOverride = false )
 			{
 				NbtViewProperty = ViewProperty;
 				FieldType = NbtViewProperty.FieldType.FieldType;
@@ -389,7 +399,7 @@ namespace ChemSW.Nbt.WebServices
 				//foreach public/instanced property in the JqGridViewProperty class of type JProperty which is not null, 
 				//add the property value to the return JObject
 				foreach( JProperty ThisPropAttribute in ( from PropertyInfo in JType.GetProperties( Flags )
-														  where PropertyInfo.PropertyType == typeof (JProperty)
+														  where PropertyInfo.PropertyType == typeof( JProperty )
 														  select (JProperty) PropertyInfo.GetValue( JqGridViewProp, null ) )
 															.Where( ThisPropAttribute => null != ThisPropAttribute ) )
 				{
@@ -399,12 +409,12 @@ namespace ChemSW.Nbt.WebServices
 					}
 					ReturnObj.Add( ThisPropAttribute );
 				}
-				
+
 				return ReturnObj;
 			}
 
 			#region jqGrid Attributes
-			
+
 			/// <summary>
 			/// Defines the alignment of the cell in the Body layer, not in header cell. Possible values: left, center, right.
 			/// </summary>
@@ -420,7 +430,7 @@ namespace ChemSW.Nbt.WebServices
 					return ReturnProp;
 				}
 			}
-			
+
 			/// <summary>
 			/// This option allows adding classes to the column. 
 			/// If more than one class will be used a space should be set. 
@@ -516,7 +526,7 @@ namespace ChemSW.Nbt.WebServices
 					return ReturnProp;
 				}
 			}
-			
+
 			/// <summary>
 			/// If set to asc or desc, the column will be sorted in that direction on first sort.Subsequent sorts of the column will toggle as usual
 			/// </summary>
@@ -530,13 +540,13 @@ namespace ChemSW.Nbt.WebServices
 						switch( NbtViewProperty.SortMethod )
 						{
 							case CswNbtViewProperty.PropertySortMethod.Ascending:
-								ReturnProp = new JProperty("firstsortorder","asc");
+								ReturnProp = new JProperty( "firstsortorder", "asc" );
 								break;
 							case CswNbtViewProperty.PropertySortMethod.Descending:
-								ReturnProp = new JProperty("firstsortorder","desc");
+								ReturnProp = new JProperty( "firstsortorder", "desc" );
 								break;
 							default:
-								ReturnProp = new JProperty("firstsortorder","asc");
+								ReturnProp = new JProperty( "firstsortorder", "asc" );
 								break;
 
 						}
@@ -585,26 +595,26 @@ namespace ChemSW.Nbt.WebServices
 				get
 				{
 					JProperty ReturnProp = null;
-					switch ( FieldType )
+					switch( FieldType )
 					{
 						case CswNbtMetaDataFieldType.NbtFieldType.Date:
 							ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
 							break;
 						case CswNbtMetaDataFieldType.NbtFieldType.Time:
-							ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString());
+							ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
 							break;
 						case CswNbtMetaDataFieldType.NbtFieldType.Number:
-							ReturnProp = new JProperty( "formatter", JqFieldType.number.ToString());
+							ReturnProp = new JProperty( "formatter", JqFieldType.number.ToString() );
 							break;
 						case CswNbtMetaDataFieldType.NbtFieldType.Link:
-							ReturnProp = new JProperty( "formatter", JqFieldType.link.ToString());
+							ReturnProp = new JProperty( "formatter", JqFieldType.link.ToString() );
 							break;
 						//case CswNbtMetaDataFieldType.NbtFieldType.Logical:
 						//    ReturnVal = "checkbox";
 						//    break;
 						default:
-							ReturnProp = new JProperty( "formatter", JqFieldType.text.ToString());
-							break; 
+							ReturnProp = new JProperty( "formatter", JqFieldType.text.ToString() );
+							break;
 
 					}
 					return ReturnProp;
@@ -662,7 +672,8 @@ namespace ChemSW.Nbt.WebServices
 			{
 				get
 				{
-					string ColumnName = NbtViewProperty.NodeTypeProp.PropName.ToLower().Replace(" ","_");
+					string ColumnName = _getViewPropName(NbtViewProperty);
+					ColumnName = ColumnName.ToLower().Replace( " ", "_" );
 					if( ColumnName == "subgrid" || ColumnName == "cb" || ColumnName == "rn" )
 					{
 						ColumnName += "_col";
@@ -691,7 +702,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				get
 				{
-					JProperty ReturnProp = new JProperty( "label", NbtViewProperty.NodeTypeProp.PropName );
+					JProperty ReturnProp = new JProperty( "label", _getViewPropName( NbtViewProperty ) );
 					return ReturnProp;
 				}
 			}
@@ -785,26 +796,26 @@ namespace ChemSW.Nbt.WebServices
 				{
 					JProperty ReturnProp = null;
 
-						switch( FieldType )
-						{
-							case CswNbtMetaDataFieldType.NbtFieldType.Date:
-								ReturnProp = new JProperty("sorttype", JqFieldType.date.ToString() );
-								break;
-							case CswNbtMetaDataFieldType.NbtFieldType.Time:
-								ReturnProp = new JProperty("sorttype", JqFieldType.date.ToString() );
-								break;
-							case CswNbtMetaDataFieldType.NbtFieldType.Number:
-								ReturnProp = new JProperty("sorttype", JqFieldType.number.ToString() );
-								break;
-							default:
-								ReturnProp = new JProperty("sorttype", JqFieldType.text.ToString() );
-								break;
-						}
-					
+					switch( FieldType )
+					{
+						case CswNbtMetaDataFieldType.NbtFieldType.Date:
+							ReturnProp = new JProperty( "sorttype", JqFieldType.date.ToString() );
+							break;
+						case CswNbtMetaDataFieldType.NbtFieldType.Time:
+							ReturnProp = new JProperty( "sorttype", JqFieldType.date.ToString() );
+							break;
+						case CswNbtMetaDataFieldType.NbtFieldType.Number:
+							ReturnProp = new JProperty( "sorttype", JqFieldType.number.ToString() );
+							break;
+						default:
+							ReturnProp = new JProperty( "sorttype", JqFieldType.text.ToString() );
+							break;
+					}
+
 					return ReturnProp;
 				}
-			}	
-				
+			}
+
 
 			/// <summary>
 			/// Determines the type of the element when searching.
@@ -879,75 +890,75 @@ namespace ChemSW.Nbt.WebServices
 		} // private class JqGridViewProperty
 
 
-        #region Archive
-        //public string getGrid( GridReturnType GridType )
-        //{
-        //    string GridString = string.Empty;
-        //    switch( GridType)
-        //    {
-        //        case GridReturnType.Xml:
-        //            XDocument GridXDoc = getGridXElements();
-        //            if( null != GridXDoc )
-        //            {
-        //                GridString = GridXDoc.ToString();
-        //            }
-        //            break;
-        //        case GridReturnType.Json:
-        //            JObject GridJson = getGridOuterJson();
-        //            if( null != GridJson )
-        //            {
-        //                GridString = GridJson.ToString();
-        //            }
-        //            //else
-        //            //{
-        //            //    GridString = getDebugGridJson().ToString(); // for debug only
-        //            //}
-        //            break;
-        //    }
-        //    return GridString;
-        //} // getGrid()
+		#region Archive
+		//public string getGrid( GridReturnType GridType )
+		//{
+		//    string GridString = string.Empty;
+		//    switch( GridType)
+		//    {
+		//        case GridReturnType.Xml:
+		//            XDocument GridXDoc = getGridXElements();
+		//            if( null != GridXDoc )
+		//            {
+		//                GridString = GridXDoc.ToString();
+		//            }
+		//            break;
+		//        case GridReturnType.Json:
+		//            JObject GridJson = getGridOuterJson();
+		//            if( null != GridJson )
+		//            {
+		//                GridString = GridJson.ToString();
+		//            }
+		//            //else
+		//            //{
+		//            //    GridString = getDebugGridJson().ToString(); // for debug only
+		//            //}
+		//            break;
+		//    }
+		//    return GridString;
+		//} // getGrid()
 
-        //        private static JObject getDebugGridJson()
-        //        {
-        //            String JsonString = @"{""viewname"": ""Debug View""
-        //								,""viewwnodeidth"": ""150""
-        //								,""columnnames"": [""nodeid"",""Equipment"",""Assembly""]
-        //								,""columndefinition"": [{""name"": ""nodeid"", ""index"": ""nodeid"", ""key"":""true"", ""sortable"":""true"", ""sorttype"":""int""}
-        //													  ,{""name"": ""Equipment"", ""index"": ""Equipment"", ""sortable"":""true"", ""search"":""true""}
-        //												      ,{""name"": ""Assembly"", ""index"": ""Assembly"", ""sortable"":""true"", ""search"":""true""}]
-        //								,""grid"": {""total"": ""1""
-        //										   ,""page"": ""1""
-        //										   ,""records"": ""2""
-        //										   ,""rows"": [{""nodeid"":""0"", ""Equipment"":""big box"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""1"", ""Equipment"":""small box 1"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""2"", ""Equipment"":""small box 2"", ""Assembly"":""ancient collection of boxes""}
-        //													  ,{""nodeid"":""3"", ""Equipment"":""small box 3"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""4"", ""Equipment"":""small box 4"", ""Assembly"":""dazzling collection of boxes""}
-        //													  ,{""nodeid"":""5"", ""Equipment"":""small box 5"", ""Assembly"":""old collection of boxes""}
-        //													  ,{""nodeid"":""6"", ""Equipment"":""small box 6"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""7"", ""Equipment"":""small box 7"", ""Assembly"":""dazzling collection of boxes""}
-        //													  ,{""nodeid"":""8"", ""Equipment"":""small box 8"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""9"", ""Equipment"":""small box 9"", ""Assembly"":""old collection of boxes""}
-        //													  ,{""nodeid"":""10"", ""Equipment"":""small box 10"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""11"", ""Equipment"":""small box 11"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""12"", ""Equipment"":""small box 12"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""13"", ""Equipment"":""small box 13"", ""Assembly"":""big collection of boxes""}
-        //													  ,{""nodeid"":""14"", ""Equipment"":""small box 14"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""15"", ""Equipment"":""small box 15"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""16"", ""Equipment"":""small box 16"", ""Assembly"":""medium collection of boxes""}
-        //													  ,{""nodeid"":""17"", ""Equipment"":""small box 17"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""18"", ""Equipment"":""small box 18"", ""Assembly"":""dazzling collection of boxes""}
-        //													  ,{""nodeid"":""19"", ""Equipment"":""small box 19"", ""Assembly"":""dazzling collection of boxes""}
-        //													  ,{""nodeid"":""20"", ""Equipment"":""small box 20"", ""Assembly"":""dazzling collection of boxes""}
-        //													  ,{""nodeid"":""21"", ""Equipment"":""small box 21"", ""Assembly"":""new collection of boxes""}
-        //													  ,{""nodeid"":""22"", ""Equipment"":""small box 22"", ""Assembly"":""new collection of boxes""}
-        //													  ]
-        //											}
-        //								}";
-        //            JObject DebugGrid = JObject.Parse( JsonString );
-        //            return DebugGrid;
-        //        }
-        #endregion
+		//        private static JObject getDebugGridJson()
+		//        {
+		//            String JsonString = @"{""viewname"": ""Debug View""
+		//								,""viewwnodeidth"": ""150""
+		//								,""columnnames"": [""nodeid"",""Equipment"",""Assembly""]
+		//								,""columndefinition"": [{""name"": ""nodeid"", ""index"": ""nodeid"", ""key"":""true"", ""sortable"":""true"", ""sorttype"":""int""}
+		//													  ,{""name"": ""Equipment"", ""index"": ""Equipment"", ""sortable"":""true"", ""search"":""true""}
+		//												      ,{""name"": ""Assembly"", ""index"": ""Assembly"", ""sortable"":""true"", ""search"":""true""}]
+		//								,""grid"": {""total"": ""1""
+		//										   ,""page"": ""1""
+		//										   ,""records"": ""2""
+		//										   ,""rows"": [{""nodeid"":""0"", ""Equipment"":""big box"", ""Assembly"":""collection of boxes""}
+		//													  ,{""nodeid"":""1"", ""Equipment"":""small box 1"", ""Assembly"":""collection of boxes""}
+		//													  ,{""nodeid"":""2"", ""Equipment"":""small box 2"", ""Assembly"":""ancient collection of boxes""}
+		//													  ,{""nodeid"":""3"", ""Equipment"":""small box 3"", ""Assembly"":""collection of boxes""}
+		//													  ,{""nodeid"":""4"", ""Equipment"":""small box 4"", ""Assembly"":""dazzling collection of boxes""}
+		//													  ,{""nodeid"":""5"", ""Equipment"":""small box 5"", ""Assembly"":""old collection of boxes""}
+		//													  ,{""nodeid"":""6"", ""Equipment"":""small box 6"", ""Assembly"":""collection of boxes""}
+		//													  ,{""nodeid"":""7"", ""Equipment"":""small box 7"", ""Assembly"":""dazzling collection of boxes""}
+		//													  ,{""nodeid"":""8"", ""Equipment"":""small box 8"", ""Assembly"":""collection of boxes""}
+		//													  ,{""nodeid"":""9"", ""Equipment"":""small box 9"", ""Assembly"":""old collection of boxes""}
+		//													  ,{""nodeid"":""10"", ""Equipment"":""small box 10"", ""Assembly"":""collection of boxes""}
+		//													  ,{""nodeid"":""11"", ""Equipment"":""small box 11"", ""Assembly"":""collection of boxes""}
+		//													  ,{""nodeid"":""12"", ""Equipment"":""small box 12"", ""Assembly"":""collection of boxes""}
+		//													  ,{""nodeid"":""13"", ""Equipment"":""small box 13"", ""Assembly"":""big collection of boxes""}
+		//													  ,{""nodeid"":""14"", ""Equipment"":""small box 14"", ""Assembly"":""collection of boxes""}
+		//													  ,{""nodeid"":""15"", ""Equipment"":""small box 15"", ""Assembly"":""collection of boxes""}
+		//													  ,{""nodeid"":""16"", ""Equipment"":""small box 16"", ""Assembly"":""medium collection of boxes""}
+		//													  ,{""nodeid"":""17"", ""Equipment"":""small box 17"", ""Assembly"":""collection of boxes""}
+		//													  ,{""nodeid"":""18"", ""Equipment"":""small box 18"", ""Assembly"":""dazzling collection of boxes""}
+		//													  ,{""nodeid"":""19"", ""Equipment"":""small box 19"", ""Assembly"":""dazzling collection of boxes""}
+		//													  ,{""nodeid"":""20"", ""Equipment"":""small box 20"", ""Assembly"":""dazzling collection of boxes""}
+		//													  ,{""nodeid"":""21"", ""Equipment"":""small box 21"", ""Assembly"":""new collection of boxes""}
+		//													  ,{""nodeid"":""22"", ""Equipment"":""small box 22"", ""Assembly"":""new collection of boxes""}
+		//													  ]
+		//											}
+		//								}";
+		//            JObject DebugGrid = JObject.Parse( JsonString );
+		//            return DebugGrid;
+		//        }
+		#endregion
 
 	} // class CswNbtWebServiceGrid
 
