@@ -22,7 +22,10 @@ var CswCookieName = {
 		var methods = {
 			'get': function(cookiename) 
 				{
-					return $.cookie(cookiename);
+					var ret = $.cookie(cookiename);
+					if(ret == undefined)
+						ret = '';
+					return ret;
 				},
 			'set': function(cookiename, value) 
 				{
@@ -30,7 +33,7 @@ var CswCookieName = {
 				},
 			'clear': function (cookiename)
 				{
-					$.cookie(cookiename, null);
+					$.cookie(cookiename, '');
 				},
 			'clearAll': function() 
 				{
