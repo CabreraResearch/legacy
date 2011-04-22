@@ -135,7 +135,7 @@
 							if(o.filterToPropId != '')
 								_openDiv($div, 600, 400);
 							else
-								_openDiv($div, 800, 600);
+								_openDiv($div, 900, 600);
 						},
 
 		'CopyNodeDialog': function (options)

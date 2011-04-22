@@ -500,7 +500,21 @@ function HandleMenuItem(options) {
 				$a.click(function () { o.onLogout(); return false; });
 				break;
 
-            case 'ViewSearch':
+			case 'Profile':
+				$a.click(function ()
+				{
+					$.CswDialog('EditNodeDialog', {
+						'nodeid': o.$itemxml.attr('userid'),
+						'cswnbtnodekey': '',
+						'filterToPropId': '',
+						'title': 'User Profile',
+						'onEditNode': function (nodeid, nodekey) { }
+					});
+					return false; 
+				});
+				break;
+
+			case 'ViewSearch':
                 $a.click(function ()
                 {
                     o.onSearch.onViewSearch();
