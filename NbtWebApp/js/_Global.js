@@ -30,7 +30,7 @@ function CswAjaxJSON(options) {
 
 			if (result.error != undefined)
 			{
-				_handleAjaxError(XMLHttpRequest, result.error, '');
+				_handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
 			}
 			else
 			{
@@ -39,10 +39,10 @@ function CswAjaxJSON(options) {
 		}, // success{}
 		error: function (XMLHttpRequest, textStatus, errorThrown)
 		{
-			_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+			_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
 			o.error();
 		}
-	});  // $.ajax({
+	});    // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options) {
@@ -75,7 +75,7 @@ function CswAjaxXml(options) {
 				var $realxml = $xml.children().first();
 				if ($realxml.first().get(0).nodeName == "error")
 				{
-					_handleAjaxError(XMLHttpRequest, $realxml.text().trim(), '');
+					_handleAjaxError(XMLHttpRequest, { 'message': $realxml.attr('message'), 'detail': $realxml.attr('detail') }, '');
 				}
 				else
 				{
@@ -85,20 +85,27 @@ function CswAjaxXml(options) {
 			}, // success{}
 			error: function (XMLHttpRequest, textStatus, errorThrown)
 			{
-				_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+				_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
 				o.error();
 			}
-		}); // $.ajax({
+		});   // $.ajax({
 	} // if(o.url != '')
 } // CswAjaxXml()
 		
-function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown) 
+function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown) 
 {
-	ErrorMessage = "A WebServices Error Occurred: " + textStatus;
-	if (null != errorThrown) {
-		ErrorMessage += "; Exception: " + errorThrown.toString()
+	//	ErrorMessage = "A WebServices Error Occurred: " + textStatus;
+	//	if (null != errorThrown) {
+	//		ErrorMessage += "; Exception: " + errorThrown.toString()
+	//	}
+	var $errorsdiv = $('#ErrorDiv');
+	if ($errorsdiv.length > 0)
+	{
+		$errorsdiv.CswErrorMessage({ 'message': errorJson.message, 'detail': errorJson.detail });
+	} else
+	{
+		log(o.message + '; ' + o.detail);
 	}
-	log(ErrorMessage);
 } // _handleAjaxError()
 
 //function extractCDataValue($node) {
