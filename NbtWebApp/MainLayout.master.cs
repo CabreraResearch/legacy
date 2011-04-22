@@ -161,10 +161,10 @@ namespace ChemSW.Nbt.WebPages
                     UserLabel.Text = Master.CswNbtResources.CurrentUser.Username;
 
                     AdminMenuItem.Visible = false;
-                    if( Master.CswNbtResources.CurrentNbtUser.IsAdministrator() )
-                    {
-                        AdminMenuItem.Visible = true;
-                    }
+					//if( Master.CswNbtResources.CurrentNbtUser.IsAdministrator() )
+					//{
+					//    AdminMenuItem.Visible = true;
+					//}
 
                     //BrandTitle.Visible = false;
                     //BrandTitle2.Visible = false;
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.WebPages
                     MainMenu.Visible = false;
                 }
                 MainMenu.DataBind();
-            }
+			}
             catch( Exception ex )
             {
                 HandleError( ex );
@@ -298,7 +298,6 @@ namespace ChemSW.Nbt.WebPages
 
 
         }
-
 
         #endregion Page Lifecycle
 
@@ -656,7 +655,8 @@ namespace ChemSW.Nbt.WebPages
         public string AccessID { get { return Master.AccessId; } set { Master.AccessId = value; } }
         public void ReleaseAll() { Master.ReleaseAll(); }
         public void Redirect( string url ) { Master.Redirect( url ); }
-        public void GoHome() { Master.GoHome(); }
+        //public void GoHome() { Master.GoHome(); }
+		public void GoHome() { Master.Redirect( "NewMain.html" ); }
         public void GoMain() { Master.GoMain(); }
         public void LogMessage( string Message ) { Master.LogMessage( Message ); }
         public void LogTimerResult( string Message, string TimerResult ) { Master.LogTimerResult( Message, TimerResult ); }
