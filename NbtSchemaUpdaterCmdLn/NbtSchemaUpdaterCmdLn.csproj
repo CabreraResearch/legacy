@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\CswConsoleOutput.cs" />
     <Compile Include="csw\CswSchemaUpdateThread.cs" />
     <Compile Include="csw\CswSchemaUpdaterConsole.cs" />
     <Compile Include="Program.cs" />
