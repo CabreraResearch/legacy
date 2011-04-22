@@ -200,6 +200,7 @@
 				iconurl: '',
 				viewid: '',
 				actionid: '',
+				actionurl: '',
 				reportid: '',
 				linktype: '',
 				nodeid: '',
@@ -230,16 +231,16 @@
 			{
 			    switch (o.type)
 			    {
-			        case 'action':
-			            {
-			                alert('Actions are not yet handled!');
-			                break;
-			            }
-			        case 'report':
-			            {
-			                alert('Reports are not yet handled!');
-			                break;
-			            }
+			    	case 'action':
+			    		{
+			    			window.location = o.actionurl;
+			    			break;
+			    		}
+			    	case 'report':
+			    		{
+			    			window.location = "Report.aspx?reportid=" + o.reportid;
+			    			break;
+			    		}
 			        default:
 			            {
 			                alert('Handling for link type ' + o.linktype + ' is not implemented yet.');

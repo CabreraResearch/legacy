@@ -14,7 +14,10 @@
 									type: '',
 									viewid: '',
 									viewname: '',
-									viewmode: ''
+									viewmode: '',
+									actionid: '',
+									actionurl: '',
+									reportid: ''
 								};
 					},
 					onSuccess: function() {},
@@ -45,6 +48,9 @@
 																	'viewid': optSelect.viewid,
 																	'viewname': optSelect.viewname,
 																	'viewmode': optSelect.viewmode,
+																	'actionid': optSelect.actionid,
+																	'actionurl': optSelect.actionurl,
+																	'reportid': optSelect.reportid,
 																	'onSelect': o.onSelect,
 																	'$selectdiv': $selectdiv
 																});
@@ -84,6 +90,9 @@
 				viewid: '',
 				viewname: '',
 				viewmode: '',
+				actionid: '',
+				actionurl: '',
+				reportid: '',
 				onSelect: function() { },
 				$selectdiv: ''
 				};
@@ -110,7 +119,10 @@
 					type: x.type,
 					viewid: x.viewid,
 					viewname: x.viewname,
-					viewmode: x.viewmode
+					viewmode: x.viewmode,
+					actionid: x.actionid,
+					actionurl: x.actionurl,
+					reportid: x.reportid
 					});
 	} // _onTreeSelect()
 		

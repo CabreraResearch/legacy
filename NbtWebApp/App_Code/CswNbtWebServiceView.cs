@@ -101,7 +101,8 @@ namespace ChemSW.Nbt.WebServices
 						( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
 							( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( Action.Name ) )
 					{
-						_makeViewTreeNode( DocRoot, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );
+						XmlNode ActionNode = _makeViewTreeNode( DocRoot, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );
+						CswXmlDocument.AppendXmlAttribute( ActionNode, "actionurl", Action.Url.ToString() );
 					}
 				}
 
@@ -133,10 +134,10 @@ namespace ChemSW.Nbt.WebServices
 			return ret;
 		} // getViewTree()
 
-		private void _makeViewTreeNode( XmlNode DocRoot, string Category, ItemType Type, Int32 Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
+		private XmlNode _makeViewTreeNode( XmlNode DocRoot, string Category, ItemType Type, Int32 Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
 		{
 			XmlNode CategoryNode = _getCategoryNode( DocRoot, Category );
-			_makeItemNode( CategoryNode, Type, Id, Text, ViewMode );
+			return _makeItemNode( CategoryNode, Type, Id, Text, ViewMode );
 		}
 
 		private static XmlNode _makeItemNode( XmlNode ParentNode, ItemType ItemType, Int32 Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
