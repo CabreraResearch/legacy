@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NbtSchemaUpdaterCmdLn</RootNamespace>
-    <AssemblyName>NbtSchemaUpdater</AssemblyName>
+    <AssemblyName>NbtUpdt</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

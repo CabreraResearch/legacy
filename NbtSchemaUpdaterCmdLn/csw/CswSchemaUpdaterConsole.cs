@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                 ReturnVal += _Separator_NuLine + _Separator_NuLine + "Usage: " +
                                             _Separator_NuLine + "NbtSchemaUpdate " + _Separator_Arg + _ArgKey_Help + _Separator_OrArgs + _Separator_Arg + _ArgKey_All + _Separator_OrArgs + _Separator_Arg + _ArgKey_AccessId + " <AccessId>" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_All + ": appdate all schemata specified CswDbConfig.xml" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey_All + ": update all schemata specified CswDbConfig.xml" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_AccessId + " <AccessId>: The AccessId, as per CswDbConfig.xml, of the schema to be updated";
                 return ( ReturnVal );
             }
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
 
         private const string _Separator_OrArgs = " | ";
-        private const string _Separator_NuLine = "\n\r";
+        private const string _Separator_NuLine = "\r\n";
         private const string _Separator_Arg = "-";
         private const string _ArgKey_Help = "help";
         private const string _ArgKey_AccessId = "accessid";
@@ -147,8 +147,11 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         _CswDbCfgInfoNbt.AccessIds.CopyTo( AccessIds );
                         for( int idx = 0; idx < AccessIds.Length; idx++ )
                         {
+
                             string CurrentAccessId = AccessIds[idx];
+                            _CswConsoleOutput.write( _Separator_NuLine + "Applying schema update to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
                             _updateAccessId( CurrentAccessId );
+                            _CswConsoleOutput.write( _Separator_NuLine );
                         }
                     }//if user said to update all accessids
                     else
@@ -197,7 +200,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
                     string MessageStem = "Update of AccessId " + AccessId + " from schema version " + UpdateFromVersion.ToString() + " to schema version " + UpdateToVersion.ToString();
                     if( UpdateSucceeded )
                     {
-                        _CswConsoleOutput.write( _Separator_NuLine + MessageStem + " succeeded." + _Separator_NuLine + _Separator_NuLine );
+                        _CswConsoleOutput.write( " succeeded." + _Separator_NuLine );
+                        //_CswConsoleOutput.write( _Separator_NuLine + MessageStem + " succeeded." + _Separator_NuLine + _Separator_NuLine );
                     }
                     else
                     {
