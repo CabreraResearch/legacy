@@ -1,7 +1,6 @@
-using System;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -65,7 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
             //    ICswNbtTree SchedulesTree = _CswNbtResources.Trees.getTreeFromView( SchedulesView, true, true, false, false );
             //    SchedulesTree.goToRoot();
 
-                
+
             //    //CswDelimitedString NodeTypeIds = new CswDelimitedString(',');
 
             //    //For each generator with this Inspection Target's MPG
@@ -113,28 +112,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
-            // Case 20907: sync FE status/inspection date with MP
-            var RelatedFireExtinguishers = new CswNbtView( _CswNbtResources );
-            RelatedFireExtinguishers.ViewName = "Fire Extinguishers on This Inspection Target";
-            CswNbtMetaDataObjectClass FireExtinguisherOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.FireExtinguisherClass );
-            CswNbtMetaDataObjectClassProp InspectionTargetOCP = FireExtinguisherOC.getObjectClassProp( CswNbtObjClassFireExtinguisher.InspectionTargetPropertyName );
-            CswNbtViewRelationship FeRelationship = RelatedFireExtinguishers.AddViewRelationship( FireExtinguisherOC, false );
-            CswNbtViewProperty FeInspectionTargetVP = RelatedFireExtinguishers.AddViewProperty( FeRelationship, InspectionTargetOCP );
-            CswNbtViewPropertyFilter ThisInspectionTargetFilt = RelatedFireExtinguishers.AddViewPropertyFilter( FeInspectionTargetVP, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, this.NodeId.PrimaryKey.ToString(), false );
-
-            ICswNbtTree FireExtTree = _CswNbtResources.Trees.getTreeFromView( RelatedFireExtinguishers, true, true, true, false );
-            FireExtTree.goToRoot();
-
-            for( Int32 i = 0; i < FireExtTree.getChildNodeCount(); i++ )
-            {
-                FireExtTree.goToNthChild( i );
-                CswNbtNode FireExtNode = FireExtTree.getNodeForCurrentPosition();
-                CswNbtObjClassFireExtinguisher FireExtinguisher = CswNbtNodeCaster.AsFireExtinguisher( FireExtNode );
-                FireExtinguisher.Status.Value = this.Status.Value;
-                FireExtinguisher.LastInspectionDate.DateValue = this.LastInspectionDate.DateValue;
-                FireExtNode.postChanges( false );
-            }
-            
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
@@ -226,7 +203,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[InspectionTargetGroupPropertyName].AsRelationship );
             }
         }
-        
+
         #endregion
 
 

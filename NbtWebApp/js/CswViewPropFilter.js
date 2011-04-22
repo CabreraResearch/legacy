@@ -19,32 +19,32 @@ var ViewBuilder_CssClasses = {
             'proparbitraryid': '',
             'filtarbitraryid': '',
             'viewbuilderpropid': '',
-            'idprefix': ''
+            'ID': ''
         };
         if(options) $.extend(o,options);
         
         if( o.filtarbitraryid !== '' && o.filtarbitraryid !== undefined )
         {
             FilterId = makeId({ 'ID': ID + Delimiter + 'filtarbitraryid', 
-                                'prefix': o.idprefix, 
+                                'prefix': o.ID, 
                                 'suffix': o.filtarbitraryid });
         }
         else if( o.viewbuilderpropid !== '' && o.viewbuilderpropid !== undefined )
         {
             FilterId = makeId({ 'ID': ID + Delimiter + 'viewbuilderpropid', 
-                                'prefix': o.idprefix, 
+                                'prefix': o.ID, 
                                 'suffix': o.viewbuilderpropid });
         }
         else if( o.proparbitraryid !== '' && o.proparbitraryid !== undefined )
         {
             FilterId = makeId({ 'ID': ID + Delimiter + 'proparbitraryid', 
-                                'prefix': o.idprefix, 
+                                'prefix': o.ID, 
                                 'suffix': o.proparbitraryid });
         }
-        else if( o.idprefix !== '' && o.idprefix !== undefined )
+        else if( o.ID !== '' && o.ID !== undefined )
         {
             FilterId = makeId({ 'ID': ID, 
-                                'prefix': o.idprefix });
+                                'prefix': o.ID });
         }
         else
         {
@@ -68,10 +68,11 @@ var ViewBuilder_CssClasses = {
                 'proparbitraryid': '',
                 'filtarbitraryid': '',
                 'viewbuilderpropid': '',
-                'idprefix': '',
+                'ID': '',
                 'propRow': 1,
                 'firstColumn': 3,
                 'includePropertyName': false,
+                'advancedIsHidden': false,
 
                 'selectedSubfieldVal': '',
                 'selectedFilterVal': '',
@@ -87,7 +88,7 @@ var ViewBuilder_CssClasses = {
                 'proparbitraryid': o.proparbitraryid,
                 'filtarbitraryid': o.filtarbitraryid,
                 'viewbuilderpropid': o.viewbuilderpropid,
-                'idprefix': o.idprefix
+                'ID': o.ID
             };
                        
             if( ( o.$propsXml === '' || o.$propsXml === undefined ) &&
@@ -134,8 +135,10 @@ var ViewBuilder_CssClasses = {
                                                     value: $defaultFilter,
                                                     cssclass: ViewBuilder_CssClasses.default_filter.name })
                                                 .attr({align:"center"});
-
-                $defaultSubField.hide(); //for Search
+                if( !o.advancedIsHidden )
+                {
+                    $defaultSubField.hide();
+                }
 
                 //Row propRow, Column 4: subfield picklist 
                 var subfieldOptionsId = makePropFilterId('subfield_select', filtOpt);
@@ -157,6 +160,10 @@ var ViewBuilder_CssClasses = {
                     $subfieldsOptions.val(o.selectedSubfieldVal).attr('selected',true);
                 }
                 $subfieldCell.append($subfieldsOptions);
+                if( o.advancedIsHidden )
+                {
+                    $subfieldsOptions.hide();
+                }
                 var subfield = $subfieldsOptions.find(':selected').val();
                 var defaultValue = $subfieldsOptions.find(':selected').attr('defaultvalue');
 
@@ -182,7 +189,10 @@ var ViewBuilder_CssClasses = {
                     $filtersOptions.val(o.selectedFilterVal).attr('selected',true);
                 }
                 $filtersCell.append($filtersOptions);
-
+                if( o.advancedIsHidden )
+                {
+                    $filtersOptions.hide();
+                }
                 //Row propRow, Column 6: filter input
                 var $propFilterValueCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 3)) //6
                                                            .empty();
@@ -190,7 +200,7 @@ var ViewBuilder_CssClasses = {
                 var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
                 if( fieldtype === 'List' )
                 {
-                    $propFilterValueCell.append( $(xmlToString($propsXml.children('filtersoptions').children('select'))) );
+                    $propFilterValueCell.append( $(xmlToString(o.$propsXml.children('filtersoptions').children('select'))) );
                 }
                 else if( fieldtype === 'Logical' )
                 {
@@ -230,7 +240,7 @@ var ViewBuilder_CssClasses = {
                 nodetypeorobjectclassid: '',
                 relatedidtype: '',
                 fieldtype: $thisProp.attr('fieldtype'),
-                idprefix: '',
+                ID: '',
                 $parent: '',
                 proparbitraryid: '',
                 filtarbitraryid: $thisProp.attr('filtarbitraryid'),
@@ -242,7 +252,7 @@ var ViewBuilder_CssClasses = {
                 'proparbitraryid': o.proparbitraryid,
                 'filtarbitraryid': o.filtarbitraryid,
                 'viewbuilderpropid': o.viewbuilderpropid,
-                'idprefix': o.idprefix
+                'ID': o.ID
             };
 
             var filtValInputId = makePropFilterId('propfilter_input', filtOpt);

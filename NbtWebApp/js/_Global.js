@@ -165,7 +165,12 @@ function jsonToString(j)
 
 function safeJsonParam(str)
 {
-	return str.replace(/'/g, "\\'");
+    var ret = '';
+    if (str !== undefined)
+    {
+        ret = str.replace(/'/g, "\\'");
+    }
+	return ret;
 }
 
 
@@ -412,7 +417,7 @@ function HandleMenuItem(options) {
 		'$itemxml': '',
 		'onLogout': function () { },
 		'onAlterNode': function (nodeid, nodekey) { },
-		'onSearch': function () { },
+		'onSearch': { onViewSearch: function () { }, onGenericSearch: function () { } },
 		'onMultiEdit': function () { },
 		'onEditView': function (viewid) { },
 		'Multi': false,
@@ -495,20 +500,21 @@ function HandleMenuItem(options) {
 				$a.click(function () { o.onLogout(); return false; });
 				break;
 
-            case 'Search':
+            case 'ViewSearch':
                 $a.click(function ()
                 {
-                    o.onSearch();
-//                    $.CswDialog('SearchDialog', {
-//                        'viewid': o.$itemxml.attr('viewid'),
-//                        'nodetypeid': o.$itemxml.attr('nodetypeid'),
-//                        'onSearch': o.onSearch
-//                    });
-                    
-                    
+                    o.onSearch.onViewSearch();
                 });
-				break;
-			case 'multiedit':
+                break;
+
+            case 'GenericSearch':
+                $a.click(function ()
+                {
+                    o.onSearch.onGenericSearch();
+                });
+                break;
+
+            case 'multiedit':
 				$a.click(o.onMultiEdit);
 				break;
 

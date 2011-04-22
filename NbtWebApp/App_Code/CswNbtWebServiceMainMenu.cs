@@ -56,14 +56,27 @@ namespace ChemSW.Nbt.WebServices
 
 			// SEARCH
 
-			MenuNode.Add( new XElement( "item",
-										new XAttribute( "text", "Search" ),
+		    XElement SearchNode = new XElement( "item",
+		                            new XAttribute( "text", "Search" ), 
+                                    new XElement( "item", 
+                                                new XAttribute( "text", "Generic Search" ), 
+                                                new XAttribute( "nodeid", NodeId ),
+                                                new XAttribute( "nodetypeid", NodeTypeId ),
+										        new XAttribute( "action", "GenericSearch" ) ) );
+            
+            if( View != null && View.IsSearchable() )
+            {
+                SearchNode.AddFirst( new XElement( "item",
+                                        new XAttribute( "text", "This View" ), 
                                         new XAttribute( "nodeid", NodeId ),
                                         new XAttribute( "nodetypeid", NodeTypeId ),
                                         new XAttribute( "viewid", ViewId ),
-										new XAttribute( "action", "Search" ) ) );
+                                        new XAttribute( "action", "ViewSearch" ) ) );
+            }
+		    
+		    MenuNode.Add( SearchNode );
 
-			if( View != null )
+            if( View != null )
 			{
                 // ADD
                 XElement AddNode = new XElement( "item",

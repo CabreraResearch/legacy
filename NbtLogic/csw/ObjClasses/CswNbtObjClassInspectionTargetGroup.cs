@@ -1,5 +1,5 @@
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 OwnerNTP = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
                 if( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
-                { 
+                {
                     OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );
                     if( null != OwnerNT && OwnerNT == Node.NodeType )
                     {
@@ -56,6 +56,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             NewGenerator = CswNbtNodeCaster.AsGenerator( GeneratorNode );
                             NewGenerator.Owner.RelatedNodeId = this.NodeId;
+                            NewGenerator.Owner.RefreshNodeName(); // 20959
                             GeneratorNode.postChanges( true );
                         }
                     }
@@ -108,7 +109,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[NamePropertyName].AsText );
             }
         }
-        
+
         #endregion
 
     }//CswNbtObjClassLocation

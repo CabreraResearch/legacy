@@ -258,29 +258,11 @@
 							_openDiv($div, 600, 400);
 						},
 
-		'SearchDialog': function (options) {
-						var o = {
-                            viewid: '',
-                            nodetypeid: ''
-                        }
-                        if(options) $.extend(o,options);
+        'SearchDialog': function (options) {
+
+                        //Not using a dialog.
                         
-                        var $div = $('<div></div>');
-						$div.CswSearch('getSearchForm', {
-                                viewid: o.viewid,
-                                nodetypeid: o.nodetypeid
-                            });
-						
-                        $div.dialog({ 'modal': true,
-							'width': 800,
-							'height': 600
-						    });
-						},
-				
-                        
-
-
-
+                        },
 
 		'FileUploadDialog': function (options) {
 							var o = {

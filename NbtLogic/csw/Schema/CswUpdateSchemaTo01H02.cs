@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
 using ChemSW.DB;
-using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 
 
 namespace ChemSW.Nbt.Schema
@@ -62,7 +62,6 @@ namespace ChemSW.Nbt.Schema
 
             //BZ 10021: FE Object Classes
             _CswNbtSchemaModTrnsctn.createObjectClass( "InspectionTargetClass", "inspection.png", false, false );
-            _CswNbtSchemaModTrnsctn.createObjectClass( "FireExtinguisherClass", "", false, false );
 
             // Case 20536
             Int32 InspectionTargetGroupClassObjectID = _CswNbtSchemaModTrnsctn.createObjectClass( "InspectionTargetGroupClass", "ball_blueS.gif", false, false );
@@ -120,17 +119,17 @@ namespace ChemSW.Nbt.Schema
             // BZ 10343
             DataRow ParentTypeDR = _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, GeneratorOC.ObjectClassId, CswNbtObjClassGenerator.ParentTypePropertyName, CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect, Int32.MinValue, Int32.MinValue );
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, GeneratorOC.ObjectClassId, CswNbtObjClassGenerator.ParentViewPropertyName, CswNbtMetaDataFieldType.NbtFieldType.ViewReference, Int32.MinValue, Int32.MinValue );
-            ParentTypeDR["multi"] = CswConvert.ToDbVal(false);
+            ParentTypeDR["multi"] = CswConvert.ToDbVal( false );
 
             // BZ 10406: Add Grace Days to GeneratorClass
             //_CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, GeneratorOC.ObjectClassId, CswNbtObjClassGenerator.GraceDaysPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number, Int32.MinValue, Int32.MinValue );
-            
+
             // BZ 10406: Add Status, Finished, Cancelled and Cancel Reason to InspectionDesignClass
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, InspectionDesignOC, CswNbtObjClassInspectionDesign.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List,
                                                            false, false, false, string.Empty, Int32.MinValue, false, false, false, true, "Pending,Overdue,Action Required,Missed,Completed,Completed Late,Cancelled", Int32.MinValue, Int32.MinValue );
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, InspectionDesignOC.ObjectClassId, CswNbtObjClassInspectionDesign.FinishedPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Logical, Int32.MinValue, Int32.MinValue );
             _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, InspectionDesignOC.ObjectClassId, CswNbtObjClassInspectionDesign.CancelledPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Logical, Int32.MinValue, Int32.MinValue );
-            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, InspectionDesignOC.ObjectClassId, CswNbtObjClassInspectionDesign.CancelReasonPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Memo, Int32.MinValue, Int32.MinValue );            
+            _CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, InspectionDesignOC.ObjectClassId, CswNbtObjClassInspectionDesign.CancelReasonPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Memo, Int32.MinValue, Int32.MinValue );
 
             // BZ 10425 - Set warning days = 0 and readonly
             CswNbtMetaDataObjectClassProp MailReportWarningDaysOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.WarningDaysPropertyName );

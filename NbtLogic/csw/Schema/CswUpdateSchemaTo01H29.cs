@@ -1,3 +1,4 @@
+using System.Linq;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
