@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Web.SessionState;
 using System.Xml;
 using System.Data;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
@@ -29,6 +30,72 @@ namespace ChemSW.Nbt.WebServices
 		public string PkColumn = string.Empty;
 		public bool HidePkColumn = true;
 		public Int32 PageSize;
+	    public Int32 GridWidth = Int32.MinValue;
+
+        public enum JqGridJsonOptions
+        {
+            Unknown,
+            /// <summary>
+            /// Display name of the grid
+            /// </summary>
+            caption,
+            /// <summary>
+            /// Grid width in pixels
+            /// </summary>
+            width,
+            /// <summary>
+            /// Data type for grid, usually == local
+            /// </summary>
+            datatype,
+            /// <summary>
+            /// Either a URL or a JSON object containing column
+            /// </summary>
+            data,
+            /// <summary>
+            /// Simple Array of friendly column names
+            /// </summary>
+            colNames,
+            /// <summary>
+            /// Complex Array of column names and definitional data determined in part by JqFieldType
+            /// </summary>
+            colModel,
+            /// <summary>
+            /// If true, jqGrid displays the beginning and ending record number in the grid, out of the total number of records in the query.
+            /// </summary>
+            viewrecords,
+            /// <summary>
+            /// If (viewrecords), defines the text to display if record count == 0
+            /// </summary>
+            emptyrecords,
+            /// <summary>
+            /// Row Number
+            /// </summary>
+            rowNum
+        };
+
+        public enum JqGridDataOptions
+        {
+            Unknown,
+            /// <summary>
+            /// Row data for first/selected page
+            /// </summary>
+            rows,
+            /// <summary>
+            /// For paging, first selected page
+            /// </summary>
+            page,
+            /// <summary>
+            /// For paging, total number of pages
+            /// </summary>
+            total,
+            /// <summary>
+            /// For paging, total # of records
+            /// </summary>
+            records,
+            row
+        };
+
+	    private const string _NoResultsDisplayString = "No Results";
 
 		public JObject DataTableToJSON( DataTable Data )
 		{
@@ -68,25 +135,100 @@ namespace ChemSW.Nbt.WebServices
 					RowObj.Add( new JProperty( Column.ColumnName, Row[Column].ToString() ) );
 				}
 				JRows.Add( RowObj );
-			} 
+			}
 
-			return new JObject(
-				new JProperty( "datatype", "local" ),
-				new JProperty( "colNames", JColumnNames ),
-				new JProperty( "colModel", JColumnDefs ),
-				new JProperty( "data", JRows ),
-				new JProperty( "rowNum", PageSize )//,
-				//new JProperty( "rowList", new JArray( 10, 25, 50 ) ) 
-				);
+		    JObject FinalGrid = makeJqGridJSON( JColumnNames, JColumnDefs, JRows );
 
-			//new JObject(
-				//    new JProperty( "total", "1" ),
-				//    new JProperty( "page", "1" ),
-				//    new JProperty( "records", Data.Rows.Count ),
-				//    new JProperty( "data", JRows ) ) ) );
+		    return FinalGrid;
 
 		} // _mapDataTable()
 
+
+        /// <summary>
+        /// Returns a JSON Array representing grid rows (a row as a JObject of JProperty key/value pairs);
+        /// This anticipates XElements as derived from a Tree from a View
+        /// </summary>
+        public JArray getGridRowsJSON(IEnumerable<XElement> GridNodes)
+        {
+
+            JArray RowsArray = new JArray(
+                                from Element in GridNodes
+                                select new JObject(
+                                    new JProperty( "nodeid", Element.Attribute( "nodeid" ).Value ),
+                                    new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( Element.Attribute( "key" ).Value ) ),
+                                    new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
+                                    from DirtyElement in Element.Elements()
+                                    where DirtyElement.Name == ( "NbtNodeProp" )
+                                    select new JProperty( DirtyElement.Attribute( "name" ).Value, DirtyElement.Attribute( "gestalt" ).Value )  // _massageGridCell( DirtyElement )
+                                    )
+                                );
+
+            return RowsArray;
+        } // getGridRowsJSON()
+
+        private static JProperty _massageGridCell( XElement DirtyElement )
+        {
+            string CleanPropName = DirtyElement.Attribute( "name" ).Value.ToLower().Replace( " ", "_" );
+            string CleanValue = string.Empty;
+            string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
+            string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
+            var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
+            switch( PropFieldType )
+            {
+                case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                    CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
+                    break;
+                default:
+                    CleanValue = DirtyValue;
+                    break;
+            }
+            JProperty CleanProp = new JProperty( CleanPropName, CleanValue );
+            return CleanProp;
+
+        }
+
+        /// <summary>
+		/// Generates a JSON array of friendly Column Names
+		/// </summary>
+		public JArray getGridColumnNamesJson(IEnumerable<CswNbtViewProperty> PropCollection)
+        {
+            JArray ColumnArray = new JArray(
+                from ViewProp in PropCollection
+                //where !string.IsNullOrEmpty(ViewProp.Name)  
+                select new JValue( ViewProp.NodeTypeProp.PropName )
+                );
+            return ColumnArray; 
+        }
+
+        /// <summary>
+		/// Generates a JSON property with the definitional data for a jqGrid Column Array
+		/// </summary>
+        public JArray getGridColumnDefinitionJson( IEnumerable<CswNbtViewProperty> PropCollection )
+        {
+            JArray ColumnDefArray = new JArray(
+                from JqGridProp in PropCollection
+                where JqGridProp != null
+                select JqGridViewProperty.getJqGridAttributesForViewProp( JqGridProp )
+                );
+            return ColumnDefArray;
+        }
+
+	    /// <summary>
+        /// Combines required jqGrid options into jqGrid consumable JObject
+        /// </summary>
+        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows )
+        {
+            return new JObject(
+                new JProperty( JqGridJsonOptions.datatype.ToString(), "local" ),
+                new JProperty( JqGridJsonOptions.colNames.ToString(), ColumnNames ),
+                new JProperty( JqGridJsonOptions.colModel.ToString(), ColumnDefinition ),
+                new JProperty( JqGridJsonOptions.data.ToString(), Rows ),
+                new JProperty( JqGridJsonOptions.rowNum.ToString(), PageSize ),
+                new JProperty( JqGridJsonOptions.viewrecords.ToString(), true ),
+                new JProperty( JqGridJsonOptions.emptyrecords.ToString(), _NoResultsDisplayString ),
+                ( GridWidth != Int32.MinValue ) ? new JProperty( JqGridJsonOptions.width.ToString(), GridWidth ) : null
+                );
+        }
 
 	} // class CswGridData
 
@@ -118,61 +260,7 @@ namespace ChemSW.Nbt.WebServices
         };
         private readonly JqFieldType _JqFieldType = JqFieldType.Unknown;
 
-        public enum JqGridJsonOptions
-        {
-            Unknown,
-            /// <summary>
-            /// Display name of the grid
-            /// </summary>
-            caption,
-            /// <summary>
-            /// Grid width in pixels
-            /// </summary>
-            width,
-            /// <summary>
-            /// Either a URL or a JSON object containing column
-            /// </summary>
-            data,
-            /// <summary>
-            /// Simple Array of friendly column names
-            /// </summary>
-            colNames,
-            /// <summary>
-            /// Complex Array of column names and definitional data determined in part by JqFieldType
-            /// </summary>
-            colModel,
-            /// <summary>
-            /// If true, jqGrid displays the beginning and ending record number in the grid, out of the total number of records in the query.
-            /// </summary>
-            viewrecords,
-            /// <summary>
-            /// If (viewrecords), defines the text to display if record count == 0
-            /// </summary>
-            emptyrecords
-        };
-
-        public enum JqGridDataOptions
-        {
-            Unknown,
-            /// <summary>
-            /// Row data for first/selected page
-            /// </summary>
-            rows,
-            /// <summary>
-            /// For paging, first selected page
-            /// </summary>
-            page,
-            /// <summary>
-            /// For paging, total number of pages
-            /// </summary>
-            total,
-            /// <summary>
-            /// For paging, total # of records
-            /// </summary>
-            records,
-            row
-        };
-
+        
         public enum JqGridSortBy
         {
             Unknown,
