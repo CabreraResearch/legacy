@@ -170,11 +170,13 @@ namespace ChemSW.Nbt.WebServices
 		private IEnumerable<XElement> _getGridXElements()
 		{
 			var RawXml = _getGridTree();
-			IEnumerable<XElement> NodesInGrid = ( from Element in RawXml.DescendantNodes().OfType<XElement>()
-												  where Element.Name == ( "NbtNode" ) && //only concerned with "NbtNode" elements
-														Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
-														Element.Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
-												  select Element );
+            // case 21463: this collection should represent the XElements of distinct rows
+			IEnumerable<XElement> NodesInGrid = ( from Element in RawXml.Elements("NbtNode").Elements("NbtNode") //root == <NbtTree />, 
+                                                                                                                 //first child <NbtNode /> == View, 
+                                                                                                                 //second child <NbtNode /> is first CswNbtNode
+			                                      where Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
+					                                    Element.DescendantNodesAndSelf().OfType<XElement>().Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
+			                                      select Element );
 			return NodesInGrid;
 		} // getGridXElements()
 
