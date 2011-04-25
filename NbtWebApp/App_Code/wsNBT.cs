@@ -68,10 +68,21 @@ namespace ChemSW.Nbt.WebServices
 				_SessionResources.setCache();
 		}
 
-		private string error( Exception ex )
+		private string error( Exception ex, out string Message, out string Detail )
 		{
 			_CswNbtResources.CswLogger.reportError( ex );
 			_CswNbtResources.Rollback();
+
+			if( ex is CswDniException )
+			{
+				Message = ( (CswDniException) ex ).MsgFriendly;
+				Detail = ( (CswDniException) ex ).MsgEscoteric + "; " + ex.StackTrace;
+			}
+			else
+			{
+				Message = "An internal error occurred";
+				Detail = ex.Message + "; " + ex.StackTrace;
+			}
 			return ex.Message;
 		}
 
@@ -80,15 +91,45 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		private XElement xError( Exception ex )
 		{
-			return ( new XElement( "error" ) { Value = "Error: " + error( ex ) } );
+			string Message = string.Empty;
+			string Detail = string.Empty;
+			error( ex, out Message, out Detail);
+	
+			return new XElement( "error",
+				new XAttribute( "message", Message ),
+				new XAttribute( "detail", Detail ) );
+		}
+
+		/// <summary>
+		/// Returns error as XmlDocument
+		/// </summary>
+		private XmlDocument xmlError( Exception ex )
+		{
+			string Message = string.Empty;
+			string Detail = string.Empty;
+			error( ex, out Message, out Detail );
+
+			XmlDocument ErrorXmlDoc = new XmlDocument();
+			CswXmlDocument.SetDocumentElement(ErrorXmlDoc, "error");
+			CswXmlDocument.AppendXmlAttribute(ErrorXmlDoc.DocumentElement, "message", Message);
+			CswXmlDocument.AppendXmlAttribute(ErrorXmlDoc.DocumentElement, "detail", Detail);
+			return ErrorXmlDoc;
 		}
 
 		/// <summary>
 		/// Returns error as JProperty
 		/// </summary>
-		private JProperty jError( Exception ex )
+		private JObject jError( Exception ex )
 		{
-			return ( new JProperty( "error" ) { Value = "Error: " + error( ex ) } );
+			string Message = string.Empty;
+			string Detail = string.Empty;
+			error( ex, out Message, out Detail );
+
+			return new JObject(
+				new JProperty( "error",
+						new JObject(
+							new JProperty( "message", Message ),
+							new JProperty( "detail", Detail ) ) ) );
 		}
 
 		//never used
@@ -156,7 +197,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				ReturnVal = jError( ex );
 			}
 
 			return ( ReturnVal.ToString() );
@@ -176,7 +217,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
 		}//deAuthenticate()
@@ -347,7 +388,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception Ex )
 			{
-				ReturnJson.Add( jError( Ex ) );
+				ReturnJson = jError( Ex );
 			}
 
 			return ReturnJson.ToString();
@@ -369,7 +410,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception Ex )
 			{
-				ReturnJson.Add( jError( Ex ) );
+				ReturnJson = jError( Ex );
 			}
 
 			return ReturnJson.ToString();
@@ -393,8 +434,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnXml = new XmlDocument();
-				ReturnXml.LoadXml( "<error>" + error( ex ) + "</error>" );
+				ReturnXml = xmlError( ex );
 			}
 
 			return ReturnXml;
@@ -490,7 +530,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception Ex )
 			{
-				ReturnJson.Add( jError( Ex ) );
+				ReturnJson = jError( Ex );
 			}
 
 			return ReturnJson.ToString();
@@ -515,7 +555,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception Ex )
 			{
-				ReturnJson.Add( jError( Ex ) );
+				ReturnJson= jError( Ex );
 			}
 
 			return ReturnJson.ToString();
@@ -556,7 +596,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception Ex )
 			{
-				ReturnJson.Add( jError( Ex ) );
+				ReturnJson = jError( Ex );
 			}
 
 			return ReturnJson.ToString();
@@ -694,19 +734,19 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getTabs( string EditMode, string SafeNodeKey, string NodeTypeId )
+		public XElement getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId )
 		{
 			var TabsNode = new XElement( "tabs" );
 			try
 			{
 				start();
 				string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-				if( !string.IsNullOrEmpty( ParsedNodeKey ) || ( EditMode == "AddInPopup" && !string.IsNullOrEmpty( NodeTypeId ) ) )
-				{
+				//if( !string.IsNullOrEmpty( ParsedNodeKey ) || ( EditMode == "AddInPopup" && !string.IsNullOrEmpty( NodeTypeId ) ) )
+				//{
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					TabsNode = ws.getTabs( RealEditMode, ParsedNodeKey, CswConvert.ToInt32( NodeTypeId ) );
-				}
+					TabsNode = ws.getTabs( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( NodeTypeId ) );
+				//}
 				end();
 			}
 			catch( Exception ex )
@@ -719,51 +759,48 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XmlDocument getProps( string EditMode, string SafeNodeKey, string TabId, string NodeTypeId )
+		public XmlDocument getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId )
 		{
 			XmlDocument ReturnXml = null;
 			try
 			{
 				start();
 				string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-				if( !string.IsNullOrEmpty( ParsedNodeKey ) || EditMode == "AddInPopup" )
-				{
+				//if( !string.IsNullOrEmpty( ParsedNodeKey ) || EditMode == "AddInPopup" )
+				//{
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					ReturnXml = ws.getProps( RealEditMode, ParsedNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ) );
-				}
+					ReturnXml = ws.getProps( RealEditMode, NodeId, ParsedNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ) );
+				//}
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnXml = new XmlDocument();
-				ReturnXml.LoadXml( "<error>" + error( ex ) + "</error>" );
+				ReturnXml = xmlError( ex );
 			}
 			return ReturnXml;
 		} // getProps()
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XmlDocument getSingleProp( string EditMode, string SafeNodeKey, string PropId, string NodeTypeId, string NewPropXml )
+		public XmlDocument getSingleProp( string EditMode, string NodeId, string SafeNodeKey, string PropId, string NodeTypeId, string NewPropXml )
 		{
 			XmlDocument ReturnXml = null;
 			try
 			{
 				start();
 				string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-				if( !string.IsNullOrEmpty( ParsedNodeKey ) )
-				{
+				//if( !string.IsNullOrEmpty( ParsedNodeKey ) )
+				//{
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					ReturnXml = ws.getSingleProp( RealEditMode, ParsedNodeKey, PropId, CswConvert.ToInt32( NodeTypeId ),
-												 NewPropXml );
-				}
+					ReturnXml = ws.getSingleProp( RealEditMode, NodeId, ParsedNodeKey, PropId, CswConvert.ToInt32( NodeTypeId ), NewPropXml );
+				//}
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnXml = new XmlDocument();
-				ReturnXml.LoadXml( "<error>" + error( ex ) + "</error>" );
+				ReturnXml = xmlError( ex );
 			}
 			return ReturnXml;
 		} // getSingleProp()
@@ -818,7 +855,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string saveProps( string EditMode, string SafeNodeKey, string NewPropsXml, string NodeTypeId, string ViewId )
+		public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string NewPropsXml, string NodeTypeId, string ViewId )
 		{
 			JObject ReturnVal = new JObject();
 			try
@@ -829,13 +866,13 @@ namespace ChemSW.Nbt.WebServices
 				//{
 				var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 				var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-				ReturnVal = ws.saveProps( RealEditMode, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ViewId ) );
+				ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ViewId ) );
 				//}
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
 		} // saveProps()
@@ -857,7 +894,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
 		} // copyPropValue()	
@@ -871,20 +908,19 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getAbout()
 		{
-			string ReturnVal = string.Empty;
+			XmlDocument Doc = new XmlDocument();
 			try
 			{
 				start();
 				var ws = new CswNbtWebServiceHeader( _CswNbtResources );
-				ReturnVal = ws.makeVersionXml();
+				string ReturnVal = ws.makeVersionXml();
+				Doc.LoadXml( ReturnVal.Replace( "&", "&amp;" ) );
 				end();
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = "<error>" + error( ex ) + "</error>";
+				Doc = xmlError( ex );
 			}
-			XmlDocument Doc = new XmlDocument();
-			Doc.LoadXml( ReturnVal.Replace( "&", "&amp;" ) );
 			return Doc;
 		} // getAbout()
 
@@ -922,7 +958,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
 		}
@@ -942,7 +978,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
 		}
@@ -1075,7 +1111,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				SearchResultView.Add( jError( ex ) );
+				SearchResultView = jError( ex );
 			}
 
 			return SearchResultView.ToString();
@@ -1099,7 +1135,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				SessionViewId.Add( jError( ex ) );
+				SessionViewId = jError( ex );
 			}
 			return SessionViewId.ToString();
 		}
@@ -1131,7 +1167,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
 		}
@@ -1164,7 +1200,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
 		}
@@ -1186,7 +1222,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
 		} // MoveProp()
@@ -1234,7 +1270,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = error( ex );
+				ReturnVal = jError( ex ).ToString();
 			}
 			return ( ReturnVal );
 		} // addWelcomeItem()
@@ -1259,7 +1295,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = error( ex );
+				ReturnVal = jError( ex ).ToString();
 			}
 			return ( ReturnVal );
 		} // deleteWelcomeItem()
@@ -1286,7 +1322,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal = error( ex );
+				ReturnVal = jError( ex ).ToString();
 			}
 			return ( ReturnVal );
 		} // moveWelcomeItems()
@@ -1306,7 +1342,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
 		} // isAdministrator()
@@ -1370,8 +1406,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				//ReturnVal.Add( jError( ex ) );
-				ReturnVal = new JObject( new JProperty( "error", ex.Message ) );
+				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
 		} // fileForProp()
@@ -1394,7 +1429,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			catch( Exception ex )
 			{
-				ReturnVal.Add( jError( ex ) );
+				ReturnVal = jError( ex );
 			}
 			return ( ReturnVal.ToString() );
 		} // clearProp()

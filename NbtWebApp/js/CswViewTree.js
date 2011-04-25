@@ -10,7 +10,10 @@
 								type: '',
 								viewid: '',
 								viewname: '',
-								viewmode: ''
+								viewmode: '',
+								actionid: '',
+								actionurl: '',
+								reportid: ''
 								};
 						},
 			onSuccess: function() { }
@@ -55,9 +58,12 @@
 												iconurl: Selected.iconurl,
 												type: Selected.$item.attr('type'),
 												viewid: Selected.$item.attr('viewid'),
-												viewname: Selected.text, 
-												viewmode: Selected.$item.attr('viewmode')
-											 };
+												viewname: Selected.text,
+												viewmode: Selected.$item.attr('viewmode'),
+												actionid: Selected.$item.attr('actionid'),
+												actionurl: Selected.$item.attr('actionurl'),
+												reportid: Selected.$item.attr('reportid')
+											};
 									o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
 								});
 

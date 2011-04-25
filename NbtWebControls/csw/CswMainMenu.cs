@@ -686,7 +686,7 @@ namespace ChemSW.NbtWebControls
             {
                 HandleError( ex );
             }
-        }
+        } // CswMainMenu_DataBinding()
 
         private void _addExportMenuItem( CswNbtView View, ExportOutputFormat Format, NbtViewRenderingMode RenderingMode )
         {
@@ -945,6 +945,13 @@ namespace ChemSW.NbtWebControls
                         }
                     }
                 }
+
+				// case 21158
+				_SearchMenuItem.Visible = false;
+				_ChangeViewMenuItem.Visible = false;
+				_EditViewMenuItem.Visible = false;
+
+
             }
             catch( Exception ex )
             {

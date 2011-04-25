@@ -3,7 +3,7 @@
 <!--#include file="NewHeader.html" -->
 
 					<tr>
-						<td id="Td5" class="PageTable_LeftColumn" rowspan="5">
+						<td id="Td5" class="PageTable_LeftColumn" rowspan="6">
 							<img src="Images/pagelayout/blank.gif" alt="X" width="1" height="450"/>
 						</td>
 
@@ -20,7 +20,7 @@
 							</table>
 						</td>
 
-						<td id="Td6" class="PageTable_RightColumn" rowspan="5"></td>
+						<td id="Td6" class="PageTable_RightColumn" rowspan="6"></td>
 					</tr>
 
 					<tr>
@@ -106,7 +106,7 @@
 											'onLinkClick': handleItemSelect,
 											'onSuccess': function ()
 											{
-												if (view.viewid == null)
+												if (view.viewid == '')
 												{
 													refreshWelcome();
 												} else
@@ -200,6 +200,7 @@
 				iconurl: '',
 				viewid: '',
 				actionid: '',
+				actionurl: '',
 				reportid: '',
 				linktype: '',
 				nodeid: '',
@@ -230,16 +231,16 @@
 			{
 			    switch (o.type)
 			    {
-			        case 'action':
-			            {
-			                alert('Actions are not yet handled!');
-			                break;
-			            }
-			        case 'report':
-			            {
-			                alert('Reports are not yet handled!');
-			                break;
-			            }
+			    	case 'action':
+			    		{
+			    			window.location = o.actionurl;
+			    			break;
+			    		}
+			    	case 'report':
+			    		{
+			    			window.location = "Report.aspx?reportid=" + o.reportid;
+			    			break;
+			    		}
 			        default:
 			            {
 			                alert('Handling for link type ' + o.linktype + ' is not implemented yet.');

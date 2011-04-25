@@ -105,15 +105,18 @@ namespace ChemSW.Nbt.WebServices
             string ret = string.Empty;
 
             ret += "<item text=\"Home\" action=\"Home\" />";
-            ret += "<item text=\"Admin\">";
-            ret += "  <item text=\"Current User List\" href=\"\" />";
-            ret += "  <item text=\"View Log\" href=\"\" />";
-            ret += "  <item text=\"Edit Config Vars\" href=\"\" />";
-            ret += "  <item text=\"Statistics\" href=\"\" />";
-            ret += "</item>";
-            ret += "<item text=\"Preferences\">";
-            ret += "  <item text=\"Profile\" href=\"\" />";
-            ret += "  <item text=\"Subscriptions\" href=\"\" />";
+			if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+			{
+				ret += "<item text=\"Admin\">";
+				ret += "  <item text=\"Current User List\" href=\"UserList.aspx\" />";
+				ret += "  <item text=\"View Log\" href=\"DisplayLog.aspx\" />";
+				ret += "  <item text=\"Edit Config Vars\" href=\"ConfigVars.aspx\" />";
+				ret += "  <item text=\"Statistics\" href=\"Statistics.aspx\" />";
+				ret += "</item>";
+			}
+			ret += "<item text=\"Preferences\">";
+			ret += "  <item text=\"Profile\" action=\"Profile\" userid=\"" + _CswNbtResources.CurrentNbtUser.UserNode.NodeId.ToString() + "\" />";
+			ret += "  <item text=\"Subscriptions\" href=\"Subscriptions.aspx\" />";
             ret += "</item>";
             ret += "<item text=\"Help\">";
             ret += "  <item text=\"Help\" popup=\"help/index.htm\" />";

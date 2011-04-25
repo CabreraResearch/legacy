@@ -30,7 +30,7 @@ function CswAjaxJSON(options) {
 
 			if (result.error != undefined)
 			{
-				_handleAjaxError(XMLHttpRequest, result.error, '');
+				_handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
 			}
 			else
 			{
@@ -39,10 +39,10 @@ function CswAjaxJSON(options) {
 		}, // success{}
 		error: function (XMLHttpRequest, textStatus, errorThrown)
 		{
-			_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+			_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
 			o.error();
 		}
-	});  // $.ajax({
+	});    // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options) {
@@ -75,7 +75,7 @@ function CswAjaxXml(options) {
 				var $realxml = $xml.children().first();
 				if ($realxml.first().get(0).nodeName == "error")
 				{
-					_handleAjaxError(XMLHttpRequest, $realxml.text().trim(), '');
+					_handleAjaxError(XMLHttpRequest, { 'message': $realxml.attr('message'), 'detail': $realxml.attr('detail') }, '');
 				}
 				else
 				{
@@ -85,20 +85,27 @@ function CswAjaxXml(options) {
 			}, // success{}
 			error: function (XMLHttpRequest, textStatus, errorThrown)
 			{
-				_handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
+				_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
 				o.error();
 			}
-		}); // $.ajax({
+		});   // $.ajax({
 	} // if(o.url != '')
 } // CswAjaxXml()
 		
-function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown) 
+function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown) 
 {
-	ErrorMessage = "A WebServices Error Occurred: " + textStatus;
-	if (null != errorThrown) {
-		ErrorMessage += "; Exception: " + errorThrown.toString()
+	//	ErrorMessage = "A WebServices Error Occurred: " + textStatus;
+	//	if (null != errorThrown) {
+	//		ErrorMessage += "; Exception: " + errorThrown.toString()
+	//	}
+	var $errorsdiv = $('#ErrorDiv');
+	if ($errorsdiv.length > 0)
+	{
+		$errorsdiv.CswErrorMessage({ 'message': errorJson.message, 'detail': errorJson.detail });
+	} else
+	{
+		log(o.message + '; ' + o.detail);
 	}
-	log(ErrorMessage);
 } // _handleAjaxError()
 
 //function extractCDataValue($node) {
@@ -434,9 +441,13 @@ function HandleMenuItem(options) {
 	}
 	else if (o.$itemxml.attr('popup') != undefined && o.$itemxml.attr('popup') != '')
 	{
-		$li = $('<li class="headermenu_dialog">' + o.$itemxml.attr('text') + '</li>')
+		$li = $('<li class="headermenu_dialog"><a href="#">' + o.$itemxml.attr('text') + '</a></li>')
 						.appendTo(o.$ul)
-						.click(function () { OpenDialog(o.$itemxml.attr('text'), o.$itemxml.attr('popup')); });
+						.click(function ()
+						{
+							$.CswDialog('OpenDialog', o.$itemxml.attr('text'), o.$itemxml.attr('popup'));
+							return false; 
+						});
 	}
 	else if (o.$itemxml.attr('action') != undefined && o.$itemxml.attr('action') != '')
 	{
@@ -500,7 +511,21 @@ function HandleMenuItem(options) {
 				$a.click(function () { o.onLogout(); return false; });
 				break;
 
-            case 'ViewSearch':
+			case 'Profile':
+				$a.click(function ()
+				{
+					$.CswDialog('EditNodeDialog', {
+						'nodeid': o.$itemxml.attr('userid'),
+						'cswnbtnodekey': '',
+						'filterToPropId': '',
+						'title': 'User Profile',
+						'onEditNode': function (nodeid, nodekey) { }
+					});
+					return false; 
+				});
+				break;
+
+			case 'ViewSearch':
                 $a.click(function ()
                 {
                     o.onSearch.onViewSearch();

@@ -286,7 +286,7 @@ namespace ChemSW.Nbt.Schema
                     SetStatus( "Update process stopped" );
                 }
                 else if( !UpdateSucceeded )
-                {
+                {	
                     if( OnUpdateFailed != null )
                         OnUpdateFailed();
                     SetStatus( "Update failed" );

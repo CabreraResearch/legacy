@@ -105,9 +105,14 @@ namespace ChemSW.Nbt.Schema
             _UpdateDrivers.Add( Schema01H27Driver.SchemaVersion, Schema01H27Driver );
             CswSchemaUpdateDriver Schema01H28Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H28( _CswNbtSchemaModTrnsctn ) );
             _UpdateDrivers.Add( Schema01H28Driver.SchemaVersion, Schema01H28Driver );
-            CswSchemaUpdateDriver Schema01H29Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H29( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01H29Driver.SchemaVersion, Schema01H29Driver );
-            // This automatically detects the latest version
+			CswSchemaUpdateDriver Schema01H29Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H29( _CswNbtSchemaModTrnsctn ) );
+			_UpdateDrivers.Add( Schema01H29Driver.SchemaVersion, Schema01H29Driver );
+			CswSchemaUpdateDriver Schema01H30Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H30( _CswNbtSchemaModTrnsctn ) );
+			_UpdateDrivers.Add( Schema01H30Driver.SchemaVersion, Schema01H30Driver );
+			CswSchemaUpdateDriver Schema01H31Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H31( _CswNbtSchemaModTrnsctn ) );
+			_UpdateDrivers.Add( Schema01H31Driver.SchemaVersion, Schema01H31Driver );
+			
+			// This automatically detects the latest version
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys )
             {
                 if( LatestVersion == null ||
@@ -121,7 +126,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
-        /// The latest schema version
+        /// The highest schema version number defined in the updater
         /// </summary>
         public CswSchemaVersion LatestVersion = null;
         /// <summary>
@@ -134,6 +139,9 @@ namespace ChemSW.Nbt.Schema
             get { return new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ) ); }
         }
 
+        /// <summary>
+        /// Schema version of the currently targeted schema
+        /// </summary>
         public CswSchemaVersion TargetVersion
         {
             get
@@ -146,6 +154,11 @@ namespace ChemSW.Nbt.Schema
                 return ret;
             }
         }
+
+        private string _ErrorMessage = string.Empty;
+        public string ErrorMessage { get { return ( _ErrorMessage ); } }
+
+
 
         /// <summary>
         /// Update the schema to the next version
@@ -175,6 +188,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     // Belt and suspenders.
                     _CswNbtResources.logError( new CswDniException( "Schema Updater encountered a problem: " + CurrentUpdateDriver.Message ) );
+                    _ErrorMessage = "Error updating to schema version " + CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Message;
                 }
                 else
                 {

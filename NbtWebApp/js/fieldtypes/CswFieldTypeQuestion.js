@@ -19,9 +19,15 @@
 
                 if(o.ReadOnly)
                 {
-                    $Div.append(Answer + '<br/>');
-                    $Div.append(Comments + '<br/>');
-                    $Div.append(CorrectiveAction + '<br/>');
+                    $Div.append('Answer: ' + Answer);
+                    if(DateAnswered != '')
+						$Div.append(' ('+ DateAnswered +')');
+					$Div.append('<br/>');
+                    $Div.append('Corrective Action: ' + CorrectiveAction);
+                    if(DateCorrected != '')
+						$Div.append(' ('+ DateCorrected +')');
+					$Div.append('<br/>');
+                    $Div.append('Comments: ' + Comments + '<br/>');
                 }
                 else 
                 {
