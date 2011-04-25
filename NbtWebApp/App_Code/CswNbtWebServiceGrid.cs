@@ -162,8 +162,6 @@ namespace ChemSW.Nbt.WebServices
 
         #region Archived Valid Grid Json
 
-					ColumnName = ColumnName.ToLower().Replace( " ", "_" );
-
 		//        private static JObject getDebugGridJson()
 		//        {
 		//            String JsonString = @"{""viewname"": ""Debug View""
