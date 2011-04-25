@@ -75,7 +75,7 @@
 							width: gridWidth,
 							pager: $gridPager, 
 							caption: ViewName,
-							toppager: true
+							toppager: false
 						};
 
 						var optSearch = {
@@ -89,7 +89,7 @@
 						};
 
 						var optNav = {
-							cloneToTop: true,
+							cloneToTop: false,
 
 							//edit
 							edit: true,
@@ -182,28 +182,28 @@
 					
 
 						//remove some dup elements from top pager
-						var topPagerDiv = $('#' + $gridTable[0].id + '_toppager')[0];         
-						$("#edit_" + $gridTable[0].id + "_top", topPagerDiv).remove();        
-						$("#del_" + $gridTable[0].id + "_top", topPagerDiv).remove();         
-						$("#search_" + $gridTable[0].id + "_top", topPagerDiv).remove();         
-						$("#add_" + $gridTable[0].id + "_top", topPagerDiv).remove();     
-						$("#view_" + $gridTable[0].id + "_top", topPagerDiv).remove();
-						$("#" + $gridTable[0].id + "_toppager_center", topPagerDiv).remove(); 
-						$(".ui-paging-info", topPagerDiv).remove();
+//						var topPagerDiv = $('#' + $gridTable[0].id + '_toppager')[0];         
+//						$("#edit_" + $gridTable[0].id + "_top", topPagerDiv).remove();        
+//						$("#del_" + $gridTable[0].id + "_top", topPagerDiv).remove();         
+//						$("#search_" + $gridTable[0].id + "_top", topPagerDiv).remove();         
+//						$("#add_" + $gridTable[0].id + "_top", topPagerDiv).remove();     
+//						$("#view_" + $gridTable[0].id + "_top", topPagerDiv).remove();
+//						$("#" + $gridTable[0].id + "_toppager_center", topPagerDiv).remove(); 
+//						$(".ui-paging-info", topPagerDiv).remove();
 
-						//add custom button to nav panel
-						$gridTable.jqGrid('navButtonAdd', '#' + $gridTable[0].id + '_toppager_left' , { 
-												caption: "Columns",
-												buttonicon: 'ui-icon-wrench',
-												onClickButton: function() {
-													$gridTable.jqGrid('columnChooser', {
-														done: function(perm) {
-															if (!perm) { return false; }
-																$gridTable.jqGrid('remapColumns', perm, true);
-															}
-														});
-													}
-												});
+//						//add custom button to nav panel
+//						$gridTable.jqGrid('navButtonAdd', '#' + $gridTable[0].id + '_toppager_left' , { 
+//												caption: "Columns",
+//												buttonicon: 'ui-icon-wrench',
+//												onClickButton: function() {
+//													$gridTable.jqGrid('columnChooser', {
+//														done: function(perm) {
+//															if (!perm) { return false; }
+//																$gridTable.jqGrid('remapColumns', perm, true);
+//															}
+//														});
+//													}
+//												});
 
 				} // success{} 
 			}); // ajax
