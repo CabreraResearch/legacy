@@ -24,7 +24,7 @@
 				// CswNodeGrid properties
 				GridUrl: '/NbtWebApp/wsNBT.asmx/getGrid',
 				viewid: '',
-				prefix: "CswNodeGrid",
+				ID: "CswNodeGrid",
 				nodeid: '',
 				cswnbtnodekey: '',
 				gridTableID: "gridTable",
@@ -42,10 +42,10 @@
 			var gridData = [];
 			var gridRows = [];
         
-        var gridTableId = makeId({ ID: o.gridTableID, prefix: o.prefix });
+        var gridTableId = makeId({ ID: o.gridTableID, prefix: o.ID });
 		var $gridTable = $parent.CswTable('init', { ID: gridTableId });
 		
-        var gridPagedId = makeId({ID: o.gridPagerID, prefix: o.prefix});
+        var gridPagedId = makeId({ID: o.gridPagerID, prefix: o.ID});
         var $gridPager = $parent.CswDOM('div',{ID: gridPagedId})
 									 .css('width','100%')
 									 .css('height','20px');
