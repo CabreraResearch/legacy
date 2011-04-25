@@ -384,9 +384,9 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["category"] = Category;
             ViewTable.Rows[0]["viewxml"] = this.ToString();
             ViewTable.Rows[0]["formobile"] = CswConvert.ToDbVal( ForMobile );
-			ViewTable.Rows[0]["visibility"] = Visibility.ToString();
-			ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
-			if( Visibility == NbtViewVisibility.Role )
+            ViewTable.Rows[0]["visibility"] = Visibility.ToString();
+            ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
+            if( Visibility == NbtViewVisibility.Role )
                 ViewTable.Rows[0]["roleid"] = CswConvert.ToDbVal( VisibilityRoleId.PrimaryKey );
             else
                 ViewTable.Rows[0]["roleid"] = DBNull.Value;
@@ -449,7 +449,7 @@ namespace ChemSW.Nbt
             if( ViewName == string.Empty )
                 throw new CswDniException( "View name cannot be blank", "CswNbtView.makeNew() called with empty ViewName parameter" );
 
-			// Enforce name-visibility compound unique constraint
+            // Enforce name-visibility compound unique constraint
             if( !ViewIsUnique( _CswNbtResources, Int32.MinValue, ViewName, Visibility, UserId, RoleId ) )
                 throw new CswDniException( "View name is already in use", "There is already a view with conflicting name and visibility settings" );
 
@@ -464,12 +464,12 @@ namespace ChemSW.Nbt
             // Insert a new view
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "ViewTableUpdate", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getEmptyTable();
-			
+
             DataRow NewRow = ViewTable.NewRow();
             NewRow["viewname"] = ViewName;
             NewRow["formobile"] = CswConvert.ToDbVal( ForMobile );
             NewRow["visibility"] = Visibility.ToString();
-			NewRow["viewmode"] = ViewMode.ToString();
+            NewRow["viewmode"] = ViewMode.ToString();
             NewRow["userid"] = CswConvert.ToDbVal( Int32.MinValue );
             if( UserId != null )
                 NewRow["userid"] = CswConvert.ToDbVal( UserId.PrimaryKey );
@@ -637,15 +637,15 @@ namespace ChemSW.Nbt
             }
         } // Delete()
 
-		public const Int32 ViewNameLength = 30;
+        public const Int32 ViewNameLength = 30;
 
-		public static bool ViewIsUnique( CswNbtResources CswNbtResources, Int32 ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
+        public static bool ViewIsUnique( CswNbtResources CswNbtResources, Int32 ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
         {
-			// truncate the name
-			if( ViewName.Length > ViewNameLength )
-				ViewName = ViewName.Substring( 0, ViewNameLength );
+            // truncate the name
+            if( ViewName.Length > ViewNameLength )
+                ViewName = ViewName.Substring( 0, ViewNameLength );
 
-			if( Visibility != NbtViewVisibility.Property )
+            if( Visibility != NbtViewVisibility.Property )
             {
                 CswTableSelect CheckViewTableSelect = CswNbtResources.makeCswTableSelect( "ViewIsUnique_select", "node_views" );
                 string WhereClause = "where viewname = '" + CswTools.SafeSqlParam( ViewName ) + "'";
@@ -1015,18 +1015,20 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Returns an ordered LinkedList of CswNbtViewProperty
         /// </summary>
-        public LinkedList<CswNbtViewProperty> getOrderedViewProps()
+        public LinkedList<CswNbtViewProperty> getOrderedViewProps( bool SelectDistinctPropNames )
         {
             var OrderedViewProps = new LinkedList<CswNbtViewProperty>();
             var ViewRelationships = new Collection<CswNbtViewRelationship>();
             ViewRelationships = getAllNbtViewRelationships( Root );
             var ViewProps = new Collection<CswNbtViewProperty>();
+            var ViewPropNames = new Collection<string>();
 
-            foreach( CswNbtViewProperty ChildProp in ViewRelationships
-                                                     .Select( Relationship => Relationship.Properties )
-                                                     .SelectMany( ChildProps => ChildProps ) )
+            foreach( CswNbtViewProperty ChildProp in ViewRelationships.Select( Relationship => Relationship.Properties )
+                                                                      .SelectMany( ChildProps => ChildProps )
+                                                                      .Where( ChildProp => !SelectDistinctPropNames || !ViewPropNames.Contains( ChildProp.Name ) ) )
             {
                 ViewProps.Add( ChildProp );
+                ViewPropNames.Add( ChildProp.Name );
             }
 
             // Add View props with defined order to the stack in ascending ViewProp.Order order

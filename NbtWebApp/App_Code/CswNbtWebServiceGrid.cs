@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.WebServices
 		{
 			JObject GridShellJObj = null;
 			IEnumerable<XElement> GridNodes = _getGridXElements();
-			IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps();
+            IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( true );
 
 			JArray GridRows = new JArray();
 			if( GridNodes.Count() > 0 )
