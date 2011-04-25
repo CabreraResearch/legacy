@@ -214,9 +214,8 @@ namespace ChemSW.Nbt.WebServices
 		public JArray getGridColumnNamesJson(IEnumerable<CswNbtViewProperty> PropCollection)
         {
             JArray ColumnArray = new JArray(
-                from ViewProp in PropCollection
-                //where !string.IsNullOrEmpty(ViewProp.Name)  
-                select new JValue( ViewProp.NodeTypeProp.PropName )
+                from ViewProp in PropCollection.Select( Prop => new CswViewBuilderProp( Prop ) )
+                select new JValue( ViewProp.MetaDataPropName )
                 );
             return ColumnArray; 
         }
@@ -227,9 +226,9 @@ namespace ChemSW.Nbt.WebServices
         public JArray getGridColumnDefinitionJson( IEnumerable<CswNbtViewProperty> PropCollection )
         {
             JArray ColumnDefArray = new JArray(
-                from JqGridProp in PropCollection
-                where JqGridProp != null
-                select JqGridViewProperty.getJqGridAttributesForViewProp( JqGridProp )
+                from ViewProp in PropCollection.Select( Prop => new CswViewBuilderProp( Prop ) )
+                where ViewProp != null
+                select JqGridViewProperty.getJqGridAttributesForViewProp( ViewProp )
                 );
             return ColumnDefArray;
         }
@@ -296,7 +295,7 @@ namespace ChemSW.Nbt.WebServices
 
         private JqGridSortBy _SortBy = JqGridSortBy.Unknown;
 
-        public JqGridViewProperty( CswNbtViewProperty ViewProperty, bool DoCssOverride = false )
+        public JqGridViewProperty( CswViewBuilderProp ViewProperty, bool DoCssOverride = false )
         {
             switch( ViewProperty.FieldType.FieldType )
             {
@@ -330,8 +329,8 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            _LiteralColumnName = ViewProperty.NodeTypeProp.PropName.ToLower();
-            _FriendlyColumnName = ViewProperty.NodeTypeProp.PropName.ToLower().Replace( " ", "_");
+            _LiteralColumnName = ViewProperty.MetaDataPropName.ToLower();
+            _FriendlyColumnName = ViewProperty.MetaDataPropName.ToLower().Replace( " ", "_" );
             _ColumnWidth = ViewProperty.Width;
             
             _DoCssOverride = DoCssOverride;
@@ -340,7 +339,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Transforms an Nbt View Property into well-form JSON for consumption by a jqGrid
         /// </summary>
-        public static JObject getJqGridAttributesForViewProp( CswNbtViewProperty ViewProperty )
+        public static JObject getJqGridAttributesForViewProp( CswViewBuilderProp ViewProperty )
         {
             var JqGridViewProp = new JqGridViewProperty( ViewProperty );
             var ReturnObj = new JObject();

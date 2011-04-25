@@ -700,6 +700,24 @@ namespace ChemSW.Nbt.WebServices
             get { return _Filters; }
         }
 
+        private bool _SortBy = false;
+        public bool SortBy
+        {
+            get { return _SortBy; }
+        }
+
+        private CswNbtViewProperty.PropertySortMethod _SortMethod = CswNbtViewProperty.PropertySortMethod.Ascending;
+        public CswNbtViewProperty.PropertySortMethod SortMethod
+        {
+            get { return _SortMethod; }
+        }
+
+        private Int32 _Width = Int32.MinValue;
+        public Int32 Width
+        {
+            get { return _Width; }
+        }
+
         public CswViewBuilderProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             _FieldType = NodeTypeProp.FieldType;
@@ -755,7 +773,10 @@ namespace ChemSW.Nbt.WebServices
             _ViewProp = ViewProp;
             _FieldType = ViewProp.FieldType;
             _Filters = ViewProp.Filters;
-            _Type = ViewProp.Type;                    
+            _Type = ViewProp.Type;
+            _Width = ViewProp.Width;
+            _SortBy = ViewProp.SortBy;
+            _SortMethod = ViewProp.SortMethod;
         } //ctor Vp
 
 
