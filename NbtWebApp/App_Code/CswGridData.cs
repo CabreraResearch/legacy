@@ -140,7 +140,15 @@ namespace ChemSW.Nbt.WebServices
             /// <summary>
             /// Complex Array of column names and definitional data determined in part by JqFieldType
             /// </summary>
-            colModel
+            colModel,
+            /// <summary>
+            /// If true, jqGrid displays the beginning and ending record number in the grid, out of the total number of records in the query.
+            /// </summary>
+            viewrecords,
+            /// <summary>
+            /// If (viewrecords), defines the text to display if record count == 0
+            /// </summary>
+            emptyrecords
         };
 
         public enum JqGridDataOptions
