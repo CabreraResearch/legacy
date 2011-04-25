@@ -70,13 +70,14 @@ namespace ChemSW.Nbt.WebServices
             _AddHiddenColumnDefiniton( ref GridColumnDefinitions );
             
 			_CswGridData.GridWidth = ( _View.Width*7 ) ;
+		    _CswGridData.GridTitle = _View.ViewName;
+		    _CswGridData.GridSortName = "nodeid";
 
-		    JObject JqGrid = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
-
+		    JObject JqGridOpt = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
+            
 			GridShellJObj = new JObject(
-				new JProperty( "viewname", _View.ViewName ),
 				new JProperty( "nodetypeid", _View.ViewNodeTypeId ),
-				new JProperty( "jqgrid", JqGrid)
+				new JProperty( "jqGridOpt", JqGridOpt)
 				);
 
 			return GridShellJObj;

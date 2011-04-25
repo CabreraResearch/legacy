@@ -30,47 +30,68 @@ namespace ChemSW.Nbt.WebServices
 		public string PkColumn = string.Empty;
 		public bool HidePkColumn = true;
 		public Int32 PageSize;
-	    public Int32 GridWidth = Int32.MinValue;
+        public bool GridAutoEncode = true;
+        public Int32 GridHeight = 300;
+	    public JArray GridRowList = new JArray(new JValue(10), new JValue(25), new JValue(50));
+	    public string GridSortName = string.Empty;
+	    public string GridTitle = string.Empty;
+        public Int32 GridWidth = Int32.MinValue;
 
         public enum JqGridJsonOptions
         {
             Unknown,
             /// <summary>
+            /// Autodetect jqGrid fieldtypes and encode accordingly
+            /// </summary>
+            autoencode,
+            /// <summary>
             /// Display name of the grid
             /// </summary>
             caption,
-            /// <summary>
-            /// Grid width in pixels
-            /// </summary>
-            width,
-            /// <summary>
-            /// Data type for grid, usually == local
-            /// </summary>
-            datatype,
-            /// <summary>
-            /// Either a URL or a JSON object containing column
-            /// </summary>
-            data,
-            /// <summary>
-            /// Simple Array of friendly column names
-            /// </summary>
-            colNames,
             /// <summary>
             /// Complex Array of column names and definitional data determined in part by JqFieldType
             /// </summary>
             colModel,
             /// <summary>
-            /// If true, jqGrid displays the beginning and ending record number in the grid, out of the total number of records in the query.
+            /// Simple Array of friendly column names
             /// </summary>
-            viewrecords,
+            colNames,
+            /// <summary>
+            /// Either a URL or a JSON object containing column
+            /// </summary>
+            data,
+            /// <summary>
+            /// Data type for grid, usually == local
+            /// </summary>
+            datatype,
             /// <summary>
             /// If (viewrecords), defines the text to display if record count == 0
             /// </summary>
             emptyrecords,
             /// <summary>
+            /// Height of grid
+            /// </summary>
+            height,
+            /// <summary>
+            /// An array of numbers used to indicate how many rows to display in the grid
+            /// </summary>
+            rowList,
+            /// <summary>
             /// Row Number
             /// </summary>
-            rowNum
+            rowNum,
+            /// <summary>
+            /// Column name in grid to perform first sort
+            /// </summary>
+            sortname,
+            /// <summary>
+            /// If true, jqGrid displays the beginning and ending record number in the grid, out of the total number of records in the query.
+            /// </summary>
+            viewrecords,
+            /// <summary>
+            /// Grid width in pixels
+            /// </summary>
+            width
         };
 
         public enum JqGridDataOptions
@@ -159,7 +180,7 @@ namespace ChemSW.Nbt.WebServices
                                     new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
                                     from DirtyElement in Element.Elements()
                                     where DirtyElement.Name == ( "NbtNodeProp" )
-                                    select new JProperty( DirtyElement.Attribute( "name" ).Value, DirtyElement.Attribute( "gestalt" ).Value )  // _massageGridCell( DirtyElement )
+                                    select _massageGridCell( DirtyElement )
                                     )
                                 );
 
@@ -219,14 +240,19 @@ namespace ChemSW.Nbt.WebServices
         public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows )
         {
             return new JObject(
-                new JProperty( JqGridJsonOptions.datatype.ToString(), "local" ),
-                new JProperty( JqGridJsonOptions.colNames.ToString(), ColumnNames ),
-                new JProperty( JqGridJsonOptions.colModel.ToString(), ColumnDefinition ),
-                new JProperty( JqGridJsonOptions.data.ToString(), Rows ),
-                new JProperty( JqGridJsonOptions.rowNum.ToString(), PageSize ),
-                new JProperty( JqGridJsonOptions.viewrecords.ToString(), true ),
-                new JProperty( JqGridJsonOptions.emptyrecords.ToString(), _NoResultsDisplayString ),
-                ( GridWidth != Int32.MinValue ) ? new JProperty( JqGridJsonOptions.width.ToString(), GridWidth ) : null
+                    new JProperty( JqGridJsonOptions.datatype.ToString(), "local" ),
+                    new JProperty( JqGridJsonOptions.colNames.ToString(), ColumnNames ),
+                    new JProperty( JqGridJsonOptions.colModel.ToString(), ColumnDefinition ),
+                    new JProperty( JqGridJsonOptions.data.ToString(), Rows ),
+                    new JProperty( JqGridJsonOptions.rowNum.ToString(), PageSize ),
+                    new JProperty( JqGridJsonOptions.viewrecords.ToString(), true ),
+                    new JProperty( JqGridJsonOptions.emptyrecords.ToString(), _NoResultsDisplayString ),
+                    ( GridWidth != Int32.MinValue ) ? new JProperty( JqGridJsonOptions.width.ToString(), GridWidth ) : null,
+                    new JProperty( JqGridJsonOptions.sortname.ToString(), GridSortName ),
+                    new JProperty( JqGridJsonOptions.autoencode.ToString(), GridAutoEncode ),
+                    new JProperty( JqGridJsonOptions.height.ToString(), GridHeight ),
+                    new JProperty( JqGridJsonOptions.rowList.ToString(), GridRowList.ToString() ),
+                    new JProperty( JqGridJsonOptions.caption.ToString(), GridTitle )
                 );
         }
 

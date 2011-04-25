@@ -7,28 +7,13 @@
 		'init': function (optJqGrid) {
 
 			var o = {
-				// jqGrid properties
-				datatype: "local", 
-				height: 300,
-				rowNum:10, 
-				autoencode: true,
-				//autowidth: true, 
-				rowList:[10,25,50],  
-				//editurl:"/Popup_EditNode.aspx",
-				sortname: "nodeid", 
-				shrinkToFit: true,
-				viewrecords: true,  
-				emptyrecords:"No Data to Display", 
-				sortorder: "asc", 
-				multiselect: true,
-				// CswNodeGrid properties
 				GridUrl: '/NbtWebApp/wsNBT.asmx/getGrid',
 				viewid: '',
-				ID: "CswNodeGrid",
+				ID: '',
 				nodeid: '',
 				cswnbtnodekey: '',
-				gridTableID: "gridTable",
-				gridPagerID: "gridPager",
+				gridTableID: 'gridTable',
+				gridPagerID: 'gridPager',
 				onAddNode: function(nodeid,cswnbtnodekey){},
 				onEditNode: function(nodeid,cswnbtnodekey){},
 				onDeleteNode: function(nodeid,cswnbtnodekey){}
@@ -39,44 +24,47 @@
 			}
 			var $parent = $(this);
 
-			var gridData = [];
-			var gridRows = [];
+			var jqGrid = {};
         
-        var gridTableId = makeId({ ID: o.gridTableID, prefix: o.ID });
-		var $gridTable = $parent.CswTable('init', { ID: gridTableId });
+            var gridTableId = makeId({ ID: o.gridTableID, prefix: o.ID });
+		    var $gridTable = $parent.CswTable('init', { ID: gridTableId });
 		
-        var gridPagedId = makeId({ID: o.gridPagerID, prefix: o.ID});
-        var $gridPager = $parent.CswDOM('div',{ID: gridPagedId})
-									 .css('width','100%')
-									 .css('height','20px');
+            var gridPagedId = makeId({ID: o.gridPagerID, prefix: o.ID});
+            var $gridPager = $parent.CswDOM('div',{ID: gridPagedId})
+									     .css('width','100%')
+									     .css('height','20px');
 		
 			CswAjaxJSON({
 				url: o.GridUrl,
 				data: "{ViewPk: '" +  o.viewid + "', 'SafeNodeKey': '" + o.cswnbtnodekey + "'}", //" + o.cswnbtnodekey + "
 				success: function (gridJson) {
 					
-						gridData = gridJson.grid;
-						gridRows = gridData.rows;
+						jqGridOpt = gridJson.jqGridOpt;
 
-						var ViewName = gridJson.viewname;
 						var NodeTypeId = gridJson.nodetypeid;
-						var columns = gridJson.columnnames;
-						var columnDefinition = gridJson.columndefinition;
-						var gridWidth =  gridJson.viewwidth;
-						if( gridWidth === '' )
+
+						if( jqGridOpt.width === '' )
 						{
-							gridWidth = 650;
+							jqGridOpt.width = 650;
 						}
 						
 						var jqGridOptions = {
-							data: gridRows,
-							colNames: columns,  
-							colModel: columnDefinition, 
-							width: gridWidth,
+                            autoencode: true,
+                            caption: '',
+                            datatype: 'local', 
+				            emptyrecords: 'No Results',
+                            height: '300',
+				            multiselect: true,
 							pager: $gridPager, 
-							caption: ViewName,
-							toppager: false
+							rowList:[10,25,50],  
+				            rowNum:10, 
+				            shrinkToFit: true,
+				            sortname: '', 
+				            sortorder: 'asc', 
+                            toppager: false,
+                            viewrecords: true
 						};
+                        $.extend(jqGridOptions,jqGridOpt);
 
 						var optSearch = {
 							caption: "Search...",
@@ -168,8 +156,6 @@
 							viewtitle: "View row"
 							//viewfunc: none--use jqGrid built-in function for read-only
 						};
-
-						$.extend(jqGridOptions, o); 
 
 						$gridTable.jqGrid(jqGridOptions)
 										  .hideCol('nodeid')
