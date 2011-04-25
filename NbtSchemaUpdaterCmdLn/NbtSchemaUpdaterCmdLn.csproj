@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NbtSchemaUpdaterCmdLn</RootNamespace>
-    <AssemblyName>NbtSchemaUpdater</AssemblyName>
+    <AssemblyName>NbtUpdt</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -44,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\CswConsoleOutput.cs" />
+    <Compile Include="csw\CswSchemaUpdateThread.cs" />
     <Compile Include="csw\CswSchemaUpdaterConsole.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -52,6 +54,10 @@
     <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
       <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NbtConfig\NbtConfig.csproj">
+      <Project>{DABF9D08-70E8-4D42-AF7A-577335A7129F}</Project>
+      <Name>NbtConfig</Name>
     </ProjectReference>
     <ProjectReference Include="..\NbtLogic\NbtLogic.csproj">
       <Project>{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}</Project>
