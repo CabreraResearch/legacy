@@ -276,18 +276,27 @@ namespace ChemSW.Nbt.WebServices
         public enum JqFieldType
         {
             Unknown,
-            date,
-            integer,
-            number,
-            currency,
-            text,
-            function,
-            email,
-            link,
-            showlink,
+            actions,
             checkbox,
+            currency,
+            date,
+            /// <summary>
+            /// This is not a jqGrid option, but we will (later) need it to distinguish from date and time
+            /// </summary>
+            datetime,
+            email,
+            function,
+            integer,
+            link,
+            number,
+            showlink,
             select,
-            actions
+            text,
+            /// <summary>
+            /// Also not a jqGrid option, but we need it to distinguish from datetime and date
+            /// </summary>
+            time
+
         };
         private readonly JqFieldType _JqFieldType = JqFieldType.Unknown;
 
@@ -312,7 +321,7 @@ namespace ChemSW.Nbt.WebServices
                     _JqFieldType = JqFieldType.date;
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Time:
-                    _JqFieldType = JqFieldType.date;
+                    _JqFieldType = JqFieldType.time;
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Link:
                     _JqFieldType = JqFieldType.link;
@@ -422,9 +431,18 @@ namespace ChemSW.Nbt.WebServices
             get
             {
                 JProperty ReturnProp = null;
-                if( _JqFieldType == JqFieldType.date )
+                switch( _JqFieldType )
                 {
-                    ReturnProp = new JProperty( "datefmt", "mm/dd/yyyy" );
+                    case JqFieldType.date:
+                        ReturnProp = new JProperty( "datefmt", "m/d/Y" );
+                        break;
+                    case JqFieldType.time:
+                        ReturnProp = new JProperty( "datefmt", "h:i A" );
+                        break;
+                    case JqFieldType.datetime:
+                        //this fieldtype is not yet implemented
+                        //ReturnProp = new JProperty( "datefmt", "m/d/Y h:i A" );
+                        break;
                 }
                 return ReturnProp;
             }
@@ -539,9 +557,17 @@ namespace ChemSW.Nbt.WebServices
             get
             {
                 JProperty ReturnProp = null;
-                switch( _JqFieldType  )
+                switch( _JqFieldType )
                 {
+                    // jqGrid handles all date/time formats as the same type == date; 
+                    // we must specify a datefmt to define the display template
                     case JqFieldType.date:
+                        ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
+                        break;
+                    case JqFieldType.time:
+                        ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
+                        break;
+                    case JqFieldType.datetime:
                         ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
                         break;
                     case JqFieldType.number:
@@ -549,9 +575,6 @@ namespace ChemSW.Nbt.WebServices
                         break;
                     case JqFieldType.link:
                         ReturnProp = new JProperty( "formatter", JqFieldType.link.ToString() );
-                        break;
-                    default:
-                        ReturnProp = new JProperty( "formatter", JqFieldType.text.ToString() );
                         break;
 
                 }
@@ -561,13 +584,54 @@ namespace ChemSW.Nbt.WebServices
 
         /// <summary>
         /// Format options can be defined for particular columns, overwriting the defaults from the language file.
+        /// http://www.trirand.com/jqgridwiki/doku.php?id=wiki:predefined_formatter
         /// </summary>
         public JProperty FormatOptions
         {
             get
             {
                 JProperty ReturnProp = null;
-                //if() --no requirements for customizing cell rendering yet
+                switch( _JqFieldType )
+                {
+                    // jqGrid handles all date/time formats as the same type == date; 
+                    // we must specify a datefmt to define the display template
+                    case JqFieldType.date:
+                        ReturnProp = new JProperty ( "formatoptions",
+                                            new JObject( 
+                                                new JProperty( "srcformat", "Y-m-d" ) ,
+                                                new JProperty( "newformat", "m/d/Y" ) )
+                                        );
+                        break;
+                    case JqFieldType.time:
+                        ReturnProp = new JProperty ( "formatoptions",
+                                            new JObject( 
+                                                new JProperty( "srcformat", "H:i:s" ),
+                                                new JProperty( "newformat", "H:i:s" ) )
+                                        );
+                        break;
+                    //case JqFieldType.datetime:
+                    //    //not implemented yet
+                    //    ReturnProp = new JProperty ( "formatoptions",
+                    //                        new JObject( new JProperty( "srcformat", "Y-m-d H:i:s" ),
+                    //                              new JProperty( "newformat", "m/d/Y H:i:s" ) )
+                    //                    );
+                    //    break;
+                    case JqFieldType.number:
+                        ReturnProp = new JProperty ( "formatoptions",
+                                            new JObject( 
+                                                new JProperty( "decimalSeparator", "." ),
+                                                new JProperty( "thousandsSeparator", "," ),
+                                                new JProperty( "decimalPlaces", "2" ),
+                                                new JProperty( "defaultValue", "" ) )
+                                        );
+                        break;
+                    case JqFieldType.link:
+                        ReturnProp = new JProperty ( "formatoptions",
+                                            new JObject( 
+                                                new JProperty( "target", "" ) )
+                                        );
+                        break;
+                }
                 return ReturnProp;
             }
         }
@@ -735,7 +799,14 @@ namespace ChemSW.Nbt.WebServices
 
                 switch( _JqFieldType )
                 {
+                    // jqGrid treats all date/time fields the same.
                     case JqFieldType.date:
+                        ReturnProp = new JProperty( "sorttype", JqFieldType.date.ToString() );
+                        break;
+                    case JqFieldType.datetime:
+                        ReturnProp = new JProperty( "sorttype", JqFieldType.date.ToString() );
+                        break;
+                    case JqFieldType.time:
                         ReturnProp = new JProperty( "sorttype", JqFieldType.date.ToString() );
                         break;
                     case JqFieldType.number:
