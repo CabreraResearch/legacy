@@ -42,9 +42,12 @@
                 var $edittext_label = $( '<span>Text</span>' )
                                 .appendTo($edittable.CswTable('cell', 1, 1));
                 
-                var $edittext = $('<input type="text" id="'+ o.ID +'_text" value="'+ Text +'" />' )
-                                .appendTo($edittable.CswTable('cell', 1, 2))
-								.change(o.onchange);
+                var $edittextcell = $edittable.CswTable('cell', 1, 2);
+                var $edittext = $edittextcell.CswInput('init',{ID: o.ID + '_text',
+                                                                type: CswInput_Types.text,
+                                                                value: Text,
+                                                                onChange: o.onchange
+                                                                }); 
                 
                 var $edithref_label = $( '<span>URL</span>' )
                                 .appendTo($edittable.CswTable('cell', 2, 1));

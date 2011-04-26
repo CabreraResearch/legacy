@@ -18,12 +18,17 @@
                 var $cell11 = $table.CswTable('cell', 1, 1);
                 var $cell21 = $table.CswTable('cell', 2, 1);
 
-                var $TextBox1 = $('<input type="password" class="textinput" id="'+ o.ID +'_pwd1" name="' + o.ID + '" />"' )
-                                    .appendTo($cell11)
-                                    .change(o.onchange);
-                var $TextBox2 = $('<input type="password" class="textinput password2" id="'+ o.ID +'_pwd2" name="' + o.ID + '" />"' )
-                                    .appendTo($cell21)
-                                    .change(o.onchange);
+                var $TextBox1 = $cell11.CswInput('init',{ID: o.ID + '_pwd1',
+                                                         type: CswInput_Types.password,
+                                                         cssclass: 'textinput',
+                                                         onChange: o.onchange
+                                                 }); 
+                var $TextBox2 = $cell21.CswInput('init',{ID: o.ID + '_pwd2',
+                                                         type: CswInput_Types.password,
+                                                         cssclass: 'textinput password2',
+                                                         onChange: o.onchange
+                                                 }); 
+                
 //                    if(o.Required)
 //                    {
 //                        $TextBox.addClass("required");

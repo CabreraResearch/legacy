@@ -27,9 +27,12 @@
 			}
 			else
 			{
-				var $TextBox = $('<input type="text" class="textinput number" id="' + o.ID + '" name="' + o.ID + '" value="' + o.Value + '" />"')
-                                    .appendTo($Div)
-                                    .change(o.onchange);
+				var $TextBox = $Div.CswInput('init',{ID: o.ID,
+                                                        type: CswInput_Types.text,
+                                                        value: o.Value,
+                                                        cssclass: 'textinput number',
+                                                        onChange: o.onchange
+                                                     }); 
 
 				if (o.MinValue != undefined)
 				{
@@ -79,7 +82,7 @@
 		{
 			var $Div = $(this);
 			var $TextBox = $Div.find('input');
-			$TextBox.val(newvalue);
+			$TextBox.CswInput('set',{value: newvalue});
 		}
 	};
 

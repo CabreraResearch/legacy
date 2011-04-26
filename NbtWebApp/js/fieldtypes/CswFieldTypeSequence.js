@@ -16,9 +16,12 @@
             }
             else 
             {
-                var $TextBox = $('<input type="text" class="textinput" id="'+ o.ID +'" name="' + o.ID + '" value="'+ Value +'" />"' )
-                                    .appendTo($Div)
-                                    .change(o.onchange);
+                var $TextBox = $Div.CswInput('init',{ID: o.ID,
+                                                      type: CswInput_Types.text,
+                                                      cssclass: 'textinput',
+                                                      onChange: o.onchange,
+                                                      value: Value
+                                                 }); 
 
                 if(o.Required)
                 {

@@ -288,8 +288,12 @@
 					}
 					if(o.ShowCheckboxes && $propxml.attr('copyable') == "true")
 					{
-						var $propcheck = $('<input type="checkbox" id="check_'+ propid +'" class="'+ o.ID +'_check" propid="'+ propid +'"></input>')
-							.appendTo($labelcell);
+						var $propcheck = $labelcell.CswInput('init',{ID: 'check_'+ propid,
+                                                                        type: CswInput_Types.checkbox,
+                                                                        value: Value,
+                                                                        cssclass: o.ID +'_check'                                                                   
+                                                                    }); 
+						$propcheck.attr('propid',propid);	
 					}
 				}
 

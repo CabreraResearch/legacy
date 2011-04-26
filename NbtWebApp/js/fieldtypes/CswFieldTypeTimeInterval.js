@@ -17,18 +17,28 @@
 					// Rate Type Selector
 					var $table = $Div.CswTable('init', { 'ID': o.ID + '_tbl', cellspacing: 5 });
 
-					var $weeklyradio = $('<input type="radio" id="' + o.ID + '_type_weekly" name="' + o.ID + '_type" value="weekly" />')
-										.appendTo($table.CswTable('cell', 1, 1));
+                    var $weeklyradiocell = $table.CswTable('cell', 1, 1);
+					var $weeklyradio = $weeklyradiocell.CswInput('init',{ID: o.ID + '_type_weekly',
+                                                                         type: CswInput_Types.radio,
+                                                                         value: 'weekly'
+                                                                });
+
 					$table.CswTable('cell', 1, 2).append('<span>&nbsp;Weekly</span>');
 					$weeklyradio.click(function() { $WeeklyDiv.show(); $MonthlyDiv.hide(); $YearlyDiv.hide(); o.onchange(); });
 
-					var $monthlyradio = $('<input type="radio" id="' + o.ID + '_type_monthly" name="' + o.ID + '_type" value="monthly" />')
-										.appendTo($table.CswTable('cell', 2, 1));
+                    var $monthlyradiocell = $table.CswTable('cell', 2, 1);
+					var $monthlyradio = $monthlyradiocell.CswInput('init',{ID: o.ID + '_type_monthly',
+                                                                           type: CswInput_Types.radio,
+                                                                           value: 'monthly'
+                                                                    });
 					$table.CswTable('cell', 2, 2).append('<span>&nbsp;Monthly</span>');
 					$monthlyradio.click(function() { $WeeklyDiv.hide(); $MonthlyDiv.show(); $YearlyDiv.hide(); o.onchange(); });
 
-					var $yearlyradio = $('<input type="radio" id="' + o.ID + '_type_yearly" name="' + o.ID + '_type" value="yearly" />')
-										.appendTo($table.CswTable('cell', 3, 1));
+                    var $yearlyradiocell = $table.CswTable('cell', 3, 1);
+					var $yearlyradio = $yearlyradiocell.CswInput('init',{ID: o.ID + '_type_yearly',
+                                                                         type: CswInput_Types.radio,
+                                                                         value: 'yearly'
+                                                                });  
 					$table.CswTable('cell', 3, 2).append('<span>&nbsp;Yearly</span>');
 					$yearlyradio.click(function() { $WeeklyDiv.hide(); $MonthlyDiv.hide(); $YearlyDiv.show(); o.onchange(); });
 
@@ -52,11 +62,12 @@
 
 					$WeeklyTable.CswTable('cell', 2, 1).append('Starting On:');
 					var $WeeklyStartDateCell = $WeeklyTable.CswTable('cell', 2, 2);
-					var $WeeklyStartDate = $('<input type="text" class="textinput date" id="'+ o.ID +'_weekly_sd" name="' + o.ID + '_weekly_sd" value="" />"' )
-										.appendTo($WeeklyStartDateCell)
-										.change(o.onchange)
-										.datepicker();
-
+					var $WeeklyStartDate = $WeeklyStartDateCell.CswInput('init',{ID: o.ID + '_weekly_sd',
+                                                                                 type: CswInput_Types.text,
+                                                                                 cssclass: 'textinput date',
+                                                                                 onChange: o.onchange
+                                                                        });  
+                    $WeeklyStartDate.datepicker();
 
 					// Monthly
 					var $MonthlyDiv = $('<div />')
@@ -74,9 +85,11 @@
 					}
 					$MonthlyDiv.append(' Month(s)<br/>');
 
-					var $MonthlyByDateRadio = $('<input type="radio" id="'+ o.ID +'_monthly_by_date" name="'+ o.ID +'_monthly_by" value="MonthlyByDate" />')
-									.appendTo($MonthlyDiv)
-									.click(o.onchange);
+					var $MonthlyByDateRadio = $MonthlyDiv.CswInput('init',{ID: o.ID +'_monthly_by_date',
+                                                                            type: CswInput_Types.radio,
+                                                                            onChange: o.onchange,
+                                                                            value: 'MonthlyByDate'
+                                                 }); 
 					$MonthlyDiv.append('On Day of Month:&nbsp;');
 					var $MonthlyDateSelect = $('<select id="'+ o.ID +'_monthly_date" />')
 									.appendTo($MonthlyDiv)
@@ -87,9 +100,12 @@
 					}
 					$MonthlyDiv.append('<br/>');
 
-					var $MonthlyByDayRadio = $('<input type="radio" id="'+ o.ID +'_monthly_by_day" name="'+ o.ID +'_monthly_by" value="MonthlyByWeekAndDay" />')
-									.appendTo($MonthlyDiv)
-									.change(o.onchange);
+					var $MonthlyByDayRadio = $MonthlyDiv.CswInput('init',{ID: o.ID +'_monthly_by_day',
+                                                                            type: CswInput_Types.radio,
+                                                                            onChange: o.onchange,
+                                                                            value: 'MonthlyByWeekAndDay'
+                                                                 });  
+                    
 					$MonthlyDiv.append('Every&nbsp;');
 					var $MonthlyWeekSelect = $('<select id="'+ o.ID +'_monthly_week" />')
 									.appendTo($MonthlyDiv);
@@ -128,11 +144,12 @@
 	//									.hide();
 				
 					$YearlyDiv.append('Every Year, Starting On:<br/>');
-					var $YearlyStartDate = $('<input type="text" class="textinput date" id="'+ o.ID +'_yearly_sd" name="' + o.ID + '_yearly_sd" value="" />"' )
-										.appendTo($YearlyDiv)
-										.change(o.onchange)
-										.datepicker();
-
+					var $YearlyStartDate = $YearlyDiv.CswInput('init',{ID: o.ID + '_yearly_sd',
+                                                                       type: CswInput_Types.text,
+                                                                       cssclass: 'textinput date',
+                                                                       onChange: o.onchange
+                                                                }); 
+                    $YearlyStartDate.datepicker();
 
 					// Set selected values
 
@@ -264,9 +281,12 @@
 
 		for(var i = 1; i <= 7; i++)
 		{
-			$('<input type="checkbox" id="' + id + '_' + i + '" name="' + id + '" value="' + i + '" />')
-				.appendTo($table.CswTable('cell', 2, i))
-				.click(onchange);
+            var $pickercell = $table.CswTable('cell', 2, i);
+            var $pickercheck = $pickercell.CswInput('init',{ID: id + '_' + i,
+                                                      type: CswInput_Types.checkbox,
+                                                      onChange: onchange,
+                                                      value: i
+                                                 }); 
 		}
 	} // makeWeekDayPicker()
 

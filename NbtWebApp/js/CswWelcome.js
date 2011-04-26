@@ -106,8 +106,10 @@
 									$imagecell.find('a').click(function() { o.onAddClick($item.attr('nodetypeid')); return false; });
 									break;
 							}
-
-							$textcell.append('<input type="hidden" welcomeid="' + $item.attr('welcomeid') + '" />');
+                            var $welcomehidden = $textcell.CswInput('init',{ID: $item.attr('welcomeid'),
+                                                                            type: CswInput_Types.hidden
+                                                                     });
+                            $welcomehidden.attr('welcomeid',$item.attr('welcomeid'));                                            
 						}); // each
 				
 					} // success{}
@@ -154,9 +156,10 @@
 
 				var $welcometext_label = $('<span>Text:</span>')
 										.appendTo($table.CswTable('cell', 4, 1))
-				var $welcometext = $('<input type="text" id="welcome_text" value="" />')
-										.appendTo($table.CswTable('cell', 4, 2));
-
+                var $welcometextcell = $table.CswTable('cell', 4, 2);
+				var $welcometext = $welcometextcell.CswInput('init',{ID: 'welcome_text',
+                                                                  type: CswInput_Types.text
+                                                                });
 				var $buttonsel_label = $('<span>Use Button:</span>')
 										.appendTo($table.CswTable('cell', 5, 1))
 				var $buttonsel = $('<select id="welcome_button" />')

@@ -18,10 +18,13 @@
             }
             else 
             {
-                var $TextBox = $('<input type="text" class="textinput date" id="'+ o.ID +'" name="' + o.ID + '" value="'+ Value +'" />"' )
-                                    .appendTo($Div)
-                                    .change(o.onchange)
-                                    .datepicker();
+                var $TextBox = $Div.CswInput('init',{ID: o.ID,
+                                                     type: CswInput_Types.text,
+                                                     value: Value,
+                                                     onChange: o.onchange,
+                                                     cssclass: 'textinput date'
+                                              }); 
+                $TextBox.datepicker();
                 if(o.Required)
                 {
                     $TextBox.addClass("required");

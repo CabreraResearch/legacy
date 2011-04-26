@@ -36,8 +36,11 @@
 							var $table = $div.CswTable('init', { 'ID': o.ID + '_tbl', 'FirstCellRightAlign': true });
 
 							$table.CswTable('cell', 1, 1).append('Name:');
-							var $nametextbox = $('<input type="text" id="' + o.ID + '_nametb" value="" />')
-													.appendTo($table.CswTable('cell', 1, 2));
+							var $nametextcell = $table.CswTable('cell', 1, 2); 
+                            var $nametextbox =  $nametextcell.CswInput('init',{ID: o.ID + '_nametb',
+                                                                               type: CswInput_Types.text,
+                                                                               cssclass: 'textinput'
+                                                                       });
 
 							$table.CswTable('cell', 2, 1).append('Display Mode:');
 							var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />')

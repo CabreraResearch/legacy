@@ -70,11 +70,13 @@
 
 		IsAdministrator({
 			'Yes': function() {
-				$('<input type="checkbox" id="'+ o.ID + '_all">Show Other Roles/Users</input>')
-					.appendTo($allcheck_div)
-					.click(function() { 
-						_getViewsGrid(onViewGridSuccess); 
-					});
+				var $showOther = $allcheck_div.CswInput('init',{ID: o.ID + '_all',
+                                                                type: CswInput_Types.checkbox,
+                                                                onChange: function() { 
+						                                                        _getViewsGrid(onViewGridSuccess); 
+					                                                        }
+                                                                });
+                $allcheck_div.append('Show Other Roles/Users');
 			}
 		});
 
@@ -151,18 +153,24 @@
 		});
 
 		$table2.CswTable('cell', 1, 1).append('View Name:');
-		var $viewnametextbox = $('<input type="textbox" id="' + o.ID + '_viewname" />')
-								.appendTo($table2.CswTable('cell', 1, 2));
+		var $viewnametextcell = $table2.CswTable('cell', 1, 2);
+        var $viewnametextbox = $viewnametextcell.CswInput('init',{ID: o.ID + '_viewname',
+                                                                  type: CswInput_Types.text
+                                                                 });
 
 		$table2.CswTable('cell', 2, 1).append('Category:');
-		var $categorytextbox = $('<input type="textbox" id="' + o.ID + '_category" />')
-								.appendTo($table2.CswTable('cell', 2, 2));
+		var $categorytextcell = $table2.CswTable('cell', 2, 2);
+        var $categorytextbox = $categorytextcell.CswInput('init',{ID: o.ID + '_category',
+                                                                  type: CswInput_Types.text
+                                                                });
 
 		var v = _makeVisibilitySelect($table2, 3, 'View Visibility:');
 
 		$table2.CswTable('cell', 4, 1).append('For Mobile:');
-		var $formobilecheckbox = $('<input type="checkbox" id="' + o.ID + '_formobile" />')
-								.appendTo($table2.CswTable('cell', 4, 2));
+		var $formobilecheckcell = $table2.CswTable('cell', 4, 2);
+        var $formobilecheckbox = $formobilecheckcell.CswInput('init',{ID: o.ID + '_formobile',
+                                                                      type: CswInput_Types.checkbox
+                                                                });
 
 		$table2.CswTable('cell', 5, 1).append('Display Mode:');
 		var $displaymodespan = $table2.CswTable('cell', 5, 2).append('<span id="'+ o.ID +'_displaymode"></span>');
@@ -567,8 +575,11 @@
 
 					var $table = $cell.CswTable({ 'ID': o.ID + '_editrel', 'FirstCellRightAlign': true });
 					$table.CswTable('cell', 1, 1).append('Allow Deleting');
-					var $allowdeletingcheck = $('<input type="checkbox" id="' + o.ID + '_adcb" />')
-												.appendTo($table.CswTable('cell', 1, 2));
+					var $allowdeletingcell = $table.CswTable('cell', 1, 2);
+                    var $allowdeletingcheck = $allowdeletingcell.CswInput('init',{ID: o.ID + '_adcb',
+                                                                  type: CswInput_Types.checkbox
+                                                                });
+
 					if($viewnodexml.attr('allowdelete').toLowerCase() == 'true') {
 						$allowdeletingcheck.attr('checked', 'true');
 					}
@@ -602,8 +613,10 @@
 					if(viewmode == "Tree")
 					{
 						$table.CswTable('cell', 3, 1).append('Show In Tree');
-						$showtreecheck = $('<input type="checkbox" id="' + o.ID + '_stcb" />')
-												.appendTo($table.CswTable('cell', 3, 2));
+						var $showtreecheckcell = $table.CswTable('cell', 3, 2);
+                        $showtreecheck = $showtreecheckcell.CswInput('init',{ID: o.ID + '_stcb',
+                                                                  type: CswInput_Types.checkbox
+                                                                }); 
 						if($viewnodexml.attr('showintree').toLowerCase() == 'true') {
 							$showtreecheck.attr('checked', 'true');
 						}
@@ -644,20 +657,26 @@
 						var $table = $cell.CswTable({ 'ID': o.ID + '_editprop', 'FirstCellRightAlign': true });
 
 						$table.CswTable('cell', 1, 1).append('Sort By');
-						var $sortbycheck = $('<input type="checkbox" id="' + o.ID + '_sortcb" />')
-												.appendTo($table.CswTable('cell', 1, 2));
+						var $sortbycheckcell = $table.CswTable('cell', 1, 2);
+                        var $sortbycheck = $sortbycheckcell.CswInput('init',{ID: o.ID + '_sortcb',
+                                                                  type: CswInput_Types.checkbox
+                                                                }); 
 						if($viewnodexml.attr('sortby').toLowerCase() == 'true') {
 							$sortbycheck.attr('checked', 'true');
 						}
 
 						$table.CswTable('cell', 2, 1).append('Grid Column Order');
-						var $colordertextbox = $('<input type="text" id="' + o.ID + '_gcotb" />')
-												.appendTo($table.CswTable('cell', 2, 2));
+						var $colordertextcell = $table.CswTable('cell', 2, 2);
+                        var $colordertextbox = $colordertextcell.CswInput('init',{ID: o.ID + '_gcotb',
+                                                                  type: CswInput_Types.text
+                                                                }); 
 						$colordertextbox.val($viewnodexml.attr('order'));
 
 						$table.CswTable('cell', 3, 1).append('Grid Column Width (in characters)');
-						var $colwidthtextbox = $('<input type="text" id="' + o.ID + '_gcwtb" />')
-												.appendTo($table.CswTable('cell', 3, 2));
+						var $colwidthtextcell = $table.CswTable('cell', 3, 2);
+                        var $colwidthtextbox = $colwidthtextcell.CswInput('init',{ID: o.ID + '_gcwtb',
+                                                                  type: CswInput_Types.text
+                                                                });
 						$colwidthtextbox.val($viewnodexml.attr('width'));
 
 						$table.CswTable('cell', 4, 2).CswButton({ 
