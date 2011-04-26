@@ -358,7 +358,7 @@
                 url: opts.ViewUrl,
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
-                data: "{ SessionId: '" + SessionId + "', ParentId: '" + DivId + "'}",
+                data: "{ SessionId: '" + SessionId + "', ParentId: '" + DivId + "', ForMobile: '" + true + "'}",
                 success: function (data, textStatus, XMLHttpRequest)
                 {
                     var $xml = $(data.d);
