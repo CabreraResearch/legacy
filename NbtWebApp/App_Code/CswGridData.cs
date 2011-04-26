@@ -173,20 +173,24 @@ namespace ChemSW.Nbt.WebServices
         {
 
             JArray RowsArray = new JArray(
-                                from Element in GridNodes
+                                from Element in GridNodes //not recursive
                                 select new JObject(
                                     new JProperty( "nodeid", Element.Attribute( "nodeid" ).Value ),
                                     new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( Element.Attribute( "key" ).Value ) ),
                                     new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
-                                    from DirtyElement in Element.Elements()
-                                    where DirtyElement.Name == ( "NbtNodeProp" )
-                                    select _massageGridCell( DirtyElement )
+                                        from DirtyElement in Element.DescendantNodes().OfType<XElement>() // recursive
+                                        where DirtyElement.Name == ( "NbtNodeProp" )
+                                        select _massageGridCell( DirtyElement )
                                     )
                                 );
 
             return RowsArray;
         } // getGridRowsJSON()
 
+        /// <summary>
+        /// Translates property value into human readable text.
+        /// Currently only handles Logical fieldtype.
+        /// </summary>
         private static JProperty _massageGridCell( XElement DirtyElement )
         {
             string CleanPropName = DirtyElement.Attribute( "name" ).Value.ToLower().Replace( " ", "_" );
