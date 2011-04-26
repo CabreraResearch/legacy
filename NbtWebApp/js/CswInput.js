@@ -81,7 +81,7 @@ var CswInput_Types = {
             $parent.append($input);
             return $input;
         },
-        'get': function(options)
+        'findandget': function(options)
         {
             var o = {
                 ID: ''
@@ -89,14 +89,56 @@ var CswInput_Types = {
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-            var $element;
+            var $input;
 
             if( o.ID !== '' && o.ID !== undefined)
             {
-                $element = $parent.find('#' + o.ID);
+                $input = $parent.find('#' + o.ID);
             }
-            return $element;
+            return $input;
+        },
+        'findandset': function(options)
+        {
+            var succeeded = false;
+            var o = {
+                ID: '',
+                value: ''
+            };
+            if (options) $.extend(o, options);
+
+            var $parent = $(this);
+            var $input;
+
+            if( o.ID !== '' && o.ID !== undefined &&
+                o.value !== undefined /*empty is OK*/ )
+            {
+                $input = $parent.find('#' + o.ID);
+                if( $input.size() > 0 )
+                {
+                    $input.val(o.value);
+                    succeeded = true;
+                }
+            }
+            return succeeded;
+        },
+        'set': function(options)
+        {
+            var succeeded = false;
+            var o = {
+                value: ''
+            };
+            if (options) $.extend(o, options);
+
+            var $input = $(this);
+
+            if( $input.size() > 0 && o.value !== undefined /*empty is OK*/ )
+            {
+                $input.val(o.value);
+                succeeded = true;
+            }
+            return succeeded;
         }
+
     };
     	// Method calling logic
 	$.fn.CswInput = function (method) {

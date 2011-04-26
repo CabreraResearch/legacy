@@ -262,7 +262,7 @@ var ViewBuilder_CssClasses = {
 
             var thisNodeProp = {}; //to return
             
-            var $filtInput = o.$parent.CswInput('get',{ID: filtValInputId});
+            var $filtInput = o.$parent.CswInput('findandget',{ID: filtValInputId});
             var filterValue;
             switch( o.fieldtype )
             { 
