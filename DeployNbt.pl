@@ -65,9 +65,9 @@ open( ASSEMBLYFILE, "< ". $repopaths{"Nbt"} ."/NbtWebApp/_Assembly.txt" )
 	or die( "Could not open _Assembly.txt" );
 my $assemblyname = <ASSEMBLYFILE>;
 close( ASSEMBLYFILE );
-
-my $assemblyno = "$assemblyname $datestr.$increment"; 
-
+$assemblyname =~ /^(\w+)\s?.*$/;
+my $releasename = $1;
+my $assemblyno = "$releasename $datestr.$increment"; 
 foreach my $component (@components)
 {
 	printf("Setting $component to $datestr.$increment\n");
@@ -94,6 +94,14 @@ foreach my $component (@components)
 					if(open( FOUT, "> $file" ) )
 					{
 						printf( FOUT "$component $datestr.$increment" );
+						close( FOUT );
+					} else {
+						printf("ERROR: Could not open $file \n");
+					}
+					$file = $repopaths{$component} ."/NbtWebApp/_Assembly.txt";
+					if(open( FOUT, "> $file" ) )
+					{
+						printf( FOUT "$assemblyno" );
 						close( FOUT );
 					} else {
 						printf("ERROR: Could not open $file \n");
