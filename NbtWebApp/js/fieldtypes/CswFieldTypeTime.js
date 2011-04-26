@@ -16,12 +16,16 @@
             }
             else 
             {
-                var $TextBox = $('<input type="text" class="textinput validateTime" id="'+ o.ID +'" name="' + o.ID + '" value="'+ Value +'" />"' )
-                                    .appendTo($Div)
-                                    .change(o.onchange);
-                var $nowbutton = $('<input type="button" id="'+ o.ID +'_now" value="Now" />"' )
-                                    .appendTo($Div)
-                                    .click(function() { $TextBox.val(getTimeString(new Date())); });
+                var $TextBox = $Div.CswInput('init',{ID: o.ID,
+                                                      type: CswInput_Types.text,
+                                                      cssclass: 'textinput validateTime',
+                                                      onChange: o.onchange,
+                                                      value: Value
+                                                 }); 
+                var $nowbutton = $Div.CswButton('init',{ID: o.ID +'_now',
+                                                        onclick: function() { $TextBox.val(getTimeString(new Date())); },
+                                                        value: 'Now'
+                                                 }); 
                 
 				jQuery.validator.addMethod( "validateTime", function(value, element) { 
                             return (this.optional(element) || validateTime($(element).val()));
