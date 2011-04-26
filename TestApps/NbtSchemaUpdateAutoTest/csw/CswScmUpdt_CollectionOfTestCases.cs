@@ -11,7 +11,7 @@ using ChemSW.Exceptions;
 //using ChemSW.TblDn;
 using ChemSW.Nbt.Schema;
 
-namespace ChemSW.Nbt.SchemaUpdaterAutoTest
+namespace ChemSW.Nbt.Schema
 {
 
     public class CswScmUpdt_CollectionOfTestCases
@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.SchemaUpdaterAutoTest
         CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn = null;
         public CswScmUpdt_CollectionOfTestCases()
         {
-            _ItemList.Add( new CswScmUpdt_TstCse_Column_AddMultiple() );
+//            _ItemList.Add( new CswScmUpdt_TstCse_Column_AddMultiple() );
             _ItemList.Add( new CswScmUpdt_TstCse_Column_RollbackAdd() );
             _ItemList.Add( new CswScmUpdt_TstCse_Column_RollbackDrop() );
             _ItemList.Add( new CswScmUpdt_TstCse_Constraint_AddMultiple() );

@@ -1,4 +1,4 @@
-﻿namespace ChemSW.Nbt.SchemaUpdaterAutoTest
+﻿namespace ChemSW.Nbt.Schema
 {
     partial class MainForm
     {

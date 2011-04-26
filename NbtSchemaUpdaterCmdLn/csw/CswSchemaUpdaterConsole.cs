@@ -57,7 +57,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 ReturnVal += _Separator_NuLine + _Separator_NuLine + "Usage: " +
                                             _Separator_NuLine + "NbtSchemaUpdate " + _Separator_Arg + _ArgKey_Help + _Separator_OrArgs + _Separator_Arg + _ArgKey_All + _Separator_OrArgs + _Separator_Arg + _ArgKey_AccessId + " <AccessId>" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_All + ": update all schemata specified CswDbConfig.xml" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_AccessId + " <AccessId>: The AccessId, as per CswDbConfig.xml, of the schema to be updated";
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey_AccessId + " <AccessId>: The AccessId, as per CswDbConfig.xml, of the schema to be updated" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey_Mode + " prod | test: perform schema update, or auto-test the schema update infrastructure";
                 return ( ReturnVal );
             }
         }
@@ -76,8 +77,6 @@ namespace ChemSW.Nbt.Schema.CmdLn
             _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, new CswSetupVblsNbt( SetupMode.Executable ), _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ), false, false );
             _CswConsoleOutput = new CswConsoleOutput( _CswNbtResources.CswLogger );
 
-            _CswSchemaUpdater = new CswSchemaUpdater( _CswNbtResources );
-            _CswSchemaUpdateThread = new CswSchemaUpdateThread( _CswSchemaUpdater );
 
         }//ctor
 
@@ -88,6 +87,10 @@ namespace ChemSW.Nbt.Schema.CmdLn
         private const string _ArgKey_Help = "help";
         private const string _ArgKey_AccessId = "accessid";
         private const string _ArgKey_All = "all";
+        private const string _ArgKey_Mode = "mode";
+        private const string _Arg_Val_Test = "test";
+
+
         private Dictionary<string, string> _UserArgs = new Dictionary<string, string>();
         private void _convertArgsToDictionary( string[] args )
         {
@@ -99,7 +102,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 if( Convert.ToChar( _Separator_Arg ) == CurrentArg[0] )
                 {
                     string CurrentArgContent = CurrentArg.Substring( 1 ).Trim().ToLower();
-                    if( _ArgKey_AccessId == CurrentArgContent )
+                    if( _ArgKey_AccessId == CurrentArgContent || _ArgKey_Mode == CurrentArgContent )
                     {
                         _UserArgs.Add( CurrentArgContent, args[idx + 1].Trim() );
                         idx += 2;
@@ -119,6 +122,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         }//_convertArgsToDictionary() 
 
+
+        ICswSchemaScripts _CswSchemaScripts = null; 
         public void process( string[] args )
         {
 
@@ -126,6 +131,20 @@ namespace ChemSW.Nbt.Schema.CmdLn
             {
 
                 _convertArgsToDictionary( args );
+
+                 if ( _UserArgs.ContainsKey( _ArgKey_Mode ) && _Arg_Val_Test == _UserArgs[_ArgKey_Mode] ) 
+                 {
+                     _CswSchemaScripts = new CswSchemaScriptsTest( _CswNbtResources );
+                 } else 
+                 {
+                     _CswSchemaScripts = new CswSchemaScriptsProd( _CswNbtResources ); 
+                 } 
+
+
+
+                _CswSchemaUpdater = new CswSchemaUpdater( _CswNbtResources, _CswSchemaScripts );
+                _CswSchemaUpdateThread = new CswSchemaUpdateThread( _CswSchemaUpdater );
+
 
                 if( false == _UserArgs.ContainsKey( _ArgKey_Help ) )
                 {
@@ -178,7 +197,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
             _CswNbtResources.AccessId = AccessId;
 
 
-            CswSchemaVersion CurrentVersion = new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ).ToString() );
+            CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion;
             if( _CswSchemaUpdater.LatestVersion != CurrentVersion )
             {
 
@@ -208,7 +227,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         _CswConsoleOutput.write( _Separator_NuLine + MessageStem + " failed: " + _CswSchemaUpdateThread.Message + _Separator_NuLine + _Separator_NuLine );
                     }
 
-                    CurrentVersion = new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ).ToString() );
+                    CurrentVersion = _CswSchemaUpdater.CurrentVersion;
 
                 }//iterate updates
 

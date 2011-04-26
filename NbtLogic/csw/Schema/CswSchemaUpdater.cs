@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Schema
         private DataTable _UpdateHistoryTable;
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = null;
-        private CswScriptCollections _CswScriptCollections = null;
+        private CswSchemaScriptsProd _CswScriptCollections = null;
 
 
         public enum HamletNodeTypes
@@ -41,19 +41,20 @@ namespace ChemSW.Nbt.Schema
             return ( NodeType.ToString().Replace( '_', ' ' ) );
         }
 
+        ICswSchemaScripts _CswSchemaScripts = null; 
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswSchemaUpdater( CswNbtResources CswNbtResources )
+        public CswSchemaUpdater( CswNbtResources CswNbtResources, ICswSchemaScripts CswSchemaScripts )
         {
+            _CswSchemaScripts = CswSchemaScripts; 
             _CswNbtResources = CswNbtResources;
             _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
 
             // This is where you manually set to the last version of the previous release
             MinimumVersion = new CswSchemaVersion( 1, 'G', 32 );
 
-            _CswScriptCollections = new CswScriptCollections( _CswNbtResources );
-            _UpdateDrivers = _CswScriptCollections.Prod;
+            _UpdateDrivers = CswSchemaScripts.Scripts;
 
             // This automatically detects the latest version
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys )
@@ -77,9 +78,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public CswSchemaVersion MinimumVersion = null;
 
-        private CswSchemaVersion CurrentVersion
+        public CswSchemaVersion CurrentVersion
         {
-            get { return new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ) ); }
+            get { return ( _CswSchemaScripts.CurrentVersion ); }
         }
 
         /// <summary>
@@ -117,11 +118,6 @@ namespace ChemSW.Nbt.Schema
                   LatestVersion.ReleaseIdentifier == CurrentVersion.ReleaseIdentifier &&
                   LatestVersion.ReleaseIteration > CurrentVersion.ReleaseIteration ) )
             {
-                //CswSchemaVersion TargetVersion = null;
-                //if( CurrentVersion == MinimumVersion )
-                //    TargetVersion = new CswSchemaVersion( LatestVersion.CycleIteration, LatestVersion.ReleaseIdentifier, 1 );
-                //else
-                //    TargetVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
 
                 CswSchemaUpdateDriver CurrentUpdateDriver = _UpdateDrivers[TargetVersion] as CswSchemaUpdateDriver;
                 CurrentUpdateDriver.update();
