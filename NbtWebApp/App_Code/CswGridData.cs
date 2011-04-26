@@ -45,6 +45,10 @@ namespace ChemSW.Nbt.WebServices
             /// </summary>
             autoencode,
             /// <summary>
+            /// Automatically adjust grid width to fit contents
+            /// </summary>
+            autowidth,
+            /// <summary>
             /// Display name of the grid
             /// </summary>
             caption,
@@ -171,7 +175,6 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JArray getGridRowsJSON(IEnumerable<XElement> GridNodes)
         {
-
             JArray RowsArray = new JArray(
                                 from Element in GridNodes //not recursive
                                 select new JObject(
@@ -183,7 +186,7 @@ namespace ChemSW.Nbt.WebServices
                                         select _massageGridCell( DirtyElement )
                                     )
                                 );
-
+            
             return RowsArray;
         } // getGridRowsJSON()
 
@@ -209,7 +212,6 @@ namespace ChemSW.Nbt.WebServices
             }
             JProperty CleanProp = new JProperty( CleanPropName, CleanValue );
             return CleanProp;
-
         }
 
         /// <summary>
@@ -250,7 +252,7 @@ namespace ChemSW.Nbt.WebServices
                     new JProperty( JqGridJsonOptions.rowNum.ToString(), PageSize ),
                     new JProperty( JqGridJsonOptions.viewrecords.ToString(), true ),
                     new JProperty( JqGridJsonOptions.emptyrecords.ToString(), _NoResultsDisplayString ),
-                    ( GridWidth != Int32.MinValue ) ? new JProperty( JqGridJsonOptions.width.ToString(), GridWidth ) : null,
+                    ( GridWidth != Int32.MinValue ) ? new JProperty( JqGridJsonOptions.width.ToString(), GridWidth ) : new JProperty( JqGridJsonOptions.autowidth.ToString(), true ),
                     new JProperty( JqGridJsonOptions.sortname.ToString(), GridSortName ),
                     new JProperty( JqGridJsonOptions.autoencode.ToString(), GridAutoEncode ),
                     new JProperty( JqGridJsonOptions.height.ToString(), GridHeight ),
