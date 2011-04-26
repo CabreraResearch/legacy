@@ -320,6 +320,10 @@ namespace ChemSW.Nbt.WebServices
                 case CswNbtMetaDataFieldType.NbtFieldType.Date:
                     _JqFieldType = JqFieldType.date;
                     break;
+                //case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                //    //not implemented yet
+                //    _JqFieldType = JqFieldType.datetime;
+                //    break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Time:
                     _JqFieldType = JqFieldType.time;
                     break;
@@ -439,10 +443,10 @@ namespace ChemSW.Nbt.WebServices
                     case JqFieldType.time:
                         ReturnProp = new JProperty( "datefmt", "h:i A" );
                         break;
-                    case JqFieldType.datetime:
-                        //this fieldtype is not yet implemented
-                        //ReturnProp = new JProperty( "datefmt", "m/d/Y h:i A" );
-                        break;
+                    //case JqFieldType.datetime:
+                    //    //this fieldtype is not yet implemented
+                    //    ReturnProp = new JProperty( "datefmt", "m/d/Y h:i A" );
+                    //    break;
                 }
                 return ReturnProp;
             }
@@ -567,9 +571,10 @@ namespace ChemSW.Nbt.WebServices
                     case JqFieldType.time:
                         ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
                         break;
-                    case JqFieldType.datetime:
-                        ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
-                        break;
+                    //case JqFieldType.datetime:
+                    //    //not implemented
+                    //    ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
+                    //    break;
                     case JqFieldType.number:
                         ReturnProp = new JProperty( "formatter", JqFieldType.number.ToString() );
                         break;
