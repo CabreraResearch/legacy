@@ -65,8 +65,11 @@
                             viewrecords: true
 						};
                         $.extend(jqGridOptions,jqGridOpt);
-
-						var optSearch = {
+                        
+                        //include the top pager if the row count is very large
+                        if(jqGridOptions.rowNum >= 50) jqGridOptions.toppager = true;
+						
+                        var optSearch = {
 							caption: "Search...",
 							Find: "Find",
 							Reset: "Reset",
