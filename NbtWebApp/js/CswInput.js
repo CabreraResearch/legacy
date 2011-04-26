@@ -41,7 +41,8 @@ var CswInput_Types = {
                 'value': '',
                 'width': "200px",
                 'autofocus': false,
-                'autocomplete': 'on'
+                'autocomplete': 'on',
+                'onChange': function() {}
             };
             if (options) $.extend(o, options);
 
@@ -68,13 +69,14 @@ var CswInput_Types = {
                 if( o.type.value.required === true || ( o.value !== '' && o.value !== undefined ) )
                 {
                     if( o.value === undefined ) o.value = '';
-                    $input.attr('value',o.value);
+                    $input.val(o.value);
                 }
             }
             
             if( o.cssclass !== '' ) $input.attr('class',o.cssclass);
             if( o.width !== '' ) $input.attr({width: o.width});
             if( o.autofocus === true ) $input.attr('autofocus');
+            if( o.onChange !== undefined ) $input.change( function () { o.onChange() } );
                                 
             $parent.append($input);
             return $input;
