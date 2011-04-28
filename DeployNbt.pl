@@ -32,6 +32,8 @@ my $masterdumpdir = "NBTDUMPS";
 my %schemata;  
 # $schemata{name} = password
 $schemata{"nbt_master"} = "nbt";
+$schemata{"nbt_schema1"} = "nbt";
+$schemata{"nbt_schema2"} = "nbt";
 
 # this one will always be reset to the master
 my $masterschema = "nbt_master";
@@ -68,6 +70,7 @@ close( ASSEMBLYFILE );
 $assemblyname =~ /^(\w+)\s?.*$/;
 my $releasename = $1;
 my $assemblyno = "$releasename $datestr.$increment"; 
+
 foreach my $component (@components)
 {
 	printf("Setting $component to $datestr.$increment\n");
