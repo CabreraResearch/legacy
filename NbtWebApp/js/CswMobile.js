@@ -355,36 +355,26 @@
 
         function _ajaxViewXml(DivId, onsuccess)
         {
-            $.ajax({
+            var o = {
                 async: false,   // required so that the link will wait for the content before navigating
-                type: 'POST',
                 url: opts.ViewUrl,
-                dataType: "json",
-                contentType: 'application/json; charset=utf-8',
                 data: "{ SessionId: '" + SessionId + "', ParentId: '" + DivId + "', ForMobile: '" + true + "'}",
                 success: function (data, textStatus, XMLHttpRequest)
                 {
-                    var $xml = $(data.d);
-                    if ($xml.get(0).nodeName == "ERROR")
+                    
+                    $auth = $xml.find('AuthenticationStatus');
+                    if ($auth.length > 0)
                     {
-                        _handleAjaxError(XMLHttpRequest, $xml.text(), '');
+                        _handleAuthenticationStatus($auth.text());
                     } else
                     {
-                        $auth = $xml.find('AuthenticationStatus');
-                        if ($auth.length > 0)
-                        {
-                            _handleAuthenticationStatus($auth.text());
-                        } else
-                        {
-                            onsuccess(data.d);
-                        }
+                        onsuccess(data.d);
                     }
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown)
-                {
-                    _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
                 }
-            });
+            };
+            
+            CswAjaxJSON(o);
+            
         } // _ajaxViewXml()
 
         var currenttab;

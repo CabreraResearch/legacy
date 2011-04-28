@@ -7,7 +7,17 @@
 // ------------------------------------------------------------------------------------
 
 function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
-	var o = {
+    /// <summary>
+    ///   Executes Async webservice request for JSON
+    /// </summary>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.url: WebService URL
+    ///     &#10;2 - options.data: {field1: value, field2: value}
+    ///     &#10;3 - options.success: function() {}
+    ///     &#10;4 - options.error: function() {}
+    /// </param>
+    var o = {
 		url: '',
 		data: '',
 		success: function (result) { },
