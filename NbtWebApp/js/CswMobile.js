@@ -355,8 +355,6 @@
 
         function _ajaxViewXml(DivId, onsuccess)
         {
-            CswAjaxXml(
-            
             $.ajax({
                 async: false,   // required so that the link will wait for the content before navigating
                 type: 'POST',
