@@ -49,14 +49,25 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
 	});    // $.ajax({
 } // CswAjaxXml()
 
-function CswAjaxXml(options) { /// <param name="$" type="jQuery" />
-	var o = {
+function CswAjaxXml(options) { 
+    /// <summary>
+    ///   Executes Async webservice request for XML
+    /// </summary>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.url: WebService URL
+    ///     &#10;2 - options.data: field1=value + ampersand + field2=value
+    ///     &#10;3 - options.success: function() {}
+    ///     &#10;4 - options.error: function() {}
+    /// </param>
+
+    var o = {
 		url: '',
 		data: '',
 		success: function ($xml) { },
 		error: function () { }
 	};
-
+    
 	if (options) {
 		$.extend(o, options);
 	}
