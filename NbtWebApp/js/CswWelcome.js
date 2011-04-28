@@ -69,7 +69,7 @@
 							var $imagecell = $cellset[1][1];
 							var $textcell = $cellset[2][1];
 
-							if($item.attr('buttonicon') != undefined && $item.attr('buttonicon') != '')
+							if($item.attr('buttonicon') !== undefined && $item.attr('buttonicon') !== '')
 								$imagecell.append( $('<a href=""><img border="0" src="'+ $item.attr('buttonicon') +'"/></a>') );
 					
 							var optSelect = {
@@ -212,7 +212,7 @@
 										$xml.children().each(function() {
 											var $icon = $(this);
 											var filename = $icon.attr('filename');
-											if(filename != 'blank.gif') 
+											if(filename !== 'blank.gif') 
 											{
 												$buttonsel.append('<option value="'+ filename +'">'+ filename +'</option>');
 											}

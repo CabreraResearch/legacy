@@ -25,7 +25,7 @@
                         var $this = $(this);
 
                         var cellcontent = '';
-                        if($this.attr('href') != undefined)
+                        if($this.attr('href') !== undefined)
                         {
                             cellcontent = '<td class="DashboardCell">' +
                                           '  <a target="_blank" href="'+ $this.attr('href') + '">' +

@@ -11,7 +11,7 @@
                         if (options) $.extend(o, options);
 
                         var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
-                        if(ThisSessionId != undefined && ThisSessionId != '' && ThisSessionId != null)
+                        if(ThisSessionId !== undefined && ThisSessionId !== '' && ThisSessionId !== null)
                         {
 
                             o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
@@ -81,7 +81,7 @@
                                                                         data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
                                                                         success: function (data) {
                                                                             auth = data.AuthenticationStatus;
-                                                                            if(auth == 'Authenticated')
+                                                                            if(auth === 'Authenticated')
                                                                             {
 														                        _handleAuthenticated(UserName);
                                                                             }
@@ -93,7 +93,7 @@
                                                             }); // ajax
                                             } // onclick
                             }); // button
-                        } // if-else(ThisSessionId != null)
+                        } // if-else(ThisSessionId !== null)
                     },  // login
 
             'logout': function(options) { _Logout(options); }

@@ -45,9 +45,9 @@
 									.appendTo($edittable.CswTable('cell', 3, 2))
 									.change(o.onchange);
 				var $hoursopt = $('<option value="hours">hours</option>').appendTo($UnitsSelect);
-				if(Units == 'hours') $hoursopt.attr('selected', 'true');
+				if(Units === 'hours') $hoursopt.attr('selected', 'true');
 				var $daysopt = $('<option value="days">days</option>').appendTo($UnitsSelect);
-				if(Units == 'days') $daysopt.attr('selected', 'true');
+				if(Units === 'days') $daysopt.attr('selected', 'true');
 
 //				var $refreshbtn = $('<input type="button" id="'+ o.ID + '_refresh" value="Refresh">')
 //									.appendTo($edittable.CswTable('cell', 4, 2));

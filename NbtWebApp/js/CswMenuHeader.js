@@ -24,7 +24,7 @@
 
                 $xml.children().each(function() {
                     var $this = $(this);
-                    if($this.attr('text') != undefined)
+                    if($this.attr('text') !== undefined)
                     {
 						var $li = HandleMenuItem({ '$ul': $ul, '$itemxml': $this, 'onLogout': o.onLogout});
                         

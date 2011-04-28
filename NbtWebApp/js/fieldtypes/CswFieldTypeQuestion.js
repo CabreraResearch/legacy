@@ -20,11 +20,11 @@
                 if(o.ReadOnly)
                 {
                     $Div.append('Answer: ' + Answer);
-                    if(DateAnswered != '')
+                    if(DateAnswered !== '')
 						$Div.append(' ('+ DateAnswered +')');
 					$Div.append('<br/>');
                     $Div.append('Corrective Action: ' + CorrectiveAction);
-                    if(DateCorrected != '')
+                    if(DateCorrected !== '')
 						$Div.append(' ('+ DateCorrected +')');
 					$Div.append('<br/>');
                     $Div.append('Comments: ' + Comments + '<br/>');
@@ -49,7 +49,7 @@
 					{
 						var thisAnswer = splitAnswers[i];
 						var $thisOpt = $('<option value="'+ thisAnswer +'">'+ thisAnswer + '</option>').appendTo($AnswerSel);
-						if(thisAnswer == Answer)
+						if(thisAnswer === Answer)
 							$thisOpt.attr('selected', 'true');
 					}
 
@@ -89,12 +89,12 @@
 		var SelectedAnswer = $AnswerSel.val();
 		var CorrectiveAction = $CorrectiveActionTextBox.val();
 
-		if(SelectedAnswer != '' && CorrectiveAction == '')
+		if(SelectedAnswer !== '' && CorrectiveAction === '')
 		{
 			isCompliant = false;
 			for(var i = 0; i < splitCompliantAnswers.length; i++)
 			{
-				if(splitCompliantAnswers[i] == SelectedAnswer)
+				if(splitCompliantAnswers[i] === SelectedAnswer)
 				{
 					isCompliant = true;
 				}
@@ -103,7 +103,7 @@
 		if(isCompliant)
 		{
 			$AnswerSel.removeClass('CswFieldTypeQuestion_OOC')
-			if(CorrectiveAction == '')
+			if(CorrectiveAction === '')
 			{
 				$CorrectiveActionLabel.hide();
 				$CorrectiveActionTextBox.hide();
