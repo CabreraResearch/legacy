@@ -1518,7 +1518,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     CswNbtWebServiceMobileUpdateProperties wsUP = new CswNbtWebServiceMobileUpdateProperties( _CswNbtWebServiceResources, ForMobile );
-                    ReturnVal.Add( XElement.Parse(  wsUP.Run( ParentId, UpdatedViewXml )  ));
+                    ReturnVal.Add( wsUP.Run( ParentId, UpdatedViewXml ) );
 
                     end();
                 }
@@ -1547,9 +1547,9 @@ namespace ChemSW.Nbt.WebServices
                 string EuphemisticAuthenticationStatus = string.Empty;
                 if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
                 {
-                    ICswNbtUser CuurentUser = _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser;
+                    ICswNbtUser CurrentUser = _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser;
                     CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtWebServiceResources, ForMobile );
-                    ReturnVal.Add( wsView.Run( ParentId, CuurentUser ) );
+                    ReturnVal.Add( wsView.Run( ParentId, CurrentUser ) );
 
                     end();
                 }

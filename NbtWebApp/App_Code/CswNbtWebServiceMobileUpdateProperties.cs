@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Web;
 using System.Web.Services;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
@@ -28,7 +29,7 @@ namespace ChemSW.Nbt.WebServices
             _ForMobile = ForMobile;
         }
 
-        public string Run( string ParentId, string UpdatedViewXml )
+        public XElement Run( string ParentId, string UpdatedViewXml )
         {
             XmlDocument XmlDoc = new XmlDocument();
             XmlDoc.LoadXml( UpdatedViewXml );
@@ -58,7 +59,7 @@ namespace ChemSW.Nbt.WebServices
 
             // return the refreshed view
             CswNbtWebServiceMobileView ViewService = new CswNbtWebServiceMobileView( _CswNbtWebServiceResources, _ForMobile );
-            return ViewService.Run( ParentId );
+            return ViewService.Run( ParentId, _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser );
 
         } // Run()
 
