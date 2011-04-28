@@ -9,7 +9,7 @@
             $Div.contents().remove();
 
             var Value = o.$propxml.children('value').text().trim();
-            if(Value == '1/1/0001')
+            if(Value === '1/1/0001')
                 Value = '';
 
             if(o.ReadOnly)

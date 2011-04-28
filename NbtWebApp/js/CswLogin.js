@@ -17,7 +17,7 @@
 						if (options) $.extend(o, options);
 
 						var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
-						if(ThisSessionId != undefined && ThisSessionId != '' && ThisSessionId != null)
+                        if(ThisSessionId !== undefined && ThisSessionId !== '' && ThisSessionId !== null)
 						{
 
 							o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
@@ -25,11 +25,14 @@
 						}
 						else 
 						{
-							var $LoginDiv = $( '<form><div id="logindiv" align="center">' +
-												'  <table>' +
+							var $LoginDiv = $( '<div id="logindiv" align="center">' +
 												'  <form>' +  
 												'    <table>' +
 												'    <tr>' +
+                                                '      <td align="right"></td>' +
+                                                '      <td id="loginmsg" class="ErrorContent" style="display: none;"></td>' +
+                                                '    </tr>' +
+                                                '    <tr>' +
 												'      <td align="right">Customer ID:</td>' +
 												'      <td><input type="text" name="accessid" id="login_accessid" /></td>' +
 												'    </tr>' +
@@ -44,14 +47,18 @@
 												'    <tr>' +
 												'      <td align="right"></td>' +
 												'      <td id="login_button_cell"> '+ //<input type="submit" id="login_button" name="Login" value="Login" />' +
-												'          <span id="loginmsg" class="errorcontent" display="none"></span></td>' +
+												'          </td>' +
 												'    </tr>' +
 												'    <tr>' +
 												'      <td></td>' +
 												'      <td></td>' +
 												'    </tr>' + 
-												'  </table></form></div><br/><br/><br/><div id="assemblydiv" width="100%" align="right"></div>')
-												.appendTo($(this));
+                                                '  </table>' +
+												' </form>' +
+												' </div>' +
+												' <br/><br/><br/>' +
+												' <div id="assemblydiv" width="100%" align="right"></div>')
+                                            .appendTo($(this));
 
 							$('#assemblydiv').load('_Assembly.txt');
 							
@@ -61,7 +68,8 @@
 														enabledText: 'Login', 
 														disabledText: 'Logging in...', 
 														onclick: function() {
-															$('#loginmsg').text('');
+                                                            $('#loginmsg').text('')
+																		.hide();
 
 															var AccessId = $('#login_accessid').val();
 															var UserName = $('#login_username').val();
@@ -79,7 +87,7 @@
 																		data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
 																		success: function (data) {
 																			auth = data.AuthenticationStatus;
-																			if(auth == 'Authenticated')
+                                                                            if(auth === 'Authenticated')
 																			{
 																				_handleAuthenticated(UserName);
 																			}
@@ -91,7 +99,7 @@
 															}); // ajax
 											} // onclick
 							}); // button
-						} // if-else(ThisSessionId != null)
+                        } // if-else(ThisSessionId !== null)
 					},  // login
 
 			'logout': function(options) { _Logout(options); }
@@ -146,11 +154,12 @@
 					}); 
 					break;
 			}
-			$('#loginmsg').text(txt);
+			$('#loginmsg').text(txt)
+						.show();
 			$('#login_password').val('');   // case 21303
 
-			$('#login_button').val('Login')
-							  .attr('disabled', '');
+            $('#login_button').CswButton('enable');
+
 			//Logout();
 
 		} // _handleAuthenticationStatus()

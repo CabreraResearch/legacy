@@ -39,7 +39,9 @@
 			HideAllSubMenus();
 			// Prevent subnav elements from triggering topnav click
 			if(event)
+			{
 				event.stopPropagation();
+			}
 		}
 		
 		function HideAllSubMenus()

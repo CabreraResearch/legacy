@@ -140,7 +140,7 @@
 									o.onEditNode(nodeid, nodekey);
 								}
 							});
-							if(o.filterToPropId != '')
+							if(o.filterToPropId !== '')
 								_openDiv($div, 600, 400);
 							else
 								_openDiv($div, 900, 600);

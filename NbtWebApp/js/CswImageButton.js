@@ -73,7 +73,7 @@ var CswImageButton_ButtonType = {
 
         function setButton(NewButtonType) {
             var Multiplier = -18;
-            if (NewButtonType != undefined && NewButtonType != CswImageButton_ButtonType.None) {
+            if (NewButtonType !== undefined && NewButtonType !== CswImageButton_ButtonType.None) {
                 $ImageDiv.get(0).style.background = 'url(\'Images/buttons/buttons18.gif\') 0px ' + NewButtonType * Multiplier + 'px no-repeat';
                 $ImageDiv.unbind('mouseover');
                 $ImageDiv.unbind('mouseout');

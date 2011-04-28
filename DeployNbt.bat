@@ -1,1 +1,1 @@
-DeployNbt.pl 1 > C:\nbtlog\dailylog.txt 2>&1
+DeployNbt.pl 2 > C:\nbtlog\dailylog.txt 2>&1
