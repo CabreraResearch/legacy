@@ -5,19 +5,28 @@
 
 ; (function ($) { /// <param name="$" type="jQuery" />
     
-    $.fn.CswMobile = function (options)
-    {
+    $.fn.CswMobile = function (options) {
+        /// <summary>
+        ///   Generates the Nbt Mobile page
+        /// </summary>
+        /// <param name="options" type="Object">
+        ///     A JSON Object
+        ///     &#10;1 - options.Theme: 'a'
+        ///     &#10;2 - options.PollingInterval: 30000
+        ///     &#10;3 - options.DivRemovalDelay: 1000
+        /// </param>
+
         var opts = {
             DBShortName: 'Mobile.html',
             DBVersion: '1.0',
             DBDisplayName: 'Mobile.html',
             DBMaxSize: 65536,
-            ViewUrl: '/NbtWebApp/wsMobile.asmx/RunView',
-            ConnectTestUrl: '/NbtWebApp/wsMobile.asmx/ConnectTest',
-            ConnectTestRandomFailUrl: '/NbtWebApp/wsMobile.asmx/ConnectTestRandomFail',
-            UpdateUrl: '/NbtWebApp/wsMobile.asmx/UpdateProperties',
+            ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
+            ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
+            ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
+            UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
             MainPageUrl: '/NbtWebApp/Mobile.html',
-            AuthenticateUrl: '/NbtWebApp/wsMobile.asmx/Authenticate',
+            AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             Theme: 'a',
             PollingInterval: 30000,
             DivRemovalDelay: 1000,
@@ -1229,17 +1238,17 @@
                     data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
                     success: function (data)
                     {
-                        var $xml = $(data.d);
-                        SessionId = $xml.find('SessionId').text();
-                        if (SessionId != "")
-                        {
-                            _cacheSession(SessionId, UserName);
+                        auth = data.AuthenticationStatus;
+						if(auth == 'Authenticated')
+						{
+							_cacheSession(SessionId, UserName);
                             reloadViews(true);
                             removeDiv('logindiv');
-                        } else
-                        {
-                            _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
-                        }
+						}
+						else 
+						{
+							_handleAuthenticationStatus(data, _handleAuthenticated);
+						}
                     }
                 });
             }
