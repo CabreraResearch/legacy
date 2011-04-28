@@ -264,7 +264,7 @@
                         });
                     } else
                     {
-                        _ajaxViewXml(p.DivId, function (xml)
+                        _ajaxViewJson(p.DivId, function (xml)
                         {
                             if (p.level == 1)
                             {
@@ -303,7 +303,7 @@
                             });
                         } else if (!amOffline())
                         {
-                            _ajaxViewXml(p.DivId, function (xml)
+                            _ajaxViewJson(p.DivId, function (xml)
                             {
                                 if (p.level == 1)
                                 {
@@ -353,7 +353,7 @@
             return ret;
         } // _loadDivContents()
 
-        function _ajaxViewXml(DivId, onsuccess)
+        function _ajaxViewJson(DivId, onsuccess)
         {
             CswAjaxJSON({
                 async: false,   // required so that the link will wait for the content before navigating
@@ -373,7 +373,7 @@
                 }
             });
             
-        } // _ajaxViewXml()
+        } // _ajaxViewJson()
 
         var currenttab;
         var onAfterAddDiv;
@@ -1306,7 +1306,7 @@
                 $('div[id*="' + RealDivId + '"]').remove();
 
                 // fetch new content
-                _ajaxViewXml(RealDivId, function (xml)
+                _ajaxViewJson(RealDivId, function (xml)
                 {
                     $currentViewXml = $(xml);
                     _updateStoredViewXml(RealDivId, xml, '0');
