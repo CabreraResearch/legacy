@@ -86,9 +86,9 @@
                             for(var c = 1; c <= maxcolumns; c++)
                             {
                                 var $cell = getCell($table, r, c);
-                                if($cell.contents().length == 0)
+                                if($cell.contents().length === 0)
                                 {
-                                    if(onEmptyCell != null)
+                                    if(onEmptyCell !== null)
                                         onEmptyCell($cell, r, c);
                                     else
                                         $cell.append('&nbsp;');
@@ -101,7 +101,7 @@
             'findRow': function (criteria) {
                         var $table = $(this);
                         var $rows = $table.children('tbody').children('tr');
-                        if (criteria != '' && criteria != null) {
+                        if (criteria !== '' && criteria !== null) {
                             $rows = $rows.filter(criteria);
                         }
                         return $rows;
@@ -109,7 +109,7 @@
             'findCell': function (criteria) {
                         var $table = $(this);
                         var $cells = $table.children('tbody').children('tr').children('td');
-                        if (criteria != '' && criteria != null) {
+                        if (criteria !== '' && criteria !== null) {
                             $cells = $cells.filter(criteria);
                         }
                         return $cells;
@@ -117,7 +117,7 @@
             'rowFindCell': function ($row, criteria) {
                         //var $table = $(this);
                         var $cells = $row.children('td');
-                        if (criteria != '' && criteria != null) {
+                        if (criteria !== '' && criteria !== null) {
                             $cells = $cells.filter(criteria);
                         }
                         return $cells;
@@ -151,8 +151,8 @@
         {
 	        var $cell = null;
 	        if ($table.length > 0 &&
-		        row != undefined && row != '' &&
-		        col != undefined && col != '') 
+		        row !== undefined && row !== '' &&
+		        col !== undefined && col !== '') 
 			{
 		        if (row <= 0) {
 			        log("error: row must be greater than 1, got: " + row);
@@ -171,8 +171,8 @@
 		        while (col > $row.children('td').length) 
 				{
 					var align = $table.attr('cellalign');
-					if(($row.children('td').length == 0 && $table.attr('FirstCellRightAlign') == 'true') ||
-					   ($row.children('td').length % 2 == 0 && $table.attr('OddCellRightAlign') == 'true'))
+					if(($row.children('td').length === 0 && $table.attr('FirstCellRightAlign') == 'true') ||
+					   ($row.children('td').length % 2 === 0 && $table.attr('OddCellRightAlign') == 'true'))
 					{
 						align = 'right';
 			        }

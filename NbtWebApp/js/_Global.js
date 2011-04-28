@@ -28,7 +28,7 @@ function CswAjaxJSON(options) {
 
 			var result = $.parseJSON(data.d);
 
-			if (result.error != undefined)
+			if (result.error !== undefined)
 			{
 				_handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
 			}
@@ -56,7 +56,7 @@ function CswAjaxXml(options) {
 	if (options) {
 		$.extend(o, options);
 	}
-	if (o.url != '')
+	if (o.url !== '')
 	{
 		//var starttime = new Date();
 		$.ajax({
@@ -73,7 +73,7 @@ function CswAjaxXml(options) {
 				// this is IE compliant
 				var $xml = $(XMLHttpRequest.responseXML);
 				var $realxml = $xml.children().first();
-				if ($realxml.first().get(0).nodeName == "error")
+				if ($realxml.first().get(0).nodeName === "error")
 				{
 					_handleAjaxError(XMLHttpRequest, { 'message': $realxml.attr('message'), 'detail': $realxml.attr('detail') }, '');
 				}
@@ -89,13 +89,13 @@ function CswAjaxXml(options) {
 				o.error();
 			}
 		});   // $.ajax({
-	} // if(o.url != '')
+	} // if(o.url !== '')
 } // CswAjaxXml()
 		
 function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown) 
 {
 	//	ErrorMessage = "A WebServices Error Occurred: " + textStatus;
-	//	if (null != errorThrown) {
+	//	if (null !== errorThrown) {
 	//		ErrorMessage += "; Exception: " + errorThrown.toString()
 	//	}
 	var $errorsdiv = $('#ErrorDiv');
@@ -115,11 +115,11 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
 //    // for some reason, CDATA fields come through from the webservice like this:
 //    // <node><!--[CDATA[some text]]--></node>
 //    var cdataval = $node.html();
-//    if (cdataval != undefined && cdataval != '') {
+//    if (cdataval !== undefined && cdataval !== '') {
 //        var prefix = '<!--[CDATA[';
 //        var suffix = ']]-->';
 
-//        if (cdataval.substr(0, prefix.length) == prefix) {
+//        if (cdataval.substr(0, prefix.length) === prefix) {
 //            ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
 //        }
 //    }
@@ -128,7 +128,7 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
 
 function xmlToString($xmlnode) {
 	var xmlstring = '';
-	if ($xmlnode != '' && $xmlnode != undefined)
+	if ($xmlnode !== '' && $xmlnode !== undefined)
 	{
 		xmlstring = $xmlnode.get(0).xml; // IE
 		if (!xmlstring)
@@ -146,7 +146,7 @@ function xmlToString($xmlnode) {
 
 function jsonToString(j)
 {
-	if(typeof j == "object")
+	if(typeof j === "object")
 	{
 		var ret = "{";
 	 	var first = true;
@@ -195,13 +195,13 @@ function setChanged()
 		changed = 1;
 		//        var statusimage = getMainStatusImage();
 		//var savebutton = $('#SaveTab');
-		//        if (statusimage != null) {
+		//        if (statusimage !== null) {
 		//            statusimage.style.backgroundPosition = "0px -210px";
 		//            statusimage.onmouseover = function() { this.style.backgroundPosition = "-15px -210px"; }
 		//            statusimage.onmouseout = function() { this.style.backgroundPosition = "0px -210px"; }
 		//            statusimage.title = "There are unsaved changes";
 		//        } 
-//		if (savebutton != null)
+//		if (savebutton !== null)
 //		{
 //			savebutton.value = "Save Changes";
 //			savebutton.disabled = false;
@@ -214,15 +214,15 @@ function unsetChanged()
 	if (checkChangesEnabled)
 	{
 		//        var statusimage = getMainStatusImage();
-		//        if(statusimage != null)
+		//        if(statusimage !== null)
 		//            statusimage.style.backgroundPosition = "0px -195px";
 		//        statusimage.onmouseover = function() { this.style.backgroundPosition = "-15px -195px"; }
 		//        statusimage.onmouseout = function() { this.style.backgroundPosition = "0px -195px"; }
 		//        statusimage.title = "There are no changes";
 //		var savebutton = $('#SaveTab');
-//		if (savebutton != null)
+//		if (savebutton !== null)
 //		{
-//			if (changed != 0)
+//			if (changed !== 0)
 //				savebutton.value = "Changes Saved";
 //			savebutton.disabled = true;
 //		}
@@ -232,7 +232,7 @@ function unsetChanged()
 
 function checkChanges()
 {
-	if (checkChangesEnabled && changed == 1)
+	if (checkChangesEnabled && changed === 1)
 	{
 		return 'If you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.';
 	}
@@ -241,7 +241,7 @@ function checkChanges()
 function manuallyCheckChanges()
 {
 	var ret = true;
-	if (checkChangesEnabled && changed == 1)
+	if (checkChangesEnabled && changed === 1)
 	{
 		ret = confirm('Are you sure you want to navigate away from this page?\n\nIf you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.\n\nPress OK to continue, or Cancel to stay on the current page.');
 
@@ -325,7 +325,7 @@ function IsAdministrator(options)
 		url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
 		success: function (data)
 		{
-			if (data.Administrator == "true")
+			if (data.Administrator === "true")
 			{
 				o.Yes();
 			} else
@@ -434,12 +434,12 @@ function HandleMenuItem(options) {
 		$.extend(o, options);
 	}
 	var $li;
-	if (o.$itemxml.attr('href') != undefined && o.$itemxml.attr('href') != '')
+	if (o.$itemxml.attr('href') !== undefined && o.$itemxml.attr('href') !== '')
 	{
 		$li = $('<li><a href="' + o.$itemxml.attr('href') + '">' + o.$itemxml.attr('text') + '</a></li>')
 						.appendTo(o.$ul)
 	}
-	else if (o.$itemxml.attr('popup') != undefined && o.$itemxml.attr('popup') != '')
+	else if (o.$itemxml.attr('popup') !== undefined && o.$itemxml.attr('popup') !== '')
 	{
 		$li = $('<li class="headermenu_dialog"><a href="#">' + o.$itemxml.attr('text') + '</a></li>')
 						.appendTo(o.$ul)
@@ -449,7 +449,7 @@ function HandleMenuItem(options) {
 							return false; 
 						});
 	}
-	else if (o.$itemxml.attr('action') != undefined && o.$itemxml.attr('action') != '')
+	else if (o.$itemxml.attr('action') !== undefined && o.$itemxml.attr('action') !== '')
 	{
 		$li = $('<li><a href="#">' + o.$itemxml.attr('text') + '</a></li>')
 						.appendTo(o.$ul);
@@ -573,7 +573,7 @@ function validateTime(value)
 	var isValid = true;
 	var regex = /^(\d?\d):(\d\d)\s?([APap][Mm])?$/g;
 	var match = regex.exec(value);
-	if (match == null)
+	if (match === null)
 	{
 		isValid = false;
 	}
@@ -594,9 +594,9 @@ function validateFloatMinValue(value, minvalue) {
 	var nMinValue = parseFloat(minvalue);
 	var isValid = true;
 
-	if (nMinValue != undefined)
+	if (nMinValue !== undefined)
 	{
-		if (nValue == undefined || nValue < nMinValue) {
+		if (nValue === undefined || nValue < nMinValue) {
 			isValid = false;
 		}
 	}
@@ -608,8 +608,8 @@ function validateFloatMaxValue(value, maxvalue) {
 	var nMaxValue = parseFloat(maxvalue);
 	var isValid = true;
 
-	if (nMaxValue != undefined) {
-		if (nValue == undefined || nValue > nMaxValue) {
+	if (nMaxValue !== undefined) {
+		if (nValue === undefined || nValue > nMaxValue) {
 			isValid = false;
 		}
 	}
@@ -647,7 +647,7 @@ function validateInteger(value) {
 
 function startsWith(source, search) 
 {
-	return (source.substr(0, search.length) == search);
+	return (source.substr(0, search.length) === search);
 }
 
 function getTimeString(date)
@@ -702,7 +702,7 @@ function iterate(obj) {
 		str = str + x + "=" + obj[x] + "<br><br>";
 	}
 	var popup = window.open("", "popup");
-	if (popup != null)
+	if (popup !== null)
 		popup.document.write(str);
 	else
 		console.log("iterate() error: No popup!");

@@ -232,7 +232,7 @@
 							.appendTo($rivnode);
 						$('<monthlyfrequency>'+ $('#' + o.ID + '_monthly_rate').val() +'</monthlyfrequency>')
 							.appendTo($rivnode);
-						if(MonthlyType == "MonthlyByDate")
+						if(MonthlyType === "MonthlyByDate")
 						{
 							$('<monthlydate>'+ $('#' + o.ID + '_monthly_date').val() +'</monthlydate>')
 								.appendTo($rivnode);
@@ -317,9 +317,9 @@
 		var ret = '';
 		$('[name="' + id + '"]').each(function() {
 			var $check = $(this);
-			if($check.attr('checked') != '')
+			if($check.attr('checked') !== '')
 			{
-				if(ret != '') ret += ',';
+				if(ret !== '') ret += ',';
 				switch($check.attr('value'))
 				{
 					case '1': ret += 'Sunday'; break;

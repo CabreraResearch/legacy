@@ -38,7 +38,7 @@
                             .children('column')
                             .each(function() {
                                     var fieldname = $(this).attr('field');
-                                    if(fieldname != NameCol && fieldname != KeyCol)
+                                    if(fieldname !== NameCol && fieldname != KeyCol)
                                     {
                                         cols[c] = fieldname;
                                         c++;
@@ -55,7 +55,7 @@
                 for(var c = 0; c < cols.length; c++)
                 {
                     var value = $this.children('column[field="'+ cols[c] +'"]').attr('value');
-                    values[r] = (value == "True");
+                    values[r] = (value === "True");
                     r++;
                 }
 
@@ -87,9 +87,9 @@
                         var $xmlitem = $LogicalSetXml.find('item:has(column[field="'+ KeyCol +'"][value="'+ checkitem.key +'"])');
                         var $xmlitemcolumn = $xmlitem.find('column[field="' + checkitem.collabel + '"]');
                     
-                        if(checkitem.checked && $xmlitemcolumn.attr('value') == "False")
+                        if(checkitem.checked && $xmlitemcolumn.attr('value') === "False")
                             $xmlitemcolumn.attr('value', 'True');
-                        else if(!checkitem.checked && $xmlitemcolumn.attr('value') == "True")
+                        else if(!checkitem.checked && $xmlitemcolumn.attr('value') === "True")
                             $xmlitemcolumn.attr('value', 'False');
 
                     } // for( var c = 0; c < formdata.length; c++)

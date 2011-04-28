@@ -28,7 +28,7 @@
 
 				$xml.children().each(function() {
 					var $this = $(this);
-					if($this.attr('text') != undefined)
+					if($this.attr('text') !== undefined)
 					{
 						var menuItemOpts = { 
 							'$ul': $ul, 

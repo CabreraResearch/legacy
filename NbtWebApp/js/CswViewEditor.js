@@ -86,7 +86,7 @@
 			'disableOnClick': true,
 			'onclick': function() {
 				var viewid = _getSelectedRowValue($viewgrid, o.ColumnViewId);
-				if(viewid != '' && viewid != undefined)
+				if(viewid !== '' && viewid !== undefined)
 				{
 					CswAjaxJSON({
 						url: o.CopyViewUrl,
@@ -95,7 +95,7 @@
 							_getViewsGrid(onViewGridSuccess, gridJson.copyviewid); 
 						}
 					});
-				} // if(viewid != '' && viewid != undefined)
+				} // if(viewid !== '' && viewid !== undefined)
 			} // onclick
 		}); // copy button
 		$copyviewbtn.CswButton('disable');
@@ -106,7 +106,7 @@
 			'disableOnClick': true,
 			'onclick': function() {
 			    var viewid = _getSelectedRowValue($viewgrid, o.ColumnViewId);
-				if(viewid != '' && viewid != undefined)
+				if(viewid !== '' && viewid !== undefined)
 				{
 					if(confirm("Are you sure you want to delete: " + _getSelectedRowValue($viewgrid, o.ColumnViewName)))
 					{
@@ -216,7 +216,7 @@
 
 		function _onBeforePrevious(stepno)
 		{
-			return (stepno != 2 || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
+			return (stepno !== 2 || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
 		}
 
 
@@ -235,19 +235,19 @@
 
 							$viewnametextbox.val($currentviewxml.attr('viewname'));
 							$categorytextbox.val($currentviewxml.attr('category'));
-							if(v.getvisibilityselect() != undefined)
+							if(v.getvisibilityselect() !== undefined)
 							{
 								v.getvisibilityselect().val($currentviewxml.attr('visibility')).trigger('change');
 								v.getvisroleselect().val('nodes_' + $currentviewxml.attr('visibilityroleid'));
 								v.getvisuserselect().val('nodes_' + $currentviewxml.attr('visibilityuserid'));
 							}
-							if($currentviewxml.attr('formobile') == 'true') {
+							if($currentviewxml.attr('formobile') === 'true') {
 								$formobilecheckbox.attr('checked', 'true');
 							}
 							var mode = $currentviewxml.attr('mode')
 							$displaymodespan.text(mode);
 							$gridwidthtextboxcell.CswNumberTextBox('setValue', $currentviewxml.attr('width'));
-							if(mode == "Grid") {
+							if(mode === "Grid") {
 								$gridwidthlabelcell.show();
 								$gridwidthtextboxcell.show();
 							} else {
@@ -260,7 +260,7 @@
 				case 3:
 
 					// save step 2 content to $currentviewxml
-					if($currentviewxml != undefined)
+					if($currentviewxml !== undefined)
 					{
 						$currentviewxml.attr('viewname', $viewnametextbox.val());
 						$currentviewxml.attr('category', $categorytextbox.val());
@@ -268,17 +268,17 @@
 				
 						// temporary workaround
 						var rolenodeid = v.getvisroleselect().val();
-						if(rolenodeid != '' && rolenodeid != undefined)
+						if(rolenodeid !== '' && rolenodeid !== undefined)
 							rolenodeid = rolenodeid.substr('nodes_'.length)
 						var usernodeid = v.getvisuserselect().val();
-						if(usernodeid != '' && usernodeid != undefined)
+						if(usernodeid !== '' && usernodeid !== undefined)
 							usernodeid = usernodeid.substr('nodes_'.length)
 						$currentviewxml.attr('visibilityroleid', rolenodeid);
 						$currentviewxml.attr('visibilityuserid', usernodeid);
 				
-						$currentviewxml.attr('formobile', ($formobilecheckbox.attr('checked') == 'true'));
+						$currentviewxml.attr('formobile', ($formobilecheckbox.attr('checked') === 'true'));
 						$currentviewxml.attr('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
-					} // if($currentviewxml != undefined)
+					} // if($currentviewxml !== undefined)
 
 					// make step 3 tree
 					_makeViewTree(3, $treediv3);
@@ -376,7 +376,7 @@
 					$viewgrid.jqGrid(gridJson)
 								.hideCol(o.ColumnViewId);
 
-					if(selectedrowpk != undefined)
+					if(selectedrowpk !== undefined)
 					{
 						$viewgrid.setSelection(_getRowForPk($viewgrid, selectedrowpk));
 						$viewgrid.CswNodeGrid('scrollToSelectedRow');
@@ -398,7 +398,7 @@
 			var rowid = 0;
 			for(var i in pks)
 			{
-				if(pks[i].value == selectedpk)
+				if(pks[i].value === selectedpk)
 					rowid = pks[i].id;
 			}
 			return rowid;
@@ -433,12 +433,12 @@
 
 						$visibilityselect.change(function() {
 							var val = $visibilityselect.val();
-							if(val == 'Role')
+							if(val === 'Role')
 							{
 								$visroleselect.show();
 								$visuserselect.hide();
 							}
-							else if(val == 'User')
+							else if(val === 'User')
 							{
 								$visroleselect.hide();
 								$visuserselect.show();
@@ -485,7 +485,7 @@
 			$div.find('.vieweditor_childselect').change(function() {
 				var $select = $(this);
 				var childxml = $select.find('option:selected').data('optionviewxml');
-				if($select.attr('arbid') == "root")
+				if($select.attr('arbid') === "root")
 				{
 					$(childxml).appendTo($currentviewxml);
 				} else {
@@ -509,7 +509,7 @@
 				});
 			}); // delete
 
-			if(stepno == 5)
+			if(stepno === 5)
 			{
 				$div.find('.vieweditor_addfilter').each(function() {
 					var $span = $(this);
@@ -553,9 +553,9 @@
 						} // onClick
 					}); // CswButton
 				}); // property click
-			} // if(stepno == 5)
+			} // if(stepno === 5)
 
-			if(stepno == 6)
+			if(stepno === 6)
 			{
 				var $cell = $table6.CswTable('cell', 1, 2);
 				var viewmode = _getSelectedRowValue($viewgrid, o.ColumnViewMode);
@@ -599,9 +599,9 @@
 								var $option = $('<option value="'+ $prop.attr('propid') +'">'+ $prop.attr('propname') +'</option>')
 									.appendTo($groupbyselect)
 									.data('propxml', $prop);
-								if($viewnodexml.attr('groupbypropid') == $prop.attr('propid') &&
-								    $viewnodexml.attr('groupbyproptype') == $prop.attr('proptype') &&
-								    $viewnodexml.attr('groupbypropname') == $prop.attr('propname'))
+								if($viewnodexml.attr('groupbypropid') === $prop.attr('propid') &&
+								    $viewnodexml.attr('groupbyproptype') === $prop.attr('proptype') &&
+								    $viewnodexml.attr('groupbypropname') === $prop.attr('propname'))
 								{
 									$option.attr('selected', 'true');
 								}
@@ -610,7 +610,7 @@
 					}); // ajax
 
 					var $showtreecheck;
-					if(viewmode == "Tree")
+					if(viewmode === "Tree")
 					{
 						$table.CswTable('cell', 3, 1).append('Show In Tree');
 						var $showtreecheckcell = $table.CswTable('cell', 3, 2);
@@ -627,10 +627,10 @@
 						'enabledText': 'Apply',
 						'disableOnClick': false,
 						'onclick': function() {
-							if($showtreecheck != undefined)
+							if($showtreecheck !== undefined)
 								$viewnodexml.attr('showintree', ($showtreecheck.is(':checked')))
 							$viewnodexml.attr('allowdelete', ($allowdeletingcheck.is(':checked')))
-							if($groupbyselect.val() != '') {
+							if($groupbyselect.val() !== '') {
 								var $propxml = $groupbyselect.find(':selected').data('propxml');
 								$viewnodexml.attr('groupbypropid', $propxml.attr('propid'));
 								$viewnodexml.attr('groupbyproptype', $propxml.attr('proptype'));
@@ -649,7 +649,7 @@
 					$a = $(this);
 					$cell.empty();
 
-					if(viewmode == "Grid")
+					if(viewmode === "Grid")
 					{
 						var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.attr('arbid') +'"]')
 
@@ -704,7 +704,7 @@
 					$table.CswTable('cell', 1, 1).append('Case Sensitive');
 					var $casecheck = $('<input type="checkbox" id="' + o.ID + '_casecb" />')
 											.appendTo($table.CswTable('cell', 1, 2));
-					if($viewnodexml.attr('casesensitive').toLowerCase() == 'true') {
+					if($viewnodexml.attr('casesensitive').toLowerCase() === 'true') {
 						$casecheck.attr('checked', 'true');
 					}
 
@@ -717,7 +717,7 @@
 						} // onClick
 					}); // CswButton
 				});
-			} // if(stepno == 6)
+			} // if(stepno === 6)
 		} // _makeViewTree()
 
 		function _viewXmlToHtml(stepno, $itemxml)
@@ -731,9 +731,9 @@
 			var skipchildoptions = true;
 			var linkclass;
 
-			if(nodename.toLowerCase() == 'treeview')
+			if(nodename.toLowerCase() === 'treeview')
 			{
-				if(stepno == 3) skipchildoptions = false;
+				if(stepno === 3) skipchildoptions = false;
 
 				arbid = "root";
 				name = $itemxml.attr('viewname');
@@ -741,16 +741,16 @@
 				types.root = { icon: { image: $itemxml.attr('iconfilename') } };
 				linkclass = 'vieweditor_viewrootlink';
 			}
-			else if(nodename.toLowerCase() == 'relationship')
+			else if(nodename.toLowerCase() === 'relationship')
 			{
-				if(stepno == 3) skipchildoptions = false;
-				if(stepno == 4) skipchildoptions = false;
+				if(stepno === 3) skipchildoptions = false;
+				if(stepno === 4) skipchildoptions = false;
 
 				name = $itemxml.attr('secondname');
 				var propname = $itemxml.attr('propname');
-                if( propname != '' && propname != undefined)
+                if( propname !== '' && propname !== undefined)
                 {
-                    if( $itemxml.attr('propowner') == "First" )
+                    if( $itemxml.attr('propowner') === "First" )
                         name += " (by " + $itemxml.attr('firstname') + "'s " + propname + ")";
                     else
                         name += " (by " + propname + ")";
@@ -759,17 +759,17 @@
 				types[rel] = { icon: { image: $itemxml.attr('secondiconfilename') } };
 				linkclass = 'vieweditor_viewrellink';
 			}
-			else if(nodename.toLowerCase() == 'property')
+			else if(nodename.toLowerCase() === 'property')
 			{
 				if(stepno <= 3) skipme = true;
-				if(stepno == 5) skipchildoptions = false;
+				if(stepno === 5) skipchildoptions = false;
 
 				name = $itemxml.attr('name');
 				rel = "property";
 				types.property = { icon: { image: "Images/view/property.gif" } };
 				linkclass = "vieweditor_viewproplink";
 			}
-			else if(nodename.toLowerCase() == 'filter')
+			else if(nodename.toLowerCase() === 'filter')
 			{
 				if(stepno <= 4) skipme = true;
 
@@ -787,7 +787,7 @@
 				treestr += '    class="jstree-open" ';
 				treestr += '>';
 				treestr += ' <a href="#" class="' + linkclass + '" arbid="'+ arbid +'">'+ name +'</a>';
-				if(arbid != "root")
+				if(arbid !== "root")
 				{
 					treestr += ' <span style="" class="vieweditor_deletespan" arbid="'+ arbid +'"></span>';
 				}
@@ -801,7 +801,7 @@
 
 				if(!skipchildoptions) 
 				{
-					if(stepno == 5)
+					if(stepno === 5)
 					{ 
 						// view filters
 						treestr += '<li><span class="vieweditor_addfilter" proparbid="' + arbid + '"></span></li>';
@@ -829,7 +829,7 @@
 							} // success
 						}); // ajax
 
-					} // if-else(stepno == 5)
+					} // if-else(stepno === 5)
 				} // if(!skipchildoptions) 
 
 				treestr += '</ul>';

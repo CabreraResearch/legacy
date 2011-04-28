@@ -76,9 +76,9 @@
 	
 		function onTreeSelect($selectdiv, itemid, text, iconurl, onchange)
 		{
-			if(itemid == 'root') itemid = '';   // case 21046
+			if(itemid === 'root') itemid = '';   // case 21046
 			$selectdiv.CswComboBox( 'TopContent', text );
-			if($selectdiv.attr('value') != itemid)
+			if($selectdiv.attr('value') !== itemid)
 			{
 				$selectdiv.attr('value', itemid);
 				onchange();

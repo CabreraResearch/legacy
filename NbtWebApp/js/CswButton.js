@@ -12,7 +12,7 @@
 				'disabledText': '',
 				'hasText': true,
 				'disableOnClick': true,
-				//'enableAfterClick': false,
+				'enableDelay': 5000,
 				'inputType': 'button',
 				'primaryicon': '',
 				'secondaryicon': '',
@@ -46,9 +46,10 @@
 			$button.button(buttonOpt)
 					.click(function ()
 					{
-						if (o.disableOnClick) $button.button({ label: o.disabledText, disabled: true });
+						if (o.disableOnClick) _disable($button);
 						o.onclick();
-						//if (o.enableAfterClick) $button.button({ label: o.enabledText, disabled: false });
+						// case 21369 - enable after time delay
+						setTimeout(function () { _enable($button); }, o.enableDelay);
 					});
 			$parent.append($button);
 			return $button;
@@ -57,14 +58,25 @@
 		'enable': function ()
 		{
 			var $button = $(this);
-			$button.button({ label: $button.attr('enabledText'), disabled: false });
+			_enable($button);
 		},
 		'disable': function ()
 		{
 			var $button = $(this);
-			$button.button({ label: $button.attr('disabledText'), disabled: true });
+			_disable($button);
 		}
 	};
+
+	function _enable($button)
+	{
+		if ($button.length > 0)
+			$button.button({ label: $button.attr('enabledText'), disabled: false });
+	}
+	function _disable($button)
+	{
+		if ($button.length > 0)
+			$button.button({ label: $button.attr('disabledText'), disabled: true });
+	}
 
 	// Method calling logic
 	$.fn.CswButton = function (method)

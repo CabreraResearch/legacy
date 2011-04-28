@@ -146,7 +146,7 @@
 			$table.find('.CswWizard_StepDiv[stepno=' + stepno + ']').show();
 
 			var $prevbtn = $('#' + $table.attr('id') + '_prev');
-			if(stepno == 1) 
+			if(stepno === 1) 
 				$prevbtn.CswButton('disable');
 			else
 				$prevbtn.CswButton('enable');

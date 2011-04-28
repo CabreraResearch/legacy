@@ -11,8 +11,8 @@
                 $Div.contents().remove();
 
                 var SelectedNodeId = o.$propxml.children('nodeid').text().trim();
-                if( o.relatednodeid != '' && o.relatednodeid != undefined && 
-                    ( SelectedNodeId == '' || SelectedNodeId == undefined ) )
+                if( o.relatednodeid !== '' && o.relatednodeid !== undefined && 
+                    ( SelectedNodeId === '' || SelectedNodeId === undefined ) )
                 {
                     SelectedNodeId = o.relatednodeid;
                 }
@@ -40,7 +40,7 @@
 
                     $SelectBox.val( SelectedNodeId );
 
-                    if(NodeTypeId != '')
+                    if(NodeTypeId !== '')
 					{
 						var $addcell = $table.CswTable('cell', 1, 2);
 						var $AddButton = $('<div />').appendTo($addcell);

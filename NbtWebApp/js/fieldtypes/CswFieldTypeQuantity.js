@@ -27,7 +27,7 @@
 				var unit = $(this).attr('value');
 				var $option = $('<option value="' + unit + '">' + unit + '</option>')
 								.appendTo($unitsel);
-				if(selectedUnit == unit)
+				if(selectedUnit === unit)
 				{
 					$option.attr('selected', 'true');
 				}

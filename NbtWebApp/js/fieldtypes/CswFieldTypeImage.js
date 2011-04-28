@@ -19,7 +19,7 @@
             var $cell22 = $table.CswTable('cell', 2, 2).attr('align', 'right');
             var $cell23 = $table.CswTable('cell', 2, 3).attr('align', 'right');
 
-			if(FileName != '')
+			if(FileName !== '')
 			{
 				var $TextBox = $('<a href="'+ Href +'" target="_blank"><img src="' + Href + '" alt="' + FileName + '" width="'+ Width +'" height="'+ Height +'"/></a>')
 									.appendTo($cell11);

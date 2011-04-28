@@ -19,7 +19,7 @@
 			var $parent = $(this);
             $parent.empty();
             var elementId = makeId({prefix: o.prefix, ID: o.ID});
-			if(o.Checked == '' || o.Checked == undefined || o.Checked == null) o.Checked = "null";
+			if(o.Checked === '' || o.Checked === undefined || o.Checked === null) o.Checked = "null";
             if(o.ReadOnly)
 			{
 				switch(o.Checked)
@@ -63,18 +63,18 @@
 		var currentValue = $ImageDiv.attr('alt');
 		var newValue = CswImageButton_ButtonType.CheckboxNull;
 		var newAltText = "null";
-		if (currentValue == "null") {
+		if (currentValue === "null") {
 			newValue = CswImageButton_ButtonType.CheckboxTrue;
 			newAltText = "true";
-		} else if (currentValue == "false") {
-			if (Required == "true") {
+		} else if (currentValue === "false") {
+			if (Required === "true") {
 				newValue = CswImageButton_ButtonType.CheckboxTrue;
 				newAltText = "true";
 			} else {
 				newValue = CswImageButton_ButtonType.CheckboxNull;
 				newAltText = "null";
 			}
-		} else if (currentValue == "true") {
+		} else if (currentValue === "true") {
 			newValue = CswImageButton_ButtonType.CheckboxFalse;
 			newAltText = "false";
 		}
