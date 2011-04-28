@@ -355,13 +355,13 @@
 
         function _ajaxViewXml(DivId, onsuccess)
         {
-            var o = {
+            CswAjaxJSON({
                 async: false,   // required so that the link will wait for the content before navigating
                 url: opts.ViewUrl,
                 data: "{ SessionId: '" + SessionId + "', ParentId: '" + DivId + "', ForMobile: '" + true + "'}",
                 success: function (data, textStatus, XMLHttpRequest)
                 {
-                    
+                    var $xml = $(data.d);
                     $auth = $xml.find('AuthenticationStatus');
                     if ($auth.length > 0)
                     {
@@ -371,9 +371,7 @@
                         onsuccess(data.d);
                     }
                 }
-            };
-            
-            CswAjaxJSON(o);
+            });
             
         } // _ajaxViewXml()
 
@@ -1226,35 +1224,22 @@
 
             if (!amOffline())
             {
-                $.ajax({
-                    type: 'POST',
+                CswAjaxJSON({
                     url: opts.AuthenticateUrl,
-                    dataType: "json",
-                    contentType: 'application/json; charset=utf-8',
                     data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
-                    success: function (data, textStatus, XMLHttpRequest)
+                    success: function (data)
                     {
                         var $xml = $(data.d);
-                        if ($xml.get(0).nodeName == "ERROR")
+                        SessionId = $xml.find('SessionId').text();
+                        if (SessionId != "")
                         {
-                            _handleAjaxError(XMLHttpRequest, $xml.text(), '');
+                            _cacheSession(SessionId, UserName);
+                            reloadViews(true);
+                            removeDiv('logindiv');
                         } else
                         {
-                            SessionId = $xml.find('SessionId').text();
-                            if (SessionId != "")
-                            {
-                                _cacheSession(SessionId, UserName);
-                                reloadViews(true);
-                                removeDiv('logindiv');
-                            } else
-                            {
-                                _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
-                            }
+                            _handleAuthenticationStatus($xml.find('AuthenticationStatus').text());
                         }
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown)
-                    {
-                        _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
                     }
                 });
             }
@@ -1717,36 +1702,28 @@
         {
             var url = opts.ConnectTestUrl;
             if (opts.RandomConnectionFailure)
+            {
                 url = opts.ConnectTestRandomFailUrl;
+            }
 
-            $.ajax({
-                type: 'POST',
+            CswAjaxJSON({
                 url: url,
-                dataType: "json",
-                contentType: 'application/json; charset=utf-8',
                 data: "{}",
-                success: function (data, textStatus, XMLHttpRequest)
+                success: function (data)
                 {
-                    var $xml = $(data.d);
-                    if ($xml.get(0).nodeName == "ERROR")
+                    setOnline();
+                    _processChanges(true);
+                    if (onSuccess != undefined)
                     {
-                        _handleAjaxError(XMLHttpRequest, $xml.text(), '');
-                        if (onFailure != undefined)
-                            onFailure();
-                        _waitForData();
-                    } else
-                    {
-                        setOnline();
-                        _processChanges(true);
-                        if (onSuccess != undefined)
-                            onSuccess();
+                        onSuccess();
                     }
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown)
+                error: function (data)
                 {
-                    _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
                     if (onFailure != undefined)
+                    {
                         onFailure();
+                    }
                     _waitForData();
                 }
             });
@@ -1761,49 +1738,44 @@
                 {
                     if (rootid != '' && viewxml != '')
                     {
-                        $.ajax({
-                            type: 'POST',
+                        CswAjaxJSON({
                             url: opts.UpdateUrl,
-                            dataType: "json",
-                            contentType: 'application/json; charset=utf-8',
-                            //data: "{ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml + "'}",
                             data: "{ SessionId: '" + SessionId + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml.replace(/'/gi, '\\\'') + "'}",
-                            success: function (data, textStatus, XMLHttpRequest)
+                            success: function (data)
                             {
                                 var $xml = $(data.d);
-                                if ($xml.get(0).nodeName == "ERROR")
+                                $auth = $xml.find('AuthenticationStatus');
+                                if ($auth.length > 0)
                                 {
-                                    _handleAjaxError(XMLHttpRequest, $xml.text(), '');
+                                    _handleAuthenticationStatus($auth.text());
                                     if (perpetuateTimer)
+                                    {
                                         _waitForData();
+                                    }
                                 } else
                                 {
-                                    $auth = $xml.find('AuthenticationStatus');
-                                    if ($auth.length > 0)
+                                    _updateStoredViewXml(rootid, data.d, '0');
+                                    if (perpetuateTimer)
                                     {
-                                        _handleAuthenticationStatus($auth.text());
-                                        if (perpetuateTimer)
-                                            _waitForData();
-                                    } else
-                                    {
-                                        _updateStoredViewXml(rootid, data.d, '0');
-                                        if (perpetuateTimer)
-                                            _waitForData();
+                                        _waitForData();
                                     }
                                 }
                             },
-                            error: function (XMLHttpRequest, textStatus, errorThrown)
+                            error: function (data)
                             {
-                                _handleAjaxError(XMLHttpRequest, textStatus, errorThrown);
                                 if (perpetuateTimer)
+                                {
                                     _waitForData();
+                                }
                             }
                         });
                     }
                     else
                     {
                         if (perpetuateTimer)
+                        {
                             _waitForData();
+                        }
                     }
                 }); // _getModifiedView();
             } else
@@ -1818,17 +1790,6 @@
         {
             alert(status);
             Logout();
-        }
-
-        function _handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
-        {
-            ErrorMessage = "Error: " + textStatus;
-            if (null != errorThrown)
-            {
-                ErrorMessage += "; Exception: " + errorThrown.toString()
-            }
-            console.log(ErrorMessage);
-            setOffline();
         }
 
         // For proper chaining support
