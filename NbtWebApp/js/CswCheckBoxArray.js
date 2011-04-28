@@ -111,7 +111,7 @@
 				if(!o.UseRadios)
 				{
 					var CheckAllLinkText = "Check All";
-					if($('.CBACheckBox_' + o.ID).not(':checked').length == 0)
+					if($('.CBACheckBox_' + o.ID).not(':checked').length === 0)
 						CheckAllLinkText = "Uncheck All";
 
 					var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ CheckAllLinkText +'</a></div>')
@@ -138,7 +138,7 @@
                             var $check = $(this);
                             var r = parseInt($check.attr('row'));
                             var c = parseInt($check.attr('col'));
-                            if(data[r] == undefined) 
+                            if(data[r] === undefined) 
                                 data[r] = new Array();
                             data[r][c] = { key: $check.attr('key'),
                                            rowlabel: $check.attr('rowlabel'),

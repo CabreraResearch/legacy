@@ -45,7 +45,7 @@
             ID: makeId({ 'prefix': id, 'id': 'hidebtn' }),
             onClick: function ($ImageDiv) { 
 				$errordiv.remove();
-				if($parentdiv.children().length == 0)
+				if($parentdiv.children().length === 0)
 					$parentdiv.hide();
 				return CswImageButton_ButtonType.None; 
 			}

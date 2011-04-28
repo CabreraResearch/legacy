@@ -120,35 +120,36 @@ namespace ChemSW.Nbt.MetaData
                     }
 
                     string NonNumericValueColumn = CasePrepend + FilterTableAlias + Column + CaseAppend;
+					string SafeValue = CswNbtViewPropertyFilterIn.Value.Replace( "'", "''" );   // case 21455
 
                     switch ( CswNbtViewPropertyFilterIn.FilterMode )
                     {
                         case CswNbtPropFilterSql.PropertyFilterMode.Begins:
-                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + CswNbtViewPropertyFilterIn.Value + "%'" + CaseAppend;
+							ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "%'" + CaseAppend;
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.Contains:
-                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + CswNbtViewPropertyFilterIn.Value + "%'" + CaseAppend;
+							ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "%'" + CaseAppend;
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.Ends:
-                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + CswNbtViewPropertyFilterIn.Value + "'" + CaseAppend;
+							ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "'" + CaseAppend;
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.Equals: //covers the case of clobs
-                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + CswNbtViewPropertyFilterIn.Value + "'" + CaseAppend;
+							ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.GreaterThan:
-                            ReturnVal = NonNumericValueColumn + " > '" + CswNbtViewPropertyFilterIn.Value + "'";
+							ReturnVal = NonNumericValueColumn + " > '" + SafeValue + "'";
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals:
-                            ReturnVal = NonNumericValueColumn + " >= '" + CswNbtViewPropertyFilterIn.Value + "'";
+							ReturnVal = NonNumericValueColumn + " >= '" + SafeValue + "'";
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.LessThan:
-                            ReturnVal = NonNumericValueColumn + " < '" + CswNbtViewPropertyFilterIn.Value + "'";
+							ReturnVal = NonNumericValueColumn + " < '" + SafeValue + "'";
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals:
-                            ReturnVal = NonNumericValueColumn + " <= '" + CswNbtViewPropertyFilterIn.Value + "'";
+							ReturnVal = NonNumericValueColumn + " <= '" + SafeValue + "'";
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                            ReturnVal = NonNumericValueColumn + " not like " + CasePrepend + "'" + CswNbtViewPropertyFilterIn.Value + "'" + CaseAppend;
+							ReturnVal = NonNumericValueColumn + " not like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
                             break;
                         default:
                             throw new CswDniException( "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );

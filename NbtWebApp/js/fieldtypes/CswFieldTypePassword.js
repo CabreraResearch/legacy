@@ -37,14 +37,14 @@
                 jQuery.validator.addMethod( "password2", function(value, element) { 
                             var pwd1 = $('#' + o.ID + '_pwd1').val();
                             var pwd2 = $('#' + o.ID + '_pwd2').val();
-                            return ((pwd1 == '' && pwd2 == '') || pwd1 == pwd2);
+                            return ((pwd1 === '' && pwd2 === '') || pwd1 === pwd2);
                         }, 'Passwords do not match!');
             }
         },
         save: function(o) { //$propdiv, $xml
                 var $TextBox = o.$propdiv.find('input#' + o.ID + '_pwd1');
                 var newpw = $TextBox.val();
-				if(newpw != '')
+				if(newpw !== '')
 				{
 					o.$propxml.children('newpassword').text(newpw);
 				}

@@ -59,7 +59,7 @@
                                                                onChange: o.onchange
                                                        }); 
 
-                if(o.Required && Href == '')
+                if(o.Required && Href === '')
                 {
                     $edittable.show();
 					$edittext.addClass("required");
