@@ -13,11 +13,16 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public interface ICswSchemaScripts
+    public interface ICswSchemaScripts 
     {
 
         Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> Scripts { get; }
+        CswSchemaVersion LatestVersion { get; }
+        CswSchemaVersion MinimumVersion { get; }
         CswSchemaVersion CurrentVersion { get; }
+        CswSchemaVersion TargetVersion { get; }
+        CswSchemaUpdateDriver Next { get;  }
+
 
     }//CswScriptCollections
 

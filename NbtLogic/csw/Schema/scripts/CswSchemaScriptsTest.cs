@@ -41,14 +41,80 @@ namespace ChemSW.Nbt.Schema
         }//Test
 
 
-        public CswSchemaVersion CurrentVersion { get { return new CswSchemaVersion( 000, 'T', 00 ); } }
+        public CswSchemaVersion LatestVersion
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public CswSchemaVersion MinimumVersion
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public CswSchemaVersion CurrentVersion
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public CswSchemaVersion TargetVersion
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public CswSchemaUpdateDriver Next
+        {
+            get { throw new NotImplementedException(); }
+        }
 
 
 
-        /// <summary>
-        /// The highest schema version number defined in the updater
-        /// </summary>
+        //#region IEnumerable
+        //public IEnumerator<CswSchemaUpdateDriver> GetEnumerator()
+        //{
+        //    return ( new CswSchemaScriptsTestEnumerator( this ) );
+        //}
 
+        //IEnumerator IEnumerable.GetEnumerator()
+        //{
+        //    return ( new CswSchemaScriptsTestEnumerator( this ) );
+        //}
+
+
+        //private class CswSchemaScriptsTestEnumerator : IEnumerator<CswSchemaUpdateDriver>
+        //{
+        //    private CswSchemaScriptsTest _CswSchemaScriptsTest = null;
+        //    public CswSchemaScriptsTestEnumerator( CswSchemaScriptsTest CswSchemaScriptsTest )
+        //    {
+        //        _CswSchemaScriptsTest = CswSchemaScriptsTest;
+        //    }
+
+        //    public CswSchemaUpdateDriver Current
+        //    {
+        //        get { throw new NotImplementedException(); }
+        //    }
+
+        //    public void Dispose()
+        //    {
+        //        throw new NotImplementedException();
+        //    }
+
+        //    object IEnumerator.Current
+        //    {
+        //        get { throw new NotImplementedException(); }
+        //    }
+
+        //    public bool MoveNext()
+        //    {
+        //        throw new NotImplementedException();
+        //    }
+
+        //    public void Reset()
+        //    {
+        //        throw new NotImplementedException();
+        //    }
+        //}//CswSchemaScriptsTestEnumerator
+
+        //#endregion
     }//CswScriptCollections
 
 }//ChemSW.Nbt.Schema
