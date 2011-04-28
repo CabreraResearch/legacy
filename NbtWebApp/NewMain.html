@@ -106,7 +106,7 @@
 											'onLinkClick': handleItemSelect,
 											'onSuccess': function ()
 											{
-												if (view.viewid == '')
+												if (view.viewid === '')
 												{
 													refreshWelcome();
 												} else
@@ -208,7 +208,7 @@
 			};
 			if (options) $.extend(o, options);
 
-			if (o.viewid != undefined && o.viewid != '')
+			if (o.viewid !== undefined && o.viewid !== '')
 			{
 			    $.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
 			    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
@@ -227,7 +227,7 @@
 			            }
 			    }
 			}
-			else if (o.type != undefined && o.type != '')
+			else if (o.type !== undefined && o.type !== '')
 			{
 			    switch (o.type)
 			    {
@@ -440,11 +440,11 @@
 		if (options) $.extend(o, options);
 
 		// Defaults
-		if (o.nodeid == '' || o.nodeid == undefined)
+		if (o.nodeid === '' || o.nodeid === undefined)
 			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
-		if (o.cswnbtnodekey == '')
+		if (o.cswnbtnodekey === '')
 			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
-		if (o.viewid != '')
+		if (o.viewid !== '')
 			$.CswCookie('get', CswCookieName.CurrentView.ViewId);
 
 		o.onAddNode = function (nodeid, cswnbtnodekey)
@@ -491,7 +491,7 @@
 			$.CswCookie('set', CswCookieName.CurrentNode.NodeId, o.nodeid);
 			$.CswCookie('set', CswCookieName.CurrentNode.NodeKey, o.cswnbtnodekey);
 
-			if (o.nodeid != '' && o.nodeid != 'root')
+			if (o.nodeid !== '' && o.nodeid !== 'root')
 			{
 				getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 				refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
@@ -605,11 +605,11 @@
 		};		
 		if (options) $.extend(o, options);
 
-		if (o.nodeid == '' || o.nodeid == undefined)
+		if (o.nodeid === '' || o.nodeid === undefined)
 			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
-		if (o.cswnbtnodekey == '')
+		if (o.cswnbtnodekey === '')
 			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
-		if (o.viewid == '')
+		if (o.viewid === '')
 			o.viewid = $.CswCookie('get', CswCookieName.CurrentView.ViewId);
 
 		clear({ left: true });
