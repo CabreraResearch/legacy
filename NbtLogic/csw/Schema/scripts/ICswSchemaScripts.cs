@@ -16,7 +16,6 @@ namespace ChemSW.Nbt.Schema
     public interface ICswSchemaScripts 
     {
 
-        Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> Scripts { get; }
         CswSchemaVersion LatestVersion { get; }
         CswSchemaVersion MinimumVersion { get; }
         CswSchemaVersion CurrentVersion { get; }

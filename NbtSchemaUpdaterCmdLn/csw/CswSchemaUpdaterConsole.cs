@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
         }//_convertArgsToDictionary() 
 
 
-        ICswSchemaScripts _CswSchemaScripts = null; 
+        ICswSchemaScripts _CswSchemaScripts = null;
         public void process( string[] args )
         {
 
@@ -132,13 +132,14 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                 _convertArgsToDictionary( args );
 
-                 if ( _UserArgs.ContainsKey( _ArgKey_Mode ) && _Arg_Val_Test == _UserArgs[_ArgKey_Mode] ) 
-                 {
-                     _CswSchemaScripts = new CswSchemaScriptsTest( _CswNbtResources );
-                 } else 
-                 {
-                     _CswSchemaScripts = new CswSchemaScriptsProd( _CswNbtResources ); 
-                 } 
+                if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _Arg_Val_Test == _UserArgs[_ArgKey_Mode] )
+                {
+                    _CswSchemaScripts = new CswSchemaScriptsTest( _CswNbtResources );
+                }
+                else
+                {
+                    _CswSchemaScripts = new CswSchemaScriptsProd( _CswNbtResources );
+                }
 
 
 
@@ -205,8 +206,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 bool UpdateSucceeded = true;
                 while( UpdateSucceeded && CurrentVersion != _CswSchemaUpdater.LatestVersion )
                 {
-                    CswSchemaVersion UpdateFromVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
-                    CswSchemaVersion UpdateToVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 2 );
+                    CswSchemaVersion UpdateFromVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration );
+                    CswSchemaVersion UpdateToVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
                     _CswConsoleOutput.write( "Updating AccessId " + AccessId + " to schema version " + UpdateToVersion.ToString() );
                     _CswSchemaUpdateThread.start();
                     while( UpdateState.Running == _CswSchemaUpdateThread.UpdateState )

@@ -17,54 +17,88 @@ namespace ChemSW.Nbt.Schema
     {
         private CswNbtResources _CswNbtResources;
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
+        List<CswSchemaUpdateDriver> _UpdateDrivers = new List<CswSchemaUpdateDriver>();
 
 
         public CswSchemaScriptsTest( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
+
+
+            _UpdateDrivers.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_001_01( _CswNbtSchemaModTrnsctn ) ) );
+            _UpdateDrivers.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_001_02( _CswNbtSchemaModTrnsctn ) ) );
+            _UpdateDrivers.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_001_03( _CswNbtSchemaModTrnsctn ) ) );
+            _UpdateDrivers.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_001_04( _CswNbtSchemaModTrnsctn ) ) );
+
         }//ctor
-
-
-        public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> Scripts
-        {
-            get
-            {
-
-                Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> ReturnVal = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
-
-                CswSchemaUpdateDriver Schema_001t01Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchema_001_T_01( _CswNbtSchemaModTrnsctn ) );
-                ReturnVal.Add( Schema_001t01Driver.SchemaVersion, Schema_001t01Driver );
-
-                return ( ReturnVal );
-            }//get 
-        }//Test
 
 
         public CswSchemaVersion LatestVersion
         {
-            get { throw new NotImplementedException(); }
+            get { return ( _UpdateDrivers[_UpdateDrivers.Count - 1].SchemaVersion ); }
         }
 
         public CswSchemaVersion MinimumVersion
         {
-            get { throw new NotImplementedException(); }
+            get { return ( new CswSchemaVersion( 001, 'T', 00 ) ); }
         }
 
         public CswSchemaVersion CurrentVersion
         {
-            get { throw new NotImplementedException(); }
-        }
+            get
+            {
+                CswSchemaVersion ReturnVal = MinimumVersion;
+                if( _CurrentIdx >= 0 )
+                {
+                    ReturnVal = _UpdateDrivers[_CurrentIdx].SchemaVersion;
+                }
+
+                return ( ReturnVal );
+            }//get
+
+        }//CurrentVersion
 
         public CswSchemaVersion TargetVersion
         {
-            get { throw new NotImplementedException(); }
-        }
+            get
+            {
+                CswSchemaVersion ret = null;
+                if( CurrentVersion == MinimumVersion )
+                    ret = new CswSchemaVersion( LatestVersion.CycleIteration, LatestVersion.ReleaseIdentifier, 1 );
+                else
+                    ret = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration );
+                return ret;
+            }
+        }//TargetVersion
 
+        private Int32 _CurrentIdx = Int32.MinValue;
         public CswSchemaUpdateDriver Next
         {
-            get { throw new NotImplementedException(); }
-        }
+            get
+            {
+                CswSchemaUpdateDriver ReturnVal = null;
+
+
+                if( _UpdateDrivers.Count > _CurrentIdx )
+                {
+                    if( Int32.MinValue == _CurrentIdx )
+                    {
+                        _CurrentIdx = 0;
+                    }
+                    else
+                    {
+                        _CurrentIdx++;
+                    }
+
+                    ReturnVal = _UpdateDrivers[_CurrentIdx];
+                }
+
+                return ( ReturnVal );
+
+            }//get
+
+        }//Next
 
 
 

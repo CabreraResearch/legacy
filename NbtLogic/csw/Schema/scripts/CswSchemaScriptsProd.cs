@@ -119,15 +119,6 @@ namespace ChemSW.Nbt.Schema
         }//ctor
 
         #region ICswSchemaScripts
-        public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> Scripts
-        {
-            get
-            {
-                return ( _UpdateDrivers );
-
-            }//get
-
-        }//Scripts
 
 
 

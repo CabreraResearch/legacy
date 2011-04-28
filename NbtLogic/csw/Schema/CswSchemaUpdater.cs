@@ -19,9 +19,6 @@ namespace ChemSW.Nbt.Schema
         private CswTableUpdate _UpdateHistoryTableUpdate;
         private DataTable _UpdateHistoryTable;
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
-        private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = null;
-        private CswSchemaScriptsProd _CswScriptCollections = null;
-
 
         public enum HamletNodeTypes
         {
@@ -52,7 +49,6 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
 
 
-            _UpdateDrivers = CswSchemaScripts.Scripts;
 
         }
 
