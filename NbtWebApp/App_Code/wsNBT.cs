@@ -78,17 +78,6 @@ namespace ChemSW.Nbt.WebServices
 
 		}//start() 
 
-        private AuthenticationStatus start( string SessionId, ref string ExotericAuthenticationResult )
-        {
-            string EuphemisticAuthenticationStatus = string.Empty;
-            AuthenticationStatus AuthenticationStatus = _CswNbtWebServiceResources.startSession( SessionId, ref EuphemisticAuthenticationStatus );
-
-            ExotericAuthenticationResult = "<AuthenticationStatus>" + EuphemisticAuthenticationStatus + "</AuthenticationStatus>";
-
-            return ( AuthenticationStatus );
-
-        }//start() 
-
 		private void end()
 		{
 			if( _CswNbtResources != null )
@@ -1513,19 +1502,12 @@ namespace ChemSW.Nbt.WebServices
             XElement ReturnVal = new XElement( "result");
             try
             {
-                string EuphemisticAuthenticationStatus = string.Empty;
-                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
-                {
-
-                    CswNbtWebServiceMobileUpdateProperties wsUP = new CswNbtWebServiceMobileUpdateProperties( _CswNbtWebServiceResources, ForMobile );
-                    ReturnVal.Add( wsUP.Run( ParentId, UpdatedViewXml ) );
-
-                    end();
-                }
-                else
-                {
-                    ReturnVal.Add( "result", EuphemisticAuthenticationStatus );
-                }
+                start();
+                
+                CswNbtWebServiceMobileUpdateProperties wsUP = new CswNbtWebServiceMobileUpdateProperties( _CswNbtWebServiceResources, ForMobile );
+                ReturnVal.Add( wsUP.Run( ParentId, UpdatedViewXml ) );
+                
+                end();
             }
 
             catch( Exception ex )
@@ -1544,19 +1526,13 @@ namespace ChemSW.Nbt.WebServices
             XElement ReturnVal = new XElement( "result" );
             try
             {
-                string EuphemisticAuthenticationStatus = string.Empty;
-                if( AuthenticationStatus.Authenticated == start( SessionId, ref EuphemisticAuthenticationStatus ) )
-                {
-                    ICswNbtUser CurrentUser = _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser;
-                    CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtWebServiceResources, ForMobile );
-                    ReturnVal.Add( wsView.Run( ParentId, CurrentUser ) );
+                start();
 
-                    end();
-                }
-                else
-                {
-                    ReturnVal.Value = EuphemisticAuthenticationStatus;
-                }
+                ICswNbtUser CurrentUser = _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser;
+                CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtWebServiceResources, ForMobile );
+                ReturnVal.Add( wsView.Run( ParentId, CurrentUser ) );
+
+                end();
             }
 
             catch( Exception ex )
