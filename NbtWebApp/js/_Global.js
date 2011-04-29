@@ -708,6 +708,18 @@ function makeId(options) { /// <param name="$" type="jQuery" />
     return elementId;
 }
 
+function isNullOrEmpty(str)
+{
+	/// <summary>
+	///   Returns true if the input is null, undefined, or ''
+	/// </summary>
+	/// <param name="str" type="Object">
+	///     String or object to test
+	/// </param>
+
+	return (str === '' || str === undefined || str === null);
+}
+
 // ------------------------------------------------------------------------------------
 // for debug
 // ------------------------------------------------------------------------------------

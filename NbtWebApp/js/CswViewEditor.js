@@ -279,11 +279,15 @@
 				
 						// temporary workaround
 						var rolenodeid = v.getvisroleselect().val();
-						if(rolenodeid !== '' && rolenodeid !== undefined)
+						if(!isNullOrEmpty(rolenodeid))
+						{
 							rolenodeid = rolenodeid.substr('nodes_'.length)
+						}
 						var usernodeid = v.getvisuserselect().val();
-						if(usernodeid !== '' && usernodeid !== undefined)
+						if(!isNullOrEmpty(usernodeid))
+						{
 							usernodeid = usernodeid.substr('nodes_'.length)
+						}
 						$currentviewxml.attr('visibilityroleid', rolenodeid);
 						$currentviewxml.attr('visibilityuserid', usernodeid);
 				
