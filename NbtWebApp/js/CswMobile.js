@@ -650,18 +650,18 @@
             var ReadOnly = ( isTrue($xmlitem.attr('readonly')) );
 
             // Subfield values
-            var sf_text =  isNullOrEmpty( _extractCDataValue($xmlitem.children('text')) ) ? '' : _extractCDataValue($xmlitem.children('text'));
-            var sf_value = isNullOrEmpty( $xmlitem.children('value').text() ) ? '' : $xmlitem.children('value').text();
-            var sf_href = isNullOrEmpty( $xmlitem.children('href').text() ) ? '' : $xmlitem.children('href').text();
-            var sf_checked = isNullOrEmpty( $xmlitem.children('checked').text() ) ? '' : $xmlitem.children('checked').text();
-            var sf_required = isNullOrEmpty( $xmlitem.children('required').text() ) ? '' : $xmlitem.children('required').text();
-            var sf_units = isNullOrEmpty( $xmlitem.children('units').text() ) ? '' : $xmlitem.children('units').text();
-            var sf_answer = isNullOrEmpty( $xmlitem.children('answer').text() ) ? '' : $xmlitem.children('answer').text();
-            var sf_allowedanswers = isNullOrEmpty( $xmlitem.children('allowedanswers').text() ) ? '' : $xmlitem.children('allowedanswers').text();
-            var sf_correctiveaction = isNullOrEmpty( $xmlitem.children('correctiveaction').text() ) ? '' : $xmlitem.children('correctiveaction').text();
-            var sf_comments = isNullOrEmpty( $xmlitem.children('comments').text() ) ? '' : $xmlitem.children('comments').text();
-            var sf_compliantanswers = isNullOrEmpty( $xmlitem.children('compliantanswers').text() ) ? '' : $xmlitem.children('compliantanswers').text();
-            var sf_options = isNullOrEmpty( $xmlitem.children('options').text() ) ? '' : $xmlitem.children('options').text();
+            var sf_text =  tryParseString( _extractCDataValue($xmlitem.children('text')), '');
+            var sf_value = tryParseString( $xmlitem.children('value').text(), '');
+            var sf_href = tryParseString( $xmlitem.children('href').text(), '');
+            var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
+            var sf_required = tryParseString( $xmlitem.children('required').text(), '');
+            var sf_units = tryParseString( $xmlitem.children('units').text(), '');
+            var sf_answer = tryParseString( $xmlitem.children('answer').text(), '');
+            var sf_allowedanswers = tryParseString( $xmlitem.children('allowedanswers').text(), '');
+            var sf_correctiveaction = tryParseString( $xmlitem.children('correctiveaction').text(), '');
+            var sf_comments = tryParseString( $xmlitem.children('comments').text(), '');
+            var sf_compliantanswers = tryParseString( $xmlitem.children('compliantanswers').text(), '');
+            var sf_options = tryParseString( $xmlitem.children('options').text(), '');
 
             if (sf_value == 'NaN') sf_value = '';
 
