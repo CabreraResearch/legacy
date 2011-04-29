@@ -180,7 +180,7 @@ function _handleAuthenticationStatus(options)
     }
     else
     {
-        o.success(result);
+        o.success();
     }
 }
 
