@@ -78,10 +78,9 @@ function CswAjaxXml(options) {
 		error: function () { }
 	};
     
-	if (options) {
-		$.extend(o, options);
-	}
-	if (o.url !== '')
+	if (options) $.extend(o, options);
+	
+    if ( o.url !== '')
 	{
 		//var starttime = new Date();
 		$.ajax({
@@ -114,12 +113,12 @@ function CswAjaxXml(options) {
 				o.error();
 			}
 		});   // $.ajax({
-	} // if(o.url !== '')
+	} // if(o.url != '')
 } // CswAjaxXml()
 
 function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown) { /// <param name="$" type="jQuery" />
 	//	ErrorMessage = "A WebServices Error Occurred: " + textStatus;
-	//	if (null !== errorThrown) {
+	//	if (null != errorThrown) {
 	//		ErrorMessage += "; Exception: " + errorThrown.toString()
 	//	}
 	var $errorsdiv = $('#ErrorDiv');
@@ -128,7 +127,7 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown) { /// <param n
 		$errorsdiv.CswErrorMessage({ 'message': errorJson.message, 'detail': errorJson.detail });
 	} else
 	{
-		log(o.message + '; ' + o.detail);
+	    log(errorJson.message + '; ' + errorJson.detail);
 	}
 } // _handleAjaxError()
 
@@ -139,11 +138,11 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown) { /// <param n
 //    // for some reason, CDATA fields come through from the webservice like this:
 //    // <node><!--[CDATA[some text]]--></node>
 //    var cdataval = $node.html();
-//    if (cdataval !== undefined && cdataval !== '') {
+//    if (cdataval != undefined && cdataval != '') {
 //        var prefix = '<!--[CDATA[';
 //        var suffix = ']]-->';
 
-//        if (cdataval.substr(0, prefix.length) === prefix) {
+//        if (cdataval.substr(0, prefix.length) == prefix) {
 //            ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
 //        }
 //    }
@@ -169,7 +168,12 @@ function xmlToString($xmlnode) { /// <param name="$" type="jQuery" />
 }
 
 function jsonToString(j) {
-	if(typeof j === "object")
+    /// <summary>
+    ///   Transforms a JSON Object into properly parsed string for consumption by a webservice
+    /// </summary>
+    /// <param name="j" type="Object">A JSON Object</param>
+    /// <returns type="String" />
+    if(typeof j === "object")
 	{
 		var ret = "{";
 	 	var first = true;
@@ -216,13 +220,13 @@ function setChanged() {
 		changed = 1;
 		//        var statusimage = getMainStatusImage();
 		//var savebutton = $('#SaveTab');
-		//        if (statusimage !== null) {
+		//        if (statusimage != null) {
 		//            statusimage.style.backgroundPosition = "0px -210px";
 		//            statusimage.onmouseover = function() { this.style.backgroundPosition = "-15px -210px"; }
 		//            statusimage.onmouseout = function() { this.style.backgroundPosition = "0px -210px"; }
 		//            statusimage.title = "There are unsaved changes";
 		//        } 
-//		if (savebutton !== null)
+//		if (savebutton != null)
 //		{
 //			savebutton.value = "Save Changes";
 //			savebutton.disabled = false;
@@ -234,15 +238,15 @@ function unsetChanged() {
 	if (checkChangesEnabled)
 	{
 		//        var statusimage = getMainStatusImage();
-		//        if(statusimage !== null)
+		//        if(statusimage != null)
 		//            statusimage.style.backgroundPosition = "0px -195px";
 		//        statusimage.onmouseover = function() { this.style.backgroundPosition = "-15px -195px"; }
 		//        statusimage.onmouseout = function() { this.style.backgroundPosition = "0px -195px"; }
 		//        statusimage.title = "There are no changes";
 //		var savebutton = $('#SaveTab');
-//		if (savebutton !== null)
+//		if (savebutton != null)
 //		{
-//			if (changed !== 0)
+//			if (changed != 0)
 //				savebutton.value = "Changes Saved";
 //			savebutton.disabled = true;
 //		}
