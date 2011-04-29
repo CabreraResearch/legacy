@@ -5,7 +5,7 @@
 
 		var o = {
 			message: '',
-			detail: '',
+			detail: ''
 		};
 		if (options) $.extend(o, options);
 
