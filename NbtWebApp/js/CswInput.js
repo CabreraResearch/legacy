@@ -40,6 +40,7 @@ var CswInput_Types = {
 		{
             var o = {
                 'ID': '',
+				'name': '',
                 'type': CswInput_Types.text,
                 'placeholder': '',
                 'cssclass': '',
@@ -51,12 +52,14 @@ var CswInput_Types = {
             };
             if (options) $.extend(o, options);
 
+			if(isNullOrEmpty(o.name)) o.name = o.ID;
+
             var $parent = $(this);
             var $input = $('<input />');
             if( o.ID !== '' ) 
             {
                 $input.attr('id',o.ID);
-                $input.attr('name',o.ID);
+                $input.attr('name',o.name);
             }
             
             if( o.type !== '' && o.type !== undefined ) 
