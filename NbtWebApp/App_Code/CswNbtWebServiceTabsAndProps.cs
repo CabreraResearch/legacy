@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.WebServices
 			CswNbtNodeKey NbtNodeKey = null;
 			if( EditMode == NodeEditMode.AddInPopup )
 			{
-				Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+				Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
 			}
 			else
 			{
