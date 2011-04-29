@@ -24,9 +24,9 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
 		error: function () { }
 	};
     
-	if (options) {
-		$.extend(o, options);
-	}
+	if (options) $.extend(o, options);
+
+	if (debug) log(o.url);
 
 	//var starttime = new Date();
 	$.ajax({
@@ -80,7 +80,9 @@ function CswAjaxXml(options) {
 	};
     
 	if (options) $.extend(o, options);
-	
+
+	if (debug) log(o.url);
+
     if ( o.url !== '')
 	{
 		//var starttime = new Date();
