@@ -9,6 +9,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.DB;
+using ChemSW.Nbt.Actions;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -108,6 +109,14 @@ namespace ChemSW.Nbt.WebServices
 				CswNbtNode Node = _getNode( NodeId, NodeKey );
 				if( Node != null )
 				{
+					// case 21209
+					if( Node.NodeSpecies == NodeSpecies.Plain )
+					{
+						CswNbtActUpdatePropertyValue PropUpdater = new Actions.CswNbtActUpdatePropertyValue( _CswNbtResources );
+						PropUpdater.UpdateNode( Node, true );
+						Node.postChanges( false );
+					}
+
 					CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
 					foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
 					{
@@ -150,22 +159,33 @@ namespace ChemSW.Nbt.WebServices
 				Node = _getNode( NodeId, NodeKey );
 			}
 
-			if( NewPropXml != string.Empty )
+			if( Node != null )
 			{
-				// for prop filters, update node prop value but don't save the change
-				XmlDocument XmlDoc = new XmlDocument();
-				XmlDoc.LoadXml( NewPropXml );
-				_applyPropXml( Node, XmlDoc.DocumentElement );
-			}
+				// case 21209
+				if( Node.NodeSpecies == NodeSpecies.Plain )
+				{
+					CswNbtActUpdatePropertyValue PropUpdater = new Actions.CswNbtActUpdatePropertyValue( _CswNbtResources );
+					PropUpdater.UpdateNode( Node, true );
+					Node.postChanges( false );
+				}
 
-			Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdFromXml );
+				if( NewPropXml != string.Empty )
+				{
+					// for prop filters, update node prop value but don't save the change
+					XmlDocument XmlDoc = new XmlDocument();
+					XmlDoc.LoadXml( NewPropXml );
+					_applyPropXml( Node, XmlDoc.DocumentElement );
+				}
 
-			CswNbtMetaDataNodeTypeProp Prop = Node.NodeType.getNodeTypeProp( NodeTypePropId );
-			_addProp( PropXmlDoc, EditMode, Node, Prop );
+				Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdFromXml );
 
-			if( NewPropXml != string.Empty )
-			{
-				//Node.Rollback();
+				CswNbtMetaDataNodeTypeProp Prop = Node.NodeType.getNodeTypeProp( NodeTypePropId );
+				_addProp( PropXmlDoc, EditMode, Node, Prop );
+
+				if( NewPropXml != string.Empty )
+				{
+					//Node.Rollback();
+				}
 			}
 
 			return PropXmlDoc;

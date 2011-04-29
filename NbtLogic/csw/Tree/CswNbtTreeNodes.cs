@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Data;
 using System.Xml;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
@@ -81,7 +82,7 @@ namespace ChemSW.Nbt
 
         //private Int32 _DummyNodeId = -1;
 
-        private static string _XPathChildren = "NbtNode";
+        //private static string _XPathChildren = "NbtNode";
 
         private XmlNode _TreeNode = null;
         //CswNbtNodes _CswNbtNodes = null;
@@ -373,7 +374,8 @@ namespace ChemSW.Nbt
             if( CurrentChildCount <= ChildN )
                 throw ( new CswDniException( "Requested child node " + ChildN + " does not exist; current node contains " + CurrentChildCount + " children" ) );
 
-            _CurrentNode = _CurrentNode.SelectNodes( _XPathChildren )[ChildN];
+            //_CurrentNode = _CurrentNode.SelectNodes( _XPathChildren )[ChildN];
+			_CurrentNode = _getCurrentNodeChildren().ElementAt<XmlNode>( ChildN );
 
         }//goToNthChild() 
 
@@ -479,9 +481,17 @@ namespace ChemSW.Nbt
 
         public int getChildNodeCount()
         {
-            return _CurrentNode.SelectNodes( _XPathChildren ).Count;
-
+            // return _CurrentNode.SelectNodes( _XPathChildren ).Count;
+			return _getCurrentNodeChildren().Count();
+											
         }//getChildNodeCount() 
+
+		private IEnumerable<XmlNode> _getCurrentNodeChildren()
+		{
+			return from XmlNode ThisNode in _CurrentNode.ChildNodes
+				   where ( ThisNode.Name == _ElemName_NodeGroup || ThisNode.Name == _ElemName_Node )
+				   select ThisNode;
+		}
 
 
         public CswNbtNodeKey getNodeKeyForParentOfCurrentPosition()
@@ -875,8 +885,8 @@ namespace ChemSW.Nbt
             if( null == _CurrentNode )
                 throw ( new CswDniException( "There is no current node" ) );
 
-            if( _CurrentNode.Name != _ElemName_Node )
-                throw ( new CswDniException( "The current node (" + _CurrentNode.Name + ") is not a CswNbtNode" ) );
+			//if( _CurrentNode.Name != _ElemName_Node )
+			//    throw ( new CswDniException( "The current node (" + _CurrentNode.Name + ") is not a CswNbtNode" ) );
 
             CswNbtNodeKey Ret = new CswNbtNodeKey( _CswNbtResources, _CurrentNode.Attributes[_AttrName_Key].Value );
             return Ret;
@@ -894,16 +904,19 @@ namespace ChemSW.Nbt
 
         }//getIdForCurrentNode()
 
-        public string getNameForCurrentNode()
-        {
-            if( null == _CurrentNode )
-                throw ( new CswDniException( "There is no current node" ) );
+		public string getNameForCurrentNode()
+		{
+			if( null == _CurrentNode )
+				throw ( new CswDniException( "There is no current node" ) );
 
-            if( _CurrentNode.Name != _ElemName_Node )
-                throw ( new CswDniException( "The current node (" + _CurrentNode.Name + ") is not a CswNbtNode" ) );
+			//if( _CurrentNode.Name != _ElemName_Node )
+			//    throw ( new CswDniException( "The current node (" + _CurrentNode.Name + ") is not a CswNbtNode" ) );
 
-            return _CurrentNode.Attributes[_AttrName_NodeName].Value;
-        }//getNameForCurrentNode()
+			if( _CurrentNode.Name == _ElemName_NodeGroup )
+				return _CurrentNode.Attributes[_AttrName_GroupName].Value;
+			else
+				return _CurrentNode.Attributes[_AttrName_NodeName].Value;
+		}//getNameForCurrentNode()
 
         public bool getSelectableForCurrentNode()
         {

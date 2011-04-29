@@ -474,7 +474,10 @@
 					if ($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 					{
 						var $subtable = propOpt.$propcell.children('#' + propOpt.$propxml.attr('id') + '_subproptable').first();
-						_updatePropXmlFromForm($subtable, $subprops);
+						if($subtable.length > 0)
+						{
+							_updatePropXmlFromForm($subtable, $subprops);
+						}
 					}
 				}
 			}); // each()

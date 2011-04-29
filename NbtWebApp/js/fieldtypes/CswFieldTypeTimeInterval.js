@@ -19,7 +19,8 @@
 
                     var $weeklyradiocell = $table.CswTable('cell', 1, 1);
 					var $weeklyradio = $weeklyradiocell.CswInput('init',{ID: o.ID + '_type_weekly',
-                                                                         type: CswInput_Types.radio,
+                                                                         name: o.ID + '_type',
+																		 type: CswInput_Types.radio,
                                                                          value: 'weekly'
                                                                 });
 
@@ -28,6 +29,7 @@
 
                     var $monthlyradiocell = $table.CswTable('cell', 2, 1);
 					var $monthlyradio = $monthlyradiocell.CswInput('init',{ID: o.ID + '_type_monthly',
+                                                                           name: o.ID + '_type',
                                                                            type: CswInput_Types.radio,
                                                                            value: 'monthly'
                                                                     });
@@ -36,6 +38,7 @@
 
                     var $yearlyradiocell = $table.CswTable('cell', 3, 1);
 					var $yearlyradio = $yearlyradiocell.CswInput('init',{ID: o.ID + '_type_yearly',
+                                                                         name: o.ID + '_type',
                                                                          type: CswInput_Types.radio,
                                                                          value: 'yearly'
                                                                 });  
@@ -86,6 +89,7 @@
 					$MonthlyDiv.append(' Month(s)<br/>');
 
 					var $MonthlyByDateRadio = $MonthlyDiv.CswInput('init',{ID: o.ID +'_monthly_by_date',
+                                                                           name: o.ID + '_monthly',
                                                                             type: CswInput_Types.radio,
                                                                             onChange: o.onchange,
                                                                             value: 'MonthlyByDate'
@@ -101,6 +105,7 @@
 					$MonthlyDiv.append('<br/>');
 
 					var $MonthlyByDayRadio = $MonthlyDiv.CswInput('init',{ID: o.ID +'_monthly_by_day',
+                                                                           name: o.ID + '_monthly',
                                                                             type: CswInput_Types.radio,
                                                                             onChange: o.onchange,
                                                                             value: 'MonthlyByWeekAndDay'
@@ -174,6 +179,7 @@
 							$YearlyDiv.hide();
 							setWeekDayChecked( o.ID + '_weeklyday', $RateIntervalXml.children('weeklyday').text());
 							$WeeklyStartDate.val($RateIntervalXml.children('startingdate').text());
+							$MonthlyByDateRadio.attr('checked', 'true');     //default (for case 21048)
 							break;
 						case "MonthlyByDate":
 							$monthlyradio.attr('checked', 'true');
@@ -203,6 +209,7 @@
 							$MonthlyDiv.show(); 
 							$YearlyDiv.hide();
 							$YearlyStartDate.val($RateIntervalXml.children('yearlydate').text());
+							$MonthlyByDateRadio.attr('checked', 'true');     //default (for case 21048)
 							break;
 					} // switch(RateType)
 				}
@@ -258,7 +265,6 @@
 						break;
 				} // switch(RateType)
 
-				log($intervalnode.find('*').length);
 				$intervalnode.find('*').andSelf().each(function() { $(this).attr('xmlns', ''); });
 
             } // save
