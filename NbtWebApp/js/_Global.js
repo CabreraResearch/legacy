@@ -21,7 +21,8 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
 		url: '',
 		data: '',
 		success: function (result) { },
-		error: function () { }
+		error: function () { },
+        formobile: false
 	};
     
 	if (options) $.extend(o, options);
@@ -30,34 +31,42 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
 
 	//var starttime = new Date();
 	$.ajax({
-		type: 'POST',
-		url: o.url,
-		dataType: "json",
-		contentType: 'application/json; charset=utf-8',
-		data: o.data,
-		success: function (data, textStatus, XMLHttpRequest)
-		{
-			//var endtime = new Date();
-			//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+	    type: 'POST',
+	    url: o.url,
+	    dataType: "json",
+	    contentType: 'application/json; charset=utf-8',
+	    data: o.data,
+	    success: function (data, textStatus, XMLHttpRequest)
+	    {
+	        //var endtime = new Date();
+	        //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-			var result = $.parseJSON(data.d);
+	        var result = $.parseJSON(data.d);
 
-			if (result.error !== undefined)
-			{
-				_handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
-				o.error();
-			}
-			else
-			{
-				o.success(result);
-			}
-		}, // success{}
-		error: function (XMLHttpRequest, textStatus, errorThrown)
-		{
-			_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-			o.error();
-		}
-	});     // $.ajax({
+	        if (result.error !== undefined)
+	        {
+	            _handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
+	            o.error();
+	        }
+	        else
+	        {
+	            $auth = $(data.d).find('AuthenticationStatus');
+	            if (o.formobile && $auth.length > 0)
+	            {
+	                _handleAuthenticationStatus($auth.text());
+	            }
+	            else
+	            {
+	                o.success(result);
+	            }
+	        }
+	    }, // success{}
+	    error: function (XMLHttpRequest, textStatus, errorThrown)
+	    {
+	        _handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+	        o.error();
+	    }
+	});      // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options) { 
@@ -70,13 +79,15 @@ function CswAjaxXml(options) {
     ///     &#10;2 - options.data: field1=value + ampersand + field2=value
     ///     &#10;3 - options.success: function() {}
     ///     &#10;4 - options.error: function() {}
+    ///     &#10;5 - options.formobile: false
     /// </param>
 
     var o = {
 		url: '',
 		data: '',
 		success: function ($xml) { },
-		error: function () { }
+		error: function () { },
+        formobile: false
 	};
     
 	if (options) $.extend(o, options);
@@ -86,37 +97,45 @@ function CswAjaxXml(options) {
     if ( o.url !== '')
 	{
 		//var starttime = new Date();
-		$.ajax({
-			type: 'POST',
-			url: o.url,
-			dataType: "xml",
-			//contentType: 'application/json; charset=utf-8',
-			data: o.data,     // should be 'field1=value&field2=value'
-			success: function (data, textStatus, XMLHttpRequest)
-			{
-				//var endtime = new Date();
-				//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+	    $.ajax({
+	        type: 'POST',
+	        url: o.url,
+	        dataType: "xml",
+	        //contentType: 'application/json; charset=utf-8',
+	        data: o.data,     // should be 'field1=value&field2=value'
+	        success: function (data, textStatus, XMLHttpRequest)
+	        {
+	            //var endtime = new Date();
+	            //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-				// this is IE compliant
-				var $xml = $(XMLHttpRequest.responseXML);
-				var $realxml = $xml.children().first();
-				if ($realxml.first().get(0).nodeName === "error")
-				{
-					_handleAjaxError(XMLHttpRequest, { 'message': $realxml.attr('message'), 'detail': $realxml.attr('detail') }, '');
-					o.error();
-				}
-				else
-				{
-					o.success($realxml);
-				}
+	            // this is IE compliant
+	            var $xml = $(XMLHttpRequest.responseXML);
+	            var $realxml = $xml.children().first();
+	            if ($realxml.first().get(0).nodeName === "error")
+	            {
+	                _handleAjaxError(XMLHttpRequest, { 'message': $realxml.attr('message'), 'detail': $realxml.attr('detail') }, '');
+	                o.error();
+	            }
+	            else
+	            {
+	                $auth = $xml.find('AuthenticationStatus');
+	                if (o.formobile && $auth.length > 0)
+	                {
+	                    _handleAuthenticationStatus($auth.text());
+	                }
+	                else
+	                {
+	                    o.success($realxml);
+	                }
+	            }
 
-			}, // success{}
-			error: function (XMLHttpRequest, textStatus, errorThrown)
-			{
-				_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-				o.error();
-			}
-		});    // $.ajax({
+	        }, // success{}
+	        error: function (XMLHttpRequest, textStatus, errorThrown)
+	        {
+	            _handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+	            o.error();
+	        }
+	    });      // $.ajax({
 	} // if(o.url != '')
 } // CswAjaxXml()
 
@@ -725,6 +744,8 @@ function isNullOrEmpty(str)
 
 	return (str === '' || str === undefined || str === null);
 }
+
+
 
 // ------------------------------------------------------------------------------------
 // for debug
