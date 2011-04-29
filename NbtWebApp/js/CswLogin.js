@@ -24,7 +24,7 @@
                                                 '    <table>' +
                                                 '    <tr>' +
                                                 '      <td align="right"></td>' +
-                                                '      <td id="loginmsg" class="ErrorContent" style="display: none;"></td>' +
+                                                '      <td id="loginmsg" style="display: none;"></td>' +
                                                 '    </tr>' +
                                                 '    <tr>' +
                                                 '      <td align="right">Customer ID:</td>' +
@@ -62,8 +62,8 @@
                                                         enabledText: 'Login', 
                                                         disabledText: 'Logging in...', 
                                                         onclick: function() {
-                                                            $('#loginmsg').text('')
-																		.hide();
+                                                            $('#loginmsg').hide()
+																	.children().remove();
 
                                                             var AccessId = $('#login_accessid').val();
                                                             var UserName = $('#login_username').val();
@@ -154,8 +154,7 @@
 					}); 
 					break;
 			}
-			$('#loginmsg').text(txt)
-						.show();
+			$('#loginmsg').CswErrorMessage({'message': txt });
 
 			$('#login_password').val('');   // case 21303
 
