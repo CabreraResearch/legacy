@@ -122,8 +122,18 @@ namespace ChemSW.Nbt.WebServices
 											)
 										)
 									)
-								)
-							) { new JProperty( "default", "" ) };
+								),
+								new JProperty( "group",
+									new JObject(
+										new JProperty( "icon",
+											new JObject(
+												new JProperty( "image", "Images/icons/group.gif" )
+											)
+										)
+									)
+								),
+								new JProperty( "default", "" )
+							);
 
 			var NodeTypes = new Dictionary<Int32, string>();
 			ArrayList Relationships = View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
@@ -170,13 +180,23 @@ namespace ChemSW.Nbt.WebServices
 			{
 				Tree.goToNthChild( c );
 
-				CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
 				CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
-
-				string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
 				string ThisNodeName = Tree.getNodeNameForCurrentPosition();
-				string ThisNodeId = IDPrefix + ThisNode.NodeId.ToString();
-				string ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
+				string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
+				string ThisNodeId = "";
+				string ThisNodeRel = ""; 
+
+				if( ThisNodeKey.NodeSpecies == NodeSpecies.Plain )
+				{
+					CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
+					ThisNodeId = IDPrefix + ThisNode.NodeId.ToString();
+					ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
+				}
+				else if( ThisNodeKey.NodeSpecies == NodeSpecies.Group )
+				{
+					ThisNodeId = "";
+					ThisNodeRel = "group";
+				}
 
 				string ThisNodeState = "closed";
 				if( ThisNodeKey.NodeSpecies == NodeSpecies.More )
