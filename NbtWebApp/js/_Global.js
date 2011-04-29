@@ -745,7 +745,32 @@ function isNullOrEmpty(str)
 	return (str === '' || str === undefined || str === null);
 }
 
+function isTrue(str)
+{
+    /// <summary>
+    ///   Returns true if the input is true, 'true', '1' or 1.
+    ///   &#10;1 Returns false if the input is false, 'false', '0' or 0.
+    ///   &#10;2 Otherwise writes an error to the log.
+    /// </summary>
+    /// <param name="str" type="Object">
+    ///     String or object to test
+    /// </param>
 
+    var ret;
+    if (str === 'true' || str === true || str === '1' || str === 1)
+    {
+        ret = true;
+    }
+    else if (str === 'false' || str === false || str === '0' || str === 0)
+    {
+        ret = false;
+    }
+    else
+    {
+        log('isTrue() was called on ' + str + ', which is not a boolean.');
+    }
+    return ret;
+}
 
 // ------------------------------------------------------------------------------------
 // for debug
