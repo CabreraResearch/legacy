@@ -364,10 +364,15 @@
 
         function _ajaxViewJson(DivId, onsuccess)
         {
+            var ajaxData = {
+                'SessionId': SessionId, 
+                'ParentId': DivId, 
+                'ForMobile': true
+            };
             CswAjaxJSON({
                 async: false,   // required so that the link will wait for the content before navigating
                 url: opts.ViewUrl,
-                data: "{ SessionId: '" + SessionId + "', ParentId: '" + DivId + "', ForMobile: '" + true + "'}",
+                data: jsonToString(ajaxData),
                 success: function (data, textStatus, XMLHttpRequest)
                 {
                     var $xml = $(data.d);
@@ -1233,9 +1238,14 @@
 
             if (!amOffline())
             {
+                var ajaxData = {
+                    'AccessId': AccessId, 
+                    'UserName': UserName, 
+                    'Password': Password
+                };
                 CswAjaxJSON({
                     url: opts.AuthenticateUrl,
-                    data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
+                    data: jsonToString(ajaxData),
                     success: function (data)
                     {
                         auth = data.AuthenticationStatus;
@@ -1747,9 +1757,14 @@
                 {
                     if (rootid != '' && viewxml != '')
                     {
+                        var ajaxData = {
+                            'SessionId': SessionId, 
+                            'ParentId': rootid, 
+                            'UpdatedViewXml': viewxml.replace(/'/gi, '\\\'') 
+                        };
                         CswAjaxJSON({
                             url: opts.UpdateUrl,
-                            data: "{ SessionId: '" + SessionId + "', ParentId: '" + rootid + "', UpdatedViewXml: '" + viewxml.replace(/'/gi, '\\\'') + "'}",
+                            data: jsonToString(ajaxData),
                             success: function (data)
                             {
                                 var $xml = $(data.d);
