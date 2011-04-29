@@ -258,7 +258,6 @@
 						break;
 				} // switch(RateType)
 
-				log($intervalnode.find('*').length);
 				$intervalnode.find('*').andSelf().each(function() { $(this).attr('xmlns', ''); });
 
             } // save
