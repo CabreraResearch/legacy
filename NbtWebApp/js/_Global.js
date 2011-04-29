@@ -54,7 +54,7 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
 
 	            if (o.formobile)
 	            {
-                    var auth = tryParseString(data.AuthenticationStatus,'');
+	                var auth = tryParseString(result.AuthenticationStatus, '');
 	                _handleAuthenticationStatus({
                         status: auth,
                         success: o.success(result),
