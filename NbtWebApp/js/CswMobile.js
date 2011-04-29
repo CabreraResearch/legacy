@@ -38,6 +38,7 @@
             $.extend(opts, options);
         }
         
+        var ForMobile = true;
         var rootid;
         var db;
         var UserName;
@@ -50,7 +51,7 @@
         if (window.location.hash.length > 0)
         {
             var potentialtempdivid = window.location.hash.substr(1);
-            if ($('#' + potentialtempdivid).length == 0 && potentialtempdivid != 'viewsdiv' && potentialtempdivid != 'logindiv')
+            if ($('#' + potentialtempdivid).length === 0 && potentialtempdivid !== 'viewsdiv' && potentialtempdivid !== 'logindiv')
             {
                 tempdivid = potentialtempdivid;
             }
@@ -77,7 +78,7 @@
 
             readConfigVar('sessionid', function (configvar_sessionid)
             {
-                if (configvar_sessionid != '' && configvar_sessionid != undefined)
+                if ( !isNullOrEmpty(configvar_sessionid) )
                 {
                     SessionId = configvar_sessionid;
                     reloadViews(true);
@@ -249,12 +250,14 @@
 
             var ret = true;
 
-            if (p.level == 1)
-                rootid = p.DivId;
-
-            if ($('#' + p.DivId).length == 0)
+            if (p.level === 1)
             {
-                if (p.level == 0)
+                rootid = p.DivId;
+            }
+
+            if ($('#' + p.DivId).length === 0)
+            {
+                if (p.level === 0)
                 {
                     if (amOffline())
                     {
@@ -273,30 +276,36 @@
                         });
                     } else
                     {
-                        _ajaxViewJson(p.DivId, function (xml)
-                        {
-                            if (p.level == 1)
+                        CswAjaxXml({
+                            async: false,   // required so that the link will wait for the content before navigating
+                            formobile: ForMobile,
+                            url: opts.ViewUrl,
+                            data: "SessionId=" + SessionId + "&ParentId=" + p.DivId + "&ForMobile=" + ForMobile,
+                            success: function (xml)
                             {
-                                _storeViewXml(p.DivId, p.HeaderText, xml);
+                                if (p.level === 1)
+                                {
+                                    _storeViewXml(p.DivId, p.HeaderText, xml);
+                                }
+                                _processViewXml({
+                                    ParentId: p.ParentId,
+                                    DivId: p.DivId,
+                                    HeaderText: p.HeaderText,
+                                    $xml: $(xml),
+                                    parentlevel: p.level,
+                                    HideRefreshButton: p.HideRefreshButton,
+                                    HideSearchButton: p.HideSearchButton,
+                                    ChangePage: p.ChangePage
+                                });
                             }
-                            _processViewXml({
-                                ParentId: p.ParentId,
-                                DivId: p.DivId,
-                                HeaderText: p.HeaderText,
-                                $xml: $(xml),
-                                parentlevel: p.level,
-                                HideRefreshButton: p.HideRefreshButton,
-                                HideSearchButton: p.HideSearchButton,
-                                ChangePage: p.ChangePage
-                            });
                         });
                     }
-                } else if (p.level == 1)
+                } else if (p.level === 1)
                 {
                     // case 20354 - try cached first
                     _fetchCachedViewXml(rootid, function (xmlstr)
                     {
-                        if (xmlstr != '')
+                        if ( !isNullOrEmpty(xmlstr) )
                         {
                             $currentViewXml = $(xmlstr);
                             
@@ -312,24 +321,30 @@
                             });
                         } else if (!amOffline())
                         {
-                            _ajaxViewJson(p.DivId, function (xml)
-                            {
-                                if (p.level == 1)
+                            CswAjaxXml({
+                                async: false,   // required so that the link will wait for the content before navigating
+                                formobile: ForMobile,
+                                url: opts.ViewUrl,
+                                data: "SessionId=" + SessionId + "&ParentId=" + p.DivId + "&ForMobile=" + ForMobile,
+                                success: function (xml)
                                 {
-                                    _storeViewXml(p.DivId, p.HeaderText, xml);
-                                }
-                                $currentViewXml = $(xml);
+                                    if (p.level === 1)
+                                    {
+                                        _storeViewXml(p.DivId, p.HeaderText, xml);
+                                    }
+                                    $currentViewXml = $(xml);
                                 
-                                _processViewXml({
-                                    ParentId: p.ParentId,
-                                    DivId: p.DivId,
-                                    HeaderText: p.HeaderText,
-                                    $xml: $(xml),
-                                    parentlevel: p.level,
-                                    HideRefreshButton: p.HideRefreshButton,
-                                    HideSearchButton: p.HideSearchButton,
-                                    ChangePage: p.ChangePage
-                                });
+                                    _processViewXml({
+                                        ParentId: p.ParentId,
+                                        DivId: p.DivId,
+                                        HeaderText: p.HeaderText,
+                                        $xml: $(xml),
+                                        parentlevel: p.level,
+                                        HideRefreshButton: p.HideRefreshButton,
+                                        HideSearchButton: p.HideSearchButton,
+                                        ChangePage: p.ChangePage
+                                    });
+                                }
                             });
                         }
                     });
@@ -339,7 +354,7 @@
 //                    {
 //                        if (xmlstr != '')
 //                        {
-                        if($currentViewXml != '')
+                        if( !isNullOrEmpty($currentViewXml) )
                         {
                             var $thisxmlstr = $currentViewXml.find('#' + p.DivId);
                             _processViewXml({
@@ -361,33 +376,6 @@
             }
             return ret;
         } // _loadDivContents()
-
-        function _ajaxViewJson(DivId, onsuccess)
-        {
-            var ajaxData = {
-                'SessionId': SessionId, 
-                'ParentId': DivId, 
-                'ForMobile': true
-            };
-            CswAjaxJSON({
-                async: false,   // required so that the link will wait for the content before navigating
-                url: opts.ViewUrl,
-                data: jsonToString(ajaxData),
-                success: function (data, textStatus, XMLHttpRequest)
-                {
-                    var $xml = $(data.d);
-                    $auth = $xml.find('AuthenticationStatus');
-                    if ($auth.length > 0)
-                    {
-                        _handleAuthenticationStatus($auth.text());
-                    } else
-                    {
-                        onsuccess(data.d);
-                    }
-                }
-            });
-            
-        } // _ajaxViewJson()
 
         var currenttab;
         var onAfterAddDiv;
@@ -441,7 +429,7 @@
             var $xmlitem = $(xmlitem);
             var id = $xmlitem.attr('id');
             var text = $xmlitem.attr('name');
-            var IsDiv = (id != undefined && id != '');
+            var IsDiv = ( !isNullOrEmpty(id) );
             var PageType = xmlitem.nodeName;
 
             var nextid = $xmlitem.next().attr('id');
@@ -462,15 +450,17 @@
                     var tab = $xmlitem.attr('tab');
                     var fieldtype = $xmlitem.attr('fieldtype');
                     var gestalt = $xmlitem.attr('gestalt');
-                    if (gestalt == 'NaN') gestalt = '';
+                    if (gestalt === 'NaN') gestalt = '';
 
                     var currentcnt = $xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
                     var siblingcnt = $xmlitem.siblings('[fieldtype="'+fieldtype+'"]').andSelf().length;
 
-                    if (currenttab != tab)
+                    if (currenttab !== tab)
                     {
-                        if (currenttab != '')
+                        if ( !isNullOrEmpty(currenttab) )
+                        {    
                             lihtml += _endUL() + _makeUL();
+                        }
                         lihtml += '<li data-role="list-divider">' + tab + '</li>'
                         currenttab = tab;
                     }
@@ -482,8 +472,8 @@
 
                             var sf_checked = $xmlitem.children('checked').text();
                             var sf_required = $xmlitem.children('required').text();
-                            if (sf_checked == undefined) sf_checked = '';
-                            if (sf_required == undefined) sf_required = '';
+                            if ( isNullOrEmpty(sf_checked) ) sf_checked = '';
+                            if ( isNullOrEmpty(sf_required) ) sf_required = '';
 
                             lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
                             lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
@@ -497,16 +487,16 @@
                             var sf_allowedanswers = $xmlitem.children('allowedanswers').text();
                             var sf_compliantanswers = $xmlitem.children('compliantanswers').text();
                             var sf_correctiveaction = $xmlitem.children('correctiveaction').text();
-                            if (sf_answer == undefined) sf_answer = '';
-                            if (sf_allowedanswers == undefined) sf_allowedanswers = '';
-                            if (sf_compliantanswers == undefined) sf_compliantanswers = '';
-                            if (sf_correctiveaction == undefined) sf_correctiveaction = '';
+                            if ( isNullOrEmpty(sf_answer) ) sf_answer = '';
+                            if ( isNullOrEmpty(sf_allowedanswers) ) sf_allowedanswers = '';
+                            if ( isNullOrEmpty(sf_compliantanswers) ) sf_compliantanswers = '';
+                            if ( isNullOrEmpty(sf_correctiveaction) ) sf_correctiveaction = '';
 
                             lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
                             lihtml += _makeQuestionAnswerFieldSet(DivId, id, '_ans', '_ans2', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
                             lihtml += '</div>';
 
-                            if (sf_answer != '' && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && sf_correctiveaction == '')
+                            if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
                             {
                                 // mark the li div OOC after it is created
                                 var old_onAfterAddDiv = onAfterAddDiv;
@@ -530,12 +520,18 @@
 
                     // add a div for editing the property directly
                     var toolbar = '';
-                    if (previd != undefined)
+                    if ( !isNullOrEmpty(previd) )
+                    {
                         toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-back="true">Previous</a>';
-                    if (nextid != undefined)
+                    }
+                    if ( !isNullOrEmpty(nextid) )
+                    {
                         toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
-                    if(fieldtype == "Question")
+                    }
+                    if( fieldtype === "Question")
+                    {
                         toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
+                    }
 
                     _addPageDivToBody({
                         ParentId: DivId,
@@ -563,7 +559,7 @@
         function _makeUL(id)
         {
             var ret = '<ul data-role="listview" ';
-            if (id != undefined)
+            if ( !isNullOrEmpty(id) )
                 ret += 'id="' + id + '"';
             ret += '>';
             return ret;
@@ -581,7 +577,7 @@
             var id = $xmlitem.attr('id');
             var NodeName = $xmlitem.attr('name');
             var icon = '';
-            if ($xmlitem.attr('iconfilename') != '' && $xmlitem.attr('iconfilename') != undefined)
+            if ( !isNullOrEmpty($xmlitem.attr('iconfilename')) && !isNullOrEmpty($xmlitem.attr('iconfilename')) )
                 icon = 'images/icons/' + $xmlitem.attr('iconfilename');
             var ObjectClass = $xmlitem.attr('objectclass');
 
@@ -595,14 +591,14 @@
                     var UnansweredCnt = 0;
                     $xmlitem.find('prop[fieldtype="Question"]').each(function ()
                     {
-                        if ($(this).children('Answer').text() == '')
+                        if ( isNullOrEmpty($(this).children('Answer').text()) )
                         {
                             UnansweredCnt++;
                         }
                     });
 
                     Html += '<li>';
-                    if (icon != '')
+                    if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
                     Html += '<p>' + Location + '</p>';
@@ -614,7 +610,7 @@
 
                 default:
                     Html += '<li>';
-                    if (icon != '')
+                    if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<a href="#' + id + '">' + NodeName + '</a>';
                     Html += '</li>';
@@ -631,12 +627,12 @@
             // for some reason, CDATA fields come through from the webservice like this:
             // <node><!--[CDATA[some text]]--></node>
             var cdataval = $node.html();
-            if (cdataval != undefined && cdataval != '')
+            if ( !isNullOrEmpty(cdataval) )
             {
                 var prefix = '<!--[CDATA[';
                 var suffix = ']]-->';
 
-                if (cdataval.substr(0, prefix.length) == prefix)
+                if (cdataval.substr(0, prefix.length) === prefix)
                 {
                     ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
                 }
@@ -649,40 +645,29 @@
             var IdStr = $xmlitem.attr('id');
             var FieldType = $xmlitem.attr('fieldtype');
             var PropName = $xmlitem.attr('name');
-            var ReadOnly = ( "true" == $xmlitem.attr('readonly') );
+            var ReadOnly = ( isTrue($xmlitem.attr('readonly')) );
 
             // Subfield values
-            var sf_text = _extractCDataValue($xmlitem.children('text'));
-            var sf_value = $xmlitem.children('value').text();
-            var sf_href = $xmlitem.children('href').text();
-            var sf_checked = $xmlitem.children('checked').text();
-            var sf_required = $xmlitem.children('required').text();
-            var sf_units = $xmlitem.children('units').text();
-            var sf_answer = $xmlitem.children('answer').text();
-            var sf_allowedanswers = $xmlitem.children('allowedanswers').text();
-            var sf_correctiveaction = $xmlitem.children('correctiveaction').text();
-            var sf_comments = $xmlitem.children('comments').text();
-            var sf_compliantanswers = $xmlitem.children('compliantanswers').text();
-            var sf_options = $xmlitem.children('options').text();
-
-            if (sf_text == undefined) sf_text = '';
-            if (sf_value == undefined) sf_value = '';
-            if (sf_href == undefined) sf_href = '';
-            if (sf_checked == undefined) sf_checked = '';
-            if (sf_required == undefined) sf_required = '';
-            if (sf_units == undefined) sf_units = '';
-            if (sf_answer == undefined) sf_answer = '';
-            if (sf_options == undefined) sf_options = '';
-            if (sf_allowedanswers == undefined) sf_allowedanswers = '';
-            if (sf_correctiveaction == undefined) sf_correctiveaction = '';
-            if (sf_comments == undefined) sf_comments = '';
-            if (sf_compliantanswers == undefined) sf_compliantanswers = '';
+            var sf_text =  isNullOrEmpty( _extractCDataValue($xmlitem.children('text')) ) ? '' : _extractCDataValue($xmlitem.children('text'));
+            var sf_value = isNullOrEmpty( $xmlitem.children('value').text() ) ? '' : $xmlitem.children('value').text();
+            var sf_href = isNullOrEmpty( $xmlitem.children('href').text() ) ? '' : $xmlitem.children('href').text();
+            var sf_checked = isNullOrEmpty( $xmlitem.children('checked').text() ) ? '' : $xmlitem.children('checked').text();
+            var sf_required = isNullOrEmpty( $xmlitem.children('required').text() ) ? '' : $xmlitem.children('required').text();
+            var sf_units = isNullOrEmpty( $xmlitem.children('units').text() ) ? '' : $xmlitem.children('units').text();
+            var sf_answer = isNullOrEmpty( $xmlitem.children('answer').text() ) ? '' : $xmlitem.children('answer').text();
+            var sf_allowedanswers = isNullOrEmpty( $xmlitem.children('allowedanswers').text() ) ? '' : $xmlitem.children('allowedanswers').text();
+            var sf_correctiveaction = isNullOrEmpty( $xmlitem.children('correctiveaction').text() ) ? '' : $xmlitem.children('correctiveaction').text();
+            var sf_comments = isNullOrEmpty( $xmlitem.children('comments').text() ) ? '' : $xmlitem.children('comments').text();
+            var sf_compliantanswers = isNullOrEmpty( $xmlitem.children('compliantanswers').text() ) ? '' : $xmlitem.children('compliantanswers').text();
+            var sf_options = isNullOrEmpty( $xmlitem.children('options').text() ) ? '' : $xmlitem.children('options').text();
 
             if (sf_value == 'NaN') sf_value = '';
 
             var Html = '<div id="' + IdStr + '_propname"';
-            if (FieldType == "Question" && !(sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
+            if (FieldType === "Question" && !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
+            {
                 Html += ' class="OOC"'
+            }
             Html += '>' + PropName + '</div><br/>';
 
             if( !ReadOnly )
@@ -705,13 +690,19 @@
                         for (var i = 0; i < options.length; i++)
                         {
                             Html += '<option value="' + options[i] + '"';
-                            if (selectedvalue == options[i])
+                            if (selectedvalue === options[i])
+                            {
                                 Html += ' selected';
+                            }
                         
-                            if(options[i] != '')
+                            if( !isNullOrEmpty(options[i]) )
+                            {
                                 Html += '>' + options[i] + '</option>';
+                            }
                             else
+                            {
                                 Html += '>[blank]</option>';
+                            }
                         }
                         Html += '</select>';
                         break;
@@ -758,11 +749,11 @@
                         Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
 
                         Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
-                        if (sf_answer == '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
+                        if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
                             Html += 'style="display: none"';
                         Html += 'onchange="';
                         Html += 'var $cor = $(this); ';
-                        Html += 'if($cor.attr(\'value\') == \'\') { ';
+                        Html += 'if($cor.attr(\'value\') === \'\') { ';
                         Html += '  $(\'#' + IdStr + '_li div\').addClass(\'OOC\'); '
                         Html += '  $(\'#' + IdStr + '_propname\').addClass(\'OOC\'); '
                         Html += '} else {';
@@ -825,31 +816,39 @@
             var $sftomodify = null;
             switch (fieldtype)
             {
-                case "Date": if (name == IdStr) $sftomodify = $sf_value; break;
+                case "Date": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Link": break;
-                case "List": if (name == IdStr) $sftomodify = $sf_value; break;
+                case "List": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Logical":
-                    if (name == IdStr + '_ans' || name == IdStr + '_ans2')
+                    if (name === IdStr + '_ans' || name === IdStr + '_ans2')
+                    {
                         $sftomodify = $sf_checked;
+                    }
                     break;
-                case "Memo": if (name == IdStr) $sftomodify = $sf_text; break;
-                case "Number": if (name == IdStr) $sftomodify = $sf_value; break;
+                case "Memo": if (name === IdStr) $sftomodify = $sf_text; break;
+                case "Number": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Password": break;
-                case "Quantity": if (name == IdStr + '_qty') $sftomodify = $sf_value; break;
+                case "Quantity": if (name === IdStr + '_qty') $sftomodify = $sf_value; break;
                 case "Question":
-                    if (name == IdStr + '_com')
+                    if (name === IdStr + '_com')
+                    {
                         $sftomodify = $sf_comments;
-                    else if (name == IdStr + '_ans' || name == IdStr + '_ans2')
+                    }
+                    else if (name === IdStr + '_ans' || name === IdStr + '_ans2')
+                    {
                         $sftomodify = $sf_answer;
-                    else if (name == IdStr + '_cor')
+                    }
+                    else if (name === IdStr + '_cor')
+                    {
                         $sftomodify = $sf_correctiveaction;
+                    }
                     break;
                 case "Static": break;
-                case "Text": if (name == IdStr) $sftomodify = $sf_text; break;
-                case "Time": if (name == IdStr) $sftomodify = $sf_value; break;
+                case "Text": if (name === IdStr) $sftomodify = $sf_text; break;
+                case "Time": if (name === IdStr) $sftomodify = $sf_value; break;
                 default: break;
             }
-            if ($sftomodify != null)
+            if ( !isNullOrEmpty($sftomodify) )
             {
                 $sftomodify.text(value);
                 $xmlitem.attr('wasmodified', '1');
@@ -861,8 +860,10 @@
             var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
 
             var answers = ['Null', 'True', 'False'];
-            if (Required == "true")
+            if ( isTrue(Required) )
+            {
                 answers = ['True', 'False'];
+            }
 
             for (var i = 0; i < answers.length; i++)
             {
@@ -875,16 +876,18 @@
                 }
 
                 Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
-                if ((Checked == 'false' && answers[i] == 'False') ||
-                    (Checked == 'true' && answers[i] == 'True') ||
-                    (Checked == '' && answers[i] == 'Null'))
+                if (( !isTrue(Checked) && !isTrue(answers[i]) ) ||
+                    ( isTrue(Checked) && isTrue(answers[i]) ) ||
+                    ( isNullOrEmpty(Checked) && isNullOrEmpty(answers[i]) ))
+                {
                     Html += 'checked';
+                }
                 Html += ' onclick="';
 
                 // case 20307: workaround for a bug with JQuery Mobile Alpha2
                 for (var j = 0; j < answers.length; j++)
                 {
-                    if (answers[j] == answers[i])
+                    if (answers[j] === answers[i])
                         Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
                     else
                         Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
@@ -894,7 +897,7 @@
                 for (var k = 0; k < answers.length; k++)
                 {
                     Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[k] + '\'); ';
-                    if (answers[k] == answers[i])
+                    if (answers[k] === answers[i])
                     {
                         Html += ' $otherradio.attr(\'checked\', true); ';
                         Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
@@ -927,7 +930,7 @@
             {
                 var answerid = _makeSafeId(answers[i]);
                 Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answerid + '" value="' + answers[i] + '" ';
-                if (Answer == answers[i])
+                if (Answer === answers[i])
                     Html += ' checked';
                 Html += ' onclick="';
 
@@ -935,7 +938,7 @@
                 for (var j = 0; j < answers.length; j++)
                 {
                     var otheranswerid = _makeSafeId(answers[j]);
-                    if (answers[j] == answers[i])
+                    if (answers[j] === answers[i])
                         Html += ' $(\'#' + IdStr + Suffix + '_' + otheranswerid + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
                     else
                         Html += ' $(\'#' + IdStr + Suffix + '_' + otheranswerid + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
@@ -946,7 +949,7 @@
                 {
                     var yetanotheranswerid = _makeSafeId(answers[k]);
                     Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + yetanotheranswerid + '\'); ';
-                    if (answers[k] == answers[i])
+                    if (answers[k] === answers[i])
                     {
                         Html += ' $otherradio.attr(\'checked\', true); ';
                         Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
@@ -967,7 +970,7 @@
                 {
                     Html += ' var $cor = $(\'#' + IdStr + CorrectiveActionSuffix + '\'); ';
                     Html += ' $cor.css(\'display\', \'\'); ';
-                    Html += ' if($cor.attr(\'value\') == \'\') { ';
+                    Html += ' if($cor.attr(\'value\') === \'\') { ';
                     Html += '   $(\'#' + IdStr + LiSuffix + ' div\').addClass(\'OOC\'); ';
                     Html += '   $(\'#' + IdStr + PropNameSuffix + '\').addClass(\'OOC\'); ';
                     Html += ' } else {';
@@ -975,7 +978,7 @@
                     Html += '   $(\'#' + IdStr + PropNameSuffix + '\').removeClass(\'OOC\'); ';
                     Html += ' } ';
                 }
-                if (Answer == '')
+                if ( isNullOrEmpty(Answer) )
                 {
                     // update unanswered count when this question is answered
                     Html += ' if(! $(\'#' + IdStr + '_fieldset\').attr(\'answered\')) { ';
@@ -1019,15 +1022,23 @@
             var divhtml = '<div id="' + p.DivId + '" data-role="page">' +
                           '<div data-role="header" data-theme="' + opts.Theme + '" data-position="fixed">';
             divhtml += '<a href="#' + p.ParentId + '" id="' + p.DivId + '_back" data-back="true" ';
-            if (p.backtransition != undefined)
+            if ( !isNullOrEmpty(p.backtransition) )
+            {
                 divhtml += ' data-transition="' + p.backtransition + '" ';
-            if (p.ParentId == '' || p.ParentId == undefined)
+            }
+            if ( !isNullOrEmpty(p.ParentId) )
+            {
                 divhtml += ' style="visibility: hidden;" ';
+            }
             divhtml += ' data-icon="';
-            if (p.backicon != undefined)
+            if ( !isNullOrEmpty(p.backicon) )
+            {
                 divhtml += p.backicon;
+            }
             else
+            {
                 divhtml += 'arrow-l';
+            }
             divhtml += '">Back</a>';
 
             divhtml += '<h1>' + p.HeaderText + '</h1>';
@@ -1203,7 +1214,7 @@
 
         function _pendingChanges()
         {
-            return ($('#ss_pendingchangecnt').text() == 'Yes');
+            return ($('#ss_pendingchangecnt').text() === 'Yes');
         }
 
         // ------------------------------------------------------------------------------------
@@ -1244,12 +1255,13 @@
                     'Password': Password
                 };
                 CswAjaxJSON({
+                    formobile: ForMobile,
                     url: opts.AuthenticateUrl,
                     data: jsonToString(ajaxData),
                     success: function (data)
                     {
                         auth = data.AuthenticationStatus;
-						if(auth == 'Authenticated')
+						if(auth === 'Authenticated')
 						{
 							_cacheSession(SessionId, UserName);
                             reloadViews(true);
@@ -1310,14 +1322,14 @@
             // remove existing divs
             var NextParentId = '';
             var ThisParentId = DivId;
-            while (ThisParentId != '' && ThisParentId.substr(0, 'viewid_'.length) != 'viewid_')
+            while ( !isNullOrEmpty(ThisParentId) && ThisParentId.substr(0, 'viewid_'.length) !== 'viewid_')
             {
                 NextParentId = _getDivParentId(ThisParentId);
                 $('div[id*="' + ThisParentId + '"]').remove();
                 ThisParentId = NextParentId;
             }
 
-            if (ThisParentId != '')
+            if ( !isNullOrEmpty(ThisParentId) )
             {
                 var RealDivId = ThisParentId;
                 var HeaderText = _getDivHeaderText(RealDivId);
@@ -1325,29 +1337,35 @@
                 $('div[id*="' + RealDivId + '"]').remove();
 
                 // fetch new content
-                _ajaxViewJson(RealDivId, function (xml)
-                {
-                    $currentViewXml = $(xml);
-                    _updateStoredViewXml(RealDivId, xml, '0');
+                CswAjaxXml({
+                    async: false,   // required so that the link will wait for the content before navigating
+                    formobile: ForMobile,
+                    url: opts.ViewUrl,
+                    data: "SessionId=" + SessionId + "&ParentId=" + RealDivId + "&ForMobile=" + ForMobile,
+                    success: function (xml)
+                    {
+                        $currentViewXml = $(xml);
+                        _updateStoredViewXml(RealDivId, xml, '0');
 
-                    _processViewXml({
-                        ParentId: 'viewsdiv',
-                        DivId: RealDivId,
-                        HeaderText: HeaderText,
-                        '$xml': $(xml),
-                        parentlevel: 1,
-                        HideRefreshButton: false,
-                        HideSearchButton: true,
-                        ChangePage: true
-                    });
-                    removeDiv('loadingdiv');
+                        _processViewXml({
+                            ParentId: 'viewsdiv',
+                            DivId: RealDivId,
+                            HeaderText: HeaderText,
+                            '$xml': $(xml),
+                            parentlevel: 1,
+                            HideRefreshButton: false,
+                            HideSearchButton: true,
+                            ChangePage: true
+                        });
+                        removeDiv('loadingdiv');
+                    } // success
                 });
             }
         }
 
         function onBack(DivId, DestinationId, eventObj)
         {
-            if (DivId != 'synchstatus' && DivId.indexOf('prop_') != 0)
+            if (DivId !== 'synchstatus' && DivId.indexOf('prop_') !== 0)
             {
                 // case 20367 - remove all matching DivId.  Doing it immediately causes bugs.
                 setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
@@ -1375,12 +1393,13 @@
             var value = $elm.attr('value');
 
             // update the xml and store it
-            if($currentViewXml != '')
+            if( !isNullOrEmpty($currentViewXml) )
             {
 //            _fetchCachedViewXml(rootid, function (xmlstr)
 //            {
 //                if (xmlstr != '')
 //                {
+
                     var $divxml = $currentViewXml.find('#' + DivId);
                     $divxml.andSelf().find('prop').each(function ()
                     {
@@ -1403,7 +1422,7 @@
             var searchfor = $('#' + DivId + '_searchfor').attr('value');
             _fetchCachedViewXml(rootid, function (xmlstr)
             {
-                if (xmlstr != '')
+                if ( !isNullOrEmpty(xmlstr) )
                 {
                     var $xmlstr = $(xmlstr);
                     var Html = '<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
@@ -1446,7 +1465,7 @@
             var searchfor = $('#' + DivId + '_searchfor').attr('value');
             _fetchCachedViewXml(rootid, function (xmlstr)
             {
-                if (xmlstr != '')
+                if ( !isNullOrEmpty(xmlstr) )
                 {
                     var $xmlstr = $(xmlstr);
                     var content = _makeUL(DivId + '_searchresultslist');
@@ -1455,7 +1474,7 @@
                     $xmlstr.find('node').each(function ()
                     {
                         var $node = $(this);
-                        if ($node.attr(searchprop) != undefined)
+                        if ( !isNullOrEmpty($node.attr(searchprop)) )
                         {
                             if ($node.attr(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
@@ -1464,7 +1483,7 @@
                             }
                         }
                     });
-                    if (hitcount == 0)
+                    if (hitcount === 0)
                     {
                         content += "<li>No Results</li>";
                     }
@@ -1518,7 +1537,7 @@
             {
                 _DoSql('DROP TABLE IF EXISTS views; ', null, function ()
                 {
-                    if (OnSuccess != null)
+                    if (!isNullOrEmpty(OnSuccess) )
                     {
                         OnSuccess();
                     }
@@ -1559,14 +1578,16 @@
                    [varname],
                    function (transaction, result)
                    {
-                       if (0 == result.rows.length)
+                       if (0 === result.rows.length)
                        {
                            _DoSql("insert into configvars (varname, varval) values ( ?, ? );",
                                   [varname, varval],
                                   function ()
                                   {
-                                      if (onsuccess != undefined)
+                                      if ( !isNullOrEmpty(onsuccess) )
+                                      {
                                           onsuccess();
+                                      }
                                   });
                        } else
                        {
@@ -1574,8 +1595,10 @@
                                   [varval, varname],
                                   function ()
                                   {
-                                      if (onsuccess != undefined)
+                                      if ( !isNullOrEmpty(onsuccess) )
+                                      {
                                           onsuccess();
+                                      }
                                   });
                        } //if-else the configvar row already exists
                    });
@@ -1610,8 +1633,10 @@
             {
                 writeConfigVar('sessionid', sessionid, function ()
                 {
-                    if (onsuccess != undefined)
+                    if ( !isNullOrEmpty(onsuccess) )
+                    {
                         onsuccess();
+                    }
                 });
             });
         } //_cacheSession()
@@ -1631,7 +1656,7 @@
 
         function _storeViewXml(rootid, rootname, viewxml)
         {
-            if (rootid != undefined && rootid != '')
+            if ( !isNullOrEmpty(rootid) )
             {
                 _DoSql('INSERT INTO views (rootid, rootname, viewxml, wasmodified) VALUES (?, ?, ?, 0);',
                        [rootid, rootname, viewxml]);
@@ -1640,7 +1665,7 @@
 
         function _updateStoredViewXml(rootid, viewxml, wasmodified)
         {
-            if (rootid != undefined && rootid != '')
+            if ( !isNullOrEmpty(rootid) )
             {
                 _DoSql('UPDATE views SET wasmodified = ?, viewxml = ? WHERE rootid = ?;',
                        [wasmodified, viewxml, rootid]);
@@ -1668,7 +1693,7 @@
 
         function _fetchCachedViewXml(rootid, onsuccess)
         {
-            if (rootid != undefined && rootid != '')
+            if ( !isNullOrEmpty(rootid) )
             {
                 _DoSql('SELECT viewxml FROM views WHERE rootid = ? ORDER BY id DESC;',
                        [rootid],
@@ -1725,21 +1750,22 @@
                 url = opts.ConnectTestRandomFailUrl;
             }
 
-            CswAjaxJSON({
+            CswAjaxXml({
+                formobile: ForMobile,
                 url: url,
-                data: "{}",
-                success: function (data)
+                data: "",
+                success: function (xml)
                 {
                     setOnline();
                     _processChanges(true);
-                    if (onSuccess != undefined)
+                    if ( !isNullOrEmpty(onSuccess) )
                     {
                         onSuccess();
                     }
                 },
-                error: function (data)
+                error: function (xml)
                 {
-                    if (onFailure != undefined)
+                    if ( !isNullOrEmpty(onFailure) )
                     {
                         onFailure();
                     }
@@ -1751,23 +1777,19 @@
 
         function _processChanges(perpetuateTimer)
         {
-            if (SessionId != '' && SessionId != undefined)
+            if ( !isNullOrEmpty(SessionId) )
             {
                 _getModifiedView(function (rootid, viewxml)
                 {
-                    if (rootid != '' && viewxml != '')
+                    if ( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
                     {
-                        var ajaxData = {
-                            'SessionId': SessionId, 
-                            'ParentId': rootid, 
-                            'UpdatedViewXml': viewxml.replace(/'/gi, '\\\'') 
-                        };
-                        CswAjaxJSON({
+                        CswAjaxXml({
+                            formobile: ForMobile,
                             url: opts.UpdateUrl,
-                            data: jsonToString(ajaxData),
-                            success: function (data)
+                            data: "SessionId=" + SessionId + "&ParentId=" + UpdatedViewXml + "&UpdatedViewXml=" + viewxml.replace(/'/gi, '\\\''),
+                            success: function (xml)
                             {
-                                var $xml = $(data.d);
+                                var $xml = $(xml);
                                 $auth = $xml.find('AuthenticationStatus');
                                 if ($auth.length > 0)
                                 {
@@ -1778,7 +1800,7 @@
                                     }
                                 } else
                                 {
-                                    _updateStoredViewXml(rootid, data.d, '0');
+                                    _updateStoredViewXml(rootid, xml, '0');
                                     if (perpetuateTimer)
                                     {
                                         _waitForData();
