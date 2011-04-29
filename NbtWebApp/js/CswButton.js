@@ -17,7 +17,6 @@
 				'disabledText': '',
 				'hasText': true,
 				'disableOnClick': true,
-				'enableDelay': 5000,
 				'inputType': 'button',
 				'primaryicon': '',
 				'secondaryicon': '',
@@ -53,8 +52,6 @@
 					{
 						if (o.disableOnClick) _disable($button);
 						o.onclick();
-						// case 21369 - enable after time delay
-						setTimeout(function () { _enable($button); }, o.enableDelay);
 					});
 			$parent.append($button);
 			return $button;

@@ -306,7 +306,6 @@ var CswSearch_CssClasses = {
             var $searchButton = $searchButtonCell.CswButton({ID: searchButtonId, 
                                                             enabledText: 'Search', 
                                                             disabledText: 'Searching', 
-                                                            enableAfterClick: true,
                                                             onclick: function() { doSearch(); }
                                                 });
         } // renderSearchButtons()

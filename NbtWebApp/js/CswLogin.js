@@ -30,7 +30,7 @@
 												'    <table>' +
 												'    <tr>' +
                                                 '      <td align="right"></td>' +
-                                                '      <td id="loginmsg" class="ErrorContent" style="display: none;"></td>' +
+                                                '      <td id="loginmsg" style="display: none;"></td>' +
                                                 '    </tr>' +
                                                 '    <tr>' +
 												'      <td align="right">Customer ID:</td>' +
@@ -68,8 +68,8 @@
 														enabledText: 'Login', 
 														disabledText: 'Logging in...', 
 														onclick: function() {
-                                                            $('#loginmsg').text('')
-																		.hide();
+                                                            $('#loginmsg').hide()
+																	.children().remove();
 
 															var AccessId = $('#login_accessid').val();
 															var UserName = $('#login_username').val();
@@ -93,9 +93,12 @@
 																			}
 																			else 
 																			{
-																				_handleAuthenticationStatus(data, _handleAuthenticated);
-																			}
-																		} // success{}
+                                                                                _handleAuthenticationStatus(data, _handleAuthenticated, $loginbutton);
+                                                                            }
+                                                                        },  // success{}
+																		error: function() {
+																			$loginbutton.CswButton('enable');
+																		}
 															}); // ajax
 											} // onclick
 							}); // button
@@ -129,6 +132,7 @@
 		function _handleAuthenticationStatus(data, onAuthenticated)
 		{
 			var txt = '';
+			var enableButton = true;
 			switch(data.AuthenticationStatus)
 			{
 				case 'Failed': txt = "Login Failed"; break;
@@ -139,6 +143,7 @@
 				case 'NonExistentSession': txt = "Login Failed"; break;
 				case 'Unknown': txt = "An Unknown Error Occurred"; break;
 				case 'ExpiredPassword': 
+					enableButton = false;
 					$.CswDialog('EditNodeDialog', { 
 						'nodeid': data.nodeid,
 						'cswnbtnodekey': data.cswnbtnodekey,
@@ -148,19 +153,21 @@
 					}); 
 					break;
 				case 'ShowLicense': 
+					enableButton = false;
 					$.CswDialog('ShowLicenseDialog', {
 						'onAccept': function() { onAuthenticated(); },
 						'onDecline': function() { _Logout(); }
 					}); 
 					break;
 			}
-			$('#loginmsg').text(txt)
-						.show();
+			$('#loginmsg').CswErrorMessage({'message': txt });
+
 			$('#login_password').val('');   // case 21303
 
-            $('#login_button').CswButton('enable');
-
-			//Logout();
+            if(enableButton)
+			{
+				$('#login_button').CswButton('enable');
+			}
 
 		} // _handleAuthenticationStatus()
 

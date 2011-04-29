@@ -22,9 +22,10 @@
                                                       onChange: o.onchange,
                                                       value: Value
                                                  }); 
-                var $nowbutton = $Div.CswButton('init',{ID: o.ID +'_now',
-                                                        onclick: function() { $TextBox.val(getTimeString(new Date())); },
-                                                        value: 'Now'
+                var $nowbutton = $Div.CswButton('init',{ 'ID': o.ID +'_now',
+														'disableOnClick': false,
+                                                        'onclick': function() { $TextBox.val(getTimeString(new Date())); },
+                                                        'enabledText': 'Now'
                                                  }); 
                 
 				jQuery.validator.addMethod( "validateTime", function(value, element) { 
