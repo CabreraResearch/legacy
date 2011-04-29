@@ -179,6 +179,7 @@
 							$YearlyDiv.hide();
 							setWeekDayChecked( o.ID + '_weeklyday', $RateIntervalXml.children('weeklyday').text());
 							$WeeklyStartDate.val($RateIntervalXml.children('startingdate').text());
+							$MonthlyByDateRadio.attr('checked', 'true');     //default (for case 21048)
 							break;
 						case "MonthlyByDate":
 							$monthlyradio.attr('checked', 'true');
@@ -208,6 +209,7 @@
 							$MonthlyDiv.show(); 
 							$YearlyDiv.hide();
 							$YearlyStartDate.val($RateIntervalXml.children('yearlydate').text());
+							$MonthlyByDateRadio.attr('checked', 'true');     //default (for case 21048)
 							break;
 					} // switch(RateType)
 				}
