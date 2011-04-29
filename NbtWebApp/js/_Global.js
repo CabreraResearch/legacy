@@ -20,6 +20,7 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
     var o = {
 		url: '',
 		data: '',
+        onloginfail: function() {},
 		success: function (result) { },
 		error: function () { },
         formobile: false
@@ -50,10 +51,15 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
 	        }
 	        else
 	        {
-	            $auth = $(data.d).find('AuthenticationStatus');
-	            if (o.formobile && $auth.length > 0)
+
+	            if (o.formobile)
 	            {
-	                _handleAuthenticationStatus($auth.text());
+                    var auth = tryParseString(data.AuthenticationStatus,'');
+	                _handleAuthenticationStatus({
+                        status: auth,
+                        success: o.success(result),
+                        failure: o.onloginfail 
+	                });
 	            }
 	            else
 	            {
@@ -66,7 +72,7 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
 	        _handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
 	        o.error();
 	    }
-	});      // $.ajax({
+	});       // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options) { 
@@ -85,6 +91,7 @@ function CswAjaxXml(options) {
     var o = {
 		url: '',
 		data: '',
+        onloginfail: function() {},
 		success: function ($xml) { },
 		error: function () { },
         formobile: false
@@ -118,10 +125,14 @@ function CswAjaxXml(options) {
 	            }
 	            else
 	            {
-	                $auth = $xml.find('AuthenticationStatus');
-	                if (o.formobile && $auth.length > 0)
+	                if (o.formobile)
 	                {
-	                    _handleAuthenticationStatus($auth.text());
+	                    var auth = tryParseString($xml.find('AuthenticationStatus').text(), '');
+	                    _handleAuthenticationStatus({
+	                        status: auth,
+	                        success: o.success($realxml),
+	                        failure: o.onloginfail
+	                    });
 	                }
 	                else
 	                {
@@ -135,7 +146,7 @@ function CswAjaxXml(options) {
 	            _handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
 	            o.error();
 	        }
-	    });      // $.ajax({
+	    });       // $.ajax({
 	} // if(o.url != '')
 } // CswAjaxXml()
 
@@ -153,6 +164,25 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown) { /// <param n
 	    log(errorJson.message + '; ' + errorJson.detail);
 	}
 } // _handleAjaxError()
+
+function _handleAuthenticationStatus(options)
+{
+    var o = {
+        status: '',
+        success: function () { },
+        failure: function () { }
+    };
+
+    if( !isNullOrEmpty(o.status) && o.status !== 'Authenticated' )
+    {
+        alert(o.status);
+        o.failure();
+    }
+    else
+    {
+        o.success(result);
+    }
+}
 
 //function extractCDataValue($node) {
 //    // default
@@ -755,6 +785,7 @@ function isTrue(str)
     /// <param name="str" type="Object">
     ///     String or object to test
     /// </param>
+    /// <returns type="Bool" />
 
     var ret;
     if (str === 'true' || str === true || str === '1' || str === 1)
@@ -768,6 +799,23 @@ function isTrue(str)
     else
     {
         log('isTrue() was called on ' + str + ', which is not a boolean.');
+    }
+    return ret;
+}
+
+function tryParseString(inputStr, defaultStr)
+{
+    /// <summary>
+    ///   Returns the inputStr if !isNullOrEmpty, else returns the defaultStr
+    /// </summary>
+    /// <param name="str" type="Object">
+    ///     String or object to parse
+    /// </param>
+    /// <returns type="String" />
+    var ret = defaultStr;
+    if( !isNullOrEmpty( inputStr ) )
+    {
+        ret = inputStr;
     }
     return ret;
 }

@@ -281,6 +281,7 @@
                             formobile: ForMobile,
                             url: opts.ViewUrl,
                             data: "SessionId=" + SessionId + "&ParentId=" + p.DivId + "&ForMobile=" + ForMobile,
+                            onloginfail: function() { Logout(); },
                             success: function (xml)
                             {
                                 if (p.level === 1)
@@ -326,6 +327,7 @@
                                 formobile: ForMobile,
                                 url: opts.ViewUrl,
                                 data: "SessionId=" + SessionId + "&ParentId=" + p.DivId + "&ForMobile=" + ForMobile,
+                                onloginfail: function() { Logout(); },
                                 success: function (xml)
                                 {
                                     if (p.level === 1)
@@ -1258,19 +1260,12 @@
                     formobile: ForMobile,
                     url: opts.AuthenticateUrl,
                     data: jsonToString(ajaxData),
+                    onloginfail: function () { Logout(); },
                     success: function (data)
                     {
-                        auth = data.AuthenticationStatus;
-						if(auth === 'Authenticated')
-						{
-							_cacheSession(SessionId, UserName);
-                            reloadViews(true);
-                            removeDiv('logindiv');
-						}
-						else 
-						{
-							_handleAuthenticationStatus(data, _handleAuthenticated);
-						}
+						_cacheSession(SessionId, UserName);
+                        reloadViews(true);
+                        removeDiv('logindiv');
                     }
                 });
             }
@@ -1342,6 +1337,7 @@
                     formobile: ForMobile,
                     url: opts.ViewUrl,
                     data: "SessionId=" + SessionId + "&ParentId=" + RealDivId + "&ForMobile=" + ForMobile,
+                    onloginfail: function() { Logout(); },
                     success: function (xml)
                     {
                         $currentViewXml = $(xml);
@@ -1754,6 +1750,7 @@
                 formobile: ForMobile,
                 url: url,
                 data: "",
+                onloginfail: function() { Logout(); },
                 success: function (xml)
                 {
                     setOnline();
@@ -1787,24 +1784,19 @@
                             formobile: ForMobile,
                             url: opts.UpdateUrl,
                             data: "SessionId=" + SessionId + "&ParentId=" + UpdatedViewXml + "&UpdatedViewXml=" + viewxml.replace(/'/gi, '\\\''),
+                            onloginfail: function() 
+                            { 
+                                if (perpetuateTimer)
+                                {
+                                    _waitForData();
+                                } 
+                            },
                             success: function (xml)
                             {
-                                var $xml = $(xml);
-                                $auth = $xml.find('AuthenticationStatus');
-                                if ($auth.length > 0)
+                                _updateStoredViewXml(rootid, xml, '0');
+                                if (perpetuateTimer)
                                 {
-                                    _handleAuthenticationStatus($auth.text());
-                                    if (perpetuateTimer)
-                                    {
-                                        _waitForData();
-                                    }
-                                } else
-                                {
-                                    _updateStoredViewXml(rootid, xml, '0');
-                                    if (perpetuateTimer)
-                                    {
-                                        _waitForData();
-                                    }
+                                    _waitForData();
                                 }
                             },
                             error: function (data)
@@ -1830,13 +1822,6 @@
                     _waitForData();
             } // if(SessionId != '') 
         } //_processChanges()
-
-
-        function _handleAuthenticationStatus(status)
-        {
-            alert(status);
-            Logout();
-        }
 
         // For proper chaining support
         return this;
