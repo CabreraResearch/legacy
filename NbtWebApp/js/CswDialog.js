@@ -70,7 +70,7 @@
 																					o.onAddView(data.newviewid);
 																				}, 
 																				error: function() {
-																					$savebtn.CswButton('enable'); 
+																					$savebtn.CswButton('enable');
 																				}
 																			});
 								                                        }
@@ -160,12 +160,17 @@
                                                                     enabledText: 'Copy', 
                                                                     disabledText: 'Copying', 
                                                                     onclick: function() {
-									                                        $div.dialog('close');
 									                                        copyNode({
 												                                        'nodeid': o.nodeid, 
 												                                        'nodekey': o.nodekey, 
-												                                        'onSuccess': o.onCopyNode 
-											                                           });
+												                                        'onSuccess': function(nodeid, nodekey) { 
+													                                        $div.dialog('close');
+																							o.onCopyNode(nodeid, nodekey);
+																						},
+																						'onError':  function() {
+																							$copybtn.CswButton('enable');
+																						}
+											                                        });
 								                                        }
                                                                     });
 
@@ -215,12 +220,16 @@
                                                                         enabledText: 'Delete', 
                                                                         disabledText: 'Deleting', 
                                                                         onclick: function() {
-														                            $div.dialog('close');
 														                            deleteNodes({
 																	                            'nodeids': nodeids, 
-																	                            'onSuccess': o.onDeleteNode 
-																	                            });
-
+																	                            'onSuccess': function(nodeid, nodekey) {
+																		                            $div.dialog('close');
+																									o.onDeleteNode(nodeid, nodekey);
+																								},
+																	                            'onError': function() {
+																									$deletebtn.CswButton('enable');
+																								}
+																	                        });
                                                                             }
                                                                         });
 
@@ -334,10 +343,14 @@
 											                                {
 												                                $div.dialog('close');
 												                                o.onAccept();
-											                                }
+											                                },
+																		error: function() 
+																			{
+																				$acceptbtn.CswButton('enable');	
+																			}
 									                                }); // ajax
-								                                }
-                                                            });
+								                                } // onclick
+                                                            }); // CswButton
 
 							var $declinebtn = $div.CswButton({ID: 'license_decline', 
                                                                 enabledText: 'I Decline', 

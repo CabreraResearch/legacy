@@ -93,6 +93,9 @@
 						data: "{ ViewId: "+ viewid +" }",
 						success: function (gridJson) {
 							_getViewsGrid(onViewGridSuccess, gridJson.copyviewid); 
+						},
+						error: function() {
+							$copyviewbtn.CswButton('enable');
 						}
 					});
 				} // if(viewid !== '' && viewid !== undefined)
@@ -116,6 +119,9 @@
 							success: function (gridJson) {
 								_getViewsGrid(onViewGridSuccess); 
 								$copyviewbtn.CswButton('disable');
+							},
+							error: function() {
+								$deleteviewbtn.CswButton('enable');
 							}
 						});
 					}

@@ -31,6 +31,7 @@ function CswAjaxJSON(options) {
 			if (result.error !== undefined)
 			{
 				_handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
+				o.error();
 			}
 			else
 			{
@@ -42,7 +43,7 @@ function CswAjaxJSON(options) {
 			_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
 			o.error();
 		}
-	});    // $.ajax({
+	});     // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options) {
@@ -76,6 +77,7 @@ function CswAjaxXml(options) {
 				if ($realxml.first().get(0).nodeName === "error")
 				{
 					_handleAjaxError(XMLHttpRequest, { 'message': $realxml.attr('message'), 'detail': $realxml.attr('detail') }, '');
+					o.error();
 				}
 				else
 				{
@@ -88,7 +90,7 @@ function CswAjaxXml(options) {
 				_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
 				o.error();
 			}
-		});   // $.ajax({
+		});    // $.ajax({
 	} // if(o.url !== '')
 } // CswAjaxXml()
 		
@@ -344,7 +346,8 @@ function copyNode(options)
 	var o = {
 		'nodeid': '',
 		'nodekey': '',
-		'onSuccess': function (nodeid, nodekey) { }
+		'onSuccess': function (nodeid, nodekey) { },
+		'onError': function () { }
 	};
 	if (options)
 	{
@@ -356,14 +359,16 @@ function copyNode(options)
 		success: function (result)
 		{
 			o.onSuccess(result.NewNodeId, '');
-		}
+		},
+		error: o.onError
 	});
 }
 
 function deleteNodes(options) {
 	var o = {
 		'nodeids': [],
-		'onSuccess': function (nodeid, nodekey) { }
+		'onSuccess': function (nodeid, nodekey) { },
+		'onError': function () { }
 	};
 	if (options) {
 		$.extend(o, options);
@@ -384,7 +389,8 @@ function deleteNodes(options) {
 		data: datastr,
 		success: function (result) {
 			o.onSuccess('', '');  // returning '' will reselect the first node in the tree
-		}
+		},
+		error: o.onError
 	});
 }
 

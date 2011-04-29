@@ -203,7 +203,7 @@
 						var $savetab = $form.CswButton({ID: 'SaveTab', 
 												enabledText: 'Save Changes', 
 												disabledText: 'Saving...', 
-												onclick: function () { Save($form, $layouttable, $xml) }
+												onclick: function () { Save($form, $layouttable, $xml, $savetab) }
 												});
 					}
 
@@ -386,7 +386,7 @@
 			});
 		} // _updateSubProps()
 
-		function Save($form, $layouttable, $propsxml)
+		function Save($form, $layouttable, $propsxml, $savebtn)
 		{
 			if($form.valid())
 			{
@@ -439,7 +439,11 @@
 						} // if(o.ShowCheckboxes)
 
 						o.onSave(data.nodeid, data.cswnbtnodekey);
-					} // success
+					}, // success
+					error: function()
+					{
+						$savebtn.CswButton('enable');
+					}
 				}); // ajax
 			} // if($form.valid())
 		} // Save()

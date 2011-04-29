@@ -180,7 +180,8 @@
 													                    'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
 													                    'text': $welcometext.val(),
 													                    'iconfilename': $buttonsel.val(),
-													                    'onSuccess': o.onAdd
+													                    'onSuccess': o.onAdd,
+																		'onError': function() { $addbutton.CswButton('enable'); }
 												                    });
 									                            }
                                                     });
@@ -278,7 +279,8 @@
 			'nodetypeid': '',
 			'text': '',
 			'iconfilename': '',
-			'onSuccess': function() { }
+			'onSuccess': function() { },
+			'onError': function() { }
 		}
 		if(addoptions){
 			$.extend(a, addoptions);
@@ -290,7 +292,8 @@
 			success: function (result) 
 				{
 					a.onSuccess();
-                }
+                },
+			error: o.onError
         });
 
 	} // _addItem()

@@ -87,9 +87,12 @@
                                                                             }
                                                                             else 
                                                                             {
-                                                                                _handleAuthenticationStatus(data, _handleAuthenticated);
+                                                                                _handleAuthenticationStatus(data, _handleAuthenticated, $loginbutton);
                                                                             }
-                                                                        } // success{}
+                                                                        },  // success{}
+																		error: function() {
+																			$loginbutton.CswButton('enable');
+																		}
                                                             }); // ajax
                                             } // onclick
                             }); // button
@@ -123,6 +126,7 @@
         function _handleAuthenticationStatus(data, onAuthenticated)
         {
 			var txt = '';
+			var enableButton = true;
             switch(data.AuthenticationStatus)
 			{
 				case 'Failed': txt = "Login Failed"; break;
@@ -133,6 +137,7 @@
 				case 'NonExistentSession': txt = "Login Failed"; break;
 				case 'Unknown': txt = "An Unknown Error Occurred"; break;
 				case 'ExpiredPassword': 
+					enableButton = false;
 					$.CswDialog('EditNodeDialog', { 
 						'nodeid': data.nodeid,
 						'cswnbtnodekey': data.cswnbtnodekey,
@@ -142,6 +147,7 @@
 					}); 
 					break;
 				case 'ShowLicense': 
+					enableButton = false;
 					$.CswDialog('ShowLicenseDialog', {
 						'onAccept': function() { onAuthenticated(); },
 						'onDecline': function() { _Logout(); }
@@ -150,11 +156,13 @@
 			}
 			$('#loginmsg').text(txt)
 						.show();
+
 			$('#login_password').val('');   // case 21303
 
-            $('#login_button').CswButton('enable');
-
-            //Logout();
+            if(enableButton)
+			{
+				$('#login_button').CswButton('enable');
+			}
 
         } // _handleAuthenticationStatus()
 
