@@ -28,8 +28,6 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
     
 	if (options) $.extend(o, options);
 
-	if (debug) log(o.url);
-
 	//var starttime = new Date();
 	$.ajax({
 	    type: 'POST',
@@ -98,8 +96,6 @@ function CswAjaxXml(options) {
 	};
     
 	if (options) $.extend(o, options);
-
-	if (debug) log(o.url);
 
     if ( o.url !== '')
 	{

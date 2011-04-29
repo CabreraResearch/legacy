@@ -276,6 +276,8 @@
                         });
                     } else
                     {
+                        if (debug) log('Starting ' + opts.ViewUrl);
+                        
                         CswAjaxXml({
                             async: false,   // required so that the link will wait for the content before navigating
                             formobile: ForMobile,
@@ -284,10 +286,13 @@
                             onloginfail: function() { Logout(); },
                             success: function (xml)
                             {
+                                if (debug) log('On Success ' + opts.ViewUrl);
+                                
                                 if (p.level === 1)
                                 {
                                     _storeViewXml(p.DivId, p.HeaderText, xml);
                                 }
+
                                 _processViewXml({
                                     ParentId: p.ParentId,
                                     DivId: p.DivId,
@@ -322,6 +327,8 @@
                             });
                         } else if (!amOffline())
                         {
+                            if (debug) log('Starting ' + opts.ViewUrl);
+
                             CswAjaxXml({
                                 async: false,   // required so that the link will wait for the content before navigating
                                 formobile: ForMobile,
@@ -330,6 +337,8 @@
                                 onloginfail: function() { Logout(); },
                                 success: function (xml)
                                 {
+                                    if (debug) log('On Success ' + opts.ViewUrl);
+
                                     if (p.level === 1)
                                     {
                                         _storeViewXml(p.DivId, p.HeaderText, xml);
@@ -1256,6 +1265,9 @@
                     'UserName': UserName, 
                     'Password': Password
                 };
+
+                if (debug) log('Starting ' + opts.AuthenticateUrl);
+
                 CswAjaxJSON({
                     formobile: ForMobile,
                     url: opts.AuthenticateUrl,
@@ -1263,6 +1275,8 @@
                     onloginfail: function () { Logout(); },
                     success: function (data)
                     {
+                        if (debug) log('On Success ' + opts.AuthenticateUrl);
+
 						_cacheSession(SessionId, UserName);
                         reloadViews(true);
                         removeDiv('logindiv');
@@ -1331,6 +1345,8 @@
 
                 $('div[id*="' + RealDivId + '"]').remove();
 
+                if (debug) log('Starting ' + opts.ViewUrl);
+
                 // fetch new content
                 CswAjaxXml({
                     async: false,   // required so that the link will wait for the content before navigating
@@ -1340,6 +1356,8 @@
                     onloginfail: function() { Logout(); },
                     success: function (xml)
                     {
+                        if (debug) log('Starting ' + opts.ViewUrl);
+
                         $currentViewXml = $(xml);
                         _updateStoredViewXml(RealDivId, xml, '0');
 
@@ -1746,6 +1764,8 @@
                 url = opts.ConnectTestRandomFailUrl;
             }
 
+            if (debug) log('Starting ' + url);
+
             CswAjaxXml({
                 formobile: ForMobile,
                 url: url,
@@ -1753,6 +1773,8 @@
                 onloginfail: function() { Logout(); },
                 success: function (xml)
                 {
+                    if (debug) log('On Success ' + url);
+
                     setOnline();
                     _processChanges(true);
                     if ( !isNullOrEmpty(onSuccess) )
@@ -1780,6 +1802,8 @@
                 {
                     if ( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
                     {
+                        if (debug) log('Starting ' + opts.UpdateUrl);
+
                         CswAjaxXml({
                             formobile: ForMobile,
                             url: opts.UpdateUrl,
@@ -1793,6 +1817,8 @@
                             },
                             success: function (xml)
                             {
+                                if (debug) log('On Success ' + opts.UpdateUrl);
+
                                 _updateStoredViewXml(rootid, xml, '0');
                                 if (perpetuateTimer)
                                 {
