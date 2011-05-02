@@ -151,14 +151,19 @@ namespace ChemSW.Nbt.WebServices
 		private IEnumerable<XElement> _getGridXElements()
 		{
 			var RawXml = _getGridTree();
-            // case 21463: this collection should represent the XElements of distinct rows
-			IEnumerable<XElement> NodesInGrid = ( from Element in RawXml.Elements("NbtNode").Elements("NbtNode") //root == <NbtTree />, 
-                                                                                                                 //first child <NbtNode /> == View, 
-                                                                                                                 //second child <NbtNode /> is first CswNbtNode
-			                                      where Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
-					                                    Element.DescendantNodesAndSelf().OfType<XElement>().Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
-			                                      select Element );
-			return NodesInGrid;
+            IEnumerable<XElement> NodesInGrid = null;
+            // case 21535: tree is not null
+            if( null != RawXml )
+            {
+                // case 21463: this collection should represent the XElements of distinct rows
+                NodesInGrid = ( from Element in RawXml.Elements( "NbtNode" ).Elements( "NbtNode" ) //root == <NbtTree />, 
+                                //first child <NbtNode /> == View, 
+                                //second child <NbtNode /> is first CswNbtNode
+                                where Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
+                                      Element.DescendantNodesAndSelf().OfType<XElement>().Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
+                                select Element );
+            }
+		    return NodesInGrid;
 		} // getGridXElements()
 
         #region Archived Valid Grid Json
