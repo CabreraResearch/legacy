@@ -247,16 +247,16 @@ function jsonToString(j) {
 	return ret;
 } // jsonToString
 
-function safeJsonParam(str) {
+function safeJsonParam(obj) {
     /// <summary>
     ///   Converts an object toString and returns a regex parsed, safe-for-JSON string
     /// </summary>
     /// <param name="options" type="Object">A JavaScript Object representing a string to parse</param>
     /// <returns type="String" />
     var ret = '';
-    if (str !== undefined)
+    if (obj !== undefined)
     {
-        ret = str.toString();
+        var str = obj.toString();
         ret = str.replace(/'/g, "\\'");
     }
 	return ret;
