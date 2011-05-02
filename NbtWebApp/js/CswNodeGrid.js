@@ -17,6 +17,7 @@
 				cswnbtnodekey: '',
 				gridTableID: 'gridTable',
 				gridPagerID: 'gridPager',
+                'reinit': false,
 				onAddNode: function(nodeid,cswnbtnodekey){},
 				onEditNode: function(nodeid,cswnbtnodekey){},
 				onDeleteNode: function(nodeid,cswnbtnodekey){}
@@ -25,7 +26,9 @@
 			if (optJqGrid) {
 				$.extend(o, optJqGrid);
 			}
-			var $parent = $(this);
+			
+            var $parent = $(this);
+            if( o.reinit ) $parent.empty();
 
 			var jqGrid = {};
         
@@ -68,7 +71,7 @@
                             viewrecords: true
 						};
                         $.extend(jqGridOptions,jqGridOpt);
-                        
+                            
                         //include the top pager if the row count is very large
                         if(jqGridOptions.rowNum >= 50) jqGridOptions.toppager = true;
 						

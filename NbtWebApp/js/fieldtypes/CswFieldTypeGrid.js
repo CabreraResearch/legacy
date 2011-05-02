@@ -37,17 +37,16 @@
 			        'cswnbtnodekey': o.cswnbtnodekey,
 			        'onAddNode': function (nodeid, cswnbtnodekey)
 			        {
-                        $GridDiv.CswNodeGrid('init', {'viewid': viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly});
+                        $GridDiv.CswNodeGrid('init', {'viewid': viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly, 'reinit': true});
 			        },
 		            'onSearch':
                         {
                             'onViewSearch': function ()
                             {
 	                            var onSearchSubmit = function(view) {
-                                    $GridDiv.empty();
-                                    $GridDiv.CswNodeGrid('init', {'viewid': view.sessionviewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly});
+                                    $GridDiv.CswNodeGrid('init', {'viewid': view.sessionviewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly, 'reinit': true});
                                 };
-                                
+
                                 $SearchDiv.empty();
                                 $SearchDiv.CswSearch({'viewid': viewid,
                                                       'cswnbtnodekey': o.cswnbtnodekey,

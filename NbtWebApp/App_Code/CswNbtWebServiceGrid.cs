@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using ChemSW.Core;
@@ -146,9 +147,18 @@ namespace ChemSW.Nbt.WebServices
             if( null != RawXml )
             {
                 // case 21463: this collection should represent the XElements of distinct rows
-                NodesInGrid = ( from Element in RawXml.Elements( "NbtNode" ).Elements( "NbtNode" ) //root == <NbtTree />, 
-                                //first child <NbtNode /> == View, 
-                                //second child <NbtNode /> is first CswNbtNode
+                // root == <NbtTree />, 
+                // first child <NbtNode /> == View, 
+                // second child <NbtNode /> is first CswNbtNode
+                IEnumerable<XElement> GridRows = RawXml.Elements( "NbtNode" ).Elements( "NbtNode" );
+                //case 21627
+                if( _View.Visibility == NbtViewVisibility.Property )
+                {
+                    //Grid Properties have an additional level of depth
+                    GridRows = GridRows.Elements( "NbtNode" );
+                }
+                
+                NodesInGrid = ( from Element in GridRows
                                 where Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
                                       Element.DescendantNodesAndSelf().OfType<XElement>().Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
                                 select Element );
