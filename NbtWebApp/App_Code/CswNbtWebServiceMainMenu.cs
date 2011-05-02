@@ -54,20 +54,24 @@ namespace ChemSW.Nbt.WebServices
 			    NodeIdNum = NodeId.ToString();
 			}
 
-			// SEARCH
-		    XElement SearchNode = new XElement( "item",
-		                            new XAttribute( "text", "Search" ), 
-                                    new XElement( "item", 
-                                                new XAttribute( "text", "Generic Search" ), 
-                                                new XAttribute( "nodeid", NodeId ),
-                                                new XAttribute( "nodetypeid", NodeTypeId ),
-										        new XAttribute( "action", "GenericSearch" ) ) );
-            
-		    MenuNode.Add( SearchNode );
-
 			if( View != null )
 			{
-				// Search View
+                // SEARCH
+                XElement SearchNode = new XElement( "item",
+                                        new XAttribute( "text", "Search" ) ); 
+                
+                // Generic search
+                if( View.Visibility != NbtViewVisibility.Property )
+                {
+                    SearchNode.AddFirst( new XElement( "item",
+                                                new XAttribute( "text", "Generic Search" ),
+                                                new XAttribute( "nodeid", NodeId ),
+                                                new XAttribute( "nodetypeid", NodeTypeId ),
+                                                new XAttribute( "action", "GenericSearch" ) ) );
+
+
+                }
+                // View based search
 				if( View.IsSearchable() )
 				{
 					SearchNode.AddFirst( new XElement( "item",
@@ -78,6 +82,7 @@ namespace ChemSW.Nbt.WebServices
 											new XAttribute( "action", "ViewSearch" ) ) );
 				}
 
+                MenuNode.Add( SearchNode );
 				
 				// ADD
 				XElement AddNode = new XElement( "item",
