@@ -94,8 +94,10 @@ namespace ChemSW.Nbt.Schema
                 ReturnVal.Add( Schema01H29Driver.SchemaVersion, Schema01H29Driver );
                 CswSchemaUpdateDriver Schema01H30Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H30( _CswNbtSchemaModTrnsctn ) );
                 ReturnVal.Add( Schema01H30Driver.SchemaVersion, Schema01H30Driver );
-                CswSchemaUpdateDriver Schema01H31Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H31( _CswNbtSchemaModTrnsctn ) );
-                ReturnVal.Add( Schema01H31Driver.SchemaVersion, Schema01H31Driver );
+				CswSchemaUpdateDriver Schema01H31Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H31( _CswNbtSchemaModTrnsctn ) );
+				ReturnVal.Add( Schema01H31Driver.SchemaVersion, Schema01H31Driver );
+				CswSchemaUpdateDriver Schema01H32Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H32( _CswNbtSchemaModTrnsctn ) );
+				ReturnVal.Add( Schema01H32Driver.SchemaVersion, Schema01H32Driver );
 
                 return ( ReturnVal );
 
