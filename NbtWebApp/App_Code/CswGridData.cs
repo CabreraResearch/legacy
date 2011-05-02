@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.WebServices
 		public Int32 PageSize;
         public bool GridAutoEncode = true;
         public Int32 GridHeight = 300;
-	    public JArray GridRowList = new JArray(new JValue(10), new JValue(25), new JValue(50));
+	    //public string GridRowList = "[10,25,50]";
 	    public string GridSortName = string.Empty;
 	    public string GridTitle = string.Empty;
         public Int32 GridWidth = Int32.MinValue;
@@ -256,7 +256,7 @@ namespace ChemSW.Nbt.WebServices
                     new JProperty( JqGridJsonOptions.sortname.ToString(), GridSortName ),
                     new JProperty( JqGridJsonOptions.autoencode.ToString(), GridAutoEncode ),
                     new JProperty( JqGridJsonOptions.height.ToString(), GridHeight ),
-                    new JProperty( JqGridJsonOptions.rowList.ToString(), GridRowList.ToString() ),
+                    //new JProperty( JqGridJsonOptions.rowList.ToString(), GridRowList ),
                     new JProperty( JqGridJsonOptions.caption.ToString(), GridTitle )
                 );
         }
