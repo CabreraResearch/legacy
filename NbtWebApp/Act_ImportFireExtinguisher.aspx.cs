@@ -252,8 +252,8 @@ namespace ChemSW.Nbt.WebPages
                 CswNbtMetaDataNodeType BuildingNT = Master.CswNbtResources.MetaData.getNodeType( "Building" );
                 CswNbtMetaDataNodeType FloorNT = Master.CswNbtResources.MetaData.getNodeType( "Floor" );
                 CswNbtMetaDataNodeType RoomNT = Master.CswNbtResources.MetaData.getNodeType( "Room" );
-                CswNbtMetaDataNodeType MountPointNT = Master.CswNbtResources.MetaData.getNodeType( "Mount Point" );
-                CswNbtMetaDataNodeType MountPointGroupNT = Master.CswNbtResources.MetaData.getNodeType( "Mount Point Group" );
+                CswNbtMetaDataNodeType MountPointNT = Master.CswNbtResources.MetaData.getNodeType( "FE Inspection Point" );
+                CswNbtMetaDataNodeType MountPointGroupNT = Master.CswNbtResources.MetaData.getNodeType( "Inspection Group" );
                 CswNbtMetaDataNodeType FireExtNT = Master.CswNbtResources.MetaData.getNodeType( "Fire Extinguisher" );
                 CswNbtMetaDataNodeType VendorNT = Master.CswNbtResources.MetaData.getNodeType( "Vendor" );
 
@@ -266,8 +266,11 @@ namespace ChemSW.Nbt.WebPages
                     CswNbtMetaDataNodeTypeProp FloorLocationNTP = FloorNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
                     CswNbtMetaDataNodeTypeProp RoomLocationNTP = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
                     CswNbtMetaDataNodeTypeProp MountPointLocationNTP = MountPointNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
-                    CswNbtMetaDataNodeTypeProp FEMountPointNTP = FireExtNT.getNodeTypeProp( "Mount Point" );
                     CswNbtMetaDataNodeTypeProp MountPointGroupNameNTP = MountPointGroupNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTargetGroup.NamePropertyName );
+
+                    CswNbtMetaDataNodeTypeProp FEMountPointNTP = null;
+					if( FireExtNT != null )
+						FEMountPointNTP = FireExtNT.getNodeTypeProp( "FE Inspection Point" );
 
                     DataTable ExcelData = _getUploadedData();
                     Collection<CswPrimaryKey> NodeKeysToInclude = new Collection<CswPrimaryKey>();
@@ -544,17 +547,21 @@ namespace ChemSW.Nbt.WebPages
                         CswNbtViewRelationship RoomRelBuilding = NewNodesView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, RoomLocationNTP, false );
                         CswNbtViewRelationship MountPointRel1 = NewNodesView.AddViewRelationship( RoomRelFloor, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationNTP, false );
                         CswNbtViewRelationship MountPointRel2 = NewNodesView.AddViewRelationship( RoomRelBuilding, CswNbtViewRelationship.PropOwnerType.Second, MountPointLocationNTP, false );
-                        CswNbtViewRelationship FERel1 = NewNodesView.AddViewRelationship( MountPointRel1, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
-                        CswNbtViewRelationship FERel2 = NewNodesView.AddViewRelationship( MountPointRel2, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
 
-                        BuildingRel.NodeIdsToFilterIn = NodeKeysToInclude;
-                        FloorRel.NodeIdsToFilterIn = NodeKeysToInclude;
-                        RoomRelFloor.NodeIdsToFilterIn = NodeKeysToInclude;
-                        RoomRelBuilding.NodeIdsToFilterIn = NodeKeysToInclude;
-                        MountPointRel1.NodeIdsToFilterIn = NodeKeysToInclude;
-                        MountPointRel2.NodeIdsToFilterIn = NodeKeysToInclude;
-                        FERel1.NodeIdsToFilterIn = NodeKeysToInclude;
-                        FERel2.NodeIdsToFilterIn = NodeKeysToInclude;
+						BuildingRel.NodeIdsToFilterIn = NodeKeysToInclude;
+						FloorRel.NodeIdsToFilterIn = NodeKeysToInclude;
+						RoomRelFloor.NodeIdsToFilterIn = NodeKeysToInclude;
+						RoomRelBuilding.NodeIdsToFilterIn = NodeKeysToInclude;
+						MountPointRel1.NodeIdsToFilterIn = NodeKeysToInclude;
+						MountPointRel2.NodeIdsToFilterIn = NodeKeysToInclude;
+
+						if( FEMountPointNTP != null )
+						{
+							CswNbtViewRelationship FERel1 = NewNodesView.AddViewRelationship( MountPointRel1, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
+							CswNbtViewRelationship FERel2 = NewNodesView.AddViewRelationship( MountPointRel2, CswNbtViewRelationship.PropOwnerType.Second, FEMountPointNTP, false );
+							FERel1.NodeIdsToFilterIn = NodeKeysToInclude;
+							FERel2.NodeIdsToFilterIn = NodeKeysToInclude;
+						}
                     } // if( !hasLegacyBarcode )
                     else
                     {
@@ -583,8 +590,9 @@ namespace ChemSW.Nbt.WebPages
                     }
 
                     NewNodesView.SaveToCache();
-                    Master.setSessionViewId( NewNodesView.SessionViewId );
-                    Master.GoMain();
+					//Master.setSessionViewId( NewNodesView.SessionViewId );
+					//Master.GoMain();
+					Master.Redirect( "NewMain.html?viewid=" + NewNodesView.SessionViewId );
 
                 } // if nodetypes exist
             }
