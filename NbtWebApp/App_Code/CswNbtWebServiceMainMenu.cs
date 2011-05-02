@@ -82,9 +82,12 @@ namespace ChemSW.Nbt.WebServices
 											new XAttribute( "action", "ViewSearch" ) ) );
 				}
 
-                MenuNode.Add( SearchNode );
-				
-				// ADD
+                if( SearchNode.HasElements )
+                {
+                    MenuNode.Add( SearchNode );
+                }
+
+			    // ADD
 				XElement AddNode = new XElement( "item",
 												new XAttribute( "text", "Add" ) );
 
