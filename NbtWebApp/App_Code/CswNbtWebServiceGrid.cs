@@ -24,16 +24,6 @@ namespace ChemSW.Nbt.WebServices
 			Json
 		};
 
-		private static string _getViewPropName(CswNbtViewProperty ViewProp)
-		{
-			string ret = ViewProp.Name;
-			if( ViewProp.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-				ret = ViewProp.NodeTypeProp.PropName;
-			else if( ViewProp.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
-				ret = ViewProp.ObjectClassProp.PropName;
-			return ret;
-		}
-
 		public CswNbtWebServiceGrid( CswNbtResources CswNbtResources, CswNbtView View, CswNbtNodeKey ParentNodeKey )
 		{
 			_CswNbtResources = CswNbtResources;
