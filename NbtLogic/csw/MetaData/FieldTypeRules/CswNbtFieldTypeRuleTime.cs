@@ -72,8 +72,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = ValueColumn + " < '" + Convert.ToDateTime( CswNbtViewPropertyFilterIn.Value ).Date.ToString() + "'";
                     break;
                 case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                    ReturnVal = ValueColumn + " not like " + "'" + CswNbtViewPropertyFilterIn.Value + "'";
-                    break;
+					ReturnVal = "(" + ValueColumn + " not like " + CswNbtViewPropertyFilterIn.Value + "'" +
+								" or " + ValueColumn + " is null )";   // case 21623
+					break;
                 case CswNbtPropFilterSql.PropertyFilterMode.NotNull:
                     ReturnVal = ValueColumn + " is not null";
                     break;
