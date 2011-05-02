@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.WebServices
 		{
 			XElement RawXml = null;
 
-			if( _ParentNodeKey != null && _View.Root.ChildRelationships.Count > 0 )
+			if( _ParentNodeKey != null && _View.Visibility == NbtViewVisibility.Property )
 			{
 				// This is a Grid Property
 				( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
