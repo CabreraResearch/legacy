@@ -36,7 +36,11 @@ namespace ChemSW.Nbt.WebServices
 				if( UsePaging )
 					PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
 
-				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
+				CswNbtViewRelationship ChildRelationshipToStartWith = null;
+				//if( IncludeNodeKey != null )
+				//    ChildRelationshipToStartWith = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( IncludeNodeKey.ViewNodeUniqueId );
+
+				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
 
 				// case 21262
 				if( IncludeNodeKey != null && IncludeNodeRequired && ( IncludeNodeKey.TreeKey != Tree.Key || Tree.getNodeKeyByNodeId( IncludeNodeKey.NodeId ) == null ) )
@@ -48,7 +52,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( Tree.getChildNodeCount() > 0 )
 				{
-
 					var RootNode = new XElement( "root" );
 					if( IsFirstLoad && View.ViewMode == NbtViewRenderingMode.Tree )
 					{
@@ -184,9 +187,9 @@ namespace ChemSW.Nbt.WebServices
 				string ThisNodeName = Tree.getNodeNameForCurrentPosition();
 				string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
 				string ThisNodeId = "";
-				string ThisNodeRel = ""; 
+				string ThisNodeRel = "";
 
-				if( ThisNodeKey.NodeSpecies == NodeSpecies.Plain )
+				if( ThisNodeKey.NodeSpecies == NodeSpecies.Plain || ThisNodeKey.NodeSpecies == NodeSpecies.More )
 				{
 					CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
 					ThisNodeId = IDPrefix + ThisNode.NodeId.ToString();

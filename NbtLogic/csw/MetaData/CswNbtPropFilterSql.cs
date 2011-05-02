@@ -149,7 +149,8 @@ namespace ChemSW.Nbt.MetaData
 							ReturnVal = NonNumericValueColumn + " <= '" + SafeValue + "'";
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-							ReturnVal = NonNumericValueColumn + " not like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
+							ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend +
+										" or " + NonNumericValueColumn + " is null )";   // case 21623
                             break;
                         default:
                             throw new CswDniException( "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );

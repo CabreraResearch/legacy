@@ -223,6 +223,7 @@
     <Compile Include="csw\Sched\logic_legacy\CswNbtSchdItemGenerateEmailReport.cs" />
     <Compile Include="csw\Sched\logic_legacy\CswNbtSchdItemGenerateNode.cs" />
     <Compile Include="csw\Schema\scripts\CswScriptCollections.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H32.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H31.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H30.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H29.cs" />
