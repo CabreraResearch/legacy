@@ -4,8 +4,21 @@
 /// <reference path="_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
-	$.fn.CswMenuMain = function (options) {
-
+	
+    $.fn.CswMenuMain = function (options) {
+    /// <summary>
+    ///   Generates an action menu for the current view
+    /// </summary>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.viewid: a viewid
+    ///     &#10;2 - options.nodeid: nodeid
+    ///     &#10;3 - options.cswnbtnodekey: a node key
+    ///     &#10;4 - options.onAddNode: function() {}
+    ///     &#10;5 - options.onMultiEdit: function() {}
+    ///     &#10;6 - options.onSearch: { onViewSearch: function() {}, onGenericSearch: function() {} }
+    ///     &#10;7 - options.onEditView: function() {}
+    /// </param>
 		var o = {
 			Url: '/NbtWebApp/wsNBT.asmx/getMainMenu',
 			viewid: '',

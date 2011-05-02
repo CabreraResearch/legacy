@@ -248,9 +248,15 @@ function jsonToString(j) {
 } // jsonToString
 
 function safeJsonParam(str) {
+    /// <summary>
+    ///   Converts an object toString and returns a regex parsed, safe-for-JSON string
+    /// </summary>
+    /// <param name="options" type="Object">A JavaScript Object representing a string to parse</param>
+    /// <returns type="String" />
     var ret = '';
     if (str !== undefined)
     {
+        ret = str.toString();
         ret = str.replace(/'/g, "\\'");
     }
 	return ret;
@@ -738,7 +744,19 @@ function getTimeString(date) {
 	return ret;
 }
 
-function makeId(options) { /// <param name="$" type="jQuery" />
+function makeId(options)
+{
+    /// <summary>
+    ///   Generates an ID for DOM assignment
+    /// </summary>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.ID: Base ID string
+    ///     &#10;2 - options.prefix: String prefix to prepend
+    ///     &#10;3 - options.suffix: String suffix to append
+    ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
+    /// </param>
+    /// <returns type="String>A concatenated string of provided values</returns>
     var o = {
         'ID': '',
         'prefix': '',

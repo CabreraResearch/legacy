@@ -202,7 +202,7 @@
 			return $gridTable;
 		}, // 'init'
 	
-		'scrollToSelectedRow': function() {
+        'scrollToSelectedRow': function() {
 			var $gridTable = $(this);
 			var rowid = $gridTable.jqGrid('getGridParam', 'selrow');
 			scrollToRow($gridTable, rowid);
@@ -236,7 +236,16 @@
 
 
 	$.fn.CswNodeGrid = function (method) {
-		// Method calling logic
+		/// <summary>
+        ///   Generates a jqGrid
+        /// </summary>
+        /// <param name="method" type="String">
+        ///     A string defining the function to call
+        ///     &#10;1 - 'init': creates a grid from a view
+        ///     &#10;2 - 'scrollToSelectedRow': scrolls to a specific row in the grid
+        /// </param>
+        
+        // Method calling logic
         if ( methods[method] ) {
           return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
         } else if ( typeof method === 'object' || ! method ) {
