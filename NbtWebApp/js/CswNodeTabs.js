@@ -24,7 +24,8 @@
 			onTabSelect: function (tabid) { },
 			onPropertyChange: function(propid, propname) { },
 			ShowCheckboxes: false,
-			NodeCheckTreeId: ''
+			NodeCheckTreeId: '',
+            'onEditView': function(viewid) { }
 		};
 
 		if (options)
@@ -321,7 +322,8 @@
 					'onchange': function() { },
 					'onReload': function() { getProps($tabcontentdiv, tabid); },
 					'cswnbtnodekey': o.cswnbtnodekey,
-					'EditMode': o.EditMode
+					'EditMode': o.EditMode,
+                    'onEditView': o.onEditView
 				};
 
 				fieldOpt.$propdiv.attr('nodeid', fieldOpt.nodeid);

@@ -540,7 +540,25 @@
 			{
 				//if(debug) log('Property Changed: propid = ' + propid + ', propname = ' + propname);
 				setChanged();
-			},
+            },
+            'onEditView': function (viewid)
+            {
+                clear({ 'all': true });
+                $('#CenterTopDiv').CswViewEditor({
+                    'viewid': viewid,
+                    'onCancel': function ()
+                    {
+                        clear({ 'all': true });
+                        refreshSelected();
+                    },
+                    'onFinish': function (viewid, viewmode)
+                    {
+                        clear({ 'all': true });
+                        handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+                    },
+                    'stepsToExecute': [2, 3, 4, 5, 6]
+                });
+            },
 			'ShowCheckboxes': multi,
 			'NodeCheckTreeId': MainTreeId
 		});
