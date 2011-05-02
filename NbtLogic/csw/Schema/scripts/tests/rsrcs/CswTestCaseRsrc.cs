@@ -15,11 +15,11 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Test Case: 001, part 01
     /// </summary>
-    public class CswTstCaseRsrc
+    public class CswTestCaseRsrc
     {
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-        public CswTstCaseRsrc( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        public CswTestCaseRsrc( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
         }//ctor

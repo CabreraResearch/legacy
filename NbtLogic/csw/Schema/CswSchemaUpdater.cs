@@ -72,7 +72,10 @@ namespace ChemSW.Nbt.Schema
         private string _ErrorMessage = string.Empty;
         public string ErrorMessage { get { return ( _ErrorMessage ); } }
 
-
+        public CswSchemaUpdateDriver getDriver( CswSchemaVersion CswSchemaVersion )
+        {
+            return ( _CswSchemaScripts[CswSchemaVersion] );
+        }//getDriver()
 
         /// <summary>
         /// Update the schema to the next version
@@ -99,7 +102,7 @@ namespace ChemSW.Nbt.Schema
                 }
                 else
                 {
-                    _CswNbtResources.setConfigVariableValue( "schemaversion", CurrentUpdateDriver.SchemaVersion.ToString() );
+                    _CswSchemaScripts.stampSchemaVersion( CurrentUpdateDriver );
 
                 }
 

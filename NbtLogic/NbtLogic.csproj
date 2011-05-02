@@ -241,6 +241,7 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswProdUpdtRsrc.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H34.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H33.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H32.cs" />
@@ -310,7 +311,7 @@
     <Compile Include="csw\Schema\scripts\tests\CswScmUpdt_TstCse_UniqueSequence_RollbackDelete.cs" />
     <Compile Include="csw\Schema\scripts\tests\CswScmUpdt_TstCse_View_RollbackUpdate.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTstUpdtSchema_001_01.cs" />
-    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTestCaseRsrc.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_001.cs" />
     <Compile Include="csw\Security\CswNbtAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSystemUser.cs" />

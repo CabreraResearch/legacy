@@ -202,13 +202,16 @@ namespace ChemSW.Nbt.Schema.CmdLn
             if( _CswSchemaUpdater.LatestVersion != CurrentVersion )
             {
 
-                _CswConsoleOutput.write( "Updating AccessId " + AccessId + " from to schema version " + _CswSchemaUpdater.TargetVersion.ToString() + " to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine );
+                //_CswConsoleOutput.write( "Updating AccessId " + AccessId + " from to schema version " + _CswSchemaUpdater.TargetVersion.ToString() + " to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine );
+                _CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "AccessId " + AccessId + ": schema version " + _CswSchemaUpdater.TargetVersion.ToString() + " to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
                 bool UpdateSucceeded = true;
                 while( UpdateSucceeded && CurrentVersion != _CswSchemaUpdater.LatestVersion )
                 {
                     CswSchemaVersion UpdateFromVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration );
                     CswSchemaVersion UpdateToVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
-                    _CswConsoleOutput.write( "Updating AccessId " + AccessId + " to schema version " + UpdateToVersion.ToString() );
+                    string UpdateDescription = _CswSchemaUpdater.getDriver( UpdateToVersion ).Description;
+                    //                    _CswConsoleOutput.write( "Updating AccessId " + AccessId + " to schema version " + UpdateToVersion.ToString() );
+                    _CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema change -- " + UpdateDescription );
                     _CswSchemaUpdateThread.start();
                     while( UpdateState.Running == _CswSchemaUpdateThread.UpdateState )
                     {
@@ -217,15 +220,18 @@ namespace ChemSW.Nbt.Schema.CmdLn
                     }
 
                     UpdateSucceeded = ( UpdateState.Succeeded == _CswSchemaUpdateThread.UpdateState );
-                    string MessageStem = "Update of AccessId " + AccessId + " from schema version " + UpdateFromVersion.ToString() + " to schema version " + UpdateToVersion.ToString();
+                    string MessageStem = "AccessId " + AccessId + ": ";
+                    //" from schema version " + UpdateFromVersion.ToString() + " to schema version " + UpdateToVersion.ToString();
                     if( UpdateSucceeded )
                     {
-                        _CswConsoleOutput.write( " succeeded." + _Separator_NuLine );
-                        //_CswConsoleOutput.write( _Separator_NuLine + MessageStem + " succeeded." + _Separator_NuLine + _Separator_NuLine );
+
+                        //                        _CswConsoleOutput.write( _Separator_NuLine + MessageStem + " succeeded." + _Separator_NuLine + _Separator_NuLine );
+                        _CswConsoleOutput.write( " succeeded." + _Separator_NuLine + _Separator_NuLine );
                     }
                     else
                     {
-                        _CswConsoleOutput.write( _Separator_NuLine + MessageStem + " failed: " + _CswSchemaUpdateThread.Message + _Separator_NuLine + _Separator_NuLine );
+                        //                        _CswConsoleOutput.write( _Separator_NuLine + MessageStem + " failed: " + _CswSchemaUpdateThread.Message + _Separator_NuLine + _Separator_NuLine );
+                        _CswConsoleOutput.write( " failed: " + _CswSchemaUpdateThread.Message + _Separator_NuLine + _Separator_NuLine );
                     }
 
                     CurrentVersion = _CswSchemaUpdater.CurrentVersion;

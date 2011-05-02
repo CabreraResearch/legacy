@@ -23,27 +23,20 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public Int32 ReleaseIteration;
 
-        public string Description = string.Empty;
-
         /// <summary>
         /// Constructor to build a Schema Version tag from parts
         /// </summary>
-        public CswSchemaVersion( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration, string Description )
+        public CswSchemaVersion( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration  )
         {
-            _init( inCycleIteration, inReleaseIdentifier, inReleaseIteration, Description );
+            _init( inCycleIteration, inReleaseIdentifier, inReleaseIteration );
         }        /// <summary>
-        /// Constructor to build a Schema Version tag from parts
-        /// </summary>
-        public CswSchemaVersion( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration )
-        {
-            _init( inCycleIteration, inReleaseIdentifier, inReleaseIteration, string.Empty );
-        }
+
         /// <summary>
         /// Constructor for single integer version numbers (for backwards compatibility)
         /// </summary>
         public CswSchemaVersion( Int32 SingleIntegerVersion )
         {
-            _init( 0, 'X', SingleIntegerVersion, string.Empty );
+            _init( 0, 'X', SingleIntegerVersion  );
         }
         /// <summary>
         /// Constructor for string version of Schema Version tag.  Detects single integers for backwards compatibility.
@@ -53,32 +46,23 @@ namespace ChemSW.Nbt.Schema
             if( SchemaVersionAsString.Length < 6 && CswTools.IsInteger( SchemaVersionAsString ) )
             {
                 // Example: 74   (backwards compatibility)
-                _init( 0, 'X', CswConvert.ToInt32( SchemaVersionAsString ), string.Empty );
+                _init( 0, 'X', CswConvert.ToInt32( SchemaVersionAsString )  );
             }
             else
             {
                 // Example: 01F-02
                 _init( CswConvert.ToInt32( SchemaVersionAsString.Substring( 0, 2 ) ),
                        SchemaVersionAsString.Substring( 2, 1 )[0],
-                       CswConvert.ToInt32( SchemaVersionAsString.Substring( 4, 2 ) ),
-                       string.Empty );
+                       CswConvert.ToInt32( SchemaVersionAsString.Substring( 4, 2 ) ) );
             }
         }
 
-        private void _init( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration, string DescriptionIn )
+        private void _init( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration  )
         {
             CycleIteration = inCycleIteration;
             ReleaseIdentifier = inReleaseIdentifier;
             ReleaseIteration = inReleaseIteration;
 
-            if( string.Empty == DescriptionIn )
-            {
-                Description = "Update to schema version " + ToString();
-            }
-            else
-            {
-                Description = DescriptionIn;
-            }
         }
 
         /// <summary>
