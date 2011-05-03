@@ -30,21 +30,46 @@
 
             var viewid = o.$propxml.children('viewid').text().trim();
             
-			$GridDiv.CswNodeGrid('init', {'viewid': viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly});
+            var gridOpts = {
+                'viewid': viewid, 
+                'nodeid': o.nodeid, 
+                'cswnbtnodekey': o.cswnbtnodekey, 
+                'readonly': o.ReadOnly,
+                'reinit': false,
+                'onEditNode': function() { 
+                    gridOpts.reinit = true;
+                    $GridDiv.CswNodeGrid('init', gridOpts); 
+                },
+                'onAddNode': function() { 
+                    gridOpts.reinit = true;
+                    $GridDiv.CswNodeGrid('init', gridOpts); 
+                },
+                'onDeleteNode': function() { 
+                    gridOpts.reinit = true;
+                    $GridDiv.CswNodeGrid('init', gridOpts); 
+                }
+            };
+
+            var refreshGrid = function() { 
+                gridOpts.reinit = true;
+                $GridDiv.CswNodeGrid('init', gridOpts);
+            };
+
+			$GridDiv.CswNodeGrid('init', gridOpts);
             $MenuDiv.CswMenuMain({
 			        'viewid': viewid,
 			        'nodeid': o.nodeid,
 			        'cswnbtnodekey': o.cswnbtnodekey,
 			        'onAddNode': function (nodeid, cswnbtnodekey)
 			        {
-                        $GridDiv.CswNodeGrid('init', {'viewid': viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly, 'reinit': true});
+                        refreshGrid();
 			        },
 		            'onSearch':
                         {
                             'onViewSearch': function ()
                             {
 	                            var onSearchSubmit = function(view) {
-                                    $GridDiv.CswNodeGrid('init', {'viewid': view.sessionviewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly, 'reinit': true});
+                                    refreshGrid();
                                 };
 
                                 $SearchDiv.empty();
