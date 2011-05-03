@@ -40,9 +40,9 @@ var CswViewEditor_WizardSteps = {
         var WizardSteps = {};
         var WizardStepsCount = 0;
         
-        for( var i=0; i < CswViewEditor_WizardStepArray.length; i++ )
+        for( var i=0; i < WizardStepArray.length; i++ )
         {                
-            var step = CswViewEditor_WizardStepArray[i];
+            var step = WizardStepArray[i];
             if( -1 !== $.inArray( step.step, o.stepsToExecute ) )
             {
                 WizardStepsCount++;
