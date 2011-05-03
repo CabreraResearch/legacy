@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.WebServices
             IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( true );
 
 			JArray GridRows = new JArray();
-			if( GridNodes.Count() > 0 )
+			if( null != GridNodes && GridNodes.Count() > 0 )
 			{
                 GridRows = _CswGridData.getGridRowsJSON( GridNodes ); //_getGridRowsJson( GridNodes );
 			}
