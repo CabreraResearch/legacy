@@ -13,22 +13,21 @@ using ChemSW.Nbt.Schema;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTstUpdtSchema_002_01 : ICswUpdateSchemaTo
+    public class CswTestCase_002_02_006 : ICswUpdateSchemaTo
     {
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'T', 05 ); } }
+        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'T', 06 ); } }
 
-        public string Description { get { return ( string.Empty ); } }
-        //        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( _CswTstCaseRsrc_001.Purpose, "Verify tear down" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_002.Purpose, "Verify tear down" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
-        private CswTstCaseRsrc_001 _CswTstCaseRsrc_001 = null;
-        public CswTstUpdtSchema_002_01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        private CswTstCaseRsrc_001 _CswTstCaseRsrc_002 = null;
+        public CswTestCase_002_02_006( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_001 = new CswTstCaseRsrc_001( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_002 = new CswTstCaseRsrc_001( _CswNbtSchemaModTrnsctn );
         }//ctor
 
 

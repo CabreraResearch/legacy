@@ -15,19 +15,19 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Test Case: 001, part 03
     /// </summary>
-    public class CswTstUpdtSchema_001_03 : ICswUpdateSchemaTo
+    public class CswTestCase_001_03_003 : ICswUpdateSchemaTo
     {
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
         public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'T', 03  ); } }
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( _CswTstCaseRsrc_001.Purpose, "Tear down add column operation" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name,_CswTstCaseRsrc_001.Purpose, "Tear down add column operation" ) ); } }
 
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_001 _CswTstCaseRsrc_001 = null;
-        public CswTstUpdtSchema_001_03( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        public CswTestCase_001_03_003( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );

@@ -20,46 +20,21 @@ namespace ChemSW.Nbt.Schema
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-
+        private CswTestCaseRsrc _CswTestCaseRsrc = null;
         public CswTstCaseRsrc_001( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+            _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
         }//ctor
 
 
         public string Purpose = "Add Columns";
 
-        public string TestColumnNameOne = "test_column_one";
-        public string TestColumnNameTwo = "test_column_two";
-        public string TestTableName = "modules";
-        public string TestValStem = "Test val ";
+        public string TestColumnNameOne { get { return ( _CswTestCaseRsrc.getTestColumnName( TestColumnNames.TestColumn01 ) ); } }
+        public string TestColumnNameTwo { get { return ( _CswTestCaseRsrc.getTestColumnName( TestColumnNames.TestColumn02 ) ); } }
+        public string TestTableName { get { return ( _CswTestCaseRsrc.getTestTableName( TestTableNames.TestTable01 ) ); } }
 
-        public void testAddColumnValues( string ColumnName )
-        {
-            Int32 TotalUpdated = 0;
-            CswTableUpdate TestTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "testAddColumnValues_update", TestTableName );
-            DataTable TestTable = TestTableUpdate.getTable();
-            foreach( DataRow CurrentRow in TestTable.Rows )
-            {
-                CurrentRow[ColumnName] = "Test val " + TestTable.Rows.IndexOf( CurrentRow ).ToString();
-                TotalUpdated++;
-            }
-
-            TestTableUpdate.update( TestTable );
-
-            Int32 TotalUpdatedInfact = 0;
-            TestTable = TestTableUpdate.getTable();
-            foreach( DataRow CurrentRow in TestTable.Rows )
-            {
-                if( ( TestValStem + TestTable.Rows.IndexOf( CurrentRow ) ) == CurrentRow[ColumnName].ToString() )
-                    TotalUpdatedInfact++;
-            }
-
-            if( TotalUpdatedInfact != TotalUpdated )
-                throw ( new CswDniException( "Error adding column " + ColumnName + ": updated " + TotalUpdated.ToString() + " rows but retrieved " + TotalUpdatedInfact.ToString() + " with that value" ) );
-
-
-        }//_testAddColumnValues
+        public void testAddColumnValues( TestColumnNames TestColumnName ) { _CswTestCaseRsrc.testAddColumnValues( TestTableNames.TestTable01, TestColumnName ); }
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

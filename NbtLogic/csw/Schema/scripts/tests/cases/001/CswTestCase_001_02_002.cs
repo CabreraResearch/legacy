@@ -15,19 +15,19 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Test Case: 001, part 02
     /// </summary>
-    public class CswTstUpdtSchema_001_02 : ICswUpdateSchemaTo
+    public class CswTestCase_001_02_002 : ICswUpdateSchemaTo
     {
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
         public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'T', 02 ); } }
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( _CswTstCaseRsrc_001.Purpose, "Verify add operation and add data to columns" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription(this.GetType().Name, _CswTstCaseRsrc_001.Purpose, "Verify add operation and add data to columns" ) ); } }
 
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_001 _CswTstCaseRsrc_001 = null;
-        public CswTstUpdtSchema_001_02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        public CswTestCase_001_02_002( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
@@ -53,8 +53,8 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "Column " + _CswTstCaseRsrc_001.TestColumnNameTwo + " was not created in meta data " ) );
 
 
-            _CswTstCaseRsrc_001.testAddColumnValues( _CswTstCaseRsrc_001.TestColumnNameOne );
-            _CswTstCaseRsrc_001.testAddColumnValues( _CswTstCaseRsrc_001.TestColumnNameTwo );
+            _CswTstCaseRsrc_001.testAddColumnValues( TestColumnNames.TestColumn01 );
+            _CswTstCaseRsrc_001.testAddColumnValues( TestColumnNames.TestColumn02 );
 
 
         }//runTest()

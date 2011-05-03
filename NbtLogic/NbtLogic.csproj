@@ -276,13 +276,14 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H29.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H30.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H31.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTstUpdtSchema_001_04.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTstUpdtSchema_001_03.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTstUpdtSchema_001_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_04_004.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03_003.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02_002.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\002\CswTestCase_002_02_006.cs" />
     <Compile Include="csw\Schema\scripts\tests\CswScmUpdt_Exception.cs" />
     <Compile Include="csw\Schema\scripts\tests\CswScmUpdt_TestTools.cs" />
     <Compile Include="csw\Schema\scripts\tests\CswScmUpdt_TstCse.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\002\CswTstUpdtSchema_002_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\002\CswTestCase_002_01_005.cs" />
     <Compile Include="csw\Schema\scripts\tests\CswScmUpdt_TstCse_Column_RollbackDrop.cs" />
     <Compile Include="csw\Schema\scripts\tests\CswScmUpdt_TstCse_Constraint_AddMultiple.cs" />
     <Compile Include="csw\Schema\scripts\tests\CswScmUpdt_TstCse_Constraint_AddOnPendingDml.cs" />
@@ -310,7 +311,7 @@
     <Compile Include="csw\Schema\scripts\tests\CswScmUpdt_TstCse_UniqueSequence_RollbackCreate.cs" />
     <Compile Include="csw\Schema\scripts\tests\CswScmUpdt_TstCse_UniqueSequence_RollbackDelete.cs" />
     <Compile Include="csw\Schema\scripts\tests\CswScmUpdt_TstCse_View_RollbackUpdate.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTstUpdtSchema_001_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01_001.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTestCaseRsrc.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_001.cs" />
     <Compile Include="csw\Security\CswNbtAuthenticator.cs" />

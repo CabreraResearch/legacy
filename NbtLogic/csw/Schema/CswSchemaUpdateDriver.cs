@@ -1,4 +1,5 @@
 ﻿using System;
+using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema
@@ -49,6 +50,22 @@ namespace ChemSW.Nbt.Schema
                 _CswUpdateSchemaTo.update();
                 _CswNbtSchemaModTrnsctn.commitTransaction();
             }
+
+            catch( CswDniExceptionIgnoreDeliberately CswDniExceptionIgnoreDeliberately )
+            {
+                _UpdateSucceeded = true;
+
+                try
+                {
+                    _CswNbtSchemaModTrnsctn.rollbackTransaction();
+                }
+
+                catch( Exception CommitException )
+                {
+                    _RollbackSucceeded = false;
+                    _Message += "Rollback failed: " + CommitException.Message + " at " + CommitException.StackTrace.ToString();
+                }//
+            }//catch
 
             catch( Exception Exception )
             {
