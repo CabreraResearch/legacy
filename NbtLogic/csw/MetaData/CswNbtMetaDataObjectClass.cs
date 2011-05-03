@@ -108,10 +108,24 @@ namespace ChemSW.Nbt.MetaData
             get { return _ObjectClassRow["iconfilename"].ToString(); }
         }
 
-        public ICollection NodeTypes
-        {
-            get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes( ObjectClassId ); }
-        }
+		public ICollection NodeTypes
+		{
+			get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes( ObjectClassId ); }
+		}
+
+		public CswNbtMetaDataNodeType FirstNodeType
+		{
+			get
+			{
+				CswNbtMetaDataNodeType ret = null;
+				foreach( CswNbtMetaDataNodeType NT in NodeTypes )
+				{
+					ret = NT;
+					break;
+				}
+				return ret;
+			}
+		} // FirstNodeType
 
         //private Hashtable _ObjectClassPropsByPropId;
         //private SortedList _ObjectClassPropsByPropName;
