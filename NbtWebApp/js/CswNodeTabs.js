@@ -203,7 +203,7 @@
 						var $savetab = $form.CswButton({ID: 'SaveTab', 
 												enabledText: 'Save Changes', 
 												disabledText: 'Saving...', 
-												onclick: function () { Save($form, $layouttable, $xml, $savetab) }
+												onclick: function () { Save($form, $layouttable, $xml, $savetab); }
 												});
 					}
 
@@ -446,6 +446,10 @@
 					}
 				}); // ajax
 			} // if($form.valid())
+			else 
+			{
+				$savebtn.CswButton('enable');
+			}
 		} // Save()
 
 		function _updatePropXmlFromForm($layouttable, $propsxml)
