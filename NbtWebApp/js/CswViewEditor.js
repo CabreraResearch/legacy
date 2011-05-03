@@ -39,10 +39,10 @@ var CswViewEditor_WizardSteps = {
                                 CswViewEditor_WizardSteps.step4, CswViewEditor_WizardSteps.step5, CswViewEditor_WizardSteps.step6];
         var WizardSteps = {};
         var WizardStepsCount = 0;
-        
-        for( var i=0; i < CswViewEditor_WizardStepArray.length; i++ )
+                
+        for( var i=0; i < WizardStepArray.length; i++ )
         {                
-            var step = CswViewEditor_WizardStepArray[i];
+            var step = WizardStepArray[i];
             if( -1 !== $.inArray( step.step, o.stepsToExecute ) )
             {
                 WizardStepsCount++;
@@ -252,6 +252,8 @@ var CswViewEditor_WizardSteps = {
 		    $div6.append('Select what you want to edit from the tree:<br/><br/>');
 		    var $table6 = $div6.CswTable({ 'ID': o.ID + '_6_tbl' });
         }
+
+        _handleNext( o.stepsToExecute[0] );
 
 		var $currentviewxml;
 
