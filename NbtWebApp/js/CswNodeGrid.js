@@ -95,13 +95,13 @@
 							editfunc: function(rowid) {
 									var editOpt = {
 										cswnbtnodekey: '',
-										nodeid: '',
+										//nodeid: '',
 										onEditNode: o.onEditNode
 									};
 									if (rowid !== null) 
 									{
 										editOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
-										editOpt.nodeid = $gridTable.jqGrid('getCell', rowid, 'nodeid');
+										//editOpt.nodeid = $gridTable.jqGrid('getCell', rowid, 'nodeid');
 										$.CswDialog('EditNodeDialog', editOpt);
 									}
 									else
@@ -131,13 +131,13 @@
 							delfunc: function(rowid) {
 									var delOpt = {
 										'cswnbtnodekey': '',
-										'nodeid': '',
+										//'nodeid': '',
 										'nodename': '',
 										'onDeleteNode': o.onDeleteNode
 									};
 									if (rowid !== null) {
 										delOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
-										delOpt.nodeid = $gridTable.jqGrid('getCell', rowid, 'nodeid');
+										//delOpt.nodeid = $gridTable.jqGrid('getCell', rowid, 'nodeid');
 										delOpt.nodename = $gridTable.jqGrid('getCell', rowid, 'nodename');
 										$.CswDialog('DeleteNodeDialog', delOpt);
 									}
