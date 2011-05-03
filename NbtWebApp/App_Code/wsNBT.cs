@@ -1540,9 +1540,11 @@ namespace ChemSW.Nbt.WebServices
                 start();
 
                 ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
-                CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtResources, ForMobile );
-                ReturnVal.Add( wsView.Run( ParentId, CurrentUser ) );
-
+                if( null != CurrentUser )
+                {
+                    CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtResources, ForMobile );
+                    ReturnVal.Add( wsView.Run( ParentId, CurrentUser ) );
+                }
                 end();
             }
 
