@@ -42,26 +42,6 @@ namespace ChemSW.Nbt.WebServices
 		private CswNbtResources _CswNbtResources;
 		private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
 
-        private CswNbtWebServiceResources __CswNbtWebServiceResources;
-        private CswNbtWebServiceResources _CswNbtWebServiceResources
-        {
-            get
-            {
-                if( null == __CswNbtWebServiceResources )
-                {
-                    __CswNbtWebServiceResources = new CswNbtWebServiceResources( Context.Application,
-                                                                                 Context.Session,
-                                                                                 Context.Request,
-                                                                                 Context.Response,
-                                                                                 string.Empty,
-                                                                                 System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc",
-                                                                                 SetupMode.Web );
-                }//if not created yet
-
-                return ( __CswNbtWebServiceResources );
-            }//get
-        }//_CswNbtWebServiceResources
-
 		private string _FilesPath
 		{
 			get
@@ -1535,7 +1515,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 start();
                 
-                CswNbtWebServiceMobileUpdateProperties wsUP = new CswNbtWebServiceMobileUpdateProperties( _CswNbtWebServiceResources, ForMobile );
+                CswNbtWebServiceMobileUpdateProperties wsUP = new CswNbtWebServiceMobileUpdateProperties( _CswNbtResources, ForMobile );
                 ReturnVal.Add( wsUP.Run( ParentId, UpdatedViewXml ) );
                 
                 end();
@@ -1559,8 +1539,8 @@ namespace ChemSW.Nbt.WebServices
             {
                 start();
 
-                ICswNbtUser CurrentUser = _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser;
-                CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtWebServiceResources, ForMobile );
+                ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
+                CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtResources, ForMobile );
                 ReturnVal.Add( wsView.Run( ParentId, CurrentUser ) );
 
                 end();

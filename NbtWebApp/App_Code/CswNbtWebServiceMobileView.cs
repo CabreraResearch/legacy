@@ -14,12 +14,12 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceMobileView
     {
-        private CswNbtWebServiceResources _CswNbtWebServiceResources;
+        private CswNbtResources _CswNbtResources;
         private bool _ForMobile;
 
-        public CswNbtWebServiceMobileView( CswNbtWebServiceResources CswNbtWebServiceResources, bool ForMobile )
+        public CswNbtWebServiceMobileView( CswNbtResources CswNbtResources, bool ForMobile )
         {
-            _CswNbtWebServiceResources = CswNbtWebServiceResources;
+            _CswNbtResources = CswNbtResources;
             _ForMobile = ForMobile;
         }
 
@@ -31,13 +31,13 @@ namespace ChemSW.Nbt.WebServices
 
         public XElement Run( string ParentId, ICswNbtUser CurrentUser )
         {
-            XElement ret = new XElement( "" );
+            XElement ret = new XElement( "node" );
 
             if( ParentId.StartsWith( ViewIdPrefix ) )
             {
                 // Get the full XML for the entire view
                 Int32 ViewId = CswConvert.ToInt32( ParentId.Substring( ViewIdPrefix.Length ) );
-                CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtWebServiceResources.CswNbtResources, ViewId );
+                CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
                 //View.SaveToCache();
                 //Session["SessionViewId"] = View.SessionViewId;
 
@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.WebServices
                     ret = _getSearchNodes( View );
                 }
 
-                ICswNbtTree Tree = _CswNbtWebServiceResources.CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
 
                 if( Tree.getChildNodeCount() > 0 )
                 {
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 // All Views
-                XElement MobileViews = _CswNbtWebServiceResources.CswNbtResources.ViewSelect.getVisibleViewsXml( CurrentUser, true, false, string.Empty );
+                XElement MobileViews = _CswNbtResources.ViewSelect.getVisibleViewsXml( CurrentUser, true, false, string.Empty );
                 ret = MobileViews;
             }
 
@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.WebServices
         private XElement _getSearchNodes( CswNbtView View )
         {
             XElement Searches = new XElement( "searches" );
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtWebServiceResources.CswNbtResources.MetaData.LatestVersionNodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
             {
                 if( View.ContainsNodeType( NodeType ) )
                 {

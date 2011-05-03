@@ -20,12 +20,12 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceMobileUpdateProperties
     {
-        private CswNbtWebServiceResources _CswNbtWebServiceResources;
+        private CswNbtResources _CswNbtResources;
         private bool _ForMobile;
 
-        public CswNbtWebServiceMobileUpdateProperties( CswNbtWebServiceResources CswNbtWebServiceResources, bool ForMobile )
+        public CswNbtWebServiceMobileUpdateProperties( CswNbtResources CswNbtResources, bool ForMobile )
         {
-            _CswNbtWebServiceResources = CswNbtWebServiceResources;
+            _CswNbtResources = CswNbtResources;
             _ForMobile = ForMobile;
         }
 
@@ -46,8 +46,8 @@ namespace ChemSW.Nbt.WebServices
                 Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[1] );
                 CswPrimaryKey NodePk = new CswPrimaryKey( SplitNodePropId[3], CswConvert.ToInt32( SplitNodePropId[4] ) );
 
-                CswNbtNode Node = _CswNbtWebServiceResources.CswNbtResources.Nodes[NodePk];
-                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtWebServiceResources.CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+                CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
+                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
                 Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
 
                 if( !NodesToPost.Contains( Node ) )
@@ -58,8 +58,8 @@ namespace ChemSW.Nbt.WebServices
                 Node.postChanges( false );
 
             // return the refreshed view
-            CswNbtWebServiceMobileView ViewService = new CswNbtWebServiceMobileView( _CswNbtWebServiceResources, _ForMobile );
-            return ViewService.Run( ParentId, _CswNbtWebServiceResources.CswNbtResources.CurrentNbtUser );
+            CswNbtWebServiceMobileView ViewService = new CswNbtWebServiceMobileView( _CswNbtResources, _ForMobile );
+            return ViewService.Run( ParentId, _CswNbtResources.CurrentNbtUser );
 
         } // Run()
 
