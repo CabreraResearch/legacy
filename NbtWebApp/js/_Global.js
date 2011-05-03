@@ -262,7 +262,6 @@ function safeJsonParam(obj) {
 	return ret;
 }
 
-
 // ------------------------------------------------------------------------------------
 // Check Changes
 // ------------------------------------------------------------------------------------
@@ -788,6 +787,26 @@ function isNullOrEmpty(str)
 	/// </param>
 
 	return (str === '' || str === undefined || str === null);
+}
+
+function isNumeric(obj)
+{
+	/// <summary>
+	///   Returns true if the input is a number
+	/// </summary>
+	/// <param name="str" type="Object">
+	///     String or object to test
+	/// </param>
+    var ret = false;
+    if(obj !== '' && obj !== undefined && obj === null && obj  )
+    {
+        var num = parseInt(obj);
+        if( num != NaN )
+        {
+            ret = true;
+        }
+    }
+	return ret;
 }
 
 function isTrue(str)
