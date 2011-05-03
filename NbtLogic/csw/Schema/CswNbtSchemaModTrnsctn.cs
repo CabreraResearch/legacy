@@ -419,9 +419,9 @@ namespace ChemSW.Nbt.Schema
 
             // Grant permission to Administrator
 			CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
-			SetActionPermission( RoleNode, Name );
+			SetActionPermission( RoleNode, Name, true );
 			CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" );
-			SetActionPermission( RoleNode2, Name );
+			SetActionPermission( RoleNode2, Name, true );
 
             return NewActionId;
         }

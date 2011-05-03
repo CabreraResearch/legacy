@@ -65,6 +65,8 @@ namespace ChemSW.Nbt.Schema
 			CswAdminUser.LastNameProperty.Text = "Admin";
 			CswAdminUser.UsernameProperty.Text = "chemsw_admin";
 			CswAdminUser.PasswordProperty.Password = "chemsw123";
+			CswAdminUser.PageSizeProperty.Value = 50;
+
 			// set new user password to be expired
 			CswAdminUser.PasswordProperty.ChangedDate = new DateTime( 2000, 1, 1 );
 
