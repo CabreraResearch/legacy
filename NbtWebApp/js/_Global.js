@@ -438,7 +438,8 @@ function copyNode(options) {
 
 function deleteNodes(options) { /// <param name="$" type="jQuery" />
 	var o = {
-		'nodeids': [],
+	    'nodeids': [],
+        'nodekeys': [],
 		'onSuccess': function (nodeid, nodekey) { },
 		'onError': function () { }
 	};
@@ -446,15 +447,12 @@ function deleteNodes(options) { /// <param name="$" type="jQuery" />
 		$.extend(o, options);
 	}
 
-	var datastr = '{ "NodePks": [';
-	var first = true;
-	for (var n in o.nodeids)
-	{
-		if (!first) datastr += ',';
-		datastr += '"' + o.nodeids[n] + '"';
-		first = false;
-	}
-	datastr += '] }';
+	var jData = {
+	    NodePks: o.nodeids,
+        NodeKeys: o.nodekeys
+	};
+
+	datastr = JSON.stringify(jData, "'");  //jsonToString(jData);
 
 	CswAjaxJSON({
 		url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',

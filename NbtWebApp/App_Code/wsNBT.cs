@@ -1197,24 +1197,52 @@ namespace ChemSW.Nbt.WebServices
 		#region Node DML
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string DeleteNodes( string[] NodePks )
+		public string DeleteNodes( string[] NodePks, string[] NodeKeys )
 		{
 			var ReturnVal = new JObject();
-			bool ret = true;
+            List<CswPrimaryKey> NodePrimaryKeys = new List<CswPrimaryKey>();
+            bool ret = true;
 			try
 			{
 				start();
-				foreach( string NodePk in NodePks )
-				{
-					CswPrimaryKey RealNodePk = new CswPrimaryKey();
-					RealNodePk.FromString( NodePk );
-					if( RealNodePk.PrimaryKey != Int32.MinValue )
-					{
-						CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-						ret = ret && ws.DeleteNode( RealNodePk );
-					}
-				}
-				ReturnVal.Add( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
+                if( NodeKeys.Length > 0 )
+                {
+                    foreach( string NodeKey in NodeKeys )
+                    {
+                        string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
+                        CswNbtNodeKey ParentNodeKey = null;
+                        if( !string.IsNullOrEmpty( ParsedNodeKey ) )
+                        {
+                            ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
+                            if( null != ParentNodeKey.NodeId )
+                            {
+                                NodePrimaryKeys.Add( ParentNodeKey.NodeId );
+                            }
+                        }
+                    }
+                }
+                else if ( NodePks.Length > 0 )
+                {
+                    foreach( string NodePk in NodePks )
+                    {
+                        CswPrimaryKey RealNodePk = new CswPrimaryKey();
+                        RealNodePk.FromString( NodePk );
+                        if( RealNodePk.PrimaryKey != Int32.MinValue )
+                        {
+                            NodePrimaryKeys.Add( RealNodePk );
+                        }
+                    }
+                }
+                if( NodePrimaryKeys.Count > 0 )
+                {
+                    foreach( CswPrimaryKey Npk in NodePrimaryKeys )
+                    {
+                        CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                        ret = ret && ws.DeleteNode( Npk );    
+                    }
+                }
+
+			    ReturnVal.Add( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
 				end();
 			}
 			catch( Exception ex )
