@@ -72,7 +72,7 @@ var CswViewEditor_WizardSteps = {
         // Step 1 - Choose a View
         if( -1 !== $.inArray( CswViewEditor_WizardSteps.step1.step, o.stepsToExecute ) )
 		{
-		    var $div1 = $wizard.CswWizard('div', 1);
+		    var $div1 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step1.step);
 		    var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  "+
 							    "Views are useful for defining a user's workflow or for creating elaborate search criteria. "+
 							    "This wizard will take you step by step through the process of creating a new View or "+
@@ -179,7 +179,7 @@ var CswViewEditor_WizardSteps = {
 		// Step 2 - Edit View Attributes
         if( -1 !== $.inArray( CswViewEditor_WizardSteps.step2.step, o.stepsToExecute ) )
 		{
-		    var $div2 = $wizard.CswWizard('div', 2);
+		    var $div2 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step2.step);
 		    var $table2 = $div2.CswTable({ 
 				    'ID': o.ID + '_tbl2', 
 				    'FirstCellRightAlign': true 
@@ -224,7 +224,7 @@ var CswViewEditor_WizardSteps = {
         // Step 3 - Add Relationships
         if( -1 !== $.inArray( CswViewEditor_WizardSteps.step3.step, o.stepsToExecute ) )
 		{
-		    var $div3 = $wizard.CswWizard('div', 3);
+		    var $div3 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step3.step);
 		    $div3.append('Add relationships from the select boxes below:<br/><br/>');
 		    var $treediv3 = $('<div />').appendTo($div3);
         }
@@ -232,7 +232,7 @@ var CswViewEditor_WizardSteps = {
         // Step 4 - Select Properties
         if( -1 !== $.inArray( CswViewEditor_WizardSteps.step4.step, o.stepsToExecute ) )
 		{
-		    var $div4 = $wizard.CswWizard('div', 4);
+		    var $div4 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step4.step);
 		    $div4.append('Add properties from the select boxes below:<br/><br/>');
 		    var $treediv4 = $('<div />').appendTo($div4);
         }
@@ -240,7 +240,7 @@ var CswViewEditor_WizardSteps = {
         // Step 5 - Set Filters
         if( -1 !== $.inArray( CswViewEditor_WizardSteps.step5.step, o.stepsToExecute ) )
 		{
-		    var $div5 = $wizard.CswWizard('div', 5);
+		    var $div5 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step5.step);
 		    $div5.append('Add filters by selecting properties from the tree:<br/><br/>');
 		    var $treediv5 = $('<div />').appendTo($div5);
         }
@@ -248,7 +248,7 @@ var CswViewEditor_WizardSteps = {
 		// Step 6 - Fine Tuning
         if( -1 !== $.inArray( CswViewEditor_WizardSteps.step6.step, o.stepsToExecute ) )
 		{
-		    var $div6 = $wizard.CswWizard('div', 6);
+		    var $div6 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step6.step);
 		    $div6.append('Select what you want to edit from the tree:<br/><br/>');
 		    var $table6 = $div6.CswTable({ 'ID': o.ID + '_6_tbl' });
         }
@@ -258,7 +258,7 @@ var CswViewEditor_WizardSteps = {
 
 		function _onBeforePrevious(stepno)
 		{
-			return (stepno !== 2 || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
+			return (stepno !== CswViewEditor_WizardSteps.step2.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
 		}
 
 
@@ -327,16 +327,16 @@ var CswViewEditor_WizardSteps = {
 					} // if($currentviewxml !== undefined)
 
 					// make step 3 tree
-					_makeViewTree(3, $treediv3);
+					_makeViewTree(CswViewEditor_WizardSteps.step3.step, $treediv3);
 					break;
 				case CswViewEditor_WizardSteps.step4.step:
-					_makeViewTree(4, $treediv4);
+					_makeViewTree(CswViewEditor_WizardSteps.step4.step, $treediv4);
 					break;
 				case CswViewEditor_WizardSteps.step5.step:
-					_makeViewTree(5, $treediv5);
+					_makeViewTree(CswViewEditor_WizardSteps.step5.step, $treediv5);
 					break;
 				case CswViewEditor_WizardSteps.step6.step:
-					_makeViewTree(6, $table6.CswTable('cell', 1, 1));
+					_makeViewTree(CswViewEditor_WizardSteps.step6.step, $table6.CswTable('cell', 1, 1));
 					break;
 			} // switch(newstepno)
 		} // _handleNext()
@@ -350,16 +350,16 @@ var CswViewEditor_WizardSteps = {
 				case CswViewEditor_WizardSteps.step2.step: 
 					break;
 				case CswViewEditor_WizardSteps.step3.step:
-					_makeViewTree(3, $treediv3);
+					_makeViewTree(CswViewEditor_WizardSteps.step3.step, $treediv3);
 					break;
 				case CswViewEditor_WizardSteps.step4.step:
-					_makeViewTree(4, $treediv4);
+					_makeViewTree(CswViewEditor_WizardSteps.step4.step, $treediv4);
 					break;
 				case CswViewEditor_WizardSteps.step5.step:
-					_makeViewTree(5, $treediv5);
+					_makeViewTree(CswViewEditor_WizardSteps.step5.step, $treediv5);
 					break;
 				case CswViewEditor_WizardSteps.step6.step:
-					_makeViewTree(6, $table6.CswTable('cell', 1, 1));
+					_makeViewTree(CswViewEditor_WizardSteps.step6.step, $table6.CswTable('cell', 1, 1));
 					break;
 			}
 		}
@@ -555,7 +555,7 @@ var CswViewEditor_WizardSteps = {
 				});
 			}); // delete
 
-			if(stepno === 5)
+			if(stepno === CswViewEditor_WizardSteps.step5.step)
 			{
 				$div.find('.vieweditor_addfilter').each(function() {
 					var $span = $(this);
@@ -601,7 +601,7 @@ var CswViewEditor_WizardSteps = {
 				}); // property click
 			} // if(stepno === 5)
 
-			if(stepno === 6)
+			if(stepno === CswViewEditor_WizardSteps.step6.step)
 			{
 				var $cell = $table6.CswTable('cell', 1, 2);
 				var viewmode = _getSelectedRowValue($viewgrid, o.ColumnViewMode);
