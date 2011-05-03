@@ -151,7 +151,7 @@
 							var o = {
 								'nodename': '',
 								'nodeid': '',
-								'nodekey': '', 
+								'cswnbtnodekey': '', 
 								'onCopyNode': function(nodeid, nodekey) { }
 								};
 
@@ -194,7 +194,7 @@
 							var o = {
 								'nodename': '',
 								'nodeid': '',
-								'nodekey': '', 
+								'cswnbtnodekey': '', 
 								'onDeleteNode': function(nodeid, nodekey) { },
 								'Multi': false,
 								'NodeCheckTreeId': ''
@@ -207,17 +207,20 @@
 							var $div = $('<div><span>Are you sure you want to delete:</span></div>');
 
 							var nodeids = [];
+                            var nodekeys = [];
 							if(o.Multi)
 							{
 								var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
 								$nodechecks.each(function() {
 									var $nodecheck = $(this);
 									nodeids[nodeids.length] = $nodecheck.attr('nodeid');
+                                    //nodekeys[nodekeys.length] = $nodecheck.attr('cswnbtnodekey');
 									$div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.attr('nodename') + '</span>');
 								});
 							} else {
 								$div.append('<span>' + o.nodename + '?</span>');
 								nodeids[0] = o.nodeid;
+                                nodekeys[0] = o.cswnbtnodekey;
 							}
 							$div.append('<br/><br/>');
 	
@@ -227,6 +230,7 @@
                                                                         onclick: function() {
 														                            deleteNodes({
 																	                            'nodeids': nodeids, 
+                                                                                                'nodekeys': nodekeys,
 																	                            'onSuccess': function(nodeid, nodekey) {
 																		                            $div.dialog('close');
 																									o.onDeleteNode(nodeid, nodekey);
