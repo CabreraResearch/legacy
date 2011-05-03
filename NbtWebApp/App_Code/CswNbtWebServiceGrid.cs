@@ -117,15 +117,18 @@ namespace ChemSW.Nbt.WebServices
 		private XElement _getGridTree()
 		{
 			XElement RawXml = null;
-
+		    ICswNbtTree Tree;
 			if( _ParentNodeKey != null && _View.Visibility == NbtViewVisibility.Property )
 			{
 				// This is a Grid Property
 				( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, Int32.MinValue, true, false, null, false );
 			}
-
-			ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );
-			Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, Int32.MinValue, true, false, null, false );
+			else
+			{
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );    
+			}
+			
 			Int32 NodeCount = Tree.getChildNodeCount();
 			if( NodeCount > 0 )
 			{
