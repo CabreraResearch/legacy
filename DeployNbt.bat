@@ -1,1 +1,3 @@
-DeployNbt.pl 3 > C:\nbtlog\dailylog.txt 2>&1
+set /p ThisVersionNo=
+
+DeployNbt.pl %ThisVersionNo% > C:\nbtlog\dailylog.txt 2>&1
