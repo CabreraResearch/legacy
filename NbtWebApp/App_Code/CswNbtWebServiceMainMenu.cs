@@ -91,16 +91,19 @@ namespace ChemSW.Nbt.WebServices
 				XElement AddNode = new XElement( "item",
 												new XAttribute( "text", "Add" ) );
 
-				foreach( XElement AddNodeType in View.Root.AllowedChildNodeTypes()
-												 .Select( Entry => new XElement( "item",
-																				new XAttribute( "text", Entry.NodeType.NodeTypeName ),
-																				new XAttribute( "nodetypeid", Entry.NodeType.NodeTypeId ),
-																				new XAttribute( "relatednodeid", NodeIdNum ), //for Grid Props
-																				new XAttribute( "action", "AddNode" ) ) ) )
+			    bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
+
+				foreach( XElement AddNodeType in View.Root.AllowedChildNodeTypes(LimitToFirstGeneration)
+				    .Select( Entry => new XElement( "item",
+				                                    new XAttribute( "text", Entry.NodeType.NodeTypeName ),
+				                                    new XAttribute( "nodetypeid", Entry.NodeType.NodeTypeId ),
+				                                    new XAttribute( "relatednodeid", NodeIdNum ), //for Grid Props
+				                                    new XAttribute( "action", "AddNode" ) ) ) )
 				{
-					AddNode.Add( AddNodeType );
+				    AddNode.Add( AddNodeType );
 				}
-				MenuNode.Add( AddNode );
+				
+			    MenuNode.Add( AddNode );
 
 				// COPY
 				if( null != Node && Node.NodeSpecies == NodeSpecies.Plain &&

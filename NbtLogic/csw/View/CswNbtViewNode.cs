@@ -1,12 +1,9 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
-using System.Xml;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -243,23 +240,24 @@ namespace ChemSW.Nbt
         //    return ret;
         //}
 
-
-
-        public Collection<CswNbtViewAddNodeTypeEntry> AllowedChildNodeTypes()
+        public Collection<CswNbtViewAddNodeTypeEntry> AllowedChildNodeTypes( bool LimitToFirstGeneration )
         {
             Collection<CswNbtViewAddNodeTypeEntry> ret = new Collection<CswNbtViewAddNodeTypeEntry>();
 
             //NbtViewAddChildrenSetting AddChildrenSetting = NbtViewAddChildrenSetting.None;
-            Collection<CswNbtViewRelationship> ChildRelationships = null;
-            if( this is CswNbtViewRoot )
+            ArrayList ChildRelationships = new ArrayList();
+            if( LimitToFirstGeneration && this is CswNbtViewRoot )
             {
-                //    AddChildrenSetting = ( (CswNbtViewRoot) this ).AddChildren;
-                ChildRelationships = ( (CswNbtViewRoot) this ).ChildRelationships;
+                ChildRelationships.AddRange( ( (CswNbtViewRoot) this ).ChildRelationships );
             }
-            else if( this is CswNbtViewRelationship )
+            else if( LimitToFirstGeneration && this is CswNbtViewRelationship )
             {
                 //    AddChildrenSetting = ( (CswNbtViewRelationship) this ).AddChildren;
-                ChildRelationships = ( (CswNbtViewRelationship) this ).ChildRelationships;
+                ChildRelationships.AddRange( ( (CswNbtViewRelationship) this ).ChildRelationships );
+            }
+            else
+            {
+                ChildRelationships = _View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
             }
 
             //if( AddChildrenSetting == NbtViewAddChildrenSetting.InView )
@@ -267,7 +265,7 @@ namespace ChemSW.Nbt
             //foreach( CswNbtViewRelationship ChildRelationship in ChildRelationships )
 
             // BZ 10025 - Always show all nodetypes in view
-            foreach( CswNbtViewRelationship ChildRelationship in _View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+            foreach( CswNbtViewRelationship ChildRelationship in ChildRelationships )
             {
 
                 if( ChildRelationship.ShowInTree &&                   // BZ 8296
