@@ -43,10 +43,7 @@ namespace ChemSW.Nbt.WebServices
 			/// Link to a View, Report, or Action
 			/// </summary>
 			Link,
-			/// <summary>
-			/// Search on a View
-			/// </summary>
-			Search,
+			//Search, // case 21599: generic search will do for now
 			/// <summary>
 			/// Static text
 			/// </summary>
@@ -114,12 +111,12 @@ namespace ChemSW.Nbt.WebServices
 						break;
 
 					case WelcomeComponentType.Link:
-					case WelcomeComponentType.Search:
-						if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
-						{
-							CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
-							if( null != ThisView && ThisView.IsFullyEnabled() )
-							{
+                    //case WelcomeComponentType.Search:
+                        if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
+                        {
+                            CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
+                            if( null != ThisView && ThisView.IsFullyEnabled() )
+                            {
                                 if( WelcomeRow["displaytext"].ToString() != string.Empty )
                                 {
                                     LinkText = WelcomeRow["displaytext"].ToString();
@@ -128,35 +125,35 @@ namespace ChemSW.Nbt.WebServices
                                 {
                                     LinkText = ThisView.ViewName;
                                 }
-							    CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", WelcomeRow["nodeviewid"].ToString() );
-								CswXmlDocument.AppendXmlAttribute( ItemNode, "viewmode", ThisView.ViewMode.ToString().ToLower() );
-								CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "view" );
-							}
-						}
-						if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
-						{
-							CswNbtAction ThisAction = _CswNbtResources.Actions[CswConvert.ToInt32( WelcomeRow["actionid"] )];
-							if( _CswNbtResources.CurrentNbtUser.CheckActionPermission( ThisAction.Name ) )
-							{
-								if( WelcomeRow["displaytext"].ToString() != string.Empty )
-									LinkText = WelcomeRow["displaytext"].ToString();
-								else
-									LinkText = ThisAction.Name.ToString();
-							}
-							CswXmlDocument.AppendXmlAttribute( ItemNode, "actionid", WelcomeRow["actionid"].ToString() );
-							CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "action" );
-						}
-						if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )
-						{
-							CswNbtNode ThisReportNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", CswConvert.ToInt32( WelcomeRow["reportid"] ) )];
-							if( WelcomeRow["displaytext"].ToString() != string.Empty )
-								LinkText = WelcomeRow["displaytext"].ToString();
-							else
-								LinkText = ThisReportNode.NodeName;
-							CswXmlDocument.AppendXmlAttribute( ItemNode, "reportid", WelcomeRow["reportid"].ToString() );
-							CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "report" );
-						}
-						break;
+                                CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", WelcomeRow["nodeviewid"].ToString() );
+                                CswXmlDocument.AppendXmlAttribute( ItemNode, "viewmode", ThisView.ViewMode.ToString().ToLower() );
+                                CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "view" );
+                            }
+                        }
+                        if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
+                        {
+                            CswNbtAction ThisAction = _CswNbtResources.Actions[CswConvert.ToInt32( WelcomeRow["actionid"] )];
+                            if( _CswNbtResources.CurrentNbtUser.CheckActionPermission( ThisAction.Name ) )
+                            {
+                                if( WelcomeRow["displaytext"].ToString() != string.Empty )
+                                    LinkText = WelcomeRow["displaytext"].ToString();
+                                else
+                                    LinkText = ThisAction.Name.ToString();
+                            }
+                            CswXmlDocument.AppendXmlAttribute( ItemNode, "actionid", WelcomeRow["actionid"].ToString() );
+                            CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "action" );
+                        }
+                        if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )
+                        {
+                            CswNbtNode ThisReportNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", CswConvert.ToInt32( WelcomeRow["reportid"] ) )];
+                            if( WelcomeRow["displaytext"].ToString() != string.Empty )
+                                LinkText = WelcomeRow["displaytext"].ToString();
+                            else
+                                LinkText = ThisReportNode.NodeName;
+                            CswXmlDocument.AppendXmlAttribute( ItemNode, "reportid", WelcomeRow["reportid"].ToString() );
+                            CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "report" );
+                        }
+                        break;
 
 					case WelcomeComponentType.Text:
 						LinkText = WelcomeRow["displaytext"].ToString();
@@ -231,8 +228,8 @@ namespace ChemSW.Nbt.WebServices
 			}
 
 			// Equipment
-			if( FindEquipmentViewId != Int32.MinValue )
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Search, CswViewListTree.ViewType.View, FindEquipmentViewId, Int32.MinValue, string.Empty, 1, 1, "magglass.gif", RoleId );
+            //if( FindEquipmentViewId != Int32.MinValue )
+            //    _AddWelcomeItem( WelcomeTable, WelcomeComponentType.Search, CswViewListTree.ViewType.View, FindEquipmentViewId, Int32.MinValue, string.Empty, 1, 1, "magglass.gif", RoleId );
 			if( EquipmentNodeTypeId != Int32.MinValue )
 				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, Int32.MinValue, EquipmentNodeTypeId, string.Empty, 5, 1, "", RoleId );
 			if( EquipmentByTypeViewId != Int32.MinValue )
@@ -328,16 +325,16 @@ namespace ChemSW.Nbt.WebServices
 					NewWelcomeRow["buttonicon"] = ButtonIcon;
 					NewWelcomeRow["displaytext"] = DisplayText;
 					break;
-				case WelcomeComponentType.Search:
-					if( ViewType == CswViewListTree.ViewType.View )
-					{
-						NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( ViewValue );
-						NewWelcomeRow["buttonicon"] = ButtonIcon;
-						NewWelcomeRow["displaytext"] = DisplayText;
-					}
-					else
-						throw new CswDniException( "You must select a view", "No view was selected for new Welcome Page Component" );
-					break;
+                //case WelcomeComponentType.Search:
+                //    if( ViewType == CswViewListTree.ViewType.View )
+                //    {
+                //        NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( ViewValue );
+                //        NewWelcomeRow["buttonicon"] = ButtonIcon;
+                //        NewWelcomeRow["displaytext"] = DisplayText;
+                //    }
+                //    else
+                //        throw new CswDniException( "You must select a view", "No view was selected for new Welcome Page Component" );
+                //    break;
 				case WelcomeComponentType.Text:
 					NewWelcomeRow["displaytext"] = DisplayText;
 					break;
