@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Schema
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'T', 02 ); } }
+        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'T', 002 ); } }
 
         public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription(this.GetType().Name, _CswTstCaseRsrc_001.Purpose, "Verify add operation and add data to columns" ) ); } }
 

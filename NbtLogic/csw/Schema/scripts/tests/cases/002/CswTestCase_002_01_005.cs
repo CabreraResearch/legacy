@@ -17,70 +17,28 @@ namespace ChemSW.Nbt.Schema
     {
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'T', 05 ); } }
+        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'T', 005 ); } }
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrcTableManipulations.Purpose, "Verify tear down" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_002.Purpose, "add and throw" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
-        private CswTstCaseRsrc_001 _CswTstCaseRsrcTableManipulations = null;
+        private CswTstCaseRsrc_002 _CswTstCaseRsrc_002 = null;
         public CswTestCase_002_01_005( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrcTableManipulations = new CswTstCaseRsrc_001( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_002 = new CswTstCaseRsrc_002( _CswNbtSchemaModTrnsctn );
 
-            
-            
         }//ctor
 
 
-        private string _TestValStem = "Test val ";
 
         public void update()
         {
-            _CswNbtSchemaModTrnsctn.beginTransaction();
 
-            _CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrcTableManipulations.TestColumnNameOne, DataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, DataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrcTableManipulations.TestTableName, DataDictionaryUniqueType.None, false, string.Empty );
+            _CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrc_002.TestColumnNameOne, DataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, DataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrc_002.TestTableName, DataDictionaryUniqueType.None, false, string.Empty );
 
-
-            if( !_CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( _CswTstCaseRsrcTableManipulations.TestTableName, _CswTstCaseRsrcTableManipulations.TestColumnNameOne ) )
-                throw ( new CswDniException( "Column " + _CswTstCaseRsrcTableManipulations.TestColumnNameOne + " was not created in data base " ) );
-
-            if( !_CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( _CswTstCaseRsrcTableManipulations.TestTableName, _CswTstCaseRsrcTableManipulations.TestColumnNameOne ) )
-                throw ( new CswDniException( "Column " + _CswTstCaseRsrcTableManipulations.TestColumnNameOne + " was not created in meta data " ) );
-
-            CswTableUpdate TestTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "CswScmUpdt_TstCse_Column_RollbackAdd_update", _CswTstCaseRsrcTableManipulations.TestTableName );
-
-            Int32 TotalUpdated = 0;
-            DataTable TestTable = TestTableUpdate.getTable();
-            foreach( DataRow CurrentRow in TestTable.Rows )
-            {
-                CurrentRow[_CswTstCaseRsrcTableManipulations.TestColumnNameOne] = "Test val " + TestTable.Rows.IndexOf( CurrentRow ).ToString();
-                TotalUpdated++;
-            }
-
-            TestTableUpdate.update( TestTable );
-
-            Int32 TotalUpdatedInfact = 0;
-            TestTable = TestTableUpdate.getTable();
-            foreach( DataRow CurrentRow in TestTable.Rows )
-            {
-                if( ( _TestValStem + TestTable.Rows.IndexOf( CurrentRow ) ) == CurrentRow[_CswTstCaseRsrcTableManipulations.TestColumnNameOne].ToString() )
-                    TotalUpdatedInfact++;
-            }
-
-            if( TotalUpdatedInfact != TotalUpdated )
-                throw ( new CswDniException( "Error adding column " + _CswTstCaseRsrcTableManipulations.TestColumnNameOne + ": updated " + TotalUpdated.ToString() + " rows but retrieved " + TotalUpdatedInfact.ToString() + " with that value" ) );
-
-            _CswNbtSchemaModTrnsctn.rollbackTransaction();
-
-
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( _CswTstCaseRsrcTableManipulations.TestTableName, _CswTstCaseRsrcTableManipulations.TestColumnNameOne ) )
-                throw ( new CswDniException( "Added column " + _CswTstCaseRsrcTableManipulations.TestColumnNameOne + " was not rolled back from the database " ) );
-
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( _CswTstCaseRsrcTableManipulations.TestTableName, _CswTstCaseRsrcTableManipulations.TestColumnNameOne ) )
-                throw ( new CswDniException( "Added column " + _CswTstCaseRsrcTableManipulations.TestColumnNameOne + " was not rolled back from the meta data " ) );
-
+            throw ( new ChemSW.Exceptions.CswDniExceptionIgnoreDeliberately() );//this will cause a rollback, so we can test that the column add was rolled back in the next script in the 002 series
 
 
         }//runTest()
