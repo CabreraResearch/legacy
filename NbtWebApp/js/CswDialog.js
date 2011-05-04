@@ -379,6 +379,7 @@
 							var o = {
 								'ID': 'print_label',
 								'GetPrintLabelsUrl': '/NbtWebApp/wsNBT.asmx/getLabels',
+								'GetEPLTextUrl': '/NbtWebApp/wsNBT.asmx/getEPLText',
 								'nodeid': '',
 								'propid': ''
 							};
@@ -418,7 +419,17 @@
 																enabledText: 'Print', 
 																disabledText: 'Printing...', 
 																onclick: function() {
-									                                
+																	var jData2 = { PropId: o.propid, PrintLabelNodeId: $labelsel.val() };
+									                                CswAjaxJSON({
+																		url: o.GetEPLTextUrl,
+																		data: JSON.stringify(jData2),
+																		success: function(data)
+																		{
+																			var labelx = $('#labelx').get(0);
+																			labelx.EPLScript = data.epl;
+																			labelx.Print();
+																		} // success
+																	}); // ajax
 																} // onclick
                                                            }); // CswButton
 
@@ -426,13 +437,14 @@
                                                                 enabledText: 'Close', 
                                                                 disabledText: 'Closing...', 
                                                                 onclick: function() {
-                                                                            $div.dialog('close');
+																		$div.dialog('close');
                                                                     }
                                                                 });
 
-							var $hiddendiv = $('<div style="display: none; border: 1px solid red;"></div>')
+							var $hiddendiv = $('<div _style="display: none; border: 1px solid red;"></div>')
 												.appendTo($div);
-							$hiddendiv.append("<OBJECT ID='labelx' Name='labelx' classid='clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0' codebase='CafLabelPrintUtil.cab#version=0,1,6,0' width=500 height=300 align=center hspace=0 vspace=0></OBJECT>");
+							var $labelx = $("<OBJECT ID='labelx' Name='labelx' classid='clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0' codebase='CafLabelPrintUtil.cab#version=0,1,6,0' width=500 height=300 align=center hspace=0 vspace=0></OBJECT>")
+												.appendTo($hiddendiv);
 
 							_openDiv($div, 400, 300);
 						},

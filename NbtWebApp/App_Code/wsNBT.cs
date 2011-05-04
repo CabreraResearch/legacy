@@ -1079,6 +1079,28 @@ namespace ChemSW.Nbt.WebServices
 			return ( ReturnVal.ToString() );
 		}
 
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getEPLText( string PropId, string PrintLabelNodeId )
+		{
+			JObject ReturnVal = new JObject();
+			try
+			{
+				start();
+
+				CswNbtWebServicePrintLabels ws = new CswNbtWebServicePrintLabels( _CswNbtResources );
+				ReturnVal.Add( new JProperty( "epl", ws.getEPLText( PropId, PrintLabelNodeId ) ) );
+
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+			return ( ReturnVal.ToString() );
+		}
+
+
 		#endregion Misc
 
         #region Search

@@ -60,6 +60,96 @@ namespace ChemSW.Nbt.WebServices
 		} // getLabels()
 
 
+		public string getEPLText( string PropIdAttr, string PrintLabelNodeIdStr )
+		{
+			string ret = string.Empty;
+
+			CswPrimaryKey PrintLabelId = new CswPrimaryKey();
+			PrintLabelId.FromString( PrintLabelNodeIdStr );
+
+			CswNbtNode PrintLabelNode = _CswNbtResources.Nodes.GetNode( PrintLabelId );
+			CswNbtObjClassPrintLabel NodeAsPrintLabel = (CswNbtObjClassPrintLabel) CswNbtNodeCaster.AsPrintLabel( PrintLabelNode );
+
+			CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+			CswNbtNode TargetNode = _CswNbtResources.Nodes.GetNode( PropId.NodeId );
+
+			string EPLText = NodeAsPrintLabel.epltext.Text;
+			string Params = NodeAsPrintLabel.Params.Text;
+
+			// BZ 6118 - this prevents " from being turned into &quot;
+			// BUT SEE BZ 7881!
+			ret = GenerateEPLScript( EPLText, Params, TargetNode ) + "\n";
+			//if( CheckedNodeIds != string.Empty )
+			//{
+			//    foreach( string NodeIdToPrintString in CheckedNodeIds.Split( ',' ) )
+			//    {
+			//        CswPrimaryKey NodeIdToPrint = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeIdToPrintString ) );
+			//        if( NodeIdToPrint != TargetNode.NodeId )
+			//        {
+			//            CswNbtNode NodeToPrint = Master.CswNbtResources.Nodes.GetNode( NodeIdToPrint );
+			//            _EPLBox.Text += GenerateEPLScript( EPLText, Params, NodeToPrint ) + "\n";
+			//        }
+			//    }
+			//}
+
+			return ret;
+		} // getEPLText()
+
+		private string GenerateEPLScript( string EPLText, string Params, CswNbtNode Node )
+		{
+			string EPLScript = EPLText;
+			string[] ParamsArray = Params.Split( '\n' );
+
+			while( EPLScript.Contains( "{" ) )
+			{
+				Int32 ParamStartIndex = EPLScript.IndexOf( "{" );
+				Int32 ParamEndIndex = EPLScript.IndexOf( "}" );
+
+				string PropertyParamString = EPLScript.Substring( ParamStartIndex, ParamEndIndex - ParamStartIndex + 1 );
+				string PropertyParamName = PropertyParamString.Substring( 1, PropertyParamString.Length - 2 );
+				// Find the property
+				CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
+				CswNbtMetaDataNodeTypeProp MetaDataProp = MetaDataNodeType.getNodeTypeProp( PropertyParamName );
+				string PropertyValue = ( (CswNbtNodePropWrapper) Node.Properties[MetaDataProp] ).Gestalt;
+
+				bool FoundMatch = false;
+				foreach( string ParamNVP in ParamsArray )
+				{
+					string[] ParamSplit = ParamNVP.Split( '=' );
+					if( ParamSplit[0] == PropertyParamName && CswTools.IsInteger( ParamSplit[1] ) )
+					{
+						FoundMatch = true;
+						Int32 MaxLength = CswConvert.ToInt32( ParamSplit[1] );
+						Int32 CurrentIteration = 1;
+						while( ParamStartIndex >= 0 )
+						{
+							if( PropertyValue.Length > MaxLength )
+							{
+								EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue.Substring( 0, MaxLength ) + EPLScript.Substring( ParamEndIndex + 1 );
+								PropertyValue = PropertyValue.Substring( MaxLength + 1 );
+							}
+							else
+							{
+								EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
+								PropertyValue = "";
+							}
+							CurrentIteration++;
+							ParamStartIndex = EPLScript.IndexOf( "{" + PropertyParamName + "_" + CurrentIteration + "}" );
+							ParamEndIndex = ParamStartIndex + ( "{" + PropertyParamName + "_" + CurrentIteration + "}" ).Length - 1;
+						}
+					}
+				}
+				if( !FoundMatch )
+				{
+					EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
+				}
+			}
+
+			return EPLScript;
+		} // GenerateEPLScript()
+
+
+
 	} // class CswNbtWebServiceTabsAndProps
 
 } // namespace ChemSW.Nbt.WebServices

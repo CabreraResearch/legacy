@@ -30,14 +30,16 @@ namespace ChemSW.Nbt.WebServices
 		{
 			get
 			{
-				// We have to accomodate for the fact that the NodeId actually takes up more than one 'slot' in _DelimitedString
-				CswDelimitedString tempDS = new CswDelimitedString( PropIdDelim );
-				tempDS.FromDelimitedString( _DelimitedString );
-				tempDS.RemoveAt( tempDS.Count - 1 );
-
 				CswPrimaryKey NodePk = new CswPrimaryKey();
-				NodePk.FromString( tempDS.ToString() );
+				if( _DelimitedString[0] != "new" )
+				{
+					NodePk.FromString( _DelimitedString[0] );
+				}
 				return NodePk;
+			}
+			set
+			{
+				_DelimitedString[0] = value.ToString();
 			}
 		} // NodeId
 
@@ -46,7 +48,11 @@ namespace ChemSW.Nbt.WebServices
 		{
 			get
 			{
-				return CswConvert.ToInt32( _DelimitedString[_DelimitedString.Count - 1] );
+				return CswConvert.ToInt32( _DelimitedString[1] );
+			}
+			set
+			{
+				_DelimitedString[1] = value.ToString();
 			}
 		} // NodeTypePropId
 
