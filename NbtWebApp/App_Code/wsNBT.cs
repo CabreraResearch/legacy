@@ -1205,11 +1205,11 @@ namespace ChemSW.Nbt.WebServices
                 {
                     foreach( string NodePk in NodePks )
                     {
-                        CswPrimaryKey RealNodePk = new CswPrimaryKey();
-                        RealNodePk.FromString( NodePk );
-                        if( RealNodePk.PrimaryKey != Int32.MinValue )
+                        CswPrimaryKey PrimaryKey = new CswPrimaryKey();
+                        PrimaryKey.FromString( NodePk );
+                        if( PrimaryKey.PrimaryKey != Int32.MinValue && !NodePrimaryKeys.Contains( PrimaryKey ) )
                         {
-                            NodePrimaryKeys.Add( RealNodePk );
+                            NodePrimaryKeys.Add( PrimaryKey );
                         }
                     }
                 }
