@@ -118,9 +118,9 @@ namespace ChemSW.Nbt.WebServices
 		{
 			XElement RawXml = null;
 		    ICswNbtTree Tree;
-			if( _ParentNodeKey != null && _View.Visibility == NbtViewVisibility.Property )
+            if( _ParentNodeKey != null && _View.Visibility == NbtViewVisibility.Property ) // This is a Grid Property
 			{
-				// This is a Grid Property
+			    ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
 				( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
                 Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, Int32.MinValue, true, false, null, false );
 			}
