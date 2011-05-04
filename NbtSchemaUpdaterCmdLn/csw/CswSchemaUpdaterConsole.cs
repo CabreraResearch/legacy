@@ -13,6 +13,7 @@ using ChemSW.Nbt.Config;
 using ChemSW.Nbt.Schema;
 using ChemSW.Nbt;
 using ChemSW.DB;
+using ChemSW.Nbt.Security;
 
 
 namespace ChemSW.Nbt.Schema.CmdLn
@@ -75,6 +76,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
         {
             _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Executable );
             _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, new CswSetupVblsNbt( SetupMode.Executable ), _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ), false, false );
+            _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
             _CswConsoleOutput = new CswConsoleOutput( _CswNbtResources.CswLogger );
 
 
@@ -203,7 +205,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
             {
 
                 //_CswConsoleOutput.write( "Updating AccessId " + AccessId + " from to schema version " + _CswSchemaUpdater.TargetVersion.ToString() + " to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine );
-                _CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "AccessId " + AccessId + ": schema version " + _CswSchemaUpdater.TargetVersion.ToString() + " to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
+                _CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "AccessId " + AccessId + ": schema version " + _CswSchemaUpdater.CurrentVersion.ToString() + " to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
                 bool UpdateSucceeded = true;
                 while( UpdateSucceeded && CurrentVersion != _CswSchemaUpdater.LatestVersion )
                 {

@@ -222,7 +222,10 @@
     <Compile Include="csw\Sched\runner\CswNbtSchdItemFactory.cs" />
     <Compile Include="csw\Sched\logic_legacy\CswNbtSchdItemGenerateEmailReport.cs" />
     <Compile Include="csw\Sched\logic_legacy\CswNbtSchdItemGenerateNode.cs" />
-    <Compile Include="csw\Schema\scripts\CswScriptCollections.cs" />
+    <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
+    <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
+    <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswProdUpdtRsrc.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H33.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H32.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H31.cs" />
@@ -239,7 +242,6 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H20.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H19.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H18.cs" />
-    <Compile Include="csw\Schema\CswDemoDataManager.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H17.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H16.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H15.cs" />
@@ -265,18 +267,23 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H01.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H02.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H03.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H04.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H05.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H06.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H07.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H22.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H23.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H24.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H25.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H26.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H27.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H28.cs" />
     <Compile Include="csw\Schema\ICswUpdateSchemaTo.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01_001.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02_002.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03_003.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_04_004.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\002\CswTestCase_002_01_005.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\002\CswTestCase_002_02_006.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTestCaseRsrc.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_001.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_002.cs" />
     <Compile Include="csw\Security\CswNbtAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSystemUser.cs" />
     <Compile Include="csw\Security\ICswNbtUser.cs" />
@@ -357,9 +364,7 @@
       <Name>NbtConfig</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="csw\Schema\scripts\test\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
