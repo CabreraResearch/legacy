@@ -796,10 +796,10 @@ function isNumeric(obj)
 	///     String or object to test
 	/// </param>
     var ret = false;
-    if(obj !== '' && obj !== undefined && obj === null && obj  )
+    if( !isNullOrEmpty(obj) )
     {
         var num = parseInt(obj);
-        if( num != NaN )
+        if( num !== NaN )
         {
             ret = true;
         }
