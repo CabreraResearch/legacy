@@ -1058,6 +1058,27 @@ namespace ChemSW.Nbt.WebServices
             return ( ReturnVal.ToString() );
         } // fileForProp()
 
+		[WebMethod( EnableSession = true )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getLabels(string PropId)
+		{
+			JObject ReturnVal = new JObject();
+			try
+			{
+				start();
+
+				CswNbtWebServicePrintLabels ws = new CswNbtWebServicePrintLabels( _CswNbtResources );
+				ReturnVal = ws.getLabels( PropId );
+
+				end();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+			return ( ReturnVal.ToString() );
+		}
+
 		#endregion Misc
 
         #region Search

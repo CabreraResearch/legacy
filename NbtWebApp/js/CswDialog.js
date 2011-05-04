@@ -373,6 +373,71 @@
 							_openDiv($div, 800, 600);
 						},
 
+
+		'PrintLabelDialog': function (options) {
+
+							var o = {
+								'ID': 'print_label',
+								'GetPrintLabelsUrl': '/NbtWebApp/wsNBT.asmx/getLabels',
+								'nodeid': '',
+								'propid': ''
+							};
+							if(options) $.extend(o, options);
+							
+							var $div = $('<div align="center"></div>');
+							
+							$div.append('Select a Label to Print:<br/>');
+							var $labelsel_div = $('<div />')
+												.appendTo($div);
+							var $labelsel = $('<select id="' + o.ID + '_labelsel"></select>')
+												.appendTo($labelsel_div);
+
+							var jData = { PropId: o.propid }
+							CswAjaxJSON({
+								url: o.GetPrintLabelsUrl,
+								data: JSON.stringify(jData),
+								success: function(data)
+								{
+									if(data.labels.length > 0)
+									{
+										for(var i = 0; i < data.labels.length; i++)
+										{
+											var label = data.labels[i];
+											$labelsel.append('<option value="'+ label.nodeid +'">'+ label.name +'</option>');
+										}
+									} else {
+										$labelsel.hide();
+										$printbtn.hide();
+										$labelsel_div.append('<span>No labels have been assigned!</span>');
+									}
+								} // success
+							}); // ajax
+
+							var $printbtn = $div.CswButton({
+																ID: 'print_label_print', 
+																enabledText: 'Print', 
+																disabledText: 'Printing...', 
+																onclick: function() {
+									                                
+																} // onclick
+                                                           }); // CswButton
+
+							var $closebtn = $div.CswButton({ID: 'print_label_close', 
+                                                                enabledText: 'Close', 
+                                                                disabledText: 'Closing...', 
+                                                                onclick: function() {
+                                                                            $div.dialog('close');
+                                                                    }
+                                                                });
+
+							var $hiddendiv = $('<div style="display: none; border: 1px solid red;"></div>')
+												.appendTo($div);
+							$hiddendiv.append("<OBJECT ID='labelx' Name='labelx' classid='clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0' codebase='CafLabelPrintUtil.cab#version=0,1,6,0' width=500 height=300 align=center hspace=0 vspace=0></OBJECT>");
+
+							_openDiv($div, 400, 300);
+						},
+
+
 		// Generic
 
 //		'OpenPopup': function(url) { 
