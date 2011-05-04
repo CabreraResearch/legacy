@@ -252,10 +252,16 @@ namespace ChemSW.Nbt.WebServices
             } // if( null != View )
 
             //Case 21680
-            SearchNode.Add( SearchGenericNode );
-            MenuNode.AddFirst( SearchNode );
-            
-			return MenuNode;
+            if( null != View && View.Visibility != NbtViewVisibility.Property && View.ViewMode != NbtViewRenderingMode.Grid )
+            {
+                SearchNode.Add( SearchGenericNode );
+            }
+            if( SearchNode.HasElements )
+            {
+                MenuNode.AddFirst( SearchNode );
+            }
+
+		    return MenuNode;
 		} // getMenu()
 
 	} // class CswNbtWebServiceMainMenu
