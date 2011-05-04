@@ -465,7 +465,7 @@ var CswViewEditor_WizardSteps = {
 			var rowid = 0;
 			for(var i in pks)
 			{
-				if(pks[i].value === selectedpk)
+				if(pks[i].value.toString() === selectedpk.toString())
 					rowid = pks[i].id;
 			}
 			return rowid;
