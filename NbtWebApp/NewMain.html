@@ -462,13 +462,13 @@
 		if (o.viewid !== '')
 			$.CswCookie('get', CswCookieName.CurrentView.ViewId);
 
-		o.onAddNode = function (nodeid, cswnbtnodekey)
-			{
-				var ocopy = o;
-				var x = { 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey };
-				$.extend(ocopy, x);
-				getViewGrid(ocopy);
-			};
+//		o.onAddNode = function (nodeid, cswnbtnodekey)
+//			{
+//				var ocopy = o;
+//				var x = { 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey };
+//				$.extend(ocopy, x);
+//				getViewGrid(ocopy);
+//			};
         o.onEditNode = function() { getViewGrid(o); };
         o.onDeleteNode = function() { getViewGrid(o); };
         
@@ -479,7 +479,7 @@
                                 'nodeid': o.nodeid, 
                                 'cswnbtnodekey': o.cswnbtnodekey, 
                                 'ID': MainGridId, 
-                                'onAddNode': o.onAddNode,
+                                //'onAddNode': o.onAddNode,
                                 'onEditNode': o.onEditNode,
                                 'onDeleteNode': o.onDeleteNode });
         if(o.doMenuRefresh) refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
