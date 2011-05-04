@@ -61,14 +61,14 @@
 							});
 
 					$WeeklyTable.CswTable('cell', 1, 1).append('Every:');
-					makeWeekDayPicker($WeeklyTable.CswTable('cell', 1 , 2), o.ID + '_weeklyday', o.onchange);
+					makeWeekDayPicker($WeeklyTable.CswTable('cell', 1 , 2), o.ID + '_weeklyday', o.onchange, false);
 
 					$WeeklyTable.CswTable('cell', 2, 1).append('Starting On:');
 					var $WeeklyStartDateCell = $WeeklyTable.CswTable('cell', 2, 2);
-					var $WeeklyStartDate = $WeeklyStartDateCell.CswInput('init',{ID: o.ID + '_weekly_sd',
-                                                                                 type: CswInput_Types.text,
-                                                                                 cssclass: 'textinput date',
-                                                                                 onChange: o.onchange
+					var $WeeklyStartDate = $WeeklyStartDateCell.CswInput('init', { ID: o.ID + '_weekly_sd',
+                                                                                   type: CswInput_Types.text,
+                                                                                   cssclass: 'textinput date',
+                                                                                   onChange: o.onchange
                                                                         });  
                     $WeeklyStartDate.datepicker();
 
@@ -120,7 +120,7 @@
 					$MonthlyWeekSelect.append('<option value="4">Fourth:</option>');
 					$MonthlyDiv.append('<br/>');
 
-					makeWeekDayPicker($MonthlyDiv, o.ID + '_monthly_day', o.onchange);
+					makeWeekDayPicker($MonthlyDiv, o.ID + '_monthly_day', o.onchange, true);
 
 					$MonthlyDiv.append('<br/>Starting On:&nbsp;');
 					var $MonthlyStartMonthSelect = $('<select id="'+ o.ID +'_monthly_startMonth" />')
@@ -170,6 +170,7 @@
 
 					var $RateIntervalXml = o.$propxml.children('interval').children('rateintervalvalue');
 					var RateType = $RateIntervalXml.children('ratetype').text();
+
 					switch(RateType)
 					{
 						case "WeeklyByDay":
@@ -271,7 +272,7 @@
     };
     
 
-	function makeWeekDayPicker($parent, id, onchange)
+	function makeWeekDayPicker($parent, id, onchange, useRadio)
 	{
 		var $table = $parent.CswTable('init', { 
 							'ID': id,
@@ -287,12 +288,17 @@
 
 		for(var i = 1; i <= 7; i++)
 		{
-            var $pickercell = $table.CswTable('cell', 2, i);
-            var $pickercheck = $pickercell.CswInput('init',{ID: id + '_' + i,
-                                                      type: CswInput_Types.checkbox,
-                                                      onChange: onchange,
-                                                      value: i
-                                                 }); 
+            var type = CswInput_Types.checkbox;
+			if(useRadio) type = CswInput_Types.radio;
+			
+			var $pickercell = $table.CswTable('cell', 2, i);
+            var $pickercheck = $pickercell.CswInput('init', { 
+														'ID': id + '_' + i,
+														'name': id,
+														'type': type,
+														'onChange': onchange,
+														'value': i
+	                                                 });
 		}
 	} // makeWeekDayPicker()
 
@@ -323,7 +329,7 @@
 		var ret = '';
 		$('[name="' + id + '"]').each(function() {
 			var $check = $(this);
-			if($check.attr('checked') !== '')
+			if($check.attr('checked') === true)
 			{
 				if(ret !== '') ret += ',';
 				switch($check.attr('value'))
