@@ -68,13 +68,18 @@ namespace ChemSW.Nbt.PropTypes
 				{
 					string AnswerVal = value;
 
-					DateTime UpdateDateAnswered = DateTime.MinValue;
-					if( !string.IsNullOrEmpty( AnswerVal ) &&
-						DateAnswered == DateTime.MinValue )  // case 21056
+					DateTime UpdateDateAnswered = DateAnswered;
+					if( !string.IsNullOrEmpty( AnswerVal ) )
 					{
-						UpdateDateAnswered = DateTime.Today;
+						if( UpdateDateAnswered == DateTime.MinValue )  // case 21056
+						{
+							UpdateDateAnswered = DateTime.Today;
+						}
 					}
-
+					else
+					{
+						UpdateDateAnswered = DateTime.MinValue;
+					}
 					DateAnswered = UpdateDateAnswered;
 					//IsCompliant = _IsCompliant;
 					_CswNbtNodePropData.SetPropRowValue( _AnswerSubField.Column, AnswerVal );
