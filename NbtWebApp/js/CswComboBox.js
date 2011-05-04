@@ -35,7 +35,8 @@
                 var $ChildDiv = $('<div id="' + o.ID +'_child" class="CswComboBox_ChildDiv">')
                                   .appendTo($Div)
                                   .attr('style', 'width: '+ o.Width)
-                                  .append(o.SelectContent);
+                                  .append(o.SelectContent)
+								  .hover(function() {}, function() { $ChildDiv.hide(); });
 
                 $cell1.click(function() { Toggle($TopDiv, $ChildDiv) });
 
