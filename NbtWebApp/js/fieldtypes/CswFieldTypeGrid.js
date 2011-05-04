@@ -37,22 +37,22 @@
                 'readonly': o.ReadOnly,
                 'reinit': false,
                 'onEditNode': function() { 
-                    gridOpts.reinit = true;
-                    $GridDiv.CswNodeGrid('init', gridOpts); 
+                    refreshGrid(gridOpts);
                 },
                 'onAddNode': function() { 
-                    gridOpts.reinit = true;
-                    $GridDiv.CswNodeGrid('init', gridOpts); 
+                    refreshGrid(gridOpts);
                 },
                 'onDeleteNode': function() { 
-                    gridOpts.reinit = true;
-                    $GridDiv.CswNodeGrid('init', gridOpts); 
+                    refreshGrid(gridOpts);
                 }
             };
 
-            var refreshGrid = function() { 
-                gridOpts.reinit = true;
-                $GridDiv.CswNodeGrid('init', gridOpts);
+            function refreshGrid(options) { 
+                var o ={
+                    reinit: true
+                };
+                if( options ) $.extend(options,o);
+                $GridDiv.CswNodeGrid('init', options);
             };
 
 			$GridDiv.CswNodeGrid('init', gridOpts);
@@ -62,14 +62,14 @@
 			        'cswnbtnodekey': o.cswnbtnodekey,
 			        'onAddNode': function (nodeid, cswnbtnodekey)
 			        {
-                        refreshGrid();
+                        refreshGrid(gridOpts);
 			        },
 		            'onSearch':
                         {
                             'onViewSearch': function ()
                             {
 	                            var onSearchSubmit = function(view) {
-                                    refreshGrid();
+                                    refreshGrid(gridOpts);
                                 };
 
                                 $SearchDiv.empty();
