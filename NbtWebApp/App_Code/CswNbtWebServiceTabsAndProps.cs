@@ -177,9 +177,8 @@ namespace ChemSW.Nbt.WebServices
 					_applyPropXml( Node, XmlDoc.DocumentElement );
 				}
 
-				Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdFromXml );
-
-				CswNbtMetaDataNodeTypeProp Prop = Node.NodeType.getNodeTypeProp( NodeTypePropId );
+				CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropIdFromXml );
+				CswNbtMetaDataNodeTypeProp Prop = Node.NodeType.getNodeTypeProp( PropIdAttr.NodeTypePropId );
 				_addProp( PropXmlDoc, EditMode, Node, Prop );
 
 				if( NewPropXml != string.Empty )
@@ -231,14 +230,17 @@ namespace ChemSW.Nbt.WebServices
 
 			CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
 
+			CswPropIdAttr PropIdAttr = null;
 			if( Node.NodeId != null )
 			{
-				CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", makePropIdAttribute( Node, Prop ) );
+				PropIdAttr = new CswPropIdAttr( Node, Prop );
 			}
 			else
 			{
-				CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", makePropIdAttribute( null, Prop ) );
+				PropIdAttr = new CswPropIdAttr( null, Prop );
 			}
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", PropIdAttr.ToString() );
+
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "name", Prop.PropNameWithQuestionNo );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "helptext", Prop.HelpText );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "fieldtype", Prop.FieldType.FieldType.ToString() );
@@ -261,7 +263,8 @@ namespace ChemSW.Nbt.WebServices
 		public bool moveProp( string PropIdAttr, Int32 NewRow, Int32 NewColumn, NodeEditMode EditMode )
 		{
 			bool ret = false;
-			Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdAttr );
+			CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+			Int32 NodeTypePropId = PropId.NodeTypePropId;
 			if( NodeTypePropId != Int32.MinValue && NewRow > 0 && NewColumn > 0 )
 			{
 				CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
@@ -374,8 +377,8 @@ namespace ChemSW.Nbt.WebServices
 						{
 							foreach( string PropIdAttr in PropIds )
 							{
-								Int32 PropId = _getPropIdFromAttribute( PropIdAttr );
-								CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
+								CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+								CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
 								CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
 							} // foreach( string PropIdAttr in PropIds )
 
@@ -387,43 +390,11 @@ namespace ChemSW.Nbt.WebServices
 			return true;
 		} // copyPropValues()
 
-		private const char PropIdDelim = '_';
-
-		public static string makePropIdAttribute( CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
-		{
-			string ret = string.Empty;
-			if( Node != null )
-				ret = Node.NodeId.ToString();
-			else
-				ret = "new";
-			ret += PropIdDelim + Prop.PropId.ToString();
-			return ret;
-		} // _makePropId()
-
-
-		private Int32 _getPropIdFromAttribute( string PropIdAttr )
-		{
-			CswDelimitedString ds = new CswDelimitedString( PropIdDelim );
-			ds.FromString( PropIdAttr );
-			Int32 NodeTypePropId = CswConvert.ToInt32( ds[ds.Count - 1] );
-			return NodeTypePropId;
-		}
-		private CswPrimaryKey _getNodePkFromAttribute( string PropIdAttr )
-		{
-			CswDelimitedString ds = new CswDelimitedString( PropIdDelim );
-			ds.FromString( PropIdAttr );
-			ds.RemoveAt( ds.Count - 1 );
-			string NodePkStr = ds.ToString();
-			CswPrimaryKey NodePk = new CswPrimaryKey();
-			NodePk.FromString( NodePkStr );
-			return NodePk;
-		}
-
 		private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
 		{
-			Int32 NodeTypePropId = _getPropIdFromAttribute( PropNode.Attributes["id"].Value );
+			CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropNode.Attributes["id"].Value );
 
-			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
 			Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
 
 			// Recurse on sub-props
@@ -442,12 +413,11 @@ namespace ChemSW.Nbt.WebServices
 		public bool ClearPropValue( string PropIdAttr, bool IncludeBlob )
 		{
 			bool ret = false;
-			CswPrimaryKey NodePk = _getNodePkFromAttribute( PropIdAttr );
-			Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdAttr );
-			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-			if( Int32.MinValue != NodePk.PrimaryKey )
+			CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
+			if( Int32.MinValue != PropId.NodeId.PrimaryKey )
 			{
-				CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
+				CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
 				CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
 				PropWrapper.ClearValue();
 				if( IncludeBlob )
@@ -463,12 +433,11 @@ namespace ChemSW.Nbt.WebServices
 		public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr )
 		{
 			bool ret = false;
-			CswPrimaryKey NodePk = _getNodePkFromAttribute( PropIdAttr );
-			Int32 NodeTypePropId = _getPropIdFromAttribute( PropIdAttr );
-			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-			if( Int32.MinValue != NodePk.PrimaryKey )
+			CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
+			if( Int32.MinValue != PropId.NodeId.PrimaryKey )
 			{
-				CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
+				CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
 				CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
 
 				// Do the update directly
@@ -486,7 +455,7 @@ namespace ChemSW.Nbt.WebServices
 				{
 					DataTable JctTable = JctUpdate.getEmptyTable();
 					DataRow JRow = JctTable.NewRow();
-					JRow["nodetypepropid"] = CswConvert.ToDbVal( NodeTypePropId );
+					JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
 					JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
 					JRow["nodeidtablename"] = Node.NodeId.TableName;
 					JRow["blobdata"] = Data;

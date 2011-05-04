@@ -183,7 +183,8 @@ namespace ChemSW.Nbt.WebServices
 						FakeKey.NodeTypeId = _CswNbtResources.CurrentNbtUser.UserNode.NodeTypeId;
 						FakeKey.ObjectClassId = _CswNbtResources.CurrentNbtUser.UserNode.ObjectClass.ObjectClassId;
 						ReturnVal.Add( new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( FakeKey.ToString() ) ) );
-						ReturnVal.Add( new JProperty( "passwordpropid", CswNbtWebServiceTabsAndProps.makePropIdAttribute( _CswNbtResources.CurrentNbtUser.UserNode.Node, _CswNbtResources.CurrentNbtUser.PasswordProperty.NodeTypeProp ) ) );
+						CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( _CswNbtResources.CurrentNbtUser.UserNode.Node, _CswNbtResources.CurrentNbtUser.PasswordProperty.NodeTypeProp );
+						ReturnVal.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
 					}
 					else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
 					{
