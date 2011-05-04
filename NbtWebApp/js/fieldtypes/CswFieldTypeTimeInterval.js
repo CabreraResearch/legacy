@@ -234,7 +234,7 @@
 						break;
 
 					case 'monthly': 
-						var MonthlyType = $('[name="'+ o.ID +'_monthly_by"]:checked').attr('value');
+						var MonthlyType = $('[name="'+ o.ID +'_monthly"]:checked').attr('value');
 						$('<ratetype>'+ MonthlyType +'</ratetype>')
 							.appendTo($rivnode);
 						$('<monthlyfrequency>'+ $('#' + o.ID + '_monthly_rate').val() +'</monthlyfrequency>')

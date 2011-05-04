@@ -229,7 +229,15 @@ namespace ChemSW.Nbt.ObjClasses
 		public string EncryptedPassword { get { return PasswordProperty.EncryptedPassword; } }
 
 		public CswNbtNodePropNumber PageSizeProperty { get { return _CswNbtNode.Properties[PageSizePropertyName].AsNumber; } }
-		public Int32 PageSize { get { return CswConvert.ToInt32( PageSizeProperty.Value ); } }
+		public Int32 PageSize
+		{
+			get
+			{
+				Int32 ret = CswConvert.ToInt32( PageSizeProperty.Value );
+				if( ret <= 0 ) ret = 10;
+				return ret;
+			}
+		}
 
 		#endregion
 
