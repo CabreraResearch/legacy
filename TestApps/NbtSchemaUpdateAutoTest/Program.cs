@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace ChemSW.Nbt.SchemaUpdaterAutoTest
+namespace ChemSW.Nbt.Schema
 {
     static class Program
     {

@@ -26,16 +26,17 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Constructor to build a Schema Version tag from parts
         /// </summary>
-        public CswSchemaVersion( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration )
+        public CswSchemaVersion( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration  )
         {
             _init( inCycleIteration, inReleaseIdentifier, inReleaseIteration );
-        }
+        }        /// <summary>
+
         /// <summary>
         /// Constructor for single integer version numbers (for backwards compatibility)
         /// </summary>
         public CswSchemaVersion( Int32 SingleIntegerVersion )
         {
-            _init( 0, 'X', SingleIntegerVersion);
+            _init( 0, 'X', SingleIntegerVersion  );
         }
         /// <summary>
         /// Constructor for string version of Schema Version tag.  Detects single integers for backwards compatibility.
@@ -45,7 +46,7 @@ namespace ChemSW.Nbt.Schema
             if( SchemaVersionAsString.Length < 6 && CswTools.IsInteger( SchemaVersionAsString ) )
             {
                 // Example: 74   (backwards compatibility)
-                _init( 0, 'X', CswConvert.ToInt32( SchemaVersionAsString ) );
+                _init( 0, 'X', CswConvert.ToInt32( SchemaVersionAsString )  );
             }
             else
             {
@@ -56,11 +57,12 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        private void _init( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration )
+        private void _init( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration  )
         {
             CycleIteration = inCycleIteration;
             ReleaseIdentifier = inReleaseIdentifier;
             ReleaseIteration = inReleaseIteration;
+
         }
 
         /// <summary>
@@ -141,7 +143,7 @@ namespace ChemSW.Nbt.Schema
         public override int GetHashCode()
         {                                                            // For 01A-16:
             return this.CycleIteration * 100000 +                    // 100000
-                   Convert.ToInt16(this.ReleaseIdentifier) * 100 +   // 106500
+                   Convert.ToInt16( this.ReleaseIdentifier ) * 100 +   // 106500
                    this.ReleaseIteration;                            // 106516
         }
 
@@ -1117,6 +1119,6 @@ namespace ChemSW.Nbt.Schema
             isdemo
         }
 
-#endregion
+        #endregion
     }
 }
