@@ -44,7 +44,7 @@
 				url: o.GridUrl,
 				data: "{ViewPk: '" +  o.viewid + "', 'SafeNodeKey': '" + o.cswnbtnodekey + "'}", //" + o.cswnbtnodekey + "
 				success: function (gridJson) {
-					
+					    
 						jqGridOpt = gridJson.jqGridOpt;
 
 						var NodeTypeId = gridJson.nodetypeid;
@@ -165,11 +165,8 @@
 							viewtitle: "View row"
 							//viewfunc: none--use jqGrid built-in function for read-only
 						};
-
+                        
 						$gridTable.jqGrid(jqGridOptions)
-										  .hideCol('nodeid')
-										  .hideCol('cswnbtnodekey')
-										  .hideCol('nodename')
 										  //all JSON options past 'optNav' define the behavior of the built-in pop-up
 										  .navGrid('#'+$gridPager.attr('id'), optNav, {}, {}, {}, optSearch, {} );
 					
