@@ -90,9 +90,14 @@ namespace ChemSW.Nbt.WebServices
 			    XElement AddNode = new XElement( "item",
 			                                     new XAttribute( "text", "Add" ) );
 
+                // case 21672
+                CswNbtViewNode ParentNode = View.Root;
 			    bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
-
-			    foreach( XElement AddNodeType in View.Root.AllowedChildNodeTypes( LimitToFirstGeneration )
+                if( LimitToFirstGeneration && View.Visibility == NbtViewVisibility.Property )
+                {
+                    ParentNode = View.Root.ChildRelationships[0];
+                }
+                foreach( XElement AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstGeneration )
 			        .Select( Entry => new XElement( "item",
 			                                        new XAttribute( "text", Entry.NodeType.NodeTypeName ),
 			                                        new XAttribute( "nodetypeid", Entry.NodeType.NodeTypeId ),
