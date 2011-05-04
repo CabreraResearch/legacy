@@ -2,9 +2,11 @@
 
 <body>
 	<script type="text/javascript">
-		$('body').CswMobile({
+		var profiler = $createProfiler();
+        $('body').CswMobile({
 			'Theme': 'b',
 			});
-	</script>
+        log( $dumpProfileHTML(profiler) );
+    </script>
 </body>
 </html>

@@ -6,6 +6,7 @@
 /// <reference path="_Global.js" />
 
 var debug = false;
+if (!debug) profiler.disable();
 
 ; (function ($) { /// <param name="$" type="jQuery" />
     
@@ -19,6 +20,14 @@ var debug = false;
         ///     &#10;2 - options.PollingInterval: 30000
         ///     &#10;3 - options.DivRemovalDelay: 1000
         /// </param>
+
+        if(debug)
+        {
+            profiler.instrumentObjectFunctions($.find, "$.find.");
+	        profiler.instrumentObjectFunctions($, "$.");
+	        profiler.instrumentObjectFunctions($.fn, "$.fn.");
+	        profiler.instrumentObjectFunctions($.mobile, "$.mobile.");
+        }
 
         var opts = {
             DBShortName: 'Mobile.html',
@@ -129,6 +138,8 @@ var debug = false;
                 $.mobile.changePage($('#logindiv'), 'fade', false, true);
         }
 
+        if(debug) profiler.instrumentFunction(_loadLoginDiv,'_loadLoginDiv');
+
         function _loadSorryCharlieDiv(ChangePage)
         {
             _addPageDivToBody({
@@ -143,10 +154,14 @@ var debug = false;
                 $.mobile.changePage($('#sorrycharliediv'), 'fade', false, true);
         }
 
+        if(debug) profiler.instrumentFunction(_loadSorryCharlieDiv,'_loadSorryCharlieDiv');
+
         function removeDiv(DivId)
         {
             setTimeout('$(\'#' + DivId + '\').remove();', opts.DivRemovalDelay);
         }
+
+        if(debug) profiler.instrumentFunction(removeDiv,'removeDiv');
 
         function reloadViews(ChangePage)
         {
@@ -170,6 +185,8 @@ var debug = false;
             }
         }
 
+        if(debug) profiler.instrumentFunction(reloadViews,'reloadViews');
+
         function continueReloadViews(ChangePage)
         {
             $('#viewsdiv').remove();
@@ -183,6 +200,8 @@ var debug = false;
             });
 
         }
+
+        if(debug) profiler.instrumentFunction(continueReloadViews,'continueReloadViews');
 
         // ------------------------------------------------------------------------------------
         // Online indicator
@@ -291,7 +310,6 @@ var debug = false;
                             success: function (xml)
                             {
                                 if (debug) log('On Success ' + opts.ViewUrl);
-                                
                                 if (p.level === 1)
                                 {
                                     _storeViewXml(p.DivId, p.HeaderText, xml);
@@ -392,6 +410,8 @@ var debug = false;
             return ret;
         } // _loadDivContents()
 
+        if(debug) profiler.instrumentFunction(_loadDivContents,'_loadDivContents');
+
         var currenttab;
         var onAfterAddDiv;
         function _processViewXml(params)
@@ -410,7 +430,7 @@ var debug = false;
             {
                 $.extend(p, params);
             }
-
+            debugger;
             var content = _makeUL();
             currenttab = '';
 
@@ -438,6 +458,8 @@ var debug = false;
                 $.mobile.changePage($('#' + p.DivId), "slide", false, true);
 
         } // _processViewXml()
+
+        if(debug) profiler.instrumentFunction(_processViewXml,'_processViewXml');
 
         function _makeListItemFromXml(xmlitem, DivId, parentlevel)
         {
@@ -571,6 +593,8 @@ var debug = false;
             return lihtml;
         } // _makeListItemFromXml()
 
+        if(debug) profiler.instrumentFunction(_makeListItemFromXml,'_loadLoginDiv_makeListItemFromXml');
+
         function _makeUL(id)
         {
             var ret = '<ul data-role="listview" ';
@@ -633,6 +657,8 @@ var debug = false;
             }
             return Html;
         }
+
+        if(debug) profiler.instrumentFunction(_makeObjectClassContent,'_makeObjectClassContent');
 
         function _extractCDataValue($node)
         {
@@ -1097,8 +1123,8 @@ var debug = false;
             return $divhtml;
 
         } // _addPageDivToBody()
-
-
+        if(debug) profiler.instrumentFunction(_addPageDivToBody,'_addPageDivToBody');
+        
         function _getDivHeaderText(DivId)
         {
             return $('#' + DivId).find('div[data-role="header"] h1').text();
@@ -1856,5 +1882,5 @@ var debug = false;
         // For proper chaining support
         return this;
     };
-   
+    //log($dumpProfilerText(profiler));
 }) ( jQuery );
