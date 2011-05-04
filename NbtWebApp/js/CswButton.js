@@ -1,19 +1,22 @@
-﻿(function ($)
-{
-	var PluginName = "CswButton";
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
 
+(function ($) { /// <param name="$" type="jQuery" />
+
+	var PluginName = "CswButton";
+    
 	var methods = {
 		'init': function (options)
 		{
 
 			var o = {
 				'ID': '',
-				'prefix': '',
 				'enabledText': '',
 				'disabledText': '',
 				'hasText': true,
 				'disableOnClick': true,
-				//'enableAfterClick': false,
 				'inputType': 'button',
 				'primaryicon': '',
 				'secondaryicon': '',
@@ -24,10 +27,9 @@
 			if (options) $.extend(o, options);
 
 			var $parent = $(this);
-			var elementId = makeId({ prefix: o.prefix, ID: o.ID });
 			var $button = $('<input />').attr('type', o.inputType)
-										.attr('id', elementId)
-										.attr('name', elementId);
+										.attr('id', o.ID)
+										.attr('name', o.ID);
 			$button.attr('enabledText', o.enabledText);
 			$button.attr('disabledText', o.disabledText);
 
@@ -48,9 +50,8 @@
 			$button.button(buttonOpt)
 					.click(function ()
 					{
-						if (o.disableOnClick) $button.button({ label: o.disabledText, disabled: true });
+						if (o.disableOnClick) _disable($button);
 						o.onclick();
-						//if (o.enableAfterClick) $button.button({ label: o.enabledText, disabled: false });
 					});
 			$parent.append($button);
 			return $button;
@@ -59,18 +60,28 @@
 		'enable': function ()
 		{
 			var $button = $(this);
-			$button.button({ label: $button.attr('enabledText'), disabled: false });
+			_enable($button);
 		},
 		'disable': function ()
 		{
 			var $button = $(this);
-			$button.button({ label: $button.attr('disabledText'), disabled: true });
+			_disable($button);
 		}
 	};
 
-	// Method calling logic
-	$.fn.CswButton = function (method)
+	function _enable($button)
 	{
+		if ($button.length > 0)
+			$button.button({ label: $button.attr('enabledText'), disabled: false });
+	}
+	function _disable($button)
+	{
+		if ($button.length > 0)
+			$button.button({ label: $button.attr('disabledText'), disabled: true });
+	}
+
+	// Method calling logic
+	$.fn.CswButton = function (method) { /// <param name="$" type="jQuery" />
 
 		if (methods[method])
 		{

@@ -175,7 +175,7 @@ namespace ChemSW.Nbt.PropTypes
 
 		public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
 		{
-			Quantity = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _QuantitySubField.ToXmlNodeName() );
+			Quantity = CswXmlDocument.ChildXmlNodeValueAsDouble( XmlNode, _QuantitySubField.ToXmlNodeName() );
 			Units = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _UnitsSubField.ToXmlNodeName() );
 		}
 

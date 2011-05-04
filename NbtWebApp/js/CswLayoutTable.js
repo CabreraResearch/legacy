@@ -1,4 +1,9 @@
-﻿; (function ($) {
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
+; (function ($) { /// <param name="$" type="jQuery" />
     $.fn.CswLayoutTable = function (method) {
         var PluginName = "CswLayoutTable";
 
@@ -183,7 +188,7 @@
             {
                 for(var c = 1; c <= cellsetcolumns; c++)
                 {
-                    if(cellset[r] == undefined) 
+                    if(cellset[r] === undefined) 
 					{
 						cellset[r] = new Array();
                     }
@@ -195,7 +200,7 @@
 
 		function isRemoveMode($table)
 		{
-            return ($table.attr('removemode') == "true");
+            return ($table.attr('removemode') === "true");
 		}
 	    function setRemoveMode($table, mode)
         {
@@ -204,7 +209,7 @@
 
         function isConfigMode($table)
         {
-            return ($table.attr('configmode') == "true");
+            return ($table.attr('configmode') === "true");
         }
 	    function setConfigMode($table, mode)
         {

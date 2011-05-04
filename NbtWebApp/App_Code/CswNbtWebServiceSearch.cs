@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
-                foreach( CswViewBuilderProp SearchProp in View.getOrderedViewProps()
+                foreach( CswViewBuilderProp SearchProp in View.getOrderedViewProps(false)
                                                      .Where( Prop => Prop.Filters.Count > 0 &&
                                                         !_ProhibittedFieldTypes.Contains( Prop.FieldType ) )
                                                      .Select( Prop => new CswViewBuilderProp( Prop ) ) )

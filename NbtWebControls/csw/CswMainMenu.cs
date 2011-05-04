@@ -1,22 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Text;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using Telerik.Web.UI;
-using ChemSW.Nbt;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.NbtWebControls.FieldTypes;
-using ChemSW.Nbt.MetaData;
+using System.Web.UI.WebControls;
 using ChemSW.Exceptions;
+using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls
 {
@@ -511,7 +503,8 @@ namespace ChemSW.NbtWebControls
                     {
                         if( ParentNodeKeyViewNode != null )
                         {
-                            Collection<CswNbtViewNode.CswNbtViewAddNodeTypeEntry> AllowedChildNodeTypes = ParentNodeKeyViewNode.AllowedChildNodeTypes();
+                            bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
+                            Collection<CswNbtViewNode.CswNbtViewAddNodeTypeEntry> AllowedChildNodeTypes = ParentNodeKeyViewNode.AllowedChildNodeTypes( LimitToFirstGeneration );
                             if( AllowedChildNodeTypes.Count > 0 )
                             {
                                 _AddMenuItem.Visible = true;
@@ -946,10 +939,10 @@ namespace ChemSW.NbtWebControls
                     }
                 }
 
-				// case 21158
-				_SearchMenuItem.Visible = false;
-				_ChangeViewMenuItem.Visible = false;
-				_EditViewMenuItem.Visible = false;
+                // case 21158
+                _SearchMenuItem.Visible = false;
+                _ChangeViewMenuItem.Visible = false;
+                _EditViewMenuItem.Visible = false;
 
 
             }

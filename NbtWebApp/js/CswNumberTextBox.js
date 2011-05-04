@@ -27,11 +27,14 @@
 			}
 			else
 			{
-				var $TextBox = $('<input type="text" class="textinput number" id="' + o.ID + '" name="' + o.ID + '" value="' + o.Value + '" />"')
-                                    .appendTo($Div)
-                                    .change(o.onchange);
+				var $TextBox = $Div.CswInput('init',{ID: o.ID,
+                                                        type: CswInput_Types.text,
+                                                        value: o.Value,
+                                                        cssclass: 'textinput number',
+                                                        onChange: o.onchange
+                                                     }); 
 
-				if (o.MinValue != undefined)
+				if (o.MinValue !== undefined)
 				{
 					jQuery.validator.addMethod(o.ID + "_validateFloatMinValue", function (value, element)
 					{
@@ -39,7 +42,7 @@
 					}, 'Number must be greater than or equal to ' + o.MinValue);
 					$TextBox.addClass(o.ID + "_validateFloatMinValue");
 				}
-				if (o.MaxValue != undefined)
+				if (o.MaxValue !== undefined)
 				{
 					jQuery.validator.addMethod(o.ID + "_validateFloatMaxValue", function (value, element)
 					{
@@ -47,7 +50,7 @@
 					}, 'Number must be less than or equal to ' + o.MaxValue);
 					$TextBox.addClass(o.ID + "_validateFloatMaxValue");
 				}
-				if (o.Precision == undefined || o.Precision <= 0)
+				if (o.Precision === undefined || o.Precision <= 0)
 				{
 					jQuery.validator.addMethod(o.ID + "_validateInteger", function (value, element)
 					{
@@ -79,7 +82,7 @@
 		{
 			var $Div = $(this);
 			var $TextBox = $Div.find('input');
-			$TextBox.val(newvalue);
+			$TextBox.CswInput('set',{value: newvalue});
 		}
 	};
 

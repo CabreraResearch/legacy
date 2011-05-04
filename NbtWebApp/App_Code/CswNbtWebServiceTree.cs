@@ -36,7 +36,11 @@ namespace ChemSW.Nbt.WebServices
 				if( UsePaging )
 					PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
 
-				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
+				CswNbtViewRelationship ChildRelationshipToStartWith = null;
+				//if( IncludeNodeKey != null )
+				//    ChildRelationshipToStartWith = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( IncludeNodeKey.ViewNodeUniqueId );
+
+				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
 
 				// case 21262
 				if( IncludeNodeKey != null && IncludeNodeRequired && ( IncludeNodeKey.TreeKey != Tree.Key || Tree.getNodeKeyByNodeId( IncludeNodeKey.NodeId ) == null ) )
@@ -48,7 +52,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( Tree.getChildNodeCount() > 0 )
 				{
-
 					var RootNode = new XElement( "root" );
 					if( IsFirstLoad && View.ViewMode == NbtViewRenderingMode.Tree )
 					{
@@ -122,8 +125,18 @@ namespace ChemSW.Nbt.WebServices
 											)
 										)
 									)
-								)
-							) { new JProperty( "default", "" ) };
+								),
+								new JProperty( "group",
+									new JObject(
+										new JProperty( "icon",
+											new JObject(
+												new JProperty( "image", "Images/icons/group.gif" )
+											)
+										)
+									)
+								),
+								new JProperty( "default", "" )
+							);
 
 			var NodeTypes = new Dictionary<Int32, string>();
 			ArrayList Relationships = View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
@@ -170,13 +183,23 @@ namespace ChemSW.Nbt.WebServices
 			{
 				Tree.goToNthChild( c );
 
-				CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
 				CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
-
-				string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
 				string ThisNodeName = Tree.getNodeNameForCurrentPosition();
-				string ThisNodeId = IDPrefix + ThisNode.NodeId.ToString();
-				string ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
+				string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
+				string ThisNodeId = "";
+				string ThisNodeRel = "";
+
+				if( ThisNodeKey.NodeSpecies == NodeSpecies.Plain || ThisNodeKey.NodeSpecies == NodeSpecies.More )
+				{
+					CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
+					ThisNodeId = IDPrefix + ThisNode.NodeId.ToString();
+					ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
+				}
+				else if( ThisNodeKey.NodeSpecies == NodeSpecies.Group )
+				{
+					ThisNodeId = "";
+					ThisNodeRel = "group";
+				}
 
 				string ThisNodeState = "closed";
 				if( ThisNodeKey.NodeSpecies == NodeSpecies.More )

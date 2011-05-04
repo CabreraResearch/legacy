@@ -1,11 +1,9 @@
-﻿/* Adapted from http://www.noupe.com/tutorial/drop-down-menu-jquery-css.html */
-
-; (function ($) {
+﻿; (function ($) {
 	$.fn.CswErrorMessage = function (options) {
 
 		var o = {
 			message: '',
-			detail: '',
+			detail: ''
 		};
 		if (options) $.extend(o, options);
 
@@ -17,7 +15,8 @@
 
 		var $errordiv = $('<div />')
 						.appendTo($parentdiv)
-						.attr('id', id);
+						.attr('id', id)
+						.addClass('CswErrorMessage_ErrorMessage');
 
 	 	var $tbl = $errordiv.CswTable('init', {
 												'id': makeId({ 
@@ -45,7 +44,7 @@
             ID: makeId({ 'prefix': id, 'id': 'hidebtn' }),
             onClick: function ($ImageDiv) { 
 				$errordiv.remove();
-				if($parentdiv.children().length == 0)
+				if($parentdiv.children().length === 0)
 					$parentdiv.hide();
 				return CswImageButton_ButtonType.None; 
 			}

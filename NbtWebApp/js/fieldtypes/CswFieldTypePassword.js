@@ -1,4 +1,9 @@
-﻿; (function ($) {
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
+; (function ($) { /// <param name="$" type="jQuery" />
         
     var PluginName = 'CswFieldTypePassword';
 
@@ -18,12 +23,17 @@
                 var $cell11 = $table.CswTable('cell', 1, 1);
                 var $cell21 = $table.CswTable('cell', 2, 1);
 
-                var $TextBox1 = $('<input type="password" class="textinput" id="'+ o.ID +'_pwd1" name="' + o.ID + '" />"' )
-                                    .appendTo($cell11)
-                                    .change(o.onchange);
-                var $TextBox2 = $('<input type="password" class="textinput password2" id="'+ o.ID +'_pwd2" name="' + o.ID + '" />"' )
-                                    .appendTo($cell21)
-                                    .change(o.onchange);
+                var $TextBox1 = $cell11.CswInput('init',{ID: o.ID + '_pwd1',
+                                                         type: CswInput_Types.password,
+                                                         cssclass: 'textinput',
+                                                         onChange: o.onchange
+                                                 }); 
+                var $TextBox2 = $cell21.CswInput('init',{ID: o.ID + '_pwd2',
+                                                         type: CswInput_Types.password,
+                                                         cssclass: 'textinput password2',
+                                                         onChange: o.onchange
+                                                 }); 
+                
 //                    if(o.Required)
 //                    {
 //                        $TextBox.addClass("required");
@@ -32,14 +42,14 @@
                 jQuery.validator.addMethod( "password2", function(value, element) { 
                             var pwd1 = $('#' + o.ID + '_pwd1').val();
                             var pwd2 = $('#' + o.ID + '_pwd2').val();
-                            return ((pwd1 == '' && pwd2 == '') || pwd1 == pwd2);
+                            return ((pwd1 === '' && pwd2 === '') || pwd1 === pwd2);
                         }, 'Passwords do not match!');
             }
         },
         save: function(o) { //$propdiv, $xml
                 var $TextBox = o.$propdiv.find('input#' + o.ID + '_pwd1');
                 var newpw = $TextBox.val();
-				if(newpw != '')
+				if(newpw !== '')
 				{
 					o.$propxml.children('newpassword').text(newpw);
 				}

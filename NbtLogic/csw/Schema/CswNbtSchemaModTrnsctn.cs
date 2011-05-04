@@ -418,8 +418,10 @@ namespace ChemSW.Nbt.Schema
             ActionsTable.update( ActionsDataTable );
 
             // Grant permission to Administrator
-            CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
-            GrantActionPermission( RoleNode, Name );
+			CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
+			SetActionPermission( RoleNode, Name, true );
+			CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" );
+			SetActionPermission( RoleNode2, Name, true );
 
             return NewActionId;
         }
@@ -456,21 +458,29 @@ namespace ChemSW.Nbt.Schema
             JctModulesATable.update( JctModulesADataTable );
         }
 
-        /// <summary>
-        /// Grants permission to an action to a role
-        /// </summary>
-        public void GrantActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName )
-        {
-            if( RoleNode != null )
-            {
-                CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).ActionPermissions;
-                ActionPermissions.SetValue( CswNbtObjClassRole.ActionPermissionsXValueName, 
-                                            CswNbtAction.ActionNameEnumToString( ActionName ), 
-                                            true );
-                ActionPermissions.Save();
-                RoleNode.postChanges( true );
-            }
-        }
+		/// <summary>
+		/// Deprecated in favor of SetActionPermission.  Don't use for new scripts.
+		/// </summary>
+		public void GrantActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName )
+		{
+			SetActionPermission( RoleNode, ActionName, true );
+		}
+
+		/// <summary>
+		/// Grants or revokes permission to an action to a role
+		/// </summary>
+		public void SetActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName, bool HasAccess )
+		{
+			if( RoleNode != null )
+			{
+				CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).ActionPermissions;
+				ActionPermissions.SetValue( CswNbtObjClassRole.ActionPermissionsXValueName,
+											CswNbtAction.ActionNameEnumToString( ActionName ),
+											HasAccess );
+				ActionPermissions.Save();
+				RoleNode.postChanges( false );
+			}
+		}
 
         /// <summary>
         /// Convenience function for making new Module

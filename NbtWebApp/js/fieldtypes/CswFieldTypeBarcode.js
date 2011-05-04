@@ -19,9 +19,12 @@
                 var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
                 var $cell1 = $table.CswTable('cell', 1, 1);
-                var $TextBox = $('<input type="text" class="textinput" id="'+ o.ID +'" name="' + o.ID + '" value="'+ Value +'" />"' )
-                                    .appendTo($cell1)
-                                    .change(o.onchange);
+                var $TextBox = $cell1.CswInput('init',{ID: o.ID,
+                                                       type: CswInput_Types.text,
+                                                       cssclass: 'textinput',
+                                                       onChange: o.onchange,
+                                                       value: Value
+                                               });
 
                 var $cell2 = $table.CswTable('cell', 1, 2);
                 var $PrintButton = $('<div/>' )

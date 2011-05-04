@@ -42,18 +42,24 @@
                 var $edittext_label = $( '<span>Text</span>' )
                                 .appendTo($edittable.CswTable('cell', 1, 1));
                 
-                var $edittext = $('<input type="text" id="'+ o.ID +'_text" value="'+ Text +'" />' )
-                                .appendTo($edittable.CswTable('cell', 1, 2))
-								.change(o.onchange);
+                var $edittextcell = $edittable.CswTable('cell', 1, 2);
+                var $edittext = $edittextcell.CswInput('init',{ID: o.ID + '_text',
+                                                                type: CswInput_Types.text,
+                                                                value: Text,
+                                                                onChange: o.onchange
+                                                                }); 
                 
                 var $edithref_label = $( '<span>URL</span>' )
                                 .appendTo($edittable.CswTable('cell', 2, 1));
                 
-				var $edithref = $('<input type="text" id="'+ o.ID +'_href" value="'+ Href +'" />' )
-                                .appendTo($edittable.CswTable('cell', 2, 2))
-								.change(o.onchange);
+                var $edithrefcell = $edittable.CswTable('cell', 2, 2);
+				var $edithref = $edithrefcell.CswInput('init',{ID: o.ID + '_href',
+                                                               type: CswInput_Types.text,
+                                                               value: Href,
+                                                               onChange: o.onchange
+                                                       }); 
 
-                if(o.Required && Href == '')
+                if(o.Required && Href === '')
                 {
                     $edittable.show();
 					$edittext.addClass("required");

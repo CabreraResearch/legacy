@@ -1,6 +1,11 @@
-﻿; (function ($) {
-    $.fn.CswCheckBoxArray = function (method) {
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
 
+; (function ($) { /// <param name="$" type="jQuery" />
+    $.fn.CswCheckBoxArray = function (method) {
+    
         var methods = {
             init: function(options) {
         
@@ -23,7 +28,7 @@
                     //ReadOnly: false
                     onchange: function() { }
                 };
-
+                
                 if (options) {
                     $.extend(o, options);
                 }
@@ -111,7 +116,7 @@
 				if(!o.UseRadios)
 				{
 					var CheckAllLinkText = "Check All";
-					if($('.CBACheckBox_' + o.ID).not(':checked').length == 0)
+					if($('.CBACheckBox_' + o.ID).not(':checked').length === 0)
 						CheckAllLinkText = "Uncheck All";
 
 					var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ CheckAllLinkText +'</a></div>')
@@ -121,7 +126,7 @@
 				}
             }, // init
 
-            getdata: function (options) {
+            getdata: function (options) { 
                 
                 var o = {
                     ID: ''
@@ -138,7 +143,7 @@
                             var $check = $(this);
                             var r = parseInt($check.attr('row'));
                             var c = parseInt($check.attr('col'));
-                            if(data[r] == undefined) 
+                            if(data[r] === undefined) 
                                 data[r] = new Array();
                             data[r][c] = { key: $check.attr('key'),
                                            rowlabel: $check.attr('rowlabel'),

@@ -1,34 +1,23 @@
-﻿/// <reference path="../jquery/jquery-1.5.2.js" />
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
 
-; (function ($) {
+; (function ($) { /// <param name="$" type="jQuery" />
 	
 	var methods = {
 	
 		'init': function (optJqGrid) {
 
 			var o = {
-				// jqGrid properties
-				datatype: "local", 
-				height: 300,
-				rowNum:10, 
-				autoencode: true,
-				//autowidth: true, 
-				rowList:[10,25,50],  
-				//editurl:"/Popup_EditNode.aspx",
-				sortname: "nodeid", 
-				shrinkToFit: true,
-				viewrecords: true,  
-				emptyrecords:"No Data to Display", 
-				sortorder: "asc", 
-				multiselect: true,
-				// CswNodeGrid properties
 				GridUrl: '/NbtWebApp/wsNBT.asmx/getGrid',
 				viewid: '',
-				prefix: "CswNodeGrid",
+				ID: '',
 				nodeid: '',
 				cswnbtnodekey: '',
-				gridTableID: "gridTable",
-				gridPagerID: "gridPager",
+				gridTableID: 'gridTable',
+				gridPagerID: 'gridPager',
+                'reinit': false,
 				onAddNode: function(nodeid,cswnbtnodekey){},
 				onEditNode: function(nodeid,cswnbtnodekey){},
 				onDeleteNode: function(nodeid,cswnbtnodekey){}
@@ -37,48 +26,56 @@
 			if (optJqGrid) {
 				$.extend(o, optJqGrid);
 			}
-			var $parent = $(this);
+			
+            var $parent = $(this);
+            if( o.reinit ) $parent.empty();
 
-			var gridData = [];
-			var gridRows = [];
+			var jqGrid = {};
         
-        var gridTableId = makeId({ ID: o.gridTableID, prefix: o.prefix });
-		var $gridTable = $parent.CswTable('init', { ID: gridTableId });
+            var gridTableId = makeId({ ID: o.gridTableID, prefix: o.ID });
+		    var $gridTable = $parent.CswTable('init', { ID: gridTableId });
 		
-        var gridPagedId = makeId({ID: o.gridPagerID, prefix: o.prefix});
-        var $gridPager = $parent.CswDOM('div',{ID: gridPagedId})
-									 .css('width','100%')
-									 .css('height','20px');
+            var gridPagedId = makeId({ID: o.gridPagerID, prefix: o.ID});
+            var $gridPager = $parent.CswDOM('div',{ID: gridPagedId})
+									     .css('width','100%')
+									     .css('height','20px');
 		
 			CswAjaxJSON({
 				url: o.GridUrl,
 				data: "{ViewPk: '" +  o.viewid + "', 'SafeNodeKey': '" + o.cswnbtnodekey + "'}", //" + o.cswnbtnodekey + "
 				success: function (gridJson) {
 					
-						gridData = gridJson.grid;
-						gridRows = gridData.rows;
+						jqGridOpt = gridJson.jqGridOpt;
 
-						var ViewName = gridJson.viewname;
 						var NodeTypeId = gridJson.nodetypeid;
-						var columns = gridJson.columnnames;
-						var columnDefinition = gridJson.columndefinition;
-						var gridWidth =  gridJson.viewwidth;
-						if( gridWidth === '' )
+
+						if( jqGridOpt.width === '' )
 						{
-							gridWidth = 650;
+							jqGridOpt.width = 650;
 						}
 						
 						var jqGridOptions = {
-							data: gridRows,
-							colNames: columns,  
-							colModel: columnDefinition, 
-							width: gridWidth,
+                            autoencode: true,
+                            caption: '',
+                            datatype: 'local', 
+				            emptyrecords: 'No Results',
+                            height: '300',
+				            multiselect: true,
 							pager: $gridPager, 
-							caption: ViewName,
-							toppager: true
+							rowList:[10,25,50],  
+				            rowNum:10, 
+				            shrinkToFit: true,
+				            sortname: '', 
+				            sortorder: 'asc', 
+                            toppager: false,
+                            viewrecords: true
 						};
-
-						var optSearch = {
+                        $.extend(jqGridOptions,jqGridOpt);
+                            
+                        //include the top pager if the row count is very large
+                        if(jqGridOptions.rowNum >= 50) jqGridOptions.toppager = true;
+						
+                        var optSearch = {
 							caption: "Search...",
 							Find: "Find",
 							Reset: "Reset",
@@ -89,7 +86,7 @@
 						};
 
 						var optNav = {
-							cloneToTop: true,
+							cloneToTop: false,
 
 							//edit
 							edit: true,
@@ -98,13 +95,13 @@
 							editfunc: function(rowid) {
 									var editOpt = {
 										cswnbtnodekey: '',
-										nodeid: '',
+										//nodeid: '',
 										onEditNode: o.onEditNode
 									};
 									if (rowid !== null) 
 									{
 										editOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
-										editOpt.nodeid = $gridTable.jqGrid('getCell', rowid, 'nodeid');
+										//editOpt.nodeid = $gridTable.jqGrid('getCell', rowid, 'nodeid');
 										$.CswDialog('EditNodeDialog', editOpt);
 									}
 									else
@@ -134,13 +131,13 @@
 							delfunc: function(rowid) {
 									var delOpt = {
 										'cswnbtnodekey': '',
-										'nodeid': '',
+										//'nodeid': '',
 										'nodename': '',
 										'onDeleteNode': o.onDeleteNode
 									};
 									if (rowid !== null) {
 										delOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
-										delOpt.nodeid = $gridTable.jqGrid('getCell', rowid, 'nodeid');
+										//delOpt.nodeid = $gridTable.jqGrid('getCell', rowid, 'nodeid');
 										delOpt.nodename = $gridTable.jqGrid('getCell', rowid, 'nodename');
 										$.CswDialog('DeleteNodeDialog', delOpt);
 									}
@@ -169,8 +166,6 @@
 							//viewfunc: none--use jqGrid built-in function for read-only
 						};
 
-						$.extend(jqGridOptions, o); 
-
 						$gridTable.jqGrid(jqGridOptions)
 										  .hideCol('nodeid')
 										  .hideCol('cswnbtnodekey')
@@ -182,35 +177,35 @@
 					
 
 						//remove some dup elements from top pager
-						var topPagerDiv = $('#' + $gridTable[0].id + '_toppager')[0];         
-						$("#edit_" + $gridTable[0].id + "_top", topPagerDiv).remove();        
-						$("#del_" + $gridTable[0].id + "_top", topPagerDiv).remove();         
-						$("#search_" + $gridTable[0].id + "_top", topPagerDiv).remove();         
-						$("#add_" + $gridTable[0].id + "_top", topPagerDiv).remove();     
-						$("#view_" + $gridTable[0].id + "_top", topPagerDiv).remove();
-						$("#" + $gridTable[0].id + "_toppager_center", topPagerDiv).remove(); 
-						$(".ui-paging-info", topPagerDiv).remove();
+//						var topPagerDiv = $('#' + $gridTable[0].id + '_toppager')[0];         
+//						$("#edit_" + $gridTable[0].id + "_top", topPagerDiv).remove();        
+//						$("#del_" + $gridTable[0].id + "_top", topPagerDiv).remove();         
+//						$("#search_" + $gridTable[0].id + "_top", topPagerDiv).remove();         
+//						$("#add_" + $gridTable[0].id + "_top", topPagerDiv).remove();     
+//						$("#view_" + $gridTable[0].id + "_top", topPagerDiv).remove();
+//						$("#" + $gridTable[0].id + "_toppager_center", topPagerDiv).remove(); 
+//						$(".ui-paging-info", topPagerDiv).remove();
 
-						//add custom button to nav panel
-						$gridTable.jqGrid('navButtonAdd', '#' + $gridTable[0].id + '_toppager_left' , { 
-												caption: "Columns",
-												buttonicon: 'ui-icon-wrench',
-												onClickButton: function() {
-													$gridTable.jqGrid('columnChooser', {
-														done: function(perm) {
-															if (!perm) { return false; }
-																$gridTable.jqGrid('remapColumns', perm, true);
-															}
-														});
-													}
-												});
+//						//add custom button to nav panel
+//						$gridTable.jqGrid('navButtonAdd', '#' + $gridTable[0].id + '_toppager_left' , { 
+//												caption: "Columns",
+//												buttonicon: 'ui-icon-wrench',
+//												onClickButton: function() {
+//													$gridTable.jqGrid('columnChooser', {
+//														done: function(perm) {
+//															if (!perm) { return false; }
+//																$gridTable.jqGrid('remapColumns', perm, true);
+//															}
+//														});
+//													}
+//												});
 
 				} // success{} 
 			}); // ajax
 			return $gridTable;
 		}, // 'init'
 	
-		'scrollToSelectedRow': function() {
+        'scrollToSelectedRow': function() {
 			var $gridTable = $(this);
 			var rowid = $gridTable.jqGrid('getGridParam', 'selrow');
 			scrollToRow($gridTable, rowid);
@@ -244,7 +239,16 @@
 
 
 	$.fn.CswNodeGrid = function (method) {
-		// Method calling logic
+		/// <summary>
+        ///   Generates a jqGrid
+        /// </summary>
+        /// <param name="method" type="String">
+        ///     A string defining the function to call
+        ///     &#10;1 - 'init': creates a grid from a view
+        ///     &#10;2 - 'scrollToSelectedRow': scrolls to a specific row in the grid
+        /// </param>
+        
+        // Method calling logic
         if ( methods[method] ) {
           return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
         } else if ( typeof method === 'object' || ! method ) {

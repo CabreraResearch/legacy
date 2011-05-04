@@ -1,4 +1,9 @@
-﻿; (function ($) {
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
+; (function ($) { /// <param name="$" type="jQuery" />
 	
 	var PluginName = 'CswNodeTree';
 
@@ -36,11 +41,11 @@
 
 				var url = o.ViewTreeUrl;
 				var data = 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=true&ParentNodeKey=&IncludeNodeRequired='+ o.IncludeNodeRequired +'&IncludeNodeKey=';
-				if(o.cswnbtnodekey != undefined)
+				if(o.cswnbtnodekey !== undefined)
 				{
 					data += o.cswnbtnodekey;
 				}
-				if(o.viewid == '' || o.viewid == undefined)
+				if(o.viewid === '' || o.viewid === undefined)
 				{
 					url = o.NodeTreeUrl;
 					data = 'IDPrefix=' + IDPrefix + '&NodePk=' + o.nodeid;
@@ -55,24 +60,24 @@
 						var treePlugins = ["themes", "html_data", "ui", "types", "crrm"];
 
 						var treeThemes;
-						if(o.nodeid != undefined && o.nodeid != '') 
+						if(o.nodeid !== undefined && o.nodeid !== '') 
 						{
 							selectid = IDPrefix + o.nodeid;
 						}
 
 						var newviewid = $xml.children('viewid').text()
-						if(o.viewid != newviewid)
+						if(o.viewid !== newviewid)
 						{
 							o.onViewChange(newviewid);
 							o.viewid = newviewid;
 						}
 
 						var $selecteditem = $xml.find('item[id="'+ selectid + '"]');
-						if(selectid == '' || $selecteditem.length == 0)
+						if(selectid === '' || $selecteditem.length === 0)
 						{
 							if(o.SelectFirstChild)
 							{	
-								if(o.viewmode == 'list' )
+								if(o.viewmode === 'list' )
 								{
 									selectid = $xml.find('item').first().attr('id');
 									treeThemes = {"dots": false};
@@ -113,7 +118,7 @@
 								treestr += '    rel="'+ $itemxml.attr('rel') +'" ';
 								treestr += '    species="'+ $itemxml.attr('species') +'" ';
 								treestr += '    class="jstree-'+ $itemxml.attr('state') +'" ';
-								if($itemxml.attr('cswnbtnodekey') != undefined)
+								if($itemxml.attr('cswnbtnodekey') !== undefined)
 								{
 									treestr += '    cswnbtnodekey="'+ $itemxml.attr('cswnbtnodekey').replace(/"/g, '&quot;') +'"';
 								}
@@ -208,13 +213,13 @@
 													viewid: o.viewid
 												};
 												
-												if(optSelect.nodespecies == "More")
+												if(optSelect.nodespecies === "More")
 												{
 													var ParentNodeKey = '';
 													var Parent = data.inst._get_parent(data.rslt.obj);
-													if(Parent != -1)
+													if(Parent !== -1)
 														ParentNodeKey = Parent.attr('cswnbtnodekey');
-													if(ParentNodeKey == undefined)
+													if(ParentNodeKey === undefined)
 														ParentNodeKey = '';
 
 													// get next page of nodes
@@ -248,7 +253,7 @@
 																						function() 
 																						{
 																							// remove 'More' node
-																							if(AfterNodeId == $itemxml.attr('id'))
+																							if(AfterNodeId === $itemxml.attr('id'))
 																							{
 																								$treediv.jstree('remove', '#' + IDPrefix + optSelect.nodeid + '[species="More"]' );
 																							}
@@ -312,7 +317,7 @@
 	function _handleCheck($treediv, $checkbox)
 	{
 		var $selected = jsTreeGetSelected($treediv);
-		return ($selected.$item.attr('rel') == $checkbox.attr('rel'));
+		return ($selected.$item.attr('rel') === $checkbox.attr('rel'));
 	}
 
 	function _clearChecks(IDPrefix)

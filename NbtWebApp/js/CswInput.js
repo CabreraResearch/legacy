@@ -1,4 +1,9 @@
-﻿// for CswInput
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
+// for CswInput
 var CswInput_Types = {
     button: { id: 0, name: 'button', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
     checkbox: { id: 1, name: 'checkbox', placeholder: false, autocomplete: false, value: { required: true, allowed: true} },
@@ -25,7 +30,7 @@ var CswInput_Types = {
     week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true} }
 };
 
-; (function ($) {
+; (function ($) { /// <param name="$" type="jQuery" />
 	
     var PluginName = "CswInput";
     
@@ -35,22 +40,26 @@ var CswInput_Types = {
 		{
             var o = {
                 'ID': '',
+				'name': '',
                 'type': CswInput_Types.text,
                 'placeholder': '',
                 'cssclass': '',
                 'value': '',
                 'width': "200px",
                 'autofocus': false,
-                'autocomplete': 'on'
+                'autocomplete': 'on',
+                'onChange': function() {}
             };
             if (options) $.extend(o, options);
+
+			if(isNullOrEmpty(o.name)) o.name = o.ID;
 
             var $parent = $(this);
             var $input = $('<input />');
             if( o.ID !== '' ) 
             {
                 $input.attr('id',o.ID);
-                $input.attr('name',o.ID);
+                $input.attr('name',o.name);
             }
             
             if( o.type !== '' && o.type !== undefined ) 
@@ -68,18 +77,19 @@ var CswInput_Types = {
                 if( o.type.value.required === true || ( o.value !== '' && o.value !== undefined ) )
                 {
                     if( o.value === undefined ) o.value = '';
-                    $input.attr('value',o.value);
+                    $input.val(o.value);
                 }
             }
             
             if( o.cssclass !== '' ) $input.attr('class',o.cssclass);
             if( o.width !== '' ) $input.attr({width: o.width});
             if( o.autofocus === true ) $input.attr('autofocus');
+            if( o.onChange !== undefined ) $input.change( function () { o.onChange() } );
                                 
             $parent.append($input);
             return $input;
         },
-        'get': function(options)
+        'findandget': function(options)
         {
             var o = {
                 ID: ''
@@ -87,17 +97,59 @@ var CswInput_Types = {
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-            var $element;
+            var $input;
 
             if( o.ID !== '' && o.ID !== undefined)
             {
-                $element = $parent.find('#' + o.ID);
+                $input = $parent.find('#' + o.ID);
             }
-            return $element;
+            return $input;
+        },
+        'findandset': function(options)
+        {
+            var succeeded = false;
+            var o = {
+                ID: '',
+                value: ''
+            };
+            if (options) $.extend(o, options);
+
+            var $parent = $(this);
+            var $input;
+
+            if( o.ID !== '' && o.ID !== undefined &&
+                o.value !== undefined /*empty is OK*/ )
+            {
+                $input = $parent.find('#' + o.ID);
+                if( $input.size() > 0 )
+                {
+                    $input.val(o.value);
+                    succeeded = true;
+                }
+            }
+            return succeeded;
+        },
+        'set': function(options)
+        {
+            var succeeded = false;
+            var o = {
+                value: ''
+            };
+            if (options) $.extend(o, options);
+
+            var $input = $(this);
+
+            if( $input.size() > 0 && o.value !== undefined /*empty is OK*/ )
+            {
+                $input.val(o.value);
+                succeeded = true;
+            }
+            return succeeded;
         }
+
     };
     	// Method calling logic
-	$.fn.CswInput = function (method) {
+	$.fn.CswInput = function (method) { /// <param name="$" type="jQuery" />
 		
 		if ( methods[method] ) {
 		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));

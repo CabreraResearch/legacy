@@ -1,6 +1,24 @@
-﻿; (function ($) {
-	$.fn.CswMenuMain = function (options) {
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
 
+; (function ($) { /// <param name="$" type="jQuery" />
+	
+    $.fn.CswMenuMain = function (options) {
+    /// <summary>
+    ///   Generates an action menu for the current view
+    /// </summary>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.viewid: a viewid
+    ///     &#10;2 - options.nodeid: nodeid
+    ///     &#10;3 - options.cswnbtnodekey: a node key
+    ///     &#10;4 - options.onAddNode: function() {}
+    ///     &#10;5 - options.onMultiEdit: function() {}
+    ///     &#10;6 - options.onSearch: { onViewSearch: function() {}, onGenericSearch: function() {} }
+    ///     &#10;7 - options.onEditView: function() {}
+    /// </param>
 		var o = {
 			Url: '/NbtWebApp/wsNBT.asmx/getMainMenu',
 			viewid: '',
@@ -28,7 +46,7 @@
 
 				$xml.children().each(function() {
 					var $this = $(this);
-					if($this.attr('text') != undefined)
+					if($this.attr('text') !== undefined)
 					{
 						var menuItemOpts = { 
 							'$ul': $ul, 

@@ -25,7 +25,7 @@
 					var $elm = { 
 								 'label': $user.children('column[field="' + NameCol + '"]').attr('value'),
 								 'key': $user.children('column[field="' + KeyCol + '"]').attr('value'),
-								 'values': [ ($user.children('column[field="' + ValueCol + '"]').attr('value') == "True") ]
+								 'values': [ ($user.children('column[field="' + ValueCol + '"]').attr('value') === "True") ]
 							   };
 					data[d] = $elm;
 					d++;
@@ -35,7 +35,7 @@
 					'ID': o.ID + '_cba',
 					'cols': [ ValueCol ],
 					'data': data,
-					'UseRadios': (SelectMode == 'Single'),
+					'UseRadios': (SelectMode === 'Single'),
 					'Required': o.Required,
 					'onchange': o.onchange
 				});
@@ -48,9 +48,9 @@
 					var checkitem = formdata[r][0];
 					var $xmlitem = $OptionsXml.find('user:has(column[field="' + KeyCol + '"][value="' + checkitem.key + '"])');
 					var $xmlvaluecolumn = $xmlitem.find('column[field="' + ValueCol + '"]');
-					if (checkitem.checked && $xmlvaluecolumn.attr('value') == "False")
+					if (checkitem.checked && $xmlvaluecolumn.attr('value') === "False")
 						$xmlvaluecolumn.attr('value', 'True');
-					else if (!checkitem.checked && $xmlvaluecolumn.attr('value') == "True")
+					else if (!checkitem.checked && $xmlvaluecolumn.attr('value') === "True")
 						$xmlvaluecolumn.attr('value', 'False');
 				} // for( var r = 0; r < formdata.length; r++)
             }

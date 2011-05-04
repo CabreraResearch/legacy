@@ -25,7 +25,7 @@
 
 					<tr>
 						<td colspan="2">
-							<div id="ErrorDiv" class="ErrorContent" style="display: none;"></div>
+							<div id="ErrorDiv" style="display: none;"></div>
 						</td>
 					</tr>
 
@@ -62,11 +62,26 @@
 
 	var debug = false;
 
-	initAll();
-
 	var MainTreeId = 'main';
 	var MainGridId = 'CswNodeGrid';
 	var MainSearchId = 'CswSearchForm';
+
+
+	// handle querystring arguments
+	var qs = $.CswQueryString();
+	if (!isNullOrEmpty(qs.viewid))
+	{
+		// set the view
+		var viewmode = tryParseString(qs.viewmode, 'tree');
+		$.CswCookie('set', CswCookieName.CurrentView.ViewId, qs.viewid),
+		$.CswCookie('set', CswCookieName.CurrentView.ViewMode, viewmode)
+		// clear the querystring
+		window.location = "NewMain.html";
+	} else
+	{
+		initAll();
+	}
+
 
 	function initAll()
 	{
@@ -106,7 +121,7 @@
 											'onLinkClick': handleItemSelect,
 											'onSuccess': function ()
 											{
-												if (view.viewid == '')
+												if (view.viewid === '')
 												{
 													refreshWelcome();
 												} else
@@ -208,7 +223,7 @@
 			};
 			if (options) $.extend(o, options);
 
-			if (o.viewid != undefined && o.viewid != '')
+			if (o.viewid !== undefined && o.viewid !== '')
 			{
 			    $.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
 			    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
@@ -227,7 +242,7 @@
 			            }
 			    }
 			}
-			else if (o.type != undefined && o.type != '')
+			else if (o.type !== undefined && o.type !== '')
 			{
 			    switch (o.type)
 			    {
@@ -440,11 +455,11 @@
 		if (options) $.extend(o, options);
 
 		// Defaults
-		if (o.nodeid == '' || o.nodeid == undefined)
+		if (o.nodeid === '' || o.nodeid === undefined)
 			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
-		if (o.cswnbtnodekey == '')
+		if (o.cswnbtnodekey === '')
 			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
-		if (o.viewid != '')
+		if (o.viewid !== '')
 			$.CswCookie('get', CswCookieName.CurrentView.ViewId);
 
 		o.onAddNode = function (nodeid, cswnbtnodekey)
@@ -463,7 +478,7 @@
                                 'viewid': o.viewid, 
                                 'nodeid': o.nodeid, 
                                 'cswnbtnodekey': o.cswnbtnodekey, 
-                                'prefix': MainGridId, 
+                                'ID': MainGridId, 
                                 'onAddNode': o.onAddNode,
                                 'onEditNode': o.onEditNode,
                                 'onDeleteNode': o.onDeleteNode });
@@ -491,7 +506,7 @@
 			$.CswCookie('set', CswCookieName.CurrentNode.NodeId, o.nodeid);
 			$.CswCookie('set', CswCookieName.CurrentNode.NodeKey, o.cswnbtnodekey);
 
-			if (o.nodeid != '' && o.nodeid != 'root')
+			if (o.nodeid !== '' && o.nodeid !== 'root')
 			{
 				getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 				refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
@@ -540,7 +555,25 @@
 			{
 				//if(debug) log('Property Changed: propid = ' + propid + ', propname = ' + propname);
 				setChanged();
-			},
+            },
+            'onEditView': function (viewid)
+            {
+                clear({ 'all': true });
+                $('#CenterTopDiv').CswViewEditor({
+                    'viewid': viewid,
+                    'onCancel': function ()
+                    {
+                        clear({ 'all': true });
+                        refreshSelected();
+                    },
+                    'onFinish': function (viewid, viewmode)
+                    {
+                        clear({ 'all': true });
+                        handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+                    },
+                    'stepsToExecute': [2, 3, 4, 5, 6]
+                });
+            },
 			'ShowCheckboxes': multi,
 			'NodeCheckTreeId': MainTreeId
 		});
@@ -605,11 +638,11 @@
 		};		
 		if (options) $.extend(o, options);
 
-		if (o.nodeid == '' || o.nodeid == undefined)
+		if (o.nodeid === '' || o.nodeid === undefined)
 			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
-		if (o.cswnbtnodekey == '')
+		if (o.cswnbtnodekey === '')
 			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
-		if (o.viewid == '')
+		if (o.viewid === '')
 			o.viewid = $.CswCookie('get', CswCookieName.CurrentView.ViewId);
 
 		clear({ left: true });

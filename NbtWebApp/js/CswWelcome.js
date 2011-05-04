@@ -1,4 +1,9 @@
-﻿; (function ($) {
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
+; (function ($) { /// <param name="$" type="jQuery" />
 	var PluginName = "CswWelcome";
 
 	var methods = {
@@ -69,7 +74,7 @@
 							var $imagecell = $cellset[1][1];
 							var $textcell = $cellset[2][1];
 
-							if($item.attr('buttonicon') != undefined && $item.attr('buttonicon') != '')
+							if($item.attr('buttonicon') !== undefined && $item.attr('buttonicon') !== '')
 								$imagecell.append( $('<a href=""><img border="0" src="'+ $item.attr('buttonicon') +'"/></a>') );
 					
 							var optSelect = {
@@ -106,8 +111,10 @@
 									$imagecell.find('a').click(function() { o.onAddClick($item.attr('nodetypeid')); return false; });
 									break;
 							}
-
-							$textcell.append('<input type="hidden" welcomeid="' + $item.attr('welcomeid') + '" />');
+                            var $welcomehidden = $textcell.CswInput('init',{ID: $item.attr('welcomeid'),
+                                                                            type: CswInput_Types.hidden
+                                                                     });
+                            $welcomehidden.attr('welcomeid',$item.attr('welcomeid'));                                            
 						}); // each
 				
 					} // success{}
@@ -154,9 +161,10 @@
 
 				var $welcometext_label = $('<span>Text:</span>')
 										.appendTo($table.CswTable('cell', 4, 1))
-				var $welcometext = $('<input type="text" id="welcome_text" value="" />')
-										.appendTo($table.CswTable('cell', 4, 2));
-
+                var $welcometextcell = $table.CswTable('cell', 4, 2);
+				var $welcometext = $welcometextcell.CswInput('init',{ID: 'welcome_text',
+                                                                  type: CswInput_Types.text
+                                                                });
 				var $buttonsel_label = $('<span>Use Button:</span>')
 										.appendTo($table.CswTable('cell', 5, 1))
 				var $buttonsel = $('<select id="welcome_button" />')
@@ -177,7 +185,8 @@
 													                    'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
 													                    'text': $welcometext.val(),
 													                    'iconfilename': $buttonsel.val(),
-													                    'onSuccess': o.onAdd
+													                    'onSuccess': o.onAdd,
+																		'onError': function() { $addbutton.CswButton('enable'); }
 												                    });
 									                            }
                                                     });
@@ -212,7 +221,7 @@
 										$xml.children().each(function() {
 											var $icon = $(this);
 											var filename = $icon.attr('filename');
-											if(filename != 'blank.gif') 
+											if(filename !== 'blank.gif') 
 											{
 												$buttonsel.append('<option value="'+ filename +'">'+ filename +'</option>');
 											}
@@ -275,7 +284,8 @@
 			'nodetypeid': '',
 			'text': '',
 			'iconfilename': '',
-			'onSuccess': function() { }
+			'onSuccess': function() { },
+			'onError': function() { }
 		}
 		if(addoptions){
 			$.extend(a, addoptions);
@@ -287,7 +297,8 @@
 			success: function (result) 
 				{
 					a.onSuccess();
-                }
+                },
+			error: o.onError
         });
 
 	} // _addItem()

@@ -1,4 +1,8 @@
-﻿
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
 // For CswImageButton
 var CswImageButton_ButtonType = {
 	None: -1,
@@ -33,7 +37,7 @@ var CswImageButton_ButtonType = {
 	View: 8
 };
 
-(function ($) {
+(function ($) { /// <param name="$" type="jQuery" />
     $.fn.CswImageButton = function (options) {
 
 
@@ -69,7 +73,7 @@ var CswImageButton_ButtonType = {
 
         function setButton(NewButtonType) {
             var Multiplier = -18;
-            if (NewButtonType != undefined && NewButtonType != CswImageButton_ButtonType.None) {
+            if (NewButtonType !== undefined && NewButtonType !== CswImageButton_ButtonType.None) {
                 $ImageDiv.get(0).style.background = 'url(\'Images/buttons/buttons18.gif\') 0px ' + NewButtonType * Multiplier + 'px no-repeat';
                 $ImageDiv.unbind('mouseover');
                 $ImageDiv.unbind('mouseout');

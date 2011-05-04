@@ -1,99 +1,153 @@
-﻿// ------------------------------------------------------------------------------------
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
+
+// ------------------------------------------------------------------------------------
 // Ajax
 // ------------------------------------------------------------------------------------
 
-function CswAjaxJSON(options) {
-	var o = {
+function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
+    /// <summary>
+    ///   Executes Async webservice request for JSON
+    /// </summary>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.url: WebService URL
+    ///     &#10;2 - options.data: {field1: value, field2: value}
+    ///     &#10;3 - options.success: function() {}
+    ///     &#10;4 - options.error: function() {}
+    /// </param>
+    var o = {
 		url: '',
 		data: '',
+        onloginfail: function() {},
 		success: function (result) { },
-		error: function () { }
+		error: function () { },
+        formobile: false
 	};
-
-	if (options) {
-		$.extend(o, options);
-	}
+    
+	if (options) $.extend(o, options);
 
 	//var starttime = new Date();
 	$.ajax({
-		type: 'POST',
-		url: o.url,
-		dataType: "json",
-		contentType: 'application/json; charset=utf-8',
-		data: o.data,
-		success: function (data, textStatus, XMLHttpRequest)
-		{
-			//var endtime = new Date();
-			//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+	    type: 'POST',
+	    url: o.url,
+	    dataType: "json",
+	    contentType: 'application/json; charset=utf-8',
+	    data: o.data,
+	    success: function (data, textStatus, XMLHttpRequest)
+	    {
+	        //var endtime = new Date();
+	        //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-			var result = $.parseJSON(data.d);
+	        var result = $.parseJSON(data.d);
 
-			if (result.error != undefined)
-			{
-				_handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
-			}
-			else
-			{
-				o.success(result);
-			}
-		}, // success{}
-		error: function (XMLHttpRequest, textStatus, errorThrown)
-		{
-			_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-			o.error();
-		}
-	});    // $.ajax({
+	        if (result.error !== undefined)
+	        {
+	            _handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
+	            o.error();
+	        }
+	        else
+	        {
+
+	            if (o.formobile)
+	            {
+	                var auth = tryParseString(result.AuthenticationStatus, '');
+	                _handleAuthenticationStatus({
+                        status: auth,
+                        success: o.success(result),
+                        failure: o.onloginfail 
+	                });
+	            }
+	            else
+	            {
+	                o.success(result);
+	            }
+	        }
+	    }, // success{}
+	    error: function (XMLHttpRequest, textStatus, errorThrown)
+	    {
+	        _handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+	        o.error();
+	    }
+	});       // $.ajax({
 } // CswAjaxXml()
 
-function CswAjaxXml(options) {
-	var o = {
+function CswAjaxXml(options) { 
+    /// <summary>
+    ///   Executes Async webservice request for XML
+    /// </summary>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.url: WebService URL
+    ///     &#10;2 - options.data: field1=value + ampersand + field2=value
+    ///     &#10;3 - options.success: function() {}
+    ///     &#10;4 - options.error: function() {}
+    ///     &#10;5 - options.formobile: false
+    /// </param>
+
+    var o = {
 		url: '',
 		data: '',
+        onloginfail: function() {},
 		success: function ($xml) { },
-		error: function () { }
+		error: function () { },
+        formobile: false
 	};
+    
+	if (options) $.extend(o, options);
 
-	if (options) {
-		$.extend(o, options);
-	}
-	if (o.url != '')
+    if ( o.url !== '')
 	{
 		//var starttime = new Date();
-		$.ajax({
-			type: 'POST',
-			url: o.url,
-			dataType: "xml",
-			//contentType: 'application/json; charset=utf-8',
-			data: o.data,     // should be 'field1=value&field2=value'
-			success: function (data, textStatus, XMLHttpRequest)
-			{
-				//var endtime = new Date();
-				//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+	    $.ajax({
+	        type: 'POST',
+	        url: o.url,
+	        dataType: "xml",
+	        //contentType: 'application/json; charset=utf-8',
+	        data: o.data,     // should be 'field1=value&field2=value'
+	        success: function (data, textStatus, XMLHttpRequest)
+	        {
+	            //var endtime = new Date();
+	            //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-				// this is IE compliant
-				var $xml = $(XMLHttpRequest.responseXML);
-				var $realxml = $xml.children().first();
-				if ($realxml.first().get(0).nodeName == "error")
-				{
-					_handleAjaxError(XMLHttpRequest, { 'message': $realxml.attr('message'), 'detail': $realxml.attr('detail') }, '');
-				}
-				else
-				{
-					o.success($realxml);
-				}
+	            // this is IE compliant
+	            var $xml = $(XMLHttpRequest.responseXML);
+	            var $realxml = $xml.children().first();
+	            if ($realxml.first().get(0).nodeName === "error")
+	            {
+	                _handleAjaxError(XMLHttpRequest, { 'message': $realxml.attr('message'), 'detail': $realxml.attr('detail') }, '');
+	                o.error();
+	            }
+	            else
+	            {
+	                if (o.formobile)
+	                {
+	                    var auth = tryParseString($xml.find('AuthenticationStatus').text(), '');
+	                    _handleAuthenticationStatus({
+	                        status: auth,
+	                        success: o.success($realxml),
+	                        failure: o.onloginfail
+	                    });
+	                }
+	                else
+	                {
+	                    o.success($realxml);
+	                }
+	            }
 
-			}, // success{}
-			error: function (XMLHttpRequest, textStatus, errorThrown)
-			{
-				_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-				o.error();
-			}
-		});   // $.ajax({
+	        }, // success{}
+	        error: function (XMLHttpRequest, textStatus, errorThrown)
+	        {
+	            _handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+	            o.error();
+	        }
+	    });       // $.ajax({
 	} // if(o.url != '')
 } // CswAjaxXml()
-		
-function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown) 
-{
+
+function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown) { /// <param name="$" type="jQuery" />
 	//	ErrorMessage = "A WebServices Error Occurred: " + textStatus;
 	//	if (null != errorThrown) {
 	//		ErrorMessage += "; Exception: " + errorThrown.toString()
@@ -104,9 +158,28 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
 		$errorsdiv.CswErrorMessage({ 'message': errorJson.message, 'detail': errorJson.detail });
 	} else
 	{
-		log(o.message + '; ' + o.detail);
+	    log(errorJson.message + '; ' + errorJson.detail);
 	}
 } // _handleAjaxError()
+
+function _handleAuthenticationStatus(options)
+{
+    var o = {
+        status: '',
+        success: function () { },
+        failure: function () { }
+    };
+
+    if( !isNullOrEmpty(o.status) && o.status !== 'Authenticated' )
+    {
+        alert(o.status);
+        o.failure();
+    }
+    else
+    {
+        o.success();
+    }
+}
 
 //function extractCDataValue($node) {
 //    // default
@@ -126,9 +199,9 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
 //    return ret;
 //}
 
-function xmlToString($xmlnode) {
+function xmlToString($xmlnode) { /// <param name="$" type="jQuery" />
 	var xmlstring = '';
-	if ($xmlnode != '' && $xmlnode != undefined)
+	if ($xmlnode !== '' && $xmlnode !== undefined)
 	{
 		xmlstring = $xmlnode.get(0).xml; // IE
 		if (!xmlstring)
@@ -144,9 +217,13 @@ function xmlToString($xmlnode) {
 	return xmlstring;
 }
 
-function jsonToString(j)
-{
-	if(typeof j == "object")
+function jsonToString(j) {
+    /// <summary>
+    ///   Transforms a JSON Object into properly parsed string for consumption by a webservice
+    /// </summary>
+    /// <param name="j" type="Object">A JSON Object</param>
+    /// <returns type="String" />
+    if(typeof j === "object")
 	{
 		var ret = "{";
 	 	var first = true;
@@ -170,16 +247,20 @@ function jsonToString(j)
 	return ret;
 } // jsonToString
 
-function safeJsonParam(str)
-{
+function safeJsonParam(obj) {
+    /// <summary>
+    ///   Converts an object toString and returns a regex parsed, safe-for-JSON string
+    /// </summary>
+    /// <param name="options" type="Object">A JavaScript Object representing a string to parse</param>
+    /// <returns type="String" />
     var ret = '';
-    if (str !== undefined)
+    if (obj !== undefined)
     {
+        var str = obj.toString();
         ret = str.replace(/'/g, "\\'");
     }
 	return ret;
 }
-
 
 // ------------------------------------------------------------------------------------
 // Check Changes
@@ -188,8 +269,7 @@ function safeJsonParam(str)
 var changed = 0;
 var checkChangesEnabled = true;
 
-function setChanged()
-{
+function setChanged() {
 	if (checkChangesEnabled)
 	{
 		changed = 1;
@@ -209,8 +289,7 @@ function setChanged()
 	}
 }
 
-function unsetChanged()
-{
+function unsetChanged() {
 	if (checkChangesEnabled)
 	{
 		//        var statusimage = getMainStatusImage();
@@ -230,18 +309,16 @@ function unsetChanged()
 	}
 }
 
-function checkChanges()
-{
-	if (checkChangesEnabled && changed == 1)
+function checkChanges() {
+	if (checkChangesEnabled && changed === 1)
 	{
 		return 'If you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.';
 	}
 }
 
-function manuallyCheckChanges()
-{
+function manuallyCheckChanges() {
 	var ret = true;
-	if (checkChangesEnabled && changed == 1)
+	if (checkChangesEnabled && changed === 1)
 	{
 		ret = confirm('Are you sure you want to navigate away from this page?\n\nIf you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.\n\nPress OK to continue, or Cancel to stay on the current page.');
 
@@ -256,8 +333,7 @@ function manuallyCheckChanges()
 	return ret;
 }
 
-function initCheckChanges()
-{
+function initCheckChanges() {
 	// Assign the checkchanges event to happen onbeforeunload
 	if ((window.onbeforeunload !== null) && (window.onbeforeunload !== undefined))
 	{
@@ -310,8 +386,7 @@ if ((window.onload !== null) && (window.onload !== undefined))
 // User permissions
 // ------------------------------------------------------------------------------------
 
-function IsAdministrator(options)
-{
+function IsAdministrator(options) {
 	var o = { 
 		'Yes': function() { }, 
 		'No': function() { }
@@ -325,7 +400,7 @@ function IsAdministrator(options)
 		url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
 		success: function (data)
 		{
-			if (data.Administrator == "true")
+			if (data.Administrator === "true")
 			{
 				o.Yes();
 			} else
@@ -339,12 +414,12 @@ function IsAdministrator(options)
 // ------------------------------------------------------------------------------------
 // Node interactions
 // ------------------------------------------------------------------------------------
-function copyNode(options)
-{
+function copyNode(options) {
 	var o = {
 		'nodeid': '',
 		'nodekey': '',
-		'onSuccess': function (nodeid, nodekey) { }
+		'onSuccess': function (nodeid, nodekey) { },
+		'onError': function () { }
 	};
 	if (options)
 	{
@@ -356,35 +431,36 @@ function copyNode(options)
 		success: function (result)
 		{
 			o.onSuccess(result.NewNodeId, '');
-		}
+		},
+		error: o.onError
 	});
 }
 
-function deleteNodes(options) {
+function deleteNodes(options) { /// <param name="$" type="jQuery" />
 	var o = {
-		'nodeids': [],
-		'onSuccess': function (nodeid, nodekey) { }
+	    'nodeids': [],
+        'nodekeys': [],
+		'onSuccess': function (nodeid, nodekey) { },
+		'onError': function () { }
 	};
 	if (options) {
 		$.extend(o, options);
 	}
 
-	var datastr = '{ "NodePks": [';
-	var first = true;
-	for (var n in o.nodeids)
-	{
-		if (!first) datastr += ',';
-		datastr += '"' + o.nodeids[n] + '"';
-		first = false;
-	}
-	datastr += '] }';
+	var jData = {
+	    NodePks: o.nodeids,
+        NodeKeys: o.nodekeys
+	};
+
+	datastr = JSON.stringify(jData, "'");  //jsonToString(jData);
 
 	CswAjaxJSON({
 		url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',
 		data: datastr,
 		success: function (result) {
 			o.onSuccess('', '');  // returning '' will reselect the first node in the tree
-		}
+		},
+		error: o.onError
 	});
 }
 
@@ -393,8 +469,7 @@ function deleteNodes(options) {
 // jsTree
 // ------------------------------------------------------------------------------------
 
-function jsTreeGetSelected($treediv)
-{
+function jsTreeGetSelected($treediv) { /// <param name="$" type="jQuery" />
 	var IDPrefix = $treediv.attr('id');
 	$SelectedItem = $treediv.jstree('get_selected');
 	var ret = { 
@@ -411,14 +486,13 @@ function jsTreeGetSelected($treediv)
 // Menu
 // ------------------------------------------------------------------------------------
 
-function GoHome() 
-{
+function GoHome() { /// <param name="$" type="jQuery" />
 	$.CswCookie('clear', CswCookieName.CurrentView.ViewId);
 	$.CswCookie('clear', CswCookieName.CurrentView.ViewMode);
 	window.location = "NewMain.html";
 }
 
-function HandleMenuItem(options) {
+function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
 	var o = {
 		'$ul': '',
 		'$itemxml': '',
@@ -434,12 +508,12 @@ function HandleMenuItem(options) {
 		$.extend(o, options);
 	}
 	var $li;
-	if (o.$itemxml.attr('href') != undefined && o.$itemxml.attr('href') != '')
+	if (o.$itemxml.attr('href') !== undefined && o.$itemxml.attr('href') !== '')
 	{
 		$li = $('<li><a href="' + o.$itemxml.attr('href') + '">' + o.$itemxml.attr('text') + '</a></li>')
 						.appendTo(o.$ul)
 	}
-	else if (o.$itemxml.attr('popup') != undefined && o.$itemxml.attr('popup') != '')
+	else if (o.$itemxml.attr('popup') !== undefined && o.$itemxml.attr('popup') !== '')
 	{
 		$li = $('<li class="headermenu_dialog"><a href="#">' + o.$itemxml.attr('text') + '</a></li>')
 						.appendTo(o.$ul)
@@ -449,7 +523,7 @@ function HandleMenuItem(options) {
 							return false; 
 						});
 	}
-	else if (o.$itemxml.attr('action') != undefined && o.$itemxml.attr('action') != '')
+	else if (o.$itemxml.attr('action') !== undefined && o.$itemxml.attr('action') !== '')
 	{
 		$li = $('<li><a href="#">' + o.$itemxml.attr('text') + '</a></li>')
 						.appendTo(o.$ul);
@@ -568,12 +642,11 @@ function openPopup(url, height, width) {
 // Validation
 // ------------------------------------------------------------------------------------
 
-function validateTime(value)
-{
+function validateTime(value) {
 	var isValid = true;
 	var regex = /^(\d?\d):(\d\d)\s?([APap][Mm])?$/g;
 	var match = regex.exec(value);
-	if (match == null)
+	if (match === null)
 	{
 		isValid = false;
 	}
@@ -594,9 +667,9 @@ function validateFloatMinValue(value, minvalue) {
 	var nMinValue = parseFloat(minvalue);
 	var isValid = true;
 
-	if (nMinValue != undefined)
+	if (nMinValue !== undefined)
 	{
-		if (nValue == undefined || nValue < nMinValue) {
+		if (nValue === undefined || nValue < nMinValue) {
 			isValid = false;
 		}
 	}
@@ -608,8 +681,8 @@ function validateFloatMaxValue(value, maxvalue) {
 	var nMaxValue = parseFloat(maxvalue);
 	var isValid = true;
 
-	if (nMaxValue != undefined) {
-		if (nValue == undefined || nValue > nMaxValue) {
+	if (nMaxValue !== undefined) {
+		if (nValue === undefined || nValue > nMaxValue) {
 			isValid = false;
 		}
 	}
@@ -645,13 +718,11 @@ function validateInteger(value) {
 // strings
 // ------------------------------------------------------------------------------------
 
-function startsWith(source, search) 
-{
-	return (source.substr(0, search.length) == search);
+function startsWith(source, search) {
+	return (source.substr(0, search.length) === search);
 }
 
-function getTimeString(date)
-{
+function getTimeString(date) {
 	var ret = '';
 	var hours = date.getHours()
 	var minutes = date.getMinutes()
@@ -672,6 +743,17 @@ function getTimeString(date)
 
 function makeId(options)
 {
+    /// <summary>
+    ///   Generates an ID for DOM assignment
+    /// </summary>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.ID: Base ID string
+    ///     &#10;2 - options.prefix: String prefix to prepend
+    ///     &#10;3 - options.suffix: String suffix to append
+    ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
+    /// </param>
+    /// <returns type="String>A concatenated string of provided values</returns>
     var o = {
         'ID': '',
         'prefix': '',
@@ -693,6 +775,83 @@ function makeId(options)
     return elementId;
 }
 
+function isNullOrEmpty(str)
+{
+	/// <summary>
+	///   Returns true if the input is null, undefined, or ''
+	/// </summary>
+	/// <param name="str" type="Object">
+	///     String or object to test
+	/// </param>
+
+	return (str === '' || str === undefined || str === null);
+}
+
+function isNumeric(obj)
+{
+	/// <summary>
+	///   Returns true if the input is a number
+	/// </summary>
+	/// <param name="str" type="Object">
+	///     String or object to test
+	/// </param>
+    var ret = false;
+    if( !isNullOrEmpty(obj) )
+    {
+        var num = parseInt(obj);
+        if( num !== NaN )
+        {
+            ret = true;
+        }
+    }
+	return ret;
+}
+
+function isTrue(str)
+{
+    /// <summary>
+    ///   Returns true if the input is true, 'true', '1' or 1.
+    ///   &#10;1 Returns false if the input is false, 'false', '0' or 0.
+    ///   &#10;2 Otherwise writes an error to the log.
+    /// </summary>
+    /// <param name="str" type="Object">
+    ///     String or object to test
+    /// </param>
+    /// <returns type="Bool" />
+
+    var ret;
+    if (str === 'true' || str === true || str === '1' || str === 1)
+    {
+        ret = true;
+    }
+    else if (str === 'false' || str === false || str === '0' || str === 0)
+    {
+        ret = false;
+    }
+    else
+    {
+        log('isTrue() was called on ' + str + ', which is not a boolean.');
+    }
+    return ret;
+}
+
+function tryParseString(inputStr, defaultStr)
+{
+    /// <summary>
+    ///   Returns the inputStr if !isNullOrEmpty, else returns the defaultStr
+    /// </summary>
+    /// <param name="str" type="Object">
+    ///     String or object to parse
+    /// </param>
+    /// <returns type="String" />
+    var ret = defaultStr;
+    if( !isNullOrEmpty( inputStr ) )
+    {
+        ret = inputStr;
+    }
+    return ret;
+}
+
 // ------------------------------------------------------------------------------------
 // for debug
 // ------------------------------------------------------------------------------------
@@ -702,15 +861,14 @@ function iterate(obj) {
 		str = str + x + "=" + obj[x] + "<br><br>";
 	}
 	var popup = window.open("", "popup");
-	if (popup != null)
+	if (popup !== null)
 		popup.document.write(str);
 	else
 		console.log("iterate() error: No popup!");
 }
 
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
-function log(s)
-{
+function log(s) {
 	try
 	{
 		console.log(s);

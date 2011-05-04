@@ -1,10 +1,15 @@
-﻿// for CswSearch
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
+// for CswSearch
 var CswSearch_CssClasses = {
     nodetype_select: { name: 'csw_search_nodetype_select' },
     property_select: { name: 'csw_search_property_select' }
 };
 
-;  (function ($) {
+; (function ($) { /// <param name="$" type="jQuery" />
 	$.fn.CswSearch = function (options) {
 
         var o = { 
@@ -306,7 +311,6 @@ var CswSearch_CssClasses = {
             var $searchButton = $searchButtonCell.CswButton({ID: searchButtonId, 
                                                             enabledText: 'Search', 
                                                             disabledText: 'Searching', 
-                                                            enableAfterClick: true,
                                                             onclick: function() { doSearch(); }
                                                 });
         } // renderSearchButtons()

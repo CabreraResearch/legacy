@@ -1,4 +1,9 @@
-﻿; (function ($) {
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
+; (function ($) { /// <param name="$" type="jQuery" />
 		
 	var PluginName = 'CswDialog';
 
@@ -36,8 +41,11 @@
 							var $table = $div.CswTable('init', { 'ID': o.ID + '_tbl', 'FirstCellRightAlign': true });
 
 							$table.CswTable('cell', 1, 1).append('Name:');
-							var $nametextbox = $('<input type="text" id="' + o.ID + '_nametb" value="" />')
-													.appendTo($table.CswTable('cell', 1, 2));
+							var $nametextcell = $table.CswTable('cell', 1, 2); 
+                            var $nametextbox =  $nametextcell.CswInput('init',{ID: o.ID + '_nametb',
+                                                                               type: CswInput_Types.text,
+                                                                               cssclass: 'textinput'
+                                                                       });
 
 							$table.CswTable('cell', 2, 1).append('Display Mode:');
 							var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />')
@@ -67,7 +75,7 @@
 																					o.onAddView(data.newviewid);
 																				}, 
 																				error: function() {
-																					$savebtn.CswButton('enable'); 
+																					$savebtn.CswButton('enable');
 																				}
 																			});
 								                                        }
@@ -132,7 +140,7 @@
 									o.onEditNode(nodeid, nodekey);
 								}
 							});
-							if(o.filterToPropId != '')
+							if(o.filterToPropId !== '')
 								_openDiv($div, 600, 400);
 							else
 								_openDiv($div, 900, 600);
@@ -143,7 +151,7 @@
 							var o = {
 								'nodename': '',
 								'nodeid': '',
-								'nodekey': '', 
+								'cswnbtnodekey': '', 
 								'onCopyNode': function(nodeid, nodekey) { }
 								};
 
@@ -157,12 +165,17 @@
                                                                     enabledText: 'Copy', 
                                                                     disabledText: 'Copying', 
                                                                     onclick: function() {
-									                                        $div.dialog('close');
 									                                        copyNode({
 												                                        'nodeid': o.nodeid, 
 												                                        'nodekey': o.nodekey, 
-												                                        'onSuccess': o.onCopyNode 
-											                                           });
+												                                        'onSuccess': function(nodeid, nodekey) { 
+													                                        $div.dialog('close');
+																							o.onCopyNode(nodeid, nodekey);
+																						},
+																						'onError':  function() {
+																							$copybtn.CswButton('enable');
+																						}
+											                                        });
 								                                        }
                                                                     });
 
@@ -181,7 +194,7 @@
 							var o = {
 								'nodename': '',
 								'nodeid': '',
-								'nodekey': '', 
+								'cswnbtnodekey': '', 
 								'onDeleteNode': function(nodeid, nodekey) { },
 								'Multi': false,
 								'NodeCheckTreeId': ''
@@ -194,17 +207,20 @@
 							var $div = $('<div><span>Are you sure you want to delete:</span></div>');
 
 							var nodeids = [];
+                            var nodekeys = [];
 							if(o.Multi)
 							{
 								var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
 								$nodechecks.each(function() {
 									var $nodecheck = $(this);
 									nodeids[nodeids.length] = $nodecheck.attr('nodeid');
+                                    //nodekeys[nodekeys.length] = $nodecheck.attr('cswnbtnodekey');
 									$div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.attr('nodename') + '</span>');
 								});
 							} else {
 								$div.append('<span>' + o.nodename + '?</span>');
 								nodeids[0] = o.nodeid;
+                                nodekeys[0] = o.cswnbtnodekey;
 							}
 							$div.append('<br/><br/>');
 	
@@ -212,12 +228,17 @@
                                                                         enabledText: 'Delete', 
                                                                         disabledText: 'Deleting', 
                                                                         onclick: function() {
-														                            $div.dialog('close');
 														                            deleteNodes({
 																	                            'nodeids': nodeids, 
-																	                            'onSuccess': o.onDeleteNode 
-																	                            });
-
+                                                                                                'nodekeys': nodekeys,
+																	                            'onSuccess': function(nodeid, nodekey) {
+																		                            $div.dialog('close');
+																									o.onDeleteNode(nodeid, nodekey);
+																								},
+																	                            'onError': function() {
+																									$deletebtn.CswButton('enable');
+																								}
+																	                        });
                                                                             }
                                                                         });
 
@@ -331,10 +352,14 @@
 											                                {
 												                                $div.dialog('close');
 												                                o.onAccept();
-											                                }
+											                                },
+																		error: function() 
+																			{
+																				$acceptbtn.CswButton('enable');	
+																			}
 									                                }); // ajax
-								                                }
-                                                            });
+								                                } // onclick
+                                                            }); // CswButton
 
 							var $declinebtn = $div.CswButton({ID: 'license_decline', 
                                                                 enabledText: 'I Decline', 

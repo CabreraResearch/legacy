@@ -30,10 +30,14 @@
 				
 				var $edittable = $table.CswTable('cell', 2, 2).CswTable('init', { 'ID': o.ID + '_edittbl' });
 				$edittable.CswTable('cell', 1, 1).append('Start Date');
-                var $StartDateBox = $('<input type="text" class="textinput date" id="'+ o.ID +'_sd" name="' + o.ID + '_sd" value="'+ StartDate +'" />"' )
-									.appendTo($edittable.CswTable('cell', 1, 2))
-                                    .change(o.onchange)
-                                    .datepicker();
+                var $StartDateBoxCell = $edittable.CswTable('cell', 1, 2);
+                var $StartDateBox = $StartDateBoxCell.CswInput('init',{ID: o.ID + '_sd',
+                                                                  type: CswInput_Types.text,
+                                                                  cssclass: 'textinput date',
+                                                                  value: StartDate,
+                                                                  onChange: o.onchange
+                                                                }); 
+                $StartDateBox.datepicker();
 				
 //				$edittable.CswTable('cell', 2, 1).append('End Date');
 //                var $EndDateBox = $('<input type="text" class="textinput date" id="'+ o.ID +'_ed" name="' + o.ID + '_ed" value="" />"' )
@@ -45,9 +49,9 @@
 									.appendTo($edittable.CswTable('cell', 3, 2))
 									.change(o.onchange);
 				var $hoursopt = $('<option value="hours">hours</option>').appendTo($UnitsSelect);
-				if(Units == 'hours') $hoursopt.attr('selected', 'true');
+				if(Units === 'hours') $hoursopt.attr('selected', 'true');
 				var $daysopt = $('<option value="days">days</option>').appendTo($UnitsSelect);
-				if(Units == 'days') $daysopt.attr('selected', 'true');
+				if(Units === 'days') $daysopt.attr('selected', 'true');
 
 //				var $refreshbtn = $('<input type="button" id="'+ o.ID + '_refresh" value="Refresh">')
 //									.appendTo($edittable.CswTable('cell', 4, 2));

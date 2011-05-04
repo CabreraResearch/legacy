@@ -1,27 +1,99 @@
-﻿; (function ($) {
+﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+/// <reference path="../CswNodeGrid.js" />
+
+; (function ($) { /// <param name="$" type="jQuery" />
 		
 	var PluginName = 'CswFieldTypeGrid';
 
 	var methods = {
-		init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
-            log(o);
-			var $Div = $(this);
+		'init': function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+			/// <summary>
+            ///   Initializes a jqGrid as an NbtNode Prop
+            /// </summary>
+            /// <param name="o" type="Object">
+            ///     A JSON Object
+            /// </param>
+            var $Div = $(this);
 			$Div.empty();
 
-            var $MenuDiv = $('<div id="grid_as_fieldtype_menu" name="grid_as_fieldtype_menu"></div>');
-            var $GridDiv = $('<div id="grid_as_fieldtype" name="grid_as_fieldtype"></div>');
+            var MenuDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype_menu'});
+            var $MenuDiv = $('<div id="' + MenuDivId + '" name="' + MenuDivId + '"></div>');
 
-            var ViewId = o.$propxml.children('viewid').text().trim();
+            var SearchDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype_search'});
+            var $SearchDiv = $('<div id="' + SearchDivId + '" name="' + SearchDivId + '"></div>');
+
+            var GridDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype'});
+            var $GridDiv = $('<div id="' + GridDivId + '" name="' + GridDivId + '"></div>');
+
+            var viewid = o.$propxml.children('viewid').text().trim();
             
-			$GridDiv.CswNodeGrid({'viewid': ViewId, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'readonly': o.ReadOnly} );
+            var gridOpts = {
+                'viewid': viewid, 
+                'nodeid': o.nodeid, 
+                'cswnbtnodekey': o.cswnbtnodekey, 
+                'readonly': o.ReadOnly,
+                'reinit': false,
+                'onEditNode': function() { 
+                    refreshGrid(gridOpts);
+                },
+                'onAddNode': function() { 
+                    refreshGrid(gridOpts);
+                },
+                'onDeleteNode': function() { 
+                    refreshGrid(gridOpts);
+                }
+            };
+
+            function refreshGrid(options) { 
+                var o ={
+                    reinit: true
+                };
+                if( options ) $.extend(options,o);
+                $GridDiv.CswNodeGrid('init', options);
+            };
+
+			$GridDiv.CswNodeGrid('init', gridOpts);
             $MenuDiv.CswMenuMain({
-			        'viewid': ViewId,
+			        'viewid': viewid,
 			        'nodeid': o.nodeid,
 			        'cswnbtnodekey': o.cswnbtnodekey,
 			        'onAddNode': function (nodeid, cswnbtnodekey)
 			        {
-                        refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-			        }
+                        refreshGrid(gridOpts);
+			        },
+		            'onSearch':
+                        {
+                            'onViewSearch': function ()
+                            {
+	                            var onSearchSubmit = function(view) {
+                                    refreshGrid(gridOpts);
+                                };
+
+                                $SearchDiv.empty();
+                                $SearchDiv.CswSearch({'viewid': viewid,
+                                                      'cswnbtnodekey': o.cswnbtnodekey,
+                                                      'ID': SearchDivId,
+                                                      'onSearchSubmit': onSearchSubmit
+                                                      });
+                                
+                                if ($SearchDiv.is(':hidden'))
+	                            {
+	                                $SearchDiv.show();
+	                            }
+	                            else
+	                            {
+	                                $SearchDiv.hide();
+	                            }
+                            },
+                            'onGenericSearch': function () { /*not possible here*/ }
+                        },
+		            'onEditView': function (Viewid)
+		            {
+                        o.onEditView(viewid);                    
+		            }
 		    });
 			$Div.append($MenuDiv, $('<br/><br/>'), $GridDiv);
 		},

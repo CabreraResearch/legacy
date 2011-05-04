@@ -1,8 +1,11 @@
-echo exit | sqlplus nbt/nbt@orcl @nbt_nuke.sql
+set /p username=
+set /p database=
 
-imp.exe nbt/nbt@orcl FILE=Dumps\Nbt_Master_01G32.dmp FULL=Y TOUSER=nbt
+echo exit | sqlplus %username%/nbt@%database% @nbt_nuke.sql
 
-echo exit | sqlplus nbt/nbt@orcl @nbt_finalize_01H21_ora.sql
+imp.exe %username%/nbt@%database% FILE=Dumps\Nbt_Master_01G32.dmp FULL=Y TOUSER=%username%
+
+echo exit | sqlplus %username%/nbt@%database% @nbt_finalize_01H21_ora.sql
 
 
 
