@@ -15,24 +15,26 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Test Case: 001, part 01
     /// </summary>
-    public class CswTstCaseRsrc_002
+    public class CswTstCaseRsrc_003
     {
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
         private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        public CswTstCaseRsrc_002( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        public CswTstCaseRsrc_003( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
         }//ctor
 
 
-        public string Purpose = "Rolllback add columns";
+        public string Purpose = "rolllback drop columns";
 
-        public string TestColumnNameOne { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }
-        public string TestColumnNameTwo { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ) ); } }
-        public string TestTableName { get { return ( _CswTestCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ) ); } }
+        public string RealTestTableName { get { return ( _CswTestCaseRsrc.getRealTestTableName( TestTableNamesReal.Nodes ) ); } }
+        public string RealTestColumnName { get { return ( _CswTestCaseRsrc.getRealTestColumnName( TestColumnNamesReal.NodeName ) ); } }
+
+        public string FakeTestTableName { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
+        public string FakeTestColumnName { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }
 
         public void testAddColumnValues( TestColumnNamesFake TestColumnName ) { _CswTestCaseRsrc.testAddColumnValues( TestTableNamesReal.DataDictionary, TestColumnName ); }
 

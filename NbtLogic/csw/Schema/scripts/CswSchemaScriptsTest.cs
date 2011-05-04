@@ -25,23 +25,45 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources = CswNbtResources;
             _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
 
-            CswSchemaUpdateDriver Schema_001_01_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_01_001( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema_001_01_Driver.SchemaVersion, Schema_001_01_Driver );
+            //***************************************************************************************
+            //******************************  Test Case 001
+            CswSchemaUpdateDriver Schema_01_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_01_001( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_01_Driver.SchemaVersion, Schema_01_Driver );
 
-            CswSchemaUpdateDriver Schema_001_02_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_02_002( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema_001_02_Driver.SchemaVersion, Schema_001_02_Driver );
+            CswSchemaUpdateDriver Schema_02_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_02_002( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_02_Driver.SchemaVersion, Schema_02_Driver );
 
-            CswSchemaUpdateDriver Schema_001_03_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_03_003( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema_001_03_Driver.SchemaVersion, Schema_001_03_Driver );
+            CswSchemaUpdateDriver Schema_03_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_03_003( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_03_Driver.SchemaVersion, Schema_03_Driver );
 
-            CswSchemaUpdateDriver Schema_001_04_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_04_004( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema_001_04_Driver.SchemaVersion, Schema_001_04_Driver );
+            CswSchemaUpdateDriver Schema_04_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_04_004( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_04_Driver.SchemaVersion, Schema_04_Driver );
 
-            CswSchemaUpdateDriver Schema_001_05_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_002_01_005( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema_001_05_Driver.SchemaVersion, Schema_001_05_Driver );
+            //***************************************************************************************
+            //******************************  Test Case 002
+            CswSchemaUpdateDriver Schema_05_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_002_01_005( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_05_Driver.SchemaVersion, Schema_05_Driver );
 
-            CswSchemaUpdateDriver Schema_001_06_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_002_02_006( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema_001_06_Driver.SchemaVersion, Schema_001_06_Driver );
+            CswSchemaUpdateDriver Schema_06_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_002_02_006( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_06_Driver.SchemaVersion, Schema_06_Driver );
+
+
+            //***************************************************************************************
+            //******************************  Test Case 003
+            CswSchemaUpdateDriver Schema_07_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_003_01_007( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_07_Driver.SchemaVersion, Schema_07_Driver );
+
+            CswSchemaUpdateDriver Schema_08_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_003_02_008( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_08_Driver.SchemaVersion, Schema_08_Driver );
+
+            CswSchemaUpdateDriver Schema_09_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_003_03_009( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_09_Driver.SchemaVersion, Schema_09_Driver );
+
+            CswSchemaUpdateDriver Schema_10_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_003_04_010( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_10_Driver.SchemaVersion, Schema_10_Driver );
+
+            CswSchemaUpdateDriver Schema_11_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_003_05_011( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_11_Driver.SchemaVersion, Schema_11_Driver );
 
 
             foreach( CswSchemaUpdateDriver CurrentDriver in _UpdateDrivers.Values )
@@ -50,10 +72,10 @@ namespace ChemSW.Nbt.Schema
 
             }
 
-            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_001_01( _CswNbtSchemaModTrnsctn ) ) );
-            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_001_02( _CswNbtSchemaModTrnsctn ) ) );
-            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_001_03( _CswNbtSchemaModTrnsctn ) ) );
-            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_001_04( _CswNbtSchemaModTrnsctn ) ) );
+            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_01( _CswNbtSchemaModTrnsctn ) ) );
+            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_02( _CswNbtSchemaModTrnsctn ) ) );
+            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_03( _CswNbtSchemaModTrnsctn ) ) );
+            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_04( _CswNbtSchemaModTrnsctn ) ) );
 
         }//ctor
 

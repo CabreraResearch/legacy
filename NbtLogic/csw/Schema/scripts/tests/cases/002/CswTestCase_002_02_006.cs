@@ -22,12 +22,12 @@ namespace ChemSW.Nbt.Schema
         public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_002.Purpose, "verify rollback" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
-        private CswTstCaseRsrc_001 _CswTstCaseRsrc_002 = null;
+        private CswTstCaseRsrc_002 _CswTstCaseRsrc_002 = null;
         public CswTestCase_002_02_006( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_002 = new CswTstCaseRsrc_001( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_002 = new CswTstCaseRsrc_002( _CswNbtSchemaModTrnsctn );
         }//ctor
 
 

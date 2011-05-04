@@ -30,11 +30,11 @@ namespace ChemSW.Nbt.Schema
 
         public string Purpose = "Add Columns";
 
-        public string TestColumnNameOne { get { return ( _CswTestCaseRsrc.getTestColumnName( TestColumnNames.TestColumn01 ) ); } }
-        public string TestColumnNameTwo { get { return ( _CswTestCaseRsrc.getTestColumnName( TestColumnNames.TestColumn02 ) ); } }
-        public string TestTableName { get { return ( _CswTestCaseRsrc.getTestTableName( TestTableNames.TestTable01 ) ); } }
+        public string TestColumnNameOne { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }
+        public string TestColumnNameTwo { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ) ); } }
+        public string TestTableName { get { return ( _CswTestCaseRsrc.getRealTestTableName( TestTableNamesReal.Modules ) ); } }
 
-        public void testAddColumnValues( TestColumnNames TestColumnName ) { _CswTestCaseRsrc.testAddColumnValues( TestTableNames.TestTable01, TestColumnName ); }
+        public void testAddColumnValues( TestColumnNamesFake TestColumnName ) { _CswTestCaseRsrc.testAddColumnValues( TestTableNamesReal.Modules, TestColumnName ); }
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

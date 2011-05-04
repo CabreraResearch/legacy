@@ -53,8 +53,8 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "Column " + _CswTstCaseRsrc_001.TestColumnNameTwo + " was not created in meta data " ) );
 
 
-            _CswTstCaseRsrc_001.testAddColumnValues( TestColumnNames.TestColumn01 );
-            _CswTstCaseRsrc_001.testAddColumnValues( TestColumnNames.TestColumn02 );
+            _CswTstCaseRsrc_001.testAddColumnValues( TestColumnNamesFake.TestColumn01 );
+            _CswTstCaseRsrc_001.testAddColumnValues( TestColumnNamesFake.TestColumn02 );
 
 
         }//runTest()
