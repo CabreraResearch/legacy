@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.WebServices
 			foreach( var Item in _QuickLaunchHistory )
 			{
 				var ThisItem = new XElement( "item" );
-				ThisItem.SetAttributeValue( "type", Item.ItemType.ToString().ToLower() );
+				ThisItem.SetAttributeValue( "launchtype", Item.ItemType.ToString() );
 				ThisItem.SetAttributeValue( "itemid", Item.ItemId.ToString()); 
 				ThisItem.SetAttributeValue( "text", Item.ItemName );
 				ThisItem.SetAttributeValue( "viewmode", Item.ViewMode.ToString().ToLower() ); //unknown if !view
