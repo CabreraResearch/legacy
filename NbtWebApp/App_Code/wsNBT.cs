@@ -1190,18 +1190,18 @@ namespace ChemSW.Nbt.WebServices
                     foreach( string NodeKey in NodeKeys )
                     {
                         string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
-                        CswNbtNodeKey ParentNodeKey = null;
+                        CswNbtNodeKey NbtNodeKey = null;
                         if( !string.IsNullOrEmpty( ParsedNodeKey ) )
                         {
-                            ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
-                            if( null != ParentNodeKey.NodeId )
+                            NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
+                            if( null != NbtNodeKey.NodeId )
                             {
-                                NodePrimaryKeys.Add( ParentNodeKey.NodeId );
+                                NodePrimaryKeys.Add( NbtNodeKey.NodeId );
                             }
                         }
                     }
                 }
-                else if ( NodePks.Length > 0 )
+                if ( NodePks.Length > 0 )
                 {
                     foreach( string NodePk in NodePks )
                     {
