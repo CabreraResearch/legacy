@@ -329,7 +329,7 @@
 		var ret = '';
 		$('[name="' + id + '"]').each(function() {
 			var $check = $(this);
-			if($check.attr('checked') === true)
+			if(isTrue($check.attr('checked')))
 			{
 				if(ret !== '') ret += ',';
 				switch($check.attr('value'))
