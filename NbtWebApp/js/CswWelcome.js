@@ -15,7 +15,7 @@
 					MoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/moveWelcomeItems',
 					RemoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/deleteWelcomeItem',
 					onLinkClick: function(optSelect) { }, //viewid, actionid, reportid
-					//onSearchClick: function(optSelect) { }, //viewid
+					onSearchClick: function(optSelect) { }, //viewid
 					onAddClick: function(nodetypeid) { },
 					onAddComponent: function() { }
 				};
@@ -97,12 +97,11 @@
 									$textcell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
 									$imagecell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
 									break;
-                                // case 21599: generic search will suffice for now
-//								case 'Search': 
-//									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
-//									$textcell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
-//									$imagecell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
-//									break;
+								case 'Search': 
+									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
+									$textcell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
+									$imagecell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
+									break;
 								case 'Text':
 									$textcell.append('<span>' + optSelect.text + '</span>');
 									break;
@@ -141,7 +140,7 @@
 										.appendTo($table.CswTable('cell', 1, 2));
 				$typeselect.append('<option value="Add" selected>Add</option>');
 				$typeselect.append('<option value="Link">Link</option>');
-				//$typeselect.append('<option value="Search">Search</option>');
+				$typeselect.append('<option value="Search">Search</option>');
 				$typeselect.append('<option value="Text">Text</option>');
 
 				var $viewselect_label = $('<span>View:</span>')
@@ -379,15 +378,15 @@
 				o.$buttonsel.show();
 				o.$buttonimg.show();
 				break;
-//			case "Search":
-//				o.$viewselect_label.show();
-//				o.$viewselect.show();
-//				o.$ntselect_label.hide();
-//				o.$ntselect.hide();
-//				o.$buttonsel_label.show();
-//				o.$buttonsel.show();
-//				o.$buttonimg.show();
-//				break;
+			case "Search":
+				o.$viewselect_label.show();
+				o.$viewselect.show();
+				o.$ntselect_label.hide();
+				o.$ntselect.hide();
+				o.$buttonsel_label.show();
+				o.$buttonsel.show();
+				o.$buttonimg.show();
+				break;
 			case "Text":
 				o.$viewselect_label.hide();
 				o.$viewselect.hide();
