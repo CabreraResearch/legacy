@@ -25,7 +25,7 @@
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
 					var $pathcell = $table.CswTable('cell', 1, 1);
-					$pathcell.attr('colspan', '2');
+					$pathcell.CswAttrDom('colspan', '2');
 					$pathcell.append(Path + "<br/>");
 
 					var $selectcell = $table.CswTable('cell', 2, 1);
@@ -69,7 +69,7 @@
 			},
 			save: function(o) { //($propdiv, $xml
 					var $selectdiv = o.$propdiv.find('.locationselect');
-					o.$propxml.children('nodeid').text($selectdiv.attr('value'));
+					o.$propxml.children('nodeid').text($selectdiv.val());
 				}
 		};
 	
@@ -78,9 +78,9 @@
 		{
 			if(itemid === 'root') itemid = '';   // case 21046
 			$selectdiv.CswComboBox( 'TopContent', text );
-			if($selectdiv.attr('value') !== itemid)
+			if($selectdiv.val() !== itemid)
 			{
-				$selectdiv.attr('value', itemid);
+				$selectdiv.val(itemid);
 				onchange();
 			}
 			setTimeout(function() { $selectdiv.CswComboBox( 'close'); }, 300);

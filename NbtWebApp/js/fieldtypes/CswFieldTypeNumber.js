@@ -10,9 +10,9 @@
 			$Div.CswNumberTextBox({
 				'ID': o.ID,
 				'Value': o.$propxml.children('value').text().trim(),
-				'MinValue': o.$propxml.children('value').attr('minvalue'),
-				'MaxValue': o.$propxml.children('value').attr('maxvalue'),
-				'Precision': o.$propxml.children('value').attr('precision'),
+				'MinValue': o.$propxml.children('value').CswAttrXml('minvalue'),
+				'MaxValue': o.$propxml.children('value').CswAttrXml('maxvalue'),
+				'Precision': o.$propxml.children('value').CswAttrXml('precision'),
 				'ReadOnly': o.ReadOnly,
 				'Required': o.Required,
 				'onchange': o.onchange

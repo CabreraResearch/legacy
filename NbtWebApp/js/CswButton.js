@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
@@ -27,11 +27,11 @@
 			if (options) $.extend(o, options);
 
 			var $parent = $(this);
-			var $button = $('<input />').attr('type', o.inputType)
-										.attr('id', o.ID)
-										.attr('name', o.ID);
-			$button.attr('enabledText', o.enabledText);
-			$button.attr('disabledText', o.disabledText);
+			var $button = $('<input />').CswAttrDom('type', o.inputType)
+										.CswAttrDom('id', o.ID)
+										.CswAttrDom('name', o.ID);
+			$button.CswAttrDom('enabledText', o.enabledText);
+			$button.CswAttrDom('disabledText', o.disabledText);
 
 
 			var buttonOpt = {
@@ -72,12 +72,12 @@
 	function _enable($button)
 	{
 		if ($button.length > 0)
-			$button.button({ label: $button.attr('enabledText'), disabled: false });
+			$button.button({ label: $button.CswAttrDom('enabledText'), disabled: false });
 	}
 	function _disable($button)
 	{
 		if ($button.length > 0)
-			$button.button({ label: $button.attr('disabledText'), disabled: true });
+			$button.button({ label: $button.CswAttrDom('disabledText'), disabled: true });
 	}
 
 	// Method calling logic

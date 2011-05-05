@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
@@ -72,13 +72,13 @@
                         var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
                                        .appendTo($cell)
                                        .click(o.onchange);
-                        $check.attr('key', '');
-                        $check.attr('rowlabel', '[none]');
-                        $check.attr('collabel', o.cols[c]);
-                        $check.attr('row', -1);
-                        $check.attr('col', c);
+                        $check.CswAttrDom('key', '');
+                        $check.CswAttrDom('rowlabel', '[none]');
+                        $check.CswAttrDom('collabel', o.cols[c]);
+                        $check.CswAttrDom('row', -1);
+                        $check.CswAttrDom('col', c);
                         
-                        $check.attr('checked', 'true');   // the browser will override this if another one is checked
+                        $check.CswAttrDom('checked', 'true');   // the browser will override this if another one is checked
 
                     } // for(var c = 0; c < o.cols.length; c++)
                 } // if(o.UseRadios && ! o.Required)
@@ -101,14 +101,14 @@
                         var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
                                        .appendTo($cell)
                                        .click(o.onchange);
-                        $check.attr('key', row.key);
-                        $check.attr('rowlabel', row.label);
-                        $check.attr('collabel', o.cols[c]);
-                        $check.attr('row', r);
-                        $check.attr('col', c);
+                        $check.CswAttrDom('key', row.key);
+                        $check.CswAttrDom('rowlabel', row.label);
+                        $check.CswAttrDom('collabel', o.cols[c]);
+                        $check.CswAttrDom('row', r);
+                        $check.CswAttrDom('col', c);
 
                         if(row.values[c]) {
-                            $check.attr('checked', 'true');
+                            $check.CswAttrDom('checked', 'true');
                         }
                     } // for(var c = 0; c < o.cols.length; c++)
                 } // for(var r = 0; r < o.data.length; r++)
@@ -141,14 +141,14 @@
                 $Div.find('.CBACheckBox_' + o.ID)
                     .each(function() {
                             var $check = $(this);
-                            var r = parseInt($check.attr('row'));
-                            var c = parseInt($check.attr('col'));
+                            var r = parseInt($check.CswAttrDom('row'));
+                            var c = parseInt($check.CswAttrDom('col'));
                             if(data[r] === undefined) 
                                 data[r] = new Array();
-                            data[r][c] = { key: $check.attr('key'),
-                                           rowlabel: $check.attr('rowlabel'),
-                                           collabel: $check.attr('collabel'),
-                                           checked: $check.attr('checked') 
+                            data[r][c] = { key: $check.CswAttrDom('key'),
+                                           rowlabel: $check.CswAttrDom('rowlabel'),
+                                           collabel: $check.CswAttrDom('collabel'),
+                                           checked: $check.CswAttrDom('checked') 
                                          };
                         });
                 return data;
@@ -168,7 +168,7 @@
 
         function CheckAll($checkalllink, id)
         {
-            $('.CBACheckBox_' + id).attr('checked', 'checked');
+            $('.CBACheckBox_' + id).CswAttrDom('checked', 'checked');
             $checkalllink.text('Uncheck all');
         }
         function UncheckAll($checkalllink, id)

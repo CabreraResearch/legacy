@@ -23,9 +23,9 @@ $.CswFieldTypeFactory = function (method)
             {
                 $.extend(m, options);
             }
-            m.ID = m.$propxml.attr('id');
-            m.Required = (m.$propxml.attr('required') === "true") || m.Required;
-            m.ReadOnly = (m.$propxml.attr('readonly') === "true") || m.ReadOnly || m.EditMode === 'PrintReport';
+            m.ID = m.$propxml.CswAttrXml('id');
+            m.Required = (m.$propxml.CswAttrXml('required') === "true") || m.Required;
+            m.ReadOnly = (m.$propxml.CswAttrXml('readonly') === "true") || m.ReadOnly || m.EditMode === 'PrintReport';
 
             switch (m.fieldtype)
             {
@@ -117,7 +117,7 @@ $.CswFieldTypeFactory = function (method)
                     m.$propdiv.CswFieldTypeViewReference('init', m); //('init', nodeid, $propxml, onchange);
                     break;
                 default:
-                    m.$propdiv.append(m.$propxml.attr('init', m)); //('gestalt'));
+                    m.$propdiv.append(m.$propxml.CswAttrXml('init', m)); //('gestalt'));
                     break;
             } // switch (fieldtype)
         }, // make
@@ -128,9 +128,9 @@ $.CswFieldTypeFactory = function (method)
             {
                 $.extend(m, options);
             }
-            m.ID = m.$propxml.attr('id');
-            m.Required = (m.$propxml.attr('required') === "true");
-            m.ReadOnly = (m.$propxml.attr('readonly') === "true");
+            m.ID = m.$propxml.CswAttrXml('id');
+            m.Required = (m.$propxml.CswAttrXml('required') === "true");
+            m.ReadOnly = (m.$propxml.CswAttrXml('readonly') === "true");
 
             switch (m.fieldtype)
             {

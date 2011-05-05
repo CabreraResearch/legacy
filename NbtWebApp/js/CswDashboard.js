@@ -25,16 +25,16 @@
                         var $this = $(this);
 
                         var cellcontent = '';
-                        if($this.attr('href') !== undefined)
+                        if($this.CswAttrXml('href') !== undefined)
                         {
                             cellcontent = '<td class="DashboardCell">' +
-                                          '  <a target="_blank" href="'+ $this.attr('href') + '">' +
-                                          '    <div title="'+ $this.attr('text') +'" id="'+ $this.attr('id') +'" class="'+ $this.attr('id') +'" />' +
+                                          '  <a target="_blank" href="'+ $this.CswAttrXml('href') + '">' +
+                                          '    <div title="'+ $this.CswAttrXml('text') +'" id="'+ $this.CswAttrXml('id') +'" class="'+ $this.CswAttrXml('id') +'" />' +
                                           '  </a>' +
                                           '</td>';
                         } else {
                             cellcontent = '<td class="DashboardCell">' +
-                                          '  <div title="'+ $this.attr('text') +'" id="'+ $this.attr('id') +'" class="'+ $this.attr('id') +'" />' +
+                                          '  <div title="'+ $this.CswAttrXml('text') +'" id="'+ $this.CswAttrXml('id') +'" class="'+ $this.CswAttrXml('id') +'" />' +
                                           '</td>';
                         }
                         $tr.append(cellcontent);

@@ -22,11 +22,11 @@
 				$xml.children("items").children("item").each(function() {
 					var $item = $(this);
 					var optSelect = {
-							launchtype: $item.attr('launchtype'),
-							viewmode: $item.attr('viewmode'),
-							text: $item.attr('text'), 
-							url: $item.attr('url'),
-							viewid: $item.attr('itemid') //actions provide their own links. itemid will only be used as viewid.
+							launchtype: $item.CswAttrXml('launchtype'),
+							viewmode: $item.CswAttrXml('viewmode'),
+							text: $item.CswAttrXml('text'), 
+							url: $item.CswAttrXml('url'),
+							viewid: $item.CswAttrXml('itemid') //actions provide their own links. itemid will only be used as viewid.
 					};
 							
 					switch(optSelect.launchtype) //webservice converts to lower case

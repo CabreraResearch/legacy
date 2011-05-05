@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
@@ -83,7 +83,7 @@ var CswViewEditor_WizardSteps = {
 		var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: '100%' });
 		var $div1_btntbl_cell11 = $div1_btntbl.CswTable('cell', 1, 1)
 		var $div1_btntbl_cell12 = $div1_btntbl.CswTable('cell', 1, 2)
-		$div1_btntbl_cell12.attr('align', 'right');
+		$div1_btntbl_cell12.CswAttrDom('align', 'right');
 		var $allcheck_div = $('<div></div>').appendTo($div1_btntbl_cell12);
 
 		IsAdministrator({
@@ -255,24 +255,24 @@ var CswViewEditor_WizardSteps = {
 						success: function($xml) {
 							$currentviewxml = $xml;
 
-							$viewnametextbox.val($currentviewxml.attr('viewname'));
-							$categorytextbox.val($currentviewxml.attr('category'));
-							if($currentviewxml.attr('visibility') !== 'Property')
+							$viewnametextbox.val($currentviewxml.CswAttrXml('viewname'));
+							$categorytextbox.val($currentviewxml.CswAttrXml('category'));
+							if($currentviewxml.CswAttrXml('visibility') !== 'Property')
 							{
 								if(v.getvisibilityselect() !== undefined)
 								{
-									v.getvisibilityselect().val($currentviewxml.attr('visibility')).trigger('change');
-									v.getvisroleselect().val('nodes_' + $currentviewxml.attr('visibilityroleid'));
-									v.getvisuserselect().val('nodes_' + $currentviewxml.attr('visibilityuserid'));
+									v.getvisibilityselect().val($currentviewxml.CswAttrXml('visibility')).trigger('change');
+									v.getvisroleselect().val('nodes_' + $currentviewxml.CswAttrXml('visibilityroleid'));
+									v.getvisuserselect().val('nodes_' + $currentviewxml.CswAttrXml('visibilityuserid'));
 								}
 							}
 
-							if($currentviewxml.attr('formobile') === 'true') {
-								$formobilecheckbox.attr('checked', 'true');
+							if($currentviewxml.CswAttrXml('formobile') === 'true') {
+								$formobilecheckbox.CswAttrDom('checked', 'true');
 							}
-							var mode = $currentviewxml.attr('mode')
+							var mode = $currentviewxml.CswAttrXml('mode')
 							$displaymodespan.text(mode);
-							$gridwidthtextboxcell.CswNumberTextBox('setValue', $currentviewxml.attr('width'));
+							$gridwidthtextboxcell.CswNumberTextBox('setValue', $currentviewxml.CswAttrXml('width'));
 							if(mode === "Grid") {
 								$gridwidthlabelcell.show();
 								$gridwidthtextboxcell.show();
@@ -288,11 +288,11 @@ var CswViewEditor_WizardSteps = {
 					// save step 2 content to $currentviewxml
 					if($currentviewxml !== undefined)
 					{
-						$currentviewxml.attr('viewname', $viewnametextbox.val());
-						$currentviewxml.attr('category', $categorytextbox.val());
-						if($currentviewxml.attr('visibility') !== 'Property')
+						$currentviewxml.CswAttrXml('viewname', $viewnametextbox.val());
+						$currentviewxml.CswAttrXml('category', $categorytextbox.val());
+						if($currentviewxml.CswAttrXml('visibility') !== 'Property')
 						{
-							$currentviewxml.attr('visibility', v.getvisibilityselect().val());
+							$currentviewxml.CswAttrXml('visibility', v.getvisibilityselect().val());
 				
 							// temporary workaround
 							var rolenodeid = v.getvisroleselect().val();
@@ -305,11 +305,11 @@ var CswViewEditor_WizardSteps = {
 							{
 								usernodeid = usernodeid.substr('nodes_'.length)
 							}
-							$currentviewxml.attr('visibilityroleid', rolenodeid);
-							$currentviewxml.attr('visibilityuserid', usernodeid);
+							$currentviewxml.CswAttrXml('visibilityroleid', rolenodeid);
+							$currentviewxml.CswAttrXml('visibilityuserid', usernodeid);
 						}
-						$currentviewxml.attr('formobile', ($formobilecheckbox.attr('checked') === 'true'));
-						$currentviewxml.attr('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
+						$currentviewxml.CswAttrXml('formobile', ($formobilecheckbox.CswAttrDom('checked') === 'true'));
+						$currentviewxml.CswAttrXml('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
 					} // if($currentviewxml !== undefined)
 
 					// make step 3 tree
@@ -481,7 +481,7 @@ var CswViewEditor_WizardSteps = {
 						
 						$table.CswTable('cell', rownum, 1).append(label);
 						var $parent = $table.CswTable('cell', rownum, 2);
-						var id = $table.attr('id');
+						var id = $table.CswAttrDom('id');
 
 						$visibilityselect = $('<select id="' + id + '_vissel" />')
 													.appendTo($parent);
@@ -552,11 +552,11 @@ var CswViewEditor_WizardSteps = {
 			$div.find('.vieweditor_childselect').change(function() {
 				var $select = $(this);
 				var childxml = $select.find('option:selected').data('optionviewxml');
-				if($select.attr('arbid') === "root")
+				if($select.CswAttrDom('arbid') === "root")
 				{
 					$(childxml).appendTo($currentviewxml);
 				} else {
-					$(childxml).appendTo($currentviewxml.find('[arbitraryid="' + $select.attr('arbid') +'"]'));
+					$(childxml).appendTo($currentviewxml.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]'));
 				}
 				_makeViewTree(stepno, $div);
 			}); // child select
@@ -566,10 +566,10 @@ var CswViewEditor_WizardSteps = {
 				$td.CswImageButton({
 					ButtonType: CswImageButton_ButtonType.Delete,
 					AlternateText: 'Delete',
-					ID: $td.attr('arbid') + '_delete',
+					ID: $td.CswAttrDom('arbid') + '_delete',
 					onClick: function ($ImageDiv) { 
 						var $span = $ImageDiv.parent();
-						$currentviewxml.find('[arbitraryid="' + $span.attr('arbid') +'"]').remove();
+						$currentviewxml.find('[arbitraryid="' + $span.CswAttrDom('arbid') +'"]').remove();
 						_makeViewTree(stepno, $div);
 						return CswImageButton_ButtonType.None; 
 					}
@@ -584,7 +584,7 @@ var CswViewEditor_WizardSteps = {
 					$tbl.css('display', 'inline-table');
 					$tbl.CswViewPropFilter('init', {
 														'viewxml': xmlToString($currentviewxml),
-														'proparbitraryid': $span.attr('proparbid'),
+														'proparbitraryid': $span.CswAttrDom('proparbid'),
 														'filtarbitraryid': '',
 														'viewbuilderpropid': '',
 														'ID': o.ID,
@@ -605,14 +605,14 @@ var CswViewEditor_WizardSteps = {
 							var Json = $tbl.CswViewPropFilter('getFilterJson', { 
 											ID: o.ID,
 											$parent: $span,
-											proparbitraryid: $span.attr('proparbid')
+											proparbitraryid: $span.CswAttrDom('proparbid')
 										});
 
 							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 
 								'viewxml': xmlToString($currentviewxml), 
 								'filtJson': Json, 
 								'onSuccess': function($filterxml) {
-									var $propxml = $currentviewxml.find('[arbitraryid="' + $span.attr('proparbid') +'"]');
+									var $propxml = $currentviewxml.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]');
 									$(xmlToString($filterxml)).appendTo($propxml);
 									_makeViewTree(stepno, $div);
 								} // onSuccess
@@ -638,7 +638,7 @@ var CswViewEditor_WizardSteps = {
 					$cell.empty();
 					//$cell.append('For ' + $a.text());
 
-					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.attr('arbid') +'"]')
+					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
 
 					var $table = $cell.CswTable({ 'ID': o.ID + '_editrel', 'FirstCellRightAlign': true });
 					$table.CswTable('cell', 1, 1).append('Allow Deleting');
@@ -647,8 +647,8 @@ var CswViewEditor_WizardSteps = {
                                                                   type: CswInput_Types.checkbox
                                                                 });
 
-					if($viewnodexml.attr('allowdelete').toLowerCase() == 'true') {
-						$allowdeletingcheck.attr('checked', 'true');
+					if($viewnodexml.CswAttrXml('allowdelete').toLowerCase() == 'true') {
+						$allowdeletingcheck.CswAttrDom('checked', 'true');
 					}
 
 					$table.CswTable('cell', 2, 1).append('Group By');
@@ -656,21 +656,21 @@ var CswViewEditor_WizardSteps = {
 												.appendTo($table.CswTable('cell', 2, 2));
 					CswAjaxXml({
 						url: o.PropNamesUrl,
-						data: "Type=" + $viewnodexml.attr('secondtype') + "&Id=" + $viewnodexml.attr('secondid'),
+						data: "Type=" + $viewnodexml.CswAttrXml('secondtype') + "&Id=" + $viewnodexml.CswAttrXml('secondid'),
 						success: function($xml) {
 							$groupbyselect.empty();
 							$('<option value="">[None]</option>')
 								.appendTo($groupbyselect);
 							$xml.children().each(function() {
 								var $prop = $(this);
-								var $option = $('<option value="'+ $prop.attr('propid') +'">'+ $prop.attr('propname') +'</option>')
+								var $option = $('<option value="'+ $prop.CswAttrXml('propid') +'">'+ $prop.CswAttrXml('propname') +'</option>')
 									.appendTo($groupbyselect)
 									.data('propxml', $prop);
-								if($viewnodexml.attr('groupbypropid') === $prop.attr('propid') &&
-								    $viewnodexml.attr('groupbyproptype') === $prop.attr('proptype') &&
-								    $viewnodexml.attr('groupbypropname') === $prop.attr('propname'))
+								if($viewnodexml.CswAttrXml('groupbypropid') === $prop.CswAttrXml('propid') &&
+								    $viewnodexml.CswAttrXml('groupbyproptype') === $prop.CswAttrXml('proptype') &&
+								    $viewnodexml.CswAttrXml('groupbypropname') === $prop.CswAttrXml('propname'))
 								{
-									$option.attr('selected', 'true');
+									$option.CswAttrDom('selected', 'true');
 								}
 							}); // each
 						} // success
@@ -684,8 +684,8 @@ var CswViewEditor_WizardSteps = {
                         $showtreecheck = $showtreecheckcell.CswInput('init',{ID: o.ID + '_stcb',
                                                                   type: CswInput_Types.checkbox
                                                                 }); 
-						if($viewnodexml.attr('showintree').toLowerCase() == 'true') {
-							$showtreecheck.attr('checked', 'true');
+						if($viewnodexml.CswAttrXml('showintree').toLowerCase() == 'true') {
+							$showtreecheck.CswAttrDom('checked', 'true');
 						}
 					}
 
@@ -695,17 +695,17 @@ var CswViewEditor_WizardSteps = {
 						'disableOnClick': false,
 						'onclick': function() {
 							if($showtreecheck !== undefined)
-								$viewnodexml.attr('showintree', ($showtreecheck.is(':checked')))
-							$viewnodexml.attr('allowdelete', ($allowdeletingcheck.is(':checked')))
+								$viewnodexml.CswAttrXml('showintree', ($showtreecheck.is(':checked')))
+							$viewnodexml.CswAttrXml('allowdelete', ($allowdeletingcheck.is(':checked')))
 							if($groupbyselect.val() !== '') {
 								var $propxml = $groupbyselect.find(':selected').data('propxml');
-								$viewnodexml.attr('groupbypropid', $propxml.attr('propid'));
-								$viewnodexml.attr('groupbyproptype', $propxml.attr('proptype'));
-								$viewnodexml.attr('groupbypropname', $propxml.attr('propname'));
+								$viewnodexml.CswAttrXml('groupbypropid', $propxml.CswAttrXml('propid'));
+								$viewnodexml.CswAttrXml('groupbyproptype', $propxml.CswAttrXml('proptype'));
+								$viewnodexml.CswAttrXml('groupbypropname', $propxml.CswAttrXml('propname'));
 							} else {
-								$viewnodexml.attr('groupbypropid', '');
-								$viewnodexml.attr('groupbyproptype', '');
-								$viewnodexml.attr('groupbypropname', '');
+								$viewnodexml.CswAttrXml('groupbypropid', '');
+								$viewnodexml.CswAttrXml('groupbyproptype', '');
+								$viewnodexml.CswAttrXml('groupbypropname', '');
 							}
 						} // onClick
 					}); // CswButton
@@ -718,7 +718,7 @@ var CswViewEditor_WizardSteps = {
 
 					if(viewmode === "Grid")
 					{
-						var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.attr('arbid') +'"]')
+						var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
 
 						//$cell.append('For ' + $a.text());
 						var $table = $cell.CswTable({ 'ID': o.ID + '_editprop', 'FirstCellRightAlign': true });
@@ -728,8 +728,8 @@ var CswViewEditor_WizardSteps = {
                         var $sortbycheck = $sortbycheckcell.CswInput('init',{ID: o.ID + '_sortcb',
                                                                   type: CswInput_Types.checkbox
                                                                 }); 
-						if($viewnodexml.attr('sortby').toLowerCase() == 'true') {
-							$sortbycheck.attr('checked', 'true');
+						if($viewnodexml.CswAttrXml('sortby').toLowerCase() == 'true') {
+							$sortbycheck.CswAttrDom('checked', 'true');
 						}
 
 						$table.CswTable('cell', 2, 1).append('Grid Column Order');
@@ -737,23 +737,23 @@ var CswViewEditor_WizardSteps = {
                         var $colordertextbox = $colordertextcell.CswInput('init',{ID: o.ID + '_gcotb',
                                                                   type: CswInput_Types.text
                                                                 }); 
-						$colordertextbox.val($viewnodexml.attr('order'));
+						$colordertextbox.val($viewnodexml.CswAttrXml('order'));
 
 						$table.CswTable('cell', 3, 1).append('Grid Column Width (in characters)');
 						var $colwidthtextcell = $table.CswTable('cell', 3, 2);
                         var $colwidthtextbox = $colwidthtextcell.CswInput('init',{ID: o.ID + '_gcwtb',
                                                                   type: CswInput_Types.text
                                                                 });
-						$colwidthtextbox.val($viewnodexml.attr('width'));
+						$colwidthtextbox.val($viewnodexml.CswAttrXml('width'));
 
 						$table.CswTable('cell', 4, 2).CswButton({ 
 							'ID': o.ID + '_saveprop',
 							'enabledText': 'Apply',
 							'disableOnClick': false,
 							'onclick': function() {
-								$viewnodexml.attr('sortby', ($sortbycheck.is(':checked')))
-								$viewnodexml.attr('order', $colordertextbox.val());
-								$viewnodexml.attr('width', $colwidthtextbox.val());
+								$viewnodexml.CswAttrXml('sortby', ($sortbycheck.is(':checked')))
+								$viewnodexml.CswAttrXml('order', $colordertextbox.val());
+								$viewnodexml.CswAttrXml('width', $colwidthtextbox.val());
 							} // onClick
 						}); // CswButton
 					}
@@ -765,14 +765,14 @@ var CswViewEditor_WizardSteps = {
 					$cell.empty();
 					//$cell.append('For ' + $a.text());
 
-					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.attr('arbid') +'"]')
+					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
 
 					var $table = $cell.CswTable({ 'ID': o.ID + '_editfilt', 'FirstCellRightAlign': true });
 					$table.CswTable('cell', 1, 1).append('Case Sensitive');
 					var $casecheck = $('<input type="checkbox" id="' + o.ID + '_casecb" />')
 											.appendTo($table.CswTable('cell', 1, 2));
-					if($viewnodexml.attr('casesensitive').toLowerCase() === 'true') {
-						$casecheck.attr('checked', 'true');
+					if($viewnodexml.CswAttrXml('casesensitive').toLowerCase() === 'true') {
+						$casecheck.CswAttrDom('checked', 'true');
 					}
 
 					$table.CswTable('cell', 4, 2).CswButton({ 
@@ -780,7 +780,7 @@ var CswViewEditor_WizardSteps = {
 						'enabledText': 'Apply',
 						'disableOnClick': false,
 						'onclick': function() {
-							$viewnodexml.attr('casesensitive', ($casecheck.is(':checked')))
+							$viewnodexml.CswAttrXml('casesensitive', ($casecheck.is(':checked')))
 						} // onClick
 					}); // CswButton
 				});
@@ -790,7 +790,7 @@ var CswViewEditor_WizardSteps = {
 		function _viewXmlToHtml(stepno, $itemxml)
 		{
 			var types = {};
-			var arbid = $itemxml.attr('arbitraryid');
+			var arbid = $itemxml.CswAttrXml('arbitraryid');
 			var nodename = $itemxml.get(0).nodeName;
 			var name;
 			var rel;
@@ -803,9 +803,9 @@ var CswViewEditor_WizardSteps = {
 				if(stepno === CswViewEditor_WizardSteps.step3.step) skipchildoptions = false;
 
 				arbid = "root";
-				name = $itemxml.attr('viewname');
+				name = $itemxml.CswAttrXml('viewname');
 				rel = "root";
-				types.root = { icon: { image: $itemxml.attr('iconfilename') } };
+				types.root = { icon: { image: $itemxml.CswAttrXml('iconfilename') } };
 				linkclass = 'vieweditor_viewrootlink';
 			}
 			else if(nodename.toLowerCase() === 'relationship')
@@ -813,17 +813,17 @@ var CswViewEditor_WizardSteps = {
 				if(stepno === CswViewEditor_WizardSteps.step3.step) skipchildoptions = false;
 				if(stepno === CswViewEditor_WizardSteps.step4.step) skipchildoptions = false;
 
-				name = $itemxml.attr('secondname');
-				var propname = $itemxml.attr('propname');
+				name = $itemxml.CswAttrXml('secondname');
+				var propname = $itemxml.CswAttrXml('propname');
                 if( propname !== '' && propname !== undefined)
                 {
-                    if( $itemxml.attr('propowner') === "First" )
-                        name += " (by " + $itemxml.attr('firstname') + "'s " + propname + ")";
+                    if( $itemxml.CswAttrXml('propowner') === "First" )
+                        name += " (by " + $itemxml.CswAttrXml('firstname') + "'s " + propname + ")";
                     else
                         name += " (by " + propname + ")";
                 }
-				rel = $itemxml.attr('secondtype') + '_' + $itemxml.attr('secondid');
-				types[rel] = { icon: { image: $itemxml.attr('secondiconfilename') } };
+				rel = $itemxml.CswAttrXml('secondtype') + '_' + $itemxml.CswAttrXml('secondid');
+				types[rel] = { icon: { image: $itemxml.CswAttrXml('secondiconfilename') } };
 				linkclass = 'vieweditor_viewrellink';
 			}
 			else if(nodename.toLowerCase() === 'property')
@@ -831,7 +831,7 @@ var CswViewEditor_WizardSteps = {
 				if(stepno <= CswViewEditor_WizardSteps.step3.step) skipme = true;
 				if(stepno === CswViewEditor_WizardSteps.step5.step) skipchildoptions = false;
 
-				name = $itemxml.attr('name');
+				name = $itemxml.CswAttrXml('name');
 				rel = "property";
 				types.property = { icon: { image: "Images/view/property.gif" } };
 				linkclass = "vieweditor_viewproplink";
@@ -840,7 +840,7 @@ var CswViewEditor_WizardSteps = {
 			{
 				if(stepno <= CswViewEditor_WizardSteps.step4.step) skipme = true;
 
-				name = $itemxml.attr('subfieldname') + ' ' + $itemxml.attr('filtermode') + ' ' + $itemxml.attr('value');
+				name = $itemxml.CswAttrXml('subfieldname') + ' ' + $itemxml.CswAttrXml('filtermode') + ' ' + $itemxml.CswAttrXml('value');
 				rel = "filter";
 				types.filter = { icon: { image: "Images/view/filter.gif" } };
 				linkclass = 'vieweditor_viewfilterlink';
@@ -887,10 +887,10 @@ var CswViewEditor_WizardSteps = {
 								$select.append('<option value="">Select...</option>');
 								$xml.children().each(function() {
 									var $optionxml = $(this);
-									var $optionviewxml = $($optionxml.attr('value'));
-									var $option = $('<option value="'+ $optionviewxml.attr('arbitraryid') +'">'+ $optionxml.attr('name') +'</option>')
+									var $optionviewxml = $($optionxml.CswAttrXml('value'));
+									var $option = $('<option value="'+ $optionviewxml.CswAttrXml('arbitraryid') +'">'+ $optionxml.CswAttrXml('name') +'</option>')
 													.appendTo($select);
-									$option.data('optionviewxml', $optionxml.attr('value'));
+									$option.data('optionviewxml', $optionxml.CswAttrXml('value'));
 								});
 
 							} // success

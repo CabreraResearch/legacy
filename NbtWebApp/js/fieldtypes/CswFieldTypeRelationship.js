@@ -35,7 +35,7 @@
 
                     $Options.children().each(function() {
                         var $this = $(this);
-                        $SelectBox.append('<option value="' + $this.attr('id') + '">' + $this.attr('value') + '</option>');
+                        $SelectBox.append('<option value="' + $this.CswAttrXml('id') + '">' + $this.CswAttrXml('value') + '</option>');
                     });
 
                     $SelectBox.val( SelectedNodeId );

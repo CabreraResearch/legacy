@@ -74,9 +74,9 @@
 							tabdivs[tabdivs.length] = $("<div><ul></ul></div>").appendTo($outertabdiv);
 						}
 						var $tabdiv = tabdivs[tabdivs.length - 1];
-						$tabdiv.children('ul').append('<li><a href="#' + $tab.attr('id') + '">' + $tab.attr('name') + '</a></li>');
-						$tabdiv.append('<div id="' + $tab.attr('id') + '"><form id="' + $tab.attr('id') + '_form" /></div>');
-						if($tab.attr('id') === o.tabid)
+						$tabdiv.children('ul').append('<li><a href="#' + $tab.CswAttrXml('id') + '">' + $tab.CswAttrXml('name') + '</a></li>');
+						$tabdiv.append('<div id="' + $tab.CswAttrXml('id') + '"><form id="' + $tab.CswAttrXml('id') + '_form" /></div>');
+						if($tab.CswAttrXml('id') === o.tabid)
 						{
 							selectedtabno = tabno;
 						}
@@ -93,7 +93,7 @@
 								if(o.onBeforeTabSelect(tabid))
 								{
 									var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
-									var tabid = $tabcontentdiv.attr('id');
+									var tabid = $tabcontentdiv.CswAttrDom('id');
 									getProps($tabcontentdiv, tabid);
 
 									o.onTabSelect(tabid);
@@ -103,7 +103,7 @@
 							}
 						});
 						var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
-						var selectedtabid = $tabcontentdiv.attr('id');
+						var selectedtabid = $tabcontentdiv.CswAttrDom('id');
 						getProps($tabcontentdiv, selectedtabid);
 						o.onTabSelect(selectedtabid);
 					} // for(var t in tabdivs)
@@ -142,15 +142,15 @@
 							$xml.children().each(function ()
 							{
 								var $propxml = $(this);
-								var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.attr('displayrow'), $propxml.attr('displaycol'));
+								var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.CswAttrXml('displayrow'), $propxml.CswAttrXml('displaycol'));
 								var $propcell = _getPropertyCell($cellset);
-								var $subtable = $propcell.children('#' + $propxml.attr('id') + '_subproptable');
+								var $subtable = $propcell.children('#' + $propxml.CswAttrXml('id') + '_subproptable');
 								
 								var fieldOpt = {
-									'fieldtype': $propxml.attr('fieldtype'),
+									'fieldtype': $propxml.CswAttrXml('fieldtype'),
 									'nodeid': o.nodeid,
                                     'relatednodeid': o.relatednodeid,
-									'propid': $propxml.attr('id'),
+									'propid': $propxml.CswAttrXml('id'),
 									'$propdiv': $propcell.children('div'),
 									'$propxml': $propxml,
 									'onchange': function() { },
@@ -161,7 +161,7 @@
 								if($subtable.length > 0)
 								{
 									//$subtable.CswLayoutTable('ConfigOn');
-									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, true);
+									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, true);
 								}
 							});
 						},
@@ -169,15 +169,15 @@
 							$xml.children().each(function ()
 							{
 								var $propxml = $(this);
-								var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.attr('displayrow'), $propxml.attr('displaycol'));
+								var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.CswAttrXml('displayrow'), $propxml.CswAttrXml('displaycol'));
 								var $propcell = _getPropertyCell($cellset);
-								var $subtable = $propcell.children('#' + $propxml.attr('id') + '_subproptable');
+								var $subtable = $propcell.children('#' + $propxml.CswAttrXml('id') + '_subproptable');
 
 								var fieldOpt = {
-									'fieldtype': $propxml.attr('fieldtype'),
+									'fieldtype': $propxml.CswAttrXml('fieldtype'),
 									'nodeid': o.nodeid,
                                     'relatednodeid': o.relatednodeid,
-									'propid': $propxml.attr('id'),
+									'propid': $propxml.CswAttrXml('id'),
 									'$propdiv': $propcell.children('div'),
 									'$propxml': $propxml,
 									'onchange': function() { },
@@ -188,7 +188,7 @@
 								if($subtable.length > 0)
 								{
 									//$subtable.CswLayoutTable('ConfigOff');
-									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false);
+									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false);
 								}
 							});
 						}
@@ -213,16 +213,16 @@
 						highlight: function (element, errorClass)
 						{
 							var $elm = $(element);
-							$elm.attr('csw_invalid', '1');
+							$elm.CswAttrDom('csw_invalid', '1');
 							$elm.animate({ backgroundColor: '#ff6666' });
 						},
 						unhighlight: function (element, errorClass)
 						{
 							var $elm = $(element);
-							if($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
+							if($elm.CswAttrDom('csw_invalid') === '1')  // only unhighlight where we highlighted
 							{
 								$elm.css('background-color', '#66ff66');
-								$elm.attr('csw_invalid', '0')
+								$elm.CswAttrDom('csw_invalid', '0')
 								setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
 							}
 						}
@@ -241,7 +241,7 @@
 		{
 			if ($propdiv.length > 0)
 			{
-				var propid = $propdiv.attr('propid');
+				var propid = $propdiv.CswAttrDom('propid');
 				CswAjaxJSON({
 					url: o.MovePropUrl,
 					data: '{ "PropId": "' + propid + '", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '", "EditMode": "'+ o.EditMode +'" }',
@@ -267,34 +267,34 @@
 			$xml.children().each(function ()
 			{
 				var $propxml = $(this);
-				var propid = $propxml.attr('id');
-				var fieldtype = $propxml.attr('fieldtype');
-				var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.attr('displayrow'), $propxml.attr('displaycol'));
+				var propid = $propxml.CswAttrXml('id');
+				var fieldtype = $propxml.CswAttrXml('fieldtype');
+				var $cellset = $layouttable.CswLayoutTable('cellset', $propxml.CswAttrXml('displayrow'), $propxml.CswAttrXml('displaycol'));
 
-				if (($propxml.attr('display') !== 'false' || ConfigMode ) &&
+				if (($propxml.CswAttrXml('display') !== 'false' || ConfigMode ) &&
 					fieldtype !== 'Image' &&
 					fieldtype !== 'Grid' &&
 					(o.filterToPropId === '' || o.filterToPropId === propid))
 				{
 					var $labelcell = _getLabelCell($cellset);
 					$labelcell.addClass('propertylabel');
-					if($propxml.attr('helptext') !== '')
+					if($propxml.CswAttrXml('helptext') !== '')
 					{
-						$('<a href="#" title="'+ $propxml.attr('helptext') + '" onclick="return false;">'+ $propxml.attr('name') +'</a>')
+						$('<a href="#" title="'+ $propxml.CswAttrXml('helptext') + '" onclick="return false;">'+ $propxml.CswAttrXml('name') +'</a>')
 							.appendTo($labelcell);
 					}
 					else
 					{
-						$labelcell.append($propxml.attr('name'));
+						$labelcell.append($propxml.CswAttrXml('name'));
 					}
-					if(o.ShowCheckboxes && $propxml.attr('copyable') === "true")
+					if(o.ShowCheckboxes && $propxml.CswAttrXml('copyable') === "true")
 					{
 						var $propcheck = $labelcell.CswInput('init',{ID: 'check_'+ propid,
                                                                         type: CswInput_Types.checkbox,
                                                                         value: Value,
                                                                         cssclass: o.ID +'_check'                                                                   
                                                                     }); 
-						$propcheck.attr('propid',propid);	
+						$propcheck.CswAttrDom('propid',propid);	
 					}
 				}
 
@@ -309,14 +309,14 @@
 		function _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode)
 		{
 			$propcell.empty();
-			if (($propxml.attr('display') !== 'false' || ConfigMode ) &&
-				(o.filterToPropId === '' || o.filterToPropId === $propxml.attr('id')))
+			if (($propxml.CswAttrXml('display') !== 'false' || ConfigMode ) &&
+				(o.filterToPropId === '' || o.filterToPropId === $propxml.CswAttrXml('id')))
 			{
 				var fieldOpt = {
-					'fieldtype': $propxml.attr('fieldtype'),
+					'fieldtype': $propxml.CswAttrXml('fieldtype'),
 					'nodeid': o.nodeid,
                     'relatednodeid': o.relatednodeid,
-					'propid': $propxml.attr('id'),
+					'propid': $propxml.CswAttrXml('id'),
 					'$propdiv': $('<div/>').appendTo($propcell),
 					'$propxml': $propxml,
 					'onchange': function() { },
@@ -326,19 +326,19 @@
                     'onEditView': o.onEditView
 				};
 
-				fieldOpt.$propdiv.attr('nodeid', fieldOpt.nodeid);
-				fieldOpt.$propdiv.attr('propid', fieldOpt.propid);
-				fieldOpt.$propdiv.attr('cswnbtnodekey', fieldOpt.cswnbtnodekey);
+				fieldOpt.$propdiv.CswAttrDom('nodeid', fieldOpt.nodeid);
+				fieldOpt.$propdiv.CswAttrDom('propid', fieldOpt.propid);
+				fieldOpt.$propdiv.CswAttrDom('cswnbtnodekey', fieldOpt.cswnbtnodekey);
 
-				fieldOpt.onchange = function () { o.onPropertyChange(fieldOpt.propid, $propxml.attr('name')); };
-				if ($propxml.attr('hassubprops') === "true")
+				fieldOpt.onchange = function () { o.onPropertyChange(fieldOpt.propid, $propxml.CswAttrXml('name')); };
+				if ($propxml.CswAttrXml('hassubprops') === "true")
 				{
 					fieldOpt.onchange = function ()
 					{
-						_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.attr('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false);
-						o.onPropertyChange(fieldOpt.propid, $propxml.attr('name'));
+						_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false);
+						o.onPropertyChange(fieldOpt.propid, $propxml.CswAttrXml('name'));
 					};
-				} // if ($propxml.attr('hassubprops') === "true")
+				} // if ($propxml.CswAttrXml('hassubprops') === "true")
 
 				$.CswFieldTypeFactory('make', fieldOpt);
 
@@ -346,7 +346,7 @@
 				var $subprops = $propxml.children('subprops');
 				if (($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0) || ConfigMode)
 				{
-					//var $subtable = $propcell.CswTable('init', { ID: $propxml.attr('id') + '_subproptable' });
+					//var $subtable = $propcell.CswTable('init', { ID: $propxml.CswAttrXml('id') + '_subproptable' });
 
 					var $subtable = $propcell.CswLayoutTable('init', {
 						'ID': fieldOpt.propid + '_subproptable',
@@ -369,7 +369,7 @@
 						$subtable.CswLayoutTable('ConfigOff');
 					}
 				}
-			} // if ($propxml.attr('display') != 'false' || ConfigMode )
+			} // if ($propxml.CswAttrXml('display') != 'false' || ConfigMode )
 		} // _makeProp()
 
 		function _updateSubProps(fieldOpt, SinglePropUrl, EditMode, cswnbtnodekey, PropId, nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, ConfigMode)
@@ -418,7 +418,7 @@
 								var datastr = "{ SourceNodeKey: '" + o.cswnbtnodekey + "', CopyNodeIds: [";
 								var first = true;
 								$nodechecks.each(function() { 
-									var nodeid = $(this).attr('nodeid');
+									var nodeid = $(this).CswAttrDom('nodeid');
 									if(!first) datastr += ',';
 									datastr += "'" + nodeid + "'"; 
 									first = false;
@@ -426,7 +426,7 @@
 								datastr += '], PropIds: [';
 								first = true;
 								$propchecks.each(function() { 
-									var propid = $(this).attr('propid');
+									var propid = $(this).CswAttrDom('propid');
 									if(!first) datastr += ',';
 									datastr += "'" + propid + "'"; 
 									first = false;
@@ -466,20 +466,20 @@
 					'nodeid': o.nodeid,
 					'cswnbtnodekey': o.cswnbtnodekey
 				};
-				propOpt.fieldtype = propOpt.$propxml.attr('fieldtype');
-				var $cellset = $layouttable.CswLayoutTable('cellset', propOpt.$propxml.attr('displayrow'), propOpt.$propxml.attr('displaycol'));
+				propOpt.fieldtype = propOpt.$propxml.CswAttrXml('fieldtype');
+				var $cellset = $layouttable.CswLayoutTable('cellset', propOpt.$propxml.CswAttrXml('displayrow'), propOpt.$propxml.CswAttrXml('displaycol'));
 				propOpt.$propcell = _getPropertyCell($cellset);
 				propOpt.$propdiv = propOpt.$propcell.children('div').first();
 
 				$.CswFieldTypeFactory('save', propOpt);
 
 				// recurse on subprops
-				if (propOpt.$propxml.attr('hassubprops') === "true")
+				if (propOpt.$propxml.CswAttrXml('hassubprops') === "true")
 				{
 					var $subprops = propOpt.$propxml.children('subprops');
 					if ($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
 					{
-						var $subtable = propOpt.$propcell.children('#' + propOpt.$propxml.attr('id') + '_subproptable').first();
+						var $subtable = propOpt.$propcell.children('#' + propOpt.$propxml.CswAttrXml('id') + '_subproptable').first();
 						if($subtable.length > 0)
 						{
 							_updatePropXmlFromForm($subtable, $subprops);

@@ -37,7 +37,7 @@
                             .first()
                             .children('column')
                             .each(function() {
-                                    var fieldname = $(this).attr('field');
+                                    var fieldname = $(this).CswAttrXml('field');
                                     if(fieldname !== NameCol && fieldname != KeyCol)
                                     {
                                         cols[c] = fieldname;
@@ -54,13 +54,13 @@
                 var r = 0;
                 for(var c = 0; c < cols.length; c++)
                 {
-                    var value = $this.children('column[field="'+ cols[c] +'"]').attr('value');
+                    var value = $this.children('column[field="'+ cols[c] +'"]').CswAttrXml('value');
                     values[r] = (value === "True");
                     r++;
                 }
 
-                var $elm = { 'label': $this.children('column[field="' + NameCol + '"]').attr('value'),
-                                'key': $this.children('column[field="' + KeyCol + '"]').attr('value'),
+                var $elm = { 'label': $this.children('column[field="' + NameCol + '"]').CswAttrXml('value'),
+                                'key': $this.children('column[field="' + KeyCol + '"]').CswAttrXml('value'),
                                 'values': values };
                 data[d] = $elm;
                 d++;
@@ -87,10 +87,10 @@
                         var $xmlitem = $LogicalSetXml.find('item:has(column[field="'+ KeyCol +'"][value="'+ checkitem.key +'"])');
                         var $xmlitemcolumn = $xmlitem.find('column[field="' + checkitem.collabel + '"]');
                     
-                        if(checkitem.checked && $xmlitemcolumn.attr('value') === "False")
-                            $xmlitemcolumn.attr('value', 'True');
-                        else if(!checkitem.checked && $xmlitemcolumn.attr('value') === "True")
-                            $xmlitemcolumn.attr('value', 'False');
+                        if(checkitem.checked && $xmlitemcolumn.CswAttrXml('value') === "False")
+                            $xmlitemcolumn.CswAttrXml('value', 'True');
+                        else if(!checkitem.checked && $xmlitemcolumn.CswAttrXml('value') === "True")
+                            $xmlitemcolumn.CswAttrXml('value', 'False');
 
                     } // for( var c = 0; c < formdata.length; c++)
                 } // for( var r = 0; r < formdata.length; r++)

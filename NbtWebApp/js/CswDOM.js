@@ -21,10 +21,10 @@
             var elementId = makeId(o);
             if( elementId !== '' ) 
             {
-                $div.attr('id',elementId);
-                $div.attr('name',elementId);
+                $div.CswAttrDom('id',elementId);
+                $div.CswAttrDom('name',elementId);
             }
-            if( o.cssclass !== '' ) $div.attr('class',o.cssclass);
+            if( o.cssclass !== '' ) $div.CswAttrDom('class',o.cssclass);
             if( o.value !== '' ) $div.text( o.value );
                     
             $parent.append($div);
@@ -46,10 +46,10 @@
             var elementId = makeId(o);
             if( elementId !== '' ) 
             {
-                $span.attr('id',elementId);
-                $span.attr('name',elementId);
+                $span.CswAttrDom('id',elementId);
+                $span.CswAttrDom('name',elementId);
             }
-            if( o.cssclass !== '' ) $span.attr('class',o.cssclass);
+            if( o.cssclass !== '' ) $span.CswAttrDom('class',o.cssclass);
             if( o.value !== '' ) $span.text( o.value );
                     
             $parent.append($span);
@@ -75,14 +75,14 @@
             var $link = $('<a></a>');
             
             var elementId = makeId(o);
-            if( elementId !== '' ) $link.attr('id',elementId);
-            if( o.href !== '' ) $link.attr('href', o.href);
+            if( elementId !== '' ) $link.CswAttrDom('id',elementId);
+            if( o.href !== '' ) $link.CswAttrDom('href', o.href);
             if( o.value !== '' ) $link.text(o.value);
-            if( o.cssclass !== '' ) $link.attr('class',o.cssclass);
-            if( o.type !== '' ) $link.attr('type',o.type);
-            if( o.rel !== '' ) $link.attr('rel',o.rel);
-            if( o.media !== '' ) $link.attr('media',o.media);
-            if( o.target !== '' ) $link.attr('target',o.target);
+            if( o.cssclass !== '' ) $link.CswAttrDom('class',o.cssclass);
+            if( o.type !== '' ) $link.CswAttrDom('type',o.type);
+            if( o.rel !== '' ) $link.CswAttrDom('rel',o.rel);
+            if( o.media !== '' ) $link.CswAttrDom('media',o.media);
+            if( o.target !== '' ) $link.CswAttrDom('target',o.target);
             if( o.onClick !== undefined ) 
             {
                 $link.click( function() {

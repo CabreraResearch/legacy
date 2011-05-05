@@ -9,7 +9,7 @@
             $Div.contents().remove();
 
             var Value = o.$propxml.children('text').text().trim();
-            var Length = o.$propxml.children('text').attr('length');
+            var Length = o.$propxml.children('text').CswAttrXml('length');
 
             if(o.ReadOnly)
             {

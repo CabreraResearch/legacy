@@ -293,7 +293,7 @@
 			'cswnbtnodekey': o.cswnbtnodekey,
 			'onAddNode': function (nodeid, cswnbtnodekey)
 			{
-				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
 			},
 			'onMultiEdit': function ()
 			{
@@ -595,7 +595,8 @@
 				nodename: '',
 				iconurl: '',
                 viewid: '',
-			    viewmode: 'tree'
+			    viewmode: 'tree',
+				IncludeNodeRequired: false
 			};
 			if (options) $.extend(o, options);
 			
@@ -617,7 +618,8 @@
 							'cswnbtnodekey': o.cswnbtnodekey,
 							'nodename': o.nodename,
                             'viewid': o.viewid,
-                            'viewmode': o.viewmode
+                            'viewmode': o.viewmode,
+                            'IncludeNodeRequired': o.IncludeNodeRequired
 						});
 						break;
 					}

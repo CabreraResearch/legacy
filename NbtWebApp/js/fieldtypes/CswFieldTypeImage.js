@@ -9,15 +9,15 @@
             $Div.contents().remove();
 
             var Href = o.$propxml.children('href').text().trim();
-            var Width = o.$propxml.children('href').attr('width');
-            var Height = o.$propxml.children('href').attr('height');
+            var Width = o.$propxml.children('href').CswAttrXml('width');
+            var Height = o.$propxml.children('href').CswAttrXml('height');
             var FileName = o.$propxml.children('name').text().trim();
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
-            var $cell11 = $table.CswTable('cell', 1, 1).attr('colspan', '3');
-            var $cell21 = $table.CswTable('cell', 2, 1).attr('width', Width-36);
-            var $cell22 = $table.CswTable('cell', 2, 2).attr('align', 'right');
-            var $cell23 = $table.CswTable('cell', 2, 3).attr('align', 'right');
+            var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
+            var $cell21 = $table.CswTable('cell', 2, 1).CswAttrDom('width', Width-36);
+            var $cell22 = $table.CswTable('cell', 2, 2).CswAttrDom('align', 'right');
+            var $cell23 = $table.CswTable('cell', 2, 3).CswAttrDom('align', 'right');
 
 			if(FileName !== '')
 			{
@@ -39,7 +39,7 @@
 											$.CswDialog( 'FileUploadDialog', {
 												'url': '/NbtWebApp/wsNBT.asmx/fileForProp',
 												'params': { 
-															'PropId': o.$propxml.attr('id')
+															'PropId': o.$propxml.CswAttrXml('id')
 														  },
 												'onSuccess': function()
 													{
@@ -61,7 +61,7 @@
 											{
 												CswAjaxJSON({
 													'url': '/NbtWebApp/wsNBT.asmx/clearProp',
-													'data': '{ "PropId": "' + o.$propxml.attr('id') + '", "IncludeBlob": "true" }',
+													'data': '{ "PropId": "' + o.$propxml.CswAttrXml('id') + '", "IncludeBlob": "true" }',
 													'success': function() { o.onReload(); }
 												});
 											}

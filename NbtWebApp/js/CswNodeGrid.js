@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
@@ -166,7 +166,7 @@
 						};
                         
 						$gridTable.jqGrid(jqGridOptions)
-										 .navGrid('#'+$gridPager.attr('id'), optNav, {}, {}, {}, optSearch, {} ); 
+										 .navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, optSearch, {} ); 
                                          //all JSON options past 'optNav' define the behavior of the built-in pop-up
 					
 						//remove some dup elements from top pager

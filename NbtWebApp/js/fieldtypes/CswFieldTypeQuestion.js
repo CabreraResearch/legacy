@@ -54,7 +54,7 @@
 						var thisAnswer = splitAnswers[i];
 						var $thisOpt = $('<option value="'+ thisAnswer +'">'+ thisAnswer + '</option>').appendTo($AnswerSel);
 						if(thisAnswer === Answer)
-							$thisOpt.attr('selected', 'true');
+							$thisOpt.CswAttrDom('selected', 'true');
 					}
 
 					var $CorrectiveActionLabel = $table.CswTable('cell', 2, 1).append('Corrective Action');

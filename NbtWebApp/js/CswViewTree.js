@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
@@ -61,13 +61,13 @@
 									var Selected = jsTreeGetSelected($viewsdiv); 
 									var optSelect = {
 												iconurl: Selected.iconurl,
-												type: Selected.$item.attr('viewtype'),
-												viewid: Selected.$item.attr('viewid'),
+												type: Selected.$item.CswAttrXml('viewtype'),
+												viewid: Selected.$item.CswAttrXml('viewid'),
 												viewname: Selected.text,
-												viewmode: Selected.$item.attr('viewmode'),
-												actionid: Selected.$item.attr('actionid'),
-												actionurl: Selected.$item.attr('actionurl'),
-												reportid: Selected.$item.attr('reportid')
+												viewmode: Selected.$item.CswAttrXml('viewmode'),
+												actionid: Selected.$item.CswAttrXml('actionid'),
+												actionurl: Selected.$item.CswAttrXml('actionurl'),
+												reportid: Selected.$item.CswAttrXml('reportid')
 											};
 									o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
 								});

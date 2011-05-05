@@ -32,7 +32,7 @@
 						{
 							$xml.children('nodetype').each(function() {
 								var $nodetype = $(this);
-								$select.append('<option value="'+ $nodetype.attr('id') +'">'+ $nodetype.attr('name') +'</option>');
+								$select.append('<option value="'+ $nodetype.CswAttrXml('id') +'">'+ $nodetype.CswAttrXml('name') +'</option>');
 							});
 
 							o.onSuccess();

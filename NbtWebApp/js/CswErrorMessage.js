@@ -15,7 +15,7 @@
 
 		var $errordiv = $('<div />')
 						.appendTo($parentdiv)
-						.attr('id', id)
+						.CswAttrDom('id', id)
 						.addClass('CswErrorMessage_ErrorMessage');
 
 	 	var $tbl = $errordiv.CswTable('init', {
@@ -26,7 +26,7 @@
 												'width': '100%' 
 											});
 		var $cell11 = $tbl.CswTable('cell', 1, 1)
-							.attr('width', '100%');
+							.CswAttrDom('width', '100%');
 		var $cell12 = $tbl.CswTable('cell', 1, 2);
 		var $cell21 = $tbl.CswTable('cell', 2, 1);
 

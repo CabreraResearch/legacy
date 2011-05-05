@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
@@ -56,7 +56,7 @@
 		'value': function ()
 		{
 			var $CheckboxImage = $(this);
-			var Checked = $CheckboxImage.attr('alt');
+			var Checked = $CheckboxImage.CswAttrDom('alt');
             return Checked;
 		}
  
@@ -64,7 +64,7 @@
 
     function onClick($ImageDiv, Required)
 	{
-		var currentValue = $ImageDiv.attr('alt');
+		var currentValue = $ImageDiv.CswAttrDom('alt');
 		var newValue = CswImageButton_ButtonType.CheckboxNull;
 		var newAltText = "null";
 		if (currentValue === "null") {
@@ -82,7 +82,7 @@
 			newValue = CswImageButton_ButtonType.CheckboxFalse;
 			newAltText = "false";
 		}
-		$ImageDiv.attr('alt', newAltText);
+		$ImageDiv.CswAttrDom('alt', newAltText);
         return newValue;
 	} // onClick()
 

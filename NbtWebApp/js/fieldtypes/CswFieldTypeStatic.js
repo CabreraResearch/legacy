@@ -9,8 +9,8 @@
             $Div.contents().remove();
                  
             var Text = o.$propxml.children('text').text().trim();
-            var Columns = parseInt( o.$propxml.children('text').attr('columns') );
-            var Rows = parseInt( o.$propxml.children('text').attr('rows') );
+            var Columns = parseInt( o.$propxml.children('text').CswAttrXml('columns') );
+            var Rows = parseInt( o.$propxml.children('text').CswAttrXml('rows') );
 
             var overflow = 'auto';
             var width = '';

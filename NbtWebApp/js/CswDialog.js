@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
@@ -213,9 +213,9 @@
 								var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
 								$nodechecks.each(function() {
 									var $nodecheck = $(this);
-									nodeids[nodeids.length] = $nodecheck.attr('nodeid');
-                                    //nodekeys[nodekeys.length] = $nodecheck.attr('cswnbtnodekey');
-									$div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.attr('nodename') + '</span>');
+									nodeids[nodeids.length] = $nodecheck.CswAttrDom('nodeid');
+                                    //nodekeys[nodekeys.length] = $nodecheck.CswAttrDom('cswnbtnodekey');
+									$div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.CswAttrDom('nodename') + '</span>');
 								});
 							} else {
 								$div.append('<span>' + o.nodename + '?</span>');

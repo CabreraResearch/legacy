@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery/jquery-1.5.2-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
@@ -79,12 +79,12 @@
 							{	
 								if(o.viewmode === 'list' )
 								{
-									selectid = $xml.find('item').first().attr('id');
+									selectid = $xml.find('item').first().CswAttrXml('id');
 									treeThemes = {"dots": false};
 								}
 								else
 								{
-									selectid = $xml.find('item').first().find('item').first().attr('id');
+									selectid = $xml.find('item').first().find('item').first().CswAttrXml('id');
 									treeThemes = {"dots": true};
 								}
 							}
@@ -99,7 +99,7 @@
 						var $itemparents = $selecteditem.parents('item').andSelf();
 						var initiallyOpen = new Array();
 						var i = 0;
-						$itemparents.each(function() { initiallyOpen[i] = $(this).attr('id'); i++; });
+						$itemparents.each(function() { initiallyOpen[i] = $(this).CswAttrXml('id'); i++; });
 
 						var strTypes = $xml.find('types').text();
 						var jsonTypes = $.parseJSON(strTypes);
@@ -112,20 +112,20 @@
 
 							function _treeXmlToHtml($itemxml)
 							{
-								var nodeid = $itemxml.attr('id').substring(IDPrefix.length);
+								var nodeid = $itemxml.CswAttrXml('id').substring(IDPrefix.length);
 								var nodename = $itemxml.children('content').children('name').text();
-								var treestr = '<li id="'+ $itemxml.attr('id') +'" ';
-								treestr += '    rel="'+ $itemxml.attr('rel') +'" ';
-								treestr += '    species="'+ $itemxml.attr('species') +'" ';
-								treestr += '    class="jstree-'+ $itemxml.attr('state') +'" ';
-								if($itemxml.attr('cswnbtnodekey') !== undefined)
+								var treestr = '<li id="'+ $itemxml.CswAttrXml('id') +'" ';
+								treestr += '    rel="'+ $itemxml.CswAttrXml('rel') +'" ';
+								treestr += '    species="'+ $itemxml.CswAttrXml('species') +'" ';
+								treestr += '    class="jstree-'+ $itemxml.CswAttrXml('state') +'" ';
+								if($itemxml.CswAttrXml('cswnbtnodekey') !== undefined)
 								{
-									treestr += '    cswnbtnodekey="'+ $itemxml.attr('cswnbtnodekey').replace(/"/g, '&quot;') +'"';
+									treestr += '    cswnbtnodekey="'+ $itemxml.CswAttrXml('cswnbtnodekey').replace(/"/g, '&quot;') +'"';
 								}
 								treestr += '>';
 								if(o.ShowCheckboxes)
 								{
-									treestr += '  <input type="checkbox" class="'+ IDPrefix +'check" id="check_'+ nodeid +'" rel="'+ $itemxml.attr('rel') +'" nodeid="'+ nodeid +'" nodename="'+ nodename +'"></input>';
+									treestr += '  <input type="checkbox" class="'+ IDPrefix +'check" id="check_'+ nodeid +'" rel="'+ $itemxml.CswAttrXml('rel') +'" nodeid="'+ nodeid +'" nodename="'+ nodename +'"></input>';
 								}
 								treestr += '  <a href="#">'+ nodename +'</a>';
 								if($itemxml.children('item').length > 0)
@@ -155,7 +155,7 @@
 //												"dataType": "xml",
 //												"data": function($nodeOpening) 
 //													{
-//														var nodekey = $nodeOpening.attr('cswnbtnodekey');
+//														var nodekey = $nodeOpening.CswAttrXml('cswnbtnodekey');
 //														return 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey=' + nodekey + '&IncludeNodeRequired=false&IncludeNodeKey=';
 //													}
 //											}
@@ -170,7 +170,7 @@
 												"dataType": "xml",
 												"data": function($nodeOpening) 
 													{
-														var nodekey = $nodeOpening.attr('cswnbtnodekey');
+														var nodekey = $nodeOpening.CswAttrXml('cswnbtnodekey');
 														return 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey=' + nodekey + '&IncludeNodeRequired=false&IncludeNodeKey=';
 													},
 												"success": function(data, textStatus, XMLHttpRequest) 
@@ -208,8 +208,8 @@
 													nodeid: Selected.id, 
 													nodename: Selected.text, 
 													iconurl: Selected.iconurl, 
-													cswnbtnodekey: Selected.$item.attr('cswnbtnodekey'),
-													nodespecies: Selected.$item.attr('species'),
+													cswnbtnodekey: Selected.$item.CswAttrDom('cswnbtnodekey'),
+													nodespecies: Selected.$item.CswAttrDom('species'),
 													viewid: o.viewid
 												};
 												
@@ -218,7 +218,7 @@
 													var ParentNodeKey = '';
 													var Parent = data.inst._get_parent(data.rslt.obj);
 													if(Parent !== -1)
-														ParentNodeKey = Parent.attr('cswnbtnodekey');
+														ParentNodeKey = Parent.CswAttrDom('cswnbtnodekey');
 													if(ParentNodeKey === undefined)
 														ParentNodeKey = '';
 
@@ -242,23 +242,23 @@
 																		$treediv.jstree('create', '#' + AfterNodeId, 'after',
 																						{ 
 																							'attr': {
-																										'id': $itemxml.attr('id'), 
-																										'rel': $itemxml.attr('rel'),
-																										'cswnbtnodekey': $itemxml.attr('cswnbtnodekey'),
-																										'species': $itemxml.attr('species')
+																										'id': $itemxml.CswAttrXml('id'), 
+																										'rel': $itemxml.CswAttrXml('rel'),
+																										'cswnbtnodekey': $itemxml.CswAttrXml('cswnbtnodekey'),
+																										'species': $itemxml.CswAttrXml('species')
 																									},
 																							'data': $itemxml.children('content').children('name').text(), 
-																							'state': $itemxml.attr('state') 
+																							'state': $itemxml.CswAttrXml('state') 
 																						}, 
 																						function() 
 																						{
 																							// remove 'More' node
-																							if(AfterNodeId === $itemxml.attr('id'))
+																							if(AfterNodeId === $itemxml.CswAttrXml('id'))
 																							{
 																								$treediv.jstree('remove', '#' + IDPrefix + optSelect.nodeid + '[species="More"]' );
 																							}
 
-																							AfterNodeId = $itemxml.attr('id');
+																							AfterNodeId = $itemxml.CswAttrXml('id');
 																							$itemxml = $itemxml.next();
 																							_continue();
 																						}, 
@@ -286,7 +286,7 @@
 							// case 21424 - Manufacture unique IDs on the expand <ins> for automated testing
 							$treediv.find('li').each(function() {
 								var $li = $(this);
-								$li.children('ins').attr('id', $li.attr('id') + '_expand');
+								$li.children('ins').CswAttrDom('id', $li.CswAttrDom('id') + '_expand');
 							});
 
 						} else {
@@ -309,7 +309,7 @@
 					$.extend(o, optSelect);
 				}
 				var $treediv = $(this).children('.treediv')
-				var IDPrefix = $treediv.attr('id');
+				var IDPrefix = $treediv.CswAttrDom('id');
 				$treediv.jstree('select_node', '#' + IDPrefix + o.newnodeid);
 			}
 	};
@@ -317,12 +317,12 @@
 	function _handleCheck($treediv, $checkbox)
 	{
 		var $selected = jsTreeGetSelected($treediv);
-		return ($selected.$item.attr('rel') === $checkbox.attr('rel'));
+		return ($selected.$item.CswAttrDom('rel') === $checkbox.CswAttrDom('rel'));
 	}
 
 	function _clearChecks(IDPrefix)
 	{
-		$('.'+ IDPrefix +'check').attr('checked', '');
+		$('.'+ IDPrefix +'check').CswAttrDom('checked', '');
 	}
 
 	// Method calling logic
