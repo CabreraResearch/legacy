@@ -326,9 +326,9 @@
                     'onEditView': o.onEditView
 				};
 
-				fieldOpt.$propdiv.CswAttrXml('nodeid', fieldOpt.nodeid);
-				fieldOpt.$propdiv.CswAttrXml('propid', fieldOpt.propid);
-				fieldOpt.$propdiv.CswAttrXml('cswnbtnodekey', fieldOpt.cswnbtnodekey);
+				fieldOpt.$propdiv.CswAttrDom('nodeid', fieldOpt.nodeid);
+				fieldOpt.$propdiv.CswAttrDom('propid', fieldOpt.propid);
+				fieldOpt.$propdiv.CswAttrDom('cswnbtnodekey', fieldOpt.cswnbtnodekey);
 
 				fieldOpt.onchange = function () { o.onPropertyChange(fieldOpt.propid, $propxml.CswAttrXml('name')); };
 				if ($propxml.CswAttrXml('hassubprops') === "true")
