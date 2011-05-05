@@ -465,13 +465,13 @@ if (!debug) profiler.disable();
         function _makeListItemFromXml(xmlitem, DivId, parentlevel)
         {
             var $xmlitem = $(xmlitem);
-            var id = $xmlitem.attr('id');
-            var text = $xmlitem.attr('name');
+            var id = $xmlitem.CswAttrXml('id');
+            var text = $xmlitem.CswAttrXml('name');
             var IsDiv = ( !isNullOrEmpty(id) );
             var PageType = xmlitem.nodeName;
 
-            var nextid = $xmlitem.next().attr('id');
-            var previd = $xmlitem.prev().attr('id');
+            var nextid = $xmlitem.next().CswAttrXml('id');
+            var previd = $xmlitem.prev().CswAttrXml('id');
 
             var lihtml = '';
             switch (PageType)
@@ -485,9 +485,9 @@ if (!debug) profiler.disable();
                     break;
 
                 case "PROP":
-                    var tab = $xmlitem.attr('tab');
-                    var fieldtype = $xmlitem.attr('fieldtype');
-                    var gestalt = $xmlitem.attr('gestalt');
+                    var tab = $xmlitem.CswAttrXml('tab');
+                    var fieldtype = $xmlitem.CswAttrXml('fieldtype');
+                    var gestalt = $xmlitem.CswAttrXml('gestalt');
                     if (gestalt === 'NaN') gestalt = '';
 
                     var currentcnt = $xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
@@ -614,20 +614,20 @@ if (!debug) profiler.disable();
         {
             var Html = '';
 
-            var id = $xmlitem.attr('id');
-            var NodeName = $xmlitem.attr('name');
+            var id = $xmlitem.CswAttrXml('id');
+            var NodeName = $xmlitem.CswAttrXml('name');
             var icon = '';
-            if ( !isNullOrEmpty($xmlitem.attr('iconfilename')) && !isNullOrEmpty($xmlitem.attr('iconfilename')) )
-                icon = 'images/icons/' + $xmlitem.attr('iconfilename');
-            var ObjectClass = $xmlitem.attr('objectclass');
+            if ( !isNullOrEmpty($xmlitem.CswAttrXml('iconfilename')) && !isNullOrEmpty($xmlitem.CswAttrXml('iconfilename')) )
+                icon = 'images/icons/' + $xmlitem.CswAttrXml('iconfilename');
+            var ObjectClass = $xmlitem.CswAttrXml('objectclass');
 
             switch (ObjectClass)
             {
                 case "InspectionDesignClass":
-                    var DueDate = $xmlitem.find('prop[ocpname="Due Date"]').attr('gestalt');
-                    var Location = $xmlitem.find('prop[ocpname="Location"]').attr('gestalt');
-                    var MountPoint = $xmlitem.find('prop[ocpname="Target"]').attr('gestalt');
-                    var Status = $xmlitem.find('prop[ocpname="Status"]').attr('gestalt');
+                    var DueDate = $xmlitem.find('prop[ocpname="Due Date"]').CswAttrXml('gestalt');
+                    var Location = $xmlitem.find('prop[ocpname="Location"]').CswAttrXml('gestalt');
+                    var MountPoint = $xmlitem.find('prop[ocpname="Target"]').CswAttrXml('gestalt');
+                    var Status = $xmlitem.find('prop[ocpname="Status"]').CswAttrXml('gestalt');
                     var UnansweredCnt = 0;
                     $xmlitem.find('prop[fieldtype="Question"]').each(function ()
                     {
@@ -684,10 +684,10 @@ if (!debug) profiler.disable();
 
         function _FieldTypeXmlToHtml($xmlitem, ParentId)
         {
-            var IdStr = $xmlitem.attr('id');
-            var FieldType = $xmlitem.attr('fieldtype');
-            var PropName = $xmlitem.attr('name');
-            var ReadOnly = ( isTrue($xmlitem.attr('readonly')) );
+            var IdStr = $xmlitem.CswAttrXml('id');
+            var FieldType = $xmlitem.CswAttrXml('fieldtype');
+            var PropName = $xmlitem.CswAttrXml('name');
+            var ReadOnly = ( isTrue($xmlitem.CswAttrXml('readonly')) );
 
             // Subfield values
             var sf_text =  tryParseString( _extractCDataValue($xmlitem.children('text')), '');
@@ -795,7 +795,7 @@ if (!debug) profiler.disable();
                             Html += 'style="display: none"';
                         Html += 'onchange="';
                         Html += 'var $cor = $(this); ';
-                        Html += 'if($cor.attr(\'value\') === \'\') { ';
+                        Html += 'if($cor.CswAttrDom(\'value\') === \'\') { ';
                         Html += '  $(\'#' + IdStr + '_li div\').addClass(\'OOC\'); '
                         Html += '  $(\'#' + IdStr + '_propname\').addClass(\'OOC\'); '
                         Html += '} else {';
@@ -825,21 +825,21 @@ if (!debug) profiler.disable();
                         break;
 
                     default:
-                        Html += $xmlitem.attr('gestalt');
+                        Html += $xmlitem.CswAttrXml('gestalt');
                         break;
                 }
             }
             else {
-                Html += $xmlitem.attr('gestalt');
+                Html += $xmlitem.CswAttrXml('gestalt');
             }
             return Html;
         }
 
         function _FieldTypeHtmlToXml($xmlitem, name, value)
         {
-            var IdStr = $xmlitem.attr('id');
-            var fieldtype = $xmlitem.attr('fieldtype');
-            var propname = $xmlitem.attr('name');
+            var IdStr = $xmlitem.CswAttrXml('id');
+            var fieldtype = $xmlitem.CswAttrXml('fieldtype');
+            var propname = $xmlitem.CswAttrXml('name');
 
             // subfield nodes
             var $sf_text = $xmlitem.children('text');
@@ -893,7 +893,7 @@ if (!debug) profiler.disable();
             if ( !isNullOrEmpty($sftomodify) )
             {
                 $sftomodify.text(value);
-                $xmlitem.attr('wasmodified', '1');
+                $xmlitem.CswAttrXml('wasmodified', '1');
             }
         } // _FieldTypeHtmlToXml()
 
@@ -941,12 +941,12 @@ if (!debug) profiler.disable();
                     Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[k] + '\'); ';
                     if (answers[k] === answers[i])
                     {
-                        Html += ' $otherradio.attr(\'checked\', true); ';
+                        Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
                         Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
                     }
                     else
                     {
-                        Html += ' $otherradio.attr(\'checked\', false); ';
+                        Html += ' $otherradio.CswAttrDom(\'checked\', false); ';
                         Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
                     }
                 } // for (var k = 0; k < answers.length; k++)
@@ -993,11 +993,11 @@ if (!debug) profiler.disable();
                     Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + yetanotheranswerid + '\'); ';
                     if (answers[k] === answers[i])
                     {
-                        Html += ' $otherradio.attr(\'checked\', true); ';
+                        Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
                         Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
                     } else
                     {
-                        Html += ' $otherradio.attr(\'checked\', false); ';
+                        Html += ' $otherradio.CswAttrDom(\'checked\', false); ';
                         Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
                     }
                 } // for (var k = 0; k < answers.length; k++)
@@ -1012,7 +1012,7 @@ if (!debug) profiler.disable();
                 {
                     Html += ' var $cor = $(\'#' + IdStr + CorrectiveActionSuffix + '\'); ';
                     Html += ' $cor.css(\'display\', \'\'); ';
-                    Html += ' if($cor.attr(\'value\') === \'\') { ';
+                    Html += ' if($cor.CswAttrDom(\'value\') === \'\') { ';
                     Html += '   $(\'#' + IdStr + LiSuffix + ' div\').addClass(\'OOC\'); ';
                     Html += '   $(\'#' + IdStr + PropNameSuffix + '\').addClass(\'OOC\'); ';
                     Html += ' } else {';
@@ -1023,10 +1023,10 @@ if (!debug) profiler.disable();
                 if ( isNullOrEmpty(Answer) )
                 {
                     // update unanswered count when this question is answered
-                    Html += ' if(! $(\'#' + IdStr + '_fieldset\').attr(\'answered\')) { ';
+                    Html += ' if(! $(\'#' + IdStr + '_fieldset\').CswAttrDom(\'answered\')) { ';
                     Html += '   var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
                     Html += '   $cntspan.text(parseInt($cntspan.text()) - 1); ';
-                    Html += '   $(\'#' + IdStr + '_fieldset\').attr(\'answered\', \'true\'); ';
+                    Html += '   $(\'#' + IdStr + '_fieldset\').CswAttrDom(\'answered\', \'true\'); ';
                     Html += ' }';
                 }
                 Html += ' " />';
@@ -1136,7 +1136,7 @@ if (!debug) profiler.disable();
             var ret = '';
             var $back = $('#' + DivId).find('div[data-role="header"] #' + DivId + '_back');
             if ($back.length > 0)
-                ret = $back.attr('href').substr(1);
+                ret = $back.CswAttrDom('href').substr(1);
             return ret;
         }
 
@@ -1176,7 +1176,7 @@ if (!debug) profiler.disable();
                     if (_loadDivContents({
                         ParentId: DivId,
                         level: (level + 1),
-                        DivId: $(this).attr('href').substr(1),
+                        DivId: $(this).CswAttrDom('href').substr(1),
                         HeaderText: $(this).text(),
                         ChangePage: true
                     })) { e.stopPropagation(); e.preventDefault(); }
@@ -1285,9 +1285,9 @@ if (!debug) profiler.disable();
         function onLoginSubmit(eventObj)
         {
             // authenticate here
-            UserName = $('#login_username').attr('value');
-            var Password = $('#login_password').attr('value');
-            var AccessId = $('#login_accessid').attr('value');
+            UserName = $('#login_username').val();
+            var Password = $('#login_password').val();
+            var AccessId = $('#login_accessid').val();
 
             if (!amOffline())
             {
@@ -1421,7 +1421,7 @@ if (!debug) profiler.disable();
 
         function onSynchStatusOpen(DivId, eventObj)
         {
-            $('#synchstatus_back').attr('href', '#' + DivId);
+            $('#synchstatus_back').CswAttrDom('href', '#' + DivId);
             $('#synchstatus_back').css('visibility', '');
             $.mobile.changePage($('#synchstatus'), 'slideup');
         }
@@ -1434,8 +1434,8 @@ if (!debug) profiler.disable();
         function onPropertyChange(DivId, eventObj)
         {
             var $elm = $(eventObj.target);
-            var name = $elm.attr('name');
-            var value = $elm.attr('value');
+            var name = $elm.CswAttrDom('name');
+            var value = $elm.val();
 
             // update the xml and store it
             if( !isNullOrEmpty($currentViewXml) )
@@ -1463,8 +1463,8 @@ if (!debug) profiler.disable();
 
         function onSearchOpen(DivId, eventObj)
         {
-            var searchprop = $('#' + DivId + '_searchprop').attr('value');
-            var searchfor = $('#' + DivId + '_searchfor').attr('value');
+            var searchprop = $('#' + DivId + '_searchprop').val();
+            var searchfor = $('#' + DivId + '_searchfor').val();
             _fetchCachedViewXml(rootid, function (xmlstr)
             {
                 if ( !isNullOrEmpty(xmlstr) )
@@ -1478,7 +1478,7 @@ if (!debug) profiler.disable();
                     .each(function ()
                     {
                         var $search = $(this);
-                        Html += '<option value="' + $search.attr('id') + '">' + $search.attr('name') + '</option>';
+                        Html += '<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>';
                     });
 
                     Html += '</select>' +
@@ -1506,8 +1506,8 @@ if (!debug) profiler.disable();
 
         function onSearchSubmit(DivId, eventObj)
         {
-            var searchprop = $('#' + DivId + '_searchprop').attr('value');
-            var searchfor = $('#' + DivId + '_searchfor').attr('value');
+            var searchprop = $('#' + DivId + '_searchprop').val();
+            var searchfor = $('#' + DivId + '_searchfor').val();
             _fetchCachedViewXml(rootid, function (xmlstr)
             {
                 if ( !isNullOrEmpty(xmlstr) )
@@ -1519,9 +1519,9 @@ if (!debug) profiler.disable();
                     $xmlstr.find('node').each(function ()
                     {
                         var $node = $(this);
-                        if ( !isNullOrEmpty($node.attr(searchprop)) )
+                        if ( !isNullOrEmpty($node.CswAttrXml(searchprop)) )
                         {
-                            if ($node.attr(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
+                            if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
                                 hitcount++;
                                 content += _makeListItemFromXml(this, DivId, 1, false);
