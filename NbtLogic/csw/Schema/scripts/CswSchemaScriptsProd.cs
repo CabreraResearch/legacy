@@ -88,15 +88,12 @@ namespace ChemSW.Nbt.Schema
             _UpdateDrivers.Add( Schema01H30Driver.SchemaVersion, Schema01H30Driver );
             CswSchemaUpdateDriver Schema01H31Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H31( _CswNbtSchemaModTrnsctn ) );
             _UpdateDrivers.Add( Schema01H31Driver.SchemaVersion, Schema01H31Driver );
-
             CswSchemaUpdateDriver Schema01H32Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H32( _CswNbtSchemaModTrnsctn ) );
             _UpdateDrivers.Add( Schema01H32Driver.SchemaVersion, Schema01H32Driver );
-
             CswSchemaUpdateDriver Schema01H33Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H33( _CswNbtSchemaModTrnsctn ) );
             _UpdateDrivers.Add( Schema01H33Driver.SchemaVersion, Schema01H33Driver );
-
-            //CswSchemaUpdateDriver Schema01H34Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H34( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema01H34Driver.SchemaVersion, Schema01H34Driver );
+			CswSchemaUpdateDriver Schema01H34Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H34( _CswNbtSchemaModTrnsctn ) );
+			_UpdateDrivers.Add( Schema01H34Driver.SchemaVersion, Schema01H34Driver );
 
 
             // This automatically detects the latest version
