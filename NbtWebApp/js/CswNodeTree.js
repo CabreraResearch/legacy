@@ -208,8 +208,8 @@
 													nodeid: Selected.id, 
 													nodename: Selected.text, 
 													iconurl: Selected.iconurl, 
-													cswnbtnodekey: Selected.$item.attr('cswnbtnodekey'),
-													nodespecies: Selected.$item.attr('species'),
+													cswnbtnodekey: Selected.$item.CswAttrDom('cswnbtnodekey'),
+													nodespecies: Selected.$item.CswAttrDom('species'),
 													viewid: o.viewid
 												};
 												
@@ -218,7 +218,7 @@
 													var ParentNodeKey = '';
 													var Parent = data.inst._get_parent(data.rslt.obj);
 													if(Parent !== -1)
-														ParentNodeKey = Parent.attr('cswnbtnodekey');
+														ParentNodeKey = Parent.CswAttrDom('cswnbtnodekey');
 													if(ParentNodeKey === undefined)
 														ParentNodeKey = '';
 

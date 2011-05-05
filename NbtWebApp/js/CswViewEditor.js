@@ -268,7 +268,7 @@ var CswViewEditor_WizardSteps = {
 							}
 
 							if($currentviewxml.CswAttrXml('formobile') === 'true') {
-								$formobilecheckbox.attr('checked', 'true');
+								$formobilecheckbox.CswAttrDom('checked', 'true');
 							}
 							var mode = $currentviewxml.CswAttrXml('mode')
 							$displaymodespan.text(mode);
@@ -308,7 +308,7 @@ var CswViewEditor_WizardSteps = {
 							$currentviewxml.CswAttrXml('visibilityroleid', rolenodeid);
 							$currentviewxml.CswAttrXml('visibilityuserid', usernodeid);
 						}
-						$currentviewxml.CswAttrXml('formobile', ($formobilecheckbox.attr('checked') === 'true'));
+						$currentviewxml.CswAttrXml('formobile', ($formobilecheckbox.CswAttrDom('checked') === 'true'));
 						$currentviewxml.CswAttrXml('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
 					} // if($currentviewxml !== undefined)
 

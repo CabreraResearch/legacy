@@ -127,7 +127,7 @@ var CswSearch_CssClasses = {
                                                                 ID: nodeTypeId,
                                                                 value: $thisProp.CswAttrXml('metadatatypename'),
                                                                 cssclass: ViewBuilder_CssClasses.metadatatype_static.name})
-                                                  .attr('relatedidtype',$thisProp.CswAttrXml('relatedidtype') );
+                                                  .CswAttrDom('relatedidtype',$thisProp.CswAttrXml('relatedidtype') );
                     o.selectedSubfieldVal = ''; 
                     o.selectedFilterVal = '';
   
@@ -396,7 +396,7 @@ var CswSearch_CssClasses = {
                 {
                     searchUrl = o.doNodeSearchUrl;
                     var nodetypeorobjectclassid = o.$nodeTypesSelect.val();
-                    o.relatedidtype = o.$nodeTypesSelect.find(':selected').attr('title');
+                    o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrDom('title');
 
                     $('.' + CswSearch_CssClasses.property_select.name).each(function() {
                             var $thisProp = $(this);
@@ -496,7 +496,7 @@ var CswSearch_CssClasses = {
 //                                                onclick: function() {
 //                                                        var r = {
 //                                                            'viewid': $viewSelect.find(':selected').val(),
-//                                                            'viewmode': $viewSelect.find(':selected').attr('title'),
+//                                                            'viewmode': $viewSelect.find(':selected').CswAttrDom('title'),
 //                                                        };
 //                                                        $.extend(o,r);                                                    
 //                                                        o.$cswSearchForm.empty();
