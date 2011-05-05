@@ -38,10 +38,10 @@
 					<tr>
 						<td id="Td6" class="PageTable_CenterCell" colspan="2" valign="top">
 							<div id="CenterDiv">
-								<input type="button" id="staticbutton" value="Static" />
-								<input type="button" id="readbutton" value="Read" />
-								<input type="button" id="readsessionbutton" value="Read Session" />
-								<input type="button" id="writebutton" value="Write" />
+								<input type="button" id="xmlbutton_new" value="New Xml" />
+								<input type="button" id="dombutton_new" value="New Dom" />
+                                <input type="button" id="xmlbutton_old" value="Old Xml" />
+                                <input type="button" id="dombutton_old" value="Old Dom" />
 							</div>
 						</td>
 					</tr>
@@ -55,30 +55,55 @@
 
 <script type="text/javascript">
 
-	$('#staticbutton').click(testStatic);
-	$('#readbutton').click(testRead);
-	$('#readsessionbutton').click(testReadSession);
-	$('#writebutton').click(testWrite);
+	$('#xmlbutton_new').click(textXml);
+	$('#dombutton_new').click(testDom);
+	$('#xmlbutton_old').click(textXml);
+	$('#dombutton_old').click(testDom);
 
+	function textXml() {
+	    CswAjaxXml({ 'url': '/NbtWebApp/wsNBT.asmx/ConnectTest',
+	        'success': function (X$xml)
+	        {
+	            var testGet = X$xml.CswAttrXml('success');
+	            log('success = ' + testGet);
 
-	function testStatic() {
-		CswAjaxXml({ 'url': '/NbtWebApp/wsTEST.asmx/testStatic' });
-	} // testStatic()
+	            X$xml.CswAttrXml('success', 'false');
+	            //log('set success = ' + testSet);
+	            var testSetGet = X$xml.CswAttrXml('success');
+	            log('success = ' + testSetGet);
 
-	function testRead()
+	            var testSetGet3 = X$xml.CswAttrXml('doesnotexist');
+	            log('doesnotexist = ' + testSetGet3);
+
+	            var testSet2 = X$xml.CswAttrXml('doesnotexist', 'nowitdoes');
+	            log('set doesnotexist = ' + testSet2);
+	            var testSetGet2 = X$xml.CswAttrXml('doesnotexist');
+	            log('doesnotexist = ' + testSetGet2);
+	        }
+	    });
+	} // textXml()
+
+	function testDom()
 	{
-		CswAjaxXml({ 'url': '/NbtWebApp/wsTEST.asmx/testRead' });
+	    var $button = $(this);
+
+	    var testGet = $button.CswAttrDom('id');
+	    log('id = ' + testGet);
+	    
+        $button.CswAttrDom('id', testGet + '_somethingnew');
+	    //log('set id succeeded = ' + testSet);
+        var testSetGet = $button.CswAttrDom('id');
+	    log('id = ' + testSetGet);
+
+	    var testSetGet3 = $button.CswAttrDom('doesnotexist');
+	    log('doesnotexist = ' + testSetGet3);
+
+	    var testSet2 = $button.CswAttrDom('doesnotexist', 'nowitdoes');
+	    log('set doesnotexist = ' + testSet2);
+	    var testSetGet2 = $button.CswAttrDom('doesnotexist');
+	    log('doesnotexist = ' + testSetGet2);
+
 	} // testRead()
-
-	function testReadSession()
-	{
-		CswAjaxXml({ 'url': '/NbtWebApp/wsTEST.asmx/testReadSession' });
-	} // testReadSession()
-
-	function testWrite()
-	{
-		CswAjaxXml({ 'url': '/NbtWebApp/wsTEST.asmx/testWrite' });
-	} // testWrite()
 
 
 </script>
