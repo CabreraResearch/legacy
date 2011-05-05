@@ -29,7 +29,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtView AllProblems = _CswNbtSchemaModTrnsctn.restoreView( "All Problems" );
             if( null == AllProblems )
             {
-                AllProblems.makeNew( "All Problems", NbtViewVisibility.Global, null, null, null );
+				AllProblems = _CswNbtSchemaModTrnsctn.makeView();
+				AllProblems.makeNew( "All Problems", NbtViewVisibility.Global, null, null, null );
             }
 
             AllProblems.Root.ChildRelationships.Clear();

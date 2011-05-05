@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.Schema
 
 
             // This is where you manually set to the last version of the previous release
-            _MinimumVersion = new CswSchemaVersion( 1, 'G', 34 );
+            _MinimumVersion = new CswSchemaVersion( 1, 'G', 32 );
 
         }//ctor
 
