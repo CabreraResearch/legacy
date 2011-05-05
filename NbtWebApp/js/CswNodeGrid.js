@@ -18,7 +18,7 @@
 				gridTableID: 'gridTable',
 				gridPagerID: 'gridPager',
                 'reinit': false,
-				onAddNode: function(nodeid,cswnbtnodekey){},
+				//onAddNode: function(nodeid,cswnbtnodekey){},
 				onEditNode: function(nodeid,cswnbtnodekey){},
 				onDeleteNode: function(nodeid,cswnbtnodekey){}
 			};
@@ -44,7 +44,7 @@
 				url: o.GridUrl,
 				data: "{ViewPk: '" +  o.viewid + "', 'SafeNodeKey': '" + o.cswnbtnodekey + "'}", //" + o.cswnbtnodekey + "
 				success: function (gridJson) {
-					
+					    
 						jqGridOpt = gridJson.jqGridOpt;
 
 						var NodeTypeId = gridJson.nodetypeid;
@@ -95,13 +95,12 @@
 							editfunc: function(rowid) {
 									var editOpt = {
 										cswnbtnodekey: '',
-										//nodeid: '',
+										nodeid: '',
 										onEditNode: o.onEditNode
 									};
 									if (rowid !== null) 
 									{
 										editOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
-										//editOpt.nodeid = $gridTable.jqGrid('getCell', rowid, 'nodeid');
 										$.CswDialog('EditNodeDialog', editOpt);
 									}
 									else
@@ -112,17 +111,18 @@
 								},
 
 							//add
-							add: true,
-							addtext:"",
-							addtitle: "Add row",
-							addfunc: function() {
-									var addOpt = {
-										'nodetypeid': NodeTypeId,
-										'onAddNode': o.onAddNode
-									}
-									$.CswDialog('AddNodeDialog', addOpt);
-									return addOpt.nodetypeid;
-								},
+							add: false,
+//							addtext:"",
+//							addtitle: "Add row",
+//							addfunc: function() {
+//									var addOpt = {
+//										'nodetypeid': NodeTypeId,
+//										'onAddNode': o.onAddNode,
+//                                        'relatednodeid': o.nodeid
+//									}
+//									$.CswDialog('AddNodeDialog', addOpt);
+//									return addOpt.nodetypeid;
+//								},
 
 							//delete
 							del: true,
@@ -131,13 +131,12 @@
 							delfunc: function(rowid) {
 									var delOpt = {
 										'cswnbtnodekey': '',
-										//'nodeid': '',
+										'nodeid': '',
 										'nodename': '',
 										'onDeleteNode': o.onDeleteNode
 									};
 									if (rowid !== null) {
 										delOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
-										//delOpt.nodeid = $gridTable.jqGrid('getCell', rowid, 'nodeid');
 										delOpt.nodename = $gridTable.jqGrid('getCell', rowid, 'nodename');
 										$.CswDialog('DeleteNodeDialog', delOpt);
 									}
@@ -165,17 +164,11 @@
 							viewtitle: "View row"
 							//viewfunc: none--use jqGrid built-in function for read-only
 						};
-
+                        
 						$gridTable.jqGrid(jqGridOptions)
-										  .hideCol('nodeid')
-										  .hideCol('cswnbtnodekey')
-										  .hideCol('nodename')
-										  //all JSON options past 'optNav' define the behavior of the built-in pop-up
-										  .navGrid('#'+$gridPager.attr('id'), optNav, {}, {}, {}, optSearch, {} );
+										 .navGrid('#'+$gridPager.attr('id'), optNav, {}, {}, {}, optSearch, {} ); 
+                                         //all JSON options past 'optNav' define the behavior of the built-in pop-up
 					
-						//$gridTable.jqGrid('navGrid', '#'+$gridPager.attr('id'), optNav, {}, {}, {}, optSearch, {} );
-					
-
 						//remove some dup elements from top pager
 //						var topPagerDiv = $('#' + $gridTable[0].id + '_toppager')[0];         
 //						$("#edit_" + $gridTable[0].id + "_top", topPagerDiv).remove();        

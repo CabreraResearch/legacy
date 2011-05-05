@@ -1,9 +1,10 @@
+using System;
 using System.Data;
-using System.Threading; 
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.DB;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -12,24 +13,22 @@ namespace ChemSW.Nbt.Schema
 	/// </summary>
 	public class CswUpdateSchemaTo01H34 : ICswUpdateSchemaTo
 	{
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		private CswProdUpdtRsrc _CswProdUpdtRsrc = null; 
 
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-        private CswProdUpdtRsrc _CswProdUpdtRsrc = null; 
+		public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'H', 34 ); } }
+		public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
 
-
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'H', 34 ); } }
-
-        public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
-
-        public CswUpdateSchemaTo01H34( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+		public CswUpdateSchemaTo01H34( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
 		{
 			_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
-        }
+		}
 
 		public void update()
 		{
-            Thread.Sleep( 5000 );
+			// case 21250
+			_CswNbtSchemaModTrnsctn.setConfigVariableValue( "treeview_resultlimit", "1000" );
 
 		} // update()
 

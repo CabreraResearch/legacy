@@ -275,6 +275,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H27.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H28.cs" />
     <Compile Include="csw\Schema\ICswUpdateSchemaTo.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H34.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01_001.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02_002.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03_003.cs" />

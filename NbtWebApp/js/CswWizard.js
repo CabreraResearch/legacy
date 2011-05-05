@@ -9,6 +9,7 @@
 					Title: 'A Wizard',
 					StepCount: 1,
 					Steps: { 1: 'Default' },
+					StartingStep: 1,
 					SelectedStep: 1,
 					FinishText: 'Finish',
 					onNext: function (newstepno) { },
@@ -19,11 +20,13 @@
 					onCancel: function() {}
 				};
 				if(options) $.extend(o, options);
-				
+				if(o.StartingStep > o.SelectedStep) o.SelectedStep = o.StartingStep;
+
 				var $parent = $(this);
 				
 				var $table = $parent.CswTable({ ID: o.ID, TableCssClass: 'CswWizard_WizardTable' });
 				$table.attr("stepcount", o.StepCount);
+				$table.attr("startingstep", o.StartingStep);
 				
 				var $titlecell = $table.CswTable('cell', 1, 1)
 									.addClass('CswWizard_TitleCell')
@@ -97,6 +100,7 @@
 															});
 
 				_selectStep($table, o.SelectedStep);
+				o.onNext(o.SelectedStep);
 
 				return $table;
 			}, // init()
@@ -137,6 +141,7 @@
 	function _selectStep($table, stepno)
 	{
 		var stepcount = $table.attr("stepcount");
+		var startingstep = $table.attr("startingstep");
 		if(stepno > 0 && stepno <= stepcount)
 		{
 			$table.find('.CswWizard_StepLinkDiv').removeClass('CswWizard_StepLinkDivSelected');
@@ -146,7 +151,7 @@
 			$table.find('.CswWizard_StepDiv[stepno=' + stepno + ']').show();
 
 			var $prevbtn = $('#' + $table.attr('id') + '_prev');
-			if(stepno === 1) 
+			if(stepno <= startingstep) 
 				$prevbtn.CswButton('disable');
 			else
 				$prevbtn.CswButton('enable');
@@ -156,7 +161,6 @@
 				$nextbtn.CswButton('disable');
 			else
 				$nextbtn.CswButton('enable');
-
 		} // if(stepno <= stepcount)
 	} // _selectStep()
 	

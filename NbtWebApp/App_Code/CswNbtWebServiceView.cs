@@ -157,7 +157,7 @@ namespace ChemSW.Nbt.WebServices
 				Rel += Mode;
 			}
 
-			CswXmlDocument.AppendXmlAttribute( ItemNode, "type", Type );
+			CswXmlDocument.AppendXmlAttribute( ItemNode, "viewtype", Type );
 			CswXmlDocument.AppendXmlAttribute( ItemNode, "rel", Rel );
 			CswXmlDocument.AppendXmlAttribute( ItemNode, "id", Rel + "_" + Id.ToString() );
 			CswXmlDocument.AppendXmlAttribute( ItemNode, Type + "id", Id.ToString() );
