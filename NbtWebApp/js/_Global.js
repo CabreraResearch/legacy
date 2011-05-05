@@ -117,7 +117,7 @@ function CswAjaxXml(options) {
 	            var $realxml = $xml.children().first();
 	            if ($realxml.first().get(0).nodeName === "error")
 	            {
-	                _handleAjaxError(XMLHttpRequest, { 'message': $realxml.attr('message'), 'detail': $realxml.attr('detail') }, '');
+	                _handleAjaxError(XMLHttpRequest, { 'message': $realxml.CswAttrXml('message'), 'detail': $realxml.CswAttrXml('detail') }, '');
 	                o.error();
 	            }
 	            else
@@ -470,11 +470,11 @@ function deleteNodes(options) { /// <param name="$" type="jQuery" />
 // ------------------------------------------------------------------------------------
 
 function jsTreeGetSelected($treediv) { /// <param name="$" type="jQuery" />
-	var IDPrefix = $treediv.attr('id');
+	var IDPrefix = $treediv.CswAttrDom('id');
 	$SelectedItem = $treediv.jstree('get_selected');
 	var ret = { 
 		'iconurl': $SelectedItem.children('a').children('ins').css('background-image'),
-		'id': $SelectedItem.attr('id').substring(IDPrefix.length),
+		'id': $SelectedItem.CswAttrDom('id').substring(IDPrefix.length),
 		'text': $SelectedItem.children('a').first().text().trim(),
 		'$item': $SelectedItem
 	};
@@ -508,27 +508,27 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
 		$.extend(o, options);
 	}
 	var $li;
-	if (o.$itemxml.attr('href') !== undefined && o.$itemxml.attr('href') !== '')
+	if (o.$itemxml.CswAttrXml('href') !== undefined && o.$itemxml.CswAttrXml('href') !== '')
 	{
-		$li = $('<li><a href="' + o.$itemxml.attr('href') + '">' + o.$itemxml.attr('text') + '</a></li>')
+		$li = $('<li><a href="' + o.$itemxml.CswAttrXml('href') + '">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
 						.appendTo(o.$ul)
 	}
-	else if (o.$itemxml.attr('popup') !== undefined && o.$itemxml.attr('popup') !== '')
+	else if (o.$itemxml.CswAttrXml('popup') !== undefined && o.$itemxml.CswAttrXml('popup') !== '')
 	{
-		$li = $('<li class="headermenu_dialog"><a href="#">' + o.$itemxml.attr('text') + '</a></li>')
+		$li = $('<li class="headermenu_dialog"><a href="#">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
 						.appendTo(o.$ul)
 						.click(function ()
 						{
-							$.CswDialog('OpenDialog', o.$itemxml.attr('text'), o.$itemxml.attr('popup'));
+							$.CswDialog('OpenDialog', o.$itemxml.CswAttrXml('text'), o.$itemxml.CswAttrXml('popup'));
 							return false; 
 						});
 	}
-	else if (o.$itemxml.attr('action') !== undefined && o.$itemxml.attr('action') !== '')
+	else if (o.$itemxml.CswAttrXml('action') !== undefined && o.$itemxml.CswAttrXml('action') !== '')
 	{
-		$li = $('<li><a href="#">' + o.$itemxml.attr('text') + '</a></li>')
+		$li = $('<li><a href="#">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
 						.appendTo(o.$ul);
 		var $a = $li.children('a');
-		switch (o.$itemxml.attr('action'))
+		switch (o.$itemxml.CswAttrXml('action'))
 		{
 
 			case 'About':
@@ -539,8 +539,8 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
 				$a.click(function ()
 				{
 					$.CswDialog('AddNodeDialog', {
-						'nodetypeid': o.$itemxml.attr('nodetypeid'),
-						'relatednodeid': o.$itemxml.attr('relatednodeid'), //for Grid Props
+						'nodetypeid': o.$itemxml.CswAttrXml('nodetypeid'),
+						'relatednodeid': o.$itemxml.CswAttrXml('relatednodeid'), //for Grid Props
                         'onAddNode': o.onAlterNode
 					}); 
 					return false;
@@ -551,8 +551,8 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
 				$a.click(function ()
 				{
 					$.CswDialog('DeleteNodeDialog', {
-						'nodename': o.$itemxml.attr('nodename'),
-						'nodeid': o.$itemxml.attr('nodeid'),
+						'nodename': o.$itemxml.CswAttrXml('nodename'),
+						'nodeid': o.$itemxml.CswAttrXml('nodeid'),
 						'onDeleteNode': o.onAlterNode,
 						'NodeCheckTreeId': o.NodeCheckTreeId,
 						'Multi': o.Multi
@@ -562,15 +562,15 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
 				break;
 
 			case 'editview':
-				$a.click(function () { o.onEditView(o.$itemxml.attr('viewid')); return false; });
+				$a.click(function () { o.onEditView(o.$itemxml.CswAttrXml('viewid')); return false; });
 				break;
 
 			case 'CopyNode':
 				$a.click(function ()
 				{
 					$.CswDialog('CopyNodeDialog', {
-						'nodename': o.$itemxml.attr('nodename'),
-						'nodeid': o.$itemxml.attr('nodeid'),
+						'nodename': o.$itemxml.CswAttrXml('nodename'),
+						'nodeid': o.$itemxml.CswAttrXml('nodeid'),
 						'onCopyNode': o.onAlterNode
 					});
 					return false;
@@ -581,8 +581,8 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
 				$a.click(function ()
 				{
 					$.CswDialog('PrintLabelDialog', {
-						'nodeid': o.$itemxml.attr('nodeid'),
-						'propid': o.$itemxml.attr('propid')
+						'nodeid': o.$itemxml.CswAttrXml('nodeid'),
+						'propid': o.$itemxml.CswAttrXml('propid')
 					});
 					return false;
 				});
@@ -600,7 +600,7 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
 				$a.click(function ()
 				{
 					$.CswDialog('EditNodeDialog', {
-						'nodeid': o.$itemxml.attr('userid'),
+						'nodeid': o.$itemxml.CswAttrXml('userid'),
 						'cswnbtnodekey': '',
 						'filterToPropId': '',
 						'title': 'User Profile',
@@ -631,7 +631,7 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
 		}
 	}
 	else {
-		$li = $('<li>' + o.$itemxml.attr('text') + '</li>')
+		$li = $('<li>' + o.$itemxml.CswAttrXml('text') + '</li>')
 						.appendTo(o.$ul)
 	}
 	return $li;
