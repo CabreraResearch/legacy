@@ -14,9 +14,15 @@ namespace ChemSW.Nbt.WebServices
 		{
 			_DelimitedString = new CswDelimitedString( PropIdDelim );
 			if( Node != null )
-				_DelimitedString.Add( Node.NodeId.ToString() );
+			{
+				_DelimitedString.Add( Node.NodeId.TableName );
+				_DelimitedString.Add( Node.NodeId.PrimaryKey.ToString() );
+			}
 			else
+			{
 				_DelimitedString.Add( "new" );
+				_DelimitedString.Add( "" );
+			}
 			_DelimitedString.Add( Prop.PropId.ToString() );
 		}
 
@@ -25,7 +31,7 @@ namespace ChemSW.Nbt.WebServices
 			_DelimitedString = new CswDelimitedString( PropIdDelim );
 			_DelimitedString.FromString( PropIdAttr );
 		}
-
+	
 		public CswPrimaryKey NodeId
 		{
 			get
@@ -33,7 +39,8 @@ namespace ChemSW.Nbt.WebServices
 				CswPrimaryKey NodePk = new CswPrimaryKey();
 				if( _DelimitedString[0] != "new" )
 				{
-					NodePk.FromString( _DelimitedString[0] );
+					NodePk.TableName = _DelimitedString[0];
+					NodePk.PrimaryKey = CswConvert.ToInt32( _DelimitedString[1] );
 				}
 				return NodePk;
 			}
@@ -48,11 +55,11 @@ namespace ChemSW.Nbt.WebServices
 		{
 			get
 			{
-				return CswConvert.ToInt32( _DelimitedString[1] );
+				return CswConvert.ToInt32( _DelimitedString[2] );
 			}
 			set
 			{
-				_DelimitedString[1] = value.ToString();
+				_DelimitedString[2] = value.ToString();
 			}
 		} // NodeTypePropId
 
