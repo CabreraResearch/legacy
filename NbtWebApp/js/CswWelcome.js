@@ -114,7 +114,7 @@
                             var $welcomehidden = $textcell.CswInput('init',{ID: $item.attr('welcomeid'),
                                                                             type: CswInput_Types.hidden
                                                                      });
-                            $welcomehidden.attr('welcomeid',$item.attr('welcomeid'));                                            
+                            $welcomehidden.CswAttrDom('welcomeid',$item.attr('welcomeid'));                                            
 						}); // each
 				
 					} // success{}
@@ -193,7 +193,7 @@
                 $table.CswTable('cell', 7, 2).append($addbutton);
 
 				$buttonsel.change(function(event) { 
-					$buttonimg.attr('src', 'Images/biggerbuttons/' + $buttonsel.val()); 
+					$buttonimg.CswAttrDom('src', 'Images/biggerbuttons/' + $buttonsel.val()); 
 				});
 
 				$typeselect.change(function() 
@@ -220,7 +220,7 @@
 							'success': function($xml) { 
 										$xml.children().each(function() {
 											var $icon = $(this);
-											var filename = $icon.attr('filename');
+											var filename = $icon.CswAttrDom('filename');
 											if(filename !== 'blank.gif') 
 											{
 												$buttonsel.append('<option value="'+ filename +'">'+ filename +'</option>');
@@ -261,7 +261,7 @@
         var $textcell = $(r.cellset[2][1]);
         if($textcell.length > 0)
         {
-            var welcomeid = $textcell.children('input').attr('welcomeid');
+            var welcomeid = $textcell.children('input').CswAttrDom('welcomeid');
 		
 			CswAjaxJSON({
 				url: r.RemoveWelcomeItemUrl,
@@ -327,7 +327,7 @@
         var $textcell = $(cellset[2][1]);
         if($textcell.length > 0)
         {
-            var welcomeid = $textcell.children('input').attr('welcomeid');
+            var welcomeid = $textcell.children('input').CswAttrDom('welcomeid');
             CswAjaxJSON({
 				url: MoveWelcomeItemUrl,
 				data: '{ "RoleId": "", "WelcomeId": "'+ welcomeid +'", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '" }',

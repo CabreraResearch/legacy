@@ -83,7 +83,7 @@ var CswViewEditor_WizardSteps = {
 		var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: '100%' });
 		var $div1_btntbl_cell11 = $div1_btntbl.CswTable('cell', 1, 1)
 		var $div1_btntbl_cell12 = $div1_btntbl.CswTable('cell', 1, 2)
-		$div1_btntbl_cell12.attr('align', 'right');
+		$div1_btntbl_cell12.CswAttrDom('align', 'right');
 		var $allcheck_div = $('<div></div>').appendTo($div1_btntbl_cell12);
 
 		IsAdministrator({
@@ -481,7 +481,7 @@ var CswViewEditor_WizardSteps = {
 						
 						$table.CswTable('cell', rownum, 1).append(label);
 						var $parent = $table.CswTable('cell', rownum, 2);
-						var id = $table.attr('id');
+						var id = $table.CswAttrDom('id');
 
 						$visibilityselect = $('<select id="' + id + '_vissel" />')
 													.appendTo($parent);
@@ -552,11 +552,11 @@ var CswViewEditor_WizardSteps = {
 			$div.find('.vieweditor_childselect').change(function() {
 				var $select = $(this);
 				var childxml = $select.find('option:selected').data('optionviewxml');
-				if($select.attr('arbid') === "root")
+				if($select.CswAttrDom('arbid') === "root")
 				{
 					$(childxml).appendTo($currentviewxml);
 				} else {
-					$(childxml).appendTo($currentviewxml.find('[arbitraryid="' + $select.attr('arbid') +'"]'));
+					$(childxml).appendTo($currentviewxml.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]'));
 				}
 				_makeViewTree(stepno, $div);
 			}); // child select
@@ -566,10 +566,10 @@ var CswViewEditor_WizardSteps = {
 				$td.CswImageButton({
 					ButtonType: CswImageButton_ButtonType.Delete,
 					AlternateText: 'Delete',
-					ID: $td.attr('arbid') + '_delete',
+					ID: $td.CswAttrDom('arbid') + '_delete',
 					onClick: function ($ImageDiv) { 
 						var $span = $ImageDiv.parent();
-						$currentviewxml.find('[arbitraryid="' + $span.attr('arbid') +'"]').remove();
+						$currentviewxml.find('[arbitraryid="' + $span.CswAttrDom('arbid') +'"]').remove();
 						_makeViewTree(stepno, $div);
 						return CswImageButton_ButtonType.None; 
 					}
@@ -584,7 +584,7 @@ var CswViewEditor_WizardSteps = {
 					$tbl.css('display', 'inline-table');
 					$tbl.CswViewPropFilter('init', {
 														'viewxml': xmlToString($currentviewxml),
-														'proparbitraryid': $span.attr('proparbid'),
+														'proparbitraryid': $span.CswAttrDom('proparbid'),
 														'filtarbitraryid': '',
 														'viewbuilderpropid': '',
 														'ID': o.ID,
@@ -605,14 +605,14 @@ var CswViewEditor_WizardSteps = {
 							var Json = $tbl.CswViewPropFilter('getFilterJson', { 
 											ID: o.ID,
 											$parent: $span,
-											proparbitraryid: $span.attr('proparbid')
+											proparbitraryid: $span.CswAttrDom('proparbid')
 										});
 
 							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 
 								'viewxml': xmlToString($currentviewxml), 
 								'filtJson': Json, 
 								'onSuccess': function($filterxml) {
-									var $propxml = $currentviewxml.find('[arbitraryid="' + $span.attr('proparbid') +'"]');
+									var $propxml = $currentviewxml.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]');
 									$(xmlToString($filterxml)).appendTo($propxml);
 									_makeViewTree(stepno, $div);
 								} // onSuccess
@@ -638,7 +638,7 @@ var CswViewEditor_WizardSteps = {
 					$cell.empty();
 					//$cell.append('For ' + $a.text());
 
-					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.attr('arbid') +'"]')
+					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
 
 					var $table = $cell.CswTable({ 'ID': o.ID + '_editrel', 'FirstCellRightAlign': true });
 					$table.CswTable('cell', 1, 1).append('Allow Deleting');
@@ -648,7 +648,7 @@ var CswViewEditor_WizardSteps = {
                                                                 });
 
 					if($viewnodexml.attr('allowdelete').toLowerCase() == 'true') {
-						$allowdeletingcheck.attr('checked', 'true');
+						$allowdeletingcheck.CswAttrDom('checked', 'true');
 					}
 
 					$table.CswTable('cell', 2, 1).append('Group By');
@@ -670,7 +670,7 @@ var CswViewEditor_WizardSteps = {
 								    $viewnodexml.attr('groupbyproptype') === $prop.attr('proptype') &&
 								    $viewnodexml.attr('groupbypropname') === $prop.attr('propname'))
 								{
-									$option.attr('selected', 'true');
+									$option.CswAttrDom('selected', 'true');
 								}
 							}); // each
 						} // success
@@ -685,7 +685,7 @@ var CswViewEditor_WizardSteps = {
                                                                   type: CswInput_Types.checkbox
                                                                 }); 
 						if($viewnodexml.attr('showintree').toLowerCase() == 'true') {
-							$showtreecheck.attr('checked', 'true');
+							$showtreecheck.CswAttrDom('checked', 'true');
 						}
 					}
 
@@ -718,7 +718,7 @@ var CswViewEditor_WizardSteps = {
 
 					if(viewmode === "Grid")
 					{
-						var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.attr('arbid') +'"]')
+						var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
 
 						//$cell.append('For ' + $a.text());
 						var $table = $cell.CswTable({ 'ID': o.ID + '_editprop', 'FirstCellRightAlign': true });
@@ -729,7 +729,7 @@ var CswViewEditor_WizardSteps = {
                                                                   type: CswInput_Types.checkbox
                                                                 }); 
 						if($viewnodexml.attr('sortby').toLowerCase() == 'true') {
-							$sortbycheck.attr('checked', 'true');
+							$sortbycheck.CswAttrDom('checked', 'true');
 						}
 
 						$table.CswTable('cell', 2, 1).append('Grid Column Order');
@@ -765,14 +765,14 @@ var CswViewEditor_WizardSteps = {
 					$cell.empty();
 					//$cell.append('For ' + $a.text());
 
-					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.attr('arbid') +'"]')
+					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
 
 					var $table = $cell.CswTable({ 'ID': o.ID + '_editfilt', 'FirstCellRightAlign': true });
 					$table.CswTable('cell', 1, 1).append('Case Sensitive');
 					var $casecheck = $('<input type="checkbox" id="' + o.ID + '_casecb" />')
 											.appendTo($table.CswTable('cell', 1, 2));
 					if($viewnodexml.attr('casesensitive').toLowerCase() === 'true') {
-						$casecheck.attr('checked', 'true');
+						$casecheck.CswAttrDom('checked', 'true');
 					}
 
 					$table.CswTable('cell', 4, 2).CswButton({ 

@@ -37,16 +37,16 @@
                         var elementId = makeId({ID: o.ID, prefix: o.prefix, suffix: o.suffix});
                         var $table = $('<table id="'+ elementId +'"></table>');
 						$table.addClass(o.TableCssClass);
-						$table.attr('width', o.width);
-						$table.attr('align', o.align);
-						$table.attr('cellpadding', o.cellpadding);
-						$table.attr('cellspacing', o.cellspacing);
-						$table.attr('border', '0');
-						$table.attr('cellalign', o.cellalign);
-						$table.attr('cellvalign', o.cellvalign);
-						$table.attr('cellcssclass', o.CellCssClass);
-						$table.attr('FirstCellRightAlign', o.FirstCellRightAlign);
-						$table.attr('OddCellRightAlign', o.OddCellRightAlign);
+						$table.CswAttrDom('width', o.width);
+						$table.CswAttrDom('align', o.align);
+						$table.CswAttrDom('cellpadding', o.cellpadding);
+						$table.CswAttrDom('cellspacing', o.cellspacing);
+						$table.CswAttrDom('border', '0');
+						$table.CswAttrDom('cellalign', o.cellalign);
+						$table.CswAttrDom('cellvalign', o.cellvalign);
+						$table.CswAttrDom('cellcssclass', o.CellCssClass);
+						$table.CswAttrDom('FirstCellRightAlign', o.FirstCellRightAlign);
+						$table.CswAttrDom('OddCellRightAlign', o.OddCellRightAlign);
 
                         $table.bind('CswTable_onCreateCell', function(e, $table, $cell, row, column) { 
                                                                 o.onCreateCell(e, $table, $cell, row, column); 
@@ -170,13 +170,13 @@
 		        var $row = $($table.children('tbody').children('tr')[row-1]);
 		        while (col > $row.children('td').length) 
 				{
-					var align = $table.attr('cellalign');
-					if(($row.children('td').length === 0 && $table.attr('FirstCellRightAlign') == 'true') ||
-					   ($row.children('td').length % 2 === 0 && $table.attr('OddCellRightAlign') == 'true'))
+					var align = $table.CswAttrDom('cellalign');
+					if(($row.children('td').length === 0 && $table.CswAttrDom('FirstCellRightAlign') == 'true') ||
+					   ($row.children('td').length % 2 === 0 && $table.CswAttrDom('OddCellRightAlign') == 'true'))
 					{
 						align = 'right';
 			        }
-					var $newcell = $('<td class="'+ $table.attr('cellcssclass') +'" align="'+ align +'" valign="'+ $table.attr('cellvalign') +'"></td>')
+					var $newcell = $('<td class="'+ $table.CswAttrDom('cellcssclass') +'" align="'+ align +'" valign="'+ $table.CswAttrDom('cellvalign') +'"></td>')
 										.appendTo($row);
                     $table.trigger('CswTable_onCreateCell', [ $table, $newcell, row, $row.children('td').length ]);
 		        }

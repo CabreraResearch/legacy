@@ -25,16 +25,16 @@
 				var $parent = $(this);
 				
 				var $table = $parent.CswTable({ ID: o.ID, TableCssClass: 'CswWizard_WizardTable' });
-				$table.attr("stepcount", o.StepCount);
-				$table.attr("startingstep", o.StartingStep);
+				$table.CswAttrDom("stepcount", o.StepCount);
+				$table.CswAttrDom("startingstep", o.StartingStep);
 				
 				var $titlecell = $table.CswTable('cell', 1, 1)
 									.addClass('CswWizard_TitleCell')
-									.attr('colspan', 2)
+									.CswAttrDom('colspan', 2)
 									.append(o.Title);
 
 				var $indexcell = $table.CswTable('cell', 2, 1)
-									.attr('rowspan', 2)
+									.CswAttrDom('rowspan', 2)
 									.addClass('CswWizard_IndexCell');
 				
 				var $stepscell = $table.CswTable('cell', 2, 2)
@@ -60,11 +60,11 @@
 
 				var $buttontbl = $buttonscell.CswTable({ ID: o.ID + '_btntbl', width: '100%' });
 				var $bcell11 = $buttontbl.CswTable('cell', 1, 1)
-							.attr('align', 'right')
-							.attr('width', '65%');
+							.CswAttrDom('align', 'right')
+							.CswAttrDom('width', '65%');
 				var $bcell12 = $buttontbl.CswTable('cell', 1, 2)
-							.attr('align', 'right')
-							.attr('width', '35%');
+							.CswAttrDom('align', 'right')
+							.CswAttrDom('width', '35%');
 
 				var $prevbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_prev',
 															'enabledText': '< Previous',
@@ -117,16 +117,16 @@
 				switch(button)
 				{
 					case 'previous':
-						$('#' + $table.attr('id') + '_prev').CswButton(action);
+						$('#' + $table.CswAttrDom('id') + '_prev').CswButton(action);
 						break;
 					case 'next':
-						$('#' + $table.attr('id') + '_next').CswButton(action);
+						$('#' + $table.CswAttrDom('id') + '_next').CswButton(action);
 						break;
 					case 'finish':
-						$('#' + $table.attr('id') + '_finish').CswButton(action);
+						$('#' + $table.CswAttrDom('id') + '_finish').CswButton(action);
 						break;
 					case 'cancel':
-						$('#' + $table.attr('id') + '_cancel').CswButton(action);
+						$('#' + $table.CswAttrDom('id') + '_cancel').CswButton(action);
 						break;
 				}
 			}
@@ -135,13 +135,13 @@
 
 	function _getCurrentStepNo($table)
 	{
-		return parseInt($table.find('.CswWizard_StepLinkDivSelected').attr('stepno'));
+		return parseInt($table.find('.CswWizard_StepLinkDivSelected').CswAttrDom('stepno'));
 	}
 	
 	function _selectStep($table, stepno)
 	{
-		var stepcount = $table.attr("stepcount");
-		var startingstep = $table.attr("startingstep");
+		var stepcount = $table.CswAttrDom("stepcount");
+		var startingstep = $table.CswAttrDom("startingstep");
 		if(stepno > 0 && stepno <= stepcount)
 		{
 			$table.find('.CswWizard_StepLinkDiv').removeClass('CswWizard_StepLinkDivSelected');
@@ -150,13 +150,13 @@
 			$table.find('.CswWizard_StepDiv').hide();
 			$table.find('.CswWizard_StepDiv[stepno=' + stepno + ']').show();
 
-			var $prevbtn = $('#' + $table.attr('id') + '_prev');
+			var $prevbtn = $('#' + $table.CswAttrDom('id') + '_prev');
 			if(stepno <= startingstep) 
 				$prevbtn.CswButton('disable');
 			else
 				$prevbtn.CswButton('enable');
 
-			var $nextbtn = $('#' + $table.attr('id') + '_next');
+			var $nextbtn = $('#' + $table.CswAttrDom('id') + '_next');
 			if(stepno >= stepcount)
 				$nextbtn.CswButton('disable');
 			else

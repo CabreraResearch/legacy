@@ -63,7 +63,7 @@
 		'value': function() 
 			{
 				var $selectdiv = $(this);
-				return $selectdiv.attr('selectedValue');
+				return $selectdiv.CswAttrDom('selectedValue');
 			}
 	};
 	
@@ -112,7 +112,7 @@
 		$cell2.append(x.viewname);
 
 		x.$selectdiv.CswComboBox( 'TopContent', $newTopContent );
-		x.$selectdiv.attr('selectedValue', x.viewid);
+		x.$selectdiv.CswAttrDom('selectedValue', x.viewid);
 		setTimeout(function() { x.$selectdiv.CswComboBox( 'toggle'); }, x.ClickDelay);
 		x.onSelect({
 					iconurl: x.iconurl,

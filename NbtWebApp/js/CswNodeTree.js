@@ -286,7 +286,7 @@
 							// case 21424 - Manufacture unique IDs on the expand <ins> for automated testing
 							$treediv.find('li').each(function() {
 								var $li = $(this);
-								$li.children('ins').attr('id', $li.attr('id') + '_expand');
+								$li.children('ins').CswAttrDom('id', $li.CswAttrDom('id') + '_expand');
 							});
 
 						} else {
@@ -309,7 +309,7 @@
 					$.extend(o, optSelect);
 				}
 				var $treediv = $(this).children('.treediv')
-				var IDPrefix = $treediv.attr('id');
+				var IDPrefix = $treediv.CswAttrDom('id');
 				$treediv.jstree('select_node', '#' + IDPrefix + o.newnodeid);
 			}
 	};
@@ -317,12 +317,12 @@
 	function _handleCheck($treediv, $checkbox)
 	{
 		var $selected = jsTreeGetSelected($treediv);
-		return ($selected.$item.attr('rel') === $checkbox.attr('rel'));
+		return ($selected.$item.CswAttrDom('rel') === $checkbox.CswAttrDom('rel'));
 	}
 
 	function _clearChecks(IDPrefix)
 	{
-		$('.'+ IDPrefix +'check').attr('checked', '');
+		$('.'+ IDPrefix +'check').CswAttrDom('checked', '');
 	}
 
 	// Method calling logic

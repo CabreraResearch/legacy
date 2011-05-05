@@ -58,21 +58,21 @@ var CswInput_Types = {
             var $input = $('<input />');
             if( o.ID !== '' ) 
             {
-                $input.attr('id',o.ID);
-                $input.attr('name',o.name);
+                $input.CswAttrDom('id',o.ID);
+                $input.CswAttrDom('name',o.name);
             }
             
             if( o.type !== '' && o.type !== undefined ) 
             {
-                $input.attr('type', o.type.name);
+                $input.CswAttrDom('type', o.type.name);
                 //cannot style placeholder across all browsers yet. Ignore for now.
                 //if( o.type.placeholder === true && o.placeholder !== '')
                 //{
-                //    $input.attr('placeholder',o.placeholder);
+                //    $input.CswAttrDom('placeholder',o.placeholder);
                 //}
                 if( o.type.autocomplete === true && o.autocomplete === 'on' )
                 {
-                    $input.attr('autocomplete','on');
+                    $input.CswAttrDom('autocomplete','on');
                 }
                 if( o.type.value.required === true || ( o.value !== '' && o.value !== undefined ) )
                 {
@@ -81,9 +81,9 @@ var CswInput_Types = {
                 }
             }
             
-            if( o.cssclass !== '' ) $input.attr('class',o.cssclass);
-            if( o.width !== '' ) $input.attr({width: o.width});
-            if( o.autofocus === true ) $input.attr('autofocus');
+            if( o.cssclass !== '' ) $input.CswAttrDom('class',o.cssclass);
+            if( o.width !== '' ) $input.CswAttrDom({width: o.width});
+            if( o.autofocus === true ) $input.CswAttrDom('autofocus');
             if( o.onChange !== undefined ) $input.change( function () { o.onChange() } );
                                 
             $parent.append($input);

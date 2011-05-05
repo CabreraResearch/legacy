@@ -112,7 +112,7 @@ var CswSearch_CssClasses = {
             {
                 //Row i, Column 1: and
                 var $andCell = o.$searchTable.CswTable('cell', andRow, 1)
-                               .attr({align:"right"});
+                               .CswAttrDom({align:"right"});
                 var $andText = $('<span>&nbsp;and&nbsp;</span>');
                 $andCell.append($andText);
                 andRow++;
@@ -159,14 +159,14 @@ var CswSearch_CssClasses = {
                                                 .empty();
             var nodeTypeSelectId = makeId({ID: 'nodetype_select',prefix: o.ID});
             var $nodeTypesSelect = $(xmlToString(o.$nodeTypesXml.children('select')))
-                                    .attr('id', nodeTypeSelectId)
-                                    .attr('name', nodeTypeSelectId)
-                                    .attr('class',CswSearch_CssClasses.nodetype_select.name)
+                                    .CswAttrDom('id', nodeTypeSelectId)
+                                    .CswAttrDom('name', nodeTypeSelectId)
+                                    .CswAttrDom('class',CswSearch_CssClasses.nodetype_select.name)
                                     .change( function() {
                                            var $thisSelect = $(this);
                                            var r = {
                                                 'nodetypeorobjectclassid': $thisSelect.val(),
-                                                'relatedidtype': $thisSelect.find(':selected').attr('title'),
+                                                'relatedidtype': $thisSelect.find(':selected').CswAttrDom('title'),
                                                 'cswnbtnodekey': '',
                                                 '$parent': o.$searchTable,
                                                 '$nodeTypesSelect': $thisSelect 
@@ -175,10 +175,10 @@ var CswSearch_CssClasses = {
                                            getNewProps();  
                                     });
             o.$nodeTypesSelect = $nodeTypesSelect;
-            o.relatedidtype = $nodeTypesSelect.find(':selected').attr('title');
+            o.relatedidtype = $nodeTypesSelect.find(':selected').CswAttrDom('title');
             if(o.nodetypeorobjectclassid !== '' )
             {
-                $nodeTypesSelect.val(o.nodetypeorobjectclassid).attr('selected',true);
+                $nodeTypesSelect.val(o.nodetypeorobjectclassid).CswAttrDom('selected',true);
             }
             $typeSelectCell.append($nodeTypesSelect);
         
@@ -188,9 +188,9 @@ var CswSearch_CssClasses = {
                                     .empty();
             var propSelectId = makeId({ID: 'property_select', prefix: o.ID});
             var $propSelect = $(xmlToString(o.$propsXml.children('properties').children('select')))
-                            .attr('id', propSelectId)
-                            .attr('name', propSelectId)
-                            .attr('class',CswSearch_CssClasses.property_select.name)
+                            .CswAttrDom('id', propSelectId)
+                            .CswAttrDom('name', propSelectId)
+                            .CswAttrDom('class',CswSearch_CssClasses.property_select.name)
                             .change(function() {
                                     var $this = $(this);
                                     var thisPropId = $this.val();
@@ -214,7 +214,7 @@ var CswSearch_CssClasses = {
                                 
             if(o.propertyid !== '' )
             {
-                $propSelect.val(o.propertyid).attr('selected',true);
+                $propSelect.val(o.propertyid).CswAttrDom('selected',true);
             }
             $propSelectCell.append($propSelect);
             
@@ -305,7 +305,7 @@ var CswSearch_CssClasses = {
                                                     });  
             //Row i, Column 5: search button
             var $searchButtonCell = o.$searchTable.CswTable('cell', o.bottomRow, o.searchBtnCell)
-                                    .attr({align:"right"})
+                                    .CswAttrDom({align:"right"})
                                     .empty();
             var searchButtonId = makeId({ID: 'search_button', prefix: o.ID});
             var $searchButton = $searchButtonCell.CswButton({ID: searchButtonId, 
@@ -404,7 +404,7 @@ var CswSearch_CssClasses = {
                             var viewbuildpropid = $thisProp.val();
                             var fieldtype = o.$propsXml.children('propertyfilters')
                                                        .children('property[propname="' + propName + '"][viewbuilderpropid="' + viewbuildpropid + '"]')
-                                                       .attr('fieldtype');
+                                                       .CswAttrDom('fieldtype');
                             var thisNodeProp = $thisProp.CswViewPropFilter('getFilterJson',{nodetypeorobjectclassid: nodetypeorobjectclassid,
                                                                                           relatedidtype: o.relatedidtype,  
                                                                                           fieldtype: fieldtype,

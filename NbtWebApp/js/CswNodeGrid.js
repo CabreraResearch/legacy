@@ -166,7 +166,7 @@
 						};
                         
 						$gridTable.jqGrid(jqGridOptions)
-										 .navGrid('#'+$gridPager.attr('id'), optNav, {}, {}, {}, optSearch, {} ); 
+										 .navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, optSearch, {} ); 
                                          //all JSON options past 'optNav' define the behavior of the built-in pop-up
 					
 						//remove some dup elements from top pager

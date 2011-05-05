@@ -74,9 +74,9 @@
 							tabdivs[tabdivs.length] = $("<div><ul></ul></div>").appendTo($outertabdiv);
 						}
 						var $tabdiv = tabdivs[tabdivs.length - 1];
-						$tabdiv.children('ul').append('<li><a href="#' + $tab.attr('id') + '">' + $tab.attr('name') + '</a></li>');
-						$tabdiv.append('<div id="' + $tab.attr('id') + '"><form id="' + $tab.attr('id') + '_form" /></div>');
-						if($tab.attr('id') === o.tabid)
+						$tabdiv.children('ul').append('<li><a href="#' + $tab.CswAttrDom('id') + '">' + $tab.CswAttrDom('name') + '</a></li>');
+						$tabdiv.append('<div id="' + $tab.CswAttrDom('id') + '"><form id="' + $tab.CswAttrDom('id') + '_form" /></div>');
+						if($tab.CswAttrDom('id') === o.tabid)
 						{
 							selectedtabno = tabno;
 						}
@@ -93,7 +93,7 @@
 								if(o.onBeforeTabSelect(tabid))
 								{
 									var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
-									var tabid = $tabcontentdiv.attr('id');
+									var tabid = $tabcontentdiv.CswAttrDom('id');
 									getProps($tabcontentdiv, tabid);
 
 									o.onTabSelect(tabid);
@@ -103,7 +103,7 @@
 							}
 						});
 						var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
-						var selectedtabid = $tabcontentdiv.attr('id');
+						var selectedtabid = $tabcontentdiv.CswAttrDom('id');
 						getProps($tabcontentdiv, selectedtabid);
 						o.onTabSelect(selectedtabid);
 					} // for(var t in tabdivs)
@@ -213,16 +213,16 @@
 						highlight: function (element, errorClass)
 						{
 							var $elm = $(element);
-							$elm.attr('csw_invalid', '1');
+							$elm.CswAttrDom('csw_invalid', '1');
 							$elm.animate({ backgroundColor: '#ff6666' });
 						},
 						unhighlight: function (element, errorClass)
 						{
 							var $elm = $(element);
-							if($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
+							if($elm.CswAttrDom('csw_invalid') === '1')  // only unhighlight where we highlighted
 							{
 								$elm.css('background-color', '#66ff66');
-								$elm.attr('csw_invalid', '0')
+								$elm.CswAttrDom('csw_invalid', '0')
 								setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
 							}
 						}
@@ -241,7 +241,7 @@
 		{
 			if ($propdiv.length > 0)
 			{
-				var propid = $propdiv.attr('propid');
+				var propid = $propdiv.CswAttrDom('propid');
 				CswAjaxJSON({
 					url: o.MovePropUrl,
 					data: '{ "PropId": "' + propid + '", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '", "EditMode": "'+ o.EditMode +'" }',
@@ -294,7 +294,7 @@
                                                                         value: Value,
                                                                         cssclass: o.ID +'_check'                                                                   
                                                                     }); 
-						$propcheck.attr('propid',propid);	
+						$propcheck.CswAttrDom('propid',propid);	
 					}
 				}
 
@@ -418,7 +418,7 @@
 								var datastr = "{ SourceNodeKey: '" + o.cswnbtnodekey + "', CopyNodeIds: [";
 								var first = true;
 								$nodechecks.each(function() { 
-									var nodeid = $(this).attr('nodeid');
+									var nodeid = $(this).CswAttrDom('nodeid');
 									if(!first) datastr += ',';
 									datastr += "'" + nodeid + "'"; 
 									first = false;
@@ -426,7 +426,7 @@
 								datastr += '], PropIds: [';
 								first = true;
 								$propchecks.each(function() { 
-									var propid = $(this).attr('propid');
+									var propid = $(this).CswAttrDom('propid');
 									if(!first) datastr += ',';
 									datastr += "'" + propid + "'"; 
 									first = false;

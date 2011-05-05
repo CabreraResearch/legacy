@@ -56,7 +56,7 @@
 		'value': function ()
 		{
 			var $CheckboxImage = $(this);
-			var Checked = $CheckboxImage.attr('alt');
+			var Checked = $CheckboxImage.CswAttrDom('alt');
             return Checked;
 		}
  
@@ -64,7 +64,7 @@
 
     function onClick($ImageDiv, Required)
 	{
-		var currentValue = $ImageDiv.attr('alt');
+		var currentValue = $ImageDiv.CswAttrDom('alt');
 		var newValue = CswImageButton_ButtonType.CheckboxNull;
 		var newAltText = "null";
 		if (currentValue === "null") {
@@ -82,7 +82,7 @@
 			newValue = CswImageButton_ButtonType.CheckboxFalse;
 			newAltText = "false";
 		}
-		$ImageDiv.attr('alt', newAltText);
+		$ImageDiv.CswAttrDom('alt', newAltText);
         return newValue;
 	} // onClick()
 

@@ -134,7 +134,7 @@ var ViewBuilder_CssClasses = {
                                                     ID: defaultSubFieldId,
                                                     value: $defaultFilter,
                                                     cssclass: ViewBuilder_CssClasses.default_filter.name })
-                                                .attr({align:"center"});
+                                                .CswAttrDom({align:"center"});
                 if( !o.advancedIsHidden )
                 {
                     $defaultSubField.hide();
@@ -143,9 +143,9 @@ var ViewBuilder_CssClasses = {
                 //Row propRow, Column 4: subfield picklist 
                 var subfieldOptionsId = makePropFilterId('subfield_select', filtOpt);
                 var $subfieldsOptions = $(xmlToString(o.$propsXml.children('subfields').children('select')))
-                                        .attr('id', subfieldOptionsId)
-                                        .attr('name', subfieldOptionsId)
-                                        .attr('class',ViewBuilder_CssClasses.subfield_select.name)
+                                        .CswAttrDom('id', subfieldOptionsId)
+                                        .CswAttrDom('name', subfieldOptionsId)
+                                        .CswAttrDom('class',ViewBuilder_CssClasses.subfield_select.name)
                                         .change(function() {
                                             var $this = $(this);
                                             var r = {
@@ -157,7 +157,7 @@ var ViewBuilder_CssClasses = {
 
                 if(o.selectedSubfieldVal !== '')
                 {
-                    $subfieldsOptions.val(o.selectedSubfieldVal).attr('selected',true);
+                    $subfieldsOptions.val(o.selectedSubfieldVal).CswAttrDom('selected',true);
                 }
                 $subfieldCell.append($subfieldsOptions);
                 if( o.advancedIsHidden )
@@ -165,16 +165,16 @@ var ViewBuilder_CssClasses = {
                     $subfieldsOptions.hide();
                 }
                 var subfield = $subfieldsOptions.find(':selected').val();
-                var defaultValue = $subfieldsOptions.find(':selected').attr('defaultvalue');
+                var defaultValue = $subfieldsOptions.find(':selected').CswAttrDom('defaultvalue');
 
                 //Row propRow, Column 5: filter picklist
                 var $filtersCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 2)) //5
                                                    .empty();
                 var filtersOptionsId = makePropFilterId('filter_select', filtOpt);
                 var $filtersOptions =  $(xmlToString(o.$propsXml.children('propertyfilters').children('subfield[column=' + subfield + ']').children('select')))
-                                        .attr('id', filtersOptionsId)
-                                        .attr('name', filtersOptionsId)
-                                        .attr('class',ViewBuilder_CssClasses.filter_select.name)
+                                        .CswAttrDom('id', filtersOptionsId)
+                                        .CswAttrDom('name', filtersOptionsId)
+                                        .CswAttrDom('class',ViewBuilder_CssClasses.filter_select.name)
                                         .change(function() {
                                             var $this = $(this);
                                             var r = {
@@ -186,7 +186,7 @@ var ViewBuilder_CssClasses = {
 
                 if(o.selectedFilterVal !== '')
                 {
-                    $filtersOptions.val(o.selectedFilterVal).attr('selected',true);
+                    $filtersOptions.val(o.selectedFilterVal).CswAttrDom('selected',true);
                 }
                 $filtersCell.append($filtersOptions);
                 if( o.advancedIsHidden )
