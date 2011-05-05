@@ -74,9 +74,9 @@
 							tabdivs[tabdivs.length] = $("<div><ul></ul></div>").appendTo($outertabdiv);
 						}
 						var $tabdiv = tabdivs[tabdivs.length - 1];
-						$tabdiv.children('ul').append('<li><a href="#' + $tab.CswAttrDom('id') + '">' + $tab.CswAttrDom('name') + '</a></li>');
-						$tabdiv.append('<div id="' + $tab.CswAttrDom('id') + '"><form id="' + $tab.CswAttrDom('id') + '_form" /></div>');
-						if($tab.CswAttrDom('id') === o.tabid)
+						$tabdiv.children('ul').append('<li><a href="#' + $tab.CswAttrXml('id') + '">' + $tab.CswAttrXml('name') + '</a></li>');
+						$tabdiv.append('<div id="' + $tab.CswAttrXml('id') + '"><form id="' + $tab.CswAttrXml('id') + '_form" /></div>');
+						if($tab.CswAttrXml('id') === o.tabid)
 						{
 							selectedtabno = tabno;
 						}
