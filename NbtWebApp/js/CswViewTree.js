@@ -61,7 +61,7 @@
 									var Selected = jsTreeGetSelected($viewsdiv); 
 									var optSelect = {
 												iconurl: Selected.iconurl,
-												type: Selected.$item.attr('type'),
+												type: Selected.$item.attr('viewtype'),
 												viewid: Selected.$item.attr('viewid'),
 												viewname: Selected.text,
 												viewmode: Selected.$item.attr('viewmode'),

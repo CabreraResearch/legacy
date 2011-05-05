@@ -577,6 +577,17 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
 				});
 				break;
 
+			case 'PrintLabel':
+				$a.click(function ()
+				{
+					$.CswDialog('PrintLabelDialog', {
+						'nodeid': o.$itemxml.attr('nodeid'),
+						'propid': o.$itemxml.attr('propid')
+					});
+					return false;
+				});
+				break;
+
 			case 'Home':
 				$a.click(function () { GoHome(); return false; });
 				break;

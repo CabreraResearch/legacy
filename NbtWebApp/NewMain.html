@@ -230,8 +230,9 @@
 
 			    switch (o.viewmode) //webservice converts to lower case
 			    {
-			        case 'grid':
-			            {
+			    	case 'Grid':
+			    	case 'grid':
+			    		{
 			                getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
 			                break;
 			            }
@@ -242,9 +243,9 @@
 			            }
 			    }
 			}
-			else if (o.type !== undefined && o.type !== '')
+			else if (!isNullOrEmpty(o.type))
 			{
-			    switch (o.type)
+				switch (o.type)
 			    {
 			    	case 'action':
 			    		{
@@ -287,61 +288,62 @@
 		}
 
 		$('#MainMenuDiv').CswMenuMain({
-		    'viewid': o.viewid,
-		    'nodeid': o.nodeid,
-		    'cswnbtnodekey': o.cswnbtnodekey,
-		    'onAddNode': function (nodeid, cswnbtnodekey)
-		    {
-		        refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
-		    },
-		    'onMultiEdit': function ()
-		    {
-		        multi = !multi;
-		        refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-		    },
-		    'onSearch':
+			'viewid': o.viewid,
+			'nodeid': o.nodeid,
+			'cswnbtnodekey': o.cswnbtnodekey,
+			'onAddNode': function (nodeid, cswnbtnodekey)
+			{
+				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+			},
+			'onMultiEdit': function ()
+			{
+				multi = !multi;
+				refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			},
+			'onSearch':
                 {
-                    'onViewSearch': function ()
-                    {
-                        var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
-                        var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
-                        var $searchForm = refreshSearchPanel({ 'genericSearchId': genericSearchId,
-                                                               'viewSearchId': viewSearchId,
-                                                               'searchType': 'view',
-                                                               'cswnbtnodekey': o.cswnbtnodekey,
-                                                               'viewid': o.viewid
-                                                            });
-                    },
-                    'onGenericSearch': function ()
-                    {
-                        var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
-                        var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
-                        var $searchForm = refreshSearchPanel({ 'genericSearchId': genericSearchId,
-                                                               'viewSearchId': viewSearchId,
-                                                               'searchType': 'generic',
-                                                               'cswnbtnodekey': o.cswnbtnodekey
-                                                           });
-                    }
+                	'onViewSearch': function ()
+                	{
+                		var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
+                		var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
+                		var $searchForm = refreshSearchPanel({ 'genericSearchId': genericSearchId,
+                			'viewSearchId': viewSearchId,
+                			'searchType': 'view',
+                			'cswnbtnodekey': o.cswnbtnodekey,
+                			'viewid': o.viewid
+                		});
+                	},
+                	'onGenericSearch': function ()
+                	{
+                		var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
+                		var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
+                		var $searchForm = refreshSearchPanel({ 'genericSearchId': genericSearchId,
+                			'viewSearchId': viewSearchId,
+                			'searchType': 'generic',
+                			'cswnbtnodekey': o.cswnbtnodekey
+                		});
+                	}
                 },
-		    'onEditView': function (viewid)
-		    {
-		        clear({ 'all': true });
-		        $('#CenterTopDiv').CswViewEditor({
-		            'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
-		            'onCancel': function ()
-		            {
-		                clear({ 'all': true });
-		                refreshSelected();
-		            },
-		            'onFinish': function (viewid, viewmode)
-		            {
-		                clear({ 'all': true });
-		                handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
-		            }
-		        });
-		    },
-		    'Multi': multi,
-		    'NodeCheckTreeId': MainTreeId
+			'onEditView': function (viewid)
+			{
+				clear({ 'all': true });
+				$('#CenterTopDiv').CswViewEditor({
+					'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
+					'viewmode': $.CswCookie('get', CswCookieName.CurrentView.ViewMode),
+					'onCancel': function ()
+					{
+						clear({ 'all': true });
+						refreshSelected();
+					},
+					'onFinish': function (viewid, viewmode)
+					{
+						clear({ 'all': true });
+						handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+					}
+				});
+			},
+			'Multi': multi,
+			'NodeCheckTreeId': MainTreeId
 		});
 	}
 
@@ -560,7 +562,8 @@
             {
                 clear({ 'all': true });
                 $('#CenterTopDiv').CswViewEditor({
-                    'viewid': viewid,
+                	'viewid': viewid,
+					'viewmode': 'Grid',
                     'onCancel': function ()
                     {
                         clear({ 'all': true });
@@ -568,10 +571,11 @@
                     },
                     'onFinish': function (viewid, viewmode)
                     {
-                        clear({ 'all': true });
-                        handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
-                    },
-                    'stepsToExecute': [2, 3, 4, 5, 6]
+                        // ignore incoming viewid and viewmode, restore previous instead
+						clear({ 'all': true });
+						refreshSelected();
+					},
+                    'startingStep': 2
                 });
             },
 			'ShowCheckboxes': multi,
