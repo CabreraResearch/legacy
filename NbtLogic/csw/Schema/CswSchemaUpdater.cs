@@ -19,9 +19,6 @@ namespace ChemSW.Nbt.Schema
         private CswTableUpdate _UpdateHistoryTableUpdate;
         private DataTable _UpdateHistoryTable;
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
-        private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = null;
-        private CswScriptCollections _CswScriptCollections = null;
-
 
         public enum HamletNodeTypes
         {
@@ -41,67 +38,44 @@ namespace ChemSW.Nbt.Schema
             return ( NodeType.ToString().Replace( '_', ' ' ) );
         }
 
+        ICswSchemaScripts _CswSchemaScripts = null;
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswSchemaUpdater( CswNbtResources CswNbtResources )
+        public CswSchemaUpdater( CswNbtResources CswNbtResources, ICswSchemaScripts CswSchemaScripts )
         {
+            _CswSchemaScripts = CswSchemaScripts;
             _CswNbtResources = CswNbtResources;
             _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
 
-            // This is where you manually set to the last version of the previous release
-            MinimumVersion = new CswSchemaVersion( 1, 'G', 32 );
 
-            _CswScriptCollections = new CswScriptCollections( _CswNbtResources );
-            _UpdateDrivers = _CswScriptCollections.Prod;
 
-            // This automatically detects the latest version
-            foreach( CswSchemaVersion Version in _UpdateDrivers.Keys )
-            {
-                if( LatestVersion == null ||
-                    ( LatestVersion.CycleIteration == Version.CycleIteration &&
-                      LatestVersion.ReleaseIdentifier == Version.ReleaseIdentifier &&
-                      LatestVersion.ReleaseIteration < Version.ReleaseIteration ) )
-                {
-                    LatestVersion = Version;
-                }
-            }
         }
 
         /// <summary>
         /// The highest schema version number defined in the updater
         /// </summary>
-        public CswSchemaVersion LatestVersion = null;
+        public CswSchemaVersion LatestVersion { get { return ( _CswSchemaScripts.LatestVersion ); } }
         /// <summary>
         /// The minimum version required to use this updater
         /// </summary>
-        public CswSchemaVersion MinimumVersion = null;
+        public CswSchemaVersion MinimumVersion { get { return ( _CswSchemaScripts.MinimumVersion ); } }
 
-        private CswSchemaVersion CurrentVersion
-        {
-            get { return new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ) ); }
-        }
+
+        public CswSchemaVersion CurrentVersion { get { return ( _CswSchemaScripts.CurrentVersion ); } }
 
         /// <summary>
         /// Schema version of the currently targeted schema
         /// </summary>
-        public CswSchemaVersion TargetVersion
-        {
-            get
-            {
-                CswSchemaVersion ret = null;
-                if( CurrentVersion == MinimumVersion )
-                    ret = new CswSchemaVersion( LatestVersion.CycleIteration, LatestVersion.ReleaseIdentifier, 1 );
-                else
-                    ret = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
-                return ret;
-            }
-        }
+        public CswSchemaVersion TargetVersion { get { return ( _CswSchemaScripts.TargetVersion ); } }
 
         private string _ErrorMessage = string.Empty;
         public string ErrorMessage { get { return ( _ErrorMessage ); } }
 
-
+        public CswSchemaUpdateDriver getDriver( CswSchemaVersion CswSchemaVersion )
+        {
+            return ( _CswSchemaScripts[CswSchemaVersion] );
+        }//getDriver()
 
         /// <summary>
         /// Update the schema to the next version
@@ -111,21 +85,14 @@ namespace ChemSW.Nbt.Schema
             _UpdateHistoryTableUpdate = _CswNbtResources.makeCswTableUpdate( "schemaupdater_updatehistory_update", "update_history" );
             _UpdateHistoryTable = _UpdateHistoryTableUpdate.getTable();
 
+            CswSchemaUpdateDriver CurrentUpdateDriver = null;
             bool UpdateSuccessful = true;
-            if( CurrentVersion == MinimumVersion ||
-                ( LatestVersion.CycleIteration == CurrentVersion.CycleIteration &&
-                  LatestVersion.ReleaseIdentifier == CurrentVersion.ReleaseIdentifier &&
-                  LatestVersion.ReleaseIteration > CurrentVersion.ReleaseIteration ) )
+            if( null != ( CurrentUpdateDriver = _CswSchemaScripts.Next ) )
             {
-                //CswSchemaVersion TargetVersion = null;
-                //if( CurrentVersion == MinimumVersion )
-                //    TargetVersion = new CswSchemaVersion( LatestVersion.CycleIteration, LatestVersion.ReleaseIdentifier, 1 );
-                //else
-                //    TargetVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
 
-                CswSchemaUpdateDriver CurrentUpdateDriver = _UpdateDrivers[TargetVersion] as CswSchemaUpdateDriver;
                 CurrentUpdateDriver.update();
                 UpdateSuccessful = CurrentUpdateDriver.UpdateSucceeded;
+
 
                 if( !UpdateSuccessful )
                 {
@@ -135,7 +102,8 @@ namespace ChemSW.Nbt.Schema
                 }
                 else
                 {
-                    _CswNbtResources.setConfigVariableValue( "schemaversion", CurrentUpdateDriver.SchemaVersion.ToString() );
+                    _CswSchemaScripts.stampSchemaVersion( CurrentUpdateDriver );
+
                 }
 
                 DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();

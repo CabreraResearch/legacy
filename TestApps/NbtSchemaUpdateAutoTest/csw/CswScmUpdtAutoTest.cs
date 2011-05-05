@@ -20,7 +20,7 @@ using ChemSW.Log;
 using ChemSW.Config;
 using ChemSW.Nbt.Security;
 
-namespace ChemSW.Nbt.SchemaUpdaterAutoTest
+namespace ChemSW.Nbt.Schema
 {
     /// <summary>
     /// Keeps the schema up-to-date

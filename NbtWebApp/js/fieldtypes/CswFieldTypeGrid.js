@@ -39,9 +39,9 @@
                 'onEditNode': function() { 
                     refreshGrid(gridOpts);
                 },
-                'onAddNode': function() { 
-                    refreshGrid(gridOpts);
-                },
+//                'onAddNode': function() { 
+//                    refreshGrid(gridOpts);
+//                },
                 'onDeleteNode': function() { 
                     refreshGrid(gridOpts);
                 }

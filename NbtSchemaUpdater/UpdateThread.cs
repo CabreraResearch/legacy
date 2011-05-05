@@ -45,6 +45,10 @@ namespace ChemSW.Nbt.Schema
         public static string _ColName_Deactivated = "Deactivated";
         public static string _ColName_Display = "Display";
 
+
+
+
+
         #endregion Thread Interface
 
         #region Session and Database
@@ -60,6 +64,7 @@ namespace ChemSW.Nbt.Schema
         private CswNbtMetaDataEvents _CswNbtMetaDataEvents = null;
 
 
+        private CswSchemaScriptsProd _CswSchemaScriptsProd = null;
         private void _InitSessionResources()
         {
             try
@@ -68,6 +73,7 @@ namespace ChemSW.Nbt.Schema
                 _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Executable );
 
                 _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ) ,false , false );
+                _CswSchemaScriptsProd = new CswSchemaScriptsProd( _CswNbtResources );
                 _CswLogger = _CswNbtResources.CswLogger;
 
                 _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
@@ -211,7 +217,7 @@ namespace ChemSW.Nbt.Schema
 
                 SchemaInfoEventArgs e = new SchemaInfoEventArgs();
 
-                _CswSchemaUpdater = new CswSchemaUpdater( _CswNbtResources ); //wait to create updater until resource initiation is thoroughly done
+                _CswSchemaUpdater = new CswSchemaUpdater( _CswNbtResources, _CswSchemaScriptsProd ); //wait to create updater until resource initiation is thoroughly done
                 e.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
                 e.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
 
@@ -250,11 +256,11 @@ namespace ChemSW.Nbt.Schema
                 _InitSessionResources();
                 _CswNbtResources.AccessId = AccessId;
 
-                _CswSchemaUpdater = new CswSchemaUpdater( _CswNbtResources ); //wait to create updater until resource initiation is thoroughly done
+                _CswSchemaUpdater = new CswSchemaUpdater( _CswNbtResources, _CswSchemaScriptsProd ); //wait to create updater until resource initiation is thoroughly done
 
                 bool UpdateSucceeded = true;
                 SchemaInfoEventArgs e = new SchemaInfoEventArgs();
-                CswSchemaVersion CurrentVersion = new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ).ToString() );
+                CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion;
                 while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
                 {
                     SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion.ToString() );
@@ -264,7 +270,7 @@ namespace ChemSW.Nbt.Schema
                     e.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
                     e.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
 
-                    CurrentVersion = new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ).ToString() );
+                    CurrentVersion = _CswSchemaUpdater.CurrentVersion;
                     e.CurrentSchemaVersion = CurrentVersion;
 
                     CswTableSelect UpdateHistorySelect = _CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
@@ -304,7 +310,7 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        #endregion DoUpdate
+        #endregion DoUpdate/
 
     } // class UpdateThread
 

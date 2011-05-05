@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ChemSW.Nbt.SchemaUpdaterAutoTest
+namespace ChemSW.Nbt.Schema
 {
     public partial class MainForm : Form
     {

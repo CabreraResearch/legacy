@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
             CmdLn.UpdateState FinalState;
             try
             {
-                if( _CswSchemaUpdater.Update() )
+                 if( _CswSchemaUpdater.Update() )
                 {
                     FinalState = CmdLn.UpdateState.Succeeded;
 

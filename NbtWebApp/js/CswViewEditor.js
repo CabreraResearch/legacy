@@ -25,31 +25,24 @@ var CswViewEditor_WizardSteps = {
 			ChildOptionsUrl: '/NbtWebApp/wsNBT.asmx/getViewChildOptions',
 			PropNamesUrl: '/NbtWebApp/wsNBT.asmx/getPropNames',
 			viewid: '',
+			viewname: '',
+			viewmode: '',
 			ID: 'vieweditor',
 			ColumnViewName: 'VIEWNAME', 
 			ColumnViewId: 'NODEVIEWID',
 			ColumnViewMode: 'VIEWMODE',
 			onCancel: function() {},
 			onFinish: function(viewid, viewmode) {},
-            stepsToExecute: [1,2,3,4,5,6]
+			startingStep: 1
 		};
 		if(options) $.extend(o, options);
 
         var WizardStepArray = [ CswViewEditor_WizardSteps.step1, CswViewEditor_WizardSteps.step2, CswViewEditor_WizardSteps.step3, 
                                 CswViewEditor_WizardSteps.step4, CswViewEditor_WizardSteps.step5, CswViewEditor_WizardSteps.step6];
-        var WizardSteps = {};
-        var WizardStepsCount = 0;
-                
-        for( var i=0; i < WizardStepArray.length; i++ )
+        var WizardSteps = {};                
+        for( var i = 1; i <= WizardStepArray.length; i++ )
         {                
-            var step = WizardStepArray[i];
-            if( -1 !== $.inArray( step.step, o.stepsToExecute ) )
-            {
-                WizardStepsCount++;
-                var StepToInclude = {};
-                StepToInclude[WizardStepsCount] = step.description;
-                $.extend(WizardSteps,StepToInclude);
-            }
+			WizardSteps[i] = WizardStepArray[i-1].description;
         }
 
 		var $parent = $(this);
@@ -59,210 +52,195 @@ var CswViewEditor_WizardSteps = {
 		var $wizard = $div.CswWizard('init', { 
 				'ID': o.ID + '_wizard',
 				'Title': 'Edit View',
-				'StepCount': WizardStepsCount,
+				'StepCount': WizardStepArray.length,
 				'Steps': WizardSteps,
+				'StartingStep': o.startingStep,
 				'FinishText': 'Save and Finish',
 				'onNext': _handleNext,
 				'onPrevious': _handlePrevious,
 				'onBeforePrevious': _onBeforePrevious,
 				'onCancel': o.onCancel,
-				'onFinish': _handleFinish 
+				'onFinish': _handleFinish
 			});
 
         // Step 1 - Choose a View
-        if( -1 !== $.inArray( CswViewEditor_WizardSteps.step1.step, o.stepsToExecute ) )
-		{
-		    var $div1 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step1.step);
-		    var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  "+
-							    "Views are useful for defining a user's workflow or for creating elaborate search criteria. "+
-							    "This wizard will take you step by step through the process of creating a new View or "+
-							    "editing an existing View.<br/><br/>";
-		    $div1.append(instructions);
-		    $div1.append('Select a View to Edit:&nbsp;');
-		    var $selview_span = $('<span id="'+ o.ID +'_selviewname" style="font-weight: bold"></span>')
-								    .appendTo($div1);
-		    var $viewgrid_div = $('<div></div>').appendTo($div1);
-		    var $viewgrid;
-		    function onViewGridSuccess($vg) { 
-			    $viewgrid = $vg; 
-		    }
-		    _getViewsGrid(onViewGridSuccess, o.viewid);
+		var $div1 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step1.step);
+		var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  "+
+							"Views are useful for defining a user's workflow or for creating elaborate search criteria. "+
+							"This wizard will take you step by step through the process of creating a new View or "+
+							"editing an existing View.<br/><br/>";
+		$div1.append(instructions);
+		$div1.append('Select a View to Edit:&nbsp;');
+		var $selview_span = $('<span id="'+ o.ID +'_selviewname" style="font-weight: bold"></span>')
+								.appendTo($div1);
+		var $viewgrid_div = $('<div></div>').appendTo($div1);
+		var $viewgrid;
+		function onViewGridSuccess($vg) { 
+			$viewgrid = $vg; 
+		}
+		_getViewsGrid(onViewGridSuccess, o.viewid);
 
-		    var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: '100%' });
-		    var $div1_btntbl_cell11 = $div1_btntbl.CswTable('cell', 1, 1)
-		    var $div1_btntbl_cell12 = $div1_btntbl.CswTable('cell', 1, 2)
-		    $div1_btntbl_cell12.attr('align', 'right');
-		    var $allcheck_div = $('<div></div>').appendTo($div1_btntbl_cell12);
+		var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: '100%' });
+		var $div1_btntbl_cell11 = $div1_btntbl.CswTable('cell', 1, 1)
+		var $div1_btntbl_cell12 = $div1_btntbl.CswTable('cell', 1, 2)
+		$div1_btntbl_cell12.attr('align', 'right');
+		var $allcheck_div = $('<div></div>').appendTo($div1_btntbl_cell12);
 
-		    IsAdministrator({
-			    'Yes': function() {
-				    var $showOther = $allcheck_div.CswInput('init',{ID: o.ID + '_all',
-                                                                    type: CswInput_Types.checkbox,
-                                                                    onChange: function() { 
-						                                                            _getViewsGrid(onViewGridSuccess); 
-					                                                            }
-                                                                    });
-                    $allcheck_div.append('Show Other Roles/Users');
-			    }
-		    });
+		IsAdministrator({
+			'Yes': function() {
+				var $showOther = $allcheck_div.CswInput('init',{ID: o.ID + '_all',
+                                                                type: CswInput_Types.checkbox,
+                                                                onChange: function() { 
+						                                                        _getViewsGrid(onViewGridSuccess); 
+					                                                        }
+                                                                });
+                $allcheck_div.append('Show Other Roles/Users');
+			}
+		});
 
-		    var $copyviewbtn = $div1_btntbl_cell11.CswButton({
-			    'ID': o.ID + '_copyview',
-			    'enabledText': 'Copy View',
-			    'disableOnClick': true,
-			    'onclick': function() {
-				    var viewid = _getSelectedRowValue($viewgrid, o.ColumnViewId);
-				    if(viewid !== '' && viewid !== undefined)
-				    {
-					    CswAjaxJSON({
-						    url: o.CopyViewUrl,
-						    data: "{ ViewId: "+ viewid +" }",
-						    success: function (gridJson) {
-							    _getViewsGrid(onViewGridSuccess, gridJson.copyviewid); 
-						    },
-						    error: function() {
-							    $copyviewbtn.CswButton('enable');
-						    }
-					    });
-				    } // if(viewid !== '' && viewid !== undefined)
-			    } // onclick
-		    }); // copy button
-		    $copyviewbtn.CswButton('disable');
+		var $copyviewbtn = $div1_btntbl_cell11.CswButton({
+			'ID': o.ID + '_copyview',
+			'enabledText': 'Copy View',
+			'disableOnClick': true,
+			'onclick': function() {
+				var viewid = _getSelectedViewId($viewgrid);
+				if(viewid !== '' && viewid !== undefined)
+				{
+					CswAjaxJSON({
+						url: o.CopyViewUrl,
+						data: "{ ViewId: "+ viewid +" }",
+						success: function (gridJson) {
+							_getViewsGrid(onViewGridSuccess, gridJson.copyviewid); 
+						},
+						error: function() {
+							$copyviewbtn.CswButton('enable');
+						}
+					});
+				} // if(viewid !== '' && viewid !== undefined)
+			} // onclick
+		}); // copy button
+		$copyviewbtn.CswButton('disable');
 
-		    var $deleteviewbtn = $div1_btntbl_cell11.CswButton({
-			    'ID': o.ID + '_deleteview',
-			    'enabledText': 'Delete View',
-			    'disableOnClick': true,
-			    'onclick': function() {
-			        var viewid = _getSelectedRowValue($viewgrid, o.ColumnViewId);
-				    if(viewid !== '' && viewid !== undefined)
-				    {
-					    if(confirm("Are you sure you want to delete: " + _getSelectedRowValue($viewgrid, o.ColumnViewName)))
-					    {
-						    CswAjaxJSON({
-							    url: o.DeleteViewUrl,
-							    data: "{ ViewId: "+ viewid +" }",
-							    success: function (gridJson) {
-								    _getViewsGrid(onViewGridSuccess); 
-								    $copyviewbtn.CswButton('disable');
-							    },
-							    error: function() {
-								    $deleteviewbtn.CswButton('enable');
-							    }
-						    });
-					    }
-				    }
-			    } // onclick
-		    }); // delete button
-		    $deleteviewbtn.CswButton('disable');
+		var $deleteviewbtn = $div1_btntbl_cell11.CswButton({
+			'ID': o.ID + '_deleteview',
+			'enabledText': 'Delete View',
+			'disableOnClick': true,
+			'onclick': function() {
+			    var viewid = _getSelectedViewId($viewgrid);
+				if(viewid !== '' && viewid !== undefined)
+				{
+					if(confirm("Are you sure you want to delete: " + _getSelectedViewName($viewgrid)))
+					{
+						CswAjaxJSON({
+							url: o.DeleteViewUrl,
+							data: "{ ViewId: "+ viewid +" }",
+							success: function (gridJson) {
+								_getViewsGrid(onViewGridSuccess); 
+								$copyviewbtn.CswButton('disable');
+							},
+							error: function() {
+								$deleteviewbtn.CswButton('enable');
+							}
+						});
+					}
+				}
+			} // onclick
+		}); // delete button
+		$deleteviewbtn.CswButton('disable');
 
-		    var $newviewbtn = $div1_btntbl_cell11.CswButton({
-			    'ID': o.ID + '_newview',
-			    'enabledText': 'Create New View',
-			    'disableOnClick': false,
-			    'onclick': function() {
-				    $.CswDialog('AddViewDialog', { 
-					    'onAddView': function(newviewid) {
-						    $viewgrid = _getViewsGrid(onViewGridSuccess, newviewid); 
-					    },
-					    'onClose': function() {
-						    $newviewbtn.CswButton('enable');
-					    },
-					    'makeVisibilitySelect': _makeVisibilitySelect
-				    }); // CswDialog
-			    } // onclick
-		    })
+		var $newviewbtn = $div1_btntbl_cell11.CswButton({
+			'ID': o.ID + '_newview',
+			'enabledText': 'Create New View',
+			'disableOnClick': false,
+			'onclick': function() {
+				$.CswDialog('AddViewDialog', { 
+					'onAddView': function(newviewid) {
+						$viewgrid = _getViewsGrid(onViewGridSuccess, newviewid); 
+					},
+					'onClose': function() {
+						$newviewbtn.CswButton('enable');
+					},
+					'makeVisibilitySelect': _makeVisibilitySelect
+				}); // CswDialog
+			} // onclick
+		})
 
-		    $wizard.CswWizard('button', 'next', 'disable');
-        }
+		//$wizard.CswWizard('button', 'next', 'disable');
 
 		// Step 2 - Edit View Attributes
-        if( -1 !== $.inArray( CswViewEditor_WizardSteps.step2.step, o.stepsToExecute ) )
+		var $div2 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step2.step);
+		var $table2 = $div2.CswTable({ 
+				'ID': o.ID + '_tbl2', 
+				'FirstCellRightAlign': true 
+		});
+
+		$table2.CswTable('cell', 1, 1).append('View Name:');
+		var $viewnametextcell = $table2.CswTable('cell', 1, 2);
+		var $viewnametextbox = $viewnametextcell.CswInput('init',{ID: o.ID + '_viewname',
+																	type: CswInput_Types.text
+																	});
+
+		$table2.CswTable('cell', 2, 1).append('Category:');
+		var $categorytextcell = $table2.CswTable('cell', 2, 2);
+		var $categorytextbox = $categorytextcell.CswInput('init',{ID: o.ID + '_category',
+																	type: CswInput_Types.text
+																});
+
+		var v;
+		// we don't have xml to see whether this is a Property view or not yet,
+		// so checking startingStep will have to suffice
+		if(o.startingStep === 1)
 		{
-		    var $div2 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step2.step);
-		    var $table2 = $div2.CswTable({ 
-				    'ID': o.ID + '_tbl2', 
-				    'FirstCellRightAlign': true 
-		    });
+			v = _makeVisibilitySelect($table2, 3, 'View Visibility:');
+		}
 
-		    $table2.CswTable('cell', 1, 1).append('View Name:');
-		    var $viewnametextcell = $table2.CswTable('cell', 1, 2);
-            var $viewnametextbox = $viewnametextcell.CswInput('init',{ID: o.ID + '_viewname',
-                                                                      type: CswInput_Types.text
-                                                                     });
+		$table2.CswTable('cell', 4, 1).append('For Mobile:');
+		var $formobilecheckcell = $table2.CswTable('cell', 4, 2);
+		var $formobilecheckbox = $formobilecheckcell.CswInput('init',{ID: o.ID + '_formobile',
+																		type: CswInput_Types.checkbox
+																});
 
-		    $table2.CswTable('cell', 2, 1).append('Category:');
-		    var $categorytextcell = $table2.CswTable('cell', 2, 2);
-            var $categorytextbox = $categorytextcell.CswInput('init',{ID: o.ID + '_category',
-                                                                      type: CswInput_Types.text
-                                                                    });
-
-		    var v = _makeVisibilitySelect($table2, 3, 'View Visibility:');
-
-		    $table2.CswTable('cell', 4, 1).append('For Mobile:');
-		    var $formobilecheckcell = $table2.CswTable('cell', 4, 2);
-            var $formobilecheckbox = $formobilecheckcell.CswInput('init',{ID: o.ID + '_formobile',
-                                                                          type: CswInput_Types.checkbox
-                                                                    });
-
-		    $table2.CswTable('cell', 5, 1).append('Display Mode:');
-		    var $displaymodespan = $table2.CswTable('cell', 5, 2).append('<span id="'+ o.ID +'_displaymode"></span>');
+		$table2.CswTable('cell', 5, 1).append('Display Mode:');
+		var $displaymodespan = $table2.CswTable('cell', 5, 2).append('<span id="'+ o.ID +'_displaymode"></span>');
 		
-		    var $gridwidthlabelcell = $table2.CswTable('cell', 6, 1)
-								    .append('Grid Width (in characters):');
-		    var $gridwidthtextboxcell = $table2.CswTable('cell', 6, 2);
-		    $gridwidthtextboxcell.CswNumberTextBox('init', {
-				    'ID': o.ID + '_gridwidth',
-				    'Value': '',
-				    'MinValue': '1',
-				    'MaxValue': '',
-				    'Precision': '0',
-				    'onchange': function() { }
-		    });
-        }
+		var $gridwidthlabelcell = $table2.CswTable('cell', 6, 1)
+								.append('Grid Width (in characters):');
+		var $gridwidthtextboxcell = $table2.CswTable('cell', 6, 2);
+		$gridwidthtextboxcell.CswNumberTextBox('init', {
+				'ID': o.ID + '_gridwidth',
+				'Value': '',
+				'MinValue': '1',
+				'MaxValue': '',
+				'Precision': '0',
+				'onchange': function() { }
+		});
 		
         // Step 3 - Add Relationships
-        if( -1 !== $.inArray( CswViewEditor_WizardSteps.step3.step, o.stepsToExecute ) )
-		{
-		    var $div3 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step3.step);
-		    $div3.append('Add relationships from the select boxes below:<br/><br/>');
-		    var $treediv3 = $('<div />').appendTo($div3);
-        }
+		var $div3 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step3.step);
+		$div3.append('Add relationships from the select boxes below:<br/><br/>');
+		var $treediv3 = $('<div />').appendTo($div3);
 		
         // Step 4 - Select Properties
-        if( -1 !== $.inArray( CswViewEditor_WizardSteps.step4.step, o.stepsToExecute ) )
-		{
-		    var $div4 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step4.step);
-		    $div4.append('Add properties from the select boxes below:<br/><br/>');
-		    var $treediv4 = $('<div />').appendTo($div4);
-        }
+		var $div4 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step4.step);
+		$div4.append('Add properties from the select boxes below:<br/><br/>');
+		var $treediv4 = $('<div />').appendTo($div4);
 		
         // Step 5 - Set Filters
-        if( -1 !== $.inArray( CswViewEditor_WizardSteps.step5.step, o.stepsToExecute ) )
-		{
-		    var $div5 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step5.step);
-		    $div5.append('Add filters by selecting properties from the tree:<br/><br/>');
-		    var $treediv5 = $('<div />').appendTo($div5);
-        }
+		var $div5 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step5.step);
+		$div5.append('Add filters by selecting properties from the tree:<br/><br/>');
+		var $treediv5 = $('<div />').appendTo($div5);
 
 		// Step 6 - Fine Tuning
-        if( -1 !== $.inArray( CswViewEditor_WizardSteps.step6.step, o.stepsToExecute ) )
-		{
-		    var $div6 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step6.step);
-		    $div6.append('Select what you want to edit from the tree:<br/><br/>');
-		    var $table6 = $div6.CswTable({ 'ID': o.ID + '_6_tbl' });
-        }
-
-        _handleNext( o.stepsToExecute[0] );
-
+		var $div6 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step6.step);
+		$div6.append('Select what you want to edit from the tree:<br/><br/>');
+		var $table6 = $div6.CswTable({ 'ID': o.ID + '_6_tbl' });
+       
 		var $currentviewxml;
-
 
 		function _onBeforePrevious(stepno)
 		{
 			return (stepno !== CswViewEditor_WizardSteps.step2.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
 		}
-
 
 		function _handleNext(newstepno)
 		{
@@ -273,18 +251,22 @@ var CswViewEditor_WizardSteps = {
 				case CswViewEditor_WizardSteps.step2.step:
 					CswAjaxXml({
 						url: o.ViewInfoUrl,
-						data: 'ViewId='+ _getSelectedRowValue($viewgrid, o.ColumnViewId),
+						data: 'ViewId='+ _getSelectedViewId($viewgrid),
 						success: function($xml) {
 							$currentviewxml = $xml;
 
 							$viewnametextbox.val($currentviewxml.attr('viewname'));
 							$categorytextbox.val($currentviewxml.attr('category'));
-							if(v.getvisibilityselect() !== undefined)
+							if($currentviewxml.attr('visibility') !== 'Property')
 							{
-								v.getvisibilityselect().val($currentviewxml.attr('visibility')).trigger('change');
-								v.getvisroleselect().val('nodes_' + $currentviewxml.attr('visibilityroleid'));
-								v.getvisuserselect().val('nodes_' + $currentviewxml.attr('visibilityuserid'));
+								if(v.getvisibilityselect() !== undefined)
+								{
+									v.getvisibilityselect().val($currentviewxml.attr('visibility')).trigger('change');
+									v.getvisroleselect().val('nodes_' + $currentviewxml.attr('visibilityroleid'));
+									v.getvisuserselect().val('nodes_' + $currentviewxml.attr('visibilityuserid'));
+								}
 							}
+
 							if($currentviewxml.attr('formobile') === 'true') {
 								$formobilecheckbox.attr('checked', 'true');
 							}
@@ -308,22 +290,24 @@ var CswViewEditor_WizardSteps = {
 					{
 						$currentviewxml.attr('viewname', $viewnametextbox.val());
 						$currentviewxml.attr('category', $categorytextbox.val());
-						$currentviewxml.attr('visibility', v.getvisibilityselect().val());
-				
-						// temporary workaround
-						var rolenodeid = v.getvisroleselect().val();
-						if(!isNullOrEmpty(rolenodeid))
+						if($currentviewxml.attr('visibility') !== 'Property')
 						{
-							rolenodeid = rolenodeid.substr('nodes_'.length)
-						}
-						var usernodeid = v.getvisuserselect().val();
-						if(!isNullOrEmpty(usernodeid))
-						{
-							usernodeid = usernodeid.substr('nodes_'.length)
-						}
-						$currentviewxml.attr('visibilityroleid', rolenodeid);
-						$currentviewxml.attr('visibilityuserid', usernodeid);
+							$currentviewxml.attr('visibility', v.getvisibilityselect().val());
 				
+							// temporary workaround
+							var rolenodeid = v.getvisroleselect().val();
+							if(!isNullOrEmpty(rolenodeid))
+							{
+								rolenodeid = rolenodeid.substr('nodes_'.length)
+							}
+							var usernodeid = v.getvisuserselect().val();
+							if(!isNullOrEmpty(usernodeid))
+							{
+								usernodeid = usernodeid.substr('nodes_'.length)
+							}
+							$currentviewxml.attr('visibilityroleid', rolenodeid);
+							$currentviewxml.attr('visibilityuserid', usernodeid);
+						}
 						$currentviewxml.attr('formobile', ($formobilecheckbox.attr('checked') === 'true'));
 						$currentviewxml.attr('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
 					} // if($currentviewxml !== undefined)
@@ -369,13 +353,13 @@ var CswViewEditor_WizardSteps = {
 
 		function _handleFinish()
 		{
-			var viewid = _getSelectedRowValue($viewgrid, o.ColumnViewId);
+			var viewid = _getSelectedViewId($viewgrid);
 
 			CswAjaxXml({
 				url: o.SaveViewUrl,
 				data: 'ViewId='+ viewid +'&ViewXml='+ xmlToString($currentviewxml),
 				success: function ($xml) {
-					o.onFinish(viewid, _getSelectedRowValue($viewgrid, o.ColumnViewMode));
+					o.onFinish(viewid, _getSelectedViewMode($viewgrid));
 				} // success
 			}); // ajax
 		} //_handleFinish
@@ -387,7 +371,8 @@ var CswViewEditor_WizardSteps = {
 				all = true;
 
 			$selview_span.text('');
-			$wizard.CswWizard('button', 'next', 'disable');
+			if(o.startingStep === 1)
+				$wizard.CswWizard('button', 'next', 'disable');
 
 			CswAjaxJSON({
 				url: o.ViewGridUrl,
@@ -414,7 +399,7 @@ var CswViewEditor_WizardSteps = {
 								$copyviewbtn.CswButton('disable');
 								$deleteviewbtn.CswButton('disable');
 							}
-							$selview_span.text(_getSelectedRowValue($viewgrid, o.ColumnViewName));
+							$selview_span.text(_getSelectedViewName($viewgrid));
 							$wizard.CswWizard('button', 'next', 'enable');
 						},
 						'pager': $gridPager
@@ -434,19 +419,53 @@ var CswViewEditor_WizardSteps = {
 			}); // ajax
 		} // _getViewsGrid()
 		
+		function _getSelectedViewId($viewgrid)
+		{
+			var ret = '';
+			if(o.startingStep === 1) {
+				ret = _getSelectedRowValue($viewgrid, o.ColumnViewId);
+			} else {
+				ret = o.viewid;
+			}
+			return ret;
+		}
+		
+		function _getSelectedViewMode($viewgrid)
+		{
+			var ret = '';
+			if(o.startingStep === 1) {
+				ret = _getSelectedRowValue($viewgrid, o.ColumnViewMode);
+			} else {
+				ret = o.viewmode;
+			}
+			return ret;
+		}
+
+		function _getSelectedViewName($viewgrid)
+		{
+			var ret = '';
+			if(o.startingStep === 1) {
+				ret = _getSelectedRowValue($viewgrid, o.ColumnViewName);
+			} else {
+				ret = o.viewname;
+			}
+			return ret;
+		}
+
 		function _getSelectedRowValue($viewgrid, columnname)
 		{
 			var rowid = $viewgrid.jqGrid('getGridParam', 'selrow');
 			var ret = $viewgrid.jqGrid('getCell', rowid, columnname);
 			return ret;
 		}
+
 		function _getRowForPk($viewgrid, selectedpk)
 		{
 			var pks = $viewgrid.jqGrid('getCol', o.ColumnViewId, true);
 			var rowid = 0;
 			for(var i in pks)
 			{
-				if(pks[i].value === selectedpk)
+				if(pks[i].value.toString() === selectedpk.toString())
 					rowid = pks[i].id;
 			}
 			return rowid;
@@ -606,7 +625,7 @@ var CswViewEditor_WizardSteps = {
 			if(stepno === CswViewEditor_WizardSteps.step6.step)
 			{
 				var $cell = $table6.CswTable('cell', 1, 2);
-				var viewmode = _getSelectedRowValue($viewgrid, o.ColumnViewMode);
+				var viewmode = _getSelectedViewMode($viewgrid);
 
 				// Root
 				$div.find('.vieweditor_viewrootlink').click(function() {

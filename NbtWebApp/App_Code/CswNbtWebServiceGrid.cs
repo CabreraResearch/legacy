@@ -93,20 +93,23 @@ namespace ChemSW.Nbt.WebServices
 			//we'll want NodeName for edit/delete
             ColumnDefArray.AddFirst( new JObject(
                                 new JProperty( "name", "nodename" ),
-								new JProperty( "index", "nodename" )
+								new JProperty( "index", "nodename" ),
+                                new JProperty( "hidden", true )
 								) );
 
 			//we'll want CswNbtNodeKey for add/edit/delete
             ColumnDefArray.AddFirst( new JObject(
                                 new JProperty( "name", "cswnbtnodekey" ),
-								new JProperty( "index", "cswnbtnodekey" )
+								new JProperty( "index", "cswnbtnodekey" ),
+                                new JProperty( "hidden", true )
 								) );
 
 			//better to use int for jqGrid key
             ColumnDefArray.AddFirst( new JObject(
 								new JProperty( "name", "nodeid" ),
 								new JProperty( "index", "nodeid" ),
-								new JProperty( "key", "true" )
+								new JProperty( "key", true ),
+                                new JProperty( "hidden", true )                                
 								) );
 
 		} // _AddHiddenColumnDefiniton()
@@ -118,9 +121,9 @@ namespace ChemSW.Nbt.WebServices
 		{
 			XElement RawXml = null;
 		    ICswNbtTree Tree;
-			if( _ParentNodeKey != null && _View.Visibility == NbtViewVisibility.Property )
+            if( _ParentNodeKey != null && _View.Visibility == NbtViewVisibility.Property ) // This is a Grid Property
 			{
-				// This is a Grid Property
+			    ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
 				( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
                 Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, Int32.MinValue, true, false, null, false );
 			}

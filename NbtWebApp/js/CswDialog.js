@@ -373,6 +373,86 @@
 							_openDiv($div, 800, 600);
 						},
 
+
+		'PrintLabelDialog': function (options) {
+
+							var o = {
+								'ID': 'print_label',
+								'GetPrintLabelsUrl': '/NbtWebApp/wsNBT.asmx/getLabels',
+								'GetEPLTextUrl': '/NbtWebApp/wsNBT.asmx/getEPLText',
+								'nodeid': '',
+								'propid': ''
+							};
+							if(options) $.extend(o, options);
+							
+							var $div = $('<div align="center"></div>');
+							
+							$div.append('Select a Label to Print:<br/>');
+							var $labelsel_div = $('<div />')
+												.appendTo($div);
+							var $labelsel;
+
+							var jData = { PropId: o.propid }
+							CswAjaxJSON({
+								url: o.GetPrintLabelsUrl,
+								data: JSON.stringify(jData),
+								success: function(data)
+								{
+									if(data.labels.length > 0)
+									{
+										$labelsel = $('<select id="' + o.ID + '_labelsel"></select>');
+										for(var i = 0; i < data.labels.length; i++)
+										{
+											var label = data.labels[i];
+											$labelsel.append('<option value="'+ label.nodeid +'">'+ label.name +'</option>');
+										}
+										$labelsel.appendTo($labelsel_div);
+										$printbtn.CswButton('enable');
+									} else {
+										$printbtn.hide();
+										$labelsel_div.append('<span>No labels have been assigned!</span>');
+									}
+								} // success
+							}); // ajax
+
+							var $printbtn = $div.CswButton({
+																ID: 'print_label_print', 
+																enabledText: 'Print', 
+																//disabledText: 'Printing...', 
+																disableOnClick: false,
+																onclick: function() {
+																	var jData2 = { PropId: o.propid, PrintLabelNodeId: $labelsel.val() };
+									                                CswAjaxJSON({
+																		url: o.GetEPLTextUrl,
+																		data: JSON.stringify(jData2),
+																		success: function(data)
+																		{
+																			var labelx = $('#labelx').get(0);
+																			labelx.EPLScript = data.epl;
+																			labelx.Print();
+																		} // success
+																	}); // ajax
+																} // onclick
+                                                           }); // CswButton
+							$printbtn.CswButton('disable');
+
+							var $closebtn = $div.CswButton({ID: 'print_label_close', 
+                                                                enabledText: 'Close', 
+                                                                disabledText: 'Closing...', 
+                                                                onclick: function() {
+																		$div.dialog('close');
+                                                                    }
+                                                                });
+
+							var $hiddendiv = $('<div style="display: none; border: 1px solid red;"></div>')
+												.appendTo($div);
+							var $labelx = $("<OBJECT ID='labelx' Name='labelx' classid='clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0' codebase='CafLabelPrintUtil.cab#version=0,1,6,0' width=500 height=300 align=center hspace=0 vspace=0></OBJECT>")
+												.appendTo($hiddendiv);
+
+							_openDiv($div, 400, 300);
+						},
+
+
 		// Generic
 
 //		'OpenPopup': function(url) { 
