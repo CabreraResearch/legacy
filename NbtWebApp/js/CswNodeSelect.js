@@ -33,7 +33,7 @@
 						{
 							$xml.children('node').each(function() {
 								var $node = $(this);
-								$select.append('<option value="'+ $node.attr('id') +'">'+ $node.attr('name') +'</option>');
+								$select.append('<option value="'+ $node.CswAttrXml('id') +'">'+ $node.CswAttrXml('name') +'</option>');
 							});
 
 							o.onSuccess();

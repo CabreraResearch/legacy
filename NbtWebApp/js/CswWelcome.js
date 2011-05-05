@@ -70,24 +70,24 @@
 						$xml.children().each(function() {
 
 							var $item = $(this);
-							var $cellset = $table.CswLayoutTable('cellset', $item.attr('displayrow'), $item.attr('displaycol'));
+							var $cellset = $table.CswLayoutTable('cellset', $item.CswAttrXml('displayrow'), $item.CswAttrXml('displaycol'));
 							var $imagecell = $cellset[1][1];
 							var $textcell = $cellset[2][1];
 
-							if($item.attr('buttonicon') !== undefined && $item.attr('buttonicon') !== '')
-								$imagecell.append( $('<a href=""><img border="0" src="'+ $item.attr('buttonicon') +'"/></a>') );
+							if($item.CswAttrXml('buttonicon') !== undefined && $item.CswAttrXml('buttonicon') !== '')
+								$imagecell.append( $('<a href=""><img border="0" src="'+ $item.CswAttrXml('buttonicon') +'"/></a>') );
 					
 							var optSelect = {
-								type: $item.attr('type'),
-								viewmode: $item.attr('viewmode'),
-								itemid: $item.attr('itemid'), 
-								text: $item.attr('text'), 
-								iconurl: $item.attr('iconurl'),
-								viewid: $item.attr('viewid'),
-								actionid: $item.attr('actionid'),
-								reportid: $item.attr('reportid'),
-								//nodetypeid: $item.attr('nodetypeid'),
-								linktype: $item.attr('linktype')
+								type: $item.CswAttrXml('type'),
+								viewmode: $item.CswAttrXml('viewmode'),
+								itemid: $item.CswAttrXml('itemid'), 
+								text: $item.CswAttrXml('text'), 
+								iconurl: $item.CswAttrXml('iconurl'),
+								viewid: $item.CswAttrXml('viewid'),
+								actionid: $item.CswAttrXml('actionid'),
+								reportid: $item.CswAttrXml('reportid'),
+								//nodetypeid: $item.CswAttrXml('nodetypeid'),
+								linktype: $item.CswAttrXml('linktype')
 							};
 
 							switch(optSelect.linktype)
@@ -107,14 +107,14 @@
 									break;
 								case 'Add': 
 									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
-									$textcell.find('a').click(function() { o.onAddClick($item.attr('nodetypeid')); return false; }); 
-									$imagecell.find('a').click(function() { o.onAddClick($item.attr('nodetypeid')); return false; });
+									$textcell.find('a').click(function() { o.onAddClick($item.CswAttrXml('nodetypeid')); return false; }); 
+									$imagecell.find('a').click(function() { o.onAddClick($item.CswAttrXml('nodetypeid')); return false; });
 									break;
 							}
-                            var $welcomehidden = $textcell.CswInput('init',{ID: $item.attr('welcomeid'),
+                            var $welcomehidden = $textcell.CswInput('init',{ID: $item.CswAttrXml('welcomeid'),
                                                                             type: CswInput_Types.hidden
                                                                      });
-                            $welcomehidden.CswAttrDom('welcomeid',$item.attr('welcomeid'));                                            
+                            $welcomehidden.CswAttrDom('welcomeid',$item.CswAttrXml('welcomeid'));                                            
 						}); // each
 				
 					} // success{}

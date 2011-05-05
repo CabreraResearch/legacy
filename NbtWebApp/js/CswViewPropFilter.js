@@ -99,7 +99,7 @@ var ViewBuilder_CssClasses = {
 		            'data': "ViewXml=" + o.viewxml + "&PropArbitraryId=" + o.proparbitraryid,
                     'success': function($xml) { 
                                 o.$propsXml = $xml.children('propertyfilters').children('property');
-                                filtOpt.filtarbitraryid = o.$propsXml.attr('filtarbitraryid');
+                                filtOpt.filtarbitraryid = o.$propsXml.CswAttrXml('filtarbitraryid');
                                 renderPropFiltRow(filtOpt);
                     } //success
                 }); //ajax
@@ -111,8 +111,8 @@ var ViewBuilder_CssClasses = {
 
             function renderPropFiltRow(filtOpt)
             {
-                var propertyId = o.$propsXml.attr('viewbuilderpropid');
-                var propertyName = o.$propsXml.attr('propname');
+                var propertyId = o.$propsXml.CswAttrXml('viewbuilderpropid');
+                var propertyName = o.$propsXml.CswAttrXml('propname');
                 
                 if( o.includePropertyName )
                 {
@@ -123,8 +123,8 @@ var ViewBuilder_CssClasses = {
                     var $props = $propSelectCell.CswDOM('span',{ID: propCellId, value: propertyName});
                 }
                 
-                var fieldtype = o.$propsXml.attr('fieldtype');
-                var $defaultFilter = o.$propsXml.children('defaultsubfield').attr('filter');
+                var fieldtype = o.$propsXml.CswAttrXml('fieldtype');
+                var $defaultFilter = o.$propsXml.children('defaultsubfield').CswAttrXml('filter');
                 
                 //Row propRow, Column 4: subfield default value (hidden) 
                 var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)) //4
@@ -239,11 +239,11 @@ var ViewBuilder_CssClasses = {
             var o = {
                 nodetypeorobjectclassid: '',
                 relatedidtype: '',
-                fieldtype: $thisProp.attr('fieldtype'),
+                fieldtype: $thisProp.CswAttrXml('fieldtype'),
                 ID: '',
                 $parent: '',
                 proparbitraryid: '',
-                filtarbitraryid: $thisProp.attr('filtarbitraryid'),
+                filtarbitraryid: $thisProp.CswAttrXml('filtarbitraryid'),
                 viewbuilderpropid: ''
             };
             if(options) $.extend(o,options);
@@ -291,7 +291,7 @@ var ViewBuilder_CssClasses = {
                 var $filter = o.$parent.CswDOM('findelement',{ID: filterId});
                 var filterText = $filter.find(':selected').val();
 
-                var propType = $thisProp.attr('proptype');
+                var propType = $thisProp.CswAttrXml('proptype');
                                 
                 thisNodeProp = {
                     nodetypeorobjectclassid: o.nodetypeorobjectclassid, // for NodeType filters

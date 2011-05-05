@@ -122,16 +122,16 @@ var CswSearch_CssClasses = {
             o.$propsXml.children('property').each( function() {
                     var $thisProp = $(this);
                     var $nodeTypeCell = o.$searchTable.CswTable('cell', propRow, 2);
-                    var nodeTypeId = makeId({ID: 'viewbuilderpropid', suffix: $thisProp.attr('viewbuilderpropid'), prefix: o.ID});
+                    var nodeTypeId = makeId({ID: 'viewbuilderpropid', suffix: $thisProp.CswAttrXml('viewbuilderpropid'), prefix: o.ID});
                     var $nodeType = $nodeTypeCell.CswDOM('span',{
                                                                 ID: nodeTypeId,
-                                                                value: $thisProp.attr('metadatatypename'),
+                                                                value: $thisProp.CswAttrXml('metadatatypename'),
                                                                 cssclass: ViewBuilder_CssClasses.metadatatype_static.name})
-                                                  .attr('relatedidtype',$thisProp.attr('relatedidtype') );
+                                                  .attr('relatedidtype',$thisProp.CswAttrXml('relatedidtype') );
                     o.selectedSubfieldVal = ''; 
                     o.selectedFilterVal = '';
   
-                    var filtArbitraryId = $thisProp.attr('filtarbitraryid');
+                    var filtArbitraryId = $thisProp.CswAttrXml('filtarbitraryid');
                     var $propFilterRow = o.$searchTable.CswViewPropFilter('init', {
                                                     'ID': o.ID,
                                                     'propRow': propRow,
@@ -348,7 +348,7 @@ var CswSearch_CssClasses = {
 		        'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeorobjectclassid + "&IdPrefix=" + o.ID + "&NodeKey=" + o.cswnbtnodekey,
                 'success': function($xml) { 
                     $topspandiv.empty();
-                    o.searchtype = $xml.attr('searchtype');
+                    o.searchtype = $xml.CswAttrXml('searchtype');
                     var searchTableId = makeId({prefix: o.ID, ID: 'search_tbl'});
                     o.$searchTable = $topspandiv.CswTable('init', { 
                                     ID: searchTableId, 
@@ -358,7 +358,7 @@ var CswSearch_CssClasses = {
                                     align: 'center'
                                     });
 					o.$searchTable.css("background-color", "0099FF");
-					o.$searchTable.attr('frame', 'border');
+					o.$searchTable.CswAttrXml('frame', 'border');
                     switch(o.searchtype)
                     {
                         case 'nodetypesearch':
@@ -426,7 +426,7 @@ var CswSearch_CssClasses = {
                     searchUrl = o.doViewSearchUrl;
                     o.$propsXml.children('property').each(function() {
                             var $thisProp = $(this);
-                            var filterarbitraryid = $thisProp.attr('filtarbitraryid');
+                            var filterarbitraryid = $thisProp.CswAttrXml('filtarbitraryid');
                             var PropFilter = $thisProp.CswViewPropFilter('getFilterJson',{ID: o.ID, 
                                                                                           $parent: o.$searchTable,
                                                                                           filterarbitraryid: filterarbitraryid
