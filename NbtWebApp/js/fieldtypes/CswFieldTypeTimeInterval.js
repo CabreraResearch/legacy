@@ -217,7 +217,7 @@
             },
         save: function(o) {
 				
-				var RateType = $('[name="' + o.ID + '_type"]:checked').CswAttrDom('value');
+				var RateType = $('[name="' + o.ID + '_type"]:checked').val();
 
 				o.$propxml.children().remove();
 				var $intervalnode = $('<interval />').appendTo(o.$propxml);
@@ -235,7 +235,7 @@
 						break;
 
 					case 'monthly': 
-						var MonthlyType = $('[name="'+ o.ID +'_monthly"]:checked').CswAttrDom('value');
+						var MonthlyType = $('[name="'+ o.ID +'_monthly"]:checked').val();
 						$('<ratetype>'+ MonthlyType +'</ratetype>')
 							.appendTo($rivnode);
 						$('<monthlyfrequency>'+ $('#' + o.ID + '_monthly_rate').val() +'</monthlyfrequency>')
@@ -332,7 +332,7 @@
 			if(isTrue($check.CswAttrDom('checked')))
 			{
 				if(ret !== '') ret += ',';
-				switch($check.CswAttrDom('value'))
+				switch($check.val())
 				{
 					case '1': ret += 'Sunday'; break;
 					case '2': ret += 'Monday'; break;

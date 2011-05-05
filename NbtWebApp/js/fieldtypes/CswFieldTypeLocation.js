@@ -69,7 +69,7 @@
 			},
 			save: function(o) { //($propdiv, $xml
 					var $selectdiv = o.$propdiv.find('.locationselect');
-					o.$propxml.children('nodeid').text($selectdiv.CswAttrDom('value'));
+					o.$propxml.children('nodeid').text($selectdiv.val());
 				}
 		};
 	
@@ -78,9 +78,9 @@
 		{
 			if(itemid === 'root') itemid = '';   // case 21046
 			$selectdiv.CswComboBox( 'TopContent', text );
-			if($selectdiv.CswAttrDom('value') !== itemid)
+			if($selectdiv.val() !== itemid)
 			{
-				$selectdiv.CswAttrDom('value', itemid);
+				$selectdiv.val(itemid);
 				onchange();
 			}
 			setTimeout(function() { $selectdiv.CswComboBox( 'close'); }, 300);
