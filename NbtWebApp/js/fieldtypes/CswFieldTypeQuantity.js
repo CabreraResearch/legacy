@@ -11,9 +11,9 @@
 			$Div.CswNumberTextBox({
 				'ID': o.ID + '_qty',
 				'Value': o.$propxml.children('value').text().trim(),
-				'MinValue': o.$propxml.children('value').attr('minvalue'),
-				'MaxValue': o.$propxml.children('value').attr('maxvalue'),
-				'Precision': o.$propxml.children('value').attr('precision'),
+				'MinValue': o.$propxml.children('value').CswAttrXml('minvalue'),
+				'MaxValue': o.$propxml.children('value').CswAttrXml('maxvalue'),
+				'Precision': o.$propxml.children('value').CswAttrXml('precision'),
 				'ReadOnly': o.ReadOnly,
 				'Required': o.Required,
 				'onchange': o.onchange
@@ -24,7 +24,7 @@
 							.appendTo($Div)
 							.change(o.onchange);
 			o.$propxml.children('units').children().each(function() {
-				var unit = $(this).attr('value');
+				var unit = $(this).CswAttrXml('value');
 				var $option = $('<option value="' + unit + '">' + unit + '</option>')
 								.appendTo($unitsel);
 				if(selectedUnit === unit)

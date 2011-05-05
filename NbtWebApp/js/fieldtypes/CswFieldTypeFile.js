@@ -31,7 +31,7 @@
 													$.CswDialog( 'FileUploadDialog', {
 														'url': '/NbtWebApp/wsNBT.asmx/fileForProp',
 														'params': { 
-																	'PropId': o.$propxml.attr('id')
+																	'PropId': o.$propxml.CswAttrXml('id')
 																  },
 														'onSuccess': function()
 															{
@@ -53,7 +53,7 @@
 													{
 														CswAjaxJSON({
 															'url': '/NbtWebApp/wsNBT.asmx/clearProp',
-															'data': '{ "PropId": "' + o.$propxml.attr('id') + '", "IncludeBlob": "true" }',
+															'data': '{ "PropId": "' + o.$propxml.CswAttrXml('id') + '", "IncludeBlob": "true" }',
 															'success': function() { o.onReload(); }
 														});
 													}

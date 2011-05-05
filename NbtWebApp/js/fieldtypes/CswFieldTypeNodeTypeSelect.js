@@ -13,7 +13,7 @@
 
             var $OptionsXml = o.$propxml.children('options');
             var SelectedNodeTypeIds = o.$propxml.children('NodeType').text().trim();
-            var SelectMode = o.$propxml.children('NodeType').attr('SelectMode');   // Single, Multiple, Blank
+            var SelectMode = o.$propxml.children('NodeType').CswAttrXml('SelectMode');   // Single, Multiple, Blank
 
             var $CBADiv = $('<div />')
                             .appendTo($Div);
@@ -24,9 +24,9 @@
             $OptionsXml.find('item').each(function () {
                 var $this = $(this);
                 var $elm = { 
-                             'label': $this.children('column[field="' + NameCol + '"]').attr('value'),
-                             'key': $this.children('column[field="' + KeyCol + '"]').attr('value'),
-                             'values': [ ($this.children('column[field="' + ValueCol + '"]').attr('value') === "True") ]
+                             'label': $this.children('column[field="' + NameCol + '"]').CswAttrXml('value'),
+                             'key': $this.children('column[field="' + KeyCol + '"]').CswAttrXml('value'),
+                             'values': [ ($this.children('column[field="' + ValueCol + '"]').CswAttrXml('value') === "True") ]
                            };
                 data[d] = $elm;
                 d++;
@@ -52,10 +52,10 @@
                 var $xmlitem = $OptionsXml.find('item:has(column[field="' + KeyCol + '"][value="' + checkitem.key + '"])');
                 var $xmlvaluecolumn = $xmlitem.find('column[field="' + ValueCol + '"]');
 
-                if (checkitem.checked && $xmlvaluecolumn.attr('value') === "False")
-                    $xmlvaluecolumn.attr('value', 'True');
-                else if (!checkitem.checked && $xmlvaluecolumn.attr('value') === "True")
-                    $xmlvaluecolumn.attr('value', 'False');
+                if (checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "False")
+                    $xmlvaluecolumn.CswAttrXml('value', 'True');
+                else if (!checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "True")
+                    $xmlvaluecolumn.CswAttrXml('value', 'False');
             } // for( var r = 0; r < formdata.length; r++)
         } // save()
     };

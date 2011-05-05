@@ -10,8 +10,8 @@
 
             //var Value = extractCDataValue($xml.children('text'));
             var Value = o.$propxml.children('text').text().trim();
-            var rows = o.$propxml.children('text').attr('rows');
-            var columns = o.$propxml.children('text').attr('columns');
+            var rows = o.$propxml.children('text').CswAttrXml('rows');
+            var columns = o.$propxml.children('text').CswAttrXml('columns');
 
             if(o.ReadOnly)
             {

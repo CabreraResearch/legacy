@@ -8,7 +8,7 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var TextValue = o.$propxml.children('Interval').attr('text');
+                var TextValue = o.$propxml.children('Interval').CswAttrXml('text');
 
 				$Div.append('<span id="' + o.ID + '_textvalue">' + TextValue + '</span>');
 
