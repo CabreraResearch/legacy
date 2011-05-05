@@ -66,6 +66,23 @@ namespace ChemSW.Nbt.Schema
             _UpdateDrivers.Add( Schema_11_Driver.SchemaVersion, Schema_11_Driver );
 
 
+            //***************************************************************************************
+            //******************************  Test Case 004
+            CswSchemaUpdateDriver Schema_12_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_004_01_012( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_12_Driver.SchemaVersion, Schema_12_Driver );
+
+            CswSchemaUpdateDriver Schema_13_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_004_02_013( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_13_Driver.SchemaVersion, Schema_13_Driver );
+
+            CswSchemaUpdateDriver Schema_14_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_004_03_014( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_14_Driver.SchemaVersion, Schema_14_Driver );
+
+            CswSchemaUpdateDriver Schema_15_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_004_04_015( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema_15_Driver.SchemaVersion, Schema_15_Driver );
+
+
+
+
             foreach( CswSchemaUpdateDriver CurrentDriver in _UpdateDrivers.Values )
             {
                 _UpdateDriverList.Add( CurrentDriver );
@@ -87,7 +104,8 @@ namespace ChemSW.Nbt.Schema
 
         public CswSchemaVersion MinimumVersion
         {
-            get { return ( new CswSchemaVersion( 1, 'T', 00 ) ); }
+            //            get { return ( new CswSchemaVersion( 1, 'T', 00 ) ); }
+            get { return ( _UpdateDriverList[0].SchemaVersion ); }
         }
 
         public CswSchemaVersion CurrentVersion

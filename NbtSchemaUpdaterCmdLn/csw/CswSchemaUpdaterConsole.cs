@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         {
 
                             string CurrentAccessId = AccessIds[idx];
-                            _CswConsoleOutput.write( _Separator_NuLine + "Applying schema update to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
+                            _CswConsoleOutput.write( _Separator_NuLine + "Applying schema operation to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
                             _updateAccessId( CurrentAccessId );
                             _CswConsoleOutput.write( _Separator_NuLine );
                         }
@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                     CswSchemaVersion UpdateToVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
                     string UpdateDescription = _CswSchemaUpdater.getDriver( UpdateToVersion ).Description;
                     //                    _CswConsoleOutput.write( "Updating AccessId " + AccessId + " to schema version " + UpdateToVersion.ToString() );
-                    _CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema change -- " + UpdateDescription );
+                    _CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema operation -- " + UpdateDescription );
                     _CswSchemaUpdateThread.start();
                     while( UpdateState.Running == _CswSchemaUpdateThread.UpdateState )
                     {

@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
         }//ctor
 
 
-        public string Purpose = "rolllback drop columns";
+        public string Purpose = "Rolllback drop columns";
 
         public string RealTestTableName { get { return ( _CswTestCaseRsrc.getRealTestTableName( TestTableNamesReal.Nodes ) ); } }
         public string RealTestColumnName { get { return ( _CswTestCaseRsrc.getRealTestColumnName( TestColumnNamesReal.NodeName ) ); } }
