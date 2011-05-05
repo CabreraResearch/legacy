@@ -16,11 +16,15 @@ namespace ChemSW.Nbt.Schema
     {
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
+        CswProdUpdtRsrc _CswProdUpdtRsrc = null;
         public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'H', 02 ); } }
         public CswUpdateSchemaTo01H02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+            _CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
         }
+
+        public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
 
         public void update()
         {

@@ -15,12 +15,18 @@ namespace ChemSW.Nbt.Schema
 	public class CswUpdateSchemaTo01H25 : ICswUpdateSchemaTo
 	{
 		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+        private CswProdUpdtRsrc _CswProdUpdtRsrc = null; 
+
 
 		public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'H', 25 ); } }
-		public CswUpdateSchemaTo01H25( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+
+        public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
+
+        public CswUpdateSchemaTo01H25( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
 		{
 			_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-		}
+            _CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
+        }
 
 		public void update()
 		{

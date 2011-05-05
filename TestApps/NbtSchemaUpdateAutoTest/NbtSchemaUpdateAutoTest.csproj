@@ -47,38 +47,6 @@
   <ItemGroup>
     <Compile Include="csw\CswScmUpdtAutoTest.cs" />
     <Compile Include="csw\CswScmUpdt_CollectionOfTestCases.cs" />
-    <Compile Include="csw\CswScmUpdt_Exception.cs" />
-    <Compile Include="csw\CswScmUpdt_TestTools.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Column_AddMultiple.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Column_RollbackAdd.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Column_RollbackDrop.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Constraint_AddMultiple.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Constraint_AddOnPendingDml.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Constraint_AddSingle.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Constraint_RollbackAdd.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Constraint_RollbackDrop.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_DataDictionary_AddTwoColumns.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_DataDictionary_ReadTableColId.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_DataDictionary_ReadTableColIdAfterDdlOp.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_DataTable_PreserveBlobColumns.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_DataTable_Transaction_NukeRolledBackInsert.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_DataTable_Transaction_NukeRolledBackUpdate.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_DataTable_Transaction_NukeStaleCoumnlValue.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_DataTable_UpdateFromSelectedColumns.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_NodetypeProp_RollbackAdd.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_NodetypeProp_RollbackDelete.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_NodeType_PreserveUpdateAfterCommit.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Nodetype_RollbackAdd.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Nodetype_RollbackDelete.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Node_KeepPropCollectionUpToDate.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Table_Add.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Table_Drop.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Table_RollbackAdd.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_Table_RollbackDrop.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_UniqueSequence_RollbackCreate.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_UniqueSequence_RollbackDelete.cs" />
-    <Compile Include="csw\CswScmUpdt_TstCse_View_RollbackUpdate.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

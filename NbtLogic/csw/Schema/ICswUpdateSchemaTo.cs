@@ -8,6 +8,7 @@ namespace ChemSW.Nbt.Schema
     {
         void update();
         CswSchemaVersion SchemaVersion { get; }
+        string Description { get; }
 
     }
 }

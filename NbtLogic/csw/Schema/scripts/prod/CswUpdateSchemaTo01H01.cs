@@ -12,11 +12,17 @@ namespace ChemSW.Nbt.Schema
     {
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
+        private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
         public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'H', 01 ); } }
         public CswUpdateSchemaTo01H01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+            _CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
         }
+
+
+        public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
+
 
         public void update()
         {
@@ -106,10 +112,10 @@ namespace ChemSW.Nbt.Schema
             //20533
             _CswNbtSchemaModTrnsctn.addBooleanColumn( "sessionlist", "ismobile", "Identifies whether the sesssion record is for a mobile column or a regular web app column", false, false );
 
-			// 21364 (see 01H-26)
-			_CswNbtSchemaModTrnsctn.addStringColumn( "node_views", "viewmode", "Tree, List, or Grid", false, false, 10 );
+            // 21364 (see 01H-26)
+            _CswNbtSchemaModTrnsctn.addStringColumn( "node_views", "viewmode", "Tree, List, or Grid", false, false, 10 );
 
-		}//Update()
+        }//Update()
 
     }//class CswUpdateSchemaTo01H01
 

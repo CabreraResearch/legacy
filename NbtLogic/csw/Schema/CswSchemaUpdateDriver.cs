@@ -1,4 +1,5 @@
 ﻿using System;
+using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema
@@ -30,6 +31,13 @@ namespace ChemSW.Nbt.Schema
             _CswUpdateSchemaTo = CswUpdateSchemaTo;
         }//ctor
 
+        public string Description
+        {
+            get
+            {
+                return ( _CswUpdateSchemaTo.Description );
+            }
+        }
 
         public CswSchemaVersion SchemaVersion { get { return ( _CswUpdateSchemaTo.SchemaVersion ); } }
 
@@ -37,13 +45,29 @@ namespace ChemSW.Nbt.Schema
         {
             try
             {
-                _CswNbtSchemaModTrnsctn.refreshDataDictionary(); 
+                _CswNbtSchemaModTrnsctn.refreshDataDictionary();
                 _CswNbtSchemaModTrnsctn.beginTransaction();
                 _CswUpdateSchemaTo.update();
                 _CswNbtSchemaModTrnsctn.commitTransaction();
             }
 
-            catch ( Exception Exception )
+            catch( CswDniExceptionIgnoreDeliberately CswDniExceptionIgnoreDeliberately )
+            {
+                _UpdateSucceeded = true;
+
+                try
+                {
+                    _CswNbtSchemaModTrnsctn.rollbackTransaction();
+                }
+
+                catch( Exception CommitException )
+                {
+                    _RollbackSucceeded = false;
+                    _Message += "Rollback failed: " + CommitException.Message + " at " + CommitException.StackTrace.ToString();
+                }//
+            }//catch
+
+            catch( Exception Exception )
             {
                 _Message = Exception.Message + " at: " + Exception.StackTrace.ToString();
                 _UpdateSucceeded = false;
@@ -53,7 +77,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.rollbackTransaction();
                 }
 
-                catch ( Exception CommitException )
+                catch( Exception CommitException )
                 {
                     _RollbackSucceeded = false;
                     _Message += "Rollback failed: " + CommitException.Message + " at " + CommitException.StackTrace.ToString();
