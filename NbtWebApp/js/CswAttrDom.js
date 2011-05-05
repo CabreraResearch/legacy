@@ -14,7 +14,7 @@
         /// <returns type=Object>Either the value of the attribute (get) or this (set) for chaining</returns> 
         
         var $Dom = $(this);
-        ret = undefined;
+        var ret = undefined;
         
         switch( arguments.length )
         {

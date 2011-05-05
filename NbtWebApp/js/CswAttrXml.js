@@ -15,7 +15,7 @@
         /// <returns type=Object>Either the value of the attribute (get) or this (set) for chaining</returns> 
 
         var X$xml = $(this);
-        ret = undefined;
+        var ret = undefined;
 
         switch( arguments.length )
         {
