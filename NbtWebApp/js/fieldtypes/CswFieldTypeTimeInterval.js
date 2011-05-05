@@ -46,7 +46,7 @@
 					$yearlyradio.click(function() { $WeeklyDiv.hide(); $MonthlyDiv.hide(); $YearlyDiv.show(); o.onchange(); });
 
 					var $topcell = $table.CswTable('cell', 1, 3);
-					$topcell.attr('rowspan', '3');
+					$topcell.CswAttrDom('rowspan', '3');
 
 
 					// Weekly
@@ -174,50 +174,50 @@
 					switch(RateType)
 					{
 						case "WeeklyByDay":
-							$weeklyradio.attr('checked', 'true');
+							$weeklyradio.CswAttrDom('checked', 'true');
 							$WeeklyDiv.show(); 
 							$MonthlyDiv.hide(); 
 							$YearlyDiv.hide();
 							setWeekDayChecked( o.ID + '_weeklyday', $RateIntervalXml.children('weeklyday').text());
 							$WeeklyStartDate.val($RateIntervalXml.children('startingdate').text());
-							$MonthlyByDateRadio.attr('checked', 'true');     //default (for case 21048)
+							$MonthlyByDateRadio.CswAttrDom('checked', 'true');     //default (for case 21048)
 							break;
 						case "MonthlyByDate":
-							$monthlyradio.attr('checked', 'true');
+							$monthlyradio.CswAttrDom('checked', 'true');
 							$WeeklyDiv.hide(); 
 							$MonthlyDiv.show(); 
 							$YearlyDiv.hide();
-							$MonthlyByDateRadio.attr('checked', 'true');
+							$MonthlyByDateRadio.CswAttrDom('checked', 'true');
 							$MonthlyRateSelect.val($RateIntervalXml.children('monthlyfrequency').text());
 							$MonthlyDateSelect.val($RateIntervalXml.children('monthlydate').text());
 							$MonthlyStartMonthSelect.val($RateIntervalXml.children('startingmonth').text());
 							$MonthlyStartYearSelect.val($RateIntervalXml.children('startingyear').text());
 							break;
 						case "MonthlyByWeekAndDay":
-							$monthlyradio.attr('checked', 'true');
+							$monthlyradio.CswAttrDom('checked', 'true');
 							$WeeklyDiv.hide(); 
 							$MonthlyDiv.show(); 
 							$YearlyDiv.hide();
-							$MonthlyByDayRadio.attr('checked', 'true');
+							$MonthlyByDayRadio.CswAttrDom('checked', 'true');
 							$MonthlyWeekSelect.val($RateIntervalXml.children('monthlyweek').text());
 							setWeekDayChecked( o.ID + '_monthly_day', $RateIntervalXml.children('monthlyday').text());
 							$MonthlyStartMonthSelect.val($RateIntervalXml.children('startingmonth').text());
 							$MonthlyStartYearSelect.val($RateIntervalXml.children('startingyear').text());
 							break;
 						case "YearlyByDate":
-							$yearlyradio.attr('checked', 'true');
+							$yearlyradio.CswAttrDom('checked', 'true');
 							$WeeklyDiv.hide(); 
 							$MonthlyDiv.show(); 
 							$YearlyDiv.hide();
 							$YearlyStartDate.val($RateIntervalXml.children('yearlydate').text());
-							$MonthlyByDateRadio.attr('checked', 'true');     //default (for case 21048)
+							$MonthlyByDateRadio.CswAttrDom('checked', 'true');     //default (for case 21048)
 							break;
 					} // switch(RateType)
 				}
             },
         save: function(o) {
 				
-				var RateType = $('[name="' + o.ID + '_type"]:checked').attr('value');
+				var RateType = $('[name="' + o.ID + '_type"]:checked').CswAttrDom('value');
 
 				o.$propxml.children().remove();
 				var $intervalnode = $('<interval />').appendTo(o.$propxml);
@@ -235,7 +235,7 @@
 						break;
 
 					case 'monthly': 
-						var MonthlyType = $('[name="'+ o.ID +'_monthly"]:checked').attr('value');
+						var MonthlyType = $('[name="'+ o.ID +'_monthly"]:checked').CswAttrDom('value');
 						$('<ratetype>'+ MonthlyType +'</ratetype>')
 							.appendTo($rivnode);
 						$('<monthlyfrequency>'+ $('#' + o.ID + '_monthly_rate').val() +'</monthlyfrequency>')
@@ -266,7 +266,7 @@
 						break;
 				} // switch(RateType)
 
-				$intervalnode.find('*').andSelf().each(function() { $(this).attr('xmlns', ''); });
+				$intervalnode.find('*').andSelf().each(function() { $(this).CswAttrDom('xmlns', ''); });
 
             } // save
     };
@@ -305,7 +305,7 @@
 	function setWeekDayChecked(id, checkedValues)
 	{
 		// set all to false
-		$('[name="' + id + '"]').attr('checked', '');
+		$('[name="' + id + '"]').CswAttrDom('checked', '');
 		
 		// set ones to true
 		var splitvalues = checkedValues.split(',');		
@@ -313,13 +313,13 @@
 		{
 			switch(splitvalues[i])
 			{
-				case "Sunday": $('#' + id + '_1').attr('checked', 'true'); break;
-				case "Monday": $('#' + id + '_2').attr('checked', 'true'); break;
-				case "Tuesday": $('#' + id + '_3').attr('checked', 'true'); break;
-				case "Wednesday": $('#' + id + '_4').attr('checked', 'true'); break;
-				case "Thursday": $('#' + id + '_5').attr('checked', 'true'); break;
-				case "Friday": $('#' + id + '_6').attr('checked', 'true'); break;
-				case "Saturday": $('#' + id + '_7').attr('checked', 'true'); break;
+				case "Sunday": $('#' + id + '_1').CswAttrDom('checked', 'true'); break;
+				case "Monday": $('#' + id + '_2').CswAttrDom('checked', 'true'); break;
+				case "Tuesday": $('#' + id + '_3').CswAttrDom('checked', 'true'); break;
+				case "Wednesday": $('#' + id + '_4').CswAttrDom('checked', 'true'); break;
+				case "Thursday": $('#' + id + '_5').CswAttrDom('checked', 'true'); break;
+				case "Friday": $('#' + id + '_6').CswAttrDom('checked', 'true'); break;
+				case "Saturday": $('#' + id + '_7').CswAttrDom('checked', 'true'); break;
 			}
 		} // for(var i = 0; i < splitvalues.length; i++)
 	} // setWeekyDayChecked()
@@ -329,10 +329,10 @@
 		var ret = '';
 		$('[name="' + id + '"]').each(function() {
 			var $check = $(this);
-			if(isTrue($check.attr('checked')))
+			if(isTrue($check.CswAttrDom('checked')))
 			{
 				if(ret !== '') ret += ',';
-				switch($check.attr('value'))
+				switch($check.CswAttrDom('value'))
 				{
 					case '1': ret += 'Sunday'; break;
 					case '2': ret += 'Monday'; break;

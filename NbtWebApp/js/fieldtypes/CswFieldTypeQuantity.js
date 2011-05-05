@@ -29,7 +29,7 @@
 								.appendTo($unitsel);
 				if(selectedUnit === unit)
 				{
-					$option.attr('selected', 'true');
+					$option.CswAttrDom('selected', 'true');
 				}
 			});
 
