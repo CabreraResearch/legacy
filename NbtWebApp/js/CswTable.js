@@ -171,8 +171,8 @@
 		        while (col > $row.children('td').length) 
 				{
 					var align = $table.CswAttrDom('cellalign');
-					if(($row.children('td').length === 0 && $table.CswAttrDom('FirstCellRightAlign') == 'true') ||
-					   ($row.children('td').length % 2 === 0 && $table.CswAttrDom('OddCellRightAlign') == 'true'))
+					if(($row.children('td').length === 0 && isTrue($table.CswAttrDom('FirstCellRightAlign'))) ||
+					   ($row.children('td').length % 2 === 0 && isTrue($table.CswAttrDom('OddCellRightAlign'))))
 					{
 						align = 'right';
 			        }

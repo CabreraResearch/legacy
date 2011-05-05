@@ -16,20 +16,24 @@
         var $Dom = $(this);
         var ret = undefined;
         
-        switch( arguments.length )
-        {
-            case 1:
-            {
-                ret = $Dom.prop(name);
-                break;
-            }
-            case 2:
-            {
-                ret = $Dom.prop(name,value);
-                break;
-            }
-        }
-        // For proper chaining support
+	    if(arguments.length === 1)
+			ret = $Dom.prop(name);
+		else
+            ret = $Dom.prop(name,value);
+
+		// special cases
+		if( ret === undefined ||
+			name === 'cellpadding' || 
+			name === 'cellspacing' ||
+			name === 'rowspan' ||
+			name === 'colspan' )
+		{
+	        if(arguments.length === 1)
+				ret = $Dom.attr(name);
+			else
+                ret = $Dom.attr(name,value);
+		}
+
         return ret;
 
     }; // function(options) {

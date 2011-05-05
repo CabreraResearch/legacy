@@ -20,7 +20,7 @@
 
                 var $TopDiv = $('<div id="'+ o.ID +'_top" class="CswComboBox_TopDiv"></div>')
                             .appendTo($Div)
-                            .CswAttrDom('style', 'width: '+ o.Width);
+                            .css('width', o.Width);
 
                 var $table = $TopDiv.CswTable('init', { ID: o.ID + '_tbl' });
                 $table.CswAttrDom('width', '100%');
@@ -34,7 +34,7 @@
 
                 var $ChildDiv = $('<div id="' + o.ID +'_child" class="CswComboBox_ChildDiv">')
                                   .appendTo($Div)
-                                  .CswAttrDom('style', 'width: '+ o.Width)
+                                  .css('width', o.Width)
                                   .append(o.SelectContent)
 								  .hover(function() {}, function() { $ChildDiv.hide(); });
 
