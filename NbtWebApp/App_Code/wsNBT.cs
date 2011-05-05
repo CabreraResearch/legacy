@@ -1578,7 +1578,7 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
         public XElement RunView( string SessionId, string ParentId, bool ForMobile )
         {
-            XElement ReturnVal = new XElement( "result" );
+            XElement ReturnVal = new XElement( "views" );
             try
             {
                 start();
@@ -1587,7 +1587,7 @@ namespace ChemSW.Nbt.WebServices
                 if( null != CurrentUser )
                 {
                     CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtResources, ForMobile );
-                    ReturnVal.Add( wsView.Run( ParentId, CurrentUser ) );
+                    ReturnVal = wsView.Run( ParentId, CurrentUser );
                 }
                 end();
             }
