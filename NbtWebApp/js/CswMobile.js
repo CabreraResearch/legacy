@@ -6,6 +6,7 @@
 /// <reference path="_Global.js" />
 
 var debug = false;
+var profiler = $createProfiler();
 if (!debug) profiler.disable();
 
 ; (function ($) { /// <param name="$" type="jQuery" />
@@ -1879,8 +1880,10 @@ if (!debug) profiler.disable();
             } // if(SessionId != '') 
         } //_processChanges()
 
+        log($dumpProfileHTML(profiler));
         // For proper chaining support
         return this;
     };
     //log($dumpProfilerText(profiler));
 }) ( jQuery );
+
