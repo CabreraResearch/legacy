@@ -33,7 +33,7 @@
                                                         AlternateText: '',
                                                         ID: o.ID + '_print',
                                                         onClick: function ($ImageDiv) { 
-                                                            $.CswDialog('OpenDialog', o.ID + '_dialog', 'Popup_PrintLabel.aspx?nodeid=' + o.nodeid + '&propid=' + o.ID); 
+															$.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.ID });
                                                             return CswImageButton_ButtonType.None; 
                                                         }
                                                         });

@@ -150,11 +150,11 @@ namespace ChemSW.Nbt.WebServices
 					CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.NodeType.BarcodeProperty;
 					if( BarcodeProperty != null )
 					{
-						string PopUp = "Popup_PrintLabel.aspx?nodeid=" + Node.NodeId.PrimaryKey + "&propid=" +
-									   BarcodeProperty.PropId + "&checkednodeids=";
 						MenuNode.Add( new XElement( "item",
 													new XAttribute( "text", "Print Label" ),
-													new XAttribute( "popup", PopUp ) ) );
+													new XAttribute( "nodeid", Node.NodeId.ToString() ),
+													new XAttribute( "propid", new CswPropIdAttr(Node, BarcodeProperty).ToString() ),
+													new XAttribute( "action", "PrintLabel" ) ) );
 					}
 				}
 
