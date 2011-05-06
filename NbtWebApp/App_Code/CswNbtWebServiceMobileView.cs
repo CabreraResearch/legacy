@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Xml.Linq;
@@ -65,8 +66,14 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 // All Views
-                XElement MobileViews = new XElement("something"); //.ViewSelect.getVisibleViewsXml( CurrentUser, true, false, string.Empty );
-                ret = MobileViews;
+				ret = new XElement("views");
+				Collection<CswNbtView> MobileViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, CurrentUser, false, true, false, NbtViewRenderingMode.Any );
+				foreach( CswNbtView MobileView in MobileViews )
+				{
+					ret.Add( new XElement( "view",
+							new XAttribute( "id", ViewIdPrefix + MobileView.ViewId ),
+							new XAttribute( "name", MobileView.ViewName ) ) );
+				}
             }
 
             return ret;
