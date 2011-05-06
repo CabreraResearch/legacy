@@ -17,11 +17,9 @@
 						if (options) $.extend(o, options);
 
 						var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
-                        if(ThisSessionId !== undefined && ThisSessionId !== '' && ThisSessionId !== null)
+                        if( !isNullOrEmpty(ThisSessionId) )
 						{
-
 							o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
-
 						}
 						else 
 						{
