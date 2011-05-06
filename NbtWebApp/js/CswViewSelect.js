@@ -21,7 +21,8 @@
 								};
 					},
 					onSuccess: function() {},
-					ClickDelay: 300
+					ClickDelay: 300,
+                    issearchable: false
 				};
 
 				if (options) {
@@ -29,8 +30,7 @@
 				}
 
 				var $selectdiv = $(this);
-				$selectdiv.contents().remove();
-
+				
 				$viewtreediv = $('<div/>');
 				$selectdiv.CswComboBox('init', { 'ID': o.ID + '_combo', 
 													'TopContent': 'Select a View',
@@ -55,7 +55,8 @@
 																	'$selectdiv': $selectdiv
 																});
 												}, 
-											'onSuccess': o.onSuccess 
+											'onSuccess': o.onSuccess,
+                                            'issearchable': o.issearchable 
 										});
 				return $selectdiv;
 			},

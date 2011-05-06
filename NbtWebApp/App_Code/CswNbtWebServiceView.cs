@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.WebServices
 		public const string ViewTreeSessionKey = "ViewTreeXml";
 
 		// jsTree compatible format
-		public string getViewTree( HttpSessionState Session )
+		public string getViewTree( HttpSessionState Session, bool IsSearchable )
 		{
 
 			//string ret = string.Empty;
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.WebServices
 				TreeXmlDoc.AppendChild( DocRoot );
 
 				// Views
-                Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, false, NbtViewRenderingMode.Any );
+                Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, IsSearchable, NbtViewRenderingMode.Any );
 
 				foreach( CswNbtView View in Views )
 				{
@@ -136,20 +136,17 @@ namespace ChemSW.Nbt.WebServices
         //public XElement getSearchableViewTree( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode )
         //{
         //    XElement SearchableViews = new XElement( "root" );
-        //    DataTable Views = _CswNbtResources.ViewSelect.getVisibleViews(OrderBy, User, IncludeEmptyViews, MobileOnly, SearchableOnly, NbtViewRenderingMode.Any );
-        //    foreach( var VARIABLE in OrderBy )
-        //    {
-                
-        //    }
-        //    var ViewsByCat = from View in Views 
-        //                  group View by View.Category into Category 
-        //                  orderby Category 
-        //                  select new {Cat = Category.Key, Views = Category};
+        //    Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( OrderBy, User, IncludeEmptyViews, MobileOnly, SearchableOnly, NbtViewRenderingMode.Any );
+
+        //    var ViewsByCat = from View in Views
+        //                     group View by View.Category into Category
+        //                     orderby Category
+        //                     select new { Cat = Category.Key, Views = Category };
         //    foreach( var Cat in ViewsByCat )
         //    {
         //        XElement ThisCat = new XElement( "item",
-        //                            new XAttribute("viewtype", "category")
-                    
+        //                            new XAttribute( "viewtype", "category" )
+
         //            );
         //    }
 
