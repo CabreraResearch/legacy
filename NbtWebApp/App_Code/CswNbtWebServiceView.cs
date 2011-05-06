@@ -272,9 +272,20 @@ namespace ChemSW.Nbt.WebServices
                     ViewsTable.Columns.Add( "username" );
                     foreach( CswNbtView View in Views.OrderBy( Name => Name.ViewName ))
                     {
+                        string RoleName = string.Empty;
                         CswNbtNode Role = _CswNbtResources.Nodes.GetNode( View.VisibilityRoleId );
+                        if( null != Role )
+                        {
+                            RoleName = Role.NodeName;
+                        }
+                        string UserName = string.Empty;
                         CswNbtNode User = _CswNbtResources.Nodes.GetNode( View.VisibilityUserId );
-                        ViewsTable.Rows.Add( View.ViewName, View.ViewMode.ToString(), View.Visibility.ToString(), View.Category, Role.NodeName, User.NodeName );
+                        if( null != User )
+                        {
+                            UserName = User.NodeName;
+                        }
+
+                        ViewsTable.Rows.Add( View.ViewName, View.ViewMode.ToString(), View.Visibility.ToString(), View.Category, RoleName, UserName );
                     }
 				}
 			}
