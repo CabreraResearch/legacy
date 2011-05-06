@@ -15,20 +15,23 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Test Case: 001, part 04
     /// </summary>
-    public class CswTestCase_001_04_004 : ICswUpdateSchemaTo
+    public class CswTestCase_001_04 : ICswUpdateSchemaTo
     {
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'T', 004 ); } }
 
 
         public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name,_CswTstCaseRsrc_001.Purpose, "Verify tear down" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_001 _CswTstCaseRsrc_001 = null;
-        public CswTestCase_001_04_004( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+
+        private CswSchemaVersion _CswSchemaVersion = null;
+        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_001_04( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion )
         {
+            _CswSchemaVersion = CswSchemaVersion;
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
             _CswTstCaseRsrc_001 = new CswTstCaseRsrc_001( _CswNbtSchemaModTrnsctn );

@@ -14,20 +14,23 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_003_01_007 : ICswUpdateSchemaTo
+    public class CswTestCase_003_01 : ICswUpdateSchemaTo
     {
 
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'T', 007 ); } }
 
         public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_003.Purpose, "add tables to use for post-rollback verify" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_003 _CswTstCaseRsrc_003 = null;
-        public CswTestCase_003_01_007( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+
+        private CswSchemaVersion _CswSchemaVersion = null;
+        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_003_01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion )
         {
+            _CswSchemaVersion = CswSchemaVersion;
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
             _CswTstCaseRsrc_003 = new CswTstCaseRsrc_003( _CswNbtSchemaModTrnsctn );
