@@ -156,7 +156,8 @@
 
                 var $searchviewselect = $viewselectcell.CswTable('cell', 2, 1).CswViewSelect({
 																'ID': 'welcome_searchviewsel',
-																'issearchable': true
+																'issearchable': true,
+                                                                'usesession': false
 															})
 						                .hide();
 

@@ -255,14 +255,14 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getViewTree(bool IsSearchable)
+		public XElement getViewTree(bool IsSearchable, bool UseSession)
 		{
 			var ReturnVal = new XElement( "viewtree" );
 			try
 			{
 				start();
 				var ws = new CswNbtWebServiceView( _CswNbtResources );
-                ReturnVal = XElement.Parse( ws.getViewTree( Session, IsSearchable ) );
+                ReturnVal = XElement.Parse( ws.getViewTree( Session, IsSearchable, UseSession ) );
 				end();
 			}
 			catch( Exception ex )

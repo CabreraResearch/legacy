@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.WebServices
 		public const string ViewTreeSessionKey = "ViewTreeXml";
 
 		// jsTree compatible format
-		public string getViewTree( HttpSessionState Session, bool IsSearchable )
+		public string getViewTree( HttpSessionState Session, bool IsSearchable, bool UseSession )
 		{
 
 			//string ret = string.Empty;
@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.WebServices
 			//return "<root>" + ret + "</root>";
 
 			XmlDocument TreeXmlDoc;
-			if( Session[ViewTreeSessionKey] != null )
+			if( Session[ViewTreeSessionKey] != null && UseSession )
 			{
 				TreeXmlDoc = (XmlDocument) Session[ViewTreeSessionKey];
 			}
@@ -93,35 +93,40 @@ namespace ChemSW.Nbt.WebServices
 					_makeViewTreeNode( DocRoot, View.Category, ItemType.View, View.ViewId, View.ViewName, View.ViewMode );
 				}
 
-				// Actions
-				foreach( CswNbtAction Action in _CswNbtResources.Actions )
-				{
-					if( Action.ShowInList &&
-						( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
-							( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( Action.Name ) )
-					{
-						XmlNode ActionNode = _makeViewTreeNode( DocRoot, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );
-						CswXmlDocument.AppendXmlAttribute( ActionNode, "actionurl", Action.Url.ToString() );
-					}
-				}
+                if( !IsSearchable )
+                {
+                    // Actions
+                    foreach( CswNbtAction Action in _CswNbtResources.Actions )
+                    {
+                        if( Action.ShowInList &&
+                            ( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
+                            ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( Action.Name ) )
+                        {
+                            XmlNode ActionNode = _makeViewTreeNode( DocRoot, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );
+                            CswXmlDocument.AppendXmlAttribute( ActionNode, "actionurl", Action.Url.ToString() );
+                        }
+                    }
 
 
-				// Reports
-				CswNbtMetaDataObjectClass ReportMetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
-				CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
-				ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
-				ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
-				for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
-				{
-					ReportTree.goToNthChild( i );
+                    // Reports
+                    CswNbtMetaDataObjectClass ReportMetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
+                    CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
+                    ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
+                    ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
+                    for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
+                    {
+                        ReportTree.goToNthChild( i );
 
-					CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( ReportTree.getNodeForCurrentPosition() );
-					_makeViewTreeNode( DocRoot, ReportNode.Category.Text, ItemType.Report, ReportNode.NodeId.PrimaryKey, ReportNode.ReportName.Text );
+                        CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( ReportTree.getNodeForCurrentPosition() );
+                        _makeViewTreeNode( DocRoot, ReportNode.Category.Text, ItemType.Report, ReportNode.NodeId.PrimaryKey, ReportNode.ReportName.Text );
 
-					ReportTree.goToParentNode();
-				}
-
-				Session[ViewTreeSessionKey] = TreeXmlDoc;
+                        ReportTree.goToParentNode();
+                    }
+                }
+			    if( UseSession )
+                {
+                    Session[ViewTreeSessionKey] = TreeXmlDoc;
+                }
 
 			}
 

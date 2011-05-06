@@ -22,7 +22,8 @@
 					},
 					onSuccess: function() {},
 					ClickDelay: 300,
-                    issearchable: false
+                    issearchable: false,
+                    usesession: true,
 				};
 
 				if (options) {
@@ -56,7 +57,8 @@
 																});
 												}, 
 											'onSuccess': o.onSuccess,
-                                            'issearchable': o.issearchable 
+                                            'issearchable': o.issearchable,
+                                            'usesession': o.usesession 
 										});
 				return $selectdiv;
 			},
