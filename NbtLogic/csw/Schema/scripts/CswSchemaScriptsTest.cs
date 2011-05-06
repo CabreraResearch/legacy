@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -80,6 +81,13 @@ namespace ChemSW.Nbt.Schema
             CswSchemaUpdateDriver Schema_15_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_004_04_015( _CswNbtSchemaModTrnsctn ) );
             _UpdateDrivers.Add( Schema_15_Driver.SchemaVersion, Schema_15_Driver );
 
+
+            //Type[] Types = Assembly.GetExecutingAssembly().GetTypes();
+            //foreach( Type CurrentType in Types )
+            //{
+            //    if( CurrentType.Namespace == "ChemSW.Nbt.Schema" && CurrentType.IsClass && typeof(ICswUpdateSchemaTo).IsInstanceOfType(
+
+            //}
 
 
 
