@@ -320,8 +320,6 @@ var debug = false;
                     {
                         if ( !isNullOrEmpty(xmlstr) )
                         {
-log('xmlstr = ');
-log(xmlstr);
 							$currentViewXml = $(xmlstr);
                             
                             _processViewXml({
@@ -544,7 +542,7 @@ log(xmlstr);
                     var toolbar = '';
                     if ( !isNullOrEmpty(previd) )
                     {
-                        toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-back="true">Previous</a>';
+                        toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>';
                     }
                     if ( !isNullOrEmpty(nextid) )
                     {
@@ -1040,15 +1038,14 @@ log(xmlstr);
                 $.extend(p, params);
             }
 
-
-            var divhtml = '<div id="' + p.DivId + '" data-role="page">' +
+            var divhtml = '<div id="' + p.DivId + '" data-role="page" data-url="'+ p.DivId +'">' +
                           '<div data-role="header" data-theme="' + opts.Theme + '" data-position="fixed">';
-            divhtml += '<a href="#' + p.ParentId + '" id="' + p.DivId + '_back" data-back="true" ';
+            divhtml += '<a href="#' + p.ParentId + '" id="' + p.DivId + '_back" data-direction="reverse" ';
             if ( !isNullOrEmpty(p.backtransition) )
             {
                 divhtml += ' data-transition="' + p.backtransition + '" ';
             }
-            if ( !isNullOrEmpty(p.ParentId) )
+            if ( isNullOrEmpty(p.ParentId) )
             {
                 divhtml += ' style="visibility: hidden;" ';
             }
