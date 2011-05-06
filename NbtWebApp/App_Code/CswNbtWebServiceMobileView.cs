@@ -185,35 +185,37 @@ namespace ChemSW.Nbt.WebServices
 
         private void _runProperties( CswNbtNode Node, ref XElement SubItemsXmlNode )
         {
-            //XElement Props = new XElement( "subitems" );
             foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
                 {
-                    if( !Prop.HideInMobile &&
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) // Case 20772
-                    {
-                        CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-                        XmlDocument XmlDoc = new XmlDocument();
-                        CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
-                        PropWrapper.ToXml( XmlDoc.DocumentElement );
+					if( !Prop.HideInMobile &&
+						Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
+						Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) // Case 20772
+					{
+						CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
+						XmlDocument XmlDoc = new XmlDocument();
+						CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
+						PropWrapper.ToXml( XmlDoc.DocumentElement );
 
-						SubItemsXmlNode.Add( new XElement( "prop",
-                                        new XAttribute( "id", PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() ),
-                                        new XAttribute( "name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
-                                        new XAttribute( "tab", CswTools.SafeJavascriptParam( Tab.TabName ) ),
-                                        new XAttribute( "readonly", Prop.ReadOnly.ToString().ToLower() ),
-                                        new XAttribute( "fieldtype", Prop.FieldType.FieldType.ToString() ),
-                                        new XAttribute( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
-                                        new XAttribute( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) ),
-                                        XElement.Parse( XmlDoc.InnerXml )
-                            ) );
-                    }
-                }
-            }
+						XElement PropXElement = new XElement( "prop",
+											new XAttribute( "id", PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() ),
+											new XAttribute( "name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
+											new XAttribute( "tab", CswTools.SafeJavascriptParam( Tab.TabName ) ),
+											new XAttribute( "readonly", Prop.ReadOnly.ToString().ToLower() ),
+											new XAttribute( "fieldtype", Prop.FieldType.FieldType.ToString() ),
+											new XAttribute( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
+											new XAttribute( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) ) );
+						SubItemsXmlNode.Add( PropXElement );
+						foreach( XmlNode PropValueChildNode in XmlDoc.DocumentElement.ChildNodes )
+						{
+							XElement ChildXElement = XElement.Parse( PropValueChildNode.OuterXml );
+							PropXElement.Add( ChildXElement );
+						}
+					}
+				} //foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
+			} // foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
 
-            //return Props;
 		} // _runProperties()
 
 

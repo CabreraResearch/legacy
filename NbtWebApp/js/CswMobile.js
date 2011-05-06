@@ -456,17 +456,21 @@ var debug = false;
             var previd = $xmlitem.prev().CswAttrXml('id');
 
             var lihtml = '';
+
             switch (PageType)
             {
                 case "SEARCHES":
+                case "searches":
                     // ignore this
                     break;
 
                 case "NODE":
+                case "node":
                     lihtml += _makeObjectClassContent($xmlitem);
                     break;
 
                 case "PROP":
+                case "prop":
                     var tab = $xmlitem.CswAttrXml('tab');
                     var fieldtype = $xmlitem.CswAttrXml('fieldtype');
                     var gestalt = $xmlitem.CswAttrXml('gestalt');
@@ -643,22 +647,26 @@ var debug = false;
 
         function _extractCDataValue($node)
         {
-            // default
-            ret = $node.text();
+            var ret = '';			
+			if($node.length > 0)
+			{
+				// default
+            	ret = $node.text();
 
-            // for some reason, CDATA fields come through from the webservice like this:
-            // <node><!--[CDATA[some text]]--></node>
-            var cdataval = $node.html();
-            if ( !isNullOrEmpty(cdataval) )
-            {
-                var prefix = '<!--[CDATA[';
-                var suffix = ']]-->';
+				// for some reason, CDATA fields come through from the webservice like this:
+				// <node><!--[CDATA[some text]]--></node>
+				var cdataval = $node.html();
+				if ( !isNullOrEmpty(cdataval) )
+				{
+					var prefix = '<!--[CDATA[';
+					var suffix = ']]-->';
 
-                if (cdataval.substr(0, prefix.length) === prefix)
-                {
-                    ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
-                }
-            }
+					if (cdataval.substr(0, prefix.length) === prefix)
+					{
+						ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
+					}
+				}
+			}
             return ret;
         }
 
@@ -670,7 +678,7 @@ var debug = false;
             var ReadOnly = ( isTrue($xmlitem.CswAttrXml('readonly')) );
 
             // Subfield values
-            var sf_text =  tryParseString( _extractCDataValue($xmlitem.children('text')), '');
+            var sf_text = tryParseString( _extractCDataValue($xmlitem.children('text')), '');
             var sf_value = tryParseString( $xmlitem.children('value').text(), '');
             var sf_href = tryParseString( $xmlitem.children('href').text(), '');
             var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
