@@ -411,7 +411,7 @@ if (!debug) profiler.disable();
             {
                 $.extend(p, params);
             }
-            debugger;
+
             var content = _makeUL();
             currenttab = '';
 
