@@ -23,6 +23,7 @@
 
 		// special cases
 		if( ret === undefined ||
+			name === 'href' ||
 			name === 'cellpadding' || 
 			name === 'cellspacing' ||
 			name === 'rowspan' ||

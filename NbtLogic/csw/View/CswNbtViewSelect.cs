@@ -248,14 +248,14 @@ namespace ChemSW.Nbt
                                                 ( !SearchableOnly || ThisView.IsSearchable() ) ) )
             {
                 ViewsElement.Add( new XElement( "view",
-                                            new XAttribute( "id", ThisView.ViewId ),
+                                            new XAttribute( "id", "viewid_" + ThisView.ViewId ),
                                             new XAttribute( "name", ThisView.ViewName ) ) );
                 HasAtLeastOneResult = true;
             }
             if( !HasAtLeastOneResult )
             {
                 ViewsElement.Add( new XElement( "view",
-                                            new XAttribute( "id", Int32.MinValue ),
+                                            new XAttribute( "id", "viewid_" + Int32.MinValue ),
                                             new XAttribute( "name", "No Results" ) ) );
             }
             _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() finished", SearchableViewsTimer.ElapsedDurationInSecondsAsString );

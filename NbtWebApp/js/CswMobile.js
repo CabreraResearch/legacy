@@ -5,9 +5,9 @@
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
 
-var debug = true;
-var profiler = $createProfiler();
-if (!debug) profiler.disable();
+var debug = false;
+//var profiler = $createProfiler();
+//if (!debug) profiler.disable();
 
 ; (function ($) { /// <param name="$" type="jQuery" />
     
@@ -128,8 +128,15 @@ if (!debug) profiler.disable();
             });
             $('#loginsubmit').click(onLoginSubmit);
             if (ChangePage)
-                $.mobile.changePage($('#logindiv'), 'fade', false, true);
-        }
+            {
+			    _changePage($('#logindiv'), 'fade', false, true);
+			}
+		}
+
+		function _changePage($div, transition, reverse, changeHash)
+		{
+			$.mobile.changePage($div, transition, reverse, changeHash);
+		}
 
         function _loadSorryCharlieDiv(ChangePage)
         {
@@ -142,7 +149,7 @@ if (!debug) profiler.disable();
                 HideLogoutButton: true
             });
             if (ChangePage)
-                $.mobile.changePage($('#sorrycharliediv'), 'fade', false, true);
+                _changePage($('#sorrycharliediv'), 'fade', false, true);
         }
 
         function removeDiv(DivId)
@@ -164,7 +171,7 @@ if (!debug) profiler.disable();
                     HideLogoutButton: true,
                     HideHelpButton: true
                 });
-                $.mobile.changePage($('#loadingdiv'), "fade", false, true);
+                _changePage($('#loadingdiv'), "fade", false, true);
                 setTimeout(function () { continueReloadViews(true); removeDiv('loadingdiv') }, opts.DivRemovalDelay);
             } else
             {
@@ -247,12 +254,7 @@ if (!debug) profiler.disable();
                 HideSearchButton: false,
                 ChangePage: false
             };
-            
-            if (params)
-            {
-                $.extend(p, params);
-            }
-
+            if (params) $.extend(p, params);
 
             var ret = true;
 
@@ -290,19 +292,19 @@ if (!debug) profiler.disable();
                             url: opts.ViewUrl,
                             data: "SessionId=" + SessionId + "&ParentId=" + p.DivId + "&ForMobile=" + ForMobile,
                             onloginfail: function() { Logout(); },
-                            success: function (xml)
+                            success: function (X$xml)
                             {
                                 if (debug) log('On Success ' + opts.ViewUrl);
                                 if (p.level === 1)
                                 {
-                                    _storeViewXml(p.DivId, p.HeaderText, xml);
+									_storeViewXml(p.DivId, p.HeaderText, X$xml);
                                 }
 
                                 _processViewXml({
                                     ParentId: p.ParentId,
                                     DivId: p.DivId,
                                     HeaderText: p.HeaderText,
-                                    $xml: $(xml),
+                                    $xml: X$xml,
                                     parentlevel: p.level,
                                     HideRefreshButton: p.HideRefreshButton,
                                     HideSearchButton: p.HideSearchButton,
@@ -318,7 +320,9 @@ if (!debug) profiler.disable();
                     {
                         if ( !isNullOrEmpty(xmlstr) )
                         {
-                            $currentViewXml = $(xmlstr);
+log('xmlstr = ');
+log(xmlstr);
+							$currentViewXml = $(xmlstr);
                             
                             _processViewXml({
                                 ParentId: p.ParentId,
@@ -340,15 +344,15 @@ if (!debug) profiler.disable();
                                 url: opts.ViewUrl,
                                 data: "SessionId=" + SessionId + "&ParentId=" + p.DivId + "&ForMobile=" + ForMobile,
                                 onloginfail: function() { Logout(); },
-                                success: function (xml)
+                                success: function (X$xml)
                                 {
                                     if (debug) log('On Success ' + opts.ViewUrl);
 
                                     if (p.level === 1)
                                     {
-                                        _storeViewXml(p.DivId, p.HeaderText, xml);
+                                        _storeViewXml(p.DivId, p.HeaderText, X$xml);
                                     }
-                                    $currentViewXml = $(xml);
+                                    $currentViewXml = X$xml;
                                 
                                     _processViewXml({
                                         ParentId: p.ParentId,
@@ -423,8 +427,6 @@ if (!debug) profiler.disable();
             });
             content += _endUL();
 
-            log(content);
-
             $divhtml = _addPageDivToBody({
                 ParentId: p.ParentId,
                 level: p.parentlevel,
@@ -435,12 +437,11 @@ if (!debug) profiler.disable();
                 HideSearchButton: p.HideSearchButton
             });
             onAfterAddDiv($divhtml);
-            log(p);
+
             // this replaces the link navigation
             if (p.ChangePage)
             {
-                log($('#' + p.DivId));
-                //$.mobile.changePage($('#' + p.DivId), "slide");
+                _changePage($('#' + p.DivId), "slide");
             }
 
         } // _processViewXml()
@@ -1151,7 +1152,7 @@ if (!debug) profiler.disable();
                 .find('li a')
                 .click(function (e)
                 {
-                    if (_loadDivContents({
+					if (_loadDivContents({
                         ParentId: DivId,
                         level: (level + 1),
                         DivId: $(this).CswAttrDom('href').substr(1),
@@ -1286,8 +1287,8 @@ if (!debug) profiler.disable();
                     {
                         if (debug) log('On Success ' + opts.AuthenticateUrl);
                         
-                        var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
-						_cacheSession(ThisSessionId, UserName);
+                        SessionId = $.CswCookie('get', CswCookieName.SessionId);
+						_cacheSession(SessionId, UserName);
                         reloadViews(true);
                         removeDiv('logindiv');
                     }
@@ -1329,7 +1330,7 @@ if (!debug) profiler.disable();
                         HideLogoutButton: true,
                         HideHelpButton: true
                     });
-                    $.mobile.changePage($('#loadingdiv'), "fade", false, true);
+                    _changePage($('#loadingdiv'), "fade", false, true);
                     setTimeout(function () { continueRefresh(DivId); }, opts.DivRemovalDelay);
                 }
             }
@@ -1402,12 +1403,12 @@ if (!debug) profiler.disable();
         {
             $('#synchstatus_back').CswAttrDom('href', '#' + DivId);
             $('#synchstatus_back').css('visibility', '');
-            $.mobile.changePage($('#synchstatus'), 'slideup');
+            _changePage($('#synchstatus'), 'slideup');
         }
 
         function onHelp(DivId, eventObj)
         {
-            $.mobile.changePage($('#help'), 'slideup');
+            _changePage($('#help'), 'slideup');
         }
 
         function onPropertyChange(DivId, eventObj)
@@ -1478,7 +1479,7 @@ if (!debug) profiler.disable();
 
                     $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
 
-                    $.mobile.changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
+                    _changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
                 }
             });
         }
@@ -1539,7 +1540,7 @@ if (!debug) profiler.disable();
                 });
             } else
             {
-                console.log("database is not opened");
+                log("database is not opened");
             }
         } //_DoSql
 
@@ -1592,7 +1593,7 @@ if (!debug) profiler.disable();
 
         function _errorHandler(transaction, error)
         {
-            console.log('Database Error: ' + error.message + ' (Code ' + error.code + ')');
+            log('Database Error: ' + error.message + ' (Code ' + error.code + ')');
             return true;
         }
 
@@ -1678,12 +1679,12 @@ if (!debug) profiler.disable();
         //        } //_clearSession()
 
 
-        function _storeViewXml(rootid, rootname, viewxml)
+        function _storeViewXml(rootid, rootname, $viewxml)
         {
             if ( !isNullOrEmpty(rootid) )
             {
                 _DoSql('INSERT INTO views (rootid, rootname, viewxml, wasmodified) VALUES (?, ?, ?, 0);',
-                       [rootid, rootname, viewxml]);
+                       [rootid, rootname, xmlToString($viewxml)]);
             }
         }
 
@@ -1726,7 +1727,7 @@ if (!debug) profiler.disable();
                            if (result.rows.length > 0)
                            {
                                var row = result.rows.item(0);
-                               onsuccess(row.viewxml);
+							   onsuccess(row.viewxml);
                            } else
                            {
                                onsuccess('');
@@ -1859,7 +1860,7 @@ if (!debug) profiler.disable();
             } // if(SessionId != '') 
         } //_processChanges()
 
-        log($dumpProfileHTML(profiler));
+        //log("profiler="+$dumpProfileHTML(profiler));
         // For proper chaining support
         return this;
     };
