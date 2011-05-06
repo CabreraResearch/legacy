@@ -186,10 +186,20 @@
                                                         enabledText: 'Add', 
                                                         disabledText: 'Adding', 
                                                         onclick: function() { 
-										                        _addItem({ 
+										                        var viewid = '';
+                                                                if( !$viewselect.is(':hidden') )
+                                                                {
+                                                                    viewid = $viewselect.CswViewSelect('value');
+                                                                }
+                                                                else if( !$searchviewselect.isPrototypeOf(':hidden') )
+                                                                {
+                                                                    viewid = $searchviewselect.CswViewSelect('value');
+                                                                }
+                                                                
+                                                                _addItem({ 
 													                    'AddWelcomeItemUrl': o.AddWelcomeItemUrl,
 													                    'type': $typeselect.val(),
-													                    'viewid': $viewselect.CswViewSelect('value'),
+													                    'viewid': viewid,
 													                    'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
 													                    'text': $welcometext.val(),
 													                    'iconfilename': $buttonsel.val(),
