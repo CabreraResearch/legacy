@@ -597,9 +597,11 @@ var debug = false;
             var id = $xmlitem.CswAttrXml('id');
             var NodeName = $xmlitem.CswAttrXml('name');
             var icon = '';
-            if ( !isNullOrEmpty($xmlitem.CswAttrXml('iconfilename')) && !isNullOrEmpty($xmlitem.CswAttrXml('iconfilename')) )
-                icon = 'images/icons/' + $xmlitem.CswAttrXml('iconfilename');
-            var ObjectClass = $xmlitem.CswAttrXml('objectclass');
+            if ( !isNullOrEmpty($xmlitem.CswAttrXml('iconfilename')))
+            {
+				icon = 'images/icons/' + $xmlitem.CswAttrXml('iconfilename');
+            }
+			var ObjectClass = $xmlitem.CswAttrXml('objectclass');
 
             switch (ObjectClass)
             {
