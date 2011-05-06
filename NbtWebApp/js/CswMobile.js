@@ -906,10 +906,11 @@ var debug = false;
                 }
 
                 Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
-                if (( !isTrue(Checked) && !isTrue(answers[i]) ) ||
-                    ( isTrue(Checked) && isTrue(answers[i]) ) ||
-                    ( isNullOrEmpty(Checked) && isNullOrEmpty(answers[i]) ))
-                {
+				// Checked is a Tristate, so isTrue() is not useful here
+				if ((Checked === 'false' && answers[i] === 'False') ||
+					(Checked === 'true' && answers[i] === 'True') ||
+					(Checked === '' && answers[i] === 'Null'))
+				{
                     Html += 'checked';
                 }
                 Html += ' onclick="';
