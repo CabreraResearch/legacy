@@ -45,8 +45,8 @@ namespace ChemSW.Nbt.WebPages
                     DataTable Views = null;
                     if( Master.CswNbtResources.CurrentNbtUser.IsAdministrator() )
                         Views = Master.CswNbtResources.ViewSelect.getAllViews();
-                    else
-                        Views = Master.CswNbtResources.ViewSelect.getVisibleViews( false );
+                    //else
+                    //    Views = Master.CswNbtResources.ViewSelect.getVisibleViews( false );
 
                     if( Views.Rows.Count > 0 )
                     {

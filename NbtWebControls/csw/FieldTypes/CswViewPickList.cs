@@ -45,7 +45,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
                 // Kind of a kludge fix for BZ 6941
                 // BUT SEE BZ 8288
-                DataTable Views = Prop.AsViewPickList.Views;
+                //DataTable Views = Prop.AsViewPickList.Views;
                 //DataTable Views = null;
                 //CswQueryCaddy ViewsCaddy = _CswNbtResources.makeCswQueryCaddy( "getVisibleViewInfo" );
                 //ViewsCaddy.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );

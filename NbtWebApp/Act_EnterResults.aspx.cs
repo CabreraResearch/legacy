@@ -97,17 +97,15 @@ namespace ChemSW.Nbt.WebPages
         private void _initViewList()
         {
             _LoadViewList.Items.Clear();
-            DataTable Views = null;
-            //if( Master.CswNbtResources.CurrentUser.IsAdministrator() )
-            Views = Master.CswNbtResources.ViewSelect.getVisibleViews( false );
+            Collection<CswNbtView> Views = Master.CswNbtResources.ViewSelect.getVisibleViews( false );
             //else
                 //Views = CswNbtView.getUserViews( Master.CswNbtResources );
 
-            if( Views.Rows.Count > 0 )
+            if( Views.Count > 0 )
             {
-                foreach( DataRow Row in Views.Rows )
+                foreach( CswNbtView View in Views )
                 {
-                    _LoadViewList.Items.Add( new ListItem( Row["viewname"].ToString(), Row["nodeviewid"].ToString() ) );
+                    _LoadViewList.Items.Add( new ListItem( View.ViewName, View.ViewId.ToString() ) );
                 }
             }
             else

@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 // All Views
-                XElement MobileViews = _CswNbtResources.ViewSelect.getVisibleViewsXml( CurrentUser, true, false, string.Empty );
+                XElement MobileViews = new XElement("something"); //.ViewSelect.getVisibleViewsXml( CurrentUser, true, false, string.Empty );
                 ret = MobileViews;
             }
 

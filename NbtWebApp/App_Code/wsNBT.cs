@@ -1144,28 +1144,29 @@ namespace ChemSW.Nbt.WebServices
 			return SearchNode;
 		} // getSearch()
 
-        //[WebMethod( EnableSession = true )]
-        //[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        //public XElement getSearchableViews( string IsMobile, string OrderBy, string IdPrefix )
-        //{
-        //    var SearchNode = new XElement( "searchableviews" );
-        //    try
-        //    {
-        //        start();
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement getSearchableViews( string IsMobile, string OrderBy )
+        {
+            var SearchNode = new XElement( "result" );
+            try
+            {
+                start();
 
-        //        ICswNbtUser UserId = _CswNbtResources.CurrentNbtUser;
-        //        bool ForMobile = CswConvert.ToBoolean( IsMobile );
-        //        XElement Views = _CswNbtResources.ViewSelect.getSearchableViews( UserId, ForMobile, OrderBy, IdPrefix ); ;
-        //        SearchNode.Add( Views );
-        //        end();
-        //    }
-        //    catch( Exception ex )
-        //    {
-        //        SearchNode = xError( ex );
-        //    }
+                ICswNbtUser UserId = _CswNbtResources.CurrentNbtUser;
+                bool ForMobile = CswConvert.ToBoolean( IsMobile );
+                var ws = new CswNbtWebServiceView( _CswNbtResources );
+                //SearchNode =  ws.getSearchableViewTree( UserId, ForMobile, true, OrderBy ); 
 
-        //    return SearchNode;
-        //} // getSearch()
+                end();
+            }
+            catch( Exception ex )
+            {
+                SearchNode = xError( ex );
+            }
+
+            return SearchNode;
+        } // getSearch()
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]

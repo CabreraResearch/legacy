@@ -288,26 +288,26 @@ namespace ChemSW.Nbt.WebPages
 
         private void _initLoadSearch()
         {
-            DataTable OriginalViewsTable = Master.CswNbtResources.ViewSelect.getVisibleViews( false );
-            DataTable ViewsTable = OriginalViewsTable.Copy();
-            Collection<DataRow> RowsToRemove = new Collection<DataRow>();
-            foreach( DataRow ViewRow in ViewsTable.Rows )
-            {
-                // Searchable?
-                if( !ViewRow["viewxml"].ToString().Contains( "<Filter" ) )
-                {
-                    RowsToRemove.Add( ViewRow );
-                }
-            }
-            foreach( DataRow DoomedRow in RowsToRemove )
-                DoomedRow.Delete();
+            //DataTable OriginalViewsTable = Master.CswNbtResources.ViewSelect.getVisibleViews( false );
+            //DataTable ViewsTable = OriginalViewsTable.Copy();
+            //Collection<DataRow> RowsToRemove = new Collection<DataRow>();
+            //foreach( DataRow ViewRow in ViewsTable.Rows )
+            //{
+            //    // Searchable?
+            //    if( !ViewRow["viewxml"].ToString().Contains( "<Filter" ) )
+            //    {
+            //        RowsToRemove.Add( ViewRow );
+            //    }
+            //}
+            //foreach( DataRow DoomedRow in RowsToRemove )
+            //    DoomedRow.Delete();
 
-            ViewsTable.Rows.InsertAt( ViewsTable.NewRow(), 0 );
+            //ViewsTable.Rows.InsertAt( ViewsTable.NewRow(), 0 );
 
-            _LoadDropDown.DataSource = ViewsTable;
-            _LoadDropDown.DataTextField = "viewname";
-            _LoadDropDown.DataValueField = "nodeviewid";
-            _LoadDropDown.DataBind();
+            //_LoadDropDown.DataSource = ViewsTable;
+            //_LoadDropDown.DataTextField = "viewname";
+            //_LoadDropDown.DataValueField = "nodeviewid";
+            //_LoadDropDown.DataBind();
         }
 
 
