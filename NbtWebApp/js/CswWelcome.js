@@ -146,12 +146,19 @@
 				var $viewselect_label = $('<span>View:</span>')
 										.appendTo($table.CswTable('cell', 2, 1))
 										.hide();
-				var $viewselect = $table.CswTable('cell', 2, 2).CswViewSelect({
+				var $viewselectcell = $table.CswTable('cell', 2, 2).CswTable('init', { ID: 'viewselecttable' });
+                var $viewselect = $viewselectcell.CswTable('cell', 1, 1).CswViewSelect({
 																				'ID': 'welcome_viewsel'
 																				//'viewid': '',
 																				//'onSelect': function(optSelect) { },
 																			})
 										.hide();
+
+                var $searchviewselect = $viewselectcell.CswTable('cell', 2, 1).CswViewSelect({
+																'ID': 'welcome_searchviewsel',
+																'issearchable': true
+															})
+						                .hide();
 
 				var $ntselect_label = $('<span>Add New:</span>')
 										.appendTo($table.CswTable('cell', 3, 1))
@@ -204,6 +211,7 @@
 											'$typeselect': $typeselect,
 											'$viewselect_label': $viewselect_label,
 											'$viewselect': $viewselect,
+                                            '$searchviewselect': $searchviewselect,
 											'$ntselect_label': $ntselect_label,
 											'$ntselect': $ntselect,
 //											'$welcometext_label': $welcometext_label,
@@ -345,6 +353,7 @@
 			$typeselect: '',
 			$viewselect_label: '', 
 			$viewselect: '',
+            $searchviewselect: '',
 			$ntselect_label: '',
 			$ntselect: '',
 //			$welcometext_label: '',
@@ -363,6 +372,7 @@
 			case "Add":
 				o.$viewselect_label.hide();
 				o.$viewselect.hide();
+                o.$searchviewselect.hide();
 				o.$ntselect_label.show();
 				o.$ntselect.show();
 				o.$buttonsel_label.show();
@@ -371,7 +381,8 @@
 				break;
 			case "Link":
 				o.$viewselect_label.show();
-				o.$viewselect.show();
+                o.$viewselect.show();
+                o.$searchviewselect.hide();
 				o.$ntselect_label.hide();
 				o.$ntselect.hide();
 				o.$buttonsel_label.show();
@@ -380,7 +391,8 @@
 				break;
 			case "Search":
 				o.$viewselect_label.show();
-				o.$viewselect.show();
+				o.$viewselect.hide();
+                o.$searchviewselect.show();                
 				o.$ntselect_label.hide();
 				o.$ntselect.hide();
 				o.$buttonsel_label.show();
@@ -390,6 +402,7 @@
 			case "Text":
 				o.$viewselect_label.hide();
 				o.$viewselect.hide();
+                o.$searchviewselect.hide();
 				o.$ntselect_label.hide();
 				o.$ntselect.hide();
 				o.$buttonsel_label.hide();
