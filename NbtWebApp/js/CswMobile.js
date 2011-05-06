@@ -22,14 +22,6 @@ if (!debug) profiler.disable();
         ///     &#10;3 - options.DivRemovalDelay: 1000
         /// </param>
 
-        if(debug)
-        {
-            profiler.instrumentObjectFunctions($.find, "$.find.");
-	        profiler.instrumentObjectFunctions($, "$.");
-	        profiler.instrumentObjectFunctions($.fn, "$.fn.");
-	        profiler.instrumentObjectFunctions($.mobile, "$.mobile.");
-        }
-
         var opts = {
             DBShortName: 'Mobile.html',
             DBVersion: '1.0',
@@ -139,8 +131,6 @@ if (!debug) profiler.disable();
                 $.mobile.changePage($('#logindiv'), 'fade', false, true);
         }
 
-        if(debug) profiler.instrumentFunction(_loadLoginDiv,'_loadLoginDiv');
-
         function _loadSorryCharlieDiv(ChangePage)
         {
             _addPageDivToBody({
@@ -155,14 +145,10 @@ if (!debug) profiler.disable();
                 $.mobile.changePage($('#sorrycharliediv'), 'fade', false, true);
         }
 
-        if(debug) profiler.instrumentFunction(_loadSorryCharlieDiv,'_loadSorryCharlieDiv');
-
         function removeDiv(DivId)
         {
             setTimeout('$(\'#' + DivId + '\').remove();', opts.DivRemovalDelay);
         }
-
-        if(debug) profiler.instrumentFunction(removeDiv,'removeDiv');
 
         function reloadViews(ChangePage)
         {
@@ -186,8 +172,6 @@ if (!debug) profiler.disable();
             }
         }
 
-        if(debug) profiler.instrumentFunction(reloadViews,'reloadViews');
-
         function continueReloadViews(ChangePage)
         {
             $('#viewsdiv').remove();
@@ -201,8 +185,6 @@ if (!debug) profiler.disable();
             });
 
         }
-
-        if(debug) profiler.instrumentFunction(continueReloadViews,'continueReloadViews');
 
         // ------------------------------------------------------------------------------------
         // Online indicator
@@ -411,8 +393,6 @@ if (!debug) profiler.disable();
             return ret;
         } // _loadDivContents()
 
-        if(debug) profiler.instrumentFunction(_loadDivContents,'_loadDivContents');
-
         var currenttab;
         var onAfterAddDiv;
         function _processViewXml(params)
@@ -459,8 +439,6 @@ if (!debug) profiler.disable();
                 $.mobile.changePage($('#' + p.DivId), "slide", false, true);
 
         } // _processViewXml()
-
-        if(debug) profiler.instrumentFunction(_processViewXml,'_processViewXml');
 
         function _makeListItemFromXml(xmlitem, DivId, parentlevel)
         {
@@ -594,8 +572,6 @@ if (!debug) profiler.disable();
             return lihtml;
         } // _makeListItemFromXml()
 
-        if(debug) profiler.instrumentFunction(_makeListItemFromXml,'_loadLoginDiv_makeListItemFromXml');
-
         function _makeUL(id)
         {
             var ret = '<ul data-role="listview" ';
@@ -658,8 +634,6 @@ if (!debug) profiler.disable();
             }
             return Html;
         }
-
-        if(debug) profiler.instrumentFunction(_makeObjectClassContent,'_makeObjectClassContent');
 
         function _extractCDataValue($node)
         {
@@ -1124,7 +1098,6 @@ if (!debug) profiler.disable();
             return $divhtml;
 
         } // _addPageDivToBody()
-        if(debug) profiler.instrumentFunction(_addPageDivToBody,'_addPageDivToBody');
         
         function _getDivHeaderText(DivId)
         {
