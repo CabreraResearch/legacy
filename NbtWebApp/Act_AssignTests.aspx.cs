@@ -201,18 +201,16 @@ namespace ChemSW.Nbt.WebPages
         {
             bool ret = false;
             ViewList.Items.Clear();
-            DataTable Views = null;
-            //if( Master.CswNbtResources.CurrentUser.IsAdministrator() )
-            Views = Master.CswNbtResources.ViewSelect.getVisibleViews( false );
+            Collection<CswNbtView> Views = Master.CswNbtResources.ViewSelect.getVisibleViews( false );
             //else
             //Views = CswNbtView.getUserViews( Master.CswNbtResources );
 
-            if( Views.Rows.Count > 0 )
+            if( Views.Count > 0 )
             {
                 ret = true;
-                foreach( DataRow Row in Views.Rows )
+                foreach( CswNbtView View in Views )
                 {
-                    ViewList.Items.Add( new ListItem( Row["viewname"].ToString(), Row["nodeviewid"].ToString() ) );
+                    ViewList.Items.Add( new ListItem( View.ViewName, View.ViewId.ToString() ) );
                 }
             }
             return ret;

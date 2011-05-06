@@ -765,18 +765,18 @@ namespace ChemSW.NbtWebControls
             //LoadViewList DropDown
             string LoadViewListPriorSelectedValue = _LoadViewList.SelectedValue;
             _LoadViewList.Items.Clear();
-            DataTable Views = null;
-            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-            {
-                if( _IncludeAllCheckBox.Checked )
-                    Views = _CswNbtResources.ViewSelect.getAllViews();
-                else
-                    Views = _CswNbtResources.ViewSelect.getVisibleViews( true );
-            }
-            else
-            {
-                Views = _CswNbtResources.ViewSelect.getUserViews();
-            }
+            DataTable Views = new DataTable();
+            //if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            //{
+            //    if( _IncludeAllCheckBox.Checked )
+            //        Views = _CswNbtResources.ViewSelect.getAllViews();
+            //    else
+            //        Views = _CswNbtResources.ViewSelect.getVisibleViews( true );
+            //}
+            //else
+            //{
+            //    Views = _CswNbtResources.ViewSelect.getUserViews();
+            //}
 
             if( Views.Rows.Count > 0 )
             {

@@ -114,8 +114,7 @@ namespace ChemSW.Nbt.WebServices
 						break;
 
 					case WelcomeComponentType.Link:
-					case WelcomeComponentType.Search:
-						if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
+                        if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
 						{
 							CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
 							if( null != ThisView && ThisView.IsFullyEnabled() )
@@ -155,6 +154,26 @@ namespace ChemSW.Nbt.WebServices
 								LinkText = ThisReportNode.NodeName;
 							CswXmlDocument.AppendXmlAttribute( ItemNode, "reportid", WelcomeRow["reportid"].ToString() );
 							CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "report" );
+						}
+						break;
+					case WelcomeComponentType.Search:
+						if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
+						{
+							CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
+							if( null != ThisView && ThisView.IsSearchable() )
+							{
+                                if( WelcomeRow["displaytext"].ToString() != string.Empty )
+                                {
+                                    LinkText = WelcomeRow["displaytext"].ToString();
+                                }
+                                else
+                                {
+                                    LinkText = ThisView.ViewName;
+                                }
+							    CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", WelcomeRow["nodeviewid"].ToString() );
+								CswXmlDocument.AppendXmlAttribute( ItemNode, "viewmode", ThisView.ViewMode.ToString().ToLower() );
+								CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "view" );
+							}
 						}
 						break;
 
@@ -201,17 +220,17 @@ namespace ChemSW.Nbt.WebServices
 			Int32 ProblemsOpenViewId = Int32.MinValue;
 			Int32 FindEquipmentViewId = Int32.MinValue;
 
-			DataTable ViewsTable = _CswNbtResources.ViewSelect.getVisibleViews( false );
-			foreach( DataRow ViewRow in ViewsTable.Rows )
+            Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( false );
+			foreach( CswNbtView View in Views )
 			{
-				if( ViewRow["viewname"].ToString() == "All Equipment" )
-					EquipmentByTypeViewId = CswConvert.ToInt32( ViewRow["nodeviewid"] );
-				if( ViewRow["viewname"].ToString() == "Tasks: Open" )
-					TasksOpenViewId = CswConvert.ToInt32( ViewRow["nodeviewid"] );
-				if( ViewRow["viewname"].ToString() == "Problems: Open" )
-					ProblemsOpenViewId = CswConvert.ToInt32( ViewRow["nodeviewid"] );
-				if( ViewRow["viewname"].ToString() == "Find Equipment" )
-					FindEquipmentViewId = CswConvert.ToInt32( ViewRow["nodeviewid"] );
+                if( View.ViewName == "All Equipment" )
+                    EquipmentByTypeViewId = View.ViewId;
+                if( View.ViewName == "Tasks: Open" )
+                    TasksOpenViewId = View.ViewId;
+                if( View.ViewName == "Problems: Open" )
+                    ProblemsOpenViewId = View.ViewId;
+                if( View.ViewName == "Find Equipment" )
+                    FindEquipmentViewId = View.ViewId;
 			}
 
 			Int32 ProblemNodeTypeId = Int32.MinValue;

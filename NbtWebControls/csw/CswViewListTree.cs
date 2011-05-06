@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
@@ -206,19 +207,19 @@ namespace ChemSW.NbtWebControls
 
                         // Views
 
-                        DataTable ViewsTable = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", false );
+                        Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", false );
 
-                        foreach( DataRow Row in ViewsTable.Rows )
+                        foreach( CswNbtView View in Views )
                         {
                             // BZ 10121
                             // This is a performance hit, but since this view list is cached, it's ok
                             CswNbtView CurrentView = new CswNbtView( _CswNbtResources );
-                            CurrentView.LoadXml( Row["viewxml"].ToString() );
-                            CurrentView.ViewId = CswConvert.ToInt32( Row["nodeviewid"] );
+                            CurrentView.LoadXml( View.ToXml() );
+                            CurrentView.ViewId = View.ViewId;
 
                             // if( CurrentView.IsFullyEnabled() ) -- Case 20452: getVisibleViews() does this already
-                            XmlNode CategoryNode = _getCategoryNode( DocRoot, Row["category"].ToString() );
-                            bool ThisSearchable = Row["viewxml"].ToString().Contains( "<Filter" );
+                            XmlNode CategoryNode = _getCategoryNode( DocRoot, View.Category );
+                            bool ThisSearchable = View.ToXml().ToString().Contains( "<Filter" );
                             CategoryNode.AppendChild( _makeTreeViewXmlNode( XmlDoc, CurrentView.ViewId.ToString(), ViewType.View, CurrentView.ViewName, CurrentView.IconFileName, true, ThisSearchable ) );
                         }
 
