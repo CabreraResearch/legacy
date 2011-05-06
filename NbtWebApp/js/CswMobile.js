@@ -5,7 +5,7 @@
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
 
-var debug = false;
+var debug = true;
 var profiler = $createProfiler();
 if (!debug) profiler.disable();
 
@@ -354,7 +354,7 @@ if (!debug) profiler.disable();
                                         ParentId: p.ParentId,
                                         DivId: p.DivId,
                                         HeaderText: p.HeaderText,
-                                        $xml: $(xml),
+                                        $xml: $currentViewXml,
                                         parentlevel: p.level,
                                         HideRefreshButton: p.HideRefreshButton,
                                         HideSearchButton: p.HideSearchButton,
@@ -423,6 +423,8 @@ if (!debug) profiler.disable();
             });
             content += _endUL();
 
+            log(content);
+
             $divhtml = _addPageDivToBody({
                 ParentId: p.ParentId,
                 level: p.parentlevel,
@@ -433,10 +435,13 @@ if (!debug) profiler.disable();
                 HideSearchButton: p.HideSearchButton
             });
             onAfterAddDiv($divhtml);
-
+            log(p);
             // this replaces the link navigation
             if (p.ChangePage)
-                $.mobile.changePage($('#' + p.DivId), "slide", false, true);
+            {
+                log($('#' + p.DivId));
+                //$.mobile.changePage($('#' + p.DivId), "slide");
+            }
 
         } // _processViewXml()
 
@@ -1280,8 +1285,9 @@ if (!debug) profiler.disable();
                     success: function (data)
                     {
                         if (debug) log('On Success ' + opts.AuthenticateUrl);
-
-						_cacheSession(SessionId, UserName);
+                        
+                        var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
+						_cacheSession(ThisSessionId, UserName);
                         reloadViews(true);
                         removeDiv('logindiv');
                     }
