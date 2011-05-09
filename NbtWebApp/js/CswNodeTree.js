@@ -41,27 +41,33 @@
 								.appendTo($(this));
 
 				var url = o.ViewTreeUrl;
-				var data = 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=true&ParentNodeKey=&IncludeNodeRequired='+ o.IncludeNodeRequired +'&IncludeNodeKey=' + '&ShowEmpty=' o.showempty;
-				if( !isNullOrEmpty( o.cswnbtnodekey ) )
-				{
-					data += o.cswnbtnodekey;
-				}
-				if( !isNullOrEmpty( o.viewid ) )
+				var dataParam = { 
+                    'UsePaging': o.UsePaging,
+                    'ViewNum': o.viewid,
+                    'IDPrefix': IDPrefix,
+                    'IsFirstLoad': true,
+                    'ParentNodeKey': '',
+                    'IncludeNodeRequired': o.IncludeNodeRequired,
+                    'IncludeNodeKey': tryParseString(o.cswnbtnodekey, ''),
+                    'ShowEmpty': o.showempty,
+                    'NodePk': tryParseString(o.nodeid,'')
+                };
+
+				if( isNullOrEmpty( o.viewid ) )
 				{
 					url = o.NodeTreeUrl;
-					data = 'IDPrefix=' + IDPrefix + '&NodePk=' + o.nodeid;
 				}
 
 				CswAjaxXml({
 					url: url,
-					data: data,
+					data: $.param(dataParam),
 					success: function ($xml) {
 						var selectid = '';
 						//var treePlugins = ["themes", "xml_data", "ui", "types", "crrm"];
 						var treePlugins = ["themes", "html_data", "ui", "types", "crrm"];
 
 						var treeThemes;
-						if(o.nodeid !== undefined && o.nodeid !== '') 
+						if( !isNullOrEmpty( o.nodeid ) ) 
 						{
 							selectid = IDPrefix + o.nodeid;
 						}
@@ -172,7 +178,18 @@
 												"data": function($nodeOpening) 
 													{
 														var nodekey = $nodeOpening.CswAttrXml('cswnbtnodekey');
-														return 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey=' + nodekey + '&IncludeNodeRequired=false&IncludeNodeKey=';
+														var retDataParam = {
+                                                            'UsePaging': o.UsePaging,
+                                                            'ViewNum': o.viewid,
+                                                            'IDPrefix': IDPrefix,
+                                                            'IsFirstLoad': false,
+                                                            'ParentNodeKey': nodekey,
+                                                            'IncludeNodeRequired': false,
+                                                            'IncludeNodeKey': '',
+                                                            'ShowEmpty': false,
+                                                            'NodePk': tryParseString(o.nodeid,'')
+                                                        };
+                                                        return $.param(retDataParam);
 													},
 												"success": function(data, textStatus, XMLHttpRequest) 
 													{
@@ -219,14 +236,26 @@
 													var ParentNodeKey = '';
 													var Parent = data.inst._get_parent(data.rslt.obj);
 													if(Parent !== -1)
-														ParentNodeKey = Parent.CswAttrDom('cswnbtnodekey');
-													if(ParentNodeKey === undefined)
-														ParentNodeKey = '';
+													{
+                                                    	ParentNodeKey = tryParseString(Parent.CswAttrDom('cswnbtnodekey'),'');
+                                                    }
+                                                    
+                                                    var nextDataParam = { 
+                                                        'UsePaging': o.UsePaging,
+                                                        'ViewNum': o.viewid,
+                                                        'IDPrefix': IDPrefix,
+                                                        'IsFirstLoad': false,
+                                                        'ParentNodeKey': ParentNodeKey,
+                                                        'IncludeNodeRequired': false,
+                                                        'IncludeNodeKey': optSelect.cswnbtnodekey,
+                                                        'ShowEmpty': false,
+                                                        'NodePk': Selected.id
+                                                    };
 
 													// get next page of nodes
 													CswAjaxXml({
 														url: url,
-														data: 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey='+ ParentNodeKey +'&IncludeNodeRequired=false&IncludeNodeKey=' + optSelect.cswnbtnodekey,
+														data: $.param(nextDataParam),
 														success: function ($xml) 
 															{
 																var AfterNodeId = IDPrefix + optSelect.nodeid;
