@@ -120,7 +120,7 @@ var ViewBuilder_CssClasses = {
                     var $propSelectCell = $propFilterTable.CswTable('cell', o.propRow, o.firstColumn) //3
                                                           .empty();
                     var propCellId = makePropFilterId(propertyName,filtOpt);
-                    var $props = $propSelectCell.CswDOM('span',{ID: propCellId, value: propertyName});
+                    var $props = $propSelectCell.CswSpan('init',{ID: propCellId, value: propertyName});
                 }
                 
                 var fieldtype = o.$propsXml.CswAttrXml('fieldtype');
@@ -130,7 +130,7 @@ var ViewBuilder_CssClasses = {
                 var $subfieldCell = $propFilterTable.CswTable('cell', o.propRow, (o.firstColumn + 1)) //4
                                                     .empty();
                 var defaultSubFieldId = makePropFilterId('default_filter', filtOpt);
-                var $defaultSubField = $subfieldCell.CswDOM('span', {
+                var $defaultSubField = $subfieldCell.CswSpan('init', {
                                                     ID: defaultSubFieldId,
                                                     value: $defaultFilter,
                                                     cssclass: ViewBuilder_CssClasses.default_filter.name })
@@ -273,7 +273,7 @@ var ViewBuilder_CssClasses = {
                 }
                 case 'List':
                 {
-                    var $filtList = o.$parent.CswDOM('findelement',{ID: filtValListId});
+                    var $filtList = o.$parent.find('#' + filtValListId);
                     filterValue = $filtList.find(':selected').val();
                     break;
                 }
@@ -285,10 +285,10 @@ var ViewBuilder_CssClasses = {
             }
             if(filterValue !== '')
             {
-                var $subField = o.$parent.CswDOM('findelement',{ID: subFieldId});
+                var $subField = o.$parent.find('#' + subFieldId);
 				var subFieldText = $subField.find(':selected').text();
 
-                var $filter = o.$parent.CswDOM('findelement',{ID: filterId});
+                var $filter = o.$parent.find('#' + filterId);
                 var filterText = $filter.find(':selected').val();
 
                 var propType = $thisProp.CswAttrXml('proptype');

@@ -375,8 +375,8 @@
         
 	    if (options) $.extend(o, options);
 
-	    var $viewSearch = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': o.viewSearchId });
-	    var $genericSearch = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': o.genericSearchId });
+	    var $viewSearch = $('#CenterTopDiv').children('#' + o.viewSearchId);
+	    var $genericSearch = $('#CenterTopDiv').children('#' + o.genericSearchId);
         var $thisSearchForm;
 
 	    switch ( o.searchType.toLowerCase() )

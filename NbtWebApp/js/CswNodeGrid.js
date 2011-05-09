@@ -37,7 +37,7 @@
 		    var $gridTable = $parent.CswTable('init', { ID: gridTableId });
 		
             var gridPagedId = makeId({ID: o.gridPagerID, prefix: o.ID});
-            var $gridPager = $parent.CswDOM('div',{ID: gridPagedId})
+            var $gridPager = $parent.CswDiv('init',{ID: gridPagedId})
 									     .css('width','100%')
 									     .css('height','20px');
             

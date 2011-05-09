@@ -58,13 +58,12 @@ var CswSearch_CssClasses = {
         if(options) $.extend(o, options);
         
         var $parent = $(this);
-        o.$searchTable = $parent.CswDOM('div',{ID: o.ID});
+        o.$searchTable = $parent.CswDiv('init',{ID: o.ID});
         
-        var $topspan = o.$searchTable.CswDOM('span');
+        var $topspan = o.$searchTable.CswSpan('init');
 
-        var $topspandiv = $topspan.CswDOM('div',{
-                                    ID: 'search_criteria_div',
-                                    prefix: o.ID});
+        var topspandivid = makeId(ID: 'search_criteria_div', prefix: o.ID);
+        var $topspandiv = $topspan.CswDiv('init',{ID: topspandivid});
         
         //o.$cswSearchForm.CswDOM('break',{count: 5});
 
@@ -84,7 +83,7 @@ var CswSearch_CssClasses = {
             };
             if(options) $.extend(o,options);
     
-            if('Advanced' === o.$link.text() || ( !o.advancedIsHidden ) )
+            if('Advanced' === o.$link.text() || ( o.advancedIsHidden ) )
             {   
                 
                 $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function() { $(this).show(); });
@@ -93,7 +92,7 @@ var CswSearch_CssClasses = {
                 o.$link.text('Simple');
                 o.advancedIsHidden = true;
             }
-            else if('Simple' === o.$link.text() || ( o.advancedIsHidden ) )
+            else if('Simple' === o.$link.text() || ( !o.advancedIsHidden ) )
             {
                 $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function() { $(this).hide(); });
                 $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).hide(); });
@@ -123,7 +122,7 @@ var CswSearch_CssClasses = {
                     var $thisProp = $(this);
                     var $nodeTypeCell = o.$searchTable.CswTable('cell', propRow, 2);
                     var nodeTypeId = makeId({ID: 'viewbuilderpropid', suffix: $thisProp.CswAttrXml('viewbuilderpropid'), prefix: o.ID});
-                    var $nodeType = $nodeTypeCell.CswDOM('span',{
+                    var $nodeType = $nodeTypeCell.CswSpan('init',{
                                                                 ID: nodeTypeId,
                                                                 value: $thisProp.CswAttrXml('metadatatypename'),
                                                                 cssclass: ViewBuilder_CssClasses.metadatatype_static.name})
@@ -296,7 +295,7 @@ var CswSearch_CssClasses = {
             var $advancedLinkCell = $clearPosition.CswTable('cell', cellRow, advancedCellNumber)
                                     .empty();
             var advancedLinkId = makeId({ID: 'advanced_options', prefix: o.ID});
-            var $advancedLink = $advancedLinkCell.CswDOM('link',{
+            var $advancedLink = $advancedLinkCell.CswLink('init',{
                                                     ID: advancedLinkId,
                                                     href: '#advanced',
                                                     value: 'Advanced' })
