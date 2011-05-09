@@ -90,7 +90,7 @@ var CswSearch_CssClasses = {
                 $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).show(); });
                 $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).hide(); });
                 o.$link.text('Simple');
-                o.advancedIsHidden = true;
+                o.advancedIsHidden = false;
             }
             else if('Simple' === o.$link.text() || ( !o.advancedIsHidden ) )
             {
@@ -98,7 +98,7 @@ var CswSearch_CssClasses = {
                 $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).hide(); });
                 $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).show(); });
                 o.$link.text('Advanced');
-                o.advancedIsHidden = false;
+                o.advancedIsHidden = true;
             }
             return o.advancedIsHidden; 
         } // modAdvanced()
