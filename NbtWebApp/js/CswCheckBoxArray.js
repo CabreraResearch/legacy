@@ -25,7 +25,7 @@
                     //CheckboxesOnLeft: false,
                     UseRadios: false,
                     Required: false,
-                    //ReadOnly: false
+                    ReadOnly: false,
                     onchange: function() { }
                 };
                 
@@ -41,89 +41,122 @@
                 $Div.contents().remove();
 
                 var $OuterDiv = $('<div/>').appendTo($Div);
-                var $table = $OuterDiv.CswTable('init', { ID: o.ID + '_tbl' });
-
-                $OuterDiv.css('height', (25 * o.HeightInRows) + 'px');
-                $OuterDiv.addClass('cbarraydiv');
-                $table.addClass('cbarraytable');
-
-                // Header
-                var tablerow = 1;
-                for(var c = 0; c < o.cols.length; c++)
-                {
-                    var $cell = $table.CswTable('cell', tablerow, c+2);
-                    $cell.addClass('cbarraycell');
-                    $cell.append(o.cols[c]);
-                }
-                tablerow++;
-
-                //[none] row
-                if(o.UseRadios && ! o.Required)
-                {
-                    // Row label
-                    var $labelcell = $table.CswTable('cell', tablerow, 1);
-                    $labelcell.addClass('cbarraycell');
-                    $labelcell.append('[none]');
-                    for(var c = 0; c < o.cols.length; c++)
-                    {
-                        var $cell = $table.CswTable('cell', tablerow, c+2);
-                        $cell.addClass('cbarraycell');
-                        var checkid = o.ID + '_none';
-                        var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
-                                       .appendTo($cell)
-                                       .click(o.onchange);
-                        $check.CswAttrDom('key', '');
-                        $check.CswAttrDom('rowlabel', '[none]');
-                        $check.CswAttrDom('collabel', o.cols[c]);
-                        $check.CswAttrDom('row', -1);
-                        $check.CswAttrDom('col', c);
-                        
-                        $check.CswAttrDom('checked', 'true');   // the browser will override this if another one is checked
-
-                    } // for(var c = 0; c < o.cols.length; c++)
-                } // if(o.UseRadios && ! o.Required)
-                tablerow++;
-
-                // Data
-                for(var r = 0; r < o.data.length; r++)
-                {
-                    var row = o.data[r];
-                    // Row label
-                    var $labelcell = $table.CswTable('cell', tablerow + r, 1);
-                    $labelcell.addClass('cbarraycell');
-                    $labelcell.append(row.label);
-                    for(var c = 0; c < o.cols.length; c++)
-                    {
-                        
-                        var $cell = $table.CswTable('cell', tablerow + r, c+2);
-                        $cell.addClass('cbarraycell');
-                        var checkid = o.ID + '_' + r + '_' + c;
-                        var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
-                                       .appendTo($cell)
-                                       .click(o.onchange);
-                        $check.CswAttrDom('key', row.key);
-                        $check.CswAttrDom('rowlabel', row.label);
-                        $check.CswAttrDom('collabel', o.cols[c]);
-                        $check.CswAttrDom('row', r);
-                        $check.CswAttrDom('col', c);
-
-                        if(row.values[c]) {
-                            $check.CswAttrDom('checked', 'true');
-                        }
-                    } // for(var c = 0; c < o.cols.length; c++)
-                } // for(var r = 0; r < o.data.length; r++)
-
-				if(!o.UseRadios)
+				if(o.ReadOnly)
 				{
-					var CheckAllLinkText = "Check All";
-					if($('.CBACheckBox_' + o.ID).not(':checked').length === 0)
-						CheckAllLinkText = "Uncheck All";
+					for(var r = 0; r < o.data.length; r++)
+					{
+						var row = o.data[r];
+						var rowlabeled = false;
+						var first = true;
+						for(var c = 0; c < o.cols.length; c++)
+						{
+							if(isTrue(row.values[c])) 
+							{
+								if(!rowlabeled)
+								{
+									$OuterDiv.append(row.label + ": ");
+									rowlabeled = true;
+								}
+								if(!first)
+								{
+									$OuterDiv.append(", ");
+								}
+								$OuterDiv.append(o.cols[c]);
+								first = false;
+							}
+						}
+						if(rowlabeled)
+						{
+							$OuterDiv.append('<br/>');
+						}
+					}
+				} else {
 
-					var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ CheckAllLinkText +'</a></div>')
-										 .appendTo($Div);
-					var $checkalllink = $checkalldiv.children('a');
-					$checkalllink.click(function() { ToggleCheckAll($checkalllink, o.ID); return false; });
-				}
+					var $table = $OuterDiv.CswTable('init', { ID: o.ID + '_tbl' });
+
+					$OuterDiv.css('height', (25 * o.HeightInRows) + 'px');
+					$OuterDiv.addClass('cbarraydiv');
+					$table.addClass('cbarraytable');
+
+					// Header
+					var tablerow = 1;
+					for(var c = 0; c < o.cols.length; c++)
+					{
+						var $cell = $table.CswTable('cell', tablerow, c+2);
+						$cell.addClass('cbarraycell');
+						$cell.append(o.cols[c]);
+					}
+					tablerow++;
+
+					//[none] row
+					if(o.UseRadios && ! o.Required)
+					{
+						// Row label
+						var $labelcell = $table.CswTable('cell', tablerow, 1);
+						$labelcell.addClass('cbarraycell');
+						$labelcell.append('[none]');
+						for(var c = 0; c < o.cols.length; c++)
+						{
+							var $cell = $table.CswTable('cell', tablerow, c+2);
+							$cell.addClass('cbarraycell');
+							var checkid = o.ID + '_none';
+							var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
+										   .appendTo($cell)
+										   .click(o.onchange);
+							$check.CswAttrDom('key', '');
+							$check.CswAttrDom('rowlabel', '[none]');
+							$check.CswAttrDom('collabel', o.cols[c]);
+							$check.CswAttrDom('row', -1);
+							$check.CswAttrDom('col', c);
+                        
+							$check.CswAttrDom('checked', 'true');   // the browser will override this if another one is checked
+
+						} // for(var c = 0; c < o.cols.length; c++)
+					} // if(o.UseRadios && ! o.Required)
+					tablerow++;
+
+					// Data
+					for(var r = 0; r < o.data.length; r++)
+					{
+						var row = o.data[r];
+						// Row label
+						var $labelcell = $table.CswTable('cell', tablerow + r, 1);
+						$labelcell.addClass('cbarraycell');
+						$labelcell.append(row.label);
+						for(var c = 0; c < o.cols.length; c++)
+						{
+                        
+							var $cell = $table.CswTable('cell', tablerow + r, c+2);
+							$cell.addClass('cbarraycell');
+							var checkid = o.ID + '_' + r + '_' + c;
+							var $check = $('<input type="'+ CheckType +'" class="CBACheckBox_'+ o.ID +'" id="'+ checkid + '" name="' + o.ID + '" />')
+										   .appendTo($cell)
+										   .click(o.onchange);
+							$check.CswAttrDom('key', row.key);
+							$check.CswAttrDom('rowlabel', row.label);
+							$check.CswAttrDom('collabel', o.cols[c]);
+							$check.CswAttrDom('row', r);
+							$check.CswAttrDom('col', c);
+
+							if(row.values[c]) {
+								$check.CswAttrDom('checked', 'true');
+							}
+						} // for(var c = 0; c < o.cols.length; c++)
+					} // for(var r = 0; r < o.data.length; r++)
+
+					if(!o.UseRadios)
+					{
+						var CheckAllLinkText = "Check All";
+						if($('.CBACheckBox_' + o.ID).not(':checked').length === 0)
+							CheckAllLinkText = "Uncheck All";
+
+						var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ CheckAllLinkText +'</a></div>')
+											 .appendTo($Div);
+						var $checkalllink = $checkalldiv.children('a');
+						$checkalllink.click(function() { ToggleCheckAll($checkalllink, o.ID); return false; });
+					}
+
+				} // if-else(o.ReadOnly)
             }, // init
 
             getdata: function (options) { 
