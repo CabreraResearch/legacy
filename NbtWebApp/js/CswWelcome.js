@@ -191,7 +191,7 @@
                                                                 {
                                                                     viewid = $viewselect.CswViewSelect('value');
                                                                 }
-                                                                else if( !$searchviewselect.isPrototypeOf(':hidden') )
+                                                                else if( !$searchviewselect.is(':hidden') )
                                                                 {
                                                                     viewid = $searchviewselect.CswViewSelect('value');
                                                                 }
