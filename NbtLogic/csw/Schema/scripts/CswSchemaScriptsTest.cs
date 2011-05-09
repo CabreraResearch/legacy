@@ -192,7 +192,7 @@ namespace ChemSW.Nbt.Schema
                 CswSchemaUpdateDriver ReturnVal = null;
 
 
-                if( _UpdateDriverList.Count > _CurrentIdx )
+                if( _UpdateDriverList.Count > ( _CurrentIdx + 1) )
                 {
                     if( Int32.MinValue == _CurrentIdx )
                     {

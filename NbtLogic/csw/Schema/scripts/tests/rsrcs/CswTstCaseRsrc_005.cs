@@ -15,20 +15,20 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Test Case: 001, part 01
     /// </summary>
-    public class CswTstCaseRsrc_004
+    public class CswTstCaseRsrc_005
     {
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
         private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        public CswTstCaseRsrc_004( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        public CswTstCaseRsrc_005( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
         }//ctor
 
 
-        public string Purpose = "Add Multiple Constrained Columns to depth N";
+        public string Purpose = "Rollback Add of Constrained Columns";
 
         public List<PkFkPair> getPkFkPairs() { return ( _CswTestCaseRsrc.getPkFkPairs( 6 ) ); }
 

@@ -13,6 +13,14 @@ namespace ChemSW.Nbt.Schema
 {
 
 
+	/*
+	
+			I am not sure what this test case was originally intended to prove. 
+			In any case, I think that if this one were not rolled back, it would 
+			fail. I don't know if there is a case for this yet: it seems that 
+			when you do DDL operations, you cannot do DML operations until the 
+			next script. 
+	*/
     public class CswScmUpdt_TstCse_Constraint_AddOnPendingDml : CswScmUpdt_TstCse
     {
         public CswScmUpdt_TstCse_Constraint_AddOnPendingDml()
