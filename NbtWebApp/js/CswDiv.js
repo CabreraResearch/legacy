@@ -28,8 +28,8 @@
             $div.CswAttrDom('id',elementId);
             $div.CswAttrDom('name',elementId);
             
-            if( !isNullOrEmpty( o.cssclass ) ) $div.CswAttrDom('class',o.cssclass);
-            if( !isNullOrEmpty( o.value ) ) $div.val( o.value );
+            if( !isNullOrEmpty( o.cssclass ) ) $div.addClass(o.cssclass);
+            if( !isNullOrEmpty( o.value ) ) $div.text( o.value );
                     
             $parent.append($div);
             return $div;

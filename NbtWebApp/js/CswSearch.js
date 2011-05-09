@@ -160,7 +160,7 @@ var CswSearch_CssClasses = {
             var $nodeTypesSelect = $(xmlToString(o.$nodeTypesXml.children('select')))
                                     .CswAttrDom('id', nodeTypeSelectId)
                                     .CswAttrDom('name', nodeTypeSelectId)
-                                    .CswAttrDom('class',CswSearch_CssClasses.nodetype_select.name)
+                                    .addClass(CswSearch_CssClasses.nodetype_select.name)
                                     .change( function() {
                                            var $thisSelect = $(this);
                                            var r = {
@@ -189,7 +189,7 @@ var CswSearch_CssClasses = {
             var $propSelect = $(xmlToString(o.$propsXml.children('properties').children('select')))
                             .CswAttrDom('id', propSelectId)
                             .CswAttrDom('name', propSelectId)
-                            .CswAttrDom('class',CswSearch_CssClasses.property_select.name)
+                            .addClass(CswSearch_CssClasses.property_select.name)
                             .change(function() {
                                     var $this = $(this);
                                     var thisPropId = $this.val();

@@ -145,7 +145,7 @@ var ViewBuilder_CssClasses = {
                 var $subfieldsOptions = $(xmlToString(o.$propsXml.children('subfields').children('select')))
                                         .CswAttrDom('id', subfieldOptionsId)
                                         .CswAttrDom('name', subfieldOptionsId)
-                                        .CswAttrDom('class',ViewBuilder_CssClasses.subfield_select.name)
+                                        .addClass(ViewBuilder_CssClasses.subfield_select.name)
                                         .change(function() {
                                             var $this = $(this);
                                             var r = {
@@ -174,7 +174,7 @@ var ViewBuilder_CssClasses = {
                 var $filtersOptions =  $(xmlToString(o.$propsXml.children('propertyfilters').children('subfield[column=' + subfield + ']').children('select')))
                                         .CswAttrDom('id', filtersOptionsId)
                                         .CswAttrDom('name', filtersOptionsId)
-                                        .CswAttrDom('class',ViewBuilder_CssClasses.filter_select.name)
+                                        .addClass(ViewBuilder_CssClasses.filter_select.name)
                                         .change(function() {
                                             var $this = $(this);
                                             var r = {

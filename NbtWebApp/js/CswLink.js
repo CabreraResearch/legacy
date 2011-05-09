@@ -29,8 +29,8 @@
             var elementId = tryParseString(o.ID,'');
             if( elementId !== '' ) $link.CswAttrDom('id',elementId);
             if( !isNullOrEmpty( o.href ) ) $link.CswAttrDom('href', o.href);
-            if( !isNullOrEmpty( o.value ) ) $link.val(o.value);
-            if( !isNullOrEmpty( o.cssclass ) ) $link.CswAttrDom('class',o.cssclass);
+            if( !isNullOrEmpty( o.value ) ) $link.text(o.value);
+            if( !isNullOrEmpty( o.cssclass ) ) $link.addClass(o.cssclass);
             if( !isNullOrEmpty( o.type ) ) $link.CswAttrDom('type',o.type);
             if( !isNullOrEmpty( o.rel ) ) $link.CswAttrDom('rel',o.rel);
             if( !isNullOrEmpty( o.media ) ) $link.CswAttrDom('media',o.media);

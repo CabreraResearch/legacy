@@ -81,7 +81,7 @@ var CswInput_Types = {
                 }
             }
             
-            if( o.cssclass !== '' ) $input.CswAttrDom('class',o.cssclass);
+            if( o.cssclass !== '' ) $input.addClass(o.cssclass);
             if( o.width !== '' ) $input.CswAttrDom({width: o.width});
             if( o.autofocus === true ) $input.CswAttrDom('autofocus');
             if( o.onChange !== undefined ) $input.change( function () { o.onChange() } );

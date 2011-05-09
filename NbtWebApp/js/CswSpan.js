@@ -26,9 +26,8 @@
                 $span.CswAttrDom('id',elementId);
                 $span.CswAttrDom('name',elementId);
             }
-            if( !isNullOrEmpty( o.cssclass ) ) $span.CswAttrDom('class',o.cssclass);
-            if( !isNullOrEmpty( o.value ) ) $span.val( o.value );
-                    
+            if( !isNullOrEmpty( o.cssclass ) ) $span.addClass(o.cssclass);
+            if( !isNullOrEmpty( o.value ) ) $span.text( o.value );
             $parent.append($span);
             return $span;
         }
