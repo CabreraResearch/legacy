@@ -450,17 +450,17 @@ namespace ChemSW.NbtWebControls
             Int32 ProblemsOpenViewId = Int32.MinValue;
             Int32 FindEquipmentViewId = Int32.MinValue;
 
-            DataTable ViewsTable = _CswNbtResources.ViewSelect.getVisibleViews( false );
-            foreach( DataRow ViewRow in ViewsTable.Rows )
+            Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( false );
+            foreach( CswNbtView View in Views )
             {
-                if( ViewRow["viewname"].ToString() == "All Equipment" )
-                    EquipmentByTypeViewId = CswConvert.ToInt32( ViewRow["nodeviewid"] );
-                if( ViewRow["viewname"].ToString() == "Tasks: Open" )
-                    TasksOpenViewId = CswConvert.ToInt32( ViewRow["nodeviewid"] );
-                if( ViewRow["viewname"].ToString() == "Problems: Open" )
-                    ProblemsOpenViewId = CswConvert.ToInt32( ViewRow["nodeviewid"] );
-                if( ViewRow["viewname"].ToString() == "Find Equipment" )
-                    FindEquipmentViewId = CswConvert.ToInt32( ViewRow["nodeviewid"] );
+                if( View.ViewName == "All Equipment" )
+                    EquipmentByTypeViewId = View.ViewId;
+                if( View.ViewName == "Tasks: Open" )
+                    TasksOpenViewId = View.ViewId;
+                if( View.ViewName == "Problems: Open" )
+                    ProblemsOpenViewId = View.ViewId;
+                if( View.ViewName == "Find Equipment" )
+                    FindEquipmentViewId = View.ViewId;
             }
 
             Int32 ProblemNodeTypeId = Int32.MinValue;

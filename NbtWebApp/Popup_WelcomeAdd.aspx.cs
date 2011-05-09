@@ -408,7 +408,7 @@ namespace ChemSW.Nbt.WebPages
             ViewList.Items.Clear();
             DataTable Views = null;
             //if( Master.CswNbtResources.CurrentUser.IsAdministrator() )
-            Views = Master.CswNbtResources.ViewSelect.getVisibleViews( false );
+            //Views = Master.CswNbtResources.ViewSelect.getVisibleViews( false );
             //else
             //Views = CswNbtView.getUserViews( Master.CswNbtResources );
 

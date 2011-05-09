@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Security;
@@ -74,33 +73,33 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
-        public DataTable getVisibleViews( NbtViewRenderingMode ViewRenderingMode )
+        public Collection<CswNbtView> getVisibleViews( NbtViewRenderingMode ViewRenderingMode )
         {
-            return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false, ViewRenderingMode );
+            return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false, false, ViewRenderingMode );
         }
 
         /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
-        public DataTable getVisibleViews( bool IncludeEmptyViews )
+        public Collection<CswNbtView> getVisibleViews( bool IncludeEmptyViews )
         {
-            return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, NbtViewRenderingMode.Any );
+            return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any );
         }
 
         /// <summary>
         /// Get a DataTable of all views visible to the provided user
         /// </summary>
-        public DataTable getVisibleViews( ICswNbtUser User, bool IncludeEmptyViews )
+        public Collection<CswNbtView> getVisibleViews( ICswNbtUser User, bool IncludeEmptyViews )
         {
-            return getVisibleViews( string.Empty, User, IncludeEmptyViews, false, NbtViewRenderingMode.Any );
+            return getVisibleViews( string.Empty, User, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any );
         }
 
         /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
-        public DataTable getVisibleViews( string OrderBy, bool IncludeEmptyViews )
+        public Collection<CswNbtView> getVisibleViews( string OrderBy, bool IncludeEmptyViews )
         {
-            return getVisibleViews( OrderBy, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, NbtViewRenderingMode.Any );
+            return getVisibleViews( OrderBy, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any );
         }
 
 
@@ -118,11 +117,14 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Get a DataTable of all views visible to the current user
+        /// Get a Collection of all views visible to the current user
         /// </summary>
-        public DataTable getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, NbtViewRenderingMode ViewRenderingMode )
+        public Collection<CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode )
         {
+            CswTimer VisibleViewsTimer = new CswTimer();
+
             DataTable ViewsTable = null;
+            Collection<CswNbtView> VisibleViews = new Collection<CswNbtView>();
             if( _LastVisibleViews != null &&
                 _LastOrderBy == OrderBy &&
                 _LastUser == User &&
@@ -132,8 +134,6 @@ namespace ChemSW.Nbt
             }
             else
             {
-                CswTimer VisibleViewsTimer = new CswTimer();
-
                 CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
                 ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
                 ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
@@ -154,49 +154,31 @@ namespace ChemSW.Nbt
                 ViewsTable = ViewsSelect.getTable();
 
                 _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() data fetched", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
-
-                // BZ 7074 - Make sure the user has permissions to at least one root node
-                Collection<DataRow> RowsToRemove = new Collection<DataRow>();
-                foreach( DataRow Row in ViewsTable.Rows )
-                {
-                    CswNbtView ThisView = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, Row["viewxml"].ToString() );
-                    if( ThisView.Root.ChildRelationships.Count > 0 || !IncludeEmptyViews )      // BZ 8136
-                    {
-                        bool skipme = true;
-                        // Case 20452 - Remove views associated with disabled nodetypes/objectclasses
-                        if( ThisView.IsFullyEnabled() )
-                        {
-                            //if( NbtViewRenderingMode.Any == ViewRenderingMode ||
-                            //    ThisView.ViewMode == ViewRenderingMode )
-                            //{
-                            foreach( CswNbtViewRelationship R in ThisView.Root.ChildRelationships )
-                            {
-                                if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                    User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) )
-                                {
-                                    skipme = false;
-                                }
-                            }
-                            //}
-                        }
-                        if( skipme )
-                        {
-                            RowsToRemove.Add( Row );
-                        }
-                    }
-                }
-                foreach( DataRow Row in RowsToRemove )
-                    ViewsTable.Rows.Remove( Row );
-
-                _LastIncludeEmptyViews = IncludeEmptyViews;
-                _LastOrderBy = OrderBy;
-                _LastUser = User;
-                _LastVisibleViews = ViewsTable;
-
-                _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() finished", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
             }
 
-            return ViewsTable;
+            // BZ 7074 - Make sure the user has permissions to at least one root node
+            foreach( CswNbtView ThisView in from DataRow Row in ViewsTable.Rows
+                                            select (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, Row["viewxml"].ToString() )
+                                                into ThisView
+                                                where ThisView.Root.ChildRelationships.Count > 0 || !IncludeEmptyViews
+                                                where ThisView.IsFullyEnabled() &&
+                                                      ( !SearchableOnly || ThisView.IsSearchable() ) &&
+                                                      ( ThisView.Root.ChildRelationships
+                                                                        .Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+                                                                                     User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ) ).Count() > 0
+                                                select ThisView )
+            {
+                VisibleViews.Add( ThisView );
+            }
+
+            _LastIncludeEmptyViews = IncludeEmptyViews;
+            _LastOrderBy = OrderBy;
+            _LastUser = User;
+            _LastVisibleViews = ViewsTable;
+
+            _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() finished", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
+
+            return VisibleViews;
         }
 
         /// <summary>
@@ -209,58 +191,42 @@ namespace ChemSW.Nbt
             return ViewsSelect.getTable();
         }
 
-        /// <summary>
-        /// Returns an XElement of all views visible by the current user, filtered according to Mobile and IsSearchable
-        /// </summary>
-        public XElement getVisibleViewsXml( ICswNbtUser User, bool MobileOnly, bool SearchableOnly, string OrderBy )
-        {
-            CswTimer SearchableViewsTimer = new CswTimer();
-            XElement ViewsElement = new XElement( "views" );
+        ///// <summary>
+        ///// Returns an XElement of all views visible by the current user, filtered according to Mobile and IsSearchable
+        ///// </summary>
+        //public Collection<CswNbtView> getVisibleViews( ICswNbtUser User, bool MobileOnly, bool SearchableOnly, string OrderBy )
+        //{
+        //    CswTimer SearchableViewsTimer = new CswTimer();
+        //    Collection<CswNbtView> VisibleViews = new Collection<CswNbtView>();
 
-            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getSearchableViews_select", "getVisibleViewInfo" );
-            ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
-            ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
-            if( MobileOnly )
-            {
-                ViewsSelect.S4Parameters.Add( "addclause", "and formobile = '" + CswConvert.ToDbVal( true ) + "'" );
-            }
-            else
-            {
-                ViewsSelect.S4Parameters.Add( "addclause", " " );
-            }
-            if( !string.IsNullOrEmpty( OrderBy ) )
-            {
-                ViewsSelect.S4Parameters.Add( "orderbyclause", OrderBy );
-            }
-            else
-            {
-                ViewsSelect.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );
-            }
-            DataTable ViewsTable = ViewsSelect.getTable();
+        //    CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getSearchableViews_select", "getVisibleViewInfo" );
+        //    ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
+        //    ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
+        //    if( MobileOnly )
+        //    {
+        //        ViewsSelect.S4Parameters.Add( "addclause", "and formobile = '" + CswConvert.ToDbVal( true ) + "'" );
+        //    }
+        //    else
+        //    {
+        //        ViewsSelect.S4Parameters.Add( "addclause", " " );
+        //    }
+        //    if( !string.IsNullOrEmpty( OrderBy ) )
+        //    {
+        //        ViewsSelect.S4Parameters.Add( "orderbyclause", OrderBy );
+        //    }
+        //    else
+        //    {
+        //        ViewsSelect.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );
+        //    }
+        //    DataTable ViewsTable = ViewsSelect.getTable();
 
-            _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() data fetched", SearchableViewsTimer.ElapsedDurationInSecondsAsString );
-            bool HasAtLeastOneResult = false;
-            foreach( CswNbtView ThisView in ViewsTable.Rows.Cast<DataRow>()
-                                            .Select( Row => CswNbtViewFactory.restoreView( _CswNbtResources, Row["viewxml"].ToString() ) )
-                                            .Where( ThisView => 0 < ThisView.Root.ChildRelationships
-                                                .Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                                        User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ).Count() &&
-                                                ( !SearchableOnly || ThisView.IsSearchable() ) ) )
-            {
-                ViewsElement.Add( new XElement( "view",
-                                            new XAttribute( "id", ThisView.ViewId ),
-                                            new XAttribute( "name", ThisView.ViewName ) ) );
-                HasAtLeastOneResult = true;
-            }
-            if( !HasAtLeastOneResult )
-            {
-                ViewsElement.Add( new XElement( "view",
-                                            new XAttribute( "id", Int32.MinValue ),
-                                            new XAttribute( "name", "No Results" ) ) );
-            }
-            _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() finished", SearchableViewsTimer.ElapsedDurationInSecondsAsString );
+        //    _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() data fetched", SearchableViewsTimer.ElapsedDurationInSecondsAsString );
 
-            return ViewsElement;
-        }
+
+
+        //    _CswNbtResources.logTimerResult( "CswNbtView.getSearchableViews() finished", SearchableViewsTimer.ElapsedDurationInSecondsAsString );
+
+        //    return VisibleViews;
+        //}
     }
 }

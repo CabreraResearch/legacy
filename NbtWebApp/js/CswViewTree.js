@@ -9,6 +9,8 @@
 		var o = {
 			ViewUrl: '/NbtWebApp/wsNBT.asmx/getViewTree',
 			viewid: '',
+            issearchable: false,
+            usesession: true,
 			onSelect: function (optSelect) { 
 							var o = {
 								iconurl: '',
@@ -29,11 +31,10 @@
 		}
 
 		var $viewsdiv = $(this);
-		$viewsdiv.contents().remove();
-		
+				
 		CswAjaxXml({
 				url: o.ViewUrl,
-				data: '',
+				data: "IsSearchable=" + o.issearchable + "&UseSession=" + o.usesession,
 				success: function ($xml)
 				{
 					var strTypes = $xml.find('types').text();

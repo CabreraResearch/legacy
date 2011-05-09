@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Web.SessionState;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Data;
@@ -12,6 +14,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 using ChemSW.Exceptions;
 
@@ -56,7 +59,7 @@ namespace ChemSW.Nbt.WebServices
 		public const string ViewTreeSessionKey = "ViewTreeXml";
 
 		// jsTree compatible format
-		public string getViewTree( HttpSessionState Session )
+		public string getViewTree( HttpSessionState Session, bool IsSearchable, bool UseSession )
 		{
 
 			//string ret = string.Empty;
@@ -70,7 +73,7 @@ namespace ChemSW.Nbt.WebServices
 			//return "<root>" + ret + "</root>";
 
 			XmlDocument TreeXmlDoc;
-			if( Session[ViewTreeSessionKey] != null )
+			if( Session[ViewTreeSessionKey] != null && UseSession )
 			{
 				TreeXmlDoc = (XmlDocument) Session[ViewTreeSessionKey];
 			}
@@ -81,48 +84,49 @@ namespace ChemSW.Nbt.WebServices
 				TreeXmlDoc.AppendChild( DocRoot );
 
 				// Views
-				DataTable ViewsTable = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, NbtViewRenderingMode.Any );
+                Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, IsSearchable, NbtViewRenderingMode.Any );
 
-				foreach( DataRow Row in ViewsTable.Rows )
+				foreach( CswNbtView View in Views )
 				{
 					// BZ 10121
 					// This is a performance hit, but since this view list is cached, it's ok
-					CswNbtView CurrentView = new CswNbtView( _CswNbtResources );
-					CurrentView.LoadXml( Row["viewxml"].ToString() );
-					CurrentView.ViewId = CswConvert.ToInt32( Row["nodeviewid"] );
-
-					_makeViewTreeNode( DocRoot, Row["category"].ToString(), ItemType.View, CurrentView.ViewId, CurrentView.ViewName, CurrentView.ViewMode );
+					_makeViewTreeNode( DocRoot, View.Category, ItemType.View, View.ViewId, View.ViewName, View.ViewMode );
 				}
 
-				// Actions
-				foreach( CswNbtAction Action in _CswNbtResources.Actions )
-				{
-					if( Action.ShowInList &&
-						( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
-							( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( Action.Name ) )
-					{
-						XmlNode ActionNode = _makeViewTreeNode( DocRoot, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );
-						CswXmlDocument.AppendXmlAttribute( ActionNode, "actionurl", Action.Url.ToString() );
-					}
-				}
+                if( !IsSearchable )
+                {
+                    // Actions
+                    foreach( CswNbtAction Action in _CswNbtResources.Actions )
+                    {
+                        if( Action.ShowInList &&
+                            ( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
+                            ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( Action.Name ) )
+                        {
+                            XmlNode ActionNode = _makeViewTreeNode( DocRoot, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );
+                            CswXmlDocument.AppendXmlAttribute( ActionNode, "actionurl", Action.Url.ToString() );
+                        }
+                    }
 
 
-				// Reports
-				CswNbtMetaDataObjectClass ReportMetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
-				CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
-				ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
-				ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
-				for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
-				{
-					ReportTree.goToNthChild( i );
+                    // Reports
+                    CswNbtMetaDataObjectClass ReportMetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
+                    CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
+                    ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
+                    ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
+                    for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
+                    {
+                        ReportTree.goToNthChild( i );
 
-					CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( ReportTree.getNodeForCurrentPosition() );
-					_makeViewTreeNode( DocRoot, ReportNode.Category.Text, ItemType.Report, ReportNode.NodeId.PrimaryKey, ReportNode.ReportName.Text );
+                        CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( ReportTree.getNodeForCurrentPosition() );
+                        _makeViewTreeNode( DocRoot, ReportNode.Category.Text, ItemType.Report, ReportNode.NodeId.PrimaryKey, ReportNode.ReportName.Text );
 
-					ReportTree.goToParentNode();
-				}
-
-				Session[ViewTreeSessionKey] = TreeXmlDoc;
+                        ReportTree.goToParentNode();
+                    }
+                }
+			    if( UseSession )
+                {
+                    Session[ViewTreeSessionKey] = TreeXmlDoc;
+                }
 
 			}
 
@@ -133,6 +137,26 @@ namespace ChemSW.Nbt.WebServices
 
 			return ret;
 		} // getViewTree()
+
+        //public XElement getSearchableViewTree( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode )
+        //{
+        //    XElement SearchableViews = new XElement( "root" );
+        //    Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( OrderBy, User, IncludeEmptyViews, MobileOnly, SearchableOnly, NbtViewRenderingMode.Any );
+
+        //    var ViewsByCat = from View in Views
+        //                     group View by View.Category into Category
+        //                     orderby Category
+        //                     select new { Cat = Category.Key, Views = Category };
+        //    foreach( var Cat in ViewsByCat )
+        //    {
+        //        XElement ThisCat = new XElement( "item",
+        //                            new XAttribute( "viewtype", "category" )
+
+        //            );
+        //    }
+
+        //    return SearchableViews;
+        //}
 
 		private XmlNode _makeViewTreeNode( XmlNode DocRoot, string Category, ItemType Type, Int32 Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
 		{
@@ -229,8 +253,10 @@ namespace ChemSW.Nbt.WebServices
 		{
 			JObject ReturnVal = new JObject();
 			bool IsAdmin = _CswNbtResources.CurrentNbtUser.IsAdministrator();
-			DataTable ViewsTable;
-			if( IsAdmin )
+
+            Collection<CswNbtView> Views = new Collection<CswNbtView>();
+		    DataTable ViewsTable;
+            if( IsAdmin )
 			{
 				if( All )
 				{
@@ -238,7 +264,31 @@ namespace ChemSW.Nbt.WebServices
 				}
 				else
 				{
-					ViewsTable = _CswNbtResources.ViewSelect.getVisibleViews( true );
+                    Views = _CswNbtResources.ViewSelect.getVisibleViews( true );
+                    ViewsTable = new DataTable();
+                    ViewsTable.Columns.Add( "VIEWNAME" );
+                    ViewsTable.Columns.Add( "VIEWMODE" );
+                    ViewsTable.Columns.Add( "VISIBILITY" );
+                    ViewsTable.Columns.Add( "CATEGORY" );
+                    ViewsTable.Columns.Add( "ROLENAME" );
+                    ViewsTable.Columns.Add( "USERNAME" );
+                    foreach( CswNbtView View in Views.OrderBy( Name => Name.ViewName ))
+                    {
+                        string RoleName = string.Empty;
+                        CswNbtNode Role = _CswNbtResources.Nodes.GetNode( View.VisibilityRoleId );
+                        if( null != Role )
+                        {
+                            RoleName = Role.NodeName;
+                        }
+                        string UserName = string.Empty;
+                        CswNbtNode User = _CswNbtResources.Nodes.GetNode( View.VisibilityUserId );
+                        if( null != User )
+                        {
+                            UserName = User.NodeName;
+                        }
+
+                        ViewsTable.Rows.Add( View.ViewName, View.ViewMode.ToString(), View.Visibility.ToString(), View.Category, RoleName, UserName );
+                    }
 				}
 			}
 			else
