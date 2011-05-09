@@ -26,7 +26,7 @@
             var $parent = $(this);
             var $link = $('<a></a>');
             
-            var elementId = tryParse(o.ID,'');
+            var elementId = tryParseString(o.ID,'');
             if( elementId !== '' ) $link.CswAttrDom('id',elementId);
             if( !isNullOrEmpty( o.href ) ) $link.CswAttrDom('href', o.href);
             if( !isNullOrEmpty( o.value ) ) $link.val(o.value);

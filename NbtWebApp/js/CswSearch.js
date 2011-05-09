@@ -62,7 +62,7 @@ var CswSearch_CssClasses = {
         
         var $topspan = o.$searchTable.CswSpan('init');
 
-        var topspandivid = makeId(ID: 'search_criteria_div', prefix: o.ID);
+        var topspandivid = makeId({ID: 'search_criteria_div', prefix: o.ID});
         var $topspandiv = $topspan.CswDiv('init',{ID: topspandivid});
         
         //o.$cswSearchForm.CswDOM('break',{count: 5});

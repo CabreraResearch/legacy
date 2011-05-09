@@ -9,7 +9,7 @@
     
     var methods = {
 	
-		'span': function(options) 
+		'init': function(options) 
 		{
             var o = {
                 'ID': '',
