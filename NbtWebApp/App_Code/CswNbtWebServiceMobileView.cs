@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Xml.Linq;
@@ -51,12 +52,12 @@ namespace ChemSW.Nbt.WebServices
 
                 if( Tree.getChildNodeCount() > 0 )
                 {
-                    _runTreeNodesRecursive( Tree, ref ret, null );
+                    _runTreeNodesRecursive( Tree, ref ret );
                 }
                 else
                 {
                     ret = new XElement( "node",
-                                new XAttribute("id", Int32.MinValue),
+								new XAttribute( "id", NodeIdPrefix + Int32.MinValue ),
                                 new XAttribute( "name", "No Results" ) 
                             );
                 }
@@ -65,8 +66,14 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 // All Views
-                XElement MobileViews = new XElement("something"); //.ViewSelect.getVisibleViewsXml( CurrentUser, true, false, string.Empty );
-                ret = MobileViews;
+				ret = new XElement("views");
+				Collection<CswNbtView> MobileViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, CurrentUser, false, true, false, NbtViewRenderingMode.Any );
+				foreach( CswNbtView MobileView in MobileViews )
+				{
+					ret.Add( new XElement( "view",
+							new XAttribute( "id", ViewIdPrefix + MobileView.ViewId ),
+							new XAttribute( "name", MobileView.ViewName ) ) );
+				}
             }
 
             return ret;
@@ -97,107 +104,119 @@ namespace ChemSW.Nbt.WebServices
             return Searches;
         } // _getSearchNodes
 
-        private void _runTreeNodesRecursive( ICswNbtTree Tree, ref XElement GrandParentNode, XElement PropertiesNode )
+
+		private void _runTreeNodesRecursive( ICswNbtTree Tree, ref XElement ParentXmlNode )
+		{
+			string ret = string.Empty;
+			for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+			{
+				Tree.goToNthChild( c );
+
+				CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
+				string ThisNodeName = Tree.getNodeNameForCurrentPosition();
+				string ThisNodeId = ThisNode.NodeId.ToString();
+
+				XElement ThisXmlNode = new XElement( "node" );
+				XElement ThisSubItems = new XElement( "subitems" );
+				ThisXmlNode.Add( ThisSubItems );
+
+				_runTreeNodesRecursive( Tree, ref ThisSubItems );
+
+				if( Tree.getNodeShowInTreeForCurrentPosition() )
+				{
+					if( _ForMobile && Tree.getChildNodeCount() == 0 )   // is a leaf
+					{
+						_runProperties( ThisNode, ref ThisSubItems );
+					}
+
+					if( _ForMobile )
+					{
+						ThisXmlNode.SetAttributeValue( "id", NodeIdPrefix + ThisNodeId );
+						ThisXmlNode.SetAttributeValue( "name", CswTools.SafeJavascriptParam( ThisNodeName ) );
+						ThisXmlNode.SetAttributeValue( "nodetype", CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) );
+						ThisXmlNode.SetAttributeValue( "objectclass", CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) );
+						ThisXmlNode.SetAttributeValue( "iconfilename", CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) );
+					}
+					else
+					{
+						//ret += "<item id=\"" + NodeIdPrefix + ThisNodeId + "\"><content><name>" + ThisNodeName + "</name></content>";
+					}
+
+					// case 20083 - search values
+					foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps )
+					{
+						if( MetaDataProp.MobileSearch )
+						{
+							if( MetaDataProp.ObjectClassProp != null )
+							{
+								//ret += " search_ocp_" + MetaDataProp.ObjectClassPropId.ToString() + "=\"" + CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) + "\"";
+								ThisXmlNode.SetAttributeValue( "search_ocp_" + MetaDataProp.ObjectClassPropId.ToString(), CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) );
+							}
+							else
+							{
+								//ret += " search_ntp_" + MetaDataProp.PropId.ToString() + "=\"" + CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) + "\"";
+								ThisXmlNode.SetAttributeValue( "search_ntp_" + MetaDataProp.PropId.ToString(), CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) );
+							}
+						}
+					}
+
+					//if( _ForMobile )
+					//{
+					//    ret += "><subitems>" + ThisSubItems + "</subitems>";
+					//    ret += "</node>";
+					//}
+					//else
+					//{
+					//    ret += ThisSubItems;
+					//    ret += "</item>";
+					//}
+					ParentXmlNode.Add( ThisXmlNode );
+				} // if( Tree.getNodeShowInTreeForCurrentPosition() )
+				else
+				{
+					//ret += ThisSubItems;
+					ParentXmlNode.Add( ThisSubItems );
+				}
+				Tree.goToParentNode();
+			}
+			//return ret;
+		} // _runTreeNodesRecursive()
+
+
+        private void _runProperties( CswNbtNode Node, ref XElement SubItemsXmlNode )
         {
-            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
-            {
-                Tree.goToNthChild( c );
-
-                CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
-                string ThisNodeName = Tree.getNodeNameForCurrentPosition();
-                string ThisNodeId = ThisNode.NodeId.ToString();
-
-                _runTreeNodesRecursive( Tree, ref GrandParentNode, PropertiesNode );
-
-                if( Tree.getNodeShowInTreeForCurrentPosition() )
-                {
-                    XElement ThisXNode;
-
-                    if( _ForMobile && PropertiesNode == null )
-                    {
-                        PropertiesNode = _runProperties( ThisNode );
-                    }
-
-                    if( _ForMobile )
-                    {
-                        ThisXNode = new XElement( "node",
-                                            new XAttribute( "id", NodeIdPrefix + ThisNodeId ),
-                                            new XAttribute( "name", NodeIdPrefix + CswTools.SafeJavascriptParam( ThisNodeName ) ),
-                                            new XAttribute( "nodetype", NodeIdPrefix + CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) ),
-                                            new XAttribute( "objectclass", NodeIdPrefix + CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) ),
-                                            new XAttribute( "iconfilename", NodeIdPrefix + CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) )
-                                                 );
-
-                    }
-                    else
-                    {
-                        ThisXNode = new XElement( "item",
-                                                new XAttribute( "id", NodeIdPrefix + ThisNodeId ) ,
-                                             new XElement( "content" ,
-                                                new XElement( "name", ThisNodeName ) ) );
-                            
-                    }
-
-                    // case 20083 - search values
-                    foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps )
-                    {
-                        if( MetaDataProp.MobileSearch )
-                        {
-                            if( MetaDataProp.ObjectClassProp != null )
-                            {
-                                ThisXNode.Add( new XAttribute( "search_ocp_" + MetaDataProp.ObjectClassPropId, CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) ) );
-                            }
-                            else
-                            {
-                                ThisXNode.Add( new XAttribute( "search_ntp_" + MetaDataProp.PropId, CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) ) );
-                            }
-                        }
-                    }
-
-                    ThisXNode.Add( PropertiesNode );
-                    GrandParentNode.Add( ThisXNode );
-                } // if( Tree.getNodeShowInTreeForCurrentPosition() )
-                else
-                {
-                    GrandParentNode.Add( PropertiesNode );
-                }
-                Tree.goToParentNode();
-            }
-        }
-
-
-        private XElement _runProperties( CswNbtNode Node )
-        {
-            XElement Props = new XElement( "subitems" );
             foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
                 {
-                    if( !Prop.HideInMobile &&
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) // Case 20772
-                    {
-                        CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-                        XmlDocument XmlDoc = new XmlDocument();
-                        CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
-                        PropWrapper.ToXml( XmlDoc.DocumentElement );
-                        
-                        Props.Add( new XElement("prop",
-                                        new XAttribute( "id", PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() ),
-                                        new XAttribute( "name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
-                                        new XAttribute( "tab", CswTools.SafeJavascriptParam( Tab.TabName ) ),
-                                        new XAttribute( "readonly", Prop.ReadOnly.ToString().ToLower() ),
-                                        new XAttribute( "fieldtype", Prop.FieldType.FieldType.ToString() ),
-                                        new XAttribute( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
-                                        new XAttribute( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) ),
-                                        XElement.Parse( XmlDoc.InnerXml )
-                            ) );
-                    }
-                }
-            }
+					if( !Prop.HideInMobile &&
+						Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
+						Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) // Case 20772
+					{
+						CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
+						XmlDocument XmlDoc = new XmlDocument();
+						CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
+						PropWrapper.ToXml( XmlDoc.DocumentElement );
 
-            return Props;
-        }
+						XElement PropXElement = new XElement( "prop",
+											new XAttribute( "id", PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() ),
+											new XAttribute( "name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
+											new XAttribute( "tab", CswTools.SafeJavascriptParam( Tab.TabName ) ),
+											new XAttribute( "readonly", Prop.ReadOnly.ToString().ToLower() ),
+											new XAttribute( "fieldtype", Prop.FieldType.FieldType.ToString() ),
+											new XAttribute( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
+											new XAttribute( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) ) );
+						SubItemsXmlNode.Add( PropXElement );
+						foreach( XmlNode PropValueChildNode in XmlDoc.DocumentElement.ChildNodes )
+						{
+							XElement ChildXElement = XElement.Parse( PropValueChildNode.OuterXml );
+							PropXElement.Add( ChildXElement );
+						}
+					}
+				} //foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
+			} // foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
+
+		} // _runProperties()
 
 
     } // class CswNbtWebServiceMobileView

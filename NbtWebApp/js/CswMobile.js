@@ -5,9 +5,9 @@
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
 
-var debug = true;
-var profiler = $createProfiler();
-if (!debug) profiler.disable();
+var debug = false;
+//var profiler = $createProfiler();
+//if (!debug) profiler.disable();
 
 ; (function ($) { /// <param name="$" type="jQuery" />
     
@@ -128,8 +128,15 @@ if (!debug) profiler.disable();
             });
             $('#loginsubmit').click(onLoginSubmit);
             if (ChangePage)
-                $.mobile.changePage($('#logindiv'), 'fade', false, true);
-        }
+            {
+			    _changePage($('#logindiv'), 'fade', false, true);
+			}
+		}
+
+		function _changePage($div, transition, reverse, changeHash)
+		{
+			$.mobile.changePage($div, transition, reverse, changeHash);
+		}
 
         function _loadSorryCharlieDiv(ChangePage)
         {
@@ -142,7 +149,7 @@ if (!debug) profiler.disable();
                 HideLogoutButton: true
             });
             if (ChangePage)
-                $.mobile.changePage($('#sorrycharliediv'), 'fade', false, true);
+                _changePage($('#sorrycharliediv'), 'fade', false, true);
         }
 
         function removeDiv(DivId)
@@ -164,7 +171,7 @@ if (!debug) profiler.disable();
                     HideLogoutButton: true,
                     HideHelpButton: true
                 });
-                $.mobile.changePage($('#loadingdiv'), "fade", false, true);
+                _changePage($('#loadingdiv'), "fade", false, true);
                 setTimeout(function () { continueReloadViews(true); removeDiv('loadingdiv') }, opts.DivRemovalDelay);
             } else
             {
@@ -247,12 +254,7 @@ if (!debug) profiler.disable();
                 HideSearchButton: false,
                 ChangePage: false
             };
-            
-            if (params)
-            {
-                $.extend(p, params);
-            }
-
+            if (params) $.extend(p, params);
 
             var ret = true;
 
@@ -290,19 +292,19 @@ if (!debug) profiler.disable();
                             url: opts.ViewUrl,
                             data: "SessionId=" + SessionId + "&ParentId=" + p.DivId + "&ForMobile=" + ForMobile,
                             onloginfail: function() { Logout(); },
-                            success: function (xml)
+                            success: function (X$xml)
                             {
                                 if (debug) log('On Success ' + opts.ViewUrl);
                                 if (p.level === 1)
                                 {
-                                    _storeViewXml(p.DivId, p.HeaderText, xml);
+									_storeViewXml(p.DivId, p.HeaderText, X$xml);
                                 }
 
                                 _processViewXml({
                                     ParentId: p.ParentId,
                                     DivId: p.DivId,
                                     HeaderText: p.HeaderText,
-                                    $xml: $(xml),
+                                    $xml: X$xml,
                                     parentlevel: p.level,
                                     HideRefreshButton: p.HideRefreshButton,
                                     HideSearchButton: p.HideSearchButton,
@@ -318,7 +320,7 @@ if (!debug) profiler.disable();
                     {
                         if ( !isNullOrEmpty(xmlstr) )
                         {
-                            $currentViewXml = $(xmlstr);
+							$currentViewXml = $(xmlstr);
                             
                             _processViewXml({
                                 ParentId: p.ParentId,
@@ -340,15 +342,15 @@ if (!debug) profiler.disable();
                                 url: opts.ViewUrl,
                                 data: "SessionId=" + SessionId + "&ParentId=" + p.DivId + "&ForMobile=" + ForMobile,
                                 onloginfail: function() { Logout(); },
-                                success: function (xml)
+                                success: function (X$xml)
                                 {
                                     if (debug) log('On Success ' + opts.ViewUrl);
 
                                     if (p.level === 1)
                                     {
-                                        _storeViewXml(p.DivId, p.HeaderText, xml);
+                                        _storeViewXml(p.DivId, p.HeaderText, X$xml);
                                     }
-                                    $currentViewXml = $(xml);
+                                    $currentViewXml = X$xml;
                                 
                                     _processViewXml({
                                         ParentId: p.ParentId,
@@ -423,8 +425,6 @@ if (!debug) profiler.disable();
             });
             content += _endUL();
 
-            log(content);
-
             $divhtml = _addPageDivToBody({
                 ParentId: p.ParentId,
                 level: p.parentlevel,
@@ -435,12 +435,11 @@ if (!debug) profiler.disable();
                 HideSearchButton: p.HideSearchButton
             });
             onAfterAddDiv($divhtml);
-            log(p);
+
             // this replaces the link navigation
             if (p.ChangePage)
             {
-                log($('#' + p.DivId));
-                //$.mobile.changePage($('#' + p.DivId), "slide");
+                _changePage($('#' + p.DivId), "slide");
             }
 
         } // _processViewXml()
@@ -457,17 +456,21 @@ if (!debug) profiler.disable();
             var previd = $xmlitem.prev().CswAttrXml('id');
 
             var lihtml = '';
+
             switch (PageType)
             {
                 case "SEARCHES":
+                case "searches":
                     // ignore this
                     break;
 
                 case "NODE":
+                case "node":
                     lihtml += _makeObjectClassContent($xmlitem);
                     break;
 
                 case "PROP":
+                case "prop":
                     var tab = $xmlitem.CswAttrXml('tab');
                     var fieldtype = $xmlitem.CswAttrXml('fieldtype');
                     var gestalt = $xmlitem.CswAttrXml('gestalt');
@@ -543,7 +546,7 @@ if (!debug) profiler.disable();
                     var toolbar = '';
                     if ( !isNullOrEmpty(previd) )
                     {
-                        toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-back="true">Previous</a>';
+                        toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>';
                     }
                     if ( !isNullOrEmpty(nextid) )
                     {
@@ -598,9 +601,11 @@ if (!debug) profiler.disable();
             var id = $xmlitem.CswAttrXml('id');
             var NodeName = $xmlitem.CswAttrXml('name');
             var icon = '';
-            if ( !isNullOrEmpty($xmlitem.CswAttrXml('iconfilename')) && !isNullOrEmpty($xmlitem.CswAttrXml('iconfilename')) )
-                icon = 'images/icons/' + $xmlitem.CswAttrXml('iconfilename');
-            var ObjectClass = $xmlitem.CswAttrXml('objectclass');
+            if ( !isNullOrEmpty($xmlitem.CswAttrXml('iconfilename')))
+            {
+				icon = 'images/icons/' + $xmlitem.CswAttrXml('iconfilename');
+            }
+			var ObjectClass = $xmlitem.CswAttrXml('objectclass');
 
             switch (ObjectClass)
             {
@@ -642,22 +647,26 @@ if (!debug) profiler.disable();
 
         function _extractCDataValue($node)
         {
-            // default
-            ret = $node.text();
+            var ret = '';			
+			if($node.length > 0)
+			{
+				// default
+            	ret = $node.text();
 
-            // for some reason, CDATA fields come through from the webservice like this:
-            // <node><!--[CDATA[some text]]--></node>
-            var cdataval = $node.html();
-            if ( !isNullOrEmpty(cdataval) )
-            {
-                var prefix = '<!--[CDATA[';
-                var suffix = ']]-->';
+				// for some reason, CDATA fields come through from the webservice like this:
+				// <node><!--[CDATA[some text]]--></node>
+				var cdataval = $node.html();
+				if ( !isNullOrEmpty(cdataval) )
+				{
+					var prefix = '<!--[CDATA[';
+					var suffix = ']]-->';
 
-                if (cdataval.substr(0, prefix.length) === prefix)
-                {
-                    ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
-                }
-            }
+					if (cdataval.substr(0, prefix.length) === prefix)
+					{
+						ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
+					}
+				}
+			}
             return ret;
         }
 
@@ -669,7 +678,7 @@ if (!debug) profiler.disable();
             var ReadOnly = ( isTrue($xmlitem.CswAttrXml('readonly')) );
 
             // Subfield values
-            var sf_text =  tryParseString( _extractCDataValue($xmlitem.children('text')), '');
+            var sf_text = tryParseString( _extractCDataValue($xmlitem.children('text')), '');
             var sf_value = tryParseString( $xmlitem.children('value').text(), '');
             var sf_href = tryParseString( $xmlitem.children('href').text(), '');
             var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
@@ -897,10 +906,11 @@ if (!debug) profiler.disable();
                 }
 
                 Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
-                if (( !isTrue(Checked) && !isTrue(answers[i]) ) ||
-                    ( isTrue(Checked) && isTrue(answers[i]) ) ||
-                    ( isNullOrEmpty(Checked) && isNullOrEmpty(answers[i]) ))
-                {
+				// Checked is a Tristate, so isTrue() is not useful here
+				if ((Checked === 'false' && answers[i] === 'False') ||
+					(Checked === 'true' && answers[i] === 'True') ||
+					(Checked === '' && answers[i] === 'Null'))
+				{
                     Html += 'checked';
                 }
                 Html += ' onclick="';
@@ -1039,15 +1049,14 @@ if (!debug) profiler.disable();
                 $.extend(p, params);
             }
 
-
-            var divhtml = '<div id="' + p.DivId + '" data-role="page">' +
+            var divhtml = '<div id="' + p.DivId + '" data-role="page" data-url="'+ p.DivId +'">' +
                           '<div data-role="header" data-theme="' + opts.Theme + '" data-position="fixed">';
-            divhtml += '<a href="#' + p.ParentId + '" id="' + p.DivId + '_back" data-back="true" ';
+            divhtml += '<a href="#' + p.ParentId + '" id="' + p.DivId + '_back" data-direction="reverse" ';
             if ( !isNullOrEmpty(p.backtransition) )
             {
                 divhtml += ' data-transition="' + p.backtransition + '" ';
             }
-            if ( !isNullOrEmpty(p.ParentId) )
+            if ( isNullOrEmpty(p.ParentId) )
             {
                 divhtml += ' style="visibility: hidden;" ';
             }
@@ -1151,7 +1160,7 @@ if (!debug) profiler.disable();
                 .find('li a')
                 .click(function (e)
                 {
-                    if (_loadDivContents({
+					if (_loadDivContents({
                         ParentId: DivId,
                         level: (level + 1),
                         DivId: $(this).CswAttrDom('href').substr(1),
@@ -1286,8 +1295,8 @@ if (!debug) profiler.disable();
                     {
                         if (debug) log('On Success ' + opts.AuthenticateUrl);
                         
-                        var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
-						_cacheSession(ThisSessionId, UserName);
+                        SessionId = $.CswCookie('get', CswCookieName.SessionId);
+						_cacheSession(SessionId, UserName);
                         reloadViews(true);
                         removeDiv('logindiv');
                     }
@@ -1329,7 +1338,7 @@ if (!debug) profiler.disable();
                         HideLogoutButton: true,
                         HideHelpButton: true
                     });
-                    $.mobile.changePage($('#loadingdiv'), "fade", false, true);
+                    _changePage($('#loadingdiv'), "fade", false, true);
                     setTimeout(function () { continueRefresh(DivId); }, opts.DivRemovalDelay);
                 }
             }
@@ -1402,12 +1411,12 @@ if (!debug) profiler.disable();
         {
             $('#synchstatus_back').CswAttrDom('href', '#' + DivId);
             $('#synchstatus_back').css('visibility', '');
-            $.mobile.changePage($('#synchstatus'), 'slideup');
+            _changePage($('#synchstatus'), 'slideup');
         }
 
         function onHelp(DivId, eventObj)
         {
-            $.mobile.changePage($('#help'), 'slideup');
+            _changePage($('#help'), 'slideup');
         }
 
         function onPropertyChange(DivId, eventObj)
@@ -1478,7 +1487,7 @@ if (!debug) profiler.disable();
 
                     $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
 
-                    $.mobile.changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
+                    _changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
                 }
             });
         }
@@ -1539,7 +1548,7 @@ if (!debug) profiler.disable();
                 });
             } else
             {
-                console.log("database is not opened");
+                log("database is not opened");
             }
         } //_DoSql
 
@@ -1592,7 +1601,7 @@ if (!debug) profiler.disable();
 
         function _errorHandler(transaction, error)
         {
-            console.log('Database Error: ' + error.message + ' (Code ' + error.code + ')');
+            log('Database Error: ' + error.message + ' (Code ' + error.code + ')');
             return true;
         }
 
@@ -1678,12 +1687,12 @@ if (!debug) profiler.disable();
         //        } //_clearSession()
 
 
-        function _storeViewXml(rootid, rootname, viewxml)
+        function _storeViewXml(rootid, rootname, $viewxml)
         {
             if ( !isNullOrEmpty(rootid) )
             {
                 _DoSql('INSERT INTO views (rootid, rootname, viewxml, wasmodified) VALUES (?, ?, ?, 0);',
-                       [rootid, rootname, viewxml]);
+                       [rootid, rootname, xmlToString($viewxml)]);
             }
         }
 
@@ -1726,7 +1735,7 @@ if (!debug) profiler.disable();
                            if (result.rows.length > 0)
                            {
                                var row = result.rows.item(0);
-                               onsuccess(row.viewxml);
+							   onsuccess(row.viewxml);
                            } else
                            {
                                onsuccess('');
@@ -1859,7 +1868,7 @@ if (!debug) profiler.disable();
             } // if(SessionId != '') 
         } //_processChanges()
 
-        log($dumpProfileHTML(profiler));
+        //log("profiler="+$dumpProfileHTML(profiler));
         // For proper chaining support
         return this;
     };
