@@ -310,14 +310,23 @@
 			$.extend(a, addoptions);
 		}
 
+        var dataJson = { 
+            RoleId: '', 
+            Type: a.type,
+            ViewId: a.viewid, 
+            NodeTypeId: a.nodetypeid , 
+            Text: a.text, 
+            IconFileName: a.iconfilename
+        };
+
         CswAjaxJSON({
 			url: a.AddWelcomeItemUrl,
-			data: '{ "RoleId": "", "Type": "' + a.type + '", "ViewId": "' + a.viewid + '", "NodeTypeId": "' + a.nodetypeid + '", "Text": "' + a.text + '", "IconFileName": "' + a.iconfilename + '" }',
+			data: JSON.stringify( dataJson ),
 			success: function (result) 
 				{
 					a.onSuccess();
                 },
-			error: o.onError
+			error: a.onError
         });
 
 	} // _addItem()
