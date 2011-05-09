@@ -59,7 +59,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
                                             _Separator_NuLine + "NbtSchemaUpdate " + _Separator_Arg + _ArgKey_Help + _Separator_OrArgs + _Separator_Arg + _ArgKey_All + _Separator_OrArgs + _Separator_Arg + _ArgKey_AccessId + " <AccessId>" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_All + ": update all schemata specified CswDbConfig.xml" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_AccessId + " <AccessId>: The AccessId, as per CswDbConfig.xml, of the schema to be updated" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_Mode + " prod | test: perform schema update, or auto-test the schema update infrastructure";
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey_Mode + " prod | test: perform schema update, or auto-test the schema update infrastructure" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey_Describe + " writes descriptions of all current scripts";
                 return ( ReturnVal );
             }
         }
@@ -91,6 +92,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
         private const string _ArgKey_All = "all";
         private const string _ArgKey_Mode = "mode";
         private const string _Arg_Val_Test = "test";
+        private const string _ArgKey_Describe = "describe";
 
 
         private Dictionary<string, string> _UserArgs = new Dictionary<string, string>();
@@ -151,18 +153,35 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                 if( false == _UserArgs.ContainsKey( _ArgKey_Help ) )
                 {
+                    string AccessId = string.Empty;
                     if( _UserArgs.ContainsKey( _ArgKey_AccessId ) )
                     {
-                        string AccessId = _UserArgs[_ArgKey_AccessId];
+                        AccessId = _UserArgs[_ArgKey_AccessId];
                         if( _CswDbCfgInfoNbt.AccessIds.Contains( AccessId ) )
                         {
-                            _updateAccessId( AccessId );
+                            _CswNbtResources.AccessId = AccessId;
+
+                            if( false == _UserArgs.ContainsKey( _ArgKey_Describe ) )
+                            {
+                                _updateAccessId();
+                            }
+                            else
+                            {
+                                if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _Arg_Val_Test == _UserArgs[_ArgKey_Mode] )
+                                {
+                                    _describe();
+                                }
+                                else
+                                {
+                                    _CswConsoleOutput.write( "Ach. The iteration model for production scripts so woefully different than for test scripts that verily do I say unto the brother, uh, yay: it is easier for a camel to pass through the eye of a needle than is to give an inventory of production test scripts. Of course, since the production test scripts don't deploy the Description property of CswRequestDriver in as a rich a way as do the test scripts, it probably doesn't matter. See case 21739" );
+                                }
+                            }//if-else a 
                         }
                         else
                         {
                             _CswConsoleOutput.write( "AccessId " + AccessId + " unknown" );
                         }
-                    }//if user specified an accessid
+                    }//if user said to work with a specific accessid
                     else if( _UserArgs.ContainsKey( _ArgKey_All ) )
                     {
                         string[] AccessIds = new string[_CswDbCfgInfoNbt.AccessIds.Count];
@@ -172,19 +191,21 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                             string CurrentAccessId = AccessIds[idx];
                             _CswConsoleOutput.write( _Separator_NuLine + "Applying schema operation to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
-                            _updateAccessId( CurrentAccessId );
+                            _CswNbtResources.AccessId = CurrentAccessId;
+                            _updateAccessId();
                             _CswConsoleOutput.write( _Separator_NuLine );
                         }
                     }//if user said to update all accessids
                     else
                     {
                         _CswConsoleOutput.write( _Help );
-                    }//if the user's input does not fit our semantic space, he needs help
+                    }//if the user's input does not fit our semantic space, he needs help (as do we all)
                 }
                 else
                 {
                     _CswConsoleOutput.write( _Help );
-                }//if-else user asked for help
+                }//if-else the "help" flag was not specified
+
             }//try
 
             catch( Exception Exception )
@@ -194,12 +215,9 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         }//process() 
 
-        private void _updateAccessId( string AccessId )
+        private void _updateAccessId()
         {
-
-            _CswNbtResources.AccessId = AccessId;
-
-
+            string AccessId = _CswNbtResources.AccessId;
             CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion;
             if( _CswSchemaUpdater.LatestVersion != CurrentVersion )
             {
@@ -248,6 +266,31 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
 
         }//_updateAccessId() 
+
+
+        private void _describe()
+        {
+            List<string> Descriptions = new List<string>();
+            while( _CswSchemaUpdater.Next() )
+            {
+                string CurrentDescription = _CswSchemaUpdater.CurrentVersion.ToString() + ": " + _CswSchemaUpdater.getDriver( _CswSchemaUpdater.CurrentVersion ).Description;
+                if( false == Descriptions.Contains( CurrentDescription ) )
+                {
+                    Descriptions.Add( CurrentDescription );
+                }
+
+            }
+
+            _CswConsoleOutput.write( _VersionInfo );
+            _CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "Script inventory:" );
+
+            foreach( string CurrentDescription in Descriptions )
+            {
+                _CswConsoleOutput.write( _Separator_NuLine + CurrentDescription );
+            }
+
+
+        }//_describe
 
     }//CswSchemaUpdaterConsole
 
