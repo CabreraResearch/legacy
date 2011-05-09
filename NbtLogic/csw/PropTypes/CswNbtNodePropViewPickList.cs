@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
-        /// Datatable of Views to select
+        /// Collection of Views to select
         /// </summary>
         public Collection<CswNbtView> Views
         {
