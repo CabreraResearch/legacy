@@ -90,22 +90,22 @@
 								linktype: $item.CswAttrXml('linktype')
 							};
 
-							switch(optSelect.linktype)
+							switch( optSelect.linktype.toLowerCase() )
 							{
-								case 'Link':
+								case 'link':
 									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
 									$textcell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
 									$imagecell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
 									break;
-								case 'Search': 
+								case 'search': 
 									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
-									$textcell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
-									$imagecell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
+									$textcell.find('a').click(function() { o.onSearchClick(optSelect); return false; });
+									$imagecell.find('a').click(function() { o.onSearchClick(optSelect); return false; });
 									break;
-								case 'Text':
+								case 'text':
 									$textcell.append('<span>' + optSelect.text + '</span>');
 									break;
-								case 'Add': 
+								case 'add': 
 									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
 									$textcell.find('a').click(function() { o.onAddClick($item.CswAttrXml('nodetypeid')); return false; }); 
 									$imagecell.find('a').click(function() { o.onAddClick($item.CswAttrXml('nodetypeid')); return false; });
