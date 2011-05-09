@@ -180,24 +180,28 @@
 	function refreshWelcome()
 	{
 		if (debug) log('NewMain.refreshWelcome()');
+        clear({ all: true });
 
-		clear({ all: true });
-		$('#CenterBottomDiv').CswWelcome('initTable', {
-		    'onLinkClick': handleItemSelect,
-            'onSearchClick': '',
-			'onAddClick': function (nodetypeid)
-			{
-				$.CswDialog('AddNodeDialog', {
-					'nodetypeid': nodetypeid,
-					'onAddNode': function (nodeid, cswnbtnodekey)
-					{
-						clear({ all: true });
-						refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
-					}
-				});
-			},
-			'onAddComponent': refreshWelcome
-		});
+        $('#CenterBottomDiv').CswWelcome('initTable', {
+            'onLinkClick': handleItemSelect,
+            'onSearchClick': function (viewid, viewmode)
+            {
+                handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode, 'linktype': 'search' });
+                refreshSearchPanel({ 'viewid': viewid, 'searchType': view });
+            },
+            'onAddClick': function (nodetypeid)
+            {
+                $.CswDialog('AddNodeDialog', {
+                    'nodetypeid': nodetypeid,
+                    'onAddNode': function (nodeid, cswnbtnodekey)
+                    {
+                        clear({ all: true });
+                        refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+                    }
+                });
+            },
+            'onAddComponent': refreshWelcome
+        });
         refreshMainMenu();
 	} // refreshWelcome()
 
@@ -373,7 +377,7 @@
 	    var $genericSearch = $('#CenterTopDiv').CswDOM('getchildren', { 'ID': o.genericSearchId });
         var $thisSearchForm;
 
-	    switch (o.searchType)
+	    switch ( o.searchType.toLowerCase() )
 	    {
 	        case 'generic':
 	            {
@@ -455,6 +459,7 @@
 		var o = {
 			viewid: '',
 			nodeid: '',
+            issearch: false,
 			cswnbtnodekey: '',
             doMenuRefresh: true,
             onAddNode: '',
@@ -464,11 +469,12 @@
 		if (options) $.extend(o, options);
 
 		// Defaults
-		if (o.nodeid === '' || o.nodeid === undefined)
+		var getEmptyGrid = (isTrue(o.issearch));
+        if ( isNullOrEmpty( o.nodeid ) )
 			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
-		if (o.cswnbtnodekey === '')
+		if ( isNullOrEmpty(o.cswnbtnodekey) )
 			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
-		if (o.viewid !== '')
+		if ( !isNullOrEmpty(o.viewid) )
 			$.CswCookie('get', CswCookieName.CurrentView.ViewId);
 
 //		o.onAddNode = function (nodeid, cswnbtnodekey)
@@ -485,8 +491,9 @@
         
         $('#CenterBottomDiv').CswNodeGrid({ 
                                 'viewid': o.viewid, 
-                                'nodeid': o.nodeid, 
+                                'nodeid': o.nodeid,
                                 'cswnbtnodekey': o.cswnbtnodekey, 
+                                'showempty': getEmptyGrid,
                                 'ID': MainGridId, 
                                 //'onAddNode': o.onAddNode,
                                 'onEditNode': o.onEditNode,
@@ -644,6 +651,7 @@
 			'nodeid': '',
 			'cswnbtnodekey': '',
 			'nodename': '', 
+            'issearch': false,
 			'iconurl': '',
 			'viewid': '',
 			'viewmode': 'tree',
@@ -651,11 +659,12 @@
 		};		
 		if (options) $.extend(o, options);
 
-		if (o.nodeid === '' || o.nodeid === undefined)
+		var getEmptyTree = (isTrue(o.issearch));
+		if (isNullOrEmpty(o.nodeid))
 			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
-		if (o.cswnbtnodekey === '')
+		if (isNullOrEmpty(o.cswnbtnodekey))
 			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
-		if (o.viewid === '')
+		if (isNullOrEmpty(o.viewid))
 			o.viewid = $.CswCookie('get', CswCookieName.CurrentView.ViewId);
 
 		clear({ left: true });
@@ -666,6 +675,7 @@
 											'nodeid': o.nodeid, 
 											'cswnbtnodekey': o.cswnbtnodekey,
 											'nodename': o.nodename,
+                                            'showempty': getEmptyTree,
 											'IncludeNodeRequired': o.IncludeNodeRequired,
 											'onViewChange': function (newviewid)
 												{
