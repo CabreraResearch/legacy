@@ -34,22 +34,23 @@ namespace ChemSW.Nbt.WebServices
 		} //ctor
 
 		
-		public JObject getGrid()
+		public JObject getGrid(bool ShowEmpty)
 		{
-			return _getGridOuterJson();
+            return _getGridOuterJson( ShowEmpty );
 		} // getGrid()
 
 		/// <summary>
 		/// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
 		/// </summary>
-		private JObject _getGridOuterJson()
+        private JObject _getGridOuterJson( bool ShowEmpty )
 		{
 			JObject GridShellJObj = null;
 			IEnumerable<XElement> GridNodes = _getGridXElements();
             IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( true );
 
 			JArray GridRows = new JArray();
-			if( null != GridNodes && GridNodes.Count() > 0 )
+		    var HasResults = ( !ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
+			if( HasResults )
 			{
                 GridRows = _CswGridData.getGridRowsJSON( GridNodes ); //_getGridRowsJson( GridNodes );
 			}
