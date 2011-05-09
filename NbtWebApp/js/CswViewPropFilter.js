@@ -1,4 +1,9 @@
-﻿// for CswViewPropFilter
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
+// for CswViewPropFilter
 var ViewBuilder_CssClasses = {
     subfield_select: { name: 'csw_viewbuilder_subfield_select' },
     filter_select: { name: 'csw_viewbuilder_filter_select' },
@@ -7,7 +12,7 @@ var ViewBuilder_CssClasses = {
     metadatatype_static: { name: 'csw_viewbuilder_metadatatype_static' }
 };
 
-;  (function ($) {
+; (function ($) { /// <param name="$" type="jQuery" />
 	
     var PluginName = "CswViewPropFilter";
 
@@ -88,6 +93,7 @@ var ViewBuilder_CssClasses = {
                 'proparbitraryid': o.proparbitraryid,
                 'filtarbitraryid': o.filtarbitraryid,
                 'viewbuilderpropid': o.viewbuilderpropid,
+                'advancedIsHidden': o.advancedIsHidden,
                 'ID': o.ID
             };
                        
@@ -135,7 +141,7 @@ var ViewBuilder_CssClasses = {
                                                     value: $defaultFilter,
                                                     cssclass: ViewBuilder_CssClasses.default_filter.name })
                                                 .CswAttrDom({align:"center"});
-                if( !o.advancedIsHidden )
+                if( !filtOpt.advancedIsHidden )
                 {
                     $defaultSubField.hide();
                 }
@@ -150,9 +156,10 @@ var ViewBuilder_CssClasses = {
                                             var $this = $(this);
                                             var r = {
                                                 'selectedSubfieldVal': $this.val(),
-                                                'selectedFilterVal': ''
+                                                'selectedFilterVal': '',
+                                                'advancedIsHidden': isTrue( $this.is(':hidden') )
                                             };
-                                            $.extend(o,r);
+                                            $.extend(filtOpt,r);
                                             renderPropFiltRow(filtOpt) });
 
                 if(o.selectedSubfieldVal !== '')
@@ -160,7 +167,7 @@ var ViewBuilder_CssClasses = {
                     $subfieldsOptions.val(o.selectedSubfieldVal).CswAttrDom('selected',true);
                 }
                 $subfieldCell.append($subfieldsOptions);
-                if( o.advancedIsHidden )
+                if( filtOpt.advancedIsHidden )
                 {
                     $subfieldsOptions.hide();
                 }
@@ -179,9 +186,10 @@ var ViewBuilder_CssClasses = {
                                             var $this = $(this);
                                             var r = {
                                                 'selectedSubfieldVal': $subfieldsOptions.val(),
-                                                'selectedFilterVal': $this.val()
+                                                'selectedFilterVal': $this.val(),
+                                                'advancedIsHidden': isTrue( $this.is(':hidden') )
                                             };
-                                            $.extend(o,r);
+                                            $.extend(filtOpt,r);
                                             renderPropFiltRow(filtOpt) });
 
                 if(o.selectedFilterVal !== '')
@@ -189,7 +197,7 @@ var ViewBuilder_CssClasses = {
                     $filtersOptions.val(o.selectedFilterVal).CswAttrDom('selected',true);
                 }
                 $filtersCell.append($filtersOptions);
-                if( o.advancedIsHidden )
+                if( filtOpt.advancedIsHidden )
                 {
                     $filtersOptions.hide();
                 }
@@ -212,7 +220,7 @@ var ViewBuilder_CssClasses = {
                         value: defaultValue,
                         placeholder: ''
                     };
-                    if( inputOpt.value === '' || inputOpt.value === undefined )
+                    if( isNullOrEmpty( inputOpt.value ) )
                     {
                         o.placeholder = propertyName;
                         if(o.placeholder !== $subfieldsOptions.find(':selected').text() )
