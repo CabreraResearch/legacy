@@ -184,10 +184,12 @@
 
         $('#CenterBottomDiv').CswWelcome('initTable', {
             'onLinkClick': handleItemSelect,
-            'onSearchClick': function (viewid, viewmode)
+            'onSearchClick': function (view)
             {
+                var viewid = view.viewid;
+                var viewmode = view.viewmode;
                 handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode, 'linktype': 'search' });
-                refreshSearchPanel({ 'viewid': viewid, 'searchType': view });
+                refreshSearchPanel({ 'viewid': viewid, 'searchType': 'view' });
             },
             'onAddClick': function (nodetypeid)
             {
@@ -224,7 +226,7 @@
 			};
 			if (options) $.extend(o, options);
 
-			if (o.viewid !== undefined && o.viewid !== '')
+			if ( !isNullOrEmpty( o.viewid ) )
 			{
 			    $.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
 			    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
