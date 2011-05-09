@@ -95,6 +95,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
         private const string _ArgVal_Test = "test";
         private const string _ArgKey_Describe = "describe";
         private const string _ArgKey_StartAtTestCase = "start";
+        private const string _ArgKey_IgnoreTestCasesCsv = "ignore";
 
 
 
@@ -109,7 +110,10 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 if( Convert.ToChar( _Separator_Arg ) == CurrentArg[0] )
                 {
                     string CurrentArgContent = CurrentArg.Substring( 1 ).Trim().ToLower();
-                    if( _ArgKey_AccessId == CurrentArgContent || _ArgKey_Mode == CurrentArgContent || _ArgKey_StartAtTestCase == CurrentArgContent )
+                    if( _ArgKey_AccessId == CurrentArgContent ||
+                        _ArgKey_Mode == CurrentArgContent || 
+                        _ArgKey_StartAtTestCase == CurrentArgContent ||
+                        _ArgKey_IgnoreTestCasesCsv == CurrentArgContent )
                     {
                         _UserArgs.Add( CurrentArgContent, args[idx + 1].Trim() );
                         idx += 2;
@@ -145,9 +149,19 @@ namespace ChemSW.Nbt.Schema.CmdLn
                     StartAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey_StartAtTestCase] ); 
                 }
 
+                List<string> IgnoreList = new List<string>();
+                if( _UserArgs.ContainsKey( _ArgKey_IgnoreTestCasesCsv ) )
+                {
+                    CswCommaDelimitedString CswCommaDelimitedString = new CswCommaDelimitedString();
+                    CswCommaDelimitedString.FromString( _UserArgs[_ArgKey_IgnoreTestCasesCsv] );
+                    IgnoreList = CswCommaDelimitedString.ToList<string>();
+
+
+                }//
+
                 if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
                 {
-                    _CswSchemaScripts = new CswSchemaScriptsTest( _CswNbtResources, StartAtTestCase );
+                    _CswSchemaScripts = new CswSchemaScriptsTest( _CswNbtResources, StartAtTestCase, IgnoreList );
                 }
                 else
                 {

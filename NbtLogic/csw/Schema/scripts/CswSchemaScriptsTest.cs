@@ -22,7 +22,9 @@ namespace ChemSW.Nbt.Schema
         private List<CswSchemaUpdateDriver> _UpdateDriverList = new List<CswSchemaUpdateDriver>();
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
 
-        public CswSchemaScriptsTest( CswNbtResources CswNbtResources, int StartAtTestCase )
+        private string _getCaseNumberFromTypeName( string TypeName ) { return ( TypeName.Substring( 12, 3 ) ); }
+
+        public CswSchemaScriptsTest( CswNbtResources CswNbtResources, int StartAtTestCase, List<string> IgnoreCases )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
@@ -38,19 +40,22 @@ namespace ChemSW.Nbt.Schema
                     CurrentType.Name.Contains( "CswTestCase_" )
                     )
                 {
-                    TestCaseTypeNames.Add( CurrentType.Name );
-                    TestCaseTypesByName.Add( CurrentType.Name, CurrentType );
-                    //typeof(ICswUpdateSchemaTo).
-                    //typeof(ICswUpdateSchemaTo).IsInstanceOfType(
+
+                    string TestCaseNumberSegment = _getCaseNumberFromTypeName( CurrentType.Name );
+                    if( false == IgnoreCases.Contains( TestCaseNumberSegment ) )
+                    {
+                        TestCaseTypeNames.Add( CurrentType.Name );
+                        TestCaseTypesByName.Add( CurrentType.Name, CurrentType );
+                    }
                 }
 
-            }
+            }//iterate types
 
             List<Type> TestCaseTypes = new List<Type>();
             TestCaseTypeNames.Sort();
             foreach( string CurrentTypeName in TestCaseTypeNames )
             {
-                string TestCaseNumberSegment = CurrentTypeName.Substring( 12, 3 );
+                string TestCaseNumberSegment = _getCaseNumberFromTypeName( CurrentTypeName );
                 Int32 TestCaseNumber = CswConvert.ToInt32( TestCaseNumberSegment );
                 if( TestCaseNumber >= StartAtTestCase )
                 {
