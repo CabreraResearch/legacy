@@ -20,19 +20,20 @@ namespace ChemSW.Nbt.WebServices
 		}
 
 
-		public XElement getTree( CswNbtView View, string IDPrefix, bool IsFirstLoad, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool UsePaging )
+		public XElement getTree( CswNbtView View, string IDPrefix, bool IsFirstLoad, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool UsePaging, bool ShowEmpty )
 		{
 			var ReturnNode = new XElement( "result" );
-			string EmptyOrInvalid = "";
-		    string ViewName = string.Empty;
+            string EmptyOrInvalid = "No Results";
+		    // Case 21699: Show empty tree for search
+            bool HasResults = !ShowEmpty;
+		    string ViewName = View.ViewName;
 			//bool IsFirstLoad = true;
 			//if( ParentNodeKey != null || IncludeNodeKey != null )
 			//    IsFirstLoad = false;
 
-			if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
+            if( ( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List ) && !ShowEmpty )
 			{
 				Int32 PageSize = Int32.MinValue;
-			    ViewName = View.ViewName;
 				if( UsePaging )
 					PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
 
@@ -50,8 +51,10 @@ namespace ChemSW.Nbt.WebServices
 					Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
 				}
 
-				if( Tree.getChildNodeCount() > 0 )
+			    HasResults = ( Tree.getChildNodeCount() > 0 );
+                if( HasResults )
 				{
+                    
 					var RootNode = new XElement( "root" );
 					if( IsFirstLoad && View.ViewMode == NbtViewRenderingMode.Tree )
 					{
@@ -79,20 +82,22 @@ namespace ChemSW.Nbt.WebServices
 						ReturnNode = RootNode;
 					}
 				} // if( Tree.getChildNodeCount() > 0 )
-				else
-				{
-					if( IsFirstLoad )
-					{
-						EmptyOrInvalid = "No Results";
-					}
-				}
-			} // if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
+                //else
+                //{
+                //    if( IsFirstLoad )
+                //    {
+                //        EmptyOrInvalid = "No Results";
+                //    }
+                //}
+			
+            } // if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
 			else
-			{
+            {
+                HasResults = false;
 				EmptyOrInvalid = "Not a Tree or List view.";
 			}
-            if( string.IsNullOrEmpty( ViewName ) ) ViewName = "No View Selected";
-			if( !string.IsNullOrEmpty( EmptyOrInvalid ) )
+            
+			if( !HasResults )
 			{
                 ReturnNode.Add( new XElement( "tree",
                     new XElement( "root",
