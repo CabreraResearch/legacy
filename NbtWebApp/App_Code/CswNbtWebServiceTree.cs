@@ -53,42 +53,43 @@ namespace ChemSW.Nbt.WebServices
 
 			    HasResults = ( Tree.getChildNodeCount() > 0 );
                 if( HasResults )
-				{
-                    
-					var RootNode = new XElement( "root" );
-					if( IsFirstLoad && View.ViewMode == NbtViewRenderingMode.Tree )
-					{
-						var RootItemNode = new XElement( "item",
-											new XAttribute( "id", IDPrefix + "root" ),
-											new XAttribute( "rel", "root" ),
-											new XElement( "content",
-														new XElement( "name", View.ViewName ) ) );
-						RootNode.Add( RootItemNode );
-						_runTreeNodesRecursive( Tree, IDPrefix, RootItemNode );
-					}
-					else // List, or non-top level of Tree
-					{
-						_runTreeNodesRecursive( Tree, IDPrefix, RootNode );
-					}
+                {
 
-					if( IsFirstLoad )
-					{
-						ReturnNode.Add( new XElement( "tree", RootNode ),
-										new XElement( "viewid", View.SessionViewId ),
-										new XElement( "types", getTypes( View ).ToString() ) );
-					}
-					else
-					{
-						ReturnNode = RootNode;
-					}
-				} // if( Tree.getChildNodeCount() > 0 )
-                //else
-                //{
-                //    if( IsFirstLoad )
-                //    {
-                //        EmptyOrInvalid = "No Results";
-                //    }
-                //}
+                    var RootNode = new XElement( "root" );
+                    if( IsFirstLoad && View.ViewMode == NbtViewRenderingMode.Tree )
+                    {
+                        var RootItemNode = new XElement( "item",
+                                            new XAttribute( "id", IDPrefix + "root" ),
+                                            new XAttribute( "rel", "root" ),
+                                            new XElement( "content",
+                                                        new XElement( "name", View.ViewName ) ) );
+                        RootNode.Add( RootItemNode );
+                        _runTreeNodesRecursive( Tree, IDPrefix, RootItemNode );
+                    }
+                    else // List, or non-top level of Tree
+                    {
+                        _runTreeNodesRecursive( Tree, IDPrefix, RootNode );
+                    }
+
+                    if( IsFirstLoad )
+                    {
+                        ReturnNode.Add( new XElement( "tree", RootNode ),
+                                        new XElement( "viewid", View.SessionViewId ),
+                                        new XElement( "types", getTypes( View ).ToString() ) );
+                    }
+                    else
+                    {
+                        ReturnNode = RootNode;
+                    }
+                } // if( Tree.getChildNodeCount() > 0 )
+                else
+                {
+                    HasResults = true; // return an empty <result/> for junior most node on tree
+                    //    if( IsFirstLoad )
+                    //    {
+                    //        EmptyOrInvalid = "No Results";
+                    //    }
+                }
 			
             } // if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
 			else
