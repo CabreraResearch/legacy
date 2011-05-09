@@ -183,7 +183,8 @@
 
 		clear({ all: true });
 		$('#CenterBottomDiv').CswWelcome('initTable', {
-			'onLinkClick': handleItemSelect,
+		    'onLinkClick': handleItemSelect,
+            'onSearchClick': '',
 			'onAddClick': function (nodetypeid)
 			{
 				$.CswDialog('AddNodeDialog', {
@@ -208,16 +209,12 @@
 		{
 			clear({ all: true });
 			var o = {
-				type: 'view',
-				viewmode: 'tree',
-				itemid: '',
-				text: '',
-				iconurl: '',
-				viewid: '',
-				actionid: '',
+				type: 'view', // Action, Report, View
+				viewmode: 'tree', // Grid, Tree, List
+				linktype: 'link', // WelcomeComponentType: Link, Search, Text, Add
+                viewid: '',
 				actionurl: '',
 				reportid: '',
-				linktype: '',
 				nodeid: '',
 				cswnbtnodekey: ''
 			};
@@ -228,24 +225,34 @@
 			    $.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
 			    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
 
-			    switch (o.viewmode) //webservice converts to lower case
+			    var linkOpt = {
+                    'issearch': false
+			    };
+
+			    switch (o.linktype.toLowerCase())
 			    {
-			    	case 'Grid':
+			        case 'search':
+			            linkOpt.issearch = true;
+			            break;
+			    }
+
+			    switch ( o.viewmode.toLowerCase() )
+			    {
 			    	case 'grid':
-			    		{
-			                getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			    	    {
+			                getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'issearch': linkOpt.issearch });
 			                break;
 			            }
 			        default:
 			            {
-			                refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '' });
+			                refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '', 'issearch': linkOpt.issearch });
 			                break;
 			            }
 			    }
 			}
 			else if (!isNullOrEmpty(o.type))
 			{
-				switch (o.type)
+			    switch ( o.type.toLowerCase() )
 			    {
 			    	case 'action':
 			    		{
@@ -259,7 +266,7 @@
 			    		}
 			        default:
 			            {
-			                alert('Handling for link type ' + o.linktype + ' is not implemented yet.');
+			                alert('Handling for link type ' + o.type + ' is not implemented yet.');
 			                break;
 			            }
 			    }
