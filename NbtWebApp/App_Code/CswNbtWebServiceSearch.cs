@@ -257,10 +257,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView InitialView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
                 SearchView = new CswNbtView( _CswNbtResources );
                 SearchView.LoadXml( InitialView.ToXml() );
-                if( !InitialView.ViewName.StartsWith( "Search " ) && !InitialView.ViewName.EndsWith( " Search" ))
-                {
-                    SearchView.ViewName = "Search " + InitialView.ViewName;
-                }
+                SearchView.ViewName = _makeSearchViewName( SearchView.ViewName );
 
                 if( null != ViewSearch.Property( "viewprops" ) )
                 {
@@ -275,6 +272,23 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
             return SearchView;
+        }
+
+        private string _makeSearchViewName( string ViewName )
+        {
+            string SearchViewName = ViewName;
+
+
+            if( !SearchViewName.StartsWith( "Search " ) && !SearchViewName.EndsWith( " Search" ) )
+            {
+                SearchViewName = "Search '" + SearchViewName + "'";
+            }
+            if( !SearchViewName.EndsWith( " Results" ) )
+            {
+                SearchViewName += " Results";
+            }
+            
+            return SearchViewName;
         }
 
         /// <summary>
