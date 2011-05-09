@@ -293,12 +293,19 @@
     <Compile Include="csw\Schema\scripts\tests\cases\004\CswTestCase_004_04.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\005\CswTestCase_005_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\005\CswTestCase_005_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_06.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_004.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_003.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTestCaseRsrc.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_001.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_002.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_005.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_006.cs" />
     <Compile Include="csw\Security\CswNbtAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSystemUser.cs" />
     <Compile Include="csw\Security\ICswNbtUser.cs" />
@@ -380,12 +387,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="csw\Schema\scripts\tests\cases\005\" />
-  </ItemGroup>
- <ItemGroup>
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\dundant\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\review\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

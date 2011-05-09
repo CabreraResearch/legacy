@@ -188,6 +188,8 @@ namespace ChemSW.Nbt.Schema
             return ( Exception.Message.Contains( "keys in table referenced by foreign keys" ) );
         }//isRecordDeletionConstraintViolation()
 
-    }//CswSchemaUpdaterTestCaseDropColumnRollback
+
+
+    }
 
 }//ChemSW.Nbt.Schema

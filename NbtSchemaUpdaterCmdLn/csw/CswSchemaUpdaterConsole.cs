@@ -60,7 +60,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_All + ": update all schemata specified CswDbConfig.xml" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_AccessId + " <AccessId>: The AccessId, as per CswDbConfig.xml, of the schema to be updated" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_Mode + " prod | test: perform schema update, or auto-test the schema update infrastructure" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_Describe + " writes descriptions of all current scripts";
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey_Describe + " writes descriptions of all current scripts"+
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey_StartAtTestCase + "  test case to begin at";
                 return ( ReturnVal );
             }
         }
@@ -91,8 +92,10 @@ namespace ChemSW.Nbt.Schema.CmdLn
         private const string _ArgKey_AccessId = "accessid";
         private const string _ArgKey_All = "all";
         private const string _ArgKey_Mode = "mode";
-        private const string _Arg_Val_Test = "test";
+        private const string _ArgVal_Test = "test";
         private const string _ArgKey_Describe = "describe";
+        private const string _ArgKey_StartAtTestCase = "start";
+
 
 
         private Dictionary<string, string> _UserArgs = new Dictionary<string, string>();
@@ -106,7 +109,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 if( Convert.ToChar( _Separator_Arg ) == CurrentArg[0] )
                 {
                     string CurrentArgContent = CurrentArg.Substring( 1 ).Trim().ToLower();
-                    if( _ArgKey_AccessId == CurrentArgContent || _ArgKey_Mode == CurrentArgContent )
+                    if( _ArgKey_AccessId == CurrentArgContent || _ArgKey_Mode == CurrentArgContent || _ArgKey_StartAtTestCase == CurrentArgContent )
                     {
                         _UserArgs.Add( CurrentArgContent, args[idx + 1].Trim() );
                         idx += 2;
@@ -136,9 +139,15 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                 _convertArgsToDictionary( args );
 
-                if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _Arg_Val_Test == _UserArgs[_ArgKey_Mode] )
+                Int32 StartAtTestCase = 0;
+                if( _UserArgs.ContainsKey( _ArgKey_StartAtTestCase ) )
                 {
-                    _CswSchemaScripts = new CswSchemaScriptsTest( _CswNbtResources );
+                    StartAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey_StartAtTestCase] ); 
+                }
+
+                if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
+                {
+                    _CswSchemaScripts = new CswSchemaScriptsTest( _CswNbtResources, StartAtTestCase );
                 }
                 else
                 {
@@ -167,7 +176,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                             }
                             else
                             {
-                                if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _Arg_Val_Test == _UserArgs[_ArgKey_Mode] )
+                                if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
                                 {
                                     _describe();
                                 }
