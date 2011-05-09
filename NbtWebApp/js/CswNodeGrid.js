@@ -12,6 +12,7 @@
 			var o = {
 				GridUrl: '/NbtWebApp/wsNBT.asmx/getGrid',
 				viewid: '',
+                showempty: false,
 				ID: '',
 				nodeid: '',
 				cswnbtnodekey: '',
@@ -39,10 +40,11 @@
             var $gridPager = $parent.CswDOM('div',{ID: gridPagedId})
 									     .css('width','100%')
 									     .css('height','20px');
-		
+            
+            var dataJson = {ViewPk: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty };		
 			CswAjaxJSON({
 				url: o.GridUrl,
-				data: "{ViewPk: '" +  o.viewid + "', 'SafeNodeKey': '" + o.cswnbtnodekey + "'}", //" + o.cswnbtnodekey + "
+				data: JSON.stringify( dataJson ),
 				success: function (gridJson) {
 					    
 						jqGridOpt = gridJson.jqGridOpt;

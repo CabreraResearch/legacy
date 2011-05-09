@@ -16,6 +16,7 @@
 					NodeTreeUrl: '/NbtWebApp/wsNBT.asmx/getTreeOfNode',
 					viewid: '',       // loads an arbitrary view
 					viewmode: '',
+                    showempty: false, // if true, shows an empty tree (primarily for search)
 					nodeid: '',       // if viewid is not supplied, loads a view of this node
 					cswnbtnodekey: '',
 					IncludeNodeRequired: false,
@@ -40,12 +41,12 @@
 								.appendTo($(this));
 
 				var url = o.ViewTreeUrl;
-				var data = 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=true&ParentNodeKey=&IncludeNodeRequired='+ o.IncludeNodeRequired +'&IncludeNodeKey=';
-				if(o.cswnbtnodekey !== undefined)
+				var data = 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=true&ParentNodeKey=&IncludeNodeRequired='+ o.IncludeNodeRequired +'&IncludeNodeKey=' + '&ShowEmpty=' o.showempty;
+				if( !isNullOrEmpty( o.cswnbtnodekey ) )
 				{
 					data += o.cswnbtnodekey;
 				}
-				if(o.viewid === '' || o.viewid === undefined)
+				if( !isNullOrEmpty( o.viewid ) )
 				{
 					url = o.NodeTreeUrl;
 					data = 'IDPrefix=' + IDPrefix + '&NodePk=' + o.nodeid;
