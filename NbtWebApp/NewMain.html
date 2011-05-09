@@ -232,13 +232,15 @@
 			    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
 
 			    var linkOpt = {
-                    'issearch': false
+                    'showempty': false,
+                    'forsearch': false
 			    };
 
 			    switch (o.linktype.toLowerCase())
 			    {
 			        case 'search':
-			            linkOpt.issearch = true;
+			            linkOpt.showempty = true;
+			            linkOpt.forsearch = true;
 			            break;
 			    }
 
@@ -246,12 +248,12 @@
 			    {
 			    	case 'grid':
 			    	    {
-			                getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'issearch': linkOpt.issearch });
+			    	        getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
 			                break;
 			            }
 			        default:
 			            {
-			                refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '', 'issearch': linkOpt.issearch });
+			                refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
 			                break;
 			            }
 			    }
@@ -436,10 +438,14 @@
         {
             clear({ right: true });
             $.CswCookie('set', CswCookieName.CurrentView.ViewId, view.viewid);
-            $.CswCookie('set', CswCookieName.CurrentView.ViewMode, view.viewmode);
+            var viewMode = view.viewmode;
+            if (viewMode === 'list') viewMode = 'tree';
+            $.CswCookie('set', CswCookieName.CurrentView.ViewMode, viewMode);
             refreshSelected({
-                viewmode: view.viewmode,
+                viewmode: viewMode,
                 viewid: view.viewid,
+                forsearch: true,
+                showempty: false,
                 cswnbtnodekey: '', //do not want a view of only this node
                 nodeid: ''
             });
@@ -461,7 +467,7 @@
 		var o = {
 			viewid: '',
 			nodeid: '',
-            issearch: false,
+            showempty: false,
 			cswnbtnodekey: '',
             doMenuRefresh: true,
             onAddNode: '',
@@ -471,7 +477,7 @@
 		if (options) $.extend(o, options);
 
 		// Defaults
-		var getEmptyGrid = (isTrue(o.issearch));
+		var getEmptyGrid = (isTrue(o.showempty));
         if ( isNullOrEmpty( o.nodeid ) )
 			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
 		if ( isNullOrEmpty(o.cswnbtnodekey) )
@@ -611,7 +617,9 @@
 				nodename: '',
 				iconurl: '',
                 viewid: '',
-			    viewmode: 'tree',
+                viewmode: 'tree',
+                showempty: false,
+                forsearch: false,
 				IncludeNodeRequired: false
 			};
 			if (options) $.extend(o, options);
@@ -623,7 +631,9 @@
 						getViewGrid({
                             'viewid': o.viewid,
 			                'nodeid': o.nodeid,
-			                'cswnbtnodekey': o.cswnbtnodekey
+			                'cswnbtnodekey': o.cswnbtnodekey,
+                            'showempty': o.showempty,
+                            'forsearch': o.forsearch
                         });
 						break;
 					}
@@ -635,6 +645,8 @@
 							'nodename': o.nodename,
                             'viewid': o.viewid,
                             'viewmode': o.viewmode,
+                            'showempty': o.showempty,
+                            'forsearch': o.forsearch,
                             'IncludeNodeRequired': o.IncludeNodeRequired
 						});
 						break;
@@ -652,8 +664,9 @@
 		var o = {
 			'nodeid': '',
 			'cswnbtnodekey': '',
-			'nodename': '', 
-            'issearch': false,
+			'nodename': '',
+            'showempty': false,
+			'forsearch': false,
 			'iconurl': '',
 			'viewid': '',
 			'viewmode': 'tree',
@@ -661,7 +674,7 @@
 		};		
 		if (options) $.extend(o, options);
 
-		var getEmptyTree = (isTrue(o.issearch));
+		var getEmptyTree = (isTrue(o.showempty));
 		if (isNullOrEmpty(o.nodeid))
 			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
 		if (isNullOrEmpty(o.cswnbtnodekey))
@@ -677,7 +690,8 @@
 											'nodeid': o.nodeid, 
 											'cswnbtnodekey': o.cswnbtnodekey,
 											'nodename': o.nodename,
-                                            'showempty': getEmptyTree,
+											'showempty': getEmptyTree,
+                                            'forsearch': o.forsearch,
 											'IncludeNodeRequired': o.IncludeNodeRequired,
 											'onViewChange': function (newviewid)
 												{

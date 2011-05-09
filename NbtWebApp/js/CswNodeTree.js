@@ -17,6 +17,7 @@
 					viewid: '',       // loads an arbitrary view
 					viewmode: '',
                     showempty: false, // if true, shows an empty tree (primarily for search)
+                    forsearch: false, // if true, used to override default behavior of list views
 					nodeid: '',       // if viewid is not supplied, loads a view of this node
 					cswnbtnodekey: '',
 					IncludeNodeRequired: false,
@@ -50,6 +51,7 @@
                     'IncludeNodeRequired': o.IncludeNodeRequired,
                     'IncludeNodeKey': tryParseString(o.cswnbtnodekey, ''),
                     'ShowEmpty': o.showempty,
+                    'ForSearch': o.forsearch,
                     'NodePk': tryParseString(o.nodeid,'')
                 };
 
@@ -187,6 +189,7 @@
                                                             'IncludeNodeRequired': false,
                                                             'IncludeNodeKey': '',
                                                             'ShowEmpty': false,
+                                                            'ForSearch': o.forsearch,
                                                             'NodePk': tryParseString(o.nodeid,'')
                                                         };
                                                         return $.param(retDataParam);
@@ -249,6 +252,7 @@
                                                         'IncludeNodeRequired': false,
                                                         'IncludeNodeKey': optSelect.cswnbtnodekey,
                                                         'ShowEmpty': false,
+                                                        'ForSearch': o.forsearch,
                                                         'NodePk': Selected.id
                                                     };
 

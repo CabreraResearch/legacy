@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.WebServices
 		}
 
 
-		public XElement getTree( CswNbtView View, string IDPrefix, bool IsFirstLoad, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool UsePaging, bool ShowEmpty )
+		public XElement getTree( CswNbtView View, string IDPrefix, bool IsFirstLoad, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool UsePaging, bool ShowEmpty, bool ForSearch )
 		{
 			var ReturnNode = new XElement( "result" );
             string EmptyOrInvalid = "No Results";
@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     var RootNode = new XElement( "root" );
-                    if( IsFirstLoad && View.ViewMode == NbtViewRenderingMode.Tree )
+                    if( ( IsFirstLoad && View.ViewMode == NbtViewRenderingMode.Tree ) || ForSearch )
                     {
                         var RootItemNode = new XElement( "item",
                                             new XAttribute( "id", IDPrefix + "root" ),
