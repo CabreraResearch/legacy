@@ -294,26 +294,27 @@ namespace ChemSW.Nbt.WebServices
         /// If the search is based on NodeType/ObjectClass, construct a View with the included search terms as Property Filters.
         /// Return the View for processing as a Tree
         /// </summary>
-        public CswNbtView doNodesSearch( string SearchJson )
+        public CswNbtView doNodesSearch( object SearchJson )
         {
             JObject NodesSearch = new JObject();
             CswNbtView SearchView = null;
             string ViewName = string.Empty;
-            if( !string.IsNullOrEmpty( SearchJson ) )
+            if( null != SearchJson ) 
             {
-                NodesSearch = JObject.Parse( SearchJson );
+                NodesSearch = JObject.FromObject( SearchJson );
                 //NodesSearch = XElement.Parse( SearchJson );
                 SearchView = new CswNbtView( _CswNbtResources ) {ViewMode = NbtViewRenderingMode.Tree};
 
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
 
-                foreach( JProperty FilterGroup in NodesSearch["viewbuilderprops"].Children()
-                                                                            .Where( FilterToken => FilterToken.Type == JTokenType.Property )
-                                                                            .Cast<JProperty>() )
+                if( null != NodesSearch.Property( "viewbuilderprops") )
                 {
-                    foreach( JObject FilterProp in FilterGroup.Children().Where( FilterToken => FilterToken.Type == JTokenType.Object )
-                                                                            .Cast<JObject>() )
+                    JArray Props = (JArray) NodesSearch.Property( "viewbuilderprops" ).Value;
+
+                    foreach( JObject FilterProp in Props.Children()
+                                                        .Cast<JObject>()
+                                                        .Where( FilterProp => FilterProp.HasValues ) )
                     {
                         var PropType = CswNbtViewRelationship.RelatedIdType.Unknown;
                         CswNbtViewRelationship.RelatedIdType.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );

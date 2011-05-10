@@ -1198,7 +1198,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string doNodeTypeSearch( string SearchJson )
+		public string doNodeTypeSearch( object SearchJson )
 		{
 			JObject SessionViewId = new JObject();
 			try
