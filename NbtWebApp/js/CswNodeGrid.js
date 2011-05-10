@@ -51,7 +51,7 @@
 
 						var NodeTypeId = gridJson.nodetypeid;
 
-						if( jqGridOpt.width === '' )
+						if( isNullOrEmpty( jqGridOpt.width ) )
 						{
 							jqGridOpt.width = 650;
 						}
