@@ -61,7 +61,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_AccessId + " <AccessId>: The AccessId, as per CswDbConfig.xml, of the schema to be updated" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_Mode + " prod | test: perform schema update, or auto-test the schema update infrastructure" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_Describe + " writes descriptions of all current scripts"+
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_StartAtTestCase + "  test case to begin at";
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey_StartAtTestCase + "  test case to begin at" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey_IgnoreTestCasesCsv + "  csv of test cases to ignore";
                 return ( ReturnVal );
             }
         }
