@@ -565,7 +565,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView View = new CswNbtView( _CswNbtResources );
             View.LoadXml( ViewXml );
 			JObject PropFilter = JObject.Parse( PropFilterJson );
-			XElement ThisPropFilter = getViewPropFilter( View, PropFilter );
+			XElement ThisPropFilter = makeViewPropFilter( View, PropFilter );
             if( null != ThisPropFilter )
             {
                 PropFilterXml = ThisPropFilter;
@@ -576,7 +576,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Creates a CswNbtViewPropertyFilter and returns its XML
         /// </summary>
-        public XElement getViewPropFilter( CswNbtView View, JObject FilterProp )
+        public XElement makeViewPropFilter( CswNbtView View, JObject FilterProp )
         {
             XElement PropFilterXml = null;
             
