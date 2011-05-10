@@ -1173,13 +1173,12 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string doViewSearch( string SearchJson )
+		public string doViewSearch( object SearchJson )
 		{
 			JObject SearchResultView = new JObject();
 			try
 			{
 				start();
-
 				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
 				CswNbtView ResultsView = ws.doViewBasedSearch( SearchJson );
 			    ResultsView.SessionViewId = Int32.MinValue;

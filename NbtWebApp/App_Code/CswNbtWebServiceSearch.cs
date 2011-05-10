@@ -246,12 +246,12 @@ namespace ChemSW.Nbt.WebServices
         /// Takes a View and applies search parameters as ViewPropertyFilters.
         /// Returns the modified View for processing as Tree/Grid/List.
         /// </summary>
-        public CswNbtView doViewBasedSearch( string SearchJson )
+        public CswNbtView doViewBasedSearch( object SearchJson )
         {
             CswNbtView SearchView = null;
-            if( !string.IsNullOrEmpty( SearchJson ) )
+            if( null != SearchJson )
             {
-                JObject ViewSearch = JObject.Parse( SearchJson );
+                JObject ViewSearch = JObject.FromObject( SearchJson );
                 string ViewIdNum = (string)ViewSearch.Property( "viewid" ).Value;
                 Int32 ViewId = CswConvert.ToInt32( ViewIdNum );
                 CswNbtView InitialView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
@@ -261,16 +261,13 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != ViewSearch.Property( "viewprops" ) )
                 {
-                    foreach( JObject FilterProp in ViewSearch["viewprops"].Children()
-                                                                            .Where( FilterToken => FilterToken.Type == JTokenType.Property )
-                                                                            .Cast<JProperty>()
-                                                                            .SelectMany( FilterGroup => FilterGroup.Children()
-                                                                            .Cast<JObject>() ) )
+                    JArray Props = (JArray) ViewSearch.Property( "viewprops" ).Value;
+
+                    foreach( JObject FilterProp in Props.Children()
+                                                        .Cast<JObject>()
+                                                        .Where( FilterProp => FilterProp.HasValues ) )
                     {
-                        if( FilterProp.HasValues )
-                        {
-                            _ViewBuilder.getViewPropFilter( SearchView, FilterProp );
-                        }
+                        _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
                     }
                 }
             }
@@ -280,7 +277,6 @@ namespace ChemSW.Nbt.WebServices
         private string _makeSearchViewName( string ViewName )
         {
             string SearchViewName = ViewName;
-
 
             if( !SearchViewName.StartsWith( "Search " ) && !SearchViewName.EndsWith( " Search" ) )
             {
