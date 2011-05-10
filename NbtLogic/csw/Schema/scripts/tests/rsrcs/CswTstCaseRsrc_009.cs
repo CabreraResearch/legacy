@@ -15,20 +15,23 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Test Case: 001, part 01
     /// </summary>
-    public class CswTstCaseRsrc_008
+    public class CswTstCaseRsrc_009
     {
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
         private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        public CswTstCaseRsrc_008( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        public CswTstCaseRsrc_009( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
         }//ctor
 
 
-        public string Purpose = "Read data_dicitionary tablecolid";
+        public string Purpose = "Read data_dicitionary tablecolid after ddl";
+
+        public string FakeTestTableName { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
+        public string FakeTestColumnName { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 
