@@ -1,0 +1,1 @@
+C:\allHertzel\Kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Debug\nbtupdt -all -mode test -ignore 006,007
