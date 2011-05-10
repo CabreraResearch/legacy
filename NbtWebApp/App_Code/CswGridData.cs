@@ -136,16 +136,17 @@ namespace ChemSW.Nbt.WebServices
 						IsPrimaryKey = true;
 				}
 
-				JColumnNames.Add( Column.ColumnName );
+				JColumnNames.Add( Column.ColumnName.ToUpperInvariant() );
 				JObject ThisColumnDef = new JObject();
-				ThisColumnDef.Add( new JProperty( "name", Column.ColumnName ) );
-				ThisColumnDef.Add( new JProperty( "index", Column.ColumnName ) );
+				ThisColumnDef.Add( new JProperty( "name", Column.ColumnName.ToUpperInvariant() ) );
+				ThisColumnDef.Add( new JProperty( "index", Column.ColumnName.ToUpperInvariant() ) );
 				if( Column.ColumnName.ToLower() == PkColumn.ToLower() )
 				{
-					ThisColumnDef.Add( new JProperty( "key", "true" ) );
-					// This is bugged...
-					//if( HidePkColumn )
-					//    ThisColumnDef.Add( new JProperty( "hidden", "true" ) );
+					ThisColumnDef.Add( new JProperty( "key", true ) );
+                    if( HidePkColumn )
+                    {
+                        ThisColumnDef.Add( new JProperty( "hidden", true ) );
+                    }
 				}
 				JColumnDefs.Add( ThisColumnDef );
 			} // foreach( DataColumn Column in Data.Columns )
@@ -157,7 +158,7 @@ namespace ChemSW.Nbt.WebServices
 				JObject RowObj = new JObject();
 				foreach( DataColumn Column in Data.Columns )
 				{
-					RowObj.Add( new JProperty( Column.ColumnName, Row[Column].ToString() ) );
+					RowObj.Add( new JProperty( Column.ColumnName.ToUpperInvariant(), Row[Column].ToString() ) );
 				}
 				JRows.Add( RowObj );
 			}
