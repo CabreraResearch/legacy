@@ -89,7 +89,7 @@ var ViewBuilder_CssClasses = {
         
             var $propFilterTable = $(this); //must call on a table
             
-            if ( isNullOrEmpty( o.$propsXml ) && isNullOrEmpty( o.proparbitraryid ) )
+            if ( isNullOrEmpty( o.$propsXml ) && !isNullOrEmpty( o.proparbitraryid ) )
             {
                 CswAjaxXml({ 
 		            'url': o.getNewPropsUrl,
