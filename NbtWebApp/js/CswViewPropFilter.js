@@ -82,7 +82,7 @@ var ViewBuilder_CssClasses = {
                 'selectedSubfieldVal': '',
                 'selectedFilterVal': '',
 
-                'autoFocusInput': false,
+                'autoFocusInput': false
 		    };
 		
             if(options) $.extend(o, options);
