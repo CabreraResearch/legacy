@@ -462,7 +462,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtView ThisView = new CswNbtView( _CswNbtResources );
                 ThisView.LoadXml( ViewXml );
-                CswNbtViewProperty ThisProp = (CswNbtViewProperty)ThisView.FindViewNodeByArbitraryId( ViewPropArbitraryId );
+                CswNbtViewProperty ThisProp = (CswNbtViewProperty) ThisView.FindViewNodeByArbitraryId( ViewPropArbitraryId );
                 if( null != ThisProp )
                 {
                     CswViewBuilderProp VbProp = new CswViewBuilderProp( ThisProp );
@@ -559,31 +559,34 @@ namespace ChemSW.Nbt.WebServices
         /// Uses View XML to construct a view and create a CswNbtViewPropertyFilter. and r
         /// Returns filter's XML
         /// </summary>
-        public XElement makeViewPropFilter(string ViewXml, string PropFilterJson )
+        public XElement getViewPropFilter(string ViewXml, string PropFilterJson )
         {
-            XElement PropFilterXml = new XElement( "propfilter" );
+            XElement PropFilterXml = null;
             CswNbtView View = new CswNbtView( _CswNbtResources );
             View.LoadXml( ViewXml );
 			JObject PropFilter = JObject.Parse( PropFilterJson );
-			PropFilterXml = makeViewPropFilter( View, PropFilter );
-
+			XElement ThisPropFilter = getViewPropFilter( View, PropFilter );
+            if( null != ThisPropFilter )
+            {
+                PropFilterXml = ThisPropFilter;
+            }
             return PropFilterXml;
         }
         
         /// <summary>
         /// Creates a CswNbtViewPropertyFilter and returns its XML
         /// </summary>
-        public XElement makeViewPropFilter( CswNbtView View, JObject FilterProp )
+        public XElement getViewPropFilter( CswNbtView View, JObject FilterProp )
         {
-            XElement PropFilterXml = new XElement( "propfilter" );
+            XElement PropFilterXml = null;
             
             var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
             CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
 
 			string FiltArbitraryId = (string) FilterProp["filtarbitraryid"];
 			string PropArbitraryId = (string) FilterProp["proparbitraryid"];
-			if( FiltArbitraryId == "undefined" ) FiltArbitraryId = string.Empty;
-			if( PropArbitraryId == "undefined" ) PropArbitraryId = string.Empty;
+            if ( FiltArbitraryId == "undefined" ) FiltArbitraryId = string.Empty;
+            if ( PropArbitraryId == "undefined" ) PropArbitraryId = string.Empty;
 
 			CswNbtViewPropertyFilter ViewPropFilt = null;
 			if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown )
@@ -598,12 +601,16 @@ namespace ChemSW.Nbt.WebServices
 					ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
 				}
 			}
-			
-			if( ViewPropFilt != null )
-			{
-				PropFilterXml = makeViewPropFilter( ViewPropFilt, FilterProp );
-			}
-			return PropFilterXml;
+
+            if( ViewPropFilt != null )
+            {
+                XElement ThisPropFilter = makeViewPropFilter( ViewPropFilt, FilterProp );
+                if( null != ThisPropFilter )
+                {
+                    PropFilterXml = ThisPropFilter;
+                }
+            }
+            return PropFilterXml;
         }
 
         /// <summary>
@@ -611,7 +618,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public XElement makeViewPropFilter( CswNbtViewPropertyFilter ViewPropFilt, JObject FilterProp )
         {
-            XElement PropFilterXml = new XElement( "propfilter" );
+            XElement PropFilterXml = null;
             if( null != ViewPropFilt )
             {
                 var FieldName = CswNbtSubField.SubFieldName.Unknown;
@@ -620,11 +627,15 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) FilterProp["filter"], true, out FilterMode );
                 string SearchTerm = (string) FilterProp["filtervalue"];
 
-                ViewPropFilt.FilterMode = FilterMode;
-                ViewPropFilt.SubfieldName = FieldName;
-                ViewPropFilt.Value = SearchTerm;
+                if( FieldName != CswNbtSubField.SubFieldName.Unknown &&
+                    FilterMode != CswNbtPropFilterSql.PropertyFilterMode.Undefined )
+                {
+                    ViewPropFilt.FilterMode = FilterMode;
+                    ViewPropFilt.SubfieldName = FieldName;
+                    ViewPropFilt.Value = SearchTerm;
 
-                PropFilterXml = ViewPropFilt.ToXElement();
+                    PropFilterXml = ViewPropFilt.ToXElement();
+                }
             }
             return PropFilterXml;
         }

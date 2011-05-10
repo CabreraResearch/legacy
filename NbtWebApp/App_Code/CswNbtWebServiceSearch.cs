@@ -267,7 +267,10 @@ namespace ChemSW.Nbt.WebServices
                                                                             .SelectMany( FilterGroup => FilterGroup.Children()
                                                                             .Cast<JObject>() ) )
                     {
-                        _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
+                        if( FilterProp.HasValues )
+                        {
+                            _ViewBuilder.getViewPropFilter( SearchView, FilterProp );
+                        }
                     }
                 }
             }

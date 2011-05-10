@@ -732,7 +732,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 				var ws = new wsViewBuilder( _CswNbtResources );
-				PropsNode = ws.makeViewPropFilter( ViewXml, PropFiltJson );
+				PropsNode = ws.getViewPropFilter( ViewXml, PropFiltJson );
 				end();
 			}
 			catch( Exception ex )
