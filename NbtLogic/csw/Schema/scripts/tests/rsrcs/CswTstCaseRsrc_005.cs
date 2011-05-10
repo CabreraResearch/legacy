@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
@@ -15,20 +15,20 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Test Case: 001, part 01
     /// </summary>
-    public class CswTstCaseRsrc_004
+    public class CswTstCaseRsrc_005
     {
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
         private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        public CswTstCaseRsrc_004( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        public CswTstCaseRsrc_005( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
         }//ctor
 
 
-        public string Purpose = "Add Multiple Constrained Columns to depth N";
+        public string Purpose = "Rollback Add of Constrained Columns";
 
         public List<PkFkPair> getPkFkPairs() { return ( _CswTestCaseRsrc.getPkFkPairs( 6 ) ); }
 
@@ -45,17 +45,6 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addColumn( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ), DataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, DataDictionaryPortableDataType.String, false, false, CurrentPair.FkTableName, DataDictionaryUniqueType.None, false, string.Empty );
                 _CswNbtSchemaModTrnsctn.addColumn( CurrentPair.PkTablePkColumnName, DataDictionaryColumnType.Fk, 20, 0, "foo", "test column", CurrentPair.PkTablePkColumnName, CurrentPair.PkTableName, true, false, false, string.Empty, false, DataDictionaryPortableDataType.Long, false, false, CurrentPair.FkTableName, DataDictionaryUniqueType.None, false, string.Empty );
 
-            }
-        }
-
-        public void dropPkFkTables()
-        {
-            //Clean up after ourselves (will verify in next script)
-            List<PkFkPair> PkFkPairs = getPkFkPairs();
-            foreach( PkFkPair CurrentPair in PkFkPairs )
-            {
-                _CswNbtSchemaModTrnsctn.dropTable( CurrentPair.PkTableName );
-                _CswNbtSchemaModTrnsctn.dropTable( CurrentPair.FkTableName );
             }
         }
 

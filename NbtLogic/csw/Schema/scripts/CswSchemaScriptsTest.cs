@@ -6,6 +6,7 @@ using System.Data;
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
 using ChemSW.DB;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 
 
@@ -21,73 +22,12 @@ namespace ChemSW.Nbt.Schema
         private List<CswSchemaUpdateDriver> _UpdateDriverList = new List<CswSchemaUpdateDriver>();
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
 
-        public CswSchemaScriptsTest( CswNbtResources CswNbtResources )
+        private string _getCaseNumberFromTypeName( string TypeName ) { return ( TypeName.Substring( 12, 3 ) ); }
+
+        public CswSchemaScriptsTest( CswNbtResources CswNbtResources, int StartAtTestCase, List<string> IgnoreCases )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
-
-            ////***************************************************************************************
-            ////******************************  Test Case 001
-            //CswSchemaUpdateDriver Schema_01_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_01_001( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_01_Driver.SchemaVersion, Schema_01_Driver );
-
-            //CswSchemaUpdateDriver Schema_02_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_02_002( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_02_Driver.SchemaVersion, Schema_02_Driver );
-
-            //CswSchemaUpdateDriver Schema_03_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_03_003( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_03_Driver.SchemaVersion, Schema_03_Driver );
-
-            //CswSchemaUpdateDriver Schema_04_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_001_04_004( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_04_Driver.SchemaVersion, Schema_04_Driver );
-
-            ////***************************************************************************************
-            ////******************************  Test Case 002
-            //CswSchemaUpdateDriver Schema_05_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_002_01_005( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_05_Driver.SchemaVersion, Schema_05_Driver );
-
-            //CswSchemaUpdateDriver Schema_06_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_002_02_006( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_06_Driver.SchemaVersion, Schema_06_Driver );
-
-
-            ////***************************************************************************************
-            ////******************************  Test Case 003
-            //CswSchemaUpdateDriver Schema_07_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_003_01_007( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_07_Driver.SchemaVersion, Schema_07_Driver );
-
-            //CswSchemaUpdateDriver Schema_08_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_003_02_008( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_08_Driver.SchemaVersion, Schema_08_Driver );
-
-            //CswSchemaUpdateDriver Schema_09_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_003_03_009( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_09_Driver.SchemaVersion, Schema_09_Driver );
-
-            //CswSchemaUpdateDriver Schema_10_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_003_04_010( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_10_Driver.SchemaVersion, Schema_10_Driver );
-
-            //CswSchemaUpdateDriver Schema_11_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_003_05_011( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_11_Driver.SchemaVersion, Schema_11_Driver );
-
-
-            ////***************************************************************************************
-            ////******************************  Test Case 004
-            //CswSchemaUpdateDriver Schema_12_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_004_01_012( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_12_Driver.SchemaVersion, Schema_12_Driver );
-
-            //CswSchemaUpdateDriver Schema_13_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_004_02_013( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_13_Driver.SchemaVersion, Schema_13_Driver );
-
-            //CswSchemaUpdateDriver Schema_14_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_004_03_014( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_14_Driver.SchemaVersion, Schema_14_Driver );
-
-            //CswSchemaUpdateDriver Schema_15_Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTestCase_004_04_015( _CswNbtSchemaModTrnsctn ) );
-            //_UpdateDrivers.Add( Schema_15_Driver.SchemaVersion, Schema_15_Driver );
-
-
-
-
-            //if( typeof( ICswUpdateSchemaTo ).IsInstanceOfType( new CswTestCase_004_04_015( _CswNbtSchemaModTrnsctn ) ) )
-            //{
-            //    string foo = string.Empty;
-            //}
 
             List<string> TestCaseTypeNames = new List<string>();
             Dictionary<string, Type> TestCaseTypesByName = new Dictionary<string, Type>();
@@ -100,20 +40,34 @@ namespace ChemSW.Nbt.Schema
                     CurrentType.Name.Contains( "CswTestCase_" )
                     )
                 {
-                    //string CurrentNameStem = CurrentType.Name.Substring( 0, 15 );
-                    TestCaseTypeNames.Add( CurrentType.Name );
-                    TestCaseTypesByName.Add( CurrentType.Name, CurrentType );
-                    //typeof(ICswUpdateSchemaTo).
-                    //typeof(ICswUpdateSchemaTo).IsInstanceOfType(
+
+                    string TestCaseNumberSegment = _getCaseNumberFromTypeName( CurrentType.Name );
+                    if( false == IgnoreCases.Contains( TestCaseNumberSegment ) )
+                    {
+                        TestCaseTypeNames.Add( CurrentType.Name );
+                        TestCaseTypesByName.Add( CurrentType.Name, CurrentType );
+                    }
                 }
 
-            }
+            }//iterate types
 
             List<Type> TestCaseTypes = new List<Type>();
             TestCaseTypeNames.Sort();
             foreach( string CurrentTypeName in TestCaseTypeNames )
             {
-                TestCaseTypes.Add( TestCaseTypesByName[CurrentTypeName] );
+                string TestCaseNumberSegment = _getCaseNumberFromTypeName( CurrentTypeName );
+                Int32 TestCaseNumber = CswConvert.ToInt32( TestCaseNumberSegment );
+                if( TestCaseNumber >= StartAtTestCase )
+                {
+                    TestCaseTypes.Add( TestCaseTypesByName[CurrentTypeName] );
+                }
+
+
+                //}
+                //else
+                //{
+                //    TestCaseTypes.Add( TestCaseTypesByName[CurrentTypeName] );
+                //}
             }
 
 
@@ -192,7 +146,7 @@ namespace ChemSW.Nbt.Schema
                 CswSchemaUpdateDriver ReturnVal = null;
 
 
-                if( _UpdateDriverList.Count > _CurrentIdx )
+                if( _UpdateDriverList.Count > ( _CurrentIdx + 1 ) )
                 {
                     if( Int32.MinValue == _CurrentIdx )
                     {

@@ -68,12 +68,8 @@ namespace ChemSW.Nbt.Schema
 
 
 
-            //Clean up after ourselves (will verify in next script
-            foreach( PkFkPair CurrentPair in PairList )
-            {
-                _CswNbtSchemaModTrnsctn.dropTable( CurrentPair.PkTableName );
-                _CswNbtSchemaModTrnsctn.dropTable( CurrentPair.FkTableName );
-            }
+            //Clean up after ourselves (will verify in next script)
+            _CswTstCaseRsrc_004.dropPkFkTables();
 
         
         }//runTest()

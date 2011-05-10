@@ -134,6 +134,8 @@ namespace ChemSW.Nbt.Schema
 
         }//Update()
 
+        public bool Next() { return ( null != _CswSchemaScripts.Next ); }
+
     }//CswSchemaUpdater
 
 }//ChemSW.Nbt.Schema

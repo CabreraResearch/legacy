@@ -12,10 +12,14 @@ using ChemSW.Nbt.Schema;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswScmUpdt_TstCse_Constraint_RollbackAdd : CswScmUpdt_TstCse
+	/*
+	
+	   This test is dundant with respect to case 004: "Add Multiple Constrained Columns to depth N"
+	*/
+    public class CswScmUpdt_TstCse_Constraint_AddSingle : CswScmUpdt_TstCse
     {
-        public CswScmUpdt_TstCse_Constraint_RollbackAdd( )
-            : base( "Rollback Add of Constrained Columns" )
+        public CswScmUpdt_TstCse_Constraint_AddSingle( )
+            : base( "Add Constrained Columns" )
         {
             _ForeignKeyTableFkCol = _PrimeKeyTablePkCol;
 
@@ -42,32 +46,31 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addColumn( _PrimeKeyTableArbitraryValCol, DataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, DataDictionaryPortableDataType.String, false, false, _PrimeKeyTable, DataDictionaryUniqueType.None, false, string.Empty );
             _CswNbtSchemaModTrnsctn.addColumn( _ForeignKeyTableArbitraryValCol, DataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, DataDictionaryPortableDataType.String, false, false, _ForeignKeyTable, DataDictionaryUniqueType.None, false, string.Empty );
 
-            //we add the fk column and fk data in this transaction to set the test up, 
-            //but we use another transaction to test the ability to add and rollback a constraint
-            _CswNbtSchemaModTrnsctn.addColumn( _ForeignKeyTableFkCol, DataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, DataDictionaryPortableDataType.Long, false, false, _ForeignKeyTable, DataDictionaryUniqueType.None, false, string.Empty );
+            _CswNbtSchemaModTrnsctn.addColumn( _ForeignKeyTableFkCol, DataDictionaryColumnType.Fk, 20, 0, "foo", "test column", _PrimeKeyTablePkCol, _PrimeKeyTable, true, false, false, string.Empty, false, DataDictionaryPortableDataType.Long, false, false, _ForeignKeyTable, DataDictionaryUniqueType.None, false, string.Empty );
+
+
             _CswScmUpdt_TestTools.fillTableWithArbitraryData( _PrimeKeyTable, _PrimeKeyTableArbitraryValCol, _TestValStem, 100 );
             _CswScmUpdt_TestTools.addArbitraryForeignKeyRecords( _PrimeKeyTable, _ForeignKeyTable, _ForeignKeyTableFkCol, _ForeignKeyTableArbitraryValCol, _TestValStem );
 
+
             _CswNbtSchemaModTrnsctn.commitTransaction();
 
-            _CswNbtSchemaModTrnsctn.beginTransaction();
 
-            _CswNbtSchemaModTrnsctn.makeConstraint( _ForeignKeyTable, _ForeignKeyTableFkCol, _PrimeKeyTable, _PrimeKeyTablePkCol, true );
 
             bool ExceptionWasThrown = false;
             try
             {
-                CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "CswScmUpdt_TstCse_Constraint_RollbackAdd_update1", _PrimeKeyTable );
+                CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "CswScmUpdt_TstCse_Constraint_AddSingle", _PrimeKeyTable );
                 DataTable PkTableTable = CswTableUpdate.getTable();
 
-                PkTableTable.Rows[ 0 ].Delete();
+                PkTableTable.Rows[0].Delete();
                 CswTableUpdate.update( PkTableTable );
             }//try()
 
 
-            catch ( Exception Exception )
+            catch( Exception Exception )
             {
-                if ( !_CswScmUpdt_TestTools.isExceptionRecordDeletionConstraintViolation( Exception ) )
+                if( !_CswScmUpdt_TestTools.isExceptionRecordDeletionConstraintViolation( Exception ) )
                 {
                     throw ( new CswScmUpdt_Exception( "An unexpected exception was thrown when deliberately trying to elicit a foreign key constraint violation: " + Exception.Message ) );
                 }
@@ -78,34 +81,6 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswScmUpdt_Exception( "No exception was thrown when deliberately trying to elicit a foreign key constraint violation by deleting a record from table " + _PrimeKeyTable ) );
 
 
-            _CswNbtSchemaModTrnsctn.rollbackTransaction();
-
-
-            try
-            {
-                CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "CswScmUpdt_TstCse_Constraint_RollbackAdd_update2", _PrimeKeyTable );
-                DataTable PkTableTable = CswTableUpdate.getTable();
-
-                PkTableTable.Rows[ 0 ].Delete();
-                CswTableUpdate.update( PkTableTable );
-            }//try()
-
-
-            catch ( Exception Exception )
-            {
-                if ( _CswScmUpdt_TestTools.isExceptionRecordDeletionConstraintViolation( Exception ) )
-                {
-                    throw ( new CswScmUpdt_Exception( "A foreign key constraint violation exception was thrown after the constraint should have been rolled back" ) );
-                }
-                else
-                {
-                    throw ( Exception );
-                }
-            }//catch()
-
-
-
-            //Now clean up after ourselves
             //Clean up after ourselves:
             _CswNbtSchemaModTrnsctn.beginTransaction();
 
@@ -115,9 +90,12 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.commitTransaction();
 
 
-            _CswNbtSchemaModTrnsctn.rollbackTransaction();
+           _CswNbtSchemaModTrnsctn.rollbackTransaction();
+
 
         }//runTest()
+
+
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
@@ -14,30 +14,38 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_004_01 : ICswUpdateSchemaTo
+    public class CswTestCase_008_01 : ICswUpdateSchemaTo
     {
 
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_004.Purpose, "build test tables" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_008.Purpose, "verify read" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
-        private CswTstCaseRsrc_004 _CswTstCaseRsrc_004 = null;
+        private CswTstCaseRsrc_008 _CswTstCaseRsrc_008 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_004_01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion )
+        public CswTestCase_008_01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion )
         {
             _CswSchemaVersion = CswSchemaVersion;
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_004 = new CswTstCaseRsrc_004( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_008 = new CswTstCaseRsrc_008( _CswNbtSchemaModTrnsctn );
         }//ctor
 
         public void update()
         {
-            _CswTstCaseRsrc_004.makePkFkTables(); 
+            _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetype_props", "nodetypepropid" );
+
+            Int32 TableColId = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
+
+            if( TableColId <= 0 )
+            {
+                throw ( new CswDniException( "tableclid received from data dictionry is suspect: " + TableColId.ToString() ) );
+            }
+
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
