@@ -42,11 +42,8 @@ namespace ChemSW.Nbt.Schema
             //Verify that we cleaned up after ourselves
             foreach( PkFkPair CurrentPair in PairList )
             {
-                if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( CurrentPair.PkTableName ) )
-                    throw ( new CswDniException( "Table " + CurrentPair.PkTableName + " was not rolled back from the database" ) );
-
-                if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( CurrentPair.FkTableName ) )
-                    throw ( new CswDniException( "Table " + CurrentPair.FkTableName + " was not rollec back from the database" ) );
+                _CswTstCaseRsrc.assertTableIsAbsent( CurrentPair.PkTableName );
+                _CswTstCaseRsrc.assertTableIsAbsent( CurrentPair.FkTableName );
             }
 
         }//runTest()

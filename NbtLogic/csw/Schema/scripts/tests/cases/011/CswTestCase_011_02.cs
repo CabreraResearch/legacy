@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Text;
 using ChemSW.Nbt;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
 using ChemSW.DB;
@@ -14,30 +15,31 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_009_03 : ICswUpdateSchemaTo
+    public class CswTestCase_011_02 : ICswUpdateSchemaTo
     {
 
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_009.Purpose, "verify tear down" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_011.Purpose, "Fill test table with data" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
-        private CswTstCaseRsrc_009 _CswTstCaseRsrc_009 = null;
+        private CswTstCaseRsrc_011 _CswTstCaseRsrc_011 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_009_03( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion )
+        public CswTestCase_011_02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion )
         {
             _CswSchemaVersion = CswSchemaVersion;
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_009 = new CswTstCaseRsrc_009( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_011 = new CswTstCaseRsrc_011( _CswNbtSchemaModTrnsctn );
         }//ctor
 
         public void update()
         {
-            _CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_009.FakeTestTableName );
+
+            _CswTstCaseRsrc.fillTableWithArbitraryData( _CswTstCaseRsrc_011.FakeTestTableName, _CswTstCaseRsrc_011.FakeTestColumnName, 20 );
 
         }//runTest()
 
