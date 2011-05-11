@@ -320,9 +320,14 @@ var ViewBuilder_CssClasses = {
 
             //var $filterXml;
 
+            var dataXml = {
+                ViewXml: o.viewxml,
+                PropFiltJson: o.filtJson
+            };
+
             CswAjaxXml({ 
 			'url': o.url,
-			'data': "ViewXml="  + o.viewxml + "&PropFiltJson=" + jsonToString(o.filtJson),
+			'data': JSON.stringify(dataXml),
             'success': function($filter) { 
                     //$filterXml = $filter;
                     o.onSuccess($filter);

@@ -1289,7 +1289,7 @@ var debug = false;
                 CswAjaxJSON({
                     formobile: ForMobile,
                     url: opts.AuthenticateUrl,
-                    data: jsonToString(ajaxData),
+                    data: JSON.stringify(ajaxData),
                     onloginfail: function () { Logout(); },
                     success: function (data)
                     {

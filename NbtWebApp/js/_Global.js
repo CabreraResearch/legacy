@@ -219,48 +219,48 @@ function xmlToString($xmlnode) { /// <param name="$" type="jQuery" />
 
 function jsonToString(j) {
     /// <summary>
-    ///   Transforms a JSON Object into properly parsed string for consumption by a webservice
+    ///   Thin wrapper around JSON.stringify()
     /// </summary>
     /// <param name="j" type="Object">A JSON Object</param>
     /// <returns type="String" />
-    if(typeof j === "object")
-	{
-		var ret = "{";
-	 	var first = true;
-		for (var property in j)
-		{
-			if (j.hasOwnProperty(property))
-			{
-				if (!first)
-					ret += ",";
-				ret += " '" + property + "': ";
-				ret += jsonToString(j[property]);
-				first = false;
-			}
-		}
-		ret += "}";
-	} 
-	else
-	{
-		ret = "'" + safeJsonParam(j) + "'";
-	}
-	return ret;
+//    if(typeof j === "object")
+//	{
+//		var ret = "{";
+//	 	var first = true;
+//		for (var property in j)
+//		{
+//			if (j.hasOwnProperty(property))
+//			{
+//				if (!first)
+//					ret += ",";
+//				ret += " '" + property + "': ";
+//				ret += jsonToString(j[property]);
+//				first = false;
+//			}
+//		}
+//		ret += "}";
+//	} 
+//	else
+//	{
+//		ret = "'" + safeJsonParam(j) + "'";
+//	}
+	return JSON.stringify(j);
 } // jsonToString
 
-function safeJsonParam(obj) {
-    /// <summary>
-    ///   Converts an object toString and returns a regex parsed, safe-for-JSON string
-    /// </summary>
-    /// <param name="options" type="Object">A JavaScript Object representing a string to parse</param>
-    /// <returns type="String" />
-    var ret = '';
-    if (obj !== undefined)
-    {
-        var str = obj.toString();
-        ret = str.replace(/'/g, "\\'");
-    }
-	return ret;
-}
+//function safeJsonParam(obj) {
+//    /// <summary>
+//    ///   Converts an object toString and returns a regex parsed, safe-for-JSON string
+//    /// </summary>
+//    /// <param name="options" type="Object">A JavaScript Object representing a string to parse</param>
+//    /// <returns type="String" />
+//    var ret = '';
+//    if (obj !== undefined)
+//    {
+//        var str = obj.toString();
+//        ret = str.replace(/'/g, "\\'");
+//    }
+//	return ret;
+//}
 
 // ------------------------------------------------------------------------------------
 // Check Changes

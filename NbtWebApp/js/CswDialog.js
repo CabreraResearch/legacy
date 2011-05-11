@@ -69,7 +69,7 @@
 																			createData.VisibilityUserId = v.getvisuserselect().val();
 																			CswAjaxJSON({
 																				url: '/NbtWebApp/wsNBT.asmx/createView',
-																				data: jsonToString(createData),
+																				data: JSON.stringify(createData),
 																				success: function(data) {
 											                                        $div.dialog('close');
 																					o.onAddView(data.newviewid);
