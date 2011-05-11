@@ -14,7 +14,7 @@
             $Div.contents().remove();
 
             var Value = o.$propxml.children('text').text().trim();
-            var Length = tryParseNumber( o.$propxml.children('text').CswAttrXml('length'), 1 );
+            var Length = tryParseNumber( o.$propxml.children('text').CswAttrXml('length'), 14 );
 
             if(o.ReadOnly)
             {
