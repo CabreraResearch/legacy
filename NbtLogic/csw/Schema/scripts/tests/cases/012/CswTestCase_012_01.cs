@@ -38,6 +38,10 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
+            _CswNbtSchemaModTrnsctn.addTable( _CswTstCaseRsrc_012.FakeTestTableName, _CswTstCaseRsrc_012.FakeTestTableName + "id" );
+            _CswNbtSchemaModTrnsctn.addStringColumn( _CswTstCaseRsrc_012.FakeTestTableName, _CswTstCaseRsrc_012.FakeTestColumnName, "test", false, false, 240 );
+
+
 
         }//runTest()
 

@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.Schema
         }//ctor
 
 
-        public string Purpose = "Reject rolled back column";
+        public string Purpose = "Reject stale column value";
 
         public string FakeTestTableName { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
         public string FakeTestColumnName { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }

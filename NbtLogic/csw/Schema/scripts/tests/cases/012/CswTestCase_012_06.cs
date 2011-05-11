@@ -38,27 +38,27 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            _CswNbtSchemaModTrnsctn.beginTransaction();
-            _CswNbtSchemaModTrnsctn.addTable( ArbitraryTableName, ArbitraryTablePkColumn );
-            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName, ArbitraryValueColumn, "arbitrary value column", true, false, 254 );
-            _CswNbtSchemaModTrnsctn.commitTransaction();
+            //_CswNbtSchemaModTrnsctn.beginTransaction();
+            //_CswNbtSchemaModTrnsctn.addTable( ArbitraryTableName, ArbitraryTablePkColumn );
+            //_CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName, ArbitraryValueColumn, "arbitrary value column", true, false, 254 );
+            //_CswNbtSchemaModTrnsctn.commitTransaction();
 
-            //add arbitrary values to arbitrary table
-            _CswNbtSchemaModTrnsctn.beginTransaction();
-            CswTableUpdate CswArbitraryTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "CswScmUpdt_TstCse_DataTable_Transaction_NukeRolledBackUpdate_update", ArbitraryTableName );
-            CswArbitraryTableUpdate.StorageMode = StorageMode.Cached; // causes the rolback behavior we want
+            ////add arbitrary values to arbitrary table
+            //_CswNbtSchemaModTrnsctn.beginTransaction();
+            //CswTableUpdate CswArbitraryTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "CswScmUpdt_TstCse_DataTable_Transaction_NukeRolledBackUpdate_update", ArbitraryTableName );
+            //CswArbitraryTableUpdate.StorageMode = StorageMode.Cached; // causes the rolback behavior we want
 
-            DataTable DataTableArbitrary = CswArbitraryTableUpdate.getTable();
-            DataTableArbitrary.Rows.Add( DataTableArbitrary.NewRow() );
-            DataTableArbitrary.Rows.Add( DataTableArbitrary.NewRow() );
-            DataTableArbitrary.Rows.Add( DataTableArbitrary.NewRow() );
+            //DataTable DataTableArbitrary = CswArbitraryTableUpdate.getTable();
+            //DataTableArbitrary.Rows.Add( DataTableArbitrary.NewRow() );
+            //DataTableArbitrary.Rows.Add( DataTableArbitrary.NewRow() );
+            //DataTableArbitrary.Rows.Add( DataTableArbitrary.NewRow() );
 
-            string EmptyValue = "snot";
+            //string EmptyValue = "snot";
 
-            DataTableArbitrary.Rows[0][ArbitraryValueColumn] = EmptyValue;
-            DataTableArbitrary.Rows[1][ArbitraryValueColumn] = EmptyValue;
-            DataTableArbitrary.Rows[2][ArbitraryValueColumn] = EmptyValue;
-            CswArbitraryTableUpdate.update( DataTableArbitrary );
+            //DataTableArbitrary.Rows[0][ArbitraryValueColumn] = EmptyValue;
+            //DataTableArbitrary.Rows[1][ArbitraryValueColumn] = EmptyValue;
+            //DataTableArbitrary.Rows[2][ArbitraryValueColumn] = EmptyValue;
+            //CswArbitraryTableUpdate.update( DataTableArbitrary );
 
         }//runTest()
 
