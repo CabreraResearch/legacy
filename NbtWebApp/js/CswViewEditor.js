@@ -131,7 +131,7 @@ var CswViewEditor_WizardSteps = {
 			'disableOnClick': true,
 			'onclick': function() {
 			    var viewid = _getSelectedViewId($viewgrid);
-				if(viewid !== '' && viewid !== undefined)
+				if( !isNullOrEmpty( viewid ) )
 				{
 					if(confirm("Are you sure you want to delete: " + _getSelectedViewName($viewgrid)))
 					{
