@@ -238,9 +238,17 @@ var CswSearch_CssClasses = {
 
         function getNewProps()
         {
+            var dataXml = {
+                RelatedIdType: o.relatedidtype,
+                NodeTypeOrObjectClassId: o.nodetypeorobjectclassid,
+                IdPrefix: o.ID,
+                NodeKey: o.cswnbtnodekey
+            };
+
             CswAjaxXml({ 
 		                'url': o.getNewPropsUrl,
-		                'data': "RelatedIdType=" + o.relatedidtype + "&NodeTypeOrObjectClassId=" + o.nodetypeorobjectclassid + "&IdPrefix=" + o.ID + "&NodeKey=" + o.cswnbtnodekey,
+		                'data': dataXml,
+                        stringify: false,
                         'success': function($xml) { 
                                 o.$propsXml = $xml;
                                 renderNodeTypeSearchContent();
@@ -351,7 +359,8 @@ var CswSearch_CssClasses = {
 
             CswAjaxXml({ 
 		        'url': o.getClientSearchXmlUrl,
-		        'data': $.param(dataXml),
+		        'data':dataXml,
+                stringify: false,
                 'success': function($xml) { 
                     $topspandiv.empty();
                     o.searchtype = $xml.CswAttrXml('searchtype');
@@ -454,7 +463,7 @@ var CswSearch_CssClasses = {
                 };
                 CswAjaxJSON({ 
 			    'url': searchUrl,
-			    'data': JSON.stringify( dataJson ),
+			    'data': dataJson,
                 'success': function(view) { 
                         o.viewid = view.sessionviewid;
                         o.searchtype = 'viewsearch'; //the next search will be always be based on the view returned

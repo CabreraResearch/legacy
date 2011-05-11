@@ -27,7 +27,8 @@
 
 				CswAjaxXml({
 						url: o.NodeTypesUrl,
-						data: '',
+						data: {},
+                        stringify: false,
 						success: function ($xml)
 						{
 							$xml.children('nodetype').each(function() {

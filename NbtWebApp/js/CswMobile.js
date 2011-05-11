@@ -286,11 +286,18 @@ var debug = false;
                     {
                         if (debug) log('Starting ' + opts.ViewUrl);
                         
+                        var dataXml = {
+                            SessionId: SessionId,
+                            ParentId: p.DivId,
+                            ForMobile: ForMobile
+                        };
+
                         CswAjaxXml({
                             async: false,   // required so that the link will wait for the content before navigating
                             formobile: ForMobile,
                             url: opts.ViewUrl,
-                            data: "SessionId=" + SessionId + "&ParentId=" + p.DivId + "&ForMobile=" + ForMobile,
+                            data: dataXml,
+                            stringify: false,
                             onloginfail: function() { Logout(); },
                             success: function (X$xml)
                             {
@@ -336,11 +343,18 @@ var debug = false;
                         {
                             if (debug) log('Starting ' + opts.ViewUrl);
 
+                            var dataXml = {
+                                SessionId: SessionId,
+                                ParentId: p.DivId,
+                                ForMobile: ForMobile
+                            };
+
                             CswAjaxXml({
                                 async: false,   // required so that the link will wait for the content before navigating
                                 formobile: ForMobile,
                                 url: opts.ViewUrl,
-                                data: "SessionId=" + SessionId + "&ParentId=" + p.DivId + "&ForMobile=" + ForMobile,
+                                data: dataXml,
+                                stringify: false,
                                 onloginfail: function() { Logout(); },
                                 success: function (X$xml)
                                 {
@@ -1289,7 +1303,7 @@ var debug = false;
                 CswAjaxJSON({
                     formobile: ForMobile,
                     url: opts.AuthenticateUrl,
-                    data: JSON.stringify(ajaxData),
+                    data: ajaxData,
                     onloginfail: function () { Logout(); },
                     success: function (data)
                     {
@@ -1366,12 +1380,19 @@ var debug = false;
 
                 if (debug) log('Starting ' + opts.ViewUrl);
 
+                var dataXml = {
+                    SessionId: SessionId,
+                    ParentId: RealDivId,
+                    ForMobile: ForMobile
+                };
+
                 // fetch new content
                 CswAjaxXml({
                     async: false,   // required so that the link will wait for the content before navigating
                     formobile: ForMobile,
                     url: opts.ViewUrl,
-                    data: "SessionId=" + SessionId + "&ParentId=" + RealDivId + "&ForMobile=" + ForMobile,
+                    data: dataXml,
+                    stringify: false,
                     onloginfail: function() { Logout(); },
                     success: function (xml)
                     {
@@ -1788,7 +1809,8 @@ var debug = false;
             CswAjaxXml({
                 formobile: ForMobile,
                 url: url,
-                data: "",
+                data: {},
+                stringify: false,
                 onloginfail: function() { Logout(); },
                 success: function (xml)
                 {
@@ -1823,10 +1845,17 @@ var debug = false;
                     {
                         if (debug) log('Starting ' + opts.UpdateUrl);
 
+                        var dataXml = {
+                            SessionId: SessionId,
+                            ParentId: UpdatedViewXml,
+                            UpdatedViewXml: viewxml.replace(/'/gi, '\\\'')
+                        };
+
                         CswAjaxXml({
                             formobile: ForMobile,
                             url: opts.UpdateUrl,
-                            data: "SessionId=" + SessionId + "&ParentId=" + UpdatedViewXml + "&UpdatedViewXml=" + viewxml.replace(/'/gi, '\\\''),
+                            data: dataXml,
+                            stringify: true,
                             onloginfail: function() 
                             { 
                                 if (perpetuateTimer)

@@ -62,7 +62,8 @@
 
 				CswAjaxXml({
 					url: url,
-					data: $.param(dataParam),
+					data: dataParam,
+                    stringify: false,
 					success: function ($xml) {
 						var selectid = '';
 						//var treePlugins = ["themes", "xml_data", "ui", "types", "crrm"];
@@ -259,7 +260,8 @@
 													// get next page of nodes
 													CswAjaxXml({
 														url: url,
-														data: $.param(nextDataParam),
+														data: nextDataParam,
+                                                        stringify: false,
 														success: function ($xml) 
 															{
 																var AfterNodeId = IDPrefix + optSelect.nodeid;

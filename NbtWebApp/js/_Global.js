@@ -19,13 +19,13 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
     ///     &#10;4 - options.error: function() {}
     /// </param>
     var o = {
-		url: '',
-		data: '',
-        onloginfail: function() {},
-		success: function (result) { },
-		error: function () { },
+        url: '',
+        data: {},
+        onloginfail: function () { },
+        success: function (result) { },
+        error: function () { },
         formobile: false
-	};
+    };
     
 	if (options) $.extend(o, options);
 
@@ -35,7 +35,7 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
 	    url: o.url,
 	    dataType: "json",
 	    contentType: 'application/json; charset=utf-8',
-	    data: o.data,
+	    data: JSON.stringify( o.data ),
 	    success: function (data, textStatus, XMLHttpRequest)
 	    {
 	        //var endtime = new Date();
@@ -81,32 +81,42 @@ function CswAjaxXml(options) {
     /// <param name="options" type="Object">
     ///     A JSON Object
     ///     &#10;1 - options.url: WebService URL
-    ///     &#10;2 - options.data: field1=value + ampersand + field2=value
+    ///     &#10;2 - options.data: {field1: value, field2: value}
     ///     &#10;3 - options.success: function() {}
     ///     &#10;4 - options.error: function() {}
     ///     &#10;5 - options.formobile: false
     /// </param>
 
     var o = {
-		url: '',
-		data: '',
-        onloginfail: function() {},
-		success: function ($xml) { },
-		error: function () { },
+        url: '',
+        data: {},
+        stringify: false, //in case we need to conditionally apply $.param() instead of JSON.stringify() (or both)
+        onloginfail: function () { },
+        success: function ($xml) { },
+        error: function () { },
         formobile: false
-	};
+    };
     
 	if (options) $.extend(o, options);
 
-    if ( o.url !== '')
-	{
+    if ( !isNullOrEmpty(o.url) )
+    {
+        var ajaxData;
+        if (!o.stringify)
+        {
+            ajaxData = $.param(o.data);
+        }
+        else
+        {
+            ajaxData = JSON.stringify(o.data);
+        }
 		//var starttime = new Date();
 	    $.ajax({
 	        type: 'POST',
 	        url: o.url,
 	        dataType: "xml",
 	        //contentType: 'application/json; charset=utf-8',
-	        data: o.data,     // should be 'field1=value&field2=value'
+	        data: ajaxData,     // should be 'field1=value&field2=value'
 	        success: function (data, textStatus, XMLHttpRequest)
 	        {
 	            //var endtime = new Date();
@@ -424,10 +434,15 @@ function copyNode(options) {
 	if (options)
 	{
 		$.extend(o, options);
-	}
+    }
+
+    var dataJson = {
+        NodePk: o.nodeid
+    };
+
 	CswAjaxJSON({
 		url: '/NbtWebApp/wsNBT.asmx/CopyNode',
-		data: '{ "NodePk":"' + o.nodeid + '" }',
+		data: dataJson,
 		success: function (result)
 		{
 			o.onSuccess(result.NewNodeId, '');
@@ -452,11 +467,9 @@ function deleteNodes(options) { /// <param name="$" type="jQuery" />
         NodeKeys: o.nodekeys
 	};
 
-	datastr = JSON.stringify(jData, "'");  //jsonToString(jData);
-
 	CswAjaxJSON({
 		url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',
-		data: datastr,
+		data: jData,
 		success: function (result) {
 			o.onSuccess('', '');  // returning '' will reselect the first node in the tree
 		},

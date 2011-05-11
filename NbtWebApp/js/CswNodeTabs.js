@@ -59,9 +59,17 @@
 
         function getTabs()
         {
+            var dataXml = {
+                EditMode: o.EditMode,
+                NodeId: o.nodeid,
+                SafeNodeKey: o.cswnbtnodekey,
+                NodeTypeId: o.nodetypeid
+            };
+
             CswAjaxXml({
                 url: o.TabsUrl,
-                data: 'EditMode=' + o.EditMode + '&NodeId=' + o.nodeid + '&SafeNodeKey=' + o.cswnbtnodekey + '&NodeTypeId=' + o.nodetypeid,
+                data: dataXml,
+                stringify: false,
                 success: function ($xml)
                 {
                     clearTabs();
@@ -118,9 +126,18 @@
 
         function getProps($tabcontentdiv, tabid)
         {
+            var dataXml = {
+                EditMode: o.EditMode,
+                NodeId: o.nodeid,
+                TabId: tabid, 
+                SafeNodeKey: o.cswnbtnodekey,
+                NodeTypeId: o.nodetypeid
+            };
+
             CswAjaxXml({
                 url: o.PropsUrl,
-                data: 'EditMode=' + o.EditMode + '&NodeId=' + o.nodeid + '&SafeNodeKey=' + o.cswnbtnodekey + '&TabId=' + tabid + '&NodeTypeId=' + o.nodetypeid,
+                data: dataXml,
+                stringify: false,
                 success: function ($xml)
                 {
                     var $form = $tabcontentdiv.children('form');
@@ -246,9 +263,17 @@
             if ($propdiv.length > 0)
             {
                 var propid = $propdiv.CswAttrDom('propid');
+
+                var dataJson = { 
+                    PropId: propid, 
+                    NewRow: newrow, 
+                    NewColumn: newcolumn, 
+                    EditMode: o.EditMode
+                };
+
                 CswAjaxJSON({
                     url: o.MovePropUrl,
-                    data: '{ "PropId": "' + propid + '", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '", "EditMode": "'+ o.EditMode +'" }',
+                    data: dataJson,
                     success: function (result)
                     {
 
@@ -295,7 +320,7 @@
                     {
                         var $propcheck = $labelcell.CswInput('init',{ID: 'check_'+ propid,
                                                                         type: CswInput_Types.checkbox,
-                                                                        value: Value,
+                                                                        value: Value
                                                                         cssclass: o.ID +'_check'                                                                   
                                                                     }); 
                         $propcheck.CswAttrDom('propid',propid);	
@@ -382,9 +407,19 @@
             $.CswFieldTypeFactory('save', fieldOpt);
 
             // update the propxml from the server
+            var dataXml = {
+                EditMode: EditMode,
+                NodeId: o.nodeid,
+                SafeNodeKey: cswnbtnodekey,
+                PropId: PropId,
+                NodeTypeId: nodetypeid,
+                NewPropXml: xmlToString($propxml)
+            };
+
             CswAjaxXml({
                 url: SinglePropUrl,
-                data: 'EditMode=' + EditMode + '&NodeId=' + o.nodeid + '&SafeNodeKey=' + cswnbtnodekey + '&PropId=' + PropId + '&NodeTypeId=' + nodetypeid + '&NewPropXml=' + xmlToString($propxml),
+                data: dataXml,
+                stringify: true,
                 success: function ($xml)
                 {
                     _makeProp($propcell, $xml.children().first(), $tabcontentdiv, tabid, ConfigMode);
@@ -409,9 +444,10 @@
                 CswAjaxJSON({
                     url: o.SavePropUrl,
                     //data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', ViewId: '"+ $.CswCookie('get', CswCookieName.CurrentView.ViewId) +"', NewPropsXml: '" + safeJsonParam(xmlToString($propsxml)) + "' }",
-                    data: JSON.stringify(data),
+                    data: data,
                     success: function (data)
                     {
+                        debugger;
                         if(o.ShowCheckboxes)
                         {
                             // apply the newly saved checked property values on this node to the checked nodes
@@ -419,27 +455,25 @@
                             var $propchecks = $('.' + o.ID + '_check:checked');
                             if($nodechecks.length > 0 && $propchecks.length > 0)
                             {
-                                var datastr = "{ SourceNodeKey: '" + o.cswnbtnodekey + "', CopyNodeIds: [";
-                                var first = true;
+                                var dataJson = {
+                                    SourceNodeKey: o.cswnbtnodekey,
+                                    CopyNodeIds: [],
+                                    PropIds: []
+                                };
+                                
                                 $nodechecks.each(function() { 
                                     var nodeid = $(this).CswAttrDom('nodeid');
-                                    if(!first) datastr += ',';
-                                    datastr += "'" + nodeid + "'"; 
-                                    first = false;
+                                    dataJson.CopyNodeIds.push(nodeid); 
                                 });
-                                datastr += '], PropIds: [';
-                                first = true;
+
                                 $propchecks.each(function() { 
                                     var propid = $(this).CswAttrDom('propid');
-                                    if(!first) datastr += ',';
-                                    datastr += "'" + propid + "'"; 
-                                    first = false;
+                                    dataJson.PropIds.push(propid);
                                 });
-                                datastr += '] }';
 
                                 CswAjaxJSON({
                                     url: o.CopyPropValuesUrl,
-                                    data: datastr
+                                    data: dataJson
                                 }); // ajax
                             } // if($nodechecks.length > 0 && $propchecks.length > 0)
                         } // if(o.ShowCheckboxes)

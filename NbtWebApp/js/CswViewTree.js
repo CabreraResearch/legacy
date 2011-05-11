@@ -31,10 +31,16 @@
 		}
 
 		var $viewsdiv = $(this);
-				
+        
+        var dataXml = {
+            IsSearchable: o.issearchable,
+            UseSession: o.usesession
+        };
+        				
 		CswAjaxXml({
 				url: o.ViewUrl,
-				data: "IsSearchable=" + o.issearchable + "&UseSession=" + o.usesession,
+				data: dataXml,
+                stringify: false,
 				success: function ($xml)
 				{
 					var strTypes = $xml.find('types').text();

@@ -51,9 +51,14 @@
 												{ 
 													if(confirm("Are you sure you want to clear this file?"))
 													{
-														CswAjaxJSON({
+														var dataJson = {
+                                                            PropId: o.$propxml.CswAttrXml('id'),
+                                                            IncludeBlob: true
+                                                        };
+                                                        
+                                                        CswAjaxJSON({
 															'url': '/NbtWebApp/wsNBT.asmx/clearProp',
-															'data': '{ "PropId": "' + o.$propxml.CswAttrXml('id') + '", "IncludeBlob": "true" }',
+															'data': dataJson,
 															'success': function() { o.onReload(); }
 														});
 													}
