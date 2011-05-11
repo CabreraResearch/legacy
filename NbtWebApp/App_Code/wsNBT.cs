@@ -732,7 +732,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				start();
 				var ws = new wsViewBuilder( _CswNbtResources );
-				PropsNode = ws.makeViewPropFilter( ViewXml, PropFiltJson );
+				PropsNode = ws.getViewPropFilter( ViewXml, PropFiltJson );
 				end();
 			}
 			catch( Exception ex )
@@ -1173,13 +1173,12 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string doViewSearch( string SearchJson )
+		public string doViewSearch( object SearchJson )
 		{
 			JObject SearchResultView = new JObject();
 			try
 			{
 				start();
-
 				var ws = new CswNbtWebServiceSearch( _CswNbtResources );
 				CswNbtView ResultsView = ws.doViewBasedSearch( SearchJson );
 			    ResultsView.SessionViewId = Int32.MinValue;
@@ -1199,7 +1198,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string doNodeTypeSearch( string SearchJson )
+		public string doNodeTypeSearch( object SearchJson )
 		{
 			JObject SessionViewId = new JObject();
 			try

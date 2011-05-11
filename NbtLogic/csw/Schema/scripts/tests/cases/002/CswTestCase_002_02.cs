@@ -37,13 +37,7 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( _TestTableName, _TestColumnName ) )
-                throw ( new CswDniException( "Added column " + _TestColumnName + " was not rolled back from the database " ) );
-
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( _TestTableName, _TestColumnName ) )
-                throw ( new CswDniException( "Added column " + _TestColumnName + " was not rolled back from the meta data " ) );
-
+            _CswTstCaseRsrc.assertColumnIsAbsent( _TestTableName, _TestColumnName );
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback

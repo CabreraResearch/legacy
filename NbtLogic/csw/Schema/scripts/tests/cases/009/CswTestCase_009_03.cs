@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
@@ -14,37 +14,30 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_005_02 : ICswUpdateSchemaTo
+    public class CswTestCase_009_03 : ICswUpdateSchemaTo
     {
 
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_005.Purpose, "verify that tables constrained were rolled back" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_009.Purpose, "verify tear down" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
-        private CswTstCaseRsrc_005 _CswTstCaseRsrc_005 = null;
+        private CswTstCaseRsrc_009 _CswTstCaseRsrc_009 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_005_02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion )
+        public CswTestCase_009_03( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion )
         {
             _CswSchemaVersion = CswSchemaVersion;
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_005 = new CswTstCaseRsrc_005( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_009 = new CswTstCaseRsrc_009( _CswNbtSchemaModTrnsctn );
         }//ctor
 
         public void update()
         {
-            List<PkFkPair> PairList = _CswTstCaseRsrc_005.getPkFkPairs();
-
-            //Verify that we cleaned up after ourselves
-            foreach( PkFkPair CurrentPair in PairList )
-            {
-                _CswTstCaseRsrc.assertTableIsAbsent( CurrentPair.PkTableName );
-                _CswTstCaseRsrc.assertTableIsAbsent( CurrentPair.FkTableName );
-            }
+            _CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_009.FakeTestTableName );
 
         }//runTest()
 

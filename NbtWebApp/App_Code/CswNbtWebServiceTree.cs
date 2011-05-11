@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     var RootNode = new XElement( "root" );
-                    if( ( IsFirstLoad && View.ViewMode == NbtViewRenderingMode.Tree ) || ForSearch )
+                    if( IsFirstLoad && ( View.ViewMode == NbtViewRenderingMode.Tree || ForSearch ) )
                     {
                         var RootItemNode = new XElement( "item",
                                             new XAttribute( "id", IDPrefix + "root" ),

@@ -246,12 +246,12 @@ namespace ChemSW.Nbt.WebServices
         /// Takes a View and applies search parameters as ViewPropertyFilters.
         /// Returns the modified View for processing as Tree/Grid/List.
         /// </summary>
-        public CswNbtView doViewBasedSearch( string SearchJson )
+        public CswNbtView doViewBasedSearch( object SearchJson )
         {
             CswNbtView SearchView = null;
-            if( !string.IsNullOrEmpty( SearchJson ) )
+            if( null != SearchJson )
             {
-                JObject ViewSearch = JObject.Parse( SearchJson );
+                JObject ViewSearch = JObject.FromObject( SearchJson );
                 string ViewIdNum = (string)ViewSearch.Property( "viewid" ).Value;
                 Int32 ViewId = CswConvert.ToInt32( ViewIdNum );
                 CswNbtView InitialView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
@@ -261,11 +261,11 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != ViewSearch.Property( "viewprops" ) )
                 {
-                    foreach( JObject FilterProp in ViewSearch["viewprops"].Children()
-                                                                            .Where( FilterToken => FilterToken.Type == JTokenType.Property )
-                                                                            .Cast<JProperty>()
-                                                                            .SelectMany( FilterGroup => FilterGroup.Children()
-                                                                            .Cast<JObject>() ) )
+                    JArray Props = (JArray) ViewSearch.Property( "viewprops" ).Value;
+
+                    foreach( JObject FilterProp in Props.Children()
+                                                        .Cast<JObject>()
+                                                        .Where( FilterProp => FilterProp.HasValues ) )
                     {
                         _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
                     }
@@ -277,7 +277,6 @@ namespace ChemSW.Nbt.WebServices
         private string _makeSearchViewName( string ViewName )
         {
             string SearchViewName = ViewName;
-
 
             if( !SearchViewName.StartsWith( "Search " ) && !SearchViewName.EndsWith( " Search" ) )
             {
@@ -295,26 +294,27 @@ namespace ChemSW.Nbt.WebServices
         /// If the search is based on NodeType/ObjectClass, construct a View with the included search terms as Property Filters.
         /// Return the View for processing as a Tree
         /// </summary>
-        public CswNbtView doNodesSearch( string SearchJson )
+        public CswNbtView doNodesSearch( object SearchJson )
         {
             JObject NodesSearch = new JObject();
             CswNbtView SearchView = null;
             string ViewName = string.Empty;
-            if( !string.IsNullOrEmpty( SearchJson ) )
+            if( null != SearchJson ) 
             {
-                NodesSearch = JObject.Parse( SearchJson );
+                NodesSearch = JObject.FromObject( SearchJson );
                 //NodesSearch = XElement.Parse( SearchJson );
                 SearchView = new CswNbtView( _CswNbtResources ) {ViewMode = NbtViewRenderingMode.Tree};
 
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
 
-                foreach( JProperty FilterGroup in NodesSearch["viewbuilderprops"].Children()
-                                                                            .Where( FilterToken => FilterToken.Type == JTokenType.Property )
-                                                                            .Cast<JProperty>() )
+                if( null != NodesSearch.Property( "viewbuilderprops") )
                 {
-                    foreach( JObject FilterProp in FilterGroup.Children().Where( FilterToken => FilterToken.Type == JTokenType.Object )
-                                                                            .Cast<JObject>() )
+                    JArray Props = (JArray) NodesSearch.Property( "viewbuilderprops" ).Value;
+
+                    foreach( JObject FilterProp in Props.Children()
+                                                        .Cast<JObject>()
+                                                        .Where( FilterProp => FilterProp.HasValues ) )
                     {
                         var PropType = CswNbtViewRelationship.RelatedIdType.Unknown;
                         CswNbtViewRelationship.RelatedIdType.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );

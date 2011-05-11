@@ -14,38 +14,41 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_006_06 : ICswUpdateSchemaTo
+    public class CswTestCase_009_02 : ICswUpdateSchemaTo
     {
 
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_006.Purpose, "verify test data tear-down" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_009.Purpose, "verify read and tear down" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
-        private CswTstCaseRsrc_006 _CswTstCaseRsrc_006 = null;
+        private CswTstCaseRsrc_009 _CswTstCaseRsrc_009 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_006_06( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion )
+        public CswTestCase_009_02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion )
         {
             _CswSchemaVersion = CswSchemaVersion;
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_006 = new CswTstCaseRsrc_006( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_009 = new CswTstCaseRsrc_009( _CswNbtSchemaModTrnsctn );
         }//ctor
 
         public void update()
         {
 
-            List<PkFkPair> PairList = _CswTstCaseRsrc_006.getPkFkPairs();
 
-            //Verify that we cleaned up after ourselves
-            foreach( PkFkPair CurrentPair in PairList )
+            _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( _CswTstCaseRsrc_009.FakeTestTableName, _CswTstCaseRsrc_009.FakeTestColumnName );
+
+            Int32 TableColId = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
+
+            if( TableColId <= 0 )
             {
-                _CswTstCaseRsrc.assertTableIsAbsent( CurrentPair.PkTableName );
-                _CswTstCaseRsrc.assertTableIsAbsent( CurrentPair.FkTableName );
+                throw ( new CswDniException( "tableclid received from data dictionry is suspect: " + TableColId.ToString() ) );
             }
+
+            _CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_009.FakeTestTableName );
 
         }//runTest()
 

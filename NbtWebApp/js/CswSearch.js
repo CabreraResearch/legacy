@@ -342,9 +342,16 @@ var CswSearch_CssClasses = {
         {
             //var $titlespan = $('<span style="align: center;">Search</span>');
             
+            var dataXml = {
+                'ViewIdNum': o.viewid, 
+                'SelectedNodeTypeIdNum': o.nodetypeorobjectclassid, 
+                'IdPrefix': o.ID,
+                'NodeKey': o.cswnbtnodekey
+            };
+
             CswAjaxXml({ 
 		        'url': o.getClientSearchXmlUrl,
-		        'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeorobjectclassid + "&IdPrefix=" + o.ID + "&NodeKey=" + o.cswnbtnodekey,
+		        'data': $.param(dataXml),
                 'success': function($xml) { 
                     $topspandiv.empty();
                     o.searchtype = $xml.CswAttrXml('searchtype');
@@ -427,8 +434,8 @@ var CswSearch_CssClasses = {
                             var $thisProp = $(this);
                             var filterarbitraryid = $thisProp.CswAttrXml('filtarbitraryid');
                             var PropFilter = $thisProp.CswViewPropFilter('getFilterJson',{ID: o.ID, 
-                                                                                          $parent: o.$searchTable,
-                                                                                          filterarbitraryid: filterarbitraryid
+                                                                                          $parent: o.$searchTable //,
+                                                                                          //filterarbitraryid: filterarbitraryid
                                                                                           });
                             props.push(PropFilter);
                         });
@@ -442,9 +449,12 @@ var CswSearch_CssClasses = {
 
             if(searchOpt)
             {
+                var dataJson = {
+                    SearchJson: searchOpt
+                };
                 CswAjaxJSON({ 
 			    'url': searchUrl,
-			    'data': "{SearchJson: \"" + jsonToString(searchOpt) + "\"}",
+			    'data': JSON.stringify( dataJson ),
                 'success': function(view) { 
                         o.viewid = view.sessionviewid;
                         o.searchtype = 'viewsearch'; //the next search will be always be based on the view returned

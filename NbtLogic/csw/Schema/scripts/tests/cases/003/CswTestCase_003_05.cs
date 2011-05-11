@@ -38,9 +38,7 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-
-            if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( _CswTstCaseRsrc_003.FakeTestTableName ) )
-                throw ( new CswDniException( "Table " + _CswTstCaseRsrc_003.FakeTestTableName + " was not dropped from the database" ) );
+            _CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_003.FakeTestTableName );
 
         }//runTest()
 

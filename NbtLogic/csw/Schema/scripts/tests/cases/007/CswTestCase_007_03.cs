@@ -37,17 +37,8 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ) )
-                throw ( new CswDniException( "Column " + _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) + " was not cleaned up from in data base " ) );
-
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ) ) )
-                throw ( new CswDniException( "Column " + _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ) + " was not cleaned up from in data base " ) );
-
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ) )
-                throw ( new CswDniException( "Column " + _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) + " was not cleaned up from in meta data " ) );
-
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ) ) )
-                throw ( new CswDniException( "Column " + _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ) + " was not cleaned up from in meta data " ) );
+            _CswTstCaseRsrc.assertColumnIsAbsent( _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) );
+            _CswTstCaseRsrc.assertColumnIsAbsent( _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ) );
 
         }//runTest()
 

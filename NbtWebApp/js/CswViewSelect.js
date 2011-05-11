@@ -23,7 +23,7 @@
 					onSuccess: function() {},
 					ClickDelay: 300,
                     issearchable: false,
-                    usesession: true,
+                    usesession: true
 				};
 
 				if (options) {

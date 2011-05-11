@@ -28,25 +28,25 @@ var ViewBuilder_CssClasses = {
         };
         if(options) $.extend(o,options);
         
-        if( o.filtarbitraryid !== '' && o.filtarbitraryid !== undefined )
+        if( !isNullOrEmpty( o.filtarbitraryid ) )
         {
             FilterId = makeId({ 'ID': ID + Delimiter + 'filtarbitraryid', 
                                 'prefix': o.ID, 
                                 'suffix': o.filtarbitraryid });
         }
-        else if( o.viewbuilderpropid !== '' && o.viewbuilderpropid !== undefined )
+        else if( !isNullOrEmpty( o.viewbuilderpropid ) )
         {
             FilterId = makeId({ 'ID': ID + Delimiter + 'viewbuilderpropid', 
                                 'prefix': o.ID, 
                                 'suffix': o.viewbuilderpropid });
         }
-        else if( o.proparbitraryid !== '' && o.proparbitraryid !== undefined )
+        else if(!isNullOrEmpty(  o.proparbitraryid ) )
         {
             FilterId = makeId({ 'ID': ID + Delimiter + 'proparbitraryid', 
                                 'prefix': o.ID, 
                                 'suffix': o.proparbitraryid });
         }
-        else if( o.ID !== '' && o.ID !== undefined )
+        else if( !isNullOrEmpty( o.ID ) )
         {
             FilterId = makeId({ 'ID': ID, 
                                 'prefix': o.ID });
@@ -89,7 +89,7 @@ var ViewBuilder_CssClasses = {
         
             var $propFilterTable = $(this); //must call on a table
             
-            if ( isNullOrEmpty( o.$propsXml ) && isNullOrEmpty( o.proparbitraryid ) )
+            if ( isNullOrEmpty( o.$propsXml ) && !isNullOrEmpty( o.proparbitraryid ) )
             {
                 CswAjaxXml({ 
 		            'url': o.getNewPropsUrl,
@@ -199,7 +199,9 @@ var ViewBuilder_CssClasses = {
                 var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
                 if( fieldtype === 'List' )
                 {
-                    $propFilterValueCell.append( $(xmlToString(filtOpt.$propsXml.children('filtersoptions').children('select'))) );
+                    $propFilterValueCell.append( $(xmlToString(filtOpt.$propsXml.children('filtersoptions').children('select'))) )
+                                        .CswAttrDom('id',filtValInputId)
+                                        .CswAttrDom('name',filtValInputId);
                 }
                 else if( fieldtype === 'Logical' )
                 {
@@ -255,13 +257,12 @@ var ViewBuilder_CssClasses = {
             };
 
             var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
-            var filtValListId = makePropFilterId('filtersoptions_select',filtOpt);
             var subFieldId = makePropFilterId('subfield_select',filtOpt);
             var filterId = makePropFilterId('filter_select',filtOpt);
 
             var thisNodeProp = {}; //to return
             
-            var $filtInput = o.$parent.CswInput('findandget',{ID: filtValInputId});
+            var $filtInput = o.$parent.find('#' + filtValInputId);
             var filterValue;
             switch( o.fieldtype )
             { 
@@ -272,8 +273,7 @@ var ViewBuilder_CssClasses = {
                 }
                 case 'List':
                 {
-                    var $filtList = o.$parent.find('#' + filtValListId);
-                    filterValue = $filtList.find(':selected').val();
+                    filterValue = $filtInput.find(':selected').val();
                     break;
                 }
                 default:

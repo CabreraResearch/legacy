@@ -188,6 +188,22 @@ namespace ChemSW.Nbt.Schema
             return ( Exception.Message.Contains( "keys in table referenced by foreign keys" ) );
         }//isRecordDeletionConstraintViolation()
 
+        public void assertColumnIsAbsent( string TableName, string ColumnName )
+        {
+            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( TableName, ColumnName) )
+                throw ( new CswDniException( "Column " + ColumnName+ " was not removed from data base" ) );
+
+            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( TableName, ColumnName) )
+                throw ( new CswDniException( "Column " + ColumnName+ " was not removed from the data base" ) );
+
+        }//assertColumnIsAbsent() 
+
+        public void assertTableIsAbsent( string TableName )
+        {
+            if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TableName ) )
+                throw ( new CswDniException( "Table " + TableName + " was not dropped from the database" ) );
+
+        }//assertTableIsAbsent() 
 
 
     }
