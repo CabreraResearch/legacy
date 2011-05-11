@@ -82,7 +82,10 @@
 		{
 			var $Div = $(this);
 			var $TextBox = $Div.find('input');
-			$TextBox.CswInput('set',{value: newvalue});
+            if( newvalue !== undefined )
+			{
+                $TextBox.val( newvalue );
+            }
 		}
 	};
 
