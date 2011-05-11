@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
             // case 21660
             CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp PageSizeOcp = UserOC.getObjectClassProp( CswNbtObjClassUser.PageSizePropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( PageSizeOcp, CswNbtSubField.SubFieldName.Value, "20" );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( PageSizeOcp, CswNbtSubField.SubFieldName.Value, "30" );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PageSizeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PageSizeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
 
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
                                             where User.PageSize == Int32.MinValue
                                             select UserNode )
             {
-                UserNode.Properties[PageSizeOcp.PropName].AsNumber.Value = 20;
+                UserNode.Properties[PageSizeOcp.PropName].AsNumber.Value = 30;
             }
 
         } // update()
