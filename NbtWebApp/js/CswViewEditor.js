@@ -406,8 +406,8 @@ var CswViewEditor_WizardSteps = {
 					};
 					$.extend(gridJson, mygridopts);
 
-					$viewgrid.jqGrid(gridJson)
-								.hideCol(o.ColumnViewId);
+					$viewgrid.jqGrid(gridJson);
+								//.hideCol(o.ColumnViewId);
 
 					if(selectedrowpk !== undefined)
 					{

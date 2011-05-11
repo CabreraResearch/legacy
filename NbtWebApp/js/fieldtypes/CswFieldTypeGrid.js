@@ -68,8 +68,11 @@
                         {
                             'onViewSearch': function ()
                             {
-	                            var onSearchSubmit = function(view) {
-                                    refreshGrid(gridOpts);
+                                var onSearchSubmit = function(view) {
+                                    var s = {};
+                                    $.extend(s,gridOpts);
+                                    s.viewid = view.viewid;
+                                    refreshGrid(s);
                                 };
 
                                 $SearchDiv.empty();
@@ -78,15 +81,6 @@
                                                       'ID': SearchDivId,
                                                       'onSearchSubmit': onSearchSubmit
                                                       });
-                                
-                                if ($SearchDiv.is(':hidden'))
-	                            {
-	                                $SearchDiv.show();
-	                            }
-	                            else
-	                            {
-	                                $SearchDiv.hide();
-	                            }
                             },
                             'onGenericSearch': function () { /*not possible here*/ }
                         },
@@ -95,7 +89,7 @@
                         o.onEditView(viewid);                    
 		            }
 		    });
-			$Div.append($MenuDiv, $('<br/><br/>'), $GridDiv);
+			$Div.append($MenuDiv, $('<br/>'), $SearchDiv, $('<br/>'), $GridDiv);
 		},
 		save: function(o) {
 //                var $TextBox = $propdiv.find('input');

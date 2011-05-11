@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
@@ -220,17 +221,14 @@ namespace ChemSW.Nbt.PropTypes
             //    _ViewsForCBA.Rows.Add( NoneRow );
             //}
 
-            string searchstr = CswNbtNodePropViewPickList.delimiter.ToString() + SelectedViewIds + CswNbtNodePropViewPickList.delimiter.ToString();
-            bool first = true;
-            foreach( CswNbtView View in Views )
+            foreach( CswNbtView ThisView in Views )
             {
                 DataRow NewViewRow = _ViewsForCBA.NewRow();
-                NewViewRow[NameColumn] = View.ViewName;
-                NewViewRow[KeyColumn] = View.ViewId;
+                NewViewRow[NameColumn] = ThisView.ViewName;
+                NewViewRow[KeyColumn] = ThisView.ViewId;
                 //NewViewRow[ValueColumn] = ( searchstr.IndexOf( CswNbtNodePropViewPickList.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropViewPickList.delimiter.ToString() ) >= 0 );
-                NewViewRow[ValueColumn] = ( ( searchstr.IndexOf( CswNbtNodePropNodeTypeSelect.delimiter.ToString() + View.ViewId + CswNbtNodePropNodeTypeSelect.delimiter.ToString() ) >= 0 ) ||
-                                          ( first && Required && SelectedViewIds.Count == 0 ) );
-                first = false;
+                NewViewRow[ValueColumn] = ( ( SelectedViewIds.Contains( ThisView.ViewId ) ) ||
+                                          ( ( Views.First() == ThisView ) && Required && SelectedViewIds.Count == 0 ) );
                 _ViewsForCBA.Rows.Add( NewViewRow );
             }
             return _ViewsForCBA;

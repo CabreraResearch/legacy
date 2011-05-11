@@ -52,17 +52,16 @@ var CswInput_Types = {
             };
             if (options) $.extend(o, options);
 
-			if(isNullOrEmpty(o.name)) o.name = o.ID;
+			o.name = tryParseString(o.name,o.ID);
+            o.ID = tryParseString(o.ID,o.name);
 
             var $parent = $(this);
             var $input = $('<input />');
-            if( o.ID !== '' ) 
-            {
-                $input.CswAttrDom('id',o.ID);
-                $input.CswAttrDom('name',o.name);
-            }
+
+            $input.CswAttrDom('id',o.ID);
+            $input.CswAttrDom('name',o.name);
             
-            if( o.type !== '' && o.type !== undefined ) 
+            if( !isNullOrEmpty( o.type ) ) 
             {
                 $input.CswAttrDom('type', o.type.name);
                 //cannot style placeholder across all browsers yet. Ignore for now.
@@ -74,77 +73,21 @@ var CswInput_Types = {
                 {
                     $input.CswAttrDom('autocomplete','on');
                 }
-                if( o.type.value.required === true || ( o.value !== '' && o.value !== undefined ) )
+                
+                o.value = tryParseString(o.value, '');
+                if( isTrue( o.type.value.required ) || ( !isNullOrEmpty( o.value ) ) )
                 {
-                    if( o.value === undefined ) o.value = '';
                     $input.val(o.value);
                 }
             }
             
-            if( o.cssclass !== '' ) $input.CswAttrDom('class',o.cssclass);
-            if( o.width !== '' ) $input.CswAttrDom({width: o.width});
-            if( o.autofocus === true ) $input.CswAttrDom('autofocus');
-            if( o.onChange !== undefined ) $input.change( function () { o.onChange() } );
+            if( !isNullOrEmpty( o.cssclass ) ) $input.addClass(o.cssclass);
+            if( !isNullOrEmpty( o.width ) ) $input.css('width', o.width);
+            if( isTrue( o.autofocus ) ) $input.CswAttrDom('autofocus', o.autofocus);
+            if( !isNullOrEmpty( o.onChange ) ) $input.change( function () { o.onChange() } );
                                 
             $parent.append($input);
             return $input;
-        },
-        'findandget': function(options)
-        {
-            var o = {
-                ID: ''
-            };
-            if (options) $.extend(o, options);
-
-            var $parent = $(this);
-            var $input;
-
-            if( o.ID !== '' && o.ID !== undefined)
-            {
-                $input = $parent.find('#' + o.ID);
-            }
-            return $input;
-        },
-        'findandset': function(options)
-        {
-            var succeeded = false;
-            var o = {
-                ID: '',
-                value: ''
-            };
-            if (options) $.extend(o, options);
-
-            var $parent = $(this);
-            var $input;
-
-            if( o.ID !== '' && o.ID !== undefined &&
-                o.value !== undefined /*empty is OK*/ )
-            {
-                $input = $parent.find('#' + o.ID);
-                if( $input.size() > 0 )
-                {
-                    $input.val(o.value);
-                    succeeded = true;
-                }
-            }
-            return succeeded;
-        },
-        'set': function(options)
-        {
-            var succeeded = false;
-            var o = {
-                value: ''
-            };
-            if (options) $.extend(o, options);
-
-            var $input = $(this);
-
-            if( $input.size() > 0 && o.value !== undefined /*empty is OK*/ )
-            {
-                $input.val(o.value);
-                succeeded = true;
-            }
-            return succeeded;
         }
 
     };
