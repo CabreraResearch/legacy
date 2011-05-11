@@ -102,14 +102,14 @@ function CswAjaxXml(options) {
     if ( !isNullOrEmpty(o.url) )
     {
         var ajaxData;
-        if (!o.stringify)
-        {
+        //if (!o.stringify)
+        //{
             ajaxData = $.param(o.data);
-        }
-        else
-        {
-            ajaxData = JSON.stringify(o.data);
-        }
+        //}
+        //else
+        //{
+        //    ajaxData = JSON.stringify( $.param(o.data) );
+        //}
 		//var starttime = new Date();
 	    $.ajax({
 	        type: 'POST',
@@ -864,9 +864,8 @@ function tryParseString(inputStr, defaultStr)
     /// <summary>
     ///   Returns the inputStr if !isNullOrEmpty, else returns the defaultStr
     /// </summary>
-    /// <param name="str" type="Object">
-    ///     String or object to parse
-    /// </param>
+    /// <param name="inputStr" type="String"> String to parse </param>
+    /// <param name="defaultStr" type="String"> Default value if null or empty </param>
     /// <returns type="String" />
     var ret = defaultStr;
     if( !isNullOrEmpty( inputStr ) )
@@ -875,6 +874,8 @@ function tryParseString(inputStr, defaultStr)
     }
     return ret;
 }
+
+
 
 // ------------------------------------------------------------------------------------
 // for debug
