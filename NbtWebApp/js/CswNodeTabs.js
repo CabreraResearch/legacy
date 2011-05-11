@@ -320,7 +320,7 @@
                     {
                         var $propcheck = $labelcell.CswInput('init',{ID: 'check_'+ propid,
                                                                         type: CswInput_Types.checkbox,
-                                                                        value: Value
+                                                                        value: false, // Value --not defined?,
                                                                         cssclass: o.ID +'_check'                                                                   
                                                                     }); 
                         $propcheck.CswAttrDom('propid',propid);	
@@ -447,7 +447,7 @@
                     data: data,
                     success: function (data)
                     {
-                        debugger;
+                        var doSave = true;
                         if(o.ShowCheckboxes)
                         {
                             // apply the newly saved checked property values on this node to the checked nodes
@@ -476,9 +476,13 @@
                                     data: dataJson
                                 }); // ajax
                             } // if($nodechecks.length > 0 && $propchecks.length > 0)
+                            else
+                            {
+                                doSave = false;
+                                confirm('You have not selected any properties to save.');
+                            }
                         } // if(o.ShowCheckboxes)
-
-                        o.onSave(data.nodeid, data.cswnbtnodekey);
+                        if( doSave ) o.onSave(data.nodeid, data.cswnbtnodekey);
                     }, // success
                     error: function()
                     {
