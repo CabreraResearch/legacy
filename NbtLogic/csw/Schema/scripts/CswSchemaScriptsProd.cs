@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
 
@@ -92,17 +94,16 @@ namespace ChemSW.Nbt.Schema
             _UpdateDrivers.Add( Schema01H34Driver.SchemaVersion, Schema01H34Driver );
             CswSchemaUpdateDriver Schema01H35Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H35( _CswNbtSchemaModTrnsctn ) );
             _UpdateDrivers.Add( Schema01H35Driver.SchemaVersion, Schema01H35Driver );
+            CswSchemaUpdateDriver Schema01H36Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H36( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H36Driver.SchemaVersion, Schema01H36Driver );
 
             // This automatically detects the latest version
-            foreach( CswSchemaVersion Version in _UpdateDrivers.Keys )
+            foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == null ||
+                                                                                        ( _LatestVersion.CycleIteration == Version.CycleIteration &&
+                                                                                          _LatestVersion.ReleaseIdentifier == Version.ReleaseIdentifier &&
+                                                                                          _LatestVersion.ReleaseIteration < Version.ReleaseIteration ) ) )
             {
-                if( _LatestVersion == null ||
-                    ( _LatestVersion.CycleIteration == Version.CycleIteration &&
-                      _LatestVersion.ReleaseIdentifier == Version.ReleaseIdentifier &&
-                      _LatestVersion.ReleaseIteration < Version.ReleaseIteration ) )
-                {
-                    _LatestVersion = Version;
-                }
+                _LatestVersion = Version;
             }
 
 
