@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_All + ": update all schemata specified CswDbConfig.xml" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_AccessId + " <AccessId>: The AccessId, as per CswDbConfig.xml, of the schema to be updated" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_Mode + " prod | test: perform schema update, or auto-test the schema update infrastructure" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_Describe + " writes descriptions of all current scripts"+
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey_Describe + " writes descriptions of all current scripts" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_StartAtTestCase + "  test case to begin at" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey_IgnoreTestCasesCsv + "  csv of test cases to ignore";
                 return ( ReturnVal );
@@ -68,6 +68,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
         }
 
         private CswDbCfgInfoNbt _CswDbCfgInfoNbt = null;
+        private CswSetupVblsNbt _CswSetupVblsNbt = null;
         private CswSchemaUpdater _CswSchemaUpdater = null;
         private CswNbtResources _CswNbtResources = null;
         private CswSchemaUpdateThread _CswSchemaUpdateThread = null;
@@ -78,12 +79,10 @@ namespace ChemSW.Nbt.Schema.CmdLn
         public CswSchemaUpdaterConsole()
         {
             _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Executable );
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, new CswSetupVblsNbt( SetupMode.Executable ), _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ), false, false );
-            _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
-            _CswConsoleOutput = new CswConsoleOutput( _CswNbtResources.CswLogger );
-
-
+            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Executable );
         }//ctor
+
+
 
 
         private const string _Separator_OrArgs = " | ";
@@ -112,7 +111,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 {
                     string CurrentArgContent = CurrentArg.Substring( 1 ).Trim().ToLower();
                     if( _ArgKey_AccessId == CurrentArgContent ||
-                        _ArgKey_Mode == CurrentArgContent || 
+                        _ArgKey_Mode == CurrentArgContent ||
                         _ArgKey_StartAtTestCase == CurrentArgContent ||
                         _ArgKey_IgnoreTestCasesCsv == CurrentArgContent )
                     {
@@ -130,12 +129,42 @@ namespace ChemSW.Nbt.Schema.CmdLn
                     ArgsAreValid = false;
                     _UserArgs.Clear();
                 }
-            }
+
+            }//iterate commandline args
 
         }//_convertArgsToDictionary() 
 
 
-        ICswSchemaScripts _CswSchemaScripts = null;
+
+        private void _makeResources( string AccessId )
+        {
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ), false, false );
+            _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
+            _CswConsoleOutput = new CswConsoleOutput( _CswNbtResources.CswLogger );
+
+
+            if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
+            {
+                _CswSchemaScripts = new CswSchemaScriptsTest( _CswNbtResources, _StartAtTestCase, _TestCasesToIgnore );
+            }
+            else
+            {
+                _CswSchemaScripts = new CswSchemaScriptsProd( _CswNbtResources );
+            }
+
+
+            _CswSchemaUpdater = new CswSchemaUpdater( _CswNbtResources, _CswSchemaScripts );
+            _CswSchemaUpdateThread = new CswSchemaUpdateThread( _CswSchemaUpdater );
+
+            _CswNbtResources.AccessId = AccessId;
+
+        }//_makeResources()
+
+
+        private ICswSchemaScripts _CswSchemaScripts = null;
+        private Int32 _StartAtTestCase = 0;
+        private List<string> _TestCasesToIgnore = new List<string>();
+
         public void process( string[] args )
         {
 
@@ -144,35 +173,17 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                 _convertArgsToDictionary( args );
 
-                Int32 StartAtTestCase = 0;
                 if( _UserArgs.ContainsKey( _ArgKey_StartAtTestCase ) )
                 {
-                    StartAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey_StartAtTestCase] ); 
+                    _StartAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey_StartAtTestCase] );
                 }
 
-                List<string> IgnoreList = new List<string>();
                 if( _UserArgs.ContainsKey( _ArgKey_IgnoreTestCasesCsv ) )
                 {
                     CswCommaDelimitedString CswCommaDelimitedString = new CswCommaDelimitedString();
                     CswCommaDelimitedString.FromString( _UserArgs[_ArgKey_IgnoreTestCasesCsv] );
-                    IgnoreList = CswCommaDelimitedString.ToList<string>();
-
-
+                    _TestCasesToIgnore = CswCommaDelimitedString.ToList<string>();
                 }//
-
-                if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
-                {
-                    _CswSchemaScripts = new CswSchemaScriptsTest( _CswNbtResources, StartAtTestCase, IgnoreList );
-                }
-                else
-                {
-                    _CswSchemaScripts = new CswSchemaScriptsProd( _CswNbtResources );
-                }
-
-
-
-                _CswSchemaUpdater = new CswSchemaUpdater( _CswNbtResources, _CswSchemaScripts );
-                _CswSchemaUpdateThread = new CswSchemaUpdateThread( _CswSchemaUpdater );
 
 
                 if( false == _UserArgs.ContainsKey( _ArgKey_Help ) )
@@ -183,7 +194,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         AccessId = _UserArgs[_ArgKey_AccessId];
                         if( _CswDbCfgInfoNbt.AccessIds.Contains( AccessId ) )
                         {
-                            _CswNbtResources.AccessId = AccessId;
+                            _makeResources( AccessId ); 
 
                             if( false == _UserArgs.ContainsKey( _ArgKey_Describe ) )
                             {
@@ -214,8 +225,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         {
 
                             string CurrentAccessId = AccessIds[idx];
+                            _makeResources( CurrentAccessId ); 
                             _CswConsoleOutput.write( _Separator_NuLine + "Applying schema operation to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
-                            _CswNbtResources.AccessId = CurrentAccessId;
                             _updateAccessId();
                             _CswConsoleOutput.write( _Separator_NuLine );
                         }
