@@ -4,9 +4,9 @@ using System.Data;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.DB;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( _SelectedUserIds == null )
                 {
                     _SelectedUserIds = new CswCommaDelimitedString();
-                    _SelectedUserIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedUserIds_OnChange );
+                    _SelectedUserIds.OnChange += _SelectedUserIds_OnChange;
                     _SelectedUserIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedUserIdsSubField.Column ) );
                 }
                 return _SelectedUserIds;
@@ -78,16 +78,30 @@ namespace ChemSW.Nbt.PropTypes
         private void _SelectedUserIds_OnChange()
         {
             if( _CswNbtNodePropData.SetPropRowValue( _SelectedUserIdsSubField.Column, _SelectedUserIds.ToString() ) )
+            {
                 PendingUpdate = true;
+            }
         }
 
+        /// <summary>
+        /// True if user is subscribed
+        /// </summary>
+        public bool IsSubscribed( CswPrimaryKey UserId )
+        {
+            bool ret = SelectedUserIds.Contains( UserId.PrimaryKey.ToString() );
+            return ret;
+        }
         /// <summary>
         /// Subscribes a user by adding the userid to the SelectedUserIds list
         /// </summary>
         public void AddUser( CswPrimaryKey UserId )
         {
-            if( !SelectedUserIds.Contains( UserId.PrimaryKey.ToString() ) )
-                SelectedUserIds.Add( UserId.PrimaryKey.ToString() );
+            if( !IsSubscribed( UserId ) )
+            {
+                CswCommaDelimitedString Users = SelectedUserIds;
+                Users.Add( UserId.PrimaryKey.ToString() );
+                SelectedUserIds = Users;
+            }
         }
 
         /// <summary>
@@ -95,7 +109,12 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void RemoveUser( CswPrimaryKey UserId )
         {
-            SelectedUserIds.Remove( UserId.PrimaryKey.ToString() );
+            if( IsSubscribed( UserId ) )
+            {
+                CswCommaDelimitedString Users = SelectedUserIds;
+                Users.Remove( UserId.PrimaryKey.ToString() );
+                SelectedUserIds = Users;
+            }
         }
 
         /// <summary>
@@ -107,100 +126,100 @@ namespace ChemSW.Nbt.PropTypes
             PendingUpdate = false;
         }
 
-		public DataTable getUserOptions()
-		{
-			DataTable Data = new CswDataTable( "Userselectdatatable", "" );
-			Data.Columns.Add( NameColumn, typeof( string ) );
-			Data.Columns.Add( KeyColumn, typeof( int ) );
-			Data.Columns.Add( ValueColumn, typeof( bool ) );
+        public DataTable getUserOptions()
+        {
+            DataTable Data = new CswDataTable( "Userselectdatatable", "" );
+            Data.Columns.Add( NameColumn, typeof( string ) );
+            Data.Columns.Add( KeyColumn, typeof( int ) );
+            Data.Columns.Add( ValueColumn, typeof( bool ) );
 
-			bool first = true;
-			ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-			for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
-			{
-				UsersTree.goToNthChild( c );
+            bool first = true;
+            ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
+            {
+                UsersTree.goToNthChild( c );
 
-				DataRow NTRow = Data.NewRow();
-				NTRow[NameColumn] = UsersTree.getNodeNameForCurrentPosition();
-				NTRow[KeyColumn] = UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
-				NTRow[ValueColumn] = ( ( SelectedUserIds.Contains( UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() ) ) ||
-									 ( first && Required && SelectedUserIds.Count == 0 ) );
-				Data.Rows.Add( NTRow );
-				first = false;
+                DataRow NTRow = Data.NewRow();
+                NTRow[NameColumn] = UsersTree.getNodeNameForCurrentPosition();
+                NTRow[KeyColumn] = UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
+                NTRow[ValueColumn] = ( ( SelectedUserIds.Contains( UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() ) ) ||
+                                     ( first && Required && SelectedUserIds.Count == 0 ) );
+                Data.Rows.Add( NTRow );
+                first = false;
 
-				UsersTree.goToParentNode();
-			}
-			return Data;
-		} // UserOptions()
+                UsersTree.goToParentNode();
+            }
+            return Data;
+        } // UserOptions()
 
-		public const string NameColumn = "User Name";
-		public const string KeyColumn = "UserId";
-		public const string ValueColumn = "Include";
+        public const string NameColumn = "User Name";
+        public const string KeyColumn = "UserId";
+        public const string ValueColumn = "Include";
 
         public override void ToXml( XmlNode ParentNode )
         {
-			XmlNode SelectedUsersNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedUserIdsSubField.ToXmlNodeName(), SelectedUserIds.ToString() );
-			XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
-			DataTable UsersTable = getUserOptions();
-			foreach( DataRow UserRow in UsersTable.Rows )
-			{
-				XmlNode UserNode = CswXmlDocument.AppendXmlNode( OptionsNode, "user" );
+            CswXmlDocument.AppendXmlNode( ParentNode, _SelectedUserIdsSubField.ToXmlNodeName(), SelectedUserIds.ToString() );
+            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
+            DataTable UsersTable = getUserOptions();
+            foreach( DataRow UserRow in UsersTable.Rows )
+            {
+                XmlNode UserNode = CswXmlDocument.AppendXmlNode( OptionsNode, "user" );
 
-				XmlNode UserNameNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
-				CswXmlDocument.AppendXmlAttribute( UserNameNode, "field", NameColumn );
-				CswXmlDocument.AppendXmlAttribute( UserNameNode, "value", UserRow[NameColumn].ToString() );
+                XmlNode UserNameNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
+                CswXmlDocument.AppendXmlAttribute( UserNameNode, "field", NameColumn );
+                CswXmlDocument.AppendXmlAttribute( UserNameNode, "value", UserRow[NameColumn].ToString() );
 
-				XmlNode UserIdNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
-				CswXmlDocument.AppendXmlAttribute( UserIdNode, "field", KeyColumn );
-				CswXmlDocument.AppendXmlAttribute( UserIdNode, "value", UserRow[KeyColumn].ToString() );
+                XmlNode UserIdNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
+                CswXmlDocument.AppendXmlAttribute( UserIdNode, "field", KeyColumn );
+                CswXmlDocument.AppendXmlAttribute( UserIdNode, "value", UserRow[KeyColumn].ToString() );
 
-				XmlNode IncludeNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
-				CswXmlDocument.AppendXmlAttribute( IncludeNode, "field", ValueColumn );
-				CswXmlDocument.AppendXmlAttribute( IncludeNode, "value", UserRow[ValueColumn].ToString() );
-			}
+                XmlNode IncludeNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
+                CswXmlDocument.AppendXmlAttribute( IncludeNode, "field", ValueColumn );
+                CswXmlDocument.AppendXmlAttribute( IncludeNode, "value", UserRow[ValueColumn].ToString() );
+            }
         } // ToXml()
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-			//string UserIds = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedUserIdsSubField.ToXmlNodeName() );
-			//SelectedUserIds.FromString( UserIds );
+            //string UserIds = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedUserIdsSubField.ToXmlNodeName() );
+            //SelectedUserIds.FromString( UserIds );
 
-			//foreach( string UserIdString in SelectedUserIds )
-			//{
-			//    if( CswTools.IsInteger( UserIdString ) )
-			//    {
-			//        Int32 UserId = CswConvert.ToInt32( UserIdString );
-			//        if( NodeMap != null && NodeMap.ContainsKey( UserId ) )
-			//            SelectedUserIds.Replace( UserIdString, NodeMap[UserId].ToString() );
-			//    }
-			//}
-			//PendingUpdate = true;
+            //foreach( string UserIdString in SelectedUserIds )
+            //{
+            //    if( CswTools.IsInteger( UserIdString ) )
+            //    {
+            //        Int32 UserId = CswConvert.ToInt32( UserIdString );
+            //        if( NodeMap != null && NodeMap.ContainsKey( UserId ) )
+            //            SelectedUserIds.Replace( UserIdString, NodeMap[UserId].ToString() );
+            //    }
+            //}
+            //PendingUpdate = true;
 
 
-			CswCommaDelimitedString NewSelectedUserIds = new CswCommaDelimitedString();
+            CswCommaDelimitedString NewSelectedUserIds = new CswCommaDelimitedString();
 
-			foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "options" ).ChildNodes )
-			{
-				string key = string.Empty;
-				string name = string.Empty;
-				bool value = false;
-				foreach( XmlNode ColumnNode in ItemNode.ChildNodes )
-				{
-					if( KeyColumn == ColumnNode.Attributes["field"].Value )
-						key = ColumnNode.Attributes["value"].Value;
-					if( NameColumn == ColumnNode.Attributes["field"].Value )
-						name = ColumnNode.Attributes["value"].Value;
-					if( ValueColumn == ColumnNode.Attributes["field"].Value )
-						value = CswConvert.ToBoolean( ColumnNode.Attributes["value"].Value );
-				}
-				if( value )
-				{
-					NewSelectedUserIds.Add( key );
-				}
-			} // foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "Options" ).ChildNodes )
+            foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "options" ).ChildNodes )
+            {
+                string key = string.Empty;
+                string name = string.Empty;
+                bool value = false;
+                foreach( XmlNode ColumnNode in ItemNode.ChildNodes )
+                {
+                    if( KeyColumn == ColumnNode.Attributes["field"].Value )
+                        key = ColumnNode.Attributes["value"].Value;
+                    if( NameColumn == ColumnNode.Attributes["field"].Value )
+                        name = ColumnNode.Attributes["value"].Value;
+                    if( ValueColumn == ColumnNode.Attributes["field"].Value )
+                        value = CswConvert.ToBoolean( ColumnNode.Attributes["value"].Value );
+                }
+                if( value )
+                {
+                    NewSelectedUserIds.Add( key );
+                }
+            } // foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "Options" ).ChildNodes )
 
-			SelectedUserIds = NewSelectedUserIds;		
-		}
+            SelectedUserIds = NewSelectedUserIds;
+        }
 
         public override void ToXElement( XElement ParentNode )
         {
