@@ -836,7 +836,7 @@ function isTrue(str)
     /// <summary>
     ///   Returns true if the input is true, 'true', '1' or 1.
     ///   &#10;1 Returns false if the input is false, 'false', '0' or 0.
-    ///   &#10;2 Otherwise writes an error to the log.
+    ///   &#10;2 Otherwise returns false and (if debug) writes an error to the log.
     /// </summary>
     /// <param name="str" type="Object">
     ///     String or object to test
@@ -854,7 +854,8 @@ function isTrue(str)
     }
     else
     {
-        log('isTrue() was called on ' + str + ', which is not a boolean.');
+        ret = false;
+        if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.');
     }
     return ret;
 }
