@@ -382,7 +382,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-            if( ret && null != MetaDataProp )
+            if( ret && null != Node && null != MetaDataProp )
             {
                 ret = _checkNodeTypePropPermission( PropPermissions, Permission, Node, MetaDataProp );
             }
