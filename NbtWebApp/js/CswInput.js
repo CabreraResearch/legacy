@@ -5,29 +5,29 @@
 
 // for CswInput
 var CswInput_Types = {
-    button: { id: 0, name: 'button', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
-    checkbox: { id: 1, name: 'checkbox', placeholder: false, autocomplete: false, value: { required: true, allowed: true} },
-    color: { id: 2, name: 'color', placeholder: false, autocomplete: true, value: { required: false, allowed: true} },
-    date: { id: 3, name: 'date', placeholder: false, autocomplete: true, value: { required: false, allowed: true} },
-    datetime: { id: 4, name: 'datetime', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
-    'datetime-local': { value: 5, name: 'datetime-local', placeholder: false, autocomplete: true, value: { required: false, allowed: true} },
-    email: { id: 6, name: 'email', placeholder: true, autocomplete: true, value: { required: false, allowed: true} },
-    file: { id: 7, name: 'file', placeholder: false, autocomplete: false, value: { required: false, allowed: false} },
-    hidden: { id: 8, name: 'hidden', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
-    image: { id: 9, name: 'image', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
-    month: { id: 10, name: 'month', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
-    number: { id: 11, name: 'number', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
-    password: { id: 12, name: 'password', placeholder: true, value: { required: false, allowed: true} },
-    radio: { id: 13, name: 'radio', placeholder: false, autocomplete: false, value: { required: true, allowed: true} },
-    range: { id: 14, name: 'range', placeholder: false, autocomplete: true, value: { required: false, allowed: true} },
-    reset: { id: 15, name: 'reset', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
-    search: { id: 16, name: 'search', placeholder: true, autocomplete: true, value: { required: false, allowed: true} },
-    submit: { id: 17, name: 'submit', placeholder: false, autocomplete: false, value: { required: false, allowed: true} },
-    tel: { id: 18, name: 'button', placeholder: true, autocomplete: true, value: { required: false, allowed: true} },
-    text: { id: 19, name: 'text', placeholder: true, autocomplete: true, value: { required: false, allowed: true} },
-    time: { id: 20, name: 'time', placeholder: false, autocomplete: true, value: { required: false, allowed: true} },
-    url: { id: 21, name: 'url', placeholder: true, autocomplete: true, value: { required: false, allowed: true} },
-    week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true} }
+    button: { id: 0, name: 'button', placeholder: false, autocomplete: false, value: { required: false, allowed: true}, defaultwidth: '' },
+    checkbox: { id: 1, name: 'checkbox', placeholder: false, autocomplete: false, value: { required: true, allowed: true}, defaultwidth: '' },
+    color: { id: 2, name: 'color', placeholder: false, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '' },
+    date: { id: 3, name: 'date', placeholder: false, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '200px' },
+    datetime: { id: 4, name: 'datetime', placeholder: false, autocomplete: false, value: { required: false, allowed: true}, defaultwidth: '200px' },
+    'datetime-local': { value: 5, name: 'datetime-local', placeholder: false, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '200px' },
+    email: { id: 6, name: 'email', placeholder: true, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '200px' },
+    file: { id: 7, name: 'file', placeholder: false, autocomplete: false, value: { required: false, allowed: false}, defaultwidth: '' },
+    hidden: { id: 8, name: 'hidden', placeholder: false, autocomplete: false, value: { required: false, allowed: true}, defaultwidth: '' },
+    image: { id: 9, name: 'image', placeholder: false, autocomplete: false, value: { required: false, allowed: true}, defaultwidth: '' },
+    month: { id: 10, name: 'month', placeholder: false, autocomplete: false, value: { required: false, allowed: true}, defaultwidth: '' },
+    number: { id: 11, name: 'number', placeholder: false, autocomplete: false, value: { required: false, allowed: true}, defaultwidth: '200px' },
+    password: { id: 12, name: 'password', placeholder: true, value: { required: false, allowed: true}, defaultwidth: '200px' },
+    radio: { id: 13, name: 'radio', placeholder: false, autocomplete: false, value: { required: true, allowed: true}, defaultwidth: '' },
+    range: { id: 14, name: 'range', placeholder: false, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '' },
+    reset: { id: 15, name: 'reset', placeholder: false, autocomplete: false, value: { required: false, allowed: true}, defaultwidth: '' },
+    search: { id: 16, name: 'search', placeholder: true, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '' },
+    submit: { id: 17, name: 'submit', placeholder: false, autocomplete: false, value: { required: false, allowed: true}, defaultwidth: '' },
+    tel: { id: 18, name: 'button', placeholder: true, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '' },
+    text: { id: 19, name: 'text', placeholder: true, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '' },
+    time: { id: 20, name: 'time', placeholder: false, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '200px' },
+    url: { id: 21, name: 'url', placeholder: true, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '200px' },
+    week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true}, defaultwidth: '' }
 };
 
 ; (function ($) { /// <param name="$" type="jQuery" />
@@ -45,7 +45,7 @@ var CswInput_Types = {
                 'placeholder': '',
                 'cssclass': '',
                 'value': '',
-                'width': "200px",
+                'width': '',
                 'autofocus': false,
                 'autocomplete': 'on',
                 'onChange': function() {}
@@ -78,6 +78,11 @@ var CswInput_Types = {
                 if( isTrue( o.type.value.required ) || ( !isNullOrEmpty( o.value ) ) )
                 {
                     $input.val(o.value);
+                }
+
+                if( o.type === CswInput_Types.text && !isNullOrEmpty( o.width ) && !isNullOrEmpty(o.type.defaultwidth) )
+                {
+                    o.width = o.type.defaultwidth;
                 }
             }
             
