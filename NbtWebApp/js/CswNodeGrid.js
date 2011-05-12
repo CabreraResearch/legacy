@@ -44,7 +44,7 @@
             var dataJson = {ViewPk: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty };		
 			CswAjaxJSON({
 				url: o.GridUrl,
-				data: JSON.stringify( dataJson ),
+				data: dataJson,
 				success: function (gridJson) {
 					    
 						jqGridOpt = gridJson.jqGridOpt;

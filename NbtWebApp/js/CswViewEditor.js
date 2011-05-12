@@ -106,9 +106,13 @@ var CswViewEditor_WizardSteps = {
 				var viewid = _getSelectedViewId($viewgrid);
 				if(viewid !== '' && viewid !== undefined)
 				{
+                    var dataJson = {
+                        ViewId: viewid
+                    };
+
 					CswAjaxJSON({
 						url: o.CopyViewUrl,
-						data: "{ ViewId: "+ viewid +" }",
+						data: dataJson,
 						success: function (gridJson) {
 							_getViewsGrid(onViewGridSuccess, gridJson.copyviewid); 
 						},
@@ -127,13 +131,17 @@ var CswViewEditor_WizardSteps = {
 			'disableOnClick': true,
 			'onclick': function() {
 			    var viewid = _getSelectedViewId($viewgrid);
-				if(viewid !== '' && viewid !== undefined)
+				if( !isNullOrEmpty( viewid ) )
 				{
 					if(confirm("Are you sure you want to delete: " + _getSelectedViewName($viewgrid)))
 					{
-						CswAjaxJSON({
+						var dataJson = {
+                            ViewId: viewid
+                        };
+
+                        CswAjaxJSON({
 							url: o.DeleteViewUrl,
-							data: "{ ViewId: "+ viewid +" }",
+							data: dataJson,
 							success: function (gridJson) {
 								_getViewsGrid(onViewGridSuccess); 
 								$copyviewbtn.CswButton('disable');
@@ -249,9 +257,14 @@ var CswViewEditor_WizardSteps = {
 				case CswViewEditor_WizardSteps.step1.step:
 					break;
 				case CswViewEditor_WizardSteps.step2.step:
-					CswAjaxXml({
+					var dataXml = {
+                        ViewId: _getSelectedViewId($viewgrid)
+                    };
+
+                    CswAjaxXml({
 						url: o.ViewInfoUrl,
-						data: 'ViewId='+ _getSelectedViewId($viewgrid),
+						data: dataXml,
+                        stringify: false,
 						success: function($xml) {
 							$currentviewxml = $xml;
 
@@ -355,9 +368,15 @@ var CswViewEditor_WizardSteps = {
 		{
 			var viewid = _getSelectedViewId($viewgrid);
 
+            var dataXml = {
+                ViewId: viewid,
+                ViewXml: xmlToString($currentviewxml)
+            };
+
 			CswAjaxXml({
 				url: o.SaveViewUrl,
-				data: 'ViewId='+ viewid +'&ViewXml='+ xmlToString($currentviewxml),
+				data: dataXml,
+                stringify: true,
 				success: function ($xml) {
 					o.onFinish(viewid, _getSelectedViewMode($viewgrid));
 				} // success
@@ -373,10 +392,14 @@ var CswViewEditor_WizardSteps = {
 			$selview_span.text('');
 			if(o.startingStep === 1)
 				$wizard.CswWizard('button', 'next', 'disable');
+            
+            var dataJson = {
+                All: all
+            };
 
 			CswAjaxJSON({
 				url: o.ViewGridUrl,
-				data: "{ All: "+ all +" }",
+				data: dataJson,
 				success: function (gridJson) {
 
 					$viewgrid_div.empty();
@@ -654,9 +677,15 @@ var CswViewEditor_WizardSteps = {
 					$table.CswTable('cell', 2, 1).append('Group By');
 					var $groupbyselect = $('<select id="' + o.ID + '_gbs" />')
 												.appendTo($table.CswTable('cell', 2, 2));
-					CswAjaxXml({
+					var dataXml = {
+                        Type: $viewnodexml.CswAttrXml('secondtype'),
+                        Id: $viewnodexml.CswAttrXml('secondid')
+                    }
+                    
+                    CswAjaxXml({
 						url: o.PropNamesUrl,
-						data: "Type=" + $viewnodexml.CswAttrXml('secondtype') + "&Id=" + $viewnodexml.CswAttrXml('secondid'),
+						data: dataXml,
+                        stringify: false,
 						success: function($xml) {
 							$groupbyselect.empty();
 							$('<option value="">[None]</option>')
@@ -877,9 +906,17 @@ var CswViewEditor_WizardSteps = {
 					{
 						// relationships or properties
 						treestr += '<li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li>';
-						CswAjaxXml({
+						
+                        var dataXml = {
+                            StepNo: stepno,
+                            ArbitraryId: arbid,
+                            ViewXml: xmlToString($currentviewxml)
+                        };
+
+                        CswAjaxXml({
 							url: o.ChildOptionsUrl,
-							data: "StepNo=" + stepno + "&ArbitraryId=" + arbid + "&ViewXml=" + xmlToString($currentviewxml),
+							data: dataXml,
+                            stringify: true,
 							success: function($xml) 
 							{
 								var $select = $('#' + stepno + '_' + arbid + '_child');

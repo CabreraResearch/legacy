@@ -25,9 +25,14 @@
 				}
 				var $this = $(this);
 
+                var dataXml = {
+                    RoleId: ''
+                };
+
 				CswAjaxXml({
 					url: o.Url,
-					data: "RoleId=",
+					data: dataXml,
+                    stringify: false,
 					success: function ($xml) {
 						var $WelcomeDiv = $('<div id="welcomediv"></div>')
 											.appendTo($this)
@@ -281,10 +286,15 @@
         if($textcell.length > 0)
         {
             var welcomeid = $textcell.children('input').CswAttrDom('welcomeid');
-		
+		    
+            var dataJson = {
+                RoleId: '', 
+                WelcomeId: welcomeid
+            };
+
 			CswAjaxJSON({
 				url: r.RemoveWelcomeItemUrl,
-				data: '{ "RoleId": "", "WelcomeId": "'+ welcomeid +'" }',
+				data: dataJson,
 				success: function (result) 
 					{
 						r.onSuccess();
@@ -321,7 +331,7 @@
 
         CswAjaxJSON({
 			url: a.AddWelcomeItemUrl,
-			data: JSON.stringify( dataJson ),
+			data: dataJson,
 			success: function (result) 
 				{
 					a.onSuccess();
@@ -356,9 +366,17 @@
         if($textcell.length > 0)
         {
             var welcomeid = $textcell.children('input').CswAttrDom('welcomeid');
+            
+            var dataJson = {
+                RoleId: '', 
+                WelcomeId: welcomeid, 
+                NewRow: newrow, 
+                NewColumn: newcolumn
+            };
+            
             CswAjaxJSON({
 				url: MoveWelcomeItemUrl,
-				data: '{ "RoleId": "", "WelcomeId": "'+ welcomeid +'", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '" }',
+				data: dataJson,
 				success: function (result) {
                             }
             });

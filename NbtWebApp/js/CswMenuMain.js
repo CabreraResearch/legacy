@@ -35,9 +35,15 @@
 
 		var $MenuDiv = $(this);
 
+        var dataXml = {
+            ViewNum: o.viewid,
+            SafeNodeKey: o.cswnbtnodekey
+        };
+
 		CswAjaxXml({
 			url: o.Url,
-			data: "ViewNum=" + o.viewid + "&SafeNodeKey=" + o.cswnbtnodekey,
+			data: dataXml,
+            stringify: false,
 			success: function ($xml) {
 				var $ul = $('<ul class="topnav"></ul>');
 

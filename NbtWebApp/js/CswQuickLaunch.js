@@ -12,9 +12,14 @@
 		}
 		var $this = $(this);
 
+        var dataXml = {
+            UserId: ''
+        }
+
 		CswAjaxXml({
 			url: o.Url,
-			data: "{ UserId: '' }",
+			data: dataXml,
+            stringify: false,
 			success: function ($xml) {
 				var $QuickLaunchDiv = $('<div id="quicklaunchdiv"><ul id="launchitems"></ul></div>')
 									.appendTo($this);

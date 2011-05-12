@@ -1,4 +1,9 @@
-﻿; (function ($) {
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
+; (function ($) { /// <param name="$" type="jQuery" />
         
     var PluginName = 'CswFieldTypeText';
 
@@ -9,7 +14,7 @@
             $Div.contents().remove();
 
             var Value = o.$propxml.children('text').text().trim();
-            var Length = o.$propxml.children('text').CswAttrXml('length');
+            var Length = tryParseNumber( o.$propxml.children('text').CswAttrXml('length'), 14 );
 
             if(o.ReadOnly)
             {
@@ -21,7 +26,7 @@
                                                         type: CswInput_Types.text,
                                                         value: Value,
                                                         cssclass: 'textinput',
-                                                        width: Length,
+                                                        width: Length * 7,
                                                         onChange: o.onchange
                                                       });
 

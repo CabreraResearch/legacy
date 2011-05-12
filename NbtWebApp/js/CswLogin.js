@@ -80,9 +80,15 @@
 																o.onAuthenticate(UserName);
 															}
 
+                                                            var dataJson = {
+                                                                AccessId: AccessId, 
+                                                                UserName: UserName, 
+                                                                Password: Password
+                                                            };
+
 															CswAjaxJSON({
 																		url: o.AuthenticateUrl,
-																		data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
+																		data: dataJson,
 																		success: function (data) {
 																			auth = data.AuthenticationStatus;
                                                                             if(auth === 'Authenticated')
@@ -124,7 +130,7 @@
 						
 			CswAjaxJSON({
 							url: o.DeauthenticateUrl,
-							data: "",
+							data: {},
 							success: function (data) {
 								$.CswCookie('clear', CswCookieName.Username);
 								o.onDeauthenticate();

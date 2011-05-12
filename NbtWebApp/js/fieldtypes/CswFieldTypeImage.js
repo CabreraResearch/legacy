@@ -1,4 +1,9 @@
-﻿; (function ($) {
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
+
+; (function ($) { /// <param name="$" type="jQuery" />
         
     var PluginName = 'CswFieldTypeImage';
 
@@ -59,9 +64,14 @@
 											
 											if(confirm("Are you sure you want to clear this image?"))
 											{
-												CswAjaxJSON({
+												var dataJson = {
+                                                    PropId: o.$propxml.CswAttrXml('id'), 
+                                                    IncludeBlob: true
+                                                };
+                                                
+                                                CswAjaxJSON({
 													'url': '/NbtWebApp/wsNBT.asmx/clearProp',
-													'data': '{ "PropId": "' + o.$propxml.CswAttrXml('id') + '", "IncludeBlob": "true" }',
+													'data': dataJson,
 													'success': function() { o.onReload(); }
 												});
 											}

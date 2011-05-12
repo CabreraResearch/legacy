@@ -91,9 +91,15 @@ var ViewBuilder_CssClasses = {
             
             if ( isNullOrEmpty( o.$propsXml ) && !isNullOrEmpty( o.proparbitraryid ) )
             {
+                var dataXml = {
+                    ViewXml: o.viewxml,
+                    PropArbitraryId: o.proparbitraryid
+                };
+
                 CswAjaxXml({ 
 		            'url': o.getNewPropsUrl,
-		            'data': "ViewXml=" + o.viewxml + "&PropArbitraryId=" + o.proparbitraryid,
+		            'data': dataXml,
+                    stringify: true,
                     'success': function($xml) { 
                                 o.$propsXml = $xml.children('propertyfilters').children('property');
                                 o.filtarbitraryid = o.$propsXml.CswAttrXml('filtarbitraryid');
@@ -320,9 +326,14 @@ var ViewBuilder_CssClasses = {
 
             //var $filterXml;
 
+            var dataXml = {
+                ViewXml: o.viewxml,
+                PropFiltJson: o.filtJson
+            };
+
             CswAjaxXml({ 
 			'url': o.url,
-			'data': "ViewXml="  + o.viewxml + "&PropFiltJson=" + jsonToString(o.filtJson),
+			'data': dataXml,
             'success': function($filter) { 
                     //$filterXml = $filter;
                     o.onSuccess($filter);

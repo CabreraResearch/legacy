@@ -19,13 +19,13 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
     ///     &#10;4 - options.error: function() {}
     /// </param>
     var o = {
-		url: '',
-		data: '',
-        onloginfail: function() {},
-		success: function (result) { },
-		error: function () { },
+        url: '',
+        data: {},
+        onloginfail: function () { },
+        success: function (result) { },
+        error: function () { },
         formobile: false
-	};
+    };
     
 	if (options) $.extend(o, options);
 
@@ -35,7 +35,7 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
 	    url: o.url,
 	    dataType: "json",
 	    contentType: 'application/json; charset=utf-8',
-	    data: o.data,
+	    data: JSON.stringify( o.data ),
 	    success: function (data, textStatus, XMLHttpRequest)
 	    {
 	        //var endtime = new Date();
@@ -81,32 +81,42 @@ function CswAjaxXml(options) {
     /// <param name="options" type="Object">
     ///     A JSON Object
     ///     &#10;1 - options.url: WebService URL
-    ///     &#10;2 - options.data: field1=value + ampersand + field2=value
+    ///     &#10;2 - options.data: {field1: value, field2: value}
     ///     &#10;3 - options.success: function() {}
     ///     &#10;4 - options.error: function() {}
     ///     &#10;5 - options.formobile: false
     /// </param>
 
     var o = {
-		url: '',
-		data: '',
-        onloginfail: function() {},
-		success: function ($xml) { },
-		error: function () { },
+        url: '',
+        data: {},
+        stringify: false, //in case we need to conditionally apply $.param() instead of JSON.stringify() (or both)
+        onloginfail: function () { },
+        success: function ($xml) { },
+        error: function () { },
         formobile: false
-	};
+    };
     
 	if (options) $.extend(o, options);
 
-    if ( o.url !== '')
-	{
+    if ( !isNullOrEmpty(o.url) )
+    {
+        var ajaxData;
+        //if (!o.stringify)
+        //{
+            ajaxData = $.param(o.data);
+        //}
+        //else
+        //{
+        //    ajaxData = JSON.stringify( $.param(o.data) );
+        //}
 		//var starttime = new Date();
 	    $.ajax({
 	        type: 'POST',
 	        url: o.url,
 	        dataType: "xml",
 	        //contentType: 'application/json; charset=utf-8',
-	        data: o.data,     // should be 'field1=value&field2=value'
+	        data: ajaxData,     // should be 'field1=value&field2=value'
 	        success: function (data, textStatus, XMLHttpRequest)
 	        {
 	            //var endtime = new Date();
@@ -219,48 +229,48 @@ function xmlToString($xmlnode) { /// <param name="$" type="jQuery" />
 
 function jsonToString(j) {
     /// <summary>
-    ///   Transforms a JSON Object into properly parsed string for consumption by a webservice
+    ///   Thin wrapper around JSON.stringify()
     /// </summary>
     /// <param name="j" type="Object">A JSON Object</param>
     /// <returns type="String" />
-    if(typeof j === "object")
-	{
-		var ret = "{";
-	 	var first = true;
-		for (var property in j)
-		{
-			if (j.hasOwnProperty(property))
-			{
-				if (!first)
-					ret += ",";
-				ret += " '" + property + "': ";
-				ret += jsonToString(j[property]);
-				first = false;
-			}
-		}
-		ret += "}";
-	} 
-	else
-	{
-		ret = "'" + safeJsonParam(j) + "'";
-	}
-	return ret;
+//    if(typeof j === "object")
+//	{
+//		var ret = "{";
+//	 	var first = true;
+//		for (var property in j)
+//		{
+//			if (j.hasOwnProperty(property))
+//			{
+//				if (!first)
+//					ret += ",";
+//				ret += " '" + property + "': ";
+//				ret += jsonToString(j[property]);
+//				first = false;
+//			}
+//		}
+//		ret += "}";
+//	} 
+//	else
+//	{
+//		ret = "'" + safeJsonParam(j) + "'";
+//	}
+	return JSON.stringify(j);
 } // jsonToString
 
-function safeJsonParam(obj) {
-    /// <summary>
-    ///   Converts an object toString and returns a regex parsed, safe-for-JSON string
-    /// </summary>
-    /// <param name="options" type="Object">A JavaScript Object representing a string to parse</param>
-    /// <returns type="String" />
-    var ret = '';
-    if (obj !== undefined)
-    {
-        var str = obj.toString();
-        ret = str.replace(/'/g, "\\'");
-    }
-	return ret;
-}
+//function safeJsonParam(obj) {
+//    /// <summary>
+//    ///   Converts an object toString and returns a regex parsed, safe-for-JSON string
+//    /// </summary>
+//    /// <param name="options" type="Object">A JavaScript Object representing a string to parse</param>
+//    /// <returns type="String" />
+//    var ret = '';
+//    if (obj !== undefined)
+//    {
+//        var str = obj.toString();
+//        ret = str.replace(/'/g, "\\'");
+//    }
+//	return ret;
+//}
 
 // ------------------------------------------------------------------------------------
 // Check Changes
@@ -424,10 +434,15 @@ function copyNode(options) {
 	if (options)
 	{
 		$.extend(o, options);
-	}
+    }
+
+    var dataJson = {
+        NodePk: o.nodeid
+    };
+
 	CswAjaxJSON({
 		url: '/NbtWebApp/wsNBT.asmx/CopyNode',
-		data: '{ "NodePk":"' + o.nodeid + '" }',
+		data: dataJson,
 		success: function (result)
 		{
 			o.onSuccess(result.NewNodeId, '');
@@ -452,11 +467,9 @@ function deleteNodes(options) { /// <param name="$" type="jQuery" />
         NodeKeys: o.nodekeys
 	};
 
-	datastr = JSON.stringify(jData, "'");  //jsonToString(jData);
-
 	CswAjaxJSON({
 		url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',
-		data: datastr,
+		data: jData,
 		success: function (result) {
 			o.onSuccess('', '');  // returning '' will reselect the first node in the tree
 		},
@@ -851,14 +864,30 @@ function tryParseString(inputStr, defaultStr)
     /// <summary>
     ///   Returns the inputStr if !isNullOrEmpty, else returns the defaultStr
     /// </summary>
-    /// <param name="str" type="Object">
-    ///     String or object to parse
-    /// </param>
+    /// <param name="inputStr" type="String"> String to parse </param>
+    /// <param name="defaultStr" type="String"> Default value if null or empty </param>
     /// <returns type="String" />
     var ret = defaultStr;
     if( !isNullOrEmpty( inputStr ) )
     {
         ret = inputStr;
+    }
+    return ret;
+}
+
+function tryParseNumber(inputNum, defaultNum)
+{
+    /// <summary>
+    ///   Returns the inputNum if !NaN, else returns the defaultNum
+    /// </summary>
+    /// <param name="inputNum" type="String"> String to parse to number </param>
+    /// <param name="defaultNum" type="String"> Default value if not a number </param>
+    /// <returns type="String" />
+    var ret = new Number(defaultNum);
+    var tryRet = new Number(inputNum);
+    if (tryRet !== NaN)
+    {
+        ret = tryRet;
     }
     return ret;
 }

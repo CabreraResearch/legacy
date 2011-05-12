@@ -15,7 +15,8 @@
 
         CswAjaxXml({
             url: o.Url,
-            data: "",
+            data: {},
+            stringify: false,
             success: function ($xml) {
                 var $ul = $('<ul class="topnav"></ul>');
 
