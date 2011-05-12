@@ -38,6 +38,7 @@
                 'data': data,
                 'UseRadios': (SelectMode === 'Single'),
                 'Required': o.Required,
+                'ReadOnly': o.ReadOnly,
                 'onchange': o.onchange
             });
 

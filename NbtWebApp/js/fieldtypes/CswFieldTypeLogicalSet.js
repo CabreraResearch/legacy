@@ -60,17 +60,18 @@
                 }
 
                 var $elm = { 'label': $this.children('column[field="' + NameCol + '"]').CswAttrXml('value'),
-                                'key': $this.children('column[field="' + KeyCol + '"]').CswAttrXml('value'),
-                                'values': values };
+                             'key': $this.children('column[field="' + KeyCol + '"]').CswAttrXml('value'),
+                             'values': values };
                 data[d] = $elm;
                 d++;
             });
                 
             $CBADiv.CswCheckBoxArray('init', {
-                                        'ID': o.ID + '_cba',
-                                        'cols': cols,
-                                        'data': data,
-                                        'onchange': o.onchange
+                                     'ID': o.ID + '_cba',
+                                     'cols': cols,
+                                     'data': data,
+                                     'onchange': o.onchange,
+									 'ReadOnly': o.ReadOnly
                                     });
 
 

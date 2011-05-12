@@ -37,6 +37,7 @@
 					'data': data,
 					'UseRadios': false,
 					'Required': o.Required,
+					'ReadOnly': o.ReadOnly,
 					'onchange': o.onchange
 				});
             },
