@@ -408,32 +408,36 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
                     {
-                        Int32 TargetNodeTypeId = Node.Properties[MetaDataProp].AsRelationship.TargetId;
-                        if( Int32.MinValue != TargetNodeTypeId )
+                        // review 21813: Can always view the relationship prop
+                        if( Permission != NodeTypePermission.View )
                         {
-                            var TargetIdType = Node.Properties[MetaDataProp].AsRelationship.TargetType;
-                            switch( TargetIdType )
+                            Int32 TargetNodeTypeId = Node.Properties[MetaDataProp].AsRelationship.TargetId;
+                            if( Int32.MinValue != TargetNodeTypeId )
                             {
-                                case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                                    {
-                                        CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId );
-                                        if( null != TargetNodeType )
+                                var TargetIdType = Node.Properties[MetaDataProp].AsRelationship.TargetType;
+                                switch( TargetIdType )
+                                {
+                                    case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
                                         {
-                                            ret = PropPermissions.CheckValue( Permission.ToString(), TargetNodeType.FirstVersionNodeTypeId.ToString() );
+                                            CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId );
+                                            if( null != TargetNodeType )
+                                            {
+                                                ret = PropPermissions.CheckValue( Permission.ToString(), TargetNodeType.FirstVersionNodeTypeId.ToString() );
+                                            }
+                                            break;
                                         }
-                                        break;
-                                    }
-                                case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                                    {
-                                        CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetNodeTypeId );
-                                        if( null != TargetObjectClass )
+                                    case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
                                         {
-                                            ret = PropPermissions.CheckValue( Permission.ToString(), TargetObjectClass.ObjectClassId.ToString() );
+                                            CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetNodeTypeId );
+                                            if( null != TargetObjectClass )
+                                            {
+                                                ret = PropPermissions.CheckValue( Permission.ToString(), TargetObjectClass.ObjectClassId.ToString() );
+                                            }
+                                            break;
                                         }
-                                        break;
-                                    }
-                            }
+                                }
 
+                            }
                         }
                         break;
                     }
