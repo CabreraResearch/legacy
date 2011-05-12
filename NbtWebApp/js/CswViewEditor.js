@@ -45,6 +45,8 @@ var CswViewEditor_WizardSteps = {
 			WizardSteps[i] = WizardStepArray[i-1].description;
         }
 
+        var CurrentStep = o.startingStep;
+
 		var $parent = $(this);
 		var $div = $('<div></div>')
 					.appendTo($parent);
@@ -255,9 +257,11 @@ var CswViewEditor_WizardSteps = {
 			switch(newstepno)
 			{
 				case CswViewEditor_WizardSteps.step1.step:
-					break;
+					CurrentStep = CswViewEditor_WizardSteps.step1.step;
+                    break;
 				case CswViewEditor_WizardSteps.step2.step:
-					var dataXml = {
+					CurrentStep = CswViewEditor_WizardSteps.step2.step;
+                    var dataXml = {
                         ViewId: _getSelectedViewId($viewgrid)
                     };
 
@@ -280,8 +284,8 @@ var CswViewEditor_WizardSteps = {
 								}
 							}
 
-							if($currentviewxml.CswAttrXml('formobile') === 'true') {
-								$formobilecheckbox.CswAttrDom('checked', 'true');
+							if( isTrue( $currentviewxml.CswAttrXml('formobile') ) ) {
+								$formobilecheckbox.val(true);
 							}
 							var mode = $currentviewxml.CswAttrXml('mode')
 							$displaymodespan.text(mode);
@@ -297,48 +301,56 @@ var CswViewEditor_WizardSteps = {
 					}); // ajax
 					break;
 				case CswViewEditor_WizardSteps.step3.step:
-
+                    CurrentStep = CswViewEditor_WizardSteps.step3.step;
 					// save step 2 content to $currentviewxml
 					if($currentviewxml !== undefined)
 					{
-						$currentviewxml.CswAttrXml('viewname', $viewnametextbox.val());
-						$currentviewxml.CswAttrXml('category', $categorytextbox.val());
-						if($currentviewxml.CswAttrXml('visibility') !== 'Property')
-						{
-							$currentviewxml.CswAttrXml('visibility', v.getvisibilityselect().val());
-				
-							// temporary workaround
-							var rolenodeid = v.getvisroleselect().val();
-							if(!isNullOrEmpty(rolenodeid))
-							{
-								rolenodeid = rolenodeid.substr('nodes_'.length)
-							}
-							var usernodeid = v.getvisuserselect().val();
-							if(!isNullOrEmpty(usernodeid))
-							{
-								usernodeid = usernodeid.substr('nodes_'.length)
-							}
-							$currentviewxml.CswAttrXml('visibilityroleid', rolenodeid);
-							$currentviewxml.CswAttrXml('visibilityuserid', usernodeid);
-						}
-						$currentviewxml.CswAttrXml('formobile', ($formobilecheckbox.CswAttrDom('checked') === 'true'));
-						$currentviewxml.CswAttrXml('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
+						cacheStepTwo();
 					} // if($currentviewxml !== undefined)
 
 					// make step 3 tree
 					_makeViewTree(CswViewEditor_WizardSteps.step3.step, $treediv3);
 					break;
 				case CswViewEditor_WizardSteps.step4.step:
+                    CurrentStep = CswViewEditor_WizardSteps.step4.step;
 					_makeViewTree(CswViewEditor_WizardSteps.step4.step, $treediv4);
 					break;
 				case CswViewEditor_WizardSteps.step5.step:
+                    CurrentStep = CswViewEditor_WizardSteps.step5.step;
 					_makeViewTree(CswViewEditor_WizardSteps.step5.step, $treediv5);
 					break;
 				case CswViewEditor_WizardSteps.step6.step:
+                    CurrentStep = CswViewEditor_WizardSteps.step6.step;
 					_makeViewTree(CswViewEditor_WizardSteps.step6.step, $table6.CswTable('cell', 1, 1));
 					break;
 			} // switch(newstepno)
 		} // _handleNext()
+
+        function cacheStepTwo()
+        {
+            $currentviewxml.CswAttrXml('viewname', $viewnametextbox.val());
+			$currentviewxml.CswAttrXml('category', $categorytextbox.val());
+			if($currentviewxml.CswAttrXml('visibility') !== 'Property')
+			{
+				$currentviewxml.CswAttrXml('visibility', v.getvisibilityselect().val());
+				
+				// temporary workaround
+				var rolenodeid = v.getvisroleselect().val();
+				if(!isNullOrEmpty(rolenodeid))
+				{
+					rolenodeid = rolenodeid.substr('nodes_'.length)
+				}
+				var usernodeid = v.getvisuserselect().val();
+				if(!isNullOrEmpty(usernodeid))
+				{
+					usernodeid = usernodeid.substr('nodes_'.length)
+				}
+				$currentviewxml.CswAttrXml('visibilityroleid', rolenodeid);
+				$currentviewxml.CswAttrXml('visibilityuserid', usernodeid);
+			}
+			$currentviewxml.CswAttrXml('formobile', $formobilecheckbox.is(':checked') );
+			$currentviewxml.CswAttrXml('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
+        }
 
 		function _handlePrevious(newstepno)
 		{
@@ -367,6 +379,12 @@ var CswViewEditor_WizardSteps = {
 		function _handleFinish()
 		{
 			var viewid = _getSelectedViewId($viewgrid);
+
+            if( CurrentStep === CswViewEditor_WizardSteps.step2.step &&
+                !isNullOrEmpty( $currentviewxml ) )
+            {
+                cacheStepTwo();
+            }
 
             var dataXml = {
                 ViewId: viewid,
