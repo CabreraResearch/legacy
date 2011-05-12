@@ -254,13 +254,12 @@ var CswViewEditor_WizardSteps = {
 
 		function _handleNext(newstepno)
 		{
+            CurrentStep = newstepno;
 			switch(newstepno)
 			{
 				case CswViewEditor_WizardSteps.step1.step:
-					CurrentStep = CswViewEditor_WizardSteps.step1.step;
                     break;
 				case CswViewEditor_WizardSteps.step2.step:
-					CurrentStep = CswViewEditor_WizardSteps.step2.step;
                     var dataXml = {
                         ViewId: _getSelectedViewId($viewgrid)
                     };
@@ -300,7 +299,6 @@ var CswViewEditor_WizardSteps = {
 					}); // ajax
 					break;
 				case CswViewEditor_WizardSteps.step3.step:
-                    CurrentStep = CswViewEditor_WizardSteps.step3.step;
 					// save step 2 content to $currentviewxml
 					if($currentviewxml !== undefined)
 					{
@@ -311,15 +309,12 @@ var CswViewEditor_WizardSteps = {
 					_makeViewTree(CswViewEditor_WizardSteps.step3.step, $treediv3);
 					break;
 				case CswViewEditor_WizardSteps.step4.step:
-                    CurrentStep = CswViewEditor_WizardSteps.step4.step;
 					_makeViewTree(CswViewEditor_WizardSteps.step4.step, $treediv4);
 					break;
 				case CswViewEditor_WizardSteps.step5.step:
-                    CurrentStep = CswViewEditor_WizardSteps.step5.step;
 					_makeViewTree(CswViewEditor_WizardSteps.step5.step, $treediv5);
 					break;
 				case CswViewEditor_WizardSteps.step6.step:
-                    CurrentStep = CswViewEditor_WizardSteps.step6.step;
 					_makeViewTree(CswViewEditor_WizardSteps.step6.step, $table6.CswTable('cell', 1, 1));
 					break;
 			} // switch(newstepno)
@@ -354,6 +349,7 @@ var CswViewEditor_WizardSteps = {
 
 		function _handlePrevious(newstepno)
 		{
+            CurrentStep = newstepno;
 			switch(newstepno)
 			{
 				case CswViewEditor_WizardSteps.step1.step: 
