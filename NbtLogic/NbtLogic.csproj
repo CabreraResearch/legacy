@@ -323,6 +323,16 @@
     <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_06.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_07.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_08.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_06.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_07.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_08.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_09.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_10.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_004.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_003.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTestCaseRsrc.cs" />
@@ -336,6 +346,7 @@
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_010.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_011.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_012.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_013.cs" />
     <Compile Include="csw\Security\CswNbtAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSystemUser.cs" />
     <Compile Include="csw\Security\ICswNbtUser.cs" />
