@@ -1,12 +1,13 @@
 using System;
-using System.Xml;
 using System.Data;
+using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -14,59 +15,59 @@ namespace ChemSW.Nbt.MetaData
     {
         public enum NodeTypePropAttributes
         {
-            append, 
-            auditlevel, 
-            datetoday, 
-            display_col, 
-            display_row, 
+            append,
+            auditlevel,
+            datetoday,
+            display_col,
+            display_row,
             //fieldtypeid, 
             //fkvalue, 
-            isbatchentry, 
+            isbatchentry,
             //isfk, 
-            isrequired, 
-            isunique, 
-            length, 
+            isrequired,
+            isunique,
+            length,
             //nodetypeid, 
             //nodetypepropid, 
             //nodetypetabsetid, 
             //objectclasspropid, 
-            servermanaged, 
-            textareacols, 
-            textarearows, 
-            textlength, 
-            url, 
-            valuepropid, 
-            width, 
-            sequenceid, 
-            numberprecision, 
-            listoptions, 
-            compositetemplate, 
+            servermanaged,
+            textareacols,
+            textarearows,
+            textlength,
+            url,
+            valuepropid,
+            width,
+            sequenceid,
+            numberprecision,
+            listoptions,
+            compositetemplate,
             //fktype, 
-            valueproptype, 
-            statictext, 
-            multi, 
-            nodeviewid, 
-            read_only, 
-            display_col_add, 
-            display_row_add, 
-            setvalonadd, 
-            numberminvalue, 
-            numbermaxvalue, 
-            usenumbering, 
-            questionno, 
-            subquestionno, 
-            filter, 
-            filterpropid, 
+            valueproptype,
+            statictext,
+            multi,
+            nodeviewid,
+            read_only,
+            display_col_add,
+            display_row_add,
+            setvalonadd,
+            numberminvalue,
+            numbermaxvalue,
+            usenumbering,
+            questionno,
+            subquestionno,
+            filter,
+            filterpropid,
             //firstpropversionid, 
             //priorpropversionid, 
-            valueoptions, 
+            valueoptions,
             //defaultvalue, 
-            helptext, 
-            propname, 
+            helptext,
+            propname,
             //defaultvalueid, 
-            isquicksearch, 
-            extended, 
-            hideinmobile, 
+            isquicksearch,
+            extended,
+            hideinmobile,
             mobilesearch,
             Unknown
         }
@@ -89,7 +90,7 @@ namespace ChemSW.Nbt.MetaData
                 ReturnVal = Attribute.ToString().Replace( "_", "" );
             return ( ReturnVal );
         }
-        
+
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _NodeTypePropRow;
         public CswNbtMetaDataNodeTypeProp( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row )
@@ -375,6 +376,27 @@ namespace ChemSW.Nbt.MetaData
                         break;
                 }
             }
+        }
+
+        public bool EditProp( CswNbtNode Node, ICswNbtUser User, bool InPopUp )
+        {
+            CswNbtMetaDataNodeTypeProp Prop = this;
+            bool IsOnAdd = ( ( IsRequired && DefaultValue.Empty ) ||
+                             Node.Properties[Prop].TemporarilyRequired ||
+                             SetValueOnAdd );
+            var ret = ( ( !InPopUp || IsOnAdd ) &&
+                        FilterNodeTypePropId == Int32.MinValue &&
+                        !( Node.Properties[Prop].Hidden ) &&
+                        User.CheckPermission( NodeTypePermission.Edit, Prop.NodeType.NodeTypeId, Node, Prop ) );
+            return ret;
+        }
+
+        public bool ShowProp( CswNbtNode Node, ICswNbtUser User )
+        {
+            CswNbtMetaDataNodeTypeProp Prop = this;
+            var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
+                        User.CheckPermission( NodeTypePermission.View, Prop.NodeType.NodeTypeId, Node, Prop ) );
+            return ret;
         }
 
         /// <summary>
@@ -854,10 +876,10 @@ namespace ChemSW.Nbt.MetaData
 
         public bool SetValueOnAddEnabled
         {
-            get 
+            get
             {
                 // Case 20480
-                return ( !( IsRequired && DefaultValue.Empty ) && !hasFilter() ); 
+                return ( !( IsRequired && DefaultValue.Empty ) && !hasFilter() );
             }
         }
 

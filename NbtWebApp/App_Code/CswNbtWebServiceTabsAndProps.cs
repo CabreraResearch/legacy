@@ -10,6 +10,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -21,9 +22,12 @@ namespace ChemSW.Nbt.WebServices
 		public enum NodeEditMode { Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue };
 
 		private readonly CswNbtResources _CswNbtResources;
-		public CswNbtWebServiceTabsAndProps( CswNbtResources CswNbtResources )
+	    private readonly ICswNbtUser _ThisUser;
+
+        public CswNbtWebServiceTabsAndProps( CswNbtResources CswNbtResources )
 		{
 			_CswNbtResources = CswNbtResources;
+            _ThisUser = _CswNbtResources.CurrentNbtUser;
 		}
 
 		private CswNbtNode _getNode( string NodeId, string NodeKey )
@@ -81,19 +85,14 @@ namespace ChemSW.Nbt.WebServices
 
 			if( EditMode == NodeEditMode.AddInPopup )
 			{
-				CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+			    CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
 
-				foreach( CswNbtMetaDataNodeTypeProp Prop in Node.NodeType.NodeTypeProps )
-				{
-					if( ( ( Prop.IsRequired && Prop.DefaultValue.Empty ) ||
-						  Node.Properties[Prop].TemporarilyRequired ||
-						  Prop.SetValueOnAdd ) &&
-						Prop.FilterNodeTypePropId == Int32.MinValue &&
-						!( Node.Properties[Prop].Hidden ) )
-					{
-						_addProp( PropXmlDoc, EditMode, Node, Prop );
-					}
-				}
+			    foreach( CswNbtMetaDataNodeTypeProp Prop in Node.NodeType.NodeTypeProps
+                                                                         .Cast<CswNbtMetaDataNodeTypeProp>()
+                                                                         .Where( Prop => Prop.EditProp( Node, _ThisUser, true ) ) )
+			    {
+			        _addProp( PropXmlDoc, EditMode, Node, Prop );
+			    }
 			}
 			else
 			{
@@ -112,18 +111,17 @@ namespace ChemSW.Nbt.WebServices
 					// case 21209
 					if( Node.NodeSpecies == NodeSpecies.Plain )
 					{
-						CswNbtActUpdatePropertyValue PropUpdater = new Actions.CswNbtActUpdatePropertyValue( _CswNbtResources );
+						CswNbtActUpdatePropertyValue PropUpdater = new CswNbtActUpdatePropertyValue( _CswNbtResources );
 						PropUpdater.UpdateNode( Node, true );
 						Node.postChanges( false );
 					}
 
 					CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
-					foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
+					foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder
+                                                                   .Cast<CswNbtMetaDataNodeTypeProp>()
+                                                                   .Where( Prop => Prop.ShowProp( Node, _ThisUser ) ) )
 					{
-						if( !Prop.hasFilter() && !Node.Properties[Prop].Hidden )
-						{
-							_addProp( PropXmlDoc, EditMode, Node, Prop );
-						}
+					    _addProp( PropXmlDoc, EditMode, Node, Prop );
 					}
 				}
 				//}

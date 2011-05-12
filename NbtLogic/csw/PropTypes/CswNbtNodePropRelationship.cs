@@ -123,6 +123,9 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        /// <summary>
+        /// CswNbtViewRelationship.RelatedIdType of the TargetId
+        /// </summary>
         public CswNbtViewRelationship.RelatedIdType TargetType
         {
             get
@@ -144,6 +147,10 @@ namespace ChemSW.Nbt.PropTypes
             //    _CswNbtMetaDataNodeTypeProp.FKType = value.ToString();
             //}
         }
+
+        /// <summary>
+        /// Relationship's Target NodeTypeId
+        /// </summary>
         public Int32 TargetId
         {
             get
@@ -212,15 +219,15 @@ namespace ChemSW.Nbt.PropTypes
             XmlNode RelatedNodeIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _NodeIDSubField.ToXmlNodeName() );
             if( RelatedNodeId != null )
                 RelatedNodeIdNode.InnerText = RelatedNodeId.PrimaryKey.ToString();
-			
-			XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
 
-			if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
-			{
-				XmlNode NodeTypeNode = CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
-			}
+            XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
 
-			XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
+            if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+            {
+                XmlNode NodeTypeNode = CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
+            }
+
+            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
             Dictionary<CswPrimaryKey, string> Options = getOptions();
             foreach( CswPrimaryKey NodePk in Options.Keys )
             {
