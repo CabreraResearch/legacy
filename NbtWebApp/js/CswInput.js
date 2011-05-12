@@ -80,10 +80,7 @@ var CswInput_Types = {
                     $input.val(o.value);
                 }
 
-                if( o.type === CswInput_Types.text && !isNullOrEmpty( o.width ) && !isNullOrEmpty(o.type.defaultwidth) )
-                {
-                    o.width = o.type.defaultwidth;
-                }
+                o.width = tryParseString( o.width, o.type.defaultwidth);
             }
             
             if( !isNullOrEmpty( o.cssclass ) ) $input.addClass(o.cssclass);
