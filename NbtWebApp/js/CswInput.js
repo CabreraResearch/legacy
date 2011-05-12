@@ -24,7 +24,7 @@ var CswInput_Types = {
     search: { id: 16, name: 'search', placeholder: true, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '' },
     submit: { id: 17, name: 'submit', placeholder: false, autocomplete: false, value: { required: false, allowed: true}, defaultwidth: '' },
     tel: { id: 18, name: 'button', placeholder: true, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '' },
-    text: { id: 19, name: 'text', placeholder: true, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '' },
+    text: { id: 19, name: 'text', placeholder: true, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '200px' },
     time: { id: 20, name: 'time', placeholder: false, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '200px' },
     url: { id: 21, name: 'url', placeholder: true, autocomplete: true, value: { required: false, allowed: true}, defaultwidth: '200px' },
     week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true}, defaultwidth: '' }
