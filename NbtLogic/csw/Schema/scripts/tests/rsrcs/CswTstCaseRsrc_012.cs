@@ -29,12 +29,18 @@ namespace ChemSW.Nbt.Schema
         }//ctor
 
 
-        public string Purpose = "Reject stale column value";
+        public string Purpose = "Rollback stale column value";
 
         public string FakeTestTableName { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
-        public string FakeTestColumnName { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }
+        public string FakeValColumnName { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }
+        public string FakePkColumnName { get { return ( FakeTestTableName + "id" ); } }
 
         public string LocalAribtiraryValue { get { return ( this.GetType().Name + "_testvalue" ); } }
+
+
+        public string Val_Row_1 { get { return( "eenie"); } } 
+        public string Val_Row_2 { get { return( "meeny"); } } 
+        public string Val_Row_3 { get { return( "minie"); } } 
 
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback

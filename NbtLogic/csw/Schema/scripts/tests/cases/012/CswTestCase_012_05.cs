@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_012.Purpose, "Add a test table" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_012.Purpose, "Commit row three value" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_012 _CswTstCaseRsrc_012 = null;
@@ -38,6 +38,13 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
+            CswTableUpdate CswArbitraryTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_012.FakeTestTableName );
+            CswArbitraryTableUpdate.StorageMode = StorageMode.Cached; // causes the rolback behavior we want
+            DataTable DataTableArbitrary = CswArbitraryTableUpdate.getTable();
+
+            DataTableArbitrary.Rows[2][_CswTstCaseRsrc_012.FakeValColumnName] = _CswTstCaseRsrc_012.Val_Row_3;
+            CswArbitraryTableUpdate.update( DataTableArbitrary );
+
 
         }//runTest()
 
