@@ -271,7 +271,6 @@ var CswViewEditor_WizardSteps = {
                         stringify: false,
 						success: function($xml) {
 							$currentviewxml = $xml;
-
 							$viewnametextbox.val($currentviewxml.CswAttrXml('viewname'));
 							$categorytextbox.val($currentviewxml.CswAttrXml('category'));
 							if($currentviewxml.CswAttrXml('visibility') !== 'Property')
@@ -285,7 +284,7 @@ var CswViewEditor_WizardSteps = {
 							}
 
 							if( isTrue( $currentviewxml.CswAttrXml('formobile') ) ) {
-								$formobilecheckbox.val(true);
+								$formobilecheckbox.CswAttrDom('checked','checked');
 							}
 							var mode = $currentviewxml.CswAttrXml('mode')
 							$displaymodespan.text(mode);
@@ -348,7 +347,8 @@ var CswViewEditor_WizardSteps = {
 				$currentviewxml.CswAttrXml('visibilityroleid', rolenodeid);
 				$currentviewxml.CswAttrXml('visibilityuserid', usernodeid);
 			}
-			$currentviewxml.CswAttrXml('formobile', $formobilecheckbox.is(':checked') );
+            var formobile = ($formobilecheckbox.is(':checked') ? 'true' : 'false');
+			$currentviewxml.CswAttrXml('formobile', formobile );
 			$currentviewxml.CswAttrXml('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
         }
 
