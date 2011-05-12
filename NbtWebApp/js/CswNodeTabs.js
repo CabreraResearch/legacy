@@ -479,7 +479,7 @@
                             else
                             {
                                 doSave = false;
-                                confirm('You have not selected any properties to save.');
+                                alert('You have not selected any properties to save.');
                             }
                         } // if(o.ShowCheckboxes)
                         if( doSave ) o.onSave(data.nodeid, data.cswnbtnodekey);
