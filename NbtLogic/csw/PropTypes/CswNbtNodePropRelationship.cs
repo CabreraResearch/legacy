@@ -220,11 +220,17 @@ namespace ChemSW.Nbt.PropTypes
             if( RelatedNodeId != null )
                 RelatedNodeIdNode.InnerText = RelatedNodeId.PrimaryKey.ToString();
 
-            XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
+            CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
 
             if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
             {
-                XmlNode NodeTypeNode = CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
+                CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
+            }
+            if( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Create, TargetId, null, this.NodeTypeProp ) ||
+                _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Edit, TargetId, null, this.NodeTypeProp )
+               )
+            {
+                CswXmlDocument.AppendXmlNode( ParentNode, "allowadd", "true" );
             }
 
             XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
