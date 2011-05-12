@@ -226,9 +226,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
             }
-            if( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Create, TargetId, null, this.NodeTypeProp ) ||
-                _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Edit, TargetId, null, this.NodeTypeProp )
-               )
+            if( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Create, TargetId, null, this.NodeTypeProp ) )
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "allowadd", "true" );
             }
