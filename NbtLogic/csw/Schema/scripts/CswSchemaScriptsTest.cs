@@ -22,7 +22,8 @@ namespace ChemSW.Nbt.Schema
         private List<CswSchemaUpdateDriver> _UpdateDriverList = new List<CswSchemaUpdateDriver>();
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
 
-        private string _getCaseNumberFromTypeName( string TypeName ) { return ( TypeName.Substring( 12, 3 ) ); }
+        private string _getCaseNumberFromTestCaseTypeName( string TypeName ) { return ( TypeName.Substring( 12, 3 ) ); }
+        //        private string _getCaseNumberFromResourceTypeName( string TypeName ) { return ( TypeName.Substring( 12, 3 ) ); }
 
         public CswSchemaScriptsTest( CswNbtResources CswNbtResources, int StartAtTestCase, List<string> IgnoreCases )
         {
@@ -31,56 +32,77 @@ namespace ChemSW.Nbt.Schema
 
             List<string> TestCaseTypeNames = new List<string>();
             Dictionary<string, Type> TestCaseTypesByName = new Dictionary<string, Type>();
+            Dictionary<string, Type> TestResourceTypesByName = new Dictionary<string, Type>();
+            Dictionary<string, Object> TestResourceInstancesByName = new Dictionary<string, Object>();
             Type[] Types = Assembly.GetExecutingAssembly().GetTypes();
             foreach( Type CurrentType in Types )
             {
-                if( CurrentType.Namespace == "ChemSW.Nbt.Schema" &&
-                    CurrentType.IsClass &&
-                    typeof( ICswUpdateSchemaTo ).IsAssignableFrom( CurrentType ) &&
-                    CurrentType.Name.Contains( "CswTestCase_" )
-                    )
+                if( CurrentType.Namespace == "ChemSW.Nbt.Schema" && CurrentType.IsClass )
                 {
-
-                    string TestCaseNumberSegment = _getCaseNumberFromTypeName( CurrentType.Name );
-                    if( false == IgnoreCases.Contains( TestCaseNumberSegment ) )
+                    if( typeof( ICswUpdateSchemaTo ).IsAssignableFrom( CurrentType ) && CurrentType.Name.Contains( "CswTestCase_" ) )
                     {
-                        TestCaseTypeNames.Add( CurrentType.Name );
-                        TestCaseTypesByName.Add( CurrentType.Name, CurrentType );
-                    }
-                }
+                        string TestCaseNumberSegment = _getCaseNumberFromTestCaseTypeName( CurrentType.Name );
+                        if( false == IgnoreCases.Contains( TestCaseNumberSegment ) )
+                        {
+                            TestCaseTypeNames.Add( CurrentType.Name );
+                            TestCaseTypesByName.Add( CurrentType.Name, CurrentType );
+                        }
+                    }//if it's a test case
+
+                    if( CurrentType.Name.Contains( "CswTstCaseRsrc_" ) )
+                    {
+                        string TestCaseGroupId = CurrentType.Name.Substring( 15, 3 );
+                        if( false == TestResourceTypesByName.ContainsKey( CurrentType.Name ) )
+                        {
+                            TestResourceTypesByName.Add( TestCaseGroupId, CurrentType );
+                            TestResourceInstancesByName.Add( TestCaseGroupId, null );
+                        }
+                    }//if its a test case resource
+
+                }//if it's in our schema and it's a class
 
             }//iterate types
+
+
+
 
             List<Type> TestCaseTypes = new List<Type>();
             TestCaseTypeNames.Sort();
             foreach( string CurrentTypeName in TestCaseTypeNames )
             {
-                string TestCaseNumberSegment = _getCaseNumberFromTypeName( CurrentTypeName );
+                string TestCaseNumberSegment = _getCaseNumberFromTestCaseTypeName( CurrentTypeName );
                 Int32 TestCaseNumber = CswConvert.ToInt32( TestCaseNumberSegment );
                 if( TestCaseNumber >= StartAtTestCase )
                 {
                     TestCaseTypes.Add( TestCaseTypesByName[CurrentTypeName] );
                 }
-
-
-                //}
-                //else
-                //{
-                //    TestCaseTypes.Add( TestCaseTypesByName[CurrentTypeName] );
-                //}
             }
 
 
             for( Int32 idx = 0; idx < TestCaseTypes.Count; idx++ )
             {
                 Type CurrentTestCaseType = TestCaseTypes[idx];
+
+
+
+                Object[] ResourceCtorArgs = new Object[1];
+                ResourceCtorArgs[0] = _CswNbtSchemaModTrnsctn;
+
+                string TestCaseGroupId = _getCaseNumberFromTestCaseTypeName( CurrentTestCaseType.Name );
+                if( null == TestResourceInstancesByName[TestCaseGroupId] )
+                {
+                    TestResourceInstancesByName[TestCaseGroupId] = Activator.CreateInstance( TestResourceTypesByName[TestCaseGroupId], ResourceCtorArgs );
+                }
+
+
                 CswSchemaVersion CurrentVersion = new CswSchemaVersion( 1, 'T', idx + 1 );
 
-                Object[] ctorargs = new Object[2];
-                ctorargs[0] = _CswNbtSchemaModTrnsctn;
-                ctorargs[1] = CurrentVersion;
+                Object[] TestCaseCtorArgs = new Object[3];
+                TestCaseCtorArgs[0] = _CswNbtSchemaModTrnsctn;
+                TestCaseCtorArgs[1] = CurrentVersion;
+                TestCaseCtorArgs[2] = TestResourceInstancesByName[TestCaseGroupId];
 
-                ICswUpdateSchemaTo CurrentTestCaseInstance = (ICswUpdateSchemaTo) Activator.CreateInstance( CurrentTestCaseType, ctorargs );
+                ICswUpdateSchemaTo CurrentTestCaseInstance = (ICswUpdateSchemaTo) Activator.CreateInstance( CurrentTestCaseType, TestCaseCtorArgs );
                 _UpdateDrivers.Add( CurrentTestCaseInstance.SchemaVersion, new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, CurrentTestCaseInstance ) );
 
             }
@@ -88,13 +110,7 @@ namespace ChemSW.Nbt.Schema
             foreach( CswSchemaUpdateDriver CurrentDriver in _UpdateDrivers.Values )
             {
                 _UpdateDriverList.Add( CurrentDriver );
-
             }
-
-            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_01( _CswNbtSchemaModTrnsctn ) ) );
-            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_02( _CswNbtSchemaModTrnsctn ) ) );
-            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_03( _CswNbtSchemaModTrnsctn ) ) );
-            //_UpdateDriverList.Add( new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswTstUpdtSchema_04( _CswNbtSchemaModTrnsctn ) ) );
 
         }//ctor
 

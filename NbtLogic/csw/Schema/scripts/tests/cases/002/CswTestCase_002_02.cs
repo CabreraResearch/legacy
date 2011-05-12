@@ -23,11 +23,11 @@ namespace ChemSW.Nbt.Schema
         private CswTstCaseRsrc_002 _CswTstCaseRsrc_002 = null;
         private CswSchemaVersion _CswSchemaVersion = null;
         public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_002_02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion )
+        public CswTestCase_002_02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
         {
             _CswSchemaVersion = CswSchemaVersion;            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_002 = new CswTstCaseRsrc_002( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_002 =   ( CswTstCaseRsrc_002) CswTstCaseRsrc;
         }//ctor
 
 
