@@ -1,4 +1,9 @@
-﻿; (function ($) {
+﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="../_Global.js" />
+
+; (function ($) { /// <param name="$" type="jQuery" />
         
     $.fn.CswFieldTypeRelationship = function (method) {
 
@@ -18,6 +23,7 @@
                 }
                 var SelectedName = o.$propxml.children('name').text().trim();
                 var NodeTypeId = o.$propxml.children('nodetypeid').text().trim();
+                var AllowAdd = isTrue( o.$propxml.children('allowadd').text().trim() );
                 var $Options = o.$propxml.children('options');
 
                 if(o.ReadOnly)
@@ -39,8 +45,8 @@
                     });
 
                     $SelectBox.val( SelectedNodeId );
-
-                    if(NodeTypeId !== '')
+                    
+                    if( !isNullOrEmpty( NodeTypeId ) && AllowAdd )
 					{
 						var $addcell = $table.CswTable('cell', 1, 2);
 						var $AddButton = $('<div />').appendTo($addcell);

@@ -45,6 +45,8 @@ var CswViewEditor_WizardSteps = {
 			WizardSteps[i] = WizardStepArray[i-1].description;
         }
 
+        var CurrentStep = o.startingStep;
+
 		var $parent = $(this);
 		var $div = $('<div></div>')
 					.appendTo($parent);
@@ -252,12 +254,13 @@ var CswViewEditor_WizardSteps = {
 
 		function _handleNext(newstepno)
 		{
+            CurrentStep = newstepno;
 			switch(newstepno)
 			{
 				case CswViewEditor_WizardSteps.step1.step:
-					break;
+                    break;
 				case CswViewEditor_WizardSteps.step2.step:
-					var dataXml = {
+                    var dataXml = {
                         ViewId: _getSelectedViewId($viewgrid)
                     };
 
@@ -267,7 +270,6 @@ var CswViewEditor_WizardSteps = {
                         stringify: false,
 						success: function($xml) {
 							$currentviewxml = $xml;
-
 							$viewnametextbox.val($currentviewxml.CswAttrXml('viewname'));
 							$categorytextbox.val($currentviewxml.CswAttrXml('category'));
 							if($currentviewxml.CswAttrXml('visibility') !== 'Property')
@@ -280,8 +282,8 @@ var CswViewEditor_WizardSteps = {
 								}
 							}
 
-							if($currentviewxml.CswAttrXml('formobile') === 'true') {
-								$formobilecheckbox.CswAttrDom('checked', 'true');
+							if( isTrue( $currentviewxml.CswAttrXml('formobile') ) ) {
+								$formobilecheckbox.CswAttrDom('checked','checked');
 							}
 							var mode = $currentviewxml.CswAttrXml('mode')
 							$displaymodespan.text(mode);
@@ -297,32 +299,10 @@ var CswViewEditor_WizardSteps = {
 					}); // ajax
 					break;
 				case CswViewEditor_WizardSteps.step3.step:
-
 					// save step 2 content to $currentviewxml
 					if($currentviewxml !== undefined)
 					{
-						$currentviewxml.CswAttrXml('viewname', $viewnametextbox.val());
-						$currentviewxml.CswAttrXml('category', $categorytextbox.val());
-						if($currentviewxml.CswAttrXml('visibility') !== 'Property')
-						{
-							$currentviewxml.CswAttrXml('visibility', v.getvisibilityselect().val());
-				
-							// temporary workaround
-							var rolenodeid = v.getvisroleselect().val();
-							if(!isNullOrEmpty(rolenodeid))
-							{
-								rolenodeid = rolenodeid.substr('nodes_'.length)
-							}
-							var usernodeid = v.getvisuserselect().val();
-							if(!isNullOrEmpty(usernodeid))
-							{
-								usernodeid = usernodeid.substr('nodes_'.length)
-							}
-							$currentviewxml.CswAttrXml('visibilityroleid', rolenodeid);
-							$currentviewxml.CswAttrXml('visibilityuserid', usernodeid);
-						}
-						$currentviewxml.CswAttrXml('formobile', ($formobilecheckbox.CswAttrDom('checked') === 'true'));
-						$currentviewxml.CswAttrXml('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
+						cacheStepTwo();
 					} // if($currentviewxml !== undefined)
 
 					// make step 3 tree
@@ -340,8 +320,36 @@ var CswViewEditor_WizardSteps = {
 			} // switch(newstepno)
 		} // _handleNext()
 
+        function cacheStepTwo()
+        {
+            $currentviewxml.CswAttrXml('viewname', $viewnametextbox.val());
+			$currentviewxml.CswAttrXml('category', $categorytextbox.val());
+			if($currentviewxml.CswAttrXml('visibility') !== 'Property')
+			{
+				$currentviewxml.CswAttrXml('visibility', v.getvisibilityselect().val());
+				
+				// temporary workaround
+				var rolenodeid = v.getvisroleselect().val();
+				if(!isNullOrEmpty(rolenodeid))
+				{
+					rolenodeid = rolenodeid.substr('nodes_'.length)
+				}
+				var usernodeid = v.getvisuserselect().val();
+				if(!isNullOrEmpty(usernodeid))
+				{
+					usernodeid = usernodeid.substr('nodes_'.length)
+				}
+				$currentviewxml.CswAttrXml('visibilityroleid', rolenodeid);
+				$currentviewxml.CswAttrXml('visibilityuserid', usernodeid);
+			}
+            var formobile = ($formobilecheckbox.is(':checked') ? 'true' : 'false');
+			$currentviewxml.CswAttrXml('formobile', formobile );
+			$currentviewxml.CswAttrXml('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
+        }
+
 		function _handlePrevious(newstepno)
 		{
+            CurrentStep = newstepno;
 			switch(newstepno)
 			{
 				case CswViewEditor_WizardSteps.step1.step: 
@@ -367,6 +375,12 @@ var CswViewEditor_WizardSteps = {
 		function _handleFinish()
 		{
 			var viewid = _getSelectedViewId($viewgrid);
+
+            if( CurrentStep === CswViewEditor_WizardSteps.step2.step &&
+                !isNullOrEmpty( $currentviewxml ) )
+            {
+                cacheStepTwo();
+            }
 
             var dataXml = {
                 ViewId: viewid,

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ChemSW.Core;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Security;
-using ChemSW.TblDn;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Security
 {
@@ -37,7 +33,7 @@ namespace ChemSW.Nbt.Security
         }
 
         public bool IsAdministrator() { return true; }
-
+        public bool canEditPassword( CswNbtNode UserNode = null ) { return true; }
         public CswNbtObjClassRole RoleNode { get { return null; } }
         public CswNbtObjClassUser UserNode { get { return null; } }
 
@@ -58,7 +54,7 @@ namespace ChemSW.Nbt.Security
         public string LastName { get { return string.Empty; } }
         public string Email { get { return string.Empty; } }
 
-		public Int32 PageSize { get { return 50; } }
+        public Int32 PageSize { get { return 50; } }
 
         public void postChanges( bool ForceUpdate )
         {

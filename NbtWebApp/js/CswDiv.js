@@ -13,8 +13,6 @@
 		{
             var o = {
                 'ID': '',
-                'prefix': '',
-                'suffix': '',
                 'value': '',
                 'cssclass': ''
             };
