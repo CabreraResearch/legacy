@@ -875,6 +875,7 @@ function tryParseString(inputStr, defaultStr)
     return ret;
 }
 
+var Int32MinVal = new Number(-2147483648);
 function tryParseNumber(inputNum, defaultNum)
 {
     /// <summary>
@@ -885,7 +886,7 @@ function tryParseNumber(inputNum, defaultNum)
     /// <returns type="String" />
     var ret = new Number(defaultNum);
     var tryRet = new Number(inputNum);
-    if (tryRet !== NaN)
+    if (tryRet !== NaN && tryRet !== Int32MinVal)
     {
         ret = tryRet;
     }
