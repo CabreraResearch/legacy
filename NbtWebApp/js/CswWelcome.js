@@ -25,9 +25,14 @@
 				}
 				var $this = $(this);
 
+                var dataXml = {
+                    RoleId: ''
+                };
+
 				CswAjaxXml({
 					url: o.Url,
-					data: "RoleId=",
+					data: dataXml,
+                    stringify: false,
 					success: function ($xml) {
 						var $WelcomeDiv = $('<div id="welcomediv"></div>')
 											.appendTo($this)
@@ -90,22 +95,22 @@
 								linktype: $item.CswAttrXml('linktype')
 							};
 
-							switch(optSelect.linktype)
+							switch( optSelect.linktype.toLowerCase() )
 							{
-								case 'Link':
+								case 'link':
 									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
 									$textcell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
 									$imagecell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
 									break;
-								case 'Search': 
+								case 'search': 
 									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
-									$textcell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
-									$imagecell.find('a').click(function() { o.onSearchClick(optSelect); return false; }); //viewid
+									$textcell.find('a').click(function() { o.onSearchClick(optSelect); return false; });
+									$imagecell.find('a').click(function() { o.onSearchClick(optSelect); return false; });
 									break;
-								case 'Text':
+								case 'text':
 									$textcell.append('<span>' + optSelect.text + '</span>');
 									break;
-								case 'Add': 
+								case 'add': 
 									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
 									$textcell.find('a').click(function() { o.onAddClick($item.CswAttrXml('nodetypeid')); return false; }); 
 									$imagecell.find('a').click(function() { o.onAddClick($item.CswAttrXml('nodetypeid')); return false; });
@@ -191,7 +196,7 @@
                                                                 {
                                                                     viewid = $viewselect.CswViewSelect('value');
                                                                 }
-                                                                else if( !$searchviewselect.isPrototypeOf(':hidden') )
+                                                                else if( !$searchviewselect.is(':hidden') )
                                                                 {
                                                                     viewid = $searchviewselect.CswViewSelect('value');
                                                                 }
@@ -281,10 +286,15 @@
         if($textcell.length > 0)
         {
             var welcomeid = $textcell.children('input').CswAttrDom('welcomeid');
-		
+		    
+            var dataJson = {
+                RoleId: '', 
+                WelcomeId: welcomeid
+            };
+
 			CswAjaxJSON({
 				url: r.RemoveWelcomeItemUrl,
-				data: '{ "RoleId": "", "WelcomeId": "'+ welcomeid +'" }',
+				data: dataJson,
 				success: function (result) 
 					{
 						r.onSuccess();
@@ -310,14 +320,23 @@
 			$.extend(a, addoptions);
 		}
 
+        var dataJson = { 
+            RoleId: '', 
+            Type: a.type,
+            ViewId: a.viewid, 
+            NodeTypeId: a.nodetypeid , 
+            Text: a.text, 
+            IconFileName: a.iconfilename
+        };
+
         CswAjaxJSON({
 			url: a.AddWelcomeItemUrl,
-			data: '{ "RoleId": "", "Type": "' + a.type + '", "ViewId": "' + a.viewid + '", "NodeTypeId": "' + a.nodetypeid + '", "Text": "' + a.text + '", "IconFileName": "' + a.iconfilename + '" }',
+			data: dataJson,
 			success: function (result) 
 				{
 					a.onSuccess();
                 },
-			error: o.onError
+			error: a.onError
         });
 
 	} // _addItem()
@@ -347,9 +366,17 @@
         if($textcell.length > 0)
         {
             var welcomeid = $textcell.children('input').CswAttrDom('welcomeid');
+            
+            var dataJson = {
+                RoleId: '', 
+                WelcomeId: welcomeid, 
+                NewRow: newrow, 
+                NewColumn: newcolumn
+            };
+            
             CswAjaxJSON({
 				url: MoveWelcomeItemUrl,
-				data: '{ "RoleId": "", "WelcomeId": "'+ welcomeid +'", "NewRow": "' + newrow + '", "NewColumn": "' + newcolumn + '" }',
+				data: dataJson,
 				success: function (result) {
                             }
             });

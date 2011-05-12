@@ -14,7 +14,8 @@
         
         CswAjaxXml({
             url: o.Url,
-            data: "",
+            data: {},
+            stringify: false,
             success: function ($xml) {
                  
                     var $table = $DashDiv.CswTable('init', { ID: 'DashboardTable' });

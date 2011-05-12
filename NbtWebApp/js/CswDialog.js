@@ -69,7 +69,7 @@
 																			createData.VisibilityUserId = v.getvisuserselect().val();
 																			CswAjaxJSON({
 																				url: '/NbtWebApp/wsNBT.asmx/createView',
-																				data: jsonToString(createData),
+																				data: createData,
 																				success: function(data) {
 											                                        $div.dialog('close');
 																					o.onAddView(data.newviewid);
@@ -256,7 +256,8 @@
 							var $div = $('<div></div>');
 							CswAjaxXml({
 								url: '/NbtWebApp/wsNBT.asmx/getAbout',
-								data: '',
+								data: {},
+                                stringify: false,
 								success: function ($xml) {
 									$div.append('NBT Assembly Version: ' + $xml.children('assembly').text() + '<br/><br/>');
 									var $table = $div.CswTable('init', { ID: 'abouttable' });
@@ -395,7 +396,7 @@
 							var jData = { PropId: o.propid }
 							CswAjaxJSON({
 								url: o.GetPrintLabelsUrl,
-								data: JSON.stringify(jData),
+								data: jData,
 								success: function(data)
 								{
 									if(data.labels.length > 0)
@@ -424,7 +425,7 @@
 																	var jData2 = { PropId: o.propid, PrintLabelNodeId: $labelsel.val() };
 									                                CswAjaxJSON({
 																		url: o.GetEPLTextUrl,
-																		data: JSON.stringify(jData2),
+																		data: jData2,
 																		success: function(data)
 																		{
 																			var labelx = $('#labelx').get(0);

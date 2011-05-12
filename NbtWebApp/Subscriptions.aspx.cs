@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.WebPages
         private ICswNbtTree _NotifTree;
         private ICswNbtTree _MailReportTree;
         private Button SaveButton;
+        private CswPrimaryKey _ThisUser;
 
         private string NotifPrefix = "notif_";
         private string MailReportPrefix = "mr_";
@@ -40,9 +41,10 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                this.EnableViewState = false;
+                EnableViewState = false;
+                _ThisUser = Master.CswNbtResources.CurrentNbtUser.UserId;
 
-                if( ( (CswNbtObjClassUser) Master.CswNbtResources.CurrentNbtUser.UserNode ).EmailProperty.Empty )
+                if( ( Master.CswNbtResources.CurrentNbtUser.UserNode ).EmailProperty.Empty )
                     throw new CswDniException( "Email address required for subscriptions", "Current user has no email address defined" );
 
                 CswCenteredDiv Div = new CswCenteredDiv();
@@ -73,8 +75,8 @@ namespace ChemSW.Nbt.WebPages
                     _NotifTree.goToNthChild( n );
 
                     CswNbtNode NotifNode = _NotifTree.getNodeForCurrentPosition();
-                    string SearchStr = CswNbtNodePropUserSelect.delimiter.ToString() + CswNbtNodeCaster.AsNotification( NotifNode ).SubscribedUsers.SelectedUserIds + CswNbtNodePropUserSelect.delimiter.ToString();
-                    bool Checked = SearchStr.Contains( CswNbtNodePropUserSelect.delimiter.ToString() + Master.CswNbtResources.CurrentNbtUser.UserId.PrimaryKey.ToString() + CswNbtNodePropUserSelect.delimiter.ToString() );
+
+                    bool Checked = CswNbtNodeCaster.AsNotification( NotifNode ).SubscribedUsers.IsSubscribed( _ThisUser );
 
                     DataRow NotifRow = _NotifData.NewRow();
                     NotifRow["Notification"] = NotifNode.NodeName;
@@ -97,10 +99,7 @@ namespace ChemSW.Nbt.WebPages
                 _Table.addControl( 0, 2, new CswLiteralNbsp() );
                 _Table.addControl( 1, 2, new CswLiteralNbsp() );
 
-                _MailReportCBArray = new CswCheckBoxArray( Master.CswNbtResources );
-                _MailReportCBArray.ID = "MailReportCBArray";
-                _MailReportCBArray.UseRadios = false;
-                _MailReportCBArray.Rows = 10;
+                _MailReportCBArray = new CswCheckBoxArray( Master.CswNbtResources ) {ID = "MailReportCBArray", UseRadios = false, Rows = 10};
                 _Table.addControl( 2, 2, _MailReportCBArray );
 
                 _MailReportData = new CswDataTable( "MailReportsDT", "" );
@@ -113,8 +112,8 @@ namespace ChemSW.Nbt.WebPages
                     _MailReportTree.goToNthChild( n );
 
                     CswNbtNode MailReportNode = _MailReportTree.getNodeForCurrentPosition();
-                    string SearchStr = CswNbtNodePropUserSelect.delimiter.ToString() + CswNbtNodeCaster.AsMailReport( MailReportNode ).Recipients.SelectedUserIds + CswNbtNodePropUserSelect.delimiter.ToString();
-                    bool Checked = SearchStr.Contains( CswNbtNodePropUserSelect.delimiter.ToString() + Master.CswNbtResources.CurrentNbtUser.UserId.PrimaryKey.ToString() + CswNbtNodePropUserSelect.delimiter.ToString() );
+
+                    bool Checked = CswNbtNodeCaster.AsMailReport( MailReportNode ).Recipients.IsSubscribed( _ThisUser );
 
                     DataRow MailReportRow = _MailReportData.NewRow();
                     MailReportRow["Mail Report"] = MailReportNode.NodeName;
@@ -133,7 +132,7 @@ namespace ChemSW.Nbt.WebPages
                 SaveButton.ID = "SaveButton";
                 SaveButton.CssClass = "Button";
                 SaveButton.Text = "Save";
-                SaveButton.Click += new EventHandler( SaveButton_Click );
+                SaveButton.Click += SaveButton_Click;
                 _Table.addControl( 4, 0, SaveButton );
 
             }
@@ -142,10 +141,6 @@ namespace ChemSW.Nbt.WebPages
                 Master.HandleError( ex );
             }
             base.OnInit( e );
-        }
-        protected override void OnLoad( EventArgs e )
-        {
-            base.OnLoad( e );
         }
 
         protected void SaveButton_Click( object sender, EventArgs e )
@@ -156,7 +151,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     // Save Notifications
                     Collection<Int32> CheckedNotifIds = _NotifCBArray.GetCheckedValues( "Subscribe" ).ToIntCollection();
-
+                    
                     for( Int32 n = 0; n < _NotifTree.getChildNodeCount(); n++ )
                     {
                         _NotifTree.goToNthChild( n );
@@ -166,14 +161,14 @@ namespace ChemSW.Nbt.WebPages
                         if( CheckedNotifIds.Contains( NotifNode.NodeId.PrimaryKey ) )
                         {
                             // subscribe!  (this will do nothing if we're already subscribed)
-                            NotifNode.SubscribedUsers.AddUser( Master.CswNbtResources.CurrentNbtUser.UserId );
+                            NotifNode.SubscribedUsers.AddUser( _ThisUser );
                         }
                         else
                         {
                             // unsubscribe!  (this will do nothing if we're already unsubscribed)
-                            NotifNode.SubscribedUsers.RemoveUser( Master.CswNbtResources.CurrentNbtUser.UserId );
+                            NotifNode.SubscribedUsers.RemoveUser( _ThisUser );
                         }
-                        NotifNode.postChanges( false );
+                        NotifNode.postChanges( true );
                         _NotifTree.goToParentNode();
                     }
 
@@ -189,14 +184,14 @@ namespace ChemSW.Nbt.WebPages
                         if( CheckedMailReportIds.Contains( MailReportNode.NodeId.PrimaryKey ) )
                         {
                             // subscribe!  (this will do nothing if we're already subscribed)
-                            MailReportNode.Recipients.AddUser( Master.CswNbtResources.CurrentNbtUser.UserId );
+                            MailReportNode.Recipients.AddUser( _ThisUser );
                         }
                         else
                         {
                             // unsubscribe!  (this will do nothing if we're already unsubscribed)
-                            MailReportNode.Recipients.RemoveUser( Master.CswNbtResources.CurrentNbtUser.UserId );
+                            MailReportNode.Recipients.RemoveUser( _ThisUser );
                         }
-                        MailReportNode.postChanges( false );
+                        MailReportNode.postChanges( true );
                         _MailReportTree.goToParentNode();
                     }
                 }

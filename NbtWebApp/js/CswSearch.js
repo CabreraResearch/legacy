@@ -58,13 +58,12 @@ var CswSearch_CssClasses = {
         if(options) $.extend(o, options);
         
         var $parent = $(this);
-        o.$searchTable = $parent.CswDOM('div',{ID: o.ID});
+        o.$searchTable = $parent.CswDiv('init',{ID: o.ID});
         
-        var $topspan = o.$searchTable.CswDOM('span');
+        var $topspan = o.$searchTable.CswSpan('init');
 
-        var $topspandiv = $topspan.CswDOM('div',{
-                                    ID: 'search_criteria_div',
-                                    prefix: o.ID});
+        var topspandivid = makeId({ID: 'search_criteria_div', prefix: o.ID});
+        var $topspandiv = $topspan.CswDiv('init',{ID: topspandivid});
         
         //o.$cswSearchForm.CswDOM('break',{count: 5});
 
@@ -84,22 +83,22 @@ var CswSearch_CssClasses = {
             };
             if(options) $.extend(o,options);
     
-            if('Advanced' === o.$link.text() || ( !o.advancedIsHidden ) )
+            if('Advanced' === o.$link.text() || ( o.advancedIsHidden ) )
             {   
                 
                 $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function() { $(this).show(); });
                 $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).show(); });
                 $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).hide(); });
                 o.$link.text('Simple');
-                o.advancedIsHidden = true;
+                o.advancedIsHidden = false;
             }
-            else if('Simple' === o.$link.text() || ( o.advancedIsHidden ) )
+            else if('Simple' === o.$link.text() || ( !o.advancedIsHidden ) )
             {
                 $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function() { $(this).hide(); });
                 $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).hide(); });
                 $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).show(); });
                 o.$link.text('Advanced');
-                o.advancedIsHidden = false;
+                o.advancedIsHidden = true;
             }
             return o.advancedIsHidden; 
         } // modAdvanced()
@@ -123,7 +122,7 @@ var CswSearch_CssClasses = {
                     var $thisProp = $(this);
                     var $nodeTypeCell = o.$searchTable.CswTable('cell', propRow, 2);
                     var nodeTypeId = makeId({ID: 'viewbuilderpropid', suffix: $thisProp.CswAttrXml('viewbuilderpropid'), prefix: o.ID});
-                    var $nodeType = $nodeTypeCell.CswDOM('span',{
+                    var $nodeType = $nodeTypeCell.CswSpan('init',{
                                                                 ID: nodeTypeId,
                                                                 value: $thisProp.CswAttrXml('metadatatypename'),
                                                                 cssclass: ViewBuilder_CssClasses.metadatatype_static.name})
@@ -161,7 +160,7 @@ var CswSearch_CssClasses = {
             var $nodeTypesSelect = $(xmlToString(o.$nodeTypesXml.children('select')))
                                     .CswAttrDom('id', nodeTypeSelectId)
                                     .CswAttrDom('name', nodeTypeSelectId)
-                                    .CswAttrDom('class',CswSearch_CssClasses.nodetype_select.name)
+                                    .addClass(CswSearch_CssClasses.nodetype_select.name)
                                     .change( function() {
                                            var $thisSelect = $(this);
                                            var r = {
@@ -190,7 +189,7 @@ var CswSearch_CssClasses = {
             var $propSelect = $(xmlToString(o.$propsXml.children('properties').children('select')))
                             .CswAttrDom('id', propSelectId)
                             .CswAttrDom('name', propSelectId)
-                            .CswAttrDom('class',CswSearch_CssClasses.property_select.name)
+                            .addClass(CswSearch_CssClasses.property_select.name)
                             .change(function() {
                                     var $this = $(this);
                                     var thisPropId = $this.val();
@@ -239,9 +238,17 @@ var CswSearch_CssClasses = {
 
         function getNewProps()
         {
+            var dataXml = {
+                RelatedIdType: o.relatedidtype,
+                NodeTypeOrObjectClassId: o.nodetypeorobjectclassid,
+                IdPrefix: o.ID,
+                NodeKey: o.cswnbtnodekey
+            };
+
             CswAjaxXml({ 
 		                'url': o.getNewPropsUrl,
-		                'data': "RelatedIdType=" + o.relatedidtype + "&NodeTypeOrObjectClassId=" + o.nodetypeorobjectclassid + "&IdPrefix=" + o.ID + "&NodeKey=" + o.cswnbtnodekey,
+		                'data': dataXml,
+                        stringify: false,
                         'success': function($xml) { 
                                 o.$propsXml = $xml;
                                 renderNodeTypeSearchContent();
@@ -296,7 +303,7 @@ var CswSearch_CssClasses = {
             var $advancedLinkCell = $clearPosition.CswTable('cell', cellRow, advancedCellNumber)
                                     .empty();
             var advancedLinkId = makeId({ID: 'advanced_options', prefix: o.ID});
-            var $advancedLink = $advancedLinkCell.CswDOM('link',{
+            var $advancedLink = $advancedLinkCell.CswLink('init',{
                                                     ID: advancedLinkId,
                                                     href: '#advanced',
                                                     value: 'Advanced' })
@@ -343,9 +350,17 @@ var CswSearch_CssClasses = {
         {
             //var $titlespan = $('<span style="align: center;">Search</span>');
             
+            var dataXml = {
+                'ViewIdNum': o.viewid, 
+                'SelectedNodeTypeIdNum': o.nodetypeorobjectclassid, 
+                'IdPrefix': o.ID,
+                'NodeKey': o.cswnbtnodekey
+            };
+
             CswAjaxXml({ 
 		        'url': o.getClientSearchXmlUrl,
-		        'data': "ViewIdNum=" + o.viewid + "&SelectedNodeTypeIdNum=" + o.nodetypeorobjectclassid + "&IdPrefix=" + o.ID + "&NodeKey=" + o.cswnbtnodekey,
+		        'data':dataXml,
+                stringify: false,
                 'success': function($xml) { 
                     $topspandiv.empty();
                     o.searchtype = $xml.CswAttrXml('searchtype');
@@ -428,8 +443,8 @@ var CswSearch_CssClasses = {
                             var $thisProp = $(this);
                             var filterarbitraryid = $thisProp.CswAttrXml('filtarbitraryid');
                             var PropFilter = $thisProp.CswViewPropFilter('getFilterJson',{ID: o.ID, 
-                                                                                          $parent: o.$searchTable,
-                                                                                          filterarbitraryid: filterarbitraryid
+                                                                                          $parent: o.$searchTable //,
+                                                                                          //filterarbitraryid: filterarbitraryid
                                                                                           });
                             props.push(PropFilter);
                         });
@@ -443,9 +458,12 @@ var CswSearch_CssClasses = {
 
             if(searchOpt)
             {
+                var dataJson = {
+                    SearchJson: searchOpt
+                };
                 CswAjaxJSON({ 
 			    'url': searchUrl,
-			    'data': "{SearchJson: \"" + jsonToString(searchOpt) + "\"}",
+			    'data': dataJson,
                 'success': function(view) { 
                         o.viewid = view.sessionviewid;
                         o.searchtype = 'viewsearch'; //the next search will be always be based on the view returned

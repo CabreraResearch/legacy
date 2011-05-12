@@ -26,9 +26,16 @@
 								.appendTo($parent);
 				$select.change(function(event) { o.onSelect( $select.val() ); });
 
+                var dataXml = {
+                    NodeTypeId: o.nodetypeid,
+                    ObjectClassId: o.objectclassid,
+                    ObjectClass: o.objectclass
+                };
+
 				CswAjaxXml({
 						url: o.NodesUrl,
-						data: 'NodeTypeId=' + o.nodetypeid + '&ObjectClassId=' + o.objectclassid + '&ObjectClass=' + o.objectclass,
+						data: dataXml,
+                        stringify: false,
 						success: function ($xml)
 						{
 							$xml.children('node').each(function() {

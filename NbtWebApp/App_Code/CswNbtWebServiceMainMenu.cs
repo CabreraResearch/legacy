@@ -252,8 +252,7 @@ namespace ChemSW.Nbt.WebServices
             } // if( null != View )
 
             //Case 21680
-            if( null == View || //Welcome page
-                ( null != View && View.Visibility != NbtViewVisibility.Property && View.ViewMode != NbtViewRenderingMode.Grid ) )
+            if( null == View || View.Visibility != NbtViewVisibility.Property )
             {
                 SearchNode.Add( SearchGenericNode );
             }

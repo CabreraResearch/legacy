@@ -32,15 +32,15 @@
                                                 '    </tr>' +
                                                 '    <tr>' +
 												'      <td align="right">Customer ID:</td>' +
-												'      <td><input type="text" name="accessid" id="login_accessid" /></td>' +
+												'      <td><input type="text" name="login_accessid" id="login_accessid" /></td>' +
 												'    </tr>' +
 												'    <tr>' +
 												'      <td align="right">User Name:</td>' +
-												'      <td><input type="text" name="username" id="login_username" /></td>' +
+												'      <td><input type="text" name="login_username" id="login_username" /></td>' +
 												'    </tr>' +
 												'    <tr>' +
 												'      <td align="right">Password:</td>' +
-												'      <td><input type="password" name="password" id="login_password" /></td>' +
+												'      <td><input type="password" name="login_password" id="login_password" /></td>' +
 												'    </tr>' +
 												'    <tr>' +
 												'      <td align="right"></td>' +
@@ -80,9 +80,15 @@
 																o.onAuthenticate(UserName);
 															}
 
+                                                            var dataJson = {
+                                                                AccessId: AccessId, 
+                                                                UserName: UserName, 
+                                                                Password: Password
+                                                            };
+
 															CswAjaxJSON({
 																		url: o.AuthenticateUrl,
-																		data: "{AccessId: '" + AccessId + "', UserName: '" + UserName + "', Password: '" + Password + "'}",
+																		data: dataJson,
 																		success: function (data) {
 																			auth = data.AuthenticationStatus;
                                                                             if(auth === 'Authenticated')
@@ -100,6 +106,11 @@
 															}); // ajax
 											} // onclick
 							}); // button
+
+                            $('#login_accessid').clickOnEnter($loginbutton);
+                            $('#login_username').clickOnEnter($loginbutton);
+                            $('#login_password').clickOnEnter($loginbutton);
+
                         } // if-else(ThisSessionId !== null)
 					},  // login
 
@@ -119,7 +130,7 @@
 						
 			CswAjaxJSON({
 							url: o.DeauthenticateUrl,
-							data: "",
+							data: {},
 							success: function (data) {
 								$.CswCookie('clear', CswCookieName.Username);
 								o.onDeauthenticate();

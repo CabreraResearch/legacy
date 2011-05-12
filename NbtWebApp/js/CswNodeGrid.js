@@ -12,6 +12,7 @@
 			var o = {
 				GridUrl: '/NbtWebApp/wsNBT.asmx/getGrid',
 				viewid: '',
+                showempty: false,
 				ID: '',
 				nodeid: '',
 				cswnbtnodekey: '',
@@ -36,20 +37,21 @@
 		    var $gridTable = $parent.CswTable('init', { ID: gridTableId });
 		
             var gridPagedId = makeId({ID: o.gridPagerID, prefix: o.ID});
-            var $gridPager = $parent.CswDOM('div',{ID: gridPagedId})
+            var $gridPager = $parent.CswDiv('init',{ID: gridPagedId})
 									     .css('width','100%')
 									     .css('height','20px');
-		
+            
+            var dataJson = {ViewPk: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty };		
 			CswAjaxJSON({
 				url: o.GridUrl,
-				data: "{ViewPk: '" +  o.viewid + "', 'SafeNodeKey': '" + o.cswnbtnodekey + "'}", //" + o.cswnbtnodekey + "
+				data: dataJson,
 				success: function (gridJson) {
 					    
 						jqGridOpt = gridJson.jqGridOpt;
 
 						var NodeTypeId = gridJson.nodetypeid;
 
-						if( jqGridOpt.width === '' )
+						if( isNullOrEmpty( jqGridOpt.width ) )
 						{
 							jqGridOpt.width = 650;
 						}

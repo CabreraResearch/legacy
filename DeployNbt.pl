@@ -136,12 +136,16 @@ foreach my $component (@components)
 
 &runCommand( "net stop \"ChemSW Log Service\"");
 
+&runCommand( "net stop \"NbtSchedService\"");
+
 &runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
 
 &runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
             "devenv ". $repopaths{"Nbt"} ."/Nbt.sln /Build \"Release\"");
 
 &runCommand( "net start \"ChemSW Log Service\"");
+
+&runCommand( "net start \"NbtSchedService\"");
 
 #---------------------------------------------------------------------------------
 # 4. back up existing schemata

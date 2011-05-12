@@ -20,19 +20,26 @@ namespace ChemSW.Nbt.WebServices
 		}
 
 
-		public XElement getTree( CswNbtView View, string IDPrefix, bool IsFirstLoad, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool UsePaging )
+		public XElement getTree( CswNbtView View, string IDPrefix, bool IsFirstLoad, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool UsePaging, bool ShowEmpty, bool ForSearch )
 		{
 			var ReturnNode = new XElement( "result" );
-			string EmptyOrInvalid = "";
+            string EmptyOrInvalid = "No Results";
+		    // Case 21699: Show empty tree for search
+		    bool ValidView = ( null != View && ( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List ) );
 		    string ViewName = string.Empty;
+		    Int32 SessionViewId = Int32.MinValue;
 			//bool IsFirstLoad = true;
 			//if( ParentNodeKey != null || IncludeNodeKey != null )
 			//    IsFirstLoad = false;
-
-			if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
+            
+            if( !ValidView )
+            {
+                ShowEmpty = true;
+                EmptyOrInvalid = "Not a Tree or List view.";
+            }
+            else if ( !ShowEmpty )
 			{
 				Int32 PageSize = Int32.MinValue;
-			    ViewName = View.ViewName;
 				if( UsePaging )
 					PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
 
@@ -50,49 +57,56 @@ namespace ChemSW.Nbt.WebServices
 					Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
 				}
 
-				if( Tree.getChildNodeCount() > 0 )
-				{
-					var RootNode = new XElement( "root" );
-					if( IsFirstLoad && View.ViewMode == NbtViewRenderingMode.Tree )
-					{
-						var RootItemNode = new XElement( "item",
-											new XAttribute( "id", IDPrefix + "root" ),
-											new XAttribute( "rel", "root" ),
-											new XElement( "content",
-														new XElement( "name", View.ViewName ) ) );
-						RootNode.Add( RootItemNode );
-						_runTreeNodesRecursive( Tree, IDPrefix, RootItemNode );
-					}
-					else // List, or non-top level of Tree
-					{
-						_runTreeNodesRecursive( Tree, IDPrefix, RootNode );
-					}
+                if( ( Tree.getChildNodeCount() > 0 ) )
+                {
 
-					if( IsFirstLoad )
-					{
-						ReturnNode.Add( new XElement( "tree", RootNode ),
-										new XElement( "viewid", View.SessionViewId ),
-										new XElement( "types", getTypes( View ).ToString() ) );
-					}
-					else
-					{
-						ReturnNode = RootNode;
-					}
-				} // if( Tree.getChildNodeCount() > 0 )
-				else
-				{
-					if( IsFirstLoad )
-					{
-						EmptyOrInvalid = "No Results";
-					}
-				}
-			} // if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
-			else
-			{
-				EmptyOrInvalid = "Not a Tree or List view.";
-			}
-            if( string.IsNullOrEmpty( ViewName ) ) ViewName = "No View Selected";
-			if( !string.IsNullOrEmpty( EmptyOrInvalid ) )
+                    var RootNode = new XElement( "root" );
+                    if( IsFirstLoad && ( View.ViewMode == NbtViewRenderingMode.Tree || ForSearch ) )
+                    {
+                        var RootItemNode = new XElement( "item",
+                                            new XAttribute( "id", IDPrefix + "root" ),
+                                            new XAttribute( "rel", "root" ),
+                                            new XElement( "content",
+                                                        new XElement( "name", View.ViewName ) ) );
+                        RootNode.Add( RootItemNode );
+                        _runTreeNodesRecursive( Tree, IDPrefix, RootItemNode );
+                    }
+                    else // List, or non-top level of Tree
+                    {
+                        _runTreeNodesRecursive( Tree, IDPrefix, RootNode );
+                    }
+
+                    if( IsFirstLoad )
+                    {
+                        ReturnNode.Add( new XElement( "tree", RootNode ),
+                                        new XElement( "viewid", View.SessionViewId ),
+                                        new XElement( "types", getTypes( View ).ToString() ) );
+                    }
+                    else
+                    {
+                        ReturnNode = RootNode;
+                    }
+                } // if( Tree.getChildNodeCount() > 0 )
+                else
+                {
+                    ShowEmpty = ( IsFirstLoad ); // else return an empty <result/> for junior most node on tree
+                    //    if( IsFirstLoad )
+                    //    {
+                    //        EmptyOrInvalid = "No Results";
+                    //    }
+                }
+			
+            } // else if( !ShowEmpty )
+
+            XElement Types = new XElement( "types" );
+            if( ValidView )
+            {
+                ViewName = View.ViewName;
+                SessionViewId = View.SessionViewId;
+                Types.Add( getTypes( View ).ToString() );
+            }
+
+			if( ShowEmpty )
 			{
                 ReturnNode.Add( new XElement( "tree",
                     new XElement( "root",
@@ -108,8 +122,8 @@ namespace ChemSW.Nbt.WebServices
                                                 new XElement( "content",
                                                     new XElement( "name", EmptyOrInvalid ) ) ) ) )
                                         ),
-                                new XElement( "viewid", View.SessionViewId ),
-                                new XElement( "types", getTypes( View ).ToString() ) );
+                                new XElement( "viewid", SessionViewId ),
+                                Types );
 			}
 			return ReturnNode;
 		} // getTree()
