@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtObjClassRole _RoleNodeObjClass = null;
         private CswNbtNode _RoleNode = null;
+        private CswNbtNode _UserNode = null;
 
         public CswNbtObjClassUser( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
@@ -108,8 +109,9 @@ namespace ChemSW.Nbt.ObjClasses
             UsernameProperty.ReadOnly = true;
 
             if( Role.WasModified && !( _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            {
                 throw new CswDniException( "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
-
+            }
 
         }//beforeWriteNode()
 
@@ -278,6 +280,11 @@ namespace ChemSW.Nbt.ObjClasses
             return _RoleNodeObjClass.Administrator.Checked == Tristate.True;
         }
 
+        public bool canEditPassword( CswNbtNode UserNode )
+        {
+            return ( _CswNbtResources.CurrentNbtUser.UserNode.Node.NodeId == UserNode.NodeId || _CswNbtResources.CurrentNbtUser.IsAdministrator() );
+        }
+
         // see BZ 6971
         //public void GrantPermission(NodeTypePermission Permission, Int32 NodeTypeId)
         //{
@@ -389,6 +396,16 @@ namespace ChemSW.Nbt.ObjClasses
             bool ret = !( Node.Properties[MetaDataProp].ReadOnly );
             switch( MetaDataProp.FieldType.FieldType )
             {
+                case CswNbtMetaDataFieldType.NbtFieldType.Password:
+                    {
+                        if( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass == Node.ObjectClass.ObjectClass &&
+                            null != MetaDataProp.ObjectClassProp &&
+                            MetaDataProp.ObjectClassProp.ObjectClassPropId == PasswordProperty.ObjectClassPropId )
+                        {
+                            ret = canEditPassword( Node );
+                        }
+                        break;
+                    }
                 case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
                     {
                         Int32 TargetNodeTypeId = Node.Properties[MetaDataProp].AsRelationship.TargetId;

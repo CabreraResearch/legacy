@@ -5,8 +5,10 @@ using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Encryption;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -52,9 +54,29 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
-                ChangedDate = DateTime.Now;
+                bool CanEditProp = true;
+                string UserName = string.Empty;
+                CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClassProp UserPassword = UserOC.getObjectClassProp( CswNbtObjClassUser.PasswordPropertyName );
+                if( this.ObjectClassPropId == UserPassword.ObjectClassPropId )
+                {
+                    CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( this.NodeId );
+                    if( null != UserNode && !_CswNbtResources.CurrentNbtUser.canEditPassword( UserNode ) )
+                    {
+                        UserName = UserNode.NodeName;
+                        CanEditProp = false;
+                    }
+                }
+                if( CanEditProp )
+                {
+                    _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value );
+                    _CswNbtNodePropData.Gestalt = value;
+                    ChangedDate = DateTime.Now;
+                }
+                else
+                {
+                    throw new CswDniException( "User does not have permission to edit this password", "canEditPassword() returned false for UserNode '" + UserName + "'." );
+                }
             }
         }
 
@@ -98,11 +120,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             EncryptedPassword = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _EncryptedPasswordSubField.ToXmlNodeName() );
             string NewPw = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" );
-			if( NewPw != string.Empty )
-				Password = NewPw;
+            if( NewPw != string.Empty )
+                Password = NewPw;
         }
 
-		public override void ToXElement( XElement ParentNode )
+        public override void ToXElement( XElement ParentNode )
         {
             throw new NotImplementedException();
         }
