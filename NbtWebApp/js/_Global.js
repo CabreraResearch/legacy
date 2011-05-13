@@ -788,15 +788,49 @@ function makeId(options)
     
     var elementId = o.ID;
     
-    if( o.prefix !== '' && elementId !== '' )
+    if( !isNullOrEmpty(o.prefix) && !isNullOrEmpty(elementId) )
     {
         elementId = o.prefix + o.Delimiter + elementId;
     }
-    if (o.suffix !== '' && elementId !== '')
+    if( !isNullOrEmpty(o.suffix) && !isNullOrEmpty(elementId) )
     {
         elementId += o.Delimiter + o.suffix;
     }
     return elementId;
+}
+
+function makeSafeId(options)
+{
+    /// <summary>
+    ///   Generates an ID for DOM assignment
+    /// </summary>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.ID: Base ID string
+    ///     &#10;2 - options.prefix: String prefix to prepend
+    ///     &#10;3 - options.suffix: String suffix to append
+    ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
+    /// </param>
+    /// <returns type="String>A concatenated string of provided values</returns>
+    var o = {
+        'ID': '',
+        'prefix': '',
+        'suffix': '',
+        'Delimiter': '_'
+    };
+    if (options) $.extend(o, options);
+
+    var elementId = o.ID;
+
+    if (!isNullOrEmpty(o.prefix) && !isNullOrEmpty(elementId))
+    {
+        elementId = o.prefix + o.Delimiter + elementId;
+    }
+    if (!isNullOrEmpty(o.suffix) && !isNullOrEmpty(elementId))
+    {
+        elementId += o.Delimiter + o.suffix;
+    }
+    return elementId.replace(/'/gi, '');
 }
 
 function isNullOrEmpty(str)
@@ -942,7 +976,7 @@ function getCallStack()
             stack += "Called by function " + callername + "() \n";
         }
         caller = caller.caller;
-        callername = caller.name;
+        callername = (!isNullOrEmpty(caller)) ? caller.name : '';
     }
 
     return stack;
