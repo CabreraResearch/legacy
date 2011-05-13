@@ -464,7 +464,7 @@ var debug = false;
             var id = $xmlitem.CswAttrXml('id');
             var text = $xmlitem.CswAttrXml('name');
             var IsDiv = ( !isNullOrEmpty(id) );
-            var PageType = xmlitem.nodeName;
+            var PageType = xmlitem.nodeName.toLowerCase();
 
             var nextid = $xmlitem.next().CswAttrXml('id');
             var previd = $xmlitem.prev().CswAttrXml('id');
@@ -473,20 +473,17 @@ var debug = false;
 
             switch (PageType)
             {
-                case "SEARCH":
                 case "search":
                     // ignore this
                     break;
 
-                case "NODE":
                 case "node":
                     lihtml += _makeObjectClassContent($xmlitem);
                     break;
 
-                case "PROP":
                 case "prop":
                     var tab = $xmlitem.CswAttrXml('tab');
-                    var fieldtype = $xmlitem.CswAttrXml('fieldtype');
+                    var fieldtype = $xmlitem.CswAttrXml('fieldtype').toLowerCase();
                     var gestalt = $xmlitem.CswAttrXml('gestalt');
                     if (gestalt === 'NaN') gestalt = '';
 
@@ -505,7 +502,7 @@ var debug = false;
 
                     switch (fieldtype)
                     {
-                        case 'Logical':
+                        case 'logical':
                             lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
 
                             var sf_checked = $xmlitem.children('checked').text();
@@ -518,7 +515,7 @@ var debug = false;
                             lihtml += '</div>';
                             break;
 
-                        case 'Question':
+                        case 'question':
                             lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
 
                             var sf_answer = $xmlitem.children('answer').text();
@@ -566,7 +563,7 @@ var debug = false;
                     {
                         toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
                     }
-                    if( fieldtype === "Question")
+                    if( fieldtype === "question")
                     {
                         toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
                     }
@@ -611,7 +608,6 @@ var debug = false;
         function _makeObjectClassContent($xmlitem)
         {
             var Html = '';
-
             var id = $xmlitem.CswAttrXml('id');
             var NodeName = $xmlitem.CswAttrXml('name');
             var icon = '';
