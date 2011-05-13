@@ -127,6 +127,9 @@ var debug = false;
                 HideLogoutButton: true
             });
             $('#loginsubmit').click(onLoginSubmit);
+            $('#login_accessid').clickOnEnter($('#loginsubmit'));
+            $('#login_username').clickOnEnter($('#loginsubmit'));
+            $('#login_password').clickOnEnter($('#loginsubmit'));
             if (ChangePage)
             {
 			    _changePage($('#logindiv'), 'fade', false, true);
@@ -607,6 +610,7 @@ var debug = false;
 
         function _makeObjectClassContent($xmlitem)
         {
+            
             var Html = '';
             var id = $xmlitem.CswAttrXml('id');
             var NodeName = $xmlitem.CswAttrXml('name');
