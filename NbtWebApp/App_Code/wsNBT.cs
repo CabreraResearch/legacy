@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.WebServices
 
 		private void start()
 		{
-			_SessionResources = new CswSessionResourcesNbt( Context.Application, Context.Session, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
+			_SessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
 			_CswNbtResources = _SessionResources.CswNbtResources;
 			_CswNbtStatisticsEvents = _SessionResources.CswNbtStatisticsEvents;
 
