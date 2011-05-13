@@ -909,31 +909,14 @@ function iterate(obj) {
 		console.log("iterate() error: No popup!");
 }
 
-var logVerbosity = {
-    error: { name: 'error' },
-    info: { name: 'info' },
-    verbose: { name: 'verbose' }
-};
-
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
-function log(s, verbosity) {
+function log(s, includeCallStack) {
     /// <summary>Outputs a message to the console log(Webkit,FF) or an alert(IE)</summary>
     /// <param name="s" type="String"> String to output </param>
-    /// <param name="verbosity" type="JSON"> The level of verbosity </param>
-    var extendedLog = '';
-    var loglevel = tryParseString(verbosity, logVerbosity.error.name);
-    switch (loglevel)
+    /// <param name="includeCallStack" type="Boolean"> If true, include the callStack </param>
+    if( isTrue(includeCallStack) )
     {
-        case logVerbosity.info.name:
-            {
-                extendedLog = getCallStack();
-                break;
-            }
-        case logVerbosity.verbose.name:
-            {
-                //nada yet
-                break;
-            }
+        extendedLog = getCallStack();
     }
     
     try

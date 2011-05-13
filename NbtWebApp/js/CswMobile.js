@@ -5,7 +5,7 @@
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
 
-var debug = false;
+var debug = true;
 //var profiler = $createProfiler();
 //if (!debug) profiler.disable();
 
@@ -287,7 +287,7 @@ var debug = false;
                         });
                     } else
                     {
-                        if (debug) log('Starting ' + opts.ViewUrl, logVerbosity.info.name);
+                        if (debug) log('Starting ' + opts.ViewUrl, true);
                         
                         var dataXml = {
                             SessionId: SessionId,
@@ -304,7 +304,7 @@ var debug = false;
                             onloginfail: function() { Logout(); },
                             success: function (xml)
                             {
-                                if (debug) log('On Success ' + opts.ViewUrl, logVerbosity.info.name);
+                                if (debug) log('On Success ' + opts.ViewUrl, true);
                                 var X$xml = $(xml);
                                 
                                 if (p.level === 1)
@@ -345,7 +345,7 @@ var debug = false;
                             });
                         } else if (!amOffline())
                         {
-                            if (debug) log('Starting ' + opts.ViewUrl, logVerbosity.info.name);
+                            if (debug) log('Starting ' + opts.ViewUrl, true);
 
                             var dataXml = {
                                 SessionId: SessionId,
@@ -362,7 +362,7 @@ var debug = false;
                                 onloginfail: function() { Logout(); },
                                 success: function (xml)
                                 {
-                                    if (debug) log('On Success ' + opts.ViewUrl, logVerbosity.info.name);
+                                    if (debug) log('On Success ' + opts.ViewUrl, true);
                                     $currentViewXml = $(xml);
                                     if (p.level === 1)
                                     {
@@ -1301,7 +1301,7 @@ var debug = false;
                     'Password': Password
                 };
 
-                if (debug) log('Starting ' + opts.AuthenticateUrl, logVerbosity.info.name);
+                if (debug) log('Starting ' + opts.AuthenticateUrl, true);
 
                 CswAjaxJSON({
                     formobile: ForMobile,
@@ -1310,7 +1310,7 @@ var debug = false;
                     onloginfail: function () { Logout(); },
                     success: function (data)
                     {
-                        if (debug) log('On Success ' + opts.AuthenticateUrl, logVerbosity.info.name);
+                        if (debug) log('On Success ' + opts.AuthenticateUrl, true);
                         
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
 						_cacheSession(SessionId, UserName);
@@ -1381,7 +1381,7 @@ var debug = false;
 
                 $('div[id*="' + RealDivId + '"]').remove();
 
-                if (debug) log('Starting ' + opts.ViewUrl, logVerbosity.info.name);
+                if (debug) log('Starting ' + opts.ViewUrl, true);
 
                 var dataXml = {
                     SessionId: SessionId,
@@ -1399,7 +1399,7 @@ var debug = false;
                     onloginfail: function() { Logout(); },
                     success: function (xml)
                     {
-                        if (debug) log('Starting ' + opts.ViewUrl, logVerbosity.info.name);
+                        if (debug) log('Starting ' + opts.ViewUrl, true);
 
                         $currentViewXml = $(xml);
                         _updateStoredViewXml(RealDivId, $currentViewXml, '0');
@@ -1571,7 +1571,7 @@ var debug = false;
                 });
             } else
             {
-                log("database is not opened", logVerbosity.info.name);
+                log("database is not opened", true);
             }
         } //_DoSql
 
@@ -1624,7 +1624,7 @@ var debug = false;
 
         function _errorHandler(transaction, error)
         {
-            log('Database Error: ' + error.message + ' (Code ' + error.code + ')', logVerbosity.info.name);
+            log('Database Error: ' + error.message + ' (Code ' + error.code + ')', true);
             return true;
         }
 
@@ -1811,7 +1811,7 @@ var debug = false;
                 url = opts.ConnectTestRandomFailUrl;
             }
 
-            if (debug) log('Starting ' + url, logVerbosity.info.name);
+            if (debug) log('Starting ' + url, true);
 
             CswAjaxXml({
                 formobile: ForMobile,
@@ -1821,7 +1821,7 @@ var debug = false;
                 onloginfail: function() { Logout(); },
                 success: function (xml)
                 {
-                    if (debug) log('On Success ' + url, logVerbosity.info.name);
+                    if (debug) log('On Success ' + url, true);
                     var $xml = $(xml);
                     setOnline();
                     _processChanges(true);
@@ -1851,7 +1851,7 @@ var debug = false;
                 {
                     if ( !isNullOrEmpty(rootid) && !isNullOrEmpty($viewxml) )
                     {
-                        if (debug) log('Starting ' + opts.UpdateUrl, logVerbosity.info.name);
+                        if (debug) log('Starting ' + opts.UpdateUrl, true);
 
                         var dataXml = {
                             SessionId: SessionId,
@@ -1873,7 +1873,7 @@ var debug = false;
                             },
                             success: function (xml)
                             {
-                                if (debug) log('On Success ' + opts.UpdateUrl, logVerbosity.info.name);
+                                if (debug) log('On Success ' + opts.UpdateUrl, true);
                                 var $xml = $(xml);
                                 _updateStoredViewXml(rootid, $xml, '0');
                                 if (perpetuateTimer)
