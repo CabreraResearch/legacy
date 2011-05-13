@@ -909,17 +909,61 @@ function iterate(obj) {
 		console.log("iterate() error: No popup!");
 }
 
+var logVerbosity = {
+    error: { name: 'error' },
+    info: { name: 'info' },
+    verbose: { name: 'verbose' }
+};
+
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
-function log(s) {
-	try
+function log(s, verbosity) {
+    /// <summary>Outputs a message to the console log(Webkit,FF) or an alert(IE)</summary>
+    /// <param name="s" type="String"> String to output </param>
+    /// <param name="verbosity" type="JSON"> The level of verbosity </param>
+    var extendedLog = '';
+    var loglevel = tryParseString(verbosity, logVerbosity.error.name);
+    switch (loglevel)
+    {
+        case logVerbosity.info.name:
+            {
+                extendedLog = getCallStack();
+                break;
+            }
+        case logVerbosity.verbose.name:
+            {
+                //nada yet
+                break;
+            }
+    }
+    
+    try
 	{
-		console.log(s);
+	    console.log(s);
+        if( !isNullOrEmpty(extendedLog) ) console.log(extendedLog);
 	} catch (e)
 	{
 		alert(s);
+        if( !isNullOrEmpty(extendedLog) ) alert(extendedLog);
 	}
 }
 
+function getCallStack()
+{
+    var stack = '';
+    var callername = arguments.callee.caller.name;
+    var caller = arguments.callee.caller;
+    while ( !isNullOrEmpty(callername) )
+    {
+        if (callername != 'log')
+        {
+            stack += "Called by function " + callername + "() \n";
+        }
+        caller = caller.caller;
+        callername = caller.name;
+    }
+
+    return stack;
+}
 
 // ------------------------------------------------------------------------------------
 // Browser Compatibility
