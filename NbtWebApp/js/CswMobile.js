@@ -272,13 +272,13 @@ var debug = false;
                 {
                     if (amOffline())
                     {
-                        _fetchCachedRootXml(function (xml)
+                        _fetchCachedRootXml(function ($xml)
                         {
                             _processViewXml({
                                 ParentId: p.ParentId,
                                 DivId: p.DivId,
                                 HeaderText: p.HeaderText,
-                                $xml: $(xml),
+                                $xml: $xml,
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 HideSearchButton: p.HideSearchButton,
@@ -287,7 +287,7 @@ var debug = false;
                         });
                     } else
                     {
-                        if (debug) log('Starting ' + opts.ViewUrl);
+                        if (debug) log('Starting ' + opts.ViewUrl, logVerbosity.info.name);
                         
                         var dataXml = {
                             SessionId: SessionId,
@@ -302,9 +302,11 @@ var debug = false;
                             data: dataXml,
                             stringify: false,
                             onloginfail: function() { Logout(); },
-                            success: function (X$xml)
+                            success: function (xml)
                             {
-                                if (debug) log('On Success ' + opts.ViewUrl);
+                                if (debug) log('On Success ' + opts.ViewUrl, logVerbosity.info.name);
+                                var X$xml = $(xml);
+                                
                                 if (p.level === 1)
                                 {
 									_storeViewXml(p.DivId, p.HeaderText, X$xml);
@@ -326,17 +328,16 @@ var debug = false;
                 } else if (p.level === 1)
                 {
                     // case 20354 - try cached first
-                    _fetchCachedViewXml(rootid, function (xmlstr)
+                    _fetchCachedViewXml(rootid, function ($xmlstr)
                     {
-                        if ( !isNullOrEmpty(xmlstr) )
+                        if ( !isNullOrEmpty($xmlstr) )
                         {
-							$currentViewXml = $(xmlstr);
-                            
+                            $currentViewXml = $xmlstr;
                             _processViewXml({
                                 ParentId: p.ParentId,
                                 DivId: p.DivId,
                                 HeaderText: p.HeaderText,
-                                $xml: $(xmlstr),
+                                $xml: $xmlstr,
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 HideSearchButton: p.HideSearchButton,
@@ -344,7 +345,7 @@ var debug = false;
                             });
                         } else if (!amOffline())
                         {
-                            if (debug) log('Starting ' + opts.ViewUrl);
+                            if (debug) log('Starting ' + opts.ViewUrl, logVerbosity.info.name);
 
                             var dataXml = {
                                 SessionId: SessionId,
@@ -359,15 +360,14 @@ var debug = false;
                                 data: dataXml,
                                 stringify: false,
                                 onloginfail: function() { Logout(); },
-                                success: function (X$xml)
+                                success: function (xml)
                                 {
-                                    if (debug) log('On Success ' + opts.ViewUrl);
-
+                                    if (debug) log('On Success ' + opts.ViewUrl, logVerbosity.info.name);
+                                    $currentViewXml = $(xml);
                                     if (p.level === 1)
                                     {
-                                        _storeViewXml(p.DivId, p.HeaderText, X$xml);
+                                        _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                                     }
-                                    $currentViewXml = X$xml;
                                 
                                     _processViewXml({
                                         ParentId: p.ParentId,
@@ -438,7 +438,7 @@ var debug = false;
 
             p.$xml.children().each(function ()
             {
-                content += _makeListItemFromXml(this, p.DivId, p.parentlevel);
+                content += _makeListItemFromXml($(this), p.DivId, p.parentlevel);
             });
             content += _endUL();
 
@@ -461,19 +461,18 @@ var debug = false;
 
         } // _processViewXml()
 
-        function _makeListItemFromXml(xmlitem, DivId, parentlevel)
+        function _makeListItemFromXml($xmlitem, DivId, parentlevel)
         {
-            var $xmlitem = $(xmlitem);
             var id = $xmlitem.CswAttrXml('id');
             var text = $xmlitem.CswAttrXml('name');
             var IsDiv = ( !isNullOrEmpty(id) );
-            var PageType = xmlitem.nodeName.toLowerCase();
+            var PageType = tryParseString($xmlitem.get(0).nodeName,'').toLowerCase();
 
             var nextid = $xmlitem.next().CswAttrXml('id');
             var previd = $xmlitem.prev().CswAttrXml('id');
 
             var lihtml = '';
-
+            
             switch (PageType)
             {
                 case "search":
@@ -485,111 +484,114 @@ var debug = false;
                     break;
 
                 case "prop":
-                    var tab = $xmlitem.CswAttrXml('tab');
-                    var fieldtype = $xmlitem.CswAttrXml('fieldtype').toLowerCase();
-                    var gestalt = $xmlitem.CswAttrXml('gestalt');
-                    if (gestalt === 'NaN') gestalt = '';
+                    {   
+                        var tab = $xmlitem.CswAttrXml('tab');
+                        var fieldtype = tryParseString($xmlitem.CswAttrXml('fieldtype'),'').toLowerCase();
+                        var gestalt = $xmlitem.CswAttrXml('gestalt');
+                        if (gestalt === 'NaN') gestalt = '';
 
-                    var currentcnt = $xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
-                    var siblingcnt = $xmlitem.siblings('[fieldtype="'+fieldtype+'"]').andSelf().length;
+                        var currentcnt = $xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
+                        var siblingcnt = $xmlitem.siblings('[fieldtype="'+fieldtype+'"]').andSelf().length;
 
-                    if (currenttab !== tab)
-                    {
-                        if ( !isNullOrEmpty(currenttab) )
-                        {    
-                            lihtml += _endUL() + _makeUL();
-                        }
-                        lihtml += '<li data-role="list-divider">' + tab + '</li>'
-                        currenttab = tab;
-                    }
-
-                    switch (fieldtype)
-                    {
-                        case 'logical':
-                            lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
-
-                            var sf_checked = $xmlitem.children('checked').text();
-                            var sf_required = $xmlitem.children('required').text();
-                            if ( isNullOrEmpty(sf_checked) ) sf_checked = '';
-                            if ( isNullOrEmpty(sf_required) ) sf_required = '';
-
-                            lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                            lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
-                            lihtml += '</div>';
-                            break;
-
-                        case 'question':
-                            lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
-
-                            var sf_answer = $xmlitem.children('answer').text();
-                            var sf_allowedanswers = $xmlitem.children('allowedanswers').text();
-                            var sf_compliantanswers = $xmlitem.children('compliantanswers').text();
-                            var sf_correctiveaction = $xmlitem.children('correctiveaction').text();
-                            if ( isNullOrEmpty(sf_answer) ) sf_answer = '';
-                            if ( isNullOrEmpty(sf_allowedanswers) ) sf_allowedanswers = '';
-                            if ( isNullOrEmpty(sf_compliantanswers) ) sf_compliantanswers = '';
-                            if ( isNullOrEmpty(sf_correctiveaction) ) sf_correctiveaction = '';
-
-                            lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                            lihtml += _makeQuestionAnswerFieldSet(DivId, id, '_ans', '_ans2', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
-                            lihtml += '</div>';
-
-                            if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
-                            {
-                                // mark the li div OOC after it is created
-                                var old_onAfterAddDiv = onAfterAddDiv;
-                                onAfterAddDiv = function ($divhtml)
-                                {
-                                    $divhtml.find('#' + id + '_li div')
-                                            .addClass('OOC');
-                                    old_onAfterAddDiv($divhtml);
-                                }
+                        if (currenttab !== tab)
+                        {
+                            if ( !isNullOrEmpty(currenttab) )
+                            {    
+                                lihtml += _endUL() + _makeUL();
                             }
-                            break;
+                            lihtml += '<li data-role="list-divider">' + tab + '</li>'
+                            currenttab = tab;
+                        }
 
-                        default:
-                            lihtml += '<li id="' + id + '_li">';
-                            lihtml += ' <a href="#' + id + '">' + text + '</a>';
-                            lihtml += ' <p class="ui-li-aside">' + gestalt + '</p>';
-                            lihtml += '</li>';
-                            break;
-                    }
+                        switch (fieldtype)
+                        {
+                            case 'logical':
+                                lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
+
+                                var sf_checked = $xmlitem.children('checked').text();
+                                var sf_required = $xmlitem.children('required').text();
+                                if ( isNullOrEmpty(sf_checked) ) sf_checked = '';
+                                if ( isNullOrEmpty(sf_required) ) sf_required = '';
+
+                                lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
+                                lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
+                                lihtml += '</div>';
+                                break;
+
+                            case 'question':
+                                lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
+
+                                var sf_answer = $xmlitem.children('answer').text();
+                                var sf_allowedanswers = $xmlitem.children('allowedanswers').text();
+                                var sf_compliantanswers = $xmlitem.children('compliantanswers').text();
+                                var sf_correctiveaction = $xmlitem.children('correctiveaction').text();
+                                if ( isNullOrEmpty(sf_answer) ) sf_answer = '';
+                                if ( isNullOrEmpty(sf_allowedanswers) ) sf_allowedanswers = '';
+                                if ( isNullOrEmpty(sf_compliantanswers) ) sf_compliantanswers = '';
+                                if ( isNullOrEmpty(sf_correctiveaction) ) sf_correctiveaction = '';
+
+                                lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
+                                lihtml += _makeQuestionAnswerFieldSet(DivId, id, '_ans', '_ans2', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
+                                lihtml += '</div>';
+
+                                if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
+                                {
+                                    // mark the li div OOC after it is created
+                                    var old_onAfterAddDiv = onAfterAddDiv;
+                                    onAfterAddDiv = function ($divhtml)
+                                    {
+                                        $divhtml.find('#' + id + '_li div')
+                                                .addClass('OOC');
+                                        old_onAfterAddDiv($divhtml);
+                                    }
+                                }
+                                break;
+
+                            default:
+                                lihtml += '<li id="' + id + '_li">';
+                                lihtml += ' <a href="#' + id + '">' + text + '</a>';
+                                lihtml += ' <p class="ui-li-aside">' + gestalt + '</p>';
+                                lihtml += '</li>';
+                                break;
+                        }
 
 
-                    // add a div for editing the property directly
-                    var toolbar = '';
-                    if ( !isNullOrEmpty(previd) )
-                    {
-                        toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>';
-                    }
-                    if ( !isNullOrEmpty(nextid) )
-                    {
-                        toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
-                    }
-                    if( fieldtype === "question")
-                    {
-                        toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
-                    }
+                        // add a div for editing the property directly
+                        var toolbar = '';
+                        if ( !isNullOrEmpty(previd) )
+                        {
+                            toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>';
+                        }
+                        if ( !isNullOrEmpty(nextid) )
+                        {
+                            toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
+                        }
+                        if( fieldtype === "question")
+                        {
+                            toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
+                        }
 
-                    _addPageDivToBody({
-                        ParentId: DivId,
-                        level: parentlevel,
-                        DivId: id,
-                        HeaderText: text,
-                        toolbar: toolbar,
-                        content: _FieldTypeXmlToHtml($xmlitem, DivId)
-                    });
+                        _addPageDivToBody({
+                            ParentId: DivId,
+                            level: parentlevel,
+                            DivId: id,
+                            HeaderText: text,
+                            toolbar: toolbar,
+                            content: _FieldTypeXmlToHtml($xmlitem, DivId)
+                        });
 
-                    break;
-
+                        break;
+                    } // case 'prop':
                 default:
-                    lihtml += '<li>';
-                    if (IsDiv)
-                        lihtml += '<a href="#' + id + '">' + text + '</a>';
-                    else
-                        lihtml += text;
-                    lihtml += '</li>';
-                    break;
+                    {
+                        lihtml += '<li>';
+                        if (IsDiv)
+                            lihtml += '<a href="#' + id + '">' + text + '</a>';
+                        else
+                            lihtml += text;
+                        lihtml += '</li>';
+                        break;
+                    } // default:
             }
             return lihtml;
         } // _makeListItemFromXml()
@@ -610,7 +612,6 @@ var debug = false;
 
         function _makeObjectClassContent($xmlitem)
         {
-            
             var Html = '';
             var id = $xmlitem.CswAttrXml('id');
             var NodeName = $xmlitem.CswAttrXml('name');
@@ -631,7 +632,8 @@ var debug = false;
                     var UnansweredCnt = 0;
                     $xmlitem.find('prop[fieldtype="Question"]').each(function ()
                     {
-                        if ( isNullOrEmpty($(this).children('Answer').text().trim() ) )
+                        var $question = $(this);
+                        if ( isNullOrEmpty($question.children('Answer').text().trim() ) )
                         {
                             UnansweredCnt++;
                         }
@@ -1172,11 +1174,12 @@ var debug = false;
                 .find('li a')
                 .click(function (e)
                 {
-					if (_loadDivContents({
+					var $div = $(this);
+                    if (_loadDivContents({
                         ParentId: DivId,
                         level: (level + 1),
-                        DivId: $(this).CswAttrDom('href').substr(1),
-                        HeaderText: $(this).text(),
+                        DivId: $div.CswAttrDom('href').substr(1),
+                        HeaderText: $div.text(),
                         ChangePage: true
                     })) { e.stopPropagation(); e.preventDefault(); }
                 })
@@ -1296,7 +1299,7 @@ var debug = false;
                     'Password': Password
                 };
 
-                if (debug) log('Starting ' + opts.AuthenticateUrl);
+                if (debug) log('Starting ' + opts.AuthenticateUrl, logVerbosity.info.name);
 
                 CswAjaxJSON({
                     formobile: ForMobile,
@@ -1305,7 +1308,7 @@ var debug = false;
                     onloginfail: function () { Logout(); },
                     success: function (data)
                     {
-                        if (debug) log('On Success ' + opts.AuthenticateUrl);
+                        if (debug) log('On Success ' + opts.AuthenticateUrl, logVerbosity.info.name);
                         
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
 						_cacheSession(SessionId, UserName);
@@ -1376,7 +1379,7 @@ var debug = false;
 
                 $('div[id*="' + RealDivId + '"]').remove();
 
-                if (debug) log('Starting ' + opts.ViewUrl);
+                if (debug) log('Starting ' + opts.ViewUrl, logVerbosity.info.name);
 
                 var dataXml = {
                     SessionId: SessionId,
@@ -1394,16 +1397,16 @@ var debug = false;
                     onloginfail: function() { Logout(); },
                     success: function (xml)
                     {
-                        if (debug) log('Starting ' + opts.ViewUrl);
+                        if (debug) log('Starting ' + opts.ViewUrl, logVerbosity.info.name);
 
                         $currentViewXml = $(xml);
-                        _updateStoredViewXml(RealDivId, xml, '0');
+                        _updateStoredViewXml(RealDivId, $currentViewXml, '0');
 
                         _processViewXml({
                             ParentId: 'viewsdiv',
                             DivId: RealDivId,
                             HeaderText: HeaderText,
-                            '$xml': $(xml),
+                            '$xml': $currentViewXml,
                             parentlevel: 1,
                             HideRefreshButton: false,
                             HideSearchButton: true,
@@ -1455,7 +1458,8 @@ var debug = false;
                     var $divxml = $currentViewXml.find('#' + DivId);
                     $divxml.andSelf().find('prop').each(function ()
                     {
-                        _FieldTypeHtmlToXml($(this), name, value);
+                        var $fieldtype = $(this);
+                        _FieldTypeHtmlToXml($fieldtype, name, value);
                     });
 
                     // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
@@ -1472,11 +1476,10 @@ var debug = false;
         {
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
-            _fetchCachedViewXml(rootid, function (xmlstr)
+            _fetchCachedViewXml(rootid, function ($xmlstr)
             {
-                if ( !isNullOrEmpty(xmlstr) )
+                if ( !isNullOrEmpty($xmlstr) )
                 {
-                    var $xmlstr = $(xmlstr);
                     var Html = '<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
 
                     $xmlstr.closest('result')
@@ -1515,11 +1518,10 @@ var debug = false;
         {
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
-            _fetchCachedViewXml(rootid, function (xmlstr)
+            _fetchCachedViewXml(rootid, function ($xmlstr)
             {
-                if ( !isNullOrEmpty(xmlstr) )
+                if ( !isNullOrEmpty($xmlstr) )
                 {
-                    var $xmlstr = $(xmlstr);
                     var content = _makeUL(DivId + '_searchresultslist');
 
                     var hitcount = 0;
@@ -1531,7 +1533,7 @@ var debug = false;
                             if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
                                 hitcount++;
-                                content += _makeListItemFromXml(this, DivId, 1, false);
+                                content += _makeListItemFromXml($node, DivId, 1, false);
                             }
                         }
                     });
@@ -1567,7 +1569,7 @@ var debug = false;
                 });
             } else
             {
-                log("database is not opened");
+                log("database is not opened", logVerbosity.info.name);
             }
         } //_DoSql
 
@@ -1620,7 +1622,7 @@ var debug = false;
 
         function _errorHandler(transaction, error)
         {
-            log('Database Error: ' + error.message + ' (Code ' + error.code + ')');
+            log('Database Error: ' + error.message + ' (Code ' + error.code + ')', logVerbosity.info.name);
             return true;
         }
 
@@ -1715,7 +1717,7 @@ var debug = false;
             }
         }
 
-        function _updateStoredViewXml(rootid, viewxml, wasmodified)
+        function _updateStoredViewXml(rootid, $viewxml, wasmodified)
         {
             if ( !isNullOrEmpty(rootid) )
             {
@@ -1730,15 +1732,17 @@ var debug = false;
                    [],
                    function (transaction, result)
                    {
+                       var $viewxml;
                        if (result.rows.length > 0)
                        {
                            _resetPendingChanges(true, true);
                            var row = result.rows.item(0);
-                           onSuccess(row.rootid, row.viewxml);
+                           $viewxml = $(row.viewxml);
+                           onSuccess(row.rootid, $viewxml);
                        } else
                        {
                            _resetPendingChanges(false, true);
-                           onSuccess('', '');
+                           onSuccess('', $viewxml);
                        }
                    });
         }
@@ -1751,13 +1755,15 @@ var debug = false;
                        [rootid],
                        function (transaction, result)
                        {
+                           var $viewxml;
                            if (result.rows.length > 0)
                            {
                                var row = result.rows.item(0);
-							   onsuccess(row.viewxml);
+							   $viewxml = $(row.viewxml);
+                               onsuccess($viewxml);
                            } else
                            {
-                               onsuccess('');
+                               onsuccess($viewxml);
                            }
                        });
             }
@@ -1775,7 +1781,8 @@ var debug = false;
                            ret += "<view id=\"" + row.rootid + "\"" +
                                   " name=\"" + row.rootname + "\" />";
                        }
-                       onsuccess("<result>" + ret + "</result>");
+                       $xml = $("<result>" + ret + "</result>");
+                       onsuccess($xml);
                    });
         }
 
@@ -1802,7 +1809,7 @@ var debug = false;
                 url = opts.ConnectTestRandomFailUrl;
             }
 
-            if (debug) log('Starting ' + url);
+            if (debug) log('Starting ' + url, logVerbosity.info.name);
 
             CswAjaxXml({
                 formobile: ForMobile,
@@ -1812,20 +1819,21 @@ var debug = false;
                 onloginfail: function() { Logout(); },
                 success: function (xml)
                 {
-                    if (debug) log('On Success ' + url);
-
+                    if (debug) log('On Success ' + url, logVerbosity.info.name);
+                    var $xml = $(xml);
                     setOnline();
                     _processChanges(true);
                     if ( !isNullOrEmpty(onSuccess) )
                     {
-                        onSuccess();
+                        onSuccess($xml);
                     }
                 },
                 error: function (xml)
                 {
+                    var $xml = $(xml);
                     if ( !isNullOrEmpty(onFailure) )
                     {
-                        onFailure();
+                        onFailure($xml);
                     }
                     _waitForData();
                 }
@@ -1837,16 +1845,16 @@ var debug = false;
         {
             if ( !isNullOrEmpty(SessionId) )
             {
-                _getModifiedView(function (rootid, viewxml)
+                _getModifiedView(function (rootid, $viewxml)
                 {
-                    if ( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
+                    if ( !isNullOrEmpty(rootid) && !isNullOrEmpty($viewxml) )
                     {
-                        if (debug) log('Starting ' + opts.UpdateUrl);
+                        if (debug) log('Starting ' + opts.UpdateUrl, logVerbosity.info.name);
 
                         var dataXml = {
                             SessionId: SessionId,
                             ParentId: UpdatedViewXml,
-                            UpdatedViewXml: viewxml.replace(/'/gi, '\\\'')
+                            UpdatedViewXml: $viewxml.replace(/'/gi, '\\\'')
                         };
 
                         CswAjaxXml({
@@ -1863,9 +1871,9 @@ var debug = false;
                             },
                             success: function (xml)
                             {
-                                if (debug) log('On Success ' + opts.UpdateUrl);
-
-                                _updateStoredViewXml(rootid, xml, '0');
+                                if (debug) log('On Success ' + opts.UpdateUrl, logVerbosity.info.name);
+                                var $xml = $(xml);
+                                _updateStoredViewXml(rootid, $xml, '0');
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
