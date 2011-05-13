@@ -84,7 +84,7 @@ namespace ChemSW.Nbt
             ICswSessionStorage SoCalledFastSessionStorage = SessionRetrievalType.Optimized == _SessionRetrievalType ? (ICswSessionStorage) new CswSessionStorageStateServer( _HttpSessionState ) : (ICswSessionStorage) new CswSessionStorageStateServerDummy();
 
 
-            CswSessionManager = new CswSessionManager( AppType.Nbt, new CswCachedSessionIdWeb( HttpRequest, HttpResponse ), LoginAccessId, CswSetupVblsNbt, CswDbCfgInfoNbt, true, SoCalledFastSessionStorage, _UsedCachedResources, CswNbtResources, new CswNbtAuthenticator( CswNbtResources ), _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ), new CswNbtStatisticsStorageStateServer(), RecordStatistics ) );
+            CswSessionManager = new CswSessionManager( AppType.Nbt, new CswWebClientStorageCookies( HttpRequest, HttpResponse ), LoginAccessId, CswSetupVblsNbt, CswDbCfgInfoNbt, true, SoCalledFastSessionStorage, _UsedCachedResources, CswNbtResources, new CswNbtAuthenticator( CswNbtResources ), _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ), new CswNbtStatisticsStorageStateServer(), RecordStatistics ) );
             CswNbtStatisticsEvents = _CswNbtStatistics.CswNbtStatisticsEvents;
             CswSessionManager.OnDeauthenticate += new CswSessionManager.DeathenticationHandler( OnDeauthenticate );
 
