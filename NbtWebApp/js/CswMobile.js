@@ -642,7 +642,7 @@ var debug = false;
                     Html += '<li>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                    Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
+                    Html += '<a href="#' + id + '">' + NodeName + '</a>';
                     Html += '<p>' + Location + '</p>';
                     Html += '<p>' + MountPoint + '</p>';
                     Html += '<p>'+ Status + ', Due: ' + DueDate + '</p>';
