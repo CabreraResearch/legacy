@@ -921,7 +921,7 @@ var debug = true;
                     case 'False': answertext = 'No'; break;
                 }
 
-                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
+                Html += '<input type="radio" name="' + makeSafeId({ prefix: IdStr, ID: Suffix}) + '" id="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]}) + '" value="' + answers[i] + '" ';
 				// Checked is a Tristate, so isTrue() is not useful here
 				if ((Checked === 'false' && answers[i] === 'False') ||
 					(Checked === 'true' && answers[i] === 'True') ||
@@ -935,15 +935,15 @@ var debug = true;
                 for (var j = 0; j < answers.length; j++)
                 {
                     if (answers[j] === answers[i])
-                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
                     else
-                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
                 }
 
                 Html += ' var $otherradio; ';
                 for (var k = 0; k < answers.length; k++)
                 {
-                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[k] + '\'); ';
+                    Html += ' $otherradio = $(\'#' + makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]}) + '\'); ';
                     if (answers[k] === answers[i])
                     {
                         Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
@@ -956,18 +956,12 @@ var debug = true;
                     }
                 } // for (var k = 0; k < answers.length; k++)
                 Html += '" />';
-                Html += '<label for="' + IdStr + Suffix + '_' + answers[i] + '">' + answertext + '</label>';
+                Html += '<label for="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]}) + '">' + answertext + '</label>';
             } // for (var i = 0; i < answers.length; i++)
 
             Html += '</fieldset>';
             return Html;
         }
-
-        function _makeSafeId(val)
-        {
-            return val.replace(/'/gi, '');
-        }
-
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
@@ -975,8 +969,8 @@ var debug = true;
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
-                var answerid = _makeSafeId(answers[i]);
-                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answerid + '" value="' + answers[i] + '" ';
+                var answerid = makeSafeId({ ID: answers[i] });
+                Html += '<input type="radio" name="' + makeSafeId({ID: IdStr, suffix: Suffix}) + '" id="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '" value="' + answers[i] + '" ';
                 if (Answer === answers[i])
                     Html += ' checked';
                 Html += ' onclick="';
@@ -984,18 +978,16 @@ var debug = true;
                 // case 20307: workaround for a bug with JQuery Mobile Alpha2
                 for (var j = 0; j < answers.length; j++)
                 {
-                    var otheranswerid = _makeSafeId(answers[j]);
                     if (answers[j] === answers[i])
-                        Html += ' $(\'#' + IdStr + Suffix + '_' + otheranswerid + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
                     else
-                        Html += ' $(\'#' + IdStr + Suffix + '_' + otheranswerid + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
                 }
 
                 Html += ' var $otherradio; ';
                 for (var k = 0; k < answers.length; k++)
                 {
-                    var yetanotheranswerid = _makeSafeId(answers[k]);
-                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + yetanotheranswerid + '\'); ';
+                    Html += ' $otherradio = $(\'#' + makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]}) + '\'); ';
                     if (answers[k] === answers[i])
                     {
                         Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
@@ -1009,20 +1001,20 @@ var debug = true;
 
                 if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
                 {
-                    Html += ' $(\'#' + IdStr + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
-                    Html += ' $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
-                    Html += ' $(\'#' + IdStr + PropNameSuffix + '\').removeClass(\'OOC\'); ';
+                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\').css(\'display\', \'none\'); ';
+                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
+                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
                 }
                 else
                 {
-                    Html += ' var $cor = $(\'#' + IdStr + CorrectiveActionSuffix + '\'); ';
+                    Html += ' var $cor = $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\'); ';
                     Html += ' $cor.css(\'display\', \'\'); ';
                     Html += ' if($cor.CswAttrDom(\'value\') === \'\') { ';
-                    Html += '   $(\'#' + IdStr + LiSuffix + ' div\').addClass(\'OOC\'); ';
-                    Html += '   $(\'#' + IdStr + PropNameSuffix + '\').addClass(\'OOC\'); ';
+                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').addClass(\'OOC\'); ';
+                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').addClass(\'OOC\'); ';
                     Html += ' } else {';
-                    Html += '   $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
-                    Html += '   $(\'#' + IdStr + PropNameSuffix + '\').removeClass(\'OOC\'); ';
+                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
+                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
                     Html += ' } ';
                 }
                 if ( isNullOrEmpty(Answer) )
@@ -1035,13 +1027,13 @@ var debug = true;
                     Html += ' }';
                 }
                 Html += ' " />';
-                Html += '            <label for="' + IdStr + Suffix + '_' + answerid + '">' + answers[i] + '</label>';
+                Html += '            <label for="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '">' + answers[i] + '</label>';
             } // for (var i = 0; i < answers.length; i++)
             Html += '</fieldset>';
             return Html;
         } // _makeQuestionAnswerFieldSet()
 
-
+        
         function _addPageDivToBody(params)
         {
             var p = {
