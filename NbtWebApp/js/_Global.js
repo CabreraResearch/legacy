@@ -276,7 +276,7 @@ function jsonToString(j) {
 // Check Changes
 // ------------------------------------------------------------------------------------
 
-var changed = 0;
+var changed = new Number(0);
 var checkChangesEnabled = true;
 
 function setChanged() {
@@ -345,7 +345,7 @@ function manuallyCheckChanges() {
 
 function initCheckChanges() {
 	// Assign the checkchanges event to happen onbeforeunload
-	if ((window.onbeforeunload !== null) && (window.onbeforeunload !== undefined))
+	if ( !isNullOrEmpty(window.onbeforeunload) )
 	{
 		window.onbeforeunload = function ()
 		{
@@ -382,7 +382,7 @@ function initCheckChanges() {
 //	}
 }
 
-if ((window.onload !== null) && (window.onload !== undefined))
+if ( !isNullOrEmpty(window.onload) )
 {
 	window.onload = new Function('initCheckChanges(); var f=' + window.onload + '; return f();');
 } else
