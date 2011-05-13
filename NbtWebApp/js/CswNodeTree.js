@@ -30,12 +30,17 @@
 												cswnbtnodekey: '',
 												viewid: ''
 											};
+											return o;
 									},
+					onInitialSelectNode: undefined,
 					onViewChange: function(newviewid) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
 					SelectFirstChild: true,
 					ShowCheckboxes: false
 				};
 				if(options) $.extend(o, options);
+
+				if(o.onInitialSelectNode === undefined)
+					o.onInitialSelectNode = o.onSelectNode;
 
 				var IDPrefix = o.ID + '_';
 				var $treediv = $('<div id="'+ IDPrefix + '" class="treediv" />')
@@ -223,95 +228,19 @@
 							}).bind('load_node.jstree', function(e, data) {
 								$('.'+ IDPrefix +'check').unbind('click');
 								$('.'+ IDPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
-							}).bind('select_node.jstree', 
-											function (e, data) {
-												var Selected = jsTreeGetSelected($treediv);
-												var optSelect =  {
-													nodeid: Selected.id, 
-													nodename: Selected.text, 
-													iconurl: Selected.iconurl, 
-													cswnbtnodekey: Selected.$item.CswAttrDom('cswnbtnodekey'),
-													nodespecies: Selected.$item.CswAttrDom('species'),
-													viewid: o.viewid
-												};
-												
-												if(optSelect.nodespecies === "More")
-												{
-													var ParentNodeKey = '';
-													var Parent = data.inst._get_parent(data.rslt.obj);
-													if(Parent !== -1)
-													{
-                                                    	ParentNodeKey = tryParseString(Parent.CswAttrDom('cswnbtnodekey'),'');
-                                                    }
-                                                    
-                                                    var nextDataParam = { 
-                                                        'UsePaging': o.UsePaging,
-                                                        'ViewNum': o.viewid,
-                                                        'IDPrefix': IDPrefix,
-                                                        'IsFirstLoad': false,
-                                                        'ParentNodeKey': ParentNodeKey,
-                                                        'IncludeNodeRequired': false,
-                                                        'IncludeNodeKey': optSelect.cswnbtnodekey,
-                                                        'ShowEmpty': false,
-                                                        'ForSearch': o.forsearch,
-                                                        'NodePk': Selected.id
-                                                    };
+							}).bind('select_node.jstree', function(e, data) { return _firstSelectNode({
+									e: e, 
+									data: data, 
+									$treediv: $treediv, 
+									IDPrefix: IDPrefix, 
+									onSelectNode: o.onSelectNode,
+									onInitialSelectNode: o.onInitialSelectNode,
+									viewid: o.viewid,
+									UsePaging: o.UsePaging,
+									forsearch: o.forsearch
+								}); 
+							});
 
-													// get next page of nodes
-													CswAjaxXml({
-														url: url,
-														data: nextDataParam,
-                                                        stringify: false,
-														success: function ($xml) 
-															{
-																var AfterNodeId = IDPrefix + optSelect.nodeid;
-																var $itemxml = $xml.children().first();
-																
-																// we have to do these one at a time in successive OnSuccess callbacks, 
-																// or else they won't end up in the right place on the tree
-																_continue();
-
-																function _continue()
-																{
-																	if($itemxml.length > 0)
-																	{
-																		$treediv.jstree('create', '#' + AfterNodeId, 'after',
-																						{ 
-																							'attr': {
-																										'id': $itemxml.CswAttrXml('id'), 
-																										'rel': $itemxml.CswAttrXml('rel'),
-																										'cswnbtnodekey': $itemxml.CswAttrXml('cswnbtnodekey'),
-																										'species': $itemxml.CswAttrXml('species')
-																									},
-																							'data': $itemxml.children('content').children('name').text(), 
-																							'state': $itemxml.CswAttrXml('state') 
-																						}, 
-																						function() 
-																						{
-																							// remove 'More' node
-																							if(AfterNodeId === $itemxml.CswAttrXml('id'))
-																							{
-																								$treediv.jstree('remove', '#' + IDPrefix + optSelect.nodeid + '[species="More"]' );
-																							}
-
-																							AfterNodeId = $itemxml.CswAttrXml('id');
-																							$itemxml = $itemxml.next();
-																							_continue();
-																						}, 
-																						true, true);
-
-																	} // if($itemxml.length > 0)
-																} // _continue()
-
-															} // success
-														}); // ajax
-												}
-												else 
-												{
-													_clearChecks(IDPrefix);
-													o.onSelectNode(optSelect);
-												}
-											});
 							// DO NOT define an onSuccess() function here that interacts with the tree.
 							// The tree has initalization events that appear to happen asynchronously,
 							// and thus having an onSuccess() function that changes the selected node will
@@ -349,6 +278,134 @@
 				$treediv.jstree('select_node', '#' + IDPrefix + o.newnodeid);
 			}
 	};
+
+	function _firstSelectNode(myoptions)
+	{
+		var m = {
+			e: '', 
+			data: '', 
+			$treediv: '', 
+			IDPrefix: '', 
+			onSelectNode: function() {},
+			onInitialSelectNode: function() {},
+			viewid: '',
+			UsePaging: '',
+			forsearch: ''
+		};
+		if(myoptions) $.extend(m, myoptions);
+		
+		// case 21715 - don't trigger onSelectNode event on first event
+		m.onSelectNode = m.onInitialSelectNode;
+		_handleSelectNode(m);
+
+		// reset
+		if(myoptions) $.extend(m, myoptions);
+		
+		// rebind event for next select
+		m.$treediv.unbind('select_node.jstree');
+		m.$treediv.bind('select_node.jstree', function(e, data) { return _handleSelectNode(m); });
+	}
+
+	function _handleSelectNode(myoptions)
+	{
+		var m = {
+			e: '', 
+			data: '', 
+			$treediv: '', 
+			IDPrefix: '', 
+			onSelectNode: function() {},
+			viewid: '',
+			UsePaging: '',
+			forsearch: ''
+		};
+		if(myoptions) $.extend(m, myoptions);
+
+		var Selected = jsTreeGetSelected(m.$treediv);
+		var optSelect =  {
+			nodeid: Selected.id, 
+			nodename: Selected.text, 
+			iconurl: Selected.iconurl, 
+			cswnbtnodekey: Selected.$item.CswAttrDom('cswnbtnodekey'),
+			nodespecies: Selected.$item.CswAttrDom('species'),
+			viewid: m.viewid
+		};
+												
+		if(optSelect.nodespecies === "More")
+		{
+			var ParentNodeKey = '';
+			var Parent = m.data.inst._get_parent(m.data.rslt.obj);
+			if(Parent !== -1)
+			{
+				ParentNodeKey = tryParseString(Parent.CswAttrDom('cswnbtnodekey'),'');
+			}
+                                                    
+			var nextDataParam = { 
+				'UsePaging': m.UsePaging,
+				'ViewNum': m.viewid,
+				'IDPrefix': m.IDPrefix,
+				'IsFirstLoad': false,
+				'ParentNodeKey': ParentNodeKey,
+				'IncludeNodeRequired': false,
+				'IncludeNodeKey': optSelect.cswnbtnodekey,
+				'ShowEmpty': false,
+				'ForSearch': m.forsearch,
+				'NodePk': Selected.id
+			};
+
+			// get next page of nodes
+			CswAjaxXml({
+				url: url,
+				data: nextDataParam,
+				success: function ($xml) 
+					{
+						var AfterNodeId = m.IDPrefix + optSelect.nodeid;
+						var $itemxml = $xml.children().first();
+																
+						// we have to do these one at a time in successive OnSuccess callbacks, 
+						// or else they won't end up in the right place on the tree
+						_continue();
+
+						function _continue()
+						{
+							if($itemxml.length > 0)
+							{
+								m.$treediv.jstree('create', '#' + AfterNodeId, 'after',
+									{ 
+										'attr': {
+													'id': $itemxml.CswAttrXml('id'), 
+													'rel': $itemxml.CswAttrXml('rel'),
+													'cswnbtnodekey': $itemxml.CswAttrXml('cswnbtnodekey'),
+													'species': $itemxml.CswAttrXml('species')
+												},
+										'data': $itemxml.children('content').children('name').text(), 
+										'state': $itemxml.CswAttrXml('state') 
+									}, 
+									function() 
+									{
+										// remove 'More' node
+										if(AfterNodeId === $itemxml.CswAttrXml('id'))
+										{
+											m.$treediv.jstree('remove', '#' + m.IDPrefix + optSelect.nodeid + '[species="More"]' );
+										}
+
+										AfterNodeId = $itemxml.CswAttrXml('id');
+										$itemxml = $itemxml.next();
+										_continue();
+									}, 
+									true, true);
+
+							} // if($itemxml.length > 0)
+						} // _continue()
+
+					} // success
+				}); // ajax
+		}
+		else 
+		{
+			_clearChecks(m.IDPrefix);
+			m.onSelectNode(optSelect);
+		}
+	}
 
 	function _handleCheck($treediv, $checkbox)
 	{
