@@ -168,12 +168,17 @@ my $masterpassword = $schemata{$masterschema};
 &runCommand( "echo exit | sqlplus ". $masterschema ."/". $masterpassword ."\@". $orclserver ." \@". $repopaths{"Nbt"} ."/Schema/nbt_finalize_ora.sql" );
 
 #---------------------------------------------------------------------------------
-# 6. run command line schema updater
+# 6. run command line schema update tester
+
+&runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/TestUpdtCurrent.bat");
+
+#---------------------------------------------------------------------------------
+# 7. run command line schema updater
 
 &runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/Release/NbtUpdt.exe -all");
 
 #---------------------------------------------------------------------------------
-# 7. tags
+# 8. tags
 
 foreach my $component (@components)
 {
