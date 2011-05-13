@@ -627,7 +627,7 @@ var debug = false;
                     var UnansweredCnt = 0;
                     $xmlitem.find('prop[fieldtype="Question"]').each(function ()
                     {
-                        if ( isNullOrEmpty($(this).children('Answer').text()) )
+                        if ( isNullOrEmpty($(this).children('Answer').text().trim() ) )
                         {
                             UnansweredCnt++;
                         }
