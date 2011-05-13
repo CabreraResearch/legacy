@@ -473,8 +473,8 @@ var debug = false;
 
             switch (PageType)
             {
-                case "SEARCHES":
-                case "searches":
+                case "SEARCH":
+                case "search":
                     // ignore this
                     break;
 
@@ -693,7 +693,7 @@ var debug = false;
 
             // Subfield values
             var sf_text = tryParseString( _extractCDataValue($xmlitem.children('text')), '');
-            var sf_value = tryParseString( $xmlitem.children('value').text(), '');
+            var sf_value = tryParseNumber( $xmlitem.children('value').text(), '');
             var sf_href = tryParseString( $xmlitem.children('href').text(), '');
             var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
             var sf_required = tryParseString( $xmlitem.children('required').text(), '');
@@ -704,8 +704,6 @@ var debug = false;
             var sf_comments = tryParseString( $xmlitem.children('comments').text(), '');
             var sf_compliantanswers = tryParseString( $xmlitem.children('compliantanswers').text(), '');
             var sf_options = tryParseString( $xmlitem.children('options').text(), '');
-
-            if (sf_value == 'NaN') sf_value = '';
 
             var Html = '<div id="' + IdStr + '_propname"';
             if (FieldType === "Question" && !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
