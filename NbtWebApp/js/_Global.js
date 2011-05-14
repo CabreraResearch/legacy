@@ -802,7 +802,7 @@ function makeId(options)
 function makeSafeId(options)
 {
     /// <summary>
-    ///   Generates an ID for DOM assignment
+    ///   Generates a "safe" ID for DOM assignment
     /// </summary>
     /// <param name="options" type="Object">
     ///     A JSON Object
@@ -830,7 +830,7 @@ function makeSafeId(options)
     {
         elementId += o.Delimiter + o.suffix;
     }
-    return elementId.replace(/'/gi, '');
+    return elementId.replace(/'/gi, '').replace(/\//g, '');
 }
 
 function isNullOrEmpty(str)
