@@ -463,7 +463,7 @@ var debug = true;
 
         function _makeListItemFromXml($xmlitem, DivId, parentlevel)
         {
-            var id = $xmlitem.CswAttrXml('id');
+            var id = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var text = $xmlitem.CswAttrXml('name');
             var IsDiv = ( !isNullOrEmpty(id) );
             var PageType = tryParseString($xmlitem.get(0).nodeName,'').toLowerCase();
@@ -514,7 +514,7 @@ var debug = true;
                                 if ( isNullOrEmpty(sf_required) ) sf_required = '';
 
                                 lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                                lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
+                                lihtml += _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required);
                                 lihtml += '</div>';
                                 break;
 
@@ -531,7 +531,7 @@ var debug = true;
                                 if ( isNullOrEmpty(sf_correctiveaction) ) sf_correctiveaction = '';
 
                                 lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                                lihtml += _makeQuestionAnswerFieldSet(DivId, id, '_ans', '_ans2', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
+                                lihtml += _makeQuestionAnswerFieldSet(DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
                                 lihtml += '</div>';
 
                                 if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
@@ -613,7 +613,7 @@ var debug = true;
         function _makeObjectClassContent($xmlitem)
         {
             var Html = '';
-            var id = $xmlitem.CswAttrXml('id');
+            var id = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var NodeName = $xmlitem.CswAttrXml('name');
             var icon = '';
             if ( !isNullOrEmpty($xmlitem.CswAttrXml('iconfilename')))
@@ -648,7 +648,7 @@ var debug = true;
                     Html += '<p>';
                     if(!isNullOrEmpty(Status)) Html +=  Status + ', ';
                     Html += 'Due: ' + DueDate + '</p>';
-                    Html += '<span id="' + id + '_unansweredcnt" class="ui-li-count">' + UnansweredCnt + '</span>';
+                    Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
                     Html += '</li>';
                     break;
 
@@ -690,7 +690,7 @@ var debug = true;
 
         function _FieldTypeXmlToHtml($xmlitem, ParentId)
         {
-            var IdStr = $xmlitem.CswAttrXml('id');
+            var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
             var ReadOnly = ( isTrue($xmlitem.CswAttrXml('readonly')) );
@@ -754,7 +754,7 @@ var debug = true;
                         break;
 
                     case "Logical":
-                        Html += _makeLogicalFieldSet(IdStr, '_ans2', '_ans', sf_checked, sf_required);
+                        Html += _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required);
                         break;
 
                     case "Memo":
@@ -792,7 +792,7 @@ var debug = true;
                         break;
 
                     case "Question":
-                        Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
+                        Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
 
                         Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
@@ -841,7 +841,7 @@ var debug = true;
 
         function _FieldTypeHtmlToXml($xmlitem, name, value)
         {
-            var IdStr = $xmlitem.CswAttrXml('id');
+            var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var fieldtype = $xmlitem.CswAttrXml('fieldtype');
             var propname = $xmlitem.CswAttrXml('name');
 
@@ -866,7 +866,7 @@ var debug = true;
                 case "Link": break;
                 case "List": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Logical":
-                    if (name === IdStr + '_ans' || name === IdStr + '_ans2')
+                    if (name === makeSafeId({ID: IdStr, suffix: 'ans'}) || name === makeSafeId({ID: IdStr, suffix: 'ans2'}))
                     {
                         $sftomodify = $sf_checked;
                     }
@@ -874,17 +874,17 @@ var debug = true;
                 case "Memo": if (name === IdStr) $sftomodify = $sf_text; break;
                 case "Number": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Password": break;
-                case "Quantity": if (name === IdStr + '_qty') $sftomodify = $sf_value; break;
+                case "Quantity": if (name === makeSafeId({ID: IdStr, suffix: 'qty'}) ) $sftomodify = $sf_value; break;
                 case "Question":
-                    if (name === IdStr + '_com')
+                    if (name === makeSafeId({ID: IdStr, suffix: 'com'}) )
                     {
                         $sftomodify = $sf_comments;
                     }
-                    else if (name === IdStr + '_ans' || name === IdStr + '_ans2')
+                    else if (name === makeSafeId({ID: IdStr, suffix: 'ans'}) || name === makeSafeId({ID: IdStr, suffix: 'ans2'}))
                     {
                         $sftomodify = $sf_answer;
                     }
-                    else if (name === IdStr + '_cor')
+                    else if (name === makeSafeId({ID: IdStr, suffix: 'cor'}) )
                     {
                         $sftomodify = $sf_correctiveaction;
                     }
@@ -1056,6 +1056,8 @@ var debug = true;
             {
                 $.extend(p, params);
             }
+
+            p.DivId = makeSafeId({ID: p.DivId});
 
             var divhtml = '<div id="' + p.DivId + '" data-role="page" data-url="'+ p.DivId +'">' +
                           '<div data-role="header" data-theme="' + opts.Theme + '" data-position="fixed">';
