@@ -1718,7 +1718,7 @@ var debug = true;
             if ( !isNullOrEmpty(rootid) )
             {
                 _DoSql('UPDATE views SET wasmodified = ?, viewxml = ? WHERE rootid = ?;',
-                       [wasmodified, viewxml, rootid]);
+                       [wasmodified, $viewxml, rootid]);
             }
         }
 
@@ -1849,7 +1849,7 @@ var debug = true;
 
                         var dataXml = {
                             SessionId: SessionId,
-                            ParentId: UpdatedViewXml,
+                            ParentId: $viewxml, // UpdatedViewXml is undefined?,
                             UpdatedViewXml: $viewxml.replace(/'/gi, '\\\'')
                         };
 
