@@ -5,7 +5,7 @@
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
 
-var debug = true;
+var debug = false;
 //var profiler = $createProfiler();
 //if (!debug) profiler.disable();
 
@@ -1733,7 +1733,7 @@ var debug = true;
                        {
                            _resetPendingChanges(true, true);
                            var row = result.rows.item(0);
-                           $viewxml = $(row.viewxml);
+                           $viewxml = $(row.viewxml.replace(/'/gi, '\\\'') );
                            onSuccess(row.rootid, $viewxml);
                        } else
                        {
@@ -1846,11 +1846,12 @@ var debug = true;
                     if ( !isNullOrEmpty(rootid) && !isNullOrEmpty($viewxml) )
                     {
                         if (debug) log('Starting ' + opts.UpdateUrl, true);
-
+                        
                         var dataXml = {
                             SessionId: SessionId,
                             ParentId: $viewxml, // UpdatedViewXml is undefined?,
-                            UpdatedViewXml: $viewxml.replace(/'/gi, '\\\'')
+                            UpdatedViewXml: $viewxml, //.replaceText(/'/gi, '\\\''),
+                            ForMobile: ForMobile
                         };
 
                         CswAjaxXml({
