@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.WebPages
                 }
                 else if( Request.QueryString["sessionviewid"] != null )
                 {
-                    CswNbtView = (CswNbtView) Master.CswNbtResources.ViewCache.getView( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) );
+					CswNbtView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionViewId( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) ) );
                 }
                 else
                 {
@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.WebPages
                     else if( Request.QueryString["sessionviewid"] != null )
                     {
                         //CswNbtView AView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) );
-                        CswNbtView AView = (CswNbtView) Master.CswNbtResources.ViewCache.getView( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) );
+						CswNbtView AView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionViewId( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) ) );
                         _NodesGrid.View = AView;
                     }
                     else

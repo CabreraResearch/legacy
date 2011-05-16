@@ -179,7 +179,7 @@ namespace ChemSW.Nbt
                 if( _CswNbtTreeKey == null )
                 {
                     if( String.Empty != _DelimitedString[5] )
-                        _CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, CswConvert.ToInt32( _DelimitedString[5] ) );
+						_CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, new CswNbtSessionViewId(CswConvert.ToInt32( _DelimitedString[5] )) );
                 }
                 return _CswNbtTreeKey;
             }

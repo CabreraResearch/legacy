@@ -59,11 +59,11 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Determines if View should be added to QuickLaunch items
         /// </summary>
-        public bool IsQuickLaumch
+        public bool IsQuickLaunch
         {
             get
             {
-                bool ReturnVal = ( ( ViewId > 0 || SessionViewId > 0 ) &&
+				bool ReturnVal = ( ( ViewId > 0 || SessionViewId.isSet() ) &&
                                     ( Visibility != NbtViewVisibility.Property ) );
                 return ReturnVal;
             }
@@ -615,7 +615,7 @@ namespace ChemSW.Nbt
             }
             NodeTypePropsUpdate.update( NodeTypePropsTable );
 
-            _CswNbtResources.ViewCache.clearFromCache( this );
+			_CswNbtResources.ViewSelect.removeSessionView( this );
 
             // Now delete the view
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "Delete_view_nodeview_update", "node_views" );
@@ -1318,14 +1318,14 @@ namespace ChemSW.Nbt
         /// </summary>
         public void SaveToCache()
         {
-            _SessionViewId = _CswNbtResources.ViewCache.putView( this );
+            _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, string.Empty );
         }
 
-        private Int32 _SessionViewId = Int32.MinValue;
+		private CswNbtSessionViewId _SessionViewId = null;
         /// <summary>
         /// Key for retrieving the view from the Session's View Cache
         /// </summary>
-        public Int32 SessionViewId
+		public CswNbtSessionViewId SessionViewId
         {
             get { return _SessionViewId; }
             set { _SessionViewId = value; }

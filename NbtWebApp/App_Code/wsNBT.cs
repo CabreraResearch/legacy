@@ -559,7 +559,7 @@ namespace ChemSW.Nbt.WebServices
 
                     //if( View.Visibility != NbtViewVisibility.Property )
                     //    CswViewListTree.ClearCache( Session );
-                    _CswNbtResources.ViewCache.clearFromCache( View );
+                    _CswNbtResources.ViewSelect.removeSessionView( View );
                     _CswNbtResources.ViewSelect.clearCache();
 
                     ReturnXml.Add( new XAttribute( "succeeded", "true" ) );
@@ -1182,7 +1182,7 @@ namespace ChemSW.Nbt.WebServices
                 start();
                 var ws = new CswNbtWebServiceSearch( _CswNbtResources );
                 CswNbtView ResultsView = ws.doViewBasedSearch( SearchJson );
-                ResultsView.SessionViewId = Int32.MinValue;
+				ResultsView.SessionViewId = null;
                 ResultsView.SaveToCache();
 
                 SearchResultView.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );

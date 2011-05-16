@@ -263,7 +263,7 @@ namespace ChemSW.Nbt.WebPages
         {
             if( NewView.Visibility != NbtViewVisibility.Property )
                 CswViewListTree.ClearCache( Session );
-			Master.CswNbtResources.ViewCache.clearFromCache( NewView );
+			Master.CswNbtResources.ViewSelect.removeSessionView( NewView );
         }
 
         public void OnBeforeDeleteView( CswNbtView ViewToDelete )
@@ -346,8 +346,8 @@ namespace ChemSW.Nbt.WebPages
                         // View
                         _CswNbtView = new CswNbtView( CswNbtResources );
 
-                        if( Session["SessionViewId"] != null )
-                            ViewLoaded = ( null != ( _CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, CswNbtResources.ViewCache.getView( CswConvert.ToInt32( Session["SessionViewId"] ) ).ToString() ) ) );
+						if( Session["SessionViewId"] != null )
+							ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionViewId( CswConvert.ToInt32( Session["SessionViewId"] ) ) ) ) );
 
                         if( Session["ViewId"] != null )
                             ViewLoaded = ( null != ( _CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, CswConvert.ToInt32( Session["ViewId"] ) ) ) );
@@ -386,12 +386,12 @@ namespace ChemSW.Nbt.WebPages
             }
         }
 
-        public void setSessionViewId( Int32 SessionViewId )
+        public void setSessionViewId( CswNbtSessionViewId SessionViewId )
         {
             setSessionViewId( SessionViewId, false );
         }//setSessionViewId()
 
-        public void setSessionViewId( Int32 SessionViewId, bool ForceReload )
+        public void setSessionViewId( CswNbtSessionViewId SessionViewId, bool ForceReload )
         {
             if( Session["SessionViewId"] == null || SessionViewId.ToString() != Session["SessionViewId"].ToString() || ForceReload )
             {

@@ -71,7 +71,7 @@ namespace ChemSW.Nbt
             ICswNbtTree CswNbtTree = null;
             foreach( CswNbtTreeKey Key in _TreeCache.Keys )
             {
-                CswNbtView CacheView = _CswNbtResources.ViewCache.getView( Key.SessionViewId );
+                CswNbtView CacheView = _CswNbtResources.ViewSelect.getSessionView( Key.SessionViewId );
                 if( CacheView == View )
                     CswNbtTree = (ICswNbtTree) _TreeCache[Key];
             }
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt
             ICswNbtTree Ret = null;
             if( !_TreeCache.ContainsKey( CswNbtTreeKey ) )
             {
-                CswNbtView View = _CswNbtResources.ViewCache.getView( CswNbtTreeKey.SessionViewId );
+				CswNbtView View = _CswNbtResources.ViewSelect.getSessionView( CswNbtTreeKey.SessionViewId );
                 if( View != null )
                     getTreeFromView( View, false, true, false, false );
             }

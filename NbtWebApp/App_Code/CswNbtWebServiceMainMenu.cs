@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.WebServices
 			CswNbtView View = null;
 			if( ViewId != Int32.MinValue )
 			{
-				View = _CswNbtResources.ViewCache.getView( ViewId );
+				View = _CswNbtResources.ViewSelect.getView( ViewId );
 			}
 
 			string NodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );

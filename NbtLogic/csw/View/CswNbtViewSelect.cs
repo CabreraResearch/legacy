@@ -16,17 +16,102 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }
 
-        /// <summary>
-        /// Get a DataTable with a single view, by primary key
-        /// </summary>
-        public DataTable getView( Int32 ViewId )
-        {
-            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getView", "getViewInfo" );
-            ViewsSelect.S4Parameters.Add( "getviewid", ViewId.ToString() );
-            return ViewsSelect.getTable();
-        }
+		/// <summary>
+		/// Get a DataTable with a single view, by primary key
+		/// </summary>
+		public CswNbtView getView( Int32 ViewId )
+		{
+			return CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+			//CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getView", "getViewInfo" );
+			//ViewsSelect.S4Parameters.Add( "getviewid", ViewId.ToString() );
+			//return ViewsSelect.getTable();
+		}
 
-        /// <summary>
+		/// <summary>
+		/// Get a CswNbtView from the session view collection
+		/// </summary>
+		public CswNbtView getSessionView( CswNbtSessionViewId SessionViewId )
+		{
+			CswTableSelect SessionViewsSelect = _CswNbtResources.makeCswTableSelect( "CswNbtViewSelect.getSessionView", "session_views" );
+			DataTable SessionViewTable = SessionViewsSelect.getTable( "sessionviewid", SessionViewId.get() );
+			CswNbtView ret = new CswNbtView( _CswNbtResources );
+			if( SessionViewTable.Rows.Count > 0 )
+			{
+				ret.LoadXml( SessionViewTable.Rows[0]["viewxml"].ToString() );
+			}
+			return ret;
+		} // getSessionView()
+
+		/// <summary>
+		/// Save a view to the session view collection.  Sets the SessionViewId on the view.
+		/// </summary>
+		public CswNbtSessionViewId saveSessionView( CswNbtView View, string SessionId )
+		{
+			if(SessionId == string.Empty)
+			{
+				SessionId = _CswNbtResources.Session.SessionId;
+			}
+
+			CswTableUpdate SessionViewsUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtViewSelect.saveSessionView", "session_views" );
+			DataTable SessionViewTable = null;
+			if( View.SessionViewId != null )
+			{
+				SessionViewTable = SessionViewsUpdate.getTable( "sessionviewid", View.SessionViewId.get() );
+			}
+			else
+			{
+				SessionViewTable = SessionViewsUpdate.getEmptyTable();
+			}
+
+			DataRow SessionViewRow = null;
+			if( SessionViewTable.Rows.Count > 0 )
+			{
+				SessionViewRow = SessionViewTable.Rows[0];
+			}
+			else
+			{
+				SessionViewRow = SessionViewTable.NewRow();
+				SessionViewTable.Rows.Add( SessionViewRow );
+			}
+	
+			SessionViewRow["viewname"] = View.ViewName;
+			SessionViewRow["viewmode"] = View.ViewMode.ToString();
+			SessionViewRow["viewxml"] = View.ToString();
+			SessionViewRow["sessionid"] = SessionId;
+
+			SessionViewsUpdate.update( SessionViewTable );
+
+			View.SessionViewId = new CswNbtSessionViewId( CswConvert.ToInt32( SessionViewRow["sessionviewid"] ) );
+			
+			return View.SessionViewId;
+
+		} // saveSessionView()
+
+		/// <summary>
+		/// Remove a view from the session view cache
+		/// </summary>
+		public void removeSessionView( CswNbtView View )
+		{
+			removeSessionView( View.SessionViewId );
+		}
+
+		/// <summary>
+		/// Remove a view from the session view cache
+		/// </summary>
+		public void removeSessionView( CswNbtSessionViewId SessionViewId )
+		{
+			CswTableUpdate SessionViewsUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtViewSelect.saveSessionView", "session_views" );
+			DataTable SessionViewTable = SessionViewsUpdate.getTable( "sessionviewid", SessionViewId.get() );
+			DataRow SessionViewRow = null;
+			if( SessionViewTable.Rows.Count > 0 )
+			{
+				SessionViewRow = SessionViewTable.Rows[0];
+				SessionViewRow.Delete();
+				SessionViewsUpdate.update( SessionViewTable );
+			}
+		} // removeSessionView()
+
+		/// <summary>
         /// Get a DataTable with a single view, by name and visibility
         /// </summary>
         public DataTable getView( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey VisibilityRoleId, CswPrimaryKey VisibilityUserId )
@@ -103,7 +188,7 @@ namespace ChemSW.Nbt
         }
 
 
-        private DataTable _LastVisibleViews = null;
+        //private DataTable _LastVisibleViews = null;
         private string _LastOrderBy = string.Empty;
         private ICswNbtUser _LastUser = null;
         private bool _LastIncludeEmptyViews = false;
@@ -113,7 +198,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public void clearCache()
         {
-            _LastVisibleViews = null;
+            //_LastVisibleViews = null;
         }
 
         /// <summary>
@@ -174,7 +259,7 @@ namespace ChemSW.Nbt
             _LastIncludeEmptyViews = IncludeEmptyViews;
             _LastOrderBy = OrderBy;
             _LastUser = User;
-            _LastVisibleViews = ViewsTable;
+            //_LastVisibleViews = ViewsTable;
 
             _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() finished", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
 

@@ -34,9 +34,9 @@ namespace ChemSW.Nbt
         public static CswNbtView restoreView( CswNbtResources CswNbtResources, Int32 ViewId )
         {
             // try cache first
-            CswNbtView ReturnVal = CswNbtResources.ViewCache.getView( ViewId );
-            if( ReturnVal == null )
-            {
+			CswNbtView ReturnVal = null; // CswNbtResources.ViewCache.getView( ViewId );
+			//if( ReturnVal == null )
+			//{
                 CswTableSelect ViewsTableSelect = CswNbtResources.makeCswTableSelect( "restoreView_select", "node_views" );
                 DataTable ViewTable = ViewsTableSelect.getTable( "nodeviewid", ViewId );
                 if( ViewTable.Rows.Count > 0 )
@@ -52,7 +52,7 @@ namespace ChemSW.Nbt
                     ReturnVal.Category = ViewTable.Rows[0]["category"].ToString();
                     ReturnVal.ViewName = ViewTable.Rows[0]["viewname"].ToString();
                 }
-            }
+            //}
             return ( ReturnVal );
 
         }//restoreView()

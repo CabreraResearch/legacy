@@ -145,18 +145,22 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( SelectMode != PropertySelectMode.Multiple && CswConvert.ToInt32( SelectedViewIds[0] ) > 0 )
                 {
-                    DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
-                    if( ViewTable != null && ViewTable.Rows.Count > 0 )
-                        CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
-                }
+				//    DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
+				//    if( ViewTable != null && ViewTable.Rows.Count > 0 )
+				//        CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
+					CswNbtView ThisView = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
+					CachedViewNames.Add( ThisView.ViewName );
+				}
                 else
                 {
                     Collection<Int32> SelectedViewIdCollection = SelectedViewIds.ToIntCollection();
                     foreach( Int32 ViewId in SelectedViewIdCollection )
                     {
-                        DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
-                        if( ViewTable != null && ViewTable.Rows.Count > 0 )
-                            CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
+						//DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
+						//if( ViewTable != null && ViewTable.Rows.Count > 0 )
+						//    CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
+						CswNbtView ThisView = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
+						CachedViewNames.Add( ThisView.ViewName );
                     } // foreach( Int32 ViewId in SelectedViewIdCollection )
 
                 } // if-else( SelectMode != PropertySelectMode.Multiple && CswConvert.ToInt32( SelectedViewIds[0] ) > 0 )

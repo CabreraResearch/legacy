@@ -76,7 +76,7 @@ namespace ChemSW.Nbt
         {
             get
             {
-                return _CswNbtResources.ViewCache.getView( _Key.SessionViewId ).ViewName;
+				return _CswNbtResources.ViewSelect.getSessionView( _Key.SessionViewId ).ViewName;
             }
         }
 

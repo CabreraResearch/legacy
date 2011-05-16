@@ -412,6 +412,7 @@
     <Compile Include="csw\Tree\ICswNbtNodeWriterImpl.cs" />
     <Compile Include="csw\Tree\ICswNbtTree.cs" />
     <Compile Include="csw\Tree\ICswNbtTreeFactory.cs" />
+    <Compile Include="csw\View\CswNbtSessionViewId.cs" />
     <Compile Include="csw\View\CswNbtView.cs" />
     <Compile Include="csw\View\CswNbtViewBase.cs" />
     <Compile Include="csw\View\CswNbtViewCache.cs" />

@@ -86,11 +86,11 @@ public class TreeViewService : System.Web.Services.WebService
                 contextDictionary.ContainsKey( "PageSize" ) && contextDictionary["PageSize"] != null &&
                 contextDictionary.ContainsKey( "ParentNodeKey" ) && contextDictionary["ParentNodeKey"] != null )
             {
-                Int32 SessionViewId = CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() );
+				CswNbtSessionViewId SessionViewId = new CswNbtSessionViewId( CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() ) );
                 CswNbtNodeKey SelectedNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["SelectedNodeKey"].ToString() );
                 CswNbtNodeKey ParentNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["ParentNodeKey"].ToString() );
                 CswNbtView View = new CswNbtView( CswNbtResources );
-                View = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, CswNbtResources.ViewCache.getView( SessionViewId ).ToString() );
+				View = CswNbtResources.ViewSelect.getSessionView( SessionViewId );
                 RadTreeView Tree = makeTree( View, ref ParentNodeKey, null, CswConvert.ToInt32( contextDictionary["PageSize"].ToString() ), null );
 
                 RadTreeNode Node = Tree.FindNodeByValue( contextDictionary["ParentNodeKey"].ToString() );
@@ -138,11 +138,11 @@ public class TreeViewService : System.Web.Services.WebService
             {
                 CswNbtNodeKey MoreKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["MoreNodeKey"].ToString() );
 
-                Int32 SessionViewId = CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() );
+				CswNbtSessionViewId SessionViewId = new CswNbtSessionViewId( CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() ) );
                 CswNbtNodeKey SelectedNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["SelectedNodeKey"].ToString() );
                 CswNbtNodeKey ParentNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["ParentNodeKey"].ToString() );
                 CswNbtView View = new CswNbtView( CswNbtResources );
-                View = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, CswNbtResources.ViewCache.getView( SessionViewId ).ToString() );
+				View = CswNbtResources.ViewSelect.getSessionView( SessionViewId );
 
                 CswNbtViewRelationship FirstChildRelationship = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( MoreKey.ViewNodeUniqueId );
 
