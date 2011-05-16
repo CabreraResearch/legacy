@@ -265,7 +265,6 @@ var debug = true;
             {
                 rootid = p.DivId;
             }
-
             if ($('#' + p.DivId).length === 0)
             {
                 if (p.level === 0)
@@ -294,7 +293,7 @@ var debug = true;
                             ParentId: p.DivId,
                             ForMobile: ForMobile
                         };
-
+                        
                         CswAjaxXml({
                             async: false,   // required so that the link will wait for the content before navigating
                             formobile: ForMobile,
@@ -641,13 +640,15 @@ var debug = true;
                     Html += '<li>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                    Html += '<a href="#' + id + '">' + NodeName + '</a>';
+                    Html += '<a href="#' + id + '">';
+                    Html += '<p>' + NodeName + '</p>';
                     Html += '<p>' + Location + '</p>';
                     Html += '<p>' + MountPoint + '</p>';
                     Html += '<p>';
                     if(!isNullOrEmpty(Status)) Html +=  Status + ', ';
                     Html += 'Due: ' + DueDate + '</p>';
-                    Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
+                   // Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
+                    Html += '</a>';
                     Html += '</li>';
                     break;
 
@@ -1806,8 +1807,6 @@ var debug = true;
                 url = opts.ConnectTestRandomFailUrl;
             }
 
-            if (debug) log('Starting ' + url, true);
-
             CswAjaxXml({
                 formobile: ForMobile,
                 url: url,
@@ -1816,7 +1815,6 @@ var debug = true;
                 onloginfail: function() { Logout(); },
                 success: function ($xml)
                 {
-                    if (debug) log('On Success ' + url, true);
                     setOnline();
                     _processChanges(true);
                     if ( !isNullOrEmpty(onSuccess) )
