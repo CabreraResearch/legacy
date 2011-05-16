@@ -858,7 +858,7 @@ function isNullOrEmpty(obj)
         {
             ret = (trim(obj) === '');
         }
-        if (!ret && isArray(obj))
+        if (!ret && ( isArray(obj) || isJQuery(obj) ) )
         {
             ret = (obj.length === 0);
         }
@@ -868,7 +868,7 @@ function isNullOrEmpty(obj)
 
 function isString(obj)
 {
-    var ret = ( !isFunction(obj) && !isArray(obj) );
+    var ret = ( !isFunction(obj) && !isArray(obj) && !isJQuery(obj) );
     return ret;
 }
 
@@ -881,6 +881,12 @@ function isFunction(obj)
 function isArray(obj)
 {
     var ret = ( $.isArray(obj) );
+    return ret;
+}
+
+function isJQuery(obj)
+{
+    ret = (obj instanceof jQuery);
     return ret;
 }
 
