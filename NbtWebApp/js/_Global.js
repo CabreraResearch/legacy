@@ -848,39 +848,57 @@ function makeSafeId(options)
 function isNullOrEmpty(obj)
 {
 	/// <summary> Returns true if the input is null, undefined, or ''</summary>
-    /// <param name="str" type="Object"> Object to test</param>
+    /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
     var ret = false;
     if (!isFunction(obj))
     {
         ret = $.isEmptyObject(obj);
-        if (!ret && isString(obj))
+        if (!ret && isGeneric(obj))
         {
             ret = (trim(obj) === '');
-        }
-        if (!ret && ( isArray(obj) || isJQuery(obj) ) )
-        {
-            ret = (obj.length === 0);
         }
     }    
 	return ret;
 }
 
-function isString(obj)
+function isGeneric(obj)
 {
-    var ret = ( !isFunction(obj) && !isArray(obj) && !isJQuery(obj) );
+    /// <summary> Returns true if the object is not a function, array, jQuery or JSON object</summary>
+    /// <param name="obj" type="Object"> Object to test</param>
+    /// <returns type="Boolean" />
+    var ret = ( !isFunction(obj) && !isArray(obj) && !isJQuery(obj) && !isJson(obj) );
     return ret;
 }
 
 function isFunction(obj)
 {
+    /// <summary> Returns true if the object is a function</summary>
+    /// <param name="obj" type="Object"> Object to test</param>
+    /// <returns type="Boolean" />
     var ret = ( $.isFunction(obj) );
     return ret;
 }
 
 function isArray(obj)
 {
+    /// <summary> Returns true if the object is an array</summary>
+    /// <param name="obj" type="Object"> Object to test</param>
+    /// <returns type="Boolean" />
     var ret = ( $.isArray(obj) );
+    return ret;
+}
+
+function isJson(obj)
+{
+    /// <summary> 
+    ///    Returns true if the object is a JSON object.
+    ///     &#10; isJson(CswInput_Types.text) === true 
+    ///     &#10; isJson(CswInput_Types.text.name) === false
+    /// </summary>
+    /// <param name="obj" type="Object"> Object to test</param>
+    /// <returns type="Boolean" />
+    var ret = ($.isPlainObject(obj));
     return ret;
 }
 
