@@ -1777,7 +1777,7 @@ var debug = false;
                            ret += "<view id=\"" + row.rootid + "\"" +
                                   " name=\"" + row.rootname + "\" />";
                        }
-                       $xml = $("<result>" + ret + "</result>");
+                       var $xml = $("<result>" + ret + "</result>");
                        onsuccess($xml);
                    });
         }
