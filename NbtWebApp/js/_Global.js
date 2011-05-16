@@ -831,11 +831,11 @@ function makeSafeId(options)
     {
         elementId += o.Delimiter + o.suffix;
     }
-    for(var i=0, i < toReplace.length; i++)
+    for (var i = 0; i < toReplace.length; i++)
     {
         if (!isNullOrEmpty(elementId))
         {
-            elementId = elementId.replace(toReplace[i],'');
+            elementId = elementId.replace(toReplace[i], '');
         }
     }
     
