@@ -1847,7 +1847,7 @@ var debug = false;
                         
                         var dataXml = {
                             SessionId: SessionId,
-                            ParentId: $viewxml, // UpdatedViewXml is undefined?,
+                            ParentId: rootid,
                             UpdatedViewXml: $viewxml, //.replaceText(/'/gi, '\\\''),
                             ForMobile: ForMobile
                         };
