@@ -1732,7 +1732,7 @@ var debug = false;
                        {
                            _resetPendingChanges(true, true);
                            var row = result.rows.item(0);
-                           $viewxml = $(row.viewxml.replace(/'/gi, '\\\'') );
+                           $viewxml = $(row);
                            onSuccess(row.rootid, $viewxml);
                        } else
                        {
