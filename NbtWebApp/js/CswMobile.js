@@ -506,10 +506,8 @@ var debug = true;
                             case 'logical':
                                 lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
 
-                                var sf_checked = $xmlitem.children('checked').text();
-                                var sf_required = $xmlitem.children('required').text();
-                                if ( isNullOrEmpty(sf_checked) ) sf_checked = '';
-                                if ( isNullOrEmpty(sf_required) ) sf_required = '';
+                                var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
+                                var sf_required = tryParseString( $xmlitem.children('required').text(), '');
 
                                 lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
                                 lihtml += _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required);
@@ -519,15 +517,11 @@ var debug = true;
                             case 'question':
                                 lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
 
-                                var sf_answer = $xmlitem.children('answer').text();
-                                var sf_allowedanswers = $xmlitem.children('allowedanswers').text();
-                                var sf_compliantanswers = $xmlitem.children('compliantanswers').text();
-                                var sf_correctiveaction = $xmlitem.children('correctiveaction').text();
-                                if ( isNullOrEmpty(sf_answer) ) sf_answer = '';
-                                if ( isNullOrEmpty(sf_allowedanswers) ) sf_allowedanswers = '';
-                                if ( isNullOrEmpty(sf_compliantanswers) ) sf_compliantanswers = '';
-                                if ( isNullOrEmpty(sf_correctiveaction) ) sf_correctiveaction = '';
-
+                                var sf_answer = tryParseString( $xmlitem.children('answer').text() , '');
+                                var sf_allowedanswers = tryParseString( $xmlitem.children('allowedanswers').text(), '');
+                                var sf_compliantanswers = tryParseString( $xmlitem.children('compliantanswers').text(), '');
+                                var sf_correctiveaction = tryParseString( $xmlitem.children('correctiveaction').text(), '');
+                                
                                 lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
                                 lihtml += _makeQuestionAnswerFieldSet(DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
                                 lihtml += '</div>';
@@ -971,8 +965,11 @@ var debug = true;
             {
                 var answerid = makeSafeId({ ID: answers[i] });
                 Html += '<input type="radio" name="' + makeSafeId({ID: IdStr, suffix: Suffix}) + '" id="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '" value="' + answers[i] + '" ';
+                
                 if (Answer === answers[i])
-                    Html += ' checked';
+                {
+                    Html += ' checked="checked"';
+                }    //' checked';
                 Html += ' onclick="';
 
                 // case 20307: workaround for a bug with JQuery Mobile Alpha2
