@@ -822,6 +822,7 @@ function makeSafeId(options)
     
     var elementId = o.ID;
 
+
     if (!isNullOrEmpty(o.prefix) && !isNullOrEmpty(elementId))
     {
         elementId = o.prefix + o.Delimiter + elementId;
@@ -837,20 +838,43 @@ function makeSafeId(options)
     return elementId;
 }
 
-function isNullOrEmpty(str)
+function isNullOrEmpty(obj)
 {
-	/// <summary>
-	///   Returns true if the input is null, undefined, or ''
-	/// </summary>
-	/// <param name="str" type="Object">
-	///     String or object to test
-	/// </param>
-    var ret = (str === undefined || str === null);
-    if( !ret )
+	/// <summary> Returns true if the input is null, undefined, or ''</summary>
+    /// <param name="str" type="Object"> Object to test</param>
+    /// <returns type="Boolean" />
+    var ret = false;
+    if (!isFunction(obj))
     {
-        ret = ( str.trim() === '' );
+        ret = $.isEmptyObject(obj);
+        if (!ret && isString(obj))
+        {
+            ret = (trim(obj) === '');
+        }
+        if (!ret && isArray(obj))
+        {
+            ret = (obj.length === 0);
+        }
     }    
 	return ret;
+}
+
+function isString(obj)
+{
+    var ret = ( !isFunction(obj) && !isArray(obj) );
+    return ret;
+}
+
+function isFunction(obj)
+{
+    var ret = ( $.isFunction(obj) );
+    return ret;
+}
+
+function isArray(obj)
+{
+    var ret = ( !$.isArray(obj) );
+    return ret;
 }
 
 function isNumeric(obj)
@@ -932,6 +956,29 @@ function tryParseNumber(inputNum, defaultNum)
     if (tryRet !== NaN && tryRet !== Int32MinVal)
     {
         ret = tryRet;
+    }
+    return ret;
+}
+
+function trim(str)
+{
+    /// <summary>Returns a string without left and right whitespace</summary>
+    /// <param name="str" type="String"> String to parse </param>
+    /// <returns type="String">Parsed string</returns>
+    var i = 0;
+    var r = (str.length - 1);
+    var ret = '';
+    if (r > 0)
+    {
+        while (i < str.length && str[i] === ' ')
+        {
+            i++;
+        }
+        while (r > i && str[r] === ' ')
+        {
+            r -= 1;
+        }
+        ret = str.substr(i, r + 1);
     }
     return ret;
 }
