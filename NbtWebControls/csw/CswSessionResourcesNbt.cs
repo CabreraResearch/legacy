@@ -20,8 +20,8 @@ namespace ChemSW.Nbt
 
         public CswNbtStatisticsEvents CswNbtStatisticsEvents = null;
 
-        private HttpSessionState _HttpSessionState = null;
-        private SessionRetrievalType _SessionRetrievalType = SessionRetrievalType.CrossProcess;
+        //private HttpSessionState _HttpSessionState = null;
+        //private SessionRetrievalType _SessionRetrievalType = SessionRetrievalType.CrossProcess;
 
 
         private CswNbtStatistics _CswNbtStatistics = null;
@@ -80,11 +80,11 @@ namespace ChemSW.Nbt
             }
 
 
-            System.Enum.TryParse<SessionRetrievalType>( CswSetupVblsNbt.readSetting( "SessionRetrievalType" ), true, out _SessionRetrievalType );
-            ICswSessionStorage SoCalledFastSessionStorage = SessionRetrievalType.Optimized == _SessionRetrievalType ? (ICswSessionStorage) new CswSessionStorageStateServer( _HttpSessionState ) : (ICswSessionStorage) new CswSessionStorageStateServerDummy();
+            //System.Enum.TryParse<SessionRetrievalType>( CswSetupVblsNbt.readSetting( "SessionRetrievalType" ), true, out _SessionRetrievalType );
+            //ICswSessionStorage SoCalledFastSessionStorage = SessionRetrievalType.Optimized == _SessionRetrievalType ? (ICswSessionStorage) new CswSessionStorageStateServer( _HttpSessionState ) : (ICswSessionStorage) new CswSessionStorageStateServerDummy();
 
 
-            CswSessionManager = new CswSessionManager( AppType.Nbt, new CswWebClientStorageCookies( HttpRequest, HttpResponse ), LoginAccessId, CswSetupVblsNbt, CswDbCfgInfoNbt, true, SoCalledFastSessionStorage, _UsedCachedResources, CswNbtResources, new CswNbtAuthenticator( CswNbtResources ), _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ), new CswNbtStatisticsStorageStateServer(), RecordStatistics ) );
+            CswSessionManager = new CswSessionManager( AppType.Nbt, new CswWebClientStorageCookies( HttpRequest, HttpResponse ), LoginAccessId, CswSetupVblsNbt, CswDbCfgInfoNbt, true, _UsedCachedResources, CswNbtResources, new CswNbtAuthenticator( CswNbtResources ), _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ), new CswNbtStatisticsStorageStateServer(), RecordStatistics ) );
             CswNbtStatisticsEvents = _CswNbtStatistics.CswNbtStatisticsEvents;
             CswSessionManager.OnDeauthenticate += new CswSessionManager.DeathenticationHandler( OnDeauthenticate );
 
@@ -104,25 +104,25 @@ namespace ChemSW.Nbt
 
         public void setCache()
         {
-            if( SessionRetrievalType.Optimized == _SessionRetrievalType )
-            {
-                if( _HttpSessionState != null )
-                {
-                    if( "1" == CswNbtResources.SetupVbls["cachemetadata"] )
-                    {
-                        if( ( CswNbtResources != null ) && ( false == _CacheCleared ) )
-                        {
-                            //Session[ "ViewCache" ] = CswNbtResources.ViewCache.ToString();
-                            CswNbtResources.BeforeStoreInCache();
-                            _HttpSessionState["CswNbtResources"] = CswNbtResources;
-                        }
-                    }
-                    else
-                    {
-                        _HttpSessionState["CswNbtResources"] = null;
-                    }
-                }
-            }//
+			//if( SessionRetrievalType.Optimized == _SessionRetrievalType )
+			//{
+			//    if( _HttpSessionState != null )
+			//    {
+			//        if( "1" == CswNbtResources.SetupVbls["cachemetadata"] )
+			//        {
+			//            if( ( CswNbtResources != null ) && ( false == _CacheCleared ) )
+			//            {
+			//                //Session[ "ViewCache" ] = CswNbtResources.ViewCache.ToString();
+			//                CswNbtResources.BeforeStoreInCache();
+			//                _HttpSessionState["CswNbtResources"] = CswNbtResources;
+			//            }
+			//        }
+			//        else
+			//        {
+			//            _HttpSessionState["CswNbtResources"] = null;
+			//        }
+			//    }
+			//}//
 
         }//setCache()
 
@@ -130,19 +130,19 @@ namespace ChemSW.Nbt
         public void OnDeauthenticate()
         {
 
-            if( SessionRetrievalType.Optimized == _SessionRetrievalType )
-            {
+			//if( SessionRetrievalType.Optimized == _SessionRetrievalType )
+			//{
 
-                if( null != _HttpSessionState && null != _HttpSessionState["CswNbtResources"] )
-                {
-                    _HttpSessionState.Remove( "CswNbtResources" );
-                    _CacheCleared = true;
+			//    if( null != _HttpSessionState && null != _HttpSessionState["CswNbtResources"] )
+			//    {
+			//        _HttpSessionState.Remove( "CswNbtResources" );
+			//        _CacheCleared = true;
 
-                    // BZ 9932,10341,10342,10266
-                    _HttpSessionState.Clear();
+			//        // BZ 9932,10341,10342,10266
+			//        _HttpSessionState.Clear();
 
-                }
-            }
+			//    }
+			//}
 
             ////bz # 9932 but cf. also 10266
             //List<string> KeysToRemove = new List<string>(); 
@@ -168,12 +168,12 @@ namespace ChemSW.Nbt
             {
                 ICswResources ret = null;
 
-                if( null != _HttpSessionState && null != _HttpSessionState["CswNbtResources"] )
-                {
+				//if( null != _HttpSessionState && null != _HttpSessionState["CswNbtResources"] )
+				//{
 
-                    if( ( null != _HttpSessionState ) && ( _HttpSessionState["CswNbtResources"] != null ) )
-                        ret = _HttpSessionState["CswNbtResources"] as ICswResources;
-                }
+				//    if( ( null != _HttpSessionState ) && ( _HttpSessionState["CswNbtResources"] != null ) )
+				//        ret = _HttpSessionState["CswNbtResources"] as ICswResources;
+				//}
 
                 return ret;
             }

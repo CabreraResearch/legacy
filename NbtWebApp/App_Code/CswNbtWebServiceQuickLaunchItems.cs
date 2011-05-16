@@ -23,21 +23,23 @@ namespace ChemSW.Nbt.WebServices
 		private const string ActionName = "actionname";
 		private const string ActionPk = "actionid";
 		private const string ActionSelected = "Include";
-		private HttpSessionState _Session;
+		//private HttpSessionState _Session;
 		private LinkedList<CswNbtQuickLaunchItem> _QuickLaunchHistory = null;
 		private bool _IsNewSession;
         private ICswWebClientStorage _CswWebClientStorage = null; 
 
 		public const string QuickLaunchViews = "QuickLaunchViews";
-        public CswNbtWebServiceQuickLaunchItems( CswNbtResources CswNbtResources, ICswWebClientStorage CswWebClientStorage, HttpSessionState Session )
+        public CswNbtWebServiceQuickLaunchItems( CswNbtResources CswNbtResources, ICswWebClientStorage CswWebClientStorage ) //, HttpSessionState Session )
 		{
             _CswWebClientStorage = CswWebClientStorage;
 			_CswNbtResources = CswNbtResources;
-			_IsNewSession = ( null == Session[QuickLaunchViews] );
-			_Session = Session;
+			//_IsNewSession = ( null == Session[QuickLaunchViews] );
+			_IsNewSession = true;
+			//_Session = Session;
 			if( !_IsNewSession )
 			{
-				_QuickLaunchHistory = (LinkedList<CswNbtQuickLaunchItem>) Session[QuickLaunchViews];
+				//_QuickLaunchHistory = (LinkedList<CswNbtQuickLaunchItem>) Session[QuickLaunchViews];
+				_QuickLaunchHistory = new LinkedList<CswNbtQuickLaunchItem>();
 			}
 			else
 			{
@@ -91,7 +93,7 @@ namespace ChemSW.Nbt.WebServices
 						_QuickLaunchHistory.AddFirst( QuickLaunchItem );
 					}
 				}
-				_Session[QuickLaunchViews] = _QuickLaunchHistory;
+				//_Session[QuickLaunchViews] = _QuickLaunchHistory;
 			} // if( IsNewSession )
 
 			foreach( var Item in _QuickLaunchHistory )
@@ -114,7 +116,7 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
         public XElement resetQuickLaunchItems( CswPrimaryKey UserId )
 		{
-			_Session[QuickLaunchViews] = null;
+			//_Session[QuickLaunchViews] = null;
 		    _IsNewSession = true;
 		    _QuickLaunchHistory = null;
             return getQuickLaunchItems( UserId );
@@ -123,19 +125,19 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Adds an item to the Session's QuickLaunchViews
 		/// </summary>
-		public static void addToQuickLaunch( CswNbtView View, HttpSessionState Session )
+		public static void addToQuickLaunch( CswNbtView View )
 		{
 			if( View.IsQuickLaumch )
 			{
 				LinkedList<CswNbtQuickLaunchItem> ViewHistoryList = null;
-				if( null == Session[QuickLaunchViews] )
-				{
+				//if( null == Session[QuickLaunchViews] )
+				//{
 					ViewHistoryList = new LinkedList<CswNbtQuickLaunchItem>();
-				}
-				else
-				{
-					ViewHistoryList = (LinkedList<CswNbtQuickLaunchItem>) Session[QuickLaunchViews];
-				}
+				//}
+				//else
+				//{
+				//    ViewHistoryList = (LinkedList<CswNbtQuickLaunchItem>) Session[QuickLaunchViews];
+				//}
 				var ThisView = new CswNbtQuickLaunchItem( View.ViewId, View.ViewName, View.ViewMode );
 
 				if( ViewHistoryList.Contains( ThisView ) )
@@ -143,7 +145,7 @@ namespace ChemSW.Nbt.WebServices
 					ViewHistoryList.Remove( ThisView );
 				}
 				ViewHistoryList.AddFirst( ThisView );
-				Session[QuickLaunchViews] = ViewHistoryList;
+				//Session[QuickLaunchViews] = ViewHistoryList;
 			}
 		}
 
