@@ -302,10 +302,9 @@ var debug = false;
                             data: dataXml,
                             stringify: false,
                             onloginfail: function() { Logout(); },
-                            success: function (xml)
+                            success: function (X$xml)
                             {
                                 if (debug) log('On Success ' + opts.ViewUrl, true);
-                                var X$xml = $(xml);
                                 
                                 if (p.level === 1)
                                 {
@@ -360,10 +359,10 @@ var debug = false;
                                 data: dataXml,
                                 stringify: false,
                                 onloginfail: function() { Logout(); },
-                                success: function (xml)
+                                success: function ($xml)
                                 {
                                     if (debug) log('On Success ' + opts.ViewUrl, true);
-                                    $currentViewXml = $(xml);
+                                    $currentViewXml = $xml;
                                     if (p.level === 1)
                                     {
                                         _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
@@ -1391,11 +1390,11 @@ var debug = false;
                     data: dataXml,
                     stringify: false,
                     onloginfail: function() { Logout(); },
-                    success: function (xml)
+                    success: function ($xml)
                     {
                         if (debug) log('Starting ' + opts.ViewUrl, true);
 
-                        $currentViewXml = $(xml);
+                        $currentViewXml = $xml;
                         _updateStoredViewXml(RealDivId, $currentViewXml, '0');
 
                         _processViewXml({
@@ -1813,10 +1812,9 @@ var debug = false;
                 data: {},
                 stringify: false,
                 onloginfail: function() { Logout(); },
-                success: function (xml)
+                success: function ($xml)
                 {
                     if (debug) log('On Success ' + url, true);
-                    var $xml = $(xml);
                     setOnline();
                     _processChanges(true);
                     if ( !isNullOrEmpty(onSuccess) )
@@ -1866,10 +1864,9 @@ var debug = false;
                                     _waitForData();
                                 } 
                             },
-                            success: function (xml)
+                            success: function ($xml)
                             {
                                 if (debug) log('On Success ' + opts.UpdateUrl, true);
-                                var $xml = $(xml);
                                 _updateStoredViewXml(rootid, $xml, '0');
                                 if (perpetuateTimer)
                                 {
