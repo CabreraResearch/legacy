@@ -70,7 +70,8 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _SelectedUserIds = value;
-                _SelectedUserIds_OnChange();
+				_SelectedUserIds.OnChange += _SelectedUserIds_OnChange;
+				_SelectedUserIds_OnChange();
             }
         }
 
@@ -91,6 +92,7 @@ namespace ChemSW.Nbt.PropTypes
             bool ret = SelectedUserIds.Contains( UserId.PrimaryKey.ToString() );
             return ret;
         }
+
         /// <summary>
         /// Subscribes a user by adding the userid to the SelectedUserIds list
         /// </summary>
@@ -98,9 +100,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( !IsSubscribed( UserId ) )
             {
-                CswCommaDelimitedString Users = SelectedUserIds;
-                Users.Add( UserId.PrimaryKey.ToString() );
-                SelectedUserIds = Users;
+				SelectedUserIds.Add( UserId.PrimaryKey.ToString() );
             }
         }
 
@@ -111,9 +111,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( IsSubscribed( UserId ) )
             {
-                CswCommaDelimitedString Users = SelectedUserIds;
-                Users.Remove( UserId.PrimaryKey.ToString() );
-                SelectedUserIds = Users;
+				SelectedUserIds.Remove( UserId.PrimaryKey.ToString() );
             }
         }
 
