@@ -28,7 +28,6 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
     };
     
 	if (options) $.extend(o, options);
-
 	//var starttime = new Date();
 	$.ajax({
 	    type: 'POST',
@@ -211,7 +210,11 @@ function _handleAuthenticationStatus(options)
 
 function xmlToString($xmlnode) { /// <param name="$" type="jQuery" />
 	var xmlstring = '';
-	if ($xmlnode !== '' && $xmlnode !== undefined)
+	if( !($xmlnode instanceof jQuery) )
+    {
+        $xmlnode = $($xmlnode);
+    }
+    if ( !isNullOrEmpty($xmlnode) )
 	{
 		xmlstring = $xmlnode.get(0).xml; // IE
 		if (!xmlstring)
@@ -925,7 +928,7 @@ function isTrue(str)
     else
     {
         ret = false;
-        if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.');
+        if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.',false);
     }
     return ret;
 }
@@ -1007,6 +1010,7 @@ function log(s, includeCallStack) {
     /// <summary>Outputs a message to the console log(Webkit,FF) or an alert(IE)</summary>
     /// <param name="s" type="String"> String to output </param>
     /// <param name="includeCallStack" type="Boolean"> If true, include the callStack </param>
+    var extendedLog = '';
     if( isTrue(includeCallStack) )
     {
         extendedLog = getCallStack();

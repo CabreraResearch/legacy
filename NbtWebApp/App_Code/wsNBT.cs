@@ -1554,26 +1554,27 @@ namespace ChemSW.Nbt.WebServices
 
         #region Mobile
         [WebMethod( EnableSession = true )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement UpdateProperties( string SessionId, string ParentId, string UpdatedViewXml, bool ForMobile )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string UpdateProperties( string SessionId, string ParentId, string UpdatedViewXml, bool ForMobile )
         {
-            XElement ReturnVal = new XElement( "result");
+            JObject ReturnVal = new JObject();
             try
             {
                 start();
                 
                 CswNbtWebServiceMobileUpdateProperties wsUP = new CswNbtWebServiceMobileUpdateProperties( _CswNbtResources, ForMobile );
-                ReturnVal.Add( wsUP.Run( ParentId, UpdatedViewXml ) );
+                string ViewXml = wsUP.Run( ParentId, UpdatedViewXml ).ToString();
+                ReturnVal.Add( new JProperty("xml", ViewXml ) );
                 
                 end();
             }
 
             catch( Exception ex )
             {
-                ReturnVal = xError( ex );
+                ReturnVal = jError( ex );
             }
 
-            return ( ReturnVal );
+            return ( ReturnVal.ToString() );
         } // UpdateProperties()
 
 

@@ -1459,7 +1459,7 @@ var debug = false;
 
                     // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
                     // However, it appears to work, for now.
-                    _updateStoredViewXml(rootid, $currentViewXml.wrap('<wrapper />').parent().html(), '1');
+                    _updateStoredViewXml(rootid, $($currentViewXml.wrap('<wrapper />').parent().html() ), '1');
 
                     _resetPendingChanges(true, false);
                 }
@@ -1717,7 +1717,7 @@ var debug = false;
             if ( !isNullOrEmpty(rootid) )
             {
                 _DoSql('UPDATE views SET wasmodified = ?, viewxml = ? WHERE rootid = ?;',
-                       [wasmodified, $viewxml.get(0), rootid]);
+                       [wasmodified, xmlToString($viewxml), rootid]);
             }
         }
 
@@ -1727,17 +1727,20 @@ var debug = false;
                    [],
                    function (transaction, result)
                    {
-                       var $viewxml;
                        if (result.rows.length > 0)
                        {
-                           _resetPendingChanges(true, true);
-                           var row = result.rows.item(0);
-                           $viewxml = $(row);
-                           onSuccess(row.rootid, $viewxml);
+                            _resetPendingChanges(true, true);
+                            var row = result.rows.item(0);
+                            var rootid = row.rootid;
+                            var viewxml = row.viewxml;
+                            if( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
+                            {
+                                onSuccess(rootid, viewxml);
+                            }
                        } else
                        {
                            _resetPendingChanges(false, true);
-                           onSuccess('', $viewxml);
+                           onSuccess();
                        }
                    });
         }
@@ -1750,15 +1753,14 @@ var debug = false;
                        [rootid],
                        function (transaction, result)
                        {
-                           var $viewxml;
                            if (result.rows.length > 0)
                            {
                                var row = result.rows.item(0);
-							   $viewxml = $(row.viewxml);
+							   var $viewxml = $(row.viewxml);
                                onsuccess($viewxml);
                            } else
                            {
-                               onsuccess($viewxml);
+                               onsuccess();
                            }
                        });
             }
@@ -1839,23 +1841,23 @@ var debug = false;
         {
             if ( !isNullOrEmpty(SessionId) )
             {
-                _getModifiedView(function (rootid, $viewxml)
+                _getModifiedView(function (rootid, viewxml)
                 {
-                    if ( !isNullOrEmpty(rootid) && !isNullOrEmpty($viewxml) )
+                    if ( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
                     {
                         if (debug) log('Starting ' + opts.UpdateUrl, true);
                         
-                        var dataXml = {
+                        var dataJson = {
                             SessionId: SessionId,
                             ParentId: rootid,
-                            UpdatedViewXml: $viewxml, //.replaceText(/'/gi, '\\\''),
+                            UpdatedViewXml: viewxml,
                             ForMobile: ForMobile
                         };
 
-                        CswAjaxXml({
+                        CswAjaxJSON({
                             formobile: ForMobile,
                             url: opts.UpdateUrl,
-                            data: dataXml,
+                            data: dataJson,
                             stringify: true,
                             onloginfail: function() 
                             { 
@@ -1864,9 +1866,10 @@ var debug = false;
                                     _waitForData();
                                 } 
                             },
-                            success: function ($xml)
+                            success: function (data)
                             {
                                 if (debug) log('On Success ' + opts.UpdateUrl, true);
+                                var $xml = data.xml;
                                 _updateStoredViewXml(rootid, $xml, '0');
                                 if (perpetuateTimer)
                                 {
