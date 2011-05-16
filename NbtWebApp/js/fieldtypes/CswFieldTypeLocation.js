@@ -36,10 +36,14 @@
 																			viewid: ViewId,
 																			nodeid: NodeId,
 																			cswnbtnodekey: NodeKey,
-																			onSelectNode: function(optSelect)
-																							{
-																								onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onchange); 
-																							}, 
+																			onSelectNode: function (optSelect)
+																			{
+																				onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onchange);
+																			},
+																			onInitialSelectNode: function(optSelect)
+																			{
+																				onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function() {}); 
+																			}, 
 																			SelectFirstChild: false,
 																			UsePaging: false
 																		});
