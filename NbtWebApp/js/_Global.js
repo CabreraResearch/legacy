@@ -821,7 +821,7 @@ function makeSafeId(options)
     if (options) $.extend(o, options);
     
     var elementId = o.ID;
-
+    var toReplace = [/'/gi, /\//g];
 
     if (!isNullOrEmpty(o.prefix) && !isNullOrEmpty(elementId))
     {
@@ -831,10 +831,14 @@ function makeSafeId(options)
     {
         elementId += o.Delimiter + o.suffix;
     }
-    if (!isNullOrEmpty(elementId))
+    for(var i=0, i < toReplace.length; i++)
     {
-        elementId = elementId.replace(/'/gi, '').replace(/\//g, '');
+        if (!isNullOrEmpty(elementId))
+        {
+            elementId = elementId.replace(toReplace[i],'');
+        }
     }
+    
     return elementId;
 }
 
