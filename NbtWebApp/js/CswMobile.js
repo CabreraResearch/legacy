@@ -5,7 +5,7 @@
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
 
-var debug = false;
+var debug = true;
 //var profiler = $createProfiler();
 //if (!debug) profiler.disable();
 
@@ -724,7 +724,7 @@ var debug = false;
                         break;
 
                     case "Link":
-                        Html += '<a href="' + sf_href + '">' + sf_text + '</a>';
+                        Html += '<a href="' + sf_href + '" rel="external">' + sf_text + '</a>';
                         break;
 
                     case "List":
