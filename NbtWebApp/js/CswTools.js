@@ -78,20 +78,25 @@
                 var oldVal;
                 var newVal = '';
 
-                // 3 === Node.TEXT_NODE
-                if (!isNullOrEmpty( $node ) && $node.nodeType === 3 ) 
+                if( !isNullOrEmpty($node) )
                 {
-                    oldVal = tryParseString( $node.val(), '');
-                    if( !isNullOrEmpty(oldVal) )
+                    // 3 === Node.TEXT_NODE
+                    if (!isNullOrEmpty( $node ) && $node.nodeType === 3 ) 
                     {
-                        log(oldVal,true);
-                        newVal = oldVal.replace( search, replace );
-                    }
-                    if ( newVal !== oldVal ) 
-                    {
-                        $node.replaceWith(newVal);
+                        oldVal = tryParseString( $node.val(), '');
+                        if( !isNullOrEmpty(oldVal) )
+                        {
+                            log(oldVal,true);
+                            newVal = oldVal.replace( search, replace );
+                            if ( newVal !== oldVal ) 
+                            {
+                                $node.replaceWith(newVal);
+                            }
+                        }
                     }
                 }
+                //recurse each $node
+                $node.replaceText( search, replace );
             });
 
         }
