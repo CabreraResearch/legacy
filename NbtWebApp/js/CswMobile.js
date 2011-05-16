@@ -1717,7 +1717,7 @@ var debug = false;
             if ( !isNullOrEmpty(rootid) )
             {
                 _DoSql('UPDATE views SET wasmodified = ?, viewxml = ? WHERE rootid = ?;',
-                       [wasmodified, $viewxml, rootid]);
+                       [wasmodified, $viewxml.get(0), rootid]);
             }
         }
 
