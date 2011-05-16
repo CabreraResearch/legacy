@@ -880,7 +880,7 @@ function isFunction(obj)
 
 function isArray(obj)
 {
-    var ret = ( !$.isArray(obj) );
+    var ret = ( $.isArray(obj) );
     return ret;
 }
 
