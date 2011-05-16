@@ -845,8 +845,12 @@ function isNullOrEmpty(str)
 	/// <param name="str" type="Object">
 	///     String or object to test
 	/// </param>
-
-	return (str === '' || str === undefined || str === null);
+    var ret = (str === undefined || str === null);
+    if( !ret )
+    {
+        ret = ( str.trim() === '' );
+    }    
+	return ret;
 }
 
 function isNumeric(obj)
