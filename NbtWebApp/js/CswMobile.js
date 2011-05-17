@@ -5,7 +5,6 @@
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
 
-var debug = true;
 //var profiler = $createProfiler();
 //if (!debug) profiler.disable();
 
