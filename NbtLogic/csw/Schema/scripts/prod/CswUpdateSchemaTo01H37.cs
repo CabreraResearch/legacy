@@ -32,13 +32,15 @@ namespace ChemSW.Nbt.Schema
 			// I'm sure this functionality will not be used by schema updater itself, 
 			// and therefore it is safe to add it here
 
-			string SessionViewsTableName = "session_views";
-			_CswNbtSchemaModTrnsctn.addTable( SessionViewsTableName, "sessionviewid" );
-			_CswNbtSchemaModTrnsctn.addStringColumn( SessionViewsTableName, "viewname", "Name of view", false, false, 30 );
-			_CswNbtSchemaModTrnsctn.addStringColumn( SessionViewsTableName, "viewmode", "Rendering Mode for view", false, false, 10 );
-			_CswNbtSchemaModTrnsctn.addClobColumn( SessionViewsTableName, "viewxml", "View XML", false, false );
-			_CswNbtSchemaModTrnsctn.addStringColumn( SessionViewsTableName, "sessionid", "User Session ID for view", false, true, 50 );
-
+			//string SessionViewsTableName = "session_data";
+			string Tbl = CswNbtSessionDataMgr.SessionDataTableName;
+			_CswNbtSchemaModTrnsctn.addTable( Tbl,  CswNbtSessionDataMgr.SessionDataColumn_PrimaryKey );
+			_CswNbtSchemaModTrnsctn.addStringColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_SessionId, "User Session ID for view", false, true, 50 );
+			_CswNbtSchemaModTrnsctn.addStringColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_SessionDataType, "Type: view or action", false, false, 10 );
+			_CswNbtSchemaModTrnsctn.addStringColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_Name, "Name of view or action", false, false, 30 );
+			_CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_ActionId, "Primary key of action", false, false, "actions", "actionid" );
+			_CswNbtSchemaModTrnsctn.addStringColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_ViewMode, "Rendering Mode for view", false, false, 10 );
+			_CswNbtSchemaModTrnsctn.addClobColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_ViewXml, "View XML", false, false );
 
         } // update()
 

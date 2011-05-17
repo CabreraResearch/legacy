@@ -237,7 +237,7 @@ namespace ChemSW.Nbt.WebServices
                 start();
 
                 CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
-				var ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources, new CswWebClientStorageCookies( Context.Request, Context.Response ) ); // , Session );
+				var ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources ); //, new CswWebClientStorageCookies( Context.Request, Context.Response ) ); // , Session );
                 if( null != UserId )
                 {
                     QuickLaunchItems.Add( ws.getQuickLaunchItems( UserId ) );

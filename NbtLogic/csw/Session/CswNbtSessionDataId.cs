@@ -13,49 +13,50 @@ using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
-    /// <summary>
+	/// <summary>
     /// Represents a Session View Id
     /// </summary>
 	/// <remarks>
 	/// This class exists solely to distinguish this Int32 from the ViewId Int32, 
 	/// and to prevent developers from using them interchangably
 	/// </remarks>
-    public class CswNbtSessionViewId : IEquatable<CswNbtSessionViewId>
+    public class CswNbtSessionDataId : IEquatable<CswNbtSessionDataId>
     {
-		Int32 _SessionViewId = Int32.MinValue;
+		Int32 _SessionDataId = Int32.MinValue;
 
-		public CswNbtSessionViewId()
+		public CswNbtSessionDataId()
 		{
 		}
 
-		public CswNbtSessionViewId( Int32 Value )
+		public CswNbtSessionDataId( Int32 Value )
 		{
-			_SessionViewId = Value;
+			_SessionDataId = Value;
 		}
 
 		public Int32 get()
 		{
-			return _SessionViewId;
+			return _SessionDataId;
 		}
 		public void set(Int32 value)
 		{
-			_SessionViewId = value;
+			_SessionDataId = value;
 		}
 
 		public bool isSet()
 		{
-			return ( _SessionViewId != Int32.MinValue );
+			return ( _SessionDataId != Int32.MinValue );
 		}
 
 		public override string ToString()
 		{
-			return CswConvert.ToString( _SessionViewId );
+			return CswConvert.ToString( _SessionDataId );
 		}
+
 		#region IEquatable
         /// <summary>
         /// IEquatable: ==
         /// </summary>
-		public static bool operator ==( CswNbtSessionViewId viewid1, CswNbtSessionViewId viewid2 )
+		public static bool operator ==( CswNbtSessionDataId viewid1, CswNbtSessionDataId viewid2 )
         {
             // If both are null, or both are same instance, return true.
 			if( System.Object.ReferenceEquals( viewid1, viewid2 ) )
@@ -79,7 +80,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// IEquatable: !=
         /// </summary>
-		public static bool operator !=( CswNbtSessionViewId viewid1, CswNbtSessionViewId viewid2 )
+		public static bool operator !=( CswNbtSessionDataId viewid1, CswNbtSessionDataId viewid2 )
         {
 			return !( viewid1 == viewid2 );
         }
@@ -89,17 +90,17 @@ namespace ChemSW.Nbt
         /// </summary>
         public override bool Equals( object obj )
         {
-			if( !( obj is CswNbtSessionViewId ) )
+			if( !( obj is CswNbtSessionDataId ) )
                 return false;
-			return this == (CswNbtSessionViewId) obj;
+			return this == (CswNbtSessionDataId) obj;
         }
 
         /// <summary>
         /// IEquatable: Equals
         /// </summary>
-		public bool Equals( CswNbtSessionViewId obj )
+		public bool Equals( CswNbtSessionDataId obj )
         {
-			return this == (CswNbtSessionViewId) obj;
+			return this == (CswNbtSessionDataId) obj;
         }
 
         /// <summary>
@@ -109,12 +110,8 @@ namespace ChemSW.Nbt
         {
 			return this.get();
         }
+
         #endregion IEquatable
 
-    } // class CswNbtView
-
-
+    } // class CswNbtSessionDataId
 } // namespace ChemSW.Nbt
-
-
-
