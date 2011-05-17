@@ -97,7 +97,7 @@ function CswAjaxXml(options) {
     };
     
 	if (options) $.extend(o, options);
-
+	
     if ( !isNullOrEmpty(o.url) )
     {
         var ajaxData;
@@ -996,22 +996,7 @@ function trim(str)
     /// <summary>Returns a string without left and right whitespace</summary>
     /// <param name="str" type="String"> String to parse </param>
     /// <returns type="String">Parsed string</returns>
-    var i = 0;
-    var r = (str.length - 1);
-    var ret = '';
-    if (r > 0)
-    {
-        while (i < str.length && str[i] === ' ')
-        {
-            i++;
-        }
-        while (r > i && str[r] === ' ')
-        {
-            r -= 1;
-        }
-        ret = str.substr(i, r + 1);
-    }
-    return ret;
+    return $.trim(str);
 }
 
 // ------------------------------------------------------------------------------------
