@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.WebServices
 		    // Case 21699: Show empty tree for search
 		    bool ValidView = ( null != View && ( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List ) );
 		    string ViewName = string.Empty;
-			CswNbtSessionViewId SessionViewId = null;
+			CswNbtSessionViewId SessionViewId = new CswNbtSessionViewId();
 			//bool IsFirstLoad = true;
 			//if( ParentNodeKey != null || IncludeNodeKey != null )
 			//    IsFirstLoad = false;
