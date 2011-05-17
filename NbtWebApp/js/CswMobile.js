@@ -633,13 +633,14 @@
                     Html += '<li>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                    Html += '<a href="#' + id + '_href">';
-                    Html += NodeName + '</br>';
-                    Html += Location + '</br>';
-                    Html += MountPoint + '</br>';
+                    Html += '<a href="#' + id + '">';
+                    Html += '<p>' + NodeName + '</p>';
+                    Html += '<p>' + Location + '</p>';
+                    Html += '<p>' + MountPoint + '</p>';
+                    Html += '<p>';
                     if(!isNullOrEmpty(Status)) Html +=  Status + ', ';
-                    Html += 'Due: ' + DueDate;
-                    //Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
+                    Html += 'Due: ' + DueDate + '</p>';
+                    Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
                     Html += '</a>';
                     Html += '</li>';
                     break;
