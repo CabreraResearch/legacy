@@ -634,7 +634,7 @@ var debug = true;
                     Html += '<li>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                    Html += '<a href="#' + id + '">';
+                    Html += '<a href="#' + id + '" data-role="button">';
                     Html += '<p>' + NodeName + '</p>';
                     Html += '<p>' + Location + '</p>';
                     Html += '<p>' + MountPoint + '</p>';
