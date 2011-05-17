@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.WebPages
 {
     public partial class Popup_NewView : System.Web.UI.Page
     {
-        private CswNbtSessionViewId SessionViewId;
+		private CswNbtSessionDataId SessionViewId;
 
         protected override void OnInit( EventArgs e )
         {
@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 EnsureChildControls();
 
-				SessionViewId = new CswNbtSessionViewId();
+				SessionViewId = new CswNbtSessionDataId();
                 if( Request.QueryString["sessionviewid"] != null && CswTools.IsInteger( Request.QueryString["sessionviewid"] ) )
                 {
 					SessionViewId.set( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) );

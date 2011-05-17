@@ -5,6 +5,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Security;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt
 {
@@ -77,61 +78,28 @@ namespace ChemSW.Nbt
 		/// <summary>
 		/// Get a CswNbtView from the session view collection
 		/// </summary>
-		public CswNbtView getSessionView( CswNbtSessionViewId SessionViewId )
+		public CswNbtView getSessionView( CswNbtSessionDataId SessionViewId )
 		{
-			CswTableSelect SessionViewsSelect = _CswNbtResources.makeCswTableSelect( "CswNbtViewSelect.getSessionView", "session_views" );
-			DataTable SessionViewTable = SessionViewsSelect.getTable( "sessionviewid", SessionViewId.get() );
-			CswNbtView ret = new CswNbtView( _CswNbtResources );
-			if( SessionViewTable.Rows.Count > 0 )
+			if( SessionViewId == null )
+				throw new CswDniException( "CswNbtViewSelect.getSessionView(): SessionViewId is null" );
+
+			CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionViewId );
+			if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.View )
 			{
-				ret.LoadXml( SessionViewTable.Rows[0]["viewxml"].ToString() );
+				return SessionDataItem.View;
 			}
-			return ret;
+			else
+			{
+				throw new CswDniException( "CswNbtViewSelect.getSessionView(): SessionViewId (" + SessionViewId.get() + ") is not a view" );
+			}
 		} // getSessionView()
 
 		/// <summary>
 		/// Save a view to the session view collection.  Sets the SessionViewId on the view.
 		/// </summary>
-		public CswNbtSessionViewId saveSessionView( CswNbtView View, string SessionId )
+		public CswNbtSessionDataId saveSessionView( CswNbtView View )
 		{
-			if(SessionId == string.Empty)
-			{
-				SessionId = _CswNbtResources.Session.SessionId;
-			}
-
-			CswTableUpdate SessionViewsUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtViewSelect.saveSessionView", "session_views" );
-			DataTable SessionViewTable = null;
-			if( View.SessionViewId != null )
-			{
-				SessionViewTable = SessionViewsUpdate.getTable( "sessionviewid", View.SessionViewId.get() );
-			}
-			else
-			{
-				SessionViewTable = SessionViewsUpdate.getEmptyTable();
-			}
-
-			DataRow SessionViewRow = null;
-			if( SessionViewTable.Rows.Count > 0 )
-			{
-				SessionViewRow = SessionViewTable.Rows[0];
-			}
-			else
-			{
-				SessionViewRow = SessionViewTable.NewRow();
-				SessionViewTable.Rows.Add( SessionViewRow );
-			}
-	
-			SessionViewRow["viewname"] = View.ViewName;
-			SessionViewRow["viewmode"] = View.ViewMode.ToString();
-			SessionViewRow["viewxml"] = View.ToString();
-			SessionViewRow["sessionid"] = SessionId;
-
-			SessionViewsUpdate.update( SessionViewTable );
-
-			View.SessionViewId = new CswNbtSessionViewId( CswConvert.ToInt32( SessionViewRow["sessionviewid"] ) );
-			
-			return View.SessionViewId;
-
+			return _CswNbtResources.SessionDataMgr.saveSessionData( View );
 		} // saveSessionView()
 
 		/// <summary>
@@ -139,23 +107,15 @@ namespace ChemSW.Nbt
 		/// </summary>
 		public void removeSessionView( CswNbtView View )
 		{
-			removeSessionView( View.SessionViewId );
+			_CswNbtResources.SessionDataMgr.removeSessionData( View );
 		}
 
 		/// <summary>
 		/// Remove a view from the session view cache
 		/// </summary>
-		public void removeSessionView( CswNbtSessionViewId SessionViewId )
+		public void removeSessionView( CswNbtSessionDataId SessionViewId )
 		{
-			CswTableUpdate SessionViewsUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtViewSelect.saveSessionView", "session_views" );
-			DataTable SessionViewTable = SessionViewsUpdate.getTable( "sessionviewid", SessionViewId.get() );
-			DataRow SessionViewRow = null;
-			if( SessionViewTable.Rows.Count > 0 )
-			{
-				SessionViewRow = SessionViewTable.Rows[0];
-				SessionViewRow.Delete();
-				SessionViewsUpdate.update( SessionViewTable );
-			}
+			_CswNbtResources.SessionDataMgr.removeSessionData( SessionViewId );
 		} // removeSessionView()
 
 		/// <summary>

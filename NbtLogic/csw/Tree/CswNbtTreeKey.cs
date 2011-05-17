@@ -51,7 +51,7 @@ namespace ChemSW.Nbt
         //    View = TheView;
         //}//ctor
 
-		public CswNbtTreeKey( CswNbtResources CswNbtResources, CswNbtSessionViewId TheSessionViewId )
+		public CswNbtTreeKey( CswNbtResources CswNbtResources, CswNbtSessionDataId TheSessionViewId )
         {
             _RealConstructor(CswNbtResources);
             SessionViewId = TheSessionViewId;
@@ -79,11 +79,11 @@ namespace ChemSW.Nbt
         //    set { _View = value; }
         //}
 
-        private CswNbtSessionViewId _SessionViewId = null;
+		private CswNbtSessionDataId _SessionViewId = null;
         /// <summary>
         /// Session-specific ViewId for View used to create this tree
         /// </summary>
-        public CswNbtSessionViewId SessionViewId
+		public CswNbtSessionDataId SessionViewId
         {
             get { return _SessionViewId; }
             set { _SessionViewId = value; }

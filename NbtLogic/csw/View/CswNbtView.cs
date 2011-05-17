@@ -1318,14 +1318,14 @@ namespace ChemSW.Nbt
         /// </summary>
         public void SaveToCache()
         {
-            _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, string.Empty );
+			_SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this );
         }
 
-		private CswNbtSessionViewId _SessionViewId = null;
+		private CswNbtSessionDataId _SessionViewId = null;
         /// <summary>
         /// Key for retrieving the view from the Session's View Cache
         /// </summary>
-		public CswNbtSessionViewId SessionViewId
+		public CswNbtSessionDataId SessionViewId
         {
             get { return _SessionViewId; }
             set { _SessionViewId = value; }
