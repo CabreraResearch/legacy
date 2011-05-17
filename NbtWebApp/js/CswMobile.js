@@ -646,7 +646,7 @@
                     break;
 
                 default:
-                    Html += '<l>';
+                    Html += '<li>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<a href="#' + id + '">' + NodeName + '</a>';
