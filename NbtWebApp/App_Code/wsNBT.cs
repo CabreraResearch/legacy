@@ -52,20 +52,12 @@ namespace ChemSW.Nbt.WebServices
 
         private AuthenticationStatus _start()
         {
-            AuthenticationStatus ReturnVal = AuthenticationStatus.Authenticated;
-
 
             _CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
             _CswNbtResources = _CswSessionResources.CswNbtResources;
             _CswNbtStatisticsEvents = _CswSessionResources.CswNbtStatisticsEvents;
 
-            ReturnVal = _CswSessionResources.AuthenticationStatus;
-            if( AuthenticationStatus.Authenticated == ReturnVal )
-            {
-                _CswSessionResources.extendUserSessionTimeout();
-            }
-
-            return ( ReturnVal );
+            return ( _CswSessionResources.refreshSession() );
 
         }//start() 
 
