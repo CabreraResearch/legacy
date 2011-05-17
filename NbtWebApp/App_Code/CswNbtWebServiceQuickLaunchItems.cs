@@ -10,6 +10,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.PropTypes;
 using System.Collections.Generic;
+using ChemSW.Session;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -25,10 +26,12 @@ namespace ChemSW.Nbt.WebServices
 		private HttpSessionState _Session;
 		private LinkedList<CswNbtQuickLaunchItem> _QuickLaunchHistory = null;
 		private bool _IsNewSession;
+        private ICswWebClientStorage _CswWebClientStorage = null; 
 
 		public const string QuickLaunchViews = "QuickLaunchViews";
-		public CswNbtWebServiceQuickLaunchItems( CswNbtResources CswNbtResources, HttpSessionState Session )
+        public CswNbtWebServiceQuickLaunchItems( CswNbtResources CswNbtResources, ICswWebClientStorage CswWebClientStorage, HttpSessionState Session )
 		{
+            _CswWebClientStorage = CswWebClientStorage;
 			_CswNbtResources = CswNbtResources;
 			_IsNewSession = ( null == Session[QuickLaunchViews] );
 			_Session = Session;

@@ -18,13 +18,13 @@ public class NodeTypeTreeService : System.Web.Services.WebService
 {
     public NodeTypeTreeService()
     {
-//        CswNbtSession CswSessionWeb = new CswNbtSession( Context.Application, Context.Session, Context.Request, Context.Response );
+        //        CswNbtSession CswSessionWeb = new CswNbtSession( Context.Application, Context.Session, Context.Request, Context.Response );
 
 
         //bz # 9278
 
 
-        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Session, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web  );
+        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
         _CswNbtResources = CswInitialization.CswNbtResources;
 
 
@@ -82,22 +82,22 @@ public class NodeTypeTreeService : System.Web.Services.WebService
         {
 
             // extract the "context" dictionary information. OnClientNodePopulating event loads the dictionary
-            IDictionary<string, object> contextDictionary = ( IDictionary<string, object> )context;
+            IDictionary<string, object> contextDictionary = (IDictionary<string, object>) context;
             // create the array of RadTreeNodeData that will be returned by this method
             List<RadTreeNodeData> result = new List<RadTreeNodeData>();
 
-            if ( contextDictionary.ContainsKey( "Parent" ) && contextDictionary["Parent"] != null &&
+            if( contextDictionary.ContainsKey( "Parent" ) && contextDictionary["Parent"] != null &&
                 contextDictionary.ContainsKey( "Mode" ) && contextDictionary["Mode"] != null )
             {
                 NbtDesignMode Mode = NbtDesignMode.Standard;
-                if ( contextDictionary["Mode"].ToString() == "i" )
+                if( contextDictionary["Mode"].ToString() == "i" )
                     Mode = NbtDesignMode.Inspection;
 
                 CswNodeTypeTree NodeTypeTree = new CswNodeTypeTree( _CswNbtResources );
                 NodeTypeTree.ShowTabsAndProperties = true;
                 NodeTypeTree.PropertySort = CswNodeTypeTree.PropertySortSetting.DisplayOrder;
                 NodeTypeTree.ShowConditionalPropertiesBeneath = true;
-                if ( Mode == NbtDesignMode.Inspection )
+                if( Mode == NbtDesignMode.Inspection )
                 {
                     NodeTypeTree.ShowQuestionNumbers = true;
                     NodeTypeTree.ObjectClassIdsToInclude = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ).ObjectClassId.ToString();
@@ -108,9 +108,9 @@ public class NodeTypeTreeService : System.Web.Services.WebService
                 NodeTypeTree.setSelectedNode( contextDictionary["Parent"].ToString() );
                 NodeTypeTree.DataBind();
                 RadTreeNode ParentNode = NodeTypeTree.TreeView.FindNodeByValue( contextDictionary["Parent"].ToString() );
-                if ( ParentNode != null )
+                if( ParentNode != null )
                 {
-                    foreach ( RadTreeNode ChildNode in ParentNode.Nodes )
+                    foreach( RadTreeNode ChildNode in ParentNode.Nodes )
                     {
                         result.Add( CopyNodeToNodeData( ChildNode ) );
                     }
@@ -143,7 +143,7 @@ public class NodeTypeTreeService : System.Web.Services.WebService
 
     private void _release()
     {
-        if ( _CswNbtResources != null )
+        if( _CswNbtResources != null )
         {
             _CswNbtResources.finalize();
             _CswNbtResources.release();
