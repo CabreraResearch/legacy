@@ -633,19 +633,19 @@
                     Html += '<li>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                    Html += '<a href="#' + id + '" data-role="button">';
-                    if(!isNullOrEmpty(NodeName)) Html += NodeName + '</br>';
-                    if(!isNullOrEmpty(Location)) Html += Location + '</br>';
-                    if(!isNullOrEmpty(MountPoint)) Html += MountPoint + '</br>';
+                    Html += '<a href="#' + id + '_href">';
+                    Html += NodeName + '</br>';
+                    Html += Location + '</br>';
+                    Html += MountPoint + '</br>';
                     if(!isNullOrEmpty(Status)) Html +=  Status + ', ';
                     Html += 'Due: ' + DueDate;
-                   // Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
+                    //Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
                     Html += '</a>';
                     Html += '</li>';
                     break;
 
                 default:
-                    Html += '<li>';
+                    Html += '<l>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<a href="#' + id + '">' + NodeName + '</a>';
