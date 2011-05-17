@@ -95,11 +95,14 @@ namespace ChemSW.Nbt
 
 
             //, new CswAuthenticator.AuthenticationHandler( _CswSession.OnAfterLogin ), new CswAuthenticator.AuthenticationHandler( _CswSession.OnBeforeLogout ) 
-
-
-
-
         }//ctor()
+
+
+        public AuthenticationStatus AuthenticationStatus { get { return ( CswSessionManager.AuthenticationStatus ); } }
+
+
+        public void extendUserSessionTimeout() { CswSessionManager.extendUserSessionTimeout(); }
+
 
 
         public void setCache()
