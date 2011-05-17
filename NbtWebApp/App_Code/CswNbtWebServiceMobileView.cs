@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 // Get the full XML for the entire view
                 Int32 ViewId = CswConvert.ToInt32( ParentId.Substring( ViewIdPrefix.Length ) );
-                CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 //View.SaveToCache();
                 //Session["SessionViewId"] = View.SessionViewId;
 

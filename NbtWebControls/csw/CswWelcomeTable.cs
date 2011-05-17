@@ -338,7 +338,7 @@ namespace ChemSW.NbtWebControls
                 string[] SplitID = ( (LinkButton) sender ).ID.Split( '_' );
                 //CswViewListTree.ViewType ThisViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), SplitID[1] );
                 Int32 ViewId = CswConvert.ToInt32( SplitID[2] );
-                CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 //_setupSearchViewRecursive( _LayoutTable, ThisView.Root );
                 if( OnSearchClick != null )
                     OnSearchClick( ThisView.ToString() );
@@ -355,7 +355,7 @@ namespace ChemSW.NbtWebControls
                 string[] SplitID = ( (ImageButton) sender ).ID.Split( '_' );
                 //CswViewListTree.ViewType ThisViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), SplitID[1] );
                 Int32 ViewId = CswConvert.ToInt32( SplitID[2] );
-                CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 //_setupSearchViewRecursive( _LayoutTable, ThisView.Root );
                 if( OnSearchClick != null )
                     OnSearchClick( ThisView.ToString() );
@@ -619,7 +619,7 @@ namespace ChemSW.NbtWebControls
                 CswNbtMetaDataNodeType NodeType = null;
                 if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
                 {
-                    ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
+					ThisView = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
                     if( ThisView.IsFullyEnabled() )
                     {
                         IDSuffix += CswViewListTree.ViewType.View.ToString() + "_" + ThisView.ViewId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();

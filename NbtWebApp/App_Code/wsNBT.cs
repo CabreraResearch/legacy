@@ -345,7 +345,7 @@ namespace ChemSW.Nbt.WebServices
                 bool ShowEmptyGrid = CswConvert.ToBoolean( ShowEmpty );
                 if( Int32.MinValue != ViewId )
                 {
-                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                     if( null != View )
                     {
                         CswNbtNodeKey ParentNodeKey = null;
@@ -385,7 +385,7 @@ namespace ChemSW.Nbt.WebServices
                 bool ShowEmptyTree = CswConvert.ToBoolean( ShowEmpty );
                 if( Int32.MinValue != ViewId )
                 {
-                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                     var ws = new CswNbtWebServiceTree( _CswNbtResources );
 
                     CswNbtNodeKey RealParentNodeKey = null;
@@ -529,7 +529,7 @@ namespace ChemSW.Nbt.WebServices
                 Int32 nViewId = CswConvert.ToInt32( ViewId );
                 if( nViewId != Int32.MinValue )
                 {
-                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( nViewId );
                     ReturnXml = View.ToXml();
                 }
                 end();
@@ -553,7 +553,7 @@ namespace ChemSW.Nbt.WebServices
                 Int32 nViewId = CswConvert.ToInt32( ViewId );
                 if( nViewId != Int32.MinValue )
                 {
-                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( nViewId );
                     View.LoadXml( ViewXml );
                     View.save();
 
@@ -608,7 +608,7 @@ namespace ChemSW.Nbt.WebServices
                 Int32 nViewId = CswConvert.ToInt32( ViewId );
                 if( nViewId != Int32.MinValue )
                 {
-                    CswNbtView SourceView = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					CswNbtView SourceView = _CswNbtResources.ViewSelect.restoreView( nViewId );
                     CswNbtView NewView = new CswNbtView( _CswNbtResources );
                     string NewViewNameOrig = SourceView.ViewName;
                     string Suffix = " Copy";
@@ -649,7 +649,7 @@ namespace ChemSW.Nbt.WebServices
                 Int32 nViewId = CswConvert.ToInt32( ViewId );
                 if( nViewId != Int32.MinValue )
                 {
-                    CswNbtView DoomedView = CswNbtViewFactory.restoreView( _CswNbtResources, nViewId );
+					CswNbtView DoomedView = _CswNbtResources.ViewSelect.restoreView( nViewId );
                     DoomedView.Delete();
                     ReturnJson.Add( new JProperty( "succeeded", "true" ) );
                 }

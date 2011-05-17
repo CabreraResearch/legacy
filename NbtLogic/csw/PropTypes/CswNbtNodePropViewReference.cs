@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.PropTypes
             CachedViewName = string.Empty;
             if( Int32.MinValue != ViewId )
             {
-                CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+                CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 if( View != null )
                     CachedViewName = View.ViewName;
             }
@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-			CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+			CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
 			XmlNode ViewIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _ViewIdSubField.ToXmlNodeName(), ViewId.ToString() );
 			XmlNode ViewModeNode = CswXmlDocument.AppendXmlNode( ParentNode, "viewmode", View.ViewMode.ToString() );
 			XmlNode CachedViewNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedViewNameSubField.ToXmlNodeName(), CachedViewName.ToString() );

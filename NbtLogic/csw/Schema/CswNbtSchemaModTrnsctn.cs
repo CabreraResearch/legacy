@@ -313,9 +313,11 @@ namespace ChemSW.Nbt.Schema
         //    return _CswNbtResources.IsModuleEnabled( Module );
         //}
 
+		public CswNbtViewSelect ViewSelect { get { return _CswNbtResources.ViewSelect; } }
+
         public CswNbtView makeView() { return ( new CswNbtView( _CswNbtResources ) ); }
-        public CswNbtView restoreView( Int32 ViewId ) { return CswNbtViewFactory.restoreView( _CswNbtResources, ViewId ); }
-        public CswNbtView restoreViewString( string ViewAsString ) { return CswNbtViewFactory.restoreView( _CswNbtResources, ViewAsString ); }
+		public CswNbtView restoreView( Int32 ViewId ) { return ViewSelect.restoreView( ViewId ); }
+		public CswNbtView restoreViewString( string ViewAsString ) { return ViewSelect.restoreView( ViewAsString ); }
         public CswNbtView restoreView( string ViewName )
         {
             CswNbtView ReturnVal = null;
@@ -357,7 +359,7 @@ namespace ChemSW.Nbt.Schema
             DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, " where viewname='" + ViewName + "'", false );
             foreach( DataRow CurrentRow in ViewTable.Rows )
             {
-                ReturnVal.Add( CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
+				ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
             }
 
             return ( ReturnVal );

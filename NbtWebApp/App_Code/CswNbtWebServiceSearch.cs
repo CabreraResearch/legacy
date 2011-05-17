@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView View = null;
             if( Int32.MinValue != ViewId )
             {
-                View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				View = _CswNbtResources.ViewSelect.restoreView( ViewId );
             }
 
             if( null == View || !View.IsSearchable() )
@@ -254,7 +254,7 @@ namespace ChemSW.Nbt.WebServices
                 JObject ViewSearch = JObject.FromObject( SearchJson );
                 string ViewIdNum = (string)ViewSearch.Property( "viewid" ).Value;
                 Int32 ViewId = CswConvert.ToInt32( ViewIdNum );
-                CswNbtView InitialView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				CswNbtView InitialView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 SearchView = new CswNbtView( _CswNbtResources );
                 SearchView.LoadXml( InitialView.ToXml() );
                 SearchView.ViewName = _makeSearchViewName( SearchView.ViewName );

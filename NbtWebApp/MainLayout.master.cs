@@ -553,7 +553,7 @@ namespace ChemSW.Nbt.WebPages
                     Master.GoMain();
                     break;
                 case CswViewListTree.ViewType.RecentView:
-                    CswNbtView View = Master.CswNbtResources.ViewSelect.getView( Pk );
+                    CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( Pk );
                     Master.setViewXml( View.ToXml().InnerXml.ToString() );
                     Master.GoMain();
                     break;

@@ -73,7 +73,7 @@ namespace ChemSW.NbtWebControls
                 {
                     if( ViewId > 0 )
                     {
-                        CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+                        CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                         _AddQuickLaunchLinkView( ThisView, true );
                     }
                 }

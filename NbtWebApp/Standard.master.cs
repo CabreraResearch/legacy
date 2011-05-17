@@ -324,7 +324,7 @@ namespace ChemSW.Nbt.WebPages
                     Int32 TargetViewId = CswConvert.ToInt32( ViewIdFromQueryParam );
                     if( Session["ViewId"] != null && Session["ViewId"].ToString() != TargetViewId.ToString() )  // BZ 10125
                     {
-                        ViewLoaded = ( null != ( _CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, TargetViewId ) ) );
+						ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.restoreView( TargetViewId ) ) );
                     }
                 }
 
@@ -350,10 +350,10 @@ namespace ChemSW.Nbt.WebPages
 							ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionViewId( CswConvert.ToInt32( Session["SessionViewId"] ) ) ) ) );
 
                         if( Session["ViewId"] != null )
-                            ViewLoaded = ( null != ( _CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, CswConvert.ToInt32( Session["ViewId"] ) ) ) );
+							ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( Session["ViewId"] ) ) ) );
 
                         if( !ViewLoaded && Session["ViewXml"] != null )
-                            ViewLoaded = ( null != ( _CswNbtView = (CswNbtView) CswNbtViewFactory.restoreView( CswNbtResources, Session["ViewXml"].ToString() ) ) );
+							ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.restoreView( Session["ViewXml"].ToString() ) ) );
 
                         // BZ 9934 - No need for 'default view' anymore
                         //if( !ViewLoaded && CswNbtResources.CurrentUser != null && CswNbtResources.CurrentNbtUser.DefaultViewId > 0 )

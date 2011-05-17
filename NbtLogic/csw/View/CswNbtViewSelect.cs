@@ -16,16 +16,63 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }
 
+
 		/// <summary>
-		/// Get a DataTable with a single view, by primary key
+		/// Restore a CswNbtViewBase that was saved as a string
 		/// </summary>
-		public CswNbtView getView( Int32 ViewId )
+		/// <param name="CswNbtResources">A CswNbtResources object</param>
+		/// <param name="ViewAsString">View saved as a string</param>
+		public CswNbtView restoreView( string ViewAsString )
 		{
-			return CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-			//CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getView", "getViewInfo" );
-			//ViewsSelect.S4Parameters.Add( "getviewid", ViewId.ToString() );
-			//return ViewsSelect.getTable();
+			CswNbtView Ret = null;
+
+			if( ViewAsString != string.Empty )
+			{
+				CswNbtView RelationshipView = new CswNbtView( _CswNbtResources );
+				RelationshipView.LoadXml( ViewAsString );
+				Ret = RelationshipView;
+			}
+			return Ret;
 		}
+
+
+		public CswNbtView restoreView( Int32 ViewId )
+		{
+			// try cache first
+			CswNbtView ReturnVal = null; // CswNbtResources.ViewCache.getView( ViewId );
+			//if( ReturnVal == null )
+			//{
+			CswTableSelect ViewsTableSelect = _CswNbtResources.makeCswTableSelect( "restoreView_select", "node_views" );
+			DataTable ViewTable = ViewsTableSelect.getTable( "nodeviewid", ViewId );
+			if( ViewTable.Rows.Count > 0 )
+			{
+				string ViewAsString = ViewTable.Rows[0]["viewxml"].ToString();
+				ReturnVal = restoreView( ViewAsString );
+				ReturnVal.ViewId = ViewId;  // BZ 8068
+
+				// Override XML values with values from row
+				ReturnVal.Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), ViewTable.Rows[0]["visibility"].ToString() );
+				ReturnVal.VisibilityRoleId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["roleid"] ) );
+				ReturnVal.VisibilityUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["userid"] ) );
+				ReturnVal.Category = ViewTable.Rows[0]["category"].ToString();
+				ReturnVal.ViewName = ViewTable.Rows[0]["viewname"].ToString();
+			}
+			//}
+			return ( ReturnVal );
+
+		}//restoreView()
+	
+
+		///// <summary>
+		///// Get a DataTable with a single view, by primary key
+		///// </summary>
+		//public CswNbtView getView( Int32 ViewId )
+		//{
+		//    return CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+		//    //CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getView", "getViewInfo" );
+		//    //ViewsSelect.S4Parameters.Add( "getviewid", ViewId.ToString() );
+		//    //return ViewsSelect.getTable();
+		//}
 
 		/// <summary>
 		/// Get a CswNbtView from the session view collection
@@ -243,7 +290,7 @@ namespace ChemSW.Nbt
 
             // BZ 7074 - Make sure the user has permissions to at least one root node
             foreach( CswNbtView ThisView in from DataRow Row in ViewsTable.Rows
-                                            select (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, Row["viewxml"].ToString() )
+                                            select _CswNbtResources.ViewSelect.restoreView( Row["viewxml"].ToString() )
                                                 into ThisView
                                                 where ( ( ThisView.Root.ChildRelationships.Count > 0 && 
 													      ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||

@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.WebServices
 					foreach( var QuickLaunchItem in UserQuickLaunchViews.Where( View => !String.IsNullOrEmpty( View ) )
 						.Select( CswConvert.ToInt32 )
 						.Where( ViewId => Int32.MinValue != ViewId )
-						.Select( ViewId => CswNbtViewFactory.restoreView( _CswNbtResources, ViewId ) )
+						.Select( ViewId => _CswNbtResources.ViewSelect.restoreView( ViewId ) )
 						.Where( QuickLaunchView => null != QuickLaunchView && QuickLaunchView.IsFullyEnabled() )
 						.Select( QuickLaunchView => new CswNbtQuickLaunchItem( QuickLaunchView.ViewId, QuickLaunchView.ViewName, QuickLaunchView.ViewMode ) ) )
 					{

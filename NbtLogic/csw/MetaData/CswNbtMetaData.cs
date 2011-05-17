@@ -998,7 +998,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 //CswNbtView CurrentView = new CswNbtView(_CswNbtResources);
                 //CurrentView.LoadXml(CswConvert.ToInt32(CurrentRow["nodeviewid"].ToString()));
-                CswNbtView CurrentView = (CswNbtView)CswNbtViewFactory.restoreView(_CswNbtMetaDataResources.CswNbtResources, CswConvert.ToInt32(CurrentRow["nodeviewid"]));
+				CswNbtView CurrentView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
                 if (CurrentView.ContainsNodeType(NodeType))
                     CurrentView.Delete();
             }
