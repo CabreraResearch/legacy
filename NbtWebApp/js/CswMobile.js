@@ -5,7 +5,6 @@
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
 
-var debug = false;
 //var profiler = $createProfiler();
 //if (!debug) profiler.disable();
 
@@ -127,6 +126,9 @@ var debug = false;
                 HideLogoutButton: true
             });
             $('#loginsubmit').click(onLoginSubmit);
+            $('#login_accessid').clickOnEnter($('#loginsubmit'));
+            $('#login_username').clickOnEnter($('#loginsubmit'));
+            $('#login_password').clickOnEnter($('#loginsubmit'));
             if (ChangePage)
             {
 			    _changePage($('#logindiv'), 'fade', false, true);
@@ -262,20 +264,19 @@ var debug = false;
             {
                 rootid = p.DivId;
             }
-
             if ($('#' + p.DivId).length === 0)
             {
                 if (p.level === 0)
                 {
                     if (amOffline())
                     {
-                        _fetchCachedRootXml(function (xml)
+                        _fetchCachedRootXml(function ($xml)
                         {
                             _processViewXml({
                                 ParentId: p.ParentId,
                                 DivId: p.DivId,
                                 HeaderText: p.HeaderText,
-                                $xml: $(xml),
+                                $xml: $xml,
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 HideSearchButton: p.HideSearchButton,
@@ -284,14 +285,14 @@ var debug = false;
                         });
                     } else
                     {
-                        if (debug) log('Starting ' + opts.ViewUrl);
+                        if (debug) log('Starting ' + opts.ViewUrl, true);
                         
                         var dataXml = {
                             SessionId: SessionId,
                             ParentId: p.DivId,
                             ForMobile: ForMobile
                         };
-
+                        
                         CswAjaxXml({
                             async: false,   // required so that the link will wait for the content before navigating
                             formobile: ForMobile,
@@ -301,7 +302,8 @@ var debug = false;
                             onloginfail: function() { Logout(); },
                             success: function (X$xml)
                             {
-                                if (debug) log('On Success ' + opts.ViewUrl);
+                                if (debug) log('On Success ' + opts.ViewUrl, true);
+                                
                                 if (p.level === 1)
                                 {
 									_storeViewXml(p.DivId, p.HeaderText, X$xml);
@@ -323,17 +325,16 @@ var debug = false;
                 } else if (p.level === 1)
                 {
                     // case 20354 - try cached first
-                    _fetchCachedViewXml(rootid, function (xmlstr)
+                    _fetchCachedViewXml(rootid, function ($xmlstr)
                     {
-                        if ( !isNullOrEmpty(xmlstr) )
+                        if ( !isNullOrEmpty($xmlstr) )
                         {
-							$currentViewXml = $(xmlstr);
-                            
+                            $currentViewXml = $xmlstr;
                             _processViewXml({
                                 ParentId: p.ParentId,
                                 DivId: p.DivId,
                                 HeaderText: p.HeaderText,
-                                $xml: $(xmlstr),
+                                $xml: $xmlstr,
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 HideSearchButton: p.HideSearchButton,
@@ -341,7 +342,7 @@ var debug = false;
                             });
                         } else if (!amOffline())
                         {
-                            if (debug) log('Starting ' + opts.ViewUrl);
+                            if (debug) log('Starting ' + opts.ViewUrl, true);
 
                             var dataXml = {
                                 SessionId: SessionId,
@@ -356,15 +357,14 @@ var debug = false;
                                 data: dataXml,
                                 stringify: false,
                                 onloginfail: function() { Logout(); },
-                                success: function (X$xml)
+                                success: function ($xml)
                                 {
-                                    if (debug) log('On Success ' + opts.ViewUrl);
-
+                                    if (debug) log('On Success ' + opts.ViewUrl, true);
+                                    $currentViewXml = $xml;
                                     if (p.level === 1)
                                     {
-                                        _storeViewXml(p.DivId, p.HeaderText, X$xml);
+                                        _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                                     }
-                                    $currentViewXml = X$xml;
                                 
                                     _processViewXml({
                                         ParentId: p.ParentId,
@@ -435,7 +435,7 @@ var debug = false;
 
             p.$xml.children().each(function ()
             {
-                content += _makeListItemFromXml(this, p.DivId, p.parentlevel);
+                content += _makeListItemFromXml($(this), p.DivId, p.parentlevel);
             });
             content += _endUL();
 
@@ -458,138 +458,131 @@ var debug = false;
 
         } // _processViewXml()
 
-        function _makeListItemFromXml(xmlitem, DivId, parentlevel)
+        function _makeListItemFromXml($xmlitem, DivId, parentlevel)
         {
-            var $xmlitem = $(xmlitem);
-            var id = $xmlitem.CswAttrXml('id');
+            var id = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var text = $xmlitem.CswAttrXml('name');
             var IsDiv = ( !isNullOrEmpty(id) );
-            var PageType = xmlitem.nodeName;
+            var PageType = tryParseString($xmlitem.get(0).nodeName,'').toLowerCase();
 
             var nextid = $xmlitem.next().CswAttrXml('id');
             var previd = $xmlitem.prev().CswAttrXml('id');
 
             var lihtml = '';
-
+            
             switch (PageType)
             {
-                case "SEARCHES":
-                case "searches":
+                case "search":
                     // ignore this
                     break;
 
-                case "NODE":
                 case "node":
                     lihtml += _makeObjectClassContent($xmlitem);
                     break;
 
-                case "PROP":
                 case "prop":
-                    var tab = $xmlitem.CswAttrXml('tab');
-                    var fieldtype = $xmlitem.CswAttrXml('fieldtype');
-                    var gestalt = $xmlitem.CswAttrXml('gestalt');
-                    if (gestalt === 'NaN') gestalt = '';
+                    {   
+                        var tab = $xmlitem.CswAttrXml('tab');
+                        var fieldtype = tryParseString($xmlitem.CswAttrXml('fieldtype'),'').toLowerCase();
+                        var gestalt = $xmlitem.CswAttrXml('gestalt');
+                        if (gestalt === 'NaN') gestalt = '';
 
-                    var currentcnt = $xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
-                    var siblingcnt = $xmlitem.siblings('[fieldtype="'+fieldtype+'"]').andSelf().length;
+                        var currentcnt = $xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
+                        var siblingcnt = $xmlitem.siblings('[fieldtype="'+fieldtype+'"]').andSelf().length;
 
-                    if (currenttab !== tab)
-                    {
-                        if ( !isNullOrEmpty(currenttab) )
-                        {    
-                            lihtml += _endUL() + _makeUL();
-                        }
-                        lihtml += '<li data-role="list-divider">' + tab + '</li>'
-                        currenttab = tab;
-                    }
-
-                    switch (fieldtype)
-                    {
-                        case 'Logical':
-                            lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
-
-                            var sf_checked = $xmlitem.children('checked').text();
-                            var sf_required = $xmlitem.children('required').text();
-                            if ( isNullOrEmpty(sf_checked) ) sf_checked = '';
-                            if ( isNullOrEmpty(sf_required) ) sf_required = '';
-
-                            lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                            lihtml += _makeLogicalFieldSet(id, '_ans', '_ans2', sf_checked, sf_required);
-                            lihtml += '</div>';
-                            break;
-
-                        case 'Question':
-                            lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
-
-                            var sf_answer = $xmlitem.children('answer').text();
-                            var sf_allowedanswers = $xmlitem.children('allowedanswers').text();
-                            var sf_compliantanswers = $xmlitem.children('compliantanswers').text();
-                            var sf_correctiveaction = $xmlitem.children('correctiveaction').text();
-                            if ( isNullOrEmpty(sf_answer) ) sf_answer = '';
-                            if ( isNullOrEmpty(sf_allowedanswers) ) sf_allowedanswers = '';
-                            if ( isNullOrEmpty(sf_compliantanswers) ) sf_compliantanswers = '';
-                            if ( isNullOrEmpty(sf_correctiveaction) ) sf_correctiveaction = '';
-
-                            lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                            lihtml += _makeQuestionAnswerFieldSet(DivId, id, '_ans', '_ans2', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
-                            lihtml += '</div>';
-
-                            if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
-                            {
-                                // mark the li div OOC after it is created
-                                var old_onAfterAddDiv = onAfterAddDiv;
-                                onAfterAddDiv = function ($divhtml)
-                                {
-                                    $divhtml.find('#' + id + '_li div')
-                                            .addClass('OOC');
-                                    old_onAfterAddDiv($divhtml);
-                                }
+                        if (currenttab !== tab)
+                        {
+                            if ( !isNullOrEmpty(currenttab) )
+                            {    
+                                lihtml += _endUL() + _makeUL();
                             }
-                            break;
+                            lihtml += '<li data-role="list-divider">' + tab + '</li>'
+                            currenttab = tab;
+                        }
 
-                        default:
-                            lihtml += '<li id="' + id + '_li">';
-                            lihtml += ' <a href="#' + id + '">' + text + '</a>';
-                            lihtml += ' <p class="ui-li-aside">' + gestalt + '</p>';
-                            lihtml += '</li>';
-                            break;
-                    }
+                        switch (fieldtype)
+                        {
+                            case 'logical':
+                                lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
+
+                                var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
+                                var sf_required = tryParseString( $xmlitem.children('required').text(), '');
+
+                                lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
+                                lihtml += _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required);
+                                lihtml += '</div>';
+                                break;
+
+                            case 'question':
+                                lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
+
+                                var sf_answer = tryParseString( $xmlitem.children('answer').text() , '');
+                                var sf_allowedanswers = tryParseString( $xmlitem.children('allowedanswers').text(), '');
+                                var sf_compliantanswers = tryParseString( $xmlitem.children('compliantanswers').text(), '');
+                                var sf_correctiveaction = tryParseString( $xmlitem.children('correctiveaction').text(), '');
+                                
+                                lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
+                                lihtml += _makeQuestionAnswerFieldSet(DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
+                                lihtml += '</div>';
+
+                                if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
+                                {
+                                    // mark the li div OOC after it is created
+                                    var old_onAfterAddDiv = onAfterAddDiv;
+                                    onAfterAddDiv = function ($divhtml)
+                                    {
+                                        $divhtml.find('#' + id + '_li div')
+                                                .addClass('OOC');
+                                        old_onAfterAddDiv($divhtml);
+                                    }
+                                }
+                                break;
+
+                            default:
+                                lihtml += '<li id="' + id + '_li">';
+                                lihtml += ' <a href="#' + id + '">' + text + '</a>';
+                                lihtml += ' <p class="ui-li-aside">' + gestalt + '</p>';
+                                lihtml += '</li>';
+                                break;
+                        }
 
 
-                    // add a div for editing the property directly
-                    var toolbar = '';
-                    if ( !isNullOrEmpty(previd) )
-                    {
-                        toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>';
-                    }
-                    if ( !isNullOrEmpty(nextid) )
-                    {
-                        toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
-                    }
-                    if( fieldtype === "Question")
-                    {
-                        toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
-                    }
+                        // add a div for editing the property directly
+                        var toolbar = '';
+                        if ( !isNullOrEmpty(previd) )
+                        {
+                            toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>';
+                        }
+                        if ( !isNullOrEmpty(nextid) )
+                        {
+                            toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
+                        }
+                        if( fieldtype === "question")
+                        {
+                            toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
+                        }
 
-                    _addPageDivToBody({
-                        ParentId: DivId,
-                        level: parentlevel,
-                        DivId: id,
-                        HeaderText: text,
-                        toolbar: toolbar,
-                        content: _FieldTypeXmlToHtml($xmlitem, DivId)
-                    });
+                        _addPageDivToBody({
+                            ParentId: DivId,
+                            level: parentlevel,
+                            DivId: id,
+                            HeaderText: text,
+                            toolbar: toolbar,
+                            content: _FieldTypeXmlToHtml($xmlitem, DivId)
+                        });
 
-                    break;
-
+                        break;
+                    } // case 'prop':
                 default:
-                    lihtml += '<li>';
-                    if (IsDiv)
-                        lihtml += '<a href="#' + id + '">' + text + '</a>';
-                    else
-                        lihtml += text;
-                    lihtml += '</li>';
-                    break;
+                    {
+                        lihtml += '<li>';
+                        if (IsDiv)
+                            lihtml += '<a href="#' + id + '">' + text + '</a>';
+                        else
+                            lihtml += text;
+                        lihtml += '</li>';
+                        break;
+                    } // default:
             }
             return lihtml;
         } // _makeListItemFromXml()
@@ -611,8 +604,7 @@ var debug = false;
         function _makeObjectClassContent($xmlitem)
         {
             var Html = '';
-
-            var id = $xmlitem.CswAttrXml('id');
+            var id = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var NodeName = $xmlitem.CswAttrXml('name');
             var icon = '';
             if ( !isNullOrEmpty($xmlitem.CswAttrXml('iconfilename')))
@@ -631,7 +623,8 @@ var debug = false;
                     var UnansweredCnt = 0;
                     $xmlitem.find('prop[fieldtype="Question"]').each(function ()
                     {
-                        if ( isNullOrEmpty($(this).children('Answer').text()) )
+                        var $question = $(this);
+                        if ( isNullOrEmpty($question.children('Answer').text() ) )
                         {
                             UnansweredCnt++;
                         }
@@ -640,11 +633,15 @@ var debug = false;
                     Html += '<li>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                    Html += '<h3><a href="#' + id + '">' + NodeName + '</a></h3>';
+                    Html += '<a href="#' + id + '">';
+                    Html += '<p>' + NodeName + '</p>';
                     Html += '<p>' + Location + '</p>';
                     Html += '<p>' + MountPoint + '</p>';
-                    Html += '<p>'+ Status + ', Due: ' + DueDate + '</p>';
-                    Html += '<span id="' + id + '_unansweredcnt" class="ui-li-count">' + UnansweredCnt + '</span>';
+                    Html += '<p>';
+                    if(!isNullOrEmpty(Status)) Html +=  Status + ', ';
+                    Html += 'Due: ' + DueDate + '</p>';
+                    Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
+                    Html += '</a>';
                     Html += '</li>';
                     break;
 
@@ -686,14 +683,14 @@ var debug = false;
 
         function _FieldTypeXmlToHtml($xmlitem, ParentId)
         {
-            var IdStr = $xmlitem.CswAttrXml('id');
+            var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
             var ReadOnly = ( isTrue($xmlitem.CswAttrXml('readonly')) );
 
             // Subfield values
             var sf_text = tryParseString( _extractCDataValue($xmlitem.children('text')), '');
-            var sf_value = tryParseString( $xmlitem.children('value').text(), '');
+            var sf_value = tryParseNumber( $xmlitem.children('value').text(), '');
             var sf_href = tryParseString( $xmlitem.children('href').text(), '');
             var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
             var sf_required = tryParseString( $xmlitem.children('required').text(), '');
@@ -704,8 +701,6 @@ var debug = false;
             var sf_comments = tryParseString( $xmlitem.children('comments').text(), '');
             var sf_compliantanswers = tryParseString( $xmlitem.children('compliantanswers').text(), '');
             var sf_options = tryParseString( $xmlitem.children('options').text(), '');
-
-            if (sf_value == 'NaN') sf_value = '';
 
             var Html = '<div id="' + IdStr + '_propname"';
             if (FieldType === "Question" && !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
@@ -723,7 +718,7 @@ var debug = false;
                         break;
 
                     case "Link":
-                        Html += '<a href="' + sf_href + '">' + sf_text + '</a>';
+                        Html += '<a href="' + sf_href + '" rel="external">' + sf_text + '</a>';
                         break;
 
                     case "List":
@@ -752,7 +747,7 @@ var debug = false;
                         break;
 
                     case "Logical":
-                        Html += _makeLogicalFieldSet(IdStr, '_ans2', '_ans', sf_checked, sf_required);
+                        Html += _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required);
                         break;
 
                     case "Memo":
@@ -790,7 +785,7 @@ var debug = false;
                         break;
 
                     case "Question":
-                        Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, '_ans2', '_ans', '_cor', '_li', '_propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
+                        Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
 
                         Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
@@ -839,7 +834,7 @@ var debug = false;
 
         function _FieldTypeHtmlToXml($xmlitem, name, value)
         {
-            var IdStr = $xmlitem.CswAttrXml('id');
+            var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var fieldtype = $xmlitem.CswAttrXml('fieldtype');
             var propname = $xmlitem.CswAttrXml('name');
 
@@ -864,7 +859,7 @@ var debug = false;
                 case "Link": break;
                 case "List": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Logical":
-                    if (name === IdStr + '_ans' || name === IdStr + '_ans2')
+                    if (name === makeSafeId({ID: IdStr, suffix: 'ans'}) || name === makeSafeId({ID: IdStr, suffix: 'ans2'}))
                     {
                         $sftomodify = $sf_checked;
                     }
@@ -872,17 +867,17 @@ var debug = false;
                 case "Memo": if (name === IdStr) $sftomodify = $sf_text; break;
                 case "Number": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Password": break;
-                case "Quantity": if (name === IdStr + '_qty') $sftomodify = $sf_value; break;
+                case "Quantity": if (name === makeSafeId({ID: IdStr, suffix: 'qty'}) ) $sftomodify = $sf_value; break;
                 case "Question":
-                    if (name === IdStr + '_com')
+                    if (name === makeSafeId({ID: IdStr, suffix: 'com'}) )
                     {
                         $sftomodify = $sf_comments;
                     }
-                    else if (name === IdStr + '_ans' || name === IdStr + '_ans2')
+                    else if (name === makeSafeId({ID: IdStr, suffix: 'ans'}) || name === makeSafeId({ID: IdStr, suffix: 'ans2'}))
                     {
                         $sftomodify = $sf_answer;
                     }
-                    else if (name === IdStr + '_cor')
+                    else if (name === makeSafeId({ID: IdStr, suffix: 'cor'}) )
                     {
                         $sftomodify = $sf_correctiveaction;
                     }
@@ -919,7 +914,7 @@ var debug = false;
                     case 'False': answertext = 'No'; break;
                 }
 
-                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answers[i] + '" value="' + answers[i] + '" ';
+                Html += '<input type="radio" name="' + makeSafeId({ prefix: IdStr, ID: Suffix}) + '" id="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]}) + '" value="' + answers[i] + '" ';
 				// Checked is a Tristate, so isTrue() is not useful here
 				if ((Checked === 'false' && answers[i] === 'False') ||
 					(Checked === 'true' && answers[i] === 'True') ||
@@ -933,15 +928,15 @@ var debug = false;
                 for (var j = 0; j < answers.length; j++)
                 {
                     if (answers[j] === answers[i])
-                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
                     else
-                        Html += ' $(\'#' + IdStr + Suffix + '_' + answers[j] + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
                 }
 
                 Html += ' var $otherradio; ';
                 for (var k = 0; k < answers.length; k++)
                 {
-                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + answers[k] + '\'); ';
+                    Html += ' $otherradio = $(\'#' + makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]}) + '\'); ';
                     if (answers[k] === answers[i])
                     {
                         Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
@@ -954,18 +949,12 @@ var debug = false;
                     }
                 } // for (var k = 0; k < answers.length; k++)
                 Html += '" />';
-                Html += '<label for="' + IdStr + Suffix + '_' + answers[i] + '">' + answertext + '</label>';
+                Html += '<label for="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]}) + '">' + answertext + '</label>';
             } // for (var i = 0; i < answers.length; i++)
 
             Html += '</fieldset>';
             return Html;
         }
-
-        function _makeSafeId(val)
-        {
-            return val.replace(/'/gi, '');
-        }
-
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
@@ -973,27 +962,28 @@ var debug = false;
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
-                var answerid = _makeSafeId(answers[i]);
-                Html += '<input type="radio" name="' + IdStr + Suffix + '" id="' + IdStr + Suffix + '_' + answerid + '" value="' + answers[i] + '" ';
+                var answerid = makeSafeId({ ID: answers[i] });
+                Html += '<input type="radio" name="' + makeSafeId({ID: IdStr, suffix: Suffix}) + '" id="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '" value="' + answers[i] + '" ';
+                
                 if (Answer === answers[i])
-                    Html += ' checked';
+                {
+                    Html += ' checked="checked"';
+                }    //' checked';
                 Html += ' onclick="';
 
                 // case 20307: workaround for a bug with JQuery Mobile Alpha2
                 for (var j = 0; j < answers.length; j++)
                 {
-                    var otheranswerid = _makeSafeId(answers[j]);
                     if (answers[j] === answers[i])
-                        Html += ' $(\'#' + IdStr + Suffix + '_' + otheranswerid + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
                     else
-                        Html += ' $(\'#' + IdStr + Suffix + '_' + otheranswerid + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
+                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
                 }
 
                 Html += ' var $otherradio; ';
                 for (var k = 0; k < answers.length; k++)
                 {
-                    var yetanotheranswerid = _makeSafeId(answers[k]);
-                    Html += ' $otherradio = $(\'#' + IdStr + OtherSuffix + '_' + yetanotheranswerid + '\'); ';
+                    Html += ' $otherradio = $(\'#' + makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]}) + '\'); ';
                     if (answers[k] === answers[i])
                     {
                         Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
@@ -1007,20 +997,20 @@ var debug = false;
 
                 if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
                 {
-                    Html += ' $(\'#' + IdStr + CorrectiveActionSuffix + '\').css(\'display\', \'none\'); ';
-                    Html += ' $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
-                    Html += ' $(\'#' + IdStr + PropNameSuffix + '\').removeClass(\'OOC\'); ';
+                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\').css(\'display\', \'none\'); ';
+                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
+                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
                 }
                 else
                 {
-                    Html += ' var $cor = $(\'#' + IdStr + CorrectiveActionSuffix + '\'); ';
+                    Html += ' var $cor = $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\'); ';
                     Html += ' $cor.css(\'display\', \'\'); ';
                     Html += ' if($cor.CswAttrDom(\'value\') === \'\') { ';
-                    Html += '   $(\'#' + IdStr + LiSuffix + ' div\').addClass(\'OOC\'); ';
-                    Html += '   $(\'#' + IdStr + PropNameSuffix + '\').addClass(\'OOC\'); ';
+                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').addClass(\'OOC\'); ';
+                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').addClass(\'OOC\'); ';
                     Html += ' } else {';
-                    Html += '   $(\'#' + IdStr + LiSuffix + ' div\').removeClass(\'OOC\'); ';
-                    Html += '   $(\'#' + IdStr + PropNameSuffix + '\').removeClass(\'OOC\'); ';
+                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
+                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
                     Html += ' } ';
                 }
                 if ( isNullOrEmpty(Answer) )
@@ -1033,13 +1023,13 @@ var debug = false;
                     Html += ' }';
                 }
                 Html += ' " />';
-                Html += '            <label for="' + IdStr + Suffix + '_' + answerid + '">' + answers[i] + '</label>';
+                Html += '            <label for="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '">' + answers[i] + '</label>';
             } // for (var i = 0; i < answers.length; i++)
             Html += '</fieldset>';
             return Html;
         } // _makeQuestionAnswerFieldSet()
 
-
+        
         function _addPageDivToBody(params)
         {
             var p = {
@@ -1062,6 +1052,8 @@ var debug = false;
             {
                 $.extend(p, params);
             }
+
+            p.DivId = makeSafeId({ID: p.DivId});
 
             var divhtml = '<div id="' + p.DivId + '" data-role="page" data-url="'+ p.DivId +'">' +
                           '<div data-role="header" data-theme="' + opts.Theme + '" data-position="fixed">';
@@ -1174,11 +1166,12 @@ var debug = false;
                 .find('li a')
                 .click(function (e)
                 {
-					if (_loadDivContents({
+					var $div = $(this);
+                    if (_loadDivContents({
                         ParentId: DivId,
                         level: (level + 1),
-                        DivId: $(this).CswAttrDom('href').substr(1),
-                        HeaderText: $(this).text(),
+                        DivId: $div.CswAttrDom('href').substr(1),
+                        HeaderText: $div.text(),
                         ChangePage: true
                     })) { e.stopPropagation(); e.preventDefault(); }
                 })
@@ -1298,7 +1291,7 @@ var debug = false;
                     'Password': Password
                 };
 
-                if (debug) log('Starting ' + opts.AuthenticateUrl);
+                if (debug) log('Starting ' + opts.AuthenticateUrl, true);
 
                 CswAjaxJSON({
                     formobile: ForMobile,
@@ -1307,7 +1300,7 @@ var debug = false;
                     onloginfail: function () { Logout(); },
                     success: function (data)
                     {
-                        if (debug) log('On Success ' + opts.AuthenticateUrl);
+                        if (debug) log('On Success ' + opts.AuthenticateUrl, true);
                         
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
 						_cacheSession(SessionId, UserName);
@@ -1378,7 +1371,7 @@ var debug = false;
 
                 $('div[id*="' + RealDivId + '"]').remove();
 
-                if (debug) log('Starting ' + opts.ViewUrl);
+                if (debug) log('Starting ' + opts.ViewUrl, true);
 
                 var dataXml = {
                     SessionId: SessionId,
@@ -1394,18 +1387,18 @@ var debug = false;
                     data: dataXml,
                     stringify: false,
                     onloginfail: function() { Logout(); },
-                    success: function (xml)
+                    success: function ($xml)
                     {
-                        if (debug) log('Starting ' + opts.ViewUrl);
+                        if (debug) log('Starting ' + opts.ViewUrl, true);
 
-                        $currentViewXml = $(xml);
-                        _updateStoredViewXml(RealDivId, xml, '0');
+                        $currentViewXml = $xml;
+                        _updateStoredViewXml(RealDivId, $currentViewXml, '0');
 
                         _processViewXml({
                             ParentId: 'viewsdiv',
                             DivId: RealDivId,
                             HeaderText: HeaderText,
-                            '$xml': $(xml),
+                            '$xml': $currentViewXml,
                             parentlevel: 1,
                             HideRefreshButton: false,
                             HideSearchButton: true,
@@ -1457,12 +1450,13 @@ var debug = false;
                     var $divxml = $currentViewXml.find('#' + DivId);
                     $divxml.andSelf().find('prop').each(function ()
                     {
-                        _FieldTypeHtmlToXml($(this), name, value);
+                        var $fieldtype = $(this);
+                        _FieldTypeHtmlToXml($fieldtype, name, value);
                     });
 
                     // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
                     // However, it appears to work, for now.
-                    _updateStoredViewXml(rootid, $currentViewXml.wrap('<wrapper />').parent().html(), '1');
+                    _updateStoredViewXml(rootid, $($currentViewXml.wrap('<wrapper />').parent().html() ), '1');
 
                     _resetPendingChanges(true, false);
                 }
@@ -1474,11 +1468,10 @@ var debug = false;
         {
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
-            _fetchCachedViewXml(rootid, function (xmlstr)
+            _fetchCachedViewXml(rootid, function ($xmlstr)
             {
-                if ( !isNullOrEmpty(xmlstr) )
+                if ( !isNullOrEmpty($xmlstr) )
                 {
-                    var $xmlstr = $(xmlstr);
                     var Html = '<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
 
                     $xmlstr.closest('result')
@@ -1517,11 +1510,10 @@ var debug = false;
         {
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
-            _fetchCachedViewXml(rootid, function (xmlstr)
+            _fetchCachedViewXml(rootid, function ($xmlstr)
             {
-                if ( !isNullOrEmpty(xmlstr) )
+                if ( !isNullOrEmpty($xmlstr) )
                 {
-                    var $xmlstr = $(xmlstr);
                     var content = _makeUL(DivId + '_searchresultslist');
 
                     var hitcount = 0;
@@ -1533,7 +1525,7 @@ var debug = false;
                             if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
                                 hitcount++;
-                                content += _makeListItemFromXml(this, DivId, 1, false);
+                                content += _makeListItemFromXml($node, DivId, 1, false);
                             }
                         }
                     });
@@ -1569,7 +1561,7 @@ var debug = false;
                 });
             } else
             {
-                log("database is not opened");
+                log("database is not opened", true);
             }
         } //_DoSql
 
@@ -1622,7 +1614,7 @@ var debug = false;
 
         function _errorHandler(transaction, error)
         {
-            log('Database Error: ' + error.message + ' (Code ' + error.code + ')');
+            log('Database Error: ' + error.message + ' (Code ' + error.code + ')', true);
             return true;
         }
 
@@ -1717,12 +1709,12 @@ var debug = false;
             }
         }
 
-        function _updateStoredViewXml(rootid, viewxml, wasmodified)
+        function _updateStoredViewXml(rootid, $viewxml, wasmodified)
         {
             if ( !isNullOrEmpty(rootid) )
             {
                 _DoSql('UPDATE views SET wasmodified = ?, viewxml = ? WHERE rootid = ?;',
-                       [wasmodified, viewxml, rootid]);
+                       [wasmodified, xmlToString($viewxml), rootid]);
             }
         }
 
@@ -1734,13 +1726,18 @@ var debug = false;
                    {
                        if (result.rows.length > 0)
                        {
-                           _resetPendingChanges(true, true);
-                           var row = result.rows.item(0);
-                           onSuccess(row.rootid, row.viewxml);
+                            _resetPendingChanges(true, true);
+                            var row = result.rows.item(0);
+                            var rootid = row.rootid;
+                            var viewxml = row.viewxml;
+                            if( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
+                            {
+                                onSuccess(rootid, viewxml);
+                            }
                        } else
                        {
                            _resetPendingChanges(false, true);
-                           onSuccess('', '');
+                           onSuccess();
                        }
                    });
         }
@@ -1756,10 +1753,11 @@ var debug = false;
                            if (result.rows.length > 0)
                            {
                                var row = result.rows.item(0);
-							   onsuccess(row.viewxml);
+							   var $viewxml = $(row.viewxml);
+                               onsuccess($viewxml);
                            } else
                            {
-                               onsuccess('');
+                               onsuccess();
                            }
                        });
             }
@@ -1777,7 +1775,8 @@ var debug = false;
                            ret += "<view id=\"" + row.rootid + "\"" +
                                   " name=\"" + row.rootname + "\" />";
                        }
-                       onsuccess("<result>" + ret + "</result>");
+                       var $xml = $("<result>" + ret + "</result>");
+                       onsuccess($xml);
                    });
         }
 
@@ -1804,30 +1803,27 @@ var debug = false;
                 url = opts.ConnectTestRandomFailUrl;
             }
 
-            if (debug) log('Starting ' + url);
-
             CswAjaxXml({
                 formobile: ForMobile,
                 url: url,
                 data: {},
                 stringify: false,
                 onloginfail: function() { Logout(); },
-                success: function (xml)
+                success: function ($xml)
                 {
-                    if (debug) log('On Success ' + url);
-
                     setOnline();
                     _processChanges(true);
                     if ( !isNullOrEmpty(onSuccess) )
                     {
-                        onSuccess();
+                        onSuccess($xml);
                     }
                 },
                 error: function (xml)
                 {
+                    var $xml = $(xml);
                     if ( !isNullOrEmpty(onFailure) )
                     {
-                        onFailure();
+                        onFailure($xml);
                     }
                     _waitForData();
                 }
@@ -1843,18 +1839,19 @@ var debug = false;
                 {
                     if ( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
                     {
-                        if (debug) log('Starting ' + opts.UpdateUrl);
-
-                        var dataXml = {
+                        if (debug) log('Starting ' + opts.UpdateUrl, true);
+                        
+                        var dataJson = {
                             SessionId: SessionId,
-                            ParentId: UpdatedViewXml,
-                            UpdatedViewXml: viewxml.replace(/'/gi, '\\\'')
+                            ParentId: rootid,
+                            UpdatedViewXml: viewxml,
+                            ForMobile: ForMobile
                         };
 
-                        CswAjaxXml({
+                        CswAjaxJSON({
                             formobile: ForMobile,
                             url: opts.UpdateUrl,
-                            data: dataXml,
+                            data: dataJson,
                             stringify: true,
                             onloginfail: function() 
                             { 
@@ -1863,11 +1860,11 @@ var debug = false;
                                     _waitForData();
                                 } 
                             },
-                            success: function (xml)
+                            success: function (data)
                             {
-                                if (debug) log('On Success ' + opts.UpdateUrl);
-
-                                _updateStoredViewXml(rootid, xml, '0');
+                                if (debug) log('On Success ' + opts.UpdateUrl, true);
+                                var $xml = data.xml;
+                                _updateStoredViewXml(rootid, $xml, '0');
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();

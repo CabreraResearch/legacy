@@ -1877,21 +1877,21 @@ namespace ChemSW.Nbt.WebServices
 
         #region Mobile
         [WebMethod( EnableSession = true )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement UpdateProperties( string SessionId, string ParentId, string UpdatedViewXml, bool ForMobile )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string UpdateProperties( string SessionId, string ParentId, string UpdatedViewXml, bool ForMobile )
         {
-            XElement ReturnVal = new XElement( "result" );
+            JObject ReturnVal = new JObject();
             try
             {
                 AuthenticationStatus AuthenticationStatus = _start();
-                ReturnVal.Add( _xAuthenticationStatus( AuthenticationStatus ) );
-
+		ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+		
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
                     CswNbtWebServiceMobileUpdateProperties wsUP = new CswNbtWebServiceMobileUpdateProperties( _CswNbtResources, ForMobile );
-                    ReturnVal.Add( wsUP.Run( ParentId, UpdatedViewXml ) );
-
+                string ViewXml = wsUP.Run( ParentId, UpdatedViewXml ).ToString();
+                ReturnVal.Add( new JProperty("xml", ViewXml ) );
                 }
 
                 _end();
@@ -1899,10 +1899,10 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
-            return ( ReturnVal );
+            return ( ReturnVal.ToString() );
         } // UpdateProperties()
 
 

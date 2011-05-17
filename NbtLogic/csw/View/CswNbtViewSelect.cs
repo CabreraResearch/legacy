@@ -125,15 +125,15 @@ namespace ChemSW.Nbt
 
             DataTable ViewsTable = null;
             Collection<CswNbtView> VisibleViews = new Collection<CswNbtView>();
-            if( _LastVisibleViews != null &&
-                _LastOrderBy == OrderBy &&
-                _LastUser == User &&
-                _LastIncludeEmptyViews == IncludeEmptyViews )
-            {
-                ViewsTable = _LastVisibleViews;
-            }
-            else
-            {
+			//if( _LastVisibleViews != null &&
+			//    _LastOrderBy == OrderBy &&
+			//    _LastUser == User &&
+			//    _LastIncludeEmptyViews == IncludeEmptyViews )
+			//{
+			//    ViewsTable = _LastVisibleViews;
+			//}
+			//else
+			//{
                 CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
                 ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
                 ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
@@ -154,18 +154,18 @@ namespace ChemSW.Nbt
                 ViewsTable = ViewsSelect.getTable();
 
                 _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() data fetched", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
-            }
+            //}
 
             // BZ 7074 - Make sure the user has permissions to at least one root node
             foreach( CswNbtView ThisView in from DataRow Row in ViewsTable.Rows
                                             select (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, Row["viewxml"].ToString() )
                                                 into ThisView
-                                                where ThisView.Root.ChildRelationships.Count > 0 || !IncludeEmptyViews
+                                                where ( ( ThisView.Root.ChildRelationships.Count > 0 && 
+													      ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+																								    User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ).Count() > 0 ) 
+													    ) || IncludeEmptyViews )
                                                 where ThisView.IsFullyEnabled() &&
-                                                      ( !SearchableOnly || ThisView.IsSearchable() ) &&
-                                                      ( ThisView.Root.ChildRelationships
-                                                                        .Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                                                                     User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ) ).Count() > 0
+                                                      ( !SearchableOnly || ThisView.IsSearchable() )
                                                 select ThisView )
             {
                 VisibleViews.Add( ThisView );

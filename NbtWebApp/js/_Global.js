@@ -28,7 +28,6 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
     };
     
 	if (options) $.extend(o, options);
-
 	//var starttime = new Date();
 	$.ajax({
 	    type: 'POST',
@@ -98,7 +97,7 @@ function CswAjaxXml(options) {
     };
     
 	if (options) $.extend(o, options);
-
+	
     if ( !isNullOrEmpty(o.url) )
     {
         var ajaxData;
@@ -211,7 +210,11 @@ function _handleAuthenticationStatus(options)
 
 function xmlToString($xmlnode) { /// <param name="$" type="jQuery" />
 	var xmlstring = '';
-	if ($xmlnode !== '' && $xmlnode !== undefined)
+	if( !($xmlnode instanceof jQuery) )
+    {
+        $xmlnode = $($xmlnode);
+    }
+    if ( !isNullOrEmpty($xmlnode) )
 	{
 		xmlstring = $xmlnode.get(0).xml; // IE
 		if (!xmlstring)
@@ -276,7 +279,7 @@ function jsonToString(j) {
 // Check Changes
 // ------------------------------------------------------------------------------------
 
-var changed = 0;
+var changed = new Number(0);
 var checkChangesEnabled = true;
 
 function setChanged() {
@@ -345,7 +348,7 @@ function manuallyCheckChanges() {
 
 function initCheckChanges() {
 	// Assign the checkchanges event to happen onbeforeunload
-	if ((window.onbeforeunload !== null) && (window.onbeforeunload !== undefined))
+	if ( !isNullOrEmpty(window.onbeforeunload) )
 	{
 		window.onbeforeunload = function ()
 		{
@@ -382,7 +385,7 @@ function initCheckChanges() {
 //	}
 }
 
-if ((window.onload !== null) && (window.onload !== undefined))
+if ( !isNullOrEmpty(window.onload) )
 {
 	window.onload = new Function('initCheckChanges(); var f=' + window.onload + '; return f();');
 } else
@@ -788,27 +791,121 @@ function makeId(options)
     
     var elementId = o.ID;
     
-    if( o.prefix !== '' && elementId !== '' )
+    if( !isNullOrEmpty(o.prefix) && !isNullOrEmpty(elementId) )
     {
         elementId = o.prefix + o.Delimiter + elementId;
     }
-    if (o.suffix !== '' && elementId !== '')
+    if( !isNullOrEmpty(o.suffix) && !isNullOrEmpty(elementId) )
     {
         elementId += o.Delimiter + o.suffix;
     }
     return elementId;
 }
 
-function isNullOrEmpty(str)
+function makeSafeId(options)
 {
-	/// <summary>
-	///   Returns true if the input is null, undefined, or ''
-	/// </summary>
-	/// <param name="str" type="Object">
-	///     String or object to test
-	/// </param>
+    /// <summary>
+    ///   Generates a "safe" ID for DOM assignment
+    /// </summary>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.ID: Base ID string
+    ///     &#10;2 - options.prefix: String prefix to prepend
+    ///     &#10;3 - options.suffix: String suffix to append
+    ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
+    /// </param>
+    /// <returns type="String>A concatenated string of provided values</returns>
+    var o = {
+        'ID': '',
+        'prefix': '',
+        'suffix': '',
+        'Delimiter': '_'
+    };
+    if (options) $.extend(o, options);
+    
+    var elementId = o.ID;
+    var toReplace = [/'/gi, /\//g];
 
-	return (str === '' || str === undefined || str === null);
+    if (!isNullOrEmpty(o.prefix) && !isNullOrEmpty(elementId))
+    {
+        elementId = o.prefix + o.Delimiter + elementId;
+    }
+    if (!isNullOrEmpty(o.suffix) && !isNullOrEmpty(elementId))
+    {
+        elementId += o.Delimiter + o.suffix;
+    }
+    for (var i = 0; i < toReplace.length; i++)
+    {
+        if (!isNullOrEmpty(elementId))
+        {
+            elementId = elementId.replace(toReplace[i], '');
+        }
+    }
+    
+    return elementId;
+}
+
+function isNullOrEmpty(obj)
+{
+	/// <summary> Returns true if the input is null, undefined, or ''</summary>
+    /// <param name="obj" type="Object"> Object to test</param>
+    /// <returns type="Boolean" />
+    var ret = false;
+    if (!isFunction(obj))
+    {
+        ret = $.isEmptyObject(obj);
+        if (!ret && isGeneric(obj))
+        {
+            ret = (trim(obj) === '');
+        }
+    }    
+	return ret;
+}
+
+function isGeneric(obj)
+{
+    /// <summary> Returns true if the object is not a function, array, jQuery or JSON object</summary>
+    /// <param name="obj" type="Object"> Object to test</param>
+    /// <returns type="Boolean" />
+    var ret = ( !isFunction(obj) && !isArray(obj) && !isJQuery(obj) && !isJson(obj) );
+    return ret;
+}
+
+function isFunction(obj)
+{
+    /// <summary> Returns true if the object is a function</summary>
+    /// <param name="obj" type="Object"> Object to test</param>
+    /// <returns type="Boolean" />
+    var ret = ( $.isFunction(obj) );
+    return ret;
+}
+
+function isArray(obj)
+{
+    /// <summary> Returns true if the object is an array</summary>
+    /// <param name="obj" type="Object"> Object to test</param>
+    /// <returns type="Boolean" />
+    var ret = ( $.isArray(obj) );
+    return ret;
+}
+
+function isJson(obj)
+{
+    /// <summary> 
+    ///    Returns true if the object is a JSON object.
+    ///     &#10; isJson(CswInput_Types.text) === true 
+    ///     &#10; isJson(CswInput_Types.text.name) === false
+    /// </summary>
+    /// <param name="obj" type="Object"> Object to test</param>
+    /// <returns type="Boolean" />
+    var ret = ($.isPlainObject(obj));
+    return ret;
+}
+
+function isJQuery(obj)
+{
+    ret = (obj instanceof jQuery);
+    return ret;
 }
 
 function isNumeric(obj)
@@ -855,7 +952,7 @@ function isTrue(str)
     else
     {
         ret = false;
-        if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.');
+        if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.',false);
     }
     return ret;
 }
@@ -894,6 +991,14 @@ function tryParseNumber(inputNum, defaultNum)
     return ret;
 }
 
+function trim(str)
+{
+    /// <summary>Returns a string without left and right whitespace</summary>
+    /// <param name="str" type="String"> String to parse </param>
+    /// <returns type="String">Parsed string</returns>
+    return $.trim(str);
+}
+
 // ------------------------------------------------------------------------------------
 // for debug
 // ------------------------------------------------------------------------------------
@@ -910,16 +1015,44 @@ function iterate(obj) {
 }
 
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
-function log(s) {
-	try
+function log(s, includeCallStack) {
+    /// <summary>Outputs a message to the console log(Webkit,FF) or an alert(IE)</summary>
+    /// <param name="s" type="String"> String to output </param>
+    /// <param name="includeCallStack" type="Boolean"> If true, include the callStack </param>
+    var extendedLog = '';
+    if( isTrue(includeCallStack) )
+    {
+        extendedLog = getCallStack();
+    }
+    
+    try
 	{
-		console.log(s);
+	    console.log(s);
+        if( !isNullOrEmpty(extendedLog) ) console.log(extendedLog);
 	} catch (e)
 	{
 		alert(s);
+        if( !isNullOrEmpty(extendedLog) ) alert(extendedLog);
 	}
 }
 
+function getCallStack()
+{
+    var stack = '';
+    var callername = arguments.callee.caller.name;
+    var caller = arguments.callee.caller;
+    while ( !isNullOrEmpty(callername) )
+    {
+        if (callername != 'log')
+        {
+            stack += "Called by function " + callername + "() \n";
+        }
+        caller = caller.caller;
+        callername = (!isNullOrEmpty(caller)) ? caller.name : '';
+    }
+
+    return stack;
+}
 
 // ------------------------------------------------------------------------------------
 // Browser Compatibility
