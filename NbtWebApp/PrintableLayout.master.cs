@@ -56,12 +56,12 @@ namespace ChemSW.Nbt.WebPages
         {
             Master.setViewId(ViewId, ForceReload);
         }
-        public void setSessionViewId( Int32 SessionViewId, bool ForceReload )
+		public void setSessionViewId( CswNbtSessionDataId SessionViewId, bool ForceReload )
         {
             Master.setSessionViewId( SessionViewId, ForceReload );
         }//setSessionViewId()
 
-        public void setSessionViewId( Int32 SessionViewId )
+		public void setSessionViewId( CswNbtSessionDataId SessionViewId )
         {
             Master.setSessionViewId( SessionViewId );
         }//setSessionViewId()

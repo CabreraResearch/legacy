@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.Sched
                                         string EmailAddy = UserNodeAsUser.Email.Trim();
                                         if( EmailAddy != string.Empty )
                                         {
-                                            CswNbtView ReportView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+											CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
 
                                             string Subject = MailReportObjClass.Type.Value + " Notification: " + ReportView.ViewName;
 

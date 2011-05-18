@@ -95,49 +95,40 @@
 					'viewmode': $.CswCookie('get', CswCookieName.CurrentView.ViewMode)
 				};
 				$('#header_username').text(u);
-				$('#header_dashboard').CswDashboard({
-					'onSuccess': function ()
-					{
-						$('#header_menu').CswMenuHeader({
-							'onLogout': function ()
-							{
-								$('#CenterBottomDiv').CswLogin('logout', {
-									onDeauthenticate: function ()
-									{
-										$.CswCookie('clearAll');
-										window.location = 'NewMain.html';
-									}
-								});
-							},
-							'onSuccess': function ()
-							{
-								$('#ViewSelectDiv').CswViewSelect({
-									'ID': 'mainviewselect',
-									'onSelect': handleItemSelect,
-									'onSuccess': function ()
-									{
+				$('#header_dashboard').CswDashboard();
 
-										$('#QuickLaunch').CswQuickLaunch({
-											'onLinkClick': handleItemSelect,
-											'onSuccess': function ()
-											{
-												if (view.viewid === '')
-												{
-													refreshWelcome();
-												} else
-												{
-													handleItemSelect({ 'viewid': view.viewid, viewmode: view.viewmode });
-												}
-											} // onSuccess
-										}); // CswQuickLaunch
-									}  // onSuccess
-								}); // CswViewSelect
-							} // onSuccess
-						}); // CswMenuHeader
-					} // onSuccess
-				}); // CswDashboard
+				$('#header_menu').CswMenuHeader({
+					'onLogout': function ()
+					{
+						$('#CenterBottomDiv').CswLogin('logout', {
+							'onDeauthenticate': function ()
+							{
+								$.CswCookie('clearAll');
+								window.location = 'NewMain.html';
+							} // onDeauthenticate
+						}); // CswLogin
+					} // onLogout
+				}); // CswMenuHeader
+						
+				$('#ViewSelectDiv').CswViewSelect({
+					'ID': 'mainviewselect',
+					'onSelect': handleItemSelect
+				}); // CswViewSelect
+
+				$('#QuickLaunch').CswQuickLaunch({
+					'onLinkClick': handleItemSelect
+				}); // CswQuickLaunch
+
+				if (view.viewid === '')
+				{
+					refreshWelcome();
+				} else
+				{
+					handleItemSelect({ 'viewid': view.viewid, viewmode: view.viewmode });
+				}
 			} // onAuthenticate
 		}); // CswLogin
+
 	} // initAll()
 
 	function clear(options)

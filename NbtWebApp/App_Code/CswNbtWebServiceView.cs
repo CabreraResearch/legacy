@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.WebServices
 		public const string ViewTreeSessionKey = "ViewTreeXml";
 
 		// jsTree compatible format
-		public string getViewTree( HttpSessionState Session, bool IsSearchable, bool UseSession )
+		public string getViewTree( bool IsSearchable )
 		{
 
 			//string ret = string.Empty;
@@ -72,62 +72,49 @@ namespace ChemSW.Nbt.WebServices
 			//}
 			//return "<root>" + ret + "</root>";
 
-			XmlDocument TreeXmlDoc;
-			if( Session[ViewTreeSessionKey] != null && UseSession )
+			XmlDocument TreeXmlDoc = new XmlDocument();
+			XmlNode DocRoot = TreeXmlDoc.CreateElement( "root" );
+			TreeXmlDoc.AppendChild( DocRoot );
+
+			// Views
+			Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, IsSearchable, NbtViewRenderingMode.Any );
+
+			foreach( CswNbtView View in Views )
 			{
-				TreeXmlDoc = (XmlDocument) Session[ViewTreeSessionKey];
+				// BZ 10121
+				// This is a performance hit, but since this view list is cached, it's ok
+				_makeViewTreeNode( DocRoot, View.Category, ItemType.View, View.ViewId, View.ViewName, View.ViewMode );
 			}
-			else
+
+			if( !IsSearchable )
 			{
-				TreeXmlDoc = new XmlDocument();
-				XmlNode DocRoot = TreeXmlDoc.CreateElement( "root" );
-				TreeXmlDoc.AppendChild( DocRoot );
-
-				// Views
-                Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, IsSearchable, NbtViewRenderingMode.Any );
-
-				foreach( CswNbtView View in Views )
+				// Actions
+				foreach( CswNbtAction Action in _CswNbtResources.Actions )
 				{
-					// BZ 10121
-					// This is a performance hit, but since this view list is cached, it's ok
-					_makeViewTreeNode( DocRoot, View.Category, ItemType.View, View.ViewId, View.ViewName, View.ViewMode );
+					if( Action.ShowInList &&
+						( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
+						( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( Action.Name ) )
+					{
+						XmlNode ActionNode = _makeViewTreeNode( DocRoot, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );
+						CswXmlDocument.AppendXmlAttribute( ActionNode, "actionurl", Action.Url.ToString() );
+					}
 				}
 
-                if( !IsSearchable )
-                {
-                    // Actions
-                    foreach( CswNbtAction Action in _CswNbtResources.Actions )
-                    {
-                        if( Action.ShowInList &&
-                            ( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
-                            ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( Action.Name ) )
-                        {
-                            XmlNode ActionNode = _makeViewTreeNode( DocRoot, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );
-                            CswXmlDocument.AppendXmlAttribute( ActionNode, "actionurl", Action.Url.ToString() );
-                        }
-                    }
 
+				// Reports
+				CswNbtMetaDataObjectClass ReportMetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
+				CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
+				ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
+				ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
+				for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
+				{
+					ReportTree.goToNthChild( i );
 
-                    // Reports
-                    CswNbtMetaDataObjectClass ReportMetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
-                    CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
-                    ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
-                    ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
-                    for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
-                    {
-                        ReportTree.goToNthChild( i );
+					CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( ReportTree.getNodeForCurrentPosition() );
+					_makeViewTreeNode( DocRoot, ReportNode.Category.Text, ItemType.Report, ReportNode.NodeId.PrimaryKey, ReportNode.ReportName.Text );
 
-                        CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( ReportTree.getNodeForCurrentPosition() );
-                        _makeViewTreeNode( DocRoot, ReportNode.Category.Text, ItemType.Report, ReportNode.NodeId.PrimaryKey, ReportNode.ReportName.Text );
-
-                        ReportTree.goToParentNode();
-                    }
-                }
-			    if( UseSession )
-                {
-                    Session[ViewTreeSessionKey] = TreeXmlDoc;
-                }
-
+					ReportTree.goToParentNode();
+				}
 			}
 
 			string ret = "<result>" +

@@ -330,7 +330,7 @@ namespace ChemSW.Nbt.WebServices
 				if( NbtNodeKey == null )
 				{
 					// Get the nodekey of this node in the current view
-					CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
 					ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
 					NbtNodeKey = Tree.getNodeKeyByNodeId( Node.NodeId );
 					if( NbtNodeKey == null )

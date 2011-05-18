@@ -418,7 +418,7 @@ namespace ChemSW.Nbt.PropTypes
             //Implementing FieldType specific behavior here. Blame Steve.
             if( null != Source.NodeTypeProp && Source.NodeTypeProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.ViewReference )
             {
-                CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId ) );
+				CswNbtView View = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId ) );
                 CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
                 ViewCopy.makeNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
                 ViewCopy.save();

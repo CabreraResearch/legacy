@@ -254,7 +254,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 if( CswTools.IsInteger( _LoadDropDown.SelectedValue ) )
                 {
-                    CswNbtView DoomedView = CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( _LoadDropDown.SelectedValue ) );
+					CswNbtView DoomedView = Master.CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( _LoadDropDown.SelectedValue ) );
                     if( DoomedView.Visibility == NbtViewVisibility.User )
                         DoomedView.Delete();
                     else

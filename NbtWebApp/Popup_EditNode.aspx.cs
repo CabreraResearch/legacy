@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.WebPages
                             if( null != Request.QueryString["sourceviewid"] && String.Empty != Request.QueryString["sourceviewid"] )
                             {
                                 Int32 SourceViewId = CswConvert.ToInt32( Request.QueryString["sourceviewid"] );
-                                CswNbtView SourceView = CswNbtViewFactory.restoreView( Master.CswNbtResources, SourceViewId );
+								CswNbtView SourceView = Master.CswNbtResources.ViewSelect.restoreView( SourceViewId );
                                 if( null != SourceView )
                                     _Node.RelateToNode( ParentNode, SourceView );
                                 else

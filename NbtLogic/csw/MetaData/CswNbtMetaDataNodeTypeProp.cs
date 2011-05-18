@@ -458,7 +458,7 @@ namespace ChemSW.Nbt.MetaData
                 // For Relationships - Reset the View if the target changed
                 if( this.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                 {
-                    CswNbtView RelationshipView = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtMetaDataResources.CswNbtResources, ViewId );
+					CswNbtView RelationshipView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( ViewId );
                     RelationshipView.Root.ChildRelationships.Clear();
                     if( inFKType != string.Empty && inFKValue != Int32.MinValue )
                     {
@@ -745,7 +745,7 @@ namespace ChemSW.Nbt.MetaData
                     {
                         // BZ 10172
                         // We can't point to the same view.  We need to copy the view, and refer to the copy.
-                        CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtMetaDataResources.CswNbtResources, CswConvert.ToInt32( _NodeTypePropRow[PropColumn.ColumnName] ) );
+						CswNbtView View = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( _NodeTypePropRow[PropColumn.ColumnName] ) );
                         CswNbtView ViewCopy = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
                         ViewCopy.makeNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
                         ViewCopy.save();

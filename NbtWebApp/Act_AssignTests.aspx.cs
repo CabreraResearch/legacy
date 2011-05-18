@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.WebPages
             if( ViewId > 0 )
             {
                 ret = true;
-                CswNbtView ViewToLoad = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, ViewId );
+                CswNbtView ViewToLoad = Master.CswNbtResources.ViewSelect.restoreView( ViewId );
                 //Filter to nodes of FilterToObjectClass on treeview
                 //_setFiltersOnView( ViewToLoad, FilterToObjectClass );
 

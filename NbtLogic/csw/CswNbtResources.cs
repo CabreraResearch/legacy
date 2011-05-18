@@ -46,15 +46,20 @@ namespace ChemSW.Nbt
         private ICswNbtTreeFactory _CswNbtTreeFactory;
         private bool _ExcludeDisabledModules = true;
 
-        /// <summary>
-        /// Provides a means to get lists of views
-        /// </summary>
-        public CswNbtViewSelect ViewSelect;
+		/// <summary>
+		/// Provides a means to get lists of views
+		/// </summary>
+		public CswNbtViewSelect ViewSelect;
 
-        /// <summary>
-        /// Stores all Views used in this session, indexed by SessionViewId
-        /// </summary>
-        public CswNbtViewCache ViewCache;
+		/// <summary>
+		/// Provides a means to get session data
+		/// </summary>
+		public CswNbtSessionDataMgr SessionDataMgr;
+
+		///// <summary>
+		///// Stores all Views used in this session, indexed by SessionViewId
+		///// </summary>
+		//public CswNbtViewCache ViewCache;
 
         /// <summary>
         /// This is for a select set of DB-aware classes ONLY.  Do not use for business logic.
@@ -82,8 +87,9 @@ namespace ChemSW.Nbt
         {
             _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical );
             _ExcludeDisabledModules = ExcludeDisabledModules;
-            ViewCache = new CswNbtViewCache( this );
+            //ViewCache = new CswNbtViewCache( this );
             ViewSelect = new CswNbtViewSelect( this );
+			SessionDataMgr = new CswNbtSessionDataMgr( this );
             _DebugID = DateTime.Now.ToString();
         }
 

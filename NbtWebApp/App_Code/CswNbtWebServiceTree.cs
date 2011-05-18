@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.WebServices
 		    // Case 21699: Show empty tree for search
 		    bool ValidView = ( null != View && ( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List ) );
 		    string ViewName = string.Empty;
-		    Int32 SessionViewId = Int32.MinValue;
+			CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId();
 			//bool IsFirstLoad = true;
 			//if( ParentNodeKey != null || IncludeNodeKey != null )
 			//    IsFirstLoad = false;
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.WebServices
                     if( IsFirstLoad )
                     {
                         ReturnNode.Add( new XElement( "tree", RootNode ),
-                                        new XElement( "viewid", View.SessionViewId ),
+                                        new XElement( "viewid", View.SessionViewId.get() ),
                                         new XElement( "types", getTypes( View ).ToString() ) );
                     }
                     else
@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.WebServices
                                                 new XElement( "content",
                                                     new XElement( "name", EmptyOrInvalid ) ) ) ) )
                                         ),
-                                new XElement( "viewid", SessionViewId ),
+                                new XElement( "viewid", SessionViewId.get() ),
                                 Types );
 			}
 			return ReturnNode;

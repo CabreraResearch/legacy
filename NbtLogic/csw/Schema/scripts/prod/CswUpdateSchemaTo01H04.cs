@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.Schema
 
             //CswNbtView ParentView = _CswNbtSchemaModTrnsctn.makeView();
             CswNbtMetaDataNodeTypeProp ParentViewNTP = PhysicalInspectionScheduleNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentViewPropertyName );
-            CswNbtView ParentView = CswNbtViewFactory.restoreView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources, ParentViewNTP.DefaultValue.AsViewReference.ViewId );
+			CswNbtView ParentView = _CswNbtSchemaModTrnsctn.restoreView( ParentViewNTP.DefaultValue.AsViewReference.ViewId );
             ParentView.ViewName = "PI Schedule ParentView";
             CswNbtViewRelationship ParentRelationship = ParentView.AddViewRelationship( PhysicalInspectionScheduleNT, true );
             CswNbtViewRelationship MountPointGroupChild = ParentView.AddViewRelationship( ParentRelationship, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );

@@ -800,7 +800,7 @@ namespace ChemSW.Nbt.ImportExport
                     if( v % 10 == 1 )
                         _StatusUpdate( "Processing View: " + v.ToString() + " of " + ViewsTable.Rows.Count.ToString() );
 
-                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( ViewRow["nodeviewid"] ) );
+					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( ViewRow["nodeviewid"] ) );
                     bool IncludeView = false;
                     foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
                         IncludeView = IncludeView || View.ContainsNodeType( NodeType );
@@ -891,7 +891,7 @@ namespace ChemSW.Nbt.ImportExport
         /// <returns>XmlDocument of all metadata, node, and property data from this view</returns>
         public XmlDocument ExportView( Int32 ViewId, bool ForMobile, bool PropsInViewOnly )
         {
-            CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+			CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
             return ExportView( View, ForMobile, PropsInViewOnly );
         } // ExportView()
 

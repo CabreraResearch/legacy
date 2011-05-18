@@ -621,12 +621,12 @@ namespace ChemSW.NbtSchemaDiff
                     if( LeftWrapper.AsViewPickList.SelectMode == PropertySelectMode.Single && LeftWrapper.AsViewPickList.SelectedViewIds.Count != 0 )
                     {
                         LeftValue = LeftWrapper.AsViewPickList.SelectedViewIds.ToString();
-                        LeftObj = CswNbtViewFactory.restoreView( _CswNbtResourcesLeft, CswConvert.ToInt32( LeftWrapper.AsViewPickList.SelectedViewIds ) );
+						LeftObj = _CswNbtResourcesLeft.ViewSelect.restoreView( CswConvert.ToInt32( LeftWrapper.AsViewPickList.SelectedViewIds ) );
                     }
                     if( RightWrapper.AsViewPickList.SelectMode == PropertySelectMode.Single && RightWrapper.AsViewPickList.SelectedViewIds.Count != 0 )
                     {
                         RightValue = RightWrapper.AsViewPickList.SelectedViewIds.ToString();
-                        RightObj = CswNbtViewFactory.restoreView( _CswNbtResourcesRight, CswConvert.ToInt32( RightWrapper.AsViewPickList.SelectedViewIds ) );
+                        RightObj = _CswNbtResourcesRight.ViewSelect.restoreView( CswConvert.ToInt32( RightWrapper.AsViewPickList.SelectedViewIds ) );
                     }
                     Condition = ( LeftObj != null && RightObj != null &&
                                   ( (CswNbtView) LeftObj ).ViewName == ( (CswNbtView) RightObj ).ViewName &&

@@ -51,7 +51,7 @@ namespace ChemSW.Nbt
         //    View = TheView;
         //}//ctor
 
-        public CswNbtTreeKey(CswNbtResources CswNbtResources, Int32 TheSessionViewId)
+		public CswNbtTreeKey( CswNbtResources CswNbtResources, CswNbtSessionDataId TheSessionViewId )
         {
             _RealConstructor(CswNbtResources);
             SessionViewId = TheSessionViewId;
@@ -79,11 +79,11 @@ namespace ChemSW.Nbt
         //    set { _View = value; }
         //}
 
-        private Int32 _SessionViewId = Int32.MinValue;
+		private CswNbtSessionDataId _SessionViewId = null;
         /// <summary>
         /// Session-specific ViewId for View used to create this tree
         /// </summary>
-        public Int32 SessionViewId
+		public CswNbtSessionDataId SessionViewId
         {
             get { return _SessionViewId; }
             set { _SessionViewId = value; }
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public override int GetHashCode()
         {
-            return SessionViewId;
+            return SessionViewId.get();
         }
         #endregion IEquatable
 

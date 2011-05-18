@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.WebServices
 					case WelcomeComponentType.Link:
                         if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
 						{
-							CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
+							CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
 							if( null != ThisView && ThisView.IsFullyEnabled() )
 							{
                                 if( WelcomeRow["displaytext"].ToString() != string.Empty )
@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.WebServices
 					case WelcomeComponentType.Search:
 						if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
 						{
-							CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
+							CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
 							if( null != ThisView && ThisView.IsSearchable() )
 							{
                                 if( WelcomeRow["displaytext"].ToString() != string.Empty )

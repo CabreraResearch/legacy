@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     if( CswConvert.ToInt32( Request.QueryString["viewid"] ) > 0 )
                     {
-                        CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) );
+						CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) );
                         _ViewEditorWizard = new CswViewEditorWizard( Master.CswNbtResources, View, null, Master.AjaxManager );
                     }
                 }
@@ -1777,7 +1777,7 @@ namespace ChemSW.NbtWebControls
                 {
                     case 1:
                         // Set values from SelectViewStep
-                        _View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( _LoadViewList.SelectedValue ) );
+						_View = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( _LoadViewList.SelectedValue ) );
                         break;
 
                     case 2:
@@ -1945,13 +1945,13 @@ namespace ChemSW.NbtWebControls
             try
             {
                 Int32 ViewId = CswConvert.ToInt32( _LoadViewList.SelectedValue );
-                _View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				_View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 _View.Delete();
 
                 _SelectViewStep_OnStepLoad();
 
                 if( CswTools.IsInteger( _LoadViewList.SelectedValue ) )
-                    _View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( _LoadViewList.SelectedValue ) );
+					_View = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( _LoadViewList.SelectedValue ) );
 
                 _setView( true );
             }

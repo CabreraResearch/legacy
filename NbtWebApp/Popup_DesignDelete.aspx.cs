@@ -406,7 +406,7 @@ namespace ChemSW.Nbt.WebPages
             ArrayList RowsToRemove = new ArrayList();
             foreach( DataRow CurrentRow in ViewsTable.Rows )
             {
-                CswNbtView CurrentView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, Convert.ToInt32( CurrentRow["nodeviewid"].ToString() ) );
+				CswNbtView CurrentView = Master.CswNbtResources.ViewSelect.restoreView( Convert.ToInt32( CurrentRow["nodeviewid"].ToString() ) );
                 if( CurrentView != null && !CurrentView.ContainsNodeType( NodeType ) )
                     RowsToRemove.Add( CurrentRow );
             }
@@ -431,7 +431,7 @@ namespace ChemSW.Nbt.WebPages
             ArrayList RowsToRemove = new ArrayList();
             foreach( DataRow CurrentRow in ViewsTable.Rows )
             {
-                CswNbtView CurrentView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, Convert.ToInt32( CurrentRow["nodeviewid"].ToString() ) );
+				CswNbtView CurrentView = Master.CswNbtResources.ViewSelect.restoreView( Convert.ToInt32( CurrentRow["nodeviewid"].ToString() ) );
                 if( CurrentView != null && !CurrentView.ContainsNodeTypeProp( NodeTypeProp ) )
                     RowsToRemove.Add( CurrentRow );
             }

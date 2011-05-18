@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.Actions
                 Parents.Add( GeneratorNode.Owner.RelatedNodeId );
             else
             {
-                CswNbtView ParentsView = CswNbtViewFactory.restoreView( _CswNbtResources, GeneratorNode.ParentView.ViewId );
+				CswNbtView ParentsView = _CswNbtResources.ViewSelect.restoreView( GeneratorNode.ParentView.ViewId );
                 // Case 20482
                 if( ParentsView.Root.ChildRelationships.Count > 0 )
                 {

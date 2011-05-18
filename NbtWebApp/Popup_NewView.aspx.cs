@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.WebPages
 {
     public partial class Popup_NewView : System.Web.UI.Page
     {
-        private Int32 SessionViewId;
+		private CswNbtSessionDataId SessionViewId;
 
         protected override void OnInit( EventArgs e )
         {
@@ -28,16 +28,16 @@ namespace ChemSW.Nbt.WebPages
             {
                 EnsureChildControls();
 
-                SessionViewId = Int32.MinValue;
+				SessionViewId = new CswNbtSessionDataId();
                 if( Request.QueryString["sessionviewid"] != null && CswTools.IsInteger( Request.QueryString["sessionviewid"] ) )
                 {
-                    SessionViewId = CswConvert.ToInt32( Request.QueryString["sessionviewid"] );
+					SessionViewId.set( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) );
                 }
 
                 _CopyList.Visible = false;
                 _NewViewCopyLabel.Visible = false;
 
-                if( SessionViewId == Int32.MinValue )
+                if( !SessionViewId.isSet() )
                 {
                     _CopyList.Items.Clear();
                     _CopyList.Items.Add( new ListItem( "[New Blank View]", "" ) );
@@ -200,9 +200,9 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 CswNbtView View = new CswNbtView( Master.CswNbtResources );
-                if( SessionViewId != Int32.MinValue )
+                if( SessionViewId.isSet() )
                 {
-                    CswNbtView ViewToCopy = Master.CswNbtResources.ViewCache.getView( SessionViewId ) as CswNbtView;
+                    CswNbtView ViewToCopy = Master.CswNbtResources.ViewSelect.getSessionView( SessionViewId );
                     View.makeNew( _NewViewNameBox.Text,
                                   ViewVisibilityEditor.SelectedVisibility,
                                   ViewVisibilityEditor.SelectedRoleId,

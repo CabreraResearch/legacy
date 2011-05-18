@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebPages
                 ViewId = Convert.ToInt32(Request.QueryString["viewid"].ToString());
 
                 //null will occur after we've deleted
-                if( null != ( View = CswNbtViewFactory.restoreView( Master.CswNbtResources, ViewId )  ) )
+				if( null != ( View = Master.CswNbtResources.ViewSelect.restoreView( ViewId ) ) )
                 {
                     //ViewNameHolder.Text = View.ViewName;
                     DeleteViewNameLiteral.Text = View.ViewName;
