@@ -3,6 +3,9 @@
 <body>
 	<script type="text/javascript">
 		
+        $(document).bind("mobileinit", function(){
+             $.mobile.hashListeningEnabled = false; 
+        });
         $('body').CswMobile({
 			'Theme': 'b',
 			});
