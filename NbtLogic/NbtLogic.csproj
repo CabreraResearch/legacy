@@ -419,6 +419,7 @@
     <Compile Include="csw\View\CswNbtViewBase.cs" />
     <Compile Include="csw\View\CswNbtViewCache.cs" />
     <Compile Include="csw\View\CswNbtViewFactory.cs" />
+    <Compile Include="csw\View\CswNbtViewId.cs" />
     <Compile Include="csw\View\CswNbtViewNode.cs" />
     <Compile Include="csw\View\CswNbtViewProperty.cs" />
     <Compile Include="csw\View\CswNbtViewPropertyFilter.cs" />
