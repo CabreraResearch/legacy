@@ -101,9 +101,9 @@ namespace ChemSW.Nbt
         public AuthenticationStatus AuthenticationStatus { get { return ( CswSessionManager.AuthenticationStatus ); } }
 
 
-        public AuthenticationStatus refreshSession() { return ( CswSessionManager.refreshSession() ); }
+        public AuthenticationStatus attemptRefresh() { return ( CswSessionManager.attemptRefresh() ); }
 
-
+        public void purgeExpiredSessions() { CswSessionManager.SessionsList.purgeExpiredSessions(); }
 
         public void setCache()
         {

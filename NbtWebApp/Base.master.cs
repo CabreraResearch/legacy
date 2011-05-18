@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.WebPages
         }
         public AuthenticationStatus Authenticate( string username, string password )
         {
-            return ( CswSessionManager.Authenticate( username, password, CswNbtWebTools.getIpAddress() ) );
+            return ( CswSessionManager.beginSession( username, password, CswNbtWebTools.getIpAddress() ) );
         }//Authenticate()
 
 
@@ -347,7 +347,7 @@ namespace ChemSW.Nbt.WebPages
         public void Logout()
         {
             string CachedLogoutPath = LogoutPath;
-            CswSessionManager.DeAuthenticate();
+            CswSessionManager.clearSession();
             Redirect( CachedLogoutPath );
         }
     }
