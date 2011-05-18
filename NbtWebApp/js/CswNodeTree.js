@@ -15,10 +15,11 @@
 					ViewTreeUrl: '/NbtWebApp/wsNBT.asmx/getTreeOfView',
 					NodeTreeUrl: '/NbtWebApp/wsNBT.asmx/getTreeOfNode',
 					viewid: '',       // loads an arbitrary view
+					sessionviewid: '',       // loads an arbitrary view
 					viewmode: '',
                     showempty: false, // if true, shows an empty tree (primarily for search)
                     forsearch: false, // if true, used to override default behavior of list views
-					nodeid: '',       // if viewid is not supplied, loads a view of this node
+					nodeid: '',       // if viewid or sessionviewid are not supplied, loads a view of this node
 					cswnbtnodekey: '',
 					IncludeNodeRequired: false,
 					UsePaging: true,
@@ -28,12 +29,13 @@
 												nodename: '', 
 												iconurl: '', 
 												cswnbtnodekey: '',
-												viewid: ''
+												viewid: '',
+												sessionviewid: ''
 											};
 											return o;
 									},
 					onInitialSelectNode: undefined,
-					onViewChange: function(newviewid) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
+					onViewChange: function(newsessionviewid) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
 					SelectFirstChild: true,
 					ShowCheckboxes: false
 				};
@@ -49,7 +51,8 @@
 				var url = o.ViewTreeUrl;
 				var dataParam = { 
                     'UsePaging': o.UsePaging,
-                    'ViewNum': o.viewid,
+                    'ViewId': o.viewid,
+                    'SessionViewId': o.sessionviewid,
                     'IDPrefix': IDPrefix,
                     'IsFirstLoad': true,
                     'ParentNodeKey': '',
@@ -60,7 +63,7 @@
                     'NodePk': tryParseString(o.nodeid,'')
                 };
 
-				if( isNullOrEmpty( o.viewid ) )
+				if( isNullOrEmpty( o.viewid ) && isNullOrEmpty( o.sessionviewid ) )
 				{
 					url = o.NodeTreeUrl;
 				}
@@ -80,11 +83,14 @@
 							selectid = IDPrefix + o.nodeid;
 						}
 
-						var newviewid = $xml.children('viewid').text()
-						if(o.viewid !== newviewid)
+						var newviewid = $xml.children('viewid').text();
+						var newsessionviewid = $xml.children('sessionviewid').text();
+						if(o.viewid !== newviewid &&
+						   o.sessionviewid !== newsessionviewid)
 						{
 							o.onViewChange(newviewid);
 							o.viewid = newviewid;
+							o.sessionviewid = newsessionviewid;
 						}
 
 						var $selecteditem = $xml.find('item[id="'+ selectid + '"]');
@@ -188,7 +194,8 @@
 														var nodekey = $nodeOpening.CswAttrXml('cswnbtnodekey');
 														var retDataParam = {
                                                             'UsePaging': o.UsePaging,
-                                                            'ViewNum': o.viewid,
+                                                            'ViewId': o.viewid,
+                                                            'SessionViewId': o.sessionviewid,
                                                             'IDPrefix': IDPrefix,
                                                             'IsFirstLoad': false,
                                                             'ParentNodeKey': nodekey,
@@ -236,6 +243,7 @@
 									onSelectNode: o.onSelectNode,
 									onInitialSelectNode: o.onInitialSelectNode,
 									viewid: o.viewid,
+									sessionviewid: o.sessionviewid,
 									UsePaging: o.UsePaging,
 									forsearch: o.forsearch
 								}); 
@@ -289,6 +297,7 @@
 			onSelectNode: function() {},
 			onInitialSelectNode: function() {},
 			viewid: '',
+			sessionviewid: '',
 			UsePaging: '',
 			forsearch: ''
 		};
@@ -315,6 +324,7 @@
 			IDPrefix: '', 
 			onSelectNode: function() {},
 			viewid: '',
+			sessionviewid: '',
 			UsePaging: '',
 			forsearch: ''
 		};
@@ -327,7 +337,8 @@
 			iconurl: Selected.iconurl, 
 			cswnbtnodekey: Selected.$item.CswAttrDom('cswnbtnodekey'),
 			nodespecies: Selected.$item.CswAttrDom('species'),
-			viewid: m.viewid
+			viewid: m.viewid,
+			sessionviewid: m.sessionviewid
 		};
 												
 		if(optSelect.nodespecies === "More")
@@ -341,7 +352,8 @@
                                                     
 			var nextDataParam = { 
 				'UsePaging': m.UsePaging,
-				'ViewNum': m.viewid,
+				'ViewId': m.viewid,
+				'SessionViewId': m.sessionviewid,
 				'IDPrefix': m.IDPrefix,
 				'IsFirstLoad': false,
 				'ParentNodeKey': ParentNodeKey,

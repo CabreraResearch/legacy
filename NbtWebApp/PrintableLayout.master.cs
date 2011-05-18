@@ -48,11 +48,11 @@ namespace ChemSW.Nbt.WebPages
         //    get { return Master.CswAuthenticator; }
         //}
 
-        public void setViewId(Int32 ViewId)
-        {
-            Master.setViewId(ViewId);
-        }
-        public void setViewId(Int32 ViewId, bool ForceReload)
+		public void setViewId( CswNbtViewId ViewId )
+		{
+			Master.setViewId( ViewId );
+		}
+		public void setViewId( CswNbtViewId ViewId, bool ForceReload )
         {
             Master.setViewId(ViewId, ForceReload);
         }

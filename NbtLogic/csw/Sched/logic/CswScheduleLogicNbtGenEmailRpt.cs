@@ -115,11 +115,11 @@ namespace ChemSW.Nbt.Sched
 
                                     if( !CurrentMailReport.Type.Empty )
                                     {
-                                        Int32 ViewId = Int32.MinValue;
+										CswNbtViewId ViewId = new CswNbtViewId();
                                         string ReportParameter = string.Empty;
                                         if( "View" == CurrentMailReport.Type.Value )
                                         {
-                                            ViewId = CswConvert.ToInt32( CurrentMailReport.ReportView.SelectedViewIds );
+											ViewId.set( CswConvert.ToInt32( CurrentMailReport.ReportView.SelectedViewIds ) );
                                             ReportParameter = CswTools.UrlToQueryStringParam( "Main.aspx?ViewId=" + ViewId.ToString() );
                                         }
                                         else if( "Report" == CurrentMailReport.Type.Value )
@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.Sched
                                             {
                                                 CswNbtNode ReportNode = _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
                                                 CswNbtObjClassReport ReportObjClass = CswNbtNodeCaster.AsReport( ReportNode );
-                                                ViewId = CswConvert.ToInt32( ReportObjClass.View.ViewId );
+												ViewId = ReportObjClass.View.ViewId;
                                                 ReportParameter = CswTools.UrlToQueryStringParam( "Report.aspx?reportid=" + ReportNode.NodeId.PrimaryKey.ToString() );
                                             }
                                         }

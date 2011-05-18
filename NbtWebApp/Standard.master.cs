@@ -321,7 +321,7 @@ namespace ChemSW.Nbt.WebPages
                 if( Request.QueryString["viewid"] != null && Request.QueryString["viewid"] != string.Empty )
                 {
                     ViewIdFromQueryParam = CswTools.QueryStringParamToUrl( Request.QueryString["viewid"].ToString() );
-                    Int32 TargetViewId = CswConvert.ToInt32( ViewIdFromQueryParam );
+					CswNbtViewId TargetViewId = new CswNbtViewId( CswConvert.ToInt32( ViewIdFromQueryParam ) );
                     if( Session["ViewId"] != null && Session["ViewId"].ToString() != TargetViewId.ToString() )  // BZ 10125
                     {
 						ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.restoreView( TargetViewId ) ) );
@@ -349,8 +349,8 @@ namespace ChemSW.Nbt.WebPages
 						if( Session["SessionViewId"] != null )
 							ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( CswConvert.ToInt32( Session["SessionViewId"] ) ) ) ) );
 
-                        if( Session["ViewId"] != null )
-							ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( Session["ViewId"] ) ) ) );
+						if( Session["ViewId"] != null )
+							ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( Session["ViewId"] ) ) ) ) );
 
                         if( !ViewLoaded && Session["ViewXml"] != null )
 							ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.restoreView( Session["ViewXml"].ToString() ) ) );
@@ -372,11 +372,11 @@ namespace ChemSW.Nbt.WebPages
             } // if( _CswNbtView == null || ForceReload )
         } // initSelectedView()
 
-        public void setViewId( Int32 ViewId )
+        public void setViewId( CswNbtViewId ViewId )
         {
             setViewId( ViewId, false );
         }
-        public void setViewId( Int32 ViewId, bool ForceReload )
+		public void setViewId( CswNbtViewId ViewId, bool ForceReload )
         {
             if( Session["ViewId"] == null || ViewId.ToString() != Session["ViewId"].ToString() || ForceReload )
             {

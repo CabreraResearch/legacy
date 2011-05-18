@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.WebPages
     {
         private CswViewEditorWizard _ViewEditorWizard = null;
 
-        public void setViewId( Int32 ViewId, bool ForceReload )
+        public void setViewId( CswNbtViewId ViewId, bool ForceReload )
         {
             Master.setViewId( ViewId, ForceReload );
         }
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     if( CswConvert.ToInt32( Request.QueryString["viewid"] ) > 0 )
                     {
-						CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) );
+						CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) ) );
                         _ViewEditorWizard = new CswViewEditorWizard( Master.CswNbtResources, View, null, Master.AjaxManager );
                     }
                 }
@@ -803,7 +803,7 @@ namespace ChemSW.NbtWebControls
 
                 if( LoadViewListPriorSelectedValue != string.Empty && null != _LoadViewList.Items.FindByValue( LoadViewListPriorSelectedValue ) )
                     _LoadViewList.SelectedValue = LoadViewListPriorSelectedValue;
-                else if( null != _View && _View.ViewId > 0 && null != _LoadViewList.Items.FindByValue( _View.ViewId.ToString() ) )
+                else if( null != _View && _View.ViewId.isSet() && null != _LoadViewList.Items.FindByValue( _View.ViewId.ToString() ) )
                     _LoadViewList.SelectedValue = _View.ViewId.ToString();
             }
             else
@@ -1777,7 +1777,7 @@ namespace ChemSW.NbtWebControls
                 {
                     case 1:
                         // Set values from SelectViewStep
-						_View = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( _LoadViewList.SelectedValue ) );
+						_View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _LoadViewList.SelectedValue ) ) );
                         break;
 
                     case 2:
@@ -1944,14 +1944,14 @@ namespace ChemSW.NbtWebControls
         {
             try
             {
-                Int32 ViewId = CswConvert.ToInt32( _LoadViewList.SelectedValue );
+				CswNbtViewId ViewId = new CswNbtViewId(CswConvert.ToInt32( _LoadViewList.SelectedValue ));
 				_View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 _View.Delete();
 
                 _SelectViewStep_OnStepLoad();
 
-                if( CswTools.IsInteger( _LoadViewList.SelectedValue ) )
-					_View = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( _LoadViewList.SelectedValue ) );
+				if( CswTools.IsInteger( _LoadViewList.SelectedValue ) )
+					_View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _LoadViewList.SelectedValue ) ) );
 
                 _setView( true );
             }

@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				// BZ 10121
 				// This is a performance hit, but since this view list is cached, it's ok
-				_makeViewTreeNode( DocRoot, View.Category, ItemType.View, View.ViewId, View.ViewName, View.ViewMode );
+				_makeViewTreeNode( DocRoot, View.Category, ItemType.View, View.ViewId.get(), View.ViewName, View.ViewMode );
 			}
 
 			if( !IsSearchable )

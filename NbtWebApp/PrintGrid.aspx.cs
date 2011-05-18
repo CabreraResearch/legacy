@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 //CswNbtView AView = new CswNbtView(Master.CswNbtResources);
                 //AView.LoadXml(CswConvert.ToInt32(Request.QueryString["viewid"].ToString()));
-				CswNbtView AView = Master.CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) );
+				CswNbtView AView = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) ) );
                 _NodesGrid.View = AView;
             }
             else if (Request.QueryString["sessionviewid"] != null)

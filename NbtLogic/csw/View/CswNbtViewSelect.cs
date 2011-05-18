@@ -37,14 +37,14 @@ namespace ChemSW.Nbt
 		}
 
 
-		public CswNbtView restoreView( Int32 ViewId )
+		public CswNbtView restoreView( CswNbtViewId ViewId )
 		{
 			// try cache first
 			CswNbtView ReturnVal = null; // CswNbtResources.ViewCache.getView( ViewId );
 			//if( ReturnVal == null )
 			//{
 			CswTableSelect ViewsTableSelect = _CswNbtResources.makeCswTableSelect( "restoreView_select", "node_views" );
-			DataTable ViewTable = ViewsTableSelect.getTable( "nodeviewid", ViewId );
+			DataTable ViewTable = ViewsTableSelect.getTable( "nodeviewid", ViewId.get() );
 			if( ViewTable.Rows.Count > 0 )
 			{
 				string ViewAsString = ViewTable.Rows[0]["viewxml"].ToString();

@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.WebPages
                 CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( Node );
 
                 // Get the Report Data
-				CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( ReportNode.View.ViewId ) );
+				CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( ReportNode.View.ViewId );
                 if( View == null )
                     throw new CswDniException( "Report has invalid View", "Report received a null view" );
 

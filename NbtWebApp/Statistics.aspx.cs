@@ -109,26 +109,29 @@ namespace ChemSW.Nbt.WebPages
                     AccessIdListBox.SelectionMode = ListSelectionMode.Multiple;
                     AccessIdListBox.Height = Unit.Parse( "300px" );
 
-                    CswNbtView CustomerView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
-                    ICswNbtTree CustomerTree = Master.CswNbtResources.Trees.getTreeFromView( CustomerView, true, true, false, false );
-
+					CswNbtMetaDataObjectClass CustomerOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
+					//CswNbtView CustomerView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
+					//ICswNbtTree CustomerTree = Master.CswNbtResources.Trees.getTreeFromView( CustomerView, true, true, false, false );
+					Collection<CswNbtNode> CustomerNodes = CustomerOC.getNodes(false, false);
                     // Sort by Customer Name
                     SortedList CustomerList = new SortedList();
                     ArrayList AccessIds = new ArrayList( Master.CswNbtResources.CswDbCfgInfo.AccessIds );
                     foreach ( string AccessId in AccessIds )
                     {
                         CswNbtNode CustomerNode = null;
-                        CustomerTree.goToRoot();
-                        for( int i = 0; i < CustomerTree.getChildNodeCount(); i++ )
-                        {
-                            CustomerTree.goToNthChild( i );
-                            CswNbtNode ThisCustomerNode = CustomerTree.getNodeForCurrentPosition();
+						//CustomerTree.goToRoot();
+						//for( int i = 0; i < CustomerTree.getChildNodeCount(); i++ )
+						//{
+						//    CustomerTree.goToNthChild( i );
+						foreach(CswNbtNode ThisCustomerNode in CustomerNodes)
+						{
+                            //CswNbtNode ThisCustomerNode = CustomerTree.getNodeForCurrentPosition();
                             if( CswNbtNodeCaster.AsCustomer( ThisCustomerNode ).CompanyID.Text == AccessId )
                             {
                                 CustomerNode = ThisCustomerNode;
                                 break;
                             }
-                            CustomerTree.goToParentNode();
+                            //CustomerTree.goToParentNode();
                         }
 
                         if( CustomerNode != null )
@@ -160,16 +163,19 @@ namespace ChemSW.Nbt.WebPages
                     UserIdListBox.SelectionMode = ListSelectionMode.Multiple;
                     UserIdListBox.Height = Unit.Parse( "300px" );
 
-                    CswNbtView UserView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                    ICswNbtTree UserTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, true, true, false, false );
+					//CswNbtView UserView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+					//ICswNbtTree UserTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, true, true, false, false );
 
-                    UserTree.goToRoot();
-                    for( int i = 0; i < UserTree.getChildNodeCount(); i++ )
-                    {
-                        UserTree.goToNthChild( i );
-                        CswNbtNode ThisUserNode = UserTree.getNodeForCurrentPosition();
+					//UserTree.goToRoot();
+					//for( int i = 0; i < UserTree.getChildNodeCount(); i++ )
+					//{
+					//    UserTree.goToNthChild( i );
+					//    CswNbtNode ThisUserNode = UserTree.getNodeForCurrentPosition();
+					CswNbtMetaDataObjectClass UserOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass);
+					foreach(CswNbtNode ThisUserNode in UserOC.getNodes(false, false))
+					{
                         UserIdListBox.Items.Add( new ListItem( ThisUserNode.NodeName, ThisUserNode.NodeId.PrimaryKey.ToString() ) );
-                        UserTree.goToParentNode();
+                        //UserTree.goToParentNode();
                     }
                     leftph.Controls.Add( UserIdListBox );
 
@@ -416,7 +422,8 @@ namespace ChemSW.Nbt.WebPages
             else
             {
                 NodesSelect = Master.CswNbtResources.makeCswTableSelect( "totalnodes_select", "nodes" );
-                UserView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+				CswNbtMetaDataObjectClass UserOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+				UserView = UserOC.CreateDefaultView(); // Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                 UserTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, true, true, false, false );
             }
 

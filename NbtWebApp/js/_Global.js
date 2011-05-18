@@ -503,7 +503,7 @@ function jsTreeGetSelected($treediv) { /// <param name="$" type="jQuery" />
 // ------------------------------------------------------------------------------------
 
 function GoHome() { /// <param name="$" type="jQuery" />
-	$.CswCookie('clear', CswCookieName.CurrentView.ViewId);
+	$.CswCookie('clear', CswCookieName.CurrentView.SessionViewId);
 	$.CswCookie('clear', CswCookieName.CurrentView.ViewMode);
 	window.location = "NewMain.html";
 }

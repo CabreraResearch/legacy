@@ -30,14 +30,14 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 		}
 
-		public XElement getMenu( Int32 ViewId, string SafeNodeKey )
+		public XElement getMenu( CswNbtSessionDataId SessionViewId, string SafeNodeKey )
 		{
 			XElement MenuNode = new XElement( "menu" );
 
 			CswNbtView View = null;
-			if( ViewId != Int32.MinValue )
+			if( SessionViewId.isSet() )
 			{
-				View = _CswNbtResources.ViewSelect.restoreView( ViewId );
+				View = _CswNbtResources.ViewSelect.getSessionView( SessionViewId );
 			}
 
 			string NodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.WebServices
 			                                           new XAttribute( "text", "This View" ),
 			                                           new XAttribute( "nodeid", NodeId ),
 			                                           new XAttribute( "nodetypeid", NodeTypeId ),
-			                                           new XAttribute( "viewid", ViewId ),
+			                                           new XAttribute( "sessionviewid", SessionViewId.ToString() ),
 			                                           new XAttribute( "action", "ViewSearch" ) ) );
 			    }
 
@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.WebServices
 			    }
 
 			    // SAVE VIEW AS
-			    if( View.ViewId <= 0 )
+			    if( !View.ViewId.isSet() )
 			    {
 			        MenuNode.Add( new XElement( "item",
 			                                    new XAttribute( "text", "SaveViewAs" ),

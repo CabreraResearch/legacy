@@ -24,8 +24,8 @@
 						$.CswCookie('set', CswCookieName.CurrentView.ViewMode, ViewMode);
 						
 						// case 20958 - so that it doesn't treat the view as a Grid Property view
-						$.CswCookie('clear', CswCookieName.CurrentNode.NodeId, o.viewid);
-						$.CswCookie('clear', CswCookieName.CurrentNode.NodeKey, o.viewmode);
+						$.CswCookie('clear', CswCookieName.CurrentNode.NodeId);
+						$.CswCookie('clear', CswCookieName.CurrentNode.NodeKey);
 						
 						window.location = "NewMain.html";
 						return CswImageButton_ButtonType.None; 

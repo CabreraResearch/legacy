@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.WebServices
 					case WelcomeComponentType.Link:
                         if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
 						{
-							CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
+							CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
 							if( null != ThisView && ThisView.IsFullyEnabled() )
 							{
                                 if( WelcomeRow["displaytext"].ToString() != string.Empty )
@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.WebServices
 					case WelcomeComponentType.Search:
 						if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
 						{
-							CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) );
+							CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
 							if( null != ThisView && ThisView.IsSearchable() )
 							{
                                 if( WelcomeRow["displaytext"].ToString() != string.Empty )
@@ -215,10 +215,10 @@ namespace ChemSW.Nbt.WebServices
 				WelcomeTable.Rows[i].Delete();
 			}
 
-			Int32 EquipmentByTypeViewId = Int32.MinValue;
-			Int32 TasksOpenViewId = Int32.MinValue;
-			Int32 ProblemsOpenViewId = Int32.MinValue;
-			Int32 FindEquipmentViewId = Int32.MinValue;
+			CswNbtViewId EquipmentByTypeViewId = new CswNbtViewId();
+			CswNbtViewId TasksOpenViewId = new CswNbtViewId();
+			CswNbtViewId ProblemsOpenViewId = new CswNbtViewId();
+			CswNbtViewId FindEquipmentViewId = new CswNbtViewId();
 
             Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( false );
 			foreach( CswNbtView View in Views )
@@ -250,22 +250,22 @@ namespace ChemSW.Nbt.WebServices
 			}
 
 			// Equipment
-			if( FindEquipmentViewId != Int32.MinValue )
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Search, CswViewListTree.ViewType.View, FindEquipmentViewId, Int32.MinValue, string.Empty, 1, 1, "magglass.gif", RoleId );
+			if( FindEquipmentViewId.isSet() )
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Search, CswViewListTree.ViewType.View, FindEquipmentViewId.get(), Int32.MinValue, string.Empty, 1, 1, "magglass.gif", RoleId );
 			if( EquipmentNodeTypeId != Int32.MinValue )
 				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, Int32.MinValue, EquipmentNodeTypeId, string.Empty, 5, 1, "", RoleId );
-			if( EquipmentByTypeViewId != Int32.MinValue )
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, EquipmentByTypeViewId, Int32.MinValue, "All Equipment", 7, 1, "", RoleId );
+			if( EquipmentByTypeViewId.isSet() )
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, EquipmentByTypeViewId.get(), Int32.MinValue, "All Equipment", 7, 1, "", RoleId );
 
 			// Problems
-			if( ProblemsOpenViewId != Int32.MinValue )
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, ProblemsOpenViewId, Int32.MinValue, "Problems", 1, 3, "warning.gif", RoleId );
+			if( ProblemsOpenViewId.isSet())
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, ProblemsOpenViewId.get(), Int32.MinValue, "Problems", 1, 3, "warning.gif", RoleId );
 			if( ProblemNodeTypeId != Int32.MinValue )
 				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, Int32.MinValue, ProblemNodeTypeId, "Add New Problem", 5, 3, "", RoleId );
 
 			// Schedules and Tasks
-			if( TasksOpenViewId != Int32.MinValue )
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, TasksOpenViewId, Int32.MinValue, "Tasks", 1, 5, "clipboard.gif", RoleId );
+			if( TasksOpenViewId.isSet())
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, TasksOpenViewId.get(), Int32.MinValue, "Tasks", 1, 5, "clipboard.gif", RoleId );
 			if( TaskNodeTypeId != Int32.MinValue )
 				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, Int32.MinValue, TaskNodeTypeId, "Add New Task", 5, 5, "", RoleId );
 			if( ScheduleNodeTypeId != Int32.MinValue )

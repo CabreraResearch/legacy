@@ -46,11 +46,16 @@ namespace ChemSW.Nbt.WebServices
 				CswNbtViewRelationship ChildRelationshipToStartWith = null;
 				//if( IncludeNodeKey != null )
 				//    ChildRelationshipToStartWith = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( IncludeNodeKey.ViewNodeUniqueId );
+				if( View.SessionViewId == null || ! View.SessionViewId.isSet() )
+				{
+					View.SaveToCache();
+				}
 
 				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
 
 				// case 21262
-				if( IncludeNodeKey != null && IncludeNodeRequired && ( IncludeNodeKey.TreeKey != Tree.Key || Tree.getNodeKeyByNodeId( IncludeNodeKey.NodeId ) == null ) )
+				if( IncludeNodeKey != null && IncludeNodeRequired && ( //IncludeNodeKey.TreeKey != Tree.Key || 
+																		Tree.getNodeKeyByNodeId( IncludeNodeKey.NodeId ) == null ) )
 				{
 					View = _CswNbtResources.MetaData.getNodeType( IncludeNodeKey.NodeTypeId ).CreateDefaultView();
 					View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeKey.NodeId );
@@ -79,7 +84,7 @@ namespace ChemSW.Nbt.WebServices
                     if( IsFirstLoad )
                     {
                         ReturnNode.Add( new XElement( "tree", RootNode ),
-                                        new XElement( "viewid", View.SessionViewId.get() ),
+                                        new XElement( "sessionviewid", View.SessionViewId.get() ),
                                         new XElement( "types", getTypes( View ).ToString() ) );
                     }
                     else
@@ -122,7 +127,7 @@ namespace ChemSW.Nbt.WebServices
                                                 new XElement( "content",
                                                     new XElement( "name", EmptyOrInvalid ) ) ) ) )
                                         ),
-                                new XElement( "viewid", SessionViewId.get() ),
+                                new XElement( "sessionviewid", SessionViewId.get() ),
                                 Types );
 			}
 			return ReturnNode;

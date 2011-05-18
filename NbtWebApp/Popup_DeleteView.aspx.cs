@@ -14,20 +14,21 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.WebPages
 {
     public partial class Popup_DeleteView : System.Web.UI.Page
     {
         //private CswViewEditorManager _CswViewEditorManager = null;
-        private Int32 ViewId;
+		private CswNbtViewId ViewId;
         private CswNbtView View;
 
         protected override void OnInit(EventArgs e)
         {
             if (Request.QueryString["viewid"] != null)
             {
-                ViewId = Convert.ToInt32(Request.QueryString["viewid"].ToString());
+				ViewId = new CswNbtViewId( CswConvert.ToInt32( Request.QueryString["viewid"] ) );
 
                 //null will occur after we've deleted
 				if( null != ( View = Master.CswNbtResources.ViewSelect.restoreView( ViewId ) ) )

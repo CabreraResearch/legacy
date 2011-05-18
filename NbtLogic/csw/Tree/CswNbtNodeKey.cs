@@ -30,11 +30,12 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Use this constructor to initialize the tree at creation
         /// </summary>
-        public CswNbtNodeKey( CswNbtResources CswNbtResources, CswNbtTreeKey inCswNbtTreeKey, string inTreePath, CswPrimaryKey inNodeId, NodeSpecies inNodeSpecies, Int32 inNodeTypeId, Int32 inObjectClassId, string inViewNodeUniqueId, string inNodeCountPath )
+        public CswNbtNodeKey( CswNbtResources CswNbtResources, // CswNbtTreeKey inCswNbtTreeKey, 
+							  string inTreePath, CswPrimaryKey inNodeId, NodeSpecies inNodeSpecies, Int32 inNodeTypeId, Int32 inObjectClassId, string inViewNodeUniqueId, string inNodeCountPath )
         {
             _CswNbtResources = CswNbtResources;
             TreePath.FromString( inTreePath );
-            TreeKey = inCswNbtTreeKey;
+            //TreeKey = inCswNbtTreeKey;
             NodeId = inNodeId;
             NodeSpecies = inNodeSpecies;
             NodeTypeId = inNodeTypeId;
@@ -168,30 +169,30 @@ namespace ChemSW.Nbt
             get { return TreePath.Count - 2; }
         }
 
-        private CswNbtTreeKey _CswNbtTreeKey = null;
-        /// <summary>
-        /// Identifier for Tree in which this NodeKey is valid
-        /// </summary>
-        public CswNbtTreeKey TreeKey
-        {
-            get
-            {
-                if( _CswNbtTreeKey == null )
-                {
-                    if( String.Empty != _DelimitedString[5] )
-						_CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, new CswNbtSessionDataId( CswConvert.ToInt32( _DelimitedString[5] ) ) );
-                }
-                return _CswNbtTreeKey;
-            }
-            set
-            {
-                _CswNbtTreeKey = value;
-                if( null != _CswNbtTreeKey )
-                    _DelimitedString[5] = value.ToString();
-                else
-                    _DelimitedString[5] = String.Empty;
-            }
-        }
+		//private CswNbtTreeKey _CswNbtTreeKey = null;
+		///// <summary>
+		///// Identifier for Tree in which this NodeKey is valid
+		///// </summary>
+		//public CswNbtTreeKey TreeKey
+		//{
+		//    get
+		//    {
+		//        if( _CswNbtTreeKey == null )
+		//        {
+		//            if( String.Empty != _DelimitedString[5] )
+		//                _CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, new CswNbtSessionDataId( CswConvert.ToInt32( _DelimitedString[5] ) ) );
+		//        }
+		//        return _CswNbtTreeKey;
+		//    }
+		//    set
+		//    {
+		//        _CswNbtTreeKey = value;
+		//        if( null != _CswNbtTreeKey )
+		//            _DelimitedString[5] = value.ToString();
+		//        else
+		//            _DelimitedString[5] = String.Empty;
+		//    }
+		//}
 
         private CswPrimaryKey _NodeId = null;
         /// <summary>
@@ -274,8 +275,8 @@ namespace ChemSW.Nbt
         /// </summary>
         public string ViewNodeUniqueId
         {
-            get { return _DelimitedString[6]; }
-            set { _DelimitedString[6] = value; }
+            get { return _DelimitedString[5]; }
+            set { _DelimitedString[5] = value; }
         }
 
         /// <summary>
@@ -301,7 +302,7 @@ namespace ChemSW.Nbt
                 {
                     _NodeCountPath = new CswDelimitedString( NodeCountDelimiter );
                     _NodeCountPath.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _NodeCountPath_OnChange );
-                    _NodeCountPath.FromString( _DelimitedString[7] );
+                    _NodeCountPath.FromString( _DelimitedString[6] );
                 }
                 return _NodeCountPath;
             }
@@ -315,9 +316,9 @@ namespace ChemSW.Nbt
         void _NodeCountPath_OnChange()
         {
             if( null != _NodeCountPath )
-                _DelimitedString[7] = _NodeCountPath.ToString();
+                _DelimitedString[6] = _NodeCountPath.ToString();
             else
-                _DelimitedString[7] = String.Empty;
+                _DelimitedString[6] = String.Empty;
         }
 
         /// <summary>
@@ -348,7 +349,7 @@ namespace ChemSW.Nbt
             }
 
             // Now we know neither are null.  Compare values.
-            if( ( key1.TreeKey == key2.TreeKey ) &&
+            if( //( key1.TreeKey == key2.TreeKey ) &&
                 ( key1.TreePath == key2.TreePath ) &&
                 ( key1.NodeId == key2.NodeId ) &&
                 ( key1.NodeSpecies == key2.NodeSpecies ) )

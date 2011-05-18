@@ -281,7 +281,7 @@ namespace ChemSW.Nbt.WebServices
 			return ret;
 		} // moveProp()
 
-		public JObject saveProps( NodeEditMode EditMode, string NodeId, string NodeKey, string NewPropsXml, Int32 NodeTypeId, Int32 ViewId )
+		public JObject saveProps( NodeEditMode EditMode, string NodeId, string NodeKey, string NewPropsXml, Int32 NodeTypeId, CswNbtSessionDataId SessionViewId )
 		{
 			JObject ret = null;
 			XmlDocument XmlDoc = new XmlDocument();
@@ -330,7 +330,7 @@ namespace ChemSW.Nbt.WebServices
 				if( NbtNodeKey == null )
 				{
 					// Get the nodekey of this node in the current view
-					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
+					CswNbtView View = _CswNbtResources.ViewSelect.getSessionView( SessionViewId );
 					ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
 					NbtNodeKey = Tree.getNodeKeyByNodeId( Node.NodeId );
 					if( NbtNodeKey == null )

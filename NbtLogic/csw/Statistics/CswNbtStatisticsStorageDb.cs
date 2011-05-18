@@ -93,15 +93,15 @@ namespace ChemSW.Nbt.Statistics
                     DataTable StatisticsViewsTable = StatisticsViewsTableCaddy.getEmptyTable();
                     foreach ( string ViewId in CswNbtStatisticsEntry.ViewsEdited.Keys )
                     {
-                        _makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, CswConvert.ToInt32( ViewId ), CswConvert.ToInt32( CswNbtStatisticsEntry.ViewsEdited[ViewId] ), "edit" );
+						_makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, new CswNbtViewId( CswConvert.ToInt32( ViewId ) ), CswConvert.ToInt32( CswNbtStatisticsEntry.ViewsEdited[ViewId] ), "edit" );
                     }
                     foreach ( string ViewId in CswNbtStatisticsEntry.ViewsMultiEdited.Keys )
                     {
-                        _makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, CswConvert.ToInt32( ViewId ), CswConvert.ToInt32( CswNbtStatisticsEntry.ViewsMultiEdited[ViewId] ), "multiedit" );
+						_makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, new CswNbtViewId( CswConvert.ToInt32( ViewId ) ), CswConvert.ToInt32( CswNbtStatisticsEntry.ViewsMultiEdited[ViewId] ), "multiedit" );
                     }
                     foreach ( string ViewId in CswNbtStatisticsEntry.ViewsLoaded.Keys )
                     {
-                        _makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, CswConvert.ToInt32( ViewId ), CswConvert.ToInt32( CswNbtStatisticsEntry.ViewsLoaded[ViewId] ), "load" );
+						_makeNewStatisticsViewsRow( StatisticsViewsTable, StatisticsId, new CswNbtViewId( CswConvert.ToInt32( ViewId ) ), CswConvert.ToInt32( CswNbtStatisticsEntry.ViewsLoaded[ViewId] ), "load" );
                     }
                     StatisticsViewsTableCaddy.update( StatisticsViewsTable );
 
@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.Statistics
             }
         }
 
-        private void _makeNewStatisticsViewsRow( DataTable Table, Int32 StatisticsId, Int32 ViewId, Int32 HitCount, string Action )
+        private void _makeNewStatisticsViewsRow( DataTable Table, Int32 StatisticsId, CswNbtViewId ViewId, Int32 HitCount, string Action )
         {
             DataRow Row = Table.NewRow();
             Row["statisticsid"] = CswConvert.ToDbVal( StatisticsId );

@@ -39,7 +39,7 @@ namespace ChemSW.Nbt
                 {
                     _RootString[1] = value;
 
-                    if( ViewId != Int32.MinValue )
+                    if( ViewId.isSet() )
                     {
                         // Update ViewPickList properties
                         CswStaticSelect RelatedsQuery = _CswNbtResources.makeCswStaticSelect( "RelatedsQuery", "getViewPickListsForViewId" );
@@ -123,9 +123,9 @@ namespace ChemSW.Nbt
         // 6 - EditMode (defunct)
 
         // 7 - ViewId
-        public Int32 ViewId
+        public CswNbtViewId ViewId
         {
-            get { return CswConvert.ToInt32( _RootString[7] ); }
+			get { return new CswNbtViewId( CswConvert.ToInt32( _RootString[7] ) ); }
             set { _RootString[7] = value.ToString(); }
         }
 
@@ -298,8 +298,8 @@ namespace ChemSW.Nbt
                     Width = CswConvert.ToInt32( Node.Attributes["width"].Value );
                 //if( Node.Attributes[ "editmode" ] != null )
                 //    EditMode = ( GridEditMode ) Enum.Parse( typeof( GridEditMode ), Node.Attributes[ "editmode" ].Value, true );
-                if( Node.Attributes["viewid"] != null && Node.Attributes["viewid"].Value != String.Empty )
-                    ViewId = CswConvert.ToInt32( Node.Attributes["viewid"].Value );
+				if( Node.Attributes["viewid"] != null && Node.Attributes["viewid"].Value != String.Empty )
+					ViewId = new CswNbtViewId( CswConvert.ToInt32( Node.Attributes["viewid"].Value ) );
                 if( Node.Attributes["category"] != null && Node.Attributes["category"].Value != String.Empty )
                     Category = Node.Attributes["category"].Value;
                 if( Node.Attributes["visibility"] != null && Node.Attributes["visibility"].Value != String.Empty )
@@ -392,7 +392,7 @@ namespace ChemSW.Nbt
             //RootXmlNode.Attributes.Append( EditModeAttribute );
 
             XmlAttribute ViewIdAttribute = XmlDoc.CreateAttribute( "viewid" );
-            if( ViewId > 0 )
+            if( ViewId.isSet() )
                 ViewIdAttribute.Value = ViewId.ToString();
             else
                 ViewIdAttribute.Value = "";

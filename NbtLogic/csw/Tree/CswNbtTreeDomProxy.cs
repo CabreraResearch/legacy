@@ -76,7 +76,8 @@ namespace ChemSW.Nbt
         {
             get
             {
-				return _CswNbtResources.ViewSelect.getSessionView( _Key.SessionViewId ).ViewName;
+				//return _CswNbtResources.ViewSelect.getSessionView( _Key.SessionViewId ).ViewName;
+				return View.ViewName;
             }
         }
 
@@ -89,9 +90,11 @@ namespace ChemSW.Nbt
         /// <param name="XslFilePath">File path to XSL used to translate the tree to XML</param>
         /// <param name="CswNbtNodeWriter">A CswNbtNodeWriter object</param>
         /// <param name="CswNbtNodeCollection">A reference to the CswNbtNodeCollection</param>
-        public CswNbtTreeDomProxy( CswNbtTreeKey CswNbtTreeKey, CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, CswNbtNodeCollection CswNbtNodeCollection )
+        public CswNbtTreeDomProxy( //CswNbtTreeKey CswNbtTreeKey, 
+								   CswNbtView View, CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, CswNbtNodeCollection CswNbtNodeCollection )
         {
-            _Key = CswNbtTreeKey;
+			_View = View;
+            //_Key = CswNbtTreeKey;
             //            CswNbtResources.CswLogger.reportTraceInfo( "CswNbtTreeDomProxy", "ctor", "entered" );
 
             _CswNbtNodeReader = new CswNbtNodeReader( CswNbtResources );
@@ -103,7 +106,8 @@ namespace ChemSW.Nbt
             //            _CswNbtNodeFactory = CswNbtResources.makeCswNbtNodeFactory();
 
             _XslFilePath = CswTools.getConfigurationFilePath( CswNbtResources.SetupVbls.SetupMode );
-            _CswNbtTreeNodes = new CswNbtTreeNodes( _Key, _XslFilePath, ViewName, _CswNbtResources, CswNbtNodeCollection );
+            _CswNbtTreeNodes = new CswNbtTreeNodes( //_Key, 
+													_XslFilePath, ViewName, _CswNbtResources, CswNbtNodeCollection );
 
             //Not required for imported rows
             //_ColsToValidateForImportRow.Add(_CswNbtColumnNames.ParentNodeId );
@@ -121,14 +125,14 @@ namespace ChemSW.Nbt
         }//ctor
 
         
-        private CswNbtTreeKey _Key = null;
-        /// <summary>
-        /// TreeKey which is used to index this tree.
-        /// </summary>
-        public CswNbtTreeKey Key
-        {
-            get { return ( _Key ); }
-        }
+        //private CswNbtTreeKey _Key = null;
+		///// <summary>
+		///// TreeKey which is used to index this tree.
+		///// </summary>
+		//public CswNbtTreeKey Key
+		//{
+		//    get { return ( _Key ); }
+		//}
 
         private CswNbtView _View = null;
         /// <summary>

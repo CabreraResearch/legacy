@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.WebPages
                 ViewTree.ViewSelected += new CswViewListTree.ViewSelectedEventHandler( _ViewTree_ViewSelected );
                 ViewTree.OnError += new CswErrorHandler( Master.HandleError );
                 if( Master.CswNbtView != null )
-                    ViewTree.ViewIdToSelect = Master.CswNbtView.ViewId;
+                    ViewTree.ViewIdToSelect = Master.CswNbtView.ViewId.get();
                 else if( Master.ActionId > 0 )
                     ViewTree.ActionIdToSelect = Master.ActionId;
                 ViewTreeTable.addControl( 1, 0, ViewTree );

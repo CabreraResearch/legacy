@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -132,20 +133,22 @@ namespace ChemSW.Nbt.PropTypes
             Data.Columns.Add( ValueColumn, typeof( bool ) );
 
             bool first = true;
-            ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
-            {
-                UsersTree.goToNthChild( c );
-
+			//ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+			//for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
+			//{
+			//    UsersTree.goToNthChild( c );
+			CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+			foreach(CswNbtNode UserNode in UserOC.getNodes(false, false))
+			{
                 DataRow NTRow = Data.NewRow();
-                NTRow[NameColumn] = UsersTree.getNodeNameForCurrentPosition();
-                NTRow[KeyColumn] = UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
-                NTRow[ValueColumn] = ( ( SelectedUserIds.Contains( UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() ) ) ||
-                                     ( first && Required && SelectedUserIds.Count == 0 ) );
+				NTRow[NameColumn] = UserNode.NodeName; // UsersTree.getNodeNameForCurrentPosition();
+				NTRow[KeyColumn] = UserNode.NodeId; //  UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
+                NTRow[ValueColumn] = ( SelectedUserIds.Contains( UserNode.NodeId.PrimaryKey.ToString() ) ||  //UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() ) ) ||
+                                       ( first && Required && SelectedUserIds.Count == 0 ) );
                 Data.Rows.Add( NTRow );
                 first = false;
 
-                UsersTree.goToParentNode();
+                //UsersTree.goToParentNode();
             }
             return Data;
         } // UserOptions()
@@ -252,12 +255,15 @@ namespace ChemSW.Nbt.PropTypes
         public CswCommaDelimitedString SelectedUserNames()
         {
             CswCommaDelimitedString SelectedUserNames = new CswCommaDelimitedString();
-            ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
+			//ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+			//for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
+			//{
+			//    UsersTree.goToNthChild( c );
+			CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+			foreach(CswNbtNode UserNode in UserOC.getNodes(false, false))
             {
-                UsersTree.goToNthChild( c );
-                CswPrimaryKey ThisUserId = UsersTree.getNodeIdForCurrentPosition();
-                string ThisUserName = UsersTree.getNodeNameForCurrentPosition();
+				CswPrimaryKey ThisUserId = UserNode.NodeId;  //UsersTree.getNodeIdForCurrentPosition();
+				string ThisUserName = UserNode.NodeName; // UsersTree.getNodeNameForCurrentPosition();
 
                 foreach( Int32 UserId in SelectedUserIds.ToIntCollection() )
                 {
@@ -270,7 +276,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                 } // foreach( Int32 UserId in SelectedUserIds.ToIntCollection() )
 
-                UsersTree.goToParentNode();
+                //UsersTree.goToParentNode();
             } // for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
 
             // Sort alphabetically

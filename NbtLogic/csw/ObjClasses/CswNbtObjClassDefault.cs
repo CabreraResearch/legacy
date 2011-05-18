@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             // BZ 9609 - We must force reinit since we just added node(s)
             // actually, let's reinit everything, since any number of trees may be affected
-            _CswNbtResources.Trees.clear();
+            //_CswNbtResources.Trees.clear();
 
             // BZ 10094 - Notification event
             _CswNbtResources.runNotification( this.NodeTypeId, CswNbtObjClassNotification.EventOption.Create, _CswNbtNode, string.Empty, string.Empty );
@@ -158,7 +158,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterDeleteNode()
         {
             // BZ 10223 - Clear all cached trees.
-            _CswNbtResources.Trees.clear();
+            //_CswNbtResources.Trees.clear();
 
             // BZ 10094 - Notification event
             _CswNbtResources.runNotification( this.NodeTypeId, CswNbtObjClassNotification.EventOption.Delete, _CswNbtNode, string.Empty, string.Empty );

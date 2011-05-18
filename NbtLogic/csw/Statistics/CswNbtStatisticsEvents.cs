@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Statistics
                 if ( null != View )
                 {
                     CswNbtStatisticsEntry.Stats_count_viewloads++;
-                    if ( View.ViewId > 0 )
+                    if ( View.ViewId.isSet() )
                         CswNbtStatisticsEntry.IncrementHash( CswNbtStatisticsEntry.ViewsLoaded, View.ViewId.ToString() );
                 }
             }
@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.Statistics
                 if ( null != View )
                 {
                     CswNbtStatisticsEntry.Stats_count_multiedit++;
-                    if ( View.ViewId > 0 )
+                    if ( View.ViewId.isSet() )
                         CswNbtStatisticsEntry.IncrementHash( CswNbtStatisticsEntry.ViewsMultiEdited, View.ViewId.ToString() );
                 }
             }
@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.Statistics
                 if ( null != View )
                 {
                     CswNbtStatisticsEntry.Stats_count_viewsedited++;
-                    if ( View.ViewId > 0 )
+                    if ( View.ViewId.isSet() )
                         CswNbtStatisticsEntry.IncrementHash( CswNbtStatisticsEntry.ViewsEdited, View.ViewId.ToString() );
                 }
             }

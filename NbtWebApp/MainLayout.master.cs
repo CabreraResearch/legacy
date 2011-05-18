@@ -549,11 +549,11 @@ namespace ChemSW.Nbt.WebPages
             switch( ViewType )
             {
                 case CswViewListTree.ViewType.View:
-                    Master.setViewId( Pk );
+					Master.setViewId( new CswNbtViewId( Pk ) );
                     Master.GoMain();
                     break;
                 case CswViewListTree.ViewType.RecentView:
-                    CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( Pk );
+					CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( Pk ) );
                     Master.setViewXml( View.ToXml().InnerXml.ToString() );
                     Master.GoMain();
                     break;
@@ -573,7 +573,7 @@ namespace ChemSW.Nbt.WebPages
 
 
 
-        protected void _QuickLaunch_OnViewLinkClick( Int32 ViewId )
+        protected void _QuickLaunch_OnViewLinkClick( CswNbtViewId ViewId )
         {
             Master.setViewId( ViewId );
             Master.GoMain();
@@ -645,8 +645,8 @@ namespace ChemSW.Nbt.WebPages
         public RadWindow DesignDeleteDialogWindow { get { return Master.DesignDeleteDialogWindow; } }
         public CswSessions SessionList { get { return ( Master.SessionList ); } }
         public void setAction( Int32 ActionId ) { Master.setAction( ActionId ); }
-        public void setViewId( Int32 ViewId ) { Master.setViewId( ViewId ); }
-        public void setViewId( Int32 ViewId, bool ForceReload ) { Master.setViewId( ViewId, ForceReload ); }
+		public void setViewId( CswNbtViewId ViewId ) { Master.setViewId( ViewId ); }
+		public void setViewId( CswNbtViewId ViewId, bool ForceReload ) { Master.setViewId( ViewId, ForceReload ); }
 		public void setSessionViewId( CswNbtSessionDataId ViewId, bool ForceReload ) { Master.setSessionViewId( ViewId, ForceReload ); }
 		public void setSessionViewId( CswNbtSessionDataId ViewId ) { Master.setSessionViewId( ViewId ); }
         public void setViewXml( string ViewXml ) { Master.setViewXml( ViewXml ); }

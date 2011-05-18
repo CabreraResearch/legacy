@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( ViewId <= 0 );
+                return ( !ViewId.isSet() );
             }
         }//Empty
 
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// ViewId for referenced view
         /// </summary>
-        public Int32 ViewId
+        public CswNbtViewId ViewId
         {
             get
             {
@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.PropTypes
                         node.postChanges( false );
                 }
 
-                return CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _ViewIdSubField.Column ) );
+				return new CswNbtViewId( CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _ViewIdSubField.Column ) ) );
             }
             private set
             {
@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             //bz # 8758
             CachedViewName = string.Empty;
-            if( Int32.MinValue != ViewId )
+            if( ViewId.isSet() )
             {
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 if( View != null )
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            ViewId = CswConvert.ToInt32( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ViewIdSubField.ToXmlNodeName() ) );
+			ViewId = new CswNbtViewId( CswConvert.ToInt32( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ViewIdSubField.ToXmlNodeName() ) ) );
             PendingUpdate = true;
         }
 
@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            ViewId = CswConvert.ToInt32( PropRow[_ViewIdSubField.ToXmlNodeName()].ToString() );
+			ViewId = new CswNbtViewId( CswConvert.ToInt32( PropRow[_ViewIdSubField.ToXmlNodeName()].ToString() ) );
             PendingUpdate = true;
         }
 

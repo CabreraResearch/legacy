@@ -998,7 +998,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 //CswNbtView CurrentView = new CswNbtView(_CswNbtResources);
                 //CurrentView.LoadXml(CswConvert.ToInt32(CurrentRow["nodeviewid"].ToString()));
-				CswNbtView CurrentView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
+				CswNbtView CurrentView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
                 if (CurrentView.ContainsNodeType(NodeType))
                     CurrentView.Delete();
             }
@@ -1086,7 +1086,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     CswNbtView CurrentView = new CswNbtView(_CswNbtMetaDataResources.CswNbtResources);
                     CurrentView.LoadXml(CurrentRow["viewxml"].ToString());
-                    CurrentView.ViewId = CswConvert.ToInt32(CurrentRow["nodeviewid"]);
+					CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
 
                     if (CurrentView.ContainsNodeTypeProp(NodeTypeProp) || CurrentView.ViewId == NodeTypeProp.ViewId)
                         CurrentView.Delete();

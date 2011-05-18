@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         public CswNbtNodeCollection Nodes { get { return ( _CswNbtResources.Nodes ); } }
-        public CswNbtTreeCache Trees { get { return ( _CswNbtResources.Trees ); } }
+        //public CswNbtTreeCache Trees { get { return ( _CswNbtResources.Trees ); } }
         public CswNbtActionCollection Actions { get { return _CswNbtResources.Actions; } }
 
         /// <summary>
@@ -316,7 +316,7 @@ namespace ChemSW.Nbt.Schema
 		public CswNbtViewSelect ViewSelect { get { return _CswNbtResources.ViewSelect; } }
 
         public CswNbtView makeView() { return ( new CswNbtView( _CswNbtResources ) ); }
-		public CswNbtView restoreView( Int32 ViewId ) { return ViewSelect.restoreView( ViewId ); }
+		public CswNbtView restoreView( CswNbtViewId ViewId ) { return ViewSelect.restoreView( ViewId ); }
 		public CswNbtView restoreViewString( string ViewAsString ) { return ViewSelect.restoreView( ViewAsString ); }
         public CswNbtView restoreView( string ViewName )
         {
@@ -345,8 +345,8 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
         }
 
-        public CswNbtView getTreeViewOfNodeType( Int32 NodeTypeId ) { return _CswNbtResources.Trees.getTreeViewOfNodeType( NodeTypeId ); }
-        public CswNbtView getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass ) { return _CswNbtResources.Trees.getTreeViewOfObjectClass( ObjectClass ); }
+        //public CswNbtView getTreeViewOfNodeType( Int32 NodeTypeId ) { return _CswNbtResources.Trees.getTreeViewOfNodeType( NodeTypeId ); }
+        //public CswNbtView getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass ) { return _CswNbtResources.Trees.getTreeViewOfObjectClass( ObjectClass ); }
 
         public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes ) { return _CswNbtResources.Trees.getTreeFromView( View, true, true, false, IncludeSystemNodes ); }
         public List<CswNbtView> restoreViews( string ViewName )
@@ -359,7 +359,7 @@ namespace ChemSW.Nbt.Schema
             DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, " where viewname='" + ViewName + "'", false );
             foreach( DataRow CurrentRow in ViewTable.Rows )
             {
-				ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
+				ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
             }
 
             return ( ReturnVal );
@@ -767,7 +767,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtView CurrentView = this.makeView();
                     CurrentView.LoadXml( CurrentRow["viewxml"].ToString() );
-                    CurrentView.ViewId = CswConvert.ToInt32( CurrentRow["nodeviewid"] );
+					CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
 
                     // Swap old property for new
                     this.ReplaceViewProperty( CurrentView, OldProp, NewProp );

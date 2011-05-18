@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 _ImportExport = new CswNbtImportExport( Master.CswNbtResources );
-				_View = Master.CswNbtResources.ViewSelect.restoreView( 696 );
+				_View = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( 696 ) );
                 _Tree = Master.CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );
                 //_Factory = new CswFieldTypeWebControlFactory( Master.CswNbtResources );
 

@@ -26,12 +26,12 @@ namespace ChemSW.Nbt.WebServices
 		//private HttpSessionState _Session;
 		private LinkedList<CswNbtQuickLaunchItem> _QuickLaunchHistory = null;
 		private bool _IsNewSession;
-        private ICswWebClientStorage _CswWebClientStorage = null; 
+        //private ICswWebClientStorage _CswWebClientStorage = null; 
 
 		public const string QuickLaunchViews = "QuickLaunchViews";
-        public CswNbtWebServiceQuickLaunchItems( CswNbtResources CswNbtResources, ICswWebClientStorage CswWebClientStorage ) //, HttpSessionState Session )
+        public CswNbtWebServiceQuickLaunchItems( CswNbtResources CswNbtResources )//, ICswWebClientStorage CswWebClientStorage ) //, HttpSessionState Session )
 		{
-            _CswWebClientStorage = CswWebClientStorage;
+            //_CswWebClientStorage = CswWebClientStorage;
 			_CswNbtResources = CswNbtResources;
 			//_IsNewSession = ( null == Session[QuickLaunchViews] );
 			_IsNewSession = true;
@@ -66,9 +66,9 @@ namespace ChemSW.Nbt.WebServices
 					foreach( var QuickLaunchItem in UserQuickLaunchViews.Where( View => !String.IsNullOrEmpty( View ) )
 						.Select( CswConvert.ToInt32 )
 						.Where( ViewId => Int32.MinValue != ViewId )
-						.Select( ViewId => _CswNbtResources.ViewSelect.restoreView( ViewId ) )
+						.Select( ViewId => _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( ViewId ) ) )
 						.Where( QuickLaunchView => null != QuickLaunchView && QuickLaunchView.IsFullyEnabled() )
-						.Select( QuickLaunchView => new CswNbtQuickLaunchItem( QuickLaunchView.ViewId, QuickLaunchView.ViewName, QuickLaunchView.ViewMode ) ) )
+						.Select( QuickLaunchView => new CswNbtQuickLaunchItem( QuickLaunchView.ViewId.get(), QuickLaunchView.ViewName, QuickLaunchView.ViewMode ) ) )
 					{
 						if( _QuickLaunchHistory.Contains( QuickLaunchItem ) )
 						{
@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.WebServices
 				//{
 				//    ViewHistoryList = (LinkedList<CswNbtQuickLaunchItem>) Session[QuickLaunchViews];
 				//}
-				var ThisView = new CswNbtQuickLaunchItem( View.ViewId, View.ViewName, View.ViewMode );
+				var ThisView = new CswNbtQuickLaunchItem( View.ViewId.get(), View.ViewName, View.ViewMode );
 
 				if( ViewHistoryList.Contains( ThisView ) )
 				{

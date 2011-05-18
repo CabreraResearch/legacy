@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
             DataTable ViewsTable = _CswNbtSchemaModTrnsctn.getAllViews();
             foreach( DataRow ViewRow in ViewsTable.Rows )
             {
-                CswNbtView ThisView = _CswNbtSchemaModTrnsctn.restoreView( CswConvert.ToInt32( ViewRow["nodeviewid"] ) );
+				CswNbtView ThisView = _CswNbtSchemaModTrnsctn.restoreView( new CswNbtViewId( CswConvert.ToInt32( ViewRow["nodeviewid"] ) ) );
                 _SetDefaultEquipmentFilter( ThisView, ThisView.Root );
             }
 

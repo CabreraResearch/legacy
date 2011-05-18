@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Schema
 			DataTable BadViewsTable = _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSqlSelect( "01H-31_View_Select", SqlText );
 			foreach( DataRow BadViewRow in BadViewsTable.Rows )
 			{
-				CswNbtView BadView = _CswNbtSchemaModTrnsctn.restoreView( CswConvert.ToInt32( BadViewRow["nodeviewid"] ) );
+				CswNbtView BadView = _CswNbtSchemaModTrnsctn.restoreView( new CswNbtViewId( CswConvert.ToInt32( BadViewRow["nodeviewid"] ) ) );
 				BadView.ViewMode = NbtViewRenderingMode.Grid;
 				BadView.save();
 			}

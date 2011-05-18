@@ -162,7 +162,7 @@ namespace ChemSW.Nbt.WebPages
             if( CswTools.IsInteger( _LoadViewList.SelectedValue ) )
             {
                 // Run the selected View
-				CswNbtView SelectedView = Master.CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( _LoadViewList.SelectedValue ) ) as CswNbtView;
+				CswNbtView SelectedView = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _LoadViewList.SelectedValue ) ) );
                 ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( SelectedView, true, true, false, false );
 
                 // Harvest the Result IDs

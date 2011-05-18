@@ -87,15 +87,15 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// True if the SelectedViewIds contains the given ViewId
         /// </summary>
-        public bool ContainsViewId( Int32 ViewIdToFind )
-        {
-            return ( ( "," + SelectedViewIds + "," ).Contains( "," + ViewIdToFind + "," ) );
-        }
+		public bool ContainsViewId( CswNbtViewId ViewIdToFind )
+		{
+			return SelectedViewIds.Contains( ViewIdToFind.ToString() );
+		}
 
         /// <summary>
         /// Removes a ViewId from the SelectedViewIds
         /// </summary>
-        public void RemoveViewId( Int32 ViewIdToRemove )
+        public void RemoveViewId( CswNbtViewId ViewIdToRemove )
         {
             SelectedViewIds.Remove( ViewIdToRemove.ToString() );
         }
@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.PropTypes
 				//    DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
 				//    if( ViewTable != null && ViewTable.Rows.Count > 0 )
 				//        CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
-					CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( SelectedViewIds[0] ) );
+					CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( SelectedViewIds[0] ) ) );
 					CachedViewNames.Add( ThisView.ViewName );
 				}
                 else
@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.PropTypes
 						//DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
 						//if( ViewTable != null && ViewTable.Rows.Count > 0 )
 						//    CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
-						CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( CswConvert.ToInt32( SelectedViewIds[0] ) );
+						CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( SelectedViewIds[0] ) ) );
 						CachedViewNames.Add( ThisView.ViewName );
                     } // foreach( Int32 ViewId in SelectedViewIdCollection )
 
