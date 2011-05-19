@@ -2,18 +2,45 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
+	/// <summary>
+	/// Represents a View Id
+	/// </summary>
+	/// <remarks>
+	/// This class exists to distinguish this Int32 from the SessionViewId Int32, 
+	/// and to prevent developers from using them interchangably
+	/// </remarks>
 	public class CswNbtViewId : IEquatable<CswNbtViewId>
 	{
+		private static char _delimiter = '_';
+		private static string _StringPrefix = "ViewId";
 		private Int32 _ViewId;
+
 		public CswNbtViewId()
 		{
 		}
 		public CswNbtViewId( Int32 value )
 		{
 			_ViewId = value;
+		}
+		public CswNbtViewId(string ViewIdString )
+		{
+			CswDelimitedString delimstr = new CswDelimitedString( _delimiter );
+			delimstr.FromString( ViewIdString );
+			_ViewId = CswConvert.ToInt32( delimstr[1] );
+		}
+		
+		public static bool isViewIdString(string TestString)
+		{
+			CswDelimitedString delimstr = new CswDelimitedString( _delimiter );
+			delimstr.FromString( TestString );
+			
+			return (delimstr.Count == 2 &&
+					delimstr[0] == _StringPrefix &&
+					CswTools.IsInteger(delimstr[1]));
 		}
 
 		public Int32 get()
@@ -31,10 +58,13 @@ namespace ChemSW.Nbt
 
 		public override string ToString()
 		{
-			string ret = string.Empty;
-			if(isSet())
-				ret = _ViewId.ToString();
-			return ret;
+			CswDelimitedString delimstr = new CswDelimitedString( _delimiter );
+			if( isSet() )
+			{
+				delimstr[0] = _StringPrefix;
+				delimstr[1] = _ViewId.ToString();
+			}
+			return delimstr.ToString();
 		}
 
 		#region IEquatable

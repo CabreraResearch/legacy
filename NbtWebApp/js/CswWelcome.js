@@ -204,7 +204,7 @@
                                                                 _addItem({ 
 													                    'AddWelcomeItemUrl': o.AddWelcomeItemUrl,
 													                    'type': $typeselect.val(),
-													                    'viewid': viewid,
+													                    'welcomepkval': viewid,
 													                    'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
 													                    'text': $welcometext.val(),
 													                    'iconfilename': $buttonsel.val(),

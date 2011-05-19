@@ -437,7 +437,7 @@
                     'NodeId': o.nodeid,
                     'SafeNodeKey': o.cswnbtnodekey,
                     'NodeTypeId': o.nodetypeid,
-                    'SessionViewId': $.CswCookie('get', CswCookieName.CurrentView.SessionViewId),
+                    'ViewId': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
                     'NewPropsXml': xmlToString($propsxml)
                 };
 

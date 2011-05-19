@@ -277,7 +277,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Adds a welcome component to the welcome page
 		/// </summary>
-		public void AddWelcomeItem( WelcomeComponentType ComponentType, CswViewListTree.ViewType ViewType, Int32 ViewValue,
+		public void AddWelcomeItem( WelcomeComponentType ComponentType, CswViewListTree.ViewType ViewType, Int32 PkValue,
 									Int32 NodeTypeId, string DisplayText, Int32 Row, Int32 Column, string ButtonIcon, string strRoleId )
 		{
 			CswPrimaryKey RolePk = new CswPrimaryKey();
@@ -287,12 +287,12 @@ namespace ChemSW.Nbt.WebServices
 			CswTableUpdate WelcomeUpdate = _CswNbtResources.makeCswTableUpdate( "AddWelcomeItem_Update", "welcome" );
 			DataTable WelcomeTable = WelcomeUpdate.getEmptyTable();
 
-			_AddWelcomeItem( WelcomeTable, ComponentType, ViewType, ViewValue, NodeTypeId, DisplayText, Row, Column, ButtonIcon, RoleId );
+			_AddWelcomeItem( WelcomeTable, ComponentType, ViewType, PkValue, NodeTypeId, DisplayText, Row, Column, ButtonIcon, RoleId );
 
 			WelcomeUpdate.update( WelcomeTable );
 		} // AddWelcomeItem()
 
-		private void _AddWelcomeItem( DataTable WelcomeTable, WelcomeComponentType ComponentType, CswViewListTree.ViewType ViewType, Int32 ViewValue,
+		private void _AddWelcomeItem( DataTable WelcomeTable, WelcomeComponentType ComponentType, CswViewListTree.ViewType ViewType, Int32 PkValue,
 									  Int32 NodeTypeId, string DisplayText, Int32 Row, Int32 Column, string ButtonIcon, Int32 RoleId )
 		{
 			if( Row == Int32.MinValue )
@@ -333,13 +333,13 @@ namespace ChemSW.Nbt.WebServices
 					switch( ViewType )
 					{
 						case CswViewListTree.ViewType.View:
-							NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( ViewValue );
+							NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( PkValue );
 							break;
 						case CswViewListTree.ViewType.Action:
-							NewWelcomeRow["actionid"] = CswConvert.ToDbVal( ViewValue );
+							NewWelcomeRow["actionid"] = CswConvert.ToDbVal( PkValue );
 							break;
 						case CswViewListTree.ViewType.Report:
-							NewWelcomeRow["reportid"] = CswConvert.ToDbVal( ViewValue );
+							NewWelcomeRow["reportid"] = CswConvert.ToDbVal( PkValue );
 							break;
 						default:
 							throw new CswDniException( "You must select a view", "No view was selected for new Welcome Page Component" );
@@ -350,7 +350,7 @@ namespace ChemSW.Nbt.WebServices
 				case WelcomeComponentType.Search:
 					if( ViewType == CswViewListTree.ViewType.View )
 					{
-						NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( ViewValue );
+						NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( PkValue );
 						NewWelcomeRow["buttonicon"] = ButtonIcon;
 						NewWelcomeRow["displaytext"] = DisplayText;
 					}

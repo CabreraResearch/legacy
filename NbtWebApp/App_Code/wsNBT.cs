@@ -312,17 +312,18 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal;
         } // getHeaderMenu()
 
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getMainMenu( string SessionViewId, string SafeNodeKey )
+        public XElement getMainMenu( string ViewId, string SafeNodeKey )
         {
             var ReturnNode = new XElement( "menu" );
             try
             {
                 start();
                 var ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
-				CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( CswConvert.ToInt32( SessionViewId ) );
-				ReturnNode = ws.getMenu( SessionDataId, SafeNodeKey );
+				CswNbtView View = _getView( ViewId );
+				ReturnNode = ws.getMenu( View, SafeNodeKey );
                 end();
             }
             catch( Exception ex )
@@ -334,37 +335,33 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getGrid( string ViewPk, string SafeNodeKey, string ShowEmpty )
+        public string getGrid( string ViewId, string SafeNodeKey, string ShowEmpty )
         {
             var ReturnJson = new JObject();
             string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
 
-            try
-            {
-                start();
-				CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( ViewPk ) );
-                bool ShowEmptyGrid = CswConvert.ToBoolean( ShowEmpty );
-                if( ViewId.isSet() )
-                {
-					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
-                    if( null != View )
-                    {
-                        CswNbtNodeKey ParentNodeKey = null;
-                        if( !string.IsNullOrEmpty( ParsedNodeKey ) )
-                        {
-                            ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
-                        }
-                        var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
-                        ReturnJson = g.getGrid( ShowEmptyGrid );
-						CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
-                    }
-                }
-                end();
-            }
-            catch( Exception Ex )
-            {
-                ReturnJson = jError( Ex );
-            }
+			try
+			{
+				start();
+				bool ShowEmptyGrid = CswConvert.ToBoolean( ShowEmpty );
+				CswNbtView View = _getView( ViewId );
+				if( null != View )
+				{
+					CswNbtNodeKey ParentNodeKey = null;
+					if( !string.IsNullOrEmpty( ParsedNodeKey ) )
+					{
+						ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
+					}
+					var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
+					ReturnJson = g.getGrid( ShowEmptyGrid );
+					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
+				}
+				end();
+			}
+			catch( Exception Ex )
+			{
+				ReturnJson = jError( Ex );
+			}
 
             return ReturnJson.ToString();
         } // getGrid()
@@ -374,7 +371,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getTreeOfView( string ViewId, string SessionViewId, string IDPrefix, bool IsFirstLoad, string ParentNodeKey, string IncludeNodeKey, bool IncludeNodeRequired,
+        public XElement getTreeOfView( string ViewId, string IDPrefix, bool IsFirstLoad, string ParentNodeKey, string IncludeNodeKey, bool IncludeNodeRequired,
                                        bool UsePaging, string ShowEmpty, bool ForSearch )
         {
             var TreeNode = new XElement( "tree" );
@@ -382,20 +379,9 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				start();
-				CswNbtViewId realViewId = new CswNbtViewId( CswConvert.ToInt32( ViewId ) );
-				CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( CswConvert.ToInt32( SessionViewId ) );
 				bool ShowEmptyTree = CswConvert.ToBoolean( ShowEmpty );
-				CswNbtView View = null;
-				if( realViewId.isSet() )
-				{
-					View = _CswNbtResources.ViewSelect.restoreView( realViewId );
-				}
-				else if( SessionDataId.isSet() )
-				{
-					View = _CswNbtResources.ViewSelect.getSessionView( SessionDataId );
-				}
-
-				if( View != null )
+				CswNbtView View = _getView( ViewId );
+				if( null != View )
 				{
 					var ws = new CswNbtWebServiceTree( _CswNbtResources );
 
@@ -537,10 +523,9 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 start();
-				CswNbtViewId realViewId = new CswNbtViewId( CswConvert.ToInt32( ViewId ) );
-				if( realViewId.isSet() )
+				CswNbtView View = _getView( ViewId );
+				if( null != View )
 				{
-					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( realViewId );
 					ReturnXml = View.ToXml();
 				}
                 end();
@@ -561,10 +546,9 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 start();
-				CswNbtViewId realViewId = new CswNbtViewId( CswConvert.ToInt32( ViewId ) );
-				if( realViewId.isSet() )
+				CswNbtView View = _getView( ViewId );
+				if( null != View )
 				{
-					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( realViewId );
 					View.LoadXml( ViewXml );
 					View.save();
 
@@ -616,11 +600,10 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 start();
-				CswNbtViewId realViewId = new CswNbtViewId( CswConvert.ToInt32( ViewId ) );
-				if( realViewId.isSet() )
+				CswNbtView SourceView = _getView( ViewId );
+				if( null != SourceView )
 				{
-					CswNbtView SourceView = _CswNbtResources.ViewSelect.restoreView( realViewId );
-                    CswNbtView NewView = new CswNbtView( _CswNbtResources );
+					CswNbtView NewView = new CswNbtView( _CswNbtResources );
                     string NewViewNameOrig = SourceView.ViewName;
                     string Suffix = " Copy";
                     if( !NewViewNameOrig.EndsWith( Suffix ) && NewViewNameOrig.Length < ( CswNbtView.ViewNameLength - Suffix.Length - 2 ) )
@@ -657,11 +640,10 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 start();
-				CswNbtViewId realViewId = new CswNbtViewId( CswConvert.ToInt32( ViewId ) );
-				if( realViewId.isSet() )
+				CswNbtView DoomedView = _getView( ViewId );
+				if( null != DoomedView )
 				{
-					CswNbtView DoomedView = _CswNbtResources.ViewSelect.restoreView( realViewId );
-                    DoomedView.Delete();
+					DoomedView.Delete();
                     ReturnJson.Add( new JProperty( "succeeded", "true" ) );
                 }
                 end();
@@ -881,7 +863,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string NewPropsXml, string NodeTypeId, string SessionViewId )
+        public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string NewPropsXml, string NodeTypeId, string ViewId )
         {
             JObject ReturnVal = new JObject();
             try
@@ -892,7 +874,8 @@ namespace ChemSW.Nbt.WebServices
                 //{
                 var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
                 var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-				ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ), new CswNbtSessionDataId( CswConvert.ToInt32( SessionViewId ) ) );
+				CswNbtView View = _getView( ViewId );
+				ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ), View );
                 //}
                 end();
             }
@@ -1122,14 +1105,15 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getClientSearchXml( string ViewIdNum, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
+        public XElement getClientSearchXml( string ViewId, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
         {
             XElement SearchNode = new XElement( "search" );
             try
             {
                 start();
                 var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
-                SearchNode = ws.getSearchXml( ViewIdNum, SelectedNodeTypeIdNum, NodeKey );
+				CswNbtView View = _getView( ViewId );
+                SearchNode = ws.getSearchXml( View, SelectedNodeTypeIdNum, NodeKey );
                 end();
             }
             catch( Exception ex )
@@ -1424,7 +1408,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string addWelcomeItem( string RoleId, string Type, string ViewId, string NodeTypeId, string Text, string IconFileName )
+        public string addWelcomeItem( string RoleId, string Type, string WelcomePkVal, string NodeTypeId, string Text, string IconFileName )
         {
             string ReturnVal = string.Empty;
             try
@@ -1436,7 +1420,7 @@ namespace ChemSW.Nbt.WebServices
                 if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     UseRoleId = RoleId;
                 CswNbtWebServiceWelcomeItems.WelcomeComponentType ComponentType = (CswNbtWebServiceWelcomeItems.WelcomeComponentType) Enum.Parse( typeof( CswNbtWebServiceWelcomeItems.WelcomeComponentType ), Type );
-                ws.AddWelcomeItem( ComponentType, NbtWebControls.CswViewListTree.ViewType.View, CswConvert.ToInt32( ViewId ), CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
+                ws.AddWelcomeItem( ComponentType, NbtWebControls.CswViewListTree.ViewType.View, CswConvert.ToInt32(WelcomePkVal), CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
                 ReturnVal = "{ \"Succeeded\": \"true\" }";
                 end();
             }
@@ -1618,6 +1602,24 @@ namespace ChemSW.Nbt.WebServices
         #endregion Mobile
 
         #endregion Web Methods
+
+
+		private CswNbtView _getView( string ViewId )
+		{
+			CswNbtView View = null;
+			if( CswNbtViewId.isViewIdString( ViewId ) )
+			{
+				CswNbtViewId realViewid = new CswNbtViewId( ViewId );
+				View = _CswNbtResources.ViewSelect.restoreView( realViewid );
+			}
+			else if( CswNbtSessionDataId.isSessionDataIdString( ViewId ) )
+			{
+				CswNbtSessionDataId SessionViewid = new CswNbtSessionDataId( ViewId );
+				View = _CswNbtResources.ViewSelect.getSessionView( SessionViewid );
+			}
+			return View;
+		} // _getView()
+
 
     }//wsNBT
 

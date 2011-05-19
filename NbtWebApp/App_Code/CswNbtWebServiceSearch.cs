@@ -180,19 +180,12 @@ namespace ChemSW.Nbt.WebServices
         /// Returns the XML for filtered (searchable) View properties, if the View is searchable.
         /// Else, returns XML for a NodeTypeSelect.
         /// </summary>
-        public XElement getSearchXml( string ViewIdNum, string SelectedNodeTypeIdNum, string NodeKey )
+        public XElement getSearchXml( CswNbtView View, string SelectedNodeTypeIdNum, string NodeKey )
         {
             XElement SearchNode = new XElement( "search", 
                                         new XAttribute( "searchtype", "viewsearch" ) );
             
             XElement PropNode = new XElement( "properties" );
-			CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( ViewIdNum ) );
-            
-            CswNbtView View = null;
-            if( ViewId.isSet() )
-            {
-				View = _CswNbtResources.ViewSelect.restoreView( ViewId );
-            }
 
             if( null == View || !View.IsSearchable() )
             {

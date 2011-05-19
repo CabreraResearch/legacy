@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.WebServices
                     if( IsFirstLoad )
                     {
                         ReturnNode.Add( new XElement( "tree", RootNode ),
-                                        new XElement( "sessionviewid", View.SessionViewId.get() ),
+                                        new XElement( "viewid", View.SessionViewId.ToString() ),
                                         new XElement( "types", getTypes( View ).ToString() ) );
                     }
                     else
@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.WebServices
                                                 new XElement( "content",
                                                     new XElement( "name", EmptyOrInvalid ) ) ) ) )
                                         ),
-                                new XElement( "sessionviewid", SessionViewId.get() ),
+                                new XElement( "viewid", SessionViewId.ToString() ),
                                 Types );
 			}
 			return ReturnNode;
