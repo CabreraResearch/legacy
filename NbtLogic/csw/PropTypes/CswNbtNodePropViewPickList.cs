@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 DataRow NewViewRow = _ViewsForCBA.NewRow();
                 NewViewRow[NameColumn] = ThisView.ViewName;
-                NewViewRow[KeyColumn] = ThisView.ViewId;
+                NewViewRow[KeyColumn] = ThisView.ViewId.get();
                 //NewViewRow[ValueColumn] = ( searchstr.IndexOf( CswNbtNodePropViewPickList.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropViewPickList.delimiter.ToString() ) >= 0 );
                 NewViewRow[ValueColumn] = ( ( SelectedViewIds.Contains( ThisView.ViewId ) ) ||
                                           ( ( Views.First() == ThisView ) && Required && SelectedViewIds.Count == 0 ) );
