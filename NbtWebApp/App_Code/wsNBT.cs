@@ -192,6 +192,10 @@ namespace ChemSW.Nbt.WebServices
                         // BZ 8133 - make sure they've seen the License
                         AuthenticationStatus = AuthenticationStatus.ShowLicense;
                     }
+
+					// initial quick launch setup
+					CswNbtWebServiceQuickLaunchItems wsQL = new CswNbtWebServiceQuickLaunchItems(_CswNbtResources);
+					wsQL.initQuickLaunchItems();
                 }
                 ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
                 end();
@@ -241,7 +245,7 @@ namespace ChemSW.Nbt.WebServices
 				var ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources ); //, new CswWebClientStorageCookies( Context.Request, Context.Response ) ); // , Session );
                 if( null != UserId )
                 {
-                    QuickLaunchItems.Add( ws.getQuickLaunchItems( UserId ) );
+                    QuickLaunchItems.Add( ws.getQuickLaunchItems() );
                 }
 
                 end();
@@ -354,7 +358,8 @@ namespace ChemSW.Nbt.WebServices
 					}
 					var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
 					ReturnJson = g.getGrid( ShowEmptyGrid );
-					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
+					//CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
+					View.SaveToCache(true);
 				}
 				end();
 			}
@@ -395,7 +400,8 @@ namespace ChemSW.Nbt.WebServices
 
 					TreeNode = ws.getTree( View, IDPrefix, IsFirstLoad, RealParentNodeKey, RealIncludeNodeKey, IncludeNodeRequired, UsePaging, ShowEmptyTree, ForSearch );
 
-					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
+					//CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
+					//View.SaveToCache(true);
 				}
 				end();
 			}
@@ -430,8 +436,9 @@ namespace ChemSW.Nbt.WebServices
 
                     var ws = new CswNbtWebServiceTree( _CswNbtResources );
                     TreeNode = ws.getTree( View, IDPrefix, true, null, null, false, false, false, false );
-					CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
-                }
+					//CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
+					View.SaveToCache( true );
+				}
                 end();
             }
             catch( Exception ex )

@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
 		public bool ContainsViewId( CswNbtViewId ViewIdToFind )
 		{
-			return SelectedViewIds.Contains( ViewIdToFind.ToString() );
+			return SelectedViewIds.Contains( ViewIdToFind.get().ToString() );
 		}
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void RemoveViewId( CswNbtViewId ViewIdToRemove )
         {
-            SelectedViewIds.Remove( ViewIdToRemove.ToString() );
+            SelectedViewIds.Remove( ViewIdToRemove.get().ToString() );
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.PropTypes
                 NewViewRow[NameColumn] = ThisView.ViewName;
                 NewViewRow[KeyColumn] = ThisView.ViewId.get();
                 //NewViewRow[ValueColumn] = ( searchstr.IndexOf( CswNbtNodePropViewPickList.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropViewPickList.delimiter.ToString() ) >= 0 );
-                NewViewRow[ValueColumn] = ( ( SelectedViewIds.Contains( ThisView.ViewId ) ) ||
+                NewViewRow[ValueColumn] = ( ( SelectedViewIds.Contains( ThisView.ViewId.get() ) ) ||
                                           ( ( Views.First() == ThisView ) && Required && SelectedViewIds.Count == 0 ) );
                 _ViewsForCBA.Rows.Add( NewViewRow );
             }

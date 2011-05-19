@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -60,6 +61,33 @@ namespace ChemSW.Nbt
 			return ret;
 		}
 
+		public XElement getQuickLaunchXml()
+		{
+			XElement Root = new XElement( "items" );
+			
+			CswTableSelect SessionDataSelect = _CswNbtResources.makeCswTableSelect( "getQuickLaunchXml_select", "session_data" );
+			Collection<OrderByClause> OrderBy = new Collection<OrderByClause>();
+ 			OrderBy.Add( new OrderByClause( SessionDataColumn_PrimaryKey, OrderByType.Descending));
+			DataTable SessionDataTable = SessionDataSelect.getTable( "where " + SessionDataColumn_SessionId + "='" + _CswNbtResources.Session.SessionId + "' and " + SessionDataColumn_QuickLaunch + " = '" + CswConvert.ToDbVal( true ).ToString() + "'", OrderBy );
+			foreach( DataRow Row in SessionDataTable.Rows )
+			{
+				XElement ThisItem = new XElement( "item" );
+				ThisItem.SetAttributeValue( "launchtype", Row[SessionDataColumn_SessionDataType].ToString() );
+				ThisItem.SetAttributeValue( "itemid", Row[SessionDataColumn_PrimaryKey].ToString() );
+				ThisItem.SetAttributeValue( "text", Row[SessionDataColumn_Name].ToString() );
+				ThisItem.SetAttributeValue( "viewmode", Row[SessionDataColumn_ViewMode].ToString() );
+
+				Int32 ActionId = CswConvert.ToInt32(Row[SessionDataColumn_ActionId]);
+				if( ActionId != Int32.MinValue )
+					ThisItem.SetAttributeValue( "url", _CswNbtResources.Actions[ActionId].Url );
+				else
+					ThisItem.SetAttributeValue( "url", "" );
+
+				Root.Add( ThisItem );
+			}
+			return Root;
+		} // getQuickLaunchXml()
+	
 		/// <summary>
 		/// Save an action to the session data collection.
 		/// </summary>
