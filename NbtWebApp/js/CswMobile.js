@@ -21,6 +21,8 @@
         ///     &#10;3 - options.DivRemovalDelay: 1000
         /// </param>
 
+        var $body = this;
+
         var opts = {
             DBShortName: 'Mobile.html',
             DBVersion: '1.0',
@@ -52,7 +54,7 @@
 
         // case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
-        var tempdivid = 'initialloadingdiv';
+        var tempdivid = 'notviewsdiv';
         if (window.location.hash.length > 0)
         {
             var potentialtempdivid = window.location.hash.substr(1);
@@ -63,16 +65,16 @@
         }
 
         // Make loading div first
-        var $loadingdiv = _addPageDivToBody({
-                DivId: tempdivid,
-                HeaderText: 'Please wait',
-                content: 'Loading...',
-                HideSearchButton: true,
-                HideOnlineButton: true,
-                HideRefreshButton: true,
-                HideLogoutButton: true,
-                HideHelpButton: true
-        });
+//        var $loadingdiv = _addPageDivToBody({
+//                DivId: tempdivid,
+//                HeaderText: 'Please wait',
+//                content: 'Loading...',
+//                HideSearchButton: true,
+//                HideOnlineButton: true,
+//                HideRefreshButton: true,
+//                HideLogoutButton: true,
+//                HideHelpButton: true
+//        });
 
         var $logindiv = _loadLoginDiv(true);
 
@@ -100,13 +102,13 @@
                         {
                             // online
                             _loadLoginDiv(true);
-                            removeDiv(tempdivid);
+                            //removeDiv(tempdivid);
                         },
                         function ()
                         {
                             // offline
                             _loadSorryCharlieDiv(true);
-                            removeDiv(tempdivid);
+                            //removeDiv(tempdivid);
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
@@ -119,14 +121,11 @@
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
             LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
             LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
-            var $retDiv = _addPageDivToBody({
+            var $retDiv = _addDialogDivToBody({
                 DivId: 'logindiv',
                 HeaderText: 'Login to ChemSW Fire Inspection',
                 content: LoginContent,
-                HideSearchButton: true,
-                HideRefreshButton: true,
-                HideLogoutButton: true,
-				shownow: true
+                HideHelpButton: false
             });
             $('#loginsubmit').click(onLoginSubmit);
             $('#login_accessid').clickOnEnter($('#loginsubmit'));
@@ -134,7 +133,7 @@
             $('#login_password').clickOnEnter($('#loginsubmit'));
             if (ChangePage)
             {
-			    _changePage($('#logindiv'), 'fade', false, true);
+			    _changePage($retDiv, 'fade', false, true);
 			}
             return $retDiv;
 		}
@@ -142,7 +141,7 @@
 		function _changePage($div, transition, reverse, changeHash)
 		{
             //debugger;
-			if($div.CswAttrDom('id') === 'viewsdiv' || $div.CswAttrDom('id') === 'logindiv')
+			if($div.CswAttrDom('id') === 'viewsdiv' || $div === $logindiv)
             {
                 $.mobile.changePage($div, transition, reverse, changeHash);
             }
@@ -150,17 +149,14 @@
 
         function _loadSorryCharlieDiv(ChangePage)
         {
-            _addPageDivToBody({
+            $retDiv = _addDialogDivToBody({
                 DivId: 'sorrycharliediv',
                 HeaderText: 'Sorry Charlie!',
-                content: 'You must have internet connectivity to login.',
-                HideSearchButton: true,
-                HideRefreshButton: true,
-                HideLogoutButton: true,
-				shownow: true
+                content: 'You must have internet connectivity to login.'                
             });
             if (ChangePage)
-                _changePage($('#sorrycharliediv'), 'fade', false, true);
+                _changePage($retDiv, 'fade', false, true);
+            return $retDiv;
         }
 
         function removeDiv(DivId)
@@ -171,20 +167,25 @@
         function reloadViews(ChangePage)
         {
             var $retDiv;
-            if ($('#viewsdiv').hasClass('ui-page-active'))
+            if ($('#viewsdiv').hasClass('ui-page-active')) //$.mobile.activePage()
             {
-                $retDiv = _addPageDivToBody({
-                    DivId: 'loadingdiv',
-                    HeaderText: 'Please wait',
-                    content: 'Loading...',
-                    HideSearchButton: true,
-                    HideOnlineButton: true,
-                    HideRefreshButton: true,
-                    HideLogoutButton: true,
-                    HideHelpButton: true
-                });
-                _changePage($('#loadingdiv'), "fade", false, true);
-                setTimeout(function () { continueReloadViews(true); removeDiv('loadingdiv') }, opts.DivRemovalDelay);
+//                $retDiv = _addPageDivToBody({
+//                    DivId: 'loadingdiv',
+//                    HeaderText: 'Please wait',
+//                    content: 'Loading...',
+//                    HideSearchButton: true,
+//                    HideOnlineButton: true,
+//                    HideRefreshButton: true,
+//                    HideLogoutButton: true,
+//                    HideHelpButton: true
+//                });
+//                _changePage($('#loadingdiv'), "fade", false, true);
+                $.mobile.pageLoading();
+                setTimeout(function () { 
+                        continueReloadViews(true);
+                        $.mobile.pageLoading( true ); 
+                    }, 
+                    opts.DivRemovalDelay);
             } else
             {
                 $retDiv = continueReloadViews(ChangePage);
@@ -222,10 +223,10 @@
 
                 reloadViews(false);
             }
-            if ($('#logindiv').length > 0)
+            if ($logindiv.length > 0)
             {
                 _loadSorryCharlieDiv(true);
-                removeDiv('logindiv');
+                $logindiv.remove();
             }
         }
         function setOnline()
@@ -268,14 +269,14 @@
                 ChangePage: false
             };
             if (params) $.extend(p, params);
-
-            var $retDiv;
-
+            
             if (p.level === 1)
             {
                 rootid = p.DivId;
             }
-            if ($('#' + p.DivId).length === 0)
+            var $retDiv = $('#' + p.DivId);
+
+            if ( isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.children().length === 0 )
             {
                 if (p.level === 0)
                 {
@@ -456,8 +457,7 @@
                 HeaderText: p.HeaderText,
                 content: content,
                 HideRefreshButton: p.HideRefreshButton,
-                HideSearchButton: p.HideSearchButton,
-				shownow: p.ChangePage
+                HideSearchButton: p.HideSearchButton
             });
             onAfterAddDiv($retDiv);
 
@@ -593,6 +593,12 @@
                         else
                             lihtml += text;
                         lihtml += '</li>';
+                        if(parentlevel === 0) 
+                        {
+                            $body.CswDiv('init',{ID: id})
+                                 .CswAttrXml({'data-title': text, 'data-role': 'page', 'data-url': id})
+                                 .css('hidden',true);
+                        }
                         break;
                     } // default:
             }
@@ -1058,7 +1064,7 @@
                 HideHelpButton: false,
                 backicon: undefined,
                 backtransition: undefined,
-				shownow: false
+                IsDialog: false
             };
 
             if (params)
@@ -1068,87 +1074,149 @@
 
             p.DivId = makeSafeId({ID: p.DivId});
 
-            var divhtml = '<div id="' + p.DivId + '" data-role="page" data-url="'+ p.DivId +'"' + 'data-title="'+ p.HeaderText +'"'; 
-			//if(p.shownow) divhtml += ' class="ui-page-active"';
-			divhtml += '><div data-role="header" data-theme="' + opts.Theme + '" data-position="fixed">';
-            divhtml += '<a href="#' + p.ParentId + '" id="' + p.DivId + '_back" data-direction="reverse" ';
+            var $pageDiv = $('#' + p.DivId);
+
+            if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
+            {
+                $pageDiv = $body.CswDiv('init',{ID: p.DivId})
+                                .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText}); 
+            }
+            if( p.IsDialog ) $pageDiv.CswAttrXml('data-rel', 'dialog');
+			var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
+                                  .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'fixed'});
+            var $backlink = $header.CswLink('init',{ID: p.DivId + '_back',href: '#' + p.ParentId, value:'Back'})
+                                   .CswAttrXml('data-direction', 'reverse');
+            
             if ( !isNullOrEmpty(p.backtransition) )
             {
-                divhtml += ' data-transition="' + p.backtransition + '" ';
+                $backlink.CswAttrXml('data-transition', p.backtransition);
             }
             if ( isNullOrEmpty(p.ParentId) )
             {
-                divhtml += ' style="visibility: hidden;" ';
+                $backlink.css('visibility','hidden');
             }
-            divhtml += ' data-icon="';
+            
             if ( !isNullOrEmpty(p.backicon) )
             {
-                divhtml += p.backicon;
+                $backlink.CswAttrXml('data-icon',p.backicon);
             }
             else
             {
-                divhtml += 'arrow-l';
+                $backlink.CswAttrXml('data-icon','arrow-l');
             }
-            divhtml += '">Back</a>';
 
-            divhtml += '<h1>' + p.HeaderText + '</h1>';
+            $header.append($('<h1>' + p.HeaderText + '</h1>'));
             if (!p.HideSearchButton)
-                divhtml += '    <a href="#" id="' + p.DivId + '_searchopen">Search</a>';
-            divhtml += '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
-                              p.toolbar +
-                       '    </div>' +
-                       '  </div>' +
-                       '  <div data-role="content" data-theme="' + opts.Theme + '">' +
-                            p.content +
-                       '  </div>' +
-                       '  <div data-role="footer" data-theme="' + opts.Theme + '" data-position="fixed">';
+            {
+                $header.CswLink('init',{href:'#',ID: p.DivId + '_searchopen',text: 'Search'});
+            }
+            $header.CswDiv('init',{class: 'toolbar',value: p.toolbar})
+                   .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
+            var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
+                                   .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
+                                   .append($(p.content));
+            var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
+                                  .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
             if (!p.HideOnlineButton)
             {
-                divhtml += '    <a href="#" id="' + p.DivId + '_gosynchstatus" data-transition="slideup">';
+                var $online = $footer.CswLink('init',{href: '#', ID: p.DivId + '_gosynchstatus'})
+                                 .CswAttrXml('data-transition','slideup');
                 if (amOffline())
-                    divhtml += '    <div class="onlineStatus offline">Offline</div>';
+                    $online.CswDiv('init',{class: 'onlineStatus offline', ID: p.DivId + '_offline', value: 'Offline' });
                 else
-                    divhtml += '    <div class="onlineStatus online">Online</div>';
-                divhtml += '    </a>';
+                    $online.CswDiv('init',{class: 'onlineStatus online', ID: p.DivId + '_online', value: 'Online' });
             }
             if (!p.HideRefreshButton)
-                divhtml += '    <a href="#" id="' + p.DivId + '_refresh" class="refresh">Refresh</a>';
+            {
+                $footer.CswLink('init',{href: '#', ID: p.DivId + '_refresh', value:'Refresh', class: 'refresh'});
+            }
             if (!p.HideLogoutButton)
-                divhtml += '    <a href="#" id="' + p.DivId + '_logout">Logout</a>';
+            {
+                $footer.CswLink('init',{href: '#', ID: p.DivId + '_logout', value: 'Logout'});
+            }
+            
+            $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'});
 
-            divhtml += '     <a rel="external" href="Login.aspx?redir=n">Full Site</a>';
             if (!p.HideHelpButton)
-                divhtml += '    <a href="#" id="' + p.DivId + '_help">Help</a>';
-            divhtml += '  </div>' +
-                       '</div>';
+            {
+                $footer.CswLink('init',{href: '#', ID: p.DivId + '_help', value: 'Help'});
+            }
 
-            var $divhtml = $(divhtml);
-            $('body').append($divhtml).page();
+            $pageDiv.page();
 
-            _bindEvents(p.DivId, p.ParentId, p.level, $divhtml);
+            _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
-            log($divhtml,true);
-
-            return $divhtml;
+            return $pageDiv;
 
         } // _addPageDivToBody()
         
+        function _addDialogDivToBody(params)
+        {
+            var p = {
+                DivId: '',       // required
+                HeaderText: '',
+                toolbar: '',
+                content: '',
+                HideHelpButton: false
+            };
+
+            if (params)
+            {
+                $.extend(p, params);
+            }
+
+            p.DivId = makeSafeId({ID: p.DivId});
+
+            var $pageDiv = $('#' + p.DivId);
+
+            if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
+            {
+                $pageDiv = $body.CswDiv('init',{ID: p.DivId})
+                                .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText, 'data-rel': 'dialog'}); 
+            }
+			var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
+                                  .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'fixed'});
+            
+ 
+            $header.CswDiv('init',{class: 'toolbar',value: p.toolbar})
+                   .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
+            var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
+                                   .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
+                                   .append($(p.content));
+            var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
+                                  .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
+            
+            $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'});
+
+            if (!p.HideHelpButton)
+            {
+                $footer.CswLink('init',{href: '#', ID: p.DivId + '_help', value: 'Help'});
+            }
+
+            $pageDiv.page();
+
+            _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
+
+            return $pageDiv;
+
+        } // _addPageDivToBody()
+
         function _getDivHeaderText(DivId)
         {
-            return $('#' + DivId).find('div[data-role="header"] h1').text();
+            return $('#' + DivId).find('div:jqmData(role="header") h1').text();
         }
 
         function _getDivParentId(DivId)
         {
             var ret = '';
-            var $back = $('#' + DivId).find('div[data-role="header"] #' + DivId + '_back');
+            var $back = $('#' + DivId).find('div:jqmData(role="header") #' + DivId + '_back');
             if ($back.length > 0)
                 ret = $back.CswAttrDom('href').substr(1);
             return ret;
         }
 
 
-        function _bindEvents(DivId, ParentId, level, $div)
+        function _bindPageEvents(DivId, ParentId, level, $div)
         {
             $div.find('#' + DivId + '_searchopen')
                 .click(function (eventObj) { onSearchOpen(DivId, eventObj); })
@@ -1157,10 +1225,10 @@
                 .click(function (eventObj) { onSynchStatusOpen(DivId, eventObj); })
                 .end()
                 .find('#' + DivId + '_refresh')
-                .click(function (e) { e.stopPropagation(); e.preventDefault(); return onRefresh(DivId, e); })
+                .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onRefresh(DivId, e); })
                 .end()
                 .find('#' + DivId + '_logout')
-                .click(function (e) { e.stopPropagation(); e.preventDefault(); return onLogout(DivId, e); })
+                .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onLogout(DivId, e); })
                 .end()
                 .find('#' + DivId + '_back')
                 .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
@@ -1178,31 +1246,35 @@
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
                 .find('li a')
-//                .click(function (e)
-//                {
-//					var $div = $(this);
-//                    if (_loadDivContents({
-//                        ParentId: DivId,
-//                        level: (level + 1),
-//                        DivId: $div.CswAttrDom('href').substr(1),
-//                        HeaderText: $div.text(),
-//                        ChangePage: true
-//                    })) { e.stopPropagation(); e.preventDefault(); }
-//                })
                 .bind('tap', function (e) { 
-                        //$div.removeClass();
-						var $target = $(this);
-                        var $child = _loadDivContents({
+                        var $target = $(this);
+						var $child = _loadDivContents({
                             ParentId: DivId,
                             level: (level + 1),
                             DivId: $target.CswAttrDom('href').substr(1),
                             HeaderText: $target.text(),
                             ChangePage: true
-                        }); //{ e.stopPropagation(); e.preventDefault(); }
-                    })
+                        });
+						$child.page(); //{ e.stopPropagation(); e.preventDefault(); }
+					})
                 .end();
         }
-
+        
+        function _bindDialogEvents(DivId, ParentId, level, $div)
+        {
+            $div.find('#' + DivId + '_help')
+                .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
+                .end()
+                .find('input')
+                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .end()
+                .find('textarea')
+                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .end()
+                .find('select')
+                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .end();
+        }
         // ------------------------------------------------------------------------------------
         // Synch Status Div
         // ------------------------------------------------------------------------------------
@@ -1333,7 +1405,7 @@
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
 						_cacheSession(SessionId, UserName);
                         reloadViews(true);
-                        removeDiv('logindiv');
+                        $logindiv.remove();
                     }
                 });
             }
@@ -1363,18 +1435,23 @@
             {
                 if (_checkNoPendingChanges())
                 {
-                    _addPageDivToBody({
-                        DivId: 'loadingdiv',
-                        HeaderText: 'Please wait',
-                        content: 'Loading...',
-                        HideSearchButton: true,
-                        HideOnlineButton: true,
-                        HideRefreshButton: true,
-                        HideLogoutButton: true,
-                        HideHelpButton: true
-                    });
-                    _changePage($('#loadingdiv'), "fade", false, true);
-                    setTimeout(function () { continueRefresh(DivId); }, opts.DivRemovalDelay);
+//                    _addPageDivToBody({
+//                        DivId: 'loadingdiv',
+//                        HeaderText: 'Please wait',
+//                        content: 'Loading...',
+//                        HideSearchButton: true,
+//                        HideOnlineButton: true,
+//                        HideRefreshButton: true,
+//                        HideLogoutButton: true,
+//                        HideHelpButton: true
+//                    });
+//                    _changePage($('#loadingdiv'), "fade", false, true);
+                    $.mobile.pageLoading();
+                    setTimeout(function () { 
+                            continueRefresh(DivId); 
+                            $.mobile.pageLoading( true );
+                        }, 
+                        opts.DivRemovalDelay);
                 }
             }
             return false;
@@ -1432,7 +1509,7 @@
                             HideSearchButton: true,
                             ChangePage: true
                         });
-                        removeDiv('loadingdiv');
+                        //removeDiv('loadingdiv');
                     } // success
                 });
             }
@@ -1443,7 +1520,7 @@
             if (DivId !== 'synchstatus' && DivId.indexOf('prop_') !== 0)
             {
                 // case 20367 - remove all matching DivId.  Doing it immediately causes bugs.
-                setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
+                //setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
             }
             return true;
         }
