@@ -67,9 +67,8 @@
         var $sorrycharliediv = _loadSorryCharlieDiv(false);
         var $logindiv = _loadLoginDiv();
         var $viewsdiv;
-
-        _makeSynchStatusDiv();
-        _makeHelpDiv();
+        var $syncstatus = _makeSynchStatusDiv();
+        var $helpdiv = _makeHelpDiv();
 
         _initDB(false, function ()
         {
@@ -126,7 +125,7 @@
 
 		function _changePage($div, transition, reverse, changeHash)
 		{
-            log($.mobile.activePage());
+            log($.mobile.activePage);
             //debugger;
 			//if($div.CswAttrDom('id') === 'viewsdiv' || $div === $logindiv)
             //{
@@ -154,7 +153,7 @@
         function reloadViews(ChangePage)
         {
             var $retDiv;
-            if ($viewsdiv.hasClass('ui-page-active')) //$.mobile.activePage()
+            if ( $.mobile.activePage === $viewsdiv)
             {
                 $.mobile.pageLoading();
                 setTimeout(function () { 
@@ -171,7 +170,7 @@
 
         function continueReloadViews(ChangePage)
         {
-            $viewsdiv.remove();
+            if($viewsdiv) $viewsdiv.remove();
             $viewsdiv = _loadDivContents({
                                 level: 0,
                                 DivId: 'viewsdiv',
@@ -199,7 +198,7 @@
 
                 reloadViews(false);
             }
-            if ( $.mobile.activePage() === $logindiv)
+            if ( $.mobile.activePage === $logindiv)
             {
                 _changePage($sorrycharliediv);
             }
@@ -216,7 +215,7 @@
                 $('.refresh').css('visibility', '');
                 reloadViews(false);
             }
-            if ( $.mobile.activePage() === $sorrycharliediv )
+            if ( $.mobile.activePage === $sorrycharliediv )
             {
                 _changePage( $logindiv );
             }
@@ -265,8 +264,7 @@
                                 $xml: $xml,
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
-                                HideSearchButton: p.HideSearchButton,
-                                ChangePage: p.ChangePage
+                                HideSearchButton: p.HideSearchButton
                             });
                         });
                     } else
@@ -303,7 +301,7 @@
                                     parentlevel: p.level,
                                     HideRefreshButton: p.HideRefreshButton,
                                     HideSearchButton: p.HideSearchButton,
-                                    ChangePage: p.ChangePage
+                                    ChangePage: true
                                 });
                             }
                         });
@@ -1080,7 +1078,8 @@
             $header.append($('<h1>' + p.HeaderText + '</h1>'));
             if (!p.HideSearchButton)
             {
-                $header.CswLink('init',{href:'#',ID: p.DivId + '_searchopen',text: 'Search'});
+                $header.CswLink('init',{href:'#',ID: p.DivId + '_searchopen',text: 'Search'})
+                       .CswAttrXml('data-transition', 'slidedown');
             }
             $header.CswDiv('init',{class: 'toolbar',value: p.toolbar})
                    .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
@@ -1091,7 +1090,7 @@
                                   .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
             if (!p.HideOnlineButton)
             {
-                var $online = $footer.CswLink('init',{href: '#', ID: p.DivId + '_gosynchstatus'})
+                var $online = $footer.CswLink('init',{href: '#' + $syncstatus.CswAttrDom('id'), ID: p.DivId + '_gosynchstatus'})
                                  .CswAttrXml('data-transition','slideup');
                 if (amOffline())
                     $online.CswDiv('init',{class: 'onlineStatus offline', ID: p.DivId + '_offline', value: 'Offline' });
@@ -1104,17 +1103,18 @@
             }
             if (!p.HideLogoutButton)
             {
-                $footer.CswLink('init',{href: '#', ID: p.DivId + '_logout', value: 'Logout'});
+                $footer.CswLink('init',{href: '#', ID: p.DivId + '_logout', value: 'Logout'})
+                       .CswAttrXml('data-transition', 'flip');;
             }
             
-            $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'});
+            $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'})
+                   .CswAttrXml('data-transition', 'pop');
 
             if (!p.HideHelpButton)
             {
-                $footer.CswLink('init',{href: '#', ID: p.DivId + '_help', value: 'Help'});
+                $footer.CswLink('init',{href: '#', ID: p.DivId + '_help', value: 'Help'})
+                       .CswAttrXml('data-transition', 'slideup');
             }
-
-            $pageDiv.page();
 
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
@@ -1164,8 +1164,6 @@
             {
                 $footer.CswLink('init',{href: '#', ID: p.DivId + '_help', value: 'Help'});
             }
-
-            $pageDiv.page();
 
             _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
@@ -1268,7 +1266,7 @@
             });
 
             $retDiv.find('#ss_forcesynch')
-                    .click(function (eventObj) { _processChanges(false); eventObj.preventDefault(); })
+                    .click(function (eventObj) { _processChanges(false); } ) //eventObj.preventDefault(); })
                     .end()
                     .find('#ss_gooffline')
                     .click(function (eventObj) { _toggleOffline(eventObj); });
@@ -1406,17 +1404,6 @@
             {
                 if (_checkNoPendingChanges())
                 {
-//                    _addPageDivToBody({
-//                        DivId: 'loadingdiv',
-//                        HeaderText: 'Please wait',
-//                        content: 'Loading...',
-//                        HideSearchButton: true,
-//                        HideOnlineButton: true,
-//                        HideRefreshButton: true,
-//                        HideLogoutButton: true,
-//                        HideHelpButton: true
-//                    });
-//                    _changePage($('#loadingdiv'), "fade", false, true);
                     $.mobile.pageLoading();
                     setTimeout(function () { 
                             continueRefresh(DivId); 
@@ -1480,7 +1467,6 @@
                                 HideSearchButton: true,
                                 ChangePage: true
                         });
-                        //removeDiv('loadingdiv');
                     } // success
                 });
             }
@@ -1501,12 +1487,11 @@
         {
             $('#synchstatus_back').CswAttrDom('href', '#' + DivId);
             $('#synchstatus_back').css('visibility', '');
-            //_changePage($('#synchstatus'), 'slideup');
         }
 
         function onHelp(DivId, eventObj)
         {
-            //_changePage($('#help'), 'slideup');
+            //
         }
 
         function onPropertyChange(DivId, eventObj)
