@@ -431,7 +431,9 @@ namespace ChemSW.Nbt.ObjClasses
                                             CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetNodeTypeId );
                                             if( null != TargetObjectClass )
                                             {
-                                                ret = PropPermissions.CheckValue( Permission.ToString(), TargetObjectClass.ObjectClassId.ToString() );
+                                                // case 21842 - this doesn't work
+												// ret = PropPermissions.CheckValue( Permission.ToString(), TargetObjectClass.ObjectClassId.ToString() );
+												ret = true;
                                             }
                                             break;
                                         }
