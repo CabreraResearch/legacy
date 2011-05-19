@@ -4,9 +4,10 @@
 	<script type="text/javascript">
 		
         $(document).bind("mobileinit", function(){
-             //s$.mobile.hashListeningEnabled = false; 
+             //$.mobile.hashListeningEnabled = false; 
+             $.mobile.path.get = function( newPath ){  return ''; };
         });
-        
+        $.mobile.path.get = function( newPath ){  return ''; };
         $('body').CswMobile({
 			'Theme': 'b',
 			});

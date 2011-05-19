@@ -64,8 +64,9 @@
             }
         }
 
-        var $sorrycharliediv = _loadSorryCharlieDiv(false);
         var $logindiv = _loadLoginDiv();
+        var $sorrycharliediv = _loadSorryCharlieDiv(false);
+        
         var $viewsdiv;
         var $syncstatus = _makeSynchStatusDiv();
         var $helpdiv = _makeHelpDiv();
@@ -80,7 +81,6 @@
                 {
                     SessionId = configvar_sessionid;
                     reloadViews(true);
-                    removeDiv(tempdivid);
                     _waitForData();
                 }
                 else
@@ -90,13 +90,13 @@
                         function ()
                         {
                             // online
-                            _changePage($logindiv);
+                            //_changePage($logindiv);
                             //removeDiv(tempdivid);
                         },
                         function ()
                         {
                             // offline
-                            _changePage($sorrycharliediv);
+                            //_changePage($sorrycharliediv);
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
@@ -119,13 +119,14 @@
             $('#login_accessid').clickOnEnter($('#loginsubmit'));
             $('#login_username').clickOnEnter($('#loginsubmit'));
             $('#login_password').clickOnEnter($('#loginsubmit'));
-		    _changePage($retDiv, 'fade', false, true);
+		    //_changePage($retDiv, 'fade', false, true);
+            $retDiv.page();
             return $retDiv;
 		}
 
 		function _changePage($div, transition, reverse, changeHash)
 		{
-            log($.mobile.activePage);
+            log($.mobile.activePage,true);
             //debugger;
 			//if($div.CswAttrDom('id') === 'viewsdiv' || $div === $logindiv)
             //{
@@ -140,8 +141,8 @@
                 HeaderText: 'Sorry Charlie!',
                 content: 'You must have internet connectivity to login.'                
             });
-            if (ChangePage)
-                _changePage($retDiv, 'fade', false, true);
+            //if (ChangePage)
+            //    _changePage($retDiv, 'fade', false, true);
             return $retDiv;
         }
 
@@ -176,8 +177,8 @@
                                 DivId: 'viewsdiv',
                                 HeaderText: 'Views',
                                 HideRefreshButton: true,
-                                HideSearchButton: true //,
-                                //ChangePage: ChangePage
+                                HideSearchButton: true,
+                                ChangePage: ChangePage
                             });
             return $viewsdiv;
         }
@@ -200,7 +201,7 @@
             }
             if ( $.mobile.activePage === $logindiv)
             {
-                _changePage($sorrycharliediv);
+               // _changePage($sorrycharliediv);
             }
         }
         function setOnline()
@@ -217,7 +218,7 @@
             }
             if ( $.mobile.activePage === $sorrycharliediv )
             {
-                _changePage( $logindiv );
+               // _changePage( $logindiv );
             }
         }
         function amOffline()
@@ -248,7 +249,7 @@
                 rootid = p.DivId;
             }
             var $retDiv = $('#' + p.DivId);
-            debugger;
+            
             if ( isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.children().length === 0 )
             {
                 if (p.level === 0)
@@ -264,7 +265,8 @@
                                 $xml: $xml,
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
-                                HideSearchButton: p.HideSearchButton
+                                HideSearchButton: p.HideSearchButton,
+                                ChangePage: p.ChangePage
                             });
                         });
                     } else
@@ -276,7 +278,7 @@
                             ParentId: p.DivId,
                             ForMobile: ForMobile
                         };
-                        
+                        $.mobile.path.get = function( newPath ){ return ''; };
                         CswAjaxXml({
                             async: false,   // required so that the link will wait for the content before navigating
                             formobile: ForMobile,
@@ -332,7 +334,7 @@
                                 ParentId: p.DivId,
                                 ForMobile: ForMobile
                             };
-
+                            $.mobile.path.get = function( newPath ){ return ''; };
                             CswAjaxXml({
                                 async: false,   // required so that the link will wait for the content before navigating
                                 formobile: ForMobile,
@@ -359,6 +361,10 @@
                                         HideSearchButton: p.HideSearchButton,
                                         ChangePage: p.ChangePage
                                     });
+                                },
+                                error: function(xml)
+                                {
+                                    if(debug) log(xml);
                                 }
                             });
                         }
@@ -409,23 +415,24 @@
 
             var $retDiv;
 
-            var content = _makeUL();
+            var $content = _makeUL();
             currenttab = '';
 
             onAfterAddDiv = function ($retDiv) { };
 
             p.$xml.children().each(function ()
             {
-                content += _makeListItemFromXml($(this), p.DivId, p.parentlevel);
+                content.append( $(_makeListItemFromXml($(this), p.DivId, p.parentlevel) ) );
             });
-            content += _endUL();
+
+            $content.listview('refresh');
 
             $retDiv = _addPageDivToBody({
                 ParentId: p.ParentId,
                 level: p.parentlevel,
                 DivId: p.DivId,
                 HeaderText: p.HeaderText,
-                content: content,
+                content: $content,
                 HideRefreshButton: p.HideRefreshButton,
                 HideSearchButton: p.HideSearchButton
             });
@@ -433,8 +440,9 @@
 
             // if and only if we're here because of an AJAX call
             if (p.ChangePage)
-            {
-                _changePage($('#' + p.DivId), "slide");
+            {   
+                $retDiv.page();
+                _changePage($retDiv, "slide");
             }
 
             return $retDiv;
@@ -450,7 +458,7 @@
             var nextid = $xmlitem.next().CswAttrXml('id');
             var previd = $xmlitem.prev().CswAttrXml('id');
 
-            var lihtml = '';
+            var $lihtml;
             
             switch (PageType)
             {
@@ -459,7 +467,7 @@
                     break;
 
                 case "node":
-                    lihtml += _makeObjectClassContent($xmlitem);
+                    $lihtml.append( $(_makeObjectClassContent($xmlitem) ) );
                     break;
 
                 case "prop":
@@ -566,8 +574,7 @@
                         if(parentlevel === 0) 
                         {
                             $body.CswDiv('init',{ID: id})
-                                 .CswAttrXml({'data-title': text, 'data-role': 'page', 'data-url': id})
-                                 .css('hidden',true);
+                                 .CswAttrXml({'data-title': text, 'data-role': 'page', 'data-url': id});
                         }
                         break;
                     } // default:
@@ -575,13 +582,16 @@
             return lihtml;
         } // _makeListItemFromXml()
 
+        function _make$UL(id)
+        {
+            var $retUL = $('<ul data-role="listview id="' + tryParseString(id,'') + '"></ul>');
+            return $retUL;
+        }
+
         function _makeUL(id)
         {
-            var ret = '<ul data-role="listview" ';
-            if ( !isNullOrEmpty(id) )
-                ret += 'id="' + id + '"';
-            ret += '>';
-            return ret;
+            var retUL = '<ul data-role="listview id="' + tryParseString(id,'') + '">';
+            return retUL;
         }
 
         function _endUL()
@@ -622,14 +632,14 @@
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<a href="#' + id + '">';
-                    Html += '<p>' + NodeName + '</p>';
-                    Html += '<p>' + Location + '</p>';
-                    Html += '<p>' + MountPoint + '</p>';
-                    Html += '<p>';
-                    if(!isNullOrEmpty(Status)) Html +=  Status + ', ';
-                    Html += 'Due: ' + DueDate + '</p>';
-                    Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
-                    Html += '</a>';
+                    // += '<p>' + NodeName + '</p>';
+                    //Html += '<p>' + Location + '</p>';
+                    //Html += '<p>' + MountPoint + '</p>';
+                    //Html += '<p>';
+                    //if(!isNullOrEmpty(Status)) Html +=  Status + ', ';
+                    //Html += 'Due: ' + DueDate + '</p>';
+                    //Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
+                    Html += NodeName + '</a>';
                     Html += '</li>';
                     break;
 
@@ -1048,6 +1058,7 @@
 
             if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
             {
+                log('Steve says ' + p.DivId);
                 $pageDiv = $body.CswDiv('init',{ID: p.DivId})
                                 .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText}); 
             }
@@ -1090,12 +1101,16 @@
                                   .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
             if (!p.HideOnlineButton)
             {
-                var $online = $footer.CswLink('init',{href: '#' + $syncstatus.CswAttrDom('id'), ID: p.DivId + '_gosynchstatus'})
-                                 .CswAttrXml('data-transition','slideup');
+                var $online;
                 if (amOffline())
-                    $online.CswDiv('init',{class: 'onlineStatus offline', ID: p.DivId + '_offline', value: 'Offline' });
+                {
+                    $online = $footer.CswLink('init',{href: '#', ID: p.DivId + '_gosynchstatus', class: 'onlineStatus offline', value: 'Offline'})
+                }
                 else
-                    $online.CswDiv('init',{class: 'onlineStatus online', ID: p.DivId + '_online', value: 'Online' });
+                {
+                    $online = $footer.CswLink('init',{href: '#', ID: p.DivId + '_gosynchstatus', class: 'onlineStatus online',  value: 'Online' });
+                }
+                $online.CswAttrXml('data-transition','slideup');
             }
             if (!p.HideRefreshButton)
             {
@@ -1216,7 +1231,7 @@
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
                 .find('li a')
-                .bind('tap', function (e) { 
+                .live('tap', function (e) { 
                         var $target = $(this);
 						var $child = _loadDivContents({
                             ParentId: DivId,
@@ -1225,11 +1240,12 @@
                             HeaderText: $target.text(),
                             ChangePage: true
                         });
-						$child.page(); //{ e.stopPropagation(); e.preventDefault(); }
+                        $child.page();
+					//{ e.stopPropagation(); e.preventDefault(); }
 					})
                 .end();
         }
-        
+        $child.page();
         function _bindDialogEvents(DivId, ParentId, level, $div)
         {
             $div.find('#' + DivId + '_help')
@@ -1362,7 +1378,7 @@
                 };
 
                 if (debug) log('Starting ' + opts.AuthenticateUrl, true);
-
+                $.mobile.path.get = function( newPath ){ return ''; };
                 CswAjaxJSON({
                     formobile: ForMobile,
                     url: opts.AuthenticateUrl,
@@ -1441,7 +1457,7 @@
                     ParentId: RealDivId,
                     ForMobile: ForMobile
                 };
-
+                $.mobile.path.get = function( newPath ){ return ''; };
                 // fetch new content
                 CswAjaxXml({
                     async: false,   // required so that the link will wait for the content before navigating
@@ -1575,7 +1591,7 @@
             {
                 if ( !isNullOrEmpty($xmlstr) )
                 {
-                    var content = _makeUL(DivId + '_searchresultslist');
+                    var $content = _makeUL(DivId + '_searchresultslist');
 
                     var hitcount = 0;
                     $xmlstr.find('node').each(function ()
@@ -1586,20 +1602,18 @@
                             if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
                                 hitcount++;
-                                content += _makeListItemFromXml($node, DivId, 1, false);
+                                $content.append( $( _makeListItemFromXml($node, DivId, 1, false) );
                             }
                         }
                     });
                     if (hitcount === 0)
                     {
-                        content += "<li>No Results</li>";
+                        $content.append( $('<li>No Results</li>');
                     }
-
-                    content += _endUL();
 
                     var $srdiv = $('#' + DivId + '_searchresults');
                     $srdiv.children().remove();
-                    $srdiv.append(content);
+                    $srdiv.append($content);
                     $('#' + DivId + '_searchresultslist').listview();
 
                     _bindPageEvents(DivId + '_searchdiv', DivId, 1, $srdiv);
@@ -1863,7 +1877,7 @@
             {
                 url = opts.ConnectTestRandomFailUrl;
             }
-
+            $.mobile.path.get = function( newPath ){ return ''; };
             CswAjaxXml({
                 formobile: ForMobile,
                 url: url,
@@ -1908,7 +1922,7 @@
                             UpdatedViewXml: viewxml,
                             ForMobile: ForMobile
                         };
-
+                        $.mobile.path.get = function( newPath ){ return ''; };
                         CswAjaxJSON({
                             formobile: ForMobile,
                             url: opts.UpdateUrl,

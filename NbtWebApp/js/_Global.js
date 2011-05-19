@@ -952,7 +952,7 @@ function isTrue(str)
     else
     {
         ret = false;
-        if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.',false);
+        //if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.',false);
     }
     return ret;
 }
