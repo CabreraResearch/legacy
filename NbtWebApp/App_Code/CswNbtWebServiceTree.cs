@@ -26,8 +26,6 @@ namespace ChemSW.Nbt.WebServices
             string EmptyOrInvalid = "No Results";
 		    // Case 21699: Show empty tree for search
 		    bool ValidView = ( null != View && ( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List ) );
-		    string ViewName = string.Empty;
-			CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId();
 			//bool IsFirstLoad = true;
 			//if( ParentNodeKey != null || IncludeNodeKey != null )
 			//    IsFirstLoad = false;
@@ -46,10 +44,6 @@ namespace ChemSW.Nbt.WebServices
 				CswNbtViewRelationship ChildRelationshipToStartWith = null;
 				//if( IncludeNodeKey != null )
 				//    ChildRelationshipToStartWith = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( IncludeNodeKey.ViewNodeUniqueId );
-				if( View.SessionViewId == null || ! View.SessionViewId.isSet() )
-				{
-					View.SaveToCache();
-				}
 
 				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
 
@@ -83,7 +77,8 @@ namespace ChemSW.Nbt.WebServices
 
                     if( IsFirstLoad )
                     {
-                        ReturnNode.Add( new XElement( "tree", RootNode ),
+						View.SaveToCache( true );
+						ReturnNode.Add( new XElement( "tree", RootNode ),
                                         new XElement( "viewid", View.SessionViewId.ToString() ),
                                         new XElement( "types", getTypes( View ).ToString() ) );
                     }
@@ -104,10 +99,12 @@ namespace ChemSW.Nbt.WebServices
             } // else if( !ShowEmpty )
 
             XElement Types = new XElement( "types" );
-            if( ValidView )
+			string ViewName = string.Empty;
+			string ViewId = string.Empty;
+			if( ValidView )
             {
                 ViewName = View.ViewName;
-                SessionViewId = View.SessionViewId;
+				ViewId = View.ViewId.ToString();
                 Types.Add( getTypes( View ).ToString() );
             }
 
@@ -127,7 +124,7 @@ namespace ChemSW.Nbt.WebServices
                                                 new XElement( "content",
                                                     new XElement( "name", EmptyOrInvalid ) ) ) ) )
                                         ),
-                                new XElement( "viewid", SessionViewId.ToString() ),
+                                new XElement( "viewid", ViewId ),
                                 Types );
 			}
 			return ReturnNode;

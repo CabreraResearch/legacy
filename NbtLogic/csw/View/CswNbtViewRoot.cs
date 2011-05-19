@@ -125,7 +125,7 @@ namespace ChemSW.Nbt
         // 7 - ViewId
         public CswNbtViewId ViewId
         {
-			get { return new CswNbtViewId( CswConvert.ToInt32( _RootString[7] ) ); }
+			get { return new CswNbtViewId( _RootString[7] ); }
             set { _RootString[7] = value.ToString(); }
         }
 

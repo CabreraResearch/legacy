@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.Schema
 			_CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_ActionId, "Primary key of action", false, false, "actions", "actionid" );
 			_CswNbtSchemaModTrnsctn.addStringColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_ViewMode, "Rendering Mode for view", false, false, 10 );
 			_CswNbtSchemaModTrnsctn.addClobColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_ViewXml, "View XML", false, false );
+			_CswNbtSchemaModTrnsctn.addBooleanColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_QuickLaunch, "Include this in quick launch", false, false );
 
         } // update()
 

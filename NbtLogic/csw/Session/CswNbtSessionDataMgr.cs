@@ -28,6 +28,7 @@ namespace ChemSW.Nbt
 		public const string SessionDataColumn_ActionId = "actionid";
 		public const string SessionDataColumn_ViewMode = "viewmode";
 		public const string SessionDataColumn_ViewXml = "viewxml";
+		public const string SessionDataColumn_QuickLaunch = "quicklaunch";
 		
 		private CswNbtResources _CswNbtResources;
 		
@@ -62,7 +63,7 @@ namespace ChemSW.Nbt
 		/// <summary>
 		/// Save an action to the session data collection.
 		/// </summary>
-		public CswNbtSessionDataId saveSessionData( CswNbtAction Action )
+		public CswNbtSessionDataId saveSessionData( CswNbtAction Action, bool IncludeInQuickLaunch )
 		{
 			CswTableUpdate SessionViewsUpdate = _CswNbtResources.makeCswTableUpdate( "saveSessionView_update", SessionDataTableName );
 			DataTable SessionViewTable = null;
@@ -83,6 +84,7 @@ namespace ChemSW.Nbt
 			SessionViewRow[SessionDataColumn_SessionId] = SessionId;
 			SessionViewRow[SessionDataColumn_SessionDataType] = CswNbtSessionDataItem.SessionDataType.Action.ToString();
 			SessionViewRow[SessionDataColumn_ActionId] = CswConvert.ToDbVal( Action.ActionId );
+			SessionViewRow[SessionDataColumn_QuickLaunch] = CswConvert.ToDbVal( IncludeInQuickLaunch );
 			SessionViewsUpdate.update( SessionViewTable );
 
 			return new CswNbtSessionDataId( CswConvert.ToInt32( SessionViewRow[SessionDataColumn_PrimaryKey] ) );
@@ -92,7 +94,7 @@ namespace ChemSW.Nbt
 		/// <summary>
 		/// Save a view to the session data collection.  Sets the SessionViewId on the view.
 		/// </summary>
-		public CswNbtSessionDataId saveSessionData( CswNbtView View )
+		public CswNbtSessionDataId saveSessionData( CswNbtView View, bool IncludeInQuickLaunch )
 		{
 			CswTableUpdate SessionViewsUpdate = _CswNbtResources.makeCswTableUpdate( "saveSessionView_update", SessionDataTableName );
 			DataTable SessionViewTable = null;
@@ -116,12 +118,11 @@ namespace ChemSW.Nbt
 			SessionViewRow[SessionDataColumn_ViewMode] = View.ViewMode.ToString();
 			SessionViewRow[SessionDataColumn_ViewXml] = View.ToString();
 			SessionViewRow[SessionDataColumn_SessionId] = SessionId;
-			SessionViewRow[SessionDataColumn_SessionDataType] = CswNbtSessionDataItem.SessionDataType.View.ToString();	
+			SessionViewRow[SessionDataColumn_SessionDataType] = CswNbtSessionDataItem.SessionDataType.View.ToString();
+			SessionViewRow[SessionDataColumn_QuickLaunch] = CswConvert.ToDbVal( IncludeInQuickLaunch );
 			SessionViewsUpdate.update( SessionViewTable );
 
-			View.SessionViewId = new CswNbtSessionDataId( CswConvert.ToInt32( SessionViewRow[SessionDataColumn_PrimaryKey] ) );
-
-			return View.SessionViewId;
+			return new CswNbtSessionDataId( CswConvert.ToInt32( SessionViewRow[SessionDataColumn_PrimaryKey] ) );
 
 		} // saveSessionData(View)
 

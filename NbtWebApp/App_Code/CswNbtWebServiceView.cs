@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				// BZ 10121
 				// This is a performance hit, but since this view list is cached, it's ok
-				_makeViewTreeNode( DocRoot, View.Category, ItemType.View, View.ViewId.get(), View.ViewName, View.ViewMode );
+				_makeViewTreeNode( DocRoot, View.Category, ItemType.View, View.ViewId, View.ViewName, View.ViewMode );
 			}
 
 			if( !IsSearchable )
@@ -145,13 +145,13 @@ namespace ChemSW.Nbt.WebServices
         //    return SearchableViews;
         //}
 
-		private XmlNode _makeViewTreeNode( XmlNode DocRoot, string Category, ItemType Type, Int32 Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
+		private XmlNode _makeViewTreeNode( XmlNode DocRoot, string Category, ItemType Type, object Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
 		{
 			XmlNode CategoryNode = _getCategoryNode( DocRoot, Category );
 			return _makeItemNode( CategoryNode, Type, Id, Text, ViewMode );
 		}
 
-		private static XmlNode _makeItemNode( XmlNode ParentNode, ItemType ItemType, Int32 Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
+		private static XmlNode _makeItemNode( XmlNode ParentNode, ItemType ItemType, object Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
 		{
 			XmlNode ItemNode = CswXmlDocument.AppendXmlNode( ParentNode, "item" );
 			XmlNode ContentNode = CswXmlDocument.AppendXmlNode( ItemNode, "content" );

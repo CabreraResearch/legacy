@@ -56,18 +56,18 @@ namespace ChemSW.Nbt
             get { return Root.IconFileName; }
         }
 
-        /// <summary>
-        /// Determines if View should be added to QuickLaunch items
-        /// </summary>
-        public bool IsQuickLaunch
-        {
-            get
-            {
-				bool ReturnVal = ( ( ViewId.isSet() || SessionViewId.isSet() ) &&
-                                    ( Visibility != NbtViewVisibility.Property ) );
-                return ReturnVal;
-            }
-        }
+		///// <summary>
+		///// Determines if View should be added to QuickLaunch items
+		///// </summary>
+		//public bool IsQuickLaunch
+		//{
+		//    get
+		//    {
+		//        bool ReturnVal = ( ( ViewId.isSet() || SessionViewId.isSet() ) &&
+		//                            ( Visibility != NbtViewVisibility.Property ) );
+		//        return ReturnVal;
+		//    }
+		//}
 
         /// <summary>
         /// Visibility permission setting
@@ -650,7 +650,7 @@ namespace ChemSW.Nbt
                 CswTableSelect CheckViewTableSelect = CswNbtResources.makeCswTableSelect( "ViewIsUnique_select", "node_views" );
                 string WhereClause = "where viewname = '" + CswTools.SafeSqlParam( ViewName ) + "'";
                 if( ViewId.get() > 0 )
-                    WhereClause += " and nodeviewid <> " + ViewId.ToString();
+                    WhereClause += " and nodeviewid <> " + ViewId.get().ToString();
 
                 switch( Visibility )
                 {
@@ -1311,30 +1311,39 @@ namespace ChemSW.Nbt
 
         #endregion Sort Property
 
-        #region View Cache functions
+        #region Session Cache functions
 
         /// <summary>
-        /// Save this View to Session's ViewCache
+        /// Save this View to Session's data cache
         /// </summary>
-        public void SaveToCache()
-        {
-			_SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this );
-        }
+		public void SaveToCache(bool IncludeInQuickLaunch)
+		{
+			// don't cache twice
+			if( SessionViewId == null )
+			{
+				_SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, IncludeInQuickLaunch );
+			}
+		} // SaveToCache()
+
+		public void clearSessionViewId()
+		{
+			_SessionViewId = null;
+		}
 
 		private CswNbtSessionDataId _SessionViewId = null;
         /// <summary>
-        /// Key for retrieving the view from the Session's View Cache
+        /// Key for retrieving the view from the Session's data cache
         /// </summary>
 		public CswNbtSessionDataId SessionViewId
         {
             get { return _SessionViewId; }
-            set { _SessionViewId = value; }
+            //set { _SessionViewId = value; }
         }
 
-        #endregion View Cache functions
+		#endregion Session Cache functions
 
-        #region IEquatable
-        /// <summary>
+		#region IEquatable
+		/// <summary>
         /// IEquatable: ==
         /// </summary>
         public static bool operator ==( CswNbtView view1, CswNbtView view2 )

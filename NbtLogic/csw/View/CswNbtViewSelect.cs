@@ -97,9 +97,9 @@ namespace ChemSW.Nbt
 		/// <summary>
 		/// Save a view to the session view collection.  Sets the SessionViewId on the view.
 		/// </summary>
-		public CswNbtSessionDataId saveSessionView( CswNbtView View )
+		public CswNbtSessionDataId saveSessionView( CswNbtView View, bool IncludeInQuickLaunch )
 		{
-			return _CswNbtResources.SessionDataMgr.saveSessionData( View );
+			return _CswNbtResources.SessionDataMgr.saveSessionData( View, IncludeInQuickLaunch );
 		} // saveSessionView()
 
 		/// <summary>

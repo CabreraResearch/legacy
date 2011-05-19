@@ -1177,8 +1177,8 @@ namespace ChemSW.Nbt.WebServices
                 start();
                 var ws = new CswNbtWebServiceSearch( _CswNbtResources );
                 CswNbtView ResultsView = ws.doViewBasedSearch( SearchJson );
-				ResultsView.SessionViewId = null;
-                ResultsView.SaveToCache();
+				ResultsView.clearSessionViewId();
+                ResultsView.SaveToCache(true);
 
                 SearchResultView.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
                 SearchResultView.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
@@ -1203,7 +1203,7 @@ namespace ChemSW.Nbt.WebServices
 
                 var ws = new CswNbtWebServiceSearch( _CswNbtResources );
                 CswNbtView ResultsView = ws.doNodesSearch( SearchJson );
-                ResultsView.SaveToCache();
+                ResultsView.SaveToCache(true);
                 SessionViewId.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
                 SessionViewId.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
                 end();

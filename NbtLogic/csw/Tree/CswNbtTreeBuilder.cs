@@ -186,7 +186,7 @@ namespace ChemSW.Nbt
             CswNbtTreeLoader = CswNbtTreeLoaderFactory.makeTreeLoaderFromXmlView( RunAsUser, ReturnVal, View, IncludeSystemNodes );
             CswNbtTreeLoader.load(ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, FetchAllPrior, SingleLevelOnly, IncludedKey);
 			
-			ReturnVal.goToRoot();
+			//ReturnVal.goToRoot();
 
             return ( ReturnVal );
 

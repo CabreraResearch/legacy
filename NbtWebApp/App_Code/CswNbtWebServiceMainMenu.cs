@@ -72,6 +72,7 @@ namespace ChemSW.Nbt.WebServices
 			    // View based search
 			    if( View.IsSearchable() )
 			    {
+					View.SaveToCache(false);
 			        SearchNode.AddFirst( new XElement( "item",
 			                                           new XAttribute( "text", "This View" ),
 			                                           new XAttribute( "nodeid", NodeId ),
@@ -137,7 +138,8 @@ namespace ChemSW.Nbt.WebServices
 			    // SAVE VIEW AS
 			    if( !View.ViewId.isSet() )
 			    {
-			        MenuNode.Add( new XElement( "item",
+					View.SaveToCache(false);
+					MenuNode.Add( new XElement( "item",
 			                                    new XAttribute( "text", "SaveViewAs" ),
 			                                    new XAttribute( "popup", "Popup_NewView.aspx?sessionviewid=" + View.SessionViewId.ToString() ) ) );
 			    }

@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.WebServices
                                 {
                                     LinkText = ThisView.ViewName;
                                 }
-							    CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", WelcomeRow["nodeviewid"].ToString() );
+								CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString() );
 								CswXmlDocument.AppendXmlAttribute( ItemNode, "viewmode", ThisView.ViewMode.ToString().ToLower() );
 								CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "view" );
 							}
@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.WebServices
                                 {
                                     LinkText = ThisView.ViewName;
                                 }
-							    CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", WelcomeRow["nodeviewid"].ToString() );
+								CswXmlDocument.AppendXmlAttribute( ItemNode, "viewid", new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString() );
 								CswXmlDocument.AppendXmlAttribute( ItemNode, "viewmode", ThisView.ViewMode.ToString().ToLower() );
 								CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "view" );
 							}
