@@ -393,7 +393,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _checkNodeTypePropPermission( CswNbtNodePropLogicalSet PropPermissions, NodeTypePermission Permission, CswNbtNode Node, CswNbtMetaDataNodeTypeProp MetaDataProp )
         {
-            bool ret = !( Node.Properties[MetaDataProp].ReadOnly );
+            bool ret = ( Permission == NodeTypePermission.View || !Node.Properties[MetaDataProp].ReadOnly );
             switch( MetaDataProp.FieldType.FieldType )
             {
                 case CswNbtMetaDataFieldType.NbtFieldType.Password:
