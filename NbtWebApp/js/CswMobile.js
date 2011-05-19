@@ -64,20 +64,10 @@
             }
         }
 
-        // Make loading div first
-//        var $loadingdiv = _addPageDivToBody({
-//                DivId: tempdivid,
-//                HeaderText: 'Please wait',
-//                content: 'Loading...',
-//                HideSearchButton: true,
-//                HideOnlineButton: true,
-//                HideRefreshButton: true,
-//                HideLogoutButton: true,
-//                HideHelpButton: true
-//        });
         var $sorrycharliediv = _loadSorryCharlieDiv(false);
         var $logindiv = _loadLoginDiv();
-        
+        var $viewsdiv;
+
         _makeSynchStatusDiv();
         _makeHelpDiv();
 
@@ -164,19 +154,8 @@
         function reloadViews(ChangePage)
         {
             var $retDiv;
-            if ($('#viewsdiv').hasClass('ui-page-active')) //$.mobile.activePage()
+            if ($viewsdiv.hasClass('ui-page-active')) //$.mobile.activePage()
             {
-//                $retDiv = _addPageDivToBody({
-//                    DivId: 'loadingdiv',
-//                    HeaderText: 'Please wait',
-//                    content: 'Loading...',
-//                    HideSearchButton: true,
-//                    HideOnlineButton: true,
-//                    HideRefreshButton: true,
-//                    HideLogoutButton: true,
-//                    HideHelpButton: true
-//                });
-//                _changePage($('#loadingdiv'), "fade", false, true);
                 $.mobile.pageLoading();
                 setTimeout(function () { 
                         continueReloadViews(true);
@@ -192,8 +171,8 @@
 
         function continueReloadViews(ChangePage)
         {
-            $('#viewsdiv').remove();
-            var $retDiv = _loadDivContents({
+            $viewsdiv.remove();
+            $viewsdiv = _loadDivContents({
                                 level: 0,
                                 DivId: 'viewsdiv',
                                 HeaderText: 'Views',
@@ -201,7 +180,7 @@
                                 HideSearchButton: true //,
                                 //ChangePage: ChangePage
                             });
-            return $retDiv;
+            return $viewsdiv;
         }
 
         // ------------------------------------------------------------------------------------
@@ -1491,15 +1470,15 @@
                         $currentViewXml = $xml;
                         _updateStoredViewXml(RealDivId, $currentViewXml, '0');
 
-                        _processViewXml({
-                            ParentId: 'viewsdiv',
-                            DivId: RealDivId,
-                            HeaderText: HeaderText,
-                            '$xml': $currentViewXml,
-                            parentlevel: 1,
-                            HideRefreshButton: false,
-                            HideSearchButton: true,
-                            ChangePage: true
+                        $viewsdiv = _processViewXml({
+                                ParentId: 'viewsdiv',
+                                DivId: RealDivId,
+                                HeaderText: HeaderText,
+                                '$xml': $currentViewXml,
+                                parentlevel: 1,
+                                HideRefreshButton: false,
+                                HideSearchButton: true,
+                                ChangePage: true
                         });
                         //removeDiv('loadingdiv');
                     } // success
@@ -1638,7 +1617,7 @@
                     $srdiv.append(content);
                     $('#' + DivId + '_searchresultslist').listview();
 
-                    _bindEvents(DivId + '_searchdiv', DivId, 1, $srdiv);
+                    _bindPageEvents(DivId + '_searchdiv', DivId, 1, $srdiv);
                 }
             });
         }
