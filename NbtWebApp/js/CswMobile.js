@@ -1,5 +1,5 @@
 ﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
-/// <reference path="../jquery/jquery.mobile-1.0a4.1/jquery.mobile-1.0a4.1.js" />
+/// <reference path="http://code.jquery.com/mobile/latest/jquery.mobile.js" />
 /// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
@@ -75,9 +75,9 @@
 //                HideLogoutButton: true,
 //                HideHelpButton: true
 //        });
-
-        var $logindiv = _loadLoginDiv(true);
-
+        var $sorrycharliediv = _loadSorryCharlieDiv(false);
+        var $logindiv = _loadLoginDiv();
+        
         _makeSynchStatusDiv();
         _makeHelpDiv();
 
@@ -101,14 +101,13 @@
                         function ()
                         {
                             // online
-                            _loadLoginDiv(true);
+                            _changePage($logindiv);
                             //removeDiv(tempdivid);
                         },
                         function ()
                         {
                             // offline
-                            _loadSorryCharlieDiv(true);
-                            //removeDiv(tempdivid);
+                            _changePage($sorrycharliediv);
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
@@ -131,20 +130,18 @@
             $('#login_accessid').clickOnEnter($('#loginsubmit'));
             $('#login_username').clickOnEnter($('#loginsubmit'));
             $('#login_password').clickOnEnter($('#loginsubmit'));
-            if (ChangePage)
-            {
-			    _changePage($retDiv, 'fade', false, true);
-			}
+		    _changePage($retDiv, 'fade', false, true);
             return $retDiv;
 		}
 
 		function _changePage($div, transition, reverse, changeHash)
 		{
+            log($.mobile.activePage());
             //debugger;
-			if($div.CswAttrDom('id') === 'viewsdiv' || $div === $logindiv)
-            {
+			//if($div.CswAttrDom('id') === 'viewsdiv' || $div === $logindiv)
+            //{
                 $.mobile.changePage($div, transition, reverse, changeHash);
-            }
+            //}
 		}
 
         function _loadSorryCharlieDiv(ChangePage)
@@ -201,8 +198,8 @@
                                 DivId: 'viewsdiv',
                                 HeaderText: 'Views',
                                 HideRefreshButton: true,
-                                HideSearchButton: true,
-                                ChangePage: ChangePage
+                                HideSearchButton: true //,
+                                //ChangePage: ChangePage
                             });
             return $retDiv;
         }
@@ -223,10 +220,9 @@
 
                 reloadViews(false);
             }
-            if ($logindiv.length > 0)
+            if ( $.mobile.activePage() === $logindiv)
             {
-                _loadSorryCharlieDiv(true);
-                $logindiv.remove();
+                _changePage($sorrycharliediv);
             }
         }
         function setOnline()
@@ -241,10 +237,9 @@
                 $('.refresh').css('visibility', '');
                 reloadViews(false);
             }
-            if ($('#sorrycharliediv').length > 0)
+            if ( $.mobile.activePage() === $sorrycharliediv )
             {
-                _loadLoginDiv(true);
-                removeDiv('sorrycharliediv');
+                _changePage( $logindiv );
             }
         }
         function amOffline()
@@ -275,7 +270,7 @@
                 rootid = p.DivId;
             }
             var $retDiv = $('#' + p.DivId);
-
+            debugger;
             if ( isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.children().length === 0 )
             {
                 if (p.level === 0)
@@ -349,8 +344,7 @@
                                 $xml: $xmlstr,
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
-                                HideSearchButton: p.HideSearchButton,
-                                ChangePage: p.ChangePage
+                                HideSearchButton: p.HideSearchButton
                             });
                         } else if (!amOffline())
                         {
@@ -408,8 +402,7 @@
                                 $xml: $thisxmlstr.children('subitems').first(),
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
-                                HideSearchButton: p.HideSearchButton,
-                                ChangePage: p.ChangePage
+                                HideSearchButton: p.HideSearchButton
                             });
                         }
                     //});
@@ -461,7 +454,7 @@
             });
             onAfterAddDiv($retDiv);
 
-            // this replaces the link navigation
+            // if and only if we're here because of an AJAX call
             if (p.ChangePage)
             {
                 _changePage($('#' + p.DivId), "slide");
@@ -1405,7 +1398,6 @@
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
 						_cacheSession(SessionId, UserName);
                         reloadViews(true);
-                        $logindiv.remove();
                     }
                 });
             }
@@ -1530,12 +1522,12 @@
         {
             $('#synchstatus_back').CswAttrDom('href', '#' + DivId);
             $('#synchstatus_back').css('visibility', '');
-            _changePage($('#synchstatus'), 'slideup');
+            //_changePage($('#synchstatus'), 'slideup');
         }
 
         function onHelp(DivId, eventObj)
         {
-            _changePage($('#help'), 'slideup');
+            //_changePage($('#help'), 'slideup');
         }
 
         function onPropertyChange(DivId, eventObj)
@@ -1606,7 +1598,7 @@
 
                     $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
 
-                    _changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
+                    //_changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
                 }
             });
         }
