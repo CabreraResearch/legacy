@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.PropTypes
                     CswNbtView NewView = new CswNbtView( _CswNbtResources );
                     NewView.makeNew( PropName, NbtViewVisibility.Property, null, null, null );
                     NewView.save();
-                    _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, NewView.ViewId );
+                    _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, NewView.ViewId.get() );
                     _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, PropName );
 
                     // Case 20194. KLUGE Alert!!!
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             private set
             {
-                if( _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, value ) )
+                if( _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, value.get() ) )
                     PendingUpdate = true;
             }
         }

@@ -43,7 +43,7 @@ namespace ChemSW.Nbt
                     {
                         // Update ViewPickList properties
                         CswStaticSelect RelatedsQuery = _CswNbtResources.makeCswStaticSelect( "RelatedsQuery", "getViewPickListsForViewId" );
-                        RelatedsQuery.S4Parameters.Add( "getviewid", ViewId );
+                        RelatedsQuery.S4Parameters.Add( "getviewid", ViewId.get() );
                         DataTable RelatedsTable = RelatedsQuery.getTable();
 
                         // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node referencing this view

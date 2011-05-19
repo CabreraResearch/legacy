@@ -280,12 +280,12 @@ namespace ChemSW.Nbt.MetaData
                         ThisView.SetViewMode( NbtViewRenderingMode.Grid );
                     }
                     ThisView.save();
-                    _NodeTypePropRow["nodeviewid"] = CswConvert.ToDbVal( ThisView.ViewId );
+                    _NodeTypePropRow["nodeviewid"] = CswConvert.ToDbVal( ThisView.ViewId.get() );
                     ret = ThisView.ViewId;
                 }
 				return ret;
             }
-            set { _NodeTypePropRow["nodeviewid"] = CswConvert.ToDbVal( value.ToString() ); }
+            set { _NodeTypePropRow["nodeviewid"] = CswConvert.ToDbVal( value.get() ); }
         }
         public bool IsRequired
         {

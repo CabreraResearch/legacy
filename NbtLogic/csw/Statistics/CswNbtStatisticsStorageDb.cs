@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.Statistics
         {
             DataRow Row = Table.NewRow();
             Row["statisticsid"] = CswConvert.ToDbVal( StatisticsId );
-            Row["nodeviewid"] = CswConvert.ToDbVal( ViewId );
+            Row["nodeviewid"] = CswConvert.ToDbVal( ViewId.get() );
 			CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( ViewId );
             if ( ThisView != null )
                 Row["viewname"] = ThisView.ViewName;

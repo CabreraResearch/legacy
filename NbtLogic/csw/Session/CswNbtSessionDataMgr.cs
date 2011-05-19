@@ -139,13 +139,16 @@ namespace ChemSW.Nbt
 		/// </summary>
 		public void removeSessionData( CswNbtSessionDataId SessionDataId )
 		{
-			CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_update", SessionDataTableName );
-			DataTable SessionDataTable = SessionDataUpdate.getTable( SessionDataColumn_PrimaryKey, SessionDataId.get() );
-			DataRow SessionDataRow = null;
-			if( SessionDataTable.Rows.Count > 0 )
+			if( SessionDataId != null )
 			{
-				SessionDataTable.Rows[0].Delete();
-				SessionDataUpdate.update( SessionDataTable );
+				CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_update", SessionDataTableName );
+				DataTable SessionDataTable = SessionDataUpdate.getTable( SessionDataColumn_PrimaryKey, SessionDataId.get() );
+				DataRow SessionDataRow = null;
+				if( SessionDataTable.Rows.Count > 0 )
+				{
+					SessionDataTable.Rows[0].Delete();
+					SessionDataUpdate.update( SessionDataTable );
+				}
 			}
 		} // removeSessionData()
 
