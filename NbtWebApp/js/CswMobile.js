@@ -67,7 +67,7 @@
         var $logindiv = _loadLoginDiv();
         var $sorrycharliediv = _loadSorryCharlieDiv(false);
         
-        var $viewsdiv;
+        var $viewsdiv = _loadViewsDiv();
         var $syncstatus = _makeSynchStatusDiv();
         var $helpdiv = _makeHelpDiv();
 
@@ -80,7 +80,8 @@
                 if ( !isNullOrEmpty(configvar_sessionid) )
                 {
                     SessionId = configvar_sessionid;
-                    reloadViews(true);
+                    $viewsdiv = reloadViews();
+                    _changePage($viewsdiv);
                     _waitForData();
                 }
                 else
@@ -90,12 +91,12 @@
                         function ()
                         {
                             // online
-                            _changePage($logindiv);
+                            //_changePage($logindiv);
                         },
                         function ()
                         {
                             // offline
-                            _changePage($sorrycharliediv);
+                            // _changePage($sorrycharliediv);
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
@@ -108,17 +109,29 @@
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
             LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
             LoginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="?loginsubmit" href="javascript:void(0);">Continue</a>';
-            var $retDiv = _addDialogDivToBody({
-                DivId: 'logindiv',
-                HeaderText: 'Login to ChemSW Fire Inspection',
-                $content: $(LoginContent),
-                HideHelpButton: false
-            }).page();
+            var $retDiv = _page( 
+                    _addDialogDivToBody({
+                        DivId: 'logindiv',
+                        HeaderText: 'Login to ChemSW Fire Inspection',
+                        $content: $(LoginContent),
+                        HideHelpButton: false
+                })
+            );
             $('#loginsubmit').click(onLoginSubmit);
             $('#login_accessid').clickOnEnter($('#loginsubmit'));
             $('#login_username').clickOnEnter($('#loginsubmit'));
             $('#login_password').clickOnEnter($('#loginsubmit'));
-		    //_changePage($retDiv, 'fade', false, true);
+            return $retDiv;
+		}
+
+        function _loadViewsDiv()
+        {
+            var $retDiv = _addDialogDivToBody({
+                        DivId: 'viewsdiv',
+                        HeaderText: 'Views',
+                        HideRefreshButton: true,
+                        HideSearchButton: true
+                });
             return $retDiv;
 		}
 
@@ -127,6 +140,18 @@
             log($.mobile.activePage,true);
             $.mobile.changePage($div, transition, reverse, changeHash);
 		}
+
+        function _page($div)
+        {
+            log($div,true);
+            $div.page();
+            $div.find('ul:jqmData(role="listview")').each( function() {
+                debugger;
+                $(this).listview('refresh');
+            });
+            log($div);
+            return $div;
+        }
 
         function _loadSorryCharlieDiv()
         {
@@ -147,10 +172,8 @@
         {
             if ( $.mobile.activePage === $viewsdiv)
             {
-                $.mobile.pageLoading();
                 setTimeout(function () { 
-                        $viewsdiv = continueReloadViews(true);
-                        $.mobile.pageLoading( true ); 
+                        $viewsdiv = continueReloadViews();
                     }, 
                     opts.DivRemovalDelay);
             } else
@@ -162,14 +185,13 @@
 
         function continueReloadViews()
         {
-            if($viewsdiv) $viewsdiv.remove();
-            $viewsdiv = _loadDivContents({
-                                level: 0,
-                                DivId: 'viewsdiv',
-                                HeaderText: 'Views',
-                                HideRefreshButton: true,
-                                HideSearchButton: true
-                            });
+            if($viewsdiv) $viewsdiv.empty();
+            $viewsdiv = _bindJqmEvents($viewsdiv, {level: 0,
+                                                   DivId: 'viewsdiv',
+                                                   HeaderText: 'Views',
+                                                   HideRefreshButton: true,
+                                                   HideSearchButton: true
+                        });
             return $viewsdiv;
         }
 
@@ -187,11 +209,11 @@
                              .text('Offline');
                 $('.refresh').css('visibility', 'hidden');
 
-                reloadViews(false);
+                $viewsdiv = reloadViews(); //no changePage
             }
             if ( $.mobile.activePage === $logindiv)
             {
-               // _changePage($sorrycharliediv);
+                _changePage($sorrycharliediv);
             }
         }
         function setOnline()
@@ -204,11 +226,11 @@
                              .text('Online');
 
                 $('.refresh').css('visibility', '');
-                reloadViews(false);
+                $viewsdiv =  reloadViews(); //no changePage
             }
             if ( $.mobile.activePage === $sorrycharliediv )
             {
-               // _changePage( $logindiv );
+                _changePage( $logindiv );
             }
         }
         function amOffline()
@@ -229,7 +251,10 @@
                 DivId: '',
                 HeaderText: '',
                 HideRefreshButton: false,
-                HideSearchButton: false
+                HideSearchButton: false,
+                loadDivContents: '',
+                $xml: '',
+                doProcessView: false
             };
             if (params) $.extend(p, params);
             
@@ -247,17 +272,21 @@
                     {
                         _fetchCachedRootXml(function ($xml)
                         {
-                            $retDiv = _processViewXml({
-                                ParentId: p.ParentId,
-                                DivId: p.DivId,
-                                HeaderText: p.HeaderText,
-                                $xml: $xml,
-                                parentlevel: p.level,
-                                HideRefreshButton: p.HideRefreshButton,
-                                HideSearchButton: p.HideSearchButton
-                            });
+                            p.$xml = $xml;
+                            p.doProcessView = true;
+//                            $retDiv = _processViewXml({
+//                                        ParentId: p.ParentId,
+//                                        DivId: p.DivId,
+//                                        HeaderText: p.HeaderText,
+//                                        $xml: $xml,
+//                                        parentlevel: p.level,
+//                                        HideRefreshButton: p.HideRefreshButton,
+//                                        HideSearchButton: p.HideSearchButton,
+//                                        loadDivContents: p
+//                                    });
                         });
-                    } else
+                    } 
+                    else
                     {
                         if (debug) log('Starting ' + opts.ViewUrl, true);
                         
@@ -282,16 +311,17 @@
                                 {
 									_storeViewXml(p.DivId, p.HeaderText, X$xml);
                                 }
-
-                                $retDiv = _processViewXml({
-                                    ParentId: p.ParentId,
-                                    DivId: p.DivId,
-                                    HeaderText: p.HeaderText,
-                                    $xml: X$xml,
-                                    parentlevel: p.level,
-                                    HideRefreshButton: p.HideRefreshButton,
-                                    HideSearchButton: p.HideSearchButton
-                                });
+                                p.$xml = X$xml;
+                                p.doProcessView = true;
+//                                $retDiv = _processViewXml({
+//                                            ParentId: p.ParentId,
+//                                            DivId: p.DivId,
+//                                            HeaderText: p.HeaderText,
+//                                            $xml: X$xml,
+//                                            parentlevel: p.level,
+//                                            HideRefreshButton: p.HideRefreshButton,
+//                                            HideSearchButton: p.HideSearchButton
+//                                        });
                             }
                         });
                     }
@@ -303,16 +333,19 @@
                         if ( !isNullOrEmpty($xmlstr) )
                         {
                             $currentViewXml = $xmlstr;
-                            $retDiv = _processViewXml({
-                                ParentId: p.ParentId,
-                                DivId: p.DivId,
-                                HeaderText: p.HeaderText,
-                                $xml: $xmlstr,
-                                parentlevel: p.level,
-                                HideRefreshButton: p.HideRefreshButton,
-                                HideSearchButton: p.HideSearchButton
-                            });
-                        } else if (!amOffline())
+                            p.$xml = $currentViewXml;
+                            p.doProcessView = true;
+//                            $retDiv = _processViewXml({
+//                                ParentId: p.ParentId,
+//                                DivId: p.DivId,
+//                                HeaderText: p.HeaderText,
+//                                $xml: $xmlstr,
+//                                parentlevel: p.level,
+//                                HideRefreshButton: p.HideRefreshButton,
+//                                HideSearchButton: p.HideSearchButton
+//                            });
+                        }
+                        else if (!amOffline())
                         {
                             if (debug) log('Starting ' + opts.ViewUrl, true);
 
@@ -333,20 +366,22 @@
                                 {
                                     if (debug) log('On Success ' + opts.ViewUrl, true);
                                     $currentViewXml = $xml;
+                                    p.$xml = $currentViewXml;
+                                    p.doProcessView = true;
                                     if (p.level === 1)
                                     {
                                         _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                                     }
-                                
-                                   $retDiv = _processViewXml({
-                                        ParentId: p.ParentId,
-                                        DivId: p.DivId,
-                                        HeaderText: p.HeaderText,
-                                        $xml: $currentViewXml,
-                                        parentlevel: p.level,
-                                        HideRefreshButton: p.HideRefreshButton,
-                                        HideSearchButton: p.HideSearchButton
-                                    });
+
+//                                   $retDiv = _processViewXml({
+//                                        ParentId: p.ParentId,
+//                                        DivId: p.DivId,
+//                                        HeaderText: p.HeaderText,
+//                                        $xml: $currentViewXml,
+//                                        parentlevel: p.level,
+//                                        HideRefreshButton: p.HideRefreshButton,
+//                                        HideSearchButton: p.HideSearchButton
+//                                    });
                                 },
                                 error: function(xml)
                                 {
@@ -355,28 +390,39 @@
                             });
                         }
                     });
-                } else  // Level 2 and up
+                } 
+                else  // Level 2 and up
                 {
-//                    _fetchCachedViewXml(rootid, function (xmlstr)
-//                    {
-//                        if (xmlstr != '')
-//                        {
-                        if( !isNullOrEmpty($currentViewXml) )
-                        {
-                            var $thisxmlstr = $currentViewXml.find('#' + p.DivId);
-                            $retDiv = _processViewXml({
+                    if( !isNullOrEmpty($currentViewXml) )
+                    {
+                        p.$xml = $currentViewXml.find('#' + p.DivId)
+                                                .children('subitems').first();
+                        p.doProcessView = true;
+//                            $retDiv = _processViewXml({
+//                                ParentId: p.ParentId,
+//                                DivId: p.DivId,
+//                                HeaderText: p.HeaderText,
+//                                $xml: $thisxmlstr.children('subitems').first(),
+//                                parentlevel: p.level,
+//                                HideRefreshButton: p.HideRefreshButton,
+//                                HideSearchButton: p.HideSearchButton
+//                            });
+                    }
+                }
+            }
+            if( p.doProcessView )
+            {
+                $retDiv = _processViewXml({
                                 ParentId: p.ParentId,
                                 DivId: p.DivId,
                                 HeaderText: p.HeaderText,
-                                $xml: $thisxmlstr.children('subitems').first(),
+                                $xml: p.$xml,
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
                                 HideSearchButton: p.HideSearchButton
                             });
-                        }
-                    //});
-                }
-            } 
+            }
+             
             return $retDiv;
         } // _loadDivContents()
 
@@ -399,19 +445,17 @@
             }
 
             var $retDiv;
-
-            var $content = _makeUL();
+            var list
+            var $content = _make$UL();
             currenttab = '';
 
             onAfterAddDiv = function ($retDiv) { };
 
             p.$xml.children().each(function ()
             {
-                $content.append( _makeListItemFromXml($(this), p.DivId, p.parentlevel) );
+                $content.append( _makeListItemFromXml($(this), p) );
             });
-
-            $content.listview('refresh');
-
+            
             $retDiv = _addPageDivToBody({
                 ParentId: p.ParentId,
                 level: p.parentlevel,
@@ -422,12 +466,24 @@
                 HideSearchButton: p.HideSearchButton
             });
             onAfterAddDiv($retDiv);
-
+            
             return $retDiv;
         } // _processViewXml()
 
-        function _makeListItemFromXml($xmlitem, DivId, parentlevel)
+        function _makeListItemFromXml($xmlitem, params)
         {
+            var p = {
+                ParentId: '',
+                DivId: '',
+                HeaderText: '',
+                $xml: '',
+                parentlevel: '',
+                HideRefreshButton: false,
+                HideSearchButton: false
+            }
+            
+            if(params) $.extend(p,params);
+
             var id = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var text = $xmlitem.CswAttrXml('name');
             var IsDiv = ( !isNullOrEmpty(id) );
@@ -533,7 +589,7 @@
 
                         _addPageDivToBody({
                             ParentId: DivId,
-                            level: parentlevel,
+                            level: p.parentlevel,
                             DivId: id,
                             HeaderText: text,
                             toolbar: toolbar,
@@ -547,7 +603,7 @@
                         $retLI = $('<li></li>');
                         if (IsDiv)
                         {
-                            $retLI.CswLink('init',{href: 'javascript:void(0);' + id, value: text})
+                            $retLI.CswLink('init',{href: 'javascript:void(0);', value: text})
                                   .CswAttrXml({'data-identity': id, 
                                                'data-url': '?' + id });
                         }
@@ -555,10 +611,11 @@
                         {
                             $retLI.val(text);
                         }
-                        if(parentlevel === 0) 
+                        if(p.parentlevel === 0) 
                         {
-                            $body.CswDiv('init',{ID: id})
-                                 .CswAttrXml({'data-title': text, 'data-role': 'page', 'data-url': id});
+                            var $newDiv = $body.CswDiv('init',{ID: id})
+                                               .CswAttrXml({'data-title': text, 'data-role': 'page', 'data-url': id});
+                            _bindJqmEvents($newDiv,p);
                         }
                         break;
                     } // default:
@@ -568,13 +625,13 @@
 
         function _make$UL(id)
         {
-            var $retUL = $('<ul data-role="listview id="' + tryParseString(id,'') + '"></ul>');
+            var $retUL = $('<ul data-role="listview" id="' + tryParseString(id,'') + '"></ul>');
             return $retUL;
         }
 
         function _makeUL(id)
         {
-            var retUL = '<ul data-role="listview id="' + tryParseString(id,'') + '">';
+            var retUL = '<ul data-role="listview" id="' + tryParseString(id,'') + '">';
             return retUL;
         }
 
@@ -1141,7 +1198,7 @@
                                     'data-url': '?' + p.DivId + '_help', 
                                     'data-transition': 'slideup' });
             }
-            $pageDiv.page();
+            //_page( $pageDiv );
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
             return $pageDiv;
@@ -1190,7 +1247,7 @@
                 $footer.CswLink('init',{'href': 'javascript:void(0)', ID: p.DivId + '_help', value: 'Help'})
                        .CswAttrXml({'data-identity': p.DivId, 'data-url': '?' + p.DivId });
             }
-            $pageDiv.page();
+            //_page( $pageDiv );
             _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
             return $pageDiv;
@@ -1211,6 +1268,30 @@
             return ret;
         }
 
+        function _bindJqmEvents($div, params)
+        {
+            var p = {
+                ParentId: '',
+                DivId: '',
+                HeaderText: '',
+                $xml: '',
+                level: 0,
+                HideRefreshButton: false,
+                HideSearchButton: false
+            }
+            
+            if(params) $.extend(p,params);
+
+            $div.bind('pageshow', function() {
+                
+                $.mobile.pageLoading();
+                var $newDiv = _loadDivContents(p);
+                $div = _page( $newDiv );
+                $.mobile.pageLoading(true);
+            });
+
+            return $div;
+        }
 
         function _bindPageEvents(DivId, ParentId, level, $div)
         {
@@ -1242,16 +1323,11 @@
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
                 .find('li a')
-                .live('tap', function (e) { 
+                .bind('tap', function (e) { 
                         var $target = $(this);
-						var $child = _loadDivContents({
-                            ParentId: DivId,
-                            level: (level + 1),
-                            DivId: $target.CswAttrXml('data-identity'),
-                            HeaderText: $target.text()
-                        });
-                        $child.page();
-					//{ e.stopPropagation(); e.preventDefault(); }
+						var dataurl = $target.CswAttrXml('data-url');
+						if( !isNullOrEmpty(dataurl) )
+							_changePage(dataurl);						
 					})
                 .end();
         }
@@ -1401,7 +1477,8 @@
                         
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
 						_cacheSession(SessionId, UserName);
-                        $viewsdiv = reloadViews(true).page();
+                        $viewsdiv = reloadViews();
+                        _changePage($viewsdiv);
                     }
                 });
             }
@@ -1431,10 +1508,8 @@
             {
                 if (_checkNoPendingChanges())
                 {
-                    $.mobile.pageLoading();
                     setTimeout(function () { 
                             continueRefresh(DivId); 
-                            $.mobile.pageLoading( true );
                         }, 
                         opts.DivRemovalDelay);
                 }
@@ -1484,15 +1559,15 @@
                         $currentViewXml = $xml;
                         _updateStoredViewXml(RealDivId, $currentViewXml, '0');
 
-                        $viewsdiv = _processViewXml({
-                                ParentId: 'viewsdiv',
-                                DivId: RealDivId,
-                                HeaderText: HeaderText,
-                                '$xml': $currentViewXml,
-                                parentlevel: 1,
-                                HideRefreshButton: false,
-                                HideSearchButton: true
-                        });
+                        $viewsdiv = _bindJqmEvents($viewsdiv, {ParentId: 'viewsdiv',
+                                                               DivId: RealDivId,
+                                                               HeaderText: HeaderText,
+                                                               '$xml': $currentViewXml,
+                                                               level: 0,
+                                                               HideRefreshButton: false,
+                                                               HideSearchButton: true
+                                    });
+                        _changePage($viewsdiv);
                     } // success
                 });
             }
@@ -1624,7 +1699,7 @@
                     $content.listview('refresh');
                     var $srdiv = $('#' + DivId + '_searchresults');
                     $srdiv.children().remove();
-                    $srdiv.append($content).page();
+                    _page( $srdiv.append($content) );
                     $('#' + DivId + '_searchresultslist').listview();
 
                     _bindPageEvents(DivId + '_searchdiv', DivId, 1, $srdiv);
