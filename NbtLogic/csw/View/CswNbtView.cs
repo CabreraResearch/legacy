@@ -485,7 +485,7 @@ namespace ChemSW.Nbt
             Clear();
             if( CopyView != null )
                 this.LoadXml( CopyView.ToXml() );
-			this.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewRow["nodeviewid"].ToString() ) );
+			this.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewRow["nodeviewid"] ) );
             this.ViewName = ViewName;
             this.Visibility = Visibility;
             this.VisibilityRoleId = RoleId;

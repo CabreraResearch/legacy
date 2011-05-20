@@ -393,7 +393,7 @@ namespace ChemSW.Nbt
 
             XmlAttribute ViewIdAttribute = XmlDoc.CreateAttribute( "viewid" );
             if( ViewId.isSet() )
-                ViewIdAttribute.Value = ViewId.ToString();
+                ViewIdAttribute.Value = ViewId.get().ToString();
             else
                 ViewIdAttribute.Value = "";
             RootXmlNode.Attributes.Append( ViewIdAttribute );
