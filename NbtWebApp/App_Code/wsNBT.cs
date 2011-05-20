@@ -280,15 +280,15 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _CswSessionResources.attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
-				var ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources ); //, new CswWebClientStorageCookies( Context.Request, Context.Response ) ); // , Session );
-                    if( null != UserId )
-                    {
-                    QuickLaunchItems.Add( ws.getQuickLaunchItems() );
-                    }
-                }
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
+					var ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources ); //, new CswWebClientStorageCookies( Context.Request, Context.Response ) ); // , Session );
+					if( null != UserId )
+					{
+						ReturnVal.Add( ws.getQuickLaunchItems() );
+					}
+				}
 
                 _deInitResources();
             }
@@ -317,10 +317,11 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceView( _CswNbtResources );
-				//ReturnVal = XElement.Parse( ws.getViewTree( Session, IsSearchable, UseSession ) );
-				ReturnVal = XElement.Parse( ws.getViewTree( IsSearchable ) );
-	            _deInitResources();
-            }
+					//ReturnVal = XElement.Parse( ws.getViewTree( Session, IsSearchable, UseSession ) );
+					ReturnVal = XElement.Parse( ws.getViewTree( IsSearchable ) );
+					_deInitResources();
+				}
+			}
             catch( Exception ex )
             {
                 ReturnVal = _xError( ex );
@@ -2187,14 +2188,12 @@ namespace ChemSW.Nbt.WebServices
             }
 
             _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-	   return ReturnVal;
-
+			return ReturnVal;
         } // RunView()
-        #endregion Mobile
+
+		#endregion Mobile
 
         #endregion Web Methods
-
-            return ReturnVal;
 
 		private CswNbtView _getView( string ViewId )
 		{
