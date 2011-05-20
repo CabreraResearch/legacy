@@ -24,14 +24,16 @@ function CswAjaxJSON(options) { /// <param name="$" type="jQuery" />
         onloginfail: function () { },
         success: function (result) { },
         error: function () { },
-        formobile: false
+        formobile: false,
+        async: true
     };
     
 	if (options) $.extend(o, options);
 	//var starttime = new Date();
 	$.ajax({
 	    type: 'POST',
-	    url: o.url,
+	    async: o.async,
+        url: o.url,
 	    dataType: "json",
 	    contentType: 'application/json; charset=utf-8',
 	    data: JSON.stringify( o.data ),
@@ -93,7 +95,8 @@ function CswAjaxXml(options) {
         onloginfail: function () { },
         success: function ($xml) { },
         error: function () { },
-        formobile: false
+        formobile: false,
+        async: true
     };
     
 	if (options) $.extend(o, options);
@@ -112,6 +115,7 @@ function CswAjaxXml(options) {
 		//var starttime = new Date();
 	    $.ajax({
 	        type: 'POST',
+            async: o.async,
 	        url: o.url,
 	        dataType: "xml",
 	        //contentType: 'application/json; charset=utf-8',
