@@ -90,13 +90,12 @@
                         function ()
                         {
                             // online
-                            //_changePage($logindiv);
-                            //removeDiv(tempdivid);
+                            _changePage($logindiv);
                         },
                         function ()
                         {
                             // offline
-                            //_changePage($sorrycharliediv);
+                            _changePage($sorrycharliediv);
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
@@ -112,37 +111,30 @@
             var $retDiv = _addDialogDivToBody({
                 DivId: 'logindiv',
                 HeaderText: 'Login to ChemSW Fire Inspection',
-                content: LoginContent,
+                $content: $(LoginContent),
                 HideHelpButton: false
-            });
+            }).page();
             $('#loginsubmit').click(onLoginSubmit);
             $('#login_accessid').clickOnEnter($('#loginsubmit'));
             $('#login_username').clickOnEnter($('#loginsubmit'));
             $('#login_password').clickOnEnter($('#loginsubmit'));
 		    //_changePage($retDiv, 'fade', false, true);
-            $retDiv.page();
             return $retDiv;
 		}
 
 		function _changePage($div, transition, reverse, changeHash)
 		{
             log($.mobile.activePage,true);
-            //debugger;
-			//if($div.CswAttrDom('id') === 'viewsdiv' || $div === $logindiv)
-            //{
-                $.mobile.changePage($div, transition, reverse, changeHash);
-            //}
+            $.mobile.changePage($div, transition, reverse, changeHash);
 		}
 
-        function _loadSorryCharlieDiv(ChangePage)
+        function _loadSorryCharlieDiv()
         {
             $retDiv = _addDialogDivToBody({
                 DivId: 'sorrycharliediv',
                 HeaderText: 'Sorry Charlie!',
-                content: 'You must have internet connectivity to login.'                
+                $content: $('<p>You must have internet connectivity to login.</p>')                
             });
-            //if (ChangePage)
-            //    _changePage($retDiv, 'fade', false, true);
             return $retDiv;
         }
 
@@ -151,7 +143,7 @@
             setTimeout('$(\'#' + DivId + '\').remove();', opts.DivRemovalDelay);
         }
 
-        function reloadViews(ChangePage)
+        function reloadViews()
         {
             var $retDiv;
             if ( $.mobile.activePage === $viewsdiv)
@@ -164,12 +156,12 @@
                     opts.DivRemovalDelay);
             } else
             {
-                $retDiv = continueReloadViews(ChangePage);
+                $retDiv = continueReloadViews();
             }
             return $retDiv;
         }
 
-        function continueReloadViews(ChangePage)
+        function continueReloadViews(ChanePage)
         {
             if($viewsdiv) $viewsdiv.remove();
             $viewsdiv = _loadDivContents({
@@ -177,8 +169,7 @@
                                 DivId: 'viewsdiv',
                                 HeaderText: 'Views',
                                 HideRefreshButton: true,
-                                HideSearchButton: true,
-                                ChangePage: ChangePage
+                                HideSearchButton: true
                             });
             return $viewsdiv;
         }
@@ -239,8 +230,7 @@
                 DivId: '',
                 HeaderText: '',
                 HideRefreshButton: false,
-                HideSearchButton: false,
-                ChangePage: false
+                HideSearchButton: false
             };
             if (params) $.extend(p, params);
             
@@ -265,8 +255,7 @@
                                 $xml: $xml,
                                 parentlevel: p.level,
                                 HideRefreshButton: p.HideRefreshButton,
-                                HideSearchButton: p.HideSearchButton,
-                                ChangePage: p.ChangePage
+                                HideSearchButton: p.HideSearchButton
                             });
                         });
                     } else
@@ -302,8 +291,7 @@
                                     $xml: X$xml,
                                     parentlevel: p.level,
                                     HideRefreshButton: p.HideRefreshButton,
-                                    HideSearchButton: p.HideSearchButton,
-                                    ChangePage: true
+                                    HideSearchButton: p.HideSearchButton
                                 });
                             }
                         });
@@ -358,8 +346,7 @@
                                         $xml: $currentViewXml,
                                         parentlevel: p.level,
                                         HideRefreshButton: p.HideRefreshButton,
-                                        HideSearchButton: p.HideSearchButton,
-                                        ChangePage: p.ChangePage
+                                        HideSearchButton: p.HideSearchButton
                                     });
                                 },
                                 error: function(xml)
@@ -405,8 +392,7 @@
                 $xml: '',
                 parentlevel: '',
                 HideRefreshButton: false,
-                HideSearchButton: false,
-                ChangePage: false
+                HideSearchButton: false
             };
             if (params)
             {
@@ -422,7 +408,7 @@
 
             p.$xml.children().each(function ()
             {
-                content.append( $(_makeListItemFromXml($(this), p.DivId, p.parentlevel) ) );
+                $content.append( _makeListItemFromXml($(this), p.DivId, p.parentlevel) );
             });
 
             $content.listview('refresh');
@@ -432,18 +418,11 @@
                 level: p.parentlevel,
                 DivId: p.DivId,
                 HeaderText: p.HeaderText,
-                content: $content,
+                $content: $content,
                 HideRefreshButton: p.HideRefreshButton,
                 HideSearchButton: p.HideSearchButton
             });
             onAfterAddDiv($retDiv);
-
-            // if and only if we're here because of an AJAX call
-            if (p.ChangePage)
-            {   
-                $retDiv.page();
-                _changePage($retDiv, "slide");
-            }
 
             return $retDiv;
         } // _processViewXml()
@@ -458,7 +437,7 @@
             var nextid = $xmlitem.next().CswAttrXml('id');
             var previd = $xmlitem.prev().CswAttrXml('id');
 
-            var $lihtml;
+            var $retLI;
             
             switch (PageType)
             {
@@ -467,11 +446,12 @@
                     break;
 
                 case "node":
-                    $lihtml.append( $(_makeObjectClassContent($xmlitem) ) );
+                    $retLI = _makeObjectClassContent($xmlitem);
                     break;
 
                 case "prop":
                     {   
+                        var lihtml = '';
                         var tab = $xmlitem.CswAttrXml('tab');
                         var fieldtype = tryParseString($xmlitem.CswAttrXml('fieldtype'),'').toLowerCase();
                         var gestalt = $xmlitem.CswAttrXml('gestalt');
@@ -558,19 +538,22 @@
                             DivId: id,
                             HeaderText: text,
                             toolbar: toolbar,
-                            content: _FieldTypeXmlToHtml($xmlitem, DivId)
+                            $content: _FieldTypeXmlToHtml($xmlitem, DivId)
                         });
-
+                        $retLI = $(lihtml);
                         break;
                     } // case 'prop':
                 default:
                     {
-                        lihtml += '<li>';
+                        $retLI = $('<li></li>');
                         if (IsDiv)
-                            lihtml += '<a href="#' + id + '">' + text + '</a>';
+                        {
+                            $retLI.CswLink('init',{href: '#' + id, value: text});
+                        }
                         else
-                            lihtml += text;
-                        lihtml += '</li>';
+                        {
+                            $retLI.val(text);
+                        }
                         if(parentlevel === 0) 
                         {
                             $body.CswDiv('init',{ID: id})
@@ -579,7 +562,7 @@
                         break;
                     } // default:
             }
-            return lihtml;
+            return $retLI;
         } // _makeListItemFromXml()
 
         function _make$UL(id)
@@ -601,6 +584,7 @@
 
         function _makeObjectClassContent($xmlitem)
         {
+            var $retHtml;
             var Html = '';
             var id = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var NodeName = $xmlitem.CswAttrXml('name');
@@ -651,7 +635,8 @@
                     Html += '</li>';
                     break;
             }
-            return Html;
+            $retHtml = $(Html);
+            return $retHtml;
         }
 
         function _extractCDataValue($node)
@@ -681,6 +666,7 @@
 
         function _FieldTypeXmlToHtml($xmlitem, ParentId)
         {
+            var $retHtml;
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
@@ -827,7 +813,8 @@
             else {
                 Html += $xmlitem.CswAttrXml('gestalt');
             }
-            return Html;
+            $retHtml = $(Html);
+            return $retHtml;
         }
 
         function _FieldTypeHtmlToXml($xmlitem, name, value)
@@ -894,6 +881,7 @@
 
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
         {
+            var $retHtml;
             var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
 
             var answers = ['Null', 'True', 'False'];
@@ -951,11 +939,13 @@
             } // for (var i = 0; i < answers.length; i++)
 
             Html += '</fieldset>';
-            return Html;
+            $retHtml = $(Html);
+            return $retHtml;
         }
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
+            var $retHtml;
             var Html = '<fieldset class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
@@ -1024,7 +1014,8 @@
                 Html += '            <label for="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '">' + answers[i] + '</label>';
             } // for (var i = 0; i < answers.length; i++)
             Html += '</fieldset>';
-            return Html;
+            $retHtml = $(Html);
+            return $retHtml;
         } // _makeQuestionAnswerFieldSet()
 
         
@@ -1036,15 +1027,14 @@
                 DivId: '',       // required
                 HeaderText: '',
                 toolbar: '',
-                content: '',
+                $content: '',
                 HideSearchButton: false,
                 HideOnlineButton: false,
                 HideRefreshButton: false,
                 HideLogoutButton: false,
                 HideHelpButton: false,
                 backicon: undefined,
-                backtransition: undefined,
-                IsDialog: false
+                backtransition: undefined
             };
 
             if (params)
@@ -1058,11 +1048,9 @@
 
             if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
             {
-                log('Steve says ' + p.DivId);
                 $pageDiv = $body.CswDiv('init',{ID: p.DivId})
                                 .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText}); 
             }
-            if( p.IsDialog ) $pageDiv.CswAttrXml('data-rel', 'dialog');
 			var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
                                   .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'fixed'});
             var $backlink = $header.CswLink('init',{ID: p.DivId + '_back',href: '#' + p.ParentId, value:'Back'})
@@ -1096,7 +1084,7 @@
                    .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
             var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
                                    .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
-                                   .append($(p.content));
+                                   .append(p.$content);
             var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
                                   .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
             if (!p.HideOnlineButton)
@@ -1130,7 +1118,7 @@
                 $footer.CswLink('init',{href: '#', ID: p.DivId + '_help', value: 'Help'})
                        .CswAttrXml('data-transition', 'slideup');
             }
-
+            $pageDiv.page();
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
             return $pageDiv;
@@ -1143,7 +1131,7 @@
                 DivId: '',       // required
                 HeaderText: '',
                 toolbar: '',
-                content: '',
+                $content: '',
                 HideHelpButton: false
             };
 
@@ -1162,14 +1150,13 @@
                                 .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText, 'data-rel': 'dialog'}); 
             }
 			var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
-                                  .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'fixed'});
-            
- 
+                                  .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'inline'});
+            $header.append($('<h1>' + p.HeaderText + '</h1>'));
             $header.CswDiv('init',{class: 'toolbar',value: p.toolbar})
                    .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
             var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
                                    .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
-                                   .append($(p.content));
+                                   .append(p.$content);
             var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
                                   .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
             
@@ -1179,7 +1166,7 @@
             {
                 $footer.CswLink('init',{href: '#', ID: p.DivId + '_help', value: 'Help'});
             }
-
+            $pageDiv.page();
             _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
             return $pageDiv;
@@ -1276,7 +1263,7 @@
             var $retDiv = _addPageDivToBody({
                     DivId: 'synchstatus',
                     HeaderText: 'Synch Status',
-                    content: content,
+                    $content: $(content),
                     HideSearchButton: true,
                     HideRefreshButton: true
             });
@@ -1344,13 +1331,12 @@
         
         function _makeHelpDiv()
         {
-            var content = '';
-            content += '<p>Help</p>';
+            var $help = $('<p>Help</p>');
             
             var $retDiv = _addPageDivToBody({
                     DivId: 'help',
                     HeaderText: 'Help',
-                    content: content,
+                    $content: $help,
                     HideSearchButton: true,
                     HideRefreshButton: true
             });
@@ -1480,8 +1466,7 @@
                                 '$xml': $currentViewXml,
                                 parentlevel: 1,
                                 HideRefreshButton: false,
-                                HideSearchButton: true,
-                                ChangePage: true
+                                HideSearchButton: true
                         });
                     } // success
                 });
@@ -1570,7 +1555,7 @@
                         ParentId: DivId,
                         DivId: DivId + '_searchdiv',
                         HeaderText: 'Search',
-                        content: Html,
+                        $content: $(Html),
                         HideSearchButton: true,
                         HideRefreshButton: true,
                         backicon: 'arrow-u'
@@ -1610,10 +1595,10 @@
                     {
                         $content.append( $('<li>No Results</li>');
                     }
-
+                    $content.listview('refresh');
                     var $srdiv = $('#' + DivId + '_searchresults');
                     $srdiv.children().remove();
-                    $srdiv.append($content);
+                    $srdiv.append($content).page();
                     $('#' + DivId + '_searchresultslist').listview();
 
                     _bindPageEvents(DivId + '_searchdiv', DivId, 1, $srdiv);
