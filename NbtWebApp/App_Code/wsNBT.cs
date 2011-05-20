@@ -903,7 +903,7 @@ namespace ChemSW.Nbt.WebServices
 					NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, null );
 					NewView.ViewMode = RealViewMode;
 					NewView.save();
-					ReturnVal.Add( new JProperty( "newviewid", NewView.ViewId ) );
+					ReturnVal.Add( new JProperty( "newviewid", NewView.ViewId.ToString() ) );
 				}
 
 				_deInitResources();
