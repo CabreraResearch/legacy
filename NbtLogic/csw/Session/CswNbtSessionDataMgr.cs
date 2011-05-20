@@ -74,7 +74,7 @@ namespace ChemSW.Nbt
 			{
 				XElement ThisItem = new XElement( "item" );
 				ThisItem.SetAttributeValue( "launchtype", Row[SessionDataColumn_SessionDataType].ToString() );
-				ThisItem.SetAttributeValue( "itemid", Row[SessionDataColumn_PrimaryKey].ToString() );
+				ThisItem.SetAttributeValue( "itemid", new CswNbtSessionDataId( CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] ) ) );
 				ThisItem.SetAttributeValue( "text", Row[SessionDataColumn_Name].ToString() );
 				ThisItem.SetAttributeValue( "viewmode", Row[SessionDataColumn_ViewMode].ToString() );
 
