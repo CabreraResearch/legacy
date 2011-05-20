@@ -198,7 +198,8 @@
                                                             'IncludeNodeKey': '',
                                                             'ShowEmpty': false,
                                                             'ForSearch': o.forsearch,
-                                                            'NodePk': tryParseString(o.nodeid,'')
+                                                            'NodePk': tryParseString(o.nodeid,''),
+															'IncludeInQuickLaunch': false
                                                         };
                                                         return $.param(retDataParam);
 													},
