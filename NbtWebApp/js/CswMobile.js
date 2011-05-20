@@ -102,7 +102,7 @@
             }); // readConfigVar();
         }); // _initDB();
 
-        function _loadLoginDiv(ChangePage)
+        function _loadLoginDiv()
         {
             var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
@@ -145,23 +145,22 @@
 
         function reloadViews()
         {
-            var $retDiv;
             if ( $.mobile.activePage === $viewsdiv)
             {
                 $.mobile.pageLoading();
                 setTimeout(function () { 
-                        continueReloadViews(true);
+                        $viewsdiv = continueReloadViews(true);
                         $.mobile.pageLoading( true ); 
                     }, 
                     opts.DivRemovalDelay);
             } else
             {
-                $retDiv = continueReloadViews();
+                $viewsdiv = continueReloadViews();
             }
-            return $retDiv;
+            return $viewsdiv;
         }
 
-        function continueReloadViews(ChanePage)
+        function continueReloadViews()
         {
             if($viewsdiv) $viewsdiv.remove();
             $viewsdiv = _loadDivContents({
@@ -1224,8 +1223,7 @@
                             ParentId: DivId,
                             level: (level + 1),
                             DivId: $target.CswAttrDom('href').substr(1),
-                            HeaderText: $target.text(),
-                            ChangePage: true
+                            HeaderText: $target.text()
                         });
                         $child.page();
 					//{ e.stopPropagation(); e.preventDefault(); }
@@ -1367,6 +1365,7 @@
                 $.mobile.path.get = function( newPath ){ return ''; };
                 CswAjaxJSON({
                     formobile: ForMobile,
+                    async: false,
                     url: opts.AuthenticateUrl,
                     data: ajaxData,
                     onloginfail: function () { Logout(); },
