@@ -39,6 +39,7 @@ namespace ChemSW.Nbt.Schema
 			_CswNbtSchemaModTrnsctn.addStringColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_SessionDataType, "Type: view or action", false, false, 10 );
 			_CswNbtSchemaModTrnsctn.addStringColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_Name, "Name of view or action", false, false, 30 );
 			_CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_ActionId, "Primary key of action", false, false, "actions", "actionid" );
+			_CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_ViewId, "Primary key of view", false, false, "node_views", "viewid" );
 			_CswNbtSchemaModTrnsctn.addStringColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_ViewMode, "Rendering Mode for view", false, false, 10 );
 			_CswNbtSchemaModTrnsctn.addClobColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_ViewXml, "View XML", false, false );
 			_CswNbtSchemaModTrnsctn.addBooleanColumn( Tbl, CswNbtSessionDataMgr.SessionDataColumn_QuickLaunch, "Include this in quick launch", false, false );

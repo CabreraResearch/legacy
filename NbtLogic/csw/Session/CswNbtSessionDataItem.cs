@@ -48,7 +48,7 @@ namespace ChemSW.Nbt
 		{
 			get { 
 				SessionDataType ret = SessionDataType.Unknown;
-				Enum.TryParse( _SessionDataRow["sessiondatatype"].ToString(), out ret);
+				Enum.TryParse( _SessionDataRow[CswNbtSessionDataMgr.SessionDataColumn_SessionDataType].ToString(), out ret);
 				return ret;
 			}
 		}
@@ -57,8 +57,7 @@ namespace ChemSW.Nbt
 		{
 			get
 			{
-				CswNbtSessionDataId ret = new CswNbtSessionDataId( CswConvert.ToInt32( _SessionDataRow["sessiondataid"] ) );
-				return ret;
+				return new CswNbtSessionDataId( CswConvert.ToInt32( _SessionDataRow[CswNbtSessionDataMgr.SessionDataColumn_PrimaryKey] ) );
 			}
 		}
 
@@ -66,7 +65,7 @@ namespace ChemSW.Nbt
 		{
 			get
 			{
-				return _SessionDataRow["name"].ToString();
+				return _SessionDataRow[CswNbtSessionDataMgr.SessionDataColumn_Name].ToString();
 			}
 		}
 
@@ -77,7 +76,9 @@ namespace ChemSW.Nbt
 				CswNbtView View = new CswNbtView( _CswNbtResources );
 				if( DataType == SessionDataType.View )
 				{
-					View.LoadXml( _SessionDataRow["viewxml"].ToString() );
+					View.LoadXml( _SessionDataRow[CswNbtSessionDataMgr.SessionDataColumn_ViewXml].ToString() );
+					View.ViewId = new CswNbtViewId( CswConvert.ToInt32( _SessionDataRow[CswNbtSessionDataMgr.SessionDataColumn_ViewId] ) );
+					View.SessionViewId = DataId;
 				}
 				return View;
 			}
@@ -87,7 +88,7 @@ namespace ChemSW.Nbt
 		{
 			get
 			{
-				return CswConvert.ToInt32( _SessionDataRow["actionid"] );
+				return CswConvert.ToInt32( _SessionDataRow[CswNbtSessionDataMgr.SessionDataColumn_ActionId] );
 			}
 		}
 
