@@ -1606,10 +1606,11 @@ namespace ChemSW.Nbt.WebServices
         #endregion Mobile
 
         #region test
+        [WebMethod( EnableSession = true )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string GetTestData()
         {
-            JObject RetJson = new JObject( new JProperty( "C", "Dynamic Page A" ), new JProperty( "D", "Dynamic Page B" ) );
+            JObject RetJson = new JObject( new JProperty( "A", "Static Page 1" ), new JProperty( "B", "Static Page 2" ), new JProperty("C", "Dynamic Page A" ), new JProperty( "D", "Dynamic Page B" ) );
             return ( RetJson.ToString() );
         } // RunView()
         #endregion test
