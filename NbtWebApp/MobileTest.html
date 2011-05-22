@@ -13,47 +13,67 @@
     
     <script type="text/javascript">
 
-        function bindJqm($div)
+        var currentPath = ( $.mobile.path.get() !== 'localhost' ) ? $.mobile.path.get() : '';
+
+        function bindJqm()
         {
-            $div.bind('pageshow', function ()
+
+            $('div[data-role="page"]').each(function ()
             {
-                $.mobile.pageLoading();
 
-                var $content = $div.find('div:jqmData(role="content")');
-                var $ul = $('<ul data-role="listview" data-theme="b"></ul>'); //.listview();
-                $content.append($ul);
-                $ul.listview();
-
-                CswAjaxJSON({
-                    url: '/NbtWebApp/wsNBT.asmx/GetTestData',
-                    data: {},
-                    success: function (links)
-                    {
-                        //debugger;
-                        for (prop in links)
-                        {
-                            log(prop);
-                            var id = links[prop].replace(' ', '').replace(' ', '');
-                            var text = links[prop];
-                            var $li = $('<li><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);" >' + text + '</a></li>');
-                            
-                            $ul.append($li);
-                            $ul.listview('refresh');
-                            makePage(id, text);
-                        }
-                    }
-                });
-
-                $content.find('ul:jqmData(role="listview") a').bind('click', function ()
+                $(this).bind('pageshow', function ()
                 {
-                    debugger;
-                    var dataurl = $(this).attr('data-url');
-                    $.mobile.changePage(dataurl);
+                    var $div = $(this).page();
+                    loadContent($div);
                 });
-                
-
-                $.mobile.pageLoading(true);
             });
+
+        }
+
+        function loadContent($div)
+        {
+            $.mobile.pageLoading();
+            
+            var $content = $div.find('div:jqmData(role="content")').empty();
+            var $ul = $('<ul data-role="listview" data-theme="b"></ul>'); //.listview();
+            $content.append($ul);
+            $ul.listview();
+
+            // hack: JQM keeps updating path as concatenation of localhost + data-url, which breaks AJAX
+            if ($.mobile.path.get() !== '') //$.mobile.path.set('');
+            $.mobile.path.get = function (newPath) { return ''; };
+            CswAjaxJSON({
+                url: '/NbtWebApp/wsNBT.asmx/GetTestData',
+                data: {},
+                success: function (links)
+                {
+                    for (prop in links)
+                    {
+                        log(prop);
+                        var id = links[prop].replace(' ', '').replace(' ', '');
+                        var text = links[prop];
+                        var $li = $('<li><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);" >' + text + '</a></li>');
+
+                        $ul.append($li);
+                        $ul.listview('refresh');
+                        $newPage = makePage(id, text);
+                        $li.find('a').bind('click', function ()
+                        {
+                            var dataurl = $(this).attr('data-url');
+                            var $thisPage = $('#' + dataurl);
+                            $.mobile.changePage($thisPage);
+                        });
+                    }
+                    bindJqm();
+
+                },
+                error: function (xml)
+                {
+                    log(xml);
+                }
+            });
+
+            $.mobile.pageLoading(true);
         }
 
         function makePage(id,text)
@@ -71,31 +91,30 @@
                            .appendTo($page);
 
                 $page.append('<div id="Footer_' + id + '" ' + 'data-role="footer">');
-            }
-            if ($page !== undefined || $page.length !== 0)
-            {
+
                 $page.page();
-                $page = bindJqm($page);
             }
             return $page;
         }
 
         var $static1 = $('<div id="StaticPage1" data-role="page" data-url="StaticPage1"><div id="StaticHeader1" data-role="header"><h1>Static Header 1</h1></div><div id="StaticContent1" data-role="content" ></div></div>');
         var $static2 = $('<div id="StaticPage2" data-role="page" data-url="StaticPage2"><div id="StaticHeader2" data-role="header"><h1>Static Header 2</h1></div><div id="StaticContent2" data-role="content" ></div></div>');
-        $static1.page();
-        bindJqm($static1);
-        $('body').append($static1).append($static2);
-        $static1.find('ul:jqmData(role="listview")').bind('click', function ()
-        {
-//            debugger;
-            var dataurl = $(this).attr('data-url');
-            $.mobile.changePage(dataurl);
-        });
-
         
+        $('body').append($static1).append($static2);
+        
+        var $currentPage = $('#' + currentPath);
+        $currentPage = ($currentPage === $static1) ? $static1 : makePage(currentPath, currentPath);
+        bindJqm();
+        if ($currentPage === $static1)
+        {
+            $static1.page();
+        }
+        else
+        {
+            loadContent($currentPage);
+        }
 
-
-
+        //$.mobile.changePage($static1,'',true,false);
     </script>
 </body>
 </html>
