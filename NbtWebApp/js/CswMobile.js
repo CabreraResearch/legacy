@@ -1114,95 +1114,96 @@
             {
                 $pageDiv = $body.CswDiv('init',{ID: p.DivId})
                                 .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText}); 
-            }
-			var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
-                                  .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'fixed'});
-            var $backlink = $header.CswLink('init',{'href': 'javascript:void(0)', 
-                                                    ID: p.DivId + '_back',
-                                                    value: 'Back'})
-                                    .CswAttrXml({'data-identity': p.DivId + '_back', 
-                                                 'data-url': p.DivId + '_back',
-                                                 'data-direction': 'reverse' });
             
-            if ( !isNullOrEmpty(p.backtransition) )
-            {
-                $backlink.CswAttrXml('data-transition', p.backtransition);
-            }
-            if ( isNullOrEmpty(p.ParentId) )
-            {
-                $backlink.css('visibility','hidden');
-            }
+			    var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
+                                      .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'fixed'});
+                var $backlink = $header.CswLink('init',{'href': 'javascript:void(0)', 
+                                                        ID: p.DivId + '_back',
+                                                        value: 'Back'})
+                                        .CswAttrXml({'data-identity': p.DivId + '_back', 
+                                                     'data-url': p.DivId + '_back',
+                                                     'data-direction': 'reverse' });
             
-            if ( !isNullOrEmpty(p.backicon) )
-            {
-                $backlink.CswAttrXml('data-icon',p.backicon);
-            }
-            else
-            {
-                $backlink.CswAttrXml('data-icon','arrow-l');
-            }
-
-            $header.append($('<h1>' + p.HeaderText + '</h1>'));
-            if (!p.HideSearchButton)
-            {
-                $header.CswLink('init',{'href': 'javascript:void(0)', 
-                                        ID: p.DivId + '_searchopen',
-                                        text: 'Search' })
-                        .CswAttrXml({'data-identity': p.DivId + '_searchopen', 
-                                     'data-url': p.DivId + '_searchopen', 
-                                     'data-transition': 'slidedown' });
-            }
-            $header.CswDiv('init',{class: 'toolbar',value: p.toolbar})
-                   .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
-            var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
-                                   .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
-                                   .append(p.$content);
-            var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
-                                  .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
-            if (!p.HideOnlineButton)
-            {
-                var $online;
-                var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
-                var onlineValue = (amOffline()) ? 'Offline' : 'Online';
-
-                $online = $footer.CswLink('init',{'href': 'javascript:void(0)', 
-                                                  ID: p.DivId + '_gosynchstatus', 
-                                                  class: onlineClass,  
-                                                  value: onlineValue })
-                                  .CswAttrXml({'data-identity': p.DivId + '_gosynchstatus', 
-                                               'data-url': p.DivId + '_gosynchstatus', 
-                                               'data-transition': 'slideup' });
-            }
-            if (!p.HideRefreshButton)
-            {
-                $footer.CswLink('init',{'href': 'javascript:void(0)', 
-                                        ID: p.DivId + '_refresh', 
-                                        value:'Refresh', 
-                                        class: 'refresh'})
-                       .CswAttrXml({'data-identity': p.DivId + '_refresh', 
-                                    'data-url': p.DivId + '_refresh' });
-            }
-            if (!p.HideLogoutButton)
-            {
-                $footer.CswLink('init',{'href': 'javascript:void(0)', 
-                                        ID: p.DivId + '_logout', 
-                                        value: 'Logout' })
-                       .CswAttrXml({'data-identity': p.DivId + '_logout', 
-                                    'data-url': p.DivId + '_logout', 
-                                    'data-transition': 'flip' });
-            }
+                if ( !isNullOrEmpty(p.backtransition) )
+                {
+                    $backlink.CswAttrXml('data-transition', p.backtransition);
+                }
+                if ( isNullOrEmpty(p.ParentId) )
+                {
+                    $backlink.css('visibility','hidden');
+                }
             
-            $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'})
-                   .CswAttrXml('data-transition', 'pop');
+                if ( !isNullOrEmpty(p.backicon) )
+                {
+                    $backlink.CswAttrXml('data-icon',p.backicon);
+                }
+                else
+                {
+                    $backlink.CswAttrXml('data-icon','arrow-l');
+                }
 
-            if (!p.HideHelpButton)
-            {
-                $footer.CswLink('init',{'href': 'javascript:void(0)', 
-                                        ID: p.DivId + '_help', 
-                                        value: 'Help' })
-                       .CswAttrXml({'data-identity': p.DivId + '_help', 
-                                    'data-url': p.DivId + '_help', 
-                                    'data-transition': 'slideup' });
+                $header.append($('<h1>' + p.HeaderText + '</h1>'));
+                if (!p.HideSearchButton)
+                {
+                    $header.CswLink('init',{'href': 'javascript:void(0)', 
+                                            ID: p.DivId + '_searchopen',
+                                            text: 'Search' })
+                            .CswAttrXml({'data-identity': p.DivId + '_searchopen', 
+                                         'data-url': p.DivId + '_searchopen', 
+                                         'data-transition': 'slidedown' });
+                }
+                $header.CswDiv('init',{class: 'toolbar',value: p.toolbar})
+                       .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
+                var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
+                                       .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
+                                       .append(p.$content);
+                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
+                                      .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
+                if (!p.HideOnlineButton)
+                {
+                    var $online;
+                    var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
+                    var onlineValue = (amOffline()) ? 'Offline' : 'Online';
+
+                    $online = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                                      ID: p.DivId + '_gosynchstatus', 
+                                                      class: onlineClass,  
+                                                      value: onlineValue })
+                                      .CswAttrXml({'data-identity': p.DivId + '_gosynchstatus', 
+                                                   'data-url': p.DivId + '_gosynchstatus', 
+                                                   'data-transition': 'slideup' });
+                }
+                if (!p.HideRefreshButton)
+                {
+                    $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                            ID: p.DivId + '_refresh', 
+                                            value:'Refresh', 
+                                            class: 'refresh'})
+                           .CswAttrXml({'data-identity': p.DivId + '_refresh', 
+                                        'data-url': p.DivId + '_refresh' });
+                }
+                if (!p.HideLogoutButton)
+                {
+                    $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                            ID: p.DivId + '_logout', 
+                                            value: 'Logout' })
+                           .CswAttrXml({'data-identity': p.DivId + '_logout', 
+                                        'data-url': p.DivId + '_logout', 
+                                        'data-transition': 'flip' });
+                }
+            
+                $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'})
+                       .CswAttrXml('data-transition', 'pop');
+
+                if (!p.HideHelpButton)
+                {
+                    $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                            ID: p.DivId + '_help', 
+                                            value: 'Help' })
+                           .CswAttrXml({'data-identity': p.DivId + '_help', 
+                                        'data-url': p.DivId + '_help', 
+                                        'data-transition': 'slideup' });
+                }
             }
             //_page( $pageDiv );
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
@@ -1234,26 +1235,27 @@
             {
                 $pageDiv = $body.CswDiv('init',{ID: p.DivId})
                                 .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText, 'data-rel': 'dialog'}); 
-            }
-			var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
-                                  .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'inline'});
-            $header.append($('<h1>' + p.HeaderText + '</h1>'));
-            $header.CswDiv('init',{class: 'toolbar',value: p.toolbar})
-                   .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
-            var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
-                                   .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
-                                   .append(p.$content);
-            var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
-                                  .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
             
-            $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'});
+		        var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
+                                        .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'inline'});
+                $header.append($('<h1>' + p.HeaderText + '</h1>'));
+                $header.CswDiv('init',{class: 'toolbar',value: p.toolbar})
+                        .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
+                var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
+                                        .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
+                                        .append(p.$content);
+                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
+                                        .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
+            
+                $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'});
 
-            if (!p.HideHelpButton)
-            {
-                $footer.CswLink('init',{'href': 'javascript:void(0)', ID: p.DivId + '_help', value: 'Help'})
-                       .CswAttrXml({'data-identity': p.DivId, 'data-url': p.DivId });
+                if (!p.HideHelpButton)
+                {
+                    $footer.CswLink('init',{'href': 'javascript:void(0)', ID: p.DivId + '_help', value: 'Help'})
+                            .CswAttrXml({'data-identity': p.DivId, 'data-url': p.DivId });
+                }
+                _page( $pageDiv );
             }
-            _page( $pageDiv );
             _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
             return $pageDiv;
