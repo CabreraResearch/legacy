@@ -373,24 +373,24 @@
 
                 // recurse on sub-props
                 var $subprops = $propxml.children('subprops');
+
+                var $subtable = $propcell.CswLayoutTable('init', {
+                    'ID': fieldOpt.propid + '_subproptable',
+                    'OddCellRightAlign': true,
+                    'ReadOnly': (o.EditMode === 'PrintReport'),
+                    'cellset': {
+                        rows: 1,
+                        columns: 2
+                    },
+                    'onSwap': function (e, onSwapData)
+                    {
+                        onSwap(onSwapData);
+                    },
+                    'showConfigButton': false
+                });
+
                 if (($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0) || ConfigMode)
                 {
-                    //var $subtable = $propcell.CswTable('init', { ID: $propxml.CswAttrXml('id') + '_subproptable' });
-
-                    var $subtable = $propcell.CswLayoutTable('init', {
-                        'ID': fieldOpt.propid + '_subproptable',
-                        'OddCellRightAlign': true,
-                        'ReadOnly': (o.EditMode === 'PrintReport'),
-                        'cellset': {
-                            rows: 1,
-                            columns: 2
-                        },
-                        'onSwap': function (e, onSwapData)
-                        {
-                            onSwap(onSwapData);
-                        },
-                        'showConfigButton': false
-                    });
                     _handleProps($subtable, $subprops, $tabcontentdiv, tabid, ConfigMode);
                     if(ConfigMode) {
                         $subtable.CswLayoutTable('ConfigOn');
@@ -403,28 +403,28 @@
 
         function _updateSubProps(fieldOpt, SinglePropUrl, EditMode, cswnbtnodekey, PropId, nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, ConfigMode)
         {
-            // do a fake 'save' to update the xml with the current value
-            $.CswFieldTypeFactory('save', fieldOpt);
+			// do a fake 'save' to update the xml with the current value
+			$.CswFieldTypeFactory('save', fieldOpt);
 
-            // update the propxml from the server
-            var dataXml = {
-                EditMode: EditMode,
-                NodeId: o.nodeid,
-                SafeNodeKey: cswnbtnodekey,
-                PropId: PropId,
-                NodeTypeId: nodetypeid,
-                NewPropXml: xmlToString($propxml)
-            };
+			// update the propxml from the server
+			var dataXml = {
+				EditMode: EditMode,
+				NodeId: o.nodeid,
+				SafeNodeKey: cswnbtnodekey,
+				PropId: PropId,
+				NodeTypeId: nodetypeid,
+				NewPropXml: xmlToString($propxml)
+			};
 
-            CswAjaxXml({
-                url: SinglePropUrl,
-                data: dataXml,
-                stringify: true,
-                success: function ($xml)
-                {
-                    _makeProp($propcell, $xml.children().first(), $tabcontentdiv, tabid, ConfigMode);
-                }
-            });
+			CswAjaxXml({
+				url: SinglePropUrl,
+				data: dataXml,
+				stringify: true,
+				success: function ($xml)
+				{
+					_makeProp($propcell, $xml.children().first(), $tabcontentdiv, tabid, ConfigMode);
+				}
+			});
         } // _updateSubProps()
 
         function Save($form, $layouttable, $propsxml, $savebtn)
