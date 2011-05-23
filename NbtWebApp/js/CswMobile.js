@@ -440,14 +440,14 @@
             });
 
             var $content = $retDiv.find('div:jqmData(role="content")').empty();
-            $content();
+            var $list = $content.makeUL();
             currenttab = '';
 
             onAfterAddDiv = function ($retDiv) { };
 
             p.$xml.children().each(function ()
             {
-                $content.makeListItemFromXml($(this), p);
+                $list.makeListItemFromXml($(this), p);
             });
             
             $retDiv = _addPageDivToBody({
@@ -626,13 +626,13 @@
             return $retLI;
         } // makeListItemFromXml()
 
-        $.fn.make$UL = function(id)
+        $.fn.makeUL = function(id)
         {
             var $parent = $(this);
             var $retUL = $('<ul data-role="listview" id="' + tryParseString(id,'') + '"></ul>')
                          .appendTo($parent);
             $retUL.listview();
-            return $parent;
+            return $retUL;
         }
 
         function _makeUL(id)
