@@ -15,19 +15,19 @@
 
         var currentPath = ( $.mobile.path.get() !== 'localhost' ) ? $.mobile.path.get() : '';
 
-        function bindJqm()
+        function bindJqm($div)
         {
 
-            $('div[data-role="page"]').each(function ()
-            {
+//            $('div[data-role="page"]').each(function ()
+//            {
 
-                $(this).bind('pageshow', function ()
+                $div.bind('pageshow', function ()
                 {
-                    var $div = $(this).page();
-                    loadContent($div);
+                    var $this = $(this); //.page();
+                    loadContent($this);
                 });
-            });
-
+//            });
+                return $div;
         }
 
         function loadContent($div)
@@ -40,8 +40,8 @@
             $ul.listview();
 
             // hack: JQM keeps updating path as concatenation of localhost + data-url, which breaks AJAX
-            if ($.mobile.path.get() !== '') //$.mobile.path.set('');
-            $.mobile.path.get = function (newPath) { return ''; };
+            if ($.mobile.path.get() !== '') $.mobile.path.set('');
+            //$.mobile.path.get = function (newPath) { return ''; };
             CswAjaxJSON({
                 url: '/NbtWebApp/wsNBT.asmx/GetTestData',
                 data: {},
@@ -56,7 +56,7 @@
 
                         $ul.append($li);
                         $ul.listview('refresh');
-                        $newPage = makePage(id, text);
+                        $newPage = bindJqm( makePage(id, text) );
                         $li.find('a').bind('click', function ()
                         {
                             var dataurl = $(this).attr('data-url');
@@ -64,7 +64,7 @@
                             $.mobile.changePage($thisPage);
                         });
                     }
-                    bindJqm();
+                    //bindJqm();
 
                 },
                 error: function (xml)
@@ -92,7 +92,7 @@
 
                 $page.append('<div id="Footer_' + id + '" ' + 'data-role="footer">');
 
-                $page.page();
+                //$page.page();
             }
             return $page;
         }
@@ -104,15 +104,24 @@
         
         var $currentPage = $('#' + currentPath);
         $currentPage = ($currentPage === $static1) ? $static1 : makePage(currentPath, currentPath);
-        bindJqm();
-        if ($currentPage === $static1)
+        
+        $('div[data-role="page"]').each(function ()
         {
-            $static1.page();
-        }
-        else
-        {
-            loadContent($currentPage);
-        }
+            var $div = $(this);
+            bindJqm($div);
+        });
+
+        $currentPage.page();
+
+//        if ($currentPage === $static1)
+//        {
+//            $static1.page();
+//        }
+//        else
+//        {
+//            //loadContent($currentPage);
+//            $currentPage.page();
+//        }
 
         //$.mobile.changePage($static1,'',true,false);
     </script>
