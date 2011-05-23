@@ -10,6 +10,74 @@
 
 ; (function ($) { /// <param name="$" type="jQuery" />
     
+    $.fn.makeUL = function(id)
+    {
+        var $div = $(this);
+        var $ret = undefined;
+        if( !isNullOrEmpty($div) )
+        {
+            $ret = $('<ul data-role="listview" id="' + tryParseString(id,'') + '"></ul>')
+                            .appendTo($div);
+            $ret.listview();
+        }
+        return $ret;
+    }
+
+    $.fn.doChangePage = function (transition, reverse, changeHash)
+	{
+        var $div = $(this);
+        var ret = false;
+        if( !isNullOrEmpty($div) )
+        {
+            log($.mobile.activePage,true);
+            ret = $.mobile.changePage($div, transition, reverse, changeHash);
+        }
+        return ret;
+	}
+
+    $.fn.doPage = function ()
+    {
+        var $div = $(this);
+        var ret = false;
+        if( !isNullOrEmpty($div) )
+        {
+            log($div,true);
+            ret = $div.page();
+            log($div);
+        }
+        return ret;
+    }
+    
+    $.fn.bindJqmEvents = function(params)
+    {
+        var $div = $(this);
+        var $ret = false;
+        if( !isNullOrEmpty($div) )
+        {
+            var p = {
+                ParentId: '',
+                DivId: '',
+                HeaderText: '',
+                $xml: '',
+                level: 1,
+                HideRefreshButton: false,
+                HideSearchButton: false,
+                onPageShow: function(p) {}
+            }
+            
+            if(params) $.extend(p,params);
+
+            $div.unbind('pageshow');
+            $ret = $div.bind('pageshow', function() 
+            {
+                $.mobile.pageLoading();
+                p.onPageShow(p);
+                $.mobile.pageLoading(true);
+            });
+        }
+        return $ret;
+    }
+
     $.fn.CswMobile = function (options) {
         /// <summary>
         ///   Generates the Nbt Mobile page
@@ -72,7 +140,7 @@
         var $helpdiv = _makeHelpDiv();
         var $sorrycharliediv = _loadSorryCharlieDiv(false);
 
-        _changePage($logindiv);
+        //$logindiv.doChangePage();
 
         _initDB(false, function ()
         {
@@ -84,7 +152,7 @@
                 {
                     SessionId = configvar_sessionid;
                     $viewsdiv = reloadViews();
-                    _changePage($viewsdiv);
+                    $viewsdiv.doChangePage();;
                     _waitForData();
                 }
                 else
@@ -94,12 +162,12 @@
                         function ()
                         {
                             // online
-                            //_changePage($logindiv);
+                            //$logindiv.doChangePage();
                         },
                         function ()
                         {
                             // offline
-                            // _changePage($sorrycharliediv);
+                            // $sorrycharliediv.doChangePage();
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
@@ -112,14 +180,12 @@
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
             LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
             LoginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
-            var $retDiv = _page( 
-                    _addDialogDivToBody({
-                        DivId: 'logindiv',
-                        HeaderText: 'Login to ChemSW Fire Inspection',
-                        $content: $(LoginContent),
-                        HideHelpButton: false
-                })
-            );
+            var $retDiv = _addDialogDivToBody({
+                    DivId: 'logindiv',
+                    HeaderText: 'Login to ChemSW Fire Inspection',
+                    $content: $(LoginContent),
+                    HideHelpButton: false
+            });
             $('#loginsubmit').click(onLoginSubmit);
             $('#login_accessid').clickOnEnter($('#loginsubmit'));
             $('#login_username').clickOnEnter($('#loginsubmit'));
@@ -134,38 +200,23 @@
                 DivId: 'viewsdiv',
                 HeaderText: 'Views',
                 $xml: '',
-                level: 1,
+                level: 0,
                 HideRefreshButton: true,
-                HideSearchButton: true
+                HideSearchButton: true,
+                onPageShow: function(p) { return _loadDivContents(p); }
             };
             var $retDiv = _addDialogDivToBody({
                         DivId: 'viewsdiv',
                         HeaderText: 'Views',
                         HideRefreshButton: true,
-                        HideSearchButton: true
+                        HideSearchButton: true,
+                        onPageShow: function(p) { return _loadDivContents(p); }
                 });
-            _bindJqmEvents($retDiv,params);
+            $retDiv.bindJqmEvents(params);
             return $retDiv;
 		}
 
-		function _changePage($div, transition, reverse, changeHash)
-		{
-            log($.mobile.activePage,true);
-            $.mobile.changePage($div, transition, reverse, changeHash);
-		}
-
-        function _page($div)
-        {
-            log($div,true);
-            $div.page();
-            $div.find('ul:jqmData(role="listview")').each( function() {
-                $(this).listview('refresh');
-            });
-            log($div);
-            return $div;
-        }
-
-        function _loadSorryCharlieDiv()
+		function _loadSorryCharlieDiv()
         {
             $retDiv = _addDialogDivToBody({
                 DivId: 'sorrycharliediv',
@@ -198,12 +249,14 @@
         function continueReloadViews()
         {
             if($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
-            $viewsdiv = _bindJqmEvents($viewsdiv, {level: 0,
-                                                   DivId: 'viewsdiv',
-                                                   HeaderText: 'Views',
-                                                   HideRefreshButton: true,
-                                                   HideSearchButton: true
-                        });
+            var params = {level: 0,
+                        DivId: 'viewsdiv',
+                        HeaderText: 'Views',
+                        HideRefreshButton: true,
+                        HideSearchButton: true,
+                        onPageShow: function(p) { return _loadDivContents(p); }
+            };
+            $viewsdiv.bindJqmEvents(params);
             return $viewsdiv;
         }
 
@@ -237,7 +290,7 @@
             }
             if ( $.mobile.activePage === $logindiv)
             {
-                _changePage($sorrycharliediv);
+                //$sorrycharliediv.doChangePage();
             }
         }
         function setOnline()
@@ -254,7 +307,7 @@
             }
             if ( $.mobile.activePage === $sorrycharliediv )
             {
-                _changePage( $logindiv );
+                //$logindiv.doChangePage();;
             }
         }
         function amOffline()
@@ -447,27 +500,17 @@
 
             p.$xml.children().each(function ()
             {
-                $list.makeListItemFromXml($(this), p);
+                $list.append( _makeListItemFromXml($(this), p) );
             });
             $list.listview('refresh');
 
-            $retDiv = _addPageDivToBody({
-                ParentId: p.ParentId,
-                level: p.parentlevel,
-                DivId: p.DivId,
-                HeaderText: p.HeaderText,
-                //$content: $content,
-                HideRefreshButton: p.HideRefreshButton,
-                HideSearchButton: p.HideSearchButton
-            });
             onAfterAddDiv($retDiv);
             
             return $retDiv;
         } // _processViewXml()
 
-        $.fn.makeListItemFromXml = function ($xmlitem, params)
+        function _makeListItemFromXml ($xmlitem, params)
         {
-            var $parent = $(this);
             var p = {
                 ParentId: '',
                 DivId: '',
@@ -497,8 +540,7 @@
                     break;
 
                 case "node":
-                    $retLI = _makeObjectClassContent($xmlitem)
-                                .appendTo($parent);
+                    $retLI = _makeObjectClassContent($xmlitem);
                     break;
 
                 case "prop":
@@ -592,12 +634,12 @@
                             toolbar: toolbar,
                             $content: _FieldTypeXmlToHtml($xmlitem, DivId)
                         });
-                        $retLI = $(lihtml).appendTo($parent);
+                        $retLI = $(lihtml);
                         break;
                     } // case 'prop':
                 default:
                     {
-                        $retLI = $('<li></li>').appendTo($parent);
+                        $retLI = $('<li></li>');
                         if (IsDiv)
                         {
                             $retLI.CswLink('init',{href: 'javascript:void(0);', value: text})
@@ -610,31 +652,22 @@
                         }
                         if(p.parentlevel === 0) 
                         {
-                            var $newDiv = _addPageDivToBody({
+                            var params = {
                                 ParentId: p.DivId,
                                 level: p.parentlevel,
                                 DivId: id,
                                 HeaderText: text,
-                                toolbar: toolbar
-                            });
-                            
-                            _bindJqmEvents($newDiv,p);
+                                toolbar: toolbar,
+                                onPageShow: function(p) { return _loadDivContents(p); }
+                            };
+                            var $newDiv = _addPageDivToBody(params);
+                            $newDiv.bindJqmEvents(params);
                         }
                         break;
                     } // default:
             }
-            //if(!isNullOrEmpty($retLI) ) $retLI.listview('refresh');
             return $retLI;
-        } // makeListItemFromXml()
-
-        $.fn.makeUL = function(id)
-        {
-            var $parent = $(this);
-            var $retUL = $('<ul data-role="listview" id="' + tryParseString(id,'') + '"></ul>')
-                         .appendTo($parent);
-            $retUL.listview();
-            return $retUL;
-        }
+        } // _makeListItemFromXml()
 
         function _makeUL(id)
         {
@@ -700,7 +733,7 @@
                     Html += '</li>';
                     break;
             }
-            $retHtml = $(Html).listview('refresh');
+            $retHtml = $(Html); //.listview('refresh');
             return $retHtml;
         }
 
@@ -1206,7 +1239,7 @@
                                         'data-transition': 'slideup' });
                 }
             }
-            //_page( $pageDiv );
+            //$pageDiv.doPage();
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
             return $pageDiv;
@@ -1255,7 +1288,7 @@
                     $footer.CswLink('init',{'href': 'javascript:void(0)', ID: p.DivId + '_help', value: 'Help'})
                             .CswAttrXml({'data-identity': p.DivId, 'data-url': p.DivId });
                 }
-                _page( $pageDiv );
+                $pageDiv.doPage();
             }
             _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
@@ -1275,32 +1308,6 @@
             if ($back.length > 0)
                 ret = $back.CswAttrXml('data-identity');
             return ret;
-        }
-
-        function _bindJqmEvents($div, params)
-        {
-            var p = {
-                ParentId: '',
-                DivId: '',
-                HeaderText: '',
-                $xml: '',
-                level: 1,
-                HideRefreshButton: false,
-                HideSearchButton: false
-            }
-            
-            if(params) $.extend(p,params);
-
-            $div.unbind('pageshow');
-            $div.bind('pageshow', function() {
-                
-                $.mobile.pageLoading();
-                _loadDivContents(p);
-                //$div = _page( $newDiv );
-                $.mobile.pageLoading(true);
-            });
-
-            return $div;
         }
 
         function _bindPageEvents(DivId, ParentId, level, $div)
@@ -1338,7 +1345,7 @@
 						var dataurl = $parent.CswAttrXml('data-url');
 						var $target = $('#' + dataurl);
 						if( !isNullOrEmpty($target) )
-							_changePage($target);						
+							$target.doChangePage();						
 					})
                 .end();
         }
@@ -1489,7 +1496,7 @@
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
 						_cacheSession(SessionId, UserName);
                         $viewsdiv = reloadViews();
-                        _changePage($viewsdiv);
+                        $viewsdiv.doChangePage();
                         restorePath();
                     },
                     error: function()
@@ -1575,15 +1582,19 @@
                         $currentViewXml = $xml;
                         _updateStoredViewXml(RealDivId, $currentViewXml, '0');
 
-                        $viewsdiv = _bindJqmEvents($viewsdiv, {ParentId: 'viewsdiv',
-                                                               DivId: RealDivId,
-                                                               HeaderText: HeaderText,
-                                                               '$xml': $currentViewXml,
-                                                               level: 0,
-                                                               HideRefreshButton: false,
-                                                               HideSearchButton: true
-                                    });
-                        _changePage($viewsdiv);
+                        var params = {
+                            ParentId: 'viewsdiv',
+                            DivId: RealDivId,
+                            HeaderText: HeaderText,
+                            '$xml': $currentViewXml,
+                            level: 0,
+                            HideRefreshButton: false,
+                            HideSearchButton: true,
+                            onPageShow: function(p) { return _loadDivContents(p); }
+                        };
+
+                        $viewsdiv.bindJqmEvents(params);
+                        $viewsdiv.doChangePage();
                         restorePath();
                     }, // success
                     error: function()
@@ -1685,7 +1696,7 @@
 
                     $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
 
-                    //_changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
+                    //$('#' + DivId + '_searchdiv').doChangePage("slideup", false, true);
                 }
             });
         }
@@ -1709,7 +1720,7 @@
                             if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
                                 hitcount++;
-                                $content.makeListItemFromXml($node, DivId, 1, false);
+                                $content.append( makeListItemFromXml($node, DivId, 1) );
                             }
                         }
                     });
@@ -1720,7 +1731,7 @@
                     $content.listview('refresh');
                     var $srdiv = $('#' + DivId + '_searchresults');
                     $srdiv.children().remove();
-                    _page( $srdiv.append($content) );
+                    $srdiv.append($content).doPage();
                     $('#' + DivId + '_searchresultslist').listview();
 
                     _bindPageEvents(DivId + '_searchdiv', DivId, 1, $srdiv);
