@@ -90,14 +90,25 @@
 																		url: o.AuthenticateUrl,
 																		data: dataJson,
 																		success: function (data) {
-																			auth = data.AuthenticationStatus;
+																			var auth = data.AuthenticationStatus;
                                                                             if(auth === 'Authenticated')
 																			{
 																				_handleAuthenticated(UserName);
 																			}
 																			else 
 																			{
-                                                                                _handleAuthenticationStatus(data, _handleAuthenticated, $loginbutton);
+																				_handleAuthenticationStatus({
+																					status: auth,
+																					success: function() { _handleAuthenticated(UserName); },
+																					failure: function(txt) {
+																						$('#loginmsg').CswErrorMessage({'message': txt });
+																						$('#login_password').val('');   // case 21303
+																						$loginbutton.CswButton('enable');
+																					},
+																					usernodeid: data.nodeid,
+																					usernodekey: data.cswnbtnodekey,
+																					passwordpropid: data.passwordpropid
+																				});
                                                                             }
                                                                         },  // success{}
 																		error: function() {
@@ -137,48 +148,6 @@
 							} // success{}
 						});                        
 		} // logout
-
-		function _handleAuthenticationStatus(data, onAuthenticated)
-		{
-			var txt = '';
-			var enableButton = true;
-			switch(data.AuthenticationStatus)
-			{
-				case 'Failed': txt = "Login Failed"; break;
-				case 'Locked': txt = "Your account is locked.  Please see your account administrator."; break;
-				case 'Deactivated': txt = "Your account is deactivated.  Please see your account administrator."; break;
-				case 'TooManyUsers': txt = "Too many users are currently connected.  Try again later."; break;
-				case 'NonExistentAccessId': txt = "Login Failed"; break;
-				case 'NonExistentSession': txt = "Login Failed"; break;
-				case 'Unknown': txt = "An Unknown Error Occurred"; break;
-				case 'ExpiredPassword': 
-					enableButton = false;
-					$.CswDialog('EditNodeDialog', { 
-						'nodeid': data.nodeid,
-						'cswnbtnodekey': data.cswnbtnodekey,
-						'filterToPropId': data.passwordpropid, 
-						'title': 'Your password has expired.  Please change it now:',
-						'onEditNode': function(nodeid, nodekey) { onAuthenticated(); } 
-					}); 
-					break;
-				case 'ShowLicense': 
-					enableButton = false;
-					$.CswDialog('ShowLicenseDialog', {
-						'onAccept': function() { onAuthenticated(); },
-						'onDecline': function() { _Logout(); }
-					}); 
-					break;
-			}
-			$('#loginmsg').CswErrorMessage({'message': txt });
-
-			$('#login_password').val('');   // case 21303
-
-            if(enableButton)
-			{
-				$('#login_button').CswButton('enable');
-			}
-
-		} // _handleAuthenticationStatus()
 
 
 		// Method calling logic

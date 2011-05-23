@@ -183,24 +183,69 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
     }
 } // _handleAjaxError()
 
+//function _handleAuthenticationStatus(options)
+//{
+//    var o = {
+//        status: '',
+//        success: function () { },
+//        failure: function () { }
+//    };
+
+//    if (!isNullOrEmpty(o.status) && o.status !== 'Authenticated')
+//    {
+//        alert(o.status);
+//        o.failure();
+//    }
+//    else
+//    {
+//        o.success();
+//    }
+//}
+
 function _handleAuthenticationStatus(options)
 {
-    var o = {
-        status: '',
-        success: function () { },
-        failure: function () { }
-    };
+	var o = {
+		status: '',
+		success: function () { },
+		failure: function () { },
+		usernodeid: '',
+		usernodekey: '',
+		passwordpropid: ''
+	};
+	if(options) $.extend(o, options);
 
-    if (!isNullOrEmpty(o.status) && o.status !== 'Authenticated')
-    {
-        alert(o.status);
-        o.failure();
-    }
-    else
-    {
-        o.success();
-    }
-}
+	var txt = '';
+	switch (o.status)
+	{
+		case 'Failed': txt = "Login Failed"; break;
+		case 'Locked': txt = "Your account is locked.  Please see your account administrator."; break;
+		case 'Deactivated': txt = "Your account is deactivated.  Please see your account administrator."; break;
+		case 'TooManyUsers': txt = "Too many users are currently connected.  Try again later."; break;
+		case 'NonExistentAccessId': txt = "Login Failed"; break;
+		case 'NonExistentSession': txt = "Login Failed"; break;
+		case 'Unknown': txt = "An Unknown Error Occurred"; break;
+		case 'ExpiredPassword':
+			$.CswDialog('EditNodeDialog', {
+				'nodeid': o.usernodeid,
+				'cswnbtnodekey': o.usernodekey,
+				'filterToPropId': o.passwordpropid,
+				'title': 'Your password has expired.  Please change it now:',
+				'onEditNode': function (nodeid, nodekey) { o.success(); }
+			});
+			break;
+		case 'ShowLicense':
+			$.CswDialog('ShowLicenseDialog', {
+				'onAccept': function () { o.success(); },
+				'onDecline': function () { o.failure('You must accept the license agreement to use this application'); }
+			});
+			break;
+	}
+
+	if (!isNullOrEmpty(txt) && o.status !== 'Authenticated')
+	{
+		o.failure(txt);
+	}
+} // _handleAuthenticationStatus()
 
 //function extractCDataValue($node) {
 //    // default

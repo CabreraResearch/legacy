@@ -131,6 +131,12 @@ namespace ChemSW.Nbt.WebServices
 
 		}//_xAuthenticationStatus()
 
+		private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn )
+		{
+			JObj.Add( new JProperty( "AuthenticationStatus", AuthenticationStatusIn.ToString() ) );
+
+		}//_jAuthenticationStatus()
+
 
 
 		/// <summary>
@@ -193,7 +199,6 @@ namespace ChemSW.Nbt.WebServices
 				}
 
 				AuthenticationStatus AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
-				ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
 
 				// case 21211
 				if( AuthenticationStatus == AuthenticationStatus.Authenticated )
@@ -230,6 +235,7 @@ namespace ChemSW.Nbt.WebServices
 					wsQL.initQuickLaunchItems();
 				}
 
+				_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 				_deInitResources();
 			}
 			catch( Exception ex )
@@ -467,7 +473,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( Ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -664,8 +670,8 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( Ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
-
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus ); 
+			
 			return ReturnVal.ToString();
 
 		} // getViewGrid()
@@ -826,8 +832,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( Ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
-
+_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 			return ReturnVal.ToString();
 
 		} // copyView()
@@ -861,7 +866,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( Ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -913,7 +918,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( Ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1184,7 +1189,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1220,7 +1225,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1318,7 +1323,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1349,7 +1354,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1424,7 +1429,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1455,7 +1460,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1487,7 +1492,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1628,7 +1633,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1662,7 +1667,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1733,7 +1738,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1778,7 +1783,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1811,7 +1816,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1843,7 +1848,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1960,7 +1965,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -1997,7 +2002,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -2037,7 +2042,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -2070,7 +2075,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( ex );
 			}
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
@@ -2148,7 +2153,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 
 
-			ReturnVal.Add( new JProperty( "AuthenticationStatus", AuthenticationStatus.ToString() ) );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			return ReturnVal.ToString();
 
