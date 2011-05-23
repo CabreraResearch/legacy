@@ -51,6 +51,7 @@
         var UserName;
         var SessionId;
         var $currentViewXml;
+        var currentMobilePath = '';
 
         // case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
@@ -63,12 +64,13 @@
                 tempdivid = potentialtempdivid;
             }
         }
+
+        var $logindiv = _loadLoginDiv();
         
         var $viewsdiv = _loadViewsDiv();
         var $syncstatus = _makeSynchStatusDiv();
         var $helpdiv = _makeHelpDiv();
         var $sorrycharliediv = _loadSorryCharlieDiv(false);
-        var $logindiv = _loadLoginDiv();
 
         _changePage($logindiv);
 
@@ -175,7 +177,7 @@
 
         function removeDiv(DivId)
         {
-            setTimeout('$(\'#' + DivId + '\').remove();', opts.DivRemovalDelay);
+            setTimeout('$(\'#' + DivId + '\').find(' + 'div:jqmData(role="content")' + ').empty();', opts.DivRemovalDelay);
         }
 
         function reloadViews()
@@ -195,7 +197,7 @@
 
         function continueReloadViews()
         {
-            if($viewsdiv) $viewsdiv.empty();
+            if($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
             $viewsdiv = _bindJqmEvents($viewsdiv, {level: 0,
                                                    DivId: 'viewsdiv',
                                                    HeaderText: 'Views',
@@ -203,6 +205,18 @@
                                                    HideSearchButton: true
                         });
             return $viewsdiv;
+        }
+
+        function clearPath()
+        {
+            currentMobilePath = tryParseString( $.mobile.path.get(), '');
+            if( currentMobilePath !== '') $.mobile.path.set('');
+        }
+
+        function restorePath()
+        {
+            currentMobilePath = tryParseString( currentMobilePath, '');
+            $.mobile.path.set(currentMobilePath);
         }
 
         // ------------------------------------------------------------------------------------
@@ -274,7 +288,7 @@
             }
             var $retDiv = $('#' + p.DivId);
             
-            if ( isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.children().length === 0 )
+            if ( isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1 )
             {
                 if (p.level === 0)
                 {
@@ -296,7 +310,7 @@
                             ParentId: p.DivId,
                             ForMobile: ForMobile
                         };
-                        if( $.mobile.path.get() !== '') $.mobile.path.set('')
+                        clearPath();
                         CswAjaxXml({
                             async: false,   // required so that the link will wait for the content before navigating
                             formobile: ForMobile,
@@ -314,6 +328,11 @@
                                 }
                                 p.$xml = X$xml;
                                 p.doProcessView = true;
+                                restorePath();
+                            },
+                            error: function ()
+                            {
+                                restorePath();
                             }
                         });
                     }
@@ -337,7 +356,7 @@
                                 ParentId: p.DivId,
                                 ForMobile: ForMobile
                             };
-                            $.mobile.path.get = function( newPath ){ return ''; };
+                            clearPath();
                             CswAjaxXml({
                                 async: false,   // required so that the link will wait for the content before navigating
                                 formobile: ForMobile,
@@ -355,10 +374,12 @@
                                     {
                                         _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                                     }
+                                    restorePath();
                                 },
                                 error: function(xml)
                                 {
                                     if(debug) log(xml);
+                                    restorePath();
                                 }
                             });
                         }
@@ -1241,7 +1262,7 @@
                 DivId: '',
                 HeaderText: '',
                 $xml: '',
-                level: 0,
+                level: 1,
                 HideRefreshButton: false,
                 HideSearchButton: false
             }
@@ -1252,8 +1273,11 @@
             $div.bind('pageshow', function() {
                 
                 $.mobile.pageLoading();
-                var $newDiv = _loadDivContents(p);
-                $div = _page( $newDiv );
+                var $oldContent = $(this).find('div:jqmData(role="content")').empty();
+                var $newContent = _loadDivContents(p).find('div:jqmData(role="content")');
+                debugger;
+                $oldContent.append( $newContent );
+                //$div = _page( $newDiv );
                 $.mobile.pageLoading(true);
             });
 
@@ -1432,7 +1456,7 @@
                 };
 
                 if (debug) log('Starting ' + opts.AuthenticateUrl, true);
-                $.mobile.path.get = function( newPath ){ return ''; };
+                clearPath();
                 CswAjaxJSON({
                     formobile: ForMobile,
                     async: false,
@@ -1447,6 +1471,11 @@
 						_cacheSession(SessionId, UserName);
                         $viewsdiv = reloadViews();
                         _changePage($viewsdiv);
+                        restorePath();
+                    },
+                    error: function()
+                    {
+                        restorePath();
                     }
                 });
             }
@@ -1493,7 +1522,7 @@
 //            while ( !isNullOrEmpty(ThisParentId) && ThisParentId.substr(0, 'viewid_'.length) !== 'viewid_')
 //            {
 //                NextParentId = _getDivParentId(ThisParentId);
-//                $('div[id*="' + ThisParentId + '"]').remove();
+//                $('div[id*="' + ThisParentId + '"]').find('div:jqmData(role="content")').empty();
 //                ThisParentId = NextParentId;
 //            }
 
@@ -1502,7 +1531,7 @@
                 var RealDivId = ThisParentId;
                 var HeaderText = _getDivHeaderText(RealDivId);
 
-               // $('div[id*="' + RealDivId + '"]').remove();
+               // $('div[id*="' + RealDivId + '"]').find('div:jqmData(role="content")').empty();
 
                 if (debug) log('Starting ' + opts.ViewUrl, true);
 
@@ -1511,7 +1540,7 @@
                     ParentId: RealDivId,
                     ForMobile: ForMobile
                 };
-                $.mobile.path.get = function( newPath ){ return ''; };
+                clearPath();
                 // fetch new content
                 CswAjaxXml({
                     async: false,   // required so that the link will wait for the content before navigating
@@ -1536,7 +1565,12 @@
                                                                HideSearchButton: true
                                     });
                         _changePage($viewsdiv);
-                    } // success
+                        restorePath();
+                    }, // success
+                    error: function()
+                    {
+                        restorePath();
+                    } 
                 });
             }
         }
@@ -1931,7 +1965,7 @@
             {
                 url = opts.ConnectTestRandomFailUrl;
             }
-            $.mobile.path.get = function( newPath ){ return ''; };
+            clearPath();
             CswAjaxXml({
                 formobile: ForMobile,
                 url: url,
@@ -1946,6 +1980,7 @@
                     {
                         onSuccess($xml);
                     }
+                    restorePath();
                 },
                 error: function (xml)
                 {
@@ -1955,6 +1990,7 @@
                         onFailure($xml);
                     }
                     _waitForData();
+                    restorePath();
                 }
             });
 
@@ -1976,7 +2012,7 @@
                             UpdatedViewXml: viewxml,
                             ForMobile: ForMobile
                         };
-                        $.mobile.path.get = function( newPath ){ return ''; };
+                        clearPath();
                         CswAjaxJSON({
                             formobile: ForMobile,
                             url: opts.UpdateUrl,
@@ -1987,7 +2023,8 @@
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
-                                } 
+                                }
+                                restorePath(); 
                             },
                             success: function (data)
                             {
@@ -1998,6 +2035,7 @@
                                 {
                                     _waitForData();
                                 }
+                                restorePath();
                             },
                             error: function (data)
                             {
@@ -2005,6 +2043,7 @@
                                 {
                                     _waitForData();
                                 }
+                                restorePath();
                             }
                         });
                     }
