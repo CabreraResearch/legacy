@@ -80,7 +80,7 @@
             var $page = $('#' + id);
             if ($page === undefined || $page.length === 0)
             {
-                $page = $('<div id="' + id + '" ' + 'data-role="page" data-url="' + id + '">')
+                $page = $('<div id="' + id + '" ' + 'data-role="page" data-url="' + id + '" data-auto-back-btn="true">')
                         .appendTo($('body'));
 
                 var $header = $('<div id="Header_' + id + '" ' + 'data-role="header"><h1>Header of ' + text + '</h1>')
@@ -96,8 +96,8 @@
             return $page;
         }
 
-        var $static1 = $('<div id="StaticPage1" data-role="page" data-url="StaticPage1"><div id="StaticHeader1" data-role="header"><h1>Static Header 1</h1></div><div id="StaticContent1" data-role="content" ></div></div>');
-        var $static2 = $('<div id="StaticPage2" data-role="page" data-url="StaticPage2"><div id="StaticHeader2" data-role="header"><h1>Static Header 2</h1></div><div id="StaticContent2" data-role="content" ></div></div>');
+        var $static1 = $('<div id="StaticPage1" data-role="page" data-url="StaticPage1" data-auto-back-btn="true"><div id="StaticHeader1" data-role="header"><h1>Static Header 1</h1></div><div id="StaticContent1" data-role="content" ></div></div>');
+        //var $static2 = $('<div id="StaticPage2" data-role="page" data-url="StaticPage2" data-auto-back-btn="true"><div id="StaticHeader2" data-role="header"><h1>Static Header 2</h1></div><div id="StaticContent2" data-role="content" ></div></div>');
         
         $('body').append($static1).append($static2);
         
