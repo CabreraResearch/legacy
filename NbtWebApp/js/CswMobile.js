@@ -109,7 +109,7 @@
             var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
             LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
-            LoginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="?loginsubmit" href="javascript:void(0);">Continue</a>';
+            LoginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
             var $retDiv = _page( 
                     _addDialogDivToBody({
                         DivId: 'logindiv',
@@ -492,7 +492,7 @@
                         switch (fieldtype)
                         {
                             case 'logical':
-                                lihtml += '<li id="' + id + '_li"><a data-identity="' + id + '" data-url="?' + id + '" href="javascript:void(0);">' + text + '</a></li>';
+                                lihtml += '<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>';
 
                                 var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
                                 var sf_required = tryParseString( $xmlitem.children('required').text(), '');
@@ -503,7 +503,7 @@
                                 break;
 
                             case 'question':
-                                lihtml += '<li id="' + id + '_li"><a data-identity="' + id + '" data-url="?' + id + '" href="javascript:void(0);">' + text + '</a></li>';
+                                lihtml += '<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>';
 
                                 var sf_answer = tryParseString( $xmlitem.children('answer').text() , '');
                                 var sf_allowedanswers = tryParseString( $xmlitem.children('allowedanswers').text(), '');
@@ -529,7 +529,7 @@
 
                             default:
                                 lihtml += '<li id="' + id + '_li">';
-                                lihtml += ' <a data-identity="' + id + '" data-url="?' + id + '" href="javascript:void(0);">' + text + '</a>';
+                                lihtml += ' <a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a>';
                                 lihtml += ' <p class="ui-li-aside">' + gestalt + '</p>';
                                 lihtml += '</li>';
                                 break;
@@ -540,11 +540,11 @@
                         var toolbar = '';
                         if ( !isNullOrEmpty(previd) )
                         {
-                            toolbar += '<a data-identity="' + previd + '" data-url="?' + previd + '" href="javascript:void(0);" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>';
+                            toolbar += '<a data-identity="' + previd + '" data-url="' + previd + '" href="javascript:void(0);" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>';
                         }
                         if ( !isNullOrEmpty(nextid) )
                         {
-                            toolbar += '<a data-identity="' + nextid + '" data-url="?' + nextid + '" href="javascript:void(0);" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
+                            toolbar += '<a data-identity="' + nextid + '" data-url="' + nextid + '" href="javascript:void(0);" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
                         }
                         if( fieldtype === "question")
                         {
@@ -569,7 +569,7 @@
                         {
                             $retLI.CswLink('init',{href: 'javascript:void(0);', value: text})
                                   .CswAttrXml({'data-identity': id, 
-                                               'data-url': '?' + id });
+                                               'data-url': '' + id });
                         }
                         else
                         {
@@ -639,7 +639,7 @@
                     Html += '<li>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                    Html += '<a data-identity="' + id + '" data-url="?' + id + '" href="javascript:void(0);">';
+                    Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">';
                     // += '<p>' + NodeName + '</p>';
                     //Html += '<p>' + Location + '</p>';
                     //Html += '<p>' + MountPoint + '</p>';
@@ -655,7 +655,7 @@
                     Html += '<li>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                    Html += '<a data-identity="' + id + '" data-url="?' + id + '" href="javascript:void(0);">' + NodeName + '</a>';
+                    Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + NodeName + '</a>';
                     Html += '</li>';
                     break;
             }
@@ -1081,7 +1081,7 @@
                                                     ID: p.DivId + '_back',
                                                     value: 'Back'})
                                     .CswAttrXml({'data-identity': p.DivId + '_back', 
-                                                 'data-url': '?' + p.DivId + '_back',
+                                                 'data-url': p.DivId + '_back',
                                                  'data-direction': 'reverse' });
             
             if ( !isNullOrEmpty(p.backtransition) )
@@ -1109,7 +1109,7 @@
                                         ID: p.DivId + '_searchopen',
                                         text: 'Search' })
                         .CswAttrXml({'data-identity': p.DivId + '_searchopen', 
-                                     'data-url': '?' + p.DivId + '_searchopen', 
+                                     'data-url': p.DivId + '_searchopen', 
                                      'data-transition': 'slidedown' });
             }
             $header.CswDiv('init',{class: 'toolbar',value: p.toolbar})
@@ -1130,7 +1130,7 @@
                                                   class: onlineClass,  
                                                   value: onlineValue })
                                   .CswAttrXml({'data-identity': p.DivId + '_gosynchstatus', 
-                                               'data-url': '?' + p.DivId + '_gosynchstatus', 
+                                               'data-url': p.DivId + '_gosynchstatus', 
                                                'data-transition': 'slideup' });
             }
             if (!p.HideRefreshButton)
@@ -1140,7 +1140,7 @@
                                         value:'Refresh', 
                                         class: 'refresh'})
                        .CswAttrXml({'data-identity': p.DivId + '_refresh', 
-                                    'data-url': '?' + p.DivId + '_refresh' });
+                                    'data-url': p.DivId + '_refresh' });
             }
             if (!p.HideLogoutButton)
             {
@@ -1148,7 +1148,7 @@
                                         ID: p.DivId + '_logout', 
                                         value: 'Logout' })
                        .CswAttrXml({'data-identity': p.DivId + '_logout', 
-                                    'data-url': '?' + p.DivId + '_logout', 
+                                    'data-url': p.DivId + '_logout', 
                                     'data-transition': 'flip' });
             }
             
@@ -1161,7 +1161,7 @@
                                         ID: p.DivId + '_help', 
                                         value: 'Help' })
                        .CswAttrXml({'data-identity': p.DivId + '_help', 
-                                    'data-url': '?' + p.DivId + '_help', 
+                                    'data-url': p.DivId + '_help', 
                                     'data-transition': 'slideup' });
             }
             //_page( $pageDiv );
@@ -1211,7 +1211,7 @@
             if (!p.HideHelpButton)
             {
                 $footer.CswLink('init',{'href': 'javascript:void(0)', ID: p.DivId + '_help', value: 'Help'})
-                       .CswAttrXml({'data-identity': p.DivId, 'data-url': '?' + p.DivId });
+                       .CswAttrXml({'data-identity': p.DivId, 'data-url': p.DivId });
             }
             _page( $pageDiv );
             _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
@@ -1324,8 +1324,8 @@
             var content = '';
             content += '<p>Pending Unsynched Changes: <span id="ss_pendingchangecnt">No</span></p>';
             content += '<p>Last synch: <span id="ss_lastsynch"></span></p>';
-            content += '<a id="ss_forcesynch" data-identity="ss_forcesynch" data-url="?ss_forcesynch" href="javascript:void(0)" data-role="button">Force Synch Now</a>';
-            content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="?ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
+            content += '<a id="ss_forcesynch" data-identity="ss_forcesynch" data-url="ss_forcesynch" href="javascript:void(0)" data-role="button">Force Synch Now</a>';
+            content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
             
 
             var $retDiv = _addPageDivToBody({
@@ -1554,7 +1554,7 @@
 
         function onSynchStatusOpen(DivId, eventObj)
         {
-            $('#synchstatus_back').CswAttrDom({'data-identity': DivId, 'data-url': '?' + DivId, 'href': 'javascript:void(0)' });
+            $('#synchstatus_back').CswAttrDom({'data-identity': DivId, 'data-url': DivId, 'href': 'javascript:void(0)' });
             
             $('#synchstatus_back').css('visibility', '');
         }
