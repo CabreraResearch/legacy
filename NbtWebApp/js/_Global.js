@@ -529,8 +529,8 @@ function jsTreeGetSelected($treediv)
 
 function GoHome()
 { /// <param name="$" type="jQuery" />
-    $.CswCookie('clear', CswCookieName.CurrentView.ViewId);
-    $.CswCookie('clear', CswCookieName.CurrentView.ViewMode);
+    $.CswCookie('clear', CswCookieName.CurrentViewId);
+    $.CswCookie('clear', CswCookieName.CurrentViewMode);
     window.location = "NewMain.html";
 }
 

@@ -6,14 +6,10 @@
 var CswCookieName = {
 	SessionId: 'CswSessionId',
 	Username: 'csw_username',
-	CurrentView: { 
-		ViewId: 'csw_currentviewid',
-		ViewMode: 'csw_currentviewmode'
-	},
-	CurrentNode: { 
-		NodeId: 'csw_currentnodeid',
-		NodeKey	: 'csw_currentnodekey'
-	},
+	CurrentViewId: 'csw_currentviewid',
+	CurrentViewMode: 'csw_currentviewmode',
+	CurrentNodeId: 'csw_currentnodeid',
+	CurrentNodeKey: 'csw_currentnodekey',
 	CurrentTabId: 'csw_currenttabid'
 };
 
@@ -46,13 +42,6 @@ var CswCookieName = {
 						if(CswCookieName.hasOwnProperty(CookieName))
 						{
 							$.cookie(CswCookieName[CookieName], null);
-							for(var SubCookieName in CswCookieName[CookieName]) 
-							{
-								if( CswCookieName[CookieName].hasOwnProperty(SubCookieName))
-								{
-									$.cookie(CswCookieName[CookieName][SubCookieName], null);
-								}
-							}
 						}
 					}
 				} // clearAll
