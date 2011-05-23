@@ -87,6 +87,9 @@ namespace ChemSW.Nbt.Schema
 
             _DdlOps[ TableName ].apply();
 
+
+
+
         }//addTable()
 
         public void dropTable( string TableName )

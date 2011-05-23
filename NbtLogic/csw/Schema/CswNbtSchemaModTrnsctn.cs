@@ -22,6 +22,8 @@ namespace ChemSW.Nbt.Schema
         private CswNbtResources _CswNbtResources;
 
         private CswDDL _CswDdl = null;
+        CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
+
 
         /// <summary>
         /// Encapsulate data acces mechanics for schmema updater so that a schema treats transactions consistently
@@ -228,7 +230,12 @@ namespace ChemSW.Nbt.Schema
 
         public int purgeTableRecords( string TableName ) { return ( _CswNbtResources.CswResources.purgeTableRecords( TableName ) ); }//purgeTableRecords()
         public void copyTable( string SourceTableName, string CopyToTableName ) { _CswNbtResources.CswResources.copyTable( SourceTableName, CopyToTableName ); }//copyTable()
-        public void addTable( string TableName, string PkColumnName ) { _CswDdl.addTable( TableName, PkColumnName ); }
+
+        public void addTable( string TableName, string PkColumnName )
+        {
+            _CswDdl.addTable( TableName, PkColumnName );
+        }
+
         public void dropTable( string TableName ) { _CswDdl.dropTable( TableName ); }//dropTable()
 
         //public void addColumn( string columnname, DataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
@@ -298,26 +305,59 @@ namespace ChemSW.Nbt.Schema
         }
 
 
-        public void makeMissingAuditTables()
+        public void makeMissingAuditTablesAndColumns()
         {
-//            CswAuditor CswAuditor = new CswAuditor( 
-            List<string> TableNames = new List<string>();
+
+
+            Dictionary<string, List<string>> ColumnsByTable = new Dictionary<string, List<string>>();
+            //            List<string> UnAuditedTables = new List<string>();
+
+
+
             CswTableSelect CswTableSelectDataDictionary = makeCswTableSelect( "makemissingaudittables", "data_dictionary" );
             DataTable DataTableDataDictionary = CswTableSelectDataDictionary.getTable();
+            string PreviousTableName = string.Empty;
             foreach( DataRow CurrentRow in DataTableDataDictionary.Rows )
             {
-                string CurrentTablename = CurrentRow["tablename"].ToString();
-                if( false == TableNames.Contains( CurrentTablename ) )
+
+                string CurrentTablename = CurrentRow["tablename"].ToString().ToLower();
+                string CurrentColumnName = CurrentRow["columnname"].ToString().ToLower();
+                if( CurrentTablename != PreviousTableName )
                 {
-                    TableNames.Add( CurrentTablename );
+                    ColumnsByTable.Add( CurrentTablename, new List<string>() );
+                }
+
+                ColumnsByTable[CurrentTablename].Add( CurrentColumnName );
+
+
+                PreviousTableName = CurrentTablename;
+
+                //if( ( false == UnAuditedTables.Contains( CurrentTablename ) ) && ( false == _CswAuditMetaData.isAuditTable( CurrentTablename ) ) )
+                //{
+                //    UnAuditedTables.Add( CurrentTablename );
+                //}
+            }
+
+            //add audit level column
+            foreach( string CurrentTableName in ColumnsByTable.Keys )
+            {
+                if( false == ColumnsByTable[CurrentTableName].Contains( _CswAuditMetaData.AuditLevelColName ) )
+                {
+                    addStringColumn( CurrentTableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
+                }
+            }//
+
+            //add audit tables
+            foreach( string CurrentTableName in ColumnsByTable.Keys )
+            {
+                string AuditTableName = _CswAuditMetaData.makeAuditTableName( CurrentTableName );
+                if( false == ColumnsByTable.ContainsKey( AuditTableName ) )
+                {
+                    copyTable( CurrentTableName, AuditTableName );
                 }
             }
 
-            foreach( string CurrentTableName in TableNames )
-            {
-
-            }//iterate tablenames 
-        }
+        }//makeMissingAuditTables()
 
         public CswNbtNodeCollection Nodes { get { return ( _CswNbtResources.Nodes ); } }
         //public CswNbtTreeCache Trees { get { return ( _CswNbtResources.Trees ); } }

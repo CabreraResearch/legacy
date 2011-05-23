@@ -188,13 +188,43 @@ namespace ChemSW.Nbt.Schema
             return ( Exception.Message.Contains( "keys in table referenced by foreign keys" ) );
         }//isRecordDeletionConstraintViolation()
 
-        public void assertColumnIsAbsent( string TableName, string ColumnName )
+        public void assertColumnIsAbsent( string TableName, string ColumnName, string ThrowMessageIn = "" )
         {
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( TableName, ColumnName) )
-                throw ( new CswDniException( "Column " + ColumnName+ " was not removed from data base" ) );
+            string ThrowMessage = string.Empty;
+            if( string.Empty == ThrowMessageIn )
+            {
+                ThrowMessage = " was not removed from data base";
+            }
+            else
+            {
+                ThrowMessage = " " + ThrowMessageIn;
+            }
 
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( TableName, ColumnName) )
-                throw ( new CswDniException( "Column " + ColumnName+ " was not removed from the data base" ) );
+            if(  _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( TableName, ColumnName ) )
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage ) );
+
+            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( TableName, ColumnName ) )
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage ) );
+
+        }//assertColumnIsAbsent() 
+
+        public void assertColumnIsPresent( string TableName, string ColumnName, string ThrowMessageIn = "" )
+        {
+            string ThrowMessage = string.Empty;
+            if( string.Empty == ThrowMessageIn )
+            {
+                ThrowMessage = " was not removed from data base"; 
+            }
+            else
+            {
+                ThrowMessage = " " + ThrowMessageIn; 
+            }
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( TableName, ColumnName ) )
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage ) );
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( TableName, ColumnName ) )
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage) );
 
         }//assertColumnIsAbsent() 
 
