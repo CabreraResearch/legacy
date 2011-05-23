@@ -449,7 +449,8 @@
             {
                 $list.makeListItemFromXml($(this), p);
             });
-            
+            $list.listview('refresh');
+
             $retDiv = _addPageDivToBody({
                 ParentId: p.ParentId,
                 level: p.parentlevel,
@@ -584,7 +585,7 @@
                         }
 
                         _addPageDivToBody({
-                            ParentId: DivId,
+                            ParentId: p.DivId,
                             level: p.parentlevel,
                             DivId: id,
                             HeaderText: text,
@@ -601,7 +602,7 @@
                         {
                             $retLI.CswLink('init',{href: 'javascript:void(0);', value: text})
                                   .CswAttrXml({'data-identity': id, 
-                                               'data-url': '' + id });
+                                               'data-url': id });
                         }
                         else
                         {
@@ -610,7 +611,7 @@
                         if(p.parentlevel === 0) 
                         {
                             var $newDiv = _addPageDivToBody({
-                                ParentId: DivId,
+                                ParentId: p.DivId,
                                 level: p.parentlevel,
                                 DivId: id,
                                 HeaderText: text,
@@ -622,7 +623,7 @@
                         break;
                     } // default:
             }
-            if(!isNullOrEmpty($retLI) ) $retLI.listview('refresh');
+            //if(!isNullOrEmpty($retLI) ) $retLI.listview('refresh');
             return $retLI;
         } // makeListItemFromXml()
 
@@ -1294,10 +1295,7 @@
             $div.bind('pageshow', function() {
                 
                 $.mobile.pageLoading();
-                var $oldContent = $(this).find('div:jqmData(role="content")').empty();
-                var $newContent = _loadDivContents(p).find('div:jqmData(role="content")');
-                debugger;
-                $oldContent.append( $newContent );
+                _loadDivContents(p);
                 //$div = _page( $newDiv );
                 $.mobile.pageLoading(true);
             });
