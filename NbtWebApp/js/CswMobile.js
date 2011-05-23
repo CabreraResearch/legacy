@@ -23,13 +23,32 @@
         return $ret;
     }
 
+    $.fn.bindLI = function()
+    {
+        var $li = $(this);
+        var $ret = undefined;
+        if( !isNullOrEmpty($li) )
+        {
+            $li.unbind('click');
+            $ret = $li.find('li a').bind('click', function ()
+            {
+                var dataurl = $(this).attr('data-url');
+                var $thisPage = $('#' + dataurl);
+                $.mobile.path.set(dataurl);
+                $thisPage.doChangePage();
+            });
+            
+        }
+        return $ret;
+    }
+
     $.fn.doChangePage = function (transition, reverse, changeHash)
 	{
         var $div = $(this);
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
-            log($.mobile.activePage,true);
+            log('doChangePage on ' + $.mobile.activePage.CswAttrDom('id'),true);
             ret = $.mobile.changePage($div, transition, reverse, changeHash);
         }
         return ret;
@@ -41,9 +60,8 @@
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
-            log($div,true);
+            log('doPage on ' + $div.CswAttrDom('id'),true);
             ret = $div.page();
-            log($div);
         }
         return ret;
     }
@@ -66,6 +84,18 @@
             }
             
             if(params) $.extend(p,params);
+
+            //$div.find('li a').unbind('click');
+            debugger;
+            $div.find('li a').bind('click', function (e) 
+            { 
+				var $parent = $(this);
+				var dataurl = $parent.CswAttrXml('data-url');
+                alert('hey: ' + dataurl);
+				var $target = $('#' + dataurl);
+				if( !isNullOrEmpty($target) )
+					$target.doChangePage();						
+    		});
 
             $div.unbind('pageshow');
             $ret = $div.bind('pageshow', function() 
@@ -503,7 +533,7 @@
                 $list.append( _makeListItemFromXml($(this), p) );
             });
             $list.listview('refresh');
-
+            $list.bindLI();
             onAfterAddDiv($retDiv);
             
             return $retDiv;
@@ -660,7 +690,7 @@
                                 toolbar: toolbar,
                                 onPageShow: function(p) { return _loadDivContents(p); }
                             };
-                            var $newDiv = _addPageDivToBody(params).doPage();
+                            var $newDiv = _addPageDivToBody(params);
                             $newDiv.bindJqmEvents(params);
                         }
                         break;
@@ -1239,7 +1269,7 @@
                                         'data-transition': 'slideup' });
                 }
             }
-            //$pageDiv.doPage();
+            if(p.level === 0) $pageDiv.doPage();
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
             return $pageDiv;
@@ -1482,7 +1512,6 @@
                     'Password': Password
                 };
 
-                if (debug) log('Starting ' + opts.AuthenticateUrl, true);
                 clearPath();
                 CswAjaxJSON({
                     formobile: ForMobile,
@@ -1492,8 +1521,6 @@
                     onloginfail: function () { Logout(); },
                     success: function (data)
                     {
-                        if (debug) log('On Success ' + opts.AuthenticateUrl, true);
-                        
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
 						_cacheSession(SessionId, UserName);
                         $viewsdiv = reloadViews();
