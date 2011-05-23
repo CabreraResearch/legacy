@@ -126,12 +126,22 @@
 
         function _loadViewsDiv()
         {
+            var params = {
+                ParentId: '',
+                DivId: 'viewsdiv',
+                HeaderText: 'Views',
+                $xml: '',
+                level: 1,
+                HideRefreshButton: true,
+                HideSearchButton: true
+            };
             var $retDiv = _addDialogDivToBody({
                         DivId: 'viewsdiv',
                         HeaderText: 'Views',
                         HideRefreshButton: true,
                         HideSearchButton: true
                 });
+            _bindJqmEvents($retDiv,params);
             return $retDiv;
 		}
 
@@ -1247,7 +1257,7 @@
                 $footer.CswLink('init',{'href': 'javascript:void(0)', ID: p.DivId + '_help', value: 'Help'})
                        .CswAttrXml({'data-identity': p.DivId, 'data-url': '?' + p.DivId });
             }
-            //_page( $pageDiv );
+            _page( $pageDiv );
             _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
             return $pageDiv;
@@ -1282,6 +1292,7 @@
             
             if(params) $.extend(p,params);
 
+            $div.unbind('pageshow');
             $div.bind('pageshow', function() {
                 
                 $.mobile.pageLoading();
