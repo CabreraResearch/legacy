@@ -40,8 +40,8 @@
             $ul.listview();
 
             // hack: JQM keeps updating path as concatenation of localhost + data-url, which breaks AJAX
-            if ($.mobile.path.get() !== '') $.mobile.path.set('');
-            //$.mobile.path.get = function (newPath) { return ''; };
+            //if ($.mobile.path.get() !== '') $.mobile.path.set('');
+            $.mobile.path.get = function (newPath) { return ''; };
             CswAjaxJSON({
                 url: '/NbtWebApp/wsNBT.asmx/GetTestData',
                 data: {},
@@ -61,6 +61,7 @@
                         {
                             var dataurl = $(this).attr('data-url');
                             var $thisPage = $('#' + dataurl);
+                            $.mobile.path.set(dataurl);
                             $.mobile.changePage($thisPage);
                         });
                     }
