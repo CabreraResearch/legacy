@@ -144,7 +144,7 @@
                         HideRefreshButton: true,
                         HideSearchButton: true
                 });
-            _bindJqmEvents($retDiv,params);
+            $retDiv.bindJqmEvents(params);
             return $retDiv;
 		}
 
@@ -198,11 +198,11 @@
         function continueReloadViews()
         {
             if($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
-            $viewsdiv = _bindJqmEvents($viewsdiv, {level: 0,
-                                                   DivId: 'viewsdiv',
-                                                   HeaderText: 'Views',
-                                                   HideRefreshButton: true,
-                                                   HideSearchButton: true
+            $viewsdiv.bindJqmEvents({level: 0,
+								     DivId: 'viewsdiv',
+								     HeaderText: 'Views',
+								     HideRefreshButton: true,
+								     HideSearchButton: true
                         });
             return $viewsdiv;
         }
@@ -618,7 +618,7 @@
                                 toolbar: toolbar
                             });
                             
-                            _bindJqmEvents($newDiv,p);
+                            $newDiv.bindJqmEvents(p);
                         }
                         break;
                     } // default:
@@ -1207,7 +1207,7 @@
                 }
             }
             //_page( $pageDiv );
-            _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
+            $pageDiv.bindPageEvents(p.DivId, p.ParentId, p.level);
 
             return $pageDiv;
 
@@ -1257,7 +1257,7 @@
                 }
                 _page( $pageDiv );
             }
-            _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
+            $pageDiv.bindDialogEvents(p.DivId, p.ParentId, p.level);
 
             return $pageDiv;
 
@@ -1277,8 +1277,9 @@
             return ret;
         }
 
-        function _bindJqmEvents($div, params)
+        $.fn.bindJqmEvents = function (params)
         {
+            var $div = $(this);
             var p = {
                 ParentId: '',
                 DivId: '',
@@ -1303,8 +1304,9 @@
             return $div;
         }
 
-        function _bindPageEvents(DivId, ParentId, level, $div)
+        $.fn.bindPageEvents = function (DivId, ParentId, level)
         {
+            var $div = $(this);
             $div.find('#' + DivId + '_searchopen')
                 .click(function (eventObj) { onSearchOpen(DivId, eventObj); })
                 .end()
@@ -1341,10 +1343,12 @@
 							_changePage($target);						
 					})
                 .end();
-        }
+			return $div;
+		}
         
-        function _bindDialogEvents(DivId, ParentId, level, $div)
+        $.fn.bindDialogEvents = function (DivId, ParentId, level)
         {
+			var $div = $(this);
             $div.find('#' + DivId + '_help')
                 .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
                 .end()
@@ -1357,6 +1361,7 @@
                 .find('select')
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end();
+			return $div;
         }
         // ------------------------------------------------------------------------------------
         // Synch Status Div
@@ -1575,13 +1580,13 @@
                         $currentViewXml = $xml;
                         _updateStoredViewXml(RealDivId, $currentViewXml, '0');
 
-                        $viewsdiv = _bindJqmEvents($viewsdiv, {ParentId: 'viewsdiv',
-                                                               DivId: RealDivId,
-                                                               HeaderText: HeaderText,
-                                                               '$xml': $currentViewXml,
-                                                               level: 0,
-                                                               HideRefreshButton: false,
-                                                               HideSearchButton: true
+                        $viewsdiv.bindJqmEvents({ParentId: 'viewsdiv',
+											     DivId: RealDivId,
+											     HeaderText: HeaderText,
+											     '$xml': $currentViewXml,
+											     level: 0,
+											     HideRefreshButton: false,
+											     HideSearchButton: true
                                     });
                         _changePage($viewsdiv);
                         restorePath();
@@ -1723,7 +1728,7 @@
                     _page( $srdiv.append($content) );
                     $('#' + DivId + '_searchresultslist').listview();
 
-                    _bindPageEvents(DivId + '_searchdiv', DivId, 1, $srdiv);
+                    $srdiv.bindPageEvents(DivId + '_searchdiv', DivId, 1);
                 }
             });
         }
