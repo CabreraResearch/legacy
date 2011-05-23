@@ -85,18 +85,6 @@
             
             if(params) $.extend(p,params);
 
-            //$div.find('li a').unbind('click');
-            debugger;
-            $div.find('li a').bind('click', function (e) 
-            { 
-				var $parent = $(this);
-				var dataurl = $parent.CswAttrXml('data-url');
-                alert('hey: ' + dataurl);
-				var $target = $('#' + dataurl);
-				if( !isNullOrEmpty($target) )
-					$target.doChangePage();						
-    		});
-
             $div.unbind('pageshow');
             $ret = $div.bind('pageshow', function() 
             {
@@ -1368,17 +1356,17 @@
                 .end()
                 .find('select')
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-                .end()
-                .find('li a')
-                .bind('tap', function (e) { 
-                        alert('hey: ' + dataurl);
-						var $parent = $(this);
-						var dataurl = $parent.CswAttrXml('data-url');
-						var $target = $('#' + dataurl);
-						if( !isNullOrEmpty($target) )
-							$target.doChangePage();						
-					})
                 .end();
+//                .find('li a')
+//                .bind('tap', function (e) { 
+//                        alert('hey: ' + dataurl);
+//						var $parent = $(this);
+//						var dataurl = $parent.CswAttrXml('data-url');
+//						var $target = $('#' + dataurl);
+//						if( !isNullOrEmpty($target) )
+//							$target.doChangePage();						
+//					})
+//               .end();
         }
         
         function _bindDialogEvents(DivId, ParentId, level, $div)
