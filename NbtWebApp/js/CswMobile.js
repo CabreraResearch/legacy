@@ -162,12 +162,12 @@
                         function ()
                         {
                             // online
-                            //$logindiv.doChangePage();
+                            $logindiv.doPage();// doChangePage();
                         },
                         function ()
                         {
                             // offline
-                            // $sorrycharliediv.doChangePage();
+                            $sorrycharliediv.doPage(); // doChangePage();
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
@@ -290,7 +290,7 @@
             }
             if ( $.mobile.activePage === $logindiv)
             {
-                //$sorrycharliediv.doChangePage();
+                $sorrycharliediv.doPage(); // doChangePage();
             }
         }
         function setOnline()
@@ -307,7 +307,7 @@
             }
             if ( $.mobile.activePage === $sorrycharliediv )
             {
-                //$logindiv.doChangePage();;
+                $logindiv.doPage(); //doChangePage();;
             }
         }
         function amOffline()
@@ -660,7 +660,7 @@
                                 toolbar: toolbar,
                                 onPageShow: function(p) { return _loadDivContents(p); }
                             };
-                            var $newDiv = _addPageDivToBody(params);
+                            var $newDiv = _addPageDivToBody(params).doPage();
                             $newDiv.bindJqmEvents(params);
                         }
                         break;
@@ -1340,8 +1340,9 @@
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
                 .find('li a')
-                .bind('click', function (e) { 
-                        var $parent = $(this);
+                .bind('tap', function (e) { 
+                        alert('hey: ' + dataurl);
+						var $parent = $(this);
 						var dataurl = $parent.CswAttrXml('data-url');
 						var $target = $('#' + dataurl);
 						if( !isNullOrEmpty($target) )
@@ -1696,7 +1697,7 @@
 
                     $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
 
-                    //$('#' + DivId + '_searchdiv').doChangePage("slideup", false, true);
+                    $('#' + DivId + '_searchdiv').doChangePage("slideup", false, true);
                 }
             });
         }
