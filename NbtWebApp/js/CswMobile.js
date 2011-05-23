@@ -429,16 +429,25 @@
                 $.extend(p, params);
             }
 
-            var $retDiv;
-            var list
-            var $content = _make$UL();
+            var $retDiv = _addPageDivToBody({
+                    ParentId: p.ParentId,
+                    level: p.parentlevel,
+                    DivId: p.DivId,
+                    HeaderText: p.HeaderText,
+                    //$content: $content,
+                    HideRefreshButton: p.HideRefreshButton,
+                    HideSearchButton: p.HideSearchButton
+            });
+
+            var $content = $retDiv.find('div:jqmData(role="content")').empty();
+            $content();
             currenttab = '';
 
             onAfterAddDiv = function ($retDiv) { };
 
             p.$xml.children().each(function ()
             {
-                $content.append( _makeListItemFromXml($(this), p) );
+                $content.makeListItemFromXml($(this), p);
             });
             
             $retDiv = _addPageDivToBody({
@@ -446,7 +455,7 @@
                 level: p.parentlevel,
                 DivId: p.DivId,
                 HeaderText: p.HeaderText,
-                $content: $content,
+                //$content: $content,
                 HideRefreshButton: p.HideRefreshButton,
                 HideSearchButton: p.HideSearchButton
             });
@@ -455,8 +464,9 @@
             return $retDiv;
         } // _processViewXml()
 
-        function _makeListItemFromXml($xmlitem, params)
+        $.fn.makeListItemFromXml = function ($xmlitem, params)
         {
+            var $parent = $(this);
             var p = {
                 ParentId: '',
                 DivId: '',
@@ -486,7 +496,8 @@
                     break;
 
                 case "node":
-                    $retLI = _makeObjectClassContent($xmlitem);
+                    $retLI = _makeObjectClassContent($xmlitem)
+                                .appendTo($parent);
                     break;
 
                 case "prop":
@@ -580,12 +591,12 @@
                             toolbar: toolbar,
                             $content: _FieldTypeXmlToHtml($xmlitem, DivId)
                         });
-                        $retLI = $(lihtml);
+                        $retLI = $(lihtml).appendTo($parent);
                         break;
                     } // case 'prop':
                 default:
                     {
-                        $retLI = $('<li></li>');
+                        $retLI = $('<li></li>').appendTo($parent);
                         if (IsDiv)
                         {
                             $retLI.CswLink('init',{href: 'javascript:void(0);', value: text})
@@ -598,22 +609,30 @@
                         }
                         if(p.parentlevel === 0) 
                         {
-                            var $newDiv = $body.CswDiv('init',{ID: id})
-                                               .CswAttrXml({'data-title': text, 'data-role': 'page', 'data-url': id});
+                            var $newDiv = _addPageDivToBody({
+                                ParentId: DivId,
+                                level: p.parentlevel,
+                                DivId: id,
+                                HeaderText: text,
+                                toolbar: toolbar
+                            });
+                            
                             _bindJqmEvents($newDiv,p);
                         }
                         break;
                     } // default:
             }
-            $retLI.listview('refresh');
+            if(!isNullOrEmpty($retLI) ) $retLI.listview('refresh');
             return $retLI;
-        } // _makeListItemFromXml()
+        } // makeListItemFromXml()
 
-        function _make$UL(id)
+        $.fn.make$UL = function(id)
         {
-            var $retUL = $('<ul data-role="listview" id="' + tryParseString(id,'') + '"></ul>');
+            var $parent = $(this);
+            var $retUL = $('<ul data-role="listview" id="' + tryParseString(id,'') + '"></ul>')
+                         .appendTo($parent);
             $retUL.listview();
-            return $retUL;
+            return $parent;
         }
 
         function _makeUL(id)
@@ -1690,7 +1709,7 @@
                             if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
                                 hitcount++;
-                                $content.append(  _makeListItemFromXml($node, DivId, 1, false) );
+                                $content.makeListItemFromXml($node, DivId, 1, false);
                             }
                         }
                     });
