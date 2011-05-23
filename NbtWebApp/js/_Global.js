@@ -498,7 +498,11 @@ function deleteNodes(options)
         data: jData,
         success: function (result)
         {
-            o.onSuccess('', '');  // returning '' will reselect the first node in the tree
+        	// clear selected node cookies
+			o.nodeid = $.CswCookie('clear', CswCookieName.CurrentNodeId);
+        	o.cswnbtnodekey = $.CswCookie('clear', CswCookieName.CurrentNodeKey);
+			// returning '' will reselect the first node in the tree
+        	o.onSuccess('', '');
         },
         error: o.onError
     });
