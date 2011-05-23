@@ -63,13 +63,14 @@
                 tempdivid = potentialtempdivid;
             }
         }
-
-        var $logindiv = _loadLoginDiv();
-        var $sorrycharliediv = _loadSorryCharlieDiv(false);
         
         var $viewsdiv = _loadViewsDiv();
         var $syncstatus = _makeSynchStatusDiv();
         var $helpdiv = _makeHelpDiv();
+        var $sorrycharliediv = _loadSorryCharlieDiv(false);
+        var $logindiv = _loadLoginDiv();
+
+        _changePage($logindiv);
 
         _initDB(false, function ()
         {
@@ -156,7 +157,6 @@
             log($div,true);
             $div.page();
             $div.find('ul:jqmData(role="listview")').each( function() {
-                debugger;
                 $(this).listview('refresh');
             });
             log($div);
@@ -284,16 +284,7 @@
                         {
                             p.$xml = $xml;
                             p.doProcessView = true;
-//                            $retDiv = _processViewXml({
-//                                        ParentId: p.ParentId,
-//                                        DivId: p.DivId,
-//                                        HeaderText: p.HeaderText,
-//                                        $xml: $xml,
-//                                        parentlevel: p.level,
-//                                        HideRefreshButton: p.HideRefreshButton,
-//                                        HideSearchButton: p.HideSearchButton,
-//                                        loadDivContents: p
-//                                    });
+
                         });
                     } 
                     else
@@ -305,7 +296,7 @@
                             ParentId: p.DivId,
                             ForMobile: ForMobile
                         };
-                        $.mobile.path.get = function( newPath ){ return ''; };
+                        if( $.mobile.path.get() !== '') $.mobile.path.set('')
                         CswAjaxXml({
                             async: false,   // required so that the link will wait for the content before navigating
                             formobile: ForMobile,
@@ -323,15 +314,6 @@
                                 }
                                 p.$xml = X$xml;
                                 p.doProcessView = true;
-//                                $retDiv = _processViewXml({
-//                                            ParentId: p.ParentId,
-//                                            DivId: p.DivId,
-//                                            HeaderText: p.HeaderText,
-//                                            $xml: X$xml,
-//                                            parentlevel: p.level,
-//                                            HideRefreshButton: p.HideRefreshButton,
-//                                            HideSearchButton: p.HideSearchButton
-//                                        });
                             }
                         });
                     }
@@ -345,15 +327,6 @@
                             $currentViewXml = $xmlstr;
                             p.$xml = $currentViewXml;
                             p.doProcessView = true;
-//                            $retDiv = _processViewXml({
-//                                ParentId: p.ParentId,
-//                                DivId: p.DivId,
-//                                HeaderText: p.HeaderText,
-//                                $xml: $xmlstr,
-//                                parentlevel: p.level,
-//                                HideRefreshButton: p.HideRefreshButton,
-//                                HideSearchButton: p.HideSearchButton
-//                            });
                         }
                         else if (!amOffline())
                         {
@@ -382,16 +355,6 @@
                                     {
                                         _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                                     }
-
-//                                   $retDiv = _processViewXml({
-//                                        ParentId: p.ParentId,
-//                                        DivId: p.DivId,
-//                                        HeaderText: p.HeaderText,
-//                                        $xml: $currentViewXml,
-//                                        parentlevel: p.level,
-//                                        HideRefreshButton: p.HideRefreshButton,
-//                                        HideSearchButton: p.HideSearchButton
-//                                    });
                                 },
                                 error: function(xml)
                                 {
@@ -408,15 +371,6 @@
                         p.$xml = $currentViewXml.find('#' + p.DivId)
                                                 .children('subitems').first();
                         p.doProcessView = true;
-//                            $retDiv = _processViewXml({
-//                                ParentId: p.ParentId,
-//                                DivId: p.DivId,
-//                                HeaderText: p.HeaderText,
-//                                $xml: $thisxmlstr.children('subitems').first(),
-//                                parentlevel: p.level,
-//                                HideRefreshButton: p.HideRefreshButton,
-//                                HideSearchButton: p.HideSearchButton
-//                            });
                     }
                 }
             }
@@ -630,12 +584,14 @@
                         break;
                     } // default:
             }
+            $retLI.listview('refresh');
             return $retLI;
         } // _makeListItemFromXml()
 
         function _make$UL(id)
         {
             var $retUL = $('<ul data-role="listview" id="' + tryParseString(id,'') + '"></ul>');
+            $retUL.listview();
             return $retUL;
         }
 
@@ -703,7 +659,7 @@
                     Html += '</li>';
                     break;
             }
-            $retHtml = $(Html);
+            $retHtml = $(Html).listview('refresh');
             return $retHtml;
         }
 
@@ -1334,11 +1290,12 @@
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
                 .find('li a')
-                .bind('tap', function (e) { 
-                        var $target = $(this);
-						var dataurl = $target.CswAttrXml('data-url');
-						if( !isNullOrEmpty(dataurl) )
-							_changePage(dataurl);						
+                .bind('click', function (e) { 
+                        var $parent = $(this);
+						var dataurl = $parent.CswAttrXml('data-url');
+						var $target = $('#' + dataurl);
+						if( !isNullOrEmpty($target) )
+							_changePage($target);						
 					})
                 .end();
         }
