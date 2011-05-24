@@ -348,7 +348,6 @@
                 HideRefreshButton: false,
                 HideSearchButton: false,
                 $xml: '',
-                doProcessView: false,
                 SessionId: SessionId
             };
             if (params) $.extend(p, params);
@@ -368,12 +367,12 @@
                         _fetchCachedRootXml(function ($xml)
                         {
                             p.$xml = $xml;
-                            p.doProcessView = true;
+                            $retDiv = _loadDivContentsXml(p);
                         });
                     } 
                     else
                     {
-                        p = _getDivXml(p);
+                        $retDiv = _getDivXml(p);
                     }
                 } 
                 else if (p.level === 1)
@@ -385,11 +384,11 @@
                         {
                             $currentViewXml = $xmlstr;
                             p.$xml = $currentViewXml;
-                            p.doProcessView = true;
+                            $retDiv = _loadDivContentsXml(p);
                         }
                         else if (!amOffline())
                         {
-                            p = _getDivXml(p);
+                            $retDiv = _getDivXml(p);
                         }
                     });
                 } 
@@ -399,55 +398,33 @@
                     {
                         p.$xml = $currentViewXml.find('#' + p.DivId)
                                                 .children('subitems').first();
-                        p.doProcessView = true;
+                        $retDiv = _loadDivContentsXml(p);
                     }
                 }
-            }
-            if( p.doProcessView )
-            {
-                var procOpt = {
-                    ParentId: p.ParentId,
-                    DivId: p.DivId,
-                    HeaderText: p.HeaderText,
-                    $xml: p.$xml,
-                    parentlevel: p.level,
-                    HideRefreshButton: p.HideRefreshButton,
-                    HideSearchButton: p.HideSearchButton
-                };
-                $retDiv = _processViewXml(procOpt);
-                if(debug) log(procOpt);
             }
              
             return $retDiv;
         } // _loadDivContents()
 
+        function _loadDivContentsXml(params)
+        {
+            var $retDiv = _processViewXml(params);
+            return $retDiv;
+        }
+
         function _getDivXml(params)
         {
-            var p = {
-                ParentId: '',
-                level: 1,
-                DivId: '',
-                HeaderText: '',
-                HideRefreshButton: false,
-                HideSearchButton: false,
-                $xml: '',
-                doProcessView: false,
-                SessionId: SessionId
-            };
-            
-            if(params) $.extend(p,params);
-            
+            var $retDiv = undefined;
             if (debug) log('Starting ' + opts.ViewUrl, true);
 
             var dataXml = {
-                SessionId: p.SessionId,
-                ParentId: p.DivId,
-                ForMobile: ForMobile
+                SessionId: params.SessionId,
+                ParentId: params.DivId,
+                formobile: ForMobile
             };
             clearPath();
             CswAjaxXml({
                 //async: false,   // required so that the link will wait for the content before navigating
-                formobile: ForMobile,
                 url: opts.ViewUrl,
                 data: dataXml,
                 onloginfail: function() { Logout(); },
@@ -455,12 +432,12 @@
                 {
                     if (debug) log('On Success ' + opts.ViewUrl, true);
                     $currentViewXml = $xml;
-                    p.$xml = $currentViewXml;
-                    p.doProcessView = true;
-                    if (p.level === 1)
+                    params.$xml = $currentViewXml;
+                    if (params.level === 1)
                     {
-                        _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
+                        _storeViewXml(params.DivId, params.HeaderText, $currentViewXml);
                     }
+                    $retDiv = _loadDivContentsXml(params);    
                     restorePath();
                 },
                 error: function(xml)
@@ -469,7 +446,8 @@
                     restorePath();
                 }
             });
-            return p;
+
+            return $retDiv;
         }
 
         var currenttab;
@@ -509,6 +487,7 @@
 
             p.$xml.children().each(function ()
             {
+                p.$xmlitem = $(this);
                 $list.append( _makeListItemFromXml(p) );
             });
             $list.listview('refresh');
