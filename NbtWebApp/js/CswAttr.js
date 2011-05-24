@@ -16,10 +16,35 @@
         var $Dom = $(this);
         var ret = undefined;
         
-	    if(arguments.length === 1)
-			ret = $Dom.prop(name);
-		else
-            ret = $Dom.prop(name,value);
+		if( typeof name === "object")
+        {
+            for( prop in name )
+            {
+                ret = doProp($Dom,prop,name[prop]);
+            }
+        }
+        else
+        {
+            ret = doProp($Dom,name,value);
+        }
+
+        return ret;
+
+    }; // function(options) {
+
+    function doProp($Dom,name,value)
+    {
+        var ret = undefined;
+        ret = $Dom.prop(name,value);
+
+        if(arguments.length === 2)
+		{
+        	ret = $Dom.prop(name);
+        }
+        else
+        {
+            ret = $Dom.prop(name, value);
+        }
 
 		// special cases
 		if( ret === undefined ||
@@ -29,15 +54,14 @@
 			name === 'rowspan' ||
 			name === 'colspan' )
 		{
-	        if(arguments.length === 1)
+	        if(arguments.length === 2)
 				ret = $Dom.attr(name);
 			else
                 ret = $Dom.attr(name,value);
 		}
 
         return ret;
-
-    }; // function(options) {
+    }
 
     $.fn.CswAttrXml = function (name, value)
     {
@@ -52,14 +76,34 @@
         var X$xml = $(this);
         var ret = undefined;
 
+        if( typeof name === "object")
+        {
+            for(prop in name)
+            {
+                ret = doAttr(X$xml,prop,name[prop]);
+            }
+        }
+        else
+        {
+            ret = doAttr(X$xml,name,value);
+        }
+        // For proper chaining support
+        return ret;
+
+    }; // function(options) {
+
+    function doAttr(X$xml,name,value)
+    {
+        var ret = undefined;
+
         switch( arguments.length )
         {
-            case 1:
+            case 2:
             {
                 ret = X$xml.attr(name);
                 break;
             }
-            case 2:
+            case 3:
             {
                 ret = X$xml.attr(name, value);
                 break;
@@ -67,8 +111,7 @@
         }
         // For proper chaining support
         return ret;
-
-    }; // function(options) {
+    }
 
 })(jQuery);
 

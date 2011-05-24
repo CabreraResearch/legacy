@@ -1,4 +1,5 @@
-﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../jquery/jquery.mobile/jquery.mobile.2011.5.17.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
@@ -25,13 +26,15 @@ function CswAjaxJSON(options)
         onloginfail: function () { },
         success: function (result) { },
         error: function () { },
-        formobile: false
+        formobile: false,
+        async: true
     };
 
     if (options) $.extend(o, options);
     //var starttime = new Date();
     $.ajax({
         type: 'POST',
+        async: o.async,
         url: o.url,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
@@ -97,7 +100,8 @@ function CswAjaxXml(options)
         onloginfail: function () { },
         success: function ($xml) { },
         error: function () { },
-        formobile: false
+        formobile: false,
+        async: true
     };
 
     if (options) $.extend(o, options);
@@ -116,6 +120,7 @@ function CswAjaxXml(options)
         //var starttime = new Date();
         $.ajax({
             type: 'POST',
+            async: o.async,
             url: o.url,
             dataType: "xml",
             //contentType: 'application/json; charset=utf-8',
@@ -1044,7 +1049,7 @@ function isTrue(str)
     else
     {
         ret = false;
-        if (debug) log('isTrue() was called on ' + str + ', which is not a boolean.', false);
+        //if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.',false);
     }
     return ret;
 }
