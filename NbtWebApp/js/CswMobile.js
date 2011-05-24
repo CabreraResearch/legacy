@@ -285,7 +285,7 @@
         function clearPath()
         {
             currentMobilePath = tryParseString( $.mobile.path.get(), '');
-            if(debug) log('pre set path = ' + currentMobilePath);
+            if(debug) log('pre set path = ' + currentMobilePath, true);
             if( currentMobilePath !== '') $.mobile.path.set('');
             if(debug) log('post set path = ' + $.mobile.path.get());
         }
@@ -570,7 +570,7 @@
                                 var sf_required = tryParseString( p.$xmlitem.children('required').text(), '');
 
                                 lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                                lihtml += _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required);
+                                lihtml += _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required).html();
                                 lihtml += '</div>';
                                 break;
 
@@ -583,7 +583,7 @@
                                 var sf_correctiveaction = tryParseString( p.$xmlitem.children('correctiveaction').text(), '');
                                 
                                 lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                                lihtml += _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
+                                lihtml +=  _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers).html();
                                 lihtml += '</div>';
 
                                 if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
@@ -609,7 +609,7 @@
 
 
                         // add a div for editing the property directly
-                        var toolbar = '';
+                        var toolbar = '<div data-role="controlgroup data-type="horizontal">';
                         if ( !isNullOrEmpty(previd) )
                         {
                             toolbar += '<a data-identity="' + previd + '" data-url="' + previd + '" href="javascript:void(0);" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>';
@@ -622,6 +622,7 @@
                         {
                             toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
                         }
+                        toolbar += '</div>';
 
                         _addPageDivToBody({
                             ParentId: p.DivId,
@@ -844,7 +845,7 @@
                         break;
 
                     case "Logical":
-                        Html += _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required);
+                        Html += _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required).html();
                         break;
 
                     case "Memo":
@@ -882,7 +883,7 @@
                         break;
 
                     case "Question":
-                        Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
+                        Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers).html();
 
                         Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
@@ -1052,82 +1053,131 @@
             } // for (var i = 0; i < answers.length; i++)
 
             Html += '</fieldset>';
+            log('logicalset');
+            log(Html);
             $retHtml = $(Html);
             return $retHtml;
         }
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
-            var $retHtml;
-            var Html = '<fieldset class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            var $retHtml = $('<fieldset class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain"></fieldset>');
+            //var Html = '<fieldset class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
                 var answerid = makeSafeId({ ID: answers[i] });
-                Html += '<input type="radio" name="' + makeSafeId({ID: IdStr, suffix: Suffix}) + '" id="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '" value="' + answers[i] + '" ';
+				var inputName = makeSafeId({ID: IdStr, suffix: Suffix});
+				var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid});
+                var $input = $('<input type="radio" name="' + inputName + '" id="' + inputId + '" value="' + answers[i] + '" />')
+								.appendTo($retHtml);
+				var $label = $('<label for="' + inputId + '">' + answers[i] + '</label>')
+								.appendTo($retHtml);
+				//Html += '<input type="radio" name="' + makeSafeId({ID: IdStr, suffix: Suffix}) + '" id="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '" value="' + answers[i] + '" ';
                 
                 if (Answer === answers[i])
                 {
-                    Html += ' checked="checked"';
+					$input.CswAttrDom('checked','checked');
+                    //Html += ' checked="checked"';
                 }    //' checked';
-                Html += ' onclick="';
-
+                //Html += ' onclick="';
+				$input.click( function() 
+				{
+				
                 // case 20307: workaround for a bug with JQuery Mobile Alpha2
-                for (var j = 0; j < answers.length; j++)
-                {
-                    if (answers[j] === answers[i])
-                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
-                    else
-                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
-                }
-
-                Html += ' var $otherradio; ';
-                for (var k = 0; k < answers.length; k++)
-                {
-                    Html += ' $otherradio = $(\'#' + makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]}) + '\'); ';
-                    if (answers[k] === answers[i])
-                    {
-                        Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
-                        Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
-                    } else
-                    {
-                        Html += ' $otherradio.CswAttrDom(\'checked\', false); ';
-                        Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
-                    }
-                } // for (var k = 0; k < answers.length; k++)
-
-                if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
-                {
-                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\').css(\'display\', \'none\'); ';
-                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
-                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
-                }
-                else
-                {
-                    Html += ' var $cor = $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\'); ';
-                    Html += ' $cor.css(\'display\', \'\'); ';
-                    Html += ' if($cor.CswAttrDom(\'value\') === \'\') { ';
-                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').addClass(\'OOC\'); ';
-                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').addClass(\'OOC\'); ';
-                    Html += ' } else {';
-                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
-                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
-                    Html += ' } ';
-                }
-                if ( isNullOrEmpty(Answer) )
-                {
-                    // update unanswered count when this question is answered
-                    Html += ' if(! $(\'#' + IdStr + '_fieldset\').CswAttrDom(\'answered\')) { ';
-                    Html += '   var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
-                    Html += '   $cntspan.text(parseInt($cntspan.text()) - 1); ';
-                    Html += '   $(\'#' + IdStr + '_fieldset\').CswAttrDom(\'answered\', \'true\'); ';
-                    Html += ' }';
-                }
-                Html += ' " />';
-                Html += '            <label for="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '">' + answers[i] + '</label>';
+//                for (var j = 0; j < answers.length; j++)
+//                {
+//                    if (answers[j] === answers[i])
+//                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
+//                    else
+//                       Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
+//                }
+					var $otherradio;
+                //Html += ' var $otherradio; ';
+					for (var k = 0; k < answers.length; k++)
+					{
+						var thisAnswerId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
+						$otherradio = $('#' + thisAnswerId);
+						//Html += ' $otherradio = $(\'#' + makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]}) + '\'); ';
+						if (answers[k] === answers[i])
+						{
+							$otherradio.CswAttrDom('checked', 'checked');
+							$otherradio.siblings('label').addClass('ui-btn-active');
+							//Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
+							//Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
+						} else
+						{
+							$otherradio.CswAttrDom('checked', false);
+							$otherradio.siblings('label').removeClass('ui-btn-active');
+							//Html += ' $otherradio.CswAttrDom(\'checked\', false); ';
+							//Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+						}
+					} // for (var k = 0; k < answers.length; k++)
+					
+					var correctiveActionId = makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix});
+					var liSuffixId = makeSafeId({ prefix: IdStr, ID: LiSuffix});
+					var propNameSuffixId = makeSafeId({ prefix: IdStr, ID: PropNameSuffix});
+					
+					var $cor = $('#' + correctiveActionId);
+					var $li = $('#' + liSuffixId);
+					var $prop = $('#' + propNameSuffixId);
+					
+					if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
+					{
+						$cor.css('display','none');
+						$li.removeClass('OOC');
+						$prop.removeClass('OOC');
+						//Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\').css(\'display\', \'none\'); ';
+						//Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
+						//Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
+					}
+					else
+					{
+						$cor.css('display','');
+						if($cor.val() === '')
+						{
+							$li.addClass('OOC');
+							$prop.addClass('OOC');
+						}
+						else
+						{
+							$li.removeClass('OOC');
+							$prop.removeClass('OOC');
+						}
+						//Html += ' var $cor = $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\'); ';
+						//Html += ' $cor.css(\'display\', \'\'); ';
+						//Html += ' if($cor.CswAttrDom(\'value\') === \'\') { ';
+						//Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').addClass(\'OOC\'); ';
+						//Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').addClass(\'OOC\'); ';
+						//Html += ' } else {';
+						//Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
+						//Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
+						//Html += ' } ';
+					}
+					if ( isNullOrEmpty(Answer) )
+					{
+						// update unanswered count when this question is answered
+						var $fieldset = $('#' + IdStr + '_fieldset');
+						if( $fieldset.CswAttrDom('answered') )
+						{
+							var $cntspan = $('#' + ParentId + '_unansweredcnt');
+							$cntspan.text(parseInt($cntspan.text()) - 1);
+							$fieldset.CswAttrDom('answered','true');
+						}
+						//Html += ' if(! $(\'#' + IdStr + '_fieldset\').CswAttrDom(\'answered\')) { ';
+						//Html += '   var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
+						//Html += '   $cntspan.text(parseInt($cntspan.text()) - 1); ';
+						//Html += '   $(\'#' + IdStr + '_fieldset\').CswAttrDom(\'answered\', \'true\'); ';
+						//Html += ' }';
+					}
+					//Html += ' " />';
+				}); //click()
+                //Html += '            <label for="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '">' + answers[i] + '</label>';
             } // for (var i = 0; i < answers.length; i++)
-            Html += '</fieldset>';
-            $retHtml = $(Html);
+            //Html += '</fieldset>';
+            //log('question');
+            //log(Html);
+            //$retHtml = $(Html);
             return $retHtml;
         } // _makeQuestionAnswerFieldSet()
 
@@ -2012,39 +2062,40 @@
 
         function _handleDataCheckTimer(onSuccess, onFailure)
         {
-            var url = opts.ConnectTestUrl;
-            if (opts.RandomConnectionFailure)
-            {
-                url = opts.ConnectTestRandomFailUrl;
-            }
-            clearPath();
-            CswAjaxXml({
-                formobile: ForMobile,
-                url: url,
-                data: {},
-                stringify: false,
-                onloginfail: function() { Logout(); },
-                success: function ($xml)
-                {
-                    setOnline();
-                    _processChanges(true);
-                    if ( !isNullOrEmpty(onSuccess) )
-                    {
-                        onSuccess($xml);
-                    }
-                    restorePath();
-                },
-                error: function (xml)
-                {
-                    var $xml = $(xml);
-                    if ( !isNullOrEmpty(onFailure) )
-                    {
-                        onFailure($xml);
-                    }
-                    _waitForData();
-                    restorePath();
-                }
-            });
+            return true;
+//            var url = opts.ConnectTestUrl;
+//            if (opts.RandomConnectionFailure)
+//            {
+//                url = opts.ConnectTestRandomFailUrl;
+//            }
+//            clearPath();
+//            CswAjaxXml({
+//                formobile: ForMobile,
+//                url: url,
+//                data: {},
+//                stringify: false,
+//                onloginfail: function() { Logout(); },
+//                success: function ($xml)
+//                {
+//                    setOnline();
+//                    _processChanges(true);
+//                    if ( !isNullOrEmpty(onSuccess) )
+//                    {
+//                        onSuccess($xml);
+//                    }
+//                    restorePath();
+//                },
+//                error: function (xml)
+//                {
+//                    var $xml = $(xml);
+//                    if ( !isNullOrEmpty(onFailure) )
+//                    {
+//                        onFailure($xml);
+//                    }
+//                    _waitForData();
+//                    restorePath();
+//                }
+//            });
 
         } //_handleDataCheckTimer()
 
