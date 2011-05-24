@@ -927,7 +927,7 @@
                         });
 
                         var $comments = $('<textarea name="' + IdStr + '_com" placeholder="Comments">' + sf_comments + '</textarea>')
-                                            .appenTo($question);
+                                            .appendTo($question);
                         break;
 
                     case "Static":
