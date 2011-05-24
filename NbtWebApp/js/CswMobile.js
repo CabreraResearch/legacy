@@ -48,7 +48,7 @@
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
-            log('doChangePage from: ' + $.mobile.activePage.CswAttrDom('id') + ' to: ' + $div.CswAttrDom('id'),true);
+            if(debug) log('doChangePage from: ' + $.mobile.activePage.CswAttrDom('id') + ' to: ' + $div.CswAttrDom('id'),true);
             ret = $.mobile.changePage($div, transition, reverse, changeHash);
         }
         return ret;
@@ -60,7 +60,7 @@
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
-            log('doPage on ' + $div.CswAttrDom('id'),true);
+            if(debug) log('doPage on ' + $div.CswAttrDom('id'),true);
             ret = $div.page();
         }
         return ret;
@@ -77,6 +77,7 @@
                 DivId: '',
                 HeaderText: '',
                 $xml: '',
+                parentlevel: 0,
                 level: 1,
                 HideRefreshButton: false,
                 HideSearchButton: false,
@@ -84,7 +85,7 @@
             }
             
             if(params) $.extend(p,params);
-
+            p.level = (p.parentlevel === p.level ) ? p.parentlevel+1 : p.level;
             $div.unbind('pageshow');
             $ret = $div.bind('pageshow', function() 
             {
@@ -218,6 +219,7 @@
                 DivId: 'viewsdiv',
                 HeaderText: 'Views',
                 $xml: '',
+                parentlevel: -1,
                 level: 0,
                 HideRefreshButton: true,
                 HideSearchButton: true,
@@ -267,12 +269,14 @@
         function continueReloadViews()
         {
             if($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
-            var params = {level: 0,
-                        DivId: 'viewsdiv',
-                        HeaderText: 'Views',
-                        HideRefreshButton: true,
-                        HideSearchButton: true,
-                        onPageShow: function(p) { return _loadDivContents(p); }
+            var params = {
+                parentlevel: -1,
+                level: 0,
+                DivId: 'viewsdiv',
+                HeaderText: 'Views',
+                HideRefreshButton: true,
+                HideSearchButton: true,
+                onPageShow: function(p) { return _loadDivContents(p); }
             };
             $viewsdiv.bindJqmEvents(params);
             return $viewsdiv;
@@ -281,7 +285,9 @@
         function clearPath()
         {
             currentMobilePath = tryParseString( $.mobile.path.get(), '');
+            if(debug) log('pre set path = ' + currentMobilePath);
             if( currentMobilePath !== '') $.mobile.path.set('');
+            if(debug) log('post set path = ' + $.mobile.path.get());
         }
 
         function restorePath()
@@ -408,6 +414,7 @@
 
         function _loadDivContentsXml(params)
         {
+            params.parentlevel = params.level;
             var $retDiv = _processViewXml(params);
             return $retDiv;
         }
@@ -461,6 +468,7 @@
                 $xml: '',
                 $xmlitem: '',
                 parentlevel: '',
+                level: '',
                 HideRefreshButton: false,
                 HideSearchButton: false
             };
@@ -505,6 +513,7 @@
                 HeaderText: '',
                 $xmlitem: '',
                 parentlevel: '',
+                level: '',
                 HideRefreshButton: false,
                 HideSearchButton: false
             }
@@ -574,7 +583,7 @@
                                 var sf_correctiveaction = tryParseString( p.$xmlitem.children('correctiveaction').text(), '');
                                 
                                 lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                                lihtml += _makeQuestionAnswerFieldSet(DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
+                                lihtml += _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
                                 lihtml += '</div>';
 
                                 if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
@@ -620,7 +629,7 @@
                             DivId: id,
                             HeaderText: text,
                             toolbar: toolbar,
-                            $content: _FieldTypeXmlToHtml(p.$xmlitem, DivId)
+                            $content: _FieldTypeXmlToHtml(p.$xmlitem, p.DivId)
                         });
                         $retLI = $(lihtml);
                         break;
@@ -642,10 +651,11 @@
                         {
                             var $newDiv = _preFormNextLevelPages({
                                                 ParentId: p.DivId,
-                                                level: p.parentlevel,
+                                                parentlevel: p.parentlevel,
+                                                level: p.parentlevel+1,
                                                 DivId: id,
                                                 HeaderText: text,
-                                                toolbar: toolbar,
+                                                toolbar: toolbar
                             });
                         }
                         break;
@@ -732,10 +742,10 @@
 
             var $newDiv = _preFormNextLevelPages({
                                 ParentId: p.DivId,
+                                parentlevel: p.parentlevel,
                                 level: p.parentlevel+1,
                                 DivId: id,
-                                HeaderText: text,
-                                toolbar: toolbar
+                                HeaderText: NodeName
                           });
 
             $retHtml = $(Html); //.listview('refresh');
@@ -1126,17 +1136,17 @@
             var $retDiv = undefined;
             var p = {
                 ParentId: '',
-                level: 0,
+                parentlevel: 0,
+                level: 1,
                 DivId: '',
                 HeaderText: '',
                 toolbar: '',
                 onPageShow: function(p) { return _loadDivContents(p); }
             };
-            if(params)
-            {
-                $retDiv = _addPageDivToBody(params);
-                $retDiv.bindJqmEvents(params);
-            }
+            if(params) $.extend(p,params);
+
+            $retDiv = _addPageDivToBody(p);
+            $retDiv.bindJqmEvents(p);
             return $retDiv;
         }
                 
@@ -1262,8 +1272,7 @@
                                         'data-transition': 'slideup' });
                 }
             }
-            //if(p.level === 0) 
-            $pageDiv.doPage();
+            //if(p.level === 0) $pageDiv.doPage();
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
             return $pageDiv;
@@ -1363,16 +1372,6 @@
                 .find('select')
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end();
-//                .find('li a')
-//                .bind('tap', function (e) { 
-//                        alert('hey: ' + dataurl);
-//						var $parent = $(this);
-//						var dataurl = $parent.CswAttrXml('data-url');
-//						var $target = $('#' + dataurl);
-//						if( !isNullOrEmpty($target) )
-//							$target.doChangePage();						
-//					})
-//               .end();
         }
         
         function _bindDialogEvents(DivId, ParentId, level, $div)
@@ -1609,6 +1608,7 @@
                             DivId: RealDivId,
                             HeaderText: HeaderText,
                             '$xml': $currentViewXml,
+                            parentlevel: -1,
                             level: 0,
                             HideRefreshButton: false,
                             HideSearchButton: true,
@@ -2114,10 +2114,8 @@
             } // if(SessionId != '') 
         } //_processChanges()
 
-        //log("profiler="+$dumpProfileHTML(profiler));
         // For proper chaining support
         return this;
     };
-    //log($dumpProfilerText(profiler));
 }) ( jQuery );
 
