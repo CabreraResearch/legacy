@@ -485,7 +485,7 @@ namespace ChemSW.Nbt
             Clear();
             if( CopyView != null )
                 this.LoadXml( CopyView.ToXml() );
-			this.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewRow["nodeviewid"].ToString() ) );
+			this.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewRow["nodeviewid"] ) );
             this.ViewName = ViewName;
             this.Visibility = Visibility;
             this.VisibilityRoleId = RoleId;
@@ -1337,7 +1337,7 @@ namespace ChemSW.Nbt
 		public CswNbtSessionDataId SessionViewId
         {
             get { return _SessionViewId; }
-            //set { _SessionViewId = value; }
+            set { _SessionViewId = value; }
         }
 
 		#endregion Session Cache functions

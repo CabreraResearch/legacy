@@ -27,6 +27,7 @@ namespace ChemSW.Nbt
 		public const string SessionDataColumn_SessionDataType = "sessiondatatype";
 		public const string SessionDataColumn_Name = "name";
 		public const string SessionDataColumn_ActionId = "actionid";
+		public const string SessionDataColumn_ViewId = "viewid";
 		public const string SessionDataColumn_ViewMode = "viewmode";
 		public const string SessionDataColumn_ViewXml = "viewxml";
 		public const string SessionDataColumn_QuickLaunch = "quicklaunch";
@@ -73,7 +74,7 @@ namespace ChemSW.Nbt
 			{
 				XElement ThisItem = new XElement( "item" );
 				ThisItem.SetAttributeValue( "launchtype", Row[SessionDataColumn_SessionDataType].ToString() );
-				ThisItem.SetAttributeValue( "itemid", Row[SessionDataColumn_PrimaryKey].ToString() );
+				ThisItem.SetAttributeValue( "itemid", new CswNbtSessionDataId( CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] ) ) );
 				ThisItem.SetAttributeValue( "text", Row[SessionDataColumn_Name].ToString() );
 				ThisItem.SetAttributeValue( "viewmode", Row[SessionDataColumn_ViewMode].ToString() );
 
@@ -126,8 +127,10 @@ namespace ChemSW.Nbt
 		{
 			CswTableUpdate SessionViewsUpdate = _CswNbtResources.makeCswTableUpdate( "saveSessionView_update", SessionDataTableName );
 			DataTable SessionViewTable = null;
-			if( View.SessionViewId != null )
-				SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_PrimaryKey, View.SessionViewId.get(), "where sessionid = '"+ SessionId + "'", false );
+			if( View.SessionViewId != null && View.SessionViewId.isSet() )
+				SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_PrimaryKey, View.SessionViewId.get(), "where sessionid = '" + SessionId + "'", false );
+			else if( View.ViewId != null && View.ViewId.isSet() )
+				SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_ViewId, View.ViewId.get(), "where sessionid = '" + SessionId + "'", false );
 			else
 				SessionViewTable = SessionViewsUpdate.getEmptyTable();
 
@@ -143,6 +146,7 @@ namespace ChemSW.Nbt
 			}
 
 			SessionViewRow[SessionDataColumn_Name] = View.ViewName;
+			SessionViewRow[SessionDataColumn_ViewId] = CswConvert.ToDbVal(View.ViewId.get());
 			SessionViewRow[SessionDataColumn_ViewMode] = View.ViewMode.ToString();
 			SessionViewRow[SessionDataColumn_ViewXml] = View.ToString();
 			SessionViewRow[SessionDataColumn_SessionId] = SessionId;

@@ -327,7 +327,7 @@ namespace ChemSW.Nbt.WebServices
 					_CswNbtResources.CurrentUser = CswNbtNodeCaster.AsUser( Node );
 				}
 
-				if( NbtNodeKey == null )
+				if( NbtNodeKey == null && View != null)
 				{
 					// Get the nodekey of this node in the current view
 					ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );

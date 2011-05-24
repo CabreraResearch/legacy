@@ -35,7 +35,8 @@
 					onInitialSelectNode: undefined,
 					onViewChange: function(newviewid) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
 					SelectFirstChild: true,
-					ShowCheckboxes: false
+					ShowCheckboxes: false,
+					IncludeInQuickLaunch: true
 				};
 				if(options) $.extend(o, options);
 
@@ -57,7 +58,8 @@
                     'IncludeNodeKey': tryParseString(o.cswnbtnodekey, ''),
                     'ShowEmpty': o.showempty,
                     'ForSearch': o.forsearch,
-                    'NodePk': tryParseString(o.nodeid,'')
+                    'NodePk': tryParseString(o.nodeid,''),
+					'IncludeInQuickLaunch': o.IncludeInQuickLaunch
                 };
 
 				if( isNullOrEmpty( o.viewid ) )
@@ -196,7 +198,8 @@
                                                             'IncludeNodeKey': '',
                                                             'ShowEmpty': false,
                                                             'ForSearch': o.forsearch,
-                                                            'NodePk': tryParseString(o.nodeid,'')
+                                                            'NodePk': tryParseString(o.nodeid,''),
+															'IncludeInQuickLaunch': false
                                                         };
                                                         return $.param(retDataParam);
 													},
