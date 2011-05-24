@@ -795,7 +795,7 @@
 
         function _FieldTypeXmlToHtml($xmlitem, ParentId)
         {
-            var $retHtml;
+            var $retHtml = $('<div id="' + IdStr + '_propname" >' + PropName + '</div>');
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
@@ -815,74 +815,78 @@
             var sf_compliantanswers = tryParseString( $xmlitem.children('compliantanswers').text(), '');
             var sf_options = tryParseString( $xmlitem.children('options').text(), '');
 
-            var Html = '<div id="' + IdStr + '_propname"';
+            //var Html = '<div id="' + IdStr + '_propname"';
             if (FieldType === "Question" && !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
             {
-                Html += ' class="OOC"'
+                $retHtml.addClass('OOC');
             }
-            Html += '>' + PropName + '</div><br/>';
+            $retHtml.append('<br/>');
 
             if( !ReadOnly )
             {
                 switch (FieldType)
                 {
                     case "Date":
-                        Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
+                        $retHtml.append('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />');
                         break;
 
                     case "Link":
-                        Html += '<a href="' + sf_href + '" rel="external">' + sf_text + '</a>';
+                        $retHtml.append('<a href="' + sf_href + '" rel="external">' + sf_text + '</a>');
                         break;
 
                     case "List":
-                        Html += '<select name="' + IdStr + '">';
+                        var $select = $('<select name="' + IdStr + '"></select>')
+                                        .appendTo($retHtml);
                         var selectedvalue = sf_value;
                         var optionsstr = sf_options;
                         var options = optionsstr.split(',');
                         for (var i = 0; i < options.length; i++)
                         {
-                            Html += '<option value="' + options[i] + '"';
+                            var $option = $('<option value="' + options[i] + '"></option>')
+                                            .appendTo($select);
                             if (selectedvalue === options[i])
                             {
-                                Html += ' selected';
+                                $option.CswAttrDom('selected','selected');
                             }
                         
                             if( !isNullOrEmpty(options[i]) )
                             {
-                                Html += '>' + options[i] + '</option>';
+                                $option.val( options[i] );
                             }
                             else
                             {
-                                Html += '>[blank]</option>';
+                                $option.valueOf('[blank]');
                             }
                         }
-                        Html += '</select>';
                         break;
 
                     case "Logical":
-                        Html += _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required).html();
+                        var $logical = _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required)
+                                            .appendTo($retHtml);
                         break;
 
                     case "Memo":
-                        Html += '<textarea name="' + IdStr + '">' + sf_text + '</textarea>';
+                        var $memo = $('<textarea name="' + IdStr + '">' + sf_text + '</textarea>')
+                                            .appendTo($retHtml);
                         break;
 
                     case "Number":
-                        Html += '<input type="number" name="' + IdStr + '" value="' + sf_value + '"';
+                        var $number = $('<input type="number" name="' + IdStr + '" value="' + sf_value + '" />')
+                                            .appendTo($retHtml);
                         // if (Prop.MinValue != Int32.MinValue)
                         //     Html += "min = \"" + Prop.MinValue + "\"";
                         // if (Prop.MaxValue != Int32.MinValue)
                         //     Html += "max = \"" + Prop.MaxValue + "\"";
-                        Html += '/>';
                         break;
 
                     case "Password":
-                        Html += string.Empty;
+                        //nada
                         break;
 
                     case "Quantity":
-                        Html += '<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />';
-                        Html += sf_units;
+                        var $quantity = $('<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />')
+                                            .appendTo($retHtml);
+                        $quantity.append( sf_units );
                         // Html += "<select name=\"" + IdStr + "_units\">";
                         // string SelectedUnit = PropWrapper.AsQuantity.Units;
                         // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
@@ -898,51 +902,57 @@
                         break;
 
                     case "Question":
-                        Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers).html();
+                        var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
+                                            .appendTo($retHtml);
 
-                        Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
+                        var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
+                                            .appendTo($question);
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
-                            Html += 'style="display: none"';
-                        Html += 'onchange="';
-                        Html += 'var $cor = $(this); ';
-                        Html += 'if($cor.CswAttrDom(\'value\') === \'\') { ';
-                        Html += '  $(\'#' + IdStr + '_li div\').addClass(\'OOC\'); '
-                        Html += '  $(\'#' + IdStr + '_propname\').addClass(\'OOC\'); '
-                        Html += '} else {';
-                        Html += '  $(\'#' + IdStr + '_li div\').removeClass(\'OOC\'); '
-                        Html += '  $(\'#' + IdStr + '_propname\').removeClass(\'OOC\'); '
-                        Html += '}';
-                        Html += '">';
-                        Html += sf_correctiveaction;
-                        Html += '</textarea>';
+                        {
+                            $corAction.css('display','none');
+                        }
+                        $corAction.change( function()
+                        {
+                            var $cor = $(this);
+                            if($cor.val() === '') 
+                            { 
+                                  $('#' + IdStr + '_li div').addClass('OOC'); 
+                                  $('#' + IdStr + '_propname').addClass('OOC');
+                            } 
+                            else 
+                            {
+                              $('#' + IdStr + '_li div').removeClass('OOC'); 
+                              $('#' + IdStr + '_propname').removeClass('OOC'); 
+                            }
+                        });
 
-                        Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
-                        Html += sf_comments
-                        Html += '</textarea>';
-
+                        var $comments = $('<textarea name="' + IdStr + '_com" placeholder="Comments">' + sf_comments + '</textarea>')
+                                            .appenTo($question);
                         break;
 
                     case "Static":
-                        Html += sf_text;
+                        $retHtml.append( sf_text );
                         break;
 
                     case "Text":
-                        Html += '<input type="text" name="' + IdStr + '" value="' + sf_text + '" />';
+                        var $text = $('<input type="text" name="' + IdStr + '" value="' + sf_text + '" />')
+                                        .appendTo($retHtml);
                         break;
 
                     case "Time":
-                        Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
+                        var $time = $('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />')
+                                        .appendTo($retHtml);
                         break;
 
                     default:
-                        Html += $xmlitem.CswAttrXml('gestalt');
+                        $retHtml.append( $xmlitem.CswAttrXml('gestalt') );
                         break;
                 }
             }
-            else {
-                Html += $xmlitem.CswAttrXml('gestalt');
+            else 
+            {
+                $retHtml.append( $xmlitem.CswAttrXml('gestalt') );
             }
-            $retHtml = $(Html);
             return $retHtml;
         }
 
