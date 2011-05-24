@@ -315,7 +315,11 @@ namespace ChemSW.Nbt.Schema
 
 
             CswTableSelect CswTableSelectDataDictionary = makeCswTableSelect( "makemissingaudittables", "data_dictionary" );
-            DataTable DataTableDataDictionary = CswTableSelectDataDictionary.getTable();
+
+            Collection<OrderByClause> OrderByCols = new Collection<OrderByClause>();
+            OrderByCols.Add( new OrderByClause( "tablename", OrderByType.Ascending ) );
+            OrderByCols.Add( new OrderByClause( "columnname", OrderByType.Ascending ) );
+            DataTable DataTableDataDictionary = CswTableSelectDataDictionary.getTable( " where deleted = '0'", OrderByCols );
             string PreviousTableName = string.Empty;
             foreach( DataRow CurrentRow in DataTableDataDictionary.Rows )
             {
@@ -341,21 +345,30 @@ namespace ChemSW.Nbt.Schema
             //add audit level column
             foreach( string CurrentTableName in ColumnsByTable.Keys )
             {
-                if( false == ColumnsByTable[CurrentTableName].Contains( _CswAuditMetaData.AuditLevelColName ) )
+                if( ( false == _CswAuditMetaData.isAuditTable( CurrentTableName ) ) && ( false == ColumnsByTable[CurrentTableName].Contains( _CswAuditMetaData.AuditLevelColName ) ) )
                 {
                     addStringColumn( CurrentTableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
                 }
-            }//
+            }//iterate table names
 
             //add audit tables
             foreach( string CurrentTableName in ColumnsByTable.Keys )
             {
-                string AuditTableName = _CswAuditMetaData.makeAuditTableName( CurrentTableName );
-                if( false == ColumnsByTable.ContainsKey( AuditTableName ) )
+                if( false == _CswAuditMetaData.isAuditTable( CurrentTableName ) )
                 {
-                    copyTable( CurrentTableName, AuditTableName );
-                }
-            }
+                    string AuditTableName = _CswAuditMetaData.makeAuditTableName( CurrentTableName );
+                    if( false == ColumnsByTable.ContainsKey( AuditTableName ) )
+                    {
+                        copyTable( CurrentTableName, AuditTableName );
+                        _CswNbtResources.CswResources.refreshDataDictionary(); 
+                        addBooleanColumn( AuditTableName, _CswAuditMetaData.DelegeFlagColName, _CswAuditMetaData.DelegeFlagColDescription, false, false );
+                        addForeignKeyColumn( AuditTableName, _CswAuditMetaData.AuditTransactionIdColName, "fk to audittransactions table", false, true, _CswAuditMetaData.AuditTransactionTableName, _CswAuditMetaData.AuditTransactionIdColName );
+
+                    }//if the audit table does not yet exist
+
+                }//if it isn't already an audit table
+
+            }//iterate table names
 
         }//makeMissingAuditTables()
 
