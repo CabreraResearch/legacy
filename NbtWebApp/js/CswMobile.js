@@ -42,18 +42,19 @@
         return $ret;
     }
 
-    $.fn.refreshJqm - function()
+    $.fn.refreshJqm = function()
     {
         //JQM doesnot yet have a refresh all method, so we must do this manually
         var $element = $(this);
-        var $ret = undefined;
         if( !isNullOrEmpty($element) )
         {
-            $element.find('input[type="checkbox"]').checkbox('refresh');
+            $element.find('input[type="checkbox"]').checkboxradio('refresh');
             $element.find('input[type="radio"]').checkboxradio('refresh');
             $element.find('input[type="range"]').slider('refresh'); //slider
+            $element.find('select').selectmenu('refresh');
+            $element.find('ul').listview('refresh');
         }
-        return $ret;
+        return $element;
     }
 
     $.fn.doChangePage = function (transition, reverse, changeHash)
@@ -502,7 +503,7 @@
             });
 
             var $content = $retDiv.find('div:jqmData(role="content")').empty();
-            var $list = $content.makeUL();
+            var $list = $content.makeUL();            
             currenttab = '';
 
             onAfterAddDiv = function ($retDiv) { };
@@ -512,8 +513,9 @@
                 p.$xmlitem = $(this);
                 $list.append( _makeListItemFromXml(p) );
             });
-            $list.listview('refresh');
-            $list.bindLI();
+            $list.listview('refresh')
+                 .bindLI();
+            $list.find('input[type="checkbox"]').checkboxradio('refresh');
             onAfterAddDiv($retDiv);
             
             return $retDiv;
@@ -836,7 +838,8 @@
 
                     case "List":
                         var $select = $('<select name="' + IdStr + '"></select>')
-                                        .appendTo($retHtml);
+                                        .appendTo($retHtml)
+                                        .selectmenu();
                         var selectedvalue = sf_value;
                         var optionsstr = sf_options;
                         var options = optionsstr.split(',');
@@ -858,6 +861,7 @@
                                 $option.valueOf('[blank]');
                             }
                         }
+                        $select.selectmenu('refresh');
                         break;
 
                     case "Logical":
@@ -1020,7 +1024,7 @@
 
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
         {
-            var $retHtml = $('<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain"></fieldset>');
+            var $retHtml = $('<div class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain"></div>');
             
             var answers = ['Null', 'True', 'False'];
             if ( isTrue(Required) )
@@ -1040,7 +1044,8 @@
                 var inputName =  makeSafeId({ prefix: IdStr, ID: Suffix});
                 var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]});
                 var $input = $('<input type="radio" name="' + inputName + '" id="' + inputId + '" value="' + answers[i] + '" data-role="button"')
-                                .appendTo($retHtml);
+                                .appendTo($retHtml)
+                                .checkboxradio();
                 var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
                                 .appendTo($retHtml);
 				
@@ -1092,7 +1097,7 @@
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
-            var $retHtml = $('<fieldset class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain"></fieldset>');
+            var $retHtml = $('<div class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain"></div>');
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
@@ -1100,7 +1105,8 @@
 				var inputName = makeSafeId({ID: IdStr, suffix: Suffix});
 				var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid});
                 var $input = $('<input type="radio" name="' + inputName + '" id="' + inputId + '" value="' + answers[i] + '" data-role="button"/>')
-								.appendTo($retHtml);
+								.appendTo($retHtml)
+                                .checkboxradio();
 				var $label = $('<label for="' + inputId + '">' + answers[i] + '</label>')
 								.appendTo($retHtml);
                 
