@@ -42,6 +42,20 @@
         return $ret;
     }
 
+    $.fn.refreshJqm - function()
+    {
+        //JQM doesnot yet have a refresh all method, so we must do this manually
+        var $element = $(this);
+        var $ret = undefined;
+        if( !isNullOrEmpty($element) )
+        {
+            $element.find('input[type="checkbox"]').checkbox('refresh');
+            $element.find('input[type="radio"]').checkboxradio('refresh');
+            $element.find('input[type="range"]').slider('refresh'); //slider
+        }
+        return $ret;
+    }
+
     $.fn.doChangePage = function (transition, reverse, changeHash)
 	{
         var $div = $(this);
@@ -584,6 +598,7 @@
                                 
                                 lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
                                 lihtml +=  _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers).html();
+                                log(_makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers).html());
                                 lihtml += '</div>';
 
                                 if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
@@ -995,9 +1010,8 @@
 
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
         {
-            var $retHtml;
-            var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-
+            var $retHtml = $('<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain"></fieldset>');
+            
             var answers = ['Null', 'True', 'False'];
             if ( isTrue(Required) )
             {
@@ -1013,74 +1027,77 @@
                     case 'True': answertext = 'Yes'; break;
                     case 'False': answertext = 'No'; break;
                 }
-
-                Html += '<input type="radio" name="' + makeSafeId({ prefix: IdStr, ID: Suffix}) + '" id="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]}) + '" value="' + answers[i] + '" ';
-				// Checked is a Tristate, so isTrue() is not useful here
+                var inputName =  makeSafeId({ prefix: IdStr, ID: Suffix});
+                var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]});
+                var $input = $('<input type="radio" name="' + inputName + '" id="' + inputId + '" value="' + answers[i] + '" data-role="button"')
+                                .appendTo($retHtml);
+                var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
+                                .appendTo($retHtml);
+				
+                // Checked is a Tristate, so isTrue() is not useful here
 				if ((Checked === 'false' && answers[i] === 'False') ||
 					(Checked === 'true' && answers[i] === 'True') ||
 					(Checked === '' && answers[i] === 'Null'))
 				{
-                    Html += 'checked';
+                    $input.CswAttrDom('checked','checked');
                 }
-                Html += ' onclick="';
-
-                // case 20307: workaround for a bug with JQuery Mobile Alpha2
-                for (var j = 0; j < answers.length; j++)
+                
+                $input.click( function ()
                 {
-                    if (answers[j] === answers[i])
-                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
-                    else
-                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
-                }
+                    // case 20307: workaround for a bug with JQuery Mobile Alpha2
+                    for (var j = 0; j < answers.length; j++)
+                    {
+                        var thisAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]});
+                        var $answer = $('#' + thisAnswerId);
+                        if (answers[j] === answers[i])
+                        {
+                            $answer.siblings('label').addClass('ui-btn-active');
+                        }
+                        else
+                        {
+                            $answer.siblings('label').removeClass('ui-btn-active');
+                        }
+                    }
 
-                Html += ' var $otherradio; ';
-                for (var k = 0; k < answers.length; k++)
-                {
-                    Html += ' $otherradio = $(\'#' + makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]}) + '\'); ';
-                    if (answers[k] === answers[i])
+                    var $otherradio;
+                    for (var k = 0; k < answers.length; k++)
                     {
-                        Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
-                        Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
-                    }
-                    else
-                    {
-                        Html += ' $otherradio.CswAttrDom(\'checked\', false); ';
-                        Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
-                    }
-                } // for (var k = 0; k < answers.length; k++)
-                Html += '" />';
-                Html += '<label for="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]}) + '">' + answertext + '</label>';
+                        var radioId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
+                        $otherradio = $('#' + radioId);
+                        if (answers[k] === answers[i])
+                        {
+                            $otherradio.CswAttrDom('checked', 'checked');
+                            $otherradio.siblings('label').addClass('ui-btn-active');
+                        }
+                        else
+                        {
+                            $otherradio.CswAttrDom('checked', false);
+                            $otherradio.siblings('label').removeClass('ui-btn-active');
+                        }
+                    } // for (var k = 0; k < answers.length; k++)
+                });
             } // for (var i = 0; i < answers.length; i++)
-
-            Html += '</fieldset>';
-            log('logicalset');
-            log(Html);
-            $retHtml = $(Html);
             return $retHtml;
         }
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
             var $retHtml = $('<fieldset class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain"></fieldset>');
-            //var Html = '<fieldset class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
                 var answerid = makeSafeId({ ID: answers[i] });
 				var inputName = makeSafeId({ID: IdStr, suffix: Suffix});
 				var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid});
-                var $input = $('<input type="radio" name="' + inputName + '" id="' + inputId + '" value="' + answers[i] + '" />')
+                var $input = $('<input type="radio" name="' + inputName + '" id="' + inputId + '" value="' + answers[i] + '" data-role="button"/>')
 								.appendTo($retHtml);
 				var $label = $('<label for="' + inputId + '">' + answers[i] + '</label>')
 								.appendTo($retHtml);
-				//Html += '<input type="radio" name="' + makeSafeId({ID: IdStr, suffix: Suffix}) + '" id="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '" value="' + answers[i] + '" ';
                 
                 if (Answer === answers[i])
                 {
 					$input.CswAttrDom('checked','checked');
-                    //Html += ' checked="checked"';
                 }    //' checked';
-                //Html += ' onclick="';
 				$input.click( function() 
 				{
 				
@@ -1093,24 +1110,21 @@
 //                       Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
 //                }
 					var $otherradio;
-                //Html += ' var $otherradio; ';
+
 					for (var k = 0; k < answers.length; k++)
 					{
 						var thisAnswerId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
 						$otherradio = $('#' + thisAnswerId);
-						//Html += ' $otherradio = $(\'#' + makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]}) + '\'); ';
 						if (answers[k] === answers[i])
 						{
 							$otherradio.CswAttrDom('checked', 'checked');
 							$otherradio.siblings('label').addClass('ui-btn-active');
-							//Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
-							//Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
+                            $otherradio.siblings('label').addClass('ui-btn-active');
 						} else
 						{
 							$otherradio.CswAttrDom('checked', false);
 							$otherradio.siblings('label').removeClass('ui-btn-active');
-							//Html += ' $otherradio.CswAttrDom(\'checked\', false); ';
-							//Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
+                            $otherradio.siblings('label').addClass('ui-btn-active');
 						}
 					} // for (var k = 0; k < answers.length; k++)
 					
@@ -1127,9 +1141,6 @@
 						$cor.css('display','none');
 						$li.removeClass('OOC');
 						$prop.removeClass('OOC');
-						//Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\').css(\'display\', \'none\'); ';
-						//Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
-						//Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
 					}
 					else
 					{
@@ -1144,15 +1155,6 @@
 							$li.removeClass('OOC');
 							$prop.removeClass('OOC');
 						}
-						//Html += ' var $cor = $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\'); ';
-						//Html += ' $cor.css(\'display\', \'\'); ';
-						//Html += ' if($cor.CswAttrDom(\'value\') === \'\') { ';
-						//Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').addClass(\'OOC\'); ';
-						//Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').addClass(\'OOC\'); ';
-						//Html += ' } else {';
-						//Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
-						//Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
-						//Html += ' } ';
 					}
 					if ( isNullOrEmpty(Answer) )
 					{
@@ -1164,20 +1166,10 @@
 							$cntspan.text(parseInt($cntspan.text()) - 1);
 							$fieldset.CswAttrDom('answered','true');
 						}
-						//Html += ' if(! $(\'#' + IdStr + '_fieldset\').CswAttrDom(\'answered\')) { ';
-						//Html += '   var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
-						//Html += '   $cntspan.text(parseInt($cntspan.text()) - 1); ';
-						//Html += '   $(\'#' + IdStr + '_fieldset\').CswAttrDom(\'answered\', \'true\'); ';
-						//Html += ' }';
 					}
-					//Html += ' " />';
 				}); //click()
-                //Html += '            <label for="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '">' + answers[i] + '</label>';
             } // for (var i = 0; i < answers.length; i++)
-            //Html += '</fieldset>';
-            //log('question');
-            //log(Html);
-            //$retHtml = $(Html);
+
             return $retHtml;
         } // _makeQuestionAnswerFieldSet()
 
