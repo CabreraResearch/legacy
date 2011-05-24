@@ -344,6 +344,21 @@
     <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_03.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_04.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_05.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_004.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_003.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTestCaseRsrc.cs" />
@@ -360,6 +375,11 @@
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_013.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_014.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_015.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_016.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_017.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_018.cs" />
     <Compile Include="csw\Security\CswNbtAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSystemUser.cs" />
     <Compile Include="csw\Security\ICswNbtUser.cs" />
