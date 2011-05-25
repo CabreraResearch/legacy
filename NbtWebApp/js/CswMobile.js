@@ -326,19 +326,19 @@
             return $viewsdiv;
         }
 
-        function clearPath()
-        {
-            currentMobilePath = tryParseString( $.mobile.path.get(), '');
-            if(debug) log('pre set path = ' + currentMobilePath, true);
-            //if( currentMobilePath !== '') $.mobile.path.set('');
-            //if(debug) log('post set path = ' + $.mobile.path.get());
-        }
+//        function clearPath()
+//        {
+//            currentMobilePath = tryParseString( $.mobile.path.get(), '');
+//            if(debug) log('pre set path = ' + currentMobilePath, true);
+//            if( currentMobilePath !== '') $.mobile.path.set('');
+//            if(debug) log('post set path = ' + $.mobile.path.get());
+//        }
 
-        function restorePath()
-        {
-            //currentMobilePath = tryParseString( currentMobilePath, '');
-            //$.mobile.path.set(currentMobilePath);
-        }
+//        function restorePath()
+//        {
+//            currentMobilePath = tryParseString( currentMobilePath, '');
+//            $.mobile.path.set(currentMobilePath);
+//        }
 
         // ------------------------------------------------------------------------------------
         // Online indicator
@@ -479,7 +479,7 @@
                 ParentId: p.DivId,
                 formobile: ForMobile
             };
-            clearPath();
+            //clearPath();
             CswAjaxXml({
                 //async: false,   // required so that the link will wait for the content before navigating
                 url: p.url,
@@ -495,12 +495,12 @@
                         _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                     }
                     $retDiv = _loadDivContentsXml(p);    
-                    restorePath();
+                    //restorePath();
                 },
                 error: function(xml)
                 {
                     if(debug) log(xml, true);
-                    restorePath();
+                    //restorePath();
                 }
             });
 
@@ -1609,7 +1609,7 @@
                     'Password': Password
                 };
 
-                clearPath();
+                //clearPath();
                 CswAjaxJSON({
                     formobile: ForMobile,
                     async: false,
@@ -1622,11 +1622,11 @@
 						_cacheSession(SessionId, UserName);
                         $viewsdiv = reloadViews();
                         $viewsdiv.doChangePage();
-                        restorePath();
+                        //restorePath();
                     },
                     error: function()
                     {
-                        restorePath();
+                        //restorePath();
                     }
                 });
             }
@@ -1689,7 +1689,7 @@
                     ParentId: RealDivId,
                     ForMobile: ForMobile
                 };
-                clearPath();
+                //clearPath();
                 // fetch new content
                 CswAjaxXml({
                     async: false,   // required so that the link will wait for the content before navigating
@@ -1719,11 +1719,11 @@
 
                         $viewsdiv.bindJqmEvents(params);
                         $viewsdiv.doChangePage();
-                        restorePath();
+                        //restorePath();
                     }, // success
                     error: function()
                     {
-                        restorePath();
+                        //restorePath();
                     } 
                 });
             }
@@ -2121,7 +2121,7 @@
             {
                 url = opts.ConnectTestRandomFailUrl;
             }
-            clearPath();
+            //clearPath();
             CswAjaxXml({
                 formobile: ForMobile,
                 url: url,
@@ -2136,7 +2136,7 @@
                     {
                         onSuccess($xml);
                     }
-                    restorePath();
+                    //restorePath();
                 },
                 error: function (xml)
                 {
@@ -2146,7 +2146,7 @@
                         onFailure($xml);
                     }
                     _waitForData();
-                    restorePath();
+                    //restorePath();
                 }
             });
         } //_handleDataCheckTimer()
@@ -2165,7 +2165,7 @@
                             UpdatedViewXml: viewxml,
                             ForMobile: ForMobile
                         };
-                        clearPath();
+                        //clearPath();
                         CswAjaxJSON({
                             formobile: ForMobile,
                             url: opts.UpdateUrl,
@@ -2177,7 +2177,7 @@
                                 {
                                     _waitForData();
                                 }
-                                restorePath(); 
+                                //restorePath(); 
                             },
                             success: function (data)
                             {
@@ -2188,7 +2188,7 @@
                                 {
                                     _waitForData();
                                 }
-                                restorePath();
+                                //restorePath();
                             },
                             error: function (data)
                             {
@@ -2196,7 +2196,7 @@
                                 {
                                     _waitForData();
                                 }
-                                restorePath();
+                                //restorePath();
                             }
                         });
                     }
