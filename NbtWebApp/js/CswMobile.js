@@ -108,6 +108,18 @@
                 p.onPageShow(p);
                 $.mobile.pageLoading(true);
             });
+
+            $div.unbind('pagebeforecreate');
+            $div.bind('pagebeforecreate', function()
+            {
+                $div.find('input[type="radio"]').checkboxradio();
+            });
+
+            $div.unbind('pagecreate');
+            $div.bind('pagecreate', function()
+            {
+                $div.find('input[type="radio"]').checkboxradio('refresh');
+            });
         }
         return $ret;
     }
@@ -538,8 +550,9 @@
                             .appendTo($list);
             });
             $list.listview('refresh')
+//                 .checkboxradio('refresh')
                  .bindLI();
-            $list.find('input[type="checkbox"]').checkboxradio('refresh');
+//            $list.find('input[type="radio"]').checkboxradio('refresh');
             onAfterAddDiv($retDiv);
             
             return $retDiv;
@@ -1027,9 +1040,10 @@
                                 .appendTo($retHtml)
                                 .CswAttrDom({
                                     class: 'csw_fieldset',
-                                    id: IdStr + '_fieldset',
+                                    id: IdStr + '_fieldset'})
+                                .CswAttrXml({
                                     'data-role': 'controlgroup',
-                                    'data-type': 'horizontal'                                    
+                                    'data-type': 'horizontal'                                     
                                  });
             var answers = ['Null', 'True', 'False'];
             if ( isTrue(Required) )
@@ -1046,10 +1060,9 @@
                     case 'True': answertext = 'Yes'; break;
                     case 'False': answertext = 'No'; break;
                 }
-                var inputName =  makeSafeId({ prefix: IdStr, ID: Suffix});
                 var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]});
-                var $input = $('<input type="radio" name="' + inputName + '" id="' + inputId + '" value="' + answers[i] + '" data-role="button"')
-                                .appendTo($fieldset)
+                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, ID: inputId, value: answers[i]})
+                                .CswAttrXml('data-role','button');
                 var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
                                 .appendTo($fieldset);
 				
@@ -1107,24 +1120,24 @@
                                 .appendTo($retHtml)
                                 .CswAttrDom({
                                     class: 'csw_fieldset',
-                                    id: IdStr + '_fieldset',
+                                    id: IdStr + '_fieldset'})
+                                .CswAttrXml({
                                     'data-role': 'controlgroup',
-                                    'data-type': 'horizontal'                                    
+                                    'data-type': 'horizontal'  
                                  });
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
                 var answerid = makeSafeId({ ID: answers[i] });
-				var inputName = makeSafeId({ID: IdStr, suffix: Suffix});
 				var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid});
-                var $input = $('<input type="radio" name="' + inputName + '" id="' + inputId + '" value="' + answers[i] + '"/>')
-								.appendTo($fieldset);
+                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, ID: inputId, value: answers[i] })
+								.CswAttrXml('data-role','button');
 				var $label = $('<label for="' + inputId + '">' + answers[i] + '</label>')
 								.appendTo($fieldset);
                 
                 if (Answer === answers[i])
                 {
-					$input.CswAttrDom('checked','checked');
+                    $input.CswAttrDom('checked','checked');
                 } 
 				$input.click( function() 
 				{
