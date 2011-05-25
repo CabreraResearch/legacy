@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.ImportExport
             Dictionary<string, Int32> NodeMap = new Dictionary<string, Int32>();
             Dictionary<Int32, Int32> NodeTypeMap = new Dictionary<Int32, Int32>();
             Dictionary<Int32, Int32> NodeTypePropMap = new Dictionary<Int32, Int32>();
-            Dictionary<Int32, Int32> ViewMap = new Dictionary<Int32, Int32>();
+			Dictionary<Int32, CswNbtViewId> ViewMap = new Dictionary<Int32, CswNbtViewId>();
 
             _StatusUpdate( "Tables Initialized" );
 
@@ -630,10 +630,10 @@ namespace ChemSW.Nbt.ImportExport
                     bool SkipView = false;
                     if( ExistingView.Rows.Count > 0 )
                     {
-                        if( IMode == ImportMode.Duplicate )
-                            SkipView = true;
-                        else  // Update or Overwrite
-                            ThisView.ViewId = CswConvert.ToInt32( ExistingView.Rows[0]["nodeviewid"] );
+						if( IMode == ImportMode.Duplicate )
+							SkipView = true;
+						else  // Update or Overwrite
+							ThisView.ViewId = new CswNbtViewId( CswConvert.ToInt32( ExistingView.Rows[0]["nodeviewid"] ) );
                     }
                     else
                     {
@@ -800,7 +800,7 @@ namespace ChemSW.Nbt.ImportExport
                     if( v % 10 == 1 )
                         _StatusUpdate( "Processing View: " + v.ToString() + " of " + ViewsTable.Rows.Count.ToString() );
 
-                    CswNbtView View = CswNbtViewFactory.restoreView( _CswNbtResources, CswConvert.ToInt32( ViewRow["nodeviewid"] ) );
+					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( ViewRow["nodeviewid"] ) ) );
                     bool IncludeView = false;
                     foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
                         IncludeView = IncludeView || View.ContainsNodeType( NodeType );
@@ -889,9 +889,9 @@ namespace ChemSW.Nbt.ImportExport
         /// <param name="ForMobile">True if this export is for the mobile device</param>
         /// <param name="PropsInViewOnly">Include properties included in the view only</param>
         /// <returns>XmlDocument of all metadata, node, and property data from this view</returns>
-        public XmlDocument ExportView( Int32 ViewId, bool ForMobile, bool PropsInViewOnly )
+		public XmlDocument ExportView( CswNbtViewId ViewId, bool ForMobile, bool PropsInViewOnly )
         {
-            CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+			CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
             return ExportView( View, ForMobile, PropsInViewOnly );
         } // ExportView()
 

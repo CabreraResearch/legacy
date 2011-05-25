@@ -37,8 +37,8 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 CswNbtView Ret = null;
-                if( _CswNbtMetaDataNodeTypeProp.ViewId != Int32.MinValue )
-                    Ret = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.ViewId );
+                if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
+                    Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
                 return Ret;
             }
         }

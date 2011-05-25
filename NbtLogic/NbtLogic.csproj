@@ -225,6 +225,8 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H38.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H37.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H36.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H35.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswProdUpdtRsrc.cs" />
@@ -359,6 +361,8 @@
     <Compile Include="csw\Sequence\CswNbtSequenceManager.cs" />
     <Compile Include="csw\Sequence\CswNbtSequenceValue.cs" />
     <Compile Include="csw\Sequence\CswSequenceName.cs" />
+    <Compile Include="csw\Session\CswNbtSessionDataItem.cs" />
+    <Compile Include="csw\Session\CswNbtSessionDataMgr.cs" />
     <Compile Include="csw\Statistics\CswNbtStatisticsEntry.cs" />
     <Compile Include="csw\Statistics\CswNbtStatisticsEvents.cs" />
     <Compile Include="csw\Statistics\CswNbtStatisticsStorageDb.cs" />
@@ -411,10 +415,12 @@
     <Compile Include="csw\Tree\ICswNbtNodeWriterImpl.cs" />
     <Compile Include="csw\Tree\ICswNbtTree.cs" />
     <Compile Include="csw\Tree\ICswNbtTreeFactory.cs" />
+    <Compile Include="csw\Session\CswNbtSessionDataId.cs" />
     <Compile Include="csw\View\CswNbtView.cs" />
     <Compile Include="csw\View\CswNbtViewBase.cs" />
     <Compile Include="csw\View\CswNbtViewCache.cs" />
     <Compile Include="csw\View\CswNbtViewFactory.cs" />
+    <Compile Include="csw\View\CswNbtViewId.cs" />
     <Compile Include="csw\View\CswNbtViewNode.cs" />
     <Compile Include="csw\View\CswNbtViewProperty.cs" />
     <Compile Include="csw\View\CswNbtViewPropertyFilter.cs" />

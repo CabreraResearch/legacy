@@ -227,7 +227,7 @@ namespace ChemSW.Nbt.PropTypes
             XmlNode CachedNodeNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
             XmlNode CachedPathNode = CswXmlDocument.AppendXmlNode( ParentNode, _PathSubField.ToXmlNodeName(), CachedPath );
             XmlNode CachedBarcodeNode = CswXmlDocument.AppendXmlNode( ParentNode, _BarcodeSubField.ToXmlNodeName(), CachedBarcode );
-            View.SaveToCache();
+            View.SaveToCache(false);
 			XmlNode ViewIdNode = CswXmlDocument.AppendXmlNode( ParentNode, "viewid", View.SessionViewId.ToString() );
 			if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
 			{

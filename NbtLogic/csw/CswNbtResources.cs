@@ -46,15 +46,20 @@ namespace ChemSW.Nbt
         private ICswNbtTreeFactory _CswNbtTreeFactory;
         private bool _ExcludeDisabledModules = true;
 
-        /// <summary>
-        /// Provides a means to get lists of views
-        /// </summary>
-        public CswNbtViewSelect ViewSelect;
+		/// <summary>
+		/// Provides a means to get lists of views
+		/// </summary>
+		public CswNbtViewSelect ViewSelect;
 
-        /// <summary>
-        /// Stores all Views used in this session, indexed by SessionViewId
-        /// </summary>
-        public CswNbtViewCache ViewCache;
+		/// <summary>
+		/// Provides a means to get session data
+		/// </summary>
+		public CswNbtSessionDataMgr SessionDataMgr;
+
+		///// <summary>
+		///// Stores all Views used in this session, indexed by SessionViewId
+		///// </summary>
+		//public CswNbtViewCache ViewCache;
 
         /// <summary>
         /// This is for a select set of DB-aware classes ONLY.  Do not use for business logic.
@@ -82,8 +87,9 @@ namespace ChemSW.Nbt
         {
             _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical );
             _ExcludeDisabledModules = ExcludeDisabledModules;
-            ViewCache = new CswNbtViewCache( this );
+            //ViewCache = new CswNbtViewCache( this );
             ViewSelect = new CswNbtViewSelect( this );
+			SessionDataMgr = new CswNbtSessionDataMgr( this );
             _DebugID = DateTime.Now.ToString();
         }
 
@@ -118,17 +124,26 @@ namespace ChemSW.Nbt
                 return ret;
             }
         }
-        private CswNbtTreeCache _CswNbtTreeCache = null;
-        /// <summary>
-        /// Access to all trees loaded during this session
-        /// </summary>
-        public CswNbtTreeCache Trees
-        {
-            get
-            {
-                return ( _CswNbtTreeCache );
-            }
-        }
+		//private CswNbtTreeCache _CswNbtTreeCache = null;
+		///// <summary>
+		///// Access to all trees loaded during this session
+		///// </summary>
+		//public CswNbtTreeCache Trees
+		//{
+		//    get
+		//    {
+		//        return ( _CswNbtTreeCache );
+		//    }
+		//}
+
+        private CswNbtTreeBuilder _CswNbtTreeBuilder = null;
+		public CswNbtTreeBuilder Trees
+		{
+			get
+			{
+				return _CswNbtTreeBuilder;
+			}
+		}
 
         /// <summary>
         /// Access to all nodes loaded during this session, and to create new nodes without trees or views
@@ -406,8 +421,8 @@ namespace ChemSW.Nbt
         /// </summary>
         public void ClearCache()
         {
-            if( Trees != null )
-                Trees.clear();
+			//if( Trees != null )
+			//    Trees.clear();
             if( Nodes != null )
                 Nodes.Clear();
             _CswNbtMetaData = null;
@@ -465,9 +480,10 @@ namespace ChemSW.Nbt
             _CswNbtTreeFactory = CswNbtTreeFactory;
             _CswNbtTreeFactory.CswNbtResources = this;
             _CswNbtTreeFactory.CswNbtNodeCollection = _CswNbtNodeCollection;
-            _CswNbtTreeCache = new CswNbtTreeCache( this, _CswNbtTreeFactory );
+            //_CswNbtTreeCache = new CswNbtTreeCache( this, _CswNbtTreeFactory );
 
-            _CswResources.SetDbResources();
+			_CswNbtTreeBuilder = new CswNbtTreeBuilder( this, _CswNbtTreeFactory ); 
+			_CswResources.SetDbResources();
         }
 
         /// <summary>
@@ -540,22 +556,26 @@ namespace ChemSW.Nbt
             if( _Notifs == null || Reinit )
             {
                 _Notifs = new Dictionary<CswNbtNotificationKey, CswNbtObjClassNotification>();
-                ICswNbtTree NotifTree = Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-                for( int n = 0; n < NotifTree.getChildNodeCount(); n++ )
-                {
-                    NotifTree.goToNthChild( n );
+				//ICswNbtTree NotifTree = Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+				//for( int n = 0; n < NotifTree.getChildNodeCount(); n++ )
+				//{
+				//    NotifTree.goToNthChild( n );
 
-                    CswNbtNode ThisNode = NotifTree.getNodeForCurrentPosition();
-                    CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) CswNbtNodeCaster.AsNotification( ThisNode );
+				//    CswNbtNode ThisNode = NotifTree.getNodeForCurrentPosition();
 
-                    if( NotifNode.TargetNodeType != null )
-                    {
-                        CswNbtNotificationKey NKey = new CswNbtNotificationKey( NotifNode.TargetNodeType.NodeTypeId, NotifNode.SelectedEvent, NotifNode.Property.Value, NotifNode.Value.Text );
-                        if( !_Notifs.ContainsKey( NKey ) )   // because we don't have compound unique rules yet
-                            _Notifs.Add( NKey, NotifNode );  // this means that if we have redundant events, only one will be processed
-                    }
-                    NotifTree.goToParentNode();
-                }
+				CswNbtMetaDataObjectClass NotificationOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+				foreach( CswNbtNode ThisNode in NotificationOC.getNodes( true, false ) )
+				{
+					CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) CswNbtNodeCaster.AsNotification( ThisNode );
+					if( NotifNode.TargetNodeType != null )
+					{
+						CswNbtNotificationKey NKey = new CswNbtNotificationKey( NotifNode.TargetNodeType.NodeTypeId, NotifNode.SelectedEvent, NotifNode.Property.Value, NotifNode.Value.Text );
+						if( !_Notifs.ContainsKey( NKey ) )   // because we don't have compound unique rules yet
+							_Notifs.Add( NKey, NotifNode );  // this means that if we have redundant events, only one will be processed
+					}
+				}
+                    //NotifTree.goToParentNode();
+                //}
             }
         }
 

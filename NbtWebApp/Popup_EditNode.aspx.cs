@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.WebPages
                     CswPrimaryKey NodeId = new CswPrimaryKey();
                     NodeId.FromString( Request.QueryString["nodeid"] );
                     _Node = Master.CswNbtResources.Nodes[NodeId];
-                    NodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, string.Empty, _Node.NodeId, _Node.NodeSpecies, _Node.NodeTypeId, _Node.ObjectClassId, string.Empty, string.Empty );
+                    NodeKey = new CswNbtNodeKey( Master.CswNbtResources, string.Empty, _Node.NodeId, _Node.NodeSpecies, _Node.NodeTypeId, _Node.ObjectClassId, string.Empty, string.Empty );
                     PropTable.EditMode = NodeEditMode.EditInPopup;
                     PropTable.SelectedNode = _Node;
                     PropTable.TabStrip.TabClick += new RadTabStripEventHandler( TabStrip_TabClick );
@@ -155,8 +155,8 @@ namespace ChemSW.Nbt.WebPages
                             //Case 20544 - Use view from querystring in case we're adding from a grid/view prop
                             if( null != Request.QueryString["sourceviewid"] && String.Empty != Request.QueryString["sourceviewid"] )
                             {
-                                Int32 SourceViewId = CswConvert.ToInt32( Request.QueryString["sourceviewid"] );
-                                CswNbtView SourceView = CswNbtViewFactory.restoreView( Master.CswNbtResources, SourceViewId );
+								CswNbtViewId SourceViewId = new CswNbtViewId( CswConvert.ToInt32( Request.QueryString["sourceviewid"] ) );
+								CswNbtView SourceView = Master.CswNbtResources.ViewSelect.restoreView( SourceViewId );
                                 if( null != SourceView )
                                     _Node.RelateToNode( ParentNode, SourceView );
                                 else
@@ -332,7 +332,7 @@ namespace ChemSW.Nbt.WebPages
                     if( !_DontChangeView && View.ViewMode == NbtViewRenderingMode.Tree)
                     {
                         // If the view doesn't include the nodetype of the new node, adjust it
-                        CswNbtTreeKey _TreeKey = Tree.Key;
+                        //CswNbtTreeKey _TreeKey = Tree.Key;
                         Tree.makeNodeCurrent( ParentNodeKey );
 
 

@@ -30,11 +30,11 @@ public class TreeViewService : System.Web.Services.WebService
 
     public TreeViewService()
     {
-//        CswNbtSession CswSessionWeb = new CswNbtSession( Context.Application, Context.Session, Context.Request, Context.Response );
+        //        CswNbtSession CswSessionWeb = new CswNbtSession( Context.Application, Context.Session, Context.Request, Context.Response );
 
-        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt(Context.Application, Context.Session, Context.Request, Context.Response , string.Empty, _FilesPath, SetupMode.Web  );
+        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
         CswNbtResources = CswInitialization.CswNbtResources;
-//        CswSessionWeb.CswNbtResources = CswNbtResources;
+        //        CswSessionWeb.CswNbtResources = CswNbtResources;
 
 
         //string SessionId = string.Empty;
@@ -77,27 +77,27 @@ public class TreeViewService : System.Web.Services.WebService
         try
         {
             // extract the "context" dictionary information. OnClientNodePopulating event loads the dictionary
-            IDictionary<string, object> contextDictionary = ( IDictionary<string, object> )context;
+            IDictionary<string, object> contextDictionary = (IDictionary<string, object>) context;
             // create the array of RadTreeNodeData that will be returned by this method
             List<RadTreeNodeData> result = new List<RadTreeNodeData>();
 
-            if ( contextDictionary.ContainsKey( "SessionViewId" ) && contextDictionary["SessionViewId"] != null &&
+            if( contextDictionary.ContainsKey( "SessionViewId" ) && contextDictionary["SessionViewId"] != null &&
                 contextDictionary.ContainsKey( "SelectedNodeKey" ) && contextDictionary["SelectedNodeKey"] != null &&
                 contextDictionary.ContainsKey( "PageSize" ) && contextDictionary["PageSize"] != null &&
                 contextDictionary.ContainsKey( "ParentNodeKey" ) && contextDictionary["ParentNodeKey"] != null )
             {
-                Int32 SessionViewId = CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() );
+				CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() ) );
                 CswNbtNodeKey SelectedNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["SelectedNodeKey"].ToString() );
                 CswNbtNodeKey ParentNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["ParentNodeKey"].ToString() );
                 CswNbtView View = new CswNbtView( CswNbtResources );
-                View = ( CswNbtView )CswNbtViewFactory.restoreView( CswNbtResources, CswNbtResources.ViewCache.getView( SessionViewId ).ToString() );
+				View = CswNbtResources.ViewSelect.getSessionView( SessionViewId );
                 RadTreeView Tree = makeTree( View, ref ParentNodeKey, null, CswConvert.ToInt32( contextDictionary["PageSize"].ToString() ), null );
 
                 RadTreeNode Node = Tree.FindNodeByValue( contextDictionary["ParentNodeKey"].ToString() );
 
-                if ( Node != null && Node.Nodes.Count > 0 )
+                if( Node != null && Node.Nodes.Count > 0 )
                 {
-                    foreach ( RadTreeNode ChildNode in Node.Nodes )
+                    foreach( RadTreeNode ChildNode in Node.Nodes )
                     {
                         result.Add( CopyNodeToNodeData( ChildNode, View, SelectedNodeKey ) );
                     }
@@ -126,11 +126,11 @@ public class TreeViewService : System.Web.Services.WebService
         try
         {
             // extract the "context" dictionary information. OnClientNodePopulating event loads the dictionary
-            IDictionary<string, object> contextDictionary = ( IDictionary<string, object> )context;
+            IDictionary<string, object> contextDictionary = (IDictionary<string, object>) context;
             // create the array of RadTreeNodeData that will be returned by this method
             List<RadTreeNodeData> result = new List<RadTreeNodeData>();
 
-            if ( contextDictionary.ContainsKey( "SessionViewId" ) && contextDictionary["SessionViewId"] != null &&
+            if( contextDictionary.ContainsKey( "SessionViewId" ) && contextDictionary["SessionViewId"] != null &&
                 contextDictionary.ContainsKey( "PageSize" ) && contextDictionary["PageSize"] != null &&
                 contextDictionary.ContainsKey( "SelectedNodeKey" ) && contextDictionary["SelectedNodeKey"] != null &&
                 contextDictionary.ContainsKey( "ParentNodeKey" ) && contextDictionary["ParentNodeKey"] != null &&
@@ -138,16 +138,16 @@ public class TreeViewService : System.Web.Services.WebService
             {
                 CswNbtNodeKey MoreKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["MoreNodeKey"].ToString() );
 
-                Int32 SessionViewId = CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() );
+				CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() ) );
                 CswNbtNodeKey SelectedNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["SelectedNodeKey"].ToString() );
                 CswNbtNodeKey ParentNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["ParentNodeKey"].ToString() );
                 CswNbtView View = new CswNbtView( CswNbtResources );
-                View = ( CswNbtView )CswNbtViewFactory.restoreView( CswNbtResources, CswNbtResources.ViewCache.getView( SessionViewId ).ToString() );
+				View = CswNbtResources.ViewSelect.getSessionView( SessionViewId );
 
-                CswNbtViewRelationship FirstChildRelationship = ( CswNbtViewRelationship )View.FindViewNodeByUniqueId( MoreKey.ViewNodeUniqueId );
+                CswNbtViewRelationship FirstChildRelationship = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( MoreKey.ViewNodeUniqueId );
 
                 // This is for the proper generation of nodecounts
-                if ( ParentNodeKey.NodeSpecies != NodeSpecies.Plain )
+                if( ParentNodeKey.NodeSpecies != NodeSpecies.Plain )
                     ParentNodeKey = null;
 
                 RadTreeView Tree = makeTree( View,
@@ -158,9 +158,9 @@ public class TreeViewService : System.Web.Services.WebService
 
                 RadTreeNode ParentNode = Tree.FindNodeByValue( contextDictionary["ParentNodeKey"].ToString() );
 
-                if ( ParentNode != null && ParentNode.Nodes.Count > 0 )
+                if( ParentNode != null && ParentNode.Nodes.Count > 0 )
                 {
-                    foreach ( RadTreeNode ChildNode in ParentNode.Nodes )
+                    foreach( RadTreeNode ChildNode in ParentNode.Nodes )
                     {
                         result.Add( CopyNodeToNodeData( ChildNode, View, SelectedNodeKey ) );
                     }
@@ -188,7 +188,7 @@ public class TreeViewService : System.Web.Services.WebService
 
         CswNbtNodeKey SourceNbtNodeKey = new CswNbtNodeKey( CswNbtResources, SourceNode.Value );
         CswNbtViewNode ViewNode = View.FindViewNodeByUniqueId( SourceNbtNodeKey.ViewNodeUniqueId );
-        if ( SourceNbtNodeKey.NodeSpecies == NodeSpecies.Group || ViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count > 0 )
+        if( SourceNbtNodeKey.NodeSpecies == NodeSpecies.Group || ViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count > 0 )
             NodeData.ExpandMode = TreeNodeExpandMode.WebService;
         else
             NodeData.ExpandMode = TreeNodeExpandMode.ClientSide;
@@ -218,7 +218,7 @@ public class TreeViewService : System.Web.Services.WebService
 
     private void _release()
     {
-        if ( CswNbtResources != null )
+        if( CswNbtResources != null )
         {
             CswNbtResources.finalize();
             CswNbtResources.release();

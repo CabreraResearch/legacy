@@ -894,7 +894,7 @@ namespace ChemSW.NbtWebControls
                     }
                 }
 
-                if( this.View is CswNbtView && ( (CswNbtView) View ).ViewId <= 0 )
+                if( this.View is CswNbtView && !( (CswNbtView) View ).ViewId.isSet() )
                 {
                     SaveViewAsMenuItem.Visible = true;
                     SaveViewAsMenuItem.Attributes.Add( "onclick", "openSaveViewAsPopup('" + View.SessionViewId + "');" );

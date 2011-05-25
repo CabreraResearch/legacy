@@ -20,12 +20,12 @@
 					'AlternateText': 'View',
 					'Required': o.Required,
 					'onClick': function ($ImageDiv) {
-						$.CswCookie('set', CswCookieName.CurrentView.ViewId, ViewId);
-						$.CswCookie('set', CswCookieName.CurrentView.ViewMode, ViewMode);
+						$.CswCookie('set', CswCookieName.CurrentViewId, ViewId);
+						$.CswCookie('set', CswCookieName.CurrentViewMode, ViewMode);
 						
 						// case 20958 - so that it doesn't treat the view as a Grid Property view
-						$.CswCookie('clear', CswCookieName.CurrentNode.NodeId, o.viewid);
-						$.CswCookie('clear', CswCookieName.CurrentNode.NodeKey, o.viewmode);
+						$.CswCookie('clear', CswCookieName.CurrentNodeId);
+						$.CswCookie('clear', CswCookieName.CurrentNodeKey);
 						
 						window.location = "NewMain.html";
 						return CswImageButton_ButtonType.None; 

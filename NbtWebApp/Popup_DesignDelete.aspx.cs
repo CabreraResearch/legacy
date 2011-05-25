@@ -323,7 +323,8 @@ namespace ChemSW.Nbt.WebPages
                 DeleteNodeTypeName.Text = SelectedNodeType.NodeTypeName;
 
                 // Delete Nodetype
-                CswNbtView DeleteNodeTypeView = Master.CswNbtResources.Trees.getTreeViewOfNodeType(Convert.ToInt32(_SelectedValue));
+				CswNbtMetaDataNodeType SelectedNT = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( _SelectedValue ) );
+				CswNbtView DeleteNodeTypeView = SelectedNT.CreateDefaultView();
                 DeleteNodeTypeView.ViewName = "Nodes to Delete";
                 ICswNbtTree CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView(DeleteNodeTypeView, false, true, false, true);
                 string XmlStr = CswNbtTree.getTreeAsXml();
@@ -406,7 +407,7 @@ namespace ChemSW.Nbt.WebPages
             ArrayList RowsToRemove = new ArrayList();
             foreach( DataRow CurrentRow in ViewsTable.Rows )
             {
-                CswNbtView CurrentView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, Convert.ToInt32( CurrentRow["nodeviewid"].ToString() ) );
+				CswNbtView CurrentView = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
                 if( CurrentView != null && !CurrentView.ContainsNodeType( NodeType ) )
                     RowsToRemove.Add( CurrentRow );
             }
@@ -431,7 +432,7 @@ namespace ChemSW.Nbt.WebPages
             ArrayList RowsToRemove = new ArrayList();
             foreach( DataRow CurrentRow in ViewsTable.Rows )
             {
-                CswNbtView CurrentView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, Convert.ToInt32( CurrentRow["nodeviewid"].ToString() ) );
+				CswNbtView CurrentView = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
                 if( CurrentView != null && !CurrentView.ContainsNodeTypeProp( NodeTypeProp ) )
                     RowsToRemove.Add( CurrentRow );
             }

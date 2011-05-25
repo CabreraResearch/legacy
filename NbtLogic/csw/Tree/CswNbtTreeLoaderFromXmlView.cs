@@ -47,7 +47,7 @@ namespace ChemSW.Nbt
 
             CswNbtNodeKey GroupKey = null;
 
-            if( ParentNodeKey != null && ParentNodeKey.TreeKey == _CswNbtTree.Key )
+            if( ParentNodeKey != null ) //&& ParentNodeKey.TreeKey == _CswNbtTree.Key )
             {
                 _handleRoot( _View.Root );
                 _CswNbtTree.goToRoot();
@@ -78,7 +78,7 @@ namespace ChemSW.Nbt
             }
 
             CswNbtViewNode ParentViewNode = null;
-            if( ParentNodeKey == null || ParentNodeKey.TreeKey != _CswNbtTree.Key )
+            if( ParentNodeKey == null ) //|| ParentNodeKey.TreeKey != _CswNbtTree.Key )
                 ParentViewNode = _View.Root;
             else
                 ParentViewNode = _View.FindViewNodeByUniqueId( ParentNodeKey.ViewNodeUniqueId );
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt
                     }
                     if( ThisRelationship == null || R == ThisRelationship )   // skips ones before the ChildRelationshipToStartWith
                     {
-                        if( ParentNodeKey == null || ParentNodeKey.TreeKey != _CswNbtTree.Key )
+                        if( ParentNodeKey == null ) //|| ParentNodeKey.TreeKey != _CswNbtTree.Key )
                         {
                             FinishedWithThisRelationship = _handleRelationship( null, R, //_View.Root.AddChildren, 
                                                                                 ThisPageSize, ref ThisLevelNodeCount, FetchAllPrior, !SingleLevelOnly, IncludedKey, false );

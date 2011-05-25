@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.WebPages
         }
         public AuthenticationStatus Authenticate( string username, string password )
         {
-            return ( CswSessionManager.Authenticate( username, password, CswNbtWebTools.getIpAddress() ) );
+            return ( CswSessionManager.beginSession( username, password, CswNbtWebTools.getIpAddress() ) );
         }//Authenticate()
 
 
@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.WebPages
                 //bz # 9278
 
 
-                CswSessionResourcesNbt = new CswSessionResourcesNbt( Context.Application, Context.Session, Context.Request, Context.Response, string.Empty, CswNbtWebTools.getFilePath(), SetupMode.Web );
+                CswSessionResourcesNbt = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, CswNbtWebTools.getFilePath(), SetupMode.Web );
 
 
                 CswNbtResources = CswSessionResourcesNbt.CswNbtResources;
@@ -347,7 +347,7 @@ namespace ChemSW.Nbt.WebPages
         public void Logout()
         {
             string CachedLogoutPath = LogoutPath;
-            CswSessionManager.DeAuthenticate();
+            CswSessionManager.clearSession();
             Redirect( CachedLogoutPath );
         }
     }

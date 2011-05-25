@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.WebPages
                 case 1:
                     break;
                 case 2:
-                    if( !_initTree( CswConvert.ToInt32( _LoadAliquotsViewList.SelectedValue ), _AliquotsTreeView, CswNbtMetaDataObjectClass.NbtObjectClass.AliquotClass ) )
+					if( !_initTree( new CswNbtViewId(CswConvert.ToInt32( _LoadAliquotsViewList.SelectedValue )), _AliquotsTreeView, CswNbtMetaDataObjectClass.NbtObjectClass.AliquotClass ) )
                     {
                         Literal ErrorMsg = new Literal();
                         ErrorMsg.Text = "Please select a valid view";
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.WebPages
                     }
                     break;
                 case 4:
-                    if( !_initTree( CswConvert.ToInt32( _LoadTestsViewList.SelectedValue ), _TestsTreeView, CswNbtMetaDataObjectClass.NbtObjectClass.TestClass ) )
+                    if( !_initTree(new CswNbtViewId( CswConvert.ToInt32( _LoadTestsViewList.SelectedValue )), _TestsTreeView, CswNbtMetaDataObjectClass.NbtObjectClass.TestClass ) )
                     {
                         Literal ErrorMsg = new Literal();
                         ErrorMsg.Text = "Please select a valid view";
@@ -216,13 +216,13 @@ namespace ChemSW.Nbt.WebPages
             return ret;
         }
 
-        private bool _initTree( Int32 ViewId, RadTreeView TreeView, CswNbtMetaDataObjectClass.NbtObjectClass FilterToObjectClass )
+        private bool _initTree( CswNbtViewId ViewId, RadTreeView TreeView, CswNbtMetaDataObjectClass.NbtObjectClass FilterToObjectClass )
         {
             bool ret = false;
-            if( ViewId > 0 )
+            if( ViewId.isSet())
             {
                 ret = true;
-                CswNbtView ViewToLoad = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, ViewId );
+                CswNbtView ViewToLoad = Master.CswNbtResources.ViewSelect.restoreView( ViewId );
                 //Filter to nodes of FilterToObjectClass on treeview
                 //_setFiltersOnView( ViewToLoad, FilterToObjectClass );
 

@@ -12,6 +12,7 @@ using ChemSW.NbtWebControls;
 using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
 using Telerik.Web.UI;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -33,14 +34,14 @@ namespace ChemSW.Nbt.WebPages
                 ViewTreeLabel.Text = "Choose a View:";
                 ViewTreeTable.addControl( 0, 0, ViewTreeLabel );
 
-                ViewTree = new CswViewListTree( Master.CswNbtResources, false );
+                ViewTree = new CswViewListTree( Master.CswNbtResources, new CswWebClientStorageCookies( Context.Request, Context.Response ), false );
                 ViewTree.ID = "viewtree";
                 ViewTree.IncludeActions = true;
                 ViewTree.IncludeReports = true;
                 ViewTree.ViewSelected += new CswViewListTree.ViewSelectedEventHandler( _ViewTree_ViewSelected );
                 ViewTree.OnError += new CswErrorHandler( Master.HandleError );
                 if( Master.CswNbtView != null )
-                    ViewTree.ViewIdToSelect = Master.CswNbtView.ViewId;
+                    ViewTree.ViewIdToSelect = Master.CswNbtView.ViewId.get();
                 else if( Master.ActionId > 0 )
                     ViewTree.ActionIdToSelect = Master.ActionId;
                 ViewTreeTable.addControl( 1, 0, ViewTree );

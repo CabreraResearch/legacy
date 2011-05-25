@@ -20,14 +20,12 @@ namespace ChemSW.Nbt.WebServices
 		}
 
 
-		public XElement getTree( CswNbtView View, string IDPrefix, bool IsFirstLoad, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool UsePaging, bool ShowEmpty, bool ForSearch )
+		public XElement getTree( CswNbtView View, string IDPrefix, bool IsFirstLoad, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool UsePaging, bool ShowEmpty, bool ForSearch, bool IncludeInQuickLaunch )
 		{
 			var ReturnNode = new XElement( "result" );
             string EmptyOrInvalid = "No Results";
 		    // Case 21699: Show empty tree for search
 		    bool ValidView = ( null != View && ( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List ) );
-		    string ViewName = string.Empty;
-		    Int32 SessionViewId = Int32.MinValue;
 			//bool IsFirstLoad = true;
 			//if( ParentNodeKey != null || IncludeNodeKey != null )
 			//    IsFirstLoad = false;
@@ -50,7 +48,8 @@ namespace ChemSW.Nbt.WebServices
 				ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
 
 				// case 21262
-				if( IncludeNodeKey != null && IncludeNodeRequired && ( IncludeNodeKey.TreeKey != Tree.Key || Tree.getNodeKeyByNodeId( IncludeNodeKey.NodeId ) == null ) )
+				if( IncludeNodeKey != null && IncludeNodeRequired && ( //IncludeNodeKey.TreeKey != Tree.Key || 
+																		Tree.getNodeKeyByNodeId( IncludeNodeKey.NodeId ) == null ) )
 				{
 					View = _CswNbtResources.MetaData.getNodeType( IncludeNodeKey.NodeTypeId ).CreateDefaultView();
 					View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeKey.NodeId );
@@ -78,8 +77,9 @@ namespace ChemSW.Nbt.WebServices
 
                     if( IsFirstLoad )
                     {
-                        ReturnNode.Add( new XElement( "tree", RootNode ),
-                                        new XElement( "viewid", View.SessionViewId ),
+						View.SaveToCache( IncludeInQuickLaunch );
+						ReturnNode.Add( new XElement( "tree", RootNode ),
+                                        new XElement( "viewid", View.SessionViewId.ToString() ),
                                         new XElement( "types", getTypes( View ).ToString() ) );
                     }
                     else
@@ -99,10 +99,12 @@ namespace ChemSW.Nbt.WebServices
             } // else if( !ShowEmpty )
 
             XElement Types = new XElement( "types" );
-            if( ValidView )
+			string ViewName = string.Empty;
+			string ViewId = string.Empty;
+			if( ValidView )
             {
                 ViewName = View.ViewName;
-                SessionViewId = View.SessionViewId;
+				ViewId = View.ViewId.ToString();
                 Types.Add( getTypes( View ).ToString() );
             }
 
@@ -122,7 +124,7 @@ namespace ChemSW.Nbt.WebServices
                                                 new XElement( "content",
                                                     new XElement( "name", EmptyOrInvalid ) ) ) ) )
                                         ),
-                                new XElement( "viewid", SessionViewId ),
+                                new XElement( "viewid", ViewId ),
                                 Types );
 			}
 			return ReturnNode;

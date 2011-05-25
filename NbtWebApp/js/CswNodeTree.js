@@ -18,7 +18,7 @@
 					viewmode: '',
                     showempty: false, // if true, shows an empty tree (primarily for search)
                     forsearch: false, // if true, used to override default behavior of list views
-					nodeid: '',       // if viewid is not supplied, loads a view of this node
+					nodeid: '',       // if viewid are not supplied, loads a view of this node
 					cswnbtnodekey: '',
 					IncludeNodeRequired: false,
 					UsePaging: true,
@@ -35,7 +35,8 @@
 					onInitialSelectNode: undefined,
 					onViewChange: function(newviewid) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
 					SelectFirstChild: true,
-					ShowCheckboxes: false
+					ShowCheckboxes: false,
+					IncludeInQuickLaunch: true
 				};
 				if(options) $.extend(o, options);
 
@@ -49,7 +50,7 @@
 				var url = o.ViewTreeUrl;
 				var dataParam = { 
                     'UsePaging': o.UsePaging,
-                    'ViewNum': o.viewid,
+                    'ViewId': o.viewid,
                     'IDPrefix': IDPrefix,
                     'IsFirstLoad': true,
                     'ParentNodeKey': '',
@@ -57,7 +58,8 @@
                     'IncludeNodeKey': tryParseString(o.cswnbtnodekey, ''),
                     'ShowEmpty': o.showempty,
                     'ForSearch': o.forsearch,
-                    'NodePk': tryParseString(o.nodeid,'')
+                    'NodePk': tryParseString(o.nodeid,''),
+					'IncludeInQuickLaunch': o.IncludeInQuickLaunch
                 };
 
 				if( isNullOrEmpty( o.viewid ) )
@@ -80,8 +82,8 @@
 							selectid = IDPrefix + o.nodeid;
 						}
 
-						var newviewid = $xml.children('viewid').text()
-						if(o.viewid !== newviewid)
+						var newviewid = $xml.children('viewid').text();
+						if(o.viewid !== newviewid )
 						{
 							o.onViewChange(newviewid);
 							o.viewid = newviewid;
@@ -188,7 +190,7 @@
 														var nodekey = $nodeOpening.CswAttrXml('cswnbtnodekey');
 														var retDataParam = {
                                                             'UsePaging': o.UsePaging,
-                                                            'ViewNum': o.viewid,
+                                                            'ViewId': o.viewid,
                                                             'IDPrefix': IDPrefix,
                                                             'IsFirstLoad': false,
                                                             'ParentNodeKey': nodekey,
@@ -196,7 +198,8 @@
                                                             'IncludeNodeKey': '',
                                                             'ShowEmpty': false,
                                                             'ForSearch': o.forsearch,
-                                                            'NodePk': tryParseString(o.nodeid,'')
+                                                            'NodePk': tryParseString(o.nodeid,''),
+															'IncludeInQuickLaunch': false
                                                         };
                                                         return $.param(retDataParam);
 													},
@@ -341,7 +344,7 @@
                                                     
 			var nextDataParam = { 
 				'UsePaging': m.UsePaging,
-				'ViewNum': m.viewid,
+				'ViewId': m.viewid,
 				'IDPrefix': m.IDPrefix,
 				'IsFirstLoad': false,
 				'ParentNodeKey': ParentNodeKey,

@@ -22,6 +22,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Session;
 using ChemSW.CswWebControls;
 using ChemSW.DB;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -109,7 +110,8 @@ namespace ChemSW.Nbt.WebPages
             //_initViewList( _ViewList );
             //FormTable.addControl( formrow++, 1, _ViewList );
 
-            _ViewTree = new CswViewListTree( Master.CswNbtResources, false );
+
+            _ViewTree = new CswViewListTree( Master.CswNbtResources, new CswWebClientStorageCookies( Context.Request, Context.Response ), false );
             _ViewTree.ID = "viewtree";
             //_ViewTree.ViewSelected += new CswViewListTree.ViewSelectedEventHandler( _ViewTree_ViewSelected );
             _ViewTree.OnError += new CswErrorHandler( Master.HandleError );

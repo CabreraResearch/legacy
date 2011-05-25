@@ -5,6 +5,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Security;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt
 {
@@ -16,17 +17,108 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }
 
-        /// <summary>
-        /// Get a DataTable with a single view, by primary key
-        /// </summary>
-        public DataTable getView( Int32 ViewId )
-        {
-            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getView", "getViewInfo" );
-            ViewsSelect.S4Parameters.Add( "getviewid", ViewId.ToString() );
-            return ViewsSelect.getTable();
-        }
 
-        /// <summary>
+		/// <summary>
+		/// Restore a CswNbtViewBase that was saved as a string
+		/// </summary>
+		/// <param name="CswNbtResources">A CswNbtResources object</param>
+		/// <param name="ViewAsString">View saved as a string</param>
+		public CswNbtView restoreView( string ViewAsString )
+		{
+			CswNbtView Ret = null;
+
+			if( ViewAsString != string.Empty )
+			{
+				CswNbtView RelationshipView = new CswNbtView( _CswNbtResources );
+				RelationshipView.LoadXml( ViewAsString );
+				Ret = RelationshipView;
+			}
+			return Ret;
+		}
+
+
+		public CswNbtView restoreView( CswNbtViewId ViewId )
+		{
+			// try cache first
+			CswNbtView ReturnVal = null; // CswNbtResources.ViewCache.getView( ViewId );
+			//if( ReturnVal == null )
+			//{
+			CswTableSelect ViewsTableSelect = _CswNbtResources.makeCswTableSelect( "restoreView_select", "node_views" );
+			DataTable ViewTable = ViewsTableSelect.getTable( "nodeviewid", ViewId.get() );
+			if( ViewTable.Rows.Count > 0 )
+			{
+				string ViewAsString = ViewTable.Rows[0]["viewxml"].ToString();
+				ReturnVal = restoreView( ViewAsString );
+				ReturnVal.ViewId = ViewId;  // BZ 8068
+
+				// Override XML values with values from row
+				ReturnVal.Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), ViewTable.Rows[0]["visibility"].ToString() );
+				ReturnVal.VisibilityRoleId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["roleid"] ) );
+				ReturnVal.VisibilityUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["userid"] ) );
+				ReturnVal.Category = ViewTable.Rows[0]["category"].ToString();
+				ReturnVal.ViewName = ViewTable.Rows[0]["viewname"].ToString();
+			}
+			//}
+			return ( ReturnVal );
+
+		}//restoreView()
+	
+
+		///// <summary>
+		///// Get a DataTable with a single view, by primary key
+		///// </summary>
+		//public CswNbtView getView( Int32 ViewId )
+		//{
+		//    return CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+		//    //CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getView", "getViewInfo" );
+		//    //ViewsSelect.S4Parameters.Add( "getviewid", ViewId.ToString() );
+		//    //return ViewsSelect.getTable();
+		//}
+
+		/// <summary>
+		/// Get a CswNbtView from the session view collection
+		/// </summary>
+		public CswNbtView getSessionView( CswNbtSessionDataId SessionViewId )
+		{
+			if( SessionViewId == null )
+				throw new CswDniException( "CswNbtViewSelect.getSessionView(): SessionViewId is null" );
+
+			CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionViewId );
+			if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.View )
+			{
+				return SessionDataItem.View;
+			}
+			else
+			{
+				throw new CswDniException( "CswNbtViewSelect.getSessionView(): SessionViewId (" + SessionViewId.get() + ") is not a view" );
+			}
+		} // getSessionView()
+
+		/// <summary>
+		/// Save a view to the session view collection.  Sets the SessionViewId on the view.
+		/// </summary>
+		public CswNbtSessionDataId saveSessionView( CswNbtView View, bool IncludeInQuickLaunch )
+		{
+			return _CswNbtResources.SessionDataMgr.saveSessionData( View, IncludeInQuickLaunch );
+		} // saveSessionView()
+
+		/// <summary>
+		/// Remove a view from the session view cache
+		/// </summary>
+		public void removeSessionView( CswNbtView View )
+		{
+			_CswNbtResources.SessionDataMgr.removeSessionData( View );
+		}
+
+		/// <summary>
+		/// Remove a view from the session view cache
+		/// </summary>
+		public void removeSessionView( CswNbtSessionDataId SessionViewId )
+		{
+			_CswNbtResources.SessionDataMgr.removeSessionData( SessionViewId );
+		} // removeSessionView()
+
+		/// <summary>
         /// Get a DataTable with a single view, by name and visibility
         /// </summary>
         public DataTable getView( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey VisibilityRoleId, CswPrimaryKey VisibilityUserId )
@@ -103,7 +195,7 @@ namespace ChemSW.Nbt
         }
 
 
-        private DataTable _LastVisibleViews = null;
+        //private DataTable _LastVisibleViews = null;
         private string _LastOrderBy = string.Empty;
         private ICswNbtUser _LastUser = null;
         private bool _LastIncludeEmptyViews = false;
@@ -113,7 +205,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public void clearCache()
         {
-            _LastVisibleViews = null;
+            //_LastVisibleViews = null;
         }
 
         /// <summary>
@@ -125,15 +217,15 @@ namespace ChemSW.Nbt
 
             DataTable ViewsTable = null;
             Collection<CswNbtView> VisibleViews = new Collection<CswNbtView>();
-            if( _LastVisibleViews != null &&
-                _LastOrderBy == OrderBy &&
-                _LastUser == User &&
-                _LastIncludeEmptyViews == IncludeEmptyViews )
-            {
-                ViewsTable = _LastVisibleViews;
-            }
-            else
-            {
+			//if( _LastVisibleViews != null &&
+			//    _LastOrderBy == OrderBy &&
+			//    _LastUser == User &&
+			//    _LastIncludeEmptyViews == IncludeEmptyViews )
+			//{
+			//    ViewsTable = _LastVisibleViews;
+			//}
+			//else
+			//{
                 CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
                 ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
                 ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
@@ -154,18 +246,18 @@ namespace ChemSW.Nbt
                 ViewsTable = ViewsSelect.getTable();
 
                 _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() data fetched", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
-            }
+            //}
 
             // BZ 7074 - Make sure the user has permissions to at least one root node
             foreach( CswNbtView ThisView in from DataRow Row in ViewsTable.Rows
-                                            select (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, Row["viewxml"].ToString() )
+                                            select _CswNbtResources.ViewSelect.restoreView( Row["viewxml"].ToString() )
                                                 into ThisView
-                                                where ThisView.Root.ChildRelationships.Count > 0 || !IncludeEmptyViews
+                                                where ( ( ThisView.Root.ChildRelationships.Count > 0 && 
+													      ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+																								    User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ).Count() > 0 ) 
+													    ) || IncludeEmptyViews )
                                                 where ThisView.IsFullyEnabled() &&
-                                                      ( !SearchableOnly || ThisView.IsSearchable() ) &&
-                                                      ( ThisView.Root.ChildRelationships
-                                                                        .Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                                                                     User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ) ).Count() > 0
+                                                      ( !SearchableOnly || ThisView.IsSearchable() )
                                                 select ThisView )
             {
                 VisibleViews.Add( ThisView );
@@ -174,7 +266,7 @@ namespace ChemSW.Nbt
             _LastIncludeEmptyViews = IncludeEmptyViews;
             _LastOrderBy = OrderBy;
             _LastUser = User;
-            _LastVisibleViews = ViewsTable;
+            //_LastVisibleViews = ViewsTable;
 
             _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() finished", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
 

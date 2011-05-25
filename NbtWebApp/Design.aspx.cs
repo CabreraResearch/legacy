@@ -884,7 +884,7 @@ namespace ChemSW.Nbt.WebPages
                     if( PropToSave.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                     {
                         // Reload the view
-                        CswNbtView View = CswNbtViewFactory.restoreView( Master.CswNbtResources, PropToSave.ViewId );
+						CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( PropToSave.ViewId );
                         _RelationshipViewTree.reinitTreeFromView( View, null, null, CswViewStructureTree.ViewTreeSelectType.None );
                     }
 
@@ -1532,7 +1532,7 @@ namespace ChemSW.Nbt.WebPages
                             //CswNbtView GridView = new CswNbtView( Master.CswNbtResources );
                             //if( SelectedNodeTypeProp.ViewId != Int32.MinValue )
                             //GridView.LoadXml(SelectedNodeTypeProp.ViewId);
-                            CswNbtView GridView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, SelectedNodeTypeProp.ViewId );
+							CswNbtView GridView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
                             //else
                             //{
                             //    // This property is missing a view -- make a new one
@@ -1607,7 +1607,7 @@ namespace ChemSW.Nbt.WebPages
                         case CswNbtMetaDataFieldType.NbtFieldType.LocationContents:
                             TableRow LCViewXmlRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) LCViewXmlRow.Cells[0].Controls[0] ).Text = "View:";
-                            CswNbtView LCView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, SelectedNodeTypeProp.ViewId );
+							CswNbtView LCView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
 
                             CswViewStructureTree LCViewTree = new CswViewStructureTree( Master.CswNbtResources );
                             LCViewTree.ID = "LCViewTree";
@@ -2020,7 +2020,7 @@ namespace ChemSW.Nbt.WebPages
                             //CswNbtView RelationshipView = new CswNbtView( Master.CswNbtResources );
                             //if( SelectedNodeTypeProp.ViewId != Int32.MinValue )
                             //{
-                            CswNbtView RelationshipView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, SelectedNodeTypeProp.ViewId );
+							CswNbtView RelationshipView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
                             //}
                             //else
                             //{

@@ -180,19 +180,12 @@ namespace ChemSW.Nbt.WebServices
         /// Returns the XML for filtered (searchable) View properties, if the View is searchable.
         /// Else, returns XML for a NodeTypeSelect.
         /// </summary>
-        public XElement getSearchXml( string ViewIdNum, string SelectedNodeTypeIdNum, string NodeKey )
+        public XElement getSearchXml( CswNbtView View, string SelectedNodeTypeIdNum, string NodeKey )
         {
             XElement SearchNode = new XElement( "search", 
                                         new XAttribute( "searchtype", "viewsearch" ) );
             
             XElement PropNode = new XElement( "properties" );
-            Int32 ViewId = CswConvert.ToInt32( ViewIdNum );
-            
-            CswNbtView View = null;
-            if( Int32.MinValue != ViewId )
-            {
-                View = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
-            }
 
             if( null == View || !View.IsSearchable() )
             {
@@ -253,8 +246,8 @@ namespace ChemSW.Nbt.WebServices
             {
                 JObject ViewSearch = JObject.FromObject( SearchJson );
                 string ViewIdNum = (string)ViewSearch.Property( "viewid" ).Value;
-                Int32 ViewId = CswConvert.ToInt32( ViewIdNum );
-                CswNbtView InitialView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+				CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( ViewIdNum ) );
+				CswNbtView InitialView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 SearchView = new CswNbtView( _CswNbtResources );
                 SearchView.LoadXml( InitialView.ToXml() );
                 SearchView.ViewName = _makeSearchViewName( SearchView.ViewName );

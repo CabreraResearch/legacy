@@ -45,7 +45,8 @@
 																				onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function() {}); 
 																			}, 
 																			SelectFirstChild: false,
-																			UsePaging: false
+																			UsePaging: false,
+																			IncludeInQuickLaunch: false
 																		});
 	
 					$selectdiv.CswComboBox( 'init', {	'ID': o.ID + '_combo', 

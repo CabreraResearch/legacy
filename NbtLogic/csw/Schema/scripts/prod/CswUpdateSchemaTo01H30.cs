@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Schema
 			DataTable ViewsTable = ViewsUpdate.getTable();
 			foreach( DataRow ViewsRow in ViewsTable.Rows )
 			{
-				CswNbtView ThisView = _CswNbtSchemaModTrnsctn.restoreView( CswConvert.ToInt32( ViewsRow["nodeviewid"] ) );
+				CswNbtView ThisView = _CswNbtSchemaModTrnsctn.restoreView( new CswNbtViewId( CswConvert.ToInt32( ViewsRow["nodeviewid"] ) ) );
 				ViewsRow["viewmode"] = ThisView.ViewMode.ToString();
 			}
 			ViewsUpdate.update( ViewsTable );

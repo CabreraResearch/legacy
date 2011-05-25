@@ -41,7 +41,7 @@
 									     .css('width','100%')
 									     .css('height','20px');
             
-            var dataJson = {ViewPk: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty };		
+            var dataJson = {ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty };		
 			CswAjaxJSON({
 				url: o.GridUrl,
 				data: dataJson,

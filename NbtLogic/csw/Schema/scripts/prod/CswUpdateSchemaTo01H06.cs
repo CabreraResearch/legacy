@@ -189,23 +189,26 @@ namespace ChemSW.Nbt.Schema
                 //         the user would have to have added their own Email property to their User nodetype.
                 //         However, if they do this, subscriptions do convey from the old to the new Recipients property.
 
-                ICswNbtTree UsersTree = _CswNbtSchemaModTrnsctn.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                ICswNbtTree MailReportTree = _CswNbtSchemaModTrnsctn.Trees.getTreeFromNodeTypeId( MailReportNT.NodeTypeId );
+				//ICswNbtTree UsersTree = _CswNbtSchemaModTrnsctn.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+				//ICswNbtTree MailReportTree = _CswNbtSchemaModTrnsctn.Trees.getTreeFromNodeTypeId( MailReportNT.NodeTypeId );
 
-                for( Int32 r = 0; r < MailReportTree.getChildNodeCount(); r++ )
-                {
-                    MailReportTree.goToNthChild( r );
-                    CswNbtNode MailReportNode = MailReportTree.getNodeForCurrentPosition();
-
+				//for( Int32 r = 0; r < MailReportTree.getChildNodeCount(); r++ )
+				//{
+				//    MailReportTree.goToNthChild( r );
+				//    CswNbtNode MailReportNode = MailReportTree.getNodeForCurrentPosition();
+				foreach(CswNbtNode MailReportNode in MailReportNT.getNodes(false, false))
+				{
                     char[] delimiters = { ';', ',', '\n' };
                     string OldRecipientsString = MailReportNode.Properties[OldRecipientsNTP].AsMemo.Text.Replace( "\r", "" );
                     string[] OldRecipientsArray = OldRecipientsString.Split( delimiters, StringSplitOptions.RemoveEmptyEntries );
 
                     CswCommaDelimitedString NewRecipientsUserIds = new CswCommaDelimitedString();
-                    for( Int32 u = 0; u < UsersTree.getChildNodeCount(); u++ )
-                    {
-                        UsersTree.goToNthChild( r );
-                        CswNbtNode UserNode = UsersTree.getNodeForCurrentPosition();
+					//for( Int32 u = 0; u < UsersTree.getChildNodeCount(); u++ )
+					//{
+					//    UsersTree.goToNthChild( r );
+					//    CswNbtNode UserNode = UsersTree.getNodeForCurrentPosition();
+					foreach(CswNbtNode UserNode in UserOC.getNodes(false, false))
+					{
                         CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) CswNbtNodeCaster.AsUser( UserNode );
                         foreach( string OldRecipientAddress in OldRecipientsArray )
                         {
@@ -214,12 +217,12 @@ namespace ChemSW.Nbt.Schema
                                 NewRecipientsUserIds.Add( UserNode.NodeId.PrimaryKey.ToString() );
                             }
                         }
-                        UsersTree.goToParentNode();
+                        //UsersTree.goToParentNode();
                     }
                     MailReportNode.Properties[NewRecipientsNTP].AsUserSelect.SelectedUserIds = NewRecipientsUserIds;
                     MailReportNode.postChanges( false );
 
-                    MailReportTree.goToParentNode();
+                    //MailReportTree.goToParentNode();
                 }
 
                 // 4. Delete the old Property

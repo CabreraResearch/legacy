@@ -36,7 +36,7 @@
 		var $MenuDiv = $(this);
 
         var dataXml = {
-            ViewNum: o.viewid,
+            ViewId: o.viewid,
             SafeNodeKey: o.cswnbtnodekey
         };
 

@@ -56,18 +56,18 @@ namespace ChemSW.Nbt
             get { return Root.IconFileName; }
         }
 
-        /// <summary>
-        /// Determines if View should be added to QuickLaunch items
-        /// </summary>
-        public bool IsQuickLaumch
-        {
-            get
-            {
-                bool ReturnVal = ( ( ViewId > 0 || SessionViewId > 0 ) &&
-                                    ( Visibility != NbtViewVisibility.Property ) );
-                return ReturnVal;
-            }
-        }
+		///// <summary>
+		///// Determines if View should be added to QuickLaunch items
+		///// </summary>
+		//public bool IsQuickLaunch
+		//{
+		//    get
+		//    {
+		//        bool ReturnVal = ( ( ViewId.isSet() || SessionViewId.isSet() ) &&
+		//                            ( Visibility != NbtViewVisibility.Property ) );
+		//        return ReturnVal;
+		//    }
+		//}
 
         /// <summary>
         /// Visibility permission setting
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Database Primary Key
         /// </summary>
-        public Int32 ViewId
+        public CswNbtViewId ViewId
         {
             get { return Root.ViewId; }
             set { Root.ViewId = value; }
@@ -353,11 +353,11 @@ namespace ChemSW.Nbt
         /// </summary>
         public void save()
         {
-            if( ViewId == Int32.MinValue )
-                throw new CswDniException( "Invalid View", "You must call makeNewView() before calling save() on a new view" );
+			if( !ViewId.isSet() )
+				throw new CswDniException( "Invalid View", "You must call makeNewView() before calling save() on a new view" );
 
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtView_save_update", "node_views" );
-            DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId, true );
+            DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId.get(), true );
             if( ViewTable.Rows.Count == 0 )
                 throw new CswDniException( "Invalid View", "No views that match viewid = " + ViewId.ToString() + " were found while attempting to save" );
 
@@ -450,7 +450,7 @@ namespace ChemSW.Nbt
                 throw new CswDniException( "View name cannot be blank", "CswNbtView.makeNew() called with empty ViewName parameter" );
 
             // Enforce name-visibility compound unique constraint
-            if( !ViewIsUnique( _CswNbtResources, Int32.MinValue, ViewName, Visibility, UserId, RoleId ) )
+            if( !ViewIsUnique( _CswNbtResources, new CswNbtViewId(), ViewName, Visibility, UserId, RoleId ) )
                 throw new CswDniException( "View name is already in use", "There is already a view with conflicting name and visibility settings" );
 
             // Before New View Events
@@ -485,7 +485,7 @@ namespace ChemSW.Nbt
             Clear();
             if( CopyView != null )
                 this.LoadXml( CopyView.ToXml() );
-            this.ViewId = CswConvert.ToInt32( NewRow["nodeviewid"].ToString() );
+			this.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewRow["nodeviewid"] ) );
             this.ViewName = ViewName;
             this.Visibility = Visibility;
             this.VisibilityRoleId = RoleId;
@@ -514,7 +514,7 @@ namespace ChemSW.Nbt
         public void ImportView( string ViewName, string ViewXml, Dictionary<Int32, Int32> NodeTypeMap, Dictionary<Int32, Int32> NodeTypePropMap, Dictionary<string, Int32> NodeMap )
         {
             this.makeNew( ViewName, NbtViewVisibility.Unknown, null, null, null );
-            Int32 NewViewId = this.ViewId;
+			CswNbtViewId NewViewId = this.ViewId;
             this.LoadXml( ViewXml );  // this overwrites the viewid
             this.ViewId = NewViewId;  // so set it back
 
@@ -608,18 +608,18 @@ namespace ChemSW.Nbt
 
             // Now remove all foreign keys to this view
             CswTableUpdate NodeTypePropsUpdate = _CswNbtResources.makeCswTableUpdate( "DeleteView_prop_update", "nodetype_props" );
-            DataTable NodeTypePropsTable = NodeTypePropsUpdate.getTable( "nodeviewid", ViewId );
+            DataTable NodeTypePropsTable = NodeTypePropsUpdate.getTable( "nodeviewid", ViewId.get() );
             foreach( DataRow NTPRow in NodeTypePropsTable.Rows )
             {
                 NTPRow["nodeviewid"] = CswConvert.ToDbVal( Int32.MinValue );
             }
             NodeTypePropsUpdate.update( NodeTypePropsTable );
 
-            _CswNbtResources.ViewCache.clearFromCache( this );
+			_CswNbtResources.ViewSelect.removeSessionView( this );
 
             // Now delete the view
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "Delete_view_nodeview_update", "node_views" );
-            DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId );
+            DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId.get() );
             if( ViewTable.Rows.Count > 0 )
             {
                 ViewTable.Rows[0].Delete();
@@ -639,7 +639,7 @@ namespace ChemSW.Nbt
 
         public const Int32 ViewNameLength = 30;
 
-        public static bool ViewIsUnique( CswNbtResources CswNbtResources, Int32 ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
+		public static bool ViewIsUnique( CswNbtResources CswNbtResources, CswNbtViewId ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
         {
             // truncate the name
             if( ViewName.Length > ViewNameLength )
@@ -649,8 +649,8 @@ namespace ChemSW.Nbt
             {
                 CswTableSelect CheckViewTableSelect = CswNbtResources.makeCswTableSelect( "ViewIsUnique_select", "node_views" );
                 string WhereClause = "where viewname = '" + CswTools.SafeSqlParam( ViewName ) + "'";
-                if( ViewId > 0 )
-                    WhereClause += " and nodeviewid <> " + ViewId.ToString();
+                if( ViewId.get() > 0 )
+                    WhereClause += " and nodeviewid <> " + ViewId.get().ToString();
 
                 switch( Visibility )
                 {
@@ -707,7 +707,7 @@ namespace ChemSW.Nbt
         public void Clear()
         {
             string OldName = string.Empty;
-            Int32 ViewId = Int32.MinValue;
+			CswNbtViewId ViewId = new CswNbtViewId();
             if( Root != null )
             {
                 OldName = Root.ViewName;
@@ -1311,30 +1311,39 @@ namespace ChemSW.Nbt
 
         #endregion Sort Property
 
-        #region View Cache functions
+        #region Session Cache functions
 
         /// <summary>
-        /// Save this View to Session's ViewCache
+        /// Save this View to Session's data cache
         /// </summary>
-        public void SaveToCache()
-        {
-            _SessionViewId = _CswNbtResources.ViewCache.putView( this );
-        }
+		public void SaveToCache(bool IncludeInQuickLaunch)
+		{
+			// don't cache twice
+			if( SessionViewId == null )
+			{
+				_SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, IncludeInQuickLaunch );
+			}
+		} // SaveToCache()
 
-        private Int32 _SessionViewId = Int32.MinValue;
+		public void clearSessionViewId()
+		{
+			_SessionViewId = null;
+		}
+
+		private CswNbtSessionDataId _SessionViewId = null;
         /// <summary>
-        /// Key for retrieving the view from the Session's View Cache
+        /// Key for retrieving the view from the Session's data cache
         /// </summary>
-        public Int32 SessionViewId
+		public CswNbtSessionDataId SessionViewId
         {
             get { return _SessionViewId; }
             set { _SessionViewId = value; }
         }
 
-        #endregion View Cache functions
+		#endregion Session Cache functions
 
-        #region IEquatable
-        /// <summary>
+		#region IEquatable
+		/// <summary>
         /// IEquatable: ==
         /// </summary>
         public static bool operator ==( CswNbtView view1, CswNbtView view2 )
@@ -1390,10 +1399,10 @@ namespace ChemSW.Nbt
         public override int GetHashCode()
         {
             int hashcode = 0;
-            if( this.ViewId > 0 )
+            if( this.ViewId.isSet() )
             {
                 // Positive hashes are for saved views
-                hashcode = this.ViewId;
+                hashcode = this.ViewId.get();
             }
             else
             {

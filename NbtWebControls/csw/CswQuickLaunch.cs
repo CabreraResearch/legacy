@@ -73,7 +73,7 @@ namespace ChemSW.NbtWebControls
                 {
                     if( ViewId > 0 )
                     {
-                        CswNbtView ThisView = CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+						CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( ViewId ) );
                         _AddQuickLaunchLinkView( ThisView, true );
                     }
                 }
@@ -130,8 +130,8 @@ namespace ChemSW.NbtWebControls
         {
             if( View != null )   // BZ 8551 #11
             {
-                if( ( View.ViewId > 0 && !ViewsInQuickLaunch.ContainsKey( View.ViewId ) ) ||
-                    ( View.ViewId <= 0 && View.SessionViewId > 0 && !ViewsInQuickLaunch.ContainsKey( View.SessionViewId ) ) )
+                if( ( View.ViewId.isSet() && !ViewsInQuickLaunch.ContainsKey( View.ViewId ) ) ||
+                    ( !View.ViewId.isSet() && View.SessionViewId.isSet() && !ViewsInQuickLaunch.ContainsKey( View.SessionViewId ) ) )
                 {
                     _AddQuickLaunchHeader();
 
@@ -153,7 +153,7 @@ namespace ChemSW.NbtWebControls
                     _QuickLaunchTable.addControl( row, 0, BulletLiteral );
 
                     LinkButton ViewLink = new LinkButton();
-                    if( View.ViewId > 0 )
+                    if( View.ViewId.isSet() )
                     {
                         ViewLink.ID = "ViewLink_" + View.ViewId;
                         ViewLink.Click += new EventHandler( ViewLink_Click );
@@ -227,8 +227,8 @@ namespace ChemSW.NbtWebControls
             }
         }
 
-        public delegate void ViewLinkClickEvent( Int32 ViewId );
-        public delegate void SessionViewLinkClickEvent( Int32 SessionViewId );
+		public delegate void ViewLinkClickEvent( CswNbtViewId ViewId );
+		public delegate void SessionViewLinkClickEvent( CswNbtSessionDataId SessionViewId );
         public delegate void ActionLinkClickEvent( Int32 ActionId );
 
         public event SessionViewLinkClickEvent OnSessionViewLinkClick = null;
@@ -237,13 +237,13 @@ namespace ChemSW.NbtWebControls
 
         protected void SessionViewLink_Click( object sender, EventArgs e )
         {
-            if( OnSessionViewLinkClick != null )
-                OnSessionViewLinkClick( CswConvert.ToInt32( ( (LinkButton) sender ).ID.Substring( "SessionViewLink_".Length ) ) );
+			if( OnSessionViewLinkClick != null )
+				OnSessionViewLinkClick( new CswNbtSessionDataId( CswConvert.ToInt32( ( (LinkButton) sender ).ID.Substring( "SessionViewLink_".Length ) ) ) );
         }
         protected void ViewLink_Click( object sender, EventArgs e )
         {
-            if( OnViewLinkClick != null )
-                OnViewLinkClick( CswConvert.ToInt32( ( (LinkButton) sender ).ID.Substring( "ViewLink_".Length ) ) );
+			if( OnViewLinkClick != null )
+				OnViewLinkClick( new CswNbtViewId( CswConvert.ToInt32( ( (LinkButton) sender ).ID.Substring( "ViewLink_".Length ) ) ) );
         }
         protected void ActionLink_Click( object sender, EventArgs e )
         {

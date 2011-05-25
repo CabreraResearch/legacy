@@ -22,7 +22,7 @@ namespace ChemSW.Nbt
         //private CswNbtNodeCatalogue _CswNbtNodeCatalogue = new CswNbtNodeCatalogue();
         private XmlDocument _XmlDoc = new XmlDocument();
         private XmlNode _CurrentNode = null;
-        CswNbtTreeKey _CswNbtTreeKey = null;
+        //CswNbtTreeKey _CswNbtTreeKey = null;
 
         //private Hashtable _ViewNodeHash = null;
 
@@ -95,13 +95,14 @@ namespace ChemSW.Nbt
         //    set { _CswNbtView = value; }
         //}
 
-        public CswNbtTreeNodes( CswNbtTreeKey CswNbtTreeKey, string XslFilePath, string TreeName, CswNbtResources CswNbtResources, CswNbtNodeCollection CswNbtNodeCollection )
+        public CswNbtTreeNodes( //CswNbtTreeKey CswNbtTreeKey, 
+								string XslFilePath, string TreeName, CswNbtResources CswNbtResources, CswNbtNodeCollection CswNbtNodeCollection )
         //public CswNbtTreeNodes( CswNbtTreeKey CswNbtTreeKey, string XslFilePath, CswNbtResources CswNbtResources, CswNbtNodeCollection CswNbtNodeCollection)
         {
             //            NodeEntries = new Hashtable();
             NodesAndParents = new Hashtable();
 
-            _CswNbtTreeKey = CswNbtTreeKey;
+            //_CswNbtTreeKey = CswNbtTreeKey;
 
             //Make Tree Node*******************************************
             _TreeNode = _XmlDoc.CreateElement( _ElemName_Tree );
@@ -263,7 +264,7 @@ namespace ChemSW.Nbt
         private CswNbtNodeKey _makeEmptyNodeKey()
         {
             CswNbtNodeKey ReturnVal = new CswNbtNodeKey( _CswNbtResources );
-            ReturnVal.TreeKey = _CswNbtTreeKey;
+            //ReturnVal.TreeKey = _CswNbtTreeKey;
             return ( ReturnVal );
         }
         //private CswNbtNodeContext _makeEmptyNodeContext()

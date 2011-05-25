@@ -30,15 +30,9 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 		}
 
-		public XElement getMenu( Int32 ViewId, string SafeNodeKey )
+		public XElement getMenu( CswNbtView View, string SafeNodeKey )
 		{
 			XElement MenuNode = new XElement( "menu" );
-
-			CswNbtView View = null;
-			if( ViewId != Int32.MinValue )
-			{
-				View = _CswNbtResources.ViewCache.getView( ViewId );
-			}
 
 			string NodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
 		    string NodeIdNum = string.Empty;
@@ -78,11 +72,12 @@ namespace ChemSW.Nbt.WebServices
 			    // View based search
 			    if( View.IsSearchable() )
 			    {
+					View.SaveToCache(false);
 			        SearchNode.AddFirst( new XElement( "item",
 			                                           new XAttribute( "text", "This View" ),
 			                                           new XAttribute( "nodeid", NodeId ),
 			                                           new XAttribute( "nodetypeid", NodeTypeId ),
-			                                           new XAttribute( "viewid", ViewId ),
+			                                           new XAttribute( "sessionviewid", View.SessionViewId.ToString() ),
 			                                           new XAttribute( "action", "ViewSearch" ) ) );
 			    }
 
@@ -141,11 +136,12 @@ namespace ChemSW.Nbt.WebServices
 			    }
 
 			    // SAVE VIEW AS
-			    if( View.ViewId <= 0 )
+			    if( !View.ViewId.isSet() )
 			    {
-			        MenuNode.Add( new XElement( "item",
+					View.SaveToCache(false);
+					MenuNode.Add( new XElement( "item",
 			                                    new XAttribute( "text", "SaveViewAs" ),
-			                                    new XAttribute( "popup", "Popup_NewView.aspx?sessionviewid=" + View.SessionViewId ) ) );
+			                                    new XAttribute( "popup", "Popup_NewView.aspx?sessionviewid=" + View.SessionViewId.ToString() ) ) );
 			    }
 
 			    // PRINT LABEL
@@ -167,7 +163,7 @@ namespace ChemSW.Nbt.WebServices
 			    {
 			        MenuNode.Add( new XElement( "item",
 			                                    new XAttribute( "text", "Print" ),
-			                                    new XAttribute( "popup", "PrintGrid.aspx?sessionviewid=" + View.SessionViewId ) ) );
+			                                    new XAttribute( "popup", "PrintGrid.aspx?sessionviewid=" + View.SessionViewId.ToString() ) ) );
 			    }
 
 			    // EXPORT
@@ -182,7 +178,7 @@ namespace ChemSW.Nbt.WebServices
 			                                        where ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile )
 			                                        select new XElement( "item",
 			                                                             new XAttribute( "text", FormatType ),
-			                                                             new XAttribute( "popup", "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode ) ) )
+			                                                             new XAttribute( "popup", "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode ) ) )
 			        {
 			            ExportNode.Add( ExportType );
 			        }
@@ -194,7 +190,7 @@ namespace ChemSW.Nbt.WebServices
 			                                      new XAttribute( "text", "Report XML" ) ) );
 			        if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
 			        {
-			            string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" +
+			            string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
 			                           ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
 			            ExportNode.Add( new XElement( "item",
 			                                          new XAttribute( "text", "Mobile XML" ),
@@ -206,7 +202,7 @@ namespace ChemSW.Nbt.WebServices
 			    // MOBILE
 			    if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
 			    {
-			        string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId + "&format=" +
+			        string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
 			                       ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
 			        XElement MobileNode = new XElement( "item",
 			                                            new XAttribute( "text", "Mobile" ) );

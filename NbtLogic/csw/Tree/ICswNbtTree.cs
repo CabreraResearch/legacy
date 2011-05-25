@@ -97,10 +97,10 @@ namespace ChemSW.Nbt
 
 //        void finalize();
 
-        /// <summary>
-        /// TreeKey which is used to index this tree.
-        /// </summary>
-        CswNbtTreeKey Key { get; }
+		///// <summary>
+		///// TreeKey which is used to index this tree.
+		///// </summary>
+		//CswNbtTreeKey Key { get; }
 
         /// <summary>
         /// Event to call when iterating nodes.  See <see cref="iterateTree" />.

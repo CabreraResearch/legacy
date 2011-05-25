@@ -351,7 +351,7 @@ var CswSearch_CssClasses = {
             //var $titlespan = $('<span style="align: center;">Search</span>');
             
             var dataXml = {
-                'ViewIdNum': o.viewid, 
+                'ViewId': o.viewid, 
                 'SelectedNodeTypeIdNum': o.nodetypeorobjectclassid, 
                 'IdPrefix': o.ID,
                 'NodeKey': o.cswnbtnodekey

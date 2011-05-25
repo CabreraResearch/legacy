@@ -71,16 +71,18 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     // BZ 7938
                     // We store the users by ID, but search by name.  So we have to decode.
                     Collection<CswPrimaryKey> MatchingUserKeys = new Collection<CswPrimaryKey>();
-                    ICswNbtTree UsersTree = _CswNbtFieldResources.CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                    for( Int32 u = 0; u < UsersTree.getChildNodeCount(); u++ )
-                    {
-                        UsersTree.goToNthChild( u );
+					//ICswNbtTree UsersTree = _CswNbtFieldResources.CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+					//for( Int32 u = 0; u < UsersTree.getChildNodeCount(); u++ )
+					//{
+					//    UsersTree.goToNthChild( u );
+					CswNbtMetaDataObjectClass UserOC = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+					foreach(CswNbtNode UserNode in UserOC.getNodes(false, false))
+					{
+						string UserNodeName = UserNode.NodeName; //UsersTree.getNodeNameForCurrentPosition();
+						if( UserNodeName.ToLower().IndexOf( CswNbtViewPropertyFilterIn.Value ) > -1 )
+							MatchingUserKeys.Add( UserNode.NodeId ); //UsersTree.getNodeIdForCurrentPosition() );
 
-                        string UserNodeName = UsersTree.getNodeNameForCurrentPosition();
-                        if( UserNodeName.ToLower().IndexOf( CswNbtViewPropertyFilterIn.Value ) > -1 )
-                            MatchingUserKeys.Add( UsersTree.getNodeIdForCurrentPosition() );
-
-                        UsersTree.goToParentNode();
+                        //UsersTree.goToParentNode();
                     }
                     if( MatchingUserKeys.Count > 0 )
                     {

@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( ViewId <= 0 );
+                return ( !ViewId.isSet() );
             }
         }//Empty
 
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// ViewId for referenced view
         /// </summary>
-        public Int32 ViewId
+        public CswNbtViewId ViewId
         {
             get
             {
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.PropTypes
                     CswNbtView NewView = new CswNbtView( _CswNbtResources );
                     NewView.makeNew( PropName, NbtViewVisibility.Property, null, null, null );
                     NewView.save();
-                    _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, NewView.ViewId );
+                    _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, NewView.ViewId.get() );
                     _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, PropName );
 
                     // Case 20194. KLUGE Alert!!!
@@ -73,11 +73,11 @@ namespace ChemSW.Nbt.PropTypes
                         node.postChanges( false );
                 }
 
-                return CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _ViewIdSubField.Column ) );
+				return new CswNbtViewId( CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _ViewIdSubField.Column ) ) );
             }
             private set
             {
-                if( _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, value ) )
+                if( _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, value.get() ) )
                     PendingUpdate = true;
             }
         }
@@ -104,9 +104,9 @@ namespace ChemSW.Nbt.PropTypes
         {
             //bz # 8758
             CachedViewName = string.Empty;
-            if( Int32.MinValue != ViewId )
+            if( ViewId.isSet() )
             {
-                CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+                CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 if( View != null )
                     CachedViewName = View.ViewName;
             }
@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-			CswNbtView View = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, ViewId );
+			CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
 			XmlNode ViewIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _ViewIdSubField.ToXmlNodeName(), ViewId.ToString() );
 			XmlNode ViewModeNode = CswXmlDocument.AppendXmlNode( ParentNode, "viewmode", View.ViewMode.ToString() );
 			XmlNode CachedViewNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedViewNameSubField.ToXmlNodeName(), CachedViewName.ToString() );
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            ViewId = CswConvert.ToInt32( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ViewIdSubField.ToXmlNodeName() ) );
+			ViewId = new CswNbtViewId( CswConvert.ToInt32( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ViewIdSubField.ToXmlNodeName() ) ) );
             PendingUpdate = true;
         }
 
@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            ViewId = CswConvert.ToInt32( PropRow[_ViewIdSubField.ToXmlNodeName()].ToString() );
+			ViewId = new CswNbtViewId( CswConvert.ToInt32( PropRow[_ViewIdSubField.ToXmlNodeName()].ToString() ) );
             PendingUpdate = true;
         }
 

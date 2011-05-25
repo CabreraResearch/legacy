@@ -79,20 +79,20 @@ namespace ChemSW.Nbt.WebPages
             get { return Master.DesignDeleteDialogWindow; }
         }
 
-        public void setViewId(Int32 ViewId)
+		public void setViewId( CswNbtViewId ViewId )
         {
             Master.setViewId(ViewId);
         }
-        public void setViewId(Int32 ViewId, bool ForceReload)
+		public void setViewId( CswNbtViewId ViewId, bool ForceReload )
         {
             Master.setViewId(ViewId, ForceReload);
         }
-        public void setSessionViewId( Int32 SessionViewId, bool ForceReload )
+		public void setSessionViewId( CswNbtSessionDataId SessionViewId, bool ForceReload )
         {
             Master.setSessionViewId( SessionViewId, ForceReload );
         }//setSessionViewId()
 
-        public void setSessionViewId( Int32 SessionViewId )
+		public void setSessionViewId( CswNbtSessionDataId SessionViewId )
         {
             Master.setSessionViewId( SessionViewId );
         }//setSessionViewId()

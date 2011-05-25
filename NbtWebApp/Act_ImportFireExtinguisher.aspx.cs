@@ -589,7 +589,7 @@ namespace ChemSW.Nbt.WebPages
                         //FireExtRel.NodeIdsToFilterIn = NodeKeysToInclude;
                     }
 
-                    NewNodesView.SaveToCache();
+                    NewNodesView.SaveToCache(true);
 					//Master.setSessionViewId( NewNodesView.SessionViewId );
 					//Master.GoMain();
 					Master.Redirect( "NewMain.html?viewid=" + NewNodesView.SessionViewId );

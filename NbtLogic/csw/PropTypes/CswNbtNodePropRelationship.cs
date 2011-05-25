@@ -48,9 +48,9 @@ namespace ChemSW.Nbt.PropTypes
             {
                 //CswNbtView Ret = new CswNbtView(_CswNbtResources);
                 CswNbtView Ret = null;
-                if( _CswNbtMetaDataNodeTypeProp.ViewId != Int32.MinValue )
+                if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
                     //Ret.LoadXml(_CswNbtMetaDataNodeTypeProp.ViewId);
-                    Ret = (CswNbtView) CswNbtViewFactory.restoreView( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.ViewId );
+					Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
                 return Ret;
             }
         }

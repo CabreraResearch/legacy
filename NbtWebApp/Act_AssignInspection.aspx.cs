@@ -211,7 +211,7 @@ namespace ChemSW.Nbt.WebPages
                         }
                         break;
                     case 3:
-                        CswNbtView ViewToLoad = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( TargetViewDropDown.SelectedValue ) );
+						CswNbtView ViewToLoad = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( TargetViewDropDown.SelectedValue ) ) );
                         ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( ViewToLoad, true, true, false, false );
                         string Xml = Tree.getTreeAsXml();
                         TargetTreeView.LoadXml( Xml );

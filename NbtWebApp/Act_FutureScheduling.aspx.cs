@@ -235,7 +235,9 @@ namespace ChemSW.Nbt.WebPages
         {
             if( _NodesTreeOfGeneratorNodes.Nodes.Count <= 0 )
             {
-                CswNbtView GeneratorView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+				CswNbtMetaDataObjectClass GeneratorOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+				//CswNbtView GeneratorView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+				CswNbtView GeneratorView = GeneratorOC.CreateDefaultView();
                 string temp = GeneratorView.ToString();
                 GeneratorView.ViewName = "Generators";
                 ICswNbtTree GeneratorTree = Master.CswNbtResources.Trees.getTreeFromView( GeneratorView, true, true, false, false );

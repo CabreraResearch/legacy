@@ -73,8 +73,8 @@
 	{
 		// set the view
 		var viewmode = tryParseString(qs.viewmode, 'tree');
-		$.CswCookie('set', CswCookieName.CurrentView.ViewId, qs.viewid),
-		$.CswCookie('set', CswCookieName.CurrentView.ViewMode, viewmode)
+		$.CswCookie('set', CswCookieName.CurrentViewId, qs.viewid),
+		$.CswCookie('set', CswCookieName.CurrentViewMode, viewmode)
 		// clear the querystring
 		window.location = "NewMain.html";
 	} else
@@ -91,54 +91,53 @@
 			'onAuthenticate': function (u)
 			{
 				var view = {
-					'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
-					'viewmode': $.CswCookie('get', CswCookieName.CurrentView.ViewMode)
+					'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
+					'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode)
 				};
 				$('#header_username').text(u);
-				$('#header_dashboard').CswDashboard({
-					'onSuccess': function ()
-					{
-						$('#header_menu').CswMenuHeader({
-							'onLogout': function ()
-							{
-								$('#CenterBottomDiv').CswLogin('logout', {
-									onDeauthenticate: function ()
-									{
-										$.CswCookie('clearAll');
-										window.location = 'NewMain.html';
-									}
-								});
-							},
-							'onSuccess': function ()
-							{
-								$('#ViewSelectDiv').CswViewSelect({
-									'ID': 'mainviewselect',
-									'onSelect': handleItemSelect,
-									'onSuccess': function ()
-									{
+				$('#header_dashboard').CswDashboard();
 
-										$('#QuickLaunch').CswQuickLaunch({
-											'onLinkClick': handleItemSelect,
-											'onSuccess': function ()
-											{
-												if (view.viewid === '')
-												{
-													refreshWelcome();
-												} else
-												{
-													handleItemSelect({ 'viewid': view.viewid, viewmode: view.viewmode });
-												}
-											} // onSuccess
-										}); // CswQuickLaunch
-									}  // onSuccess
-								}); // CswViewSelect
-							} // onSuccess
-						}); // CswMenuHeader
-					} // onSuccess
-				}); // CswDashboard
+				$('#header_menu').CswMenuHeader({
+					'onLogout': function ()
+					{
+						$('#CenterBottomDiv').CswLogin('logout', {
+							'onDeauthenticate': function ()
+							{
+								$.CswCookie('clearAll');
+								window.location = 'NewMain.html';
+							} // onDeauthenticate
+						}); // CswLogin
+					} // onLogout
+				}); // CswMenuHeader
+
+				$('#ViewSelectDiv').CswViewSelect({
+					'ID': 'mainviewselect',
+					'onSelect': handleItemSelect
+				}); // CswViewSelect
+
+				refreshQuickLaunch();
+
+				if (view.viewid === '')
+				{
+					refreshWelcome();
+				} else
+				{
+					handleItemSelect({ 'viewid': view.viewid, viewmode: view.viewmode });
+				}
 			} // onAuthenticate
-		}); // CswLogin
+		});  // CswLogin
+
 	} // initAll()
+
+	function refreshQuickLaunch()
+	{
+		$('#QuickLaunch').contents().remove();
+
+		$('#QuickLaunch').CswQuickLaunch({
+			'onLinkClick': handleItemSelect
+		}); // CswQuickLaunch
+	}
+
 
 	function clear(options)
 	{
@@ -228,8 +227,8 @@
 
 			if ( !isNullOrEmpty( o.viewid ) )
 			{
-			    $.CswCookie('set', CswCookieName.CurrentView.ViewId, o.viewid);
-			    $.CswCookie('set', CswCookieName.CurrentView.ViewMode, o.viewmode);
+			    $.CswCookie('set', CswCookieName.CurrentViewId, o.viewid);
+			    $.CswCookie('set', CswCookieName.CurrentViewMode, o.viewmode);
 
 			    var linkOpt = {
                     'showempty': false,
@@ -283,6 +282,9 @@
 			{
 			    alert('Handling for this action is not yet implemented');
 			}
+
+			refreshQuickLaunch();
+
 		} // if (manuallyCheckChanges())
 	} // handleItemSelect()
 
@@ -343,8 +345,8 @@
 			{
 				clear({ 'all': true });
 				$('#CenterTopDiv').CswViewEditor({
-					'viewid': $.CswCookie('get', CswCookieName.CurrentView.ViewId),
-					'viewmode': $.CswCookie('get', CswCookieName.CurrentView.ViewMode),
+					'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
+					'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
 					'onCancel': function ()
 					{
 						clear({ 'all': true });
@@ -437,10 +439,10 @@
         var onSearchSubmit = function (view)
         {
             clear({ right: true });
-            $.CswCookie('set', CswCookieName.CurrentView.ViewId, view.viewid);
+            $.CswCookie('set', CswCookieName.CurrentViewId, view.viewid);
             var viewMode = view.viewmode;
             if (viewMode === 'list') viewMode = 'tree';
-            $.CswCookie('set', CswCookieName.CurrentView.ViewMode, viewMode);
+            $.CswCookie('set', CswCookieName.CurrentViewMode, viewMode);
             refreshSelected({
                 viewmode: viewMode,
                 viewid: view.viewid,
@@ -479,11 +481,11 @@
 		// Defaults
 		var getEmptyGrid = (isTrue(o.showempty));
         if ( isNullOrEmpty( o.nodeid ) )
-			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
+			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNodeId);
 		if ( isNullOrEmpty(o.cswnbtnodekey) )
-			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
+			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNodeKey);
 		if ( !isNullOrEmpty(o.viewid) )
-			$.CswCookie('get', CswCookieName.CurrentView.ViewId);
+			$.CswCookie('get', CswCookieName.CurrentViewId);
 
 //		o.onAddNode = function (nodeid, cswnbtnodekey)
 //			{
@@ -527,8 +529,8 @@
 				$.extend(o, options);
 			}
 
-			$.CswCookie('set', CswCookieName.CurrentNode.NodeId, o.nodeid);
-			$.CswCookie('set', CswCookieName.CurrentNode.NodeKey, o.cswnbtnodekey);
+			$.CswCookie('set', CswCookieName.CurrentNodeId, o.nodeid);
+			$.CswCookie('set', CswCookieName.CurrentNodeKey, o.cswnbtnodekey);
 
 			if (o.nodeid !== '' && o.nodeid !== 'root')
 			{
@@ -676,11 +678,11 @@
 
 		var getEmptyTree = (isTrue(o.showempty));
 		if (isNullOrEmpty(o.nodeid))
-			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNode.NodeId);
+			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNodeId);
 		if (isNullOrEmpty(o.cswnbtnodekey))
-			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNode.NodeKey);
+			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNodeKey);
 		if (isNullOrEmpty(o.viewid))
-			o.viewid = $.CswCookie('get', CswCookieName.CurrentView.ViewId);
+			o.viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
 
 		clear({ left: true });
 
@@ -695,7 +697,7 @@
 											'IncludeNodeRequired': o.IncludeNodeRequired,
 											'onViewChange': function (newviewid)
 												{
-													$.CswCookie('set', CswCookieName.CurrentView.ViewId, newviewid);
+													$.CswCookie('set', CswCookieName.CurrentViewId, newviewid);
 												},
 											'onSelectNode': function (optSelect)
 												{

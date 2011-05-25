@@ -329,8 +329,10 @@
                  .CswAttrDom('cellsetrow', cellsetrow)
                  .CswAttrDom('cellsetcolumn', cellsetcolumn)
 				 .click(function(ev, dd) { onClick(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
-                 .drag(function(ev, dd) { onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
-                 .drop(function(ev, dd) { onDrop(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
+                 .draggable({	//start: function(ev, dd) { onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); },
+								drag: function(ev, dd) { onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); },
+								stop: function(ev, dd) { onDrop(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); }
+							})
                  .hover(function(ev, dd) { onHoverIn(ev, dd, $table, $(this)); },
                         function(ev, dd) { onHoverOut(ev, dd, $table, $(this)); } );
         }
@@ -422,11 +424,9 @@
 		{
 			if(isRemoveMode($table))
 			{
-				var $removecells = $('.CswLayoutTable_remove');
+				var $removecells = $table.find('.CswLayoutTable_remove');
 				if($removecells.length > 0)
 				{
-//					var row = $removecells.CswAttrDom('row');
-//					var column = $removecells.CswAttrDom('column');
 					$table.trigger($table.CswAttrDom('id') + 'CswLayoutTable_onRemove', { 
                                             table: $table,
                                             cellset: _getCellSet($table, row, column),
@@ -443,22 +443,8 @@
         
         function getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd)
         {
-//            // top left cell of each cellset
-//            var $cell = $table.CswTable('cell', (row - 1) * cellsetrows + 1, (column - 1) * cellsetcolumns + 1)
-
-//            var thistop = $cell.offset().top;
-//            var thisleft = $cell.offset().left;
-//            var thisheight = $cell.outerHeight();
-//            var thiswidth = $cell.outerWidth();
-
-//            var origrow = parseInt($cell.CswAttrDom('row'));
-//            var origcol = parseInt($cell.CswAttrDom('column'));
-//            var newrow = origrow + Math.round((dd.offsetY - thistop) / (thisheight * cellsetrows));
-//            var newcol = origcol + Math.round((dd.offsetX - thisleft) / (thiswidth * cellsetcolumns));
-
-//            return $table.find('td[row="'+ newrow +'"][column="'+ newcol +'"]');
-            var $hovercell = $('.CswLayoutTable_hover');
-            return $table.CswTable('findCell', '[row="'+ $hovercell.CswAttrDom('row') +'"][column="'+ $hovercell.CswAttrDom('column') +'"]');
+            var $hovercell = $table.find('.CswLayoutTable_hover');
+			return $table.CswTable('findCell', '[row="'+ $hovercell.CswAttrDom('row') +'"][column="'+ $hovercell.CswAttrDom('column') +'"]');
         } // getSwapCells()
 
 

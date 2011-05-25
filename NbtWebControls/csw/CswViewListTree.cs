@@ -12,17 +12,20 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Actions;
+using ChemSW.Session;
 
 namespace ChemSW.NbtWebControls
 {
     public class CswViewListTree : CompositeControl, INamingContainer
     {
         private CswNbtResources _CswNbtResources;
+        private ICswWebClientStorage _CswWebClientStorage = null; 
 
         public static string SessionCachedXmlName = "CswViewListTree_Xml";
 
-        public CswViewListTree( CswNbtResources CswNbtResources, bool UseCombo )
+        public CswViewListTree( CswNbtResources CswNbtResources, ICswWebClientStorage CswWebClientStorage , bool UseCombo)
         {
+            _CswWebClientStorage = CswWebClientStorage;
             _CswNbtResources = CswNbtResources;
             _UseCombo = UseCombo;
             this.DataBinding += new EventHandler( CswViewTree_DataBinding );

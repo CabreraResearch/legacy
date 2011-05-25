@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Actions
                 {
                     CurrentActionName = CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() );
                     Int32 ActionId = CswConvert.ToInt32( ActionRow["actionid"] );
-                    CswNbtAction Action = new CswNbtAction( ActionId, ActionRow["url"].ToString(), CurrentActionName, ( ActionRow["showinlist"].ToString() == "1" ), ActionRow["category"].ToString() );
+                    CswNbtAction Action = new CswNbtAction( _CswNbtResources, ActionId, ActionRow["url"].ToString(), CurrentActionName, ( ActionRow["showinlist"].ToString() == "1" ), ActionRow["category"].ToString() );
                     _ActionSL.Add( CswNbtAction.ActionNameEnumToString( CurrentActionName ), Action );
                     _ActionHash.Add( ActionId, Action );
                 }
