@@ -550,9 +550,7 @@
                             .appendTo($list);
             });
             $list.listview('refresh')
-//                 .checkboxradio('refresh')
                  .bindLI();
-//            $list.find('input[type="radio"]').checkboxradio('refresh');
             onAfterAddDiv($retDiv);
             
             return $retDiv;
@@ -671,7 +669,7 @@
                                                 .appendTo($list);
                                 var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                                 .appendTo($div);
-                                $div.checkboxradio();
+
                                 if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
                                 {
                                     // mark the li div OOC after it is created
@@ -941,7 +939,7 @@
                     case "Question":
                         var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                             .appendTo($propContDiv);
-                        $retHtml.checkboxradio();
+
                         var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
                                             .appendTo($question);
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
@@ -1127,7 +1125,7 @@
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
-            var $retHtml = $('<div data-role="fieldcontain"></div>');
+            var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
             var $fieldset = $('<fieldset></fieldset>')
                                 .appendTo($retHtml)
                                 .CswAttrDom({
