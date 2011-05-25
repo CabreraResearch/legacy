@@ -199,7 +199,7 @@
                 {
                     SessionId = configvar_sessionid;
                     $viewsdiv = reloadViews();
-                    $viewsdiv.doChangePage();;
+                    $viewsdiv.doChangePage();
                     _waitForData();
                 }
                 else
@@ -209,12 +209,14 @@
                         function ()
                         {
                             // online
-                            $logindiv.doPage();// doChangePage();
+                            $logindiv.doPage();
+							$logindiv.doChangePage();
                         },
                         function ()
                         {
                             // offline
-                            $sorrycharliediv.doPage(); // doChangePage();
+                            $sorrycharliediv.doPage();
+							$sorrycharliediv.doChangePage();
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
@@ -2083,41 +2085,39 @@
 
         function _handleDataCheckTimer(onSuccess, onFailure)
         {
-            return true;
-//            var url = opts.ConnectTestUrl;
-//            if (opts.RandomConnectionFailure)
-//            {
-//                url = opts.ConnectTestRandomFailUrl;
-//            }
-//            clearPath();
-//            CswAjaxXml({
-//                formobile: ForMobile,
-//                url: url,
-//                data: {},
-//                stringify: false,
-//                onloginfail: function() { Logout(); },
-//                success: function ($xml)
-//                {
-//                    setOnline();
-//                    _processChanges(true);
-//                    if ( !isNullOrEmpty(onSuccess) )
-//                    {
-//                        onSuccess($xml);
-//                    }
-//                    restorePath();
-//                },
-//                error: function (xml)
-//                {
-//                    var $xml = $(xml);
-//                    if ( !isNullOrEmpty(onFailure) )
-//                    {
-//                        onFailure($xml);
-//                    }
-//                    _waitForData();
-//                    restorePath();
-//                }
-//            });
-
+            var url = opts.ConnectTestUrl;
+            if (opts.RandomConnectionFailure)
+            {
+                url = opts.ConnectTestRandomFailUrl;
+            }
+            clearPath();
+            CswAjaxXml({
+                formobile: ForMobile,
+                url: url,
+                data: {},
+                stringify: false,
+                onloginfail: function() { Logout(); },
+                success: function ($xml)
+                {
+                    setOnline();
+                    _processChanges(true);
+                    if ( !isNullOrEmpty(onSuccess) )
+                    {
+                        onSuccess($xml);
+                    }
+                    restorePath();
+                },
+                error: function (xml)
+                {
+                    var $xml = $(xml);
+                    if ( !isNullOrEmpty(onFailure) )
+                    {
+                        onFailure($xml);
+                    }
+                    _waitForData();
+                    restorePath();
+                }
+            });
         } //_handleDataCheckTimer()
 
         function _processChanges(perpetuateTimer)
