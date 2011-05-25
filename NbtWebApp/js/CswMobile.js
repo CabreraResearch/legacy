@@ -524,7 +524,8 @@
             p.$xml.children().each(function ()
             {
                 p.$xmlitem = $(this);
-                _makeListItemFromXml($list, p);
+                _makeListItemFromXml($list, p)
+                    .appendTo($list);
             });
             $list.listview('refresh')
                  .bindLI();
