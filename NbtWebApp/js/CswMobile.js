@@ -745,7 +745,7 @@
                     if(!isNullOrEmpty(Status)) Html +=  Status + ', ';
                     Html += 'Due: ' + DueDate + '</p>';
                     Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
-                    Html += NodeName + '</a>';
+                    Html += '</a>';
                     Html += '</li>';
                     break;
 
