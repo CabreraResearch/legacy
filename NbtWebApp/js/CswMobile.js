@@ -130,12 +130,12 @@
             DBVersion: '1.0',
             DBDisplayName: 'Mobile.html',
             DBMaxSize: 65536,
-            ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
-            ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
-            ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
-            UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
-            MainPageUrl: '/NbtWebApp/Mobile.html',
-            AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
+            ViewUrl: '/MobileFork/wsNBT.asmx/RunView',
+            ConnectTestUrl: '/MobileFork/wsNBT.asmx/ConnectTest',
+            ConnectTestRandomFailUrl: '/MobileFork/wsNBT.asmx/ConnectTestRandomFail',
+            UpdateUrl: '/MobileFork/wsNBT.asmx/UpdateProperties',
+            MainPageUrl: '/MobileFork/Mobile.html',
+            AuthenticateUrl: '/MobileFork/wsNBT.asmx/Authenticate',
             Theme: 'a',
             PollingInterval: 30000,
             DivRemovalDelay: 1000,
@@ -301,14 +301,14 @@
         {
             currentMobilePath = tryParseString( $.mobile.path.get(), '');
             if(debug) log('pre set path = ' + currentMobilePath, true);
-            if( currentMobilePath !== '') $.mobile.path.set('');
-            if(debug) log('post set path = ' + $.mobile.path.get());
+            //if( currentMobilePath !== '') $.mobile.path.set('');
+            //if(debug) log('post set path = ' + $.mobile.path.get());
         }
 
         function restorePath()
         {
-            currentMobilePath = tryParseString( currentMobilePath, '');
-            $.mobile.path.set(currentMobilePath);
+            //currentMobilePath = tryParseString( currentMobilePath, '');
+            //$.mobile.path.set(currentMobilePath);
         }
 
         // ------------------------------------------------------------------------------------
