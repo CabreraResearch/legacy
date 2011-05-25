@@ -130,12 +130,12 @@
             DBVersion: '1.0',
             DBDisplayName: 'Mobile.html',
             DBMaxSize: 65536,
-            ViewUrl: '/MobileFork/wsNBT.asmx/RunView',
-            ConnectTestUrl: '/MobileFork/wsNBT.asmx/ConnectTest',
-            ConnectTestRandomFailUrl: '/MobileFork/wsNBT.asmx/ConnectTestRandomFail',
-            UpdateUrl: '/MobileFork/wsNBT.asmx/UpdateProperties',
-            MainPageUrl: '/MobileFork/Mobile.html',
-            AuthenticateUrl: '/MobileFork/wsNBT.asmx/Authenticate',
+            ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
+            ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
+            ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
+            UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
+            MainPageUrl: '/NbtWebApp/Mobile.html',
+            AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             Theme: 'a',
             PollingInterval: 30000,
             DivRemovalDelay: 1000,
@@ -155,9 +155,10 @@
         var $currentViewXml;
         var currentMobilePath = '';
 
-        // case 20355 - error on browser refresh
+
+		// case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
-        var tempdivid = 'notviewsdiv';
+        var tempdivid = 'initialloadingdiv';
         if (window.location.hash.length > 0)
         {
             var potentialtempdivid = window.location.hash.substr(1);
@@ -166,6 +167,18 @@
                 tempdivid = potentialtempdivid;
             }
         }
+
+        // Make loading div first
+        _addPageDivToBody({
+            DivId: tempdivid,
+            HeaderText: 'Please wait',
+            content: 'Loading...',
+            HideSearchButton: true,
+            HideOnlineButton: true,
+            HideRefreshButton: true,
+            HideLogoutButton: true,
+            HideHelpButton: true
+        });
 
         var $logindiv = _loadLoginDiv();
         
