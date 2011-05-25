@@ -32,7 +32,7 @@
             $li.unbind('click');
             $ret = $li.find('li a').bind('click', function ()
             {
-                var dataurl = $(this).attr('data-url');
+                var dataurl = $(this).CswAttrXml('data-url');
                 var $thisPage = $('#' + dataurl);
                 $.mobile.path.set(dataurl);
                 $thisPage.doChangePage();
@@ -586,11 +586,29 @@
             var $toolbar = $('<div data-role="controlgroup data-type="horizontal"></div>');
             if ( !isNullOrEmpty(previd) )
             {
-                $toolbar.append( $('<a data-identity="' + previd + '" data-url="' + previd + '" href="javascript:void(0);" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>') );
+                $toolbar.CswLink('init',{href:'javascript:void(0);', value: 'Previous'})
+                        .CswAttrXml({'data-identity': previd,
+                                      'data-url': previd,
+                                      'data-role': 'button',
+                                      'data-icon': 'arrow-u',
+                                      'data-inline': true,
+                                      'data-theme': opts.Theme,
+                                      'data-transition': 'slideup',
+                                      'data-direction': 'reverse'
+                        });
             }
             if ( !isNullOrEmpty(nextid) )
             {
-                $toolbar.append( $('<a data-identity="' + nextid + '" data-url="' + nextid + '" href="javascript:void(0);" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>') );
+                $toolbar.CswLink('init',{href:'javascript:void(0);', value: 'Next'})
+                        .CswAttrXml({'data-identity': nextid,
+                                              'data-url': nextid,
+                                              'data-role': 'button',
+                                              'data-icon': 'arrow-d',
+                                              'data-inline': true,
+                                              'data-theme': opts.Theme,
+                                              'data-transition': 'slideup',
+                                              'data-direction': 'reverse'
+                                });
             }
             
             var $retLI = $('');
@@ -1724,7 +1742,9 @@
 
         function onSynchStatusOpen(DivId, eventObj)
         {
-            $('#synchstatus_back').CswAttrDom({'data-identity': DivId, 'data-url': DivId, 'href': 'javascript:void(0)' });
+            $('#synchstatus_back').CswAttrDom({'href': 'javascript:void(0)' })
+                                  .CswAttrXml({'data-identity': DivId, 
+                                               'data-url': DivId });
             
             $('#synchstatus_back').css('visibility', '');
         }
