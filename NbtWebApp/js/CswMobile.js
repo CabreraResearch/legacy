@@ -42,20 +42,20 @@
         return $ret;
     }
 
-    $.fn.refreshJqm = function()
-    {
-        //JQM doesnot yet have a refresh all method, so we must do this manually
-        var $element = $(this);
-        if( !isNullOrEmpty($element) )
-        {
-            $element.find('input[type="checkbox"]').checkboxradio('refresh');
-            $element.find('input[type="radio"]').checkboxradio('refresh');
-            $element.find('input[type="range"]').slider('refresh'); //slider
-            $element.find('select').selectmenu('refresh');
-            $element.find('ul').listview('refresh');
-        }
-        return $element;
-    }
+//    $.fn.refreshJqm = function()
+//    {
+//        //JQM doesnot yet have a refresh all method, so we must do this manually
+//        var $element = $(this);
+//        if( !isNullOrEmpty($element) )
+//        {
+//            $element.find('input[type="checkbox"]').checkboxradio('refresh');
+//            $element.find('input[type="radio"]').checkboxradio('refresh');
+//            $element.find('input[type="range"]').slider('refresh'); //slider
+//            $element.find('select').selectmenu('refresh');
+//            $element.find('ul').listview('refresh');
+//        }
+//        return $element;
+//    }
 
     $.fn.doChangePage = function (transition, reverse, changeHash)
 	{
