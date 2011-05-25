@@ -1261,17 +1261,18 @@
                                                         ID: p.DivId + '_back',
                                                         value: 'Back'})
                                         .CswAttrXml({'data-identity': p.DivId + '_back', 
-                                                     'data-url': p.DivId + '_back',
+                                                     //'data-url': p.DivId + '_back',
+													 'data-rel': 'back',
                                                      'data-direction': 'reverse' });
             
                 if ( !isNullOrEmpty(p.backtransition) )
                 {
                     $backlink.CswAttrXml('data-transition', p.backtransition);
                 }
-                if ( isNullOrEmpty(p.ParentId) )
-                {
-                    $backlink.css('visibility','hidden');
-                }
+//                if ( isNullOrEmpty(p.ParentId) )
+//                {
+//                    $backlink.css('visibility','hidden');
+//                }
             
                 if ( !isNullOrEmpty(p.backicon) )
                 {
