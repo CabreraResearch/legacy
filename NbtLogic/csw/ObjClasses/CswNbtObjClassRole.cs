@@ -1,8 +1,8 @@
 using System;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -37,6 +37,24 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass ); }
         }
 
+        private bool _CanUpdateNode
+        {
+            get
+            {
+                bool ret = false;
+                if( ( _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId &&
+                       !Administrator.WasModified ) ||
+                    _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                {
+                    ret = true;
+                }
+                if( _CswNbtResources.CurrentUser.RoleId != _CswNbtNode.NodeId &&
+                    _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    return ret;
+            }
+
+        }
+
 
         #region Inherited Events
         public override void beforeCreateNode()
@@ -55,12 +73,15 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode()
         {
             // The user cannot change his or her own Administrator privileges.
-            if( this.Administrator.WasModified && _CswNbtResources.CurrentUser.RoleId == this._CswNbtNode.NodeId )
+            if( Administrator.WasModified && _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
             {
                 _CswNbtNode.Properties.clearModifiedFlag();  // prevents multiple error messages from appearing if we attempt to write() again
                 throw new CswDniException( "Users may not change their own administrator status", "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the Administrator property of their own Role" );
             }
-
+            if( _CswNbtResources.CurrentUser.RoleId != _CswNbtNode.NodeId && !( _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            {
+                throw new CswDniException( "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
+            }
             _CswNbtObjClassDefault.beforeWriteNode();
         }//beforeWriteNode()
 
