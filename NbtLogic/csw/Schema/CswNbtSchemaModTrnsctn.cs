@@ -371,6 +371,30 @@ namespace ChemSW.Nbt.Schema
 
         }//makeMissingAuditTables()
 
+
+        public void makeTableAuditable( string TableName )
+        {
+            if( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) )
+            {
+                addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
+            }
+
+
+            if( false == _CswAuditMetaData.isAuditTable( TableName ) )
+            {
+                string AuditTableName = _CswAuditMetaData.makeAuditTableName( TableName );
+                if( false == _CswNbtResources.CswResources.DataDictionary.isTableDefined( AuditTableName ) )
+                {
+                    copyTable( TableName, AuditTableName );
+                    addBooleanColumn( AuditTableName, _CswAuditMetaData.DelegeFlagColName, _CswAuditMetaData.DelegeFlagColDescription, false, false );
+                    addForeignKeyColumn( AuditTableName, _CswAuditMetaData.AuditTransactionIdColName, "fk to audittransactions table", false, true, _CswAuditMetaData.AuditTransactionTableName, _CswAuditMetaData.AuditTransactionIdColName );
+
+                }//if the audit table does not yet exist
+
+            }//if it isn't already an audit table
+
+        }//makeTableAuditable() 
+
         public CswNbtNodeCollection Nodes { get { return ( _CswNbtResources.Nodes ); } }
         //public CswNbtTreeCache Trees { get { return ( _CswNbtResources.Trees ); } }
         public CswNbtActionCollection Actions { get { return _CswNbtResources.Actions; } }
