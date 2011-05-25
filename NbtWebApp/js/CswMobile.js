@@ -452,7 +452,6 @@
         function _getDivXml(params)
         {
             var $retDiv = undefined;
-            if (debug) log('Starting ' + opts.ViewUrl, true);
 
             var dataXml = {
                 SessionId: params.SessionId,
@@ -479,7 +478,7 @@
                 },
                 error: function(xml)
                 {
-                    if(debug) log(xml);
+                    if(debug) log(xml, true);
                     restorePath();
                 }
             });
@@ -624,11 +623,10 @@
                                 var sf_compliantanswers = tryParseString( p.$xmlitem.children('compliantanswers').text(), '');
                                 var sf_correctiveaction = tryParseString( p.$xmlitem.children('correctiveaction').text(), '');
                                 
-                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"><div>')
+                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c" data-role="fieldcontain"><div>')
                                                 .appendTo($list);
                                 var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                                 .appendTo($div);
-                                //log(_makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers).html());
 
                                 if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
                                 {
@@ -820,7 +818,7 @@
 
         function _FieldTypeXmlToHtml($xmlitem, ParentId)
         {
-            var $retHtml = $('<div id="' + IdStr + '_propname" >' + PropName + '</div>');
+            var $retHtml = $('<div id="' + IdStr + '_propname" data-role="fieldcontain">' + PropName + '</div>');
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
@@ -1120,7 +1118,13 @@
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
-            var $retHtml = $('<div class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain"></div>');
+            var $retHtml = $('<fieldset></fieldset>')
+                                .CswAttrDom({
+                                    class: 'csw_fieldset',
+                                    id: IdStr + '_fieldset',
+                                    'data-role': 'controlgroup',
+                                    'data-type': 'horizontal'                                    
+                                });
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
@@ -1208,7 +1212,7 @@
 					}
 				}); //click()
             } // for (var i = 0; i < answers.length; i++)
-
+            log($retHtml.html());
             return $retHtml;
         } // _makeQuestionAnswerFieldSet()
 
@@ -1662,8 +1666,6 @@
 
                // $('div[id*="' + RealDivId + '"]').find('div:jqmData(role="content")').empty();
 
-                if (debug) log('Starting ' + opts.ViewUrl, true);
-
                 var dataXml = {
                     SessionId: SessionId,
                     ParentId: RealDivId,
@@ -1680,7 +1682,7 @@
                     onloginfail: function() { Logout(); },
                     success: function ($xml)
                     {
-                        if (debug) log('Starting ' + opts.ViewUrl, true);
+                        if (debug) log('On Success ' + opts.ViewUrl, true);
 
                         $currentViewXml = $xml;
                         _updateStoredViewXml(RealDivId, $currentViewXml, '0');
@@ -2137,8 +2139,6 @@
                 {
                     if ( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
                     {
-                        if (debug) log('Starting ' + opts.UpdateUrl, true);
-                        
                         var dataJson = {
                             SessionId: SessionId,
                             ParentId: rootid,
