@@ -832,7 +832,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( Ex );
 			}
 
-_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 			return ReturnVal.ToString();
 
 		} // copyView()
@@ -2162,7 +2162,7 @@ _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement RunView( string SessionId, string ParentId, bool ForMobile )
+		public XElement GetViewsList( string SessionId, string ParentId, bool ForMobile )
 		{
 			XElement ReturnVal = new XElement( "views" );
 			AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
@@ -2178,7 +2178,7 @@ _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 					if( null != CurrentUser )
 					{
 						CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtResources, ForMobile );
-						ReturnVal = wsView.Run( ParentId, CurrentUser );
+						ReturnVal = wsView.getViewsList( ParentId, CurrentUser );
 					}
 
 				}
@@ -2193,7 +2193,42 @@ _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			_xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 			return ReturnVal;
-		} // RunView()
+		} // GetViews()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement GetView( string SessionId, string ParentId, bool ForMobile )
+        {
+            XElement ReturnVal = new XElement( "views" );
+            AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _CswSessionResources.attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+
+                    ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
+                    if( null != CurrentUser )
+                    {
+                        CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtResources, ForMobile );
+                        ReturnVal = wsView.getView( ParentId, CurrentUser );
+                    }
+
+                }
+
+                _deInitResources();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = _xError( ex );
+            }
+
+            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            return ReturnVal;
+        } // GetViews()
 
 		#endregion Mobile
 

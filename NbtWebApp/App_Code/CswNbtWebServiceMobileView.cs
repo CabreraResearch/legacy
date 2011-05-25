@@ -24,56 +24,52 @@ namespace ChemSW.Nbt.WebServices
             _ForMobile = ForMobile;
         }
 
-        private static string ViewIdPrefix = "viewid_";
-        private static string PropIdPrefix = "prop_";
-        private static string TabIdPrefix = "tab_";
-        private static string NodeIdPrefix = "nodeid_";
-        private static string NodeKeyPrefix = "nodekey_";
+        private const string PropIdPrefix = "prop_";
+        private const string NodeIdPrefix = "nodeid_";
 
-        public XElement Run( string ParentId, ICswNbtUser CurrentUser )
+        public XElement getViewsList( string ParentId, ICswNbtUser CurrentUser )
         {
             XElement ret = new XElement( "node" );
 
-            if( ParentId.StartsWith( ViewIdPrefix ) )
+            // All Views
+			ret = new XElement("views");
+			Collection<CswNbtView> MobileViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, CurrentUser, false, _ForMobile, false, NbtViewRenderingMode.Any );
+			foreach( CswNbtView MobileView in MobileViews )
+			{
+				ret.Add( new XElement( "view",
+						new XAttribute( "id", MobileView.ViewId ),
+						new XAttribute( "name", MobileView.ViewName ) ) );
+			}
+
+            return ret;
+        } // Run()
+
+        public XElement getView( string ViewId, ICswNbtUser CurrentUser )
+        {
+            XElement ret = new XElement( "node" );
+
+            // Get the full XML for the entire view
+			CswNbtViewId NbtViewId = new CswNbtViewId( ViewId );
+			CswNbtView View = _CswNbtResources.ViewSelect.restoreView( NbtViewId );
+
+            // case 20083
+            if( _ForMobile )
             {
-                // Get the full XML for the entire view
-				CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( ParentId.Substring( ViewIdPrefix.Length ) ) );
-				CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
-                //View.SaveToCache();
-                //Session["SessionViewId"] = View.SessionViewId;
+                ret = _getSearchNodes( View );
+            }
 
-                // case 20083
-                if( _ForMobile )
-                {
-                    ret = _getSearchNodes( View );
-                }
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
 
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
-
-                if( Tree.getChildNodeCount() > 0 )
-                {
-                    _runTreeNodesRecursive( Tree, ref ret );
-                }
-                else
-                {
-                    ret = new XElement( "node",
-								new XAttribute( "id", NodeIdPrefix + Int32.MinValue ),
-                                new XAttribute( "name", "No Results" ) 
-                            );
-                }
-
-            }// if( ParentId.StartsWith( ViewIdPrefix ) )
+            if( Tree.getChildNodeCount() > 0 )
+            {
+                _runTreeNodesRecursive( Tree, ref ret );
+            }
             else
             {
-                // All Views
-				ret = new XElement("views");
-				Collection<CswNbtView> MobileViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, CurrentUser, false, true, false, NbtViewRenderingMode.Any );
-				foreach( CswNbtView MobileView in MobileViews )
-				{
-					ret.Add( new XElement( "view",
-							new XAttribute( "id", ViewIdPrefix + MobileView.ViewId ),
-							new XAttribute( "name", MobileView.ViewName ) ) );
-				}
+                ret = new XElement( "node",
+							new XAttribute( "id", NodeIdPrefix + Int32.MinValue ),
+                            new XAttribute( "name", "No Results" ) 
+                        );
             }
 
             return ret;
@@ -107,7 +103,6 @@ namespace ChemSW.Nbt.WebServices
 
 		private void _runTreeNodesRecursive( ICswNbtTree Tree, ref XElement ParentXmlNode )
 		{
-			string ret = string.Empty;
 			for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
 			{
 				Tree.goToNthChild( c );

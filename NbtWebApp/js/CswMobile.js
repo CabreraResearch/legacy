@@ -130,7 +130,9 @@
             DBVersion: '1.0',
             DBDisplayName: 'Mobile.html',
             DBMaxSize: 65536,
-            ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
+            //ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
+            ViewsListUrl: '/NbtWebApp/wsNBT.asmx/GetViewsList',
+            ViewUrl: '/NbtWebApp/wsNBT.asmx/GetView',
             ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
             ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
             UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
@@ -408,6 +410,7 @@
                     } 
                     else
                     {
+                        p.url = opts.ViewsListUrl;
                         $retDiv = _getDivXml(p);
                     }
                 } 
@@ -424,6 +427,7 @@
                         }
                         else if (!amOffline())
                         {
+                            p.url = opts.ViewUrl;
                             $retDiv = _getDivXml(p);
                         }
                     });
@@ -452,28 +456,33 @@
         function _getDivXml(params)
         {
             var $retDiv = undefined;
+            
+            var p = {
+                url: opts.ViewUrl
+            }
+            $.extend(p,params);
 
             var dataXml = {
-                SessionId: params.SessionId,
-                ParentId: params.DivId,
+                SessionId: p.SessionId,
+                ParentId: p.DivId,
                 formobile: ForMobile
             };
             clearPath();
             CswAjaxXml({
                 //async: false,   // required so that the link will wait for the content before navigating
-                url: opts.ViewUrl,
+                url: p.url,
                 data: dataXml,
                 onloginfail: function() { Logout(); },
                 success: function ($xml)
                 {
                     if (debug) log('On Success ' + opts.ViewUrl, true);
                     $currentViewXml = $xml;
-                    params.$xml = $currentViewXml;
+                    p.$xml = $currentViewXml;
                     if (params.level === 1)
                     {
-                        _storeViewXml(params.DivId, params.HeaderText, $currentViewXml);
+                        _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                     }
-                    $retDiv = _loadDivContentsXml(params);    
+                    $retDiv = _loadDivContentsXml(p);    
                     restorePath();
                 },
                 error: function(xml)
@@ -1654,13 +1663,13 @@
                 CswAjaxXml({
                     async: false,   // required so that the link will wait for the content before navigating
                     formobile: ForMobile,
-                    url: opts.ViewUrl,
+                    url: opts.ViewsListUrl,
                     data: dataXml,
                     stringify: false,
                     onloginfail: function() { Logout(); },
                     success: function ($xml)
                     {
-                        if (debug) log('On Success ' + opts.ViewUrl, true);
+                        if (debug) log('On Success ' + opts.ViewsListUrl, true);
 
                         $currentViewXml = $xml;
                         _updateStoredViewXml(RealDivId, $currentViewXml, '0');
