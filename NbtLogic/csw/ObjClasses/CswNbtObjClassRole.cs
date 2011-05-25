@@ -37,25 +37,6 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass ); }
         }
 
-        private bool _CanUpdateNode
-        {
-            get
-            {
-                bool ret = false;
-                if( ( _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId &&
-                       !Administrator.WasModified ) ||
-                    _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-                {
-                    ret = true;
-                }
-                if( _CswNbtResources.CurrentUser.RoleId != _CswNbtNode.NodeId &&
-                    _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-                    return ret;
-            }
-
-        }
-
-
         #region Inherited Events
         public override void beforeCreateNode()
         {
