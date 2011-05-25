@@ -588,26 +588,26 @@
             {
                 $toolbar.CswLink('init',{href:'javascript:void(0);', value: 'Previous'})
                         .CswAttrXml({'data-identity': previd,
-                                      'data-url': previd,
-                                      'data-role': 'button',
-                                      'data-icon': 'arrow-u',
-                                      'data-inline': true,
-                                      'data-theme': opts.Theme,
-                                      'data-transition': 'slideup',
-                                      'data-direction': 'reverse'
+                                     'data-url': previd,
+                                     'data-role': 'button',
+                                     'data-icon': 'arrow-u',
+                                     'data-inline': true,
+                                     'data-theme': opts.Theme,
+                                     'data-transition': 'slideup',
+                                     'data-direction': 'reverse'
                         });
             }
             if ( !isNullOrEmpty(nextid) )
             {
                 $toolbar.CswLink('init',{href:'javascript:void(0);', value: 'Next'})
                         .CswAttrXml({'data-identity': nextid,
-                                              'data-url': nextid,
-                                              'data-role': 'button',
-                                              'data-icon': 'arrow-d',
-                                              'data-inline': true,
-                                              'data-theme': opts.Theme,
-                                              'data-transition': 'slideup',
-                                              'data-direction': 'reverse'
+                                     'data-url': nextid,
+                                     'data-role': 'button',
+                                     'data-icon': 'arrow-d',
+                                     'data-inline': true,
+                                     'data-theme': opts.Theme,
+                                     'data-transition': 'slideup',
+                                     'data-direction': 'reverse'
                                 });
             }
             
@@ -845,11 +845,15 @@
             var sf_compliantanswers = tryParseString( $xmlitem.children('compliantanswers').text(), '');
             var sf_options = tryParseString( $xmlitem.children('options').text(), '');
             
-            var $retHtml = $('<div id="' + IdStr + '_propname">' + PropName + '</div>');
+            var $retHtml = $('<div id="' + IdStr + '_propwrapper"></div>');
+            var $propNameDiv = $('<div id="' + IdStr + '_propname">' + PropName + '</div>')
+                                .appendTo($retHtml);
+            var $propContDiv = $('<div id="' + IdStr + '_propcontent"></div>')
+                                .appendTo($retHtml);
             //var Html = '<div id="' + IdStr + '_propname"';
             if (FieldType === "Question" && !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
             {
-                $retHtml.addClass('OOC');
+                $propNameDiv.addClass('OOC');
             }
             $retHtml.append('<br/>');
 
@@ -858,16 +862,16 @@
                 switch (FieldType)
                 {
                     case "Date":
-                        $retHtml.append('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />');
+                        $propContDiv.append('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />');
                         break;
 
                     case "Link":
-                        $retHtml.append('<a href="' + sf_href + '" rel="external">' + sf_text + '</a>');
+                        $propContDiv.append('<a href="' + sf_href + '" rel="external">' + sf_text + '</a>');
                         break;
 
                     case "List":
                         var $select = $('<select name="' + IdStr + '"></select>')
-                                        .appendTo($retHtml)
+                                        .appendTo($propContDiv)
                                         .selectmenu();
                         var selectedvalue = sf_value;
                         var optionsstr = sf_options;
@@ -895,17 +899,17 @@
 
                     case "Logical":
                         var $logical = _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required)
-                                            .appendTo($retHtml);
+                                            .appendTo($propContDiv);
                         break;
 
                     case "Memo":
                         var $memo = $('<textarea name="' + IdStr + '">' + sf_text + '</textarea>')
-                                            .appendTo($retHtml);
+                                            .appendTo($propContDiv);
                         break;
 
                     case "Number":
                         var $number = $('<input type="number" name="' + IdStr + '" value="' + sf_value + '" />')
-                                            .appendTo($retHtml);
+                                            .appendTo($propContDiv);
                         // if (Prop.MinValue != Int32.MinValue)
                         //     Html += "min = \"" + Prop.MinValue + "\"";
                         // if (Prop.MaxValue != Int32.MinValue)
@@ -918,7 +922,7 @@
 
                     case "Quantity":
                         var $quantity = $('<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />')
-                                            .appendTo($retHtml);
+                                            .appendTo($propContDiv);
                         $quantity.append( sf_units );
                         // Html += "<select name=\"" + IdStr + "_units\">";
                         // string SelectedUnit = PropWrapper.AsQuantity.Units;
@@ -936,7 +940,7 @@
 
                     case "Question":
                         var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
-                                            .appendTo($retHtml);
+                                            .appendTo($propContDiv);
                         $retHtml.checkboxradio();
                         var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
                                             .appendTo($question);
@@ -964,27 +968,27 @@
                         break;
 
                     case "Static":
-                        $retHtml.append( sf_text );
+                        $propContDiv.append( sf_text );
                         break;
 
                     case "Text":
                         var $text = $('<input type="text" name="' + IdStr + '" value="' + sf_text + '" />')
-                                        .appendTo($retHtml);
+                                        .appendTo($propContDiv);
                         break;
 
                     case "Time":
                         var $time = $('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />')
-                                        .appendTo($retHtml);
+                                        .appendTo($propContDiv);
                         break;
 
                     default:
-                        $retHtml.append( $xmlitem.CswAttrXml('gestalt') );
+                        $propContDiv.append( $xmlitem.CswAttrXml('gestalt') );
                         break;
                 }
             }
             else 
             {
-                $retHtml.append( $xmlitem.CswAttrXml('gestalt') );
+                $propContDiv.append( $xmlitem.CswAttrXml('gestalt') );
             }
             return $retHtml;
         }
@@ -1094,33 +1098,23 @@
                 
                 $input.click( function ()
                 {
-                    // case 20307: workaround for a bug with JQuery Mobile Alpha2
-                    for (var j = 0; j < answers.length; j++)
-                    {
-                        var thisAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]});
-                        var $answer = $('#' + thisAnswerId);
-                        if (answers[j] === answers[i])
-                        {
-                            $answer.siblings('label').addClass('ui-btn-active');
-                        }
-                        else
-                        {
-                            $answer.siblings('label').removeClass('ui-btn-active');
-                        }
-                    }
-
-                    var $otherradio;
                     for (var k = 0; k < answers.length; k++)
                     {
+                        var thisAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k]});
+                        var $answer = $('#' + thisAnswerId);
+
                         var radioId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
-                        $otherradio = $('#' + radioId);
+                        var $otherradio = $('#' + radioId);
+                        
                         if (answers[k] === answers[i])
                         {
+                            $answer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
                             $otherradio.CswAttrDom('checked', 'checked');
                             $otherradio.siblings('label').addClass('ui-btn-active');
                         }
                         else
                         {
+                            $answer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
                             $otherradio.CswAttrDom('checked', false);
                             $otherradio.siblings('label').removeClass('ui-btn-active');
                         }
@@ -1146,44 +1140,39 @@
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
-                var answerid = makeSafeId({ ID: answers[i] });
-				var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid});
-                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, ID: inputId, value: answers[i] })
+				var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
+                var $answer = $fieldset.CswInput('init',{type: CswInput_Types.radio, ID: answerid, value: answers[i] })
 								.CswAttrXml('data-role','button');
-				var $label = $('<label for="' + inputId + '">' + answers[i] + '</label>')
+				var $label = $('<label for="' + answerid + '">' + answers[i] + '</label>')
 								.appendTo($fieldset);
                 
                 if (Answer === answers[i])
                 {
-                    $input.CswAttrDom('checked','checked');
+                    $answer.CswAttrDom('checked','checked');
                 } 
-				$input.click( function() 
+				$answer.click( function() 
 				{
-				
-                // case 20307: workaround for a bug with JQuery Mobile Alpha2
-//                for (var j = 0; j < answers.length; j++)
-//                {
-//                    if (answers[j] === answers[i])
-//                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
-//                    else
-//                       Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
-//                }
-					var $otherradio;
 
 					for (var k = 0; k < answers.length; k++)
 					{
-						var thisAnswerId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
-						$otherradio = $('#' + thisAnswerId);
+                        var suffixAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
+                        var $suffixAnswer = $('#' + suffixAnswerId);
+						
+                        var oSuffixAnswerId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
+						var $oSuffixAnswer = $('#' + oSuffixAnswerId);
 						if (answers[k] === answers[i])
 						{
-							$otherradio.CswAttrDom('checked', 'checked');
-							$otherradio.siblings('label').addClass('ui-btn-active');
-                            $otherradio.siblings('label').addClass('ui-btn-active');
-						} else
+                            $suffixAnswer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
+							$oSuffixAnswer.CswAttrDom('checked', 'checked');
+							$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
+                            $oSuffixAnswer.siblings('label').addClass('ui-btn-active');
+						} 
+                        else
 						{
-							$otherradio.CswAttrDom('checked', false);
-							$otherradio.siblings('label').removeClass('ui-btn-active');
-                            $otherradio.siblings('label').addClass('ui-btn-active');
+							$suffixAnswer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
+                            $oSuffixAnswer.CswAttrDom('checked', false);
+							$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
+                            $oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
 						}
 					} // for (var k = 0; k < answers.length; k++)
 					
