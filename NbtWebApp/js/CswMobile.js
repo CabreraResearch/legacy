@@ -130,12 +130,12 @@
             DBVersion: '1.0',
             DBDisplayName: 'Mobile.html',
             DBMaxSize: 65536,
-            ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
-            ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
-            ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
-            UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
-            MainPageUrl: '/NbtWebApp/Mobile.html',
-            AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
+            ViewUrl: '/MobileFork/wsNBT.asmx/RunView',
+            ConnectTestUrl: '/MobileFork/wsNBT.asmx/ConnectTest',
+            ConnectTestRandomFailUrl: '/MobileFork/wsNBT.asmx/ConnectTestRandomFail',
+            UpdateUrl: '/MobileFork/wsNBT.asmx/UpdateProperties',
+            MainPageUrl: '/MobileFork/Mobile.html',
+            AuthenticateUrl: '/MobileFork/wsNBT.asmx/Authenticate',
             Theme: 'a',
             PollingInterval: 30000,
             DivRemovalDelay: 1000,
@@ -524,8 +524,8 @@
             p.$xml.children().each(function ()
             {
                 p.$xmlitem = $(this);
-                _makeListItemFromXml($list, p)
-                    .appendTo($list);
+                var $li = _makeListItemFromXml($list, p)
+                            .appendTo($list);
             });
             $list.listview('refresh')
                  .bindLI();
@@ -557,8 +557,7 @@
 
             var nextid = p.$xmlitem.next().CswAttrXml('id');
             var previd = p.$xmlitem.prev().CswAttrXml('id');
-
-            var $retLI;
+            var $retLI = $('');
             
             switch (PageType)
             {
