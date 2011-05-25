@@ -216,9 +216,6 @@ namespace ChemSW.Nbt.WebServices
 						ReturnVal.Add( new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( FakeKey.ToString() ) ) );
 						CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( _CswNbtResources.CurrentNbtUser.UserNode.Node, _CswNbtResources.CurrentNbtUser.PasswordProperty.NodeTypeProp );
 						ReturnVal.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
-
-
-						_CswSessionResources.purgeExpiredSessions(); //bury the overhead of nuking old sessions in the overhead of authenticating
 					}
 					else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
 					{
@@ -230,6 +227,8 @@ namespace ChemSW.Nbt.WebServices
 					CswNbtWebServiceQuickLaunchItems wsQL = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
 					wsQL.initQuickLaunchItems();
 				}
+
+				_CswSessionResources.purgeExpiredSessions(); //bury the overhead of nuking old sessions in the overhead of authenticating
 
 				_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 				_deInitResources();
