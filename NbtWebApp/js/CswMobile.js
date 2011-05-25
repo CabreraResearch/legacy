@@ -606,17 +606,8 @@
                             currenttab = tab;
                         }
 
-                        var $link;
-                        if($tab) 
-                        {
-                            $link = $('<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>')
-                                        .appendTo($tab)
-                        }
-                        else
-                        {
-                            $link = $('<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>')
+                        var $link = $('<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>')
                                         .appendTo($list);
-                        } 
 
                         switch (fieldtype)
                         {
@@ -695,8 +686,8 @@
                                                 parentlevel: p.parentlevel,
                                                 level: p.parentlevel+1,
                                                 DivId: id,
-                                                HeaderText: text,
-                                                $toolbar: $toolbar
+                                                HeaderText: text
+                                                //,$toolbar: $toolbar
                             });
                         }
                         break;
