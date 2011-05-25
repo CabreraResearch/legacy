@@ -60,15 +60,11 @@ namespace ChemSW.Nbt.WebServices
 
 		private void _deInitResources()
 		{
+			_CswSessionResources.endSession();
 			if( _CswNbtResources != null )
 			{
 				_CswNbtResources.finalize();
 				_CswNbtResources.release();
-			}
-
-			if( _CswSessionResources != null )
-			{
-				_CswSessionResources.setCache();
 			}
 		}
 
