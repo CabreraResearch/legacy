@@ -199,7 +199,7 @@
                 {
                     SessionId = configvar_sessionid;
                     $viewsdiv = reloadViews();
-                    $viewsdiv.doChangePage();;
+                    $viewsdiv.doChangePage();
                     _waitForData();
                 }
                 else
@@ -209,12 +209,14 @@
                         function ()
                         {
                             // online
-                            $logindiv.doPage();// doChangePage();
+                            $logindiv.doPage();
+							$logindiv.doChangePage();
                         },
                         function ()
                         {
                             // offline
-                            $sorrycharliediv.doPage(); // doChangePage();
+                            $sorrycharliediv.doPage();
+							$sorrycharliediv.doChangePage();
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
@@ -1267,17 +1269,18 @@
                                                         ID: p.DivId + '_back',
                                                         value: 'Back'})
                                         .CswAttrXml({'data-identity': p.DivId + '_back', 
-                                                     'data-url': p.DivId + '_back',
+                                                     //'data-url': p.DivId + '_back',
+													 'data-rel': 'back',
                                                      'data-direction': 'reverse' });
             
                 if ( !isNullOrEmpty(p.backtransition) )
                 {
                     $backlink.CswAttrXml('data-transition', p.backtransition);
                 }
-                if ( isNullOrEmpty(p.ParentId) )
-                {
-                    $backlink.css('visibility','hidden');
-                }
+//                if ( isNullOrEmpty(p.ParentId) )
+//                {
+//                    $backlink.css('visibility','hidden');
+//                }
             
                 if ( !isNullOrEmpty(p.backicon) )
                 {
@@ -2091,41 +2094,39 @@
 
         function _handleDataCheckTimer(onSuccess, onFailure)
         {
-            return true;
-//            var url = opts.ConnectTestUrl;
-//            if (opts.RandomConnectionFailure)
-//            {
-//                url = opts.ConnectTestRandomFailUrl;
-//            }
-//            clearPath();
-//            CswAjaxXml({
-//                formobile: ForMobile,
-//                url: url,
-//                data: {},
-//                stringify: false,
-//                onloginfail: function() { Logout(); },
-//                success: function ($xml)
-//                {
-//                    setOnline();
-//                    _processChanges(true);
-//                    if ( !isNullOrEmpty(onSuccess) )
-//                    {
-//                        onSuccess($xml);
-//                    }
-//                    restorePath();
-//                },
-//                error: function (xml)
-//                {
-//                    var $xml = $(xml);
-//                    if ( !isNullOrEmpty(onFailure) )
-//                    {
-//                        onFailure($xml);
-//                    }
-//                    _waitForData();
-//                    restorePath();
-//                }
-//            });
-
+            var url = opts.ConnectTestUrl;
+            if (opts.RandomConnectionFailure)
+            {
+                url = opts.ConnectTestRandomFailUrl;
+            }
+            clearPath();
+            CswAjaxXml({
+                formobile: ForMobile,
+                url: url,
+                data: {},
+                stringify: false,
+                onloginfail: function() { Logout(); },
+                success: function ($xml)
+                {
+                    setOnline();
+                    _processChanges(true);
+                    if ( !isNullOrEmpty(onSuccess) )
+                    {
+                        onSuccess($xml);
+                    }
+                    restorePath();
+                },
+                error: function (xml)
+                {
+                    var $xml = $(xml);
+                    if ( !isNullOrEmpty(onFailure) )
+                    {
+                        onFailure($xml);
+                    }
+                    _waitForData();
+                    restorePath();
+                }
+            });
         } //_handleDataCheckTimer()
 
         function _processChanges(perpetuateTimer)
