@@ -526,7 +526,8 @@
             p.$xml.children().each(function ()
             {
                 p.$xmlitem = $(this);
-                $list.append( _makeListItemFromXml(p) );
+                _makeListItemFromXml($list, p)
+                    .appendTo($list);
             });
             $list.listview('refresh')
                  .bindLI();
@@ -536,7 +537,7 @@
             return $retDiv;
         } // _processViewXml()
 
-        function _makeListItemFromXml (params)
+        function _makeListItemFromXml ($list, params)
         {
             var p = {
                 ParentId: '',
@@ -568,12 +569,13 @@
                     break;
 
                 case "node":
-                    $retLI = _makeObjectClassContent(p);
+                    $retLI = _makeObjectClassContent(p)
+                                .appendTo($list);
                     break;
 
                 case "prop":
                     {   
-                        var lihtml = '';
+                        var $tab;
                         var tab = p.$xmlitem.CswAttrXml('tab');
                         var fieldtype = tryParseString(p.$xmlitem.CswAttrXml('fieldtype'),'').toLowerCase();
                         var gestalt = p.$xmlitem.CswAttrXml('gestalt');
@@ -584,39 +586,50 @@
 
                         if (currenttab !== tab)
                         {
-                            if ( !isNullOrEmpty(currenttab) )
-                            {    
-                                lihtml += _endUL() + _makeUL();
-                            }
-                            lihtml += '<li data-role="list-divider">' + tab + '</li>'
+//                            if ( !isNullOrEmpty(currenttab) )
+//                            {    
+//                                lihtml += _endUL() + _makeUL();
+//                            }
+                            $tab = $('<li data-role="list-divider">' + tab + '</li>')
+                                        .appendTo($list);
                             currenttab = tab;
                         }
+
+                        var $link;
+                        if($tab) 
+                        {
+                            $link = $('<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>')
+                                        .appendTo($tab)
+                        }
+                        else
+                        {
+                            $link = $('<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>')
+                                        .appendTo($list);
+                        } 
 
                         switch (fieldtype)
                         {
                             case 'logical':
-                                lihtml += '<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>';
-
                                 var sf_checked = tryParseString( p.$xmlitem.children('checked').text(), '');
                                 var sf_required = tryParseString( p.$xmlitem.children('required').text(), '');
 
-                                lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                                lihtml += _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required).html();
-                                lihtml += '</div>';
+                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"></div>')
+                                                .appendTo($list);
+                                var $logical = _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required)
+                                                .appendTo($div);
                                 break;
 
                             case 'question':
-                                lihtml += '<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>';
-
                                 var sf_answer = tryParseString( p.$xmlitem.children('answer').text() , '');
                                 var sf_allowedanswers = tryParseString( p.$xmlitem.children('allowedanswers').text(), '');
                                 var sf_compliantanswers = tryParseString( p.$xmlitem.children('compliantanswers').text(), '');
                                 var sf_correctiveaction = tryParseString( p.$xmlitem.children('correctiveaction').text(), '');
                                 
-                                lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                                lihtml +=  _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers).html();
-                                log(_makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers).html());
-                                lihtml += '</div>';
+                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"><div>')
+                                                .appendTo($list);
+                                var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
+                                                .appendTo($div);
+                                //log(_makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers).html());
 
                                 if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
                                 {
@@ -632,39 +645,35 @@
                                 break;
 
                             default:
-                                lihtml += '<li id="' + id + '_li">';
-                                lihtml += ' <a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a>';
-                                lihtml += ' <p class="ui-li-aside">' + gestalt + '</p>';
-                                lihtml += '</li>';
+                                var $gestalt = $(' <p class="ui-li-aside">' + gestalt + '</p>')
+                                                    .appendTo($link);
                                 break;
                         }
 
 
                         // add a div for editing the property directly
-                        var toolbar = '<div data-role="controlgroup data-type="horizontal">';
+                        var $toolbar = $('<div data-role="controlgroup data-type="horizontal"></div>');
                         if ( !isNullOrEmpty(previd) )
                         {
-                            toolbar += '<a data-identity="' + previd + '" data-url="' + previd + '" href="javascript:void(0);" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>';
+                            $toolbar.append( $('<a data-identity="' + previd + '" data-url="' + previd + '" href="javascript:void(0);" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>') );
                         }
                         if ( !isNullOrEmpty(nextid) )
                         {
-                            toolbar += '<a data-identity="' + nextid + '" data-url="' + nextid + '" href="javascript:void(0);" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
+                            $toolbar.append( $('<a data-identity="' + nextid + '" data-url="' + nextid + '" href="javascript:void(0);" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>') );
                         }
                         if( fieldtype === "question")
                         {
-                            toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
+                            $toolbar.append('&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt);
                         }
-                        toolbar += '</div>';
 
                         _addPageDivToBody({
                             ParentId: p.DivId,
                             level: p.parentlevel,
                             DivId: id,
                             HeaderText: text,
-                            toolbar: toolbar,
+                            toolbar: $toolbar,
                             $content: _FieldTypeXmlToHtml(p.$xmlitem, p.DivId)
                         });
-                        $retLI = $(lihtml);
                         break;
                     } // case 'prop':
                 default:
@@ -760,7 +769,7 @@
                     if(!isNullOrEmpty(Status)) Html +=  Status + ', ';
                     Html += 'Due: ' + DueDate + '</p>';
                     Html += '<span id="' + makeSafeId({prefix: id, ID: 'unansweredcnt'}) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
-                    Html += NodeName + '</a>';
+                    Html += '</a>';
                     Html += '</li>';
                     break;
 
