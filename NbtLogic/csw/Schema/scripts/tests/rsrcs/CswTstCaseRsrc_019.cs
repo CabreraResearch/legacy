@@ -15,59 +15,50 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Test Case: 001, part 01
     /// </summary>
-    public class CswTstCaseRsrc_018
+    public class CswTstCaseRsrc_019
     {
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
         private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        public CswTstCaseRsrc_018( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        public CswTstCaseRsrc_019( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
         }//ctor
 
 
-        public string Purpose = "Constrained columns after rolled-back column rename";
+        public string Purpose = "DML an object that was DDLed in the same script";
 
-        public List<PkFkPair> getPkFkPairs() { return ( _CswTestCaseRsrc.getPkFkPairs( 6 ) ); }
+        public string ArbitraryTableName_01 { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
+        public string ArbitraryTableName_02 { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable02 ) ); } }
+
+        public string ArbitraryColumnName_01 { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }
+        public string ArbitraryColumnName_02 { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ) ); } }
+
+        public string ArbitraryColumnValue { get { return ( "snot" ); } }
+
+        public Int32 TotalTestRows { get { return ( 10 ); } }
 
 
-        public string PkTablePkColumnNameNewNameSuffix = "_nuName";
 
-        public void makePkFkTables()
+        public void makeArbitraryTables()
         {
-            List<PkFkPair> PkFkPairs = getPkFkPairs();
-            foreach( PkFkPair CurrentPair in PkFkPairs )
-            {
-                _CswNbtSchemaModTrnsctn.addTable( CurrentPair.PkTableName, CurrentPair.PkTablePkColumnName );
-                _CswNbtSchemaModTrnsctn.addColumn( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ), DataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, DataDictionaryPortableDataType.String, false, false, CurrentPair.PkTableName, DataDictionaryUniqueType.None, false, string.Empty );
+            _CswNbtSchemaModTrnsctn.addTable( ArbitraryTableName_01, ArbitraryTableName_01 + "id" );
+            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_01, ArbitraryColumnName_01, false, false, 20 );
+            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_02, ArbitraryColumnName_02, ArbitraryColumnName_01, false, false, 20 );
 
-                _CswNbtSchemaModTrnsctn.addTable( CurrentPair.FkTableName, CurrentPair.FkTablePkColumnName );
-                _CswNbtSchemaModTrnsctn.addColumn( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ), DataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, DataDictionaryPortableDataType.String, false, false, CurrentPair.FkTableName, DataDictionaryUniqueType.None, false, string.Empty );
-                _CswNbtSchemaModTrnsctn.addColumn( CurrentPair.PkTablePkColumnName, DataDictionaryColumnType.Fk, 20, 0, "foo", "test column", CurrentPair.PkTablePkColumnName, CurrentPair.PkTableName, true, false, false, string.Empty, false, DataDictionaryPortableDataType.Long, false, false, CurrentPair.FkTableName, DataDictionaryUniqueType.None, false, string.Empty );
+            _CswNbtSchemaModTrnsctn.addTable( ArbitraryTableName_02, ArbitraryTableName_02 + "id" );
+            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_01, ArbitraryColumnName_01, false, false, 20 );
+            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_02, ArbitraryColumnName_02, ArbitraryColumnName_01, false, false, 20 );
 
-            }
         }
 
-        public void dropPkFkTables()
+        public void makeArbitraryTableData()
         {
-            //Clean up after ourselves (will verify in next script)
-            List<PkFkPair> PkFkPairs = getPkFkPairs();
-            foreach( PkFkPair CurrentPair in PkFkPairs )
-            {
-                _CswNbtSchemaModTrnsctn.dropTable( CurrentPair.PkTableName );
-                _CswNbtSchemaModTrnsctn.dropTable( CurrentPair.FkTableName );
-            }
+            _CswTestCaseRsrc.fillTableWithArbitraryData( ArbitraryTableName_01, ArbitraryColumnName_01, TotalTestRows, ArbitraryColumnValue );
+            _CswTestCaseRsrc.fillTableWithArbitraryData( ArbitraryTableName_02, ArbitraryColumnName_01, TotalTestRows, ArbitraryColumnValue );
         }
-
-        //public string RealTestTableName { get { return ( _CswTestCaseRsrc.getRealTestTableName( TestTableNamesReal.Nodes ) ); } }
-        //public string RealTestColumnName { get { return ( _CswTestCaseRsrc.getRealTestColumnName( TestColumnNamesReal.NodeName ) ); } }
-
-        //public string FakeTestTableName { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
-        //public string FakeTestColumnName { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }
-
-        //public void testAddColumnValues( TestColumnNamesFake TestColumnName ) { _CswTestCaseRsrc.testAddColumnValues( TestTableNamesReal.DataDictionary, TestColumnName ); }
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

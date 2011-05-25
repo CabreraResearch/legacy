@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.Schema
 
         }//
 
-        public void fillTableWithArbitraryData( string TableName, string ColumnName, Int32 TotalRows )
+        public void fillTableWithArbitraryData( string TableName, string ColumnName, Int32 TotalRows, string Value = "" )
         {
             Int32 ArbitraryValue = 0;
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "fillTableWithArbitraryData_update", TableName );
@@ -142,7 +142,15 @@ namespace ChemSW.Nbt.Schema
             for( Int32 idx = 0; idx < TotalRows; idx++ )
             {
                 DataRow NewRow = PkTableTable.NewRow();
-                NewRow[ColumnName] = getTestNameStem( TestNameStem.TestVal ) + ":" + ( +ArbitraryValue ).ToString();
+
+                if( "" != Value )
+                {
+                    NewRow[ColumnName] = Value;
+                }
+                else
+                {
+                    NewRow[ColumnName] = getTestNameStem( TestNameStem.TestVal ) + ":" + ( +ArbitraryValue ).ToString();
+                }
                 PkTableTable.Rows.Add( NewRow );
             }
             CswTableUpdate.update( PkTableTable );

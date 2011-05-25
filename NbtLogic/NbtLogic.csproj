@@ -361,6 +361,7 @@
     <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_03.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_04.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\019\CswTestCase_019_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_004.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_003.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTestCaseRsrc.cs" />
@@ -382,6 +383,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_018.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_019.cs" />
     <Compile Include="csw\Security\CswNbtAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSystemUser.cs" />
     <Compile Include="csw\Security\ICswNbtUser.cs" />
@@ -467,7 +469,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="csw\Schema\scripts\tests\cases\019\" />
+    <Folder Include="csw\Schema\scripts\tests\cases\020\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\dundant\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\review\" />
   </ItemGroup>

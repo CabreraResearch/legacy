@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.Schema
 
 
         public int purgeTableRecords( string TableName ) { return ( _CswNbtResources.CswResources.purgeTableRecords( TableName ) ); }//purgeTableRecords()
-        public void copyTable( string SourceTableName, string CopyToTableName ) { _CswNbtResources.CswResources.copyTable( SourceTableName, CopyToTableName ); }//copyTable()
+        public void copyTable( string SourceTableName, string CopyToTableName, bool TableIsTemporary = true ) { _CswNbtResources.CswResources.copyTable( SourceTableName, CopyToTableName, TableIsTemporary ); }//copyTable()
 
         public void addTable( string TableName, string PkColumnName )
         {
@@ -360,7 +360,6 @@ namespace ChemSW.Nbt.Schema
                     if( false == ColumnsByTable.ContainsKey( AuditTableName ) )
                     {
                         copyTable( CurrentTableName, AuditTableName );
-                        _CswNbtResources.CswResources.refreshDataDictionary(); 
                         addBooleanColumn( AuditTableName, _CswAuditMetaData.DelegeFlagColName, _CswAuditMetaData.DelegeFlagColDescription, false, false );
                         addForeignKeyColumn( AuditTableName, _CswAuditMetaData.AuditTransactionIdColName, "fk to audittransactions table", false, true, _CswAuditMetaData.AuditTransactionTableName, _CswAuditMetaData.AuditTransactionIdColName );
 
