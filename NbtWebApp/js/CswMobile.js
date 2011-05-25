@@ -553,11 +553,24 @@
 
             var id = makeSafeId({ID: p.$xmlitem.CswAttrXml('id') });
             var text = p.$xmlitem.CswAttrXml('name');
+
             var IsDiv = ( !isNullOrEmpty(id) );
             var PageType = tryParseString(p.$xmlitem.get(0).nodeName,'').toLowerCase();
-
+            
             var nextid = p.$xmlitem.next().CswAttrXml('id');
             var previd = p.$xmlitem.prev().CswAttrXml('id');
+            
+            // add a div for editing the property directly
+            var $toolbar = $('<div data-role="controlgroup data-type="horizontal"></div>');
+            if ( !isNullOrEmpty(previd) )
+            {
+                $toolbar.append( $('<a data-identity="' + previd + '" data-url="' + previd + '" href="javascript:void(0);" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>') );
+            }
+            if ( !isNullOrEmpty(nextid) )
+            {
+                $toolbar.append( $('<a data-identity="' + nextid + '" data-url="' + nextid + '" href="javascript:void(0);" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>') );
+            }
+            
             var $retLI = $('');
             
             switch (PageType)
@@ -622,12 +635,12 @@
                                 var sf_allowedanswers = tryParseString( p.$xmlitem.children('allowedanswers').text(), '');
                                 var sf_compliantanswers = tryParseString( p.$xmlitem.children('compliantanswers').text(), '');
                                 var sf_correctiveaction = tryParseString( p.$xmlitem.children('correctiveaction').text(), '');
-                                
-                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c" data-role="fieldcontain"><div>')
+
+                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"><div>')
                                                 .appendTo($list);
                                 var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                                 .appendTo($div);
-
+                                $div.checkboxradio();
                                 if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
                                 {
                                     // mark the li div OOC after it is created
@@ -642,22 +655,11 @@
                                 break;
 
                             default:
-                                var $gestalt = $(' <p class="ui-li-aside">' + gestalt + '</p>')
+                                var $gestalt = $('<p class="ui-li-aside">' + gestalt + '</p>')
                                                     .appendTo($link);
                                 break;
                         }
 
-
-                        // add a div for editing the property directly
-                        var $toolbar = $('<div data-role="controlgroup data-type="horizontal"></div>');
-                        if ( !isNullOrEmpty(previd) )
-                        {
-                            $toolbar.append( $('<a data-identity="' + previd + '" data-url="' + previd + '" href="javascript:void(0);" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>') );
-                        }
-                        if ( !isNullOrEmpty(nextid) )
-                        {
-                            $toolbar.append( $('<a data-identity="' + nextid + '" data-url="' + nextid + '" href="javascript:void(0);" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>') );
-                        }
                         if( fieldtype === "question")
                         {
                             $toolbar.append('&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt);
@@ -668,7 +670,7 @@
                             level: p.parentlevel,
                             DivId: id,
                             HeaderText: text,
-                            toolbar: $toolbar,
+                            $toolbar: $toolbar,
                             $content: _FieldTypeXmlToHtml(p.$xmlitem, p.DivId)
                         });
                         break;
@@ -694,7 +696,7 @@
                                                 level: p.parentlevel+1,
                                                 DivId: id,
                                                 HeaderText: text,
-                                                toolbar: toolbar
+                                                $toolbar: $toolbar
                             });
                         }
                         break;
@@ -791,41 +793,15 @@
             return $retHtml;
         }
 
-        function _extractCDataValue($node)
-        {
-            var ret = '';			
-			if($node.length > 0)
-			{
-				// default
-            	ret = $node.text();
-
-				// for some reason, CDATA fields come through from the webservice like this:
-				// <node><!--[CDATA[some text]]--></node>
-				var cdataval = $node.html();
-				if ( !isNullOrEmpty(cdataval) )
-				{
-					var prefix = '<!--[CDATA[';
-					var suffix = ']]-->';
-
-					if (cdataval.substr(0, prefix.length) === prefix)
-					{
-						ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
-					}
-				}
-			}
-            return ret;
-        }
-
         function _FieldTypeXmlToHtml($xmlitem, ParentId)
         {
-            var $retHtml = $('<div id="' + IdStr + '_propname" data-role="fieldcontain">' + PropName + '</div>');
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
             var ReadOnly = ( isTrue($xmlitem.CswAttrXml('readonly')) );
 
             // Subfield values
-            var sf_text = tryParseString( _extractCDataValue($xmlitem.children('text')), '');
+            var sf_text = tryParseString( $xmlitem.children('text'), '');
             var sf_value = tryParseNumber( $xmlitem.children('value').text(), '');
             var sf_href = tryParseString( $xmlitem.children('href').text(), '');
             var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
@@ -837,7 +813,8 @@
             var sf_comments = tryParseString( $xmlitem.children('comments').text(), '');
             var sf_compliantanswers = tryParseString( $xmlitem.children('compliantanswers').text(), '');
             var sf_options = tryParseString( $xmlitem.children('options').text(), '');
-
+            
+            var $retHtml = $('<div id="' + IdStr + '_propname">' + PropName + '</div>');
             //var Html = '<div id="' + IdStr + '_propname"';
             if (FieldType === "Question" && !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
             {
@@ -929,7 +906,7 @@
                     case "Question":
                         var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                             .appendTo($retHtml);
-
+                        $retHtml.checkboxradio();
                         var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
                                             .appendTo($question);
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
@@ -1045,8 +1022,15 @@
 
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
         {
-            var $retHtml = $('<div class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain"></div>');
-            
+            var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
+            var $fieldset = $('<fieldset></fieldset>')
+                                .appendTo($retHtml)
+                                .CswAttrDom({
+                                    class: 'csw_fieldset',
+                                    id: IdStr + '_fieldset',
+                                    'data-role': 'controlgroup',
+                                    'data-type': 'horizontal'                                    
+                                 });
             var answers = ['Null', 'True', 'False'];
             if ( isTrue(Required) )
             {
@@ -1065,10 +1049,9 @@
                 var inputName =  makeSafeId({ prefix: IdStr, ID: Suffix});
                 var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]});
                 var $input = $('<input type="radio" name="' + inputName + '" id="' + inputId + '" value="' + answers[i] + '" data-role="button"')
-                                .appendTo($retHtml)
-                                .checkboxradio();
+                                .appendTo($fieldset)
                 var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
-                                .appendTo($retHtml);
+                                .appendTo($fieldset);
 				
                 // Checked is a Tristate, so isTrue() is not useful here
 				if ((Checked === 'false' && answers[i] === 'False') ||
@@ -1113,34 +1096,36 @@
                     } // for (var k = 0; k < answers.length; k++)
                 });
             } // for (var i = 0; i < answers.length; i++)
+            $retHtml.checkboxradio();
             return $retHtml;
         }
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
-            var $retHtml = $('<fieldset></fieldset>')
+            var $retHtml = $('<div data-role="fieldcontain"></div>');
+            var $fieldset = $('<fieldset></fieldset>')
+                                .appendTo($retHtml)
                                 .CswAttrDom({
                                     class: 'csw_fieldset',
                                     id: IdStr + '_fieldset',
                                     'data-role': 'controlgroup',
                                     'data-type': 'horizontal'                                    
-                                });
+                                 });
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
                 var answerid = makeSafeId({ ID: answers[i] });
 				var inputName = makeSafeId({ID: IdStr, suffix: Suffix});
 				var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid});
-                var $input = $('<input type="radio" name="' + inputName + '" id="' + inputId + '" value="' + answers[i] + '" data-role="button"/>')
-								.appendTo($retHtml)
-                                .checkboxradio();
+                var $input = $('<input type="radio" name="' + inputName + '" id="' + inputId + '" value="' + answers[i] + '"/>')
+								.appendTo($fieldset);
 				var $label = $('<label for="' + inputId + '">' + answers[i] + '</label>')
-								.appendTo($retHtml);
+								.appendTo($fieldset);
                 
                 if (Answer === answers[i])
                 {
 					$input.CswAttrDom('checked','checked');
-                }    //' checked';
+                } 
 				$input.click( function() 
 				{
 				
@@ -1212,7 +1197,7 @@
 					}
 				}); //click()
             } // for (var i = 0; i < answers.length; i++)
-            log($retHtml.html());
+            $retHtml.checkboxradio();
             return $retHtml;
         } // _makeQuestionAnswerFieldSet()
 
@@ -1225,7 +1210,7 @@
                 level: 1,
                 DivId: '',
                 HeaderText: '',
-                toolbar: '',
+                $toolbar: '',
                 onPageShow: function(p) { return _loadDivContents(p); }
             };
             if(params) $.extend(p,params);
@@ -1242,8 +1227,8 @@
                 level: 1,
                 DivId: '',       // required
                 HeaderText: '',
-                toolbar: '',
-                $content: '',
+                $toolbar: $(''),
+                $content: $(''),
                 HideSearchButton: false,
                 HideOnlineButton: false,
                 HideRefreshButton: false,
@@ -1305,7 +1290,8 @@
                                          'data-url': p.DivId + '_searchopen', 
                                          'data-transition': 'slidedown' });
                 }
-                $header.CswDiv('init',{class: 'toolbar',value: p.toolbar})
+                $header.CswDiv('init',{class: 'toolbar'})
+                       .append(p.$toolbar)
                        .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
                 var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
                                        .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
@@ -1370,7 +1356,7 @@
             var p = {
                 DivId: '',       // required
                 HeaderText: '',
-                toolbar: '',
+                $toolbar: '',
                 $content: '',
                 HideHelpButton: false
             };
@@ -1392,7 +1378,8 @@
 		        var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
                                         .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'inline'});
                 $header.append($('<h1>' + p.HeaderText + '</h1>'));
-                $header.CswDiv('init',{class: 'toolbar',value: p.toolbar})
+                $header.CswDiv('init',{class: 'toolbar'})
+                        .append(p.$toolbar)
                         .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
                 var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
                                         .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
