@@ -94,7 +94,8 @@
 					'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
 					'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode)
 				};
-				$('#header_username').text(u);
+				$('#header_username').text(u)
+				 					 .hover(function () { $(this).CswAttrDom('title', getTimeout()); });
 				$('#header_dashboard').CswDashboard();
 
 				$('#header_menu').CswMenuHeader({
@@ -125,7 +126,7 @@
 					handleItemSelect({ 'viewid': view.viewid, viewmode: view.viewmode });
 				}
 			} // onAuthenticate
-		});  // CswLogin
+		});    // CswLogin
 
 	} // initAll()
 

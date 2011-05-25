@@ -3,9 +3,16 @@
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
 
+
 // ------------------------------------------------------------------------------------
 // Ajax
 // ------------------------------------------------------------------------------------
+
+var timeout = '';
+function getTimeout()
+{
+	return timeout;
+}
 
 function CswAjaxJSON(options)
 { /// <param name="$" type="jQuery" />
@@ -50,11 +57,12 @@ function CswAjaxJSON(options)
             }
             else
             {
+            	var auth = tryParseString(result.AuthenticationStatus, '');
+            	timeout = tryParseString(result.timeout, '');
 
                 if (o.formobile)
                 {
-                    var auth = tryParseString(result.AuthenticationStatus, '');
-                    _handleAuthenticationStatus({
+                	_handleAuthenticationStatus({
                         status: auth,
                         success: o.success(result),
                         failure: o.onloginfail
@@ -62,8 +70,6 @@ function CswAjaxJSON(options)
                 }
                 else
                 {
-                    var auth = tryParseString(result.AuthenticationStatus, '');
-                    //log("json: " + auth);
                     o.success(result);
                 }
             }
@@ -133,6 +139,7 @@ function CswAjaxXml(options)
                 var $realxml = $xml.children().first();
 
                 var authstatus = $realxml.CswAttrXml('authenticationstatus');
+                timeout = $realxml.CswAttrXml('timeout');
 
                 if ($realxml.first().get(0).nodeName === "error")
                 {

@@ -115,22 +115,20 @@ namespace ChemSW.Nbt.WebServices
 		private void _xAddAuthenticationStatus( XElement XElement, AuthenticationStatus AuthenticationStatusIn )
 		{
 			XElement.SetAttributeValue( "authenticationstatus", AuthenticationStatusIn.ToString() );
-
+			XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
 		}//_xAuthenticationStatus()
 
 
 		private void _xAddAuthenticationStatus( XmlDocument XmlDocument, AuthenticationStatus AuthenticationStatusIn )
 		{
-			XmlAttribute XmlAttribute = XmlDocument.CreateAttribute( "authenticationstatus" );
-			XmlAttribute.Value = AuthenticationStatusIn.ToString();
-			XmlDocument.DocumentElement.Attributes.Append( XmlAttribute );
-
+			CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "authenticationstatus", AuthenticationStatusIn.ToString() );
+			CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
 		}//_xAuthenticationStatus()
 
 		private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn )
 		{
 			JObj.Add( new JProperty( "AuthenticationStatus", AuthenticationStatusIn.ToString() ) );
-
+			JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
 		}//_jAuthenticationStatus()
 
 
