@@ -46,10 +46,10 @@ namespace ChemSW.Nbt.Schema
         {
             _CswNbtSchemaModTrnsctn.addTable( ArbitraryTableName_01, ArbitraryTableName_01 + "id" );
             _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_01, ArbitraryColumnName_01, false, false, 20 );
-            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_02, ArbitraryColumnName_02, ArbitraryColumnName_01, false, false, 20 );
+            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_02, ArbitraryColumnName_01, false, false, 20 );
 
             _CswNbtSchemaModTrnsctn.addTable( ArbitraryTableName_02, ArbitraryTableName_02 + "id" );
-            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_01, ArbitraryColumnName_01, false, false, 20 );
+            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_02, ArbitraryColumnName_01, ArbitraryColumnName_01, false, false, 20 );
             _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_02, ArbitraryColumnName_02, ArbitraryColumnName_01, false, false, 20 );
 
         }
@@ -58,6 +58,18 @@ namespace ChemSW.Nbt.Schema
         {
             _CswTestCaseRsrc.fillTableWithArbitraryData( ArbitraryTableName_01, ArbitraryColumnName_01, TotalTestRows, ArbitraryColumnValue );
             _CswTestCaseRsrc.fillTableWithArbitraryData( ArbitraryTableName_02, ArbitraryColumnName_01, TotalTestRows, ArbitraryColumnValue );
+        }
+
+        public void dropArbitraryTables()
+        {
+            _CswNbtSchemaModTrnsctn.dropTable( ArbitraryTableName_01 );
+            _CswNbtSchemaModTrnsctn.dropTable( ArbitraryTableName_02 );
+        }
+
+        public void verifyTablesDropped()
+        {
+            _CswTestCaseRsrc.assertTableIsAbsent( ArbitraryTableName_01 );
+            _CswTestCaseRsrc.assertTableIsAbsent( ArbitraryTableName_02 );
         }
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback

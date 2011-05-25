@@ -14,20 +14,20 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_019_01 : ICswUpdateSchemaTo
+    public class CswTestCase_019_02 : ICswUpdateSchemaTo
     {
 
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_019.Purpose, "create and use test tables" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_019.Purpose, "use test tables after a commmit and refresh cycle" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_019 _CswTstCaseRsrc_019 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_019_01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public CswTestCase_019_02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
         {
             _CswSchemaVersion = CswSchemaVersion;
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
@@ -38,9 +38,6 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            _CswTstCaseRsrc_019.makeArbitraryTables();
-            _CswTstCaseRsrc_019.makeArbitraryTableData();
-
             CswTableSelect CswTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( Description, _CswTstCaseRsrc_019.ArbitraryTableName_01 );
             DataTable DataTable = CswTableSelect.getTable();
 
@@ -54,8 +51,6 @@ namespace ChemSW.Nbt.Schema
                     throw ( new CswDniException( "A row value in the test table did not match the inserted data" ) );
                 }
             }
-
-
 
         }//runTest()
 
