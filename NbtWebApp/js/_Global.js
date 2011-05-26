@@ -70,9 +70,9 @@ function CswAjaxJSON(options)
     				status: auth,
     				success: function () { o.success(result); },
     				failure: o.onloginfail,
-    				usernodeid: data.nodeid,
-    				usernodekey: data.cswnbtnodekey,
-    				passwordpropid: data.passwordpropid
+    				usernodeid: result.nodeid,
+    				usernodekey: result.cswnbtnodekey,
+    				passwordpropid: result.passwordpropid
     			});
     		}
     	}, // success{}
