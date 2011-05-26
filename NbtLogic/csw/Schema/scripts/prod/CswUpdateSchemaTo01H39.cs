@@ -34,9 +34,24 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addStringColumn( CswAuditMetaData.AuditTransactionTableName, "esigusername", "Name of user who signed the ESIG event", false, false, 50 );
             _CswNbtSchemaModTrnsctn.addStringColumn( CswAuditMetaData.AuditTransactionTableName, "esiguserpassword", "Password of user who signed the ESIG event", false, false, 50 );
 
-            _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
-
-
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "jct_modules_objectclass" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "jct_nodes_props_audit" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "users" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "packdetail" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "object_class_props" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "nodetypes" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "license_accept" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "containers" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "materials_subclass" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "materials_synonyms" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "vendors" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "materials" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "inventory_groups" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "units_of_measure" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "locations" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "node_views" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "packages" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "jct_nodes_props" );
 
         } // update()
 

@@ -42,10 +42,10 @@ namespace ChemSW.Nbt.Schema
 
             CswAuditMetaData CswAuditMetaData  = new Audit.CswAuditMetaData();
             string AuditTableName01 = CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_020.ArbitraryTableName_01 );
-            string AuditTable01PkColumnName = AuditTableName01 + "id";
+            string AuditTable01PkColumnName = CswTools.makePkColNameFromTableName( AuditTableName01 );
 
             string AuditTableName02 = CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_020.ArbitraryTableName_02 );
-            string AuditTable02PkColumnName = AuditTableName02 + "id";
+            string AuditTable02PkColumnName = CswTools.makePkColNameFromTableName( AuditTableName02 );
 
 
             //note that these assert() methods are implicitly testing the meta data as well as the actual tables and columns the DB
