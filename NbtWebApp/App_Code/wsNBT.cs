@@ -60,15 +60,11 @@ namespace ChemSW.Nbt.WebServices
 
 		private void _deInitResources()
 		{
+			_CswSessionResources.endSession();
 			if( _CswNbtResources != null )
 			{
 				_CswNbtResources.finalize();
 				_CswNbtResources.release();
-			}
-
-			if( _CswSessionResources != null )
-			{
-				_CswSessionResources.setCache();
 			}
 		}
 
@@ -119,22 +115,20 @@ namespace ChemSW.Nbt.WebServices
 		private void _xAddAuthenticationStatus( XElement XElement, AuthenticationStatus AuthenticationStatusIn )
 		{
 			XElement.SetAttributeValue( "authenticationstatus", AuthenticationStatusIn.ToString() );
-
+			XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
 		}//_xAuthenticationStatus()
 
 
 		private void _xAddAuthenticationStatus( XmlDocument XmlDocument, AuthenticationStatus AuthenticationStatusIn )
 		{
-			XmlAttribute XmlAttribute = XmlDocument.CreateAttribute( "authenticationstatus" );
-			XmlAttribute.Value = AuthenticationStatusIn.ToString();
-			XmlDocument.DocumentElement.Attributes.Append( XmlAttribute );
-
+			CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "authenticationstatus", AuthenticationStatusIn.ToString() );
+			CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
 		}//_xAuthenticationStatus()
 
 		private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn )
 		{
 			JObj.Add( new JProperty( "AuthenticationStatus", AuthenticationStatusIn.ToString() ) );
-
+			JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
 		}//_jAuthenticationStatus()
 
 
@@ -220,9 +214,6 @@ namespace ChemSW.Nbt.WebServices
 						ReturnVal.Add( new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( FakeKey.ToString() ) ) );
 						CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( _CswNbtResources.CurrentNbtUser.UserNode.Node, _CswNbtResources.CurrentNbtUser.PasswordProperty.NodeTypeProp );
 						ReturnVal.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
-
-
-						_CswSessionResources.purgeExpiredSessions(); //bury the overhead of nuking old sessions in the overhead of authenticating
 					}
 					else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
 					{
@@ -234,6 +225,8 @@ namespace ChemSW.Nbt.WebServices
 					CswNbtWebServiceQuickLaunchItems wsQL = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
 					wsQL.initQuickLaunchItems();
 				}
+
+				_CswSessionResources.purgeExpiredSessions(); //bury the overhead of nuking old sessions in the overhead of authenticating
 
 				_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 				_deInitResources();

@@ -182,6 +182,8 @@ namespace ChemSW.Nbt
             }
         }
 
+		public void endSession() { CswSessionManager.updateLastAccess(); }
+
         //public void setUserResources()
         //{
 
