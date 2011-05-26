@@ -69,7 +69,10 @@ function CswAjaxJSON(options)
     			_handleAuthenticationStatus({
     				status: auth,
     				success: function () { o.success(result); },
-    				failure: o.onloginfail
+    				failure: o.onloginfail,
+    				usernodeid: data.nodeid,
+    				usernodekey: data.cswnbtnodekey,
+    				passwordpropid: data.passwordpropid
     			});
     		}
     	}, // success{}
@@ -136,7 +139,10 @@ function CswAjaxXml(options)
                 	_handleAuthenticationStatus({
                         status: auth,
                         success: function() { o.success($realxml) },
-                        failure: o.onloginfail
+                        failure: o.onloginfail,
+                        usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
+                        usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
+                        passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), '')
                     });
                 }
 

@@ -89,31 +89,20 @@
 															CswAjaxJSON({
 																		url: o.AuthenticateUrl,
 																		data: dataJson,
-																		success: function (data) {
-																			var auth = data.AuthenticationStatus;
-                                                                            if(auth === 'Authenticated')
+																		success: function (data) 
 																			{
 																				_handleAuthenticated(UserName);
-																			}
-																			else 
+																			},
+																		onloginfail: function(txt) 
 																			{
-																				_handleAuthenticationStatus({
-																					status: auth,
-																					success: function() { _handleAuthenticated(UserName); },
-																					failure: function(txt) {
-																						$('#loginmsg').CswErrorMessage({'message': txt });
-																						$('#login_password').val('');   // case 21303
-																						$loginbutton.CswButton('enable');
-																					},
-																					usernodeid: data.nodeid,
-																					usernodekey: data.cswnbtnodekey,
-																					passwordpropid: data.passwordpropid
-																				});
-                                                                            }
-                                                                        },  // success{}
-																		error: function() {
-																			$loginbutton.CswButton('enable');
-																		}
+																				$('#loginmsg').CswErrorMessage({'message': txt });
+																				$('#login_password').val('');   // case 21303
+																				$loginbutton.CswButton('enable');
+																			},
+																		error: function() 
+																			{
+																				$loginbutton.CswButton('enable');
+																			}
 															}); // ajax
 											} // onclick
 							}); // button
