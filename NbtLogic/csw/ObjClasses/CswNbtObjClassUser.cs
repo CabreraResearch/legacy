@@ -422,7 +422,16 @@ namespace ChemSW.Nbt.ObjClasses
                                             CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId );
                                             if( null != TargetNodeType )
                                             {
-                                                ret = PropPermissions.CheckValue( Permission.ToString(), TargetNodeType.FirstVersionNodeTypeId.ToString() );
+                                                if( !IsAdministrator() &&
+                                                    null != TargetNodeType.ObjectClass &&
+                                                    TargetNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass )
+                                                {
+                                                    ret = false;
+                                                }
+                                                else
+                                                {
+                                                    ret = PropPermissions.CheckValue( Permission.ToString(), TargetNodeType.FirstVersionNodeTypeId.ToString() );
+                                                }
                                             }
                                             break;
                                         }
@@ -431,9 +440,17 @@ namespace ChemSW.Nbt.ObjClasses
                                             CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetNodeTypeId );
                                             if( null != TargetObjectClass )
                                             {
-                                                // case 21842 - this doesn't work
-                                                // ret = PropPermissions.CheckValue( Permission.ToString(), TargetObjectClass.ObjectClassId.ToString() );
-                                                ret = true;
+                                                if( !IsAdministrator() &&
+                                                    TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass )
+                                                {
+                                                    ret = false;
+                                                }
+                                                else
+                                                {
+                                                    // case 21842 - this doesn't work
+                                                    // ret = PropPermissions.CheckValue( Permission.ToString(), TargetObjectClass.ObjectClassId.ToString() );
+                                                    ret = true;
+                                                }
                                             }
                                             break;
                                         }
