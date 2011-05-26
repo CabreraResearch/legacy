@@ -424,7 +424,9 @@ namespace ChemSW.Nbt.ObjClasses
                                             {
                                                 if( !IsAdministrator() &&
                                                     null != TargetNodeType.ObjectClass &&
-                                                    TargetNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass )
+                                                    TargetNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
+                                                    null != MetaDataProp.ObjectClassProp &&
+                                                    MetaDataProp.ObjectClassProp == _CswNbtResources.MetaData.getObjectClassProp( Role.ObjectClassPropId ) )
                                                 {
                                                     ret = false;
                                                 }
@@ -441,7 +443,8 @@ namespace ChemSW.Nbt.ObjClasses
                                             if( null != TargetObjectClass )
                                             {
                                                 if( !IsAdministrator() &&
-                                                    TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass )
+                                                    TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
+                                                    MetaDataProp.ObjectClassProp == _CswNbtResources.MetaData.getObjectClassProp( Role.ObjectClassPropId ) )
                                                 {
                                                     ret = false;
                                                 }
