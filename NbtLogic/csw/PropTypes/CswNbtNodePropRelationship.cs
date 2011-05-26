@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.PropTypes
                 CswNbtView Ret = null;
                 if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
                     //Ret.LoadXml(_CswNbtMetaDataNodeTypeProp.ViewId);
-					Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
+                    Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
                 return Ret;
             }
         }
@@ -255,10 +255,13 @@ namespace ChemSW.Nbt.PropTypes
 
             Int32 NodeId = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIDSubField.ToXmlNodeName() );
             if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
-                NodeId = NodeMap[NodeId];
-            RelatedNodeId = new CswPrimaryKey( "nodes", NodeId );
-            if( RelatedNodeId != null )
             {
+                NodeId = NodeMap[NodeId];
+            }
+            CswPrimaryKey NewRelatedNodeId = new CswPrimaryKey( "nodes", NodeId );
+            if( NewRelatedNodeId != RelatedNodeId && null != NewRelatedNodeId )
+            {
+                RelatedNodeId = NewRelatedNodeId;
                 CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", RelatedNodeId.PrimaryKey.ToString() );
                 PendingUpdate = true;
             }
