@@ -123,31 +123,9 @@
                             $('#login_password').clickOnEnter($loginbutton);
 
                         } // if-else(ThisSessionId !== null)
-					},  // login
-
-			'logout': function(options) { _Logout(options); }
+					}  // login
 		};
 
-
-		function _Logout(options) {
-			var o = {
-				DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
-				onDeauthenticate: function() {}
-			};
-
-			if (options) {
-				$.extend(o, options);
-			}
-						
-			CswAjaxJSON({
-							url: o.DeauthenticateUrl,
-							data: {},
-							success: function (data) {
-								$.CswCookie('clear', CswCookieName.Username);
-								o.onDeauthenticate();
-							} // success{}
-						});                        
-		} // logout
 
 
 		// Method calling logic

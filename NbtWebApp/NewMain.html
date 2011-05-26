@@ -101,13 +101,7 @@
 				$('#header_menu').CswMenuHeader({
 					'onLogout': function ()
 					{
-						$('#CenterBottomDiv').CswLogin('logout', {
-							'onDeauthenticate': function ()
-							{
-								$.CswCookie('clearAll');
-								window.location = 'NewMain.html';
-							} // onDeauthenticate
-						}); // CswLogin
+						Logout();
 					} // onLogout
 				}); // CswMenuHeader
 
@@ -126,7 +120,7 @@
 					handleItemSelect({ 'viewid': view.viewid, viewmode: view.viewmode });
 				}
 			} // onAuthenticate
-		});    // CswLogin
+		});     // CswLogin
 
 	} // initAll()
 

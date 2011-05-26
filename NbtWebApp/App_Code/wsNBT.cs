@@ -252,6 +252,7 @@ namespace ChemSW.Nbt.WebServices
 
 				_CswSessionResources.CswSessionManager.clearSession();
 				ReturnVal.Add( new JProperty( "Deauthentication", "Succeeded" ) );
+				_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Deauthenticated );
 				_deInitResources();
 			}
 			catch( Exception ex )
