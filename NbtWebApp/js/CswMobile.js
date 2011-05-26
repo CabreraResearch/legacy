@@ -1306,7 +1306,7 @@
 
                 $header.append($('<h1>' + p.HeaderText + '</h1>'));
 
-                searchButton = $header.CswLink('init',{'href': 'javascript:void(0)', 
+                $searchBtn = $header.CswLink('init',{'href': 'javascript:void(0)', 
                                             ID: p.DivId + '_searchopen',
                                             text: 'Search' })
                                       .CswAttrXml({'data-identity': p.DivId + '_searchopen', 
