@@ -199,7 +199,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( !Required )
                     Options.Add( new CswPrimaryKey(), "" );
 
-                ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
+                ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false, false );
                 for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
                 {
                     CswNbtTree.goToNthChild( c );
