@@ -30,6 +30,7 @@ var CswViewEditor_WizardSteps = {
 			ID: 'vieweditor',
 			ColumnViewName: 'VIEWNAME', 
 			ColumnViewId: 'NODEVIEWID',
+			ColumnFullViewId: 'VIEWID',
 			ColumnViewMode: 'VIEWMODE',
 			onCancel: function() {},
 			onFinish: function(viewid, viewmode) {},
@@ -80,6 +81,7 @@ var CswViewEditor_WizardSteps = {
 		function onViewGridSuccess($vg) { 
 			$viewgrid = $vg; 
 		}
+
 		_getViewsGrid(onViewGridSuccess, o.viewid);
 
 		var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: '100%' });
@@ -106,7 +108,7 @@ var CswViewEditor_WizardSteps = {
 			'disableOnClick': true,
 			'onclick': function() {
 				var viewid = _getSelectedViewId($viewgrid);
-				if(viewid !== '' && viewid !== undefined)
+				if(!isNullOrEmpty(viewid))
 				{
                     var dataJson = {
                         ViewId: viewid
@@ -397,7 +399,7 @@ var CswViewEditor_WizardSteps = {
 			}); // ajax
 		} //_handleFinish
 
-		function _getViewsGrid(onSuccess, selectedrowpk)
+		function _getViewsGrid(onSuccess, selectedviewid)
 		{
 			var all = false;
 			if($('#'+ o.ID + '_all:checked').length > 0)
@@ -407,8 +409,10 @@ var CswViewEditor_WizardSteps = {
 			if(o.startingStep === 1)
 				$wizard.CswWizard('button', 'next', 'disable');
             
+			// passing selectedviewid in allows us to translate SessionViewIds to ViewIds
             var dataJson = {
-                All: all
+                All: all,
+				SelectedViewId: selectedviewid
             };
 
 			CswAjaxJSON({
@@ -443,12 +447,12 @@ var CswViewEditor_WizardSteps = {
 					};
 					$.extend(gridJson, mygridopts);
 
-					$viewgrid.jqGrid(gridJson);
-								//.hideCol(o.ColumnViewId);
+					$viewgrid.jqGrid(gridJson)
+							.hideCol(o.ColumnFullViewId);
 
-					if(selectedrowpk !== undefined)
+					if(!isNullOrEmpty( gridJson.selectedpk ))
 					{
-						$viewgrid.setSelection(_getRowForPk($viewgrid, selectedrowpk));
+						$viewgrid.setSelection(_getRowForPk($viewgrid, gridJson.selectedpk));
 						$viewgrid.CswNodeGrid('scrollToSelectedRow');
 					}
 					onSuccess($viewgrid);
@@ -460,7 +464,7 @@ var CswViewEditor_WizardSteps = {
 		{
 			var ret = '';
 			if(o.startingStep === 1) {
-				ret = _getSelectedRowValue($viewgrid, o.ColumnViewId);
+				ret = _getSelectedRowValue($viewgrid, o.ColumnFullViewId);
 			} else {
 				ret = o.viewid;
 			}
