@@ -108,11 +108,7 @@ namespace ChemSW.Nbt.ObjClasses
             // BZ 5906
             UsernameProperty.ReadOnly = true;
 
-            CswPrimaryKey ThisUserPk = ( null == _UserNode ) ? null : _UserNode.NodeId;
-            CswPrimaryKey CurrentUserPk = ( null == ThisUserPk ) ? null : _CswNbtResources.CurrentNbtUser.UserNode.NodeId;
-
-            if( ( Role.WasModified && !( _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) &&
-                ThisUserPk != CurrentUserPk )
+            if( ( Role.WasModified && !( _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) )
             {
                 throw new CswDniException( "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
             }

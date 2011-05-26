@@ -59,10 +59,6 @@ namespace ChemSW.Nbt.ObjClasses
                 _CswNbtNode.Properties.clearModifiedFlag();  // prevents multiple error messages from appearing if we attempt to write() again
                 throw new CswDniException( "Users may not change their own administrator status", "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the Administrator property of their own Role" );
             }
-            if( _CswNbtResources.CurrentUser.RoleId != _CswNbtNode.NodeId && !( _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
-            {
-                throw new CswDniException( "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
-            }
             _CswNbtObjClassDefault.beforeWriteNode();
         }//beforeWriteNode()
 
