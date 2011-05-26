@@ -1802,7 +1802,7 @@
 
                     // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
                     // However, it appears to work, for now.
-                    _updateStoredViewXml(rootid, $($currentViewXml.wrap('<wrapper />').parent().html() ), '1');
+                    _updateStoredViewXml(rootid, $currentViewXml, '1');
 
                     _resetPendingChanges(true, false);
                 }
