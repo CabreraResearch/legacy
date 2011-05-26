@@ -19,7 +19,8 @@ namespace ChemSW.Nbt
                                   Int32 PageSize, 
                                   bool FetchAllPrior,
                                   bool SingleLevelOnly, 
-                                  CswNbtNodeKey IncludedKey);
+                                  CswNbtNodeKey IncludedKey,
+					  			  bool RequireViewPermissions );
     }//CswNbtTreeLoader
 
 }//namespace ChemSW.Nbt
