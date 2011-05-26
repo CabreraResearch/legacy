@@ -1106,15 +1106,16 @@
                         
                         if (answers[k] === answers[i])
                         {
-                            $answer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
+                            //$answer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
                             $otherradio.CswAttrDom('checked', 'checked');
-                            $otherradio.siblings('label').addClass('ui-btn-active');
+                            $otherradio.checkboxradio('refresh');
+                            //$otherradio.siblings('label').addClass('ui-btn-active');
                         }
                         else
                         {
-                            $answer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
-                            $otherradio.CswAttrDom('checked', false);
-                            $otherradio.siblings('label').removeClass('ui-btn-active');
+                            //$answer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
+                            $otherradio.removeProp('checked');
+                            //$otherradio.siblings('label').removeClass('ui-btn-active');
                         }
                     } // for (var k = 0; k < answers.length; k++)
                 });
@@ -1150,7 +1151,7 @@
                 } 
 				$answer.click( function() 
 				{
-
+                    alert('question clicked');
 					for (var k = 0; k < answers.length; k++)
 					{
                         var suffixAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
@@ -1158,20 +1159,23 @@
 						
                         var oSuffixAnswerId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
 						var $oSuffixAnswer = $('#' + oSuffixAnswerId);
-						if (answers[k] === answers[i])
+						
+                        if (answers[k] === answers[i])
 						{
-                            $suffixAnswer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
+                            //$suffixAnswer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
 							$oSuffixAnswer.CswAttrDom('checked', 'checked');
-							$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
-                            $oSuffixAnswer.siblings('label').addClass('ui-btn-active');
+						    $oSuffixAnswer.checkboxradio('refresh');
+                        	//$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
+                            //$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
 						} 
                         else
 						{
-							$suffixAnswer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
-                            $oSuffixAnswer.CswAttrDom('checked', false);
-							$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
-                            $oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
+							//$suffixAnswer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
+                            $oSuffixAnswer.removeProp('checked');
+							//$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
+                            //$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
 						}
+                        
 					} // for (var k = 0; k < answers.length; k++)
 					
 					var correctiveActionId = makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix});
@@ -1185,20 +1189,21 @@
 					if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
 					{
 						$cor.css('display','none');
-						$li.removeClass('OOC');
+						$li.children('div').removeClass('OOC');
 						$prop.removeClass('OOC');
 					}
 					else
 					{
 						$cor.css('display','');
-						if($cor.val() === '')
+
+						if( isNullOrEmpty($cor.val()) )
 						{
-							$li.addClass('OOC');
+							$li.children('div').addClass('OOC');
 							$prop.addClass('OOC');
 						}
 						else
 						{
-							$li.removeClass('OOC');
+							$li.children('div').removeClass('OOC');
 							$prop.removeClass('OOC');
 						}
 					}
@@ -1215,7 +1220,7 @@
 					}
 				}); //click()
             } // for (var i = 0; i < answers.length; i++)
-            $retHtml.checkboxradio();
+            //$retHtml.checkboxradio();
             return $retHtml;
         } // _makeQuestionAnswerFieldSet()
 
