@@ -10,24 +10,25 @@ using ChemSW.Exceptions;
 using ChemSW.DB;
 using ChemSW.Nbt.Schema;
 using ChemSW.Core;
+using ChemSW.Audit;
 
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_020_02 : ICswUpdateSchemaTo
+    public class CswTestCase_020_05 : ICswUpdateSchemaTo
     {
 
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_020.Purpose, "create audit tables" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_020.Purpose, "verify tear down test data" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_020 _CswTstCaseRsrc_020 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_020_02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public CswTestCase_020_05( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
         {
             _CswSchemaVersion = CswSchemaVersion;
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
@@ -38,9 +39,15 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( _CswTstCaseRsrc_020.ArbitraryTableName_01 );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( _CswTstCaseRsrc_020.ArbitraryTableName_02 );
 
+            CswAuditMetaData CswAuditMetaData = new Audit.CswAuditMetaData();
+            string AuditTableName01 = CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_020.ArbitraryTableName_01 );
+            string AuditTableName02 = CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_020.ArbitraryTableName_02 );
+
+            _CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_020.ArbitraryTableName_01 );
+            _CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_020.ArbitraryTableName_02 );
+            _CswTstCaseRsrc.assertTableIsAbsent( AuditTableName01 );
+            _CswTstCaseRsrc.assertTableIsAbsent( AuditTableName02 );
 
         }//runTest()
 

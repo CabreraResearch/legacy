@@ -201,18 +201,18 @@ namespace ChemSW.Nbt.Schema
             string ThrowMessage = string.Empty;
             if( string.Empty == ThrowMessageIn )
             {
-                ThrowMessage = " was not removed from data base";
+                ThrowMessage = " exists in ";
             }
             else
             {
                 ThrowMessage = " " + ThrowMessageIn;
             }
 
-            if(  _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( TableName, ColumnName ) )
-                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage ) );
+            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( TableName, ColumnName ) )
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the database " ) );
 
             if( _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( TableName, ColumnName ) )
-                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage ) );
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the meta data ") );
 
         }//assertColumnIsAbsent() 
 
@@ -221,18 +221,18 @@ namespace ChemSW.Nbt.Schema
             string ThrowMessage = string.Empty;
             if( string.Empty == ThrowMessageIn )
             {
-                ThrowMessage = " was not removed from data base"; 
+                ThrowMessage = " does not exist in ";
             }
             else
             {
-                ThrowMessage = " " + ThrowMessageIn; 
+                ThrowMessage = " " + ThrowMessageIn;
             }
 
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( TableName, ColumnName ) )
-                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage ) );
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the data base") );
 
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( TableName, ColumnName ) )
-                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage) );
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the meta data" ) );
 
         }//assertColumnIsAbsent() 
 
@@ -241,9 +241,23 @@ namespace ChemSW.Nbt.Schema
             if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TableName ) )
                 throw ( new CswDniException( "Table " + TableName + " was not dropped from the database" ) );
 
+            if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TableName ) )
+                throw ( new CswDniException( "Table " + TableName + " was not dropped from meta data" ) );
+
+        }//assertTableIsAbsent() 
+
+        public void assertTableIsPresent( string TableName )
+        {
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TableName ) )
+                throw ( new CswDniException( "Table " + TableName + " was not in the database" ) );
+
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TableName ) )
+                throw ( new CswDniException( "Table " + TableName + " in not in the meta data" ) );
+
         }//assertTableIsAbsent() 
 
 
-    }
+
+    }//CswTestCaseRsrc
 
 }//ChemSW.Nbt.Schema
