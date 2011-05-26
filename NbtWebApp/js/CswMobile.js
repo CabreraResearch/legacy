@@ -1265,6 +1265,12 @@
 
             var $pageDiv = $('#' + p.DivId);
 
+            var $searchBtn = $('#' + p.DivId + '_searchopen');
+            var $synchstatusBtn = $('#' + p.DivId + '_gosynchstatus');
+            var $refreshBtn = $('#' + p.DivId + '_refresh');
+            var $logoutBtn = $('#' + p.DivId + '_logout');
+            var $helpBtn = $('#' + p.DivId + '_help');
+
             if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
             {
                 $pageDiv = $body.CswDiv('init',{ID: p.DivId})
@@ -1299,15 +1305,15 @@
                 }
 
                 $header.append($('<h1>' + p.HeaderText + '</h1>'));
-                if (!p.HideSearchButton)
-                {
-                    $header.CswLink('init',{'href': 'javascript:void(0)', 
+
+                searchButton = $header.CswLink('init',{'href': 'javascript:void(0)', 
                                             ID: p.DivId + '_searchopen',
                                             text: 'Search' })
-                            .CswAttrXml({'data-identity': p.DivId + '_searchopen', 
-                                         'data-url': p.DivId + '_searchopen', 
-                                         'data-transition': 'slidedown' });
-                }
+                                      .CswAttrXml({'data-identity': p.DivId + '_searchopen', 
+                                                   'data-url': p.DivId + '_searchopen', 
+                                                   'data-transition': 'slidedown',
+                                                   'data-role': 'button' });
+
                 $header.CswDiv('init',{class: 'toolbar'})
                        .append(p.$toolbar)
                        .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
@@ -1316,52 +1322,79 @@
                                        .append(p.$content);
                 var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
                                       .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
-                if (!p.HideOnlineButton)
-                {
-                    var $online;
-                    var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
-                    var onlineValue = (amOffline()) ? 'Offline' : 'Online';
 
-                    $online = $footer.CswLink('init',{'href': 'javascript:void(0)', 
-                                                      ID: p.DivId + '_gosynchstatus', 
-                                                      class: onlineClass,  
-                                                      value: onlineValue })
-                                      .CswAttrXml({'data-identity': p.DivId + '_gosynchstatus', 
-                                                   'data-url': p.DivId + '_gosynchstatus', 
-                                                   'data-transition': 'slideup' });
-                }
-                if (!p.HideRefreshButton)
-                {
-                    $footer.CswLink('init',{'href': 'javascript:void(0)', 
-                                            ID: p.DivId + '_refresh', 
-                                            value:'Refresh', 
-                                            class: 'refresh'})
-                           .CswAttrXml({'data-identity': p.DivId + '_refresh', 
-                                        'data-url': p.DivId + '_refresh' });
-                }
-                if (!p.HideLogoutButton)
-                {
-                    $footer.CswLink('init',{'href': 'javascript:void(0)', 
-                                            ID: p.DivId + '_logout', 
-                                            value: 'Logout' })
-                           .CswAttrXml({'data-identity': p.DivId + '_logout', 
-                                        'data-url': p.DivId + '_logout', 
-                                        'data-transition': 'flip' });
-                }
+                
+                var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
+                var onlineValue = (amOffline()) ? 'Offline' : 'Online';
+
+                $synchstatusBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                                    ID: p.DivId + '_gosynchstatus', 
+                                                    class: onlineClass,  
+                                                    value: onlineValue })
+                                    .CswAttrXml({'data-identity': p.DivId + '_gosynchstatus', 
+                                                'data-url': p.DivId + '_gosynchstatus', 
+                                                'data-transition': 'slideup',
+                                                'data-role': 'button' });
+
+                $refreshBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                                       ID: p.DivId + '_refresh', 
+                                                       value:'Refresh', 
+                                                       class: 'refresh'})
+                                      .CswAttrXml({'data-identity': p.DivId + '_refresh', 
+                                                   'data-url': p.DivId + '_refresh',
+                                                   'data-role': 'button' });
+
+                $logoutBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                                    ID: p.DivId + '_logout', 
+                                                    value: 'Logout' })
+                                   .CswAttrXml({'data-identity': p.DivId + '_logout', 
+                                                'data-url': p.DivId + '_logout', 
+                                                'data-transition': 'flip' });
+                
             
-                $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'})
-                       .CswAttrXml('data-transition', 'pop');
+                var $mainBtn = $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'})
+                                      .CswAttrXml('data-transition', 'pop');
 
-                if (!p.HideHelpButton)
-                {
-                    $footer.CswLink('init',{'href': 'javascript:void(0)', 
-                                            ID: p.DivId + '_help', 
-                                            value: 'Help' })
-                           .CswAttrXml({'data-identity': p.DivId + '_help', 
-                                        'data-url': p.DivId + '_help', 
-                                        'data-transition': 'slideup' });
-                }
+
+                $helpBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                                   ID: p.DivId + '_help', 
+                                                   value: 'Help' })
+                                   .CswAttrXml({'data-identity': p.DivId + '_help', 
+                                                'data-url': p.DivId + '_help', 
+                                                'data-transition': 'slideup' });
             }
+
+            if ( p.HideOnlineButton ) { 
+                $synchstatusBtn.hide(); 
+            }
+            else {
+                $synchstatusBtn.show(); 
+            }
+            if ( p.HideHelpButton ) {
+                $helpBtn.hide();
+            }
+            else {
+                $helpBtn.show();
+            }
+            if ( p.HideLogoutButton ) {
+                $logoutBtn.hide();
+            }
+            else {
+                $logoutBtn.show();
+            }
+            if ( p.HideRefreshButton ) {
+                $refreshBtn.hide();
+            }
+            else {
+                $refreshBtn.show();
+            }
+            if ( p.HideSearchButton ) {
+                $searchBtn.hide();
+            }
+            else {
+                $searchBtn.show();
+            }
+
             //if(p.level === 0) $pageDiv.doPage();
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
