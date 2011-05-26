@@ -66,6 +66,10 @@ var CswViewEditor_WizardSteps = {
 				'onFinish': _handleFinish
 			});
 
+		// don't activate Save and Finish until step 2
+		if(o.startingStep === 1)
+			$wizard.CswWizard('button', 'finish', 'disable');
+
         // Step 1 - Choose a View
 		var $div1 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step1.step);
 		var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  "+
@@ -262,6 +266,8 @@ var CswViewEditor_WizardSteps = {
 				case CswViewEditor_WizardSteps.step1.step:
                     break;
 				case CswViewEditor_WizardSteps.step2.step:
+					$wizard.CswWizard('button', 'finish', 'enable');
+
                     var dataXml = {
                         ViewId: _getSelectedViewId($viewgrid)
                     };
@@ -351,6 +357,9 @@ var CswViewEditor_WizardSteps = {
 
 		function _handlePrevious(newstepno)
 		{
+			if(newstepno === 1)
+				$wizard.CswWizard('button', 'finish', 'disable');
+			
             CurrentStep = newstepno;
 			switch(newstepno)
 			{
