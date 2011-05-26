@@ -1149,9 +1149,8 @@
                 {
                     $answer.CswAttrDom('checked','checked');
                 } 
-				$answer.click( function() 
+				$answer.bind('click', function(eventObj) 
 				{
-                    alert('question clicked');
 					for (var k = 0; k < answers.length; k++)
 					{
                         var suffixAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
@@ -1218,6 +1217,7 @@
 							$fieldset.CswAttrDom('answered','true');
 						}
 					}
+                    onPropertyChange(ParentId,eventObj);
 				}); //click()
             } // for (var i = 0; i < answers.length; i++)
             //$retHtml.checkboxradio();
@@ -1492,9 +1492,9 @@
                 .find('#' + DivId + '_help')
                 .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
                 .end()
-                .find('input')
-                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-                .end()
+//                .find('input')
+//                .change(function (eventObj) {  onPropertyChange(DivId, eventObj); })
+//                .end()
                 .find('textarea')
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
