@@ -1094,25 +1094,21 @@
                     var i = $(this).data('thisI');
                     for (var k = 0; k < answers.length; k++)
                     {
-                        var thisAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k]});
-                        var $answer = $('#' + thisAnswerId);
+                        var input1Id = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k]});
+                        var $input1 = $('#' + input1Id);
 
-                        var radioId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
-                        var $otherradio = $('#' + radioId);
+                        var input2Id = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
+                        var $input2 = $('#' + input2Id);
                         
                         if (answers[k] === answers[i])
                         {
-                            //$answer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
-                            $otherradio.CswAttrDom('checked', 'checked');
-                            $answer.CswAttrDom('checked', 'checked');
-                            //$otherradio.siblings('label').addClass('ui-btn-active');
+                            $input1.CswAttrDom('checked', 'checked');
+                            $input2.CswAttrDom('checked', 'checked');
                         }
                         else
                         {
-                            //$answer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
-                            $otherradio.removeAttr('checked');
-                            $answer.removeAttr('checked');
-                            //$otherradio.siblings('label').removeClass('ui-btn-active');
+                            $input1.removeAttr('checked');
+                            $input2.removeAttr('checked');
                         }
                     } // for (var k = 0; k < answers.length; k++)
                 });
@@ -1155,23 +1151,23 @@
 
 					for (var k = 0; k < answers.length; k++)
 					{
-                        var suffixAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
-                        var $suffixAnswer = $('#' + suffixAnswerId);
+                        var answer1Id = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
+                        var $answer1 = $('#' + answer1Id);
 
-                        var oSuffixAnswerId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
-						var $oSuffixAnswer = $('#' + oSuffixAnswerId);
+                        var answer2Id = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
+						var $answer2 = $('#' + answer2Id);
 
                         if (answers[k] === answers[thisI])
 						{
-                            $suffixAnswer.CswAttrDom('checked', 'checked');
-                            $oSuffixAnswer.CswAttrDom('checked', 'checked');
+                            $answer1.CswAttrDom('checked', 'checked');
+                            $answer2.CswAttrDom('checked', 'checked');
                             //$suffixAnswer.checkboxradio('refresh');
                             //$oSuffixAnswer.checkboxradio('refresh');
 						} 
                         else
 						{
-                            $suffixAnswer.removeAttr('checked');
-                            $oSuffixAnswer.removeAttr('checked');
+                            $answer1.removeAttr('checked');
+                            $answer2.removeAttr('checked');
 						}
                         
 					} // for (var k = 0; k < answers.length; k++)
