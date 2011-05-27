@@ -1063,6 +1063,7 @@
             {
                 answers = ['True', 'False'];
             }
+            var inputName = makeSafeId({ prefix: IdStr, ID: Suffix}); //Name needs to be non-unique and shared
 
             for (var i = 0; i < answers.length; i++)
             {
@@ -1073,8 +1074,9 @@
                     case 'True': answertext = 'Yes'; break;
                     case 'False': answertext = 'No'; break;
                 }
+                
                 var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]});
-                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, ID: inputId, value: answers[i]})
+                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i]})
                                 .CswAttrXml('data-role','button');
                 var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
                                 .appendTo($fieldset);
@@ -1132,49 +1134,45 @@
                                     'data-type': 'horizontal'  
                                  });
             var answers = Options.split(',');
+            var answerName = makeSafeId({ prefix: IdStr, ID: Suffix }); //Name needs to be non-unqiue and shared
+
             for (var i = 0; i < answers.length; i++)
             {
 				var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                var $answer = $fieldset.CswInput('init',{type: CswInput_Types.radio, ID: answerid, value: answers[i] })
+                var $answer = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: answerName, ID: answerid, value: answers[i] })
 								.CswAttrXml('data-role','button');
 				var $label = $('<label for="' + answerid + '">' + answers[i] + '</label>')
 								.appendTo($fieldset);
-                
                 if (Answer === answers[i])
                 {
                     $answer.CswAttrDom('checked','checked');
                 } 
                 $answer.data('thisI',i);
 
-				$answer.click( function(eventObj) 
+				$answer.bind('change', function(eventObj) 
 				{
                     var thisI = $(this).data('thisI');
+
 					for (var k = 0; k < answers.length; k++)
 					{
                         var suffixAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
                         var $suffixAnswer = $('#' + suffixAnswerId);
-						
+
                         var oSuffixAnswerId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
 						var $oSuffixAnswer = $('#' + oSuffixAnswerId);
 
                         if (answers[k] === answers[thisI])
 						{
-                            //$suffixAnswer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
                             $suffixAnswer.CswAttrDom('checked', 'checked');
                             $oSuffixAnswer.CswAttrDom('checked', 'checked');
-						    //$oSuffixAnswer.checkboxradio('refresh');
-                        	//$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
-                            //$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
+                            //$suffixAnswer.checkboxradio('refresh');
+                            //$oSuffixAnswer.checkboxradio('refresh');
 						} 
                         else
 						{
-							//$suffixAnswer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
                             $suffixAnswer.removeAttr('checked');
                             $oSuffixAnswer.removeAttr('checked');
-							//$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
-                            //$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
 						}
-                        //$suffixAnswer.checkboxradio('refresh');
                         
 					} // for (var k = 0; k < answers.length; k++)
 					
@@ -1795,7 +1793,6 @@
 //                {
 
                     var $divxml = $currentViewXml.find('#' + DivId);
-                    debugger;
                     $divxml.andSelf().find('prop').each(function ()
                     {
                         var $fieldtype = $(this);
