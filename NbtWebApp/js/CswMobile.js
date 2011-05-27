@@ -45,21 +45,6 @@
         return $ret;
     }
 
-//    $.fn.refreshJqm = function()
-//    {
-//        //JQM doesnot yet have a refresh all method, so we must do this manually
-//        var $element = $(this);
-//        if( !isNullOrEmpty($element) )
-//        {
-//            $element.find('input[type="checkbox"]').checkboxradio('refresh');
-//            $element.find('input[type="radio"]').checkboxradio('refresh');
-//            $element.find('input[type="range"]').slider('refresh'); //slider
-//            $element.find('select').selectmenu('refresh');
-//            $element.find('ul').listview('refresh');
-//        }
-//        return $element;
-//    }
-
     $.fn.doChangePage = function (transition, reverse, changeHash)
 	{
         var $div = $(this);
@@ -112,19 +97,19 @@
                 $.mobile.pageLoading(true);
             });
 
-            //$div.unbind('pagebeforecreate');
-            $div.bind('pagebeforecreate', function()
-            {
-                //$div.find('input[type="radio"]').checkboxradio();
-                //$div.find('input[type="checkbox"]').checkboxradio();
-            });
+//            $div.unbind('pagebeforecreate');
+//            $div.bind('pagebeforecreate', function()
+//            {
+//                //$div.find('input[type="radio"]').checkboxradio();
+//                //$div.find('input[type="checkbox"]').checkboxradio();
+//            });
 
-            //$div.unbind('pagecreate');
-            $div.bind('pagecreate', function()
-            {
-                //$div.find('input[type="radio"]').checkboxradio('refresh',true);
-                //$div.find('input[type="checkbox"]').checkboxradio('refresh',true);
-            });
+//            $div.unbind('pagecreate');
+//            $div.bind('pagecreate', function()
+//            {
+//                //$div.find('input[type="radio"]').checkboxradio('refresh',true);
+//                //$div.find('input[type="checkbox"]').checkboxradio('refresh',true);
+//            });
         }
         return $ret;
     }
@@ -1155,8 +1140,11 @@
                 {
                     $answer.CswAttrDom('checked','checked');
                 } 
-				$answer.bind('click', function(eventObj) 
+                $answer.data('thisI',i);
+
+				$answer.click( function(eventObj) 
 				{
+                    var thisI = $(this).data('thisI');
 					for (var k = 0; k < answers.length; k++)
 					{
                         var suffixAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
@@ -1164,22 +1152,25 @@
 						
                         var oSuffixAnswerId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
 						var $oSuffixAnswer = $('#' + oSuffixAnswerId);
-						
-                        if (answers[k] === answers[i])
+
+                        if (answers[k] === answers[thisI])
 						{
                             //$suffixAnswer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
-							$oSuffixAnswer.CswAttrDom('checked', 'checked');
-						    $oSuffixAnswer.checkboxradio('refresh');
+                            $suffixAnswer.CswAttrDom('checked', 'checked');
+                            $oSuffixAnswer.CswAttrDom('checked', 'checked');
+						    //$oSuffixAnswer.checkboxradio('refresh');
                         	//$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
                             //$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
 						} 
                         else
 						{
 							//$suffixAnswer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
-                            $oSuffixAnswer.removeProp('checked');
+                            $suffixAnswer.removeAttr('checked');
+                            $oSuffixAnswer.removeAttr('checked');
 							//$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
                             //$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
 						}
+                        //$suffixAnswer.checkboxradio('refresh');
                         
 					} // for (var k = 0; k < answers.length; k++)
 					
@@ -1191,7 +1182,7 @@
 					var $li = $('#' + liSuffixId);
 					var $prop = $('#' + propNameSuffixId);
 					
-					if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
+					if ((',' + CompliantAnswers + ',').indexOf(',' + answers[thisI] + ',') >= 0)
 					{
 						$cor.css('display','none');
 						$li.children('div').removeClass('OOC');
@@ -1212,7 +1203,7 @@
 							$prop.removeClass('OOC');
 						}
 					}
-					if ( isNullOrEmpty(Answer) )
+					if ( !isNullOrEmpty(Answer) )
 					{
 						// update unanswered count when this question is answered
 						var $fieldset = $('#' + IdStr + '_fieldset');
