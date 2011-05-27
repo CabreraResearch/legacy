@@ -1767,11 +1767,14 @@
                                                'data-url': DivId });
             
             $('#synchstatus_back').css('visibility', '');
+
+            $syncstatus.doChangePage();
         }
 
         function onHelp(DivId, eventObj)
         {
-            //
+            $help = _makeHelpDiv();
+            $help.doChangePage();
         }
 
         function onPropertyChange(DivId, eventObj)
