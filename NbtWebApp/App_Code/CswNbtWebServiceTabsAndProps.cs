@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.WebServices
 		} // addProp()
 
 
-		private XmlNode _makePropXml( XmlNode ParentXmlNode, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 Row, Int32 Column )
+        private XmlNode _makePropXml( XmlNode ParentXmlNode, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 Row, Int32 Column )
 		{
 			XmlNode PropXmlNode = CswXmlDocument.AppendXmlNode( ParentXmlNode, "prop" );
 
@@ -249,7 +249,10 @@ namespace ChemSW.Nbt.WebServices
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displayrow", Row.ToString() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displaycol", Column.ToString() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "required", Prop.IsRequired.ToString().ToLower() );
-			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", ( Prop.ReadOnly || PropWrapper.ReadOnly ).ToString().ToLower() );
+            bool IsReadOnly = ( Prop.ReadOnly || PropWrapper.ReadOnly ||
+                !_CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Edit, Prop.NodeType.NodeTypeId, Node, Prop ) );
+
+            CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", IsReadOnly.ToString().ToLower() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "gestalt", PropWrapper.Gestalt.Replace( "\"", "&quot;" ) );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "copyable", Prop.IsCopyable().ToString().ToLower() );
 

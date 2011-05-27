@@ -1,4 +1,5 @@
-﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../jquery/jquery.mobile/jquery.mobile.2011.5.17.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
@@ -8,7 +9,7 @@
 // Globals (yuck)
 // ------------------------------------------------------------------------------------
 
-var loginUrl = 'NewMain.html';
+var homeUrl = 'NewMain.html';
 
 var timeout = '';
 function getTimeout()
@@ -38,13 +39,16 @@ function CswAjaxJSON(options)
 		data: {},
 		onloginfail: function () { _finishLogout(); },
 		success: function (result) { },
-		error: function () { }
+		error: function () { },
+        formobile: false,
+        async: true
 	};
 
     if (options) $.extend(o, options);
     //var starttime = new Date();
     $.ajax({
     	type: 'POST',
+	    async: o.async,
     	url: o.url,
     	dataType: "json",
     	contentType: 'application/json; charset=utf-8',
@@ -104,7 +108,9 @@ function CswAjaxXml(options)
         stringify: false, //in case we need to conditionally apply $.param() instead of JSON.stringify() (or both)
         onloginfail: function () { _finishLogout(); },
         success: function ($xml) { },
-        error: function () { }
+        error: function () { },
+        formobile: false,
+        async: true
 	};
 
     if (options) $.extend(o, options);
@@ -113,6 +119,7 @@ function CswAjaxXml(options)
     {
         $.ajax({
             type: 'POST',
+            async: o.async,
             url: o.url,
             dataType: "xml",
             //contentType: 'application/json; charset=utf-8',
@@ -175,7 +182,7 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
 
 function _handleAuthenticationStatus(options)
 {
-	var o = {
+ 	var o = {
 		status: '',
 		success: function () { },
 		failure: function () { },
@@ -248,7 +255,7 @@ function Logout(options)
 function _finishLogout()
 {
 	$.CswCookie('clearAll');
-	window.location = loginUrl;
+	window.location = homeUrl;
 }
 
 
@@ -585,7 +592,7 @@ function GoHome()
 { /// <param name="$" type="jQuery" />
     $.CswCookie('clear', CswCookieName.CurrentViewId);
     $.CswCookie('clear', CswCookieName.CurrentViewMode);
-    window.location = "NewMain.html";
+    window.location = homeUrl;
 }
 
 function HandleMenuItem(options)
@@ -1049,7 +1056,7 @@ function isTrue(str)
     else
     {
         ret = false;
-        if (debug) log('isTrue() was called on ' + str + ', which is not a boolean.', false);
+        //if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.',false);
     }
     return ret;
 }

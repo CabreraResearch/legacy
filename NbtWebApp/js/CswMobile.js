@@ -1,5 +1,5 @@
 ﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
-/// <reference path="../jquery/jquery.mobile-1.0a4.1/jquery.mobile-1.0a4.1.js" />
+/// <reference path="http://code.jquery.com/mobile/latest/jquery.mobile.js" />
 /// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
@@ -10,6 +10,125 @@
 
 ; (function ($) { /// <param name="$" type="jQuery" />
     
+    $.fn.makeUL = function(id)
+    {
+        var $div = $(this);
+        var $ret = undefined;
+        if( !isNullOrEmpty($div) )
+        {
+            $ret = $('<ul id="' + tryParseString(id,'') + '"></ul>')
+                            .appendTo($div)
+                            .CswAttrXml({'data-filter': true,
+                                         'data-role': 'listview',
+                                         'data-inset': true});
+            $ret.listview();
+        }
+        return $ret;
+    }
+
+    $.fn.bindLI = function()
+    {
+        var $li = $(this);
+        var $ret = undefined;
+        if( !isNullOrEmpty($li) )
+        {
+            $li.unbind('click');
+            $ret = $li.find('li a').bind('click', function ()
+            {
+                var dataurl = $(this).CswAttrXml('data-url');
+                var $thisPage = $('#' + dataurl);
+                $.mobile.path.set(dataurl);
+                $thisPage.doChangePage();
+            });
+            
+        }
+        return $ret;
+    }
+
+//    $.fn.refreshJqm = function()
+//    {
+//        //JQM doesnot yet have a refresh all method, so we must do this manually
+//        var $element = $(this);
+//        if( !isNullOrEmpty($element) )
+//        {
+//            $element.find('input[type="checkbox"]').checkboxradio('refresh');
+//            $element.find('input[type="radio"]').checkboxradio('refresh');
+//            $element.find('input[type="range"]').slider('refresh'); //slider
+//            $element.find('select').selectmenu('refresh');
+//            $element.find('ul').listview('refresh');
+//        }
+//        return $element;
+//    }
+
+    $.fn.doChangePage = function (transition, reverse, changeHash)
+	{
+        var $div = $(this);
+        var ret = false;
+        if( !isNullOrEmpty($div) )
+        {
+            if(debug) log('doChangePage from: ' + $.mobile.activePage.CswAttrDom('id') + ' to: ' + $div.CswAttrDom('id'),true);
+            ret = $.mobile.changePage($div, transition, reverse, changeHash);
+        }
+        return ret;
+	}
+
+    $.fn.doPage = function ()
+    {
+        var $div = $(this);
+        var ret = false;
+        if( !isNullOrEmpty($div) )
+        {
+            if(debug) log('doPage on ' + $div.CswAttrDom('id'),true);
+            ret = $div.page();
+        }
+        return ret;
+    }
+    
+    $.fn.bindJqmEvents = function(params)
+    {
+        var $div = $(this);
+        var $ret = false;
+        if( !isNullOrEmpty($div) )
+        {
+            var p = {
+                ParentId: '',
+                DivId: '',
+                HeaderText: '',
+                $xml: '',
+                parentlevel: 0,
+                level: 1,
+                HideRefreshButton: false,
+                HideSearchButton: false,
+                onPageShow: function(p) {}
+            }
+            
+            if(params) $.extend(p,params);
+            p.level = (p.parentlevel === p.level ) ? p.parentlevel+1 : p.level;
+            $div.unbind('pageshow');
+            $ret = $div.bind('pageshow', function() 
+            {
+                $.mobile.pageLoading();
+                p.onPageShow(p);
+                $.mobile.pageLoading(true);
+            });
+
+            //$div.unbind('pagebeforecreate');
+            $div.bind('pagebeforecreate', function()
+            {
+                //$div.find('input[type="radio"]').checkboxradio();
+                //$div.find('input[type="checkbox"]').checkboxradio();
+            });
+
+            //$div.unbind('pagecreate');
+            $div.bind('pagecreate', function()
+            {
+                //$div.find('input[type="radio"]').checkboxradio('refresh',true);
+                //$div.find('input[type="checkbox"]').checkboxradio('refresh',true);
+            });
+        }
+        return $ret;
+    }
+
     $.fn.CswMobile = function (options) {
         /// <summary>
         ///   Generates the Nbt Mobile page
@@ -21,12 +140,16 @@
         ///     &#10;3 - options.DivRemovalDelay: 1000
         /// </param>
 
+        var $body = this;
+
         var opts = {
             DBShortName: 'Mobile.html',
             DBVersion: '1.0',
             DBDisplayName: 'Mobile.html',
             DBMaxSize: 65536,
-            ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
+            //ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
+            ViewsListUrl: '/NbtWebApp/wsNBT.asmx/GetViewsList',
+            ViewUrl: '/NbtWebApp/wsNBT.asmx/GetView',
             ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
             ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
             UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
@@ -49,8 +172,10 @@
         var UserName;
         var SessionId;
         var $currentViewXml;
+        var currentMobilePath = '';
 
-        // case 20355 - error on browser refresh
+
+		// case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
         var tempdivid = 'initialloadingdiv';
         if (window.location.hash.length > 0)
@@ -74,8 +199,14 @@
             HideHelpButton: true
         });
 
-        _makeSynchStatusDiv();
-        _makeHelpDiv();
+        var $logindiv = _loadLoginDiv();
+        
+        var $viewsdiv = _loadViewsDiv();
+        var $syncstatus = _makeSynchStatusDiv();
+        var $helpdiv = _makeHelpDiv();
+        var $sorrycharliediv = _loadSorryCharlieDiv(false);
+
+        //$logindiv.doChangePage();
 
         _initDB(false, function ()
         {
@@ -86,8 +217,8 @@
                 if ( !isNullOrEmpty(configvar_sessionid) )
                 {
                     SessionId = configvar_sessionid;
-                    reloadViews(true);
-                    removeDiv(tempdivid);
+                    $viewsdiv = reloadViews();
+                    $viewsdiv.doChangePage();
                     _waitForData();
                 }
                 else
@@ -97,103 +228,122 @@
                         function ()
                         {
                             // online
-                            _loadLoginDiv(true);
-                            removeDiv(tempdivid);
+                            $logindiv.doPage();
+							$logindiv.doChangePage();
                         },
                         function ()
                         {
                             // offline
-                            _loadSorryCharlieDiv(true);
-                            removeDiv(tempdivid);
+                            $sorrycharliediv.doPage();
+							$sorrycharliediv.doChangePage();
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
             }); // readConfigVar();
         }); // _initDB();
 
-        function _loadLoginDiv(ChangePage)
+        function _loadLoginDiv()
         {
             var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
             LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
-            LoginContent += '<a id="loginsubmit" data-role="button" href="#">Continue</a>';
-            _addPageDivToBody({
-                DivId: 'logindiv',
-                HeaderText: 'Login to ChemSW Fire Inspection',
-                content: LoginContent,
-                HideSearchButton: true,
-                HideRefreshButton: true,
-                HideLogoutButton: true
+            LoginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
+            var $retDiv = _addDialogDivToBody({
+                    DivId: 'logindiv',
+                    HeaderText: 'Login to ChemSW Fire Inspection',
+                    $content: $(LoginContent),
+                    HideHelpButton: false
             });
             $('#loginsubmit').click(onLoginSubmit);
             $('#login_accessid').clickOnEnter($('#loginsubmit'));
             $('#login_username').clickOnEnter($('#loginsubmit'));
             $('#login_password').clickOnEnter($('#loginsubmit'));
-            if (ChangePage)
-            {
-			    _changePage($('#logindiv'), 'fade', false, true);
-			}
+            return $retDiv;
 		}
 
-		function _changePage($div, transition, reverse, changeHash)
-		{
-			$.mobile.changePage($div, transition, reverse, changeHash);
-		}
-
-        function _loadSorryCharlieDiv(ChangePage)
+        function _loadViewsDiv()
         {
-            _addPageDivToBody({
+            var params = {
+                ParentId: '',
+                DivId: 'viewsdiv',
+                HeaderText: 'Views',
+                $xml: '',
+                parentlevel: -1,
+                level: 0,
+                HideRefreshButton: true,
+                HideSearchButton: true,
+                onPageShow: function(p) { return _loadDivContents(p); }
+            };
+            var $retDiv = _addDialogDivToBody({
+                        DivId: 'viewsdiv',
+                        HeaderText: 'Views',
+                        HideRefreshButton: true,
+                        HideSearchButton: true,
+                        onPageShow: function(p) { return _loadDivContents(p); }
+                });
+            $retDiv.bindJqmEvents(params);
+            return $retDiv;
+		}
+
+		function _loadSorryCharlieDiv()
+        {
+            $retDiv = _addDialogDivToBody({
                 DivId: 'sorrycharliediv',
                 HeaderText: 'Sorry Charlie!',
-                content: 'You must have internet connectivity to login.',
-                HideSearchButton: true,
-                HideRefreshButton: true,
-                HideLogoutButton: true
+                $content: $('<p>You must have internet connectivity to login.</p>')                
             });
-            if (ChangePage)
-                _changePage($('#sorrycharliediv'), 'fade', false, true);
+            return $retDiv;
         }
 
         function removeDiv(DivId)
         {
-            setTimeout('$(\'#' + DivId + '\').remove();', opts.DivRemovalDelay);
+            setTimeout('$(\'#' + DivId + '\').find(' + 'div:jqmData(role="content")' + ').empty();', opts.DivRemovalDelay);
         }
 
-        function reloadViews(ChangePage)
+        function reloadViews()
         {
-            if ($('#viewsdiv').hasClass('ui-page-active'))
+            if ( $.mobile.activePage === $viewsdiv)
             {
-                _addPageDivToBody({
-                    DivId: 'loadingdiv',
-                    HeaderText: 'Please wait',
-                    content: 'Loading...',
-                    HideSearchButton: true,
-                    HideOnlineButton: true,
-                    HideRefreshButton: true,
-                    HideLogoutButton: true,
-                    HideHelpButton: true
-                });
-                _changePage($('#loadingdiv'), "fade", false, true);
-                setTimeout(function () { continueReloadViews(true); removeDiv('loadingdiv') }, opts.DivRemovalDelay);
+                setTimeout(function () { 
+                        $viewsdiv = continueReloadViews();
+                    }, 
+                    opts.DivRemovalDelay);
             } else
             {
-                continueReloadViews(ChangePage)
+                $viewsdiv = continueReloadViews();
             }
+            return $viewsdiv;
         }
 
-        function continueReloadViews(ChangePage)
+        function continueReloadViews()
         {
-            $('#viewsdiv').remove();
-            _loadDivContents({
+            if($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
+            var params = {
+                parentlevel: -1,
                 level: 0,
                 DivId: 'viewsdiv',
                 HeaderText: 'Views',
                 HideRefreshButton: true,
                 HideSearchButton: true,
-                ChangePage: ChangePage
-            });
-
+                onPageShow: function(p) { return _loadDivContents(p); }
+            };
+            $viewsdiv.bindJqmEvents(params);
+            return $viewsdiv;
         }
+
+//        function clearPath()
+//        {
+//            currentMobilePath = tryParseString( $.mobile.path.get(), '');
+//            if(debug) log('pre set path = ' + currentMobilePath, true);
+//            if( currentMobilePath !== '') $.mobile.path.set('');
+//            if(debug) log('post set path = ' + $.mobile.path.get());
+//        }
+
+//        function restorePath()
+//        {
+//            currentMobilePath = tryParseString( currentMobilePath, '');
+//            $.mobile.path.set(currentMobilePath);
+//        }
 
         // ------------------------------------------------------------------------------------
         // Online indicator
@@ -209,12 +359,11 @@
                              .text('Offline');
                 $('.refresh').css('visibility', 'hidden');
 
-                reloadViews(false);
+                $viewsdiv = reloadViews(); //no changePage
             }
-            if ($('#logindiv').length > 0)
+            if ( $.mobile.activePage === $logindiv)
             {
-                _loadSorryCharlieDiv(true);
-                removeDiv('logindiv');
+                $sorrycharliediv.doPage(); // doChangePage();
             }
         }
         function setOnline()
@@ -227,12 +376,11 @@
                              .text('Online');
 
                 $('.refresh').css('visibility', '');
-                reloadViews(false);
+                $viewsdiv =  reloadViews(); //no changePage
             }
-            if ($('#sorrycharliediv').length > 0)
+            if ( $.mobile.activePage === $sorrycharliediv )
             {
-                _loadLoginDiv(true);
-                removeDiv('sorrycharliediv');
+                $logindiv.doPage(); //doChangePage();;
             }
         }
         function amOffline()
@@ -254,17 +402,18 @@
                 HeaderText: '',
                 HideRefreshButton: false,
                 HideSearchButton: false,
-                ChangePage: false
+                $xml: '',
+                SessionId: SessionId
             };
             if (params) $.extend(p, params);
-
-            var ret = true;
-
+            
             if (p.level === 1)
             {
                 rootid = p.DivId;
             }
-            if ($('#' + p.DivId).length === 0)
+            var $retDiv = $('#' + p.DivId);
+            
+            if ( isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1 )
             {
                 if (p.level === 0)
                 {
@@ -272,57 +421,17 @@
                     {
                         _fetchCachedRootXml(function ($xml)
                         {
-                            _processViewXml({
-                                ParentId: p.ParentId,
-                                DivId: p.DivId,
-                                HeaderText: p.HeaderText,
-                                $xml: $xml,
-                                parentlevel: p.level,
-                                HideRefreshButton: p.HideRefreshButton,
-                                HideSearchButton: p.HideSearchButton,
-                                ChangePage: p.ChangePage
-                            });
+                            p.$xml = $xml;
+                            $retDiv = _loadDivContentsXml(p);
                         });
-                    } else
+                    } 
+                    else
                     {
-                        if (debug) log('Starting ' + opts.ViewUrl, true);
-                        
-                        var dataXml = {
-                            SessionId: SessionId,
-                            ParentId: p.DivId,
-                            ForMobile: ForMobile
-                        };
-                        
-                        CswAjaxXml({
-                            async: false,   // required so that the link will wait for the content before navigating
-                            formobile: ForMobile,
-                            url: opts.ViewUrl,
-                            data: dataXml,
-                            stringify: false,
-                            onloginfail: function() { Logout(); },
-                            success: function (X$xml)
-                            {
-                                if (debug) log('On Success ' + opts.ViewUrl, true);
-                                
-                                if (p.level === 1)
-                                {
-									_storeViewXml(p.DivId, p.HeaderText, X$xml);
-                                }
-
-                                _processViewXml({
-                                    ParentId: p.ParentId,
-                                    DivId: p.DivId,
-                                    HeaderText: p.HeaderText,
-                                    $xml: X$xml,
-                                    parentlevel: p.level,
-                                    HideRefreshButton: p.HideRefreshButton,
-                                    HideSearchButton: p.HideSearchButton,
-                                    ChangePage: p.ChangePage
-                                });
-                            }
-                        });
+                        p.url = opts.ViewsListUrl;
+                        $retDiv = _getDivXml(p);
                     }
-                } else if (p.level === 1)
+                } 
+                else if (p.level === 1)
                 {
                     // case 20354 - try cached first
                     _fetchCachedViewXml(rootid, function ($xmlstr)
@@ -330,84 +439,78 @@
                         if ( !isNullOrEmpty($xmlstr) )
                         {
                             $currentViewXml = $xmlstr;
-                            _processViewXml({
-                                ParentId: p.ParentId,
-                                DivId: p.DivId,
-                                HeaderText: p.HeaderText,
-                                $xml: $xmlstr,
-                                parentlevel: p.level,
-                                HideRefreshButton: p.HideRefreshButton,
-                                HideSearchButton: p.HideSearchButton,
-                                ChangePage: p.ChangePage
-                            });
-                        } else if (!amOffline())
+                            p.$xml = $currentViewXml;
+                            $retDiv = _loadDivContentsXml(p);
+                        }
+                        else if (!amOffline())
                         {
-                            if (debug) log('Starting ' + opts.ViewUrl, true);
-
-                            var dataXml = {
-                                SessionId: SessionId,
-                                ParentId: p.DivId,
-                                ForMobile: ForMobile
-                            };
-
-                            CswAjaxXml({
-                                async: false,   // required so that the link will wait for the content before navigating
-                                formobile: ForMobile,
-                                url: opts.ViewUrl,
-                                data: dataXml,
-                                stringify: false,
-                                onloginfail: function() { Logout(); },
-                                success: function ($xml)
-                                {
-                                    if (debug) log('On Success ' + opts.ViewUrl, true);
-                                    $currentViewXml = $xml;
-                                    if (p.level === 1)
-                                    {
-                                        _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
-                                    }
-                                
-                                    _processViewXml({
-                                        ParentId: p.ParentId,
-                                        DivId: p.DivId,
-                                        HeaderText: p.HeaderText,
-                                        $xml: $currentViewXml,
-                                        parentlevel: p.level,
-                                        HideRefreshButton: p.HideRefreshButton,
-                                        HideSearchButton: p.HideSearchButton,
-                                        ChangePage: p.ChangePage
-                                    });
-                                }
-                            });
+                            p.url = opts.ViewUrl;
+                            $retDiv = _getDivXml(p);
                         }
                     });
-                } else  // Level 2 and up
+                } 
+                else  // Level 2 and up
                 {
-//                    _fetchCachedViewXml(rootid, function (xmlstr)
-//                    {
-//                        if (xmlstr != '')
-//                        {
-                        if( !isNullOrEmpty($currentViewXml) )
-                        {
-                            var $thisxmlstr = $currentViewXml.find('#' + p.DivId);
-                            _processViewXml({
-                                ParentId: p.ParentId,
-                                DivId: p.DivId,
-                                HeaderText: p.HeaderText,
-                                $xml: $thisxmlstr.children('subitems').first(),
-                                parentlevel: p.level,
-                                HideRefreshButton: p.HideRefreshButton,
-                                HideSearchButton: p.HideSearchButton,
-                                ChangePage: p.ChangePage
-                            });
-                        }
-                    //});
+                    if( !isNullOrEmpty($currentViewXml) )
+                    {
+                        p.$xml = $currentViewXml.find('#' + p.DivId)
+                                                .children('subitems').first();
+                        $retDiv = _loadDivContentsXml(p);
+                    }
                 }
-            } else
-            {
-                ret = false;
             }
-            return ret;
+             
+            return $retDiv;
         } // _loadDivContents()
+
+        function _loadDivContentsXml(params)
+        {
+            params.parentlevel = params.level;
+            var $retDiv = _processViewXml(params);
+            return $retDiv;
+        }
+
+        function _getDivXml(params)
+        {
+            var $retDiv = undefined;
+            
+            var p = {
+                url: opts.ViewUrl
+            }
+            $.extend(p,params);
+
+            var dataXml = {
+                SessionId: p.SessionId,
+                ParentId: p.DivId,
+                formobile: ForMobile
+            };
+            //clearPath();
+            CswAjaxXml({
+                //async: false,   // required so that the link will wait for the content before navigating
+                url: p.url,
+                data: dataXml,
+                onloginfail: function() { Logout(); },
+                success: function ($xml)
+                {
+                    if (debug) log('On Success ' + opts.ViewUrl, true);
+                    $currentViewXml = $xml;
+                    p.$xml = $currentViewXml;
+                    if (params.level === 1)
+                    {
+                        _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
+                    }
+                    $retDiv = _loadDivContentsXml(p);    
+                    //restorePath();
+                },
+                error: function(xml)
+                {
+                    if(debug) log(xml, true);
+                    //restorePath();
+                }
+            });
+
+            return $retDiv;
+        }
 
         var currenttab;
         var onAfterAddDiv;
@@ -418,57 +521,101 @@
                 DivId: '',
                 HeaderText: '',
                 $xml: '',
+                $xmlitem: '',
                 parentlevel: '',
+                level: '',
                 HideRefreshButton: false,
-                HideSearchButton: false,
-                ChangePage: false
+                HideSearchButton: false
             };
             if (params)
             {
                 $.extend(p, params);
             }
 
-            var content = _makeUL();
+            var $retDiv = _addPageDivToBody({
+                    ParentId: p.ParentId,
+                    level: p.parentlevel,
+                    DivId: p.DivId,
+                    HeaderText: p.HeaderText,
+                    //$content: $content,
+                    HideRefreshButton: p.HideRefreshButton,
+                    HideSearchButton: p.HideSearchButton
+            });
+
+            var $content = $retDiv.find('div:jqmData(role="content")').empty();
+            var $list = $content.makeUL();            
             currenttab = '';
 
-            onAfterAddDiv = function ($divhtml) { };
+            onAfterAddDiv = function ($retDiv) { };
 
             p.$xml.children().each(function ()
             {
-                content += _makeListItemFromXml($(this), p.DivId, p.parentlevel);
+                p.$xmlitem = $(this);
+                var $li = _makeListItemFromXml($list, p)
+                            .appendTo($list);
             });
-            content += _endUL();
-
-            $divhtml = _addPageDivToBody({
-                ParentId: p.ParentId,
-                level: p.parentlevel,
-                DivId: p.DivId,
-                HeaderText: p.HeaderText,
-                content: content,
-                HideRefreshButton: p.HideRefreshButton,
-                HideSearchButton: p.HideSearchButton
-            });
-            onAfterAddDiv($divhtml);
-
-            // this replaces the link navigation
-            if (p.ChangePage)
-            {
-                _changePage($('#' + p.DivId), "slide");
-            }
-
+            $list.listview('refresh')
+                 .bindLI()
+                 .find('input[type="radio"]').checkboxradio('refresh',true);
+            onAfterAddDiv($retDiv);
+            
+            return $retDiv;
         } // _processViewXml()
 
-        function _makeListItemFromXml($xmlitem, DivId, parentlevel)
+        function _makeListItemFromXml ($list, params)
         {
-            var id = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
-            var text = $xmlitem.CswAttrXml('name');
+            var p = {
+                ParentId: '',
+                DivId: '',
+                HeaderText: '',
+                $xmlitem: '',
+                parentlevel: '',
+                level: '',
+                HideRefreshButton: false,
+                HideSearchButton: false
+            }
+            
+            if(params) $.extend(p,params);
+
+            var id = makeSafeId({ID: p.$xmlitem.CswAttrXml('id') });
+            var text = p.$xmlitem.CswAttrXml('name');
+
             var IsDiv = ( !isNullOrEmpty(id) );
-            var PageType = tryParseString($xmlitem.get(0).nodeName,'').toLowerCase();
-
-            var nextid = $xmlitem.next().CswAttrXml('id');
-            var previd = $xmlitem.prev().CswAttrXml('id');
-
-            var lihtml = '';
+            var PageType = tryParseString(p.$xmlitem.get(0).nodeName,'').toLowerCase();
+            
+            var nextid = p.$xmlitem.next().CswAttrXml('id');
+            var previd = p.$xmlitem.prev().CswAttrXml('id');
+            
+            // add a div for editing the property directly
+            var $toolbar = $('<div data-role="controlgroup data-type="horizontal"></div>');
+            if ( !isNullOrEmpty(previd) )
+            {
+                $toolbar.CswLink('init',{href:'javascript:void(0);', value: 'Previous'})
+                        .CswAttrXml({'data-identity': previd,
+                                     'data-url': previd,
+                                     'data-role': 'button',
+                                     'data-icon': 'arrow-u',
+                                     'data-inline': true,
+                                     'data-theme': opts.Theme,
+                                     'data-transition': 'slideup',
+                                     'data-direction': 'reverse'
+                        });
+            }
+            if ( !isNullOrEmpty(nextid) )
+            {
+                $toolbar.CswLink('init',{href:'javascript:void(0);', value: 'Next'})
+                        .CswAttrXml({'data-identity': nextid,
+                                     'data-url': nextid,
+                                     'data-role': 'button',
+                                     'data-icon': 'arrow-d',
+                                     'data-inline': true,
+                                     'data-theme': opts.Theme,
+                                     'data-transition': 'slideup',
+                                     'data-direction': 'reverse'
+                                });
+            }
+            
+            var $retLI = $('');
             
             switch (PageType)
             {
@@ -477,53 +624,57 @@
                     break;
 
                 case "node":
-                    lihtml += _makeObjectClassContent($xmlitem);
+                    $retLI = _makeObjectClassContent(p)
+                                .appendTo($list);
                     break;
 
                 case "prop":
                     {   
-                        var tab = $xmlitem.CswAttrXml('tab');
-                        var fieldtype = tryParseString($xmlitem.CswAttrXml('fieldtype'),'').toLowerCase();
-                        var gestalt = $xmlitem.CswAttrXml('gestalt');
+                        var $tab;
+                        var tab = p.$xmlitem.CswAttrXml('tab');
+                        var fieldtype = tryParseString(p.$xmlitem.CswAttrXml('fieldtype'),'').toLowerCase();
+                        var gestalt = p.$xmlitem.CswAttrXml('gestalt');
                         if (gestalt === 'NaN') gestalt = '';
 
-                        var currentcnt = $xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
-                        var siblingcnt = $xmlitem.siblings('[fieldtype="'+fieldtype+'"]').andSelf().length;
+                        var currentcnt = p.$xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
+                        var siblingcnt = p.$xmlitem.siblings('[fieldtype="'+fieldtype+'"]').andSelf().length;
 
                         if (currenttab !== tab)
                         {
-                            if ( !isNullOrEmpty(currenttab) )
-                            {    
-                                lihtml += _endUL() + _makeUL();
-                            }
-                            lihtml += '<li data-role="list-divider">' + tab + '</li>'
+//                            if ( !isNullOrEmpty(currenttab) )
+//                            {    
+//                                lihtml += _endUL() + _makeUL();
+//                            }
+                            $tab = $('<li data-role="list-divider">' + tab + '</li>')
+                                        .appendTo($list);
                             currenttab = tab;
                         }
+
+                        var $link = $('<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>')
+                                        .appendTo($list);
 
                         switch (fieldtype)
                         {
                             case 'logical':
-                                lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
+                                var sf_checked = tryParseString( p.$xmlitem.children('checked').text(), '');
+                                var sf_required = tryParseString( p.$xmlitem.children('required').text(), '');
 
-                                var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
-                                var sf_required = tryParseString( $xmlitem.children('required').text(), '');
-
-                                lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                                lihtml += _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required);
-                                lihtml += '</div>';
+                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"></div>')
+                                                .appendTo($list);
+                                var $logical = _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required)
+                                                .appendTo($div);
                                 break;
 
                             case 'question':
-                                lihtml += '<li id="' + id + '_li"><a href="#' + id + '">' + text + '</a></li>';
+                                var sf_answer = tryParseString( p.$xmlitem.children('answer').text() , '');
+                                var sf_allowedanswers = tryParseString( p.$xmlitem.children('allowedanswers').text(), '');
+                                var sf_compliantanswers = tryParseString( p.$xmlitem.children('compliantanswers').text(), '');
+                                var sf_correctiveaction = tryParseString( p.$xmlitem.children('correctiveaction').text(), '');
 
-                                var sf_answer = tryParseString( $xmlitem.children('answer').text() , '');
-                                var sf_allowedanswers = tryParseString( $xmlitem.children('allowedanswers').text(), '');
-                                var sf_compliantanswers = tryParseString( $xmlitem.children('compliantanswers').text(), '');
-                                var sf_correctiveaction = tryParseString( $xmlitem.children('correctiveaction').text(), '');
-                                
-                                lihtml += '<div class="lisubstitute ui-li ui-btn-up-c">';
-                                lihtml += _makeQuestionAnswerFieldSet(DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
-                                lihtml += '</div>';
+                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"><div>')
+                                                .appendTo($list);
+                                var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
+                                                .appendTo($div);
 
                                 if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
                                 {
@@ -539,61 +690,60 @@
                                 break;
 
                             default:
-                                lihtml += '<li id="' + id + '_li">';
-                                lihtml += ' <a href="#' + id + '">' + text + '</a>';
-                                lihtml += ' <p class="ui-li-aside">' + gestalt + '</p>';
-                                lihtml += '</li>';
+                                var $gestalt = $('<p class="ui-li-aside">' + gestalt + '</p>')
+                                                    .appendTo($link);
                                 break;
                         }
 
-
-                        // add a div for editing the property directly
-                        var toolbar = '';
-                        if ( !isNullOrEmpty(previd) )
-                        {
-                            toolbar += '<a href="#' + previd + '" data-role="button" data-icon="arrow-u" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup" data-direction="reverse">Previous</a>';
-                        }
-                        if ( !isNullOrEmpty(nextid) )
-                        {
-                            toolbar += '<a href="#' + nextid + '" data-role="button" data-icon="arrow-d" data-inline="true" data-theme="' + opts.Theme + '" data-transition="slideup">Next</a>';
-                        }
                         if( fieldtype === "question")
                         {
-                            toolbar += '&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt;
+                            $toolbar.append('&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt);
                         }
 
                         _addPageDivToBody({
-                            ParentId: DivId,
-                            level: parentlevel,
+                            ParentId: p.DivId,
+                            level: p.parentlevel,
                             DivId: id,
                             HeaderText: text,
-                            toolbar: toolbar,
-                            content: _FieldTypeXmlToHtml($xmlitem, DivId)
+                            $toolbar: $toolbar,
+                            $content: _FieldTypeXmlToHtml(p.$xmlitem, p.DivId)
                         });
-
                         break;
                     } // case 'prop':
                 default:
                     {
-                        lihtml += '<li>';
+                        $retLI = $('<li></li>');
                         if (IsDiv)
-                            lihtml += '<a href="#' + id + '">' + text + '</a>';
+                        {
+                            $retLI.CswLink('init',{href: 'javascript:void(0);', value: text})
+                                  .CswAttrXml({'data-identity': id, 
+                                               'data-url': id });
+                        }
                         else
-                            lihtml += text;
-                        lihtml += '</li>';
+                        {
+                            $retLI.val(text);
+                        }
+                        if(p.parentlevel === 0) 
+                        {
+                            var $newDiv = _preFormNextLevelPages({
+                                                ParentId: p.DivId,
+                                                parentlevel: p.parentlevel,
+                                                level: p.parentlevel+1,
+                                                DivId: id,
+                                                HeaderText: text
+                                                //,$toolbar: $toolbar
+                            });
+                        }
                         break;
                     } // default:
             }
-            return lihtml;
+            return $retLI;
         } // _makeListItemFromXml()
 
         function _makeUL(id)
         {
-            var ret = '<ul data-role="listview" ';
-            if ( !isNullOrEmpty(id) )
-                ret += 'id="' + id + '"';
-            ret += '>';
-            return ret;
+            var retUL = '<ul data-role="listview" id="' + tryParseString(id,'') + '">';
+            return retUL;
         }
 
         function _endUL()
@@ -601,27 +751,39 @@
             return '</ul>';
         }
 
-        function _makeObjectClassContent($xmlitem)
+        function _makeObjectClassContent(params)
         {
+            var p = {
+                ParentId: '',
+                DivId: '',
+                HeaderText: '',
+                $xmlitem: '',
+                parentlevel: '',
+                HideRefreshButton: false,
+                HideSearchButton: false
+            };
+            if(params) $.extend(p,params);
+
+            var $retHtml;
             var Html = '';
-            var id = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
-            var NodeName = $xmlitem.CswAttrXml('name');
+            var id = makeSafeId({ID: p.$xmlitem.CswAttrXml('id') });
+            var NodeName = p.$xmlitem.CswAttrXml('name');
             var icon = '';
-            if ( !isNullOrEmpty($xmlitem.CswAttrXml('iconfilename')))
+            if ( !isNullOrEmpty(p.$xmlitem.CswAttrXml('iconfilename')))
             {
-				icon = 'images/icons/' + $xmlitem.CswAttrXml('iconfilename');
+				icon = 'images/icons/' + p.$xmlitem.CswAttrXml('iconfilename');
             }
-			var ObjectClass = $xmlitem.CswAttrXml('objectclass');
+			var ObjectClass = p.$xmlitem.CswAttrXml('objectclass');
 
             switch (ObjectClass)
             {
                 case "InspectionDesignClass":
-                    var DueDate = $xmlitem.find('prop[ocpname="Due Date"]').CswAttrXml('gestalt');
-                    var Location = $xmlitem.find('prop[ocpname="Location"]').CswAttrXml('gestalt');
-                    var MountPoint = $xmlitem.find('prop[ocpname="Target"]').CswAttrXml('gestalt');
-                    var Status = $xmlitem.find('prop[ocpname="Status"]').CswAttrXml('gestalt');
+                    var DueDate = p.$xmlitem.find('prop[ocpname="Due Date"]').CswAttrXml('gestalt');
+                    var Location = p.$xmlitem.find('prop[ocpname="Location"]').CswAttrXml('gestalt');
+                    var MountPoint = p.$xmlitem.find('prop[ocpname="Target"]').CswAttrXml('gestalt');
+                    var Status = p.$xmlitem.find('prop[ocpname="Status"]').CswAttrXml('gestalt');
                     var UnansweredCnt = 0;
-                    $xmlitem.find('prop[fieldtype="Question"]').each(function ()
+                    p.$xmlitem.find('prop[fieldtype="Question"]').each(function ()
                     {
                         var $question = $(this);
                         if ( isNullOrEmpty($question.children('Answer').text() ) )
@@ -633,7 +795,7 @@
                     Html += '<li>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                    Html += '<a href="#' + id + '">';
+                    Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">';
                     Html += '<p>' + NodeName + '</p>';
                     Html += '<p>' + Location + '</p>';
                     Html += '<p>' + MountPoint + '</p>';
@@ -649,36 +811,21 @@
                     Html += '<li>';
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                    Html += '<a href="#' + id + '">' + NodeName + '</a>';
+                    Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + NodeName + '</a>';
                     Html += '</li>';
                     break;
             }
-            return Html;
-        }
 
-        function _extractCDataValue($node)
-        {
-            var ret = '';			
-			if($node.length > 0)
-			{
-				// default
-            	ret = $node.text();
+            var $newDiv = _preFormNextLevelPages({
+                                ParentId: p.DivId,
+                                parentlevel: p.parentlevel,
+                                level: p.parentlevel+1,
+                                DivId: id,
+                                HeaderText: NodeName
+                          });
 
-				// for some reason, CDATA fields come through from the webservice like this:
-				// <node><!--[CDATA[some text]]--></node>
-				var cdataval = $node.html();
-				if ( !isNullOrEmpty(cdataval) )
-				{
-					var prefix = '<!--[CDATA[';
-					var suffix = ']]-->';
-
-					if (cdataval.substr(0, prefix.length) === prefix)
-					{
-						ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
-					}
-				}
-			}
-            return ret;
+            $retHtml = $(Html); //.listview('refresh');
+            return $retHtml;
         }
 
         function _FieldTypeXmlToHtml($xmlitem, ParentId)
@@ -689,7 +836,7 @@
             var ReadOnly = ( isTrue($xmlitem.CswAttrXml('readonly')) );
 
             // Subfield values
-            var sf_text = tryParseString( _extractCDataValue($xmlitem.children('text')), '');
+            var sf_text = tryParseString( $xmlitem.children('text'), '');
             var sf_value = tryParseNumber( $xmlitem.children('value').text(), '');
             var sf_href = tryParseString( $xmlitem.children('href').text(), '');
             var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
@@ -701,75 +848,86 @@
             var sf_comments = tryParseString( $xmlitem.children('comments').text(), '');
             var sf_compliantanswers = tryParseString( $xmlitem.children('compliantanswers').text(), '');
             var sf_options = tryParseString( $xmlitem.children('options').text(), '');
-
-            var Html = '<div id="' + IdStr + '_propname"';
+            
+            var $retHtml = $('<div id="' + IdStr + '_propwrapper"></div>');
+            var $propNameDiv = $('<div id="' + IdStr + '_propname">' + PropName + '</div>')
+                                .appendTo($retHtml);
+            var $propContDiv = $('<div id="' + IdStr + '_propcontent"></div>')
+                                .appendTo($retHtml);
+            //var Html = '<div id="' + IdStr + '_propname"';
             if (FieldType === "Question" && !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
             {
-                Html += ' class="OOC"'
+                $propNameDiv.addClass('OOC');
             }
-            Html += '>' + PropName + '</div><br/>';
+            $retHtml.append('<br/>');
 
             if( !ReadOnly )
             {
                 switch (FieldType)
                 {
                     case "Date":
-                        Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
+                        $propContDiv.append('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />');
                         break;
 
                     case "Link":
-                        Html += '<a href="' + sf_href + '" rel="external">' + sf_text + '</a>';
+                        $propContDiv.append('<a href="' + sf_href + '" rel="external">' + sf_text + '</a>');
                         break;
 
                     case "List":
-                        Html += '<select name="' + IdStr + '">';
+                        var $select = $('<select name="' + IdStr + '"></select>')
+                                        .appendTo($propContDiv)
+                                        .selectmenu();
                         var selectedvalue = sf_value;
                         var optionsstr = sf_options;
                         var options = optionsstr.split(',');
                         for (var i = 0; i < options.length; i++)
                         {
-                            Html += '<option value="' + options[i] + '"';
+                            var $option = $('<option value="' + options[i] + '"></option>')
+                                            .appendTo($select);
                             if (selectedvalue === options[i])
                             {
-                                Html += ' selected';
+                                $option.CswAttrDom('selected','selected');
                             }
                         
                             if( !isNullOrEmpty(options[i]) )
                             {
-                                Html += '>' + options[i] + '</option>';
+                                $option.val( options[i] );
                             }
                             else
                             {
-                                Html += '>[blank]</option>';
+                                $option.valueOf('[blank]');
                             }
                         }
-                        Html += '</select>';
+                        $select.selectmenu('refresh');
                         break;
 
                     case "Logical":
-                        Html += _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required);
+                        var $logical = _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required)
+                                            .appendTo($propContDiv);
                         break;
 
                     case "Memo":
-                        Html += '<textarea name="' + IdStr + '">' + sf_text + '</textarea>';
+                        var $memo = $('<textarea name="' + IdStr + '">' + sf_text + '</textarea>')
+                                            .appendTo($propContDiv);
                         break;
 
                     case "Number":
-                        Html += '<input type="number" name="' + IdStr + '" value="' + sf_value + '"';
+                        var $number = $('<input type="number" name="' + IdStr + '" value="' + sf_value + '" />')
+                                            .appendTo($propContDiv);
                         // if (Prop.MinValue != Int32.MinValue)
                         //     Html += "min = \"" + Prop.MinValue + "\"";
                         // if (Prop.MaxValue != Int32.MinValue)
                         //     Html += "max = \"" + Prop.MaxValue + "\"";
-                        Html += '/>';
                         break;
 
                     case "Password":
-                        Html += string.Empty;
+                        //nada
                         break;
 
                     case "Quantity":
-                        Html += '<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />';
-                        Html += sf_units;
+                        var $quantity = $('<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />')
+                                            .appendTo($propContDiv);
+                        $quantity.append( sf_units );
                         // Html += "<select name=\"" + IdStr + "_units\">";
                         // string SelectedUnit = PropWrapper.AsQuantity.Units;
                         // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
@@ -785,51 +943,58 @@
                         break;
 
                     case "Question":
-                        Html += _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers);
+                        var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
+                                            .appendTo($propContDiv);
 
-                        Html += '<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action"';
+                        var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
+                                            .appendTo($question);
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
-                            Html += 'style="display: none"';
-                        Html += 'onchange="';
-                        Html += 'var $cor = $(this); ';
-                        Html += 'if($cor.CswAttrDom(\'value\') === \'\') { ';
-                        Html += '  $(\'#' + IdStr + '_li div\').addClass(\'OOC\'); '
-                        Html += '  $(\'#' + IdStr + '_propname\').addClass(\'OOC\'); '
-                        Html += '} else {';
-                        Html += '  $(\'#' + IdStr + '_li div\').removeClass(\'OOC\'); '
-                        Html += '  $(\'#' + IdStr + '_propname\').removeClass(\'OOC\'); '
-                        Html += '}';
-                        Html += '">';
-                        Html += sf_correctiveaction;
-                        Html += '</textarea>';
+                        {
+                            $corAction.css('display','none');
+                        }
+                        $corAction.change( function()
+                        {
+                            var $cor = $(this);
+                            if($cor.val() === '') 
+                            { 
+                                  $('#' + IdStr + '_li div').addClass('OOC'); 
+                                  $('#' + IdStr + '_propname').addClass('OOC');
+                            } 
+                            else 
+                            {
+                              $('#' + IdStr + '_li div').removeClass('OOC'); 
+                              $('#' + IdStr + '_propname').removeClass('OOC'); 
+                            }
+                        });
 
-                        Html += '<textarea name="' + IdStr + '_com" placeholder="Comments">';
-                        Html += sf_comments
-                        Html += '</textarea>';
-
+                        var $comments = $('<textarea name="' + IdStr + '_com" placeholder="Comments">' + sf_comments + '</textarea>')
+                                            .appendTo($question);
                         break;
 
                     case "Static":
-                        Html += sf_text;
+                        $propContDiv.append( sf_text );
                         break;
 
                     case "Text":
-                        Html += '<input type="text" name="' + IdStr + '" value="' + sf_text + '" />';
+                        var $text = $('<input type="text" name="' + IdStr + '" value="' + sf_text + '" />')
+                                        .appendTo($propContDiv);
                         break;
 
                     case "Time":
-                        Html += '<input type="text" name="' + IdStr + '" value="' + sf_value + '" />';
+                        var $time = $('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />')
+                                        .appendTo($propContDiv);
                         break;
 
                     default:
-                        Html += $xmlitem.CswAttrXml('gestalt');
+                        $propContDiv.append( $xmlitem.CswAttrXml('gestalt') );
                         break;
                 }
             }
-            else {
-                Html += $xmlitem.CswAttrXml('gestalt');
+            else 
+            {
+                $propContDiv.append( $xmlitem.CswAttrXml('gestalt') );
             }
-            return Html;
+            return $retHtml;
         }
 
         function _FieldTypeHtmlToXml($xmlitem, name, value)
@@ -896,8 +1061,16 @@
 
         function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
         {
-            var Html = '<fieldset class="csw_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
-
+            var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
+            var $fieldset = $('<fieldset></fieldset>')
+                                .appendTo($retHtml)
+                                .CswAttrDom({
+                                    class: 'csw_fieldset',
+                                    id: IdStr + '_fieldset'})
+                                .CswAttrXml({
+                                    'data-role': 'controlgroup',
+                                    'data-type': 'horizontal'                                     
+                                 });
             var answers = ['Null', 'True', 'False'];
             if ( isTrue(Required) )
             {
@@ -913,123 +1086,169 @@
                     case 'True': answertext = 'Yes'; break;
                     case 'False': answertext = 'No'; break;
                 }
-
-                Html += '<input type="radio" name="' + makeSafeId({ prefix: IdStr, ID: Suffix}) + '" id="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]}) + '" value="' + answers[i] + '" ';
-				// Checked is a Tristate, so isTrue() is not useful here
+                var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]});
+                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, ID: inputId, value: answers[i]})
+                                .CswAttrXml('data-role','button');
+                var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
+                                .appendTo($fieldset);
+				
+                // Checked is a Tristate, so isTrue() is not useful here
 				if ((Checked === 'false' && answers[i] === 'False') ||
 					(Checked === 'true' && answers[i] === 'True') ||
 					(Checked === '' && answers[i] === 'Null'))
 				{
-                    Html += 'checked';
+                    $input.CswAttrDom('checked','checked');
                 }
-                Html += ' onclick="';
-
-                // case 20307: workaround for a bug with JQuery Mobile Alpha2
-                for (var j = 0; j < answers.length; j++)
+                
+                $input.click( function ()
                 {
-                    if (answers[j] === answers[i])
-                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
-                    else
-                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
-                }
+                    for (var k = 0; k < answers.length; k++)
+                    {
+                        var thisAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k]});
+                        var $answer = $('#' + thisAnswerId);
 
-                Html += ' var $otherradio; ';
-                for (var k = 0; k < answers.length; k++)
-                {
-                    Html += ' $otherradio = $(\'#' + makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]}) + '\'); ';
-                    if (answers[k] === answers[i])
-                    {
-                        Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
-                        Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
-                    }
-                    else
-                    {
-                        Html += ' $otherradio.CswAttrDom(\'checked\', false); ';
-                        Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
-                    }
-                } // for (var k = 0; k < answers.length; k++)
-                Html += '" />';
-                Html += '<label for="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]}) + '">' + answertext + '</label>';
+                        var radioId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
+                        var $otherradio = $('#' + radioId);
+                        
+                        if (answers[k] === answers[i])
+                        {
+                            //$answer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
+                            $otherradio.CswAttrDom('checked', 'checked');
+                            $otherradio.checkboxradio('refresh');
+                            //$otherradio.siblings('label').addClass('ui-btn-active');
+                        }
+                        else
+                        {
+                            //$answer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
+                            $otherradio.removeProp('checked');
+                            //$otherradio.siblings('label').removeClass('ui-btn-active');
+                        }
+                    } // for (var k = 0; k < answers.length; k++)
+                });
             } // for (var i = 0; i < answers.length; i++)
-
-            Html += '</fieldset>';
-            return Html;
+            $retHtml.checkboxradio();
+            return $retHtml;
         }
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
-            var Html = '<fieldset class="csw_fieldset" id="' + IdStr + '_fieldset" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">';
+            var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
+            var $fieldset = $('<fieldset></fieldset>')
+                                .appendTo($retHtml)
+                                .CswAttrDom({
+                                    class: 'csw_fieldset',
+                                    id: IdStr + '_fieldset'})
+                                .CswAttrXml({
+                                    'data-role': 'controlgroup',
+                                    'data-type': 'horizontal'  
+                                 });
             var answers = Options.split(',');
             for (var i = 0; i < answers.length; i++)
             {
-                var answerid = makeSafeId({ ID: answers[i] });
-                Html += '<input type="radio" name="' + makeSafeId({ID: IdStr, suffix: Suffix}) + '" id="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '" value="' + answers[i] + '" ';
+				var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
+                var $answer = $fieldset.CswInput('init',{type: CswInput_Types.radio, ID: answerid, value: answers[i] })
+								.CswAttrXml('data-role','button');
+				var $label = $('<label for="' + answerid + '">' + answers[i] + '</label>')
+								.appendTo($fieldset);
                 
                 if (Answer === answers[i])
                 {
-                    Html += ' checked="checked"';
-                }    //' checked';
-                Html += ' onclick="';
+                    $answer.CswAttrDom('checked','checked');
+                } 
+				$answer.bind('click', function(eventObj) 
+				{
+					for (var k = 0; k < answers.length; k++)
+					{
+                        var suffixAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
+                        var $suffixAnswer = $('#' + suffixAnswerId);
+						
+                        var oSuffixAnswerId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
+						var $oSuffixAnswer = $('#' + oSuffixAnswerId);
+						
+                        if (answers[k] === answers[i])
+						{
+                            //$suffixAnswer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
+							$oSuffixAnswer.CswAttrDom('checked', 'checked');
+						    $oSuffixAnswer.checkboxradio('refresh');
+                        	//$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
+                            //$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
+						} 
+                        else
+						{
+							//$suffixAnswer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
+                            $oSuffixAnswer.removeProp('checked');
+							//$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
+                            //$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
+						}
+                        
+					} // for (var k = 0; k < answers.length; k++)
+					
+					var correctiveActionId = makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix});
+					var liSuffixId = makeSafeId({ prefix: IdStr, ID: LiSuffix});
+					var propNameSuffixId = makeSafeId({ prefix: IdStr, ID: PropNameSuffix});
+					
+					var $cor = $('#' + correctiveActionId);
+					var $li = $('#' + liSuffixId);
+					var $prop = $('#' + propNameSuffixId);
+					
+					if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
+					{
+						$cor.css('display','none');
+						$li.children('div').removeClass('OOC');
+						$prop.removeClass('OOC');
+					}
+					else
+					{
+						$cor.css('display','');
 
-                // case 20307: workaround for a bug with JQuery Mobile Alpha2
-                for (var j = 0; j < answers.length; j++)
-                {
-                    if (answers[j] === answers[i])
-                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').addClass(\'ui-btn-active\');';
-                    else
-                        Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[j]}) + '\').siblings(\'label\').removeClass(\'ui-btn-active\');';
-                }
-
-                Html += ' var $otherradio; ';
-                for (var k = 0; k < answers.length; k++)
-                {
-                    Html += ' $otherradio = $(\'#' + makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]}) + '\'); ';
-                    if (answers[k] === answers[i])
-                    {
-                        Html += ' $otherradio.CswAttrDom(\'checked\', true); ';
-                        Html += ' $otherradio.siblings(\'label\').addClass(\'ui-btn-active\'); ';
-                    } else
-                    {
-                        Html += ' $otherradio.CswAttrDom(\'checked\', false); ';
-                        Html += ' $otherradio.siblings(\'label\').removeClass(\'ui-btn-active\'); ';
-                    }
-                } // for (var k = 0; k < answers.length; k++)
-
-                if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
-                {
-                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\').css(\'display\', \'none\'); ';
-                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
-                    Html += ' $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
-                }
-                else
-                {
-                    Html += ' var $cor = $(\'#' + makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix}) + '\'); ';
-                    Html += ' $cor.css(\'display\', \'\'); ';
-                    Html += ' if($cor.CswAttrDom(\'value\') === \'\') { ';
-                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').addClass(\'OOC\'); ';
-                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').addClass(\'OOC\'); ';
-                    Html += ' } else {';
-                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: LiSuffix}) + ' div\').removeClass(\'OOC\'); ';
-                    Html += '   $(\'#' + makeSafeId({ prefix: IdStr, ID: PropNameSuffix}) + '\').removeClass(\'OOC\'); ';
-                    Html += ' } ';
-                }
-                if ( isNullOrEmpty(Answer) )
-                {
-                    // update unanswered count when this question is answered
-                    Html += ' if(! $(\'#' + IdStr + '_fieldset\').CswAttrDom(\'answered\')) { ';
-                    Html += '   var $cntspan = $(\'#' + ParentId + '_unansweredcnt\'); ';
-                    Html += '   $cntspan.text(parseInt($cntspan.text()) - 1); ';
-                    Html += '   $(\'#' + IdStr + '_fieldset\').CswAttrDom(\'answered\', \'true\'); ';
-                    Html += ' }';
-                }
-                Html += ' " />';
-                Html += '            <label for="' + makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answerid}) + '">' + answers[i] + '</label>';
+						if( isNullOrEmpty($cor.val()) )
+						{
+							$li.children('div').addClass('OOC');
+							$prop.addClass('OOC');
+						}
+						else
+						{
+							$li.children('div').removeClass('OOC');
+							$prop.removeClass('OOC');
+						}
+					}
+					if ( isNullOrEmpty(Answer) )
+					{
+						// update unanswered count when this question is answered
+						var $fieldset = $('#' + IdStr + '_fieldset');
+						if( $fieldset.CswAttrDom('answered') )
+						{
+							var $cntspan = $('#' + ParentId + '_unansweredcnt');
+							$cntspan.text(parseInt($cntspan.text()) - 1);
+							$fieldset.CswAttrDom('answered','true');
+						}
+					}
+                    onPropertyChange(ParentId,eventObj);
+				}); //click()
             } // for (var i = 0; i < answers.length; i++)
-            Html += '</fieldset>';
-            return Html;
+            $retHtml.checkboxradio();
+            return $retHtml;
         } // _makeQuestionAnswerFieldSet()
 
-        
+        function _preFormNextLevelPages(params)
+        {
+            var $retDiv = undefined;
+            var p = {
+                ParentId: '',
+                parentlevel: 0,
+                level: 1,
+                DivId: '',
+                HeaderText: '',
+                $toolbar: '',
+                onPageShow: function(p) { return _loadDivContents(p); }
+            };
+            if(params) $.extend(p,params);
+
+            $retDiv = _addPageDivToBody(p);
+            $retDiv.bindJqmEvents(p);
+            return $retDiv;
+        }
+                
         function _addPageDivToBody(params)
         {
             var p = {
@@ -1037,8 +1256,8 @@
                 level: 1,
                 DivId: '',       // required
                 HeaderText: '',
-                toolbar: '',
-                content: '',
+                $toolbar: $(''),
+                $content: $(''),
                 HideSearchButton: false,
                 HideOnlineButton: false,
                 HideRefreshButton: false,
@@ -1055,86 +1274,211 @@
 
             p.DivId = makeSafeId({ID: p.DivId});
 
-            var divhtml = '<div id="' + p.DivId + '" data-role="page" data-url="'+ p.DivId +'">' +
-                          '<div data-role="header" data-theme="' + opts.Theme + '" data-position="fixed">';
-            divhtml += '<a href="#' + p.ParentId + '" id="' + p.DivId + '_back" data-direction="reverse" ';
-            if ( !isNullOrEmpty(p.backtransition) )
-            {
-                divhtml += ' data-transition="' + p.backtransition + '" ';
-            }
-            if ( isNullOrEmpty(p.ParentId) )
-            {
-                divhtml += ' style="visibility: hidden;" ';
-            }
-            divhtml += ' data-icon="';
-            if ( !isNullOrEmpty(p.backicon) )
-            {
-                divhtml += p.backicon;
-            }
-            else
-            {
-                divhtml += 'arrow-l';
-            }
-            divhtml += '">Back</a>';
+            var $pageDiv = $('#' + p.DivId);
 
-            divhtml += '<h1>' + p.HeaderText + '</h1>';
-            if (!p.HideSearchButton)
-                divhtml += '    <a href="#" id="' + p.DivId + '_searchopen">Search</a>';
-            divhtml += '    <div class="toolbar" data-role="controlgroup" data-type="horizontal">' +
-                              p.toolbar +
-                       '    </div>' +
-                       '  </div>' +
-                       '  <div data-role="content" data-theme="' + opts.Theme + '">' +
-                            p.content +
-                       '  </div>' +
-                       '  <div data-role="footer" data-theme="' + opts.Theme + '" data-position="fixed">';
-            if (!p.HideOnlineButton)
+            var $searchBtn = $('#' + p.DivId + '_searchopen');
+            var $synchstatusBtn = $('#' + p.DivId + '_gosynchstatus');
+            var $refreshBtn = $('#' + p.DivId + '_refresh');
+            var $logoutBtn = $('#' + p.DivId + '_logout');
+            var $helpBtn = $('#' + p.DivId + '_help');
+
+            if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
             {
-                divhtml += '    <a href="#" id="' + p.DivId + '_gosynchstatus" data-transition="slideup">';
-                if (amOffline())
-                    divhtml += '    <div class="onlineStatus offline">Offline</div>';
+                $pageDiv = $body.CswDiv('init',{ID: p.DivId})
+                                .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText}); 
+            
+			    var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
+                                      .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'fixed'});
+                var $backlink = $header.CswLink('init',{'href': 'javascript:void(0)', 
+                                                        ID: p.DivId + '_back',
+                                                        value: 'Back'})
+                                        .CswAttrXml({'data-identity': p.DivId + '_back', 
+                                                     //'data-url': p.DivId + '_back',
+													 'data-rel': 'back',
+                                                     'data-direction': 'reverse' });
+            
+                if ( !isNullOrEmpty(p.backtransition) )
+                {
+                    $backlink.CswAttrXml('data-transition', p.backtransition);
+                }
+//                if ( isNullOrEmpty(p.ParentId) )
+//                {
+//                    $backlink.css('visibility','hidden');
+//                }
+            
+                if ( !isNullOrEmpty(p.backicon) )
+                {
+                    $backlink.CswAttrXml('data-icon',p.backicon);
+                }
                 else
-                    divhtml += '    <div class="onlineStatus online">Online</div>';
-                divhtml += '    </a>';
+                {
+                    $backlink.CswAttrXml('data-icon','arrow-l');
+                }
+
+                $header.append($('<h1>' + p.HeaderText + '</h1>'));
+
+                $searchBtn = $header.CswLink('init',{'href': 'javascript:void(0)', 
+                                            ID: p.DivId + '_searchopen',
+                                            value: 'Search' })
+                                      .CswAttrXml({'data-identity': p.DivId + '_searchopen', 
+                                                   'data-url': p.DivId + '_searchopen', 
+                                                   'data-transition': 'slidedown',
+                                                   'data-role': 'button' });
+
+                $header.CswDiv('init',{class: 'toolbar'})
+                       .append(p.$toolbar)
+                       .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
+                var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
+                                       .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
+                                       .append(p.$content);
+                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
+                                      .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
+
+                
+                var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
+                var onlineValue = (amOffline()) ? 'Offline' : 'Online';
+
+                $synchstatusBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                                    ID: p.DivId + '_gosynchstatus', 
+                                                    class: onlineClass,  
+                                                    value: onlineValue })
+                                    .CswAttrXml({'data-identity': p.DivId + '_gosynchstatus', 
+                                                'data-url': p.DivId + '_gosynchstatus', 
+                                                'data-transition': 'slideup',
+                                                'data-role': 'button' });
+
+                $refreshBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                                       ID: p.DivId + '_refresh', 
+                                                       value:'Refresh', 
+                                                       class: 'refresh'})
+                                      .CswAttrXml({'data-identity': p.DivId + '_refresh', 
+                                                   'data-url': p.DivId + '_refresh',
+                                                   'data-role': 'button' });
+
+                $logoutBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                                    ID: p.DivId + '_logout', 
+                                                    value: 'Logout' })
+                                   .CswAttrXml({'data-identity': p.DivId + '_logout', 
+                                                'data-url': p.DivId + '_logout', 
+                                                'data-transition': 'flip' });
+                
+            
+                var $mainBtn = $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'})
+                                      .CswAttrXml('data-transition', 'pop');
+
+
+                $helpBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                                                   ID: p.DivId + '_help', 
+                                                   value: 'Help' })
+                                   .CswAttrXml({'data-identity': p.DivId + '_help', 
+                                                'data-url': p.DivId + '_help', 
+                                                'data-transition': 'slideup' });
             }
-            if (!p.HideRefreshButton)
-                divhtml += '    <a href="#" id="' + p.DivId + '_refresh" class="refresh">Refresh</a>';
-            if (!p.HideLogoutButton)
-                divhtml += '    <a href="#" id="' + p.DivId + '_logout">Logout</a>';
 
-            divhtml += '     <a rel="external" href="Login.aspx?redir=n">Full Site</a>';
-            if (!p.HideHelpButton)
-                divhtml += '    <a href="#" id="' + p.DivId + '_help">Help</a>';
-            divhtml += '  </div>' +
-                       '</div>';
+            if ( p.HideOnlineButton ) { 
+                $synchstatusBtn.hide(); 
+            }
+            else {
+                $synchstatusBtn.show(); 
+            }
+            if ( p.HideHelpButton ) {
+                $helpBtn.hide();
+            }
+            else {
+                $helpBtn.show();
+            }
+            if ( p.HideLogoutButton ) {
+                $logoutBtn.hide();
+            }
+            else {
+                $logoutBtn.show();
+            }
+            if ( p.HideRefreshButton ) {
+                $refreshBtn.hide();
+            }
+            else {
+                $refreshBtn.show();
+            }
+            if ( p.HideSearchButton ) {
+                $searchBtn.hide();
+            }
+            else {
+                $searchBtn.show();
+            }
 
-            var $divhtml = $(divhtml);
-            $('body').append($divhtml);
+            //if(p.level === 0) $pageDiv.doPage();
+            _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
-            $divhtml.page();
-
-            _bindEvents(p.DivId, p.ParentId, p.level, $divhtml);
-
-            return $divhtml;
+            return $pageDiv;
 
         } // _addPageDivToBody()
         
+        function _addDialogDivToBody(params)
+        {
+            var p = {
+                DivId: '',       // required
+                HeaderText: '',
+                $toolbar: '',
+                $content: '',
+                HideHelpButton: false
+            };
+
+            if (params)
+            {
+                $.extend(p, params);
+            }
+
+            p.DivId = makeSafeId({ID: p.DivId});
+
+            var $pageDiv = $('#' + p.DivId);
+
+            if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
+            {
+                $pageDiv = $body.CswDiv('init',{ID: p.DivId})
+                                .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText, 'data-rel': 'dialog'}); 
+            
+		        var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
+                                        .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'inline'});
+                $header.append($('<h1>' + p.HeaderText + '</h1>'));
+                $header.CswDiv('init',{class: 'toolbar'})
+                        .append(p.$toolbar)
+                        .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
+                var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
+                                        .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
+                                        .append(p.$content);
+                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
+                                        .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
+            
+                $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'});
+
+                if (!p.HideHelpButton)
+                {
+                    $footer.CswLink('init',{'href': 'javascript:void(0)', ID: p.DivId + '_help', value: 'Help'})
+                            .CswAttrXml({'data-identity': p.DivId, 'data-url': p.DivId });
+                }
+                $pageDiv.doPage();
+            }
+            _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
+
+            return $pageDiv;
+
+        } // _addPageDivToBody()
+
         function _getDivHeaderText(DivId)
         {
-            return $('#' + DivId).find('div[data-role="header"] h1').text();
+            return $('#' + DivId).find('div:jqmData(role="header") h1').text();
         }
 
         function _getDivParentId(DivId)
         {
             var ret = '';
-            var $back = $('#' + DivId).find('div[data-role="header"] #' + DivId + '_back');
+            var $back = $('#' + DivId).find('div:jqmData(role="header") #' + DivId + '_back');
             if ($back.length > 0)
-                ret = $back.CswAttrDom('href').substr(1);
+                ret = $back.CswAttrXml('data-identity');
             return ret;
         }
 
-
-        function _bindEvents(DivId, ParentId, level, $div)
+        function _bindPageEvents(DivId, ParentId, level, $div)
         {
             $div.find('#' + DivId + '_searchopen')
                 .click(function (eventObj) { onSearchOpen(DivId, eventObj); })
@@ -1143,15 +1487,31 @@
                 .click(function (eventObj) { onSynchStatusOpen(DivId, eventObj); })
                 .end()
                 .find('#' + DivId + '_refresh')
-                .click(function (e) { e.stopPropagation(); e.preventDefault(); return onRefresh(DivId, e); })
+                .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onRefresh(DivId, e); })
                 .end()
                 .find('#' + DivId + '_logout')
-                .click(function (e) { e.stopPropagation(); e.preventDefault(); return onLogout(DivId, e); })
+                .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onLogout(DivId, e); })
                 .end()
                 .find('#' + DivId + '_back')
                 .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
                 .end()
                 .find('#' + DivId + '_help')
+                .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
+                .end()
+//                .find('input')
+//                .change(function (eventObj) {  onPropertyChange(DivId, eventObj); })
+//                .end()
+                .find('textarea')
+                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .end()
+                .find('select')
+                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .end();
+        }
+        
+        function _bindDialogEvents(DivId, ParentId, level, $div)
+        {
+            $div.find('#' + DivId + '_help')
                 .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
                 .end()
                 .find('input')
@@ -1162,22 +1522,8 @@
                 .end()
                 .find('select')
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-                .end()
-                .find('li a')
-                .click(function (e)
-                {
-					var $div = $(this);
-                    if (_loadDivContents({
-                        ParentId: DivId,
-                        level: (level + 1),
-                        DivId: $div.CswAttrDom('href').substr(1),
-                        HeaderText: $div.text(),
-                        ChangePage: true
-                    })) { e.stopPropagation(); e.preventDefault(); }
-                })
                 .end();
         }
-
         // ------------------------------------------------------------------------------------
         // Synch Status Div
         // ------------------------------------------------------------------------------------
@@ -1187,22 +1533,25 @@
             var content = '';
             content += '<p>Pending Unsynched Changes: <span id="ss_pendingchangecnt">No</span></p>';
             content += '<p>Last synch: <span id="ss_lastsynch"></span></p>';
-            content += '<a id="ss_forcesynch" href="#" data-role="button">Force Synch Now</a>';
-            content += '<a id="ss_gooffline" href="#" data-role="button">Go Offline</a>';
+            content += '<a id="ss_forcesynch" data-identity="ss_forcesynch" data-url="ss_forcesynch" href="javascript:void(0)" data-role="button">Force Synch Now</a>';
+            content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
+            
 
-            $divhtml = _addPageDivToBody({
-                DivId: 'synchstatus',
-                HeaderText: 'Synch Status',
-                content: content,
-                HideSearchButton: true,
-                HideRefreshButton: true
+            var $retDiv = _addPageDivToBody({
+                    DivId: 'synchstatus',
+                    HeaderText: 'Synch Status',
+                    $content: $(content),
+                    HideSearchButton: true,
+                    HideRefreshButton: true
             });
 
-            $divhtml.find('#ss_forcesynch')
-                    .click(function (eventObj) { _processChanges(false); eventObj.preventDefault(); })
+            $retDiv.find('#ss_forcesynch')
+                    .click(function (eventObj) { _processChanges(false); } ) //eventObj.preventDefault(); })
                     .end()
                     .find('#ss_gooffline')
                     .click(function (eventObj) { _toggleOffline(eventObj); });
+
+            return $retDiv;
         }
 
         function _toggleOffline(eventObj)
@@ -1259,17 +1608,17 @@
         
         function _makeHelpDiv()
         {
-            var content = '';
-            content += '<p>Help</p>';
+            var $help = $('<p>Help</p>');
             
-            $divhtml = _addPageDivToBody({
-                DivId: 'help',
-                HeaderText: 'Help',
-                content: content,
-                HideSearchButton: true,
-                HideRefreshButton: true
+            var $retDiv = _addPageDivToBody({
+                    DivId: 'help',
+                    HeaderText: 'Help',
+                    $content: $help,
+                    HideSearchButton: true,
+                    HideRefreshButton: true
             });
-
+            
+            return $retDiv;
         }
 
         // ------------------------------------------------------------------------------------
@@ -1291,21 +1640,24 @@
                     'Password': Password
                 };
 
-                if (debug) log('Starting ' + opts.AuthenticateUrl, true);
-
+                //clearPath();
                 CswAjaxJSON({
                     formobile: ForMobile,
+                    async: false,
                     url: opts.AuthenticateUrl,
                     data: ajaxData,
                     onloginfail: function () { Logout(); },
                     success: function (data)
                     {
-                        if (debug) log('On Success ' + opts.AuthenticateUrl, true);
-                        
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
 						_cacheSession(SessionId, UserName);
-                        reloadViews(true);
-                        removeDiv('logindiv');
+                        $viewsdiv = reloadViews();
+                        $viewsdiv.doChangePage();
+                        //restorePath();
+                    },
+                    error: function()
+                    {
+                        //restorePath();
                     }
                 });
             }
@@ -1335,18 +1687,10 @@
             {
                 if (_checkNoPendingChanges())
                 {
-                    _addPageDivToBody({
-                        DivId: 'loadingdiv',
-                        HeaderText: 'Please wait',
-                        content: 'Loading...',
-                        HideSearchButton: true,
-                        HideOnlineButton: true,
-                        HideRefreshButton: true,
-                        HideLogoutButton: true,
-                        HideHelpButton: true
-                    });
-                    _changePage($('#loadingdiv'), "fade", false, true);
-                    setTimeout(function () { continueRefresh(DivId); }, opts.DivRemovalDelay);
+                    setTimeout(function () { 
+                            continueRefresh(DivId); 
+                        }, 
+                        opts.DivRemovalDelay);
                 }
             }
             return false;
@@ -1357,55 +1701,61 @@
             // remove existing divs
             var NextParentId = '';
             var ThisParentId = DivId;
-            while ( !isNullOrEmpty(ThisParentId) && ThisParentId.substr(0, 'viewid_'.length) !== 'viewid_')
-            {
-                NextParentId = _getDivParentId(ThisParentId);
-                $('div[id*="' + ThisParentId + '"]').remove();
-                ThisParentId = NextParentId;
-            }
+//            while ( !isNullOrEmpty(ThisParentId) && ThisParentId.substr(0, 'viewid_'.length) !== 'viewid_')
+//            {
+//                NextParentId = _getDivParentId(ThisParentId);
+//                $('div[id*="' + ThisParentId + '"]').find('div:jqmData(role="content")').empty();
+//                ThisParentId = NextParentId;
+//            }
 
             if ( !isNullOrEmpty(ThisParentId) )
             {
                 var RealDivId = ThisParentId;
                 var HeaderText = _getDivHeaderText(RealDivId);
 
-                $('div[id*="' + RealDivId + '"]').remove();
-
-                if (debug) log('Starting ' + opts.ViewUrl, true);
+               // $('div[id*="' + RealDivId + '"]').find('div:jqmData(role="content")').empty();
 
                 var dataXml = {
                     SessionId: SessionId,
                     ParentId: RealDivId,
                     ForMobile: ForMobile
                 };
-
+                //clearPath();
                 // fetch new content
                 CswAjaxXml({
                     async: false,   // required so that the link will wait for the content before navigating
                     formobile: ForMobile,
-                    url: opts.ViewUrl,
+                    url: opts.ViewsListUrl,
                     data: dataXml,
                     stringify: false,
                     onloginfail: function() { Logout(); },
                     success: function ($xml)
                     {
-                        if (debug) log('Starting ' + opts.ViewUrl, true);
+                        if (debug) log('On Success ' + opts.ViewsListUrl, true);
 
                         $currentViewXml = $xml;
                         _updateStoredViewXml(RealDivId, $currentViewXml, '0');
 
-                        _processViewXml({
+                        var params = {
                             ParentId: 'viewsdiv',
                             DivId: RealDivId,
                             HeaderText: HeaderText,
                             '$xml': $currentViewXml,
-                            parentlevel: 1,
+                            parentlevel: -1,
+                            level: 0,
                             HideRefreshButton: false,
                             HideSearchButton: true,
-                            ChangePage: true
-                        });
-                        removeDiv('loadingdiv');
-                    } // success
+                            onPageShow: function(p) { return _loadDivContents(p); }
+                        };
+
+                        $viewsdiv.bindJqmEvents(params);
+                        $viewsdiv.doChangePage();
+                        //restorePath();
+                    }, // success
+                    error: function()
+                    {
+                        //restorePath();
+                    } 
                 });
             }
         }
@@ -1415,7 +1765,7 @@
             if (DivId !== 'synchstatus' && DivId.indexOf('prop_') !== 0)
             {
                 // case 20367 - remove all matching DivId.  Doing it immediately causes bugs.
-                setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
+                //setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
             }
             return true;
         }
@@ -1423,14 +1773,16 @@
 
         function onSynchStatusOpen(DivId, eventObj)
         {
-            $('#synchstatus_back').CswAttrDom('href', '#' + DivId);
+            $('#synchstatus_back').CswAttrDom({'href': 'javascript:void(0)' })
+                                  .CswAttrXml({'data-identity': DivId, 
+                                               'data-url': DivId });
+            
             $('#synchstatus_back').css('visibility', '');
-            _changePage($('#synchstatus'), 'slideup');
         }
 
         function onHelp(DivId, eventObj)
         {
-            _changePage($('#help'), 'slideup');
+            //
         }
 
         function onPropertyChange(DivId, eventObj)
@@ -1456,7 +1808,7 @@
 
                     // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
                     // However, it appears to work, for now.
-                    _updateStoredViewXml(rootid, $($currentViewXml.wrap('<wrapper />').parent().html() ), '1');
+                    _updateStoredViewXml(rootid, $currentViewXml, '1');
 
                     _resetPendingChanges(true, false);
                 }
@@ -1493,7 +1845,7 @@
                         ParentId: DivId,
                         DivId: DivId + '_searchdiv',
                         HeaderText: 'Search',
-                        content: Html,
+                        $content: $(Html),
                         HideSearchButton: true,
                         HideRefreshButton: true,
                         backicon: 'arrow-u'
@@ -1501,7 +1853,7 @@
 
                     $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
 
-                    _changePage($('#' + DivId + '_searchdiv'), "slideup", false, true);
+                    $('#' + DivId + '_searchdiv').doChangePage("slideup", false, true);
                 }
             });
         }
@@ -1514,7 +1866,7 @@
             {
                 if ( !isNullOrEmpty($xmlstr) )
                 {
-                    var content = _makeUL(DivId + '_searchresultslist');
+                    var $content = _makeUL(DivId + '_searchresultslist');
 
                     var hitcount = 0;
                     $xmlstr.find('node').each(function ()
@@ -1525,23 +1877,21 @@
                             if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
                                 hitcount++;
-                                content += _makeListItemFromXml($node, DivId, 1, false);
+                                $content.append( makeListItemFromXml($node, DivId, 1) );
                             }
                         }
                     });
                     if (hitcount === 0)
                     {
-                        content += "<li>No Results</li>";
+                        $content.append( $('<li>No Results</li>'));
                     }
-
-                    content += _endUL();
-
+                    $content.listview('refresh');
                     var $srdiv = $('#' + DivId + '_searchresults');
                     $srdiv.children().remove();
-                    $srdiv.append(content);
+                    $srdiv.append($content).doPage();
                     $('#' + DivId + '_searchresultslist').listview();
 
-                    _bindEvents(DivId + '_searchdiv', DivId, 1, $srdiv);
+                    _bindPageEvents(DivId + '_searchdiv', DivId, 1, $srdiv);
                 }
             });
         }
@@ -1802,7 +2152,7 @@
             {
                 url = opts.ConnectTestRandomFailUrl;
             }
-
+            //clearPath();
             CswAjaxXml({
                 formobile: ForMobile,
                 url: url,
@@ -1817,6 +2167,7 @@
                     {
                         onSuccess($xml);
                     }
+                    //restorePath();
                 },
                 error: function (xml)
                 {
@@ -1826,9 +2177,9 @@
                         onFailure($xml);
                     }
                     _waitForData();
+                    //restorePath();
                 }
             });
-
         } //_handleDataCheckTimer()
 
         function _processChanges(perpetuateTimer)
@@ -1839,15 +2190,13 @@
                 {
                     if ( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
                     {
-                        if (debug) log('Starting ' + opts.UpdateUrl, true);
-                        
                         var dataJson = {
                             SessionId: SessionId,
                             ParentId: rootid,
                             UpdatedViewXml: viewxml,
                             ForMobile: ForMobile
                         };
-
+                        //clearPath();
                         CswAjaxJSON({
                             formobile: ForMobile,
                             url: opts.UpdateUrl,
@@ -1858,7 +2207,8 @@
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
-                                } 
+                                }
+                                //restorePath(); 
                             },
                             success: function (data)
                             {
@@ -1869,6 +2219,7 @@
                                 {
                                     _waitForData();
                                 }
+                                //restorePath();
                             },
                             error: function (data)
                             {
@@ -1876,6 +2227,7 @@
                                 {
                                     _waitForData();
                                 }
+                                //restorePath();
                             }
                         });
                     }
@@ -1894,10 +2246,8 @@
             } // if(SessionId != '') 
         } //_processChanges()
 
-        //log("profiler="+$dumpProfileHTML(profiler));
         // For proper chaining support
         return this;
     };
-    //log($dumpProfilerText(profiler));
 }) ( jQuery );
 

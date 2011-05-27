@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.ObjClasses
             // BZ 5906
             UsernameProperty.ReadOnly = true;
 
-            if( Role.WasModified && !( _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            if( ( Role.WasModified && !( _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) )
             {
                 throw new CswDniException( "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
             }
@@ -422,7 +422,18 @@ namespace ChemSW.Nbt.ObjClasses
                                             CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId );
                                             if( null != TargetNodeType )
                                             {
-                                                ret = PropPermissions.CheckValue( Permission.ToString(), TargetNodeType.FirstVersionNodeTypeId.ToString() );
+                                                if( !IsAdministrator() &&
+                                                    null != TargetNodeType.ObjectClass &&
+                                                    TargetNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
+                                                    null != MetaDataProp.ObjectClassProp &&
+                                                    MetaDataProp.ObjectClassProp.ObjectClassPropId == Role.ObjectClassPropId )
+                                                {
+                                                    ret = false;
+                                                }
+                                                else
+                                                {
+                                                    ret = PropPermissions.CheckValue( Permission.ToString(), TargetNodeType.FirstVersionNodeTypeId.ToString() );
+                                                }
                                             }
                                             break;
                                         }
@@ -431,9 +442,18 @@ namespace ChemSW.Nbt.ObjClasses
                                             CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetNodeTypeId );
                                             if( null != TargetObjectClass )
                                             {
-                                                // case 21842 - this doesn't work
-												// ret = PropPermissions.CheckValue( Permission.ToString(), TargetObjectClass.ObjectClassId.ToString() );
-												ret = true;
+                                                if( !IsAdministrator() &&
+                                                    TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
+                                                    MetaDataProp.ObjectClassProp.ObjectClassPropId == Role.ObjectClassPropId )
+                                                {
+                                                    ret = false;
+                                                }
+                                                else
+                                                {
+                                                    // case 21842 - this doesn't work
+                                                    // ret = PropPermissions.CheckValue( Permission.ToString(), TargetObjectClass.ObjectClassId.ToString() );
+                                                    ret = true;
+                                                }
                                             }
                                             break;
                                         }

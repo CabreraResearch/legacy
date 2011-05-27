@@ -108,14 +108,15 @@ namespace ChemSW.Nbt.WebServices
 
 		/*
 		 * The two _xAddAuthenticationStatus() methods must _not_ add the authentication status as a element. 
-		 * I tried that, and it turne dout that in the JQuery world the code that displays an xml tree
+		 * I tried that, and it turned out that in the JQuery world the code that displays an xml tree
 		 * ends up seeing the authentication node even if it is a peer of the tree and not in the tree. 
 		 * Please trust me: we're talking major whackadelia. But it works fine as an attribute. 
 		 */
 		private void _xAddAuthenticationStatus( XElement XElement, AuthenticationStatus AuthenticationStatusIn )
 		{
 			XElement.SetAttributeValue( "authenticationstatus", AuthenticationStatusIn.ToString() );
-			XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+			if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+				XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
 		}//_xAuthenticationStatus()
 
 
@@ -124,13 +125,15 @@ namespace ChemSW.Nbt.WebServices
 			if( XmlDocument.DocumentElement == null )
 				CswXmlDocument.SetDocumentElement( XmlDocument, "root" );
 			CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "authenticationstatus", AuthenticationStatusIn.ToString() );
-			CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+			if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+				CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
 		}//_xAuthenticationStatus()
 
 		private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn )
 		{
 			JObj.Add( new JProperty( "AuthenticationStatus", AuthenticationStatusIn.ToString() ) );
-			JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
+			if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+				JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
 		}//_jAuthenticationStatus()
 
 
@@ -833,7 +836,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( Ex );
 			}
 
-_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 			return ReturnVal.ToString();
 
 		} // copyView()
@@ -2091,6 +2094,7 @@ _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 		{
 			// no session needed here
 			XElement Connected = new XElement( "Connected" );
+			_xAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
 			return ( Connected );
 		}
 
@@ -2163,7 +2167,7 @@ _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement RunView( string SessionId, string ParentId, bool ForMobile )
+		public XElement GetViewsList( string SessionId, string ParentId, bool ForMobile )
 		{
 			XElement ReturnVal = new XElement( "views" );
 			AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
@@ -2179,7 +2183,7 @@ _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 					if( null != CurrentUser )
 					{
 						CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtResources, ForMobile );
-						ReturnVal = wsView.Run( ParentId, CurrentUser );
+						ReturnVal = wsView.getViewsList( ParentId, CurrentUser );
 					}
 
 				}
@@ -2194,11 +2198,55 @@ _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
 			_xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 			return ReturnVal;
-		} // RunView()
+		} // GetViews()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+        public XElement GetView( string SessionId, string ParentId, bool ForMobile )
+        {
+            XElement ReturnVal = new XElement( "views" );
+            AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _CswSessionResources.attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+
+                    ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
+                    if( null != CurrentUser )
+                    {
+                        CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtResources, ForMobile );
+                        ReturnVal = wsView.getView( ParentId, CurrentUser );
+                    }
+
+                }
+
+                _deInitResources();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = _xError( ex );
+            }
+
+            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            return ReturnVal;
+        } // GetViews()
 
 		#endregion Mobile
 
-		#endregion Web Methods
+        #region test
+        [WebMethod( EnableSession = true )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string GetTestData()
+        {
+            JObject RetJson = new JObject( new JProperty( "A", "Static Page 1" ), new JProperty( "B", "Static Page 2" ), new JProperty("C", "Dynamic Page A" ), new JProperty( "D", "Dynamic Page B" ) );
+            return ( RetJson.ToString() );
+        } // RunView()
+        #endregion test
+				#endregion Web Methods
 
 		private CswNbtView _getView( string ViewId )
 		{

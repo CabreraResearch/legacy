@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.PropTypes
                 CswNbtView Ret = null;
                 if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
                     //Ret.LoadXml(_CswNbtMetaDataNodeTypeProp.ViewId);
-					Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
+                    Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
                 return Ret;
             }
         }
@@ -98,9 +98,13 @@ namespace ChemSW.Nbt.PropTypes
                 if( value != null ) //&& value.TableName == "nodes" )
                 {
                     if( value.TableName != TargetTableName )
+                    {
                         throw new CswDniException( "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
-
-                    _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, value.PrimaryKey );
+                    }
+                    if( RelatedNodeId != value )
+                    {
+                        _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, value.PrimaryKey );
+                    }
                 }
                 else
                     _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, Int32.MinValue );
@@ -255,9 +259,11 @@ namespace ChemSW.Nbt.PropTypes
 
             Int32 NodeId = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIDSubField.ToXmlNodeName() );
             if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
+            {
                 NodeId = NodeMap[NodeId];
+            }
             RelatedNodeId = new CswPrimaryKey( "nodes", NodeId );
-            if( RelatedNodeId != null )
+            if( null != RelatedNodeId )
             {
                 CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", RelatedNodeId.PrimaryKey.ToString() );
                 PendingUpdate = true;

@@ -352,9 +352,9 @@
                     'onReload': function() { getProps($tabcontentdiv, tabid); },
                     'cswnbtnodekey': o.cswnbtnodekey,
                     'EditMode': o.EditMode,
-                    'onEditView': o.onEditView
+                    'onEditView': o.onEditView,
+                    'ReadOnly': isTrue( $propxml.CswAttrXml('readonly') )
                 };
-
                 fieldOpt.$propdiv.CswAttrDom('nodeid', fieldOpt.nodeid);
                 fieldOpt.$propdiv.CswAttrDom('propid', fieldOpt.propid);
                 fieldOpt.$propdiv.CswAttrDom('cswnbtnodekey', fieldOpt.cswnbtnodekey);
