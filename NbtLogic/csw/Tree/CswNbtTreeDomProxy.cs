@@ -94,7 +94,7 @@ namespace ChemSW.Nbt
 								   CswNbtView View, CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, CswNbtNodeCollection CswNbtNodeCollection )
         {
 			_View = View;
-            //_Key = CswNbtTreeKey;
+			_Key = new CswNbtTreeKey( _CswNbtResources, _View );
             //            CswNbtResources.CswLogger.reportTraceInfo( "CswNbtTreeDomProxy", "ctor", "entered" );
 
             _CswNbtNodeReader = new CswNbtNodeReader( CswNbtResources );
@@ -106,8 +106,7 @@ namespace ChemSW.Nbt
             //            _CswNbtNodeFactory = CswNbtResources.makeCswNbtNodeFactory();
 
             _XslFilePath = CswTools.getConfigurationFilePath( CswNbtResources.SetupVbls.SetupMode );
-            _CswNbtTreeNodes = new CswNbtTreeNodes( //_Key, 
-													_XslFilePath, ViewName, _CswNbtResources, CswNbtNodeCollection );
+            _CswNbtTreeNodes = new CswNbtTreeNodes( _Key, _XslFilePath, ViewName, _CswNbtResources, CswNbtNodeCollection );
 
             //Not required for imported rows
             //_ColsToValidateForImportRow.Add(_CswNbtColumnNames.ParentNodeId );
@@ -124,15 +123,15 @@ namespace ChemSW.Nbt
 
         }//ctor
 
-        
-        //private CswNbtTreeKey _Key = null;
-		///// <summary>
-		///// TreeKey which is used to index this tree.
-		///// </summary>
-		//public CswNbtTreeKey Key
-		//{
-		//    get { return ( _Key ); }
-		//}
+
+		private CswNbtTreeKey _Key = null;
+		/// <summary>
+		/// TreeKey which is used to index this tree.
+		/// </summary>
+		public CswNbtTreeKey Key
+		{
+			get { return ( _Key ); }
+		}
 
         private CswNbtView _View = null;
         /// <summary>
