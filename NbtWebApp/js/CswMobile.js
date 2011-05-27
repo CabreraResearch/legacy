@@ -1277,7 +1277,10 @@
                                 .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText}); 
             
 			    var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
-                                      .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'fixed'});
+                                      .CswAttrXml({'data-role': 'header',
+                                                   'data-theme': opts.Theme, 
+                                                   'data-position':'fixed',
+                                                   'data-id': 'csw_header'});
                 var $backlink = $header.CswLink('init',{'href': 'javascript:void(0)', 
                                                         ID: p.DivId + '_back',
                                                         value: 'Back'})
@@ -1320,8 +1323,11 @@
                 var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
                                        .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
                                        .append(p.$content);
-                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
-                                      .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
+                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer', class: 'ui-bar'})
+                                      .CswAttrXml({'data-role':'footer', 
+                                                   'data-theme': opts.Theme, 
+                                                   'data-position':'fixed',
+                                                   'data-id': 'csw_footer'});
 
                 
                 var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
