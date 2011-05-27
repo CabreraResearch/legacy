@@ -45,21 +45,6 @@
         return $ret;
     }
 
-//    $.fn.refreshJqm = function()
-//    {
-//        //JQM doesnot yet have a refresh all method, so we must do this manually
-//        var $element = $(this);
-//        if( !isNullOrEmpty($element) )
-//        {
-//            $element.find('input[type="checkbox"]').checkboxradio('refresh');
-//            $element.find('input[type="radio"]').checkboxradio('refresh');
-//            $element.find('input[type="range"]').slider('refresh'); //slider
-//            $element.find('select').selectmenu('refresh');
-//            $element.find('ul').listview('refresh');
-//        }
-//        return $element;
-//    }
-
     $.fn.doChangePage = function (transition, reverse, changeHash)
 	{
         var $div = $(this);
@@ -112,19 +97,19 @@
                 $.mobile.pageLoading(true);
             });
 
-            //$div.unbind('pagebeforecreate');
-            $div.bind('pagebeforecreate', function()
-            {
-                //$div.find('input[type="radio"]').checkboxradio();
-                //$div.find('input[type="checkbox"]').checkboxradio();
-            });
+//            $div.unbind('pagebeforecreate');
+//            $div.bind('pagebeforecreate', function()
+//            {
+//                //$div.find('input[type="radio"]').checkboxradio();
+//                //$div.find('input[type="checkbox"]').checkboxradio();
+//            });
 
-            //$div.unbind('pagecreate');
-            $div.bind('pagecreate', function()
-            {
-                //$div.find('input[type="radio"]').checkboxradio('refresh',true);
-                //$div.find('input[type="checkbox"]').checkboxradio('refresh',true);
-            });
+//            $div.unbind('pagecreate');
+//            $div.bind('pagecreate', function()
+//            {
+//                //$div.find('input[type="radio"]').checkboxradio('refresh',true);
+//                //$div.find('input[type="checkbox"]').checkboxradio('refresh',true);
+//            });
         }
         return $ret;
     }
