@@ -5,14 +5,21 @@
 
 
 // ------------------------------------------------------------------------------------
-// Ajax
+// Globals (yuck)
 // ------------------------------------------------------------------------------------
+
+var loginUrl = 'NewMain.html';
 
 var timeout = '';
 function getTimeout()
 {
 	return timeout;
 }
+
+// ------------------------------------------------------------------------------------
+// Ajax
+// ------------------------------------------------------------------------------------
+
 
 function CswAjaxJSON(options)
 { /// <param name="$" type="jQuery" />
@@ -26,60 +33,55 @@ function CswAjaxJSON(options)
     ///     &#10;3 - options.success: function() {}
     ///     &#10;4 - options.error: function() {}
     /// </param>
-    var o = {
-        url: '',
-        data: {},
-        onloginfail: function () { },
-        success: function (result) { },
-        error: function () { },
-        formobile: false
-    };
+	var o = {
+		url: '',
+		data: {},
+		onloginfail: function () { _finishLogout(); },
+		success: function (result) { },
+		error: function () { }
+	};
 
     if (options) $.extend(o, options);
     //var starttime = new Date();
     $.ajax({
-        type: 'POST',
-        url: o.url,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        data: JSON.stringify(o.data),
-        success: function (data, textStatus, XMLHttpRequest)
-        {
-            //var endtime = new Date();
-            //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+    	type: 'POST',
+    	url: o.url,
+    	dataType: "json",
+    	contentType: 'application/json; charset=utf-8',
+    	data: JSON.stringify(o.data),
+    	success: function (data, textStatus, XMLHttpRequest)
+    	{
+    		//var endtime = new Date();
+    		//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-            var result = $.parseJSON(data.d);
+    		var result = $.parseJSON(data.d);
 
-            if (result.error !== undefined)
-            {
-                _handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
-                o.error();
-            }
-            else
-            {
-            	var auth = tryParseString(result.AuthenticationStatus, '');
-            	timeout = tryParseString(result.timeout, '');
+    		if (result.error !== undefined)
+    		{
+    			_handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
+    			o.error();
+    		}
+    		else
+    		{
+    			var auth = tryParseString(result.AuthenticationStatus, 'Unknown');
+    			timeout = tryParseString(result.timeout, '');
 
-                if (o.formobile)
-                {
-                	_handleAuthenticationStatus({
-                        status: auth,
-                        success: o.success(result),
-                        failure: o.onloginfail
-                    });
-                }
-                else
-                {
-                    o.success(result);
-                }
-            }
-        }, // success{}
-        error: function (XMLHttpRequest, textStatus, errorThrown)
-        {
-            _handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-            o.error();
-        }
-    });        // $.ajax({
+    			_handleAuthenticationStatus({
+    				status: auth,
+    				success: function () { o.success(result); },
+    				failure: o.onloginfail,
+    				usernodeid: result.nodeid,
+    				usernodekey: result.cswnbtnodekey,
+    				passwordpropid: result.passwordpropid
+    			});
+    		}
+    	}, // success{}
+    	error: function (XMLHttpRequest, textStatus, errorThrown)
+    	{
+    		_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+    		o.error();
+    	}
+    });         // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options)
@@ -100,46 +102,29 @@ function CswAjaxXml(options)
         url: '',
         data: {},
         stringify: false, //in case we need to conditionally apply $.param() instead of JSON.stringify() (or both)
-        onloginfail: function () { },
+        onloginfail: function () { _finishLogout(); },
         success: function ($xml) { },
-        error: function () { },
-        formobile: false
-    };
+        error: function () { }
+	};
 
     if (options) $.extend(o, options);
 
     if (!isNullOrEmpty(o.url))
     {
-        var ajaxData;
-        //if (!o.stringify)
-        //{
-        ajaxData = $.param(o.data);
-        //}
-        //else
-        //{
-        //    ajaxData = JSON.stringify( $.param(o.data) );
-        //}
-        //var starttime = new Date();
         $.ajax({
             type: 'POST',
             url: o.url,
             dataType: "xml",
             //contentType: 'application/json; charset=utf-8',
-            data: ajaxData,     // should be 'field1=value&field2=value'
+            data: $.param(o.data),     // should be 'field1=value&field2=value'
             success: function (data, textStatus, XMLHttpRequest)
             {
                 //var endtime = new Date();
                 //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
                 // this is IE compliant
-                //                var $xml = $(XMLHttpRequest.responseXML);
-                //                var $realxml = $xml.children().first();
-
                 var $xml = $(XMLHttpRequest.responseXML);
                 var $realxml = $xml.children().first();
-
-                var authstatus = $realxml.CswAttrXml('authenticationstatus');
-                timeout = $realxml.CswAttrXml('timeout');
 
                 if ($realxml.first().get(0).nodeName === "error")
                 {
@@ -148,20 +133,17 @@ function CswAjaxXml(options)
                 }
                 else
                 {
-                    if (o.formobile)
-                    {
-                        var auth = tryParseString($xml.find('AuthenticationStatus').text(), '');
-                        _handleAuthenticationStatus({
-                            status: auth,
-                            success: o.success($realxml),
-                            failure: o.onloginfail
-                        });
-                    }
-                    else
-                    {
-                        //log(o.url + "; authstatus: " + authstatus);
-                        o.success($realxml);
-                    }
+                	var auth = tryParseString($realxml.CswAttrXml('authenticationstatus'), 'Unknown');
+                	timeout = $realxml.CswAttrXml('timeout');
+
+                	_handleAuthenticationStatus({
+                        status: auth,
+                        success: function() { o.success($realxml) },
+                        failure: o.onloginfail,
+                        usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
+                        usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
+                        passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), '')
+                    });
                 }
 
             }, // success{}
@@ -175,7 +157,8 @@ function CswAjaxXml(options)
 } // CswAjaxXml()
 
 function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
-{ /// <param name="$" type="jQuery" />
+{
+	/// <param name="$" type="jQuery" />
     //	ErrorMessage = "A WebServices Error Occurred: " + textStatus;
     //	if (null != errorThrown) {
     //		ErrorMessage += "; Exception: " + errorThrown.toString()
@@ -189,25 +172,6 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
         log(errorJson.message + '; ' + errorJson.detail);
     }
 } // _handleAjaxError()
-
-//function _handleAuthenticationStatus(options)
-//{
-//    var o = {
-//        status: '',
-//        success: function () { },
-//        failure: function () { }
-//    };
-
-//    if (!isNullOrEmpty(o.status) && o.status !== 'Authenticated')
-//    {
-//        alert(o.status);
-//        o.failure();
-//    }
-//    else
-//    {
-//        o.success();
-//    }
-//}
 
 function _handleAuthenticationStatus(options)
 {
@@ -224,13 +188,16 @@ function _handleAuthenticationStatus(options)
 	var txt = '';
 	switch (o.status)
 	{
+		case 'Authenticated': o.success(); break;
+		case 'Deauthenticated': o.success(); break;  // yes, o.success() is intentional here.
 		case 'Failed': txt = "Login Failed"; break;
 		case 'Locked': txt = "Your account is locked.  Please see your account administrator."; break;
 		case 'Deactivated': txt = "Your account is deactivated.  Please see your account administrator."; break;
 		case 'TooManyUsers': txt = "Too many users are currently connected.  Try again later."; break;
 		case 'NonExistentAccessId': txt = "Login Failed"; break;
-		case 'NonExistentSession': txt = "Login Failed"; break;
+		case 'NonExistentSession': txt = "Your session has timed out.  Please login again."; break;
 		case 'Unknown': txt = "An Unknown Error Occurred"; break;
+		case 'TimedOut': txt = "Your session has timed out.  Please login again."; break;
 		case 'ExpiredPassword':
 			$.CswDialog('EditNodeDialog', {
 				'nodeid': o.usernodeid,
@@ -253,6 +220,37 @@ function _handleAuthenticationStatus(options)
 		o.failure(txt);
 	}
 } // _handleAuthenticationStatus()
+
+
+function Logout(options)
+{
+	var o = {
+		DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
+		onDeauthenticate: function () { }
+	};
+
+	if (options)
+	{
+		$.extend(o, options);
+	}
+
+	CswAjaxJSON({
+		url: o.DeauthenticateUrl,
+		data: {},
+		success: function (data)
+		{
+			_finishLogout();
+			o.onDeauthenticate();
+		} // success{}
+	});
+} // logout
+
+function _finishLogout()
+{
+	$.CswCookie('clearAll');
+	window.location = loginUrl;
+}
+
 
 //function extractCDataValue($node) {
 //    // default
