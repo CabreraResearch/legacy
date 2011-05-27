@@ -1086,9 +1086,10 @@
 				{
                     $input.CswAttrDom('checked','checked');
                 }
-                
+                $input.data('thisI',i);
                 $input.click( function ()
                 {
+                    var i = $(this).data('thisI');l
                     for (var k = 0; k < answers.length; k++)
                     {
                         var thisAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k]});
@@ -1101,13 +1102,14 @@
                         {
                             //$answer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
                             $otherradio.CswAttrDom('checked', 'checked');
-                            $otherradio.checkboxradio('refresh');
+                            $answer.CswAttrDom('checked', 'checked');
                             //$otherradio.siblings('label').addClass('ui-btn-active');
                         }
                         else
                         {
                             //$answer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
-                            $otherradio.removeProp('checked');
+                            $otherradio.removeAttr('checked');
+                            $answer.removeAttr('checked');
                             //$otherradio.siblings('label').removeClass('ui-btn-active');
                         }
                     } // for (var k = 0; k < answers.length; k++)
