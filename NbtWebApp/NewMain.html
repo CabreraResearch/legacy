@@ -614,13 +614,18 @@
 				nodename: '',
 				iconurl: '',
                 viewid: '',
-                viewmode: 'tree',
+                viewmode: '',
                 showempty: false,
                 forsearch: false,
 				IncludeNodeRequired: false
 			};
 			if (options) $.extend(o, options);
-			
+
+			if (isNullOrEmpty(o.viewid))
+				o.viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
+			if (isNullOrEmpty(o.viewmode))
+				o.viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
+
 			switch (o.viewmode)
 			{
 				case 'grid':
