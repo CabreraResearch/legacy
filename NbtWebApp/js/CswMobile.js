@@ -1089,7 +1089,7 @@
                 $input.data('thisI',i);
                 $input.click( function ()
                 {
-                    var i = $(this).data('thisI');l
+                    var i = $(this).data('thisI');
                     for (var k = 0; k < answers.length; k++)
                     {
                         var thisAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k]});
