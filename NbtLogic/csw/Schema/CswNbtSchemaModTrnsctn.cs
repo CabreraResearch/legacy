@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
@@ -10,6 +11,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.DB;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Audit;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -21,6 +23,8 @@ namespace ChemSW.Nbt.Schema
         private CswNbtResources _CswNbtResources;
 
         private CswDDL _CswDdl = null;
+        CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
+
 
         /// <summary>
         /// Encapsulate data acces mechanics for schmema updater so that a schema treats transactions consistently
@@ -37,7 +41,7 @@ namespace ChemSW.Nbt.Schema
             _CswDdl = new CswDDL( _CswNbtResources );
             //            _CswNbtSequenceManager = new CswNbtSequenceManager( _CswNbtResources );
         }//ctor
-        
+
         //private bool _ManageConstraints = true;
         //public bool ManageConstraints
         //{
@@ -226,8 +230,13 @@ namespace ChemSW.Nbt.Schema
 
 
         public int purgeTableRecords( string TableName ) { return ( _CswNbtResources.CswResources.purgeTableRecords( TableName ) ); }//purgeTableRecords()
-        public void copyTable( string SourceTableName, string CopyToTableName ) { _CswNbtResources.CswResources.copyTable( SourceTableName, CopyToTableName ); }//copyTable()
-        public void addTable( string TableName, string PkColumnName ) { _CswDdl.addTable( TableName, PkColumnName ); }
+        public void copyTable( string SourceTableName, string CopyToTableName, bool TableIsTemporary = true ) { _CswNbtResources.CswResources.copyTable( SourceTableName, CopyToTableName, TableIsTemporary ); }//copyTable()
+
+        public void addTable( string TableName, string PkColumnName )
+        {
+            _CswDdl.addTable( TableName, PkColumnName );
+        }
+
         public void dropTable( string TableName ) { _CswDdl.dropTable( TableName ); }//dropTable()
 
         //public void addColumn( string columnname, DataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
@@ -296,6 +305,45 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
+
+        public void makeMissingAuditTablesAndColumns()
+        {
+
+            ICollection TableNamesColl = (ICollection) _CswNbtResources.CswResources.DataDictionary.getTableNames();
+            string[] TableNames = new string[TableNamesColl.Count];
+            TableNamesColl.CopyTo( TableNames, 0 );
+
+            foreach( string CurrentTableName in TableNames )
+            {
+                makeTableAuditable( CurrentTableName );
+            }
+
+        }//makeMissingAuditTables()
+
+
+        public void makeTableAuditable( string TableName )
+        {
+            if( ( false == _CswAuditMetaData.isAuditTable( TableName ) ) && ( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) ) )
+            {
+                addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
+            }
+
+
+            if( false == _CswAuditMetaData.isAuditTable( TableName ) )
+            {
+                string AuditTableName = _CswAuditMetaData.makeAuditTableName( TableName );
+                if( false == _CswNbtResources.CswResources.DataDictionary.isTableDefined( AuditTableName ) )
+                {
+                    copyTable( TableName, AuditTableName, false );
+                    addBooleanColumn( AuditTableName, _CswAuditMetaData.DelegeFlagColName, _CswAuditMetaData.DelegeFlagColDescription, false, false );
+                    addForeignKeyColumn( AuditTableName, _CswAuditMetaData.AuditTransactionIdColName, "fk to audittransactions table", false, true, _CswAuditMetaData.AuditTransactionTableName, _CswAuditMetaData.AuditTransactionIdColName );
+
+                }//if the audit table does not yet exist
+
+            }//if it isn't already an audit table
+
+        }//makeTableAuditable() 
+
         public CswNbtNodeCollection Nodes { get { return ( _CswNbtResources.Nodes ); } }
         //public CswNbtTreeCache Trees { get { return ( _CswNbtResources.Trees ); } }
         public CswNbtActionCollection Actions { get { return _CswNbtResources.Actions; } }
@@ -313,11 +361,11 @@ namespace ChemSW.Nbt.Schema
         //    return _CswNbtResources.IsModuleEnabled( Module );
         //}
 
-		public CswNbtViewSelect ViewSelect { get { return _CswNbtResources.ViewSelect; } }
+        public CswNbtViewSelect ViewSelect { get { return _CswNbtResources.ViewSelect; } }
 
         public CswNbtView makeView() { return ( new CswNbtView( _CswNbtResources ) ); }
-		public CswNbtView restoreView( CswNbtViewId ViewId ) { return ViewSelect.restoreView( ViewId ); }
-		public CswNbtView restoreViewString( string ViewAsString ) { return ViewSelect.restoreView( ViewAsString ); }
+        public CswNbtView restoreView( CswNbtViewId ViewId ) { return ViewSelect.restoreView( ViewId ); }
+        public CswNbtView restoreViewString( string ViewAsString ) { return ViewSelect.restoreView( ViewAsString ); }
         public CswNbtView restoreView( string ViewName )
         {
             CswNbtView ReturnVal = null;
@@ -359,7 +407,7 @@ namespace ChemSW.Nbt.Schema
             DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, " where viewname='" + ViewName + "'", false );
             foreach( DataRow CurrentRow in ViewTable.Rows )
             {
-				ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
+                ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
             }
 
             return ( ReturnVal );
@@ -420,10 +468,10 @@ namespace ChemSW.Nbt.Schema
             ActionsTable.update( ActionsDataTable );
 
             // Grant permission to Administrator
-			CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
-			SetActionPermission( RoleNode, Name, true );
-			CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" );
-			SetActionPermission( RoleNode2, Name, true );
+            CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
+            SetActionPermission( RoleNode, Name, true );
+            CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" );
+            SetActionPermission( RoleNode2, Name, true );
 
             return NewActionId;
         }
@@ -460,29 +508,29 @@ namespace ChemSW.Nbt.Schema
             JctModulesATable.update( JctModulesADataTable );
         }
 
-		/// <summary>
-		/// Deprecated in favor of SetActionPermission.  Don't use for new scripts.
-		/// </summary>
-		public void GrantActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName )
-		{
-			SetActionPermission( RoleNode, ActionName, true );
-		}
+        /// <summary>
+        /// Deprecated in favor of SetActionPermission.  Don't use for new scripts.
+        /// </summary>
+        public void GrantActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName )
+        {
+            SetActionPermission( RoleNode, ActionName, true );
+        }
 
-		/// <summary>
-		/// Grants or revokes permission to an action to a role
-		/// </summary>
-		public void SetActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName, bool HasAccess )
-		{
-			if( RoleNode != null )
-			{
-				CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).ActionPermissions;
-				ActionPermissions.SetValue( CswNbtObjClassRole.ActionPermissionsXValueName,
-											CswNbtAction.ActionNameEnumToString( ActionName ),
-											HasAccess );
-				ActionPermissions.Save();
-				RoleNode.postChanges( false );
-			}
-		}
+        /// <summary>
+        /// Grants or revokes permission to an action to a role
+        /// </summary>
+        public void SetActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName, bool HasAccess )
+        {
+            if( RoleNode != null )
+            {
+                CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).ActionPermissions;
+                ActionPermissions.SetValue( CswNbtObjClassRole.ActionPermissionsXValueName,
+                                            CswNbtAction.ActionNameEnumToString( ActionName ),
+                                            HasAccess );
+                ActionPermissions.Save();
+                RoleNode.postChanges( false );
+            }
+        }
 
         /// <summary>
         /// Convenience function for making new Module
@@ -767,7 +815,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtView CurrentView = this.makeView();
                     CurrentView.LoadXml( CurrentRow["viewxml"].ToString() );
-					CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
+                    CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
 
                     // Swap old property for new
                     this.ReplaceViewProperty( CurrentView, OldProp, NewProp );
@@ -870,9 +918,9 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for setting value of a configuration variable
         /// </summary>
-        public void setConfigVariableValue(String VariableName, String VariableValue )
+        public void setConfigVariableValue( String VariableName, String VariableValue )
         {
-            if( !String.IsNullOrEmpty( VariableValue) && !String.IsNullOrEmpty( VariableName ) )
+            if( !String.IsNullOrEmpty( VariableValue ) && !String.IsNullOrEmpty( VariableName ) )
             {
                 _CswNbtResources.setConfigVariableValue( VariableName, VariableValue );
             }

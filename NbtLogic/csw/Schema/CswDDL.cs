@@ -87,6 +87,9 @@ namespace ChemSW.Nbt.Schema
 
             _DdlOps[ TableName ].apply();
 
+
+
+
         }//addTable()
 
         public void dropTable( string TableName )
@@ -161,6 +164,18 @@ namespace ChemSW.Nbt.Schema
 
         }//addColumn()
 
+
+        public void renameColumn( string TableName, string OriginalColumnName, string NewColumnName )
+        {
+            _verifyOrCreateTableForColumnOp( TableName );
+
+            _DdlOps[TableName].renameColumn( OriginalColumnName, NewColumnName ); 
+
+            _DdlOps[TableName].apply();
+
+        }//renameColumn() 
+
+
         public Int32 makeSequence( CswSequenceName SequenceName, string Prepend, string Postpend, Int32 Pad, Int32 InitialValue )
         {
 
@@ -169,7 +184,8 @@ namespace ChemSW.Nbt.Schema
             _SequenceOps.Add( CswSequenceDdlOp );
 
             return _CswNbtSequenceManager.makeSequence( SequenceName, Prepend, Postpend, Pad, InitialValue );
-        }
+
+        }//makeSequence() 
 
         public DataTable getSequence( CswSequenceName SequenceName )
         {
@@ -308,10 +324,6 @@ namespace ChemSW.Nbt.Schema
         }//revert() 
 
 
-        public void renameColumn( string TableName, string OriginalColumnName, string NewColumnName )
-        {
-            throw ( new CswDniException( "Rename not implemented yet" ) );
-        }
 
     }//class CswDDL
 

@@ -49,6 +49,7 @@ drop table schedule_items;
 drop table scheduledrules;
 drop table scheduledruleparams;
 drop table session_data;
+drop table audit_transactions;
 commit;
 
 exec drop_sequences;

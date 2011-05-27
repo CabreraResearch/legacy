@@ -152,19 +152,25 @@ namespace ChemSW.Nbt
 
 		public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes )
 		{
-		    CswNbtNodeKey ParentNodeKey = null;
-		    return getTreeFromView( View, ForceReInit, ref ParentNodeKey, null, Int32.MinValue, FetchAllPrior, SingleLevelOnly, null, IncludeSystemNodes );
+			CswNbtNodeKey ParentNodeKey = null;
+			return getTreeFromView( View, ForceReInit, ref ParentNodeKey, null, Int32.MinValue, FetchAllPrior, SingleLevelOnly, null, IncludeSystemNodes );
+		}
+
+		public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes, bool RequireViewPermissions )
+		{
+			CswNbtNodeKey ParentNodeKey = null;
+			return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, ForceReInit, ref ParentNodeKey, null, Int32.MinValue, FetchAllPrior, SingleLevelOnly, null, IncludeSystemNodes, RequireViewPermissions );
 		}
 
 		public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes )
 		{
 		    CswNbtNodeKey ParentNodeKey = null;
-		    return getTreeFromView( RunAsUser, View, ForceReInit, ref ParentNodeKey, null, Int32.MinValue, FetchAllPrior, SingleLevelOnly, null, IncludeSystemNodes );
+		    return getTreeFromView( RunAsUser, View, ForceReInit, ref ParentNodeKey, null, Int32.MinValue, FetchAllPrior, SingleLevelOnly, null, IncludeSystemNodes, true );
 		}
 
 		public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, ref CswNbtNodeKey ParentNodeKey, CswNbtViewRelationship ChildRelationshipToStartWith, Int32 PageSize, bool FetchAllPrior, bool SingleLevelOnly, CswNbtNodeKey IncludedKey, bool IncludeSystemNodes )
 		{
-			return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, ForceReInit, ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, FetchAllPrior, SingleLevelOnly, IncludedKey, IncludeSystemNodes );
+			return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, ForceReInit, ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, FetchAllPrior, SingleLevelOnly, IncludedKey, IncludeSystemNodes, true );
 		}
 
         public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, 
@@ -177,14 +183,15 @@ namespace ChemSW.Nbt
 											bool FetchAllPrior, 
 											bool SingleLevelOnly, 
 											CswNbtNodeKey IncludedKey, 
-											bool IncludeSystemNodes)
+											bool IncludeSystemNodes,
+											bool RequireViewPermissions )
         {
             ICswNbtTree ReturnVal = _makeTree(View); // CswNbtTreeKey );
             CswNbtTreeLoaderFactory CswNbtTreeLoaderFactory = new CswNbtTreeLoaderFactory( _CswNbtResources );
 
             CswNbtTreeLoader CswNbtTreeLoader = null;
             CswNbtTreeLoader = CswNbtTreeLoaderFactory.makeTreeLoaderFromXmlView( RunAsUser, ReturnVal, View, IncludeSystemNodes );
-            CswNbtTreeLoader.load(ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, FetchAllPrior, SingleLevelOnly, IncludedKey);
+			CswNbtTreeLoader.load( ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, FetchAllPrior, SingleLevelOnly, IncludedKey, RequireViewPermissions );
 			
 			//ReturnVal.goToRoot();
 

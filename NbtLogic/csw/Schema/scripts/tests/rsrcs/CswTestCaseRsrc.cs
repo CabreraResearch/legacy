@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.Schema
 
         }//
 
-        public void fillTableWithArbitraryData( string TableName, string ColumnName, Int32 TotalRows )
+        public void fillTableWithArbitraryData( string TableName, string ColumnName, Int32 TotalRows, string Value = "" )
         {
             Int32 ArbitraryValue = 0;
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "fillTableWithArbitraryData_update", TableName );
@@ -142,7 +142,15 @@ namespace ChemSW.Nbt.Schema
             for( Int32 idx = 0; idx < TotalRows; idx++ )
             {
                 DataRow NewRow = PkTableTable.NewRow();
-                NewRow[ColumnName] = getTestNameStem( TestNameStem.TestVal ) + ":" + ( +ArbitraryValue ).ToString();
+
+                if( "" != Value )
+                {
+                    NewRow[ColumnName] = Value;
+                }
+                else
+                {
+                    NewRow[ColumnName] = getTestNameStem( TestNameStem.TestVal ) + ":" + ( +ArbitraryValue ).ToString();
+                }
                 PkTableTable.Rows.Add( NewRow );
             }
             CswTableUpdate.update( PkTableTable );
@@ -188,13 +196,43 @@ namespace ChemSW.Nbt.Schema
             return ( Exception.Message.Contains( "keys in table referenced by foreign keys" ) );
         }//isRecordDeletionConstraintViolation()
 
-        public void assertColumnIsAbsent( string TableName, string ColumnName )
+        public void assertColumnIsAbsent( string TableName, string ColumnName, string ThrowMessageIn = "" )
         {
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( TableName, ColumnName) )
-                throw ( new CswDniException( "Column " + ColumnName+ " was not removed from data base" ) );
+            string ThrowMessage = string.Empty;
+            if( string.Empty == ThrowMessageIn )
+            {
+                ThrowMessage = " exists in ";
+            }
+            else
+            {
+                ThrowMessage = " " + ThrowMessageIn;
+            }
 
-            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( TableName, ColumnName) )
-                throw ( new CswDniException( "Column " + ColumnName+ " was not removed from the data base" ) );
+            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( TableName, ColumnName ) )
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the database " ) );
+
+            if( _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( TableName, ColumnName ) )
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the meta data ") );
+
+        }//assertColumnIsAbsent() 
+
+        public void assertColumnIsPresent( string TableName, string ColumnName, string ThrowMessageIn = "" )
+        {
+            string ThrowMessage = string.Empty;
+            if( string.Empty == ThrowMessageIn )
+            {
+                ThrowMessage = " does not exist in ";
+            }
+            else
+            {
+                ThrowMessage = " " + ThrowMessageIn;
+            }
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( TableName, ColumnName ) )
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the data base") );
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( TableName, ColumnName ) )
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the meta data" ) );
 
         }//assertColumnIsAbsent() 
 
@@ -203,9 +241,23 @@ namespace ChemSW.Nbt.Schema
             if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TableName ) )
                 throw ( new CswDniException( "Table " + TableName + " was not dropped from the database" ) );
 
+            if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TableName ) )
+                throw ( new CswDniException( "Table " + TableName + " was not dropped from meta data" ) );
+
+        }//assertTableIsAbsent() 
+
+        public void assertTableIsPresent( string TableName )
+        {
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TableName ) )
+                throw ( new CswDniException( "Table " + TableName + " was not in the database" ) );
+
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TableName ) )
+                throw ( new CswDniException( "Table " + TableName + " in not in the meta data" ) );
+
         }//assertTableIsAbsent() 
 
 
-    }
+
+    }//CswTestCaseRsrc
 
 }//ChemSW.Nbt.Schema

@@ -39,7 +39,7 @@ namespace ChemSW.Nbt
                 ResultLimit = CswConvert.ToInt32( ResultLimitString );
         }
 
-        public override void load( ref CswNbtNodeKey ParentNodeKey, CswNbtViewRelationship ChildRelationshipToStartWith, Int32 PageSize, bool FetchAllPrior, bool SingleLevelOnly, CswNbtNodeKey IncludedKey )
+        public override void load( ref CswNbtNodeKey ParentNodeKey, CswNbtViewRelationship ChildRelationshipToStartWith, Int32 PageSize, bool FetchAllPrior, bool SingleLevelOnly, CswNbtNodeKey IncludedKey, bool RequireViewPermissions )
         {
             CswTimer _Timer = new CswTimer();
             Int32 ThisLevelNodeCount = 0;
@@ -56,7 +56,7 @@ namespace ChemSW.Nbt
                 foreach( CswNbtViewRelationship R in _View.Root.ChildRelationships )
                 {
                     _handleRelationship( null, R, //_View.Root.AddChildren, 
-                                         PageSize, ref ThisLevelNodeCount, FetchAllPrior, false, ParentNodeKey, true );
+										 PageSize, ref ThisLevelNodeCount, FetchAllPrior, false, ParentNodeKey, true, RequireViewPermissions );
                 }
 
                 if( ParentNodeKey.NodeSpecies == NodeSpecies.Group )
@@ -106,13 +106,13 @@ namespace ChemSW.Nbt
                         if( ParentNodeKey == null ) //|| ParentNodeKey.TreeKey != _CswNbtTree.Key )
                         {
                             FinishedWithThisRelationship = _handleRelationship( null, R, //_View.Root.AddChildren, 
-                                                                                ThisPageSize, ref ThisLevelNodeCount, FetchAllPrior, !SingleLevelOnly, IncludedKey, false );
+																				ThisPageSize, ref ThisLevelNodeCount, FetchAllPrior, !SingleLevelOnly, IncludedKey, false, RequireViewPermissions );
                             _CswNbtResources.logTimerResult( "Built tree level from view " + _View.ViewName + " (" + _View.ViewId + ")", _Timer.ElapsedDurationInSecondsAsString );
                         }
                         else
                         {
                             FinishedWithThisRelationship = _handleRelationship( ParentNodeKey, R, //_View.Root.AddChildren, 
-                                                                                ThisPageSize, ref ThisLevelNodeCount, FetchAllPrior, !SingleLevelOnly, IncludedKey, false );
+																				ThisPageSize, ref ThisLevelNodeCount, FetchAllPrior, !SingleLevelOnly, IncludedKey, false, RequireViewPermissions );
                             _CswNbtResources.logTimerResult( "Built tree level from ParentKey: " + ParentNodeKey.ToString() + " ,for view " + _View.ViewName + " (" + _View.ViewId + ")", _Timer.ElapsedDurationInSecondsAsString );
                         }
                     }
@@ -126,7 +126,8 @@ namespace ChemSW.Nbt
         }
 
         private bool _handleRelationship( CswNbtNodeKey ParentNodeKey, CswNbtViewRelationship Relationship, //NbtViewAddChildrenSetting AllowAddChildren, 
-                                          Int32 PageSize, ref Int32 ThisLevelNodeCount, bool FetchAllPrior, bool Recurse, CswNbtNodeKey IncludedKey, bool FetchIncludedKeyAndParentsOnly )
+                                          Int32 PageSize, ref Int32 ThisLevelNodeCount, bool FetchAllPrior, 
+										  bool Recurse, CswNbtNodeKey IncludedKey, bool FetchIncludedKeyAndParentsOnly, bool RequireViewPermissions )
         {
             CswPrimaryKey FindThisNodeId = null;
             Int32 FindThisNodeCount = Int32.MinValue;
@@ -212,7 +213,7 @@ namespace ChemSW.Nbt
                             Collection<CswNbtNodeKey> ChildKeys = null;
                             if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
                             {
-                                if( _RunAsUser.CheckPermission( NodeTypePermission.View, CswConvert.ToInt32( CurrentRow["nodetypeid"] ), null, null ) )
+								if( !RequireViewPermissions || _RunAsUser.CheckPermission( NodeTypePermission.View, CswConvert.ToInt32( CurrentRow["nodetypeid"] ), null, null ) )
                                     NodeIsAllowed = true;
                             }
                             else
@@ -274,7 +275,7 @@ namespace ChemSW.Nbt
                                                     //Relationship.AddChildren,
                                                                      PageSize,
                                                                      ref NewLevelCount,
-                                                                     FetchAllPrior, Recurse, IncludedKey, FetchIncludedKeyAndParentsOnly );
+																	 FetchAllPrior, Recurse, IncludedKey, FetchIncludedKeyAndParentsOnly, RequireViewPermissions );
                                             }
                                         }
                                     } // foreach( CswNbtNodeKey ChildKey in ChildKeys )

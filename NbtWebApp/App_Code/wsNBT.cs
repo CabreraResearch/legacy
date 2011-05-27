@@ -121,6 +121,8 @@ namespace ChemSW.Nbt.WebServices
 
 		private void _xAddAuthenticationStatus( XmlDocument XmlDocument, AuthenticationStatus AuthenticationStatusIn )
 		{
+			if( XmlDocument.DocumentElement == null )
+				CswXmlDocument.SetDocumentElement( XmlDocument, "root" );
 			CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "authenticationstatus", AuthenticationStatusIn.ToString() );
 			CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
 		}//_xAuthenticationStatus()
@@ -252,6 +254,7 @@ namespace ChemSW.Nbt.WebServices
 
 				_CswSessionResources.CswSessionManager.clearSession();
 				ReturnVal.Add( new JProperty( "Deauthentication", "Succeeded" ) );
+				_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Deauthenticated );
 				_deInitResources();
 			}
 			catch( Exception ex )
@@ -641,7 +644,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string getViewGrid( bool All )
+		public string getViewGrid( bool All, string SelectedViewId )
 		{
 			JObject ReturnVal = new JObject();
 			AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
@@ -649,13 +652,18 @@ namespace ChemSW.Nbt.WebServices
 			{
 				_initResources();
 				AuthenticationStatus = _CswSessionResources.attemptRefresh();
-
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
 					CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
 					ReturnVal = ws.getViewGrid( All );
-				}
 
+					// This translates CswNbtSessionDataIds into CswNbtViewIds for the client
+					CswNbtView SelectedView = _getView( SelectedViewId );
+					if( SelectedView != null && SelectedView.ViewId != null && SelectedView.ViewId.isSet() )
+					{
+						ReturnVal.Add( new JProperty( "selectedpk", SelectedView.ViewId.get().ToString() ) );
+					}
+				}
 				_deInitResources();
 			}
 			catch( Exception Ex )
@@ -673,7 +681,7 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getViewInfo( string ViewId )
 		{
-			XmlDocument ReturnVal = null;
+			XmlDocument ReturnVal = new XmlDocument();
 			AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
 			try
 			{
@@ -1025,7 +1033,7 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId )
 		{
-			XmlDocument ReturnVal = null;
+			XmlDocument ReturnVal = new XmlDocument();
 			AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
 			try
 			{
@@ -1060,7 +1068,7 @@ namespace ChemSW.Nbt.WebServices
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
 		public XmlDocument getSingleProp( string EditMode, string NodeId, string SafeNodeKey, string PropId, string NodeTypeId, string NewPropXml )
 		{
-			XmlDocument ReturnVal = null;
+			XmlDocument ReturnVal = new XmlDocument();
 			AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
 			try
 			{
