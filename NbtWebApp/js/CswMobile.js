@@ -16,8 +16,11 @@
         var $ret = undefined;
         if( !isNullOrEmpty($div) )
         {
-            $ret = $('<ul data-role="listview" id="' + tryParseString(id,'') + '"></ul>')
-                            .appendTo($div);
+            $ret = $('<ul id="' + tryParseString(id,'') + '"></ul>')
+                            .appendTo($div)
+                            .CswAttrXml({'data-filter': true,
+                                         'data-role': 'listview',
+                                         'data-inset': true});
             $ret.listview();
         }
         return $ret;
@@ -109,16 +112,18 @@
                 $.mobile.pageLoading(true);
             });
 
-            $div.unbind('pagebeforecreate');
+            //$div.unbind('pagebeforecreate');
             $div.bind('pagebeforecreate', function()
             {
-                $div.find('input[type="radio"]').checkboxradio();
+                //$div.find('input[type="radio"]').checkboxradio();
+                //$div.find('input[type="checkbox"]').checkboxradio();
             });
 
-            $div.unbind('pagecreate');
+            //$div.unbind('pagecreate');
             $div.bind('pagecreate', function()
             {
-                $div.find('input[type="radio"]').checkboxradio('refresh');
+                //$div.find('input[type="radio"]').checkboxradio('refresh',true);
+                //$div.find('input[type="checkbox"]').checkboxradio('refresh',true);
             });
         }
         return $ret;
@@ -550,7 +555,8 @@
                             .appendTo($list);
             });
             $list.listview('refresh')
-                 .bindLI();
+                 .bindLI()
+                 .find('input[type="radio"]').checkboxradio('refresh',true);
             onAfterAddDiv($retDiv);
             
             return $retDiv;
@@ -1220,7 +1226,7 @@
                     onPropertyChange(ParentId,eventObj);
 				}); //click()
             } // for (var i = 0; i < answers.length; i++)
-            //$retHtml.checkboxradio();
+            $retHtml.checkboxradio();
             return $retHtml;
         } // _makeQuestionAnswerFieldSet()
 
@@ -1313,7 +1319,7 @@
 
                 $searchBtn = $header.CswLink('init',{'href': 'javascript:void(0)', 
                                             ID: p.DivId + '_searchopen',
-                                            text: 'Search' })
+                                            value: 'Search' })
                                       .CswAttrXml({'data-identity': p.DivId + '_searchopen', 
                                                    'data-url': p.DivId + '_searchopen', 
                                                    'data-transition': 'slidedown',
