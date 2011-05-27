@@ -9,7 +9,7 @@
 // Globals (yuck)
 // ------------------------------------------------------------------------------------
 
-var loginUrl = 'NewMain.html';
+var homeUrl = 'NewMain.html';
 
 var timeout = '';
 function getTimeout()
@@ -182,7 +182,7 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
 
 function _handleAuthenticationStatus(options)
 {
-	var o = {
+ 	var o = {
 		status: '',
 		success: function () { },
 		failure: function () { },
@@ -255,7 +255,7 @@ function Logout(options)
 function _finishLogout()
 {
 	$.CswCookie('clearAll');
-	window.location = loginUrl;
+	window.location = homeUrl;
 }
 
 
@@ -592,7 +592,7 @@ function GoHome()
 { /// <param name="$" type="jQuery" />
     $.CswCookie('clear', CswCookieName.CurrentViewId);
     $.CswCookie('clear', CswCookieName.CurrentViewMode);
-    window.location = "NewMain.html";
+    window.location = homeUrl;
 }
 
 function HandleMenuItem(options)

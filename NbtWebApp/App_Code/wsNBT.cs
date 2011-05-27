@@ -108,14 +108,15 @@ namespace ChemSW.Nbt.WebServices
 
 		/*
 		 * The two _xAddAuthenticationStatus() methods must _not_ add the authentication status as a element. 
-		 * I tried that, and it turne dout that in the JQuery world the code that displays an xml tree
+		 * I tried that, and it turned out that in the JQuery world the code that displays an xml tree
 		 * ends up seeing the authentication node even if it is a peer of the tree and not in the tree. 
 		 * Please trust me: we're talking major whackadelia. But it works fine as an attribute. 
 		 */
 		private void _xAddAuthenticationStatus( XElement XElement, AuthenticationStatus AuthenticationStatusIn )
 		{
 			XElement.SetAttributeValue( "authenticationstatus", AuthenticationStatusIn.ToString() );
-			XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+			if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+				XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
 		}//_xAuthenticationStatus()
 
 
@@ -124,13 +125,15 @@ namespace ChemSW.Nbt.WebServices
 			if( XmlDocument.DocumentElement == null )
 				CswXmlDocument.SetDocumentElement( XmlDocument, "root" );
 			CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "authenticationstatus", AuthenticationStatusIn.ToString() );
-			CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+			if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+				CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
 		}//_xAuthenticationStatus()
 
 		private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn )
 		{
 			JObj.Add( new JProperty( "AuthenticationStatus", AuthenticationStatusIn.ToString() ) );
-			JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
+			if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+				JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
 		}//_jAuthenticationStatus()
 
 
@@ -2091,6 +2094,7 @@ namespace ChemSW.Nbt.WebServices
 		{
 			// no session needed here
 			XElement Connected = new XElement( "Connected" );
+			_xAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
 			return ( Connected );
 		}
 
