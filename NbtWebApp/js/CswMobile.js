@@ -1,9 +1,10 @@
-﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6.1-vsdoc.js" />
 /// <reference path="http://code.jquery.com/mobile/latest/jquery.mobile.js" />
 /// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
+/// <reference path="CswClasses.js" />
 
 //var profiler = $createProfiler();
 //if (!debug) profiler.disable();
@@ -982,8 +983,9 @@
             return $retHtml;
         }
 
-        function _FieldTypeHtmlToXml($xmlitem, name, value)
+        function _FieldTypeHtmlToXml($xmlitem, id, value)
         {
+            var name = new CswString(id);
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var fieldtype = $xmlitem.CswAttrXml('fieldtype');
             var propname = $xmlitem.CswAttrXml('name');
@@ -1005,36 +1007,36 @@
             var $sftomodify = null;
             switch (fieldtype)
             {
-                case "Date": if (name === IdStr) $sftomodify = $sf_value; break;
+                case "Date": if (name.val() === IdStr) $sftomodify = $sf_value; break;
                 case "Link": break;
-                case "List": if (name === IdStr) $sftomodify = $sf_value; break;
+                case "List": if (name.val() === IdStr) $sftomodify = $sf_value; break;
                 case "Logical":
-                    if (name === makeSafeId({ID: IdStr, suffix: 'ans'}) || name === makeSafeId({ID: IdStr, suffix: 'ans2'}))
+                    if (name.contains( makeSafeId({ID: IdStr, suffix: 'ans'}) ) )
                     {
                         $sftomodify = $sf_checked;
                     }
                     break;
-                case "Memo": if (name === IdStr) $sftomodify = $sf_text; break;
-                case "Number": if (name === IdStr) $sftomodify = $sf_value; break;
+                case "Memo": if (name.val() === IdStr) $sftomodify = $sf_text; break;
+                case "Number": if (name.val() === IdStr) $sftomodify = $sf_value; break;
                 case "Password": break;
-                case "Quantity": if (name === makeSafeId({ID: IdStr, suffix: 'qty'}) ) $sftomodify = $sf_value; break;
+                case "Quantity": if (name.contains(makeSafeId({ID: IdStr, suffix: 'qty'})) ) $sftomodify = $sf_value; break;
                 case "Question":
-                    if (name === makeSafeId({ID: IdStr, suffix: 'com'}) )
+                    if (name.contains( makeSafeId({ID: IdStr, suffix: 'com'}) ))
                     {
                         $sftomodify = $sf_comments;
                     }
-                    else if (name === makeSafeId({ID: IdStr, suffix: 'ans'}) || name === makeSafeId({ID: IdStr, suffix: 'ans2'}))
+                    else if (name.contains( makeSafeId({ID: IdStr, suffix: 'ans'}) ) )
                     {
                         $sftomodify = $sf_answer;
                     }
-                    else if (name === makeSafeId({ID: IdStr, suffix: 'cor'}) )
+                    else if (name.contains( makeSafeId({ID: IdStr, suffix: 'cor'}) ) )
                     {
                         $sftomodify = $sf_correctiveaction;
                     }
                     break;
                 case "Static": break;
-                case "Text": if (name === IdStr) $sftomodify = $sf_text; break;
-                case "Time": if (name === IdStr) $sftomodify = $sf_value; break;
+                case "Text": if (name.val() === IdStr) $sftomodify = $sf_text; break;
+                case "Time": if (name.val() === IdStr) $sftomodify = $sf_value; break;
                 default: break;
             }
             if ( !isNullOrEmpty($sftomodify) )
@@ -1791,6 +1793,7 @@
 //                {
 
                     var $divxml = $currentViewXml.find('#' + DivId);
+                    debugger;
                     $divxml.andSelf().find('prop').each(function ()
                     {
                         var $fieldtype = $(this);
