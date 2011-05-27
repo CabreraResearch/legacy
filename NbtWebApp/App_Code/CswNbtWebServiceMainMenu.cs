@@ -161,7 +161,8 @@ namespace ChemSW.Nbt.WebServices
 			    // PRINT
 			    if( View.ViewMode == NbtViewRenderingMode.Grid )
 			    {
-			        MenuNode.Add( new XElement( "item",
+					View.SaveToCache( false );
+					MenuNode.Add( new XElement( "item",
 			                                    new XAttribute( "text", "Print" ),
 			                                    new XAttribute( "popup", "PrintGrid.aspx?sessionviewid=" + View.SessionViewId.ToString() ) ) );
 			    }
