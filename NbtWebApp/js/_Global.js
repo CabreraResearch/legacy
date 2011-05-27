@@ -39,7 +39,7 @@ function CswAjaxJSON(options)
 		data: {},
 		onloginfail: function () { _finishLogout(); },
 		success: function (result) { },
-		error: function () { },
+		error: function () { }
         formobile: false,
         async: true
 	};
@@ -108,7 +108,7 @@ function CswAjaxXml(options)
         stringify: false, //in case we need to conditionally apply $.param() instead of JSON.stringify() (or both)
         onloginfail: function () { _finishLogout(); },
         success: function ($xml) { },
-        error: function () { },
+        error: function () { }
         formobile: false,
         async: true
 	};
