@@ -1,13 +1,11 @@
 using System.Web;
-using System.Web.SessionState;
-using ChemSW.Session;
+using ChemSW.Config;
 using ChemSW.Nbt.Config;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Security;
 using ChemSW.Nbt.Security;
-using ChemSW.Config;
-using ChemSW.CswWebControls;
 using ChemSW.Nbt.Statistics;
+using ChemSW.Security;
+using ChemSW.Session;
 
 namespace ChemSW.Nbt
 {
@@ -102,31 +100,31 @@ namespace ChemSW.Nbt
 
 
         public AuthenticationStatus attemptRefresh() { return ( CswSessionManager.attemptRefresh() ); }
-        public void endSession() { CswSessionManager.updateLastAccess();  }
+        public void endSession() { CswSessionManager.updateLastAccess(); }
 
         public void purgeExpiredSessions() { CswSessionManager.SessionsList.purgeExpiredSessions(); }
 
         public void setCache()
         {
-			//if( SessionRetrievalType.Optimized == _SessionRetrievalType )
-			//{
-			//    if( _HttpSessionState != null )
-			//    {
-			//        if( "1" == CswNbtResources.SetupVbls["cachemetadata"] )
-			//        {
-			//            if( ( CswNbtResources != null ) && ( false == _CacheCleared ) )
-			//            {
-			//                //Session[ "ViewCache" ] = CswNbtResources.ViewCache.ToString();
-			//                CswNbtResources.BeforeStoreInCache();
-			//                _HttpSessionState["CswNbtResources"] = CswNbtResources;
-			//            }
-			//        }
-			//        else
-			//        {
-			//            _HttpSessionState["CswNbtResources"] = null;
-			//        }
-			//    }
-			//}//
+            //if( SessionRetrievalType.Optimized == _SessionRetrievalType )
+            //{
+            //    if( _HttpSessionState != null )
+            //    {
+            //        if( "1" == CswNbtResources.SetupVbls["cachemetadata"] )
+            //        {
+            //            if( ( CswNbtResources != null ) && ( false == _CacheCleared ) )
+            //            {
+            //                //Session[ "ViewCache" ] = CswNbtResources.ViewCache.ToString();
+            //                CswNbtResources.BeforeStoreInCache();
+            //                _HttpSessionState["CswNbtResources"] = CswNbtResources;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            _HttpSessionState["CswNbtResources"] = null;
+            //        }
+            //    }
+            //}//
 
         }//setCache()
 
@@ -134,19 +132,19 @@ namespace ChemSW.Nbt
         public void OnDeauthenticate()
         {
 
-			//if( SessionRetrievalType.Optimized == _SessionRetrievalType )
-			//{
+            //if( SessionRetrievalType.Optimized == _SessionRetrievalType )
+            //{
 
-			//    if( null != _HttpSessionState && null != _HttpSessionState["CswNbtResources"] )
-			//    {
-			//        _HttpSessionState.Remove( "CswNbtResources" );
-			//        _CacheCleared = true;
+            //    if( null != _HttpSessionState && null != _HttpSessionState["CswNbtResources"] )
+            //    {
+            //        _HttpSessionState.Remove( "CswNbtResources" );
+            //        _CacheCleared = true;
 
-			//        // BZ 9932,10341,10342,10266
-			//        _HttpSessionState.Clear();
+            //        // BZ 9932,10341,10342,10266
+            //        _HttpSessionState.Clear();
 
-			//    }
-			//}
+            //    }
+            //}
 
             ////bz # 9932 but cf. also 10266
             //List<string> KeysToRemove = new List<string>(); 
@@ -172,18 +170,16 @@ namespace ChemSW.Nbt
             {
                 ICswResources ret = null;
 
-				//if( null != _HttpSessionState && null != _HttpSessionState["CswNbtResources"] )
-				//{
+                //if( null != _HttpSessionState && null != _HttpSessionState["CswNbtResources"] )
+                //{
 
-				//    if( ( null != _HttpSessionState ) && ( _HttpSessionState["CswNbtResources"] != null ) )
-				//        ret = _HttpSessionState["CswNbtResources"] as ICswResources;
-				//}
+                //    if( ( null != _HttpSessionState ) && ( _HttpSessionState["CswNbtResources"] != null ) )
+                //        ret = _HttpSessionState["CswNbtResources"] as ICswResources;
+                //}
 
                 return ret;
             }
         }
-
-		public void endSession() { CswSessionManager.updateLastAccess(); }
 
         //public void setUserResources()
         //{
