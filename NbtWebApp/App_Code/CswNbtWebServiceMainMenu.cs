@@ -102,8 +102,11 @@ namespace ChemSW.Nbt.WebServices
 			    {
 			        AddNode.Add( AddNodeType );
 			    }
-
-			    MenuNode.Add( AddNode );
+				
+				if( AddNode.HasElements )
+				{
+					MenuNode.Add( AddNode );
+				}
 
 			    // COPY
 			    if( null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
