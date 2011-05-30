@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.Schema
 
     public enum TestTableNamesFake { TestTable01, TestTable02 }
     public enum TestTableNamesReal { Modules, DataDictionary, Nodes }
-    public enum TestColumnNamesFake { TestColumn01, TestColumn02 }
+    public enum TestColumnNamesFake { TestColumn01, TestColumn02, TestColumn03 }
     public enum TestColumnNamesReal { NodeName }
     public enum TestNameStem { PrimeKeyTable, ForeignKeyTable, TestVal }
 
@@ -138,10 +138,10 @@ namespace ChemSW.Nbt.Schema
         {
             Int32 ArbitraryValue = 0;
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "fillTableWithArbitraryData_update", TableName );
-            DataTable PkTableTable = CswTableUpdate.getTable();
+            DataTable DataTable = CswTableUpdate.getTable();
             for( Int32 idx = 0; idx < TotalRows; idx++ )
             {
-                DataRow NewRow = PkTableTable.NewRow();
+                DataRow NewRow = DataTable.NewRow();
 
                 if( "" != Value )
                 {
@@ -151,11 +151,76 @@ namespace ChemSW.Nbt.Schema
                 {
                     NewRow[ColumnName] = getTestNameStem( TestNameStem.TestVal ) + ":" + ( +ArbitraryValue ).ToString();
                 }
-                PkTableTable.Rows.Add( NewRow );
+
+                DataTable.Rows.Add( NewRow );
             }
-            CswTableUpdate.update( PkTableTable );
+
+            CswTableUpdate.update( DataTable );
 
         }//fillTableWithArbitraryData()
+
+
+
+        public Dictionary<string, List<string>> makeArbitraryTestValues( Int32 TotalRows )
+        {
+
+            Dictionary<string, List<string>> ReturnVal = new Dictionary<string, List<string>>();
+            
+            foreach( string CurrentFakeColumnName in Enum.GetNames( typeof( TestColumnNamesFake ) ) )
+            {
+                List<string> CurrentValueList = new List<string>();
+                ReturnVal.Add( CurrentFakeColumnName, CurrentValueList );
+                for( int idx = 0; idx < TotalRows; TotalRows++ )
+                {
+                    CurrentValueList.Add( CurrentFakeColumnName + "_valsnot_" + idx.ToString() );
+
+                }//iterate test values
+
+            }//iterate fake column name enumeration
+
+
+            return ( ReturnVal );
+
+        }//makeArbitraryTestValues() 
+
+
+
+        public void fillTableWithArbitraryData( string TableName, Dictionary<string, List<string>> FillData )
+        {
+            CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "fillTableWtithArbitraryData_update", TableName );
+            DataTable DataTable = CswTableUpdate.getTable();
+
+            if( FillData.Count != DataTable.Columns.Count )
+                throw ( new CswDniException( "number of columns specified in fill data does not match the number of columns in the destination table" ) );
+
+            Int32 MaxRows = 0;
+            foreach( List<string> CurrentValueList in FillData.Values )
+            {
+                if( CurrentValueList.Count > MaxRows )
+                {
+                    MaxRows = CurrentValueList.Count;
+                }
+            }//iterate lists to get max row count
+
+            for( int idx = 0; idx < MaxRows; idx++ )
+            {
+                DataRow DataRow = DataTable.NewRow();
+                DataTable.Rows.Add( DataRow );
+            }//iterate max rows to prime the tables
+
+            foreach( string CurrentColumn in FillData.Keys )
+            {
+                List<string> CurrentValueList = FillData[CurrentColumn];
+                for( int idx = 0; idx < CurrentValueList.Count; idx++ )
+                {
+                    DataTable.Rows[idx][CurrentColumn] = CurrentValueList[idx];
+                }//iterate value list for current column
+
+            }//iterate fill data to to populate table
+
+            CswTableUpdate.update( DataTable );
+
+        }//fillTableWithArbitraryData() 
 
         public void addArbitraryForeignKeyRecords( string PkTable, string FkTable, string ReferenceColumnName, string FkTableArbitraryValueColumnName, string FkTableValueStem )
         {
@@ -212,7 +277,7 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the database " ) );
 
             if( _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( TableName, ColumnName ) )
-                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the meta data ") );
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the meta data " ) );
 
         }//assertColumnIsAbsent() 
 
@@ -229,7 +294,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( TableName, ColumnName ) )
-                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the data base") );
+                throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the data base" ) );
 
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInMetaData( TableName, ColumnName ) )
                 throw ( new CswDniException( "Column " + ColumnName + ThrowMessage + " the meta data" ) );
