@@ -108,10 +108,16 @@ namespace ChemSW.Nbt.Schema
         //public void addAdapter( string AdapterName ) { _CswResourcesForTableCaddy.addAdapter( AdapterName ); }
         //public bool isAdapterDefined( string AdapterName ) { return ( _CswResourcesForTableCaddy.isAdapterDefined<CswDataAdapter>( AdapterName ) ); }
         //public void setIsDeleteModeLogical( bool IsDeleteModeLogical ) { _CswResourcesForTableCaddy.setIsDeleteModeLogical( IsDeleteModeLogical ); }
+
         public bool isTableDefinedInMetaData( string TableName ) { return ( _CswNbtResources.CswResources.isTableDefinedInMetaData( TableName ) ); }
         public bool isColumnDefinedInMetaData( string TableName, string ColumnName ) { return ( _CswNbtResources.CswResources.isColumnDefinedInMetaData( TableName, ColumnName ) ); }//isColumnDefinedInMetaData 
+
         public bool isTableDefinedInDataBase( string TableName ) { return ( _CswNbtResources.CswResources.isTableDefinedInDataBase( TableName ) ); }//isTableDefinedInDataBase() 
         public bool isColumnDefinedInDataBase( string TableName, string ColumnName ) { return ( _CswNbtResources.CswResources.isColumnDefinedInDataBase( TableName, ColumnName ) ); }//isColumnDefinedInDataBase()
+
+        public bool isTableDefined( string TableName ) { return ( _CswNbtResources.CswResources.isTableDefined( TableName ) ); }
+        public bool isColumnDefined( string TableName, string ColumnName ) { return ( _CswNbtResources.CswResources.isColumnDefined( TableName, ColumnName ) ); }
+
 
         //bz # 9116: Centralize access to dbresources for easier datacaching
         //public CswMetaDataReader CswMetaDataReader { get { return ( _CswNbtResources.CswResources.CswMetaDataReader ); } }
@@ -343,6 +349,37 @@ namespace ChemSW.Nbt.Schema
             }//if it isn't already an audit table
 
         }//makeTableAuditable() 
+
+
+        public bool isTableAuditable( string TableName ) { return ( _CswNbtResources.CswResources.isTableAuditable( TableName ) ); }
+
+        public void setTableAuditLevel( string TableName, string WhereClause, AuditLevel AuditLevel )
+        {
+            if( isTableAuditable( TableName ) )
+            {
+                CswTableUpdate CswTableUpdate = makeCswTableUpdate( "setTableAuditLevel", TableName );
+
+                DataTable DataTable = null;
+
+                if( string.Empty == WhereClause )
+                {
+                    DataTable = CswTableUpdate.getTable();
+                }
+                else
+                {
+                    DataTable = CswTableUpdate.getTable( WhereClause );
+                }//if-else we have a where clause
+
+                foreach( DataRow CurrentRow in DataTable.Rows )
+                {
+                    CurrentRow[_CswAuditMetaData.AuditLevelColName] = _CswAuditMetaData.DefaultAuditLevel;
+                }
+
+                CswTableUpdate.update( DataTable );
+
+            }//if table is auditable
+
+        }//setTableAuditLevel() 
 
         public CswNbtNodeCollection Nodes { get { return ( _CswNbtResources.Nodes ); } }
         //public CswNbtTreeCache Trees { get { return ( _CswNbtResources.Trees ); } }
@@ -926,6 +963,10 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
+        public string getConfigVariableValue( String VariableName )
+        {
+            return ( _CswNbtResources.getConfigVariableValue( VariableName ) );
+        }
     }//class CswNbtSchemaModTrnsctn
 
 }//ChemSW.Nbt.Schema

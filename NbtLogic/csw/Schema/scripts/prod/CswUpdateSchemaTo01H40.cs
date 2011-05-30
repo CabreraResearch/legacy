@@ -11,7 +11,6 @@ namespace ChemSW.Nbt.Schema
     /// Updates the schema to version 01H-38
     /// </summary>
     public class CswUpdateSchemaTo01H40 : ICswUpdateSchemaTo
-
     {
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
         private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
@@ -27,7 +26,8 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            _CswNbtSchemaModTrnsctn.createConfigurationVariable( "auditing", "1 = auditing is on; 0 = auditing is off", "0", true );
+            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswAuditMetaData.AuditConfgVarName, CswAuditMetaData.AuditConfgVaDescription, "0", true );
 
         } // update()
 

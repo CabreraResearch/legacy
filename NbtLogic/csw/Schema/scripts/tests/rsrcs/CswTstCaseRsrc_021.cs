@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections;
 using System.Data;
 using System.Text;
 using ChemSW.Nbt;
@@ -9,6 +11,7 @@ using ChemSW.Exceptions;
 using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Nbt.Schema;
+using ChemSW.Audit;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -21,8 +24,10 @@ namespace ChemSW.Nbt.Schema
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
         private CswTestCaseRsrc _CswTestCaseRsrc = null;
+        private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
         public CswTstCaseRsrc_021( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
+
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
         }//ctor
@@ -49,7 +54,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_02, ArbitraryColumnName_02, false, false, 20 );
             _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_03, ArbitraryColumnName_03, false, false, 20 );
 
-       }
+        }
 
 
         private Dictionary<string, List<string>> __ArbitraryTestValues;
@@ -69,6 +74,30 @@ namespace ChemSW.Nbt.Schema
         }//_ArbitraryTestValues
 
 
+
+        public bool compareTargetAndAuditedData( ref string MisMatchMessage )
+        {
+
+
+            CswTableSelect CswTableSelectTargetTable = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "Compare table 1", ArbitraryTableName_01 );
+            DataTable TargetTable = CswTableSelectTargetTable.getTable( " where 1=1", new Collection<OrderByClause> { new OrderByClause( CswTools.makePkColNameFromTableName( ArbitraryTableName_01 ), OrderByType.Ascending ) } );
+
+
+            CswCommaDelimitedString CswCommaDelimitedString = new Core.CswCommaDelimitedString();
+            foreach( DataColumn CurrentColumn in TargetTable.Columns )
+            {
+                CswCommaDelimitedString.Add( CurrentColumn.ColumnName );
+            }
+
+            CswTableSelect CswTableSelectAuditTable = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "Compare table 1", _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 ) );
+            DataTable AuditTable = CswTableSelectAuditTable.getTable( CswCommaDelimitedString, "where 1=1", new Collection<OrderByClause> { new OrderByClause( CswTools.makePkColNameFromTableName( _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 ) ), OrderByType.Ascending ) } );
+
+
+            return ( _CswTestCaseRsrc.doTableValuesMatch( TargetTable, AuditTable, ref MisMatchMessage ) );
+
+
+        }//compareTargetAndAuditedData()
+
         public void makeArbitraryTableData()
         {
             _CswTestCaseRsrc.fillTableWithArbitraryData( ArbitraryTableName_01, _ArbitraryTestValues );
@@ -83,6 +112,37 @@ namespace ChemSW.Nbt.Schema
         {
             _CswTestCaseRsrc.assertTableIsAbsent( ArbitraryTableName_01 );
         }
+
+        private string _OriginalAuditSetting_Audit = string.Empty;
+        public void setAuditingOn()
+        {
+            _OriginalAuditSetting_Audit = _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName );
+
+            if( "1" != _OriginalAuditSetting_Audit )
+            {
+                _CswNbtSchemaModTrnsctn.setConfigVariableValue( _CswAuditMetaData.AuditConfgVarName, "1" );
+            }
+
+        }//setAuditingOn()
+
+        public void restoreAuditSetting()
+        {
+            if( _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName ) != _OriginalAuditSetting_Audit )
+            {
+                _CswNbtSchemaModTrnsctn.setConfigVariableValue( _CswAuditMetaData.AuditConfgVarName, "1" );
+            }
+        }//setAuditingOn()
+
+        public void assertAuditSettingIsRestored()
+        {
+            string CurrentAuditSetting = _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName );
+
+            if( _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName ) != _OriginalAuditSetting_Audit )
+            {
+                throw ( new CswDniException( "Current audit configuration setting (" + CurrentAuditSetting + ") does not match the original setting (" + _OriginalAuditSetting_Audit + ")" ) );
+            }
+
+        }//assertAuditSettingIsRestored()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

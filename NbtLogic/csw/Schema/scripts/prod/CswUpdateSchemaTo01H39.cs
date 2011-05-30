@@ -34,11 +34,8 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addStringColumn( CswAuditMetaData.AuditTransactionTableName, "esigusername", "Name of user who signed the ESIG event", false, false, 50 );
             _CswNbtSchemaModTrnsctn.addStringColumn( CswAuditMetaData.AuditTransactionTableName, "esiguserpassword", "Password of user who signed the ESIG event", false, false, 50 );
 
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "jct_modules_objectclass" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "jct_nodes_props_audit" );
             _CswNbtSchemaModTrnsctn.makeTableAuditable( "users" );
             _CswNbtSchemaModTrnsctn.makeTableAuditable( "packdetail" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "object_class_props" );
             _CswNbtSchemaModTrnsctn.makeTableAuditable( "nodetypes" );
             _CswNbtSchemaModTrnsctn.makeTableAuditable( "license_accept" );
             _CswNbtSchemaModTrnsctn.makeTableAuditable( "containers" );
@@ -52,6 +49,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.makeTableAuditable( "node_views" );
             _CswNbtSchemaModTrnsctn.makeTableAuditable( "packages" );
             _CswNbtSchemaModTrnsctn.makeTableAuditable( "jct_nodes_props" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "nodetype_tabset" );
 
         } // update()
 

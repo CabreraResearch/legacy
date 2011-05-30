@@ -10,24 +10,25 @@ using ChemSW.Exceptions;
 using ChemSW.DB;
 using ChemSW.Nbt.Schema;
 using ChemSW.Core;
+using ChemSW.Audit;
 
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_021_01 : ICswUpdateSchemaTo
+    public class CswTestCase_021_05 : ICswUpdateSchemaTo
     {
 
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_021.Purpose, "set up test tables" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_021.Purpose, "verify test data was cleaned up" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_021 _CswTstCaseRsrc_021 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_021_01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public CswTestCase_021_05( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
         {
             _CswSchemaVersion = CswSchemaVersion;
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
@@ -39,11 +40,10 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-
-            _CswTstCaseRsrc_021.setAuditingOn(); 
-            _CswTstCaseRsrc_021.makeArbitraryTable();
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( _CswTstCaseRsrc_021.ArbitraryTableName_01 );
-
+            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+            _CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_021.ArbitraryTableName_01 );
+            _CswTstCaseRsrc.assertTableIsAbsent( CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_021.ArbitraryTableName_01 ) );
+            _CswTstCaseRsrc_021.assertAuditSettingIsRestored(); 
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
