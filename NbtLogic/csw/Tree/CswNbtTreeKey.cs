@@ -28,10 +28,14 @@ namespace ChemSW.Nbt
 			{
 				_KeyString = TheView.ViewId.ToString();
 			}
+			else if( TheView.SessionViewId != null && TheView.SessionViewId.isSet() )
+			{
+				//TheView.SaveToCache(false);
+				_KeyString = TheView.SessionViewId.ToString();
+			}
 			else
 			{
-				TheView.SaveToCache(false);
-				_KeyString = TheView.SessionViewId.ToString();
+				// stay empty
 			}
 		}//ctor
 
