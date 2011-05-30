@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
 				CswNbtMetaDataNodeTypeProp LocationNTP = EquipmentNT.getNodeTypeProp( "Location" );
 				CswNbtMetaDataNodeTypeProp DepartmentNTP = EquipmentNT.getNodeTypeProp( "Department" );
 				CswNbtMetaDataNodeTypeProp ResponsibleNTP = EquipmentNT.getNodeTypeProp( "Responsible" );
-				CswNbtMetaDataNodeTypeProp StatusNTP = EquipmentNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassEquipment.StatusPropertyName );
+				//CswNbtMetaDataNodeTypeProp StatusNTP = EquipmentNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassEquipment.StatusPropertyName );
 
 				CswNbtView FindEquipmentView = _CswNbtSchemaModTrnsctn.restoreView( "Find Equipment" );
 				if( FindEquipmentView != null )
@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Schema
 					CswNbtViewProperty LocationViewProp = FindEquipmentView.AddViewProperty( EquipRel, LocationNTP );
 					CswNbtViewProperty DepartmentViewProp = FindEquipmentView.AddViewProperty( EquipRel, DepartmentNTP );
 					CswNbtViewProperty ResponsibleViewProp = FindEquipmentView.AddViewProperty( EquipRel, ResponsibleNTP );
-					CswNbtViewProperty StatusViewProp = FindEquipmentView.AddViewProperty( EquipRel, StatusNTP );
+					//CswNbtViewProperty StatusViewProp = FindEquipmentView.AddViewProperty( EquipRel, StatusNTP );
 
 					FindEquipmentView.AddViewPropertyFilter( EquipmentIdViewProp, EquipmentIdNTP.FieldTypeRule.SubFields.Default.Name, EquipmentIdNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
 					FindEquipmentView.AddViewPropertyFilter( TypeViewProp, TypeNTP.FieldTypeRule.SubFields.Default.Name, TypeNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Schema
 					FindEquipmentView.AddViewPropertyFilter( LocationViewProp, LocationNTP.FieldTypeRule.SubFields.Default.Name, LocationNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
 					FindEquipmentView.AddViewPropertyFilter( DepartmentViewProp, DepartmentNTP.FieldTypeRule.SubFields.Default.Name, DepartmentNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
 					FindEquipmentView.AddViewPropertyFilter( ResponsibleViewProp, ResponsibleNTP.FieldTypeRule.SubFields.Default.Name, ResponsibleNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
-					FindEquipmentView.AddViewPropertyFilter( StatusViewProp, StatusNTP.FieldTypeRule.SubFields.Default.Name, StatusNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
+					//FindEquipmentView.AddViewPropertyFilter( StatusViewProp, StatusNTP.FieldTypeRule.SubFields.Default.Name, StatusNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
 
 					FindEquipmentView.save();
 
