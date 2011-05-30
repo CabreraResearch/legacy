@@ -25,10 +25,11 @@ namespace ChemSW.Nbt.Schema
 
 		public void update()
 		{
-			// case 21215
 			CswNbtMetaDataNodeType EquipmentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment" );
 			if( EquipmentNT != null )
 			{
+
+				// case 21215
 				CswNbtMetaDataNodeTypeProp EquipmentIdNTP = EquipmentNT.getNodeTypeProp( "Equipment Id" );
 				CswNbtMetaDataNodeTypeProp TypeNTP = EquipmentNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassEquipment.TypePropertyName );
 				CswNbtMetaDataNodeTypeProp ManufacturerNTP = EquipmentNT.getNodeTypeProp( "Manufacturer" );
@@ -72,8 +73,64 @@ namespace ChemSW.Nbt.Schema
 					FindEquipmentView.save();
 
 				} // if( FindEquipmentView != null )
-			} // if( EquipmentNT != null)
 
+				// case 21216
+				CswNbtMetaDataNodeType BuildingNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Building" );
+				CswNbtMetaDataNodeType FloorNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Floor" );
+				CswNbtMetaDataNodeType RoomNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Room" );
+
+				CswNbtMetaDataNodeTypeProp BuildingLocationNTP = BuildingNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
+				CswNbtMetaDataNodeTypeProp BuildingNameNTP = BuildingNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.NamePropertyName );
+				CswNbtMetaDataNodeTypeProp BuildingBarcodeNTP = BuildingNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.BarcodePropertyName );
+
+				CswNbtMetaDataNodeTypeProp FloorLocationNTP = FloorNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
+				CswNbtMetaDataNodeTypeProp FloorNameNTP = FloorNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.NamePropertyName );
+				CswNbtMetaDataNodeTypeProp FloorBarcodeNTP = FloorNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.BarcodePropertyName );
+
+				CswNbtMetaDataNodeTypeProp RoomLocationNTP = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
+				CswNbtMetaDataNodeTypeProp RoomNameNTP = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.NamePropertyName );
+				CswNbtMetaDataNodeTypeProp RoomBarcodeNTP = RoomNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.BarcodePropertyName );
+
+				CswNbtMetaDataNodeTypeProp EquipLocationNTP = EquipmentNT.getNodeTypeProp( "Location" );
+
+				if( BuildingNT != null )
+				{
+					CswNbtView EquipByLocView = _CswNbtSchemaModTrnsctn.makeView();
+					EquipByLocView.makeNew( "Equipment By Location", NbtViewVisibility.Global, null, null, null );
+					EquipByLocView.Category = "Equipment";
+
+					CswNbtViewRelationship BuildingRel = EquipByLocView.AddViewRelationship( BuildingNT, true );
+					CswNbtViewRelationship FloorRel = EquipByLocView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, FloorLocationNTP, true );
+					CswNbtViewRelationship RoomRel1 = EquipByLocView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, RoomLocationNTP, true );
+					CswNbtViewRelationship RoomRel2 = EquipByLocView.AddViewRelationship( FloorRel, CswNbtViewRelationship.PropOwnerType.Second, RoomLocationNTP, true );
+
+					CswNbtViewRelationship EquipRel1 = EquipByLocView.AddViewRelationship( BuildingRel, CswNbtViewRelationship.PropOwnerType.Second, EquipLocationNTP, true );
+					CswNbtViewRelationship EquipRel2 = EquipByLocView.AddViewRelationship( FloorRel, CswNbtViewRelationship.PropOwnerType.Second, EquipLocationNTP, true );
+					CswNbtViewRelationship EquipRel3 = EquipByLocView.AddViewRelationship( RoomRel1, CswNbtViewRelationship.PropOwnerType.Second, EquipLocationNTP, true );
+					CswNbtViewRelationship EquipRel4 = EquipByLocView.AddViewRelationship( RoomRel2, CswNbtViewRelationship.PropOwnerType.Second, EquipLocationNTP, true );
+
+					CswNbtViewProperty BuildingNameViewProp = EquipByLocView.AddViewProperty( BuildingRel, BuildingNameNTP );					
+					CswNbtViewProperty BuildingBarcodeViewProp = EquipByLocView.AddViewProperty( BuildingRel, BuildingBarcodeNTP );
+					CswNbtViewProperty FloorNameViewProp = EquipByLocView.AddViewProperty( FloorRel, FloorNameNTP );
+					CswNbtViewProperty FloorBarcodeViewProp = EquipByLocView.AddViewProperty( FloorRel, FloorBarcodeNTP );
+					CswNbtViewProperty RoomNameViewProp1 = EquipByLocView.AddViewProperty( RoomRel1, RoomNameNTP );
+					CswNbtViewProperty RoomBarcodeViewProp1 = EquipByLocView.AddViewProperty( RoomRel1, RoomBarcodeNTP );
+					CswNbtViewProperty RoomNameViewProp2 = EquipByLocView.AddViewProperty( RoomRel1, RoomNameNTP );
+					CswNbtViewProperty RoomBarcodeViewProp2 = EquipByLocView.AddViewProperty( RoomRel1, RoomBarcodeNTP );
+
+					EquipByLocView.AddViewPropertyFilter( BuildingNameViewProp, BuildingNameNTP.FieldTypeRule.SubFields.Default.Name, BuildingNameNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
+					EquipByLocView.AddViewPropertyFilter( BuildingBarcodeViewProp, BuildingBarcodeNTP.FieldTypeRule.SubFields.Default.Name, BuildingBarcodeNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
+					EquipByLocView.AddViewPropertyFilter( FloorNameViewProp, FloorNameNTP.FieldTypeRule.SubFields.Default.Name, FloorNameNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
+					EquipByLocView.AddViewPropertyFilter( FloorBarcodeViewProp, FloorBarcodeNTP.FieldTypeRule.SubFields.Default.Name, FloorBarcodeNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
+					EquipByLocView.AddViewPropertyFilter( RoomNameViewProp1, RoomNameNTP.FieldTypeRule.SubFields.Default.Name, RoomNameNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
+					EquipByLocView.AddViewPropertyFilter( RoomBarcodeViewProp1, RoomBarcodeNTP.FieldTypeRule.SubFields.Default.Name, RoomBarcodeNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
+					EquipByLocView.AddViewPropertyFilter( RoomNameViewProp2, RoomNameNTP.FieldTypeRule.SubFields.Default.Name, RoomNameNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
+					EquipByLocView.AddViewPropertyFilter( RoomBarcodeViewProp2, RoomBarcodeNTP.FieldTypeRule.SubFields.Default.Name, RoomBarcodeNTP.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
+
+					EquipByLocView.save();
+				}
+
+			} // if( EquipmentNT != null)
 		} // update()
 
 	}//class CswUpdateSchemaTo01H41
