@@ -71,7 +71,7 @@
 															'disableOnClick': false,
 															'onclick': function() { 
 																	var currentStepNo = _getCurrentStepNo($table);
-																	if(o.onBeforePrevious(currentStepNo))
+																	if(o.onBeforePrevious($table, currentStepNo))
 																	{
 																		_selectStep($table, currentStepNo - 1);
 																		o.onPrevious(currentStepNo - 1);
