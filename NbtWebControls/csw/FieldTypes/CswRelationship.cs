@@ -5,6 +5,7 @@ using ChemSW.Nbt;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.CswWebControls;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {
@@ -46,8 +47,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     _ValueLabel.Text = Prop.AsRelationship.CachedNodeName + "&nbsp;";
 
                     // BZ 10216
-                    if( Prop.AsRelationship.TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && !ReadOnly )
-                        ReadOnly = !(_CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.View, Prop.AsRelationship.TargetId, null, null ));
+					if( Prop.AsRelationship.TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && !ReadOnly )
+						ReadOnly = !( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.AsRelationship.TargetId ) );
 
                     //if( AllowEditValue && !ReadOnly )
                     //{
@@ -193,9 +194,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 if( _EditMode != NodeEditMode.AddInPopup &&
                     _EditMode != NodeEditMode.EditInPopup &&
                     _EditMode != NodeEditMode.Demo &&
-                    Prop.AsRelationship.TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
-                    !ReadOnly &&
-                    _CswNbtResources.CurrentNbtUser.CheckCreatePermission( Prop.AsRelationship.TargetId ) )
+					!ReadOnly &&
+					Prop.AsRelationship.TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Prop.AsRelationship.TargetId ) )
                 {
                     _AddNewButton.OnClientClick = "return RelationshipAddNodeDialog_openPopup('" + Prop.AsRelationship.TargetId.ToString() + "');";
                     _AddNewButton.Visible = true;

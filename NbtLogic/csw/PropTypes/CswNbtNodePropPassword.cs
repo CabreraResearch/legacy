@@ -9,6 +9,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -54,29 +55,23 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                bool CanEditProp = true;
                 string UserName = string.Empty;
                 CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                 CswNbtMetaDataObjectClassProp UserPassword = UserOC.getObjectClassProp( CswNbtObjClassUser.PasswordPropertyName );
+
                 if( this.ObjectClassPropId == UserPassword.ObjectClassPropId )
                 {
                     CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( this.NodeId );
-                    if( null != UserNode && !_CswNbtResources.CurrentNbtUser.canEditPassword( UserNode ) )
+					if( null != UserNode && 
+						!_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, UserNode, NodeTypeProp ) )
                     {
-                        UserName = UserNode.NodeName;
-                        CanEditProp = false;
-                    }
+						throw new CswDniException( "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + UserNode.NodeName + "'." );
+					}
                 }
-                if( CanEditProp )
-                {
-                    _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value );
-                    _CswNbtNodePropData.Gestalt = value;
-                    ChangedDate = DateTime.Now;
-                }
-                else
-                {
-                    throw new CswDniException( "User does not have permission to edit this password", "canEditPassword() returned false for UserNode '" + UserName + "'." );
-                }
+                
+				_CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value );
+                _CswNbtNodePropData.Gestalt = value;
+                ChangedDate = DateTime.Now;
             }
         }
 

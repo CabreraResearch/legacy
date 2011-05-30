@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -166,14 +167,24 @@ namespace ChemSW.Nbt.Schema
             CswNbtNode RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
             if( RoleNode != null )
             {
-                CswNbtNodeTypePermissions Permissions = _CswNbtSchemaModTrnsctn.getNodeTypePermissions( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ), FloorNT );
-                Permissions.Create = true;
-                Permissions.Edit = true;
-                Permissions.View = true;
-                Permissions.Delete = true;
-                Permissions.Save();
-                RoleNode.postChanges( true );
-            }
+				//CswNbtNodeTypePermissions Permissions = _CswNbtSchemaModTrnsctn.getNodeTypePermissions( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ), FloorNT );
+				//Permissions.Create = true;
+				//Permissions.Edit = true;
+				//Permissions.View = true;
+				//Permissions.Delete = true;
+				//Permissions.Save();
+				//RoleNode.postChanges( true );
+
+				_CswNbtSchemaModTrnsctn.Permit.set( new CswNbtPermit.NodeTypePermission[] {
+											CswNbtPermit.NodeTypePermission.Create,
+											CswNbtPermit.NodeTypePermission.View,
+											CswNbtPermit.NodeTypePermission.Edit,
+											CswNbtPermit.NodeTypePermission.Delete },
+										FloorNT,
+										(CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ),
+										true );
+
+			}
 
             //Modify Locations View
 

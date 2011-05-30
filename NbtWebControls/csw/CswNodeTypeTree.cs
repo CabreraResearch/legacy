@@ -15,6 +15,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
 using Telerik.Web.UI;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.NbtWebControls
 {
@@ -486,7 +487,7 @@ namespace ChemSW.NbtWebControls
         private bool _IncludeThisNodeType( CswNbtMetaDataNodeType NodeType )
         {
             // BZ 7121 - Must have view permission on the nodetype
-            return ( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.View, NodeType.FirstVersionNodeTypeId, null, null ) &&
+			return ( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType.FirstVersionNodeTypeId ) &&
                      ( ( NodeTypeIdsToFilterOut == null || !( delimiter + NodeTypeIdsToFilterOut + delimiter ).Contains( delimiter + NodeType.FirstVersionNodeTypeId.ToString() + delimiter ) ) &&
                        ( NodeTypeIdsToInclude == null || ( delimiter + NodeTypeIdsToInclude + delimiter ).Contains( delimiter + NodeType.FirstVersionNodeTypeId.ToString() + delimiter ) ) &&
                        ( ObjectClassIdsToInclude == null || ( delimiter + ObjectClassIdsToInclude + delimiter ).Contains( delimiter + NodeType.ObjectClass.ObjectClassId.ToString() + delimiter ) ) ) );

@@ -16,6 +16,7 @@ using ChemSW.NbtWebControls;
 using ChemSW.Exceptions;
 using ChemSW.CswWebControls;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -197,7 +198,7 @@ namespace ChemSW.Nbt.WebPages
                 switch( _AddType )
                 {
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.Property:
-                        if( !Master.CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Create, SelectedNodeTypeTab.NodeType.NodeTypeId, null, null ) )
+						if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeTypeTab.NodeType.NodeTypeId ) )
                             throw new CswDniException( "You do not have permission to add properties to this NodeType" );
 
                         create_AddPropertyPage();
@@ -214,7 +215,7 @@ namespace ChemSW.Nbt.WebPages
                         //LeftHeaderContentLiteral.Text = "Add " + LabelNodeTypeProp + " to " + LabelNodeTypeTab + ": " + SelectedNodeTypeTab.TabName;
                         break;
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.Tab:
-                        if( !Master.CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Create, SelectedNodeType.NodeTypeId, null, null ) )
+                        if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType.NodeTypeId ) )
                             throw new CswDniException( "You do not have permission to add tabs to this NodeType" );
 
                         create_AddTabPage();
@@ -229,7 +230,7 @@ namespace ChemSW.Nbt.WebPages
                         //LeftHeaderContentLiteral.Text = "Add " + LabelNodeTypeTab + " to " + LabelNodeType + ": " + SelectedNodeType.NodeTypeName;
                         break;
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType:
-                        if( !( (CswNbtObjClassUser) Master.CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Design ) )
+                        if( !Master.CswNbtResources.Permit.can( CswNbtActionName.Design ) )
                                 throw new CswDniException( "You do not have permission to add NodeTypes" );
 
                         create_AddNodeTypePage();

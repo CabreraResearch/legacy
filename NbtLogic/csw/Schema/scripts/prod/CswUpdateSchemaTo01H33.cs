@@ -5,6 +5,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -48,18 +49,29 @@ namespace ChemSW.Nbt.Schema
 			// add all permissions to 'chemsw_admin' role
 			foreach( CswNbtMetaDataNodeType OtherNodeType in _CswNbtSchemaModTrnsctn.MetaData.NodeTypes )
 			{
-				CswNbtNodeTypePermissions Perms = _CswNbtSchemaModTrnsctn.getNodeTypePermissions( CswAdminRole, OtherNodeType );
-				Perms.Create = true;
-				Perms.View = true;
-				Perms.Edit = true;
-				Perms.Delete = true;
-				Perms.Save();
+				//CswNbtNodeTypePermissions Perms = _CswNbtSchemaModTrnsctn.getNodeTypePermissions( CswAdminRole, OtherNodeType );
+				//Perms.Create = true;
+				//Perms.View = true;
+				//Perms.Edit = true;
+				//Perms.Delete = true;
+				//Perms.Save();
+
+				_CswNbtSchemaModTrnsctn.Permit.set( new CswNbtPermit.NodeTypePermission[] { 
+														CswNbtPermit.NodeTypePermission.Create,
+														CswNbtPermit.NodeTypePermission.View,
+														CswNbtPermit.NodeTypePermission.Edit,
+														CswNbtPermit.NodeTypePermission.Delete }, 
+													OtherNodeType, 
+													CswAdminRole, 
+													true );
+
 			} // foreach( CswNbtMetaDataNodeType OtherNodeType in _CswNbtSchemaModTrnsctn.MetaData.NodeTypes )
 
 			// add all actions to 'chemsw_admin' role
 			foreach( CswNbtActionName ActionName in Enum.GetValues( typeof( Actions.CswNbtActionName ) ) )
 			{
-				_CswNbtSchemaModTrnsctn.SetActionPermission( CswAdminRoleNode, ActionName, true );
+				//_CswNbtSchemaModTrnsctn.SetActionPermission( CswAdminRoleNode, ActionName, true );
+				_CswNbtSchemaModTrnsctn.Permit.set( ActionName, CswAdminRole, true );
 			}
 						
 			// add 'chemsw_admin' user
@@ -77,7 +89,8 @@ namespace ChemSW.Nbt.Schema
 
 			// remove Design from existing 'admin' role
 			CswNbtNode OldAdminRoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
-			_CswNbtSchemaModTrnsctn.SetActionPermission( OldAdminRoleNode, CswNbtActionName.Design, false );
+			//_CswNbtSchemaModTrnsctn.SetActionPermission( OldAdminRoleNode, CswNbtActionName.Design, false );
+			_CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Design, CswNbtNodeCaster.AsRole(OldAdminRoleNode), false );
 
 			// post changes
 			CswAdminRoleNode.postChanges( false );

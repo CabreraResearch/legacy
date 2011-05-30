@@ -218,10 +218,10 @@ namespace ChemSW.Nbt.WebPages
                 }
 
                 EnsureChildControls();
-                if( !( (CswNbtObjClassUser) Master.CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Design ) )
-                {
-                    Master.GoHome();
-                }
+				if( !Master.CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+				{
+					Master.GoHome();
+				}
                 NodeTypeTree.DataBind();
             }
             catch( Exception ex )

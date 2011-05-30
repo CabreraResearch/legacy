@@ -18,22 +18,22 @@ namespace ChemSW.Nbt.Security
             _Username = Username;
         }
 
-        public bool CheckCreatePermission( int NodeTypeId )
-        {
-            return true;
-        }
-        public bool CheckActionPermission( CswNbtActionName ActionName )
-        {
-            return true;
-        }
+		//public bool CheckCreatePermission( int NodeTypeId )
+		//{
+		//    return true;
+		//}
+		//public bool CheckActionPermission( CswNbtActionName ActionName )
+		//{
+		//    return true;
+		//}
 
-        public bool CheckPermission( NodeTypePermission Permission, int NodeTypeId, CswNbtNode Node, CswNbtMetaDataNodeTypeProp MetaDataProp )
-        {
-            return true;
-        }
+		//public bool CheckPermission( NodeTypePermission Permission, int NodeTypeId, CswNbtNode Node, CswNbtMetaDataNodeTypeProp MetaDataProp )
+		//{
+		//    return true;
+		//}
 
         public bool IsAdministrator() { return true; }
-        public bool canEditPassword( CswNbtNode UserNode = null ) { return true; }
+        //public bool canEditPassword( CswNbtNode UserNode = null ) { return true; }
         public CswNbtObjClassRole RoleNode { get { return null; } }
         public CswNbtObjClassUser UserNode { get { return null; } }
 

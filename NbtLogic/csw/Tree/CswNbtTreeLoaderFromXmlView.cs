@@ -211,16 +211,19 @@ namespace ChemSW.Nbt
                         {
                             NodeIsAllowed = false;
                             Collection<CswNbtNodeKey> ChildKeys = null;
-                            if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
-                            {
-								if( !RequireViewPermissions || _RunAsUser.CheckPermission( NodeTypePermission.View, CswConvert.ToInt32( CurrentRow["nodetypeid"] ), null, null ) )
-                                    NodeIsAllowed = true;
-                            }
-                            else
-                            {
-                                // Don't know what permissions we'll put on object-class referencing views...for now just add the node.
-                                NodeIsAllowed = true;
-                            }
+							if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+							{
+								if( !RequireViewPermissions ||
+									_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, CswConvert.ToInt32( CurrentRow["nodetypeid"] ), _RunAsUser ) )
+								{
+									NodeIsAllowed = true;
+								}
+							}
+							else
+							{
+								// Don't know what permissions we'll put on object-class referencing views...for now just add the node.
+								NodeIsAllowed = true;
+							}
 
                             if( NodeIsAllowed )
                             {

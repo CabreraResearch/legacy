@@ -2,7 +2,7 @@ using System.Data;
 using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -24,14 +24,24 @@ namespace ChemSW.Nbt.MetaData
             // Give the current user's role full permissions to the new nodetype
             if( null != _CswNbtResources.CurrentNbtUser.RoleNode )
             {
-                CswNbtNodePropLogicalSet PropPermissions = ( (CswNbtObjClassRole) _CswNbtResources.CurrentNbtUser.RoleNode ).NodeTypePermissions;
-                PropPermissions.SetValue( NodeTypePermission.Delete.ToString(), NewNodeType.NodeTypeId.ToString(), true );
-                PropPermissions.SetValue( NodeTypePermission.Create.ToString(), NewNodeType.NodeTypeId.ToString(), true );
-                PropPermissions.SetValue( NodeTypePermission.Edit.ToString(), NewNodeType.NodeTypeId.ToString(), true );
-                PropPermissions.SetValue( NodeTypePermission.View.ToString(), NewNodeType.NodeTypeId.ToString(), true );
-                PropPermissions.Save();
-                _CswNbtResources.CurrentNbtUser.RoleNode.postChanges( false );
-            }//if we have a current user
+				//CswNbtNodePropLogicalSet PropPermissions = ( (CswNbtObjClassRole) _CswNbtResources.CurrentNbtUser.RoleNode ).NodeTypePermissions;
+				//PropPermissions.SetValue( NodeTypePermission.Delete.ToString(), NewNodeType.NodeTypeId.ToString(), true );
+				//PropPermissions.SetValue( NodeTypePermission.Create.ToString(), NewNodeType.NodeTypeId.ToString(), true );
+				//PropPermissions.SetValue( NodeTypePermission.Edit.ToString(), NewNodeType.NodeTypeId.ToString(), true );
+				//PropPermissions.SetValue( NodeTypePermission.View.ToString(), NewNodeType.NodeTypeId.ToString(), true );
+				//PropPermissions.Save();
+				//_CswNbtResources.CurrentNbtUser.RoleNode.postChanges( false );
+
+				_CswNbtResources.Permit.set( new CswNbtPermit.NodeTypePermission[] {
+												CswNbtPermit.NodeTypePermission.Delete, 
+												CswNbtPermit.NodeTypePermission.Create, 
+												CswNbtPermit.NodeTypePermission.Edit, 
+												CswNbtPermit.NodeTypePermission.View }, 
+											NewNodeType, 
+											_CswNbtResources.CurrentNbtUser.RoleNode,
+											true );
+
+			}//if we have a current user
 
             if( NewNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
                 OnMakeNewInspectionDesignNodeType( NewNodeType );

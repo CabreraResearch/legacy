@@ -253,16 +253,16 @@ namespace ChemSW.NbtWebControls
                 _RoleLiteral.Visible = true;
             }
 
-            if( ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Design ) )
-            {
-                _ConfigButton.Visible = true;
-                _AddButton.Visible = true;
-            }
-            else
-            {
-                _ConfigButton.Visible = false;
-                _AddButton.Visible = false;
-            }
+			if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+			{
+				_ConfigButton.Visible = true;
+				_AddButton.Visible = true;
+			}
+			else
+			{
+				_ConfigButton.Visible = false;
+				_AddButton.Visible = false;
+			}
 
             _ResetButton.OnClientClick = "return confirm(\"Are you sure you want to reset the content of this page?\");";
             _AddButton.OnClientClick = "WelcomeAddComponentDialog_openPopup(document.getElementById('" + _RoleSelect.ClientID + "')); return false;";
@@ -636,14 +636,14 @@ namespace ChemSW.NbtWebControls
                 if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
                 {
                     ThisAction = _CswNbtResources.Actions[CswConvert.ToInt32( WelcomeRow["actionid"] )];
-                    if( _CswNbtResources.CurrentNbtUser.CheckActionPermission( ThisAction.Name ) )
-                    {
-                        IDSuffix += CswViewListTree.ViewType.Action.ToString() + "_" + ThisAction.ActionId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
-                        if( WelcomeRow["displaytext"].ToString() != string.Empty )
-                            LinkText = WelcomeRow["displaytext"].ToString();
-                        else
-                            LinkText = ThisAction.Name.ToString();
-                    }
+					if( _CswNbtResources.Permit.can( ThisAction.Name ) )
+					{
+						IDSuffix += CswViewListTree.ViewType.Action.ToString() + "_" + ThisAction.ActionId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
+						if( WelcomeRow["displaytext"].ToString() != string.Empty )
+							LinkText = WelcomeRow["displaytext"].ToString();
+						else
+							LinkText = ThisAction.Name.ToString();
+					}
                 }
                 if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )
                 {

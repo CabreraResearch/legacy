@@ -384,18 +384,18 @@ namespace ChemSW.Nbt.MetaData
             bool IsOnAdd = ( ( IsRequired && DefaultValue.Empty ) ||
                              Node.Properties[Prop].TemporarilyRequired ||
                              SetValueOnAdd );
-            var ret = ( ( !InPopUp || IsOnAdd ) &&
-                        FilterNodeTypePropId == Int32.MinValue &&
-                        !( Node.Properties[Prop].Hidden ) &&
-                        User.CheckPermission( NodeTypePermission.Edit, Prop.NodeType.NodeTypeId, Node, Prop ) );
+			var ret = ( ( !InPopUp || IsOnAdd ) &&
+						FilterNodeTypePropId == Int32.MinValue &&
+						!( Node.Properties[Prop].Hidden ) &&
+						_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, User, Node, Prop ) );
             return ret;
         }
 
         public bool ShowProp( CswNbtNode Node, ICswNbtUser User )
         {
             CswNbtMetaDataNodeTypeProp Prop = this;
-            var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
-                        User.CheckPermission( NodeTypePermission.View, Prop.NodeType.NodeTypeId, Node, Prop ) );
+			var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
+						_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, User, Node, Prop ) );
             return ret;
         }
 

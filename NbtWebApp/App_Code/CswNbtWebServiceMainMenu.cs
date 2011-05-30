@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -107,7 +108,7 @@ namespace ChemSW.Nbt.WebServices
 			    // COPY
 			    if( null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
 			        View.ViewMode != NbtViewRenderingMode.Grid &&
-			        _CswNbtResources.CurrentNbtUser.CheckCreatePermission( Node.NodeTypeId ) )
+			        _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, Node.NodeTypeId ) )
 			    {
 			        string BadPropertyName = string.Empty;
 			        if( !Node.NodeType.IsUniqueAndRequired( ref BadPropertyName ) )
@@ -125,7 +126,7 @@ namespace ChemSW.Nbt.WebServices
 			        null != Node &&
 			        View.ViewMode != NbtViewRenderingMode.Grid &&
 			        Node.NodeSpecies == NodeSpecies.Plain &&
-			        _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Delete, Node.NodeTypeId, Node, null ) )
+					_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.NodeTypeId, Node, null ) )
 			    {
 
 			        MenuNode.Add( new XElement( "item",
@@ -221,7 +222,7 @@ namespace ChemSW.Nbt.WebServices
             } // if( null != View )
 		    
             // EDIT VIEW
-			if( ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Edit_View ) )
+			if( _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) )
 			{
 				//string EditViewHref = "EditView.aspx?viewid=" + ViewId;
 				//if( View != null && View.Visibility == NbtViewVisibility.Property )

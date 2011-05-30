@@ -13,6 +13,7 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -205,7 +206,7 @@ namespace ChemSW.Nbt.WebPages
 
             foreach( CswNbtMetaDataNodeType LatestNodeType in Master.CswNbtResources.MetaData.LatestVersionNodeTypes )
             {
-                if( Master.CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.View, LatestNodeType.NodeTypeId, null, null ) )
+				if( Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, LatestNodeType.NodeTypeId ) )
                 {
                     ListItem Item = new ListItem( LatestNodeType.NodeTypeName, _NodeTypePrefix + LatestNodeType.NodeTypeId.ToString() );
                     _NodeTypeDropDown.Items.Add( Item );
