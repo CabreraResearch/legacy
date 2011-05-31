@@ -782,7 +782,7 @@
                     if ( !isNullOrEmpty(icon) )
                         Html += '<img src="' + icon + '" class="ui-li-icon"/>';
                     Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">';
-                    Html += '<p>' + NodeName + '</p>';
+                    Html += '<h2>' + NodeName + '</h2>';
                     Html += '<p>' + Location + '</p>';
                     Html += '<p>' + MountPoint + '</p>';
                     Html += '<p>';
