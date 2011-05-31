@@ -351,6 +351,25 @@ namespace ChemSW.Nbt.Schema
         }//makeTableAuditable() 
 
 
+        public void makeTableNotAuditable( string TableName )
+        {
+            if( _CswNbtResources.CswResources.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) )
+            {
+                dropColumn( TableName, _CswAuditMetaData.AuditLevelColName );
+            }
+
+
+            string AuditTableName = _CswAuditMetaData.makeAuditTableName( TableName );
+
+            if( _CswNbtResources.CswResources.isTableDefined( AuditTableName ) )
+            {
+                dropTable( AuditTableName ); 
+            }//if the audit table does not yet exist
+
+
+        }//makeTableAuditable() 
+
+
         public bool isTableAuditable( string TableName ) { return ( _CswNbtResources.CswResources.isTableAuditable( TableName ) ); }
 
         public void setTableAuditLevel( string TableName, string WhereClause, AuditLevel AuditLevel )
@@ -463,31 +482,31 @@ namespace ChemSW.Nbt.Schema
 
         }//deleteView()
 
-		//public CswNbtNodeTypePermissions getNodeTypePermissions( CswNbtObjClassRole Role, CswNbtMetaDataNodeType NodeType )
-		//{
-		//    return new CswNbtNodeTypePermissions( Role, NodeType );
-		//}
+        //public CswNbtNodeTypePermissions getNodeTypePermissions( CswNbtObjClassRole Role, CswNbtMetaDataNodeType NodeType )
+        //{
+        //    return new CswNbtNodeTypePermissions( Role, NodeType );
+        //}
 
-		//public CswNbtNodeTypePermissions getNodeTypePermissions( string RoleName, string NodeTypeName )
-		//{
-		//    CswNbtNodeTypePermissions ReturnVal = null;
-		//    CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( RoleName );
-		//    if( null == RoleNode )
-		//        throw ( new CswDniException( "No such role: " + RoleName ) );
-		//    CswNbtObjClassRole Role = CswNbtNodeCaster.AsRole( RoleNode );
+        //public CswNbtNodeTypePermissions getNodeTypePermissions( string RoleName, string NodeTypeName )
+        //{
+        //    CswNbtNodeTypePermissions ReturnVal = null;
+        //    CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( RoleName );
+        //    if( null == RoleNode )
+        //        throw ( new CswDniException( "No such role: " + RoleName ) );
+        //    CswNbtObjClassRole Role = CswNbtNodeCaster.AsRole( RoleNode );
 
-		//    CswNbtMetaDataNodeType CswNbtMetaDataNodeType = null;
-		//    if( null == ( CswNbtMetaDataNodeType = MetaData.getNodeType( NodeTypeName ) ) )
-		//        throw ( new CswDniException( "No such nodetype: " + NodeTypeName ) );
+        //    CswNbtMetaDataNodeType CswNbtMetaDataNodeType = null;
+        //    if( null == ( CswNbtMetaDataNodeType = MetaData.getNodeType( NodeTypeName ) ) )
+        //        throw ( new CswDniException( "No such nodetype: " + NodeTypeName ) );
 
 
-		//    ReturnVal = new CswNbtNodeTypePermissions( Role, CswNbtMetaDataNodeType );
+        //    ReturnVal = new CswNbtNodeTypePermissions( Role, CswNbtMetaDataNodeType );
 
-		//    return ( ReturnVal );
+        //    return ( ReturnVal );
 
-		//}//getNodeTypePermissions
+        //}//getNodeTypePermissions
 
-		public CswNbtPermit Permit { get { return _CswNbtResources.Permit; } }
+        public CswNbtPermit Permit { get { return _CswNbtResources.Permit; } }
 
         /// <summary>
         /// Convenience function for making new Action
@@ -508,9 +527,9 @@ namespace ChemSW.Nbt.Schema
 
             // Grant permission to Administrator
             CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
-			_CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode ), true );
+            _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode ), true );
             CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" );
-			_CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
+            _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
 
             return NewActionId;
         }
@@ -547,29 +566,29 @@ namespace ChemSW.Nbt.Schema
             JctModulesATable.update( JctModulesADataTable );
         }
 
-		///// <summary>
-		///// Deprecated in favor of SetActionPermission.  Don't use for new scripts.
-		///// </summary>
-		//public void GrantActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName )
-		//{
-		//    _CswNbtResources.Permit.set( ActionName, RoleNode, true );
-		//}
+        ///// <summary>
+        ///// Deprecated in favor of SetActionPermission.  Don't use for new scripts.
+        ///// </summary>
+        //public void GrantActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName )
+        //{
+        //    _CswNbtResources.Permit.set( ActionName, RoleNode, true );
+        //}
 
-		///// <summary>
-		///// Grants or revokes permission to an action to a role
-		///// </summary>
-		//public void SetActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName, bool HasAccess )
-		//{
-		//    if( RoleNode != null )
-		//    {
-		//        CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).ActionPermissions;
-		//        ActionPermissions.SetValue( CswNbtObjClassRole.ActionPermissionsXValueName,
-		//                                    CswNbtAction.ActionNameEnumToString( ActionName ),
-		//                                    HasAccess );
-		//        ActionPermissions.Save();
-		//        RoleNode.postChanges( false );
-		//    }
-		//}
+        ///// <summary>
+        ///// Grants or revokes permission to an action to a role
+        ///// </summary>
+        //public void SetActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName, bool HasAccess )
+        //{
+        //    if( RoleNode != null )
+        //    {
+        //        CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).ActionPermissions;
+        //        ActionPermissions.SetValue( CswNbtObjClassRole.ActionPermissionsXValueName,
+        //                                    CswNbtAction.ActionNameEnumToString( ActionName ),
+        //                                    HasAccess );
+        //        ActionPermissions.Save();
+        //        RoleNode.postChanges( false );
+        //    }
+        //}
 
         /// <summary>
         /// Convenience function for making new Module

@@ -31,20 +31,9 @@ namespace ChemSW.Nbt.Schema
 			_CswNbtSchemaModTrnsctn.makeTableAuditable( "nodetype_tabset" );
 
 			// don't audit
-			if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( "jct_nodes_props_audit_audit" ) )
-			{
-				_CswNbtSchemaModTrnsctn.dropTable( "jct_nodes_props_audit_audit" );
-			}
-
-			if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( "jct_modules_objectclass_audit" ) )
-			{
-				_CswNbtSchemaModTrnsctn.dropTable( "jct_modules_objectclass_audit" );
-			}
-
-			if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( "object_class_props_audit" ) )
-			{
-				_CswNbtSchemaModTrnsctn.dropTable( "object_class_props_audit" );
-			}
+            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "jct_nodes_props_audit" );
+            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "jct_modules_objectclass" );
+            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "object_class_props" ); 
 
 		} // update()
 
