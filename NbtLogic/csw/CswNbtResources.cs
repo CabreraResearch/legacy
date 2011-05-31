@@ -86,12 +86,15 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtResources( AppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical )
         {
-            _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical );
-            _ExcludeDisabledModules = ExcludeDisabledModules;
+			_CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical );
+	
+			_DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
+			logMessage( "CswNbtResources CREATED GUID: " + _DebugID );
+
+			_ExcludeDisabledModules = ExcludeDisabledModules;
             //ViewCache = new CswNbtViewCache( this );
             ViewSelect = new CswNbtViewSelect( this );
 			SessionDataMgr = new CswNbtSessionDataMgr( this );
-			_DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
 			Permit = new CswNbtPermit( this );
         }
 
