@@ -5,19 +5,19 @@
 
 function CswString(string)
 {
-    this.value = string;
+    var value = string;
     this.val = function (string)
     {
         if (arguments.length === 1)
         {
-            this.value = string;
+            value = string;
             return this; //for chaining
         }
         else
         {
-            return this.value;
+            return value;
         }
     };
-    this.contains = function (string) { return this.value.indexOf(string) !== -1; };
+    this.contains = function (string) { return value.indexOf(string) !== -1; };
 }
 
