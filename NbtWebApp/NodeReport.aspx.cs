@@ -15,6 +15,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.NbtWebControls;
 using ChemSW.NbtWebControls.FieldTypes;
 using ChemSW.CswWebControls;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -34,9 +35,9 @@ namespace ChemSW.Nbt.WebPages
                     CswPrimaryKey NodeId = new CswPrimaryKey();
                     NodeId.FromString( Request.QueryString["nodeid"] );
                     _Node = Master.CswNbtResources.Nodes[NodeId];
-                    _NodeKey = new CswNbtNodeKey( Master.CswNbtResources, "", NodeId, _Node.NodeSpecies, _Node.NodeTypeId, _Node.ObjectClassId, "", "" );
+                    _NodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, "", NodeId, _Node.NodeSpecies, _Node.NodeTypeId, _Node.ObjectClassId, "", "" );
 
-                    if( Master.CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.View, _Node.NodeTypeId, null, null ) )
+					if( Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _Node.NodeTypeId ) )
                     {
                         bGetOut = false;
                     }

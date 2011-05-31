@@ -32,7 +32,7 @@ var CswViewEditor_WizardSteps = {
 			ColumnViewId: 'NODEVIEWID',
 			ColumnFullViewId: 'VIEWID',
 			ColumnViewMode: 'VIEWMODE',
-			onCancel: function() {},
+			onCancel: function($wizard) {},
 			onFinish: function(viewid, viewmode) {},
 			startingStep: 1
 		};
@@ -253,12 +253,12 @@ var CswViewEditor_WizardSteps = {
        
 		var $currentviewxml;
 
-		function _onBeforePrevious(stepno)
+		function _onBeforePrevious($wizard, stepno)
 		{
 			return (stepno !== CswViewEditor_WizardSteps.step2.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
 		}
 
-		function _handleNext(newstepno)
+		function _handleNext($wizard, newstepno)
 		{
             CurrentStep = newstepno;
 			switch(newstepno)
@@ -355,7 +355,7 @@ var CswViewEditor_WizardSteps = {
 			$currentviewxml.CswAttrXml('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
         }
 
-		function _handlePrevious(newstepno)
+		function _handlePrevious($wizard, newstepno)
 		{
 			if(newstepno === 1)
 				$wizard.CswWizard('button', 'finish', 'disable');
@@ -383,7 +383,7 @@ var CswViewEditor_WizardSteps = {
 		}
 
 
-		function _handleFinish()
+		function _handleFinish($wizard)
 		{
 			var viewid = _getSelectedViewId($viewgrid);
 

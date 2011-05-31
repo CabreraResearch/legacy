@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 FakeNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                FakeNodeKey = new CswNbtNodeKey( Master.CswNbtResources, string.Empty, FakeNode.NodeId, NodeSpecies.Plain, NodeType.NodeTypeId, NodeType.ObjectClass.ObjectClassId, string.Empty, string.Empty );
+                FakeNodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, string.Empty, FakeNode.NodeId, NodeSpecies.Plain, NodeType.NodeTypeId, NodeType.ObjectClass.ObjectClassId, string.Empty, string.Empty );
 
                 PropertyTable = new CswPropertyTable( Master.CswNbtResources, Master.AjaxManager );
                 PropertyTable.EnableViewState = false;

@@ -12,12 +12,12 @@
 					StartingStep: 1,
 					SelectedStep: 1,
 					FinishText: 'Finish',
-					onNext: function (newstepno) { },
-					onPrevious: function (newstepno) { },
-					onBeforeNext: function(stepno) { return true; },
-					onBeforePrevious: function(stepno) { return true; },
-					onFinish: function () { },
-					onCancel: function() {}
+					onNext: function ($wizard, newstepno) { },
+					onPrevious: function ($wizard, newstepno) { },
+					onBeforeNext: function($wizard, stepno) { return true; },
+					onBeforePrevious: function($wizard, stepno) { return true; },
+					onFinish: function($wizard) { },
+					onCancel: function($wizard) {}
 				};
 				if(options) $.extend(o, options);
 				if(o.StartingStep > o.SelectedStep) o.SelectedStep = o.StartingStep;
@@ -71,7 +71,7 @@
 															'disableOnClick': false,
 															'onclick': function() { 
 																	var currentStepNo = _getCurrentStepNo($table);
-																	if(o.onBeforePrevious(currentStepNo))
+																	if(o.onBeforePrevious($table, currentStepNo))
 																	{
 																		_selectStep($table, currentStepNo - 1);
 																		o.onPrevious(currentStepNo - 1);
@@ -86,7 +86,7 @@
 																	if(o.onBeforeNext(currentStepNo))
 																	{
 																		_selectStep($table, currentStepNo + 1);
-																		o.onNext(currentStepNo + 1);
+																		o.onNext($table, currentStepNo + 1);
 																	}
 																}
 															});
@@ -100,7 +100,7 @@
 															});
 
 				_selectStep($table, o.SelectedStep);
-				o.onNext(o.SelectedStep);
+				o.onNext($table, o.SelectedStep);
 
 				return $table;
 			}, // init()

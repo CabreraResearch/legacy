@@ -82,7 +82,8 @@ function CswAjaxJSON(options)
     	}, // success{}
     	error: function (XMLHttpRequest, textStatus, errorThrown)
     	{
-    		_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+    		//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+    		log("Webservice Request (" + o.url + ") Failed: " + textStatus);
     		o.error();
     	}
     });         // $.ajax({
@@ -117,49 +118,50 @@ function CswAjaxXml(options)
 
     if (!isNullOrEmpty(o.url))
     {
-        $.ajax({
-            type: 'POST',
-            async: o.async,
-            url: o.url,
-            dataType: "xml",
-            //contentType: 'application/json; charset=utf-8',
-            data: $.param(o.data),     // should be 'field1=value&field2=value'
-            success: function (data, textStatus, XMLHttpRequest)
-            {
-                //var endtime = new Date();
-                //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+    	$.ajax({
+    		type: 'POST',
+    		async: o.async,
+    		url: o.url,
+    		dataType: "xml",
+    		//contentType: 'application/json; charset=utf-8',
+    		data: $.param(o.data),     // should be 'field1=value&field2=value'
+    		success: function (data, textStatus, XMLHttpRequest)
+    		{
+    			//var endtime = new Date();
+    			//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-                // this is IE compliant
-                var $xml = $(XMLHttpRequest.responseXML);
-                var $realxml = $xml.children().first();
+    			// this is IE compliant
+    			var $xml = $(XMLHttpRequest.responseXML);
+    			var $realxml = $xml.children().first();
 
-                if ($realxml.first().get(0).nodeName === "error")
-                {
-                    _handleAjaxError(XMLHttpRequest, { 'message': $realxml.CswAttrXml('message'), 'detail': $realxml.CswAttrXml('detail') }, '');
-                    o.error();
-                }
-                else
-                {
-                	var auth = tryParseString($realxml.CswAttrXml('authenticationstatus'), 'Unknown');
-                	timeout = $realxml.CswAttrXml('timeout');
+    			if ($realxml.first().get(0).nodeName === "error")
+    			{
+    				_handleAjaxError(XMLHttpRequest, { 'message': $realxml.CswAttrXml('message'), 'detail': $realxml.CswAttrXml('detail') }, '');
+    				o.error();
+    			}
+    			else
+    			{
+    				var auth = tryParseString($realxml.CswAttrXml('authenticationstatus'), 'Unknown');
+    				timeout = $realxml.CswAttrXml('timeout');
 
-                	_handleAuthenticationStatus({
-                        status: auth,
-                        success: function() { o.success($realxml) },
-                        failure: o.onloginfail,
-                        usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
-                        usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
-                        passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), '')
-                    });
-                }
+    				_handleAuthenticationStatus({
+    					status: auth,
+    					success: function () { o.success($realxml) },
+    					failure: o.onloginfail,
+    					usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
+    					usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
+    					passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), '')
+    				});
+    			}
 
-            }, // success{}
-            error: function (XMLHttpRequest, textStatus, errorThrown)
-            {
-                _handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-                o.error();
-            }
-        });              // $.ajax({
+    		}, // success{}
+    		error: function (XMLHttpRequest, textStatus, errorThrown)
+    		{
+    			//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+    			log("Webservice Request ("+ o.url +") Failed: " + textStatus);
+    			o.error();
+    		}
+    	});               // $.ajax({
     } // if(o.url != '')
 } // CswAjaxXml()
 

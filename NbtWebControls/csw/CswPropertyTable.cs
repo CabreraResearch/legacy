@@ -14,6 +14,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.CswWebControls;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.NbtWebControls
 {
@@ -244,8 +245,8 @@ namespace ChemSW.NbtWebControls
         {
             try
             {
-                if( !( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Design ) )
-                    throw new CswDniException( "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
+				if( !_CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+					throw new CswDniException( "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
 
                 // LayoutComponentId == PropId (set in addPropertyToTable below)
                 CswNbtMetaDataNodeTypeProp DoomedProp = _CswNbtResources.MetaData.getNodeTypeProp( LayoutComponentId );
@@ -263,8 +264,8 @@ namespace ChemSW.NbtWebControls
         {
             try
             {
-                if( !( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Design ) )
-                    throw new CswDniException( "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
+				if( !_CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+					throw new CswDniException( "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
 
                 // LayoutComponentId == PropId (set in addPropertyToTable below)
                 CswNbtMetaDataNodeTypeProp MovedProp = _CswNbtResources.MetaData.getNodeTypeProp( LayoutComponentId );
@@ -326,16 +327,16 @@ namespace ChemSW.NbtWebControls
                 else
                     _CancelButton.Visible = false;
 
-                if( ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Design ) )
-                {
-                    _ConfigButton.Visible = true;
-                    _AddButton.Visible = true;
-                }
-                else
-                {
-                    _ConfigButton.Visible = false;
-                    _AddButton.Visible = false;
-                }
+				if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+				{
+					_ConfigButton.Visible = true;
+					_AddButton.Visible = true;
+				}
+				else
+				{
+					_ConfigButton.Visible = false;
+					_AddButton.Visible = false;
+				}
 
                 RadTab SelectedTab = TabStrip.FindTabByValue( SelectedTabId );
                 if( SelectedTab != null )
@@ -660,7 +661,7 @@ namespace ChemSW.NbtWebControls
                     } // if( Prop.NodeTypeTab != null && Prop.NodeTypeTab.TabId.ToString() == SelectedTabId.ToString() )
                 } // foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
 
-                if( !_CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Edit, SelectedNodeTypeId, SelectedNode, null ) )
+				if( !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, SelectedNodeTypeId, SelectedNode, null ) )
                 {
                     SaveButton.Visible = false;
                 }
@@ -682,7 +683,7 @@ namespace ChemSW.NbtWebControls
                             _PropertyControlSetHash.Add( Prop.FirstPropVersionId, PCS );
                     }
                 }
-                if( !_CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Create, MetaDataNodeType.NodeTypeId, null, null ) )
+				if( !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType.NodeTypeId ) )
                 {
                     SaveButton.Visible = false;
                 }

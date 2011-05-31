@@ -21,6 +21,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.DB;
 using Telerik.Web.UI;
 using ChemSW.CswWebControls;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -1286,7 +1287,7 @@ namespace ChemSW.NbtWebControls
 
                             foreach( CswNbtMetaDataNodeType LatestNodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
                             {
-                                if( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.View, LatestNodeType.NodeTypeId, null, null ) )
+								if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, LatestNodeType.NodeTypeId ) )
                                 {
                                     // This is purposefully not the typical way of creating CswNbtViewRelationships.
                                     CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, _View, LatestNodeType.FirstVersionNodeType, false );
@@ -2111,7 +2112,7 @@ namespace ChemSW.NbtWebControls
                         ( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
                           PropRow["fkvalue"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) )
                     {
-                        if( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.View, FirstVersionNodeType.NodeTypeId, null, null ) )
+						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, FirstVersionNodeType.NodeTypeId ) )
                         {
                             // Special case -- relationship to my own type
                             // We need to create two relationships from this
@@ -2172,7 +2173,7 @@ namespace ChemSW.NbtWebControls
                                 R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
 
                             if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) )
+								_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId ) )
                             {
                                 Relationships.Add( R );
                             }
@@ -2192,7 +2193,7 @@ namespace ChemSW.NbtWebControls
                                     R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["typeid"] ) ) );
 
                                 if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                    _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) )
+									_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId ) )
                                 {
                                     Relationships.Add( R );
                                 }

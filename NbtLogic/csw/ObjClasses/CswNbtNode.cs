@@ -464,8 +464,15 @@ namespace ChemSW.Nbt.ObjClasses
         //bz # 5943
         public void delete()
         {
-            if( null == OnRequestDeleteNode )
-                throw ( new CswDniException( "There is no delete handler" ) );
+			if( null == OnRequestDeleteNode )
+			{
+				throw ( new CswDniException( "There is no delete handler" ) );
+			}
+
+			if( !_CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, this.NodeType ) )
+			{
+				throw ( new CswDniException( "You do not have permission to delete this " + this.NodeType.NodeTypeName, "User attempted to delete a " + this.NodeType.NodeTypeName + " without Delete permissions" ) );
+			}
 
             if( null != _CswNbtObjClass )
             {

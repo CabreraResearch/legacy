@@ -56,6 +56,8 @@ namespace ChemSW.Nbt.WebServices
 			_CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
 			_CswNbtResources = _CswSessionResources.CswNbtResources;
 			_CswNbtStatisticsEvents = _CswSessionResources.CswNbtStatisticsEvents;
+
+			_CswNbtResources.logMessage( "WebServices: Session Started (_initResources called)" );
 		}//start() 
 
 		private void _deInitResources()
@@ -63,6 +65,8 @@ namespace ChemSW.Nbt.WebServices
 			_CswSessionResources.endSession();
 			if( _CswNbtResources != null )
 			{
+				_CswNbtResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
+
 				_CswNbtResources.finalize();
 				_CswNbtResources.release();
 			}
@@ -74,8 +78,11 @@ namespace ChemSW.Nbt.WebServices
 
 		private string error( Exception ex, out string Message, out string Detail )
 		{
-			_CswNbtResources.CswLogger.reportError( ex );
-			_CswNbtResources.Rollback();
+			if( _CswNbtResources != null )
+			{
+				_CswNbtResources.CswLogger.reportError( ex );
+				_CswNbtResources.Rollback();
+			}
 
 			if( ex is CswDniException )
 			{
