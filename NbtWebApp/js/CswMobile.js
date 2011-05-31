@@ -230,7 +230,7 @@
 
         function _loadLoginDiv()
         {
-            var LoginContent = '<input type="textbox" id="login_accessid" placeholder="Access Id"/><br>';
+            var LoginContent = '<input type="textbox" id="login_customerid" placeholder="Customer Id"/><br>';
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
             LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
             LoginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
@@ -241,7 +241,7 @@
                     HideHelpButton: false
             });
             $('#loginsubmit').click(onLoginSubmit);
-            $('#login_accessid').clickOnEnter($('#loginsubmit'));
+            $('#login_customerid').clickOnEnter($('#loginsubmit'));
             $('#login_username').clickOnEnter($('#loginsubmit'));
             $('#login_password').clickOnEnter($('#loginsubmit'));
             return $retDiv;
@@ -1625,12 +1625,12 @@
             // authenticate here
             UserName = $('#login_username').val();
             var Password = $('#login_password').val();
-            var AccessId = $('#login_accessid').val();
+            var CustomerId = $('#login_customerid').val();
 
             if (!amOffline())
             {
                 var ajaxData = {
-                    'AccessId': AccessId, 
+                    'AccessId': CustomerId, //We're displaying "Customer ID" but processing "AccessID"
                     'UserName': UserName, 
                     'Password': Password
                 };
