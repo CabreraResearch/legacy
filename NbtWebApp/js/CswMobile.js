@@ -11,17 +11,22 @@
 
 ; (function ($) { /// <param name="$" type="jQuery" />
     
-    $.fn.makeUL = function(id)
+    $.fn.makeUL = function(id, params)
     {
+        var p = {
+            'data-filter': true,
+            'data-role': 'listview',
+            'data-inset': true
+        };
+        if(params) $.extend(p,params);
+
         var $div = $(this);
         var $ret = undefined;
         if( !isNullOrEmpty($div) )
         {
             $ret = $('<ul id="' + tryParseString(id,'') + '"></ul>')
                             .appendTo($div)
-                            .CswAttrXml({'data-filter': true,
-                                         'data-role': 'listview',
-                                         'data-inset': true});
+                            .CswAttrXml(p);
             $ret.listview();
         }
         return $ret;
@@ -757,17 +762,6 @@
             }
             return $retLI;
         } // _makeListItemFromXml()
-
-        function _makeUL(id)
-        {
-            var retUL = '<ul data-role="listview" id="' + tryParseString(id,'') + '">';
-            return retUL;
-        }
-
-        function _endUL()
-        {
-            return '</ul>';
-        }
 
         function _makeObjectClassContent(params)
         {
@@ -1855,50 +1849,61 @@
             {
                 if ( !isNullOrEmpty($xmlstr) )
                 {
-                    var Html = '<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">';
+                    var $wrapper = $('<div></div>');
+                    var $fieldCtn = $('<div data-role="fieldcontain"></div>')
+                                        .appendTo($wrapper);
+                    var $select =  $('<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">')
+                                        .appendTo($fieldCtn);
 
-                    $xmlstr.closest('result')
-                    .find('searches')
-                    .children()
-                    .each(function ()
+                    $xmlstr.children('search').each(function ()
                     {
                         var $search = $(this);
-                        Html += '<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>';
+                        var $option = $('<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>')
+                                        .appendTo($select);
                     });
 
-                    Html += '</select>' +
-                        '<input type="search" name="' + DivId + '_searchfor" id="' + DivId + '_searchfor" value="" placeholder="Search" />' +
-                        '<input type="button" id="' + DivId + '_searchgo" data-inline="true" value="Go" /> ' +
-                        '<div id="' + DivId + '_searchresults"></div>';
+                    var $searchCtn = $('<div data-role="fieldcontain"></div>')
+                                        .appendTo($wrapper);
+                    var $searchBox = $searchCtn.CswInput('init',{type: CswInput_Types.search, ID: DivId + '_searchfor'})
+                                               .CswAttrXml({'placeholder':'Search',
+                                                    'data-placeholder': 'Search'
+                                               });
+                    var $goBtn = $wrapper.CswLink('init',{type:'button', ID: DivId + '_searchgo', value:'Go', href: 'javascript:void(0)'})
+                                           .CswAttrXml({'data-inline': 'true',
+                                                'data-role': 'button'
+                                           })
+                                           .bind('click', function () { 
+                                                onSearchSubmit(DivId); 
+                                           });
+                    var $results = $wrapper.CswDiv('init',{ID: DivId + '_searchresults'});
 
-
-                    _addPageDivToBody({
+                    var $searchDiv = _addDialogDivToBody({
                         ParentId: DivId,
                         DivId: DivId + '_searchdiv',
                         HeaderText: 'Search',
-                        $content: $(Html),
+                        $content: $wrapper,
                         HideSearchButton: true,
                         HideRefreshButton: true,
                         backicon: 'arrow-u'
                     });
-
-                    $('#' + DivId + '_searchgo').click(function (eventObj) { onSearchSubmit(DivId, eventObj); });
-
-                    $('#' + DivId + '_searchdiv').doChangePage("slideup", false, true);
+                    $searchDiv.doChangePage("slideup", {changeHash: false});
                 }
             });
         }
 
-        function onSearchSubmit(DivId, eventObj)
+        function onSearchSubmit(DivId)
         {
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
+            var $resultsDiv = $('#' + DivId + '_searchresults')
+                                    .empty();
             _fetchCachedViewXml(rootid, function ($xmlstr)
             {
                 if ( !isNullOrEmpty($xmlstr) )
                 {
-                    var $content = _makeUL(DivId + '_searchresultslist');
-
+                    var $content = $resultsDiv.makeUL(DivId + '_searchresultslist', {'data-filter': false})
+                                              .append( $('<li data-role="list divider">Results</li>') );
+                    
                     var hitcount = 0;
                     $xmlstr.find('node').each(function ()
                     {
@@ -1908,7 +1913,13 @@
                             if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                             {
                                 hitcount++;
-                                $content.append( makeListItemFromXml($node, DivId, 1) );
+                                $content.append( _makeListItemFromXml($content, {ParentId: DivId + '_searchresults',
+                                                                                 DivId: DivId + '_searchresultslist',
+                                                                                 HeaderText: 'Results',
+                                                                                 $xmlitem: $node,
+                                                                                 parentlevel: 1
+                                                                                })
+                                               );
                             }
                         }
                     });
@@ -1917,12 +1928,6 @@
                         $content.append( $('<li>No Results</li>'));
                     }
                     $content.listview('refresh');
-                    var $srdiv = $('#' + DivId + '_searchresults');
-                    $srdiv.children().remove();
-                    $srdiv.append($content).doPage();
-                    $('#' + DivId + '_searchresultslist').listview();
-
-                    _bindPageEvents(DivId + '_searchdiv', DivId, 1, $srdiv);
                 }
             });
         }
