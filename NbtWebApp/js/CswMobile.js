@@ -46,14 +46,28 @@
         return $ret;
     }
 
-    $.fn.doChangePage = function (transition, reverse, changeHash)
+    $.fn.doChangePage = function (options)
 	{
+        var o = {
+            transition: $.mobile.defaultPageTransition,
+            reverse: false,
+            changeHash: true,
+            role: 'page',
+            pageContainer: $.mobile.pageContainer,
+            type: 'get',
+            data: undefined,
+            reloadPage: false,
+            showLoadMsg: true
+        };
+
+        if(options) $.extend(o,options);
+
         var $div = $(this);
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
             if(debug) log('doChangePage from: ' + $.mobile.activePage.CswAttrDom('id') + ' to: ' + $div.CswAttrDom('id'),true);
-            ret = $.mobile.changePage($div, transition, reverse, changeHash);
+            ret = $.mobile.changePage($div, o);
         }
         return ret;
 	}
@@ -585,6 +599,10 @@
                                      'data-theme': opts.Theme,
                                      'data-transition': 'slideup',
                                      'data-direction': 'reverse'
+                        })
+                        .bind('click', function() { 
+                            var $prev = $('#' + previd);
+                            $prev.doChangePage({changeHash: false});
                         });
             }
             if ( !isNullOrEmpty(nextid) )
@@ -598,7 +616,12 @@
                                      'data-theme': opts.Theme,
                                      'data-transition': 'slideup',
                                      'data-direction': 'reverse'
-                                });
+                        })
+                        .bind('click', function() { 
+                            var $next = $('#' + nextid);
+                            $next.doChangePage({changeHash: false});
+                        });
+
             }
             
             var $retLI = $('');
@@ -618,13 +641,14 @@
                     {   
                         var $tab;
                         var tab = p.$xmlitem.CswAttrXml('tab');
-                        var fieldtype = tryParseString(p.$xmlitem.CswAttrXml('fieldtype'),'').toLowerCase();
+                        var fieldtype = tryParseString(p.$xmlitem.CswAttrXml('fieldtype'),'');
                         var gestalt = p.$xmlitem.CswAttrXml('gestalt');
                         if (gestalt === 'NaN') gestalt = '';
+                        
+                        var currentcnt = p.$xml.find('[fieldtype="'+fieldtype+'"]').length;
+                        var siblingcnt = p.$xml.find( '[id="' + p.$xmlitem.CswAttrXml('id') + '"]' ).siblings('[fieldtype="'+fieldtype+'"]').length;
 
-                        var currentcnt = p.$xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
-                        var siblingcnt = p.$xmlitem.siblings('[fieldtype="'+fieldtype+'"]').andSelf().length;
-
+                        //debugger;
                         if (currenttab !== tab)
                         {
 //                            if ( !isNullOrEmpty(currenttab) )
@@ -639,7 +663,7 @@
                         var $link = $('<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>')
                                         .appendTo($list);
 
-                        switch (fieldtype)
+                        switch (fieldtype.toLowerCase())
                         {
                             case 'logical':
                                 var sf_checked = tryParseString( p.$xmlitem.children('checked').text(), '');
