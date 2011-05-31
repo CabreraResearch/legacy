@@ -74,8 +74,11 @@ namespace ChemSW.Nbt.WebServices
 
 		private string error( Exception ex, out string Message, out string Detail )
 		{
-			_CswNbtResources.CswLogger.reportError( ex );
-			_CswNbtResources.Rollback();
+			if( _CswNbtResources != null )
+			{
+				_CswNbtResources.CswLogger.reportError( ex );
+				_CswNbtResources.Rollback();
+			}
 
 			if( ex is CswDniException )
 			{

@@ -11,6 +11,7 @@ drop table materials_synonyms_audit;
 drop table nodes_audit;
 drop table nodetypes_audit;
 drop table nodetype_props_audit;
+drop table nodetype_tabset_audit;
 drop table node_views_audit;
 drop table object_class_props_audit;
 drop table packages_audit;
