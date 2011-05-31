@@ -680,16 +680,8 @@
                         var gestalt = p.$xmlitem.CswAttrXml('gestalt');
                         if (gestalt === 'NaN') gestalt = '';
                         
-                        var totalCnt = p.$xml.find('[fieldtype="'+fieldtype+'"]').length;
-                        var currentNo; 
-                        var i=0;
-                        p.$xml.find('[fieldtype="'+fieldtype+'"]').each( function()
-                        {
-                            i++;
-                            if( $(this).CswAttrXml('id') === p.$xmlitem.CswAttrXml('id') ) {
-                                currentNo = i;
-                            }
-                        });
+                        var currentNo =  p.$xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
+                        var totalCnt = p.$xmlitem.siblings('[fieldtype="'+fieldtype+'"]').andSelf().length;
 
                         if (currenttab !== tab)
                         {
