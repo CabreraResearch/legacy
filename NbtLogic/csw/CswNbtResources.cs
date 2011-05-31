@@ -743,11 +743,15 @@ namespace ChemSW.Nbt
         /// Appends a message to the log
         /// </summary>
         public void logMessage( string Msg, string Filter ) { _CswResources.logMessage( Msg, Filter ); }
-        /// <summary>
-        /// Appends a timer result message to the log
-        /// </summary>
-        public void logTimerResult( string Msg, string TimerResult ) { _CswResources.logTimerResult( Msg, TimerResult ); }
-        /// <summary>
+		/// <summary>
+		/// Appends a timer result message to the log
+		/// </summary>
+		public void logTimerResult( string Msg, string TimerResult ) { _CswResources.logTimerResult( Msg, TimerResult ); }
+		/// <summary>
+		/// Appends a timer result message to the log
+		/// </summary>
+		public void logTimerResult( string Msg, CswTimer Timer ) { _CswResources.logTimerResult( Msg, Timer ); }
+		/// <summary>
         /// Appends a timer result message to the log
         /// </summary>
         public void logTimerResult( string Msg, string TimerResult, string Filter ) { _CswResources.logTimerResult( Msg, TimerResult, Filter ); }
