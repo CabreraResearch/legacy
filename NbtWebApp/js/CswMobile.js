@@ -43,7 +43,7 @@
             {
                 var dataurl = $(this).CswAttrXml('data-url');
                 var $thisPage = $('#' + dataurl);
-                $.mobile.path.set(dataurl);
+                //$.mobile.path.set(dataurl);
                 $thisPage.doChangePage();
             });
             
@@ -72,6 +72,7 @@
         if( !isNullOrEmpty($div) )
         {
             if(debug) log('doChangePage from: ' + $.mobile.activePage.CswAttrDom('id') + ' to: ' + $div.CswAttrDom('id'),true);
+            //$.moble.loadPage($div);
             ret = $.mobile.changePage($div, o);
         }
         return ret;
@@ -201,7 +202,9 @@
             HideOnlineButton: true,
             HideRefreshButton: true,
             HideLogoutButton: true,
-            HideHelpButton: true
+            HideHelpButton: true,
+            HideCloseButton: true,
+            HideBackButton: true,
         });
 
         var $logindiv = _loadLoginDiv();
@@ -253,11 +256,18 @@
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
             LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
             LoginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
-            var $retDiv = _addDialogDivToBody({
+            var $retDiv = _addPageDivToBody({
                     DivId: 'logindiv',
                     HeaderText: 'Login to ChemSW Fire Inspection',
                     $content: $(LoginContent),
-                    HideHelpButton: false
+                    HideSearchButton: true,
+                    HideOnlineButton: true,
+                    HideRefreshButton: true,
+                    HideLogoutButton: true,
+                    HideHelpButton: false,
+                    HideCloseButton: true,
+                    HideBackButton: true,
+                    dataRel: 'dialog'
             });
             $('#loginsubmit').click(onLoginSubmit);
             $('#login_customerid').clickOnEnter($('#loginsubmit'));
@@ -279,11 +289,16 @@
                 HideSearchButton: true,
                 onPageShow: function(p) { return _loadDivContents(p); }
             };
-            var $retDiv = _addDialogDivToBody({
+            var $retDiv = _addPageDivToBody({
                         DivId: 'viewsdiv',
                         HeaderText: 'Views',
-                        HideRefreshButton: true,
+                        HideRefreshButton: false,
                         HideSearchButton: true,
+                        HideOnlineButton: false,
+                        HideLogoutButton: false,
+                        HideHelpButton: false,
+                        HideCloseButton: true,
+                        HideBackButton: false,
                         onPageShow: function(p) { return _loadDivContents(p); }
                 });
             $retDiv.bindJqmEvents(params);
@@ -292,9 +307,17 @@
 
 		function _loadSorryCharlieDiv()
         {
-            $retDiv = _addDialogDivToBody({
+            $retDiv = _addPageDivToBody({
                 DivId: 'sorrycharliediv',
                 HeaderText: 'Sorry Charlie!',
+                HideSearchButton: true,
+                HideOnlineButton: false,
+                HideRefreshButton: true,
+                HideLogoutButton: true,
+                HideHelpButton: false,
+                HideCloseButton: true,
+                HideBackButton: true,
+                dataRel: 'dialog',
                 $content: $('<p>You must have internet connectivity to login.</p>')                
             });
             return $retDiv;
@@ -529,23 +552,22 @@
                 $xmlitem: '',
                 parentlevel: '',
                 level: '',
+                HideSearchButton: false,
+                HideOnlineButton: false,
                 HideRefreshButton: false,
-                HideSearchButton: false
+                HideLogoutButton: false,
+                HideHelpButton: false,
+                HideCloseButton: true,
+                HideBackButton: false
             };
             if (params)
             {
                 $.extend(p, params);
             }
-
-            var $retDiv = _addPageDivToBody({
-                    ParentId: p.ParentId,
-                    level: p.parentlevel,
-                    DivId: p.DivId,
-                    HeaderText: p.HeaderText,
-                    //$content: $content,
-                    HideRefreshButton: p.HideRefreshButton,
-                    HideSearchButton: p.HideSearchButton
-            });
+            
+            p.level = p.parentlevel;
+            
+            var $retDiv = _addPageDivToBody(p);
 
             var $content = $retDiv.find('div:jqmData(role="content")').empty();
             var $list = $content.makeUL();            
@@ -592,7 +614,7 @@
             var previd = p.$xmlitem.prev().CswAttrXml('id');
             
             // add a div for editing the property directly
-            var $toolbar = $('<div data-role="controlgroup data-type="horizontal"></div>');
+            var $toolbar = $('<div data-role="controlgroup" data-type="horizontal"></div>');
             if ( !isNullOrEmpty(previd) )
             {
                 $toolbar.CswLink('init',{href:'javascript:void(0);', value: 'Previous'})
@@ -601,7 +623,6 @@
                                      'data-role': 'button',
                                      'data-icon': 'arrow-u',
                                      'data-inline': true,
-                                     'data-theme': opts.Theme,
                                      'data-transition': 'slideup',
                                      'data-direction': 'reverse'
                         })
@@ -618,7 +639,6 @@
                                      'data-role': 'button',
                                      'data-icon': 'arrow-d',
                                      'data-inline': true,
-                                     'data-theme': opts.Theme,
                                      'data-transition': 'slideup',
                                      'data-direction': 'reverse'
                         })
@@ -1278,6 +1298,9 @@
                 HideRefreshButton: false,
                 HideLogoutButton: false,
                 HideHelpButton: false,
+                HideCloseButton: true,
+                HideBackButton: false,
+                dataRel: 'page', 
                 backicon: undefined,
                 backtransition: undefined
             };
@@ -1296,24 +1319,43 @@
             var $refreshBtn = $('#' + p.DivId + '_refresh');
             var $logoutBtn = $('#' + p.DivId + '_logout');
             var $helpBtn = $('#' + p.DivId + '_help');
+            var $closeBtn = $('#' + p.DivId + '_close');
+            var $backlink = $('#' + p.DivId + '_back');
 
             if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
             {
                 $pageDiv = $body.CswDiv('init',{ID: p.DivId})
-                                .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText}); 
-            
+                                .CswAttrXml({'data-role': 'page', 
+                                             'data-url': p.DivId, 
+                                             'data-title': p.HeaderText,
+                                             'data-rel': p.dataRel
+                                 }); 
+
 			    var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
                                       .CswAttrXml({'data-role': 'header',
                                                    'data-theme': opts.Theme, 
                                                    'data-position':'fixed',
                                                    'data-id': 'csw_header'});
-                var $backlink = $header.CswLink('init',{'href': 'javascript:void(0)', 
+                $backlink = $header.CswLink('init',{'href': 'javascript:void(0)', 
                                                         ID: p.DivId + '_back',
+                                                        cssclass: 'ui-btn-left',
                                                         value: 'Back'})
                                         .CswAttrXml({'data-identity': p.DivId + '_back', 
                                                      //'data-url': p.DivId + '_back',
 													 'data-rel': 'back',
                                                      'data-direction': 'reverse' });
+
+                $closeBtn = $header.CswLink('init',{href:'javascript:void(0)',
+                                                    ID: p.DivId + '_close',
+                                                    cssclass: 'ui-btn-left'})
+                                       .CswAttrXml({
+                                            'data-identity': p.DivId + '_close',
+                                            'data-icon': 'delete',
+                                            'data-rel': 'back',
+                                            'data-iconpos': 'notext',
+                                            'data-direction': 'reverse',
+                                            'title': 'Close'
+                                       });
             
                 if ( !isNullOrEmpty(p.backtransition) )
                 {
@@ -1337,15 +1379,18 @@
 
                 $searchBtn = $header.CswLink('init',{'href': 'javascript:void(0)', 
                                             ID: p.DivId + '_searchopen',
+                                            cssclass: 'ui-btn-right',
                                             value: 'Search' })
                                       .CswAttrXml({'data-identity': p.DivId + '_searchopen', 
                                                    'data-url': p.DivId + '_searchopen', 
-                                                   'data-transition': 'slidedown',
-                                                   'data-role': 'button' });
+                                                   'data-transition': 'pop',
+                                                   'data-role': 'button',
+                                                   'data-rel': 'dialog' });
 
                 $header.CswDiv('init',{cssclass: 'toolbar'})
                        .append(p.$toolbar)
-                       .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
+                       .CswAttrXml({'data-role':'header','data-type':'horizontal', 'data-theme': opts.Theme});
+
                 var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
                                        .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
                                        .append(p.$content);
@@ -1365,8 +1410,10 @@
                                                     value: onlineValue })
                                     .CswAttrXml({'data-identity': p.DivId + '_gosynchstatus', 
                                                 'data-url': p.DivId + '_gosynchstatus', 
-                                                'data-transition': 'slideup',
-                                                'data-role': 'button' });
+                                                'data-transition': 'pop',
+                                                'data-role': 'button',
+                                                'data-rel': 'dialog' 
+                                                });
 
                 $refreshBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
                                                        ID: p.DivId + '_refresh', 
@@ -1393,7 +1440,8 @@
                                                    value: 'Help' })
                                    .CswAttrXml({'data-identity': p.DivId + '_help', 
                                                 'data-url': p.DivId + '_help', 
-                                                'data-transition': 'slideup' });
+                                                'data-transition': 'pop',
+                                                'data-rel': 'dialog'  });
             }
 
             if ( p.HideOnlineButton ) { 
@@ -1426,7 +1474,18 @@
             else {
                 $searchBtn.show();
             }
-
+            if ( p.dataRel === 'dialog' && !p.HideCloseButton ) {
+                $closeBtn.show();
+            }
+            else {
+                $closeBtn.hide();
+            }
+            if( !p.HideBackButton ) {
+                $backlink.show();
+            } 
+            else {
+                $backlink.hide();
+            }
             //if(p.level === 0)  
             //$pageDiv.loadPage();
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
@@ -1435,56 +1494,69 @@
 
         } // _addPageDivToBody()
         
-        function _addDialogDivToBody(params)
-        {
-            var p = {
-                DivId: '',       // required
-                HeaderText: '',
-                $toolbar: '',
-                $content: '',
-                HideHelpButton: false
-            };
+//        function _addDialogDivToBody(params)
+//        {
+//            var p = {
+//                DivId: '',       // required
+//                HeaderText: '',
+//                $toolbar: '',
+//                $content: '',
+//                HideHelpButton: false,
+//                HideCloseButton: true
+//            };
 
-            if (params)
-            {
-                $.extend(p, params);
-            }
+//            if (params)
+//            {
+//                $.extend(p, params);
+//            }
 
-            p.DivId = makeSafeId({ID: p.DivId});
+//            p.DivId = makeSafeId({ID: p.DivId});
 
-            var $pageDiv = $('#' + p.DivId);
+//            var $pageDiv = $('#' + p.DivId);
 
-            if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
-            {
-                $pageDiv = $body.CswDiv('init',{ID: p.DivId})
-                                .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText, 'data-rel': 'dialog'}); 
-            
-		        var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
-                                        .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'inline'});
-                $header.append($('<h1>' + p.HeaderText + '</h1>'));
-                $header.CswDiv('init',{cssclass: 'toolbar'})
-                        .append(p.$toolbar)
-                        .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
-                var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
-                                        .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
-                                        .append(p.$content);
-                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
-                                        .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
-            
-                $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'});
+//            if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
+//            {
+//                $pageDiv = $body.CswDiv('init',{ID: p.DivId})
+//                                .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText, 'data-rel': 'dialog'}); 
+//            
+//		        var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
+//                                        .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'inline'});
+//                $header.append($('<h1>' + p.HeaderText + '</h1>'));
+//                $header.CswDiv('init',{cssclass: 'toolbar'});
 
-                if (!p.HideHelpButton)
-                {
-                    $footer.CswLink('init',{'href': 'javascript:void(0)', ID: p.DivId + '_help', value: 'Help'})
-                            .CswAttrXml({'data-identity': p.DivId, 'data-url': p.DivId });
-                }
-                $pageDiv.doPage();
-            }
-            _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
+//                
 
-            return $pageDiv;
+//                $header.append(p.$toolbar)
+//                       .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
+//                
+//                var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
+//                                        .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
+//                                        .append(p.$content);
+//                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
+//                                        .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
+//            
+//                $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'});
 
-        } // _addPageDivToBody()
+//                
+//                var $helpBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', ID: p.DivId + '_help', value: 'Help'})
+//                                      .CswAttrXml({'data-identity': p.DivId, 'data-url': p.DivId });
+//                $pageDiv.doPage();
+//            }
+
+//            if (!p.HideHelpButton) {
+//                $help.hide();
+//            }
+//            else {
+//                $help.show();
+//            }
+//            if (!p.HideCloseButton) {
+
+//            }
+//            _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
+
+//            return $pageDiv;
+
+//        } // _addPageDivToBody()
 
         function _getDivHeaderText(DivId)
         {
@@ -1531,21 +1603,21 @@
                 .end();
         }
         
-        function _bindDialogEvents(DivId, ParentId, level, $div)
-        {
-            $div.find('#' + DivId + '_help')
-                .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
-                .end()
-                .find('input')
-                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-                .end()
-                .find('textarea')
-                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-                .end()
-                .find('select')
-                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-                .end();
-        }
+//        function _bindDialogEvents(DivId, ParentId, level, $div)
+//        {
+//            $div.find('#' + DivId + '_help')
+//                .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
+//                .end()
+//                .find('input')
+//                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+//                .end()
+//                .find('textarea')
+//                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+//                .end()
+//                .find('select')
+//                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+//                .end();
+//        }
         // ------------------------------------------------------------------------------------
         // Synch Status Div
         // ------------------------------------------------------------------------------------
@@ -1563,8 +1635,14 @@
                     DivId: 'synchstatus',
                     HeaderText: 'Synch Status',
                     $content: $(content),
+                    dataRel: 'dialog',
                     HideSearchButton: true,
-                    HideRefreshButton: true
+                    HideOnlineButton: true,
+                    HideRefreshButton: false,
+                    HideLogoutButton: false,
+                    HideHelpButton: false,
+                    HideCloseButton: false,
+                    HideBackButton: true,
             });
 
             $retDiv.find('#ss_forcesynch')
@@ -1636,8 +1714,14 @@
                     DivId: 'help',
                     HeaderText: 'Help',
                     $content: $help,
+                    dataRel: 'dialog',
                     HideSearchButton: true,
-                    HideRefreshButton: true
+                    HideOnlineButton: false,
+                    HideRefreshButton: true,
+                    HideLogoutButton: false,
+                    HideHelpButton: true,
+                    HideCloseButton: false,
+                    HideBackButton: true,
             });
             
             return $retDiv;
@@ -1877,13 +1961,19 @@
                                            });
                     var $results = $wrapper.CswDiv('init',{ID: DivId + '_searchresults'});
 
-                    var $searchDiv = _addDialogDivToBody({
+                    var $searchDiv = _addPageDivToBody({
                         ParentId: DivId,
                         DivId: DivId + '_searchdiv',
                         HeaderText: 'Search',
                         $content: $wrapper,
                         HideSearchButton: true,
+                        HideOnlineButton: true,
                         HideRefreshButton: true,
+                        HideLogoutButton: false,
+                        HideHelpButton: false,
+                        HideCloseButton: false,
+                        HideBackButton: true,
+                        dataRel: 'dialog',
                         backicon: 'arrow-u'
                     });
                     $searchDiv.doChangePage("slideup", {changeHash: false});
