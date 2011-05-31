@@ -1,9 +1,10 @@
-﻿/// <reference path="../jquery/jquery-1.6-vsdoc.js" />
+﻿/// <reference path="../jquery/jquery-1.6.1-vsdoc.js" />
 /// <reference path="http://code.jquery.com/mobile/latest/jquery.mobile.js" />
 /// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
+/// <reference path="CswClasses.js" />
 
 //var profiler = $createProfiler();
 //if (!debug) profiler.disable();
@@ -44,21 +45,6 @@
         }
         return $ret;
     }
-
-//    $.fn.refreshJqm = function()
-//    {
-//        //JQM doesnot yet have a refresh all method, so we must do this manually
-//        var $element = $(this);
-//        if( !isNullOrEmpty($element) )
-//        {
-//            $element.find('input[type="checkbox"]').checkboxradio('refresh');
-//            $element.find('input[type="radio"]').checkboxradio('refresh');
-//            $element.find('input[type="range"]').slider('refresh'); //slider
-//            $element.find('select').selectmenu('refresh');
-//            $element.find('ul').listview('refresh');
-//        }
-//        return $element;
-//    }
 
     $.fn.doChangePage = function (transition, reverse, changeHash)
 	{
@@ -112,19 +98,19 @@
                 $.mobile.pageLoading(true);
             });
 
-            //$div.unbind('pagebeforecreate');
-            $div.bind('pagebeforecreate', function()
-            {
-                //$div.find('input[type="radio"]').checkboxradio();
-                //$div.find('input[type="checkbox"]').checkboxradio();
-            });
+//            $div.unbind('pagebeforecreate');
+//            $div.bind('pagebeforecreate', function()
+//            {
+//                //$div.find('input[type="radio"]').checkboxradio();
+//                //$div.find('input[type="checkbox"]').checkboxradio();
+//            });
 
-            //$div.unbind('pagecreate');
-            $div.bind('pagecreate', function()
-            {
-                //$div.find('input[type="radio"]').checkboxradio('refresh',true);
-                //$div.find('input[type="checkbox"]').checkboxradio('refresh',true);
-            });
+//            $div.unbind('pagecreate');
+//            $div.bind('pagecreate', function()
+//            {
+//                //$div.find('input[type="radio"]').checkboxradio('refresh',true);
+//                //$div.find('input[type="checkbox"]').checkboxradio('refresh',true);
+//            });
         }
         return $ret;
     }
@@ -997,8 +983,9 @@
             return $retHtml;
         }
 
-        function _FieldTypeHtmlToXml($xmlitem, name, value)
+        function _FieldTypeHtmlToXml($xmlitem, id, value)
         {
+            var name = new CswString(id);
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var fieldtype = $xmlitem.CswAttrXml('fieldtype');
             var propname = $xmlitem.CswAttrXml('name');
@@ -1024,7 +1011,7 @@
                 case "Link": break;
                 case "List": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Logical":
-                    if (name === makeSafeId({ID: IdStr, suffix: 'ans'}) || name === makeSafeId({ID: IdStr, suffix: 'ans2'}))
+                    if (name.contains( makeSafeId({ID: IdStr, suffix: 'ans'}) ) )
                     {
                         $sftomodify = $sf_checked;
                     }
@@ -1032,17 +1019,17 @@
                 case "Memo": if (name === IdStr) $sftomodify = $sf_text; break;
                 case "Number": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Password": break;
-                case "Quantity": if (name === makeSafeId({ID: IdStr, suffix: 'qty'}) ) $sftomodify = $sf_value; break;
+                case "Quantity": if (name.contains(makeSafeId({ID: IdStr, suffix: 'qty'})) ) $sftomodify = $sf_value; break;
                 case "Question":
-                    if (name === makeSafeId({ID: IdStr, suffix: 'com'}) )
+                    if (name.contains( makeSafeId({ID: IdStr, suffix: 'com'}) ))
                     {
                         $sftomodify = $sf_comments;
                     }
-                    else if (name === makeSafeId({ID: IdStr, suffix: 'ans'}) || name === makeSafeId({ID: IdStr, suffix: 'ans2'}))
+                    else if (name.contains( makeSafeId({ID: IdStr, suffix: 'ans'}) ) )
                     {
                         $sftomodify = $sf_answer;
                     }
-                    else if (name === makeSafeId({ID: IdStr, suffix: 'cor'}) )
+                    else if (name.contains( makeSafeId({ID: IdStr, suffix: 'cor'}) ) )
                     {
                         $sftomodify = $sf_correctiveaction;
                     }
@@ -1076,6 +1063,7 @@
             {
                 answers = ['True', 'False'];
             }
+            var inputName = makeSafeId({ prefix: IdStr, ID: Suffix}); //Name needs to be non-unique and shared
 
             for (var i = 0; i < answers.length; i++)
             {
@@ -1086,8 +1074,9 @@
                     case 'True': answertext = 'Yes'; break;
                     case 'False': answertext = 'No'; break;
                 }
+                
                 var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]});
-                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, ID: inputId, value: answers[i]})
+                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i]})
                                 .CswAttrXml('data-role','button');
                 var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
                                 .appendTo($fieldset);
@@ -1099,29 +1088,27 @@
 				{
                     $input.CswAttrDom('checked','checked');
                 }
-                
+                $input.data('thisI',i);
                 $input.click( function ()
                 {
+                    var i = $(this).data('thisI');
                     for (var k = 0; k < answers.length; k++)
                     {
-                        var thisAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k]});
-                        var $answer = $('#' + thisAnswerId);
+                        var input1Id = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k]});
+                        var $input1 = $('#' + input1Id);
 
-                        var radioId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
-                        var $otherradio = $('#' + radioId);
+                        var input2Id = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
+                        var $input2 = $('#' + input2Id);
                         
                         if (answers[k] === answers[i])
                         {
-                            //$answer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
-                            $otherradio.CswAttrDom('checked', 'checked');
-                            $otherradio.checkboxradio('refresh');
-                            //$otherradio.siblings('label').addClass('ui-btn-active');
+                            $input1.CswAttrDom('checked', 'checked');
+                            $input2.CswAttrDom('checked', 'checked');
                         }
                         else
                         {
-                            //$answer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
-                            $otherradio.removeProp('checked');
-                            //$otherradio.siblings('label').removeClass('ui-btn-active');
+                            $input1.removeAttr('checked');
+                            $input2.removeAttr('checked');
                         }
                     } // for (var k = 0; k < answers.length; k++)
                 });
@@ -1143,42 +1130,44 @@
                                     'data-type': 'horizontal'  
                                  });
             var answers = Options.split(',');
+            var answerName = makeSafeId({ prefix: IdStr, ID: Suffix }); //Name needs to be non-unqiue and shared
+
             for (var i = 0; i < answers.length; i++)
             {
 				var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                var $answer = $fieldset.CswInput('init',{type: CswInput_Types.radio, ID: answerid, value: answers[i] })
+                var $answer = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: answerName, ID: answerid, value: answers[i] })
 								.CswAttrXml('data-role','button');
 				var $label = $('<label for="' + answerid + '">' + answers[i] + '</label>')
 								.appendTo($fieldset);
-                
                 if (Answer === answers[i])
                 {
                     $answer.CswAttrDom('checked','checked');
                 } 
-				$answer.bind('click', function(eventObj) 
+                $answer.data('thisI',i);
+
+				$answer.bind('change', function(eventObj) 
 				{
+                    var thisI = $(this).data('thisI');
+
 					for (var k = 0; k < answers.length; k++)
 					{
-                        var suffixAnswerId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
-                        var $suffixAnswer = $('#' + suffixAnswerId);
-						
-                        var oSuffixAnswerId = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
-						var $oSuffixAnswer = $('#' + oSuffixAnswerId);
-						
-                        if (answers[k] === answers[i])
+                        var answer1Id = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
+                        var $answer1 = $('#' + answer1Id);
+
+                        var answer2Id = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
+						var $answer2 = $('#' + answer2Id);
+
+                        if (answers[k] === answers[thisI])
 						{
-                            //$suffixAnswer.siblings('label').addClass('ui-btn-active'); // case 20307: bug is still here
-							$oSuffixAnswer.CswAttrDom('checked', 'checked');
-						    $oSuffixAnswer.checkboxradio('refresh');
-                        	//$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
-                            //$oSuffixAnswer.siblings('label').addClass('ui-btn-active');
+                            $answer1.CswAttrDom('checked', 'checked');
+                            $answer2.CswAttrDom('checked', 'checked');
+                            //$suffixAnswer.checkboxradio('refresh');
+                            //$oSuffixAnswer.checkboxradio('refresh');
 						} 
                         else
 						{
-							//$suffixAnswer.siblings('label').removeClass('ui-btn-active'); // case 20307: bug is still here
-                            $oSuffixAnswer.removeProp('checked');
-							//$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
-                            //$oSuffixAnswer.siblings('label').removeClass('ui-btn-active');
+                            $answer1.removeAttr('checked');
+                            $answer2.removeAttr('checked');
 						}
                         
 					} // for (var k = 0; k < answers.length; k++)
@@ -1191,7 +1180,7 @@
 					var $li = $('#' + liSuffixId);
 					var $prop = $('#' + propNameSuffixId);
 					
-					if ((',' + CompliantAnswers + ',').indexOf(',' + answers[i] + ',') >= 0)
+					if ((',' + CompliantAnswers + ',').indexOf(',' + answers[thisI] + ',') >= 0)
 					{
 						$cor.css('display','none');
 						$li.children('div').removeClass('OOC');
@@ -1212,7 +1201,7 @@
 							$prop.removeClass('OOC');
 						}
 					}
-					if ( isNullOrEmpty(Answer) )
+					if ( !isNullOrEmpty(Answer) )
 					{
 						// update unanswered count when this question is answered
 						var $fieldset = $('#' + IdStr + '_fieldset');
@@ -1288,7 +1277,10 @@
                                 .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText}); 
             
 			    var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
-                                      .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'fixed'});
+                                      .CswAttrXml({'data-role': 'header',
+                                                   'data-theme': opts.Theme, 
+                                                   'data-position':'fixed',
+                                                   'data-id': 'csw_header'});
                 var $backlink = $header.CswLink('init',{'href': 'javascript:void(0)', 
                                                         ID: p.DivId + '_back',
                                                         value: 'Back'})
@@ -1331,8 +1323,11 @@
                 var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
                                        .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
                                        .append(p.$content);
-                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
-                                      .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
+                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer', class: 'ui-bar'})
+                                      .CswAttrXml({'data-role':'footer', 
+                                                   'data-theme': opts.Theme, 
+                                                   'data-position':'fixed',
+                                                   'data-id': 'csw_footer'});
 
                 
                 var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
@@ -1778,11 +1773,14 @@
                                                'data-url': DivId });
             
             $('#synchstatus_back').css('visibility', '');
+
+            $syncstatus.doChangePage();
         }
 
         function onHelp(DivId, eventObj)
         {
-            //
+            $help = _makeHelpDiv();
+            $help.doChangePage();
         }
 
         function onPropertyChange(DivId, eventObj)
