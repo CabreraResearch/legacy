@@ -249,19 +249,21 @@ namespace ChemSW.Nbt
             //}
 
             // BZ 7074 - Make sure the user has permissions to at least one root node
-            foreach( CswNbtView ThisView in from DataRow Row in ViewsTable.Rows
-                                            select _CswNbtResources.ViewSelect.restoreView( Row["viewxml"].ToString() )
-                                                into ThisView
-                                                where ( ( ThisView.Root.ChildRelationships.Count > 0 && 
-													      ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-																									_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId, User ) ).Count() > 0 ) 
-													    ) || IncludeEmptyViews )
-                                                where ThisView.IsFullyEnabled() &&
-                                                      ( !SearchableOnly || ThisView.IsSearchable() )
-                                                select ThisView )
-            {
-                VisibleViews.Add( ThisView );
-            }
+			foreach( DataRow Row in ViewsTable.Rows )
+			{
+				CswNbtView ThisView = new CswNbtView( _CswNbtResources );
+				ThisView.LoadXml( Row["viewxml"].ToString() );
+					
+				if( ( ( ThisView.Root.ChildRelationships.Count > 0 &&
+							( ThisView.Root.ChildRelationships.Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+																	_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId, User ) ).Count() > 0 )
+						) || IncludeEmptyViews ) && 
+					ThisView.IsFullyEnabled() &&
+					( !SearchableOnly || ThisView.IsSearchable() ) )
+				{
+					VisibleViews.Add( ThisView );
+				}
+			} // foreach( DataRow Row in ViewsTable.Rows )
 
             _LastIncludeEmptyViews = IncludeEmptyViews;
             _LastOrderBy = OrderBy;

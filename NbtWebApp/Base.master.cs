@@ -250,8 +250,8 @@ namespace ChemSW.Nbt.WebPages
                     OnEndOfPageLifeCycle( CswNbtResources.Timer );
 
                 ReleaseAll();
-                if( CswSessionResourcesNbt != null )
-                    CswSessionResourcesNbt.setCache();
+				//if( CswSessionResourcesNbt != null )
+				//    CswSessionResourcesNbt.setCache();
 
                 base.OnUnload( e );
             }

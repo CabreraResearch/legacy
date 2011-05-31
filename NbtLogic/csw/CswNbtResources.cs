@@ -86,12 +86,15 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtResources( AppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical )
         {
-            _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical );
-            _ExcludeDisabledModules = ExcludeDisabledModules;
+			_CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical );
+	
+			_DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
+			logMessage( "CswNbtResources CREATED GUID: " + _DebugID );
+
+			_ExcludeDisabledModules = ExcludeDisabledModules;
             //ViewCache = new CswNbtViewCache( this );
             ViewSelect = new CswNbtViewSelect( this );
 			SessionDataMgr = new CswNbtSessionDataMgr( this );
-            _DebugID = DateTime.Now.ToString();
 			Permit = new CswNbtPermit( this );
         }
 
@@ -738,19 +741,23 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Appends a message to the log
         /// </summary>
-        public void logMessage( string Msg ) { _CswResources.logMessage( Msg ); }
+		public void logMessage( string Msg ) { _CswResources.logMessage( "(" + _DebugID + ")\t" + Msg ); }
         /// <summary>
         /// Appends a message to the log
         /// </summary>
-        public void logMessage( string Msg, string Filter ) { _CswResources.logMessage( Msg, Filter ); }
-        /// <summary>
+		public void logMessage( string Msg, string Filter ) { _CswResources.logMessage( "(" + _DebugID + ")\t" + Msg, Filter ); }
+		/// <summary>
+		/// Appends a timer result message to the log
+		/// </summary>
+		public void logTimerResult( string Msg, string TimerResult ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, TimerResult ); }
+		/// <summary>
+		/// Appends a timer result message to the log
+		/// </summary>
+		public void logTimerResult( string Msg, CswTimer Timer ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, Timer ); }
+		/// <summary>
         /// Appends a timer result message to the log
         /// </summary>
-        public void logTimerResult( string Msg, string TimerResult ) { _CswResources.logTimerResult( Msg, TimerResult ); }
-        /// <summary>
-        /// Appends a timer result message to the log
-        /// </summary>
-        public void logTimerResult( string Msg, string TimerResult, string Filter ) { _CswResources.logTimerResult( Msg, TimerResult, Filter ); }
+		public void logTimerResult( string Msg, string TimerResult, string Filter ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, TimerResult, Filter ); }
         /// <summary>
         /// Appends an exception to the log
         /// </summary>
