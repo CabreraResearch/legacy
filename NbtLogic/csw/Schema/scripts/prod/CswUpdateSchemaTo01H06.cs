@@ -11,6 +11,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -122,10 +123,10 @@ namespace ChemSW.Nbt.Schema
             {
                 //Grant admin user permissions
                 CswNbtNodePropLogicalSet Permissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( AdminRoleNode ) ).NodeTypePermissions;
-                Permissions.SetValue( NodeTypePermission.Create.ToString(), NotificationNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Delete.ToString(), NotificationNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Edit.ToString(), NotificationNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.View.ToString(), NotificationNT.NodeTypeId.ToString(), true );
+                Permissions.SetValue( CswNbtPermit.NodeTypePermission.Create.ToString(), NotificationNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Delete.ToString(), NotificationNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Edit.ToString(), NotificationNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.View.ToString(), NotificationNT.NodeTypeId.ToString(), true );
                 Permissions.Save();
                 AdminRoleNode.postChanges( true );
 

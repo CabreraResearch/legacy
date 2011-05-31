@@ -9,6 +9,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Telerik.Web.UI;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.NbtWebControls
 {
@@ -545,7 +546,7 @@ namespace ChemSW.NbtWebControls
                     else if( DesignSelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Tab )
                     {
                         CswNbtMetaDataNodeTypeTab SelectedTab = CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) );
-                        if( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Create, SelectedTab.NodeType.NodeTypeId, null, null ) )
+						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedTab.NodeType.NodeTypeId ) )
                         {
                             if( SelectedTab.NodeType.IsLatestVersion )
                             {
@@ -571,7 +572,7 @@ namespace ChemSW.NbtWebControls
                     else if( DesignSelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType )
                     {
                         CswNbtMetaDataNodeType SelectedNodeType = CswNbtResources.MetaData.getNodeType( Convert.ToInt32( DesignSelectedValue ) );
-                        if( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Create, SelectedNodeType.NodeTypeId, null, null ) )
+						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType.NodeTypeId ) )
                         {
                             if( SelectedNodeType != null && SelectedNodeType.IsLatestVersion )
                             {
@@ -660,7 +661,7 @@ namespace ChemSW.NbtWebControls
                 // Copy
                 if( AllowCopy && SelectedNodeKey != null &&
                     SelectedNodeKey.NodeSpecies == NodeSpecies.Plain &&
-                    _CswNbtResources.CurrentNbtUser.CheckCreatePermission( SelectedNodeKey.NodeTypeId ) )
+                    _CswNbtResources.Permit.can( Nbt.Security.CswNbtPermit.NodeTypePermission.Create, SelectedNodeKey.NodeTypeId ) )
                 {
                     if( SelectedNodeKeyViewNode != null && SelectedNodeKeyViewNode is CswNbtViewRelationship &&
                       ( (CswNbtViewRelationship) SelectedNodeKeyViewNode ).NodeIdsToFilterIn.Count == 0 )   // BZ 8022
@@ -871,8 +872,8 @@ namespace ChemSW.NbtWebControls
                 if( AllowMobile && _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
                     _MobileMenuItem.Visible = true;
                 //if( AllowEditView && ( (CswNbtObjClassRole) _CswNbtResources.CurrentNbtUser.RoleNode ).ActionPermissions.CheckValue( CswNbtAction.PermissionXValue, CswNbtAction.ActionNameEnumToString( _CswNbtResources.Actions[CswNbtActionName.Edit_View].Name ) ) )
-                if( AllowEditView && ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser ).CheckActionPermission( CswNbtActionName.Edit_View ) )
-                    _EditViewMenuItem.Visible = true;
+				if( AllowEditView && _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) )
+					_EditViewMenuItem.Visible = true;
                 //if ( AllowExport && NbtViewRenderingMode.Unknown != NbtViewRenderingMode )
                 //    ExportMenuItem.Visible = true;
                 //if( AllowExportXml )
@@ -912,7 +913,7 @@ namespace ChemSW.NbtWebControls
                     {
                         if( SelectedNodeKeyViewNode is CswNbtViewRelationship &&
                             ( (CswNbtViewRelationship) SelectedNodeKeyViewNode ).AllowDelete &&
-                            _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Delete, SelectedNodeKey.NodeTypeId, CswNbtResources.Nodes[SelectedNodeKey], null ) )
+							_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, SelectedNodeKey.NodeTypeId, CswNbtResources.Nodes[SelectedNodeKey], null ) )
                         {
                             DeleteMenuItem.Visible = true;
 

@@ -159,13 +159,6 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
 
-        public bool CheckActionPermission( CswNbtActionName ActionName )
-        {
-            return ActionPermissions.CheckValue( ActionPermissionsXValueName,
-                                                 CswNbtAction.ActionNameEnumToString( _CswNbtResources.Actions[ActionName].Name ) );
-        }
-
-
     }//CswNbtObjClassRole
 
 }//namespace ChemSW.Nbt.ObjClasses

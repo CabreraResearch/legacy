@@ -298,7 +298,7 @@ namespace ChemSW.Nbt
                         if( ( ( FirstVersionNodeType.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
                                 FirstVersionNodeType.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) ||
                               _CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
-                            _CswNbtResources.CurrentNbtUser.CheckCreatePermission( FirstVersionNodeType.NodeTypeId ) )
+                            _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, FirstVersionNodeType ) )
                         {
                             // Only use the first view relationship found per nodetype
                             bool FoundMatch = false;

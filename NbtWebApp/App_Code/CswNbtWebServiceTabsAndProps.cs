@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.WebServices
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displaycol", Column.ToString() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "required", Prop.IsRequired.ToString().ToLower() );
             bool IsReadOnly = ( Prop.ReadOnly || PropWrapper.ReadOnly ||
-                !_CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Edit, Prop.NodeType.NodeTypeId, Node, Prop ) );
+				!_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType.NodeTypeId, Node, Prop ) );
 
             CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", IsReadOnly.ToString().ToLower() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "gestalt", PropWrapper.Gestalt.Replace( "\"", "&quot;" ) );

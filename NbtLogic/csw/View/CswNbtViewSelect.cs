@@ -254,7 +254,7 @@ namespace ChemSW.Nbt
                                                 into ThisView
                                                 where ( ( ThisView.Root.ChildRelationships.Count > 0 && 
 													      ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-																								    User.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) ).Count() > 0 ) 
+																									_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId, User ) ).Count() > 0 ) 
 													    ) || IncludeEmptyViews )
                                                 where ThisView.IsFullyEnabled() &&
                                                       ( !SearchableOnly || ThisView.IsSearchable() )

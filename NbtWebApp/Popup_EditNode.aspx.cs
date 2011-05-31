@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.WebPages
                     CswPrimaryKey NodeId = new CswPrimaryKey();
                     NodeId.FromString( Request.QueryString["nodeid"] );
                     _Node = Master.CswNbtResources.Nodes[NodeId];
-                    NodeKey = new CswNbtNodeKey( Master.CswNbtResources, string.Empty, _Node.NodeId, _Node.NodeSpecies, _Node.NodeTypeId, _Node.ObjectClassId, string.Empty, string.Empty );
+                    NodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, string.Empty, _Node.NodeId, _Node.NodeSpecies, _Node.NodeTypeId, _Node.ObjectClassId, string.Empty, string.Empty );
                     PropTable.EditMode = NodeEditMode.EditInPopup;
                     PropTable.SelectedNode = _Node;
                     PropTable.TabStrip.TabClick += new RadTabStripEventHandler( TabStrip_TabClick );

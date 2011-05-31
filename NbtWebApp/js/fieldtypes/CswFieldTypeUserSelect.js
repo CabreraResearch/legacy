@@ -2,8 +2,9 @@
         
     var PluginName = 'CswFieldTypeUserSelect';
 	var NameCol = "User Name";
-    var KeyCol = "UserId";
-    var ValueCol = "Include";
+	var KeyCol = "UserId";
+    var StringKeyCol = "UserIdString";
+	var ValueCol = "Include";
 
     var methods = {
         'init': function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey

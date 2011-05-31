@@ -1,4 +1,3 @@
-
 using System;
 using System.Linq;
 using ChemSW.Nbt.MetaData;
@@ -8,7 +7,7 @@ using ChemSW.Audit;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01H-38
+    /// Updates the schema to version 01H-39
     /// </summary>
     public class CswUpdateSchemaTo01H39 : ICswUpdateSchemaTo
     {
@@ -34,23 +33,25 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addStringColumn( CswAuditMetaData.AuditTransactionTableName, "esigusername", "Name of user who signed the ESIG event", false, false, 50 );
             _CswNbtSchemaModTrnsctn.addStringColumn( CswAuditMetaData.AuditTransactionTableName, "esiguserpassword", "Password of user who signed the ESIG event", false, false, 50 );
 
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "users" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "packdetail" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "nodetypes" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "license_accept" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "containers" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "materials_subclass" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "materials_synonyms" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "vendors" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "materials" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "inventory_groups" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "units_of_measure" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "locations" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "node_views" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "packages" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "jct_nodes_props" );
-            _CswNbtSchemaModTrnsctn.makeTableAuditable( "nodetype_tabset" );
+			// nbt tables
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "jct_nodes_props" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "license_accept" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "node_views" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "nodetypes" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "nodetype_tabset" );
 
+			// legacy CISPro tables
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "containers" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "inventory_groups" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "locations" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "materials" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "materials_subclass" );
+            _CswNbtSchemaModTrnsctn.makeTableAuditable( "materials_synonyms" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "packages" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "packdetail" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "users" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "vendors" );
+			
         } // update()
 
     }//class CswUpdateSchemaTo01H39

@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.WebServices
 						if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
 						{
 							CswNbtAction ThisAction = _CswNbtResources.Actions[CswConvert.ToInt32( WelcomeRow["actionid"] )];
-							if( _CswNbtResources.CurrentNbtUser.CheckActionPermission( ThisAction.Name ) )
+							if( _CswNbtResources.Permit.can( ThisAction.Name ) )
 							{
 								if( WelcomeRow["displaytext"].ToString() != string.Empty )
 									LinkText = WelcomeRow["displaytext"].ToString();

@@ -5,6 +5,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {
@@ -232,22 +233,24 @@ namespace ChemSW.NbtWebControls.FieldTypes
         }//makeControl()
 
 
-        private static void _setReadOnly( CswNbtResources CswNbtResources, CswFieldTypeWebControl Control, CswNbtNodePropWrapper PropWrapper, CswNbtNode Node, NodeEditMode EditMode )
-        {
-            if( !Control.ReadOnly )
-                Control.ReadOnly = ( ( EditMode == NodeEditMode.PrintReport ) ||
-                                     ( PropWrapper != null &&
-                                       ( PropWrapper.ReadOnly ||
-                                         PropWrapper.NodeTypeProp.ServerManaged ||
-                                         ( EditMode == NodeEditMode.AddInPopup &&
-                                           !CswNbtResources.CurrentNbtUser.CheckCreatePermission( PropWrapper.NodeTypeProp.NodeType.NodeTypeId ) ) ||
-                                         ( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) &&
-                                           !CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Edit, PropWrapper.NodeTypeProp.NodeType.NodeTypeId, Node, PropWrapper.NodeTypeProp ) ) ) ) );
-                                     
-            // BZ 8307
-            if( EditMode == NodeEditMode.DefaultValue )
-                Control.ReadOnly = false;
-        }
+		private static void _setReadOnly( CswNbtResources CswNbtResources, CswFieldTypeWebControl Control, CswNbtNodePropWrapper PropWrapper, CswNbtNode Node, NodeEditMode EditMode )
+		{
+			if( !Control.ReadOnly )
+			{
+				Control.ReadOnly = ( ( EditMode == NodeEditMode.PrintReport ) ||
+									 ( PropWrapper != null &&
+									   ( PropWrapper.ReadOnly ||
+										 PropWrapper.NodeTypeProp.ServerManaged ||
+										 ( EditMode == NodeEditMode.AddInPopup &&
+										   !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, PropWrapper.NodeTypeProp.NodeType ) ) ||
+										 ( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) &&
+										   !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, PropWrapper.NodeTypeProp.NodeType, Node, PropWrapper.NodeTypeProp ) ) ) ) );
+			}
+
+			// BZ 8307
+			if( EditMode == NodeEditMode.DefaultValue )
+				Control.ReadOnly = false;
+		}
         
         //public delegate void ErrorHandler( Exception ex );
         //public event ErrorHandler OnError;

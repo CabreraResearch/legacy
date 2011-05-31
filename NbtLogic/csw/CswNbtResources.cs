@@ -43,6 +43,7 @@ namespace ChemSW.Nbt
         private CswResources _CswResources;
         private CswNbtNodeCollection _CswNbtNodeCollection = null;
         private CswNbtActionCollection _ActionCollection;
+		public CswNbtPermit Permit = null;
         private ICswNbtTreeFactory _CswNbtTreeFactory;
         private bool _ExcludeDisabledModules = true;
 
@@ -91,6 +92,7 @@ namespace ChemSW.Nbt
             ViewSelect = new CswNbtViewSelect( this );
 			SessionDataMgr = new CswNbtSessionDataMgr( this );
             _DebugID = DateTime.Now.ToString();
+			Permit = new CswNbtPermit( this );
         }
 
         public PooledConnectionState PooledConnectionState { set { _CswResources.PooledConnectionState = value; } }

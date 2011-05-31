@@ -8,6 +8,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -230,7 +231,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
             }
-            if( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Create, TargetId, null, this.NodeTypeProp ) )
+            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetId ) )
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "allowadd", "true" );
             }

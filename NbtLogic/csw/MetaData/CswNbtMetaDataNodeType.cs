@@ -11,6 +11,7 @@ using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -213,16 +214,16 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return ( ( !IsLocked || IsLatestVersion ) &&
-                         ( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Edit, NodeTypeId, null, null ) ) );
+				return ( ( !IsLocked || IsLatestVersion ) &&
+						 ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeId ) ) );
             }
         }
         public bool CanDelete
         {
             get
             {
-                return ( ( !IsLocked || IsLatestVersion ) &&
-                         ( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.Delete, NodeTypeId, null, null ) ) );
+				return ( ( !IsLocked || IsLatestVersion ) &&
+						 ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, NodeTypeId ) ) );
             }
         }
 

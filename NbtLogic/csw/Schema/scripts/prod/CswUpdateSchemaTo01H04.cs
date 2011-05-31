@@ -4,6 +4,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -152,39 +153,39 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtNodePropLogicalSet Permissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).NodeTypePermissions;
 
-                Permissions.SetValue( NodeTypePermission.Create.ToString(), MountPointNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Delete.ToString(), MountPointNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Edit.ToString(), MountPointNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.View.ToString(), MountPointNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Create.ToString(), MountPointNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Delete.ToString(), MountPointNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Edit.ToString(), MountPointNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.View.ToString(), MountPointNT.NodeTypeId.ToString(), true );
 
-                Permissions.SetValue( NodeTypePermission.Create.ToString(), MountPointGroupNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Delete.ToString(), MountPointGroupNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Edit.ToString(), MountPointGroupNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.View.ToString(), MountPointGroupNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Create.ToString(), MountPointGroupNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Delete.ToString(), MountPointGroupNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Edit.ToString(), MountPointGroupNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.View.ToString(), MountPointGroupNT.NodeTypeId.ToString(), true );
 
-                Permissions.SetValue( NodeTypePermission.Create.ToString(), PhysicalInspectionScheduleNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Delete.ToString(), PhysicalInspectionScheduleNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Edit.ToString(), PhysicalInspectionScheduleNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.View.ToString(), PhysicalInspectionScheduleNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Create.ToString(), PhysicalInspectionScheduleNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Delete.ToString(), PhysicalInspectionScheduleNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Edit.ToString(), PhysicalInspectionScheduleNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.View.ToString(), PhysicalInspectionScheduleNT.NodeTypeId.ToString(), true );
 
-                Permissions.SetValue( NodeTypePermission.Create.ToString(), PhysicalInspectionNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Delete.ToString(), PhysicalInspectionNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Edit.ToString(), PhysicalInspectionNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.View.ToString(), PhysicalInspectionNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Create.ToString(), PhysicalInspectionNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Delete.ToString(), PhysicalInspectionNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Edit.ToString(), PhysicalInspectionNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.View.ToString(), PhysicalInspectionNT.NodeTypeId.ToString(), true );
 
-                Permissions.SetValue( NodeTypePermission.Create.ToString(), PhysicalInspectionRouteNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Delete.ToString(), PhysicalInspectionRouteNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.Edit.ToString(), PhysicalInspectionRouteNT.NodeTypeId.ToString(), true );
-                Permissions.SetValue( NodeTypePermission.View.ToString(), PhysicalInspectionRouteNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Create.ToString(), PhysicalInspectionRouteNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Delete.ToString(), PhysicalInspectionRouteNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.Edit.ToString(), PhysicalInspectionRouteNT.NodeTypeId.ToString(), true );
+				Permissions.SetValue( CswNbtPermit.NodeTypePermission.View.ToString(), PhysicalInspectionRouteNT.NodeTypeId.ToString(), true );
 
                 Permissions.Save();
                 RoleNode.postChanges( true );
 
                 // Case 20043: Add action permissions to FE
-                _CswNbtSchemaModTrnsctn.GrantActionPermission( RoleNode, CswNbtActionName.Assign_Inspection );
-                _CswNbtSchemaModTrnsctn.GrantActionPermission( RoleNode, CswNbtActionName.Create_Inspection );
-                _CswNbtSchemaModTrnsctn.GrantActionPermission( RoleNode, CswNbtActionName.Inspection_Design );
-            }
+				_CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Assign_Inspection, CswNbtNodeCaster.AsRole( RoleNode ), true );
+				_CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Create_Inspection, CswNbtNodeCaster.AsRole( RoleNode ), true );
+				_CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Inspection_Design, CswNbtNodeCaster.AsRole( RoleNode ), true );
+			} // if( RoleNode != null )
 
             //_CswNbtSchemaModTrnsctn.MetaData.refreshAll();
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();

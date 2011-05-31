@@ -1,16 +1,33 @@
 -- drop all tables
+drop table containers_audit;
+drop table inventory_groups_audit;
+drop table jct_modules_objectclass_audit;
+drop table jct_nodes_props_audit;
+drop table license_accept_audit;
+drop table locations_audit;
+drop table materials_audit;
+drop table materials_subclass_audit;
+drop table materials_synonyms_audit;
+drop table nodes_audit;
+drop table nodetypes_audit;
+drop table nodetype_props_audit;
+drop table node_views_audit;
+drop table object_class_props_audit;
+drop table packages_audit;
+drop table packdetail_audit;
+drop table units_of_measure_audit;
+drop table users_audit;
+drop table vendors_audit;
+
 drop table configuration_variables;
 drop table fkey_definitions;
 drop table jct_modules_actions;
 drop table jct_modules_objectclass;
 drop table jct_nodes_props;
-drop table jct_nodes_props_audit;
 drop table modules;
 drop table nodes_audit;
 drop table nodetype_props;
-drop table nodetype_props_audit;
 drop table nodetype_tabset;
-drop table nodetypes_audit;
 drop table object_class_props;
 drop table sequences;
 drop table static_sql_selects;
