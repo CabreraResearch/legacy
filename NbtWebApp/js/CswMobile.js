@@ -1007,17 +1007,17 @@
             var $sftomodify = null;
             switch (fieldtype)
             {
-                case "Date": if (name.val() === IdStr) $sftomodify = $sf_value; break;
+                case "Date": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Link": break;
-                case "List": if (name.val() === IdStr) $sftomodify = $sf_value; break;
+                case "List": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Logical":
                     if (name.contains( makeSafeId({ID: IdStr, suffix: 'ans'}) ) )
                     {
                         $sftomodify = $sf_checked;
                     }
                     break;
-                case "Memo": if (name.val() === IdStr) $sftomodify = $sf_text; break;
-                case "Number": if (name.val() === IdStr) $sftomodify = $sf_value; break;
+                case "Memo": if (name === IdStr) $sftomodify = $sf_text; break;
+                case "Number": if (name === IdStr) $sftomodify = $sf_value; break;
                 case "Password": break;
                 case "Quantity": if (name.contains(makeSafeId({ID: IdStr, suffix: 'qty'})) ) $sftomodify = $sf_value; break;
                 case "Question":
@@ -1035,8 +1035,8 @@
                     }
                     break;
                 case "Static": break;
-                case "Text": if (name.val() === IdStr) $sftomodify = $sf_text; break;
-                case "Time": if (name.val() === IdStr) $sftomodify = $sf_value; break;
+                case "Text": if (name === IdStr) $sftomodify = $sf_text; break;
+                case "Time": if (name === IdStr) $sftomodify = $sf_value; break;
                 default: break;
             }
             if ( !isNullOrEmpty($sftomodify) )

@@ -21,3 +21,4 @@ function CswString(string)
     this.contains = function (string) { return value.indexOf(string) !== -1; };
 }
 
+CswString.prototype.toString = function () { return this.value; };
