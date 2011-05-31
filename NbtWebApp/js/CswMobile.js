@@ -565,9 +565,19 @@
                 $.extend(p, params);
             }
             
-            p.level = p.parentlevel;
-            
-            var $retDiv = _addPageDivToBody(p);
+            var $retDiv = _addPageDivToBody({
+                ParentId: p.ParentId,
+                    level: p.parentlevel,
+                    DivId: p.DivId,
+                    HeaderText: p.HeaderText,
+                    HideSearchButton: p.HideSearchButton,
+                    HideOnlineButton: p.HideOnlineButton,
+                    HideRefreshButton: p.HideRefreshButton,
+                    HideLogoutButton: p.HideLogoutButton,
+                    HideHelpButton: p.HideHelpButton,
+                    HideCloseButton: p.HideCloseButton,
+                    HideBackButton: p.HideBackButton
+            });
 
             var $content = $retDiv.find('div:jqmData(role="content")').empty();
             var $list = $content.makeUL();            
@@ -583,7 +593,7 @@
             });
             $list.listview('refresh')
                  .bindLI()
-                 .find('input[type="radio"]').checkboxradio('refresh',true);
+                 //.find('input[type="radio"]').checkboxradio('refresh',true);
             onAfterAddDiv($retDiv);
             
             return $retDiv;
@@ -1398,90 +1408,107 @@
                                       .CswAttrXml({'data-role':'footer', 
                                                    'data-theme': opts.Theme, 
                                                    'data-position':'fixed',
-                                                   'data-id': 'csw_footer'});
+                                                   'data-id': 'csw_footer' });
 
-                
+                var $footerCtn = $('<div data-role="controlgroup" data-type="horizontal">')
+                                    .appendTo($footer);
                 var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
                 var onlineValue = (amOffline()) ? 'Offline' : 'Online';
 
-                $synchstatusBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                $synchstatusBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
                                                     ID: p.DivId + '_gosynchstatus', 
-                                                    cssclass: onlineClass,  
+                                                    cssclass: onlineClass + ' ui-btn-left',  
                                                     value: onlineValue })
                                     .CswAttrXml({'data-identity': p.DivId + '_gosynchstatus', 
                                                 'data-url': p.DivId + '_gosynchstatus', 
                                                 'data-transition': 'pop',
                                                 'data-role': 'button',
                                                 'data-rel': 'dialog' 
-                                                });
+                                                })
+                                                .css('display','');
 
-                $refreshBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                $refreshBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
                                                        ID: p.DivId + '_refresh', 
                                                        value:'Refresh', 
-                                                       cssclass: 'refresh'})
+                                                       cssclass: 'refresh ui-btn-left'})
                                       .CswAttrXml({'data-identity': p.DivId + '_refresh', 
                                                    'data-url': p.DivId + '_refresh',
-                                                   'data-role': 'button' });
+                                                   'data-role': 'button'
+                                                   })
+                                                   .css('display','');
 
-                $logoutBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                $logoutBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
                                                     ID: p.DivId + '_logout', 
-                                                    value: 'Logout' })
+                                                    value: 'Logout',
+                                                    cssclass: 'ui-btn-left' })
                                    .CswAttrXml({'data-identity': p.DivId + '_logout', 
                                                 'data-url': p.DivId + '_logout', 
-                                                'data-transition': 'flip' });
+                                                'data-transition': 'flip',
+                                                'data-role': 'button' })
+                                                .css('display','');
                 
             
-                var $mainBtn = $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'})
-                                      .CswAttrXml('data-transition', 'pop');
+                var $mainBtn = $footerCtn.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'})
+                                      .CswAttrXml({'data-transition':'pop','data-role': 'button'});
 
 
-                $helpBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
+                $helpBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
                                                    ID: p.DivId + '_help', 
-                                                   value: 'Help' })
-                                   .CswAttrXml({'data-identity': p.DivId + '_help', 
+                                                   value: 'Help',
+                                                   cssclass: 'ui-btn-left' })
+                                     .CswAttrXml({'data-identity': p.DivId + '_help', 
                                                 'data-url': p.DivId + '_help', 
                                                 'data-transition': 'pop',
-                                                'data-rel': 'dialog'  });
+                                                'data-rel': 'dialog',
+                                                'data-role': 'button' })
+                                     .css('display','');
             }
 
             if ( p.HideOnlineButton ) { 
                 $synchstatusBtn.hide(); 
             }
             else {
-                $synchstatusBtn.show(); 
+                $synchstatusBtn.show()
+                               .css('display',''); 
             }
             if ( p.HideHelpButton ) {
                 $helpBtn.hide();
             }
             else {
-                $helpBtn.show();
+                $helpBtn.show()
+                        .css('display',''); 
             }
             if ( p.HideLogoutButton ) {
                 $logoutBtn.hide();
             }
             else {
-                $logoutBtn.show();
+                $logoutBtn.show()
+                          .css('display',''); 
             }
             if ( p.HideRefreshButton ) {
                 $refreshBtn.hide();
             }
             else {
-                $refreshBtn.show();
+                $refreshBtn.show()
+                           .css('display',''); 
             }
             if ( p.HideSearchButton ) {
                 $searchBtn.hide();
             }
             else {
-                $searchBtn.show();
+                $searchBtn.show()
+                          .css('display',''); 
             }
             if ( p.dataRel === 'dialog' && !p.HideCloseButton ) {
-                $closeBtn.show();
+                $closeBtn.show()
+                         .css('display',''); 
             }
             else {
                 $closeBtn.hide();
             }
             if( !p.HideBackButton ) {
-                $backlink.show();
+                $backlink.show()
+                         .css('display',''); 
             } 
             else {
                 $backlink.hide();
