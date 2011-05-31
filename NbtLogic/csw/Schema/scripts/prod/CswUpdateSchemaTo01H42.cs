@@ -35,6 +35,8 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "jct_modules_objectclass" );
             _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "object_class_props" ); 
 
+            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+            _CswNbtSchemaModTrnsctn.addStringColumn( CswAuditMetaData.AuditTransactionTableName, "transactionusername", "the user as which the transaction was comitted", false, false, 50 );
 		} // update()
 
 	}//class CswUpdateSchemaTo01H42
