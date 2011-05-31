@@ -91,7 +91,7 @@ namespace ChemSW.Nbt
             //ViewCache = new CswNbtViewCache( this );
             ViewSelect = new CswNbtViewSelect( this );
 			SessionDataMgr = new CswNbtSessionDataMgr( this );
-            _DebugID = DateTime.Now.ToString();
+			_DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
 			Permit = new CswNbtPermit( this );
         }
 
@@ -738,23 +738,23 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Appends a message to the log
         /// </summary>
-        public void logMessage( string Msg ) { _CswResources.logMessage( Msg ); }
+		public void logMessage( string Msg ) { _CswResources.logMessage( "(" + _DebugID + ")\t" + Msg ); }
         /// <summary>
         /// Appends a message to the log
         /// </summary>
-        public void logMessage( string Msg, string Filter ) { _CswResources.logMessage( Msg, Filter ); }
+		public void logMessage( string Msg, string Filter ) { _CswResources.logMessage( "(" + _DebugID + ")\t" + Msg, Filter ); }
 		/// <summary>
 		/// Appends a timer result message to the log
 		/// </summary>
-		public void logTimerResult( string Msg, string TimerResult ) { _CswResources.logTimerResult( Msg, TimerResult ); }
+		public void logTimerResult( string Msg, string TimerResult ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, TimerResult ); }
 		/// <summary>
 		/// Appends a timer result message to the log
 		/// </summary>
-		public void logTimerResult( string Msg, CswTimer Timer ) { _CswResources.logTimerResult( Msg, Timer ); }
+		public void logTimerResult( string Msg, CswTimer Timer ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, Timer ); }
 		/// <summary>
         /// Appends a timer result message to the log
         /// </summary>
-        public void logTimerResult( string Msg, string TimerResult, string Filter ) { _CswResources.logTimerResult( Msg, TimerResult, Filter ); }
+		public void logTimerResult( string Msg, string TimerResult, string Filter ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, TimerResult, Filter ); }
         /// <summary>
         /// Appends an exception to the log
         /// </summary>
