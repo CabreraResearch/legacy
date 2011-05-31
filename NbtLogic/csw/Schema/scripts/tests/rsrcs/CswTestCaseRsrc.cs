@@ -60,6 +60,7 @@ namespace ChemSW.Nbt.Schema
 
             _TestColumnNamesFake.Add( TestColumnNamesFake.TestColumn01, "test_column_one" );
             _TestColumnNamesFake.Add( TestColumnNamesFake.TestColumn02, "test_column_two" );
+            _TestColumnNamesFake.Add( TestColumnNamesFake.TestColumn03, "test_column_three" );
 
             _TestColumnNamesReal.Add( TestColumnNamesReal.NodeName, "nodename" );
 
