@@ -645,10 +645,17 @@
                         var gestalt = p.$xmlitem.CswAttrXml('gestalt');
                         if (gestalt === 'NaN') gestalt = '';
                         
-                        var currentcnt = p.$xml.find('[fieldtype="'+fieldtype+'"]').length;
-                        var siblingcnt = p.$xml.find( '[id="' + p.$xmlitem.CswAttrXml('id') + '"]' ).siblings('[fieldtype="'+fieldtype+'"]').length;
+                        var totalCnt = p.$xml.find('[fieldtype="'+fieldtype+'"]').length;
+                        var currentNo; 
+                        var i=0;
+                        p.$xml.find('[fieldtype="'+fieldtype+'"]').each( function()
+                        {
+                            i++;
+                            if( $(this).CswAttrXml('id') === p.$xmlitem.CswAttrXml('id') ) {
+                                currentNo = i;
+                            }
+                        });
 
-                        //debugger;
                         if (currenttab !== tab)
                         {
 //                            if ( !isNullOrEmpty(currenttab) )
@@ -705,9 +712,10 @@
                                 break;
                         }
 
-                        if( fieldtype === "question")
+                        if( fieldtype.toLowerCase() === "question")
                         {
-                            $toolbar.append('&nbsp;' + currentcnt + '&nbsp;of&nbsp;' + siblingcnt);
+                            var $count = $('<p>' + currentNo + '&nbsp;of&nbsp;' + totalCnt +'</p>');
+                            $toolbar.append($count);
                         }
 
                         _addPageDivToBody({
@@ -1341,13 +1349,13 @@
                                                    'data-transition': 'slidedown',
                                                    'data-role': 'button' });
 
-                $header.CswDiv('init',{class: 'toolbar'})
+                $header.CswDiv('init',{cssclass: 'toolbar'})
                        .append(p.$toolbar)
                        .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
                 var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
                                        .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
                                        .append(p.$content);
-                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer', class: 'ui-bar'})
+                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer', cssclass: 'ui-bar'})
                                       .CswAttrXml({'data-role':'footer', 
                                                    'data-theme': opts.Theme, 
                                                    'data-position':'fixed',
@@ -1359,7 +1367,7 @@
 
                 $synchstatusBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
                                                     ID: p.DivId + '_gosynchstatus', 
-                                                    class: onlineClass,  
+                                                    cssclass: onlineClass,  
                                                     value: onlineValue })
                                     .CswAttrXml({'data-identity': p.DivId + '_gosynchstatus', 
                                                 'data-url': p.DivId + '_gosynchstatus', 
@@ -1369,7 +1377,7 @@
                 $refreshBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', 
                                                        ID: p.DivId + '_refresh', 
                                                        value:'Refresh', 
-                                                       class: 'refresh'})
+                                                       cssclass: 'refresh'})
                                       .CswAttrXml({'data-identity': p.DivId + '_refresh', 
                                                    'data-url': p.DivId + '_refresh',
                                                    'data-role': 'button' });
@@ -1425,7 +1433,8 @@
                 $searchBtn.show();
             }
 
-            //if(p.level === 0) $pageDiv.doPage();
+            //if(p.level === 0)  
+            //$pageDiv.loadPage();
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
             return $pageDiv;
@@ -1459,7 +1468,7 @@
 		        var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
                                         .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'inline'});
                 $header.append($('<h1>' + p.HeaderText + '</h1>'));
-                $header.CswDiv('init',{class: 'toolbar'})
+                $header.CswDiv('init',{cssclass: 'toolbar'})
                         .append(p.$toolbar)
                         .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
                 var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
