@@ -31,21 +31,12 @@ namespace ChemSW.Nbt.Schema
 			_CswNbtSchemaModTrnsctn.makeTableAuditable( "nodetype_tabset" );
 
 			// don't audit
-			if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( "jct_nodes_props_audit_audit" ) )
-			{
-				_CswNbtSchemaModTrnsctn.dropTable( "jct_nodes_props_audit_audit" );
-			}
+            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "jct_nodes_props_audit" );
+            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "jct_modules_objectclass" );
+            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "object_class_props" ); 
 
-			if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( "jct_modules_objectclass_audit" ) )
-			{
-				_CswNbtSchemaModTrnsctn.dropTable( "jct_modules_objectclass_audit" );
-			}
-
-			if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( "object_class_props_audit" ) )
-			{
-				_CswNbtSchemaModTrnsctn.dropTable( "object_class_props_audit" );
-			}
-
+            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+            _CswNbtSchemaModTrnsctn.addStringColumn( CswAuditMetaData.AuditTransactionTableName, "transactionusername", "the user as which the transaction was comitted", false, false, 50 );
 		} // update()
 
 	}//class CswUpdateSchemaTo01H42

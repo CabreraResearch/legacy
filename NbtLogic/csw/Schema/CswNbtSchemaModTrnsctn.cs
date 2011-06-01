@@ -108,10 +108,16 @@ namespace ChemSW.Nbt.Schema
         //public void addAdapter( string AdapterName ) { _CswResourcesForTableCaddy.addAdapter( AdapterName ); }
         //public bool isAdapterDefined( string AdapterName ) { return ( _CswResourcesForTableCaddy.isAdapterDefined<CswDataAdapter>( AdapterName ) ); }
         //public void setIsDeleteModeLogical( bool IsDeleteModeLogical ) { _CswResourcesForTableCaddy.setIsDeleteModeLogical( IsDeleteModeLogical ); }
+
         public bool isTableDefinedInMetaData( string TableName ) { return ( _CswNbtResources.CswResources.isTableDefinedInMetaData( TableName ) ); }
         public bool isColumnDefinedInMetaData( string TableName, string ColumnName ) { return ( _CswNbtResources.CswResources.isColumnDefinedInMetaData( TableName, ColumnName ) ); }//isColumnDefinedInMetaData 
+
         public bool isTableDefinedInDataBase( string TableName ) { return ( _CswNbtResources.CswResources.isTableDefinedInDataBase( TableName ) ); }//isTableDefinedInDataBase() 
         public bool isColumnDefinedInDataBase( string TableName, string ColumnName ) { return ( _CswNbtResources.CswResources.isColumnDefinedInDataBase( TableName, ColumnName ) ); }//isColumnDefinedInDataBase()
+
+        public bool isTableDefined( string TableName ) { return ( _CswNbtResources.CswResources.isTableDefined( TableName ) ); }
+        public bool isColumnDefined( string TableName, string ColumnName ) { return ( _CswNbtResources.CswResources.isColumnDefined( TableName, ColumnName ) ); }
+
 
         //bz # 9116: Centralize access to dbresources for easier datacaching
         //public CswMetaDataReader CswMetaDataReader { get { return ( _CswNbtResources.CswResources.CswMetaDataReader ); } }
@@ -344,6 +350,56 @@ namespace ChemSW.Nbt.Schema
 
         }//makeTableAuditable() 
 
+
+        public void makeTableNotAuditable( string TableName )
+        {
+            if( _CswNbtResources.CswResources.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) )
+            {
+                dropColumn( TableName, _CswAuditMetaData.AuditLevelColName );
+            }
+
+
+            string AuditTableName = _CswAuditMetaData.makeAuditTableName( TableName );
+
+            if( _CswNbtResources.CswResources.isTableDefined( AuditTableName ) )
+            {
+                dropTable( AuditTableName ); 
+            }//if the audit table does not yet exist
+
+
+        }//makeTableAuditable() 
+
+
+        public bool isTableAuditable( string TableName ) { return ( _CswNbtResources.CswResources.isTableAuditable( TableName ) ); }
+
+        public void setTableAuditLevel( string TableName, string WhereClause, AuditLevel AuditLevel )
+        {
+            if( isTableAuditable( TableName ) )
+            {
+                CswTableUpdate CswTableUpdate = makeCswTableUpdate( "setTableAuditLevel", TableName );
+
+                DataTable DataTable = null;
+
+                if( string.Empty == WhereClause )
+                {
+                    DataTable = CswTableUpdate.getTable();
+                }
+                else
+                {
+                    DataTable = CswTableUpdate.getTable( WhereClause );
+                }//if-else we have a where clause
+
+                foreach( DataRow CurrentRow in DataTable.Rows )
+                {
+                    CurrentRow[_CswAuditMetaData.AuditLevelColName] = _CswAuditMetaData.DefaultAuditLevel;
+                }
+
+                CswTableUpdate.update( DataTable );
+
+            }//if table is auditable
+
+        }//setTableAuditLevel() 
+
         public CswNbtNodeCollection Nodes { get { return ( _CswNbtResources.Nodes ); } }
         //public CswNbtTreeCache Trees { get { return ( _CswNbtResources.Trees ); } }
         public CswNbtActionCollection Actions { get { return _CswNbtResources.Actions; } }
@@ -426,31 +482,31 @@ namespace ChemSW.Nbt.Schema
 
         }//deleteView()
 
-		//public CswNbtNodeTypePermissions getNodeTypePermissions( CswNbtObjClassRole Role, CswNbtMetaDataNodeType NodeType )
-		//{
-		//    return new CswNbtNodeTypePermissions( Role, NodeType );
-		//}
+        //public CswNbtNodeTypePermissions getNodeTypePermissions( CswNbtObjClassRole Role, CswNbtMetaDataNodeType NodeType )
+        //{
+        //    return new CswNbtNodeTypePermissions( Role, NodeType );
+        //}
 
-		//public CswNbtNodeTypePermissions getNodeTypePermissions( string RoleName, string NodeTypeName )
-		//{
-		//    CswNbtNodeTypePermissions ReturnVal = null;
-		//    CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( RoleName );
-		//    if( null == RoleNode )
-		//        throw ( new CswDniException( "No such role: " + RoleName ) );
-		//    CswNbtObjClassRole Role = CswNbtNodeCaster.AsRole( RoleNode );
+        //public CswNbtNodeTypePermissions getNodeTypePermissions( string RoleName, string NodeTypeName )
+        //{
+        //    CswNbtNodeTypePermissions ReturnVal = null;
+        //    CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( RoleName );
+        //    if( null == RoleNode )
+        //        throw ( new CswDniException( "No such role: " + RoleName ) );
+        //    CswNbtObjClassRole Role = CswNbtNodeCaster.AsRole( RoleNode );
 
-		//    CswNbtMetaDataNodeType CswNbtMetaDataNodeType = null;
-		//    if( null == ( CswNbtMetaDataNodeType = MetaData.getNodeType( NodeTypeName ) ) )
-		//        throw ( new CswDniException( "No such nodetype: " + NodeTypeName ) );
+        //    CswNbtMetaDataNodeType CswNbtMetaDataNodeType = null;
+        //    if( null == ( CswNbtMetaDataNodeType = MetaData.getNodeType( NodeTypeName ) ) )
+        //        throw ( new CswDniException( "No such nodetype: " + NodeTypeName ) );
 
 
-		//    ReturnVal = new CswNbtNodeTypePermissions( Role, CswNbtMetaDataNodeType );
+        //    ReturnVal = new CswNbtNodeTypePermissions( Role, CswNbtMetaDataNodeType );
 
-		//    return ( ReturnVal );
+        //    return ( ReturnVal );
 
-		//}//getNodeTypePermissions
+        //}//getNodeTypePermissions
 
-		public CswNbtPermit Permit { get { return _CswNbtResources.Permit; } }
+        public CswNbtPermit Permit { get { return _CswNbtResources.Permit; } }
 
         /// <summary>
         /// Convenience function for making new Action
@@ -471,9 +527,9 @@ namespace ChemSW.Nbt.Schema
 
             // Grant permission to Administrator
             CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
-			_CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode ), true );
+            _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode ), true );
             CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" );
-			_CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
+            _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
 
             return NewActionId;
         }
@@ -510,29 +566,29 @@ namespace ChemSW.Nbt.Schema
             JctModulesATable.update( JctModulesADataTable );
         }
 
-		///// <summary>
-		///// Deprecated in favor of SetActionPermission.  Don't use for new scripts.
-		///// </summary>
-		//public void GrantActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName )
-		//{
-		//    _CswNbtResources.Permit.set( ActionName, RoleNode, true );
-		//}
+        ///// <summary>
+        ///// Deprecated in favor of SetActionPermission.  Don't use for new scripts.
+        ///// </summary>
+        //public void GrantActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName )
+        //{
+        //    _CswNbtResources.Permit.set( ActionName, RoleNode, true );
+        //}
 
-		///// <summary>
-		///// Grants or revokes permission to an action to a role
-		///// </summary>
-		//public void SetActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName, bool HasAccess )
-		//{
-		//    if( RoleNode != null )
-		//    {
-		//        CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).ActionPermissions;
-		//        ActionPermissions.SetValue( CswNbtObjClassRole.ActionPermissionsXValueName,
-		//                                    CswNbtAction.ActionNameEnumToString( ActionName ),
-		//                                    HasAccess );
-		//        ActionPermissions.Save();
-		//        RoleNode.postChanges( false );
-		//    }
-		//}
+        ///// <summary>
+        ///// Grants or revokes permission to an action to a role
+        ///// </summary>
+        //public void SetActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName, bool HasAccess )
+        //{
+        //    if( RoleNode != null )
+        //    {
+        //        CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).ActionPermissions;
+        //        ActionPermissions.SetValue( CswNbtObjClassRole.ActionPermissionsXValueName,
+        //                                    CswNbtAction.ActionNameEnumToString( ActionName ),
+        //                                    HasAccess );
+        //        ActionPermissions.Save();
+        //        RoleNode.postChanges( false );
+        //    }
+        //}
 
         /// <summary>
         /// Convenience function for making new Module
@@ -928,6 +984,10 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
+        public string getConfigVariableValue( String VariableName )
+        {
+            return ( _CswNbtResources.getConfigVariableValue( VariableName ) );
+        }
     }//class CswNbtSchemaModTrnsctn
 
 }//ChemSW.Nbt.Schema

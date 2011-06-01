@@ -44,11 +44,12 @@ namespace ChemSW.Nbt.Schema
 
         public void makeArbitraryTables()
         {
-            _CswNbtSchemaModTrnsctn.addTable( ArbitraryTableName_01, ( ArbitraryTableName_01 + "id" ).Replace( "_", "" ) );
+
+            _CswNbtSchemaModTrnsctn.addTable( ArbitraryTableName_01, CswTools.makePkColNameFromTableName( ArbitraryTableName_01 + "id" ) );
             _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_01, ArbitraryColumnName_01, false, false, 20 );
             _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_02, ArbitraryColumnName_01, false, false, 20 );
 
-            _CswNbtSchemaModTrnsctn.addTable( ArbitraryTableName_02, ( ArbitraryTableName_02 + "id" ).Replace( "_", "" ) );
+            _CswNbtSchemaModTrnsctn.addTable( ArbitraryTableName_02, CswTools.makePkColNameFromTableName( ArbitraryTableName_01 + "id" ) );
             _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_02, ArbitraryColumnName_01, ArbitraryColumnName_01, false, false, 20 );
             _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_02, ArbitraryColumnName_02, ArbitraryColumnName_01, false, false, 20 );
 

@@ -25,6 +25,8 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
+            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswAuditMetaData.AuditConfgVarName, CswAuditMetaData.AuditConfgVaDescription, "0", true );
 
         } // update()
 
