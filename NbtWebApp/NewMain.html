@@ -373,7 +373,7 @@
 	    };
         
 	    if (options) $.extend(o, options);
-
+	    
 	    var $viewSearch = $('#CenterTopDiv').children('#' + o.viewSearchId)
                             .empty();
 	    var $genericSearch = $('#CenterTopDiv').children('#' + o.genericSearchId)
@@ -408,28 +408,68 @@
 
         clear({ centertop: true });
 
-        var onSearchSubmit = function (view)
+        var onSearchSubmit = function (searchviewid, searchviewmode)
         {
             clear({ right: true, centerbottom: true });
-            $.CswCookie('set', CswCookieName.CurrentViewId, view.viewid);
-            var viewMode = view.viewmode;
+            $.CswCookie('set', CswCookieName.CurrentViewId, searchviewid);
+            var viewMode = searchviewmode;
             if (viewMode === 'list') viewMode = 'tree';
             $.CswCookie('set', CswCookieName.CurrentViewMode, viewMode);
             refreshSelected({
                 viewmode: viewMode,
-                viewid: view.viewid,
+                viewid: searchviewid,
                 forsearch: true,
                 showempty: false,
                 cswnbtnodekey: '', //do not want a view of only this node
                 nodeid: ''
             });
         };
+        var onClearSubmit = function (parentviewid, parentviewmode)
+        {
+            clear({ centertop: true }); //clear Search first
+
+            var viewid;
+            if (isNullOrEmpty(parentviewid))
+            {
+                viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
+            }
+            else
+            {
+                viewid = parentviewid;
+                $.CswCookie('set', CswCookieName.CurrentViewId, viewid);
+            }
+
+            if (!isNullOrEmpty(viewid))
+            {
+                clear({ right: true, centerbottom: true }); //wait to clear rest until we have a valid viewid
+                var viewmode = 'tree';
+                if (isNullOrEmpty(parentviewmode))
+                {
+                    viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
+                }
+                else
+                {
+                    viewmode = (parentviewmode === 'list') ? 'tree' : parentviewmode;
+                    $.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
+                }
+
+                refreshSelected({
+                    viewmode: viewmode,
+                    viewid: viewid,
+                    forsearch: true,
+                    showempty: false,
+                    cswnbtnodekey: '', //do not want a view of only this node
+                    nodeid: ''
+                });
+            }
+        }
         var $search = $('#CenterTopDiv').CswSearch({
-                                    'viewid': o.viewid,
+                                    'parentviewid': o.viewid,
                                     'cswnbtnodekey': o.cswnbtnodekey,
                                     'nodetypeid': o.nodetypeid,
                                     'ID': o.ID,
-                                    'onSearchSubmit': onSearchSubmit
+                                    'onSearchSubmit': onSearchSubmit,
+                                    'onClearSubmit': onClearSubmit
                                 });
         return $search;
     }
@@ -582,7 +622,7 @@
 	function refreshSelected(options)
 	{
 		if (debug) log('NewMain.refreshSelected()');
-
+		
 		if (manuallyCheckChanges())
 		{
 			var o = {

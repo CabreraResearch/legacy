@@ -1619,7 +1619,7 @@ namespace ChemSW.Nbt.WebServices
 		{
 			JObject ReturnVal = new JObject();
 
-			AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
 			try
 			{
 				_initResources();
@@ -1628,11 +1628,10 @@ namespace ChemSW.Nbt.WebServices
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
 					var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-					CswNbtView ResultsView = ws.doViewBasedSearch( SearchJson );
-					ResultsView.clearSessionViewId();
-					ResultsView.SaveToCache( true );
+					CswNbtViewSearchPair ResultsView = ws.doViewBasedSearch( SearchJson );
 
-					ReturnVal.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
+                    ReturnVal.Add( new JProperty( "parentviewid", ResultsView.ParentViewId.ToString() ) );
+					ReturnVal.Add( new JProperty( "searchviewid", ResultsView.SearchViewId.ToString() ) );
 					ReturnVal.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
 				}
 

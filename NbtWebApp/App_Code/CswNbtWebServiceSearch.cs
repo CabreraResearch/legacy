@@ -239,53 +239,76 @@ namespace ChemSW.Nbt.WebServices
         /// Takes a View and applies search parameters as ViewPropertyFilters.
         /// Returns the modified View for processing as Tree/Grid/List.
         /// </summary>
-        public CswNbtView doViewBasedSearch( object SearchJson )
+        public CswNbtViewSearchPair doViewBasedSearch( object SearchJson )
         {
-            CswNbtView SearchView = null;
+            CswNbtViewSearchPair SearchPair = null;
             if( null != SearchJson )
             {
                 JObject ViewSearch = JObject.FromObject( SearchJson );
-                string ViewId = (string)ViewSearch.Property( "viewid" ).Value;
-                CswDelimitedString NbtViewString = new CswDelimitedString( '_' );
-                NbtViewString.FromString( ViewId );
-                CswNbtView InitialView = null;
-                
-                switch( NbtViewString[0] )
-                {
-                    case "ViewId":
-                        {
-                            CswNbtViewId NbtViewId = new CswNbtViewId( ViewId );
-                            InitialView = _CswNbtResources.ViewSelect.restoreView( NbtViewId );    
-                        }
-                        break;
-                    case "SessionDataId":
-                        {
-                            CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( ViewId );
-                            InitialView = _CswNbtResources.ViewSelect.getSessionView( SessionViewId );    
-                        }
-                        break;
-                }
 
-                if( null != InitialView )
+                string ParentViewId = (string) ViewSearch.Property( "parentviewid" ).Value;
+                if( !string.IsNullOrEmpty( ParentViewId ) ) // we need this for client-side clear()
                 {
-                    SearchView = new CswNbtView( _CswNbtResources );
-                    SearchView.LoadXml( InitialView.ToXml() );
-                    SearchView.ViewName = _makeSearchViewName( SearchView.ViewName );
+                    CswDelimitedString ParentId = new CswDelimitedString( '_' );
+                    ParentId.FromString( ParentViewId );
 
-                    if( null != ViewSearch.Property( "viewprops" ) )
+                    CswNbtView ParentView = null;
+                    switch( ParentId[0].ToLower() )
                     {
-                        JArray Props = (JArray) ViewSearch.Property( "viewprops" ).Value;
-
-                        foreach( JObject FilterProp in Props.Children()
-                            .Cast<JObject>()
-                            .Where( FilterProp => FilterProp.HasValues ) )
+                        case "viewid":
+                            {
+                                CswNbtViewId ParentVid = new CswNbtViewId( ParentViewId );
+                                ParentView = _CswNbtResources.ViewSelect.restoreView( ParentVid );
+                                if( null == ParentView.SessionViewId ) ParentView.SaveToCache( false );
+                                break;
+                            }
+                        case "sessiondataid":
+                            {
+                                CswNbtSessionDataId ParentSessionId = new CswNbtSessionDataId( ParentViewId );
+                                ParentView = _CswNbtResources.ViewSelect.getSessionView( ParentSessionId );
+                                break;
+                            }
+                    }
+                    if( null != ParentView )
+                    {
+                        string SearchViewId = (string) ViewSearch.Property( "searchviewid" ).Value;
+                        CswNbtView SearchView;
+                        if( !string.IsNullOrEmpty( SearchViewId ) )
                         {
-                            _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
+                            CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( SearchViewId );
+                            SearchView = _CswNbtResources.ViewSelect.getSessionView( SessionViewId );
                         }
+                        else
+                        {
+                            SearchView = new CswNbtView( _CswNbtResources );
+                            SearchView.LoadXml( ParentView.ToXml() );
+                            SearchView.ViewName = _makeSearchViewName( SearchView.ViewName );
+                        }
+
+                        if( null != SearchView )
+                        {
+
+                            if( null != ViewSearch.Property( "viewprops" ) )
+                            {
+                                JArray Props = (JArray) ViewSearch.Property( "viewprops" ).Value;
+
+                                foreach( JObject FilterProp in Props.Children()
+                                    .Cast<JObject>()
+                                    .Where( FilterProp => FilterProp.HasValues ) )
+                                {
+                                    _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
+                                }
+                            }
+                            SearchView.ViewId = new CswNbtViewId( Int32.MinValue );
+                            SearchView.clearSessionViewId();
+                            SearchView.SaveToCache( false );
+                        }
+
+                        SearchPair = new CswNbtViewSearchPair( ParentView, SearchView );
                     }
                 }
             }
-            return SearchView;
+            return SearchPair;
         }
 
         private string _makeSearchViewName( string ViewName )
@@ -396,5 +419,26 @@ namespace ChemSW.Nbt.WebServices
 
         
     } // class CswNbtWebServiceSearch
+
+    public class CswNbtViewSearchPair
+    {
+
+        private readonly CswNbtSessionDataId _ParentViewId;
+        public CswNbtSessionDataId ParentViewId { get { return _ParentViewId; } }
+
+        private readonly CswNbtSessionDataId _SearchViewId;
+        public CswNbtSessionDataId SearchViewId { get { return _SearchViewId; } }
+
+        private readonly NbtViewRenderingMode _ViewMode = NbtViewRenderingMode.Unknown;
+        public NbtViewRenderingMode ViewMode  { get { return _ViewMode; } }
+
+        public CswNbtViewSearchPair( CswNbtView ParentView, CswNbtView SearchView )
+        {
+            _ViewMode = ParentView.ViewMode;
+            _ParentViewId = ParentView.SessionViewId;
+            _SearchViewId = SearchView.SessionViewId;
+        }
+
+    }
 
 } // namespace ChemSW.Nbt.WebServices
