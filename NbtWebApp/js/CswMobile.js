@@ -204,7 +204,7 @@
             HideLogoutButton: true,
             HideHelpButton: true,
             HideCloseButton: true,
-            HideBackButton: true,
+            HideBackButton: true
         });
 
         var $logindiv = _loadLoginDiv();
@@ -1100,8 +1100,8 @@
             var $fieldset = $('<fieldset></fieldset>')
                                 .appendTo($retHtml)
                                 .CswAttrDom({
-                                    class: 'csw_fieldset',
-                                    id: IdStr + '_fieldset'})
+                                    'class': 'csw_fieldset',
+                                    'id': IdStr + '_fieldset'})
                                 .CswAttrXml({
                                     'data-role': 'controlgroup',
                                     'data-type': 'horizontal'                                     
@@ -1171,8 +1171,8 @@
             var $fieldset = $('<fieldset></fieldset>')
                                 .appendTo($retHtml)
                                 .CswAttrDom({
-                                    class: 'csw_fieldset',
-                                    id: IdStr + '_fieldset'})
+                                    'class': 'csw_fieldset',
+                                    'id': IdStr + '_fieldset'})
                                 .CswAttrXml({
                                     'data-role': 'controlgroup',
                                     'data-type': 'horizontal'  
@@ -1661,7 +1661,7 @@
                     HideLogoutButton: false,
                     HideHelpButton: false,
                     HideCloseButton: false,
-                    HideBackButton: true,
+                    HideBackButton: true
             });
 
             $retDiv.find('#ss_forcesynch')
@@ -1740,7 +1740,7 @@
                     HideLogoutButton: false,
                     HideHelpButton: true,
                     HideCloseButton: false,
-                    HideBackButton: true,
+                    HideBackButton: true
             });
             
             return $retDiv;
