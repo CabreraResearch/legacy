@@ -245,22 +245,43 @@ namespace ChemSW.Nbt.WebServices
             if( null != SearchJson )
             {
                 JObject ViewSearch = JObject.FromObject( SearchJson );
-                string ViewIdNum = (string)ViewSearch.Property( "viewid" ).Value;
-				CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( ViewIdNum ) );
-				CswNbtView InitialView = _CswNbtResources.ViewSelect.restoreView( ViewId );
-                SearchView = new CswNbtView( _CswNbtResources );
-                SearchView.LoadXml( InitialView.ToXml() );
-                SearchView.ViewName = _makeSearchViewName( SearchView.ViewName );
-
-                if( null != ViewSearch.Property( "viewprops" ) )
+                string ViewId = (string)ViewSearch.Property( "viewid" ).Value;
+                CswDelimitedString NbtViewString = new CswDelimitedString( '_' );
+                NbtViewString.FromString( ViewId );
+                CswNbtView InitialView = null;
+                
+                switch( NbtViewString[0] )
                 {
-                    JArray Props = (JArray) ViewSearch.Property( "viewprops" ).Value;
+                    case "ViewId":
+                        {
+                            CswNbtViewId NbtViewId = new CswNbtViewId( ViewId );
+                            InitialView = _CswNbtResources.ViewSelect.restoreView( NbtViewId );    
+                        }
+                        break;
+                    case "SessionDataId":
+                        {
+                            CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( ViewId );
+                            InitialView = _CswNbtResources.ViewSelect.getSessionView( SessionViewId );    
+                        }
+                        break;
+                }
 
-                    foreach( JObject FilterProp in Props.Children()
-                                                        .Cast<JObject>()
-                                                        .Where( FilterProp => FilterProp.HasValues ) )
+                if( null != InitialView )
+                {
+                    SearchView = new CswNbtView( _CswNbtResources );
+                    SearchView.LoadXml( InitialView.ToXml() );
+                    SearchView.ViewName = _makeSearchViewName( SearchView.ViewName );
+
+                    if( null != ViewSearch.Property( "viewprops" ) )
                     {
-                        _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
+                        JArray Props = (JArray) ViewSearch.Property( "viewprops" ).Value;
+
+                        foreach( JObject FilterProp in Props.Children()
+                            .Cast<JObject>()
+                            .Where( FilterProp => FilterProp.HasValues ) )
+                        {
+                            _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
+                        }
                     }
                 }
             }
