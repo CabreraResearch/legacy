@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
             string MisMatchMessage = string.Empty;
             if( false == _CswTstCaseRsrc_021.compareTargetAndAuditedData( ref MisMatchMessage ) )
             {
-                throw ( new CswDniException( "Auditing test failed: MisMatchMessage" ) );
+                throw ( new CswDniException( "Auditing test failed: " + MisMatchMessage ) );
             }
 
         }//runTest()

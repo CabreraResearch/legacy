@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Text;
 using ChemSW.Nbt;
@@ -167,13 +169,14 @@ namespace ChemSW.Nbt.Schema
 
             Dictionary<string, List<string>> ReturnVal = new Dictionary<string, List<string>>();
 
-            foreach( string CurrentFakeColumnName in Enum.GetNames( typeof( TestColumnNamesFake ) ) )
+            foreach( TestColumnNamesFake CurrentFakeColumnId in Enum.GetValues( typeof( TestColumnNamesFake ) ) )
             {
                 List<string> CurrentValueList = new List<string>();
+                string CurrentFakeColumnName = _TestColumnNamesFake[CurrentFakeColumnId];
                 ReturnVal.Add( CurrentFakeColumnName, CurrentValueList );
-                for( int idx = 0; idx < TotalRows; TotalRows++ )
+                for( int idx = 0; idx < TotalRows; idx++ )
                 {
-                    CurrentValueList.Add( CurrentFakeColumnName + "_valsnot_" + idx.ToString() );
+                    CurrentValueList.Add( idx.ToString() + "_valsnot_" + CurrentFakeColumnName );
 
                 }//iterate test values
 
@@ -185,57 +188,50 @@ namespace ChemSW.Nbt.Schema
         }//makeArbitraryTestValues() 
 
 
-        public bool doTableValuesMatch( DataTable DataTable_1, DataTable DataTable_2, ref string MisMatchReason )
+        public bool doTableValuesMatch( DataTable DataTable_1, DataTable DataTable_2, IEnumerable CompareColumns, ref string MisMatchReason )
         {
             bool ReturnVal = true;
 
             if( DataTable_1.Rows.Count == DataTable_2.Rows.Count )
             {
 
-                if( DataTable_1.Columns.Count == DataTable_2.Columns.Count )
+                for( Int32 rowidx = 0; ( rowidx < DataTable_1.Rows.Count ) && ( true == ReturnVal ); rowidx++ )
                 {
-                    for( Int32 rowidx = 0; ( rowidx < DataTable_1.Rows.Count ) && ( true == ReturnVal ); rowidx++ )
+                    DataRow CurrentRowInTable_1 = DataTable_1.Rows[rowidx];
+                    //for( Int32 columnidx = 0; ( columnidx < CompareColumns.Count ) && ( true == ReturnVal ); columnidx++ )
+                    foreach( string DataTable_1_ColumnName in CompareColumns )
                     {
-                        DataRow CurrentRowInTable_1 = DataTable_1.Rows[rowidx];
-                        for( Int32 columnidx = 0; ( columnidx < DataTable_1.Columns.Count ) && ( true == ReturnVal ); columnidx++ )
+                        //string DataTable_1_ColumnName = CompareColumns[columnidx];
+                        if( DataTable_2.Columns.Contains( DataTable_1_ColumnName ) )
                         {
-                            string DataTable_1_ColumnName = DataTable_1.Columns[columnidx].ColumnName;
-                            if( DataTable_2.Columns.Contains( DataTable_1_ColumnName ) )
+                            if( ( false == CurrentRowInTable_1.IsNull( DataTable_1_ColumnName ) && ( false == DataTable_2.Rows[rowidx].IsNull( DataTable_1_ColumnName ) ) ) )
                             {
-                                if( ( false == CurrentRowInTable_1.IsNull( DataTable_1_ColumnName ) && ( false == DataTable_2.Rows[rowidx].IsNull( DataTable_1_ColumnName ) ) ) )
-                                {
-                                    if( CurrentRowInTable_1[DataTable_1_ColumnName].ToString() != DataTable_2.Rows[rowidx][DataTable_1_ColumnName].ToString() )
-                                    {
-                                        ReturnVal = false;
-                                        MisMatchReason = "The ToString()'ed (sic.) value of column " + DataTable_1_ColumnName + " at row index " + rowidx.ToString() + " differs between DataTable_1 and DataTable_1: " + CurrentRowInTable_1[DataTable_1_ColumnName].ToString() + " and " + DataTable_2.Rows[rowidx][DataTable_1_ColumnName].ToString() + " (respectively)";
-                                    }
-                                }
-                                else if( CurrentRowInTable_1.IsNull( DataTable_1_ColumnName ) != DataTable_2.Rows[rowidx].IsNull( DataTable_1_ColumnName ) )
+                                if( CurrentRowInTable_1[DataTable_1_ColumnName].ToString() != DataTable_2.Rows[rowidx][DataTable_1_ColumnName].ToString() )
                                 {
                                     ReturnVal = false;
-                                    MisMatchReason = "The value of column " + DataTable_1_ColumnName + " at row index " + rowidx.ToString() + " is null in one table but not in the other";
-                                }//else they are _both_ null which is means they match and ReturnVal is still true :-) 
+                                    MisMatchReason = "The ToString()'ed (sic.) value of column " + DataTable_1_ColumnName + " at row index " + rowidx.ToString() + " differs between DataTable_1 and DataTable_1: " + CurrentRowInTable_1[DataTable_1_ColumnName].ToString() + " and " + DataTable_2.Rows[rowidx][DataTable_1_ColumnName].ToString() + " (respectively)";
+                                }
                             }
-                            else
+                            else if( CurrentRowInTable_1.IsNull( DataTable_1_ColumnName ) != DataTable_2.Rows[rowidx].IsNull( DataTable_1_ColumnName ) )
                             {
                                 ReturnVal = false;
-                                MisMatchReason = "DataTable_1 has column " + DataTable_1_ColumnName + " but DataTable_2 does not";
-                            }
-                        }//iterate columns in table 1
+                                MisMatchReason = "The value of column " + DataTable_1_ColumnName + " at row index " + rowidx.ToString() + " is null in one table but not in the other";
+                            }//else they are _both_ null which is means they match and ReturnVal is still true :-) 
+                        }
+                        else
+                        {
+                            ReturnVal = false;
+                            MisMatchReason = "DataTable_1 has column " + DataTable_1_ColumnName + " but DataTable_2 does not";
+                        }
+                    }//iterate columns in table 1
 
-                    }//iterate rows in table 1 
-                }
-                else
-                {
-                    ReturnVal = false;
-                    MisMatchReason = "The number of columns do not match: DatTable_1 has " + DataTable_1.Rows.Count.ToString() + " columns whilst DataTable_2 has " + DataTable_2.Columns.Count.ToString() + " columns";
+                }//iterate rows in table 1 
 
-                }//if-else column count matches
             }
             else
             {
                 ReturnVal = false;
-                MisMatchReason = "The number of rows do not match: DatTable_1 has " + DataTable_1.Rows.Count.ToString() + "rows whilst DataTable_2 has " + DataTable_2.Rows.ToString() + "rows";
+                MisMatchReason = "The number of rows do not match: DatTable_1 has " + DataTable_1.Rows.Count.ToString() + " rows whilst DataTable_2 has " + DataTable_2.Rows.Count.ToString() + "rows";
             }//if-else row count matches
 
 
@@ -249,19 +245,25 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "fillTableWtithArbitraryData_update", TableName );
             DataTable DataTable = CswTableUpdate.getTable();
 
-            if( FillData.Count != DataTable.Columns.Count )
-                throw ( new CswDniException( "number of columns specified in fill data does not match the number of columns in the destination table" ) );
-
-            Int32 MaxRows = 0;
-            foreach( List<string> CurrentValueList in FillData.Values )
+            Int32 TotalRows = 0;
+            foreach( List<string> CurrentList in FillData.Values )
             {
-                if( CurrentValueList.Count > MaxRows )
+                if( CurrentList.Count > TotalRows )
                 {
-                    MaxRows = CurrentValueList.Count;
+                    TotalRows = CurrentList.Count;
+                }
+            }
+
+
+            foreach( string CurrentColumnName in FillData.Keys )
+            {
+                if( false == DataTable.Columns.Contains( CurrentColumnName ) )
+                {
+                    throw ( new CswDniException( "Value-fill column " + CurrentColumnName + " does not exist in table " + TableName ) );
                 }
             }//iterate lists to get max row count
 
-            for( int idx = 0; idx < MaxRows; idx++ )
+            for( int idx = 0; idx < TotalRows; idx++ )
             {
                 DataRow DataRow = DataTable.NewRow();
                 DataTable.Rows.Add( DataRow );

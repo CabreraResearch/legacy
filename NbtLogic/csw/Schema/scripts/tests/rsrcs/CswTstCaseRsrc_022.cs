@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.Schema
             DataTable AuditTable = CswTableSelectAuditTable.getTable( CswCommaDelimitedString, "where 1=1", new Collection<OrderByClause> { new OrderByClause( CswTools.makePkColNameFromTableName( _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 ) ), OrderByType.Ascending ) } );
 
 
-            return ( _CswTestCaseRsrc.doTableValuesMatch( TargetTable, AuditTable, ref MisMatchMessage ) );
+            return ( _CswTestCaseRsrc.doTableValuesMatch( TargetTable, AuditTable, CswCommaDelimitedString, ref MisMatchMessage ) );
 
 
         }//compareTargetAndAuditedData()

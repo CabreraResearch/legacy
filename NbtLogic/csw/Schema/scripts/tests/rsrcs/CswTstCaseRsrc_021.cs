@@ -50,9 +50,9 @@ namespace ChemSW.Nbt.Schema
         public void makeArbitraryTable()
         {
             _CswNbtSchemaModTrnsctn.addTable( ArbitraryTableName_01, ( ArbitraryTableName_01 + "id" ).Replace( "_", "" ) );
-            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_01, ArbitraryColumnName_01, false, false, 20 );
-            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_02, ArbitraryColumnName_02, false, false, 20 );
-            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_03, ArbitraryColumnName_03, false, false, 20 );
+            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_01, ArbitraryColumnName_01, false, false, 60 );
+            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_02, ArbitraryColumnName_02, false, false, 60 );
+            _CswNbtSchemaModTrnsctn.addStringColumn( ArbitraryTableName_01, ArbitraryColumnName_03, ArbitraryColumnName_03, false, false, 60 );
 
         }
 
@@ -78,22 +78,28 @@ namespace ChemSW.Nbt.Schema
         public bool compareTargetAndAuditedData( ref string MisMatchMessage )
         {
 
-
-            CswTableSelect CswTableSelectTargetTable = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "Compare table 1", ArbitraryTableName_01 );
-            DataTable TargetTable = CswTableSelectTargetTable.getTable( " where 1=1", new Collection<OrderByClause> { new OrderByClause( CswTools.makePkColNameFromTableName( ArbitraryTableName_01 ), OrderByType.Ascending ) } );
-
-
             CswCommaDelimitedString CswCommaDelimitedString = new Core.CswCommaDelimitedString();
-            foreach( DataColumn CurrentColumn in TargetTable.Columns )
+            string ArbitraryTablePkCol = CswTools.makePkColNameFromTableName( ArbitraryTableName_01 );
+            Collection<OrderByClause> OrderByClauses = new Collection<OrderByClause>();
+            ;
+            foreach( string CurrentColumnName in _CswNbtSchemaModTrnsctn.CswDataDictionary.getColumnNames( ArbitraryTableName_01 ) )
             {
-                CswCommaDelimitedString.Add( CurrentColumn.ColumnName );
+                if( CurrentColumnName.ToLower() != ArbitraryTablePkCol.ToLower() && CurrentColumnName.ToLower() != _CswAuditMetaData.AuditLevelColName )
+                {
+                    OrderByClauses.Add( new OrderByClause( CurrentColumnName, OrderByType.Ascending ) );
+                    CswCommaDelimitedString.Add( CurrentColumnName );
+                }
             }
 
-            CswTableSelect CswTableSelectAuditTable = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "Compare table 1", _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 ) );
-            DataTable AuditTable = CswTableSelectAuditTable.getTable( CswCommaDelimitedString, "where 1=1", new Collection<OrderByClause> { new OrderByClause( CswTools.makePkColNameFromTableName( _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 ) ), OrderByType.Ascending ) } );
+            CswTableSelect CswTableSelectTargetTable = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "Compare table 1", ArbitraryTableName_01 );
+            DataTable TargetTable = CswTableSelectTargetTable.getTable( " where 1=1", OrderByClauses );
+
+            string AuditTableName = _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 );
+            CswTableSelect CswTableSelectAuditTable = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "Compare table 1", AuditTableName );
+            DataTable AuditTable = CswTableSelectAuditTable.getTable( "where 1=1", OrderByClauses );
 
 
-            return ( _CswTestCaseRsrc.doTableValuesMatch( TargetTable, AuditTable, ref MisMatchMessage ) );
+            return ( _CswTestCaseRsrc.doTableValuesMatch( TargetTable, AuditTable, CswCommaDelimitedString, ref MisMatchMessage ) );
 
 
         }//compareTargetAndAuditedData()
