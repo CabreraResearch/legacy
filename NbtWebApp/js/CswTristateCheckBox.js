@@ -25,13 +25,7 @@
             var elementId = makeId({prefix: o.prefix, ID: o.ID});
             
             //Case 21769
-            var tristateVal;
-            if( isNullOrEmpty(o.Checked) ) {
-                tristateVal = "null"; //o.Checked = "null";
-            }
-            else {
-                tristateVal = o.Checked.toString().toLowerCase();
-            } 
+            var tristateVal = tryParseString(o.Checked,"null").toLowerCase();
 
             if(o.ReadOnly)
 			{
