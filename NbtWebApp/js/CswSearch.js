@@ -90,6 +90,7 @@ var CswSearch_CssClasses = {
                 $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).show(); });
                 $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).hide(); });
                 o.$link.text('Simple');
+                o.$link.hide(); //Case 21847
                 o.advancedIsHidden = false;
             }
             else if('Simple' === o.$link.text() || ( !o.advancedIsHidden ) )
@@ -305,11 +306,14 @@ var CswSearch_CssClasses = {
             var advancedLinkId = makeId({ID: 'advanced_options', prefix: o.ID});
             var $advancedLink = $advancedLinkCell.CswLink('init',{
                                                     ID: advancedLinkId,
-                                                    href: '#advanced',
+                                                    href: 'javascript:void(0)',
                                                     value: 'Advanced' })
                                                     .click(function() {
                                                             o.advancedIsHidden = modAdvanced({'$link': $advancedLink, advancedIsHidden: o.advancedIsHidden });
                                                     });  
+            if( !o.advancedIsHidden ) {
+                $advancedLink.hide();
+            }
             //Row i, Column 5: search button
             var $searchButtonCell = o.$searchTable.CswTable('cell', o.bottomRow, o.searchBtnCell)
                                     .CswAttrDom({align:"right"})
