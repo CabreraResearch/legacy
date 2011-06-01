@@ -1097,6 +1097,32 @@ function tryParseNumber(inputNum, defaultNum)
     return ret;
 }
 
+function tryParseElement(elementId, $context)
+{
+    /// <summary>
+    ///   Attempts to fetch an element from the DOM first through jQuery, then through JavaScript
+    /// </summary>
+    /// <param name="elementId" type="String"> ElementId to find </param>
+    /// <param name="$context" type="jQuery"> Optional context to limit the search </param>
+    /// <returns type="jQuery">jQuery object, empty if no match found.</returns>
+    var $ret = $('');
+    if (!isNullOrEmpty(elementId)) {
+        if (arguments.length == 2 && !isNullOrEmpty($context) ) {
+            $ret = $('#' + elementId, $context);
+        }
+        else {
+            $ret = $('#' + elementId);
+        }
+    }
+    if ($ret.length === 0) {
+        $ret = $(document.getElementById(elementId));
+    }
+    if ($ret.length === 0) {
+        $ret = $(document.getElementsByName(elementId));
+    }
+    return $ret;
+}
+
 function trim(str)
 {
     /// <summary>Returns a string without left and right whitespace</summary>
