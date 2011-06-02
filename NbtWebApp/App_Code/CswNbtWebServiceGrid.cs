@@ -34,59 +34,68 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 			_View = View;
 			_ParentNodeKey = ParentNodeKey;
-
-		    if( null != _ParentNodeKey && _View.Visibility == NbtViewVisibility.Property )
+		    bool IsProperty = ( null != _ParentNodeKey && _View.Visibility == NbtViewVisibility.Property );
+            Collection<CswNbtViewRelationship> FirstLevelRelationships = new Collection<CswNbtViewRelationship>();
+            if( IsProperty )
 		    {
-		        CswNbtMetaDataNodeType GridPropNodeType = _CswNbtResources.MetaData.getNodeType( ParentNodeKey.NodeTypeId );
-                _CanEdit = ( _CanEdit &&
-                             _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, GridPropNodeType ) );
-                _CanDelete = ( _CanDelete &&
-                             _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, GridPropNodeType ) );
+		        foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships.SelectMany( NodeRelationship => NodeRelationship.ChildRelationships ) )
+		        {
+		            FirstLevelRelationships.Add( Relationship );
+		        }
+		    }
+		    else
+		    {
+		        FirstLevelRelationships = _View.Root.ChildRelationships;
 		    }
 
             // Case 21778
             // Maybe do this in Permit someday; however, the meaning of Edit and Delete is very specific in this context:
             // only evaluating visibility of the option to edit or delete root nodetypes of a view
-            if( _CanEdit || _CanDelete )
+            foreach( CswNbtViewRelationship Relationship in FirstLevelRelationships )
             {
-                foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships )
-                {
-                    Collection<CswNbtMetaDataNodeType> FirstLevelNodeTypes = new Collection<CswNbtMetaDataNodeType>();
-                    if( Relationship.FirstType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && Relationship.FirstId != Int32.MinValue )
-                    {
-                        CswNbtMetaDataObjectClass FirstOc = _CswNbtResources.MetaData.getObjectClass( Relationship.FirstId );
-                        foreach( CswNbtMetaDataNodeType NT in FirstOc.NodeTypes )
-                        {
-                            FirstLevelNodeTypes.Add( NT );
-                        }
-                    }
-                    else if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && Relationship.SecondId != Int32.MinValue )
-                    {
-                        CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
-                        foreach( CswNbtMetaDataNodeType NT in SecondOc.NodeTypes )
-                        {
-                            FirstLevelNodeTypes.Add( NT );
-                        }
-                    }
-                    else if( Relationship.FirstType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && Relationship.FirstId != Int32.MinValue )
-                    {
-                        FirstLevelNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Relationship.FirstId ) );
-                    }
-                    else if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && Relationship.SecondId != Int32.MinValue )
-                    {
-                        FirstLevelNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Relationship.SecondId ) );
-                    }
+                Collection<CswNbtMetaDataNodeType> FirstLevelNodeTypes = new Collection<CswNbtMetaDataNodeType>();
 
-                    foreach( CswNbtMetaDataNodeType NodeType in FirstLevelNodeTypes )
+                if( IsProperty &&
+                    Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+                    Relationship.SecondId != Int32.MinValue )
+                {
+                    CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
+                    foreach( CswNbtMetaDataNodeType NT in SecondOc.NodeTypes )
                     {
-                        _CanEdit = ( _CanEdit &&
-                                 _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType ) );
-                        _CanDelete = ( _CanDelete &&
-                                       _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, NodeType ) );
-                        //exit if we already know both are false
-                        if( !_CanEdit && !_CanDelete ) break;
+                        FirstLevelNodeTypes.Add( NT );
                     }
                 }
+                else if( Relationship.FirstType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+                         Relationship.FirstId != Int32.MinValue )
+                {
+                    CswNbtMetaDataObjectClass FirstOc = _CswNbtResources.MetaData.getObjectClass( Relationship.FirstId );
+                    foreach( CswNbtMetaDataNodeType NT in FirstOc.NodeTypes )
+                    {
+                        FirstLevelNodeTypes.Add( NT );
+                    }
+                }
+                else if( IsProperty &&
+                         Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+                         Relationship.SecondId != Int32.MinValue )
+                {
+                    FirstLevelNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Relationship.SecondId ) );
+                }
+                else if( Relationship.FirstType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+                         Relationship.FirstId != Int32.MinValue )
+                {
+                    FirstLevelNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Relationship.FirstId ) );
+                }
+
+                foreach( CswNbtMetaDataNodeType NodeType in FirstLevelNodeTypes )
+                {
+                    _CanEdit = ( _CanEdit &&
+                                 _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType ) );
+                    _CanDelete = ( _CanDelete &&
+                                   _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, NodeType ) );
+                    //exit if we already know both are false
+                    if( !_CanEdit && !_CanDelete ) break;
+                }
+
             }
 
 		    _CswGridData = new CswGridData( _CswNbtResources );
