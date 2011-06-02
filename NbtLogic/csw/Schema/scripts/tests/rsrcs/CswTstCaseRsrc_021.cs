@@ -119,6 +119,7 @@ namespace ChemSW.Nbt.Schema
             _CswTestCaseRsrc.assertTableIsAbsent( ArbitraryTableName_01 );
         }
 
+
         private string _OriginalAuditSetting_Audit = string.Empty;
         public void setAuditingOn()
         {
@@ -135,7 +136,7 @@ namespace ChemSW.Nbt.Schema
         {
             if( _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName ) != _OriginalAuditSetting_Audit )
             {
-                _CswNbtSchemaModTrnsctn.setConfigVariableValue( _CswAuditMetaData.AuditConfgVarName, "1" );
+                _CswNbtSchemaModTrnsctn.setConfigVariableValue( _CswAuditMetaData.AuditConfgVarName, _OriginalAuditSetting_Audit );
             }
         }//setAuditingOn()
 
@@ -143,7 +144,7 @@ namespace ChemSW.Nbt.Schema
         {
             string CurrentAuditSetting = _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName );
 
-            if( _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName ) != _OriginalAuditSetting_Audit )
+            if( CurrentAuditSetting != _OriginalAuditSetting_Audit )
             {
                 throw ( new CswDniException( "Current audit configuration setting (" + CurrentAuditSetting + ") does not match the original setting (" + _OriginalAuditSetting_Audit + ")" ) );
             }

@@ -11,6 +11,7 @@ using ChemSW.Exceptions;
 using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Nbt.Schema;
+using ChemSW.Audit;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -42,6 +43,9 @@ namespace ChemSW.Nbt.Schema
         private Dictionary<TestColumnNamesReal, string> _TestColumnNamesReal = new Dictionary<TestColumnNamesReal, string>();
         private Dictionary<TestNameStem, string> _TestNameStems = new Dictionary<TestNameStem, string>();
 
+
+        CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData(); 
+ 
 
         private string _ForeignKeyTableStem = "fk_Table_";
         private string _PrimeKeyTableStem = "pk_Table_";
