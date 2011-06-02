@@ -419,6 +419,7 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 if( null != ParentView ) ParentViewId = ParentView.SessionViewId.ToString();
+                ViewMode = ParentView.ViewMode;
             }
 
             CswNbtView SearchView = null;
@@ -438,7 +439,11 @@ namespace ChemSW.Nbt.WebServices
                 SearchView.SaveToCache( false );
             }
 
-            if( null != SearchView ) SearchViewId = SearchView.SessionViewId.ToString();
+            if( null != SearchView )
+            {
+                SearchViewId = SearchView.SessionViewId.ToString();
+                if( ViewMode == NbtViewRenderingMode.Unknown ) ViewMode = SearchView.ViewMode;
+            }
         }
 
         private static string _makeSearchViewName( string ViewName )
