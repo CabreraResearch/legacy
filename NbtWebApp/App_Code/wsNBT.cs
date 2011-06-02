@@ -1625,17 +1625,19 @@ namespace ChemSW.Nbt.WebServices
 				_initResources();
 				AuthenticationStatus = _CswSessionResources.attemptRefresh();
 
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-					CswNbtViewSearchPair ResultsView = ws.doViewBasedSearch( SearchJson );
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    CswNbtViewSearchPair SearchPair = ws.doViewBasedSearch( SearchJson );
+                    if( null != SearchPair )
+                    {
+                        ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId.ToString() ) );
+                        ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId.ToString() ) );
+                        ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
+                    }
+                }
 
-                    ReturnVal.Add( new JProperty( "parentviewid", ResultsView.ParentViewId.ToString() ) );
-					ReturnVal.Add( new JProperty( "searchviewid", ResultsView.SearchViewId.ToString() ) );
-					ReturnVal.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
-				}
-
-				_deInitResources();
+			    _deInitResources();
 			}
 
 			catch( Exception ex )
@@ -1660,17 +1662,20 @@ namespace ChemSW.Nbt.WebServices
 				_initResources();
 				AuthenticationStatus = _CswSessionResources.attemptRefresh();
 
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
 
-					var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-					CswNbtView ResultsView = ws.doNodesSearch( SearchJson );
-					ResultsView.SaveToCache( true );
-					ReturnVal.Add( new JProperty( "sessionviewid", ResultsView.SessionViewId.ToString() ) );
-					ReturnVal.Add( new JProperty( "viewmode", ResultsView.ViewMode.ToString().ToLower() ) );
-				}
+                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    CswNbtViewSearchPair SearchPair = ws.doNodesSearch( SearchJson );
+                    if( null != SearchPair )
+                    {
+                        ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId.ToString() ) );
+                        ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId.ToString() ) );
+                        ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
+                    }
+                }
 
-				_deInitResources();
+			    _deInitResources();
 			}
 			catch( Exception ex )
 			{

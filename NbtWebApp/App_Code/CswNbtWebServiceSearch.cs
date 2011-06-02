@@ -268,16 +268,18 @@ namespace ChemSW.Nbt.WebServices
         /// If the search is based on NodeType/ObjectClass, construct a View with the included search terms as Property Filters.
         /// Return the View for processing as a Tree
         /// </summary>
-        public CswNbtView doNodesSearch( object SearchJson )
+        public CswNbtViewSearchPair doNodesSearch( object SearchJson )
         {
             JObject NodesSearch = new JObject();
-            CswNbtView SearchView = null;
+
+            CswNbtViewSearchPair GenericSearch = null;
+            //CswNbtView SearchView = null;
             string ViewName = string.Empty;
             if( null != SearchJson ) 
             {
                 NodesSearch = JObject.FromObject( SearchJson );
                 //NodesSearch = XElement.Parse( SearchJson );
-                SearchView = new CswNbtView( _CswNbtResources ) {ViewMode = NbtViewRenderingMode.Tree};
+                CswNbtView SearchView = new CswNbtView( _CswNbtResources ) {ViewMode = NbtViewRenderingMode.Tree};
 
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
@@ -345,11 +347,12 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
                 }
-
+                if( string.IsNullOrEmpty( ViewName ) ) ViewName = "No Results for Search";
+                SearchView.ViewName = ViewName;
+                GenericSearch = new CswNbtViewSearchPair( SearchView, SearchView );
             }
-            if( string.IsNullOrEmpty( ViewName ) ) ViewName = "No Results for Search";
-            SearchView.ViewName = ViewName;
-            return SearchView;
+
+            return GenericSearch;
         }
 
         #endregion
