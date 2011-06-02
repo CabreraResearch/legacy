@@ -1631,8 +1631,8 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewSearchPair SearchPair = ws.doViewBasedSearch( SearchJson );
                     if( null != SearchPair )
                     {
-                        ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId.ToString() ) );
-                        ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId.ToString() ) );
+                        ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
+                        ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
                         ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
                     }
                 }
@@ -1669,8 +1669,8 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewSearchPair SearchPair = ws.doNodesSearch( SearchJson );
                     if( null != SearchPair )
                     {
-                        ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId.ToString() ) );
-                        ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId.ToString() ) );
+                        ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
+                        ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
                         ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
                     }
                 }

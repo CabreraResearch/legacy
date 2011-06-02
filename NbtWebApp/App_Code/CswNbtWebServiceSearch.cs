@@ -371,8 +371,8 @@ namespace ChemSW.Nbt.WebServices
     /// </summary>
     public class CswNbtViewSearchPair
     {
-        public readonly CswNbtSessionDataId ParentViewId;
-        public readonly CswNbtSessionDataId SearchViewId;
+        public readonly string ParentViewId = string.Empty;
+        public readonly string SearchViewId = string.Empty;
         public readonly CswNbtView SearchView;
         public readonly NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown;
         private readonly CswNbtResources _CswNbtResources;
@@ -381,10 +381,10 @@ namespace ChemSW.Nbt.WebServices
         {
             ViewMode = ParentView.ViewMode;
             if( null == ParentView.SessionViewId || !ParentView.SessionViewId.isSet() ) ParentView.SaveToCache( false );
-            ParentViewId = ParentView.SessionViewId;
+            ParentViewId = ParentView.SessionViewId.ToString();
 
             if( null == SearchableView.SessionViewId || !SearchableView.SessionViewId.isSet() ) SearchableView.SaveToCache( false );
-            SearchViewId = SearchableView.SessionViewId;
+            SearchViewId = SearchableView.SessionViewId.ToString();
 
             SearchView = SearchableView;
         }
@@ -418,7 +418,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                 }
 
-                if( null != ParentView ) ParentViewId = ParentView.SessionViewId;
+                if( null != ParentView ) ParentViewId = ParentView.SessionViewId.ToString();
             }
 
             CswNbtView SearchView = null;
@@ -438,7 +438,7 @@ namespace ChemSW.Nbt.WebServices
                 SearchView.SaveToCache( false );
             }
 
-            if( null != SearchView ) SearchViewId = SearchView.SessionViewId;
+            if( null != SearchView ) SearchViewId = SearchView.SessionViewId.ToString();
         }
 
         private static string _makeSearchViewName( string ViewName )
