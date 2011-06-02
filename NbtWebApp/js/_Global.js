@@ -4,6 +4,18 @@
 /// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
 
+// ------------------------------------------------------------------------------------
+// Enums
+// ------------------------------------------------------------------------------------
+
+var EditMode = {
+    Edit: {name: 'Edit'},
+    AddInPopup: { name: 'AddInPopup' },
+    EditInPopup: { name: 'EditInPopup' },
+    Demo: { name: 'Demo' },
+    PrintReport: { name: 'PrintReport' },
+    DefaultValue: { name: 'DefaultValue' }
+};
 
 // ------------------------------------------------------------------------------------
 // Globals (yuck)

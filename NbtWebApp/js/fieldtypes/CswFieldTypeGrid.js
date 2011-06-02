@@ -31,11 +31,13 @@
             var viewid = o.$propxml.children('viewid').text().trim();
             
             var gridOpts = {
+                'ID': o.ID,
                 'viewid': viewid, 
                 'nodeid': o.nodeid, 
                 'cswnbtnodekey': o.cswnbtnodekey, 
                 'readonly': o.ReadOnly,
                 'reinit': false,
+                'EditMode': o.EditMode,
                 'onEditNode': function() { 
                     refreshGrid(gridOpts);
                 },
@@ -56,47 +58,51 @@
             };
 
 			$GridDiv.CswNodeGrid('init', gridOpts);
-            $MenuDiv.CswMenuMain({
-			        'viewid': viewid,
-			        'nodeid': o.nodeid,
-			        'cswnbtnodekey': o.cswnbtnodekey,
-			        'onAddNode': function (nodeid, cswnbtnodekey)
-			        {
-                        refreshGrid(gridOpts);
-			        },
-		            'onSearch':
-                        {
-                            'onViewSearch': function ()
+            //Case 21741
+            if( o.EditMode !== 'PrintReport' )
+            {
+                $MenuDiv.CswMenuMain({
+			            'viewid': viewid,
+			            'nodeid': o.nodeid,
+			            'cswnbtnodekey': o.cswnbtnodekey,
+			            'onAddNode': function (nodeid, cswnbtnodekey)
+			            {
+                            refreshGrid(gridOpts);
+			            },
+		                'onSearch':
                             {
-                                var onSearchSubmit = function(searchviewid) {
-                                    var s = {};
-                                    $.extend(s,gridOpts);
-                                    s.viewid = searchviewid;
-                                    refreshGrid(s);
-                                };
+                                'onViewSearch': function ()
+                                {
+                                    var onSearchSubmit = function(searchviewid) {
+                                        var s = {};
+                                        $.extend(s,gridOpts);
+                                        s.viewid = searchviewid;
+                                        refreshGrid(s);
+                                    };
                                 
-                                var onClearSubmit = function(parentviewid) {
-                                    var s = {};
-                                    $.extend(s,gridOpts);
-                                    s.viewid = parentviewid;
-                                    refreshGrid(s);
-                                };
+                                    var onClearSubmit = function(parentviewid) {
+                                        var s = {};
+                                        $.extend(s,gridOpts);
+                                        s.viewid = parentviewid;
+                                        refreshGrid(s);
+                                    };
 
-                                $SearchDiv.empty();
-                                $SearchDiv.CswSearch({'parentviewid': viewid,
-                                                      'cswnbtnodekey': o.cswnbtnodekey,
-                                                      'ID': SearchDivId,
-                                                      'onSearchSubmit': onSearchSubmit,
-                                                      'onClearSubmit': onClearSubmit
-                                                      });
+                                    $SearchDiv.empty();
+                                    $SearchDiv.CswSearch({'parentviewid': viewid,
+                                                          'cswnbtnodekey': o.cswnbtnodekey,
+                                                          'ID': SearchDivId,
+                                                          'onSearchSubmit': onSearchSubmit,
+                                                          'onClearSubmit': onClearSubmit
+                                                          });
+                                },
+                                'onGenericSearch': function () { /*not possible here*/ }
                             },
-                            'onGenericSearch': function () { /*not possible here*/ }
-                        },
-		            'onEditView': function (Viewid)
-		            {
-                        o.onEditView(viewid);                    
-		            }
-		    });
+		                'onEditView': function (Viewid)
+		                {
+                            o.onEditView(viewid);                    
+		                }
+		        });
+            }
 			$Div.append($MenuDiv, $('<br/>'), $SearchDiv, $('<br/>'), $GridDiv);
 		},
 		save: function(o) {

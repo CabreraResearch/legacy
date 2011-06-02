@@ -19,6 +19,7 @@
 				gridTableID: 'gridTable',
 				gridPagerID: 'gridPager',
                 'reinit': false,
+                'EditMode': EditMode.Edit.name,
 				//onAddNode: function(nodeid,cswnbtnodekey){},
 				onEditNode: function(nodeid,cswnbtnodekey){},
 				onDeleteNode: function(nodeid,cswnbtnodekey){}
@@ -34,15 +35,17 @@
 			var jqGrid = {};
         
             var gridTableId = makeId({ ID: o.gridTableID, prefix: o.ID });
+
 		    var $gridTable = $parent.CswTable('init', { ID: gridTableId });
 		
             var gridPagedId = makeId({ID: o.gridPagerID, prefix: o.ID});
-            var $gridPager = $parent.CswDiv('init',{ID: gridPagedId})
-									     .css('width','100%')
-									     .css('height','20px');
+            var $gridPager = $parent.CswDiv('init',{ID: gridPagedId});
+									     //.css('width','100%')
+									     //.css('height','20px');
             
             var dataJson = {ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty };		
-			CswAjaxJSON({
+			
+            CswAjaxJSON({
 				url: o.GridUrl,
 				data: dataJson,
 				success: function (gridJson) {
@@ -53,20 +56,24 @@
 
 						if( isNullOrEmpty( jqGridOpt.width ) )
 						{
-							jqGridOpt.width = 650;
+							$gridTable.css('width','650px');
+                            //jqGridOpt.width = 650;
 						}
 						
 						var jqGridOptions = {
                             autoencode: true,
+                            autowidth: true,
+                            altRows: true,
                             caption: '',
                             datatype: 'local', 
 				            emptyrecords: 'No Results',
                             height: '300',
-				            multiselect: true,
+                            loadtext: 'Loading...',
+				            multiselect: false,
 							pager: $gridPager, 
 							rowList:[10,25,50],  
 				            rowNum:10, 
-				            shrinkToFit: true,
+				            forceFit: true,
 				            sortname: '', 
 				            sortorder: 'asc', 
                             toppager: false,
@@ -77,100 +84,111 @@
                         //include the top pager if the row count is very large
                         if(jqGridOptions.rowNum >= 50) jqGridOptions.toppager = true;
 						
-                        var optSearch = {
-							caption: "Search...",
-							Find: "Find",
-							Reset: "Reset",
-							odata : ['equal', 'not equal', 'less', 'less or equal','greater','greater or equal', 'begins with','does not begin with','is in','is not in','ends with','does not end with','contains','does not contain'],
-							groupOps: [ { op: "AND", text: "all" }, { op: "OR", text: "any" } ],
-							matchText: "match",
-							rulesText: "rules"
-						};
+                        var optSearch = {};
+						var optNav = {};
 
-						var optNav = {
-							cloneToTop: false,
+                        if( o.EditMode === EditMode.PrintReport.name )
+                        {
+                            jqGridOptions.caption = '';
+                            $gridTable.jqGrid(jqGridOptions);
+                        }
+                        else
+                        {
+                            jqGridOptions.multiselect = true;
+                            optSearch = {
+							    caption: "Search...",
+							    Find: "Find",
+							    Reset: "Reset",
+							    odata : ['equal', 'not equal', 'less', 'less or equal','greater','greater or equal', 'begins with','does not begin with','is in','is not in','ends with','does not end with','contains','does not contain'],
+							    groupOps: [ { op: "AND", text: "all" }, { op: "OR", text: "any" } ],
+							    matchText: "match",
+							    rulesText: "rules"
+						    };
 
-							//edit
-							edit: true,
-							edittext: "",
-							edittitle: "Edit row",
-							editfunc: function(rowid) {
-									var editOpt = {
-										cswnbtnodekey: '',
-										nodeid: '',
-										onEditNode: o.onEditNode
-									};
-									if (rowid !== null) 
-									{
-										editOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
-										$.CswDialog('EditNodeDialog', editOpt);
-									}
-									else
-									{
-										alert('Please select a row to edit');
-									}
-									return editOpt.CswNbtNodeKey;
-								},
+						    optNav = {	
+                                cloneToTop: false,
 
-							//add
-							add: false,
-//							addtext:"",
-//							addtitle: "Add row",
-//							addfunc: function() {
-//									var addOpt = {
-//										'nodetypeid': NodeTypeId,
-//										'onAddNode': o.onAddNode,
-//                                        'relatednodeid': o.nodeid
-//									}
-//									$.CswDialog('AddNodeDialog', addOpt);
-//									return addOpt.nodetypeid;
-//								},
+							    //edit
+							    edit: true,
+							    edittext: "",
+							    edittitle: "Edit row",
+							    editfunc: function(rowid) {
+									    var editOpt = {
+										    cswnbtnodekey: '',
+										    nodeid: '',
+										    onEditNode: o.onEditNode
+									    };
+									    if (rowid !== null) 
+									    {
+										    editOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
+										    $.CswDialog('EditNodeDialog', editOpt);
+									    }
+									    else
+									    {
+										    alert('Please select a row to edit');
+									    }
+									    return editOpt.CswNbtNodeKey;
+								    },
 
-							//delete
-							del: true,
-							deltext: "",
-							deltitle: "Delete row",
-							delfunc: function(rowid) {
-									var delOpt = {
-										'cswnbtnodekey': '',
-										'nodeid': '',
-										'nodename': '',
-										'onDeleteNode': o.onDeleteNode
-									};
-									if (rowid !== null) {
-										delOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
-										delOpt.nodename = $gridTable.jqGrid('getCell', rowid, 'nodename');
-										$.CswDialog('DeleteNodeDialog', delOpt);
-									}
-									else
-									{
-										alert('Please select a row to delete');
-									}
-									return delOpt.cswnbtnodekey;
-								},
+							    //add
+							    add: false,
+    //							addtext:"",
+    //							addtitle: "Add row",
+    //							addfunc: function() {
+    //									var addOpt = {
+    //										'nodetypeid': NodeTypeId,
+    //										'onAddNode': o.onAddNode,
+    //                                        'relatednodeid': o.nodeid
+    //									}
+    //									$.CswDialog('AddNodeDialog', addOpt);
+    //									return addOpt.nodetypeid;
+    //								},
+
+							    //delete
+							    del: true,
+							    deltext: "",
+							    deltitle: "Delete row",
+							    delfunc: function(rowid) {
+									    var delOpt = {
+										    'cswnbtnodekey': '',
+										    'nodeid': '',
+										    'nodename': '',
+										    'onDeleteNode': o.onDeleteNode
+									    };
+									    if (rowid !== null) {
+										    delOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
+										    delOpt.nodename = $gridTable.jqGrid('getCell', rowid, 'nodename');
+										    $.CswDialog('DeleteNodeDialog', delOpt);
+									    }
+									    else
+									    {
+										    alert('Please select a row to delete');
+									    }
+									    return delOpt.cswnbtnodekey;
+								    },
 						
-							//search
-							search: true,
-							searchtext: "",
-							searchtitle: "Find records",
+							    //search
+							    search: true,
+							    searchtext: "",
+							    searchtitle: "Find records",
 						
-							//refresh
-							refreshtext: "",
-							refreshtitle: "Reload Grid",
-							alertcap: "Warning",
-							alerttext: "Please, select row",
+							    //refresh
+							    refreshtext: "",
+							    refreshtitle: "Reload Grid",
+							    alertcap: "Warning",
+							    alerttext: "Please, select row",
 						
-							//view
-							view: true,
-							viewtext: "",
-							viewtitle: "View row"
-							//viewfunc: none--use jqGrid built-in function for read-only
-						};
-                        
-						$gridTable.jqGrid(jqGridOptions)
+							    //view
+							    view: true,
+							    viewtext: "",
+							    viewtitle: "View row"
+							    //viewfunc: none--use jqGrid built-in function for read-only
+						    };
+                            $gridTable.jqGrid(jqGridOptions)
 										 .navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, optSearch, {} ); 
                                          //all JSON options past 'optNav' define the behavior of the built-in pop-up
-					
+                        } // else
+
 						//remove some dup elements from top pager
 //						var topPagerDiv = $('#' + $gridTable[0].id + '_toppager')[0];         
 //						$("#edit_" + $gridTable[0].id + "_top", topPagerDiv).remove();        
