@@ -441,7 +441,8 @@ var CswSearch_CssClasses = {
                             props.push( thisNodeProp );
                         });
                     searchOpt = {
-                        'viewbuilderprops' : props
+                        'viewbuilderprops' : props,
+                        parentviewid: $.CswCookie('get', CswCookieName.CurrentViewId)
                     };
                     
                     break;

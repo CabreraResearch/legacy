@@ -283,7 +283,9 @@ namespace ChemSW.Nbt.WebServices
 
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
-
+                
+                string ParentViewId = (string) NodesSearch.Property( "parentviewid" ).Value;
+                
                 if( null != NodesSearch.Property( "viewbuilderprops") )
                 {
                     JArray Props = (JArray) NodesSearch.Property( "viewbuilderprops" ).Value;
@@ -349,7 +351,9 @@ namespace ChemSW.Nbt.WebServices
                 }
                 if( string.IsNullOrEmpty( ViewName ) ) ViewName = "No Results for Search";
                 SearchView.ViewName = ViewName;
-                GenericSearch = new CswNbtViewSearchPair( SearchView, SearchView );
+                SearchView.SaveToCache( false );
+                string SearchViewId = SearchView.SessionViewId.ToString();
+                GenericSearch = new CswNbtViewSearchPair(_CswNbtResources, ParentViewId, SearchViewId );
             }
 
             return GenericSearch;
