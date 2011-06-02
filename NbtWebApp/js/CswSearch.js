@@ -25,7 +25,9 @@ var CswSearch_CssClasses = {
             'getClientSearchXmlUrl': '/NbtWebApp/wsNBT.asmx/getClientSearchXml',
 
             //options
-			'viewid': '',
+			'searchviewid': '',
+            'viewmode': 'tree',
+            'parentviewid': '',
             'nodetypeorobjectclassid': '',
             'propertyid': '',
             'cswnbtnodekey': '',
@@ -40,7 +42,8 @@ var CswSearch_CssClasses = {
             '$nodeTypesXml': '',
             '$nodeTypesSelect': '',
 
-            'onSearchSubmit': function (view) {}, 
+            'onSearchSubmit': function (view) {},
+            'onClearSubmit': function(parentviewid) {}, 
 
             //For submit
             'selectedPropVal': '',
@@ -90,6 +93,7 @@ var CswSearch_CssClasses = {
                 $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).show(); });
                 $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).hide(); });
                 o.$link.text('Simple');
+                o.$link.hide(); //Case 21847
                 o.advancedIsHidden = false;
             }
             else if('Simple' === o.$link.text() || ( !o.advancedIsHidden ) )
@@ -296,7 +300,10 @@ var CswSearch_CssClasses = {
                                                             enabledText: 'Clear', 
                                                             disabledText: 'Clear',
                                                             disableOnClick: false, 
-                                                            onclick: function() { reInit(); }
+                                                            onclick: function() 
+                                                            {
+                                                                o.onClearSubmit(o.parentviewid,o.viewmode);
+                                                            }
                                             });
                                             
             //Row i, Column 1 (1/2): advanced link
@@ -305,11 +312,14 @@ var CswSearch_CssClasses = {
             var advancedLinkId = makeId({ID: 'advanced_options', prefix: o.ID});
             var $advancedLink = $advancedLinkCell.CswLink('init',{
                                                     ID: advancedLinkId,
-                                                    href: '#advanced',
+                                                    href: 'javascript:void(0)',
                                                     value: 'Advanced' })
                                                     .click(function() {
                                                             o.advancedIsHidden = modAdvanced({'$link': $advancedLink, advancedIsHidden: o.advancedIsHidden });
                                                     });  
+            if( !o.advancedIsHidden ) {
+                $advancedLink.hide();
+            }
             //Row i, Column 5: search button
             var $searchButtonCell = o.$searchTable.CswTable('cell', o.bottomRow, o.searchBtnCell)
                                     .CswAttrDom({align:"right"})
@@ -349,9 +359,9 @@ var CswSearch_CssClasses = {
         function init()
         {
             //var $titlespan = $('<span style="align: center;">Search</span>');
-            
+            var thisViewId = ( !isNullOrEmpty(o.searchviewid) ) ? o.searchviewid : o.parentviewid; 
             var dataXml = {
-                'ViewId': o.viewid, 
+                'ViewId': thisViewId, 
                 'SelectedNodeTypeIdNum': o.nodetypeorobjectclassid, 
                 'IdPrefix': o.ID,
                 'NodeKey': o.cswnbtnodekey
@@ -431,7 +441,8 @@ var CswSearch_CssClasses = {
                             props.push( thisNodeProp );
                         });
                     searchOpt = {
-                        'viewbuilderprops' : props
+                        'viewbuilderprops' : props,
+                        parentviewid: $.CswCookie('get', CswCookieName.CurrentViewId)
                     };
                     
                     break;
@@ -450,7 +461,8 @@ var CswSearch_CssClasses = {
                         });
                     searchOpt = { 
                             viewprops: props,
-                            viewid: o.viewid
+                            searchviewid: o.searchviewid,
+                            parentviewid: o.parentviewid
                     };
                     break;
                 }
@@ -465,10 +477,12 @@ var CswSearch_CssClasses = {
 			    'url': searchUrl,
 			    'data': dataJson,
                 'success': function(view) { 
-                        o.viewid = view.sessionviewid;
+                        o.searchviewid = view.searchviewid;
+                        o.parentviewid = view.parentviewid;
+                        o.viewmode = view.viewmode;
                         o.searchtype = 'viewsearch'; //the next search will be always be based on the view returned
                         init(); //our arbitraryid's have probably changed. need to pull fresh XML.
-                        o.onSearchSubmit({viewid: view.sessionviewid, viewmode: view.viewmode});
+                        o.onSearchSubmit(view.searchviewid, view.viewmode, view.parentviewid);
                     }
                 });
             }

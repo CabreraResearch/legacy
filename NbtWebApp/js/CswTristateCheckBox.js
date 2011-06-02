@@ -23,10 +23,13 @@
 			var $parent = $(this);
             $parent.empty();
             var elementId = makeId({prefix: o.prefix, ID: o.ID});
-			if(o.Checked === '' || o.Checked === undefined || o.Checked === null) o.Checked = "null";
+            
+            //Case 21769
+            var tristateVal = tryParseString(o.Checked,"null").toLowerCase();
+
             if(o.ReadOnly)
 			{
-				switch(o.Checked)
+				switch(tristateVal)
 				{
 					case "true": $parent.append('Yes'); break;
 					case "false": $parent.append('No'); break;
@@ -35,7 +38,7 @@
 			else 
 			{
 				var thisButtonType;
-				switch(o.Checked)
+				switch(tristateVal)
 				{
 					case "true": thisButtonType = CswImageButton_ButtonType.CheckboxTrue; break;
 					case "false": thisButtonType = CswImageButton_ButtonType.CheckboxFalse; break;
@@ -44,7 +47,7 @@
 
 				$parent.CswImageButton({ ID: elementId,  
                                         ButtonType: thisButtonType, 
-										AlternateText: o.Checked,
+										AlternateText: tristateVal,
 										onClick: function($ImageDiv) {
 													var newvalue = onClick($ImageDiv, o.Required);
 													o.onchange(); 

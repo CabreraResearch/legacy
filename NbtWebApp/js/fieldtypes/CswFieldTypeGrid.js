@@ -68,18 +68,26 @@
                         {
                             'onViewSearch': function ()
                             {
-                                var onSearchSubmit = function(view) {
+                                var onSearchSubmit = function(searchviewid) {
                                     var s = {};
                                     $.extend(s,gridOpts);
-                                    s.viewid = view.viewid;
+                                    s.viewid = searchviewid;
+                                    refreshGrid(s);
+                                };
+                                
+                                var onClearSubmit = function(parentviewid) {
+                                    var s = {};
+                                    $.extend(s,gridOpts);
+                                    s.viewid = parentviewid;
                                     refreshGrid(s);
                                 };
 
                                 $SearchDiv.empty();
-                                $SearchDiv.CswSearch({'viewid': viewid,
+                                $SearchDiv.CswSearch({'parentviewid': viewid,
                                                       'cswnbtnodekey': o.cswnbtnodekey,
                                                       'ID': SearchDivId,
-                                                      'onSearchSubmit': onSearchSubmit
+                                                      'onSearchSubmit': onSearchSubmit,
+                                                      'onClearSubmit': onClearSubmit
                                                       });
                             },
                             'onGenericSearch': function () { /*not possible here*/ }

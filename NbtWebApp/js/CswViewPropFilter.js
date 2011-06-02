@@ -268,7 +268,7 @@ var ViewBuilder_CssClasses = {
 
             var thisNodeProp = {}; //to return
             
-            var $filtInput = o.$parent.find('#' + filtValInputId);
+            var $filtInput = tryParseElement(filtValInputId, o.$parent); //o.$parent.find('#' + filtValInputId);
             var filterValue;
             switch( o.fieldtype )
             { 
@@ -290,10 +290,10 @@ var ViewBuilder_CssClasses = {
             }
             if(filterValue !== '')
             {
-                var $subField = o.$parent.find('#' + subFieldId);
+                var $subField = tryParseElement(subFieldId, o.$parent); //o.$parent.find('#' + subFieldId);
 				var subFieldText = $subField.find(':selected').text();
 
-                var $filter = o.$parent.find('#' + filterId);
+                var $filter = tryParseElement(filterId,o.$parent) //o.$parent.find('#' + filterId);
                 var filterText = $filter.find(':selected').val();
 
                 var propType = $thisProp.CswAttrXml('proptype');
