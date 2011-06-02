@@ -56,6 +56,7 @@ namespace ChemSW.Nbt.WebServices
 			_CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
 			_CswNbtResources = _CswSessionResources.CswNbtResources;
 			_CswNbtStatisticsEvents = _CswSessionResources.CswNbtStatisticsEvents;
+            _CswNbtResources.beginTransaction(); 
 
 			_CswNbtResources.logMessage( "WebServices: Session Started (_initResources called)" );
 		}//start() 

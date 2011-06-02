@@ -341,7 +341,7 @@ namespace ChemSW.Nbt.Schema
                 if( false == _CswNbtResources.CswResources.DataDictionary.isTableDefined( AuditTableName ) )
                 {
                     copyTable( TableName, AuditTableName, false );
-                    addBooleanColumn( AuditTableName, _CswAuditMetaData.DelegeFlagColName, _CswAuditMetaData.DelegeFlagColDescription, false, false );
+                    addBooleanColumn( AuditTableName, _CswAuditMetaData.AuditEventTypeColName, _CswAuditMetaData.AuditEventTypeColDescription, false, false );
                     addForeignKeyColumn( AuditTableName, _CswAuditMetaData.AuditTransactionIdColName, "fk to audittransactions table", false, true, _CswAuditMetaData.AuditTransactionTableName, _CswAuditMetaData.AuditTransactionIdColName );
 
                 }//if the audit table does not yet exist
