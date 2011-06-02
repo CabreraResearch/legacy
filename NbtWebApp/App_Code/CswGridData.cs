@@ -36,6 +36,8 @@ namespace ChemSW.Nbt.WebServices
 	    public string GridSortName = string.Empty;
 	    public string GridTitle = string.Empty;
         public Int32 GridWidth = Int32.MinValue;
+	    public bool CanEdit = false;
+	    public bool CanDelete = false;
 
         public enum JqGridJsonOptions
         {
@@ -258,7 +260,9 @@ namespace ChemSW.Nbt.WebServices
                     new JProperty( JqGridJsonOptions.autoencode.ToString(), GridAutoEncode ),
                     new JProperty( JqGridJsonOptions.height.ToString(), GridHeight ),
                     //new JProperty( JqGridJsonOptions.rowList.ToString(), GridRowList ),
-                    new JProperty( JqGridJsonOptions.caption.ToString(), GridTitle )
+                    new JProperty( JqGridJsonOptions.caption.ToString(), GridTitle ),
+                    new JProperty( "CanEdit", CanEdit.ToString().ToLower() ),
+                    new JProperty( "CanDelete", CanDelete.ToString().ToLower() )
                 );
         }
 

@@ -59,7 +59,9 @@
 							$gridTable.css('width','650px');
                             //jqGridOpt.width = 650;
 						}
-						
+						var canEdit = isTrue( jqGridOpt.CanEdit );
+                        var canDelete = isTrue( jqGridOpt.CanDelete );
+
 						var jqGridOptions = {
                             autoencode: true,
                             autowidth: true,
@@ -94,7 +96,6 @@
                         }
                         else
                         {
-                            jqGridOptions.multiselect = true;
                             optSearch = {
 							    caption: "Search...",
 							    Find: "Find",
@@ -105,67 +106,61 @@
 							    rulesText: "rules"
 						    };
 
-						    optNav = {	
-                                cloneToTop: false,
-
-							    //edit
+                            var optNavEdit = {
 							    edit: true,
 							    edittext: "",
 							    edittitle: "Edit row",
-							    editfunc: function(rowid) {
-									    var editOpt = {
-										    cswnbtnodekey: '',
-										    nodeid: '',
-										    onEditNode: o.onEditNode
-									    };
-									    if (rowid !== null) 
-									    {
-										    editOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
-										    $.CswDialog('EditNodeDialog', editOpt);
-									    }
-									    else
-									    {
-										    alert('Please select a row to edit');
-									    }
-									    return editOpt.CswNbtNodeKey;
-								    },
+							    editfunc: function(rowid) 
+                                {
+									var editOpt = {
+										cswnbtnodekey: '',
+										nodeid: '',
+										onEditNode: o.onEditNode
+									};
+									if (rowid !== null) 
+									{
+										editOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
+										$.CswDialog('EditNodeDialog', editOpt);
+									}
+									else
+									{
+										alert('Please select a row to edit');
+									}
+									return editOpt.CswNbtNodeKey;
+								}
+                            };
 
-							    //add
-							    add: false,
-    //							addtext:"",
-    //							addtitle: "Add row",
-    //							addfunc: function() {
-    //									var addOpt = {
-    //										'nodetypeid': NodeTypeId,
-    //										'onAddNode': o.onAddNode,
-    //                                        'relatednodeid': o.nodeid
-    //									}
-    //									$.CswDialog('AddNodeDialog', addOpt);
-    //									return addOpt.nodetypeid;
-    //								},
-
-							    //delete
-							    del: true,
+                            var optNavDelete = {
+                                del: true,
 							    deltext: "",
 							    deltitle: "Delete row",
-							    delfunc: function(rowid) {
-									    var delOpt = {
-										    'cswnbtnodekey': '',
-										    'nodeid': '',
-										    'nodename': '',
-										    'onDeleteNode': o.onDeleteNode
-									    };
-									    if (rowid !== null) {
-										    delOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
-										    delOpt.nodename = $gridTable.jqGrid('getCell', rowid, 'nodename');
-										    $.CswDialog('DeleteNodeDialog', delOpt);
-									    }
-									    else
-									    {
-										    alert('Please select a row to delete');
-									    }
-									    return delOpt.cswnbtnodekey;
-								    },
+							    delfunc: function(rowid) 
+                                {
+									var delOpt = {
+										'cswnbtnodekey': '',
+										'nodeid': '',
+										'nodename': '',
+										'onDeleteNode': o.onDeleteNode
+									};
+									if (rowid !== null) {
+										delOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
+										delOpt.nodename = $gridTable.jqGrid('getCell', rowid, 'nodename');
+										$.CswDialog('DeleteNodeDialog', delOpt);
+									}
+									else
+									{
+										alert('Please select a row to delete');
+									}
+									return delOpt.cswnbtnodekey;
+								}
+                            };
+
+						    optNav = {	
+                                cloneToTop: false,
+
+							    add: false,
+                                del: false,
+                                edit: false,
 						
 							    //search
 							    search: true,
@@ -184,6 +179,11 @@
 							    viewtitle: "View row"
 							    //viewfunc: none--use jqGrid built-in function for read-only
 						    };
+
+                            if( canEdit ) $.extend(optNav,optNavEdit);
+                            if( canDelete ) $.extend(optNav,optNavDelete);
+                            if( canEdit || canDelete ) jqGridOptions.multiselect = true;
+
                             $gridTable.jqGrid(jqGridOptions)
 										 .navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, optSearch, {} ); 
                                          //all JSON options past 'optNav' define the behavior of the built-in pop-up
