@@ -373,11 +373,16 @@ namespace ChemSW.Nbt.WebServices
         public readonly NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown;
         private readonly CswNbtResources _CswNbtResources;
 
-        public CswNbtViewSearchPair( CswNbtView ParentView, CswNbtView SearchView )
+        public CswNbtViewSearchPair( CswNbtView ParentView, CswNbtView SearchableView )
         {
             ViewMode = ParentView.ViewMode;
+            if( null == ParentView.SessionViewId || !ParentView.SessionViewId.isSet() ) ParentView.SaveToCache( false );
             ParentViewId = ParentView.SessionViewId;
-            SearchViewId = SearchView.SessionViewId;
+
+            if( null == SearchableView.SessionViewId || !SearchableView.SessionViewId.isSet() ) SearchableView.SaveToCache( false );
+            SearchViewId = SearchableView.SessionViewId;
+
+            SearchView = SearchableView;
         }
 
         public CswNbtViewSearchPair( CswNbtResources CswNbtResources, string ParentViewKey, string SearchViewKey )
