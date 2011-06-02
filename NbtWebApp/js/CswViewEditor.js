@@ -334,8 +334,10 @@ var CswViewEditor_WizardSteps = {
 			$currentviewxml.CswAttrXml('category', $categorytextbox.val());
 			if($currentviewxml.CswAttrXml('visibility') !== 'Property')
 			{
-				$currentviewxml.CswAttrXml('visibility', v.getvisibilityselect().val());
-				
+                if( v.getvisibilityselect() !== undefined )
+				{
+                    $currentviewxml.CswAttrXml('visibility', v.getvisibilityselect().val());
+				}
 				// temporary workaround
 				var rolenodeid = v.getvisroleselect().val();
 				if(!isNullOrEmpty(rolenodeid))
