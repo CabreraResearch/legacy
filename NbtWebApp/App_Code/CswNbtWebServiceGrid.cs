@@ -62,7 +62,10 @@ namespace ChemSW.Nbt.WebServices
             _AddHiddenColumnDefiniton( ref GridColumnDefinitions );
             
 			_CswGridData.GridWidth = ( _View.Width*7 ) ;
-		    _CswGridData.GridTitle = _View.ViewName;
+            if( _View.Visibility != NbtViewVisibility.Property )
+            {
+                _CswGridData.GridTitle = _View.ViewName;
+            }
 		    _CswGridData.GridSortName = "nodeid";
 
 		    JObject JqGridOpt = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
