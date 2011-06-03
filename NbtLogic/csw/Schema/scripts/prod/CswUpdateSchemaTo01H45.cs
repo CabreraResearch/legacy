@@ -98,7 +98,68 @@ namespace ChemSW.Nbt.Schema
             } //if( null != ProblemNT )
 
 
+            // Case 21221
+            CswNbtView TasksOpen = _CswNbtSchemaModTrnsctn.restoreView( "Tasks: Open" );
+            if( null != TasksOpen )
+            {
+                TasksOpen.Root.ChildRelationships.Clear();
+            }
+            else
+            {
+                TasksOpen = _CswNbtSchemaModTrnsctn.makeView();
+                TasksOpen.makeNew( "Tasks: Open", NbtViewVisibility.Global, null, null, null );
+            }
+            CswNbtMetaDataNodeType TaskNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Task" );
+            if( null != TaskNT )
+            {
+                CswNbtViewRelationship TaskRel = ProblemsOpen.AddViewRelationship( TaskNT, false );
+                CswNbtMetaDataNodeTypeProp CompletedNtp = TaskNT.getNodeTypeProp( CswNbtObjClassTask.CompletedPropertyName );
+                CswNbtMetaDataNodeTypeProp EquipmentNtp = TaskNT.getNodeTypeProp( CswNbtObjClassTask.OwnerPropertyName );
+                CswNbtMetaDataNodeTypeProp DueDateNtp = TaskNT.getNodeTypeProp( CswNbtObjClassTask.DueDatePropertyName );
+                CswNbtMetaDataNodeTypeProp SummaryNtp = TaskNT.getNodeTypeProp( CswNbtObjClassTask.SummaryPropertyName );
+                CswNbtMetaDataNodeTypeProp TechnicianNtp = TaskNT.getNodeTypeProp( "Technician" );
 
+
+                CswNbtViewProperty DueDateVp = TasksOpen.AddViewProperty( TaskRel, DueDateNtp );
+                TasksOpen.AddViewPropertyFilter( DueDateVp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, DateTime.MinValue.ToString(), false );
+
+                CswNbtViewProperty CompletedVp = TasksOpen.AddViewProperty( TaskRel, CompletedNtp );
+                TasksOpen.AddViewPropertyFilter( CompletedVp, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "false", false );
+
+                CswNbtViewProperty SummaryVp = TasksOpen.AddViewProperty( TaskRel, SummaryNtp );
+                TasksOpen.AddViewPropertyFilter( SummaryVp, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Contains, string.Empty, false );
+
+                if( null != TechnicianNtp )
+                {
+                    CswNbtViewProperty TechnicianVp = TasksOpen.AddViewProperty( TaskRel, TechnicianNtp );
+                    TasksOpen.AddViewPropertyFilter( TechnicianVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Contains, string.Empty, false );
+                }
+
+                CswNbtViewProperty EquipmentVp = TasksOpen.AddViewProperty( TaskRel, EquipmentNtp );
+                TasksOpen.AddViewPropertyFilter( EquipmentVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+
+                if( null != EquipmentNT )
+                {
+                    CswNbtViewRelationship EquipmentRel = TasksOpen.AddViewRelationship( TaskRel, CswNbtViewRelationship.PropOwnerType.First, EquipmentNtp, false );
+                    CswNbtMetaDataNodeTypeProp StatusNtp = EquipmentNT.getNodeTypeProp( CswNbtObjClassEquipment.StatusPropertyName );
+                    CswNbtMetaDataNodeTypeProp TypeNtp = EquipmentNT.getNodeTypeProp( CswNbtObjClassEquipment.TypePropertyName );
+                    CswNbtMetaDataNodeTypeProp SerialNoNtp = EquipmentNT.getNodeTypeProp( "Serial No" );
+
+                    CswNbtViewProperty TypeVp = TasksOpen.AddViewProperty( EquipmentRel, TypeNtp );
+                    TasksOpen.AddViewPropertyFilter( TypeVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+
+                    if( null != SerialNoNtp )
+                    {
+                        CswNbtViewProperty SerialNoVp = TasksOpen.AddViewProperty( EquipmentRel, SerialNoNtp );
+                        TasksOpen.AddViewPropertyFilter( SerialNoVp, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Contains, string.Empty, false );
+                    }
+
+                    CswNbtViewProperty StatusVp = TasksOpen.AddViewProperty( EquipmentRel, StatusNtp );
+                    TasksOpen.AddViewPropertyFilter( StatusVp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, "Retired", false );
+                } // if( null != EquipmentNT )
+
+                TasksOpen.save();
+            } //if( null != ProblemNT )
 
 
         } // update()
