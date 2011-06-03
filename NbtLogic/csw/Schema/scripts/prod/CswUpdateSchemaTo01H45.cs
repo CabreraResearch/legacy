@@ -192,6 +192,12 @@ namespace ChemSW.Nbt.Schema
                 TasksOpen.save();
             } //if( null != ProblemNT )
 
+            // Case 21855
+            CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            CswNbtMetaDataObjectClassProp NameOcp = InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 
         } // update()
 
