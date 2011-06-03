@@ -53,18 +53,15 @@
 						jqGridOpt = gridJson.jqGridOpt;
 
 						var NodeTypeId = gridJson.nodetypeid;
-
-						if( isNullOrEmpty( jqGridOpt.width ) )
-						{
-							$gridTable.css('width','650px');
-                            //jqGridOpt.width = 650;
-						}
+                        var tableWidth = ( !isNullOrEmpty( jqGridOpt.width ) ) ? '650' : jqGridOpt.width;
+						//$gridTable.css('width',tableWidth + 'px');
+                        
 						var canEdit = isTrue( jqGridOpt.CanEdit );
                         var canDelete = isTrue( jqGridOpt.CanDelete );
 
 						var jqGridOptions = {
                             autoencode: true,
-                            autowidth: true,
+                            //autowidth: true,
                             altRows: true,
                             caption: '',
                             datatype: 'local', 
@@ -75,11 +72,12 @@
 							pager: $gridPager, 
 							rowList:[10,25,50],  
 				            rowNum:10, 
-				            forceFit: true,
+				            shrinkToFit: true,
 				            sortname: '', 
 				            sortorder: 'asc', 
                             toppager: false,
-                            viewrecords: true
+                            viewrecords: true,
+                            width: tableWidth + 'px'
 						};
                         $.extend(jqGridOptions,jqGridOpt);
                             
