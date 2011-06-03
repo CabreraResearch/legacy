@@ -16,7 +16,7 @@ begin
         INTO obj_name;
       EXIT WHEN cur_objects%NOTFOUND;
 
-      sql_str := 'drop TABLE ' || obj_name;
+      sql_str := 'drop TABLE ' || obj_name || ' CASCADE CONSTRAINTS PURGE';
       EXECUTE IMMEDIATE sql_str;
 
     END LOOP;
@@ -25,6 +25,7 @@ begin
   END;
 
 end;
+/
 
 exec drop_tables;
 commit;
