@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 Collection<CswNbtMetaDataNodeType> FirstLevelNodeTypes = new Collection<CswNbtMetaDataNodeType>();
 
-                if( IsProperty &&
+                if( ( IsProperty || Relationship.FirstId == Int32.MinValue ) &&
                     Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
                     Relationship.SecondId != Int32.MinValue )
                 {
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.WebServices
                         FirstLevelNodeTypes.Add( NT );
                     }
                 }
-                else if( IsProperty &&
+                else if( ( IsProperty || Relationship.FirstId == Int32.MinValue ) &&
                          Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
                          Relationship.SecondId != Int32.MinValue )
                 {
