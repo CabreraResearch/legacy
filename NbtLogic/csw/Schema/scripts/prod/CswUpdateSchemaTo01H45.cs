@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.Schema
             }
             else
             {
+                ProblemsOpen = _CswNbtSchemaModTrnsctn.makeView();
                 ProblemsOpen.makeNew( "Problems: Open", NbtViewVisibility.Global, null, null, null );
             }
             CswNbtMetaDataNodeType ProblemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Problem" );
@@ -69,10 +70,10 @@ namespace ChemSW.Nbt.Schema
                 if( null != EquipmentNT )
                 {
                     CswNbtViewRelationship EquipmentRel = ProblemsOpen.AddViewRelationship( ProblemRel, CswNbtViewRelationship.PropOwnerType.First, EquipmentNtp, false );
-                    CswNbtMetaDataNodeTypeProp StatusNtp = ProblemNT.getNodeTypeProp( CswNbtObjClassEquipment.StatusPropertyName );
-                    CswNbtMetaDataNodeTypeProp TypeNtp = ProblemNT.getNodeTypeProp( CswNbtObjClassEquipment.TypePropertyName );
-                    CswNbtMetaDataNodeTypeProp ManufacturerNtp = ProblemNT.getNodeTypeProp( "Manufacturer" );
-                    CswNbtMetaDataNodeTypeProp SerialNoNtp = ProblemNT.getNodeTypeProp( "Serial No" );
+                    CswNbtMetaDataNodeTypeProp StatusNtp = EquipmentNT.getNodeTypeProp( CswNbtObjClassEquipment.StatusPropertyName );
+                    CswNbtMetaDataNodeTypeProp TypeNtp = EquipmentNT.getNodeTypeProp( CswNbtObjClassEquipment.TypePropertyName );
+                    CswNbtMetaDataNodeTypeProp ManufacturerNtp = EquipmentNT.getNodeTypeProp( "Manufacturer" );
+                    CswNbtMetaDataNodeTypeProp SerialNoNtp = EquipmentNT.getNodeTypeProp( "Serial No" );
 
                     CswNbtViewProperty TypeVp = ProblemsOpen.AddViewProperty( EquipmentRel, TypeNtp );
                     ProblemsOpen.AddViewPropertyFilter( TypeVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
@@ -90,8 +91,10 @@ namespace ChemSW.Nbt.Schema
                     }
 
                     CswNbtViewProperty StatusVp = ProblemsOpen.AddViewProperty( EquipmentRel, StatusNtp );
-                    ProblemsOpen.AddViewPropertyFilter( StatusVp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+                    ProblemsOpen.AddViewPropertyFilter( StatusVp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, "Available", false );
                 } // if( null != EquipmentNT )
+
+                ProblemsOpen.save();
             } //if( null != ProblemNT )
 
 
