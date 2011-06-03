@@ -314,10 +314,19 @@ namespace ChemSW.Nbt.WebServices
 
 			if( Node != null )
 			{
-				foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
+				Collection<CswNbtMetaDataNodeTypeProp> NodeTypePropsInXml = new Collection<CswNbtMetaDataNodeTypeProp>();
+                foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
 				{
-					_applyPropXml( Node, PropNode );
+                    _applyPropXml( Node, PropNode, ref NodeTypePropsInXml );
 				}
+
+			    foreach( CswNbtNodePropWrapper Wrapper in Node.Properties )
+			    {
+                    if( !NodeTypePropsInXml.Contains( Wrapper.NodeTypeProp ) && Wrapper.NodeTypeProp.HasDefaultValue() )
+                    {
+                        Wrapper.copy( Wrapper.DefaultValue );
+                    }
+			    }
 
 				// BZ 8517 - this sets sequences that have setvalonadd = 0
 				_CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( Node );
@@ -375,14 +384,13 @@ namespace ChemSW.Nbt.WebServices
 						CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
 						if( CopyToNode != null )
 						{
-							foreach( string PropIdAttr in PropIds )
-							{
-								CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
-								CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-								CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
-							} // foreach( string PropIdAttr in PropIds )
+						    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
+                                                                                       .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
+						    {
+						        CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
+						    }
 
-							CopyToNode.postChanges( false );
+						    CopyToNode.postChanges( false );
 						} // if( CopyToNode != null )
 					} // foreach( string NodeIdStr in CopyNodeIds )
 				} // if(SourceNode != null)
@@ -390,25 +398,44 @@ namespace ChemSW.Nbt.WebServices
 			return true;
 		} // copyPropValues()
 
-		private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
+		private void _applyPropXml( CswNbtNode Node, XmlNode PropNode, ref Collection<CswNbtMetaDataNodeTypeProp> NodeTypePropsInXml )
 		{
 			CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropNode.Attributes["id"].Value );
 
 			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
 			Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
-
-			// Recurse on sub-props
+            NodeTypePropsInXml.Add( MetaDataProp );
+			
+            // Recurse on sub-props
 			XmlNode SubPropsNode = CswXmlDocument.ChildXmlNode( PropNode, "subprops" );
 			if( SubPropsNode != null )
 			{
 				foreach( XmlNode ChildPropNode in SubPropsNode.ChildNodes )
 				{
-					_applyPropXml( Node, ChildPropNode );
+					_applyPropXml( Node, ChildPropNode, ref NodeTypePropsInXml );
 				}
 			}
 
 		} // _applyPropXml
 
+        private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
+        {
+            CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropNode.Attributes["id"].Value );
+
+            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
+            Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
+
+            // Recurse on sub-props
+            XmlNode SubPropsNode = CswXmlDocument.ChildXmlNode( PropNode, "subprops" );
+            if( SubPropsNode != null )
+            {
+                foreach( XmlNode ChildPropNode in SubPropsNode.ChildNodes )
+                {
+                    _applyPropXml( Node, ChildPropNode );
+                }
+            }
+
+        } // _applyPropXml
 
 		public bool ClearPropValue( string PropIdAttr, bool IncludeBlob )
 		{
