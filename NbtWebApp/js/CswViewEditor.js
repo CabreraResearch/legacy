@@ -423,7 +423,7 @@ var CswViewEditor_WizardSteps = {
 			// passing selectedviewid in allows us to translate SessionViewIds to ViewIds
             var dataJson = {
                 All: all,
-				SelectedViewId: selectedviewid
+				SelectedViewId: tryParseString(selectedviewid,'')
             };
 
 			CswAjaxJSON({
