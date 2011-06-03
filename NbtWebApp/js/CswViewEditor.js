@@ -385,29 +385,42 @@ var CswViewEditor_WizardSteps = {
 		}
 
 
-		function _handleFinish($wizard)
+		function _handleFinish()
 		{
 			var viewid = _getSelectedViewId($viewgrid);
+            var processView = true; 
 
-            if( CurrentStep === CswViewEditor_WizardSteps.step2.step &&
-                !isNullOrEmpty( $currentviewxml ) )
+            if( !isNullOrEmpty( $currentviewxml ) )
             {
-                cacheStepTwo();
+                if( CurrentStep === CswViewEditor_WizardSteps.step2.step )
+                {
+                    cacheStepTwo();
+                }
+                if( $currentviewxml.CswAttrXml('mode') === 'Grid' &&
+                    ( $('.vieweditor_viewrellink').children().length === 0 ||
+                      $('.vieweditor_viewproplink').children().length === 0 ) )
+                {
+                    processView = confirm('You are attempting to create a Grid without properties. This will not display any information. Do you want to continue?');
+                    if(!processView) $wizard.CswWizard('button', 'finish', 'enable');
+                }
             }
 
-            var dataXml = {
-                ViewId: viewid,
-                ViewXml: xmlToString($currentviewxml)
-            };
+            if(processView)
+            {
+                var dataXml = {
+                    ViewId: viewid,
+                    ViewXml: xmlToString($currentviewxml)
+                };
 
-			CswAjaxXml({
-				url: o.SaveViewUrl,
-				data: dataXml,
-                stringify: true,
-				success: function ($xml) {
-					o.onFinish(viewid, _getSelectedViewMode($viewgrid));
-				} // success
-			}); // ajax
+			    CswAjaxXml({
+				    url: o.SaveViewUrl,
+				    data: dataXml,
+                    stringify: true,
+				    success: function ($xml) {
+					    o.onFinish(viewid, _getSelectedViewMode($viewgrid));
+				    } // success
+			    });
+            } // ajax
 		} //_handleFinish
 
 		function _getViewsGrid(onSuccess, selectedviewid)
