@@ -1077,13 +1077,24 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Returns the NodeTypeId of the first View property. Determines the NodeType to 'Add' in grids.
+        /// Returns the MetaDataTypeId of the first View property. Determines the MetaDataType to 'Add' in grids.
         /// </summary>
-        public Int32 ViewNodeTypeId
+        public Int32 ViewMetaDataTypeId
         {
             get
             {
-                Int32 ReturnVal = findFirstProperty().NodeTypeProp.NodeType.NodeTypeId;
+                Int32 ReturnVal = Int32.MinValue;
+                if( null != findFirstProperty() )
+                {
+                    if( null != findFirstProperty().NodeTypeProp )
+                    {
+                        ReturnVal = findFirstProperty().NodeTypeProp.NodeType.NodeTypeId;
+                    }
+                    else if( null != findFirstProperty().ObjectClassProp )
+                    {
+                        ReturnVal = findFirstProperty().ObjectClassProp.ObjectClassPropId;
+                    }
+                }
                 return ReturnVal;
             }
         }

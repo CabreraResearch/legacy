@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.WebServices
 		    JObject JqGridOpt = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
             
 			GridShellJObj = new JObject(
-				new JProperty( "nodetypeid", _View.ViewNodeTypeId ),
+				new JProperty( "nodetypeid", _View.ViewMetaDataTypeId ),
 				new JProperty( "jqGridOpt", JqGridOpt)
 				);
 
