@@ -395,32 +395,24 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView ParentView = null;
             if( !string.IsNullOrEmpty( ParentViewKey ) ) // we need this for client-side clear()
             {
-                CswDelimitedString ParentId = new CswDelimitedString( '_' );
-                ParentId.FromString( ParentViewKey );
-
-                switch( ParentId[0].ToLower() )
+                if( CswNbtViewId.isViewIdString( ParentViewKey ))
                 {
-                    case "viewid":
-                        {
-                            CswNbtViewId ParentVid = new CswNbtViewId( ParentViewKey );
-                            ParentView = _CswNbtResources.ViewSelect.restoreView( ParentVid );
-                            if( null == ParentView.SessionViewId )
-                            {
-                                ParentView.SaveToCache( false );
-                            }
-                            break;
-                        }
-                    case "sessiondataid":
-                        {
-                            CswNbtSessionDataId ParentSessionId = new CswNbtSessionDataId( ParentViewKey );
-                            ParentView = _CswNbtResources.ViewSelect.getSessionView( ParentSessionId );
-                            break;
-                        }
+                    CswNbtViewId ParentVid = new CswNbtViewId( ParentViewKey );
+                    ParentView = _CswNbtResources.ViewSelect.restoreView( ParentVid );
+                    if( null == ParentView.SessionViewId )
+                    {
+                        ParentView.SaveToCache( false );
+                    }
                 }
-
-                if( null != ParentView ) ParentViewId = ParentView.SessionViewId.ToString();
-                ViewMode = ParentView.ViewMode;
+                else if( CswNbtSessionDataId.isSessionDataIdString( ParentViewKey ))
+                {
+                    CswNbtSessionDataId ParentSessionId = new CswNbtSessionDataId( ParentViewKey );
+                    ParentView = _CswNbtResources.ViewSelect.getSessionView( ParentSessionId );
+                }
             }
+
+            if( null != ParentView ) ParentViewId = ParentView.SessionViewId.ToString();
+            ViewMode = ParentView.ViewMode;
 
             CswNbtView SearchView = null;
             if( !string.IsNullOrEmpty( SearchViewKey ) )
