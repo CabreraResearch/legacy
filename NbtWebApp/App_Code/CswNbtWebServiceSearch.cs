@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 if( string.IsNullOrEmpty( ViewName ) ) ViewName = "No Results for Search";
                 SearchView.ViewName = ViewName;
-                SearchView.SaveToCache( false );
+                SearchView.SaveToCache( true );
                 string SearchViewId = SearchView.SessionViewId.ToString();
                 GenericSearch = new CswNbtViewSearchPair(_CswNbtResources, ParentViewId, SearchViewId );
             }
@@ -380,10 +380,10 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtViewSearchPair( CswNbtView ParentView, CswNbtView SearchableView )
         {
             ViewMode = ParentView.ViewMode;
-            if( null == ParentView.SessionViewId || !ParentView.SessionViewId.isSet() ) ParentView.SaveToCache( false );
+            if( null == ParentView.SessionViewId || !ParentView.SessionViewId.isSet() ) ParentView.SaveToCache( true );
             ParentViewId = ParentView.SessionViewId.ToString();
 
-            if( null == SearchableView.SessionViewId || !SearchableView.SessionViewId.isSet() ) SearchableView.SaveToCache( false );
+            if( null == SearchableView.SessionViewId || !SearchableView.SessionViewId.isSet() ) SearchableView.SaveToCache( true );
             SearchViewId = SearchableView.SessionViewId.ToString();
 
             SearchView = SearchableView;
@@ -401,7 +401,7 @@ namespace ChemSW.Nbt.WebServices
                     ParentView = _CswNbtResources.ViewSelect.restoreView( ParentVid );
                     if( null == ParentView.SessionViewId )
                     {
-                        ParentView.SaveToCache( false );
+                        ParentView.SaveToCache( true );
                     }
                 }
                 else if( CswNbtSessionDataId.isSessionDataIdString( ParentViewKey ))
@@ -428,7 +428,7 @@ namespace ChemSW.Nbt.WebServices
                 //Must depart the nest immediately
                 SearchView.ViewId = new CswNbtViewId( Int32.MinValue );
                 SearchView.clearSessionViewId();
-                SearchView.SaveToCache( false );
+                SearchView.SaveToCache( true );
             }
 
             if( null != SearchView )
