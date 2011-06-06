@@ -34,9 +34,8 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 			_View = View;
 			_ParentNodeKey = ParentNodeKey;
-		    bool IsProperty = ( null != _ParentNodeKey && _View.Visibility == NbtViewVisibility.Property );
             Collection<CswNbtViewRelationship> FirstLevelRelationships = new Collection<CswNbtViewRelationship>();
-            if( IsProperty )
+            if( null != _ParentNodeKey && _View.Visibility == NbtViewVisibility.Property )
 		    {
 		        foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships.SelectMany( NodeRelationship => NodeRelationship.ChildRelationships ) )
 		        {
@@ -55,8 +54,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 Collection<CswNbtMetaDataNodeType> FirstLevelNodeTypes = new Collection<CswNbtMetaDataNodeType>();
 
-                if( ( IsProperty || Relationship.FirstId == Int32.MinValue ) &&
-                    Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+                if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
                     Relationship.SecondId != Int32.MinValue )
                 {
                     CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
@@ -65,25 +63,10 @@ namespace ChemSW.Nbt.WebServices
                         FirstLevelNodeTypes.Add( NT );
                     }
                 }
-                else if( Relationship.FirstType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
-                         Relationship.FirstId != Int32.MinValue )
-                {
-                    CswNbtMetaDataObjectClass FirstOc = _CswNbtResources.MetaData.getObjectClass( Relationship.FirstId );
-                    foreach( CswNbtMetaDataNodeType NT in FirstOc.NodeTypes )
-                    {
-                        FirstLevelNodeTypes.Add( NT );
-                    }
-                }
-                else if( ( IsProperty || Relationship.FirstId == Int32.MinValue ) &&
-                         Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+                else if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
                          Relationship.SecondId != Int32.MinValue )
                 {
                     FirstLevelNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Relationship.SecondId ) );
-                }
-                else if( Relationship.FirstType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
-                         Relationship.FirstId != Int32.MinValue )
-                {
-                    FirstLevelNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Relationship.FirstId ) );
                 }
 
                 foreach( CswNbtMetaDataNodeType NodeType in FirstLevelNodeTypes )
