@@ -59,7 +59,7 @@
 
 			$GridDiv.CswNodeGrid('init', gridOpts);
             //Case 21741
-            if( o.EditMode !== 'PrintReport' )
+            if( o.EditMode !== EditMode.PrintReport.name )
             {
                 $MenuDiv.CswMenuMain({
 			            'viewid': viewid,
