@@ -44,8 +44,8 @@ namespace ChemSW.Nbt.Schema
         private Dictionary<TestNameStem, string> _TestNameStems = new Dictionary<TestNameStem, string>();
 
 
-        CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData(); 
- 
+        CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
+
 
         private string _ForeignKeyTableStem = "fk_Table_";
         private string _PrimeKeyTableStem = "pk_Table_";
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.Schema
 
 
 
-        public Dictionary<string, List<string>> makeArbitraryTestValues( Int32 TotalRows )
+        public Dictionary<string, List<string>> makeArbitraryTestValues( Int32 TotalRows, string ValueStem )
         {
 
             Dictionary<string, List<string>> ReturnVal = new Dictionary<string, List<string>>();
@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.Schema
                 ReturnVal.Add( CurrentFakeColumnName, CurrentValueList );
                 for( int idx = 0; idx < TotalRows; idx++ )
                 {
-                    CurrentValueList.Add( idx.ToString() + "_valsnot_" + CurrentFakeColumnName );
+                    CurrentValueList.Add( idx.ToString() + ValueStem + CurrentFakeColumnName );
 
                 }//iterate test values
 
@@ -190,6 +190,80 @@ namespace ChemSW.Nbt.Schema
             return ( ReturnVal );
 
         }//makeArbitraryTestValues() 
+
+
+
+        public bool doTableValuesMatchTestValues( DataTable DataTable, Dictionary<string, List<string>> Testvalues, ref string MisMatchReason )
+        {
+            bool ReturnVal = true;
+
+
+            Int32 TotalRowsToCompare = 0;
+            foreach( List<string> CurrentList in Testvalues.Values )
+            {
+                if( CurrentList.Count > TotalRowsToCompare )
+                {
+                    TotalRowsToCompare = CurrentList.Count;
+                }
+            }
+
+            if( TotalRowsToCompare <= DataTable.Rows.Count )
+            {
+
+                foreach( string CurrentColumnName in Testvalues.Keys )
+                {
+
+                    if( false == ReturnVal )//next best thing to having it all in the loop control :-( 
+                    {
+                        break;
+                    }
+
+                    if( DataTable.Columns.Contains( CurrentColumnName ) )
+                    {
+
+                        List<string> CurrentValues = Testvalues[CurrentColumnName];
+                        for( int idx = 0; idx < CurrentValues.Count; idx++ )
+                        {
+
+                            DataRow CurrentRow = DataTable.Rows[idx];
+
+                            if( ( false == CurrentRow.IsNull( CurrentColumnName ) && ( string.Empty != CurrentValues[idx] ) ) )
+                            {
+                                if( CurrentRow[CurrentColumnName].ToString() != CurrentValues[idx] )
+                                {
+                                    ReturnVal = false;
+                                    MisMatchReason = "The ToString()'ed (sic.) value of column " + CurrentColumnName + " at row index " + idx.ToString() + " is " + CurrentRow[CurrentColumnName].ToString() + " in the data table and " + CurrentValues[idx] + " in the test values";
+                                }
+                            }
+                            else if( CurrentRow.IsNull( CurrentColumnName ) && ( string.Empty != CurrentValues[idx] ) )
+                            {
+                                ReturnVal = false;
+                                MisMatchReason = "The value of column " + CurrentColumnName + " at row index " + idx.ToString() + " is null in one table but not in the other";
+                            }//else they are _both_ null which is means they match and ReturnVal is still true :-) 
+
+                        }//iterate curent column values
+
+                    }
+                    else
+                    {
+                        ReturnVal = false;
+                        MisMatchReason = "Table " + DataTable.TableName + " does not contain the compare column " + CurrentColumnName;
+                    }//if-else table contains the test column
+
+                }//iterate test value columns
+
+            }
+            else
+            {
+                ReturnVal = false;
+                MisMatchReason = "A column value list in the test values has " + DataTable.Rows.Count.ToString() + " but the comparison DataTable only has " + DataTable.Rows.Count.ToString() + " rows";
+            }//if-else number of rows match
+
+
+
+            return ( ReturnVal );
+
+        }//doTableValuesMatchTestValues()
 
 
         public bool doTableValuesMatch( DataTable DataTable_1, DataTable DataTable_2, IEnumerable CompareColumns, ref string MisMatchReason )
@@ -202,9 +276,15 @@ namespace ChemSW.Nbt.Schema
                 for( Int32 rowidx = 0; ( rowidx < DataTable_1.Rows.Count ) && ( true == ReturnVal ); rowidx++ )
                 {
                     DataRow CurrentRowInTable_1 = DataTable_1.Rows[rowidx];
-                    //for( Int32 columnidx = 0; ( columnidx < CompareColumns.Count ) && ( true == ReturnVal ); columnidx++ )
                     foreach( string DataTable_1_ColumnName in CompareColumns )
                     {
+
+                        if( false == ReturnVal )//next best thing to having it all in the loop control :-( 
+                        {
+                            break;
+                        }
+
+
                         //string DataTable_1_ColumnName = CompareColumns[columnidx];
                         if( DataTable_2.Columns.Contains( DataTable_1_ColumnName ) )
                         {
@@ -227,7 +307,9 @@ namespace ChemSW.Nbt.Schema
                             ReturnVal = false;
                             MisMatchReason = "DataTable_1 has column " + DataTable_1_ColumnName + " but DataTable_2 does not";
                         }
+
                     }//iterate columns in table 1
+
 
                 }//iterate rows in table 1 
 
@@ -249,12 +331,12 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "fillTableWtithArbitraryData_update", TableName );
             DataTable DataTable = CswTableUpdate.getTable();
 
-            Int32 TotalRows = 0;
+            Int32 MaxFillDataRows = 0;
             foreach( List<string> CurrentList in FillData.Values )
             {
-                if( CurrentList.Count > TotalRows )
+                if( CurrentList.Count > MaxFillDataRows )
                 {
-                    TotalRows = CurrentList.Count;
+                    MaxFillDataRows = CurrentList.Count;
                 }
             }
 
@@ -267,7 +349,8 @@ namespace ChemSW.Nbt.Schema
                 }
             }//iterate lists to get max row count
 
-            for( int idx = 0; idx < TotalRows; idx++ )
+            Int32 MaxRowsToAdd = MaxFillDataRows - DataTable.Rows.Count; //if we need to add the rows, we do so
+            for( int idx = (DataTable.Rows.Count - 1 ) ; idx < MaxRowsToAdd; idx++ )
             {
                 DataRow DataRow = DataTable.NewRow();
                 DataTable.Rows.Add( DataRow );

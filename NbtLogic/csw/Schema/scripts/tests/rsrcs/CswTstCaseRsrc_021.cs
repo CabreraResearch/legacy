@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
         }//ctor
 
 
-        public string Purpose = "Basic audit mechanism";
+        public string Purpose = "Basic audit mechanism for insert";
 
         public string ArbitraryTableName_01 { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
 
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema
             {
                 if( null == __ArbitraryTestValues )
                 {
-                    __ArbitraryTestValues = _CswTestCaseRsrc.makeArbitraryTestValues( 20 );
+                    __ArbitraryTestValues = _CswTestCaseRsrc.makeArbitraryTestValues( 20 , "_valsnot_");
                 }
 
                 return ( __ArbitraryTestValues );

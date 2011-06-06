@@ -289,7 +289,7 @@ namespace ChemSW.Nbt.Schema
 
         #region Metadata, table, and Nodes
         public CswStaticSelect makeCswStaticSelect( string UniqueName, string QueryName ) { return ( _CswNbtResources.makeCswStaticSelect( UniqueName, QueryName ) ); }
-        public CswArbitrarySelect makeCswArbitrarySelect( string UniqueName, string QueryName ) { return ( _CswNbtResources.makeCswArbitrarySelect( UniqueName, QueryName ) ); }
+        public CswArbitrarySelect makeCswArbitrarySelect( string UniqueName, string QueryText ) { return ( _CswNbtResources.makeCswArbitrarySelect( UniqueName, QueryText ) ); }
         public CswTableSelect makeCswTableSelect( string UniqueName, string TableName ) { return ( _CswNbtResources.makeCswTableSelect( UniqueName, TableName ) ); }
         public CswTableUpdate makeCswTableUpdate( string UniqueName, string TableName ) { return ( _CswNbtResources.makeCswTableUpdate( UniqueName, TableName ) ); }
         //public CswNbtMetaData MetaData { get { return ( _CswNbtResources.MetaData ); } }

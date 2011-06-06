@@ -138,9 +138,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         private void _makeResources( string AccessId )
         {
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ), false, false );
             _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
-            _CswConsoleOutput = new CswConsoleOutput( _CswNbtResources.CswLogger );
 
 
             if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
@@ -172,6 +170,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
             {
 
                 _convertArgsToDictionary( args );
+                _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ), false, false );
+                _CswConsoleOutput = new CswConsoleOutput( _CswNbtResources.CswLogger );
 
                 if( _UserArgs.ContainsKey( _ArgKey_StartAtTestCase ) )
                 {
