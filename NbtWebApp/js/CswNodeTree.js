@@ -234,6 +234,7 @@
 							}).bind('select_node.jstree', function(e, data) { return _firstSelectNode({
 									e: e, 
 									data: data, 
+									url: url,
 									$treediv: $treediv, 
 									IDPrefix: IDPrefix, 
 									onSelectNode: o.onSelectNode,
@@ -287,6 +288,7 @@
 		var m = {
 			e: '', 
 			data: '', 
+			url: '',
 			$treediv: '', 
 			IDPrefix: '', 
 			onSelectNode: function() {},
@@ -314,6 +316,7 @@
 		var m = {
 			e: '', 
 			data: '', 
+			url: '',
 			$treediv: '', 
 			IDPrefix: '', 
 			onSelectNode: function() {},
@@ -352,12 +355,13 @@
 				'IncludeNodeKey': optSelect.cswnbtnodekey,
 				'ShowEmpty': false,
 				'ForSearch': m.forsearch,
-				'NodePk': Selected.id
+				'NodePk': Selected.id,
+				'IncludeInQuickLaunch': false
 			};
 
 			// get next page of nodes
 			CswAjaxXml({
-				url: url,
+				url: m.url,
 				data: nextDataParam,
 				success: function ($xml) 
 					{
