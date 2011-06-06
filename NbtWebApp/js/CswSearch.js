@@ -316,6 +316,7 @@ var CswSearch_CssClasses = {
                                                     value: 'Advanced' })
                                                     .click(function() {
                                                             o.advancedIsHidden = modAdvanced({'$link': $advancedLink, advancedIsHidden: o.advancedIsHidden });
+                                                            return false;
                                                     });  
             if( !o.advancedIsHidden ) {
                 $advancedLink.hide();
