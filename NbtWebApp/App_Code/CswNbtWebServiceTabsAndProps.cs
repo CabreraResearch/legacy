@@ -314,8 +314,7 @@ namespace ChemSW.Nbt.WebServices
 
 			if( Node != null )
 			{
-                CswNbtNodeWriter Writer = new CswNbtNodeWriter( _CswNbtResources );
-                Writer.setDefaultPropertyValues( Node );
+                _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
                 foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
 				{
                     _applyPropXml( Node, PropNode );
