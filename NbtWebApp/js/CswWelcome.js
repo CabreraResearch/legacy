@@ -309,7 +309,7 @@
 		var a = {
 			'AddWelcomeItemUrl': '', 
 			'type': '',
-			'viewid': '',
+			'welcomepkval': '',
 			'nodetypeid': '',
 			'text': '',
 			'iconfilename': '',
@@ -323,8 +323,8 @@
         var dataJson = { 
             RoleId: '', 
             Type: a.type,
-            ViewId: a.viewid, 
-            NodeTypeId: a.nodetypeid , 
+            WelcomePkVal: a.welcomepkval, 
+            NodeTypeId: a.nodetypeid, 
             Text: a.text, 
             IconFileName: a.iconfilename
         };
