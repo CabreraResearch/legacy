@@ -170,7 +170,6 @@ my $masterpassword = $schemata{$masterschema};
 #---------------------------------------------------------------------------------
 # 6. run command line schema update tester
 
-&runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/TestUpdtCurrent.bat");
 
 #---------------------------------------------------------------------------------
 # 7. run command line schema updater

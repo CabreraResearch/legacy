@@ -43,7 +43,6 @@
             {
                 var dataurl = $(this).CswAttrXml('data-url');
                 var $thisPage = $('#' + dataurl);
-                //$.mobile.path.set(dataurl);
                 $thisPage.doChangePage();
             });
             
@@ -71,9 +70,11 @@
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
-            if(debug) log('doChangePage from: ' + $.mobile.activePage.CswAttrDom('id') + ' to: ' + $div.CswAttrDom('id'),true);
-            //$.moble.loadPage($div);
-            ret = $.mobile.changePage($div, o);
+            var $page = $.mobile.activePage;
+            var id = ( isNullOrEmpty($page) ) ? 'no ID' : $page.CswAttrDom('id');
+            if(debug) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
+
+            if( id !== $div.CswAttrDom('id') ) ret = $.mobile.changePage( $div.CswAttrXml('data-url'), o);
         }
         return ret;
 	}
@@ -85,6 +86,7 @@
         if( !isNullOrEmpty($div) )
         {
             if(debug) log('doPage on ' + $div.CswAttrDom('id'),true);
+            //ret = $.mobile.loadPage( $div.CswAttrXml('data-url'));
             ret = $div.page();
         }
         return ret;
@@ -180,39 +182,23 @@
         var $currentViewXml;
         var currentMobilePath = '';
 
-
-		// case 20355 - error on browser refresh
-        // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
-        var tempdivid = 'initialloadingdiv';
-        if (window.location.hash.length > 0)
-        {
-            var potentialtempdivid = window.location.hash.substr(1);
-            if ($('#' + potentialtempdivid).length === 0 && potentialtempdivid !== 'viewsdiv' && potentialtempdivid !== 'logindiv')
-            {
-                tempdivid = potentialtempdivid;
-            }
-        }
-
-        // Make loading div first
-        _addPageDivToBody({
-            DivId: tempdivid,
-            HeaderText: 'Please wait',
-            content: 'Loading...',
-            HideSearchButton: true,
-            HideOnlineButton: true,
-            HideRefreshButton: true,
-            HideLogoutButton: true,
-            HideHelpButton: true,
-            HideCloseButton: true,
-            HideBackButton: true
-        });
-
         var $logindiv = _loadLoginDiv();
         
         var $viewsdiv = _loadViewsDiv();
         var $syncstatus = _makeSynchStatusDiv();
         var $helpdiv = _makeHelpDiv();
         var $sorrycharliediv = _loadSorryCharlieDiv(false);
+
+		// case 20355 - error on browser refresh
+        // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
+        if (window.location.hash.length > 0)
+        {
+            var potentialtempdivid = window.location.hash.substr(1);
+            if ($('#' + potentialtempdivid).length === 0 && potentialtempdivid !== 'viewsdiv' && potentialtempdivid !== 'logindiv')
+            {
+                $.mobile.path.set('viewsdiv');
+            }
+        }
 
         //$logindiv.doChangePage();
 
@@ -586,6 +572,7 @@
             {
                 p.$xmlitem = $(this);
                 var $li = _makeListItemFromXml($list, p)
+                            .CswAttrXml('data-icon', false)                            
                             .appendTo($list);
             });
             $list.listview('refresh')
@@ -646,8 +633,7 @@
                                      'data-role': 'button',
                                      'data-icon': 'arrow-d',
                                      'data-inline': true,
-                                     'data-transition': 'slideup',
-                                     'data-direction': 'reverse'
+                                     'data-transition': 'slidedown'
                         })
                         .bind('click', function() { 
                             var $next = $('#' + nextid);
@@ -657,7 +643,7 @@
             }
             
             var $retLI = $('');
-            
+
             switch (PageType)
             {
                 case "search":
@@ -675,6 +661,7 @@
                         var tab = p.$xmlitem.CswAttrXml('tab');
                         var fieldtype = tryParseString(p.$xmlitem.CswAttrXml('fieldtype'),'');
                         var gestalt = p.$xmlitem.CswAttrXml('gestalt');
+                        var ReadOnly = ( isTrue(p.$xmlitem.CswAttrXml('isreadonly')) );
                         if (gestalt === 'NaN') gestalt = '';
                         
                         var currentNo =  p.$xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
@@ -690,9 +677,15 @@
                                         .appendTo($list);
                             currenttab = tab;
                         }
-
-                        var $link = $('<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>')
+                        
+                        var $lItem = $('<li id="' + id + '_li"></li>')
+                                        .CswAttrXml('data-icon', false)
                                         .appendTo($list);
+                        var $link = $('<a href="javascript:void(0);">' + text + '</a>')
+                                        .appendTo($lItem);
+                        if( !ReadOnly ) {
+                            $link.CswAttrXml({'data-identity': + id, 'data-url': + id });
+                        }
 
                         switch (fieldtype.toLowerCase())
                         {
@@ -702,7 +695,7 @@
 
                                 var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"></div>')
                                                 .appendTo($list);
-                                var $logical = _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required)
+                                var $logical = _makeLogicalFieldSet(p.DivId, id, 'ans', 'ans2', sf_checked, sf_required)
                                                 .appendTo($div);
                                 break;
 
@@ -731,14 +724,15 @@
                                 break;
 
                             default:
-                                var $gestalt = $('<p class="ui-li-aside">' + gestalt + '</p>')
+                                var $gestalt = $('<div><p>' + gestalt + '</p></div>')
                                                     .appendTo($link);
                                 break;
                         }
 
                         if( fieldtype.toLowerCase() === "question")
                         {
-                            var $count = $('<p>' + currentNo + '&nbsp;of&nbsp;' + totalCnt +'</p>');
+                            var $count = $('<span>' + currentNo + '&nbsp;of&nbsp;' + totalCnt +'</span>')
+                                         .addClass('ui-btn-right');
                             $toolbar.append($count);
                         }
 
@@ -775,6 +769,7 @@
                                                 HeaderText: text
                                                 //,$toolbar: $toolbar
                             });
+                            $newDiv.doPage( $newDiv.CswAttrXml('data-url') );
                         }
                         break;
                     } // default:
@@ -864,7 +859,7 @@
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
-            var ReadOnly = ( isTrue($xmlitem.CswAttrXml('readonly')) );
+            var ReadOnly = ( isTrue($xmlitem.CswAttrXml('isreadonly')) );
 
             // Subfield values
             var sf_text = tryParseString( $xmlitem.children('text'), '');
@@ -933,7 +928,7 @@
                         break;
 
                     case "Logical":
-                        var $logical = _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required)
+                        var $logical = _makeLogicalFieldSet(ParentId, IdStr, 'ans2', 'ans', sf_checked, sf_required)
                                             .appendTo($propContDiv);
                         break;
 
@@ -1091,7 +1086,7 @@
             }
         } // _FieldTypeHtmlToXml()
 
-        function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
+        function _makeLogicalFieldSet(ParentId, IdStr, Suffix, OtherSuffix, Checked, Required)
         {
             var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
             var $fieldset = $('<fieldset></fieldset>')
@@ -1125,7 +1120,7 @@
                                 .CswAttrXml('data-role','button');
                 var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
                                 .appendTo($fieldset);
-				
+
                 // Checked is a Tristate, so isTrue() is not useful here
 				if ((Checked === 'false' && answers[i] === 'False') ||
 					(Checked === 'true' && answers[i] === 'True') ||
@@ -1134,7 +1129,7 @@
                     $input.CswAttrDom('checked','checked');
                 }
                 $input.data('thisI',i);
-                $input.click( function ()
+                $input.bind('click', function (eventObj)
                 {
                     var i = $(this).data('thisI');
                     for (var k = 0; k < answers.length; k++)
@@ -1156,6 +1151,7 @@
                             $input2.removeAttr('checked');
                         }
                     } // for (var k = 0; k < answers.length; k++)
+                    onPropertyChange(ParentId,eventObj);
                 });
             } // for (var i = 0; i < answers.length; i++)
             $retHtml.find('input[type="radio"]').checkboxradio();
@@ -1504,74 +1500,10 @@
             //if(p.level === 0)  
             //$pageDiv.loadPage();
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
-
+            //$pageDiv.doPage();
             return $pageDiv;
 
         } // _addPageDivToBody()
-        
-//        function _addDialogDivToBody(params)
-//        {
-//            var p = {
-//                DivId: '',       // required
-//                HeaderText: '',
-//                $toolbar: '',
-//                $content: '',
-//                HideHelpButton: false,
-//                HideCloseButton: true
-//            };
-
-//            if (params)
-//            {
-//                $.extend(p, params);
-//            }
-
-//            p.DivId = makeSafeId({ID: p.DivId});
-
-//            var $pageDiv = $('#' + p.DivId);
-
-//            if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
-//            {
-//                $pageDiv = $body.CswDiv('init',{ID: p.DivId})
-//                                .CswAttrXml({'data-role':'page', 'data-url': p.DivId, 'data-title': p.HeaderText, 'data-rel': 'dialog'}); 
-//            
-//		        var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
-//                                        .CswAttrXml({'data-role': 'header','data-theme': opts.Theme, 'data-position':'inline'});
-//                $header.append($('<h1>' + p.HeaderText + '</h1>'));
-//                $header.CswDiv('init',{cssclass: 'toolbar'});
-
-//                
-
-//                $header.append(p.$toolbar)
-//                       .CswAttrXml({'data-role':'controlgroup','data-type':'horizontal'});
-//                
-//                var $content = $pageDiv.CswDiv('init',{ID: p.DivId + '_content'})
-//                                        .CswAttrXml({'data-role':'content','data-theme': opts.Theme})
-//                                        .append(p.$content);
-//                var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer'})
-//                                        .CswAttrXml({'data-role':'footer', 'data-theme': opts.Theme, 'data-position':'fixed'});
-//            
-//                $footer.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'});
-
-//                
-//                var $helpBtn = $footer.CswLink('init',{'href': 'javascript:void(0)', ID: p.DivId + '_help', value: 'Help'})
-//                                      .CswAttrXml({'data-identity': p.DivId, 'data-url': p.DivId });
-//                $pageDiv.doPage();
-//            }
-
-//            if (!p.HideHelpButton) {
-//                $help.hide();
-//            }
-//            else {
-//                $help.show();
-//            }
-//            if (!p.HideCloseButton) {
-
-//            }
-//            _bindDialogEvents(p.DivId, p.ParentId, p.level, $pageDiv);
-
-//            return $pageDiv;
-
-//        } // _addPageDivToBody()
 
         function _getDivHeaderText(DivId)
         {
@@ -1601,9 +1533,9 @@
                 .find('#' + DivId + '_logout')
                 .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onLogout(DivId, e); })
                 .end()
-                .find('#' + DivId + '_back')
-                .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
-                .end()
+//                .find('#' + DivId + '_back')
+//                .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
+//                .end()
                 .find('#' + DivId + '_help')
                 .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
                 .end()
@@ -1617,22 +1549,7 @@
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end();
         }
-        
-//        function _bindDialogEvents(DivId, ParentId, level, $div)
-//        {
-//            $div.find('#' + DivId + '_help')
-//                .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
-//                .end()
-//                .find('input')
-//                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-//                .end()
-//                .find('textarea')
-//                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-//                .end()
-//                .find('select')
-//                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-//                .end();
-//        }
+
         // ------------------------------------------------------------------------------------
         // Synch Status Div
         // ------------------------------------------------------------------------------------
@@ -1881,15 +1798,15 @@
             }
         }
 
-        function onBack(DivId, DestinationId, eventObj)
-        {
-            if (DivId !== 'synchstatus' && DivId.indexOf('prop_') !== 0)
-            {
-                // case 20367 - remove all matching DivId.  Doing it immediately causes bugs.
-                //setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
-            }
-            return true;
-        }
+//        function onBack(DivId, DestinationId, eventObj)
+//        {
+//            if (DivId !== 'synchstatus' && DivId.indexOf('prop_') !== 0)
+//            {
+//                // case 20367 - remove all matching DivId.  Doing it immediately causes bugs.
+//                //setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
+//            }
+//            return true;
+//        }
 
 
         function onSynchStatusOpen(DivId, eventObj)
@@ -1978,7 +1895,7 @@
 
                     var $searchDiv = _addPageDivToBody({
                         ParentId: DivId,
-                        DivId: DivId + '_searchdiv',
+                        DivId: 'CswMobile_SearchDiv',
                         HeaderText: 'Search',
                         $content: $wrapper,
                         HideSearchButton: true,
@@ -1986,10 +1903,8 @@
                         HideRefreshButton: true,
                         HideLogoutButton: false,
                         HideHelpButton: false,
-                        HideCloseButton: false,
-                        HideBackButton: true,
-                        dataRel: 'dialog',
-                        backicon: 'arrow-u'
+                        HideCloseButton: true,
+                        HideBackButton: false,
                     });
                     $searchDiv.doChangePage("slideup", {changeHash: false});
                 }
