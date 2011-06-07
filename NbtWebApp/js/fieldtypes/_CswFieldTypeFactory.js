@@ -12,7 +12,7 @@ $.CswFieldTypeFactory = function (method)
         'ID': '',
         'Required': '',
         'ReadOnly': '',
-        'EditMode': 'Edit',
+        'EditMode': EditMode.Edit.name,
         'onEditView': function (viewid) { }
     };
 
@@ -25,7 +25,7 @@ $.CswFieldTypeFactory = function (method)
             }
             m.ID = m.$propxml.CswAttrXml('id');
             m.Required = (m.$propxml.CswAttrXml('required') === "true") || m.Required;
-            m.ReadOnly = (m.$propxml.CswAttrXml('readonly') === "true") || m.ReadOnly || m.EditMode === 'PrintReport';
+            m.ReadOnly = (m.$propxml.CswAttrXml('readonly') === "true") || m.ReadOnly || m.EditMode === EditMode.PrintReport.name;
 
             switch (m.fieldtype)
             {

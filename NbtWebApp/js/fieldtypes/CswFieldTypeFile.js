@@ -23,7 +23,7 @@
 
                 $cell11.append('<a href="'+ Href +'" target="_blank">'+ FileName +'</a>');
 
-                if(!o.ReadOnly)
+                if(!o.ReadOnly && o.EditMode != EditMode.AddInPopup.name)
                 {
                     var $editButton = $('<div/>')
                         .appendTo($cell12)
