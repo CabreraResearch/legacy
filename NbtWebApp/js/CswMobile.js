@@ -649,8 +649,7 @@
                                      'data-role': 'button',
                                      'data-icon': 'arrow-d',
                                      'data-inline': true,
-                                     'data-transition': 'slideup',
-                                     'data-direction': 'reverse'
+                                     'data-transition': 'slidedown'
                         })
                         .bind('click', function() { 
                             var $next = $('#' + nextid);
@@ -741,7 +740,7 @@
 
                         if( fieldtype.toLowerCase() === "question")
                         {
-                            var $count = $('<p>' + currentNo + '&nbsp;of&nbsp;' + totalCnt +'</p>');
+                            var $count = $('<span>' + currentNo + '&nbsp;of&nbsp;' + totalCnt +'</span>');
                             $toolbar.append($count);
                         }
 
