@@ -141,9 +141,9 @@ namespace ChemSW.Nbt
 
 
         private TreeMode _TreeMode = TreeMode.DomProxy;
-        private ICswNbtTree _makeTree(CswNbtView View) //CswNbtTreeKey CswNbtTreeKey )
+		private ICswNbtTree _makeTree( CswNbtView View, bool IsFullyPopulated ) //CswNbtTreeKey CswNbtTreeKey )
         {
-			return ( _CswNbtTreeFactory.makeTree( _TreeMode, View ) ); //, CswNbtTreeKey ) );
+			return ( _CswNbtTreeFactory.makeTree( _TreeMode, View, IsFullyPopulated ) ); //, CswNbtTreeKey ) );
 
         }//_makeTree()
 
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt
 											bool IncludeSystemNodes,
 											bool RequireViewPermissions )
         {
-            ICswNbtTree ReturnVal = _makeTree(View); // CswNbtTreeKey );
+			ICswNbtTree ReturnVal = _makeTree( View, ( FetchAllPrior && !SingleLevelOnly ) ); // CswNbtTreeKey );
             CswNbtTreeLoaderFactory CswNbtTreeLoaderFactory = new CswNbtTreeLoaderFactory( _CswNbtResources );
 
             CswNbtTreeLoader CswNbtTreeLoader = null;
