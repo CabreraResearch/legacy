@@ -71,9 +71,11 @@
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
-            if(debug) log('doChangePage from: ' + $.mobile.activePage.CswAttrDom('id') + ' to: ' + $div.CswAttrDom('id'),true);
-            //$.moble.loadPage($div);
-            ret = $.mobile.changePage($div, o);
+            var $page = $.mobile.activePage;
+            var id = ( isNullOrEmpty($page) ) ? 'no ID' : $page.CswAttrDom('id');
+            if(debug) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
+
+            if( id !== $div.CswAttrDom('id') ) ret = $.mobile.changePage( $div.CswAttrXml('data-url'), o);
         }
         return ret;
 	}
@@ -85,6 +87,7 @@
         if( !isNullOrEmpty($div) )
         {
             if(debug) log('doPage on ' + $div.CswAttrDom('id'),true);
+            //ret = $.mobile.loadPage( $div.CswAttrXml('data-url'));
             ret = $div.page();
         }
         return ret;
@@ -180,39 +183,23 @@
         var $currentViewXml;
         var currentMobilePath = '';
 
-
-		// case 20355 - error on browser refresh
-        // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
-        var tempdivid = 'initialloadingdiv';
-        if (window.location.hash.length > 0)
-        {
-            var potentialtempdivid = window.location.hash.substr(1);
-            if ($('#' + potentialtempdivid).length === 0 && potentialtempdivid !== 'viewsdiv' && potentialtempdivid !== 'logindiv')
-            {
-                tempdivid = potentialtempdivid;
-            }
-        }
-
-        // Make loading div first
-        _addPageDivToBody({
-            DivId: tempdivid,
-            HeaderText: 'Please wait',
-            content: 'Loading...',
-            HideSearchButton: true,
-            HideOnlineButton: true,
-            HideRefreshButton: true,
-            HideLogoutButton: true,
-            HideHelpButton: true,
-            HideCloseButton: true,
-            HideBackButton: true
-        });
-
         var $logindiv = _loadLoginDiv();
         
         var $viewsdiv = _loadViewsDiv();
         var $syncstatus = _makeSynchStatusDiv();
         var $helpdiv = _makeHelpDiv();
         var $sorrycharliediv = _loadSorryCharlieDiv(false);
+
+		// case 20355 - error on browser refresh
+        // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
+        if (window.location.hash.length > 0)
+        {
+            var potentialtempdivid = window.location.hash.substr(1);
+            if ($('#' + potentialtempdivid).length === 0 && potentialtempdivid !== 'viewsdiv' && potentialtempdivid !== 'logindiv')
+            {
+                $.mobile.path.set('viewsdiv');
+            }
+        }
 
         //$logindiv.doChangePage();
 
@@ -778,6 +765,7 @@
                                                 HeaderText: text
                                                 //,$toolbar: $toolbar
                             });
+                            $newDiv.doPage( $newDiv.CswAttrXml('data-url') );
                         }
                         break;
                     } // default:
@@ -1508,7 +1496,7 @@
             //if(p.level === 0)  
             //$pageDiv.loadPage();
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
-
+            //$pageDiv.doPage();
             return $pageDiv;
 
         } // _addPageDivToBody()
@@ -1541,9 +1529,9 @@
                 .find('#' + DivId + '_logout')
                 .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onLogout(DivId, e); })
                 .end()
-                .find('#' + DivId + '_back')
-                .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
-                .end()
+//                .find('#' + DivId + '_back')
+//                .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
+//                .end()
                 .find('#' + DivId + '_help')
                 .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
                 .end()
@@ -1557,22 +1545,7 @@
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end();
         }
-        
-//        function _bindDialogEvents(DivId, ParentId, level, $div)
-//        {
-//            $div.find('#' + DivId + '_help')
-//                .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
-//                .end()
-//                .find('input')
-//                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-//                .end()
-//                .find('textarea')
-//                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-//                .end()
-//                .find('select')
-//                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
-//                .end();
-//        }
+
         // ------------------------------------------------------------------------------------
         // Synch Status Div
         // ------------------------------------------------------------------------------------
@@ -1821,15 +1794,15 @@
             }
         }
 
-        function onBack(DivId, DestinationId, eventObj)
-        {
-            if (DivId !== 'synchstatus' && DivId.indexOf('prop_') !== 0)
-            {
-                // case 20367 - remove all matching DivId.  Doing it immediately causes bugs.
-                //setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
-            }
-            return true;
-        }
+//        function onBack(DivId, DestinationId, eventObj)
+//        {
+//            if (DivId !== 'synchstatus' && DivId.indexOf('prop_') !== 0)
+//            {
+//                // case 20367 - remove all matching DivId.  Doing it immediately causes bugs.
+//                //setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
+//            }
+//            return true;
+//        }
 
 
         function onSynchStatusOpen(DivId, eventObj)
@@ -1918,7 +1891,7 @@
 
                     var $searchDiv = _addPageDivToBody({
                         ParentId: DivId,
-                        DivId: DivId + '_searchdiv',
+                        DivId: 'CswMobile_SearchDiv',
                         HeaderText: 'Search',
                         $content: $wrapper,
                         HideSearchButton: true,
@@ -1926,10 +1899,8 @@
                         HideRefreshButton: true,
                         HideLogoutButton: false,
                         HideHelpButton: false,
-                        HideCloseButton: false,
-                        HideBackButton: true,
-                        dataRel: 'dialog',
-                        backicon: 'arrow-u'
+                        HideCloseButton: true,
+                        HideBackButton: false,
                     });
                     $searchDiv.doChangePage("slideup", {changeHash: false});
                 }
