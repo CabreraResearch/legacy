@@ -1,6 +1,6 @@
-set /p ThisVersionNo=
+@REM set /p ThisVersionNo=
 
-DeployNbt.pl %ThisVersionNo% > C:\nbtlog\dailylog.txt 2>&1
+DeployNbt.pl 1 > C:\nbtlog\dailylog.txt 2>&1
 
 echo "Deploy Finished"
 
