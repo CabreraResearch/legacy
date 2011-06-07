@@ -560,10 +560,7 @@
                 HideCloseButton: true,
                 HideBackButton: false
             };
-            if (params)
-            {
-                $.extend(p, params);
-            }
+            if (params) $.extend(p, params);
             
             var $retDiv = _addPageDivToBody({
                 ParentId: p.ParentId,
@@ -592,7 +589,7 @@
                             .appendTo($list);
             });
             $list.listview('refresh')
-                 .bindLI()
+                 .bindLI();
                  //.find('input[type="radio"]').checkboxradio('refresh',true);
             onAfterAddDiv($retDiv);
             
@@ -1161,13 +1158,13 @@
                     } // for (var k = 0; k < answers.length; k++)
                 });
             } // for (var i = 0; i < answers.length; i++)
-            $retHtml.checkboxradio();
+            $retHtml.find('input[type="radio"]').checkboxradio();
             return $retHtml;
-        }
+        } // _makeLogicalFieldSet()
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Suffix, OtherSuffix, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers)
         {
-            var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
+            var $retHtml = $('<div class="csw_fieldset ui-field-contain ui-body ui-br" data-role="fieldcontain"></div>');
             var $fieldset = $('<fieldset></fieldset>')
                                 .appendTo($retHtml)
                                 .CswAttrDom({
@@ -1175,8 +1172,9 @@
                                     'id': IdStr + '_fieldset'})
                                 .CswAttrXml({
                                     'data-role': 'controlgroup',
-                                    'data-type': 'horizontal'  
-                                 });
+                                    'data-type': 'horizontal'
+								})
+								.addClass('csw_fieldset toolbar ui-corner-all ui-controlgroup ui-controlgroup-horizontal');
             var answers = Options.split(',');
             var answerName = makeSafeId({ prefix: IdStr, ID: Suffix }); //Name needs to be non-unqiue and shared
 
@@ -1209,8 +1207,6 @@
 						{
                             $answer1.CswAttrDom('checked', 'checked');
                             $answer2.CswAttrDom('checked', 'checked');
-                            //$suffixAnswer.checkboxradio('refresh');
-                            //$oSuffixAnswer.checkboxradio('refresh');
 						} 
                         else
 						{
@@ -1263,7 +1259,7 @@
                     onPropertyChange(ParentId,eventObj);
 				}); //click()
             } // for (var i = 0; i < answers.length; i++)
-            $retHtml.checkboxradio();
+            $retHtml.find('input[type="radio"]').checkboxradio();
             return $retHtml;
         } // _makeQuestionAnswerFieldSet()
 
@@ -2039,7 +2035,7 @@
                     $content.listview('refresh');
                 }
             });
-        }
+        } // onSearchSubmit()
 
         // ------------------------------------------------------------------------------------
         // Client-side Database Interaction
