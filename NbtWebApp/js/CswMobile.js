@@ -691,7 +691,7 @@
 
                                 var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"></div>')
                                                 .appendTo($list);
-                                var $logical = _makeLogicalFieldSet(id, 'ans', 'ans2', sf_checked, sf_required)
+                                var $logical = _makeLogicalFieldSet(p.DivId, id, 'ans', 'ans2', sf_checked, sf_required)
                                                 .appendTo($div);
                                 break;
 
@@ -924,7 +924,7 @@
                         break;
 
                     case "Logical":
-                        var $logical = _makeLogicalFieldSet(IdStr, 'ans2', 'ans', sf_checked, sf_required)
+                        var $logical = _makeLogicalFieldSet(ParentId, IdStr, 'ans2', 'ans', sf_checked, sf_required)
                                             .appendTo($propContDiv);
                         break;
 
@@ -1082,7 +1082,7 @@
             }
         } // _FieldTypeHtmlToXml()
 
-        function _makeLogicalFieldSet(IdStr, Suffix, OtherSuffix, Checked, Required)
+        function _makeLogicalFieldSet(ParentId, IdStr, Suffix, OtherSuffix, Checked, Required)
         {
             var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
             var $fieldset = $('<fieldset></fieldset>')
@@ -1116,7 +1116,7 @@
                                 .CswAttrXml('data-role','button');
                 var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
                                 .appendTo($fieldset);
-				
+
                 // Checked is a Tristate, so isTrue() is not useful here
 				if ((Checked === 'false' && answers[i] === 'False') ||
 					(Checked === 'true' && answers[i] === 'True') ||
@@ -1125,7 +1125,7 @@
                     $input.CswAttrDom('checked','checked');
                 }
                 $input.data('thisI',i);
-                $input.click( function ()
+                $input.bind('click', function (eventObj)
                 {
                     var i = $(this).data('thisI');
                     for (var k = 0; k < answers.length; k++)
@@ -1147,6 +1147,7 @@
                             $input2.removeAttr('checked');
                         }
                     } // for (var k = 0; k < answers.length; k++)
+                    onPropertyChange(ParentId,eventObj);
                 });
             } // for (var i = 0; i < answers.length; i++)
             $retHtml.checkboxradio();
