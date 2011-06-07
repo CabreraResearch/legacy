@@ -63,11 +63,12 @@ namespace ChemSW.Nbt
         {
             get
             {
-                bool ReturnVal = ( ( ViewId.isSet() || SessionViewId.isSet() ) &&
-                                    ( Visibility != NbtViewVisibility.Property ) );
+				bool ReturnVal = ( ( ( ViewId != null && ViewId.isSet() ) ||
+								     ( SessionViewId  != null && SessionViewId.isSet() ) ) &&
+								   ( Visibility != NbtViewVisibility.Property ) );
                 return ReturnVal;
             }
-        }
+        } // IsQuickLaunch
 
         /// <summary>
         /// Visibility permission setting
