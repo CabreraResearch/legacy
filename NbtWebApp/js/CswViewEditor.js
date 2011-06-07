@@ -667,9 +667,11 @@ var CswViewEditor_WizardSteps = {
 						'enabledText': 'Add',
 						'disabledText': 'Adding',
 						'onclick': function () { 
-							var Json = $tbl.CswViewPropFilter('getFilterJson', { 
+							
+                            var Json = $tbl.CswViewPropFilter('getFilterJson', { 
 											ID: o.ID,
 											$parent: $span,
+                                            fieldtype: $currentviewxml.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]').CswAttrXml('fieldtype'),
 											proparbitraryid: $span.CswAttrDom('proparbid')
 										});
 

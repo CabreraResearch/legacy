@@ -327,8 +327,8 @@ var ViewBuilder_CssClasses = {
             //var $filterXml;
 
             var dataXml = {
-                ViewXml: o.viewxml,
-                PropFiltJson: o.filtJson
+                PropFiltJson: JSON.stringify( o.filtJson ),
+                ViewXml: o.viewxml
             };
 
             CswAjaxXml({ 

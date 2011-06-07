@@ -314,19 +314,11 @@ namespace ChemSW.Nbt.WebServices
 
 			if( Node != null )
 			{
-				Collection<CswNbtMetaDataNodeTypeProp> NodeTypePropsInXml = new Collection<CswNbtMetaDataNodeTypeProp>();
+                _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
                 foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
 				{
-                    _applyPropXml( Node, PropNode, ref NodeTypePropsInXml );
+                    _applyPropXml( Node, PropNode );
 				}
-
-			    foreach( CswNbtNodePropWrapper Wrapper in Node.Properties )
-			    {
-                    if( !NodeTypePropsInXml.Contains( Wrapper.NodeTypeProp ) && Wrapper.NodeTypeProp.HasDefaultValue() )
-                    {
-                        Wrapper.copy( Wrapper.DefaultValue );
-                    }
-			    }
 
 				// BZ 8517 - this sets sequences that have setvalonadd = 0
 				_CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( Node );
@@ -397,26 +389,6 @@ namespace ChemSW.Nbt.WebServices
 			} // if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
 			return true;
 		} // copyPropValues()
-
-		private void _applyPropXml( CswNbtNode Node, XmlNode PropNode, ref Collection<CswNbtMetaDataNodeTypeProp> NodeTypePropsInXml )
-		{
-			CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropNode.Attributes["id"].Value );
-
-			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
-			Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
-            NodeTypePropsInXml.Add( MetaDataProp );
-			
-            // Recurse on sub-props
-			XmlNode SubPropsNode = CswXmlDocument.ChildXmlNode( PropNode, "subprops" );
-			if( SubPropsNode != null )
-			{
-				foreach( XmlNode ChildPropNode in SubPropsNode.ChildNodes )
-				{
-					_applyPropXml( Node, ChildPropNode, ref NodeTypePropsInXml );
-				}
-			}
-
-		} // _applyPropXml
 
         private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
         {

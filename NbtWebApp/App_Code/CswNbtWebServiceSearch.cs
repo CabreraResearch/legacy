@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 if( string.IsNullOrEmpty( ViewName ) ) ViewName = "No Results for Search";
                 SearchView.ViewName = ViewName;
-                SearchView.SaveToCache( false );
+                SearchView.SaveToCache( true );
                 string SearchViewId = SearchView.SessionViewId.ToString();
                 GenericSearch = new CswNbtViewSearchPair(_CswNbtResources, ParentViewId, SearchViewId );
             }
@@ -380,10 +380,10 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtViewSearchPair( CswNbtView ParentView, CswNbtView SearchableView )
         {
             ViewMode = ParentView.ViewMode;
-            if( null == ParentView.SessionViewId || !ParentView.SessionViewId.isSet() ) ParentView.SaveToCache( false );
+            if( null == ParentView.SessionViewId || !ParentView.SessionViewId.isSet() ) ParentView.SaveToCache( true );
             ParentViewId = ParentView.SessionViewId.ToString();
 
-            if( null == SearchableView.SessionViewId || !SearchableView.SessionViewId.isSet() ) SearchableView.SaveToCache( false );
+            if( null == SearchableView.SessionViewId || !SearchableView.SessionViewId.isSet() ) SearchableView.SaveToCache( true );
             SearchViewId = SearchableView.SessionViewId.ToString();
 
             SearchView = SearchableView;
@@ -395,32 +395,24 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView ParentView = null;
             if( !string.IsNullOrEmpty( ParentViewKey ) ) // we need this for client-side clear()
             {
-                CswDelimitedString ParentId = new CswDelimitedString( '_' );
-                ParentId.FromString( ParentViewKey );
-
-                switch( ParentId[0].ToLower() )
+                if( CswNbtViewId.isViewIdString( ParentViewKey ))
                 {
-                    case "viewid":
-                        {
-                            CswNbtViewId ParentVid = new CswNbtViewId( ParentViewKey );
-                            ParentView = _CswNbtResources.ViewSelect.restoreView( ParentVid );
-                            if( null == ParentView.SessionViewId )
-                            {
-                                ParentView.SaveToCache( false );
-                            }
-                            break;
-                        }
-                    case "sessiondataid":
-                        {
-                            CswNbtSessionDataId ParentSessionId = new CswNbtSessionDataId( ParentViewKey );
-                            ParentView = _CswNbtResources.ViewSelect.getSessionView( ParentSessionId );
-                            break;
-                        }
+                    CswNbtViewId ParentVid = new CswNbtViewId( ParentViewKey );
+                    ParentView = _CswNbtResources.ViewSelect.restoreView( ParentVid );
+                    if( null == ParentView.SessionViewId )
+                    {
+                        ParentView.SaveToCache( true );
+                    }
                 }
-
-                if( null != ParentView ) ParentViewId = ParentView.SessionViewId.ToString();
-                ViewMode = ParentView.ViewMode;
+                else if( CswNbtSessionDataId.isSessionDataIdString( ParentViewKey ))
+                {
+                    CswNbtSessionDataId ParentSessionId = new CswNbtSessionDataId( ParentViewKey );
+                    ParentView = _CswNbtResources.ViewSelect.getSessionView( ParentSessionId );
+                }
             }
+
+            if( null != ParentView ) ParentViewId = ParentView.SessionViewId.ToString();
+            ViewMode = ParentView.ViewMode;
 
             CswNbtView SearchView = null;
             if( !string.IsNullOrEmpty( SearchViewKey ) )
@@ -436,7 +428,7 @@ namespace ChemSW.Nbt.WebServices
                 //Must depart the nest immediately
                 SearchView.ViewId = new CswNbtViewId( Int32.MinValue );
                 SearchView.clearSessionViewId();
-                SearchView.SaveToCache( false );
+                SearchView.SaveToCache( true );
             }
 
             if( null != SearchView )
