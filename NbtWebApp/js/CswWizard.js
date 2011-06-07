@@ -92,11 +92,11 @@
 															});
 				var $finishbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_finish',
 															'enabledText': o.FinishText,
-															'onclick': o.onFinish
+															'onclick': function() { o.onFinish($table); }
 															});
 				var $cancelbtn = $bcell12.CswButton('init', { 'ID': o.ID + '_cancel',
 															'enabledText': 'Cancel',
-															'onclick': o.onCancel
+															'onclick': function() { o.onCancel($table); }
 															});
 
 				_selectStep($table, o.SelectedStep);

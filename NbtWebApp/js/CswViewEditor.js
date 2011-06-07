@@ -385,7 +385,7 @@ var CswViewEditor_WizardSteps = {
 		}
 
 
-		function _handleFinish($_wizard)
+		function _handleFinish($wizard)
 		{
 			var viewid = _getSelectedViewId($viewgrid);
             var processView = true; 
