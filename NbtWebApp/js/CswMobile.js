@@ -43,7 +43,6 @@
             {
                 var dataurl = $(this).CswAttrXml('data-url');
                 var $thisPage = $('#' + dataurl);
-                //$.mobile.path.set(dataurl);
                 $thisPage.doChangePage();
             });
             
@@ -576,10 +575,11 @@
             {
                 p.$xmlitem = $(this);
                 var $li = _makeListItemFromXml($list, p)
+                            .CswAttrXml('data-icon', false)                            
                             .appendTo($list);
             });
             $list.listview('refresh')
-                 .bindLI()
+                 .bindLI();
                  //.find('input[type="radio"]').checkboxradio('refresh',true);
             onAfterAddDiv($retDiv);
             
@@ -646,7 +646,7 @@
             }
             
             var $retLI = $('');
-            
+
             switch (PageType)
             {
                 case "search":
@@ -664,6 +664,7 @@
                         var tab = p.$xmlitem.CswAttrXml('tab');
                         var fieldtype = tryParseString(p.$xmlitem.CswAttrXml('fieldtype'),'');
                         var gestalt = p.$xmlitem.CswAttrXml('gestalt');
+                        var ReadOnly = ( isTrue(p.$xmlitem.CswAttrXml('isreadonly')) );
                         if (gestalt === 'NaN') gestalt = '';
                         
                         var currentNo =  p.$xmlitem.prevAll('[fieldtype="'+fieldtype+'"]').andSelf().length;
@@ -679,9 +680,15 @@
                                         .appendTo($list);
                             currenttab = tab;
                         }
-
-                        var $link = $('<li id="' + id + '_li"><a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + text + '</a></li>')
+                        
+                        var $lItem = $('<li id="' + id + '_li"></li>')
+                                        .CswAttrXml('data-icon', false)
                                         .appendTo($list);
+                        var $link = $('<a href="javascript:void(0);">' + text + '</a>')
+                                        .appendTo($lItem);
+                        if( !ReadOnly ) {
+                            $link.CswAttrXml({'data-identity': + id, 'data-url': + id });
+                        }
 
                         switch (fieldtype.toLowerCase())
                         {
@@ -720,7 +727,7 @@
                                 break;
 
                             default:
-                                var $gestalt = $('<p class="ui-li-aside">' + gestalt + '</p>')
+                                var $gestalt = $('<div><p>' + gestalt + '</p></div>')
                                                     .appendTo($link);
                                 break;
                         }
@@ -855,7 +862,7 @@
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
-            var ReadOnly = ( isTrue($xmlitem.CswAttrXml('readonly')) );
+            var ReadOnly = ( isTrue($xmlitem.CswAttrXml('isreadonly')) );
 
             // Subfield values
             var sf_text = tryParseString( $xmlitem.children('text'), '');
