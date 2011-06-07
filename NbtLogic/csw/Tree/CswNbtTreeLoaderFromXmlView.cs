@@ -95,8 +95,11 @@ namespace ChemSW.Nbt
                 {
                     if( FinishedWithThisRelationship )
                     {
-                        ThisPageSize = PageSize - ThisLevelNodeCount;
-						if( ThisPageSize < 1 ) ThisPageSize = 1;
+						if( ThisPageSize != Int32.MinValue )
+						{
+							ThisPageSize = PageSize - ThisLevelNodeCount;
+							if( ThisPageSize < 1 ) ThisPageSize = 1;
+						}
 						ThisLevelNodeCount = 0;
                         FinishedWithThisRelationship = false;
                         ThisRelationship = R;
