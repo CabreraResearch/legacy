@@ -340,13 +340,13 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
-
             foreach( string CurrentColumnName in FillData.Keys )
             {
                 if( false == DataTable.Columns.Contains( CurrentColumnName ) )
                 {
                     throw ( new CswDniException( "Value-fill column " + CurrentColumnName + " does not exist in table " + TableName ) );
                 }
+
             }//iterate lists to get max row count
 
             Int32 MaxRowsToAdd = MaxFillDataRows - DataTable.Rows.Count; //if we need to add the rows, we do so
@@ -368,6 +368,21 @@ namespace ChemSW.Nbt.Schema
 
             CswTableUpdate.update( DataTable );
         }//fillTableWithArbitraryData() 
+
+
+        public void deleteArbitraryTableData( string TableName )
+        {
+            CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "fillTableWtithArbitraryData_update", TableName );
+            DataTable DataTable = CswTableUpdate.getTable();
+
+            foreach( DataRow CurrentRow in DataTable.Rows )
+            {
+                CurrentRow.Delete();
+            }
+
+            CswTableUpdate.update( DataTable );
+
+        }//deleteArbitraryTableData()
 
         public void addArbitraryForeignKeyRecords( string PkTable, string FkTable, string ReferenceColumnName, string FkTableArbitraryValueColumnName, string FkTableValueStem )
         {
