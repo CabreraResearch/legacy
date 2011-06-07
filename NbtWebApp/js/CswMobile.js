@@ -740,7 +740,8 @@
 
                         if( fieldtype.toLowerCase() === "question")
                         {
-                            var $count = $('<span>' + currentNo + '&nbsp;of&nbsp;' + totalCnt +'</span>');
+                            var $count = $('<span>' + currentNo + '&nbsp;of&nbsp;' + totalCnt +'</span>')
+                                         .addClass('ui-btn-right');
                             $toolbar.append($count);
                         }
 
