@@ -89,12 +89,12 @@ namespace ChemSW.Nbt.Schema
 
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( Purpose, "select * from " + AuditTablename + " order by " + ArbitraryTablePkCol + " asc" );
 
-                DataTable TargetTable = CswArbitrarySelect.getTable( _TheNumberOfRowsToAffect + 1, _TheNumberOfRowsToAffect + _TheNumberOfRowsToAffect + 1, false, false );
+                DataTable TargetTable = CswArbitrarySelect.getTable( _TheNumberOfRowsToAffect, _TheNumberOfRowsToAffect + _TheNumberOfRowsToAffect + 1, false, false );
 
                 return ( TargetTable );
 
             }
-        }//UpdateAuditTestRecords
+        }//TestRecordsFromUpdate
 
         public DataTable TestRecordsFromInsert
         {
@@ -109,12 +109,12 @@ namespace ChemSW.Nbt.Schema
 
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( Purpose, "select * from " + AuditTablename + " order by " + ArbitraryTablePkCol + " asc" );
 
-                DataTable TargetTable = CswArbitrarySelect.getTable( 1, _TheNumberOfRowsToAffect + 1, false, false );
+                DataTable TargetTable = CswArbitrarySelect.getTable( 0, _TheNumberOfRowsToAffect, false, false );
 
                 return ( TargetTable );
 
             }
-        }//UpdateAuditTestRecords
+        }//TestRecordsFromInsert
 
         private Dictionary<string, List<string>> __ArbitraryInsertTestValues;
         private Dictionary<string, List<string>> _ArbitraryInsertTestValues

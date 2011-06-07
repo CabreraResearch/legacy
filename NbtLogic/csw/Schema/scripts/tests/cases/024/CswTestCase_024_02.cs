@@ -40,7 +40,6 @@ namespace ChemSW.Nbt.Schema
         public void update()
         {
             _CswTstCaseRsrc_024.makeArbitraryTableData();
-            _CswTstCaseRsrc_024.setAuditingOn(); //we _don't_ want to capture the inserts 
 
 
         }//runTest()

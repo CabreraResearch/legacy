@@ -40,6 +40,7 @@ namespace ChemSW.Nbt.Schema
         public void update()
         {
 
+            _CswTstCaseRsrc_024.setAuditingOn();
             _CswTstCaseRsrc_024.makeArbitraryTable();
             _CswNbtSchemaModTrnsctn.makeTableAuditable( _CswTstCaseRsrc_024.ArbitraryTableName_01 );
 

@@ -256,7 +256,7 @@ namespace ChemSW.Nbt.Schema
             else
             {
                 ReturnVal = false;
-                MisMatchReason = "A column value list in the test values has " + DataTable.Rows.Count.ToString() + " but the comparison DataTable only has " + DataTable.Rows.Count.ToString() + " rows";
+                MisMatchReason = "A column value list in the test values has " + TotalRowsToCompare.ToString() + " but the comparison DataTable only has " + DataTable.Rows.Count.ToString() + " rows";
             }//if-else number of rows match
 
 
@@ -350,7 +350,7 @@ namespace ChemSW.Nbt.Schema
             }//iterate lists to get max row count
 
             Int32 MaxRowsToAdd = MaxFillDataRows - DataTable.Rows.Count; //if we need to add the rows, we do so
-            for( int idx = (DataTable.Rows.Count - 1 ) ; idx < MaxRowsToAdd; idx++ )
+            for( int idx = DataTable.Rows.Count; idx < MaxRowsToAdd; idx++ )
             {
                 DataRow DataRow = DataTable.NewRow();
                 DataTable.Rows.Add( DataRow );
@@ -367,7 +367,6 @@ namespace ChemSW.Nbt.Schema
             }//iterate fill data to to populate table
 
             CswTableUpdate.update( DataTable );
-
         }//fillTableWithArbitraryData() 
 
         public void addArbitraryForeignKeyRecords( string PkTable, string FkTable, string ReferenceColumnName, string FkTableArbitraryValueColumnName, string FkTableValueStem )
