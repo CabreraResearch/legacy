@@ -107,7 +107,8 @@
                 level: 1,
                 HideRefreshButton: false,
                 HideSearchButton: false,
-                onPageShow: function(p) {}
+                onPageShow: function(p) {},
+                onSuccess: function() { $.mobile.pageLoading(true); }
             }
             
             if(params) $.extend(p,params);
@@ -117,7 +118,7 @@
             {
                 $.mobile.pageLoading();
                 p.onPageShow(p);
-                $.mobile.pageLoading(true);
+                $(this).unbind('pageshow'); //only need to do this once per page
             });
 
 //            $div.unbind('pagebeforecreate');
@@ -331,7 +332,7 @@
 
         function continueReloadViews()
         {
-            if($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
+            //if($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
             var params = {
                 parentlevel: -1,
                 level: 0,
@@ -417,7 +418,8 @@
                 HideRefreshButton: false,
                 HideSearchButton: false,
                 $xml: '',
-                SessionId: SessionId
+                SessionId: SessionId,
+                onSuccess: function() {}
             };
             if (params) $.extend(p, params);
             
@@ -544,7 +546,8 @@
                 HideLogoutButton: false,
                 HideHelpButton: false,
                 HideCloseButton: true,
-                HideBackButton: false
+                HideBackButton: false,
+                onSuccess: function() {}
             };
             if (params) $.extend(p, params);
             
@@ -580,6 +583,8 @@
                  //.find('input[type="radio"]').checkboxradio('refresh',true);
             onAfterAddDiv($retDiv);
             
+            p.onSuccess();
+
             return $retDiv;
         } // _processViewXml()
 
