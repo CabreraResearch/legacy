@@ -713,7 +713,7 @@
 
                                 var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"><div>')
                                                 .appendTo($list);
-                                var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
+                                var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'input', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                                 .appendTo($div);
 
                                 if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
@@ -981,7 +981,7 @@
 
                     case "Question":
                         addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
-                        $prop = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
+                        $prop = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'input', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                             .appendTo($retHtml);
 
                         var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
@@ -1154,7 +1154,7 @@
                     $input.CswAttrDom('checked','checked');
                 }
                 $input.data('thisI',i);
-                $input.bind('click', function (eventObj)
+                $input.bind('change', function (eventObj)
                 {
                     var i = $(this).data('thisI');
                     for (var k = 0; k < answers.length; k++)
@@ -1164,7 +1164,7 @@
 
                         var input2Id = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k]});
                         var $input2 = $('#' + input2Id);
-                        
+            
                         if (answers[k] === answers[i])
                         {
                             $input1.CswAttrDom('checked', 'checked');
@@ -1255,7 +1255,7 @@
 					if ((',' + CompliantAnswers + ',').indexOf(',' + answers[thisI] + ',') >= 0)
 					{
 						$cor.css('display','none');
-						$li.children('div').removeClass('OOC');
+						$li.children('div').removeClass('OOC').children('div').removeClass('OOC');
 						$prop.removeClass('OOC');
 					}
 					else
