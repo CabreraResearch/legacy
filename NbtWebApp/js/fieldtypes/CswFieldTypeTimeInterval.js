@@ -207,8 +207,8 @@
 						case "YearlyByDate":
 							$yearlyradio.CswAttrDom('checked', 'true');
 							$WeeklyDiv.hide(); 
-							$MonthlyDiv.show(); 
-							$YearlyDiv.hide();
+							$MonthlyDiv.hide(); 
+							$YearlyDiv.show();
 							$YearlyStartDate.val($RateIntervalXml.children('yearlydate').text());
 							$MonthlyByDateRadio.CswAttrDom('checked', 'true');     //default (for case 21048)
 							break;
