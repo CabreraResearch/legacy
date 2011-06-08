@@ -1969,6 +1969,7 @@
                                                                                  parentlevel: 1
                                                                                 })
                                                );
+                                $content.bindLI();
                             }
                         }
                     });
