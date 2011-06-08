@@ -1904,7 +1904,7 @@
                         HideLogoutButton: false,
                         HideHelpButton: false,
                         HideCloseButton: true,
-                        HideBackButton: false,
+                        HideBackButton: false
                     });
                     $searchDiv.doChangePage("slideup", {changeHash: false});
                 }
