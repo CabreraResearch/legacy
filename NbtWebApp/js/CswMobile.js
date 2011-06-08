@@ -2020,12 +2020,38 @@
                 }
             }
             catch(e) {
-                if( e === 2 ) { //version mismatch
-                    log('Invalid database version');
-                } 
-                else {
-                    log('An error occurred attempting to open database, error = ' + e.toString() );
-                }
+                switch( e.code )
+                {
+                    case 2:
+                    {
+                        log('Invalid database version');
+                        break;
+                    }
+                    case 3:
+                    {
+                        log('Dataset too large: ' + e);
+                        break;
+                    }
+                    case 4:
+                    {
+                        log('Storage limit exceeded: ' + e);
+                        break;
+                    }
+                    case 5:
+                    {
+                        log('Lock contention error: ' + e);
+                        break;
+                    }
+                    case 6:
+                    {
+                        log('Constraint failure: ' + e);
+                        break;
+                    }
+                    default:
+                    {
+                        log('An unknown error occurred attempting to open database, error: ' + e );
+                        break;
+                    }
             }
             
         } //_initDb()
