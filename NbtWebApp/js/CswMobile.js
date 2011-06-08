@@ -685,7 +685,7 @@
                                         .css('white-space','normal')
                                         .appendTo($lItem);
                         if( !ReadOnly ) {
-                            $link.CswAttrXml({'data-identity': + id, 'data-url': + id });
+                            $link.CswAttrXml({'data-identity': id, 'data-url': id });
                         }
 
                         switch (fieldtype.toLowerCase())
