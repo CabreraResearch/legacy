@@ -1111,7 +1111,7 @@
 
         function _makeLogicalFieldSet(ParentId, IdStr, Suffix, OtherSuffix, Checked, Required)
         {
-            var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
+            var $retHtml = $('<div class="csw_fieldset ui-field-contain ui-body ui-br" data-role="fieldcontain"></div>');
             var $fieldset = $('<fieldset></fieldset>')
                                 .appendTo($retHtml)
                                 .CswAttrDom({
@@ -1120,7 +1120,8 @@
                                 .CswAttrXml({
                                     'data-role': 'controlgroup',
                                     'data-type': 'horizontal'                                     
-                                 });
+                                 })
+                                 .addClass('csw_fieldset toolbar ui-corner-all ui-controlgroup ui-controlgroup-horizontal');
             var answers = ['Null', 'True', 'False'];
             if ( isTrue(Required) )
             {
@@ -1141,6 +1142,7 @@
                 var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]});
                 var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i]})
                                 .CswAttrXml('data-role','button');
+                                
                 var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
                                 .appendTo($fieldset);
 
@@ -1173,6 +1175,10 @@
                             $input1.removeAttr('checked');
                             $input2.removeAttr('checked');
                         }
+
+                        $input1.checkboxradio('refresh');
+                        $input2.checkboxradio('refresh');
+
                     } // for (var k = 0; k < answers.length; k++)
                     onPropertyChange(ParentId,eventObj);
                 });
@@ -1226,12 +1232,15 @@
 						{
                             $answer1.CswAttrDom('checked', 'checked');
                             $answer2.CswAttrDom('checked', 'checked');
+                            
 						} 
                         else
 						{
                             $answer1.removeAttr('checked');
                             $answer2.removeAttr('checked');
 						}
+                        $answer2.checkboxradio('refresh');
+                        $answer1.checkboxradio('refresh');
                         
 					} // for (var k = 0; k < answers.length; k++)
 					
@@ -1242,7 +1251,7 @@
 					var $cor = $('#' + correctiveActionId);
 					var $li = $('#' + liSuffixId);
 					var $prop = $('#' + propNameSuffixId);
-					
+
 					if ((',' + CompliantAnswers + ',').indexOf(',' + answers[thisI] + ',') >= 0)
 					{
 						$cor.css('display','none');
