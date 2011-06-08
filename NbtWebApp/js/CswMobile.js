@@ -274,6 +274,7 @@
                 level: 0,
                 HideRefreshButton: true,
                 HideSearchButton: true,
+                HideBackButton: true,
                 onPageShow: function(p) { return _loadDivContents(p); }
             };
             var $retDiv = _addPageDivToBody({
