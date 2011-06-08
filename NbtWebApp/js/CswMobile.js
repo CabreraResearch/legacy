@@ -864,8 +864,8 @@
             var ReadOnly = ( isTrue($xmlitem.CswAttrXml('isreadonly')) );
 
             // Subfield values
-            var sf_text = tryParseString( $xmlitem.children('text'), '');
-            var sf_value = tryParseNumber( $xmlitem.children('value').text(), '');
+            var sf_text = tryParseString( $xmlitem.children('text').text(), '');
+            var sf_value = tryParseString( $xmlitem.children('value').text(), '');
             var sf_href = tryParseString( $xmlitem.children('href').text(), '');
             var sf_checked = tryParseString( $xmlitem.children('checked').text(), '');
             var sf_required = tryParseString( $xmlitem.children('required').text(), '');
@@ -949,6 +949,7 @@
                         break;
 
                     case "Number":
+                        sf_value = tryParseNumber(sf_value, '');
                         $prop = $('<input type="number" name="' + IdStr + '" value="' + sf_value + '" />')
                                             .appendTo($fieldCtn);
                         // if (Prop.MinValue != Int32.MinValue)
