@@ -761,7 +761,7 @@
                         {
                             $retLI.val(text);
                         }
-                        if(p.parentlevel === 0) 
+                        if(p.parentlevel === 0 && !ReadOnly) 
                         {
                             var $newDiv = _preFormNextLevelPages({
                                                 ParentId: p.DivId,
@@ -843,7 +843,7 @@
                     Html += '</li>';
                     break;
             }
-
+            
             var $newDiv = _preFormNextLevelPages({
                                 ParentId: p.DivId,
                                 parentlevel: p.parentlevel,
