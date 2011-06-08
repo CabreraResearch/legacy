@@ -891,19 +891,27 @@
 
             if( !ReadOnly )
             {
+                var addChangeHandler = true;
+                var $fieldCtn = $propContDiv.CswDiv('init')
+                                .CswAttrXml({
+                                    'data-role': 'fieldcontain'
+                                });
+                var $prop;
                 switch (FieldType)
                 {
                     case "Date":
-                        $propContDiv.append('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />');
+                        $prop = $('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />')
+                                    .appendTo($fieldCtn);
                         break;
 
                     case "Link":
-                        $propContDiv.append('<a href="' + sf_href + '" rel="external">' + sf_text + '</a>');
+                        $prop = $('<a href="' + sf_href + '" rel="external">' + sf_text + '</a>')
+                                    .appendTo($fieldCtn);
                         break;
 
                     case "List":
-                        var $select = $('<select name="' + IdStr + '"></select>')
-                                        .appendTo($propContDiv)
+                        var $prop = $('<select name="' + IdStr + '_select" id="' + IdStr + '_select"></select>')
+                                        .appendTo($fieldCtn)
                                         .selectmenu();
                         var selectedvalue = sf_value;
                         var optionsstr = sf_options;
@@ -911,7 +919,7 @@
                         for (var i = 0; i < options.length; i++)
                         {
                             var $option = $('<option value="' + options[i] + '"></option>')
-                                            .appendTo($select);
+                                            .appendTo($prop);
                             if (selectedvalue === options[i])
                             {
                                 $option.CswAttrDom('selected','selected');
@@ -926,22 +934,23 @@
                                 $option.valueOf('[blank]');
                             }
                         }
-                        $select.selectmenu('refresh');
+                        $prop.selectmenu('refresh');
                         break;
 
                     case "Logical":
-                        var $logical = _makeLogicalFieldSet(ParentId, IdStr, 'ans2', 'ans', sf_checked, sf_required)
+                        addChangeHandler = false; //_makeLogicalFieldSet() does this for us
+                        $prop = _makeLogicalFieldSet(ParentId, IdStr, 'ans2', 'ans', sf_checked, sf_required)
                                             .appendTo($propContDiv);
                         break;
 
                     case "Memo":
-                        var $memo = $('<textarea name="' + IdStr + '">' + sf_text + '</textarea>')
-                                            .appendTo($propContDiv);
+                        $prop = $('<textarea name="' + IdStr + '">' + sf_text + '</textarea>')
+                                            .appendTo($fieldCtn);
                         break;
 
                     case "Number":
-                        var $number = $('<input type="number" name="' + IdStr + '" value="' + sf_value + '" />')
-                                            .appendTo($propContDiv);
+                        $prop = $('<input type="number" name="' + IdStr + '" value="' + sf_value + '" />')
+                                            .appendTo($fieldCtn);
                         // if (Prop.MinValue != Int32.MinValue)
                         //     Html += "min = \"" + Prop.MinValue + "\"";
                         // if (Prop.MaxValue != Int32.MinValue)
@@ -953,9 +962,9 @@
                         break;
 
                     case "Quantity":
-                        var $quantity = $('<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />')
-                                            .appendTo($propContDiv);
-                        $quantity.append( sf_units );
+                        $prop = $('<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />')
+                                            .appendTo($fieldCtn);
+                        $prop.append( sf_units );
                         // Html += "<select name=\"" + IdStr + "_units\">";
                         // string SelectedUnit = PropWrapper.AsQuantity.Units;
                         // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
@@ -971,11 +980,12 @@
                         break;
 
                     case "Question":
-                        var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
+                        addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
+                        $prop = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                             .appendTo($propContDiv);
 
                         var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
-                                            .appendTo($question);
+                                            .appendTo($prop);
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
                         {
                             $corAction.css('display','none');
@@ -996,26 +1006,33 @@
                         });
 
                         var $comments = $('<textarea name="' + IdStr + '_com" placeholder="Comments">' + sf_comments + '</textarea>')
-                                            .appendTo($question);
+                                            .appendTo($prop);
                         break;
 
                     case "Static":
-                        $propContDiv.append( sf_text );
+                        $fieldCtn.append( sf_text );
                         break;
 
                     case "Text":
-                        var $text = $('<input type="text" name="' + IdStr + '" value="' + sf_text + '" />')
-                                        .appendTo($propContDiv);
+                        $prop = $('<input type="text" name="' + IdStr + '" value="' + sf_text + '" />')
+                                        .appendTo($fieldCtn);
                         break;
 
                     case "Time":
-                        var $time = $('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />')
-                                        .appendTo($propContDiv);
+                        $prop = $('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />')
+                                        .appendTo($fieldCtn);
                         break;
 
                     default:
                         $propContDiv.append( $xmlitem.CswAttrXml('gestalt') );
                         break;
+                } // switch (FieldType)
+
+                if( addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0 )
+                {
+                    $prop.bind('change', function(eventObj) {
+                        onPropertyChange(ParentId,eventObj);
+                    });
                 }
             }
             else 
