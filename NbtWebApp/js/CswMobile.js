@@ -2003,14 +2003,30 @@
 
         function _initDB(doreset, OnSuccess)
         {
-            db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
-            if (doreset)
-            {
-                _dropDb(function () { _createDb(OnSuccess); });
-            } else
-            {
-                _createDb(OnSuccess);
+            try {
+                if( !window.openDatabase) {
+                    log('SQLite is not supported by this browser');
+                }
+                else {
+                    db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
+                    if (doreset)
+                    {
+                        _dropDb(function () { _createDb(OnSuccess); });
+                    } else
+                    {
+                        _createDb(OnSuccess);
+                    }
+                }
             }
+            catch(e) {
+                if( e === 2 ) { //version mismatch
+                    log('Invalid database version');
+                } 
+                else {
+                    log('An error occurred attempting to open database, error = ' + e.toString() );
+                }
+            }
+            
         } //_initDb()
 
         function _dropDb(OnSuccess)
