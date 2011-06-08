@@ -681,9 +681,8 @@
                         var $lItem = $('<li id="' + id + '_li"></li>')
                                         .CswAttrXml('data-icon', false)
                                         .appendTo($list);
-                        var $link = $('<a href="javascript:void(0);">' + text + '</a>')
-                                        .css('white-space','normal')
-                                        .appendTo($lItem);
+                        var $link = $lItem.CswLink('init',{ID: id + '_href', href:'javascript:void(0)', value: text})
+                                          .css('white-space','normal');
                         if( !ReadOnly ) {
                             $link.CswAttrXml({'data-identity': id, 'data-url': id });
                         }
@@ -743,7 +742,7 @@
                             DivId: id,
                             HeaderText: text,
                             $toolbar: $toolbar,
-                            $content: _FieldTypeXmlToHtml(p.$xmlitem, p.DivId)
+                            $content: _FieldTypeXmlToHtml(p.$xmlitem, p.DivId, id + '_href')
                         });
                         break;
                     } // case 'prop':
@@ -856,7 +855,7 @@
             return $retHtml;
         }
 
-        function _FieldTypeXmlToHtml($xmlitem, ParentId)
+        function _FieldTypeXmlToHtml($xmlitem, ParentId, SiblingId)
         {
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
@@ -877,41 +876,36 @@
             var sf_compliantanswers = tryParseString( $xmlitem.children('compliantanswers').text(), '');
             var sf_options = tryParseString( $xmlitem.children('options').text(), '');
             
-            var $retHtml = $('<div id="' + IdStr + '_propwrapper"></div>');
-            var $propNameDiv = $('<div id="' + IdStr + '_propname">' + PropName + '</div>')
+            var $retHtml = $('<div data-role="fieldcontain" id="' + IdStr + '_fieldcontain"></div>');
+            var $propNameDiv = $('<label for="' + IdStr + '_input" id="' + IdStr + '_label">' + PropName + '</label>')
                                 .appendTo($retHtml);
-            var $propContDiv = $('<div id="' + IdStr + '_propcontent"></div>')
-                                .appendTo($retHtml);
+
             //var Html = '<div id="' + IdStr + '_propname"';
             if (FieldType === "Question" && !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
             {
                 $propNameDiv.addClass('OOC');
             }
-            $retHtml.append('<br/>');
+            //$retHtml.append('<br/>');
 
             if( !ReadOnly )
             {
                 var addChangeHandler = true;
-                var $fieldCtn = $propContDiv.CswDiv('init')
-                                .CswAttrXml({
-                                    'data-role': 'fieldcontain'
-                                });
                 var $prop;
+                var propId = IdStr + '_input';
+
                 switch (FieldType)
                 {
                     case "Date":
-                        $prop = $('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />')
-                                    .appendTo($fieldCtn);
+                        $prop = $retHtml.CswInput('init', {type: CswInput_Types.text, ID: propId, value: sf_value });
                         break;
 
                     case "Link":
-                        $prop = $('<a href="' + sf_href + '" rel="external">' + sf_text + '</a>')
-                                    .appendTo($fieldCtn);
+                        $prop = $retHtml.CswLink('init', {ID: propId, href: sf_href, rel: 'external',value: sf_text});
                         break;
 
                     case "List":
-                        var $prop = $('<select name="' + IdStr + '_select" id="' + IdStr + '_select"></select>')
-                                        .appendTo($fieldCtn)
+                        var $prop = $('<select name="' + propId + '" id="' + propId + '"></select>')
+                                        .appendTo($retHtml)
                                         .selectmenu();
                         var selectedvalue = sf_value;
                         var optionsstr = sf_options;
@@ -940,18 +934,18 @@
                     case "Logical":
                         addChangeHandler = false; //_makeLogicalFieldSet() does this for us
                         $prop = _makeLogicalFieldSet(ParentId, IdStr, 'ans2', 'ans', sf_checked, sf_required)
-                                            .appendTo($propContDiv);
+                                            .appendTo($retHtml);
                         break;
 
                     case "Memo":
-                        $prop = $('<textarea name="' + IdStr + '">' + sf_text + '</textarea>')
-                                            .appendTo($fieldCtn);
+                        $prop = $('<textarea name="' + propId + '">' + sf_text + '</textarea>')
+                                            .appendTo($retHtml);
                         break;
 
                     case "Number":
                         sf_value = tryParseNumber(sf_value, '');
-                        $prop = $('<input type="number" name="' + IdStr + '" value="' + sf_value + '" />')
-                                            .appendTo($fieldCtn);
+                        $prop = $retHtml.CswInput('init', {type: CswInput_Types.number, ID: propId, value: sf_value});
+                        
                         // if (Prop.MinValue != Int32.MinValue)
                         //     Html += "min = \"" + Prop.MinValue + "\"";
                         // if (Prop.MaxValue != Int32.MinValue)
@@ -963,9 +957,8 @@
                         break;
 
                     case "Quantity":
-                        $prop = $('<input type="text" name="' + IdStr + '_qty" value="' + sf_value + '" />')
-                                            .appendTo($fieldCtn);
-                        $prop.append( sf_units );
+                        $prop = $retHtml.CswInput('init', {type: CswInput_Types.text, ID: propId, value: sf_value})
+                                        .append( sf_units );
                         // Html += "<select name=\"" + IdStr + "_units\">";
                         // string SelectedUnit = PropWrapper.AsQuantity.Units;
                         // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
@@ -983,7 +976,7 @@
                     case "Question":
                         addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
                         $prop = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'propname', sf_allowedanswers, sf_answer, sf_compliantanswers)
-                                            .appendTo($propContDiv);
+                                            .appendTo($retHtml);
 
                         var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
                                             .appendTo($prop);
@@ -1006,39 +999,43 @@
                             }
                         });
 
-                        var $comments = $('<textarea name="' + IdStr + '_com" placeholder="Comments">' + sf_comments + '</textarea>')
+                        var $comments = $('<textarea name="' + propId + '" id="' + propId + '" placeholder="Comments">' + sf_comments + '</textarea>')
                                             .appendTo($prop);
                         break;
 
                     case "Static":
-                        $fieldCtn.append( sf_text );
+                        $retHtml.append( $('<p id="' + propId + '">' + sf_text + '</p>') );
                         break;
 
                     case "Text":
-                        $prop = $('<input type="text" name="' + IdStr + '" value="' + sf_text + '" />')
-                                        .appendTo($fieldCtn);
+                        $prop = $retHtml.CswInput('init', {type: CswInput_Types.text, ID: propId, value: sf_text});
                         break;
 
                     case "Time":
-                        $prop = $('<input type="text" name="' + IdStr + '" value="' + sf_value + '" />')
-                                        .appendTo($fieldCtn);
+                        $prop = $retHtml.CswInput('init', {type: CswInput_Types.text, ID: propId, value: sf_value})
                         break;
 
                     default:
-                        $propContDiv.append( $xmlitem.CswAttrXml('gestalt') );
+                        $retHtml.append( $('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>') );
                         break;
                 } // switch (FieldType)
 
                 if( addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0 )
                 {
                     $prop.bind('change', function(eventObj) {
+                        var $this = $(this);
+                        var $sibling = $('#' + SiblingId);
+                        if( !isNullOrEmpty($sibling) && $sibling.length !== 0 )
+                        {
+                            $sibling.children('div').children('p').text( $this.val() );
+                        }
                         onPropertyChange(ParentId,eventObj);
                     });
                 }
             }
             else 
             {
-                $propContDiv.append( $xmlitem.CswAttrXml('gestalt') );
+                $retHtml.append( $('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>') );
             }
             return $retHtml;
         }
@@ -1067,19 +1064,19 @@
             var $sftomodify = null;
             switch (fieldtype)
             {
-                case "Date": if (name === IdStr) $sftomodify = $sf_value; break;
+                case "Date": if (name.contains( IdStr )) $sftomodify = $sf_value; break;
                 case "Link": break;
-                case "List": if (name === IdStr) $sftomodify = $sf_value; break;
+                case "List": if (name.contains( IdStr )) $sftomodify = $sf_value; break;
                 case "Logical":
                     if (name.contains( makeSafeId({ID: IdStr, suffix: 'ans'}) ) )
                     {
                         $sftomodify = $sf_checked;
                     }
                     break;
-                case "Memo": if (name === IdStr) $sftomodify = $sf_text; break;
-                case "Number": if (name === IdStr) $sftomodify = $sf_value; break;
+                case "Memo": if (name.contains( IdStr )) $sftomodify = $sf_text; break;
+                case "Number": if (name.contains( IdStr )) $sftomodify = $sf_value; break;
                 case "Password": break;
-                case "Quantity": if (name.contains(makeSafeId({ID: IdStr, suffix: 'qty'})) ) $sftomodify = $sf_value; break;
+                case "Quantity": if (name.contains( IdStr )) $sftomodify = $sf_value; break;
                 case "Question":
                     if (name.contains( makeSafeId({ID: IdStr, suffix: 'com'}) ))
                     {
@@ -1095,8 +1092,8 @@
                     }
                     break;
                 case "Static": break;
-                case "Text": if (name === IdStr) $sftomodify = $sf_text; break;
-                case "Time": if (name === IdStr) $sftomodify = $sf_value; break;
+                case "Text": if (name.contains( IdStr )) $sftomodify = $sf_text; break;
+                case "Time": if (name.contains( IdStr )) $sftomodify = $sf_value; break;
                 default: break;
             }
             if ( !isNullOrEmpty($sftomodify) )
@@ -1851,7 +1848,6 @@
             var $elm = $(eventObj.target);
             var name = $elm.CswAttrDom('name');
             var value = $elm.val();
-
             // update the xml and store it
             if( !isNullOrEmpty($currentViewXml) )
             {
@@ -1867,10 +1863,7 @@
                         _FieldTypeHtmlToXml($fieldtype, name, value);
                     });
 
-                    // Strictly speaking, this is not a valid use of html() since we're operating on xml.  
-                    // However, it appears to work, for now.
                     _updateStoredViewXml(rootid, $currentViewXml, '1');
-
                     _resetPendingChanges(true, false);
                 }
             //});
