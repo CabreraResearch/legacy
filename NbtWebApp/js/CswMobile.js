@@ -285,7 +285,7 @@
                         HideLogoutButton: false,
                         HideHelpButton: false,
                         HideCloseButton: true,
-                        HideBackButton: false,
+                        HideBackButton: true,
                         onPageShow: function(p) { return _loadDivContents(p); }
                 });
             $retDiv.bindJqmEvents(params);
@@ -332,7 +332,7 @@
 
         function continueReloadViews()
         {
-            //if($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
+            if($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
             var params = {
                 parentlevel: -1,
                 level: 0,
@@ -340,6 +340,7 @@
                 HeaderText: 'Views',
                 HideRefreshButton: true,
                 HideSearchButton: true,
+                HideBackButton: true,
                 onPageShow: function(p) { return _loadDivContents(p); }
             };
             $viewsdiv.bindJqmEvents(params);
@@ -1805,6 +1806,7 @@
                             level: 0,
                             HideRefreshButton: false,
                             HideSearchButton: true,
+                            HideBackButton: true,
                             onPageShow: function(p) { return _loadDivContents(p); }
                         };
 
