@@ -263,11 +263,11 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Set the ViewId for Relationships.  Editing this does not cause versioning.
         /// </summary>
-		public CswNbtViewId ViewId
+        public CswNbtViewId ViewId
         {
             get
             {
-				CswNbtViewId ret = new CswNbtViewId( CswConvert.ToInt32( _NodeTypePropRow["nodeviewid"] ) );
+                CswNbtViewId ret = new CswNbtViewId( CswConvert.ToInt32( _NodeTypePropRow["nodeviewid"] ) );
                 if( !ret.isSet() )
                 {
                     // This prop is missing a view, so make one
@@ -283,7 +283,7 @@ namespace ChemSW.Nbt.MetaData
                     _NodeTypePropRow["nodeviewid"] = CswConvert.ToDbVal( ThisView.ViewId.get() );
                     ret = ThisView.ViewId;
                 }
-				return ret;
+                return ret;
             }
             set { _NodeTypePropRow["nodeviewid"] = CswConvert.ToDbVal( value.get() ); }
         }
@@ -384,18 +384,18 @@ namespace ChemSW.Nbt.MetaData
             bool IsOnAdd = ( ( IsRequired && DefaultValue.Empty ) ||
                              Node.Properties[Prop].TemporarilyRequired ||
                              SetValueOnAdd );
-			var ret = ( ( !InPopUp || IsOnAdd ) &&
-						FilterNodeTypePropId == Int32.MinValue &&
-						!( Node.Properties[Prop].Hidden ) &&
-						_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, User, Node, Prop ) );
+            var ret = ( ( !InPopUp || IsOnAdd ) &&
+                        FilterNodeTypePropId == Int32.MinValue &&
+                        !( Node.Properties[Prop].Hidden ) &&
+                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, User, Node, Prop ) );
             return ret;
         }
 
         public bool ShowProp( CswNbtNode Node, ICswNbtUser User )
         {
             CswNbtMetaDataNodeTypeProp Prop = this;
-			var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
-						_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, User, Node, Prop ) );
+            var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
+                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, User, Node, Prop ) );
             return ret;
         }
 
@@ -458,7 +458,7 @@ namespace ChemSW.Nbt.MetaData
                 // For Relationships - Reset the View if the target changed
                 if( this.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                 {
-					CswNbtView RelationshipView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( ViewId );
+                    CswNbtView RelationshipView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( ViewId );
                     RelationshipView.Root.ChildRelationships.Clear();
                     if( inFKType != string.Empty && inFKValue != Int32.MinValue )
                     {
@@ -745,7 +745,7 @@ namespace ChemSW.Nbt.MetaData
                     {
                         // BZ 10172
                         // We can't point to the same view.  We need to copy the view, and refer to the copy.
-						CswNbtView View = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _NodeTypePropRow[PropColumn.ColumnName] ) ) );
+                        CswNbtView View = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _NodeTypePropRow[PropColumn.ColumnName] ) ) );
                         CswNbtView ViewCopy = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
                         ViewCopy.makeNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
                         ViewCopy.save();
@@ -965,10 +965,14 @@ namespace ChemSW.Nbt.MetaData
             // Logical needs a special case
             if( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
             {
-                if( SubField.Name == CswNbtSubField.SubFieldName.Checked && FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                if( SubField.Name == CswNbtSubField.SubFieldName.Checked &&
+                    ( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals ||
+                        FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals ) )
+                {
                     FilterMatches = ( CswConvert.ToTristate( FilterValue ) == FilterProp.AsLogical.Checked );
+                }
                 else
-                    throw new CswDniException( "Invalid filter condition", "CswPropertyTable only supports 'Checked Equals' filters on Logical properties" );
+                    throw new CswDniException( "Invalid filter condition", "CswNbtMetaDataNodeTypeProp only supports 'Checked Equality' filters on Logical properties" );
             }
             else
             {
@@ -1092,38 +1096,38 @@ namespace ChemSW.Nbt.MetaData
                                         FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ) )
                 {
                     // Update nodes
-					//ICswNbtTree TreeOfNodesOfType = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromNodeTypeId( NodeType.NodeTypeId );
-					//TreeOfNodesOfType.goToRoot();
-					//int TotalNodes = TreeOfNodesOfType.getChildNodeCount();
-					//if( TotalNodes > 0 )
-					//{
-					//    TreeOfNodesOfType.goToNthChild( 0 );
-						//for( int idx = 0; idx < TotalNodes; idx++ )
-						//{
-							//TreeOfNodesOfType.goToParentNode();
-							//TreeOfNodesOfType.goToNthChild( idx );
-                            //CswNbtNode CurrentNode = TreeOfNodesOfType.getNodeForCurrentPosition();
-						foreach(CswNbtNode CurrentNode in NodeType.getNodes(false, false))
-						{
-                            CswNbtNodePropWrapper CurrentProp = CurrentNode.Properties[this];
+                    //ICswNbtTree TreeOfNodesOfType = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromNodeTypeId( NodeType.NodeTypeId );
+                    //TreeOfNodesOfType.goToRoot();
+                    //int TotalNodes = TreeOfNodesOfType.getChildNodeCount();
+                    //if( TotalNodes > 0 )
+                    //{
+                    //    TreeOfNodesOfType.goToNthChild( 0 );
+                    //for( int idx = 0; idx < TotalNodes; idx++ )
+                    //{
+                    //TreeOfNodesOfType.goToParentNode();
+                    //TreeOfNodesOfType.goToNthChild( idx );
+                    //CswNbtNode CurrentNode = TreeOfNodesOfType.getNodeForCurrentPosition();
+                    foreach( CswNbtNode CurrentNode in NodeType.getNodes( false, false ) )
+                    {
+                        CswNbtNodePropWrapper CurrentProp = CurrentNode.Properties[this];
 
-                            if( CurrentProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
-                            {
-                                CurrentNode.Properties[this].AsSequence.setSequenceValue();
-                            }
-                            else if( CurrentProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
-                            {
-                                CurrentNode.Properties[this].AsBarcode.setBarcodeValue();
-                            }
-						}
-                        //} // for( int idx = 0; idx < TotalNodes; idx++ )
+                        if( CurrentProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
+                        {
+                            CurrentNode.Properties[this].AsSequence.setSequenceValue();
+                        }
+                        else if( CurrentProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
+                        {
+                            CurrentNode.Properties[this].AsBarcode.setBarcodeValue();
+                        }
+                    }
+                    //} // for( int idx = 0; idx < TotalNodes; idx++ )
 
-                        // need to post this change immediately for resync to work
-                        _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( _NodeTypePropRow.Table );
+                    // need to post this change immediately for resync to work
+                    _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( _NodeTypePropRow.Table );
 
-                        // Resync Sequence to next new value
-                        CswNbtSequenceValue SeqValue = new CswNbtSequenceValue( _CswNbtMetaDataResources.CswNbtResources, SequenceId );
-                        SeqValue.reSync();
+                    // Resync Sequence to next new value
+                    CswNbtSequenceValue SeqValue = new CswNbtSequenceValue( _CswNbtMetaDataResources.CswNbtResources, SequenceId );
+                    SeqValue.reSync();
 
                     //} // if( TotalNodes > 0 )
                 } // if prop is sequence or barcode
