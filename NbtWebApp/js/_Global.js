@@ -995,16 +995,16 @@ function isNullOrEmpty(obj)
     /// <summary> Returns true if the input is null, undefined, or ''</summary>
     /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
-    var ret = false;
+	var ret = false;
     if (!isFunction(obj))
     {
-        ret = $.isEmptyObject(obj);
+        ret = $.isPlainObject(obj) && $.isEmptyObject(obj);
         if (!ret && isGeneric(obj))
         {
             ret = (trim(obj) === '');
         }
     }
-    return ret;
+	return ret;
 }
 
 function isGeneric(obj)

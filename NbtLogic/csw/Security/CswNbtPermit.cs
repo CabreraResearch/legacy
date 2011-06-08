@@ -137,6 +137,13 @@ namespace ChemSW.Nbt.Security
 
 						if( null != Node && null != Node.NodeId )
 						{
+							// case 2209 - Users can edit their own profile without permissions to the User nodetype
+							if( !ret &&
+								Node.NodeId == User.UserId )
+							{
+								ret = true;
+							}
+
 							// Prevent users from deleting themselves or their own roles
 							if( ret &&
 								Permission == NodeTypePermission.Delete &&
