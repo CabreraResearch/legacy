@@ -327,21 +327,18 @@
 	function getWeekDayChecked(id)
 	{
 		var ret = '';
-		$('[name="' + id + '"]').each(function() {
+		$('[name="' + id + '"]:checked').each(function() {
 			var $check = $(this);
-			if(isTrue($check.CswAttrDom('checked')))
+			if(ret !== '') ret += ',';
+			switch($check.val())
 			{
-				if(ret !== '') ret += ',';
-				switch($check.val())
-				{
-					case '1': ret += 'Sunday'; break;
-					case '2': ret += 'Monday'; break;
-					case '3': ret += 'Tuesday'; break;
-					case '4': ret += 'Wednesday'; break;
-					case '5': ret += 'Thursday'; break;
-					case '6': ret += 'Friday'; break;
-					case '7': ret += 'Saturday'; break;
-				}
+				case '1': ret += 'Sunday'; break;
+				case '2': ret += 'Monday'; break;
+				case '3': ret += 'Tuesday'; break;
+				case '4': ret += 'Wednesday'; break;
+				case '5': ret += 'Thursday'; break;
+				case '6': ret += 'Friday'; break;
+				case '7': ret += 'Saturday'; break;
 			}
 		});
 		return ret;
