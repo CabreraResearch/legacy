@@ -2052,6 +2052,7 @@
                         log('An unknown error occurred attempting to open database, error: ' + e );
                         break;
                     }
+                }
             }
             
         } //_initDb()
