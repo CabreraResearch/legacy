@@ -682,6 +682,7 @@
                                         .CswAttrXml('data-icon', false)
                                         .appendTo($list);
                         var $link = $('<a href="javascript:void(0);">' + text + '</a>')
+                                        .css('white-space','normal')
                                         .appendTo($lItem);
                         if( !ReadOnly ) {
                             $link.CswAttrXml({'data-identity': + id, 'data-url': + id });
@@ -752,6 +753,7 @@
                         if (IsDiv)
                         {
                             $retLI.CswLink('init',{href: 'javascript:void(0);', value: text})
+                                  .css('white-space','normal')
                                   .CswAttrXml({'data-identity': id, 
                                                'data-url': id });
                         }
