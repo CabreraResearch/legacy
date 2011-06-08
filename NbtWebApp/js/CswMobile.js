@@ -152,9 +152,9 @@
         var $body = this;
 
         var opts = {
-            DBShortName: 'CswMobile',
+            DBShortName: 'Mobile.html',
             DBVersion: '1.0',
-            DBDisplayName: 'CswMobile',
+            DBDisplayName: 'Mobile.html',
             DBMaxSize: 65536,
             //ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
             ViewsListUrl: '/NbtWebApp/wsNBT.asmx/GetViewsList',
@@ -274,7 +274,6 @@
                 level: 0,
                 HideRefreshButton: true,
                 HideSearchButton: true,
-                HideBackButton: true,
                 onPageShow: function(p) { return _loadDivContents(p); }
             };
             var $retDiv = _addPageDivToBody({
@@ -1360,8 +1359,7 @@
 
 			    var $header = $pageDiv.CswDiv('init',{ID: p.DivId + '_header'})
                                       .CswAttrXml({'data-role': 'header',
-                                                   'data-theme': opts.Theme,
-                                                   'data-fullscreen': true, 
+                                                   'data-theme': opts.Theme, 
                                                    'data-position':'fixed',
                                                    'data-id': 'csw_header'});
                 $backlink = $header.CswLink('init',{'href': 'javascript:void(0)', 
@@ -1424,8 +1422,7 @@
                                        .append(p.$content);
                 var $footer = $pageDiv.CswDiv('init',{ID: p.DivId + '_footer', cssclass: 'ui-bar'})
                                       .CswAttrXml({'data-role':'footer', 
-                                                   'data-theme': opts.Theme,
-                                                   'data-fullscreen': true, 
+                                                   'data-theme': opts.Theme, 
                                                    'data-position':'fixed',
                                                    'data-id': 'csw_footer' });
 
@@ -2022,38 +2019,11 @@
                 }
             }
             catch(e) {
-                switch( e.code )
-                {
-                    case 2:
-                    {
-                        log('Invalid database version');
-                        break;
-                    }
-                    case 3:
-                    {
-                        log('Dataset too large: ' + e);
-                        break;
-                    }
-                    case 4:
-                    {
-                        log('Storage limit exceeded: ' + e);
-                        break;
-                    }
-                    case 5:
-                    {
-                        log('Lock contention error: ' + e);
-                        break;
-                    }
-                    case 6:
-                    {
-                        log('Constraint failure: ' + e);
-                        break;
-                    }
-                    default:
-                    {
-                        log('An unknown error occurred attempting to open database, error: ' + e );
-                        break;
-                    }
+                if( e === 2 ) { //version mismatch
+                    log('Invalid database version');
+                } 
+                else {
+                    log('An error occurred attempting to open database, error = ' + e.toString() );
                 }
             }
             
