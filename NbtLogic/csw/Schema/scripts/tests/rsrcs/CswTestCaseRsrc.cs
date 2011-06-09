@@ -12,6 +12,8 @@ using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Nbt.Schema;
 using ChemSW.Audit;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -22,6 +24,7 @@ namespace ChemSW.Nbt.Schema
     public enum TestColumnNamesReal { NodeName }
     public enum TestNameStem { PrimeKeyTable, ForeignKeyTable, TestVal }
 
+    public enum TestNodeTypeNamesFake { TestNodeType01, TestNodeType02 }
 
     public struct PkFkPair
     {
@@ -43,6 +46,7 @@ namespace ChemSW.Nbt.Schema
         private Dictionary<TestColumnNamesReal, string> _TestColumnNamesReal = new Dictionary<TestColumnNamesReal, string>();
         private Dictionary<TestNameStem, string> _TestNameStems = new Dictionary<TestNameStem, string>();
 
+        private Dictionary<TestNodeTypeNamesFake, string> _TestNodeTypeNamesFake = new Dictionary<TestNodeTypeNamesFake, string>(); 
 
         CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
 
@@ -77,6 +81,10 @@ namespace ChemSW.Nbt.Schema
             _TestNameStems.Add( TestNameStem.ForeignKeyTable, "fk_Table_" );
             _TestNameStems.Add( TestNameStem.PrimeKeyTable, "pk_Table_" );
             _TestNameStems.Add( TestNameStem.TestVal, "Test val " );
+
+
+            _TestNodeTypeNamesFake.Add( TestNodeTypeNamesFake.TestNodeType01, "NodeTypeTest01" );
+            _TestNodeTypeNamesFake.Add( TestNodeTypeNamesFake.TestNodeType02, "NodeTypeTest02" );
 
         }//ctor
 
@@ -489,7 +497,12 @@ namespace ChemSW.Nbt.Schema
         }//assertTableIsAbsent() 
 
 
+        public CswNbtMetaDataNodeType makeTestNodeType( TestNodeTypeNamesFake TestNodeTypeNamesFake )
+        {
+            return ( _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass.ToString(), _TestNodeTypeNamesFake[TestNodeTypeNamesFake], string.Empty ) );
+        }//makeTestNodeType()
 
+        
 
     }//CswTestCaseRsrc
 
