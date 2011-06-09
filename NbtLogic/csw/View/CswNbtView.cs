@@ -63,9 +63,9 @@ namespace ChemSW.Nbt
         {
             get
             {
-				bool ReturnVal = ( ( ( ViewId != null && ViewId.isSet() ) ||
-								     ( SessionViewId  != null && SessionViewId.isSet() ) ) &&
-								   ( Visibility != NbtViewVisibility.Property ) );
+                bool ReturnVal = ( ( ( ViewId != null && ViewId.isSet() ) ||
+                                     ( SessionViewId != null && SessionViewId.isSet() ) ) &&
+                                   ( Visibility != NbtViewVisibility.Property ) );
                 return ReturnVal;
             }
         } // IsQuickLaunch
@@ -1328,10 +1328,10 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Save this View to Session's data cache
         /// </summary>
-        public void SaveToCache( bool IncludeInQuickLaunch )
+        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false )
         {
             // don't cache twice
-            if( SessionViewId == null )
+            if( SessionViewId == null || ForceCache )
             {
                 bool ForQuickLaunch = ( IncludeInQuickLaunch && IsQuickLaunch );
                 _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch );
