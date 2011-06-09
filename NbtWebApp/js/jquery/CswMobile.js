@@ -188,6 +188,8 @@ var debug = false;
         var storedViews = '';
         if(localStorage.storedViews) storedViews = JSON.parse( localStorage['storedviews'] );  // {name: '', rootid: ''}
 
+        _fetchCachedPages();
+
         var $logindiv = _loadLoginDiv();
         
         var $viewsdiv = _loadViewsDiv();
@@ -1527,10 +1529,11 @@ var debug = false;
             else {
                 $backlink.hide();
             }
-            //if(p.level === 0)  
-            //$pageDiv.loadPage();
+            
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
-            //$pageDiv.doPage();
+            
+            _cachePage($pageDiv, p.DivId);
+            
             return $pageDiv;
 
         } // _addPageDivToBody()
@@ -1744,6 +1747,7 @@ var debug = false;
 //                _dropDb(function ()
 //                {
 //                    // reloading browser window is the easiest way to reset
+                    sessionStorage.clear();
                     localStorage.clear();
                     window.location.href = window.location.pathname;
 //                });
@@ -2013,6 +2017,50 @@ var debug = false;
         // ------------------------------------------------------------------------------------
         // Persistance functions
         // ------------------------------------------------------------------------------------
+        function _cachePage($div, divid)
+        {
+            try {
+                var storedPages = [];
+                if( !isNullOrEmpty( sessionStorage.storedPages ) )
+                {
+                    storedPages = [sessionStorage.storedPages];
+                }
+                if( storedPages.indexOf(divid) === -1 )
+                {
+                    storedPages.push( divid );
+                }
+                sessionStorage.storedPages = storedPages.toString();
+                sessionStorage[divid] = xmlToString( $div );
+            }
+            catch(e) {
+                _errorHandler(e);        
+            }
+        }
+
+        function _fetchCachedPages()
+        {
+            try {
+                if( !isNullOrEmpty( sessionStorage.storedPages ) )
+                {
+                    var storedPages = sessionStorage.storedPages;
+                    for( var i=0; i < storedPages.length; i++ )
+                    {
+                        var divid = storedPages[i];
+                        if( !isNullOrEmpty( sessionStorage[divid] ) )
+                        {
+                            var $page = $(sessionStorage[divid])
+                                            .appendTo( $('body') )
+                                            .page();
+                        }
+
+                    }
+                }
+            }
+            catch(e) {
+                _errorHandler(e);        
+            }            
+
+        }
 
         function _cacheSession(sessionid, username, onsuccess)
         {
@@ -2036,7 +2084,7 @@ var debug = false;
                 if( isNullOrEmpty(storedViews) ) {
                     storedViews = [{rootid: rootid, name: rootname}];
                 }
-                else if( storedViews.indexOf(rootid) > -1 )  {
+                else if( storedViews.indexOf(rootid) === -1 )  {
                     storedViews.push({rootid: rootid, name: rootname});
                 }
                 localStorage["storedviews"] = JSON.stringify( storedViews );
