@@ -1,8 +1,8 @@
-﻿/// <reference path="../jquery/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../jquery/jquery.mobile/jquery.mobile.2011.5.17.js" />
-/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
+﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../js/thirdparty/jquery/core/jquery.mobile/jquery.mobile.2011.5.17.js" />
+/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="../js/thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
 
 // ------------------------------------------------------------------------------------
 // Enums
@@ -995,16 +995,16 @@ function isNullOrEmpty(obj)
     /// <summary> Returns true if the input is null, undefined, or ''</summary>
     /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
-	var ret = false;
+    var ret = false;
     if (!isFunction(obj))
     {
-        ret = $.isPlainObject(obj) && $.isEmptyObject(obj);
+        ret = $.isEmptyObject(obj);
         if (!ret && isGeneric(obj))
         {
             ret = (trim(obj) === '');
         }
     }
-	return ret;
+    return ret;
 }
 
 function isGeneric(obj)
