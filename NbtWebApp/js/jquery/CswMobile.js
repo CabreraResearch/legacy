@@ -5,6 +5,7 @@
 /// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../_Global.js" />
 /// <reference path="CswClasses.js" />
+/// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
 
 //var profiler = $createProfiler();
 //if (!debug) profiler.disable();
@@ -65,7 +66,6 @@ var debug = false;
             reloadPage: false,
             showLoadMsg: true
         };
-
         if(options) $.extend(o,options);
 
         var $div = $(this);
@@ -180,10 +180,12 @@ var debug = false;
         var ForMobile = true;
         var rootid;
         var db;
-        var UserName;
-        var SessionId;
+        var UserName = localStorage["username"];;
+        var SessionId = localStorage["sessionid"];
         var $currentViewXml;
         var currentMobilePath = '';
+
+        var storedViews = localStorage['storedviews']; // {name: '', rootid: ''}
 
         var $logindiv = _loadLoginDiv();
         
@@ -205,16 +207,19 @@ var debug = false;
 
         //$logindiv.doChangePage();
 
-        _initDB(false, function ()
-        {
-            //_waitForData();
+        var configvar_sessionid 
 
-            readConfigVar('sessionid', function (configvar_sessionid)
-            {
-                if ( !isNullOrEmpty(configvar_sessionid) )
+//        _initDB(false, function ()
+//        {
+//            //_waitForData();
+//            
+
+//            readConfigVar('sessionid', function (configvar_sessionid)
+//            {
+                if ( !isNullOrEmpty(SessionId) )
                 {
-                    SessionId = configvar_sessionid;
                     $viewsdiv = reloadViews();
+                    $viewsdiv.page();
                     $viewsdiv.doChangePage();
                     _waitForData();
                 }
@@ -236,8 +241,8 @@ var debug = false;
                         }
                     ); // _handleDataCheckTimer();
                 } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
-            }); // readConfigVar();
-        }); // _initDB();
+//            }); // readConfigVar();
+//        }); // _initDB();
 
         function _loadLoginDiv()
         {
@@ -1990,163 +1995,146 @@ var debug = false;
         // ------------------------------------------------------------------------------------
 
 
-        function _DoSql(sql, params, onSuccess)
-        {
-            if (window.openDatabase)
-            {
-                db.transaction(function (transaction)
-                {
-                    transaction.executeSql(sql, params, onSuccess, _errorHandler);
-                });
-            } else
-            {
-                log("database is not opened", true);
-            }
-        } //_DoSql
+//        function _DoSql(sql, params, onSuccess)
+//        {
+//            if (window.openDatabase)
+//            {
+//                db.transaction(function (transaction)
+//                {
+//                    transaction.executeSql(sql, params, onSuccess, _errorHandler);
+//                });
+//            } else
+//            {
+//                log("database is not opened", true);
+//            }
+//        } //_DoSql
 
         function _initDB(doreset, OnSuccess)
         {
             try {
-                if( !window.openDatabase) {
-                    log('SQLite is not supported by this browser');
+                if( !Modernizr.localstorage ) {
+                    log('localStorage is not supported by this browser');
                 }
                 else {
-                    db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
-                    if (doreset)
-                    {
-                        _dropDb(function () { _createDb(OnSuccess); });
-                    } else
-                    {
-                        _createDb(OnSuccess);
-                    }
+//                    db = openDatabase(opts.DBShortName, opts.DBVersion, opts.DBDisplayName, opts.DBMaxSize);
+//                    if (doreset)
+//                    {
+//                        _dropDb(function () { _createDb(OnSuccess); });
+//                    } else
+//                    {
+//                        _createDb(OnSuccess);
+//                    }
+                    OnSuccess();
                 }
             }
             catch(e) {
-                switch( e.code )
-                {
-                    case 2:
-                    {
-                        log('Invalid database version');
-                        break;
-                    }
-                    case 3:
-                    {
-                        log('Dataset too large: ' + e);
-                        break;
-                    }
-                    case 4:
-                    {
-                        log('Storage limit exceeded: ' + e);
-                        break;
-                    }
-                    case 5:
-                    {
-                        log('Lock contention error: ' + e);
-                        break;
-                    }
-                    case 6:
-                    {
-                        log('Constraint failure: ' + e);
-                        break;
-                    }
-                    default:
-                    {
-                        log('An unknown error occurred attempting to open database, error: ' + e );
-                        break;
-                    }
-                }
+                _errorHandler(e);
             }
             
         } //_initDb()
 
-        function _dropDb(OnSuccess)
-        {
-            _DoSql('DROP TABLE IF EXISTS configvars; ', null, function ()
-            {
-                _DoSql('DROP TABLE IF EXISTS views; ', null, function ()
-                {
-                    if (!isNullOrEmpty(OnSuccess) )
-                    {
-                        OnSuccess();
-                    }
-                });
-            });
-        } // _dropDB()
+//        function _dropDb(OnSuccess)
+//        {
+//            _DoSql('DROP TABLE IF EXISTS configvars; ', null, function ()
+//            {
+//                _DoSql('DROP TABLE IF EXISTS views; ', null, function ()
+//                {
+//                    if (!isNullOrEmpty(OnSuccess) )
+//                    {
+//                        OnSuccess();
+//                    }
+//                });
+//            });
+//        } // _dropDB()
 
-        function _createDb(OnSuccess)
-        {
-            _DoSql( 'CREATE TABLE IF NOT EXISTS configvars ' +
-                    '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                    '   varname TEXT NOT NULL, ' +
-                    '   varval TEXT);',
-                    null,
-                    function() {
-                        _DoSql( 'CREATE TABLE IF NOT EXISTS views ' +
-                                '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
-                                '   rootid TEXT NOT NULL, ' +
-                                '   rootname TEXT NOT NULL, ' +
-                                '   viewxml TEXT, ' +
-                                '   wasmodified INTEGER );',
-                                null,
-                                OnSuccess
-                                );
-                    } );
+//        function _createDb(OnSuccess)
+//        {
+//            _DoSql( 'CREATE TABLE IF NOT EXISTS configvars ' +
+//                    '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
+//                    '   varname TEXT NOT NULL, ' +
+//                    '   varval TEXT);',
+//                    null,
+//                    function() {
+//                        _DoSql( 'CREATE TABLE IF NOT EXISTS views ' +
+//                                '  (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
+//                                '   rootid TEXT NOT NULL, ' +
+//                                '   rootname TEXT NOT NULL, ' +
+//                                '   viewxml TEXT, ' +
+//                                '   wasmodified INTEGER );',
+//                                null,
+//                                OnSuccess
+//                                );
+//                    } );
 
-        } //_createDb() 
+//        } //_createDb() 
 
-        function _errorHandler(transaction, error)
+        function _errorHandler(error)
         {
-            log('Database Error: ' + error.message + ' (Code ' + error.code + ')', true);
+            log('localStorage Error: ' + error.message + ' (Code ' + error.code + ')', true);
             return true;
         }
 
         function writeConfigVar(varname, varval, onsuccess)
         {
-            _DoSql("select varval from configvars where varname=?;",
-                   [varname],
-                   function (transaction, result)
-                   {
-                       if (0 === result.rows.length)
-                       {
-                           _DoSql("insert into configvars (varname, varval) values ( ?, ? );",
-                                  [varname, varval],
-                                  function ()
-                                  {
-                                      if ( !isNullOrEmpty(onsuccess) )
-                                      {
-                                          onsuccess();
-                                      }
-                                  });
-                       } else
-                       {
-                           _DoSql("update configvars set varval = ? where varname = ?",
-                                  [varval, varname],
-                                  function ()
-                                  {
-                                      if ( !isNullOrEmpty(onsuccess) )
-                                      {
-                                          onsuccess();
-                                      }
-                                  });
-                       } //if-else the configvar row already exists
-                   });
+            localStorage[varname] = varval;
+            onsuccess();
+//            _DoSql("select varval from configvars where varname=?;",
+//                   [varname],
+//                   function (transaction, result)
+//                   {
+//                       if (0 === result.rows.length)
+//                       {
+//                           _DoSql("insert into configvars (varname, varval) values ( ?, ? );",
+//                                  [varname, varval],
+//                                  function ()
+//                                  {
+//                                      if ( !isNullOrEmpty(onsuccess) )
+//                                      {
+//                                          onsuccess();
+//                                      }
+//                                  });
+//                       } else
+//                       {
+//                           _DoSql("update configvars set varval = ? where varname = ?",
+//                                  [varval, varname],
+//                                  function ()
+//                                  {
+//                                      if ( !isNullOrEmpty(onsuccess) )
+//                                      {
+//                                          onsuccess();
+//                                      }
+//                                  });
+//                       } //if-else the configvar row already exists
+//                   });
         } //writeConfigVar() 
 
         function readConfigVar(varname, onSuccess)
         {
-            _DoSql("select varval from configvars where varname=?;",
-                   [varname],
-                   function (transaction, result)
-                   {
-                       if (result.rows.length > 0)
-                       {
-                           var row = result.rows.item(0);
-                           onSuccess(row.varval);
-                       } else
-                       {
-                           onSuccess('');
-                       }
-                   });
+            try {
+                var configvar = localStorage[varname];
+                if( !isNullOrEmpty(configvar) ) {
+                    onSuccess(configvar);
+                }
+                else {
+                    onSuccess('');
+                }
+            }
+            catch(e) {
+                _errorHandler(error);        
+            }
+//            _DoSql("select varval from configvars where varname=?;",
+//                   [varname],
+//                   function (transaction, result)
+//                   {
+//                       if (result.rows.length > 0)
+//                       {
+//                           var row = result.rows.item(0);
+//                           onSuccess(row.varval);
+//                       } else
+//                       {
+//                           onSuccess('');
+//                       }
+//                   });
 
         } //readConfigVar()
 
@@ -2157,16 +2145,18 @@ var debug = false;
 
         function _cacheSession(sessionid, username, onsuccess)
         {
-            writeConfigVar('username', username, function ()
-            {
-                writeConfigVar('sessionid', sessionid, function ()
+            try {
+                localStorage['username'] = username;
+                localStorage['sessionid'] = sessionid;
+
+                if ( !isNullOrEmpty(onsuccess) )
                 {
-                    if ( !isNullOrEmpty(onsuccess) )
-                    {
-                        onsuccess();
-                    }
-                });
-            });
+                    onsuccess();
+                }
+            }
+            catch(e) {
+                _errorHandler(error);        
+            }
         } //_cacheSession()
 
         //        function _clearSession(onsuccess)
@@ -2184,82 +2174,143 @@ var debug = false;
 
         function _storeViewXml(rootid, rootname, $viewxml)
         {
-            if ( !isNullOrEmpty(rootid) )
-            {
-                _DoSql('INSERT INTO views (rootid, rootname, viewxml, wasmodified) VALUES (?, ?, ?, 0);',
-                       [rootid, rootname, xmlToString($viewxml)]);
+            try {
+                if( isNullOrEmpty(storedViews) ) {
+                    storedViews = [{rootid: rootid, name: rootname}];
+                }
+                else if( storedViews.indexOf(rootid) > -1 )  {
+                    storedViews.push({rootid: rootid, name: rootname});
+                }
+            
+                localStorage["storedviews"] = storedViews;
+                localStorage[rootid] = {name: rootname, xml: $viewxml, wasmodified: false };
             }
+            catch(e) {
+                _errorHandler(error);        
+            }
+//            if ( !isNullOrEmpty(rootid) )
+//            {
+//                _DoSql('INSERT INTO views (rootid, rootname, viewxml, wasmodified) VALUES (?, ?, ?, 0);',
+//                       [rootid, rootname, xmlToString($viewxml)]);
+//            }
         }
 
         function _updateStoredViewXml(rootid, $viewxml, wasmodified)
         {
-            if ( !isNullOrEmpty(rootid) )
-            {
-                _DoSql('UPDATE views SET wasmodified = ?, viewxml = ? WHERE rootid = ?;',
-                       [wasmodified, xmlToString($viewxml), rootid]);
+            try {
+                localStorage[rootid] = { name: rootname, xml: $viewxml, wasmodified: wasmodified };   
             }
+            catch(e) {
+                _errorHandler(error);        
+            }
+//            if ( !isNullOrEmpty(rootid) )
+//            {
+//                _DoSql('UPDATE views SET wasmodified = ?, viewxml = ? WHERE rootid = ?;',
+//                       [wasmodified, xmlToString($viewxml), rootid]);
+//            }
         }
 
         function _getModifiedView(onSuccess)
         {
-            _DoSql('SELECT rootid, viewxml FROM views WHERE wasmodified = 1 ORDER BY id DESC;',
-                   [],
-                   function (transaction, result)
-                   {
-                       if (result.rows.length > 0)
-                       {
-                            _resetPendingChanges(true, true);
-                            var row = result.rows.item(0);
-                            var rootid = row.rootid;
-                            var viewxml = row.viewxml;
-                            if( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
-                            {
-                                onSuccess(rootid, viewxml);
-                            }
-                       } else
-                       {
-                           _resetPendingChanges(false, true);
-                           onSuccess();
-                       }
-                   });
+            try {
+                var modified = false;
+                for( var stored in storedViews )
+                {
+                    var view = localStorage[stored.rootid];
+                    if( !isNullOrEmpty(view) && view.wasmodified)
+                    {
+                        modified = true;
+                        _resetPendingChanges(true, true);
+                        var rootid = view.rootid;
+                        var viewxml = view.xml;
+                        if( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
+                        {
+                            onSuccess(rootid, $(viewxml));
+                        }
+                    }
+                }
+                if( !modified ) {
+                    _resetPendingChanges(false, true);
+                    onSuccess();
+                }
+            }
+            catch(e) {
+                _errorHandler(error);        
+            }
+//            _DoSql('SELECT rootid, viewxml FROM views WHERE wasmodified = 1 ORDER BY id DESC;',
+//                   [],
+//                   function (transaction, result)
+//                   {
+//                       if (result.rows.length > 0)
+//                       {
+//                            
+//                       } else
+//                       {
+//                           
+//                       }
+//                   });
         }
 
         function _fetchCachedViewXml(rootid, onsuccess)
         {
-            if ( !isNullOrEmpty(rootid) )
-            {
-                _DoSql('SELECT viewxml FROM views WHERE rootid = ? ORDER BY id DESC;',
-                       [rootid],
-                       function (transaction, result)
-                       {
-                           if (result.rows.length > 0)
-                           {
-                               var row = result.rows.item(0);
-							   var $viewxml = $(row.viewxml);
-                               onsuccess($viewxml);
-                           } else
-                           {
-                               onsuccess();
-                           }
-                       });
+            try {
+                var view = localStorage[rootid];
+                if( !isNullOrEmpty(view) )
+                {
+                    onsuccess( $(view.xml) );
+                }
+                else {
+                    onsuccess();
+                }
             }
+            catch(e) {
+                _errorHandler(error);        
+            }
+//            if ( !isNullOrEmpty(rootid) )
+//            {
+//                _DoSql('SELECT viewxml FROM views WHERE rootid = ? ORDER BY id DESC;',
+//                       [rootid],
+//                       function (transaction, result)
+//                       {
+//                           if (result.rows.length > 0)
+//                           {
+//                               var row = result.rows.item(0);
+//							   var $viewxml = $(row.viewxml);
+//                               onsuccess($viewxml);
+//                           } else
+//                           {
+//                               onsuccess();
+//                           }
+//                       });
+//            }
         }
         function _fetchCachedRootXml(onsuccess)
         {
-            _DoSql('SELECT rootid, rootname FROM views ORDER BY rootname;',
-                   [],
-                   function (transaction, result)
-                   {
-                       var ret = '';
-                       for (var i = 0; i < result.rows.length; i++)
-                       {
-                           var row = result.rows.item(i);
-                           ret += "<view id=\"" + row.rootid + "\"" +
-                                  " name=\"" + row.rootname + "\" />";
-                       }
-                       var $xml = $("<result>" + ret + "</result>");
-                       onsuccess($xml);
-                   });
+            try {
+                var ret = '';
+                for( var view in storedViews )
+                {
+                    ret += "<view id=\"" + view.rootid + "\" name=\"" + view.name + "\" />";
+                }
+                onsuccess( $(ret) );
+            }
+            catch(e) {
+                _errorHandler(error);        
+            }
+//            _DoSql('SELECT rootid, rootname FROM views ORDER BY rootname;',
+//                   [],
+//                   function (transaction, result)
+//                   {
+//                       var ret = '';
+//                       for (var i = 0; i < result.rows.length; i++)
+//                       {
+//                           var row = result.rows.item(i);
+//                           ret += "<view id=\"" + row.rootid + "\"" +
+//                                  " name=\"" + row.rootname + "\" />";
+//                       }
+//                       var $xml = $("<result>" + ret + "</result>");
+//                       onsuccess($xml);
+//                   });
         }
 
 
