@@ -81,7 +81,6 @@ var ViewBuilder_CssClasses = {
 
                 'selectedSubfieldVal': '',
                 'selectedFilterVal': '',
-
                 'autoFocusInput': false
 		    };
 		
@@ -157,7 +156,8 @@ var ViewBuilder_CssClasses = {
                                                 'advancedIsHidden': isTrue( $this.is(':hidden') )
                                             };
                                             $.extend(filtOpt,r);
-                                            renderPropFiltRow(filtOpt) });
+                                            renderPropFiltRow(filtOpt) 
+                                         });
 
                 if( !isNullOrEmpty( filtOpt.selectedSubfieldVal ) )
                 {
@@ -188,7 +188,7 @@ var ViewBuilder_CssClasses = {
                                             };
                                             $.extend(filtOpt,r);
                                             renderPropFiltRow(filtOpt) });
-
+                
                 if( !isNullOrEmpty( filtOpt.selectedFilterVal ) )
                 {
                     $filtersOptions.val(filtOpt.selectedFilterVal).CswAttrDom('selected',true);
@@ -203,15 +203,16 @@ var ViewBuilder_CssClasses = {
                                                            .empty();
                 
                 var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
+                var $filtValInput;
                 if( fieldtype === 'List' )
                 {
-                    $propFilterValueCell.append( $(xmlToString(filtOpt.$propsXml.children('filtersoptions').children('select'))) )
-                                        .CswAttrDom('id',filtValInputId)
-                                        .CswAttrDom('name',filtValInputId);
+                    $filtValInput = $(xmlToString(filtOpt.$propsXml.children('filtersoptions').children('select')))
+                                    .appendTo($propFilterValueCell)
+                                    .CswAttrDom({'id': filtValInputId, 'name':filtValInputId });
                 }
                 else if( fieldtype === 'Logical' )
                 {
-                    $propFilterValueCell.CswTristateCheckBox('init',{'ID': filtValInputId, 'Checked': defaultValue}); 
+                    $filtValInput = $propFilterValueCell.CswTristateCheckBox('init',{'ID': filtValInputId, 'Checked': defaultValue}); 
                 }
                 else
                 {
@@ -227,7 +228,7 @@ var ViewBuilder_CssClasses = {
                             filtOpt.placeholder += "'s " +  $subfieldsOptions.find(':selected').text();
                         }  
                     }
-                    var $filtValInput = $propFilterValueCell.CswInput('init', {ID: filtValInputId,
+                    $filtValInput = $propFilterValueCell.CswInput('init', {ID: filtValInputId,
                                                                                 type: CswInput_Types.text,
                                                                                 cssclass: ViewBuilder_CssClasses.filter_value.name,
                                                                                 value: inputOpt.value,
@@ -342,6 +343,7 @@ var ViewBuilder_CssClasses = {
 
             //return $filterXml;
         } // 'makefilter': function(options)
+        
     } // methods 
 	 
     $.fn.CswViewPropFilter = function (method) {
