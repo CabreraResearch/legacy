@@ -40,10 +40,10 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
-            _CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_026.ArbitraryTableName_01 );
-            _CswTstCaseRsrc.assertTableIsAbsent( CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_026.ArbitraryTableName_01 ) );
-            _CswTstCaseRsrc_026.assertAuditSettingIsRestored(); 
+            //CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+            //_CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_026.ArbitraryTableName_01 );
+            //_CswTstCaseRsrc.assertTableIsAbsent( CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_026.ArbitraryTableName_01 ) );
+            //_CswTstCaseRsrc_026.assertAuditSettingIsRestored(); 
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback

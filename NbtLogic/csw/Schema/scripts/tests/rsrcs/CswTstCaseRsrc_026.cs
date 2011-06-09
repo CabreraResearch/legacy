@@ -59,6 +59,7 @@ namespace ChemSW.Nbt.Schema
 
         }//makeArbitraryNode()
 
+        private string _OriginalAuditSetting_Audit = string.Empty;
         public void setAuditingOn()
         {
             _OriginalAuditSetting_Audit = _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName );

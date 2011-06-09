@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            _CswTstCaseRsrc_026.makeArbitraryTableData();
+//            _CswTstCaseRsrc_026.makeArbitraryTableData();
 
 
         }//runTest()

@@ -41,97 +41,97 @@ namespace ChemSW.Nbt.Schema
         public void update()
         {
 
-            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+            //CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
 
-            //Records from insert **************************************************************
-            string MisMatchMessage = string.Empty;
-            if( false == _CswTstCaseRsrc_026.compareInsertAuditData( ref MisMatchMessage ) )
-            {
-                throw ( new CswDniException( "Auditing test failed on insert data: " + MisMatchMessage ) );
-            }
+            ////Records from insert **************************************************************
+            //string MisMatchMessage = string.Empty;
+            //if( false == _CswTstCaseRsrc_026.compareInsertAuditData( ref MisMatchMessage ) )
+            //{
+            //    throw ( new CswDniException( "Auditing test failed on insert data: " + MisMatchMessage ) );
+            //}
 
-            DataTable DataTableFromInsert = _CswTstCaseRsrc_026.AuditRecordsFromInsert;
-            if( DataTableFromInsert.Rows.Count <= 0 )
-            {
-                throw ( new CswDniException( "Unable to evalutate state of audit table: there are no rows :-( " ) );
-            }
+            //DataTable DataTableFromInsert = _CswTstCaseRsrc_026.AuditRecordsFromInsert;
+            //if( DataTableFromInsert.Rows.Count <= 0 )
+            //{
+            //    throw ( new CswDniException( "Unable to evalutate state of audit table: there are no rows :-( " ) );
+            //}
 
-            string TargetTablePkColName = _CswNbtSchemaModTrnsctn.getPrimeKeyColName( _CswTstCaseRsrc_026.ArbitraryTableName_01 );
+            //string TargetTablePkColName = _CswNbtSchemaModTrnsctn.getPrimeKeyColName( _CswTstCaseRsrc_026.ArbitraryTableName_01 );
 
-            for( int idx = 0; idx < DataTableFromInsert.Rows.Count; idx++ )
-            {
-                DataRow CurrentRow = DataTableFromInsert.Rows[idx];
-                if( AuditEventType.Insert != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
-                {
-                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.Insert.ToString() ) );
-                }
+            //for( int idx = 0; idx < DataTableFromInsert.Rows.Count; idx++ )
+            //{
+            //    DataRow CurrentRow = DataTableFromInsert.Rows[idx];
+            //    if( AuditEventType.Insert != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
+            //    {
+            //        throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.Insert.ToString() ) );
+            //    }
 
-                if( Convert.ToInt32( CurrentRow[TargetTablePkColName] ) != _CswTstCaseRsrc_026.PksOfAuditedRecords[idx] )
-                {
-                    throw ( new CswDniException( "The " + CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() + " audit record at row " + idx.ToString() + " has a mismatched prime key" ) );
-                }
+            //    if( Convert.ToInt32( CurrentRow[TargetTablePkColName] ) != _CswTstCaseRsrc_026.PksOfAuditedRecords[idx] )
+            //    {
+            //        throw ( new CswDniException( "The " + CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() + " audit record at row " + idx.ToString() + " has a mismatched prime key" ) );
+            //    }
 
-            }
-
-
-
-            //Records from Update ********************************************************************
-            if( false == _CswTstCaseRsrc_026.compareUpdateAuditData( ref MisMatchMessage ) )
-            {
-                throw ( new CswDniException( "Auditing test failed on update datea: " + MisMatchMessage ) );
-            }
-
-            DataTable DataTableFromUpdate = _CswTstCaseRsrc_026.AuditRecordsFromUpdate;
-            if( DataTableFromUpdate.Rows.Count <= 0 )
-            {
-                throw ( new CswDniException( "Unable to evalutate state of audit table: there are no rows :-( " ) );
-            }
+            //}
 
 
-            for( int idx = 0; idx < DataTableFromUpdate.Rows.Count; idx++ )
-            {
-                DataRow CurrentRow = DataTableFromUpdate.Rows[idx];
 
-                if( AuditEventType.Update != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
-                {
-                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.Update.ToString() ) );
-                }
+            ////Records from Update ********************************************************************
+            //if( false == _CswTstCaseRsrc_026.compareUpdateAuditData( ref MisMatchMessage ) )
+            //{
+            //    throw ( new CswDniException( "Auditing test failed on update datea: " + MisMatchMessage ) );
+            //}
 
-
-                if( Convert.ToInt32( CurrentRow[TargetTablePkColName] ) != _CswTstCaseRsrc_026.PksOfAuditedRecords[idx] )
-                {
-                    throw ( new CswDniException( "The " + CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() + " audit record at row " + idx.ToString() + " has a mismatched prime key" ) );
-                }
-
-            }
+            //DataTable DataTableFromUpdate = _CswTstCaseRsrc_026.AuditRecordsFromUpdate;
+            //if( DataTableFromUpdate.Rows.Count <= 0 )
+            //{
+            //    throw ( new CswDniException( "Unable to evalutate state of audit table: there are no rows :-( " ) );
+            //}
 
 
-            //Records from delete **************************************************************
-            if( false == _CswTstCaseRsrc_026.compareDeleteAuditData( ref MisMatchMessage ) )
-            {
-                throw ( new CswDniException( "Auditing test failed on Delete data: " + MisMatchMessage ) );
-            }
+            //for( int idx = 0; idx < DataTableFromUpdate.Rows.Count; idx++ )
+            //{
+            //    DataRow CurrentRow = DataTableFromUpdate.Rows[idx];
 
-            DataTable DataTableFromDelete = _CswTstCaseRsrc_026.AuditRecordsFromDelete;
-            if( DataTableFromDelete.Rows.Count <= 0 )
-            {
-                throw ( new CswDniException( "Unable to evalutate state of audit table: there are no rows :-( " ) );
-            }
+            //    if( AuditEventType.Update != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
+            //    {
+            //        throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.Update.ToString() ) );
+            //    }
 
-            for( int idx = 0; idx < DataTableFromDelete.Rows.Count; idx++ )
-            {
-                DataRow CurrentRow = DataTableFromDelete.Rows[idx];
 
-                if( AuditEventType.PhysicalDelete != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
-                {
-                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.PhysicalDelete.ToString() ) );
-                }
+            //    if( Convert.ToInt32( CurrentRow[TargetTablePkColName] ) != _CswTstCaseRsrc_026.PksOfAuditedRecords[idx] )
+            //    {
+            //        throw ( new CswDniException( "The " + CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() + " audit record at row " + idx.ToString() + " has a mismatched prime key" ) );
+            //    }
 
-                if( Convert.ToInt32( CurrentRow[TargetTablePkColName] ) != _CswTstCaseRsrc_026.PksOfAuditedRecords[idx] )
-                {
-                    throw ( new CswDniException( "The " + CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() + " audit record at row " + idx.ToString() + " has a mismatched prime key" ) );
-                }
-            }
+            //}
+
+
+            ////Records from delete **************************************************************
+            //if( false == _CswTstCaseRsrc_026.compareDeleteAuditData( ref MisMatchMessage ) )
+            //{
+            //    throw ( new CswDniException( "Auditing test failed on Delete data: " + MisMatchMessage ) );
+            //}
+
+            //DataTable DataTableFromDelete = _CswTstCaseRsrc_026.AuditRecordsFromDelete;
+            //if( DataTableFromDelete.Rows.Count <= 0 )
+            //{
+            //    throw ( new CswDniException( "Unable to evalutate state of audit table: there are no rows :-( " ) );
+            //}
+
+            //for( int idx = 0; idx < DataTableFromDelete.Rows.Count; idx++ )
+            //{
+            //    DataRow CurrentRow = DataTableFromDelete.Rows[idx];
+
+            //    if( AuditEventType.PhysicalDelete != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
+            //    {
+            //        throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.PhysicalDelete.ToString() ) );
+            //    }
+
+            //    if( Convert.ToInt32( CurrentRow[TargetTablePkColName] ) != _CswTstCaseRsrc_026.PksOfAuditedRecords[idx] )
+            //    {
+            //        throw ( new CswDniException( "The " + CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() + " audit record at row " + idx.ToString() + " has a mismatched prime key" ) );
+            //    }
+            //}
 
         }//runTest()
 
