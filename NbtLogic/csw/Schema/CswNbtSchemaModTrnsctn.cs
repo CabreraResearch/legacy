@@ -334,6 +334,8 @@ namespace ChemSW.Nbt.Schema
                 addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
             }
 
+            //datetime stamp column
+
 
             if( false == _CswAuditMetaData.isAuditTable( TableName ) )
             {
@@ -343,7 +345,9 @@ namespace ChemSW.Nbt.Schema
                     copyTable( TableName, AuditTableName, false );
                     addStringColumn( AuditTableName, _CswAuditMetaData.AuditEventTypeColName, _CswAuditMetaData.AuditEventTypeColDescription, false, true, _CswAuditMetaData.AuditEventTypeColLength );
                     addForeignKeyColumn( AuditTableName, _CswAuditMetaData.AuditTransactionIdColName, "fk to audittransactions table", false, true, _CswAuditMetaData.AuditTransactionTableName, _CswAuditMetaData.AuditTransactionIdColName );
- 
+                    addDateColumn( AuditTableName, _CswAuditMetaData.AuditRecordCreatedColName, _CswAuditMetaData.AuditRecordCreatedColDescription, false, true );
+                    addLongColumn( AuditTableName, _CswNbtResources.DataDictionary.getPrimeKeyColumn( TableName ), "prime key of audited record", false, true );
+
                 }//if the audit table does not yet exist
 
             }//if it isn't already an audit table

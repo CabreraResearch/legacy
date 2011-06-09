@@ -59,11 +59,13 @@ namespace ChemSW.Nbt.Schema
         }
 
 
+        public List<Int32> PksOfAuditedRecords = new List<int>(); 
+
 
         public bool compareInsertAuditData( ref string MisMatchMessage )
         {
 
-            return ( _CswTestCaseRsrc.doTableValuesMatchTestValues( TestRecordsFromInsert, _ArbitraryInsertTestValues, ref MisMatchMessage ) );
+            return ( _CswTestCaseRsrc.doTableValuesMatchTestValues( AuditRecordsFromInsert, _ArbitraryInsertTestValues, ref MisMatchMessage ) );
 
         }//compareTargetAndAuditedData()
 
@@ -71,7 +73,7 @@ namespace ChemSW.Nbt.Schema
         public bool compareUpdateAuditData( ref string MisMatchMessage )
         {
 
-            return ( _CswTestCaseRsrc.doTableValuesMatchTestValues( TestRecordsFromUpdate, _ArbitraryUpdateTestValues, ref MisMatchMessage ) );
+            return ( _CswTestCaseRsrc.doTableValuesMatchTestValues( AuditRecordsFromUpdate, _ArbitraryUpdateTestValues, ref MisMatchMessage ) );
 
         }//compareTargetAndAuditedData()
 
@@ -80,12 +82,12 @@ namespace ChemSW.Nbt.Schema
         {
             //we expect the delete audit records to have the last values that were applied to the table -- it records the state of th e
             //record when it was deleted
-            return ( _CswTestCaseRsrc.doTableValuesMatchTestValues( TestRecordsFromDelete, _ArbitraryUpdateTestValues, ref MisMatchMessage ) );
+            return ( _CswTestCaseRsrc.doTableValuesMatchTestValues( AuditRecordsFromDelete, _ArbitraryUpdateTestValues, ref MisMatchMessage ) );
 
         }//compareTargetAndAuditedData()
 
 
-        public DataTable TestRecordsFromInsert
+        public DataTable AuditRecordsFromInsert
         {
             get
             {
@@ -106,7 +108,7 @@ namespace ChemSW.Nbt.Schema
         }//TestRecordsFromInsert
 
 
-        public DataTable TestRecordsFromUpdate
+        public DataTable AuditRecordsFromUpdate
         {
             get
             {
@@ -119,7 +121,7 @@ namespace ChemSW.Nbt.Schema
 
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( Purpose, "select * from " + AuditTablename + " order by " + ArbitraryTablePkCol + " asc" );
 
-                DataTable TargetTable = CswArbitrarySelect.getTable( _TheNumberOfRowsToAffect, _TheNumberOfRowsToAffect + _TheNumberOfRowsToAffect + 1, false, false );
+                DataTable TargetTable = CswArbitrarySelect.getTable( _TheNumberOfRowsToAffect, _TheNumberOfRowsToAffect + _TheNumberOfRowsToAffect, false, false );
 
                 return ( TargetTable );
 
@@ -127,7 +129,7 @@ namespace ChemSW.Nbt.Schema
         }//TestRecordsFromUpdate
 
 
-        public DataTable TestRecordsFromDelete
+        public DataTable AuditRecordsFromDelete
         {
             get
             {
@@ -186,7 +188,7 @@ namespace ChemSW.Nbt.Schema
 
         public void makeArbitraryTableData()
         {
-            _CswTestCaseRsrc.fillTableWithArbitraryData( ArbitraryTableName_01, _ArbitraryInsertTestValues );
+            _CswTestCaseRsrc.fillTableWithArbitraryData( ArbitraryTableName_01, _ArbitraryInsertTestValues, PksOfAuditedRecords );
         }
 
 

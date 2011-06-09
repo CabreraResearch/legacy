@@ -326,7 +326,7 @@ namespace ChemSW.Nbt.Schema
         }//doTableValuesMatch() 
 
 
-        public void fillTableWithArbitraryData( string TableName, Dictionary<string, List<string>> FillData )
+        public void fillTableWithArbitraryData( string TableName, Dictionary<string, List<string>> FillData, List<Int32> PksList = null )
         {
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "fillTableWtithArbitraryData_update", TableName );
             DataTable DataTable = CswTableUpdate.getTable();
@@ -354,6 +354,11 @@ namespace ChemSW.Nbt.Schema
             {
                 DataRow DataRow = DataTable.NewRow();
                 DataTable.Rows.Add( DataRow );
+
+                if( null != PksList )
+                {
+                    PksList.Add( CswConvert.ToInt32( DataRow[_CswNbtSchemaModTrnsctn.getPrimeKeyColName( TableName )] ) );
+                }
             }//iterate max rows to prime the tables
 
             foreach( string CurrentColumn in FillData.Keys )

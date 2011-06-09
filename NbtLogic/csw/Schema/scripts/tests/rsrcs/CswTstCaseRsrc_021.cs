@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.Schema
             ;
             foreach( string CurrentColumnName in _CswNbtSchemaModTrnsctn.CswDataDictionary.getColumnNames( ArbitraryTableName_01 ) )
             {
-                if( CurrentColumnName.ToLower() != ArbitraryTablePkCol.ToLower() && CurrentColumnName.ToLower() != _CswAuditMetaData.AuditLevelColName )
+                if(  CurrentColumnName.ToLower() != _CswAuditMetaData.AuditLevelColName )
                 {
                     OrderByClauses.Add( new OrderByClause( CurrentColumnName, OrderByType.Ascending ) );
                     CswCommaDelimitedString.Add( CurrentColumnName );
