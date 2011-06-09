@@ -1,15 +1,12 @@
+
 using System;
-using System.Data;
-using System.Linq;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Audit;
-using ChemSW.DB;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01H-42
+    /// Updates the schema to version 01H-45
     /// </summary>
     public class CswUpdateSchemaTo01H45 : ICswUpdateSchemaTo
     {
@@ -27,57 +24,183 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-
-
-
-            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "jct_nodes_props_audit" );
-            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "nodes_audit" );
-            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "nodetype_props_audit" );
-            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "nodetypes_audit" );
-            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "object_class_props_audit" );
-
-
-
-            CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( Description, "select distinct tablename from data_dictionary where lower(tablename) like '%_audit'" );
-            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
-
-            DataTable DataTable = CswArbitrarySelect.getTable();
-            foreach( DataRow CurrentRow in DataTable.Rows )
+            // Case 21219
+            CswNbtView ProblemsOpen = _CswNbtSchemaModTrnsctn.restoreView( "Problems: Open" );
+            if( null != ProblemsOpen )
             {
-                string CurrentAuditTableName = CurrentRow["tablename"].ToString();
+                ProblemsOpen.Clear();
+            }
+            else
+            {
+                ProblemsOpen = _CswNbtSchemaModTrnsctn.makeView();
+                ProblemsOpen.makeNew( "Problems: Open", NbtViewVisibility.Global, null, null, null );
+            }
+            ProblemsOpen.Category = "Problems";
+            ProblemsOpen.Visibility = NbtViewVisibility.Global;
+            ProblemsOpen.ViewMode = NbtViewRenderingMode.Grid;
 
-                if( _CswNbtSchemaModTrnsctn.isColumnDefined( CurrentAuditTableName, "deletedphysically" ) )
+            CswNbtMetaDataNodeType ProblemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment Problem" );
+            CswNbtMetaDataNodeType EquipmentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment" );
+            if( null != ProblemNT )
+            {
+                CswNbtViewRelationship ProblemRel = ProblemsOpen.AddViewRelationship( ProblemNT, false );
+                CswNbtMetaDataNodeTypeProp ClosedNtp = ProblemNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.ClosedPropertyName );
+                CswNbtMetaDataNodeTypeProp EquipmentNtp = ProblemNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassProblem.OwnerPropertyName );
+                CswNbtMetaDataNodeTypeProp StartDateNtp = ProblemNT.getNodeTypeProp( "Start Date" );
+                CswNbtMetaDataNodeTypeProp SummaryNtp = ProblemNT.getNodeTypeProp( "Summary" );
+                CswNbtMetaDataNodeTypeProp TechnicianNtp = ProblemNT.getNodeTypeProp( "Technician" );
+
+                Int32 Order = 0;
+
+                if( null != StartDateNtp )
                 {
-                    _CswNbtSchemaModTrnsctn.dropColumn( CurrentAuditTableName, "deletedphysically" );
+                    CswNbtViewProperty StartDateVp = ProblemsOpen.AddViewProperty( ProblemRel, StartDateNtp );
+                    StartDateVp.Order = Order++;
+                    ProblemsOpen.AddViewPropertyFilter( StartDateVp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, DateTime.MinValue.ToString(), false );
                 }
 
-                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( CurrentAuditTableName, CswAuditMetaData.AuditEventTypeColName ) )
+                CswNbtViewProperty ClosedVp = ProblemsOpen.AddViewProperty( ProblemRel, ClosedNtp );
+                ClosedVp.Order = Order++;
+                ProblemsOpen.AddViewPropertyFilter( ClosedVp, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "false", false );
+
+                if( null != SummaryNtp )
                 {
-                    _CswNbtSchemaModTrnsctn.addStringColumn( CurrentAuditTableName, CswAuditMetaData.AuditEventTypeColName, CswAuditMetaData.AuditEventTypeColDescription, false, true, CswAuditMetaData.AuditEventTypeColLength );
+                    CswNbtViewProperty SummaryVp = ProblemsOpen.AddViewProperty( ProblemRel, SummaryNtp );
+                    SummaryVp.Order = Order++;
+                    ProblemsOpen.AddViewPropertyFilter( SummaryVp, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Contains, string.Empty, false );
                 }
 
-                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( CurrentAuditTableName, CswAuditMetaData.AuditRecordCreatedColName ) )
+                if( null != TechnicianNtp )
                 {
-                    _CswNbtSchemaModTrnsctn.addDateColumn( CurrentAuditTableName, CswAuditMetaData.AuditRecordCreatedColName, CswAuditMetaData.AuditRecordCreatedColDescription, false, true );
+                    CswNbtViewProperty TechnicianVp = ProblemsOpen.AddViewProperty( ProblemRel, TechnicianNtp );
+                    TechnicianVp.Order = Order++;
+                    ProblemsOpen.AddViewPropertyFilter( TechnicianVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
                 }
 
+                CswNbtViewProperty EquipmentVp = ProblemsOpen.AddViewProperty( ProblemRel, EquipmentNtp );
+                EquipmentVp.Order = Order++;
+                ProblemsOpen.AddViewPropertyFilter( EquipmentVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
 
-                string AuditedTableName = CswAuditMetaData.makeNameOfAuditedTable( CurrentAuditTableName );
-                string AuditedTablePkColName = _CswNbtSchemaModTrnsctn.CswDataDictionary.getPrimeKeyColumn( AuditedTableName );
-                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( CurrentAuditTableName, AuditedTablePkColName ) )
+                if( null != EquipmentNT )
                 {
-                    _CswNbtSchemaModTrnsctn.addLongColumn( CurrentAuditTableName, AuditedTablePkColName, "prime key of audited record", false, true );
+                    CswNbtViewRelationship EquipmentRel = ProblemsOpen.AddViewRelationship( ProblemRel, CswNbtViewRelationship.PropOwnerType.First, EquipmentNtp, false );
+                    CswNbtMetaDataNodeTypeProp StatusNtp = EquipmentNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassEquipment.StatusPropertyName );
+                    CswNbtMetaDataNodeTypeProp TypeNtp = EquipmentNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassEquipment.TypePropertyName );
+                    CswNbtMetaDataNodeTypeProp ManufacturerNtp = EquipmentNT.getNodeTypeProp( "Manufacturer" );
+                    CswNbtMetaDataNodeTypeProp SerialNoNtp = EquipmentNT.getNodeTypeProp( "Serial No" );
+
+                    CswNbtViewProperty TypeVp = ProblemsOpen.AddViewProperty( EquipmentRel, TypeNtp );
+                    TypeVp.Order = Order++;
+                    ProblemsOpen.AddViewPropertyFilter( TypeVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+
+                    if( null != SerialNoNtp )
+                    {
+                        CswNbtViewProperty SerialNoVp = ProblemsOpen.AddViewProperty( EquipmentRel, SerialNoNtp );
+                        SerialNoVp.Order = Order++;
+                        ProblemsOpen.AddViewPropertyFilter( SerialNoVp, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Contains, string.Empty, false );
+                    }
+
+                    if( null != ManufacturerNtp )
+                    {
+                        CswNbtViewProperty ManufacturerVp = ProblemsOpen.AddViewProperty( EquipmentRel, ManufacturerNtp );
+                        ManufacturerVp.Order = Order++;
+                        ProblemsOpen.AddViewPropertyFilter( ManufacturerVp, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+                    }
+
+                    CswNbtViewProperty StatusVp = ProblemsOpen.AddViewProperty( EquipmentRel, StatusNtp );
+                    StatusVp.Order = Order++;
+                    ProblemsOpen.AddViewPropertyFilter( StatusVp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, "Available", false );
+                } // if( null != EquipmentNT )
+
+                ProblemsOpen.save();
+            } //if( null != ProblemNT )
+
+
+            // Case 21221
+            CswNbtView TasksOpen = _CswNbtSchemaModTrnsctn.restoreView( "Tasks: Open" );
+            if( null != TasksOpen )
+            {
+                TasksOpen.Clear();
+            }
+            else
+            {
+                TasksOpen = _CswNbtSchemaModTrnsctn.makeView();
+                TasksOpen.makeNew( "Tasks: Open", NbtViewVisibility.Global, null, null, null );
+            }
+            TasksOpen.Category = "Tasks";
+            TasksOpen.Visibility = NbtViewVisibility.Global;
+            TasksOpen.ViewMode = NbtViewRenderingMode.Grid;
+
+            CswNbtMetaDataNodeType TaskNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment Task" );
+            if( null != TaskNT )
+            {
+                CswNbtViewRelationship TaskRel = TasksOpen.AddViewRelationship( TaskNT, false );
+                CswNbtMetaDataNodeTypeProp CompletedNtp = TaskNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassTask.CompletedPropertyName );
+                CswNbtMetaDataNodeTypeProp EquipmentNtp = TaskNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassTask.OwnerPropertyName );
+                CswNbtMetaDataNodeTypeProp DueDateNtp = TaskNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassTask.DueDatePropertyName );
+                CswNbtMetaDataNodeTypeProp SummaryNtp = TaskNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassTask.SummaryPropertyName );
+                CswNbtMetaDataNodeTypeProp TechnicianNtp = TaskNT.getNodeTypeProp( "Technician" );
+
+                Int32 Order = 0;
+
+                CswNbtViewProperty DueDateVp = TasksOpen.AddViewProperty( TaskRel, DueDateNtp );
+                DueDateVp.Order = Order++;
+                TasksOpen.AddViewPropertyFilter( DueDateVp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, DateTime.MinValue.ToString(), false );
+
+                CswNbtViewProperty CompletedVp = TasksOpen.AddViewProperty( TaskRel, CompletedNtp );
+                CompletedVp.Order = Order++;
+                TasksOpen.AddViewPropertyFilter( CompletedVp, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "false", false );
+
+                CswNbtViewProperty SummaryVp = TasksOpen.AddViewProperty( TaskRel, SummaryNtp );
+                SummaryVp.Order = Order++;
+                TasksOpen.AddViewPropertyFilter( SummaryVp, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Contains, string.Empty, false );
+
+                if( null != TechnicianNtp )
+                {
+                    CswNbtViewProperty TechnicianVp = TasksOpen.AddViewProperty( TaskRel, TechnicianNtp );
+                    TechnicianVp.Order = Order++;
+                    TasksOpen.AddViewPropertyFilter( TechnicianVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Contains, string.Empty, false );
                 }
 
-            }//iterate audit tables
+                CswNbtViewProperty EquipmentVp = TasksOpen.AddViewProperty( TaskRel, EquipmentNtp );
+                EquipmentVp.Order = Order++;
+                TasksOpen.AddViewPropertyFilter( EquipmentVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
 
+                if( null != EquipmentNT )
+                {
+                    CswNbtViewRelationship EquipmentRel = TasksOpen.AddViewRelationship( TaskRel, CswNbtViewRelationship.PropOwnerType.First, EquipmentNtp, false );
+                    CswNbtMetaDataNodeTypeProp StatusNtp = EquipmentNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassEquipment.StatusPropertyName );
+                    CswNbtMetaDataNodeTypeProp TypeNtp = EquipmentNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassEquipment.TypePropertyName );
+                    CswNbtMetaDataNodeTypeProp SerialNoNtp = EquipmentNT.getNodeTypeProp( "Serial No" );
 
+                    CswNbtViewProperty TypeVp = TasksOpen.AddViewProperty( EquipmentRel, TypeNtp );
+                    TypeVp.Order = Order++;
+                    TasksOpen.AddViewPropertyFilter( TypeVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
 
+                    if( null != SerialNoNtp )
+                    {
+                        CswNbtViewProperty SerialNoVp = TasksOpen.AddViewProperty( EquipmentRel, SerialNoNtp );
+                        SerialNoVp.Order = Order++;
+                        TasksOpen.AddViewPropertyFilter( SerialNoVp, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Contains, string.Empty, false );
+                    }
 
+                    CswNbtViewProperty StatusVp = TasksOpen.AddViewProperty( EquipmentRel, StatusNtp );
+                    StatusVp.Order = Order++;
+                    TasksOpen.AddViewPropertyFilter( StatusVp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, "Retired", false );
+                } // if( null != EquipmentNT )
+
+                TasksOpen.save();
+            } //if( null != ProblemNT )
+
+            // Case 21855
+            CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            CswNbtMetaDataObjectClassProp NameOcp = InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 
         } // update()
 
     }//class CswUpdateSchemaTo01H45
 
 }//namespace ChemSW.Nbt.Schema
-
