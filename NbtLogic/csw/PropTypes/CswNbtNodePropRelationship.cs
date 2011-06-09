@@ -105,6 +105,11 @@ namespace ChemSW.Nbt.PropTypes
                     if( RelatedNodeId != value )
                     {
                         _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, value.PrimaryKey );
+                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[value];
+                        if( null != RelatedNode )
+                        {
+                            CachedNodeName = RelatedNode.NodeName;
+                        }
                     }
                 }
                 else

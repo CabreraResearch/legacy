@@ -12,7 +12,7 @@ namespace ChemSW.Nbt
         CswNbtResources CswNbtResources { set; get; }
 
 
-        ICswNbtTree makeTree( TreeMode TreeMode, CswNbtView View ); //, CswNbtTreeKey CswNbtTreeKey );
+		ICswNbtTree makeTree( TreeMode TreeMode, CswNbtView View, bool IsFullyPopulated ); //, CswNbtTreeKey CswNbtTreeKey );
         //CswNbtNodes Nodes { get; set; }
         CswNbtNodeCollection CswNbtNodeCollection { get; set; }
 

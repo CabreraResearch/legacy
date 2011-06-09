@@ -6,7 +6,8 @@ unlink($destfile);
 
 my $param = "";
 $param .= extract("c:\\kiln\\nbt\\nbt\\nbtwebapp\\js");
-$param .= extract("c:\\kiln\\nbt\\nbt\\nbtwebapp\\js\\fieldtypes");
+$param .= extract("c:\\kiln\\nbt\\nbt\\nbtwebapp\\js\\jquery");
+$param .= extract("c:\\kiln\\nbt\\nbt\\nbtwebapp\\js\\jquery\\fieldtypes");
 
 `java -jar "C:\\kiln\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
 

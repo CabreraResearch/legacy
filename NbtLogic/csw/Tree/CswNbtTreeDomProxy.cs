@@ -91,7 +91,7 @@ namespace ChemSW.Nbt
         /// <param name="CswNbtNodeWriter">A CswNbtNodeWriter object</param>
         /// <param name="CswNbtNodeCollection">A reference to the CswNbtNodeCollection</param>
         public CswNbtTreeDomProxy( //CswNbtTreeKey CswNbtTreeKey, 
-								   CswNbtView View, CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, CswNbtNodeCollection CswNbtNodeCollection )
+								   CswNbtView View, CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, CswNbtNodeCollection CswNbtNodeCollection, bool IsFullyPopulated )
         {
 			_View = View;
 			_Key = new CswNbtTreeKey( _CswNbtResources, _View );
@@ -121,8 +121,17 @@ namespace ChemSW.Nbt
             _CswNbtNodeCollection = CswNbtNodeCollection;
             //_CswNbtNodes.PathBasedNodes[_Key] = new CswNbtPathBasedNodes(_Key, _CswNbtTreeNodes);
 
+			_IsFullyPopulated = IsFullyPopulated;
         }//ctor
 
+		private bool _IsFullyPopulated = false;
+		public bool IsFullyPopulated
+		{
+			get
+			{
+				return _IsFullyPopulated;
+			}
+		}
 
 		private CswNbtTreeKey _Key = null;
 		/// <summary>

@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.TreeEvents
             }
         }//
 
-        public ICswNbtTree makeTree(TreeMode TreeMode, CswNbtView View) //, CswNbtTreeKey CswNbtTreeKey)
+        public ICswNbtTree makeTree(TreeMode TreeMode, CswNbtView View, bool IsFullyPopulated) //, CswNbtTreeKey CswNbtTreeKey)
         {
             ICswNbtTree ReturnVal = null;
 
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.TreeEvents
             //else if( TreeMode.DomProxy == TreeMode )
             //{
             CswNbtTreeDomProxy CswNbtTreeDomProxy = new CswNbtTreeDomProxy(//CswNbtTreeKey, 
-																			View, _CswNbtResources, CswNbtNodeWriter, CswNbtNodeCollection );
+																			View, _CswNbtResources, CswNbtNodeWriter, CswNbtNodeCollection, IsFullyPopulated );
 
             CswNbtTreeDomProxy.onBeforeInsertNode += new CswNbtTreeDomProxy.CswNbtTreeModificationHandler(CswNbtTreeEventInsertNodeGeneric.handleBeforeInsertNode);
             CswNbtTreeDomProxy.onAfterInsertNode += new CswNbtTreeDomProxy.CswNbtTreeModificationHandler(CswNbtTreeEventInsertNodeGeneric.handleAfterInsertNode);

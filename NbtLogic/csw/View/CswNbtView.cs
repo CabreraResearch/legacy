@@ -56,18 +56,19 @@ namespace ChemSW.Nbt
             get { return Root.IconFileName; }
         }
 
-		///// <summary>
-		///// Determines if View should be added to QuickLaunch items
-		///// </summary>
-		//public bool IsQuickLaunch
-		//{
-		//    get
-		//    {
-		//        bool ReturnVal = ( ( ViewId.isSet() || SessionViewId.isSet() ) &&
-		//                            ( Visibility != NbtViewVisibility.Property ) );
-		//        return ReturnVal;
-		//    }
-		//}
+        /// <summary>
+        /// Determines if View should be added to QuickLaunch items
+        /// </summary>
+        public bool IsQuickLaunch
+        {
+            get
+            {
+                bool ReturnVal = ( ( ( ViewId != null && ViewId.isSet() ) ||
+                                     ( SessionViewId != null && SessionViewId.isSet() ) ) &&
+                                   ( Visibility != NbtViewVisibility.Property ) );
+                return ReturnVal;
+            }
+        } // IsQuickLaunch
 
         /// <summary>
         /// Visibility permission setting
@@ -353,8 +354,8 @@ namespace ChemSW.Nbt
         /// </summary>
         public void save()
         {
-			if( !ViewId.isSet() )
-				throw new CswDniException( "Invalid View", "You must call makeNewView() before calling save() on a new view" );
+            if( !ViewId.isSet() )
+                throw new CswDniException( "Invalid View", "You must call makeNewView() before calling save() on a new view" );
 
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtView_save_update", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId.get(), true );
@@ -485,7 +486,7 @@ namespace ChemSW.Nbt
             Clear();
             if( CopyView != null )
                 this.LoadXml( CopyView.ToXml() );
-			this.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewRow["nodeviewid"] ) );
+            this.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewRow["nodeviewid"] ) );
             this.ViewName = ViewName;
             this.Visibility = Visibility;
             this.VisibilityRoleId = RoleId;
@@ -514,7 +515,7 @@ namespace ChemSW.Nbt
         public void ImportView( string ViewName, string ViewXml, Dictionary<Int32, Int32> NodeTypeMap, Dictionary<Int32, Int32> NodeTypePropMap, Dictionary<string, Int32> NodeMap )
         {
             this.makeNew( ViewName, NbtViewVisibility.Unknown, null, null, null );
-			CswNbtViewId NewViewId = this.ViewId;
+            CswNbtViewId NewViewId = this.ViewId;
             this.LoadXml( ViewXml );  // this overwrites the viewid
             this.ViewId = NewViewId;  // so set it back
 
@@ -615,7 +616,7 @@ namespace ChemSW.Nbt
             }
             NodeTypePropsUpdate.update( NodeTypePropsTable );
 
-			_CswNbtResources.ViewSelect.removeSessionView( this );
+            _CswNbtResources.ViewSelect.removeSessionView( this );
 
             // Now delete the view
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "Delete_view_nodeview_update", "node_views" );
@@ -639,7 +640,7 @@ namespace ChemSW.Nbt
 
         public const Int32 ViewNameLength = 30;
 
-		public static bool ViewIsUnique( CswNbtResources CswNbtResources, CswNbtViewId ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
+        public static bool ViewIsUnique( CswNbtResources CswNbtResources, CswNbtViewId ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
         {
             // truncate the name
             if( ViewName.Length > ViewNameLength )
@@ -707,7 +708,7 @@ namespace ChemSW.Nbt
         public void Clear()
         {
             string OldName = string.Empty;
-			CswNbtViewId ViewId = new CswNbtViewId();
+            CswNbtViewId ViewId = new CswNbtViewId();
             if( Root != null )
             {
                 OldName = Root.ViewName;
@@ -1077,13 +1078,24 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Returns the NodeTypeId of the first View property. Determines the NodeType to 'Add' in grids.
+        /// Returns the MetaDataTypeId of the first View property. Determines the MetaDataType to 'Add' in grids.
         /// </summary>
-        public Int32 ViewNodeTypeId
+        public Int32 ViewMetaDataTypeId
         {
             get
             {
-                Int32 ReturnVal = findFirstProperty().NodeTypeProp.NodeType.NodeTypeId;
+                Int32 ReturnVal = Int32.MinValue;
+                if( null != findFirstProperty() )
+                {
+                    if( null != findFirstProperty().NodeTypeProp )
+                    {
+                        ReturnVal = findFirstProperty().NodeTypeProp.NodeType.NodeTypeId;
+                    }
+                    else if( null != findFirstProperty().ObjectClassProp )
+                    {
+                        ReturnVal = findFirstProperty().ObjectClassProp.ObjectClassPropId;
+                    }
+                }
                 return ReturnVal;
             }
         }
@@ -1316,34 +1328,35 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Save this View to Session's data cache
         /// </summary>
-		public void SaveToCache(bool IncludeInQuickLaunch)
-		{
-			// don't cache twice
-			if( SessionViewId == null )
-			{
-				_SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, IncludeInQuickLaunch );
-			}
-		} // SaveToCache()
+        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false )
+        {
+            // don't cache twice
+            if( SessionViewId == null || ForceCache )
+            {
+                bool ForQuickLaunch = ( IncludeInQuickLaunch && IsQuickLaunch );
+                _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch );
+            }
+        } // SaveToCache()
 
-		public void clearSessionViewId()
-		{
-			_SessionViewId = null;
-		}
+        public void clearSessionViewId()
+        {
+            _SessionViewId = null;
+        }
 
-		private CswNbtSessionDataId _SessionViewId = null;
+        private CswNbtSessionDataId _SessionViewId = null;
         /// <summary>
         /// Key for retrieving the view from the Session's data cache
         /// </summary>
-		public CswNbtSessionDataId SessionViewId
+        public CswNbtSessionDataId SessionViewId
         {
             get { return _SessionViewId; }
             set { _SessionViewId = value; }
         }
 
-		#endregion Session Cache functions
+        #endregion Session Cache functions
 
-		#region IEquatable
-		/// <summary>
+        #region IEquatable
+        /// <summary>
         /// IEquatable: ==
         /// </summary>
         public static bool operator ==( CswNbtView view1, CswNbtView view2 )

@@ -1,73 +1,36 @@
 -- drop all tables
-drop table containers_audit;
-drop table inventory_groups_audit;
-drop table jct_modules_objectclass_audit;
-drop table jct_nodes_props_audit;
-drop table license_accept_audit;
-drop table locations_audit;
-drop table materials_audit;
-drop table materials_subclass_audit;
-drop table materials_synonyms_audit;
-drop table nodes_audit;
-drop table nodetypes_audit;
-drop table nodetype_props_audit;
-drop table nodetype_tabset_audit;
-drop table node_views_audit;
-drop table object_class_props_audit;
-drop table packages_audit;
-drop table packdetail_audit;
-drop table units_of_measure_audit;
-drop table users_audit;
-drop table vendors_audit;
+create or replace procedure DROP_TABLES is
+begin
+  DECLARE
+    CURSOR cur_objects(obj_type VARCHAR2) IS
+      SELECT object_name FROM user_objects WHERE object_type IN (obj_type);
 
-drop table configuration_variables;
-drop table fkey_definitions;
-drop table jct_modules_actions;
-drop table jct_modules_objectclass;
-drop table jct_nodes_props;
-drop table modules;
-drop table nodes_audit;
-drop table nodetype_props;
-drop table nodetype_tabset;
-drop table object_class_props;
-drop table sequences;
-drop table static_sql_selects;
-drop table statistics_actions;
-drop table statistics_nodetypes;
-drop table statistics_reports;
-drop table statistics_searches;
-drop table statistics_views;
-drop table data_dictionary;
-drop table field_types;
-drop table license;
-drop table license_accept;
-drop table actions;
-drop table node_views;
-drop table nodes;
-drop table nodetypes;
-drop table object_class;
-drop table statistics;
-drop table update_history;
-drop table jct_dd_ntp;
-drop table packages;
-drop table vendors;
-drop table users;
-drop table materials;
-drop table materials_subclass;
-drop table materials_synonyms;
-drop table packdetail;
-drop table locations;
-drop table units_of_measure;
-drop table containers;
-drop table inventory_groups;
-drop table sessionlist;
-drop table welcome;
-drop table jct_modules_nodetypes;
-drop table schedule_items;
-drop table scheduledrules;
-drop table scheduledruleparams;
-drop table session_data;
-drop table audit_transactions;
+    obj_name VARCHAR(200);
+    sql_str  VARCHAR(500);
+
+  BEGIN
+    OPEN cur_objects('TABLE');
+
+    LOOP
+      FETCH cur_objects
+        INTO obj_name;
+      EXIT WHEN cur_objects%NOTFOUND;
+
+      sql_str := 'drop TABLE ' || obj_name || ' CASCADE CONSTRAINTS PURGE';
+      EXECUTE IMMEDIATE sql_str;
+
+    END LOOP;
+
+    CLOSE cur_objects;
+  END;
+
+end;
+/
+
+exec drop_tables;
+commit;
+
+drop procedure drop_tables;
 commit;
 
 exec drop_sequences;

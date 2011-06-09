@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.WebServices
 											new XAttribute( "id", PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() ),
 											new XAttribute( "name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
 											new XAttribute( "tab", CswTools.SafeJavascriptParam( Tab.TabName ) ),
-											new XAttribute( "readonly", Prop.ReadOnly.ToString().ToLower() ),
+											new XAttribute( "isreadonly", Prop.ReadOnly.ToString().ToLower() ),
 											new XAttribute( "fieldtype", Prop.FieldType.FieldType.ToString() ),
 											new XAttribute( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
 											new XAttribute( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) ) );

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reflection;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using System.Linq;
 using System.Xml.Linq;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.Security;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -18,6 +20,8 @@ namespace ChemSW.Nbt.WebServices
 		private readonly CswNbtView _View;
 		private CswNbtNodeKey _ParentNodeKey;
 	    private CswGridData _CswGridData;
+	    private bool _CanEdit = true;
+	    private bool _CanDelete = true;
 
 		public enum GridReturnType
 		{
@@ -30,10 +34,56 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 			_View = View;
 			_ParentNodeKey = ParentNodeKey;
-            _CswGridData = new CswGridData( _CswNbtResources );
+            Collection<CswNbtViewRelationship> FirstLevelRelationships = new Collection<CswNbtViewRelationship>();
+            if( null != _ParentNodeKey && _View.Visibility == NbtViewVisibility.Property )
+		    {
+		        foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships.SelectMany( NodeRelationship => NodeRelationship.ChildRelationships ) )
+		        {
+		            FirstLevelRelationships.Add( Relationship );
+		        }
+		    }
+		    else
+		    {
+		        FirstLevelRelationships = _View.Root.ChildRelationships;
+		    }
+
+            // Case 21778
+            // Maybe do this in Permit someday; however, the meaning of Edit and Delete is very specific in this context:
+            // only evaluating visibility of the option to edit or delete root nodetypes of a view
+            foreach( CswNbtViewRelationship Relationship in FirstLevelRelationships )
+            {
+                Collection<CswNbtMetaDataNodeType> FirstLevelNodeTypes = new Collection<CswNbtMetaDataNodeType>();
+
+                if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+                    Relationship.SecondId != Int32.MinValue )
+                {
+                    CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
+                    foreach( CswNbtMetaDataNodeType NT in SecondOc.NodeTypes )
+                    {
+                        FirstLevelNodeTypes.Add( NT );
+                    }
+                }
+                else if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+                         Relationship.SecondId != Int32.MinValue )
+                {
+                    FirstLevelNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Relationship.SecondId ) );
+                }
+
+                foreach( CswNbtMetaDataNodeType NodeType in FirstLevelNodeTypes )
+                {
+                    _CanEdit = ( _CanEdit &&
+                                 _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType ) );
+                    _CanDelete = ( _CanDelete &&
+                                   _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, NodeType ) );
+                    //exit if we already know both are false
+                    if( !_CanEdit && !_CanDelete ) break;
+                }
+
+            }
+
+		    _CswGridData = new CswGridData( _CswNbtResources );
 		} //ctor
 
-		
 		public JObject getGrid(bool ShowEmpty)
 		{
             return _getGridOuterJson( ShowEmpty );
@@ -62,13 +112,19 @@ namespace ChemSW.Nbt.WebServices
             _AddHiddenColumnDefiniton( ref GridColumnDefinitions );
             
 			_CswGridData.GridWidth = ( _View.Width*7 ) ;
-		    _CswGridData.GridTitle = _View.ViewName;
+            if( _View.Visibility != NbtViewVisibility.Property )
+            {
+                _CswGridData.GridTitle = _View.ViewName;
+            }
+		    _CswGridData.CanEdit = _CanEdit;
+		    _CswGridData.CanDelete = _CanDelete;
+
 		    _CswGridData.GridSortName = "nodeid";
 
 		    JObject JqGridOpt = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
             
 			GridShellJObj = new JObject(
-				new JProperty( "nodetypeid", _View.ViewNodeTypeId ),
+				new JProperty( "nodetypeid", _View.ViewMetaDataTypeId ),
 				new JProperty( "jqGridOpt", JqGridOpt)
 				);
 

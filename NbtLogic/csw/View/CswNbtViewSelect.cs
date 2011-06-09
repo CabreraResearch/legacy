@@ -45,7 +45,7 @@ namespace ChemSW.Nbt
             //{
             CswTableSelect ViewsTableSelect = _CswNbtResources.makeCswTableSelect( "restoreView_select", "node_views" );
             Int32 ViewId = NbtViewId.get();
-            if( Int32.MinValue != ViewId )
+            if( NbtViewId.isSet() )
             {
                 DataTable ViewTable = ViewsTableSelect.getTable( "nodeviewid", ViewId );
                 if( ViewTable.Rows.Count > 0 )
@@ -267,6 +267,7 @@ namespace ChemSW.Nbt
                                                                     _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId, User ) ).Count() > 0 )
                         ) || IncludeEmptyViews ) &&
                     ThisView.IsFullyEnabled() &&
+                    ( ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
                     ( !SearchableOnly || ThisView.IsSearchable() ) )
                 {
                     VisibleViews.Add( ThisView );
