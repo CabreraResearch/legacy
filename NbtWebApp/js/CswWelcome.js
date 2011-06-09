@@ -76,8 +76,8 @@
 
 							var $item = $(this);
 							var $cellset = $table.CswLayoutTable('cellset', $item.CswAttrXml('displayrow'), $item.CswAttrXml('displaycol'));
-							var $imagecell = $cellset[1][1];
-							var $textcell = $cellset[2][1];
+							var $imagecell = $cellset[1][1].children('div');
+							var $textcell = $cellset[2][1].children('div');
 
 							if($item.CswAttrXml('buttonicon') !== undefined && $item.CswAttrXml('buttonicon') !== '')
 								$imagecell.append( $('<a href=""><img border="0" src="'+ $item.CswAttrXml('buttonicon') +'"/></a>') );
@@ -365,21 +365,22 @@
         var $textcell = $(cellset[2][1]);
         if($textcell.length > 0)
         {
-            var welcomeid = $textcell.children('input').CswAttrDom('welcomeid');
+            var welcomeid = $textcell.find('input').CswAttrDom('welcomeid');
+            if(!isNullOrEmpty(welcomeid))
+			{
+				var dataJson = {
+					RoleId: '', 
+					WelcomeId: welcomeid, 
+					NewRow: newrow, 
+					NewColumn: newcolumn
+				};
             
-            var dataJson = {
-                RoleId: '', 
-                WelcomeId: welcomeid, 
-                NewRow: newrow, 
-                NewColumn: newcolumn
-            };
-            
-            CswAjaxJSON({
-				url: MoveWelcomeItemUrl,
-				data: dataJson,
-				success: function (result) {
-                            }
-            });
+				CswAjaxJSON({
+					url: MoveWelcomeItemUrl,
+					data: dataJson,
+					success: function (result) {}
+				});
+			}
         }
     } // _moveItem()
 

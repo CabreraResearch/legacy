@@ -248,6 +248,8 @@
             $table.CswTable('findCell', '.CswLayoutTable_cell')
 				.removeClass('CswLayoutTable_configcell');
 
+			disableDrag($table);
+
             setConfigMode($table, 'false');
             $table.trigger($table.CswAttrDom('id') + 'CswLayoutTable_onConfigOff', $buttontable);
         } // _configOff()
@@ -267,7 +269,9 @@
             $table.CswTable('findCell', '.CswLayoutTable_cell')
 				.addClass('CswLayoutTable_configcell');
 
-            setConfigMode($table, 'true');
+			enableDrag($table);
+            
+			setConfigMode($table, 'true');
             $table.trigger($table.CswAttrDom('id') + 'CswLayoutTable_onConfigOn', $buttontable);
         } // _configOn()
 
@@ -329,18 +333,36 @@
                  .CswAttrDom('cellsetrow', cellsetrow)
                  .CswAttrDom('cellsetcolumn', cellsetcolumn)
 				 .click(function(ev, dd) { onClick(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
-                 .draggable({	//start: function(ev, dd) { onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); },
-								drag: function(ev, dd) { onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); },
-								stop: function(ev, dd) { onDrop(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); }
+                 .droppable({
+								hoverClass: 'CswLayoutTable_hover',
+								drop: function(ev, dd) { 
+									onDrop(ev, dd, $(this), $table, cellsetrows, cellsetcolumns); 
+								}
 							})
                  .hover(function(ev, dd) { onHoverIn(ev, dd, $table, $(this)); },
                         function(ev, dd) { onHoverOut(ev, dd, $table, $(this)); } );
+
+			var $celldiv = $('<div class="CswLayoutTable_celldiv"></div>')
+					.appendTo($cell);
         }
+
+		function enableDrag($table)
+		{
+			$table.find('.CswLayoutTable_celldiv')
+					.draggable({
+						revert: "invalid",
+						drag: function(ev, dd) { onDrag(ev, dd, $(this), $table); }
+					});
+		}
+
+		function disableDrag($table)
+		{
+			$table.find('.CswLayoutTable_celldiv')
+					.draggable( 'destroy' );
+		}
 
         function onHoverIn(ev, dd, $table, $cell)
         {
-            if(isConfigMode($table))
-                $cell.addClass('CswLayoutTable_hover');
 			if(isRemoveMode($table))
 			{
 				var $cellset = $table.CswTable('findCell', '[row="'+ $cell.CswAttrDom('row') +'"][column="'+ $cell.CswAttrDom('column') +'"]');
@@ -350,8 +372,6 @@
 
         function onHoverOut(ev, dd, $table, $cell)
         {
-            if(isConfigMode($table))
-                $cell.removeClass('CswLayoutTable_hover');
 			if(isRemoveMode($table))
 			{
 				var $cellset = $table.CswTable('findCell', '[row="'+ $cell.CswAttrDom('row') +'"][column="'+ $cell.CswAttrDom('column') +'"]');
@@ -359,64 +379,69 @@
 	        }
 		} // onHoverOut()
 
-        function onDrag(ev, dd, $table, row, column, cellsetrows, cellsetcolumns) 
+        function onDrag(ev, dd, $dragdiv, $table )
         {
             if(isConfigMode($table))
-            {
-                $table.CswTable('findCell', '.CswLayoutTable_swapcell')
-                      .removeClass('CswLayoutTable_swapcell');
+            {				
+				var $dragcell = $dragdiv.parent();
 
-                var $cells = $table.CswTable('findCell', '[row="'+ row +'"][column="'+ column +'"]');
+                var $cells = $table.CswTable('findCell', '[row="'+ $dragcell.CswAttrDom('row') +'"][column="'+ $dragcell.CswAttrDom('column') +'"]');
                 $cells.addClass('CswLayoutTable_dragcell');
-
-                var $swapcells = getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd);
-                if($swapcells.length > 0)
-                {
-                    $swapcells.addClass('CswLayoutTable_swapcell');
-                }
-            }
+			}
         } // onDrag
 
-        function onDrop(ev, dd, $table, row, column, cellsetrows, cellsetcolumns)
+        function onDrop(ev, dd, $dropcell, $table, cellsetrows, cellsetcolumns)
         { 
             if(isConfigMode($table))
             {
-                $table.CswTable('findCell', '.CswLayoutTable_swapcell')
-                      .removeClass('CswLayoutTable_swapcell');
+				var $dropdiv = $dropcell.children('div');
+				var $dragdiv = dd.draggable;
+				var $dragcell = $dragdiv.parent();
 
-                var $cells = $table.CswTable('findCell', '[row="'+ row +'"][column="'+ column +'"]');
-                $cells.removeClass('CswLayoutTable_dragcell');
+				$dragcells = $table.CswTable('findCell', '[row="'+ $dragcell.CswAttrDom('row') +'"][column="'+ $dragcell.CswAttrDom('column') +'"]');
+				$dropcells = $table.CswTable('findCell', '[row="'+ $dropcell.CswAttrDom('row') +'"][column="'+ $dropcell.CswAttrDom('column') +'"]');
 
-                var $swapcells = getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd);
-                if($swapcells.length > 0)
+                $dragcells.removeClass('CswLayoutTable_dragcell');
+
+				// This must happen BEFORE we do the swap, in case the caller relies on the contents of the div being where it was
+                $table.trigger($table.CswAttrDom('id') + 'CswLayoutTable_onSwap', { 
+                                        table: $table,
+                                        cellset: _getCellSet($table, $dragcell.CswAttrDom('row'), $dragcell.CswAttrDom('column')),
+                                        swapcellset: _getCellSet($table, $dropcells.first().CswAttrDom('row'), $dropcells.first().CswAttrDom('column')),
+                                        row: $dragcell.CswAttrDom('row'),
+                                        column: $dragcell.CswAttrDom('column'),
+                                        swaprow: $dropcells.first().CswAttrDom('row'),
+                                        swapcolumn: $dropcells.first().CswAttrDom('column')
+                                    });
+
+                for(r = 1; r <= cellsetrows; r++)
                 {
-                    // This must happen BEFORE we do the swap, in case the caller relies on the contents of the div being where it was
-                    $table.trigger($table.CswAttrDom('id') + 'CswLayoutTable_onSwap', { 
-                                            table: $table,
-                                            cellset: _getCellSet($table, row, column),
-                                            swapcellset: _getCellSet($table, $swapcells.first().CswAttrDom('row'), $swapcells.first().CswAttrDom('column')),
-                                            row: row,
-                                            column: column,
-                                            swaprow: $swapcells.first().CswAttrDom('row'),
-                                            swapcolumn: $swapcells.first().CswAttrDom('column')
-                                        });
-                    
-
-                    var $tempdiv = $('<div />');
-                    for(r = 1; r <= cellsetrows; r++)
+                    for(c = 1; c <= cellsetcolumns; c++)
                     {
-                        for(c = 1; c <= cellsetcolumns; c++)
-                        {
-                            var $cell = $cells.filter('[cellsetrow="'+ r +'"][cellsetcolumn="'+ c +'"]');
-                            var $swapcell = $swapcells.filter('[cellsetrow="'+ r +'"][cellsetcolumn="'+ c +'"]');
+                        var $thisdragcell = $dragcells.filter('[cellsetrow="'+ r +'"][cellsetcolumn="'+ c +'"]');
+                        var $thisdropcell = $dropcells.filter('[cellsetrow="'+ r +'"][cellsetcolumn="'+ c +'"]');
+						var $thisdragdiv = $thisdragcell.children('div');
+						var $thisdropdiv = $thisdropcell.children('div');
 
-                            // swap contents
-                            $cell.contents().appendTo($tempdiv);
-                            $swapcell.contents().appendTo($cell);
-                            $tempdiv.contents().appendTo($swapcell);
-                        }
-                    }
-                } // if($swapcells.length > 0)
+						$thisdragcell.append($thisdropdiv);
+						$thisdropcell.append($thisdragdiv);
+
+						$thisdragdiv.position({
+							my: "left top",
+							at: "left top",
+							of: $thisdropcell,
+							offset: $table.CswAttrDom('cellpadding')
+						});
+
+						$thisdropdiv.position({
+							my: "left top",
+							at: "left top",
+							of: $thisdragcell,
+							offset: $table.CswAttrDom('cellpadding')
+						});
+
+					} // for(c = 1; c <= cellsetcolumns; c++)
+				} // for(r = 1; r <= cellsetrows; r++)
             } // if(isConfigMode($table))
         } // onDrop()
 
@@ -440,12 +465,6 @@
 				$removecells.removeClass('CswLayoutTable_remove');
 			} // if(isRemoveMode($table))
 		} // onClick()
-        
-        function getSwapCells($table, row, column, cellsetrows, cellsetcolumns, dd)
-        {
-            var $hovercell = $table.find('.CswLayoutTable_hover');
-			return $table.CswTable('findCell', '[row="'+ $hovercell.CswAttrDom('row') +'"][column="'+ $hovercell.CswAttrDom('column') +'"]');
-        } // getSwapCells()
 
 
         // Method calling logic

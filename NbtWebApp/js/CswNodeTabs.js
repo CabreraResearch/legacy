@@ -284,11 +284,11 @@
 
         function _getLabelCell($cellset)
         {
-            return $cellset[1][1];
+            return $cellset[1][1].children('div');
         }
         function _getPropertyCell($cellset)
         {
-            return $cellset[1][2];
+            return $cellset[1][2].children('div');
         }
 
         function _handleProps($layouttable, $xml, $tabcontentdiv, tabid, ConfigMode)
