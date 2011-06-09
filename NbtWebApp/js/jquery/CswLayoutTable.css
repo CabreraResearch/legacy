@@ -1,6 +1,9 @@
 ﻿.CswLayoutTable_cell
 {
 }
+.CswLayoutTable_celldiv
+{
+}
 .CswLayoutTable_configcell
 {
     border: 1px solid #aaaaaa;
@@ -10,12 +13,9 @@
 {
     background-color: #dddddd;
 }
-.CswLayoutTable_swapcell
-{
-    background-color: #ffff00;
-}
 .CswLayoutTable_hover
 {
+    background-color: #ffff00;
 }
 .CswLayoutTable_emptycell
 {

@@ -1,7 +1,7 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../_Global.js" />
+﻿/// <reference path="../jquery/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
     $.fn.CswNodeTabs = function (options)
@@ -284,11 +284,11 @@
 
         function _getLabelCell($cellset)
         {
-            return $cellset[1][1];
+            return $cellset[1][1].children('div');
         }
         function _getPropertyCell($cellset)
         {
-            return $cellset[1][2];
+            return $cellset[1][2].children('div');
         }
 
         function _handleProps($layouttable, $xml, $tabcontentdiv, tabid, ConfigMode)
