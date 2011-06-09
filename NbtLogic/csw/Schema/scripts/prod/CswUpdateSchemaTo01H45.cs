@@ -28,26 +28,52 @@ namespace ChemSW.Nbt.Schema
         public void update()
         {
 
+
+
+            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "jct_nodes_props_audit" );
+            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "nodes_audit" );
+            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "nodetype_props_audit" );
+            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "nodetypes_audit" );
+            _CswNbtSchemaModTrnsctn.makeTableNotAuditable( "object_class_props_audit" );
+
+
+
             CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( Description, "select distinct tablename from data_dictionary where lower(tablename) like '%_audit'" );
-            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData(); 
-                 
+            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+
             DataTable DataTable = CswArbitrarySelect.getTable();
             foreach( DataRow CurrentRow in DataTable.Rows )
             {
-                string CurrentTableName = CurrentRow["tablename"].ToString(); 
+                string CurrentAuditTableName = CurrentRow["tablename"].ToString();
 
-                if( _CswNbtSchemaModTrnsctn.isColumnDefined( CurrentTableName, "deletedphysically" ) )
+                if( _CswNbtSchemaModTrnsctn.isColumnDefined( CurrentAuditTableName, "deletedphysically" ) )
                 {
-                    _CswNbtSchemaModTrnsctn.dropColumn( CurrentTableName, "deletedphysically" );
+                    _CswNbtSchemaModTrnsctn.dropColumn( CurrentAuditTableName, "deletedphysically" );
                 }
 
-                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( CurrentTableName, CswAuditMetaData.AuditEventTypeColName ) )
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( CurrentAuditTableName, CswAuditMetaData.AuditEventTypeColName ) )
                 {
-                    _CswNbtSchemaModTrnsctn.addStringColumn( CurrentTableName, CswAuditMetaData.AuditEventTypeColName, CswAuditMetaData.AuditEventTypeColDescription, false, true, CswAuditMetaData.AuditEventTypeColLength );
+                    _CswNbtSchemaModTrnsctn.addStringColumn( CurrentAuditTableName, CswAuditMetaData.AuditEventTypeColName, CswAuditMetaData.AuditEventTypeColDescription, false, true, CswAuditMetaData.AuditEventTypeColLength );
                 }
 
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( CurrentAuditTableName, CswAuditMetaData.AuditRecordCreatedColName ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addDateColumn( CurrentAuditTableName, CswAuditMetaData.AuditRecordCreatedColName, CswAuditMetaData.AuditRecordCreatedColDescription, false, true );
+                }
+
+
+                string AuditedTableName = CswAuditMetaData.makeNameOfAuditedTable( CurrentAuditTableName );
+                string AuditedTablePkColName = _CswNbtSchemaModTrnsctn.CswDataDictionary.getPrimeKeyColumn( AuditedTableName );
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( CurrentAuditTableName, AuditedTablePkColName ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addLongColumn( CurrentAuditTableName, AuditedTablePkColName, "prime key of audited record", false, true );
+                }
 
             }//iterate audit tables
+
+
+
+
 
         } // update()
 
