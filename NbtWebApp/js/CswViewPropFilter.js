@@ -342,8 +342,32 @@ var ViewBuilder_CssClasses = {
             });
 
             //return $filterXml;
-        } // 'makefilter': function(options)
-        
+        }, // 'makefilter': function(options)
+        'bindToButton': function()
+        {
+            var $button = $(this);
+
+            if( !isNullOrEmpty($button) )
+            {
+                $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function() { 
+                    var $input = $(this);
+                    $input.clickOnEnter($button);
+                });
+                $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { 
+                    var $input = $(this);
+                    $input.clickOnEnter($button);
+                });
+                $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { 
+                    var $input = $(this);
+                    $input.clickOnEnter($button);
+                });                       
+                $('.' + ViewBuilder_CssClasses.filter_value.name).each(function() { 
+                    var $input = $(this);
+                    $input.clickOnEnter($button);
+                });
+            }
+            return $button;            
+        } // 'bindToButton': function(options)
     } // methods 
 	 
     $.fn.CswViewPropFilter = function (method) {

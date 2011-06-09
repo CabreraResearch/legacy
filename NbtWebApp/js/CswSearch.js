@@ -327,7 +327,8 @@ var CswSearch_CssClasses = {
                                                             enabledText: 'Search', 
                                                             disabledText: 'Searching', 
                                                             onclick: function() { doSearch(); }
-                                                });
+                                                  });
+           $searchButton.CswViewPropFilter('bindToButton');
         } // renderSearchButtons()
 
         function reInit()
