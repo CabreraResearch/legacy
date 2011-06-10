@@ -2020,15 +2020,10 @@
         // ------------------------------------------------------------------------------------
         // Persistance functions
         // ------------------------------------------------------------------------------------
-        function _cacheSession(sessionid, username, onsuccess)
+        function _cacheSession(sessionid, username)
         {
             localStorage['username'] = username;
             localStorage['sessionid'] = sessionid;
-
-            if ( !isNullOrEmpty(onsuccess) )
-            {
-                onsuccess();
-            }
         } //_cacheSession()
 
         function _storeViewXml(rootid, rootname, $viewxml)
