@@ -197,12 +197,15 @@ namespace ChemSW.Nbt.WebServices
 
 				try
 				{
-					_CswSessionResources.CswSessionManager.setAccessId( AccessId );
+				    string ParsedAccessId = AccessId.ToLower().Trim();
+                    _CswSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
 				}
 				catch( CswDniException ex )
 				{
-					if( !ex.Message.Contains( "There is no configuration information for this AccessId" ) )
-						throw ex;
+                    if( !ex.Message.Contains( "There is no configuration information for this AccessId" ) )
+                    {
+                        throw ex;
+                    }
 				}
 
 				AuthenticationStatus AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
