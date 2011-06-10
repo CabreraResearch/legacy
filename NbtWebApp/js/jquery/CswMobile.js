@@ -468,11 +468,8 @@
                 {
                     if (amOffline())
                     {
-                        _fetchCachedRootXml(function ($xml)
-                        {
-                            p.$xml = $xml;
-                            $retDiv = _loadDivContentsXml(p);
-                        });
+                        p.$xml = _fetchCachedRootXml();
+                        $retDiv = _loadDivContentsXml(p);
                     } 
                     else
                     {
@@ -2073,15 +2070,14 @@
             return $view;
         }
 
-        function _fetchCachedRootXml(onsuccess)
+        function _fetchCachedRootXml()
         {
             var ret = '';
-               
             for( var view in storedViews )
             {
                 ret += "<view id=\"" + view.rootid + "\" name=\"" + view.name + "\" />";
             }
-            onsuccess( $(ret) );
+            return $(ret);
         }
 
 
