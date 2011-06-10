@@ -2017,17 +2017,6 @@
             });
         } // onSearchSubmit()
 
-        function readConfigVar(varname, onSuccess)
-        {
-            var configvar = localStorage[varname];
-            if( !isNullOrEmpty(configvar) ) {
-                onSuccess(configvar);
-            }
-            else {
-                onSuccess('');
-            }
-        } //readConfigVar()
-
         // ------------------------------------------------------------------------------------
         // Persistance functions
         // ------------------------------------------------------------------------------------
