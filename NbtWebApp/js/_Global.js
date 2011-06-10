@@ -1005,7 +1005,7 @@ function isNullOrEmpty(obj)
     var ret = false;
     if (!isFunction(obj))
     {
-        ret = $.isEmptyObject(obj);
+    	ret = $.isPlainObject(obj) && $.isEmptyObject(obj);
         if (!ret && isGeneric(obj))
         {
             ret = (trim(obj) === '');
