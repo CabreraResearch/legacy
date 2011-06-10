@@ -2017,12 +2017,6 @@
             });
         } // onSearchSubmit()
 
-        function writeConfigVar(varname, varval, onsuccess)
-        {
-            localStorage[varname] = varval;
-            onsuccess();
-        } //writeConfigVar() 
-
         function readConfigVar(varname, onSuccess)
         {
             var configvar = localStorage[varname];
