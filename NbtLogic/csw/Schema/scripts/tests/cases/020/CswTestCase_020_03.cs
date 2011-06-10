@@ -53,12 +53,12 @@ namespace ChemSW.Nbt.Schema
             _CswTstCaseRsrc.assertTableIsPresent( AuditTableName02 );
 
 
-            _CswTstCaseRsrc.assertColumnIsPresent( AuditTableName01, CswAuditMetaData.DelegeFlagColName );
+            _CswTstCaseRsrc.assertColumnIsPresent( AuditTableName01, CswAuditMetaData.AuditEventTypeColName );
             _CswTstCaseRsrc.assertColumnIsPresent( AuditTableName01, AuditTable01PkColumnName );
             _CswTstCaseRsrc.assertColumnIsPresent( AuditTableName01, _CswTstCaseRsrc_020.ArbitraryColumnName_01 );
             _CswTstCaseRsrc.assertColumnIsPresent( AuditTableName01, _CswTstCaseRsrc_020.ArbitraryColumnName_02 );
 
-            _CswTstCaseRsrc.assertColumnIsPresent( AuditTableName02, CswAuditMetaData.DelegeFlagColName );
+            _CswTstCaseRsrc.assertColumnIsPresent( AuditTableName02, CswAuditMetaData.AuditEventTypeColName );
             _CswTstCaseRsrc.assertColumnIsPresent( AuditTableName02, AuditTable02PkColumnName );
             _CswTstCaseRsrc.assertColumnIsPresent( AuditTableName02, _CswTstCaseRsrc_020.ArbitraryColumnName_01 );
             _CswTstCaseRsrc.assertColumnIsPresent( AuditTableName02, _CswTstCaseRsrc_020.ArbitraryColumnName_02 );

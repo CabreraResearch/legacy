@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema
             {
                 if( null == __ArbitraryTestValues )
                 {
-                    __ArbitraryTestValues = _CswTestCaseRsrc.makeArbitraryTestValues( 20 );
+                    __ArbitraryTestValues = _CswTestCaseRsrc.makeArbitraryTestValues( 20, "_valsnot_" );
                 }
 
                 return ( __ArbitraryTestValues );

@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema
             {
                 if( null == __ArbitraryTestValues )
                 {
-                    __ArbitraryTestValues = _CswTestCaseRsrc.makeArbitraryTestValues( 20 );
+                    __ArbitraryTestValues = _CswTestCaseRsrc.makeArbitraryTestValues( 20, "_valsnot_" );
                 }
 
                 return ( __ArbitraryTestValues );
@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.Schema
         {
             if( _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName ) != _OriginalAuditSetting_Audit )
             {
-                _CswNbtSchemaModTrnsctn.setConfigVariableValue( _CswAuditMetaData.AuditConfgVarName, "1" );
+                _CswNbtSchemaModTrnsctn.setConfigVariableValue( _CswAuditMetaData.AuditConfgVarName, _OriginalAuditSetting_Audit );
             }
         }//setAuditingOn()
 
@@ -137,13 +137,15 @@ namespace ChemSW.Nbt.Schema
         {
             string CurrentAuditSetting = _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName );
 
-            if( _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName ) != _OriginalAuditSetting_Audit )
+            if( CurrentAuditSetting != _OriginalAuditSetting_Audit )
             {
                 throw ( new CswDniException( "Current audit configuration setting (" + CurrentAuditSetting + ") does not match the original setting (" + _OriginalAuditSetting_Audit + ")" ) );
             }
 
         }//assertAuditSettingIsRestored()
 
+
     }//CswSchemaUpdaterTestCaseDropColumnRollback
+
 
 }//ChemSW.Nbt.Schema

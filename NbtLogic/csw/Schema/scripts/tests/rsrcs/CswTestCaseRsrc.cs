@@ -11,6 +11,9 @@ using ChemSW.Exceptions;
 using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Nbt.Schema;
+using ChemSW.Audit;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -21,6 +24,7 @@ namespace ChemSW.Nbt.Schema
     public enum TestColumnNamesReal { NodeName }
     public enum TestNameStem { PrimeKeyTable, ForeignKeyTable, TestVal }
 
+    public enum TestNodeTypeNamesFake { TestNodeType01, TestNodeType02 }
 
     public struct PkFkPair
     {
@@ -41,6 +45,10 @@ namespace ChemSW.Nbt.Schema
         private Dictionary<TestColumnNamesFake, string> _TestColumnNamesFake = new Dictionary<TestColumnNamesFake, string>();
         private Dictionary<TestColumnNamesReal, string> _TestColumnNamesReal = new Dictionary<TestColumnNamesReal, string>();
         private Dictionary<TestNameStem, string> _TestNameStems = new Dictionary<TestNameStem, string>();
+
+        private Dictionary<TestNodeTypeNamesFake, string> _TestNodeTypeNamesFake = new Dictionary<TestNodeTypeNamesFake, string>(); 
+
+        CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
 
 
         private string _ForeignKeyTableStem = "fk_Table_";
@@ -73,6 +81,10 @@ namespace ChemSW.Nbt.Schema
             _TestNameStems.Add( TestNameStem.ForeignKeyTable, "fk_Table_" );
             _TestNameStems.Add( TestNameStem.PrimeKeyTable, "pk_Table_" );
             _TestNameStems.Add( TestNameStem.TestVal, "Test val " );
+
+
+            _TestNodeTypeNamesFake.Add( TestNodeTypeNamesFake.TestNodeType01, "NodeTypeTest01" );
+            _TestNodeTypeNamesFake.Add( TestNodeTypeNamesFake.TestNodeType02, "NodeTypeTest02" );
 
         }//ctor
 
@@ -164,7 +176,7 @@ namespace ChemSW.Nbt.Schema
 
 
 
-        public Dictionary<string, List<string>> makeArbitraryTestValues( Int32 TotalRows )
+        public Dictionary<string, List<string>> makeArbitraryTestValues( Int32 TotalRows, string ValueStem )
         {
 
             Dictionary<string, List<string>> ReturnVal = new Dictionary<string, List<string>>();
@@ -176,7 +188,7 @@ namespace ChemSW.Nbt.Schema
                 ReturnVal.Add( CurrentFakeColumnName, CurrentValueList );
                 for( int idx = 0; idx < TotalRows; idx++ )
                 {
-                    CurrentValueList.Add( idx.ToString() + "_valsnot_" + CurrentFakeColumnName );
+                    CurrentValueList.Add( idx.ToString() + ValueStem + CurrentFakeColumnName );
 
                 }//iterate test values
 
@@ -186,6 +198,80 @@ namespace ChemSW.Nbt.Schema
             return ( ReturnVal );
 
         }//makeArbitraryTestValues() 
+
+
+
+        public bool doTableValuesMatchTestValues( DataTable DataTable, Dictionary<string, List<string>> Testvalues, ref string MisMatchReason )
+        {
+            bool ReturnVal = true;
+
+
+            Int32 TotalRowsToCompare = 0;
+            foreach( List<string> CurrentList in Testvalues.Values )
+            {
+                if( CurrentList.Count > TotalRowsToCompare )
+                {
+                    TotalRowsToCompare = CurrentList.Count;
+                }
+            }
+
+            if( TotalRowsToCompare <= DataTable.Rows.Count )
+            {
+
+                foreach( string CurrentColumnName in Testvalues.Keys )
+                {
+
+                    if( false == ReturnVal )//next best thing to having it all in the loop control :-( 
+                    {
+                        break;
+                    }
+
+                    if( DataTable.Columns.Contains( CurrentColumnName ) )
+                    {
+
+                        List<string> CurrentValues = Testvalues[CurrentColumnName];
+                        for( int idx = 0; idx < CurrentValues.Count; idx++ )
+                        {
+
+                            DataRow CurrentRow = DataTable.Rows[idx];
+
+                            if( ( false == CurrentRow.IsNull( CurrentColumnName ) && ( string.Empty != CurrentValues[idx] ) ) )
+                            {
+                                if( CurrentRow[CurrentColumnName].ToString() != CurrentValues[idx] )
+                                {
+                                    ReturnVal = false;
+                                    MisMatchReason = "The ToString()'ed (sic.) value of column " + CurrentColumnName + " at row index " + idx.ToString() + " is " + CurrentRow[CurrentColumnName].ToString() + " in the data table and " + CurrentValues[idx] + " in the test values";
+                                }
+                            }
+                            else if( CurrentRow.IsNull( CurrentColumnName ) && ( string.Empty != CurrentValues[idx] ) )
+                            {
+                                ReturnVal = false;
+                                MisMatchReason = "The value of column " + CurrentColumnName + " at row index " + idx.ToString() + " is null in one table but not in the other";
+                            }//else they are _both_ null which is means they match and ReturnVal is still true :-) 
+
+                        }//iterate curent column values
+
+                    }
+                    else
+                    {
+                        ReturnVal = false;
+                        MisMatchReason = "Table " + DataTable.TableName + " does not contain the compare column " + CurrentColumnName;
+                    }//if-else table contains the test column
+
+                }//iterate test value columns
+
+            }
+            else
+            {
+                ReturnVal = false;
+                MisMatchReason = "A column value list in the test values has " + TotalRowsToCompare.ToString() + " but the comparison DataTable only has " + DataTable.Rows.Count.ToString() + " rows";
+            }//if-else number of rows match
+
+
+
+            return ( ReturnVal );
+
+        }//doTableValuesMatchTestValues()
 
 
         public bool doTableValuesMatch( DataTable DataTable_1, DataTable DataTable_2, IEnumerable CompareColumns, ref string MisMatchReason )
@@ -198,9 +284,15 @@ namespace ChemSW.Nbt.Schema
                 for( Int32 rowidx = 0; ( rowidx < DataTable_1.Rows.Count ) && ( true == ReturnVal ); rowidx++ )
                 {
                     DataRow CurrentRowInTable_1 = DataTable_1.Rows[rowidx];
-                    //for( Int32 columnidx = 0; ( columnidx < CompareColumns.Count ) && ( true == ReturnVal ); columnidx++ )
                     foreach( string DataTable_1_ColumnName in CompareColumns )
                     {
+
+                        if( false == ReturnVal )//next best thing to having it all in the loop control :-( 
+                        {
+                            break;
+                        }
+
+
                         //string DataTable_1_ColumnName = CompareColumns[columnidx];
                         if( DataTable_2.Columns.Contains( DataTable_1_ColumnName ) )
                         {
@@ -223,7 +315,9 @@ namespace ChemSW.Nbt.Schema
                             ReturnVal = false;
                             MisMatchReason = "DataTable_1 has column " + DataTable_1_ColumnName + " but DataTable_2 does not";
                         }
+
                     }//iterate columns in table 1
+
 
                 }//iterate rows in table 1 
 
@@ -240,20 +334,19 @@ namespace ChemSW.Nbt.Schema
         }//doTableValuesMatch() 
 
 
-        public void fillTableWithArbitraryData( string TableName, Dictionary<string, List<string>> FillData )
+        public void fillTableWithArbitraryData( string TableName, Dictionary<string, List<string>> FillData, List<Int32> PksList = null )
         {
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "fillTableWtithArbitraryData_update", TableName );
             DataTable DataTable = CswTableUpdate.getTable();
 
-            Int32 TotalRows = 0;
+            Int32 MaxFillDataRows = 0;
             foreach( List<string> CurrentList in FillData.Values )
             {
-                if( CurrentList.Count > TotalRows )
+                if( CurrentList.Count > MaxFillDataRows )
                 {
-                    TotalRows = CurrentList.Count;
+                    MaxFillDataRows = CurrentList.Count;
                 }
             }
-
 
             foreach( string CurrentColumnName in FillData.Keys )
             {
@@ -261,12 +354,19 @@ namespace ChemSW.Nbt.Schema
                 {
                     throw ( new CswDniException( "Value-fill column " + CurrentColumnName + " does not exist in table " + TableName ) );
                 }
+
             }//iterate lists to get max row count
 
-            for( int idx = 0; idx < TotalRows; idx++ )
+            Int32 MaxRowsToAdd = MaxFillDataRows - DataTable.Rows.Count; //if we need to add the rows, we do so
+            for( int idx = DataTable.Rows.Count; idx < MaxRowsToAdd; idx++ )
             {
                 DataRow DataRow = DataTable.NewRow();
                 DataTable.Rows.Add( DataRow );
+
+                if( null != PksList )
+                {
+                    PksList.Add( CswConvert.ToInt32( DataRow[_CswNbtSchemaModTrnsctn.getPrimeKeyColName( TableName )] ) );
+                }
             }//iterate max rows to prime the tables
 
             foreach( string CurrentColumn in FillData.Keys )
@@ -280,8 +380,22 @@ namespace ChemSW.Nbt.Schema
             }//iterate fill data to to populate table
 
             CswTableUpdate.update( DataTable );
-
         }//fillTableWithArbitraryData() 
+
+
+        public void deleteArbitraryTableData( string TableName )
+        {
+            CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "fillTableWtithArbitraryData_update", TableName );
+            DataTable DataTable = CswTableUpdate.getTable();
+
+            foreach( DataRow CurrentRow in DataTable.Rows )
+            {
+                CurrentRow.Delete();
+            }
+
+            CswTableUpdate.update( DataTable );
+
+        }//deleteArbitraryTableData()
 
         public void addArbitraryForeignKeyRecords( string PkTable, string FkTable, string ReferenceColumnName, string FkTableArbitraryValueColumnName, string FkTableValueStem )
         {
@@ -383,7 +497,12 @@ namespace ChemSW.Nbt.Schema
         }//assertTableIsAbsent() 
 
 
+        public CswNbtMetaDataNodeType makeTestNodeType( TestNodeTypeNamesFake TestNodeTypeNamesFake )
+        {
+            return ( _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass.ToString(), _TestNodeTypeNamesFake[TestNodeTypeNamesFake], string.Empty ) );
+        }//makeTestNodeType()
 
+        
 
     }//CswTestCaseRsrc
 

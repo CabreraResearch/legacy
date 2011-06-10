@@ -10,6 +10,7 @@ using ChemSW.Exceptions;
 using ChemSW.DB;
 using ChemSW.Nbt.Schema;
 using ChemSW.Core;
+using ChemSW.Audit;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -43,6 +44,22 @@ namespace ChemSW.Nbt.Schema
             if( false == _CswTstCaseRsrc_021.compareTargetAndAuditedData( ref MisMatchMessage ) )
             {
                 throw ( new CswDniException( "Auditing test failed: " + MisMatchMessage ) );
+            }
+
+            CswAuditMetaData CswAuditMetaData = new Audit.CswAuditMetaData();
+            CswTableSelect CswTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( Description, CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_021.ArbitraryTableName_01 ) );
+            DataTable DataTable = CswTableSelect.getTable();
+            if( DataTable.Rows.Count <= 0 )
+            {
+                throw ( new CswDniException( "Unable to evalutate state of audit table: there are no rows :-( " ) );
+            }
+
+            foreach( DataRow CurrentRow in DataTable.Rows )
+            {
+                if( AuditEventType.Insert != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
+                {
+                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.Insert.ToString() ) );
+                }
             }
 
         }//runTest()

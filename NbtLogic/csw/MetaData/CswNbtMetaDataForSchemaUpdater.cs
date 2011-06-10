@@ -171,7 +171,17 @@ namespace ChemSW.Nbt.MetaData
                     }
                 }
             }
+
+
         } // UpdateObjectClassProp()
 
-    }
-}
+
+
+
+
+
+
+    }//CswNbtMetaDataForSchemaUpdater
+
+
+}//ChemSW.Nbt.MetaData

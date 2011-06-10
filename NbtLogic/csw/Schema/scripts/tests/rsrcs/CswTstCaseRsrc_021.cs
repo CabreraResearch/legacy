@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
         }//ctor
 
 
-        public string Purpose = "Basic audit mechanism";
+        public string Purpose = "Basic audit mechanism for insert";
 
         public string ArbitraryTableName_01 { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
 
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema
             {
                 if( null == __ArbitraryTestValues )
                 {
-                    __ArbitraryTestValues = _CswTestCaseRsrc.makeArbitraryTestValues( 20 );
+                    __ArbitraryTestValues = _CswTestCaseRsrc.makeArbitraryTestValues( 20 , "_valsnot_");
                 }
 
                 return ( __ArbitraryTestValues );
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.Schema
             ;
             foreach( string CurrentColumnName in _CswNbtSchemaModTrnsctn.CswDataDictionary.getColumnNames( ArbitraryTableName_01 ) )
             {
-                if( CurrentColumnName.ToLower() != ArbitraryTablePkCol.ToLower() && CurrentColumnName.ToLower() != _CswAuditMetaData.AuditLevelColName )
+                if(  CurrentColumnName.ToLower() != _CswAuditMetaData.AuditLevelColName )
                 {
                     OrderByClauses.Add( new OrderByClause( CurrentColumnName, OrderByType.Ascending ) );
                     CswCommaDelimitedString.Add( CurrentColumnName );
@@ -119,6 +119,7 @@ namespace ChemSW.Nbt.Schema
             _CswTestCaseRsrc.assertTableIsAbsent( ArbitraryTableName_01 );
         }
 
+
         private string _OriginalAuditSetting_Audit = string.Empty;
         public void setAuditingOn()
         {
@@ -135,7 +136,7 @@ namespace ChemSW.Nbt.Schema
         {
             if( _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName ) != _OriginalAuditSetting_Audit )
             {
-                _CswNbtSchemaModTrnsctn.setConfigVariableValue( _CswAuditMetaData.AuditConfgVarName, "1" );
+                _CswNbtSchemaModTrnsctn.setConfigVariableValue( _CswAuditMetaData.AuditConfgVarName, _OriginalAuditSetting_Audit );
             }
         }//setAuditingOn()
 
@@ -143,7 +144,7 @@ namespace ChemSW.Nbt.Schema
         {
             string CurrentAuditSetting = _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName );
 
-            if( _CswNbtSchemaModTrnsctn.getConfigVariableValue( _CswAuditMetaData.AuditConfgVarName ) != _OriginalAuditSetting_Audit )
+            if( CurrentAuditSetting != _OriginalAuditSetting_Audit )
             {
                 throw ( new CswDniException( "Current audit configuration setting (" + CurrentAuditSetting + ") does not match the original setting (" + _OriginalAuditSetting_Audit + ")" ) );
             }

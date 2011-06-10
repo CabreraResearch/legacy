@@ -289,7 +289,7 @@ namespace ChemSW.Nbt.Schema
 
         #region Metadata, table, and Nodes
         public CswStaticSelect makeCswStaticSelect( string UniqueName, string QueryName ) { return ( _CswNbtResources.makeCswStaticSelect( UniqueName, QueryName ) ); }
-        public CswArbitrarySelect makeCswArbitrarySelect( string UniqueName, string QueryName ) { return ( _CswNbtResources.makeCswArbitrarySelect( UniqueName, QueryName ) ); }
+        public CswArbitrarySelect makeCswArbitrarySelect( string UniqueName, string QueryText ) { return ( _CswNbtResources.makeCswArbitrarySelect( UniqueName, QueryText ) ); }
         public CswTableSelect makeCswTableSelect( string UniqueName, string TableName ) { return ( _CswNbtResources.makeCswTableSelect( UniqueName, TableName ) ); }
         public CswTableUpdate makeCswTableUpdate( string UniqueName, string TableName ) { return ( _CswNbtResources.makeCswTableUpdate( UniqueName, TableName ) ); }
         //public CswNbtMetaData MetaData { get { return ( _CswNbtResources.MetaData ); } }
@@ -334,6 +334,8 @@ namespace ChemSW.Nbt.Schema
                 addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
             }
 
+            //datetime stamp column
+
 
             if( false == _CswAuditMetaData.isAuditTable( TableName ) )
             {
@@ -341,8 +343,10 @@ namespace ChemSW.Nbt.Schema
                 if( false == _CswNbtResources.CswResources.DataDictionary.isTableDefined( AuditTableName ) )
                 {
                     copyTable( TableName, AuditTableName, false );
-                    addBooleanColumn( AuditTableName, _CswAuditMetaData.DelegeFlagColName, _CswAuditMetaData.DelegeFlagColDescription, false, false );
+                    addStringColumn( AuditTableName, _CswAuditMetaData.AuditEventTypeColName, _CswAuditMetaData.AuditEventTypeColDescription, false, true, _CswAuditMetaData.AuditEventTypeColLength );
                     addForeignKeyColumn( AuditTableName, _CswAuditMetaData.AuditTransactionIdColName, "fk to audittransactions table", false, true, _CswAuditMetaData.AuditTransactionTableName, _CswAuditMetaData.AuditTransactionIdColName );
+                    addDateColumn( AuditTableName, _CswAuditMetaData.AuditRecordCreatedColName, _CswAuditMetaData.AuditRecordCreatedColDescription, false, true );
+                    addLongColumn( AuditTableName, _CswNbtResources.DataDictionary.getPrimeKeyColumn( TableName ), "prime key of audited record", false, true );
 
                 }//if the audit table does not yet exist
 
