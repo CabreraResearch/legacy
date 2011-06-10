@@ -397,8 +397,8 @@ var CswViewEditor_WizardSteps = {
                     cacheStepTwo();
                 }
                 if( $currentviewxml.CswAttrXml('mode') === 'Grid' &&
-                    ( $('.vieweditor_viewrellink').children().length === 0 ||
-                      $('.vieweditor_viewproplink').children().length === 0 ) )
+                    ( $currentviewxml.children('relationship').length === 0 ||
+                      $currentviewxml.children('relationship').children('property').length === 0 ) )
                 {
                     processView = confirm('You are attempting to create a Grid without properties. This will not display any information. Do you want to continue?');
                     if(!processView) $wizard.CswWizard('button', 'finish', 'enable');
