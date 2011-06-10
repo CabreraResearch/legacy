@@ -619,9 +619,10 @@ var CswViewEditor_WizardSteps = {
 				var childxml = $select.find('option:selected').data('optionviewxml');
 				if($select.CswAttrDom('arbid') === "root")
 				{
-					$(childxml).appendTo($currentviewxml);
+					$currentviewxml.append(childxml);
 				} else {
-					$(childxml).appendTo($currentviewxml.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]'));
+					$currentviewxml.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]')
+								   .append(childxml);
 				}
 				_makeViewTree(stepno, $div);
 			}); // child select

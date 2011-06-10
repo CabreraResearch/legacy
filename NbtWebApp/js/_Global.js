@@ -161,7 +161,7 @@ function CswAjaxXml(options)
     		type: 'POST',
     		async: o.async,
     		url: o.url,
-    		dataType: "xml",
+    		dataType: "text",
     		//contentType: 'application/json; charset=utf-8',
     		data: $.param(o.data),     // should be 'field1=value&field2=value'
     		success: function (data, textStatus, XMLHttpRequest)
@@ -169,9 +169,16 @@ function CswAjaxXml(options)
     			//var endtime = new Date();
     			//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-    			// this is IE compliant
-    			var $xml = $(XMLHttpRequest.responseXML);
-    			var $realxml = $xml.children().first();
+    			var $realxml;
+    			if ($.browser.msie)
+    			{
+    				// We have to use third-party jquery.xml.js for Internet Explorer to handle non-DOM XML content
+    				$realxml = $.xml(data);
+    			}
+    			else
+    			{
+					$realxml = $(XMLHttpRequest.responseXML).children().first();    			
+				}
 
     			if ($realxml.first().get(0).nodeName === "error")
     			{
@@ -197,10 +204,10 @@ function CswAjaxXml(options)
     		error: function (XMLHttpRequest, textStatus, errorThrown)
     		{
     			//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-    			log("Webservice Request ("+ o.url +") Failed: " + textStatus);
+    			log("Webservice Request (" + o.url + ") Failed: " + textStatus);
     			o.error();
     		}
-    	});               // $.ajax({
+    	});                             // $.ajax({
     } // if(o.url != '')
 } // CswAjaxXml()
 
@@ -1246,21 +1253,3 @@ if (typeof String.prototype.trim !== 'function')
         return this.replace(/^\s+|\s+$/g, '');
     }
 }
-
-
-// Validation Hack
-// This is a workaround to a problem introduced by using jquery.validation with jquery 1.5
-// http://stackoverflow.com/questions/5068822/ajax-parseerror-on-verrorsfoundtrue-vmessagelogin-failed
-// http://blog.m0sa.net/2011/02/jqueryvalidation-breaks-jquery-15-ajax.html
-
-//$(function () {
-//	$.ajaxSettings.cache = false;
-//	$.ajaxSettings.jsonp = undefined;
-//	$.ajaxSettings.jsonpCallback = undefined;
-//})
-
-
-
-// ------------------------------------------------------------------------------------
-// Cookiedelia
-// ------------------------------------------------------------------------------------
