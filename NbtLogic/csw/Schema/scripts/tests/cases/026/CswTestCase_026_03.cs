@@ -39,7 +39,13 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-//            _CswTstCaseRsrc_026.updateArbitraryTableData();
+//e            DataTable DataTable = _CswTstCaseRsrc_026.getJctAuditRecords();
+
+            //if( 2 != DataTable.Rows.Count )
+            //{
+            //    throw ( new CswDniException( "After setting two prop values, there are " + DataTable.Rows.Count.ToString() + " audit values" ) );
+            //}
+
 
         }//runTest()
 

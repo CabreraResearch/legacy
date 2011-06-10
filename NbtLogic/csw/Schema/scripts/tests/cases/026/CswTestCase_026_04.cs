@@ -39,7 +39,16 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-//            _CswTstCaseRsrc_026.deleteArbitraryTableData();
+
+
+            //_CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.BuiltInProp].AsText.Text = _CswTstCaseRsrc_026.UpdateValOfBuiltInProp;
+            //_CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.AddedProp].AsText.Text = _CswTstCaseRsrc_026.UpdateValOfAddedProp;
+            //_CswTstCaseRsrc_026.TestNode.postChanges( true );
+
+
+            //_CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.BuiltInProp].ClearValue();
+            //_CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.AddedProp].ClearValue();
+            //_CswTstCaseRsrc_026.TestNode.postChanges( true ); 
 
         }//runTest()
 

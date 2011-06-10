@@ -10,6 +10,7 @@ using ChemSW.Exceptions;
 using ChemSW.DB;
 using ChemSW.Nbt.Schema;
 using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -39,8 +40,13 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-//            _CswTstCaseRsrc_026.makeArbitraryTableData();
 
+            //_CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.BuiltInProp].AsText.Text = _CswTstCaseRsrc_026.InsertValOfBuiltInProp;
+            //_CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.AddedProp].AsText.Text = _CswTstCaseRsrc_026.InsertValOfAddedProp;
+            //_CswTstCaseRsrc_026.TestNode.postChanges( true );
+
+            //_CswTstCaseRsrc_026.JctNodePropIdOfBuiltInProp = _CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.BuiltInProp].JctNodePropId;
+            //_CswTstCaseRsrc_026.JctNodePropIdOfAddedProp = _CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.AddedProp].JctNodePropId;
 
         }//runTest()
 
