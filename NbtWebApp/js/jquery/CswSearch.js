@@ -66,7 +66,8 @@ var CswSearch_CssClasses = {
         var $topspan = o.$searchTable.CswSpan('init');
 
         var topspandivid = makeId({ID: 'search_criteria_div', prefix: o.ID});
-        var $topspandiv = $topspan.CswDiv('init',{ID: topspandivid});
+        var $topspandiv = $topspan.CswDiv('init',{ID: topspandivid})
+							.addClass('CswSearch_Div');
         
         //o.$cswSearchForm.CswDOM('break',{count: 5});
 
@@ -379,10 +380,9 @@ var CswSearch_CssClasses = {
                                     cellpadding: 1,
                                     cellspacing: 1,
                                     cellalign: 'left',
-                                    align: 'center'
+                                    align: 'center',
+									TableCssClass: 'CswSearch_Table'
                                     });
-					o.$searchTable.css("background-color", "0099FF");
-					o.$searchTable.CswAttrXml('frame', 'border');
                     switch(o.searchtype)
                     {
                         case 'nodetypesearch':
