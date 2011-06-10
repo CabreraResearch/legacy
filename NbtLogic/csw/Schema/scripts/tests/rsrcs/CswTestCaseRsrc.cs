@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Schema
         private Dictionary<TestColumnNamesReal, string> _TestColumnNamesReal = new Dictionary<TestColumnNamesReal, string>();
         private Dictionary<TestNameStem, string> _TestNameStems = new Dictionary<TestNameStem, string>();
 
-        private Dictionary<TestNodeTypeNamesFake, string> _TestNodeTypeNamesFake = new Dictionary<TestNodeTypeNamesFake, string>(); 
+        private Dictionary<TestNodeTypeNamesFake, string> _TestNodeTypeNamesFake = new Dictionary<TestNodeTypeNamesFake, string>();
 
         CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
 
@@ -497,12 +497,13 @@ namespace ChemSW.Nbt.Schema
         }//assertTableIsAbsent() 
 
 
+        public CswNbtMetaDataObjectClass.NbtObjectClass TestObjectClassLocation = CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass;
         public CswNbtMetaDataNodeType makeTestNodeType( TestNodeTypeNamesFake TestNodeTypeNamesFake )
         {
-            return ( _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass.ToString(), _TestNodeTypeNamesFake[TestNodeTypeNamesFake], string.Empty ) );
+            return ( _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( TestObjectClassLocation.ToString(), _TestNodeTypeNamesFake[TestNodeTypeNamesFake], string.Empty ) );
         }//makeTestNodeType()
 
-        
+
 
     }//CswTestCaseRsrc
 

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections;
 using System.Data;
 using System.Text;
+using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
@@ -35,15 +36,21 @@ namespace ChemSW.Nbt.Schema
 
 
 
-        public string Purpose = "Audit of NBT prop val insert";
+        public string Purpose = "Audit of NBT node and prop val changes";
 
 
-        public string NameOfPropAddedWithCreate_01 = "foo";
-        public string NameOfPropAddedWithCreate_02 = "bar";
+        public string InsertValOfBuiltInProp = "insert_val_foo";
+        public string InsertValOfAddedProp = "insert_val_bar";
+        public string UpdateValOfBuiltInProp = "update_val_foo";
+        public string UpdateValOfAddedProp = "update_val_bar";
+        public Int32 JctNodePropIdOfBuiltInProp = Int32.MaxValue;
+        public Int32 JctNodePropIdOfAddedProp = Int32.MaxValue;
 
 
-        CswNbtMetaDataNodeType TestNodeType = null;
-        CswNbtNode TestNode = null; 
+        public CswNbtMetaDataNodeType TestNodeType = null;
+        public CswNbtNode TestNode = null;
+        public CswNbtMetaDataNodeTypeProp BuiltInProp = null;
+        public CswNbtMetaDataNodeTypeProp AddedProp = null;
         public void makeArbitraryNode()
         {
             if( null == TestNode )
@@ -52,12 +59,34 @@ namespace ChemSW.Nbt.Schema
                 if( null == TestNodeType )
                 {
                     TestNodeType = _CswTestCaseRsrc.makeTestNodeType( TestNodeTypeNamesFake.TestNodeType01 );
+                    BuiltInProp = TestNodeType.getNodeTypeProp( "Name" );
+                    AddedProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( TestNodeType, CswNbtMetaDataFieldType.NbtFieldType.Text, "AddedProp", 0 );
                 }
-                //_CswNbtSchemaModTrnsctn.MetaData.NodeTypes
-                //CswNbtNode NewNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+
+                CswNbtMetaDataNodeType LatestVersionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( TestNodeType.NodeTypeId ).LatestVersionNodeType;
+                TestNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             }//if we haven't already made a node
 
         }//makeArbitraryNode()
+
+
+        public DataTable getJctAuditRecords()
+        {
+            DataTable ReturnVal = null;
+
+            CswCommaDelimitedString CswCommaDelimitedString = new CswCommaDelimitedString();
+            CswCommaDelimitedString.Add( JctNodePropIdOfBuiltInProp.ToString() );
+            CswCommaDelimitedString.Add( JctNodePropIdOfAddedProp.ToString() );
+
+            CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( Purpose, "select * from jct_nodes_props_audit where jctnodepropid in (" + CswCommaDelimitedString.ToString() + ")" );
+
+
+            ReturnVal = CswArbitrarySelect.getTable();
+
+            return ( ReturnVal );
+        }
+
+
 
         private string _OriginalAuditSetting_Audit = string.Empty;
         public void setAuditingOn()

@@ -40,7 +40,8 @@ namespace ChemSW.Nbt.Schema
         public void update()
         {
 
-            _CswTstCaseRsrc_026.setAuditingOn();
+           // _CswTstCaseRsrc_026.makeArbitraryNode();
+           //_CswTstCaseRsrc_026.setAuditingOn();
 
         }//runTest()
 
