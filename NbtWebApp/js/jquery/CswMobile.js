@@ -87,7 +87,7 @@
         if( !isNullOrEmpty($div) )
         {
             if(debug) log('doPage on ' + $div.CswAttrDom('id'),true);
-            ret = $.mobile.loadPage( $div.CswAttrXml('data-url'));
+            //ret = $.mobile.loadPage( $div.CswAttrXml('data-url'));
             ret = $div.page(); //cachePage() //not yet, but we'll want to update the cache with the latest version of content
         }
         return ret;
@@ -2065,7 +2065,10 @@
         {
             var $view;
             if( !isNullOrEmpty(localStorage[rootid]) ) {
-                $view = $( JSON.parse( localStorage[rootid] ) );
+                //View is JSON: {name: '', xml: '', wasmodified: ''}
+                var rootObj = JSON.parse( localStorage[rootid] );
+                var rootXml = rootObj.xml;
+                $view = $( rootXml );
             }
             return $view;
         }
