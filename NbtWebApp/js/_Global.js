@@ -1234,6 +1234,12 @@ function getCallStack()
     return stack;
 }
 
+function errorHandler(error, includeCallStack, includeLocalStorage)
+{
+    if(includeLocalStorage) log(localStorage);
+    log('localStorage Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack);
+}
+
 // ------------------------------------------------------------------------------------
 // Browser Compatibility
 // ------------------------------------------------------------------------------------

@@ -10,8 +10,6 @@
 //var profiler = $createProfiler();
 //if (!debug) profiler.disable();
 
-var debug = false;
-
 ; (function ($) { /// <param name="$" type="jQuery" />
     
     $.fn.makeUL = function(id, params)
@@ -72,6 +70,7 @@ var debug = false;
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
+            //$div.cachePage(); //not yet, but we'll want to update the cache with the latest version of content
             var $page = $.mobile.activePage;
             var id = ( isNullOrEmpty($page) ) ? 'no ID' : $page.CswAttrDom('id');
             if(debug) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
@@ -89,11 +88,53 @@ var debug = false;
         {
             if(debug) log('doPage on ' + $div.CswAttrDom('id'),true);
             ret = $.mobile.loadPage( $div.CswAttrXml('data-url'));
-            ret = $div.page();
+            ret = $div.page(); //cachePage() //not yet, but we'll want to update the cache with the latest version of content
         }
         return ret;
     }
     
+    $.fn.cachePage = function()
+    {
+        // we have the technology, we can persist the DOM
+        var $div = $(this);
+        var divid = $div.CswAttrDom('id');
+        var storedPages = [];
+        if( !isNullOrEmpty( sessionStorage.storedPages ) )
+        {
+            storedPages = sessionStorage.storedPages.split(',');
+        }
+        if( storedPages.indexOf(divid) === -1 )
+        {
+            storedPages.push( divid );
+        }
+        sessionStorage.storedPages = storedPages.toString();
+        sessionStorage[divid] = xmlToString( $div );
+        return $div;
+    }
+
+    $.fn.restorePages = function(params)
+    {
+        //this also needs to bindJqmEvents, but let's not inject this now.
+        var $parent = $(this);
+        if( !isNullOrEmpty( sessionStorage.storedPages ) )
+        {
+            var storedPages = sessionStorage.storedPages.split(',');
+            for( var i=0; i < storedPages.length; i++ )
+            {
+                var divid = storedPages[i];
+                if( !isNullOrEmpty( sessionStorage[divid] ) )
+                {
+                    var $page = $(sessionStorage[divid])
+                                    .bindJqmEvents(params)
+                                    .appendTo( $parent )
+                                    .page();
+                }
+
+            }
+        }
+        return $parent;
+    }
+
     $.fn.bindJqmEvents = function(params)
     {
         var $div = $(this);
@@ -144,12 +185,6 @@ var debug = false;
         /// <summary>
         ///   Generates the Nbt Mobile page
         /// </summary>
-        /// <param name="options" type="Object">
-        ///     A JSON Object
-        ///     &#10;1 - options.Theme: 'a'
-        ///     &#10;2 - options.PollingInterval: 30000
-        ///     &#10;3 - options.DivRemovalDelay: 1000
-        /// </param>
 
         var $body = this;
 
@@ -179,16 +214,15 @@ var debug = false;
         
         var ForMobile = true;
         var rootid;
-        var db;
+
         var UserName = localStorage["username"];;
         var SessionId = localStorage["sessionid"];
         var $currentViewXml;
-        var currentMobilePath = '';
 
         var storedViews = '';
         if(localStorage.storedViews) storedViews = JSON.parse( localStorage['storedviews'] );  // {name: '', rootid: ''}
 
-        _fetchCachedPages();
+        //$body.restorePages(); //not yet. someday.
 
         var $logindiv = _loadLoginDiv();
         
@@ -204,17 +238,15 @@ var debug = false;
             var potentialtempdivid = window.location.hash.substr(1);
             if ($('#' + potentialtempdivid).length === 0 && potentialtempdivid !== 'viewsdiv' && potentialtempdivid !== 'logindiv')
             {
-                $.mobile.path.set('#viewsdiv');
+                $.mobile.path.set('#viewsdiv'); // we can use restorePages() to eliminate this later.
             }
         }
-
-        //$logindiv.doChangePage();
 
         if ( !isNullOrEmpty(SessionId) )
         {
             $viewsdiv = reloadViews();
             $viewsdiv.page();
-            $viewsdiv.doChangePage();
+            //$viewsdiv.doChangePage(); //JQM will do this for us.
             _waitForData();
         }
         else
@@ -1532,7 +1564,7 @@ var debug = false;
             
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
             
-            _cachePage($pageDiv, p.DivId);
+            //$pageDiv.cachePage(); //not yet
             
             return $pageDiv;
 
@@ -1985,13 +2017,6 @@ var debug = false;
             });
         } // onSearchSubmit()
 
-        function _errorHandler(error)
-        {
-            log(localStorage);
-            log('localStorage Error: ' + error.message + ' (Code ' + error.code + ')', true);
-            return true;
-        }
-
         function writeConfigVar(varname, varval, onsuccess)
         {
             localStorage[varname] = varval;
@@ -2000,182 +2025,101 @@ var debug = false;
 
         function readConfigVar(varname, onSuccess)
         {
-            try {
-                var configvar = localStorage[varname];
-                if( !isNullOrEmpty(configvar) ) {
-                    onSuccess(configvar);
-                }
-                else {
-                    onSuccess('');
-                }
+            var configvar = localStorage[varname];
+            if( !isNullOrEmpty(configvar) ) {
+                onSuccess(configvar);
             }
-            catch(e) {
-                _errorHandler(e);        
+            else {
+                onSuccess('');
             }
         } //readConfigVar()
 
         // ------------------------------------------------------------------------------------
         // Persistance functions
         // ------------------------------------------------------------------------------------
-        function _cachePage($div, divid)
-        {
-            try {
-                var storedPages = [];
-                if( !isNullOrEmpty( sessionStorage.storedPages ) )
-                {
-                    storedPages = [sessionStorage.storedPages];
-                }
-                if( storedPages.indexOf(divid) === -1 )
-                {
-                    storedPages.push( divid );
-                }
-                sessionStorage.storedPages = storedPages.toString();
-                sessionStorage[divid] = xmlToString( $div );
-            }
-            catch(e) {
-                _errorHandler(e);        
-            }
-        }
-
-        function _fetchCachedPages()
-        {
-            try {
-                if( !isNullOrEmpty( sessionStorage.storedPages ) )
-                {
-                    var storedPages = sessionStorage.storedPages;
-                    for( var i=0; i < storedPages.length; i++ )
-                    {
-                        var divid = storedPages[i];
-                        if( !isNullOrEmpty( sessionStorage[divid] ) )
-                        {
-                            var $page = $(sessionStorage[divid])
-                                            .appendTo( $('body') )
-                                            .page();
-                        }
-
-                    }
-                }
-            }
-            catch(e) {
-                _errorHandler(e);        
-            }            
-
-        }
-
         function _cacheSession(sessionid, username, onsuccess)
         {
-            try {
-                localStorage['username'] = username;
-                localStorage['sessionid'] = sessionid;
+            localStorage['username'] = username;
+            localStorage['sessionid'] = sessionid;
 
-                if ( !isNullOrEmpty(onsuccess) )
-                {
-                    onsuccess();
-                }
-            }
-            catch(e) {
-                _errorHandler(e);        
+            if ( !isNullOrEmpty(onsuccess) )
+            {
+                onsuccess();
             }
         } //_cacheSession()
 
         function _storeViewXml(rootid, rootname, $viewxml)
         {
-            try {
-                if( isNullOrEmpty(storedViews) ) {
-                    storedViews = [{rootid: rootid, name: rootname}];
-                }
-                else if( storedViews.indexOf(rootid) === -1 )  {
-                    storedViews.push({rootid: rootid, name: rootname});
-                }
-                localStorage["storedviews"] = JSON.stringify( storedViews );
-                localStorage[rootid] = JSON.stringify( {name: rootname, xml: xmlToString( $viewxml ), wasmodified: false } );
+            if( isNullOrEmpty(storedViews) ) {
+                storedViews = [{rootid: rootid, name: rootname}];
             }
-            catch(e) {
-                _errorHandler(e);        
+            else if( storedViews.indexOf(rootid) === -1 )  {
+                storedViews.push({rootid: rootid, name: rootname});
             }
+            localStorage["storedviews"] = JSON.stringify( storedViews );
+            localStorage[rootid] = JSON.stringify( {name: rootname, xml: xmlToString( $viewxml ), wasmodified: false } );
         }
 
         function _updateStoredViewXml(rootid, $viewxml, wasmodified)
         {
-            try {
-                if( !isNullOrEmpty(localStorage[rootid]) )
-                {
-                    var view = JSON.parse( localStorage[rootid] );
-                    var update = { xml: xmlToString( $viewxml ), wasmodified: wasmodified };
-                    if( view ) $.extend(view,update);
-                    localStorage[rootid] = JSON.stringify( view );   
-                }
-            }
-            catch(e) {
-                _errorHandler(e);        
+            if( !isNullOrEmpty(localStorage[rootid]) )
+            {
+                var view = JSON.parse( localStorage[rootid] );
+                var update = { xml: xmlToString( $viewxml ), wasmodified: wasmodified };
+                if( view ) $.extend(view,update);
+                localStorage[rootid] = JSON.stringify( view );   
             }
         }
 
         function _getModifiedView(onSuccess)
         {
-            try {
-                var modified = false;
-                for( var i=0; i < storedViews.length; i++ )
+            var modified = false;
+            for( var i=0; i < storedViews.length; i++ )
+            {
+                stored = storedViews[i];
+                if( !isNullOrEmpty(localStorage[stored.rootid]) )
                 {
-                    stored = storedViews[i];
-                    if( !isNullOrEmpty(localStorage[stored.rootid]) )
+                    var view = JSON.parse( localStorage[stored.rootid] );
+                    if( view.wasmodified )
                     {
-                        var view = JSON.parse( localStorage[stored.rootid] );
-                        if( view.wasmodified )
+                        modified = true;
+                        _resetPendingChanges(true, true);
+                        var rootid = stored.rootid;
+                        var viewxml = view.xml;
+                        if( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
                         {
-                            modified = true;
-                            _resetPendingChanges(true, true);
-                            var rootid = stored.rootid;
-                            var viewxml = view.xml;
-                            if( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
-                            {
-                                onSuccess(rootid, viewxml);
-                            }
+                            onSuccess(rootid, viewxml);
                         }
                     }
                 }
-                if( !modified ) {
-                    _resetPendingChanges(false, true);
-                    onSuccess();
-                }
             }
-            catch(e) {
-                _errorHandler(e);        
+            if( !modified ) {
+                _resetPendingChanges(false, true);
+                onSuccess();
             }
         }
 
         function _fetchCachedViewXml(rootid, onsuccess)
         {
-            try {
-
-                if( !isNullOrEmpty(localStorage[rootid]) )
-                {
-                    var view = JSON.parse( localStorage[rootid] );
-                    onsuccess( $(view.xml) );
-                }
-                else {
-                    onsuccess();
-                }
+            if( !isNullOrEmpty(localStorage[rootid]) )
+            {
+                var view = JSON.parse( localStorage[rootid] );
+                onsuccess( $(view.xml) );
             }
-            catch(e) {
-                _errorHandler(e);        
+            else {
+                onsuccess();
             }
         }
 
         function _fetchCachedRootXml(onsuccess)
         {
-            try {
-                var ret = '';
+            var ret = '';
                
-                for( var view in storedViews )
-                {
-                    ret += "<view id=\"" + view.rootid + "\" name=\"" + view.name + "\" />";
-                }
-                onsuccess( $(ret) );
+            for( var view in storedViews )
+            {
+                ret += "<view id=\"" + view.rootid + "\" name=\"" + view.name + "\" />";
             }
-            catch(e) {
-                _errorHandler(e);        
-            }
+            onsuccess( $(ret) );
         }
 
 
