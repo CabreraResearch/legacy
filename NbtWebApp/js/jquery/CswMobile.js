@@ -483,20 +483,18 @@
                 else if (p.level === 1)
                 {
                     // case 20354 - try cached first
-                    _fetchCachedViewXml(rootid, function ($xmlstr)
+                    var $xmlstr = _fetchCachedViewXml(rootid);
+                    if ( !isNullOrEmpty($xmlstr) )
                     {
-                        if ( !isNullOrEmpty($xmlstr) )
-                        {
-                            $currentViewXml = $xmlstr;
-                            p.$xml = $currentViewXml;
-                            $retDiv = _loadDivContentsXml(p);
-                        }
-                        else if (!amOffline())
-                        {
-                            p.url = opts.ViewUrl;
-                            $retDiv = _getDivXml(p);
-                        }
-                    });
+                        $currentViewXml = $xmlstr;
+                        p.$xml = $currentViewXml;
+                        $retDiv = _loadDivContentsXml(p);
+                    }
+                    else if (!amOffline())
+                    {
+                        p.url = opts.ViewUrl;
+                        $retDiv = _getDivXml(p);
+                    }
                 } 
                 else  // Level 2 and up
                 {
@@ -1902,77 +1900,68 @@
             // update the xml and store it
             if( !isNullOrEmpty($currentViewXml) )
             {
-//            _fetchCachedViewXml(rootid, function (xmlstr)
-//            {
-//                if (xmlstr != '')
-//                {
+                var $divxml = $currentViewXml.find('#' + DivId);
+                $divxml.andSelf().find('prop').each(function ()
+                {
+                    var $fieldtype = $(this);
+                    _FieldTypeHtmlToXml($fieldtype, name, value);
+                });
 
-                    var $divxml = $currentViewXml.find('#' + DivId);
-                    $divxml.andSelf().find('prop').each(function ()
-                    {
-                        var $fieldtype = $(this);
-                        _FieldTypeHtmlToXml($fieldtype, name, value);
-                    });
-
-                    _updateStoredViewXml(rootid, $currentViewXml, '1');
-                    _resetPendingChanges(true, false);
-                }
-            //});
-
+                _updateStoredViewXml(rootid, $currentViewXml, '1');
+                _resetPendingChanges(true, false);
+            }
         } // onPropertyChange()
 
         function onSearchOpen(DivId, eventObj)
         {
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
-            _fetchCachedViewXml(rootid, function ($xmlstr)
+            var $xmlstr = _fetchCachedViewXml(rootid);
+            if ( !isNullOrEmpty($xmlstr) )
             {
-                if ( !isNullOrEmpty($xmlstr) )
+                var $wrapper = $('<div></div>');
+                var $fieldCtn = $('<div data-role="fieldcontain"></div>')
+                                    .appendTo($wrapper);
+                var $select =  $('<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">')
+                                    .appendTo($fieldCtn);
+
+                $xmlstr.children('search').each(function ()
                 {
-                    var $wrapper = $('<div></div>');
-                    var $fieldCtn = $('<div data-role="fieldcontain"></div>')
-                                        .appendTo($wrapper);
-                    var $select =  $('<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">')
-                                        .appendTo($fieldCtn);
+                    var $search = $(this);
+                    var $option = $('<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>')
+                                    .appendTo($select);
+                });
 
-                    $xmlstr.children('search').each(function ()
-                    {
-                        var $search = $(this);
-                        var $option = $('<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>')
-                                        .appendTo($select);
-                    });
+                var $searchCtn = $('<div data-role="fieldcontain"></div>')
+                                    .appendTo($wrapper);
+                var $searchBox = $searchCtn.CswInput('init',{type: CswInput_Types.search, ID: DivId + '_searchfor'})
+                                            .CswAttrXml({'placeholder':'Search',
+                                                'data-placeholder': 'Search'
+                                            });
+                var $goBtn = $wrapper.CswLink('init',{type:'button', ID: DivId + '_searchgo', value:'Go', href: 'javascript:void(0)'})
+                                        .CswAttrXml({'data-inline': 'true',
+                                            'data-role': 'button'
+                                        })
+                                        .bind('click', function () { 
+                                            onSearchSubmit(DivId); 
+                                        });
+                var $results = $wrapper.CswDiv('init',{ID: DivId + '_searchresults'});
 
-                    var $searchCtn = $('<div data-role="fieldcontain"></div>')
-                                        .appendTo($wrapper);
-                    var $searchBox = $searchCtn.CswInput('init',{type: CswInput_Types.search, ID: DivId + '_searchfor'})
-                                               .CswAttrXml({'placeholder':'Search',
-                                                    'data-placeholder': 'Search'
-                                               });
-                    var $goBtn = $wrapper.CswLink('init',{type:'button', ID: DivId + '_searchgo', value:'Go', href: 'javascript:void(0)'})
-                                           .CswAttrXml({'data-inline': 'true',
-                                                'data-role': 'button'
-                                           })
-                                           .bind('click', function () { 
-                                                onSearchSubmit(DivId); 
-                                           });
-                    var $results = $wrapper.CswDiv('init',{ID: DivId + '_searchresults'});
-
-                    var $searchDiv = _addPageDivToBody({
-                        ParentId: DivId,
-                        DivId: 'CswMobile_SearchDiv',
-                        HeaderText: 'Search',
-                        $content: $wrapper,
-                        HideSearchButton: true,
-                        HideOnlineButton: true,
-                        HideRefreshButton: true,
-                        HideLogoutButton: false,
-                        HideHelpButton: false,
-                        HideCloseButton: true,
-                        HideBackButton: false
-                    });
-                    $searchDiv.doChangePage("slideup", {changeHash: false});
-                }
-            });
+                var $searchDiv = _addPageDivToBody({
+                    ParentId: DivId,
+                    DivId: 'CswMobile_SearchDiv',
+                    HeaderText: 'Search',
+                    $content: $wrapper,
+                    HideSearchButton: true,
+                    HideOnlineButton: true,
+                    HideRefreshButton: true,
+                    HideLogoutButton: false,
+                    HideHelpButton: false,
+                    HideCloseButton: true,
+                    HideBackButton: false
+                });
+                $searchDiv.doChangePage("slideup", {changeHash: false});
+            }
         }
 
         function onSearchSubmit(DivId)
@@ -1981,40 +1970,38 @@
             var searchfor = $('#' + DivId + '_searchfor').val();
             var $resultsDiv = $('#' + DivId + '_searchresults')
                                     .empty();
-            _fetchCachedViewXml(rootid, function ($xmlstr)
+            var $xmlstr = _fetchCachedViewXml(rootid);
+            if ( !isNullOrEmpty($xmlstr) )
             {
-                if ( !isNullOrEmpty($xmlstr) )
-                {
-                    var $content = $resultsDiv.makeUL(DivId + '_searchresultslist', {'data-filter': false})
-                                              .append( $('<li data-role="list divider">Results</li>') );
+                var $content = $resultsDiv.makeUL(DivId + '_searchresultslist', {'data-filter': false})
+                                            .append( $('<li data-role="list divider">Results</li>') );
                     
-                    var hitcount = 0;
-                    $xmlstr.find('node').each(function ()
+                var hitcount = 0;
+                $xmlstr.find('node').each(function ()
+                {
+                    var $node = $(this);
+                    if ( !isNullOrEmpty($node.CswAttrXml(searchprop)) )
                     {
-                        var $node = $(this);
-                        if ( !isNullOrEmpty($node.CswAttrXml(searchprop)) )
+                        if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
                         {
-                            if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0)
-                            {
-                                hitcount++;
-                                $content.append( _makeListItemFromXml($content, {ParentId: DivId + '_searchresults',
-                                                                                 DivId: DivId + '_searchresultslist',
-                                                                                 HeaderText: 'Results',
-                                                                                 $xmlitem: $node,
-                                                                                 parentlevel: 1
-                                                                                })
-                                               );
-                                $content.bindLI();
-                            }
+                            hitcount++;
+                            $content.append( _makeListItemFromXml($content, {ParentId: DivId + '_searchresults',
+                                                                                DivId: DivId + '_searchresultslist',
+                                                                                HeaderText: 'Results',
+                                                                                $xmlitem: $node,
+                                                                                parentlevel: 1
+                                                                            })
+                                            );
+                            $content.bindLI();
                         }
-                    });
-                    if (hitcount === 0)
-                    {
-                        $content.append( $('<li>No Results</li>'));
                     }
-                    $content.listview('refresh');
+                });
+                if (hitcount === 0)
+                {
+                    $content.append( $('<li>No Results</li>'));
                 }
-            });
+                $content.listview('refresh');
+            }
         } // onSearchSubmit()
 
         // ------------------------------------------------------------------------------------
@@ -2077,16 +2064,13 @@
             }
         }
 
-        function _fetchCachedViewXml(rootid, onsuccess)
+        function _fetchCachedViewXml(rootid)
         {
-            if( !isNullOrEmpty(localStorage[rootid]) )
-            {
-                var view = JSON.parse( localStorage[rootid] );
-                onsuccess( $(view.xml) );
+            var $view;
+            if( !isNullOrEmpty(localStorage[rootid]) ) {
+                $view = $( JSON.parse( localStorage[rootid] ) );
             }
-            else {
-                onsuccess();
-            }
+            return $view;
         }
 
         function _fetchCachedRootXml(onsuccess)
