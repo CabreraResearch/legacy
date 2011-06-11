@@ -220,53 +220,45 @@
 				var RateType = $('[name="' + o.ID + '_type"]:checked').val();
 
 				o.$propxml.children().remove();
-				var $intervalnode = $('<interval />').appendTo(o.$propxml);
-				var $rivnode = $('<rateintervalvalue />').appendTo($intervalnode);
-				
+
+				var $intervalnode = $.xml('<interval />');
+				o.$propxml.append($intervalnode);
+
+				var $rivnode = $.xml('<rateintervalvalue />');
+				$intervalnode.append($rivnode);
+
 				switch(RateType)
 				{
 					case 'weekly': 
-						$('<ratetype>WeeklyByDay</ratetype>')
-							.appendTo($rivnode);
-						$('<weeklyday>' + getWeekDayChecked( o.ID + '_weeklyday' ) + '</weeklyday>')
-							.appendTo($rivnode);
-						$('<startingdate>'+ $('#' + o.ID + '_weekly_sd').val() +'</startingdate>')
-							.appendTo($rivnode);
+						$rivnode.append($.xml('<ratetype>WeeklyByDay</ratetype>'));
+						$rivnode.append($.xml('<weeklyday>' + getWeekDayChecked( o.ID + '_weeklyday' ) + '</weeklyday>'));
+						$rivnode.append($.xml('<startingdate>'+ $('#' + o.ID + '_weekly_sd').val() +'</startingdate>'));
 						break;
 
 					case 'monthly': 
 						var MonthlyType = $('[name="'+ o.ID +'_monthly"]:checked').val();
-						$('<ratetype>'+ MonthlyType +'</ratetype>')
-							.appendTo($rivnode);
-						$('<monthlyfrequency>'+ $('#' + o.ID + '_monthly_rate').val() +'</monthlyfrequency>')
-							.appendTo($rivnode);
+						$rivnode.append($.xml('<ratetype>'+ MonthlyType +'</ratetype>'));
+						$rivnode.append($.xml('<monthlyfrequency>'+ $('#' + o.ID + '_monthly_rate').val() +'</monthlyfrequency>'));
 						if(MonthlyType === "MonthlyByDate")
 						{
-							$('<monthlydate>'+ $('#' + o.ID + '_monthly_date').val() +'</monthlydate>')
-								.appendTo($rivnode);
+							$rivnode.append($.xml('<monthlydate>'+ $('#' + o.ID + '_monthly_date').val() +'</monthlydate>'));
 						} 
 						else // MonthlyByWeekAndDay
 						{
-							$('<monthlyweek>' + $('#' + o.ID + '_monthly_week' ).val() + '</monthlyweek>')
-								.appendTo($rivnode);
-							$('<monthlyday>' + getWeekDayChecked( o.ID + '_monthly_day' ) + '</monthlyday>')
-								.appendTo($rivnode);
+							$rivnode.append($.xml('<monthlyweek>' + $('#' + o.ID + '_monthly_week' ).val() + '</monthlyweek>'));
+							$rivnode.append($.xml('<monthlyday>' + getWeekDayChecked( o.ID + '_monthly_day' ) + '</monthlyday>'));
 						}
-						$('<startingmonth>' + $('#' + o.ID + '_monthly_startMonth' ).val() + '</startingmonth>')
-							.appendTo($rivnode);
-						$('<startingyear>' + $('#' + o.ID + '_monthly_startYear' ).val() + '</startingyear>')				
-							.appendTo($rivnode);
+						$rivnode.append($.xml('<startingmonth>' + $('#' + o.ID + '_monthly_startMonth' ).val() + '</startingmonth>'));
+						$rivnode.append($.xml('<startingyear>' + $('#' + o.ID + '_monthly_startYear' ).val() + '</startingyear>'));
 						break;
 					
 					case 'yearly': 
-						$('<ratetype>YearlyByDate</ratetype>')
-							.appendTo($rivnode);
-						$('<yearlydate>'+ $('#' + o.ID + '_yearly_sd').val() +'</yearlydate>')
-							.appendTo($rivnode);
+						$rivnode.append($.xml('<ratetype>YearlyByDate</ratetype>'));
+						$rivnode.append($.xml('<yearlydate>'+ $('#' + o.ID + '_yearly_sd').val() +'</yearlydate>'));
 						break;
 				} // switch(RateType)
 
-				$intervalnode.find('*').andSelf().each(function() { $(this).CswAttrDom('xmlns', ''); });
+				//$intervalnode.find('*').andSelf().each(function() { $(this).CswAttrDom('xmlns', ''); });
 
             } // save
     };
