@@ -267,6 +267,7 @@ var CswViewEditor_WizardSteps = {
                     break;
 				case CswViewEditor_WizardSteps.step2.step:
 					$wizard.CswWizard('button', 'finish', 'enable');
+					$wizard.CswWizard('button', 'next', 'disable');
 
                     var dataXml = {
                         ViewId: _getSelectedViewId($viewgrid)
@@ -303,6 +304,8 @@ var CswViewEditor_WizardSteps = {
 								$gridwidthlabelcell.hide();
 								$gridwidthtextboxcell.hide();
 							}
+
+							$wizard.CswWizard('button', 'next', 'enable');
 						} // success
 					}); // ajax
 					break;
