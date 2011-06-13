@@ -252,7 +252,8 @@ var ViewBuilder_CssClasses = {
                 $parent: '',
                 proparbitraryid: '',
                 filtarbitraryid: $thisProp.CswAttrXml('filtarbitraryid'),
-                viewbuilderpropid: ''
+                viewbuilderpropid: '',
+				allowNullFilterValue: false
             };
             if(options) $.extend(o,options);
 
@@ -289,7 +290,7 @@ var ViewBuilder_CssClasses = {
                     break;
                 }
             }
-            if(filterValue !== '')
+            if(filterValue !== '' || o.allowNullFilterValue)
             {
                 var $subField = tryParseElement(subFieldId, o.$parent); //o.$parent.find('#' + subFieldId);
 				var subFieldText = $subField.find(':selected').text();
@@ -311,7 +312,7 @@ var ViewBuilder_CssClasses = {
                     filter: filterText,
                     filtervalue: filterValue  
                 };
-                
+
             } // if(filterValue !== '')
             return thisNodeProp;
         }, // 'getFilterJson': function(options) { 
@@ -326,7 +327,6 @@ var ViewBuilder_CssClasses = {
             if(options) $.extend(o,options);
 
             //var $filterXml;
-
             var dataXml = {
                 PropFiltJson: JSON.stringify( o.filtJson ),
                 ViewXml: o.viewxml

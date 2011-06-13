@@ -676,7 +676,8 @@ var CswViewEditor_WizardSteps = {
 											ID: o.ID,
 											$parent: $span,
                                             fieldtype: $currentviewxml.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]').CswAttrXml('fieldtype'),
-											proparbitraryid: $span.CswAttrDom('proparbid')
+											proparbitraryid: $span.CswAttrDom('proparbid'),
+											allowNullFilterValue: true
 										});
 
 							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 
