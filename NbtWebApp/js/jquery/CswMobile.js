@@ -150,6 +150,7 @@
                 level: 1,
                 HideRefreshButton: false,
                 HideSearchButton: false,
+                persistBindEvent: false,
                 onPageShow: function(p) {},
                 onSuccess: function() { $.mobile.pageLoading(true); }
             }
@@ -161,7 +162,10 @@
             {
                 $.mobile.pageLoading();
                 p.onPageShow(p);
-                $(this).unbind('pageshow'); //only need to do this once per page
+                if( !p.persistBindEvent ) {
+                    // If the page is constructed entirely from cache, we only do this once.
+                    $(this).unbind('pageshow'); 
+                }
             });
 
 //            $div.unbind('pagebeforecreate');
@@ -800,6 +804,8 @@
                                                 parentlevel: p.parentlevel,
                                                 level: p.parentlevel+1,
                                                 DivId: id,
+                                                // Case 22211: IDC content is not cached. We need to reconstruct nodes on each page load.
+                                                persistBindEvent: true,
                                                 HeaderText: text
                                                 //,$toolbar: $toolbar
                             });
@@ -834,7 +840,7 @@
 				icon = 'images/icons/' + p.$xmlitem.CswAttrXml('iconfilename');
             }
 			var ObjectClass = p.$xmlitem.CswAttrXml('objectclass');
-
+            
             switch (ObjectClass)
             {
                 case "InspectionDesignClass":
@@ -843,6 +849,7 @@
                     var MountPoint = p.$xmlitem.find('prop[ocpname="Target"]').CswAttrXml('gestalt');
                     var Status = p.$xmlitem.find('prop[ocpname="Status"]').CswAttrXml('gestalt');
                     var UnansweredCnt = 0;
+
                     p.$xmlitem.find('prop[fieldtype="Question"]').each(function ()
                     {
                         var $question = $(this);
@@ -1328,6 +1335,7 @@
                 DivId: '',
                 HeaderText: '',
                 $toolbar: '',
+                persistBindEvent: false,
                 onPageShow: function(p) { return _loadDivContents(p); }
             };
             if(params) $.extend(p,params);
