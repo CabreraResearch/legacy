@@ -39,25 +39,25 @@ namespace ChemSW.Nbt.Schema
                 CswNbtViewProperty NameVp = OocInspectionsView.AddViewProperty( InspectionRel, NameNtp );
                 NameVp.Order = Order++;
                 NameVp.Name = "Name";
-                OocInspectionsView.AddViewPropertyFilter( NameVp, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Contains, string.Empty, false );
+                OocInspectionsView.AddViewPropertyFilter( NameVp, NameNtp.FieldTypeRule.SubFields.Default.Name, NameNtp.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
 
                 CswNbtMetaDataNodeTypeProp DateNtp = FirstInspectionNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.DatePropertyName );
                 CswNbtViewProperty DateVp = OocInspectionsView.AddViewProperty( InspectionRel, DateNtp );
                 DateVp.Order = Order++;
                 DateVp.Name = "Due Date";
-                OocInspectionsView.AddViewPropertyFilter( DateVp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, DateTime.MinValue.ToString(), false );
+                OocInspectionsView.AddViewPropertyFilter( DateVp, DateNtp.FieldTypeRule.SubFields.Default.Name, DateNtp.FieldTypeRule.SubFields.Default.DefaultFilterMode, DateTime.MinValue.ToString(), false );
 
                 CswNbtMetaDataNodeTypeProp LocationNtp = FirstInspectionNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.LocationPropertyName );
                 CswNbtViewProperty LocationVp = OocInspectionsView.AddViewProperty( InspectionRel, LocationNtp );
                 LocationVp.Order = Order++;
                 LocationVp.Name = "Location";
-                OocInspectionsView.AddViewPropertyFilter( LocationVp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Contains, string.Empty, false );
+                OocInspectionsView.AddViewPropertyFilter( LocationVp, LocationNtp.FieldTypeRule.SubFields.Default.Name, LocationNtp.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
 
                 CswNbtMetaDataNodeTypeProp TargetNtp = FirstInspectionNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
                 CswNbtViewProperty TargetVp = OocInspectionsView.AddViewProperty( InspectionRel, TargetNtp );
                 TargetVp.Order = Order++;
                 TargetVp.Name = "Inspection Point";
-                OocInspectionsView.AddViewPropertyFilter( TargetVp, CswNbtSubField.SubFieldName.Name, CswNbtPropFilterSql.PropertyFilterMode.Contains, string.Empty, false );
+                OocInspectionsView.AddViewPropertyFilter( TargetVp, TargetNtp.FieldTypeRule.SubFields.Default.Name, TargetNtp.FieldTypeRule.SubFields.Default.DefaultFilterMode, string.Empty, false );
 
                 string ActionRequired = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Action_Required );
 
