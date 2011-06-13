@@ -70,6 +70,7 @@
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
+            $.mobile.pageLoading();
             //$div.cachePage(); //not yet, but we'll want to update the cache with the latest version of content
             var $page = $.mobile.activePage;
             var id = ( isNullOrEmpty($page) ) ? 'no ID' : $page.CswAttrDom('id');
@@ -207,7 +208,7 @@
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             Theme: 'a',
             PollingInterval: 30000,
-            DivRemovalDelay: 1000,
+            DivRemovalDelay: 1,
             RandomConnectionFailure: false
         };
         
@@ -237,7 +238,7 @@
 
 		// case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
-        if (window.location.hash.length > 0)
+        if ( !isNullOrEmpty(SessionId) )
         {
             var potentialtempdivid = window.location.hash.substr(1);
             if ($('#' + potentialtempdivid).length === 0 && potentialtempdivid !== 'viewsdiv' && potentialtempdivid !== 'logindiv')
@@ -1795,78 +1796,57 @@
             {
                 if (_checkNoPendingChanges())
                 {
-                    setTimeout(function () { 
-                            continueRefresh(DivId); 
-                        }, 
-                        opts.DivRemovalDelay);
+                    $.mobile.pageLoading();
+                    continueRefresh(); 
                 }
             }
             return false;
         }
 
-        function continueRefresh(DivId)
+        function continueRefresh()
         {
-            // remove existing divs
-            var NextParentId = '';
-            var ThisParentId = DivId;
-//            while ( !isNullOrEmpty(ThisParentId) && ThisParentId.substr(0, 'viewid_'.length) !== 'viewid_')
-//            {
-//                NextParentId = _getDivParentId(ThisParentId);
-//                $('div[id*="' + ThisParentId + '"]').find('div:jqmData(role="content")').empty();
-//                ThisParentId = NextParentId;
-//            }
+            //Case 22211
+            var DivId = 'viewsdiv';
+            var HeaderText = 'Views';
 
-            if ( !isNullOrEmpty(ThisParentId) )
-            {
-                var RealDivId = ThisParentId;
-                var HeaderText = _getDivHeaderText(RealDivId);
+            var dataXml = {
+                SessionId: SessionId,
+                ParentId: DivId,
+                ForMobile: ForMobile
+            };
+            
+            CswAjaxXml({
+                async: false,   // required so that the link will wait for the content before navigating
+                formobile: ForMobile,
+                url: opts.ViewsListUrl,
+                data: dataXml,
+                stringify: false,
+                onloginfail: function() { Logout(); },
+                success: function ($xml)
+                {
+                    if (debug) log('On Success ' + opts.ViewsListUrl, true);
 
-               // $('div[id*="' + RealDivId + '"]').find('div:jqmData(role="content")').empty();
+                    $currentViewXml = $xml;
+                    _updateStoredViewXml(DivId, $currentViewXml, '0');
 
-                var dataXml = {
-                    SessionId: SessionId,
-                    ParentId: RealDivId,
-                    ForMobile: ForMobile
-                };
-                //clearPath();
-                // fetch new content
-                CswAjaxXml({
-                    async: false,   // required so that the link will wait for the content before navigating
-                    formobile: ForMobile,
-                    url: opts.ViewsListUrl,
-                    data: dataXml,
-                    stringify: false,
-                    onloginfail: function() { Logout(); },
-                    success: function ($xml)
-                    {
-                        if (debug) log('On Success ' + opts.ViewsListUrl, true);
+                    var params = {
+                        ParentId: 'viewsdiv',
+                        DivId: DivId,
+                        HeaderText: HeaderText,
+                        '$xml': $currentViewXml,
+                        parentlevel: -1,
+                        level: 0,
+                        HideRefreshButton: false,
+                        HideSearchButton: true,
+                        HideBackButton: true,
+                        onPageShow: function(p) { return _loadDivContents(p); }
+                    };
 
-                        $currentViewXml = $xml;
-                        _updateStoredViewXml(RealDivId, $currentViewXml, '0');
-
-                        var params = {
-                            ParentId: 'viewsdiv',
-                            DivId: RealDivId,
-                            HeaderText: HeaderText,
-                            '$xml': $currentViewXml,
-                            parentlevel: -1,
-                            level: 0,
-                            HideRefreshButton: false,
-                            HideSearchButton: true,
-                            HideBackButton: true,
-                            onPageShow: function(p) { return _loadDivContents(p); }
-                        };
-
-                        $viewsdiv.bindJqmEvents(params);
-                        $viewsdiv.doChangePage();
-                        //restorePath();
-                    }, // success
-                    error: function()
-                    {
-                        //restorePath();
-                    } 
-                });
-            }
+                    $viewsdiv.bindJqmEvents(params);
+                    $viewsdiv.doChangePage();
+                    //restorePath();
+                } // success
+            });
         }
 
 //        function onBack(DivId, DestinationId, eventObj)
