@@ -1243,7 +1243,7 @@ function getCallStack()
 
 function errorHandler(error, includeCallStack, includeLocalStorage)
 {
-    if(includeLocalStorage) log(localStorage);
+    if(Modernizr.localstorage && includeLocalStorage) log(localStorage);
     log('localStorage Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack);
 }
 
