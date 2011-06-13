@@ -267,7 +267,7 @@ namespace ChemSW.Nbt
                                                                     _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId, User ) ).Count() > 0 )
                         ) || IncludeEmptyViews ) &&
                     ThisView.IsFullyEnabled() &&
-                    ( ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
+					( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
                     ( !SearchableOnly || ThisView.IsSearchable() ) )
                 {
                     VisibleViews.Add( ThisView );
