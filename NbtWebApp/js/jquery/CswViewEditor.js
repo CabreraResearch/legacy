@@ -622,10 +622,10 @@ var CswViewEditor_WizardSteps = {
 				var childxml = $select.find('option:selected').data('optionviewxml');
 				if($select.CswAttrDom('arbid') === "root")
 				{
-					$currentviewxml.append(childxml);
+					$currentviewxml.append($(childxml));
 				} else {
-					$currentviewxml.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]')
-								   .append(childxml);
+					var $parent = $currentviewxml.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]');
+					$parent.append($(childxml));
 				}
 				_makeViewTree(stepno, $div);
 			}); // child select
@@ -786,7 +786,7 @@ var CswViewEditor_WizardSteps = {
 							}
 						} // onClick
 					}); // CswButton
-				});
+				}); // $div.find('.vieweditor_viewrellink').click(function() {
 
 				// Property
 				$div.find('.vieweditor_viewproplink').click(function() {
