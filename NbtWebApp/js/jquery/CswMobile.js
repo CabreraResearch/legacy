@@ -740,7 +740,7 @@
 
                                 var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"><div>')
                                                 .appendTo($list);
-                                var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'input', sf_allowedanswers, sf_answer, sf_compliantanswers)
+                                var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'label', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                                 .appendTo($div);
 
                                 if ( !isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction) )
@@ -1008,7 +1008,7 @@
 
                     case "Question":
                         addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
-                        $prop = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'input', sf_allowedanswers, sf_answer, sf_compliantanswers)
+                        $prop = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'ans2', 'ans', 'cor', 'li', 'label', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                             .appendTo($retHtml);
 
                         var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
@@ -1291,7 +1291,8 @@
 
 						if( isNullOrEmpty($cor.val()) )
 						{
-							$li.children('div').addClass('OOC');
+							debugger;
+                            $li.children('div').addClass('OOC');
 							$prop.addClass('OOC');
 						}
 						else
