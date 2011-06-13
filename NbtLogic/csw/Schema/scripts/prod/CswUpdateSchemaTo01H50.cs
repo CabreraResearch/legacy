@@ -5,7 +5,7 @@ using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01H-42
+    /// Updates the schema to version 01H-50
     /// </summary>
     public class CswUpdateSchemaTo01H50 : ICswUpdateSchemaTo
     {

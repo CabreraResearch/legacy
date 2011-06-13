@@ -1,15 +1,11 @@
-using System;
 using System.Data;
-using System.Linq;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Audit;
 using ChemSW.DB;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01H-42
+    /// Updates the schema to version 01H-48
     /// </summary>
     public class CswUpdateSchemaTo01H48 : ICswUpdateSchemaTo
     {
