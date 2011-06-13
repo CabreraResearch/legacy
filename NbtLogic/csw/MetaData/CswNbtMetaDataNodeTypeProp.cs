@@ -965,14 +965,22 @@ namespace ChemSW.Nbt.MetaData
             // Logical needs a special case
             if( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
             {
-                if( SubField.Name == CswNbtSubField.SubFieldName.Checked &&
-                    ( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals ||
-                        FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals ) )
+                if( SubField.Name == CswNbtSubField.SubFieldName.Checked )
                 {
-                    FilterMatches = ( CswConvert.ToTristate( FilterValue ) == FilterProp.AsLogical.Checked );
+                    switch( FilterMode )
+                    {
+                        case CswNbtPropFilterSql.PropertyFilterMode.Equals:
+                            FilterMatches = ( CswConvert.ToTristate( FilterValue ) == FilterProp.AsLogical.Checked );
+                            break;
+                        case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
+                            FilterMatches = ( CswConvert.ToTristate( FilterValue ) != FilterProp.AsLogical.Checked );
+                            break;
+                    }
                 }
                 else
+                {
                     throw new CswDniException( "Invalid filter condition", "CswNbtMetaDataNodeTypeProp only supports 'Checked Equality' filters on Logical properties" );
+                }
             }
             else
             {

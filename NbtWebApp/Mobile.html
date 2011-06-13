@@ -47,18 +47,35 @@
 <body id="CswMobile_Body">
 	<script type="text/javascript">
 		
-        $(document).bind("mobileinit", function(){
-             //$.mobile.hashListeningEnabled = false; 
-             //$.mobile.path.get = function( newPath ){  return ''; };
-        });
+        var debug = false;
+        try {
+            if(Modernizr.localstorage) {
+            
+                $(document).bind("mobileinit", function(){
+                     //$.mobile.hashListeningEnabled = false; 
+                     //$.mobile.path.get = function( newPath ){  return ''; };
+                });
 
-		// override value in _Globals.js
-		homeUrl = "Mobile.html";
+		        // override value in _Globals.js
+		        homeUrl = "Mobile.html";
 
-        $('body').CswMobile({
-			'Theme': 'b',
-			});
-        
-	</script>
+                $('body').CswMobile({
+			        'Theme': 'b',
+			        });
+            }
+            else {
+                throw('This browser does not support localStorage.');
+            }
+        }
+        catch(e) {
+            if(debug) {
+                errorHandler(e,true,true);
+            }
+            else {
+                errorHandler(e);
+            }
+        }
+
+    </script>
 </body>
 </html>

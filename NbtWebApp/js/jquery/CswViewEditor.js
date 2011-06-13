@@ -397,8 +397,8 @@ var CswViewEditor_WizardSteps = {
                     cacheStepTwo();
                 }
                 if( $currentviewxml.CswAttrXml('mode') === 'Grid' &&
-                    ( $('.vieweditor_viewrellink').children().length === 0 ||
-                      $('.vieweditor_viewproplink').children().length === 0 ) )
+                    ( $currentviewxml.children('relationship').length === 0 ||
+                      $currentviewxml.children('relationship').children('property').length === 0 ) )
                 {
                     processView = confirm('You are attempting to create a Grid without properties. This will not display any information. Do you want to continue?');
                     if(!processView) $wizard.CswWizard('button', 'finish', 'enable');
@@ -619,9 +619,10 @@ var CswViewEditor_WizardSteps = {
 				var childxml = $select.find('option:selected').data('optionviewxml');
 				if($select.CswAttrDom('arbid') === "root")
 				{
-					$(childxml).appendTo($currentviewxml);
+					$currentviewxml.append(childxml);
 				} else {
-					$(childxml).appendTo($currentviewxml.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]'));
+					$currentviewxml.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]')
+								   .append(childxml);
 				}
 				_makeViewTree(stepno, $div);
 			}); // child select
