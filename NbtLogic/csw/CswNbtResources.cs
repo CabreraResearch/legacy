@@ -251,15 +251,15 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Delegate, when a new nodetype is created
         /// </summary>
-        public delegate void NewNodeTypeEventHandler( CswNbtMetaDataNodeType NewNodeType );
+        public delegate void NewNodeTypeEventHandler( CswNbtMetaDataNodeType NewNodeType, bool IsCopy );
         /// <summary>
         /// Event, when a new nodetype is created
         /// </summary>
         public event NewNodeTypeEventHandler OnMakeNewNodeType = null;
-        void _CswNbtMetaData_OnMakeNewNodeType( CswNbtMetaDataNodeType NewNodeType )
+        void _CswNbtMetaData_OnMakeNewNodeType( CswNbtMetaDataNodeType NewNodeType, bool IsCopy )
         {
             if( OnMakeNewNodeType != null )
-                OnMakeNewNodeType( NewNodeType );
+				OnMakeNewNodeType( NewNodeType, IsCopy );
         }
 
         /// <summary>
