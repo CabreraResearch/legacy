@@ -70,7 +70,6 @@
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
-            $.mobile.pageLoading();
             //$div.cachePage(); //not yet, but we'll want to update the cache with the latest version of content
             var $page = $.mobile.activePage;
             var id = ( isNullOrEmpty($page) ) ? 'no ID' : $page.CswAttrDom('id');
@@ -158,10 +157,12 @@
             
             if(params) $.extend(p,params);
             p.level = (p.parentlevel === p.level ) ? p.parentlevel+1 : p.level;
+
             $div.unbind('pageshow');
             $ret = $div.bind('pageshow', function() 
             {
                 $.mobile.pageLoading();
+                //if(p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
                 if( !p.persistBindEvent ) {
                     // If the page is constructed entirely from cache, we only do this once.
@@ -220,7 +221,7 @@
         var ForMobile = true;
         var rootid;
 
-        var UserName = localStorage["username"];;
+        var UserName = localStorage["username"];
         var SessionId = localStorage["sessionid"];
         var $currentViewXml;
 
@@ -230,7 +231,6 @@
         //$body.restorePages(); //not yet. someday.
 
         var $logindiv = _loadLoginDiv();
-        
         var $viewsdiv = _loadViewsDiv();
         var $syncstatus = _makeSynchStatusDiv();
         var $helpdiv = _makeHelpDiv();
@@ -774,14 +774,15 @@
                             $toolbar.append($count);
                         }
 
-                        _addPageDivToBody({
-                            ParentId: p.DivId,
-                            level: p.parentlevel,
-                            DivId: id,
-                            HeaderText: text,
-                            $toolbar: $toolbar,
-                            $content: _FieldTypeXmlToHtml(p.$xmlitem, p.DivId, id + '_href')
-                        });
+                        var $newDiv = _addPageDivToBody({
+                                            ParentId: p.DivId,
+                                            level: p.parentlevel,
+                                            DivId: id,
+                                            HeaderText: text,
+                                            $toolbar: $toolbar,
+                                            $content: _FieldTypeXmlToHtml(p.$xmlitem, p.DivId, id + '_href')
+                                        })
+                                        .addClass('CswNbtNodeProp');
                         break;
                     } // case 'prop':
                 default:
@@ -810,7 +811,8 @@
                                                 HeaderText: text
                                                 //,$toolbar: $toolbar
                             });
-                            $newDiv.doPage( $newDiv.CswAttrXml('data-url') );
+                            $newDiv.addClass('CswNbtView')
+                                   .doPage( $newDiv.CswAttrXml('data-url') );
                         }
                         break;
                     } // default:
@@ -890,7 +892,8 @@
                                 level: p.parentlevel+1,
                                 DivId: id,
                                 HeaderText: NodeName
-                          });
+                          })
+                          .addClass('CswNbtNode');
 
             $retHtml = $(Html); //.listview('refresh');
             return $retHtml;
@@ -1597,7 +1600,7 @@
                 .click(function (eventObj) { onSynchStatusOpen(DivId, eventObj); })
                 .end()
                 .find('#' + DivId + '_refresh')
-                .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onRefresh(DivId, e); })
+                .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onRefresh(DivId); })
                 .end()
                 .find('#' + DivId + '_logout')
                 .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onLogout(DivId, e); })
@@ -1694,8 +1697,8 @@
         // returns true if no pending changes or user is willing to lose them
         function _checkNoPendingChanges()
         {
-            return (!_pendingChanges() ||
-                    confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
+            return ( !_pendingChanges() ||
+                     confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
         }
 
         function _pendingChanges()
@@ -1734,6 +1737,7 @@
 
         function onLoginSubmit(eventObj)
         {
+            $.mobile.pageLoading();
             // authenticate here
             UserName = $('#login_username').val();
             var Password = $('#login_password').val();
@@ -1790,7 +1794,7 @@
             }
         }
 
-        function onRefresh(DivId, eventObj)
+        function onRefresh()
         {
             if (!amOffline())
             {
@@ -1805,48 +1809,56 @@
 
         function continueRefresh()
         {
-            //Case 22211
+            //var DivId = localStorage['currentviewid'];
             var DivId = 'viewsdiv';
-            var HeaderText = 'Views';
+            if( !isNullOrEmpty(DivId) )
+            {
+                var HeaderText = _getDivHeaderText(DivId);
 
-            var dataXml = {
-                SessionId: SessionId,
-                ParentId: DivId,
-                ForMobile: ForMobile
-            };
+                //$('.CswNbtNode').remove();
+                //$('.CswNbtNodeProp').remove();
+                //$('#' + DivId).empty();
+
+                var dataXml = {
+                    SessionId: SessionId,
+                    ParentId: DivId,
+                    ForMobile: ForMobile
+                };
             
-            CswAjaxXml({
-                async: false,   // required so that the link will wait for the content before navigating
-                formobile: ForMobile,
-                url: opts.ViewsListUrl,
-                data: dataXml,
-                stringify: false,
-                onloginfail: function() { Logout(); },
-                success: function ($xml)
-                {
-                    if (debug) log('On Success ' + opts.ViewsListUrl, true);
+                CswAjaxXml({
+                    async: false,   // required so that the link will wait for the content before navigating
+                    formobile: ForMobile,
+                    url: opts.ViewsListUrl,
+                    data: dataXml,
+                    stringify: false,
+                    onloginfail: function() { Logout(); },
+                    success: function ($xml)
+                    {
+                        if (debug) log('On Success ' + opts.ViewsListUrl, true);
 
-                    $currentViewXml = $xml;
-                    _updateStoredViewXml(DivId, $currentViewXml, '0');
+                        $currentViewXml = $xml;
+                        _updateStoredViewXml(DivId, $currentViewXml, '0');
 
-                    var params = {
-                        ParentId: 'viewsdiv',
-                        DivId: DivId,
-                        HeaderText: HeaderText,
-                        '$xml': $currentViewXml,
-                        parentlevel: -1,
-                        level: 0,
-                        HideRefreshButton: false,
-                        HideSearchButton: true,
-                        HideBackButton: true,
-                        onPageShow: function(p) { return _loadDivContents(p); }
-                    };
-
-                    $viewsdiv.bindJqmEvents(params);
-                    $viewsdiv.doChangePage();
-                    //restorePath();
-                } // success
-            });
+                        var params = {
+                            ParentId: 'viewsdiv',
+                            DivId: DivId,
+                            HeaderText: HeaderText,
+                            '$xml': $currentViewXml,
+                            parentlevel: -1,
+                            level: 0,
+                            HideRefreshButton: false,
+                            HideSearchButton: (DivId === 'viewsdiv'),
+                            HideBackButton: (DivId === 'viewsdiv'),
+                            onPageShow: function(p) { return _loadDivContents(p); }
+                        };
+                         
+                        //var $thisDiv = _processViewXml(params);
+                        $viewsdiv.bindJqmEvents(params);
+                        $viewsdiv.doChangePage();
+                        $.mobile.pageLoading(true);
+                    } // success
+                });
+            }
         }
 
 //        function onBack(DivId, DestinationId, eventObj)
