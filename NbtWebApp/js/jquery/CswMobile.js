@@ -2030,6 +2030,7 @@
         function _getModifiedView(onSuccess)
         {
             var modified = false;
+            var storedViews = localStorage['storedviews'];   
             for( var i=0; i < storedViews.length; i++ )
             {
                 stored = storedViews[i];
@@ -2152,6 +2153,7 @@
                             stringify: true,
                             onloginfail: function() 
                             { 
+                                if(debug) log('_processChanges onloginfail()' + opts.UpdateUrl,true);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
@@ -2171,6 +2173,7 @@
                             },
                             error: function (data)
                             {
+                                if(debug) log('_processChanges error()' + opts.UpdateUrl,true);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
