@@ -1291,7 +1291,6 @@
 
 						if( isNullOrEmpty($cor.val()) )
 						{
-							debugger;
                             $li.children('div').addClass('OOC');
 							$prop.addClass('OOC');
 						}
