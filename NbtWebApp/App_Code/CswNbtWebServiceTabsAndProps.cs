@@ -312,7 +312,10 @@ namespace ChemSW.Nbt.WebServices
 				Node = _getNode( NodeId, NodeKey );
 			}
 
-			if( Node != null )
+			if( Node != null &&
+				( EditMode == NodeEditMode.AddInPopup &&
+				  _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeTypeId ) ) ||
+				_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeId, Node, null ) )
 			{
                 _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
                 foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
@@ -363,6 +366,7 @@ namespace ChemSW.Nbt.WebServices
 
 		public bool copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] PropIds )
 		{
+			bool ret = true;
 			CswNbtNodeKey SourceNodeKey = new CswNbtNodeKey( _CswNbtResources, SourceNodeKeyStr );
 			if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
 			{
@@ -374,20 +378,25 @@ namespace ChemSW.Nbt.WebServices
 						CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
 						CopyToNodePk.FromString( NodeIdStr );
 						CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
-						if( CopyToNode != null )
+						if( CopyToNode != null &&
+							_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.NodeType, CopyToNode, null ) )
 						{
-						    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
-                                                                                       .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
-						    {
-						        CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
-						    }
+							foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
+																					   .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
+							{
+								CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
+							}
 
-						    CopyToNode.postChanges( false );
+							CopyToNode.postChanges( false );
 						} // if( CopyToNode != null )
+						else
+						{
+							ret = false;
+						}
 					} // foreach( string NodeIdStr in CopyNodeIds )
 				} // if(SourceNode != null)
 			} // if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
-			return true;
+			return ret;
 		} // copyPropValues()
 
         private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )

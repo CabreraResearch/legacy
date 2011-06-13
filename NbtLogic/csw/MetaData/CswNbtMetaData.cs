@@ -255,7 +255,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Defines events that occur when a new nodetype is created
         /// </summary>
-        public delegate void NewNodeTypeEventHandler(CswNbtMetaDataNodeType NewNodeType);
+		public delegate void NewNodeTypeEventHandler( CswNbtMetaDataNodeType NewNodeType, bool IsCopy );
         /// <summary>
         /// Event handle for creating new nodetypes
         /// </summary>
@@ -421,7 +421,7 @@ namespace ChemSW.Nbt.MetaData
             }//iterate object class props
 
             if (OnMakeNewNodeType != null)
-                OnMakeNewNodeType(NewNodeType);
+                OnMakeNewNodeType(NewNodeType, false);
 
             return NewNodeType;
         } // makeNewNodeType()

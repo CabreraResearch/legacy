@@ -122,26 +122,35 @@ namespace ChemSW.Nbt.WebServices
 		 */
 		private void _xAddAuthenticationStatus( XElement XElement, AuthenticationStatus AuthenticationStatusIn )
 		{
-			XElement.SetAttributeValue( "authenticationstatus", AuthenticationStatusIn.ToString() );
-			if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
-				XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+			if( XElement != null )
+			{
+				XElement.SetAttributeValue( "authenticationstatus", AuthenticationStatusIn.ToString() );
+				if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+					XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+			}
 		}//_xAuthenticationStatus()
 
 
 		private void _xAddAuthenticationStatus( XmlDocument XmlDocument, AuthenticationStatus AuthenticationStatusIn )
 		{
-			if( XmlDocument.DocumentElement == null )
-				CswXmlDocument.SetDocumentElement( XmlDocument, "root" );
-			CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "authenticationstatus", AuthenticationStatusIn.ToString() );
-			if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
-				CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+			if( XmlDocument != null )
+			{
+				if( XmlDocument.DocumentElement == null )
+					CswXmlDocument.SetDocumentElement( XmlDocument, "root" );
+				CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "authenticationstatus", AuthenticationStatusIn.ToString() );
+				if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+					CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+			}
 		}//_xAuthenticationStatus()
 
 		private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn )
 		{
-			JObj.Add( new JProperty( "AuthenticationStatus", AuthenticationStatusIn.ToString() ) );
-			if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
-				JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
+			if( JObj != null )
+			{
+				JObj.Add( new JProperty( "AuthenticationStatus", AuthenticationStatusIn.ToString() ) );
+				if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+					JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
+			}
 		}//_jAuthenticationStatus()
 
 

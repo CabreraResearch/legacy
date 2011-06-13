@@ -267,6 +267,7 @@ var CswViewEditor_WizardSteps = {
                     break;
 				case CswViewEditor_WizardSteps.step2.step:
 					$wizard.CswWizard('button', 'finish', 'enable');
+					$wizard.CswWizard('button', 'next', 'disable');
 
                     var dataXml = {
                         ViewId: _getSelectedViewId($viewgrid)
@@ -303,6 +304,8 @@ var CswViewEditor_WizardSteps = {
 								$gridwidthlabelcell.hide();
 								$gridwidthtextboxcell.hide();
 							}
+
+							$wizard.CswWizard('button', 'next', 'enable');
 						} // success
 					}); // ajax
 					break;
@@ -619,10 +622,10 @@ var CswViewEditor_WizardSteps = {
 				var childxml = $select.find('option:selected').data('optionviewxml');
 				if($select.CswAttrDom('arbid') === "root")
 				{
-					$currentviewxml.append(childxml);
+					$currentviewxml.append($(childxml));
 				} else {
-					$currentviewxml.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]')
-								   .append(childxml);
+					var $parent = $currentviewxml.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]');
+					$parent.append($(childxml));
 				}
 				_makeViewTree(stepno, $div);
 			}); // child select
@@ -673,7 +676,8 @@ var CswViewEditor_WizardSteps = {
 											ID: o.ID,
 											$parent: $span,
                                             fieldtype: $currentviewxml.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]').CswAttrXml('fieldtype'),
-											proparbitraryid: $span.CswAttrDom('proparbid')
+											proparbitraryid: $span.CswAttrDom('proparbid'),
+											allowNullFilterValue: true
 										});
 
 							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 
@@ -783,7 +787,7 @@ var CswViewEditor_WizardSteps = {
 							}
 						} // onClick
 					}); // CswButton
-				});
+				}); // $div.find('.vieweditor_viewrellink').click(function() {
 
 				// Property
 				$div.find('.vieweditor_viewproplink').click(function() {

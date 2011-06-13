@@ -316,7 +316,7 @@
                     {
                         $labelcell.append($propxml.CswAttrXml('name'));
                     }
-                    if(o.ShowCheckboxes && $propxml.CswAttrXml('copyable') === "true")
+                    if(o.ShowCheckboxes && $propxml.CswAttrXml('copyable') === "true" && $propxml.CswAttrXml('readonly') === "false")
                     {
                         var $propcheck = $labelcell.CswInput('init',{ID: 'check_'+ propid,
                                                                         type: CswInput_Types.checkbox,

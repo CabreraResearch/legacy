@@ -67,7 +67,7 @@ $.xml = function (xml) {
                 
                 // Nodes get removed from array when moved
                 numNodes = nodes.length;			
-                for (i = 0; i < numNodes; i++) {
+                for (var i = 0; i < numNodes; i++) {
                     if ($.browser.webkit) {					
                         curDOM.appendChild(curDOM.ownerDocument.importNode(nodes[i], true));
                     } else {
