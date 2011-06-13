@@ -749,7 +749,7 @@ namespace ChemSW.Nbt.MetaData
                         CswNbtView ViewCopy = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
                         ViewCopy.makeNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
                         ViewCopy.save();
-                        NewPropRow[PropColumn.ColumnName] = CswConvert.ToDbVal( ViewCopy.ViewId );
+                        NewPropRow[PropColumn.ColumnName] = CswConvert.ToDbVal( ViewCopy.ViewId.get() );
                     }
                     else if( PropColumn.ColumnName.ToLower() == "defaultvalueid" && CswTools.IsInteger( _NodeTypePropRow[PropColumn.ColumnName].ToString() ) )
                     {
