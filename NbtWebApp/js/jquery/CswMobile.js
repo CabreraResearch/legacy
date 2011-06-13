@@ -162,7 +162,7 @@
             $ret = $div.bind('pageshow', function() 
             {
                 $.mobile.pageLoading();
-                //if(p.level === 1) localStorage['currentviewid'] = p.DivId;
+                if(p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
                 if( !p.persistBindEvent ) {
                     // If the page is constructed entirely from cache, we only do this once.
@@ -1809,16 +1809,10 @@
 
         function continueRefresh()
         {
-            //var DivId = localStorage['currentviewid'];
-            var DivId = 'viewsdiv';
+            var DivId = localStorage['currentviewid'];
             if( !isNullOrEmpty(DivId) )
             {
                 var HeaderText = _getDivHeaderText(DivId);
-
-                //$('.CswNbtNode').remove();
-                //$('.CswNbtNodeProp').remove();
-                //$('#' + DivId).empty();
-
                 var dataXml = {
                     SessionId: SessionId,
                     ParentId: DivId,
@@ -1828,13 +1822,13 @@
                 CswAjaxXml({
                     async: false,   // required so that the link will wait for the content before navigating
                     formobile: ForMobile,
-                    url: opts.ViewsListUrl,
+                    url: opts.ViewUrl,
                     data: dataXml,
                     stringify: false,
                     onloginfail: function() { Logout(); },
                     success: function ($xml)
                     {
-                        if (debug) log('On Success ' + opts.ViewsListUrl, true);
+                        if (debug) log('On Success ' + opts.ViewUrl, true);
 
                         $currentViewXml = $xml;
                         _updateStoredViewXml(DivId, $currentViewXml, '0');
@@ -1844,17 +1838,17 @@
                             DivId: DivId,
                             HeaderText: HeaderText,
                             '$xml': $currentViewXml,
-                            parentlevel: -1,
-                            level: 0,
+                            parentlevel: 0,
+                            level: 1,
                             HideRefreshButton: false,
-                            HideSearchButton: (DivId === 'viewsdiv'),
-                            HideBackButton: (DivId === 'viewsdiv'),
+                            HideSearchButton: false,
+                            HideBackButton: false,
                             onPageShow: function(p) { return _loadDivContents(p); }
                         };
                          
-                        //var $thisDiv = _processViewXml(params);
-                        $viewsdiv.bindJqmEvents(params);
-                        $viewsdiv.doChangePage();
+                        var $thisDiv = _loadDivContents(params);
+                        //$thisDiv.bindJqmEvents(params);
+                        $thisDiv.doChangePage();
                         $.mobile.pageLoading(true);
                     } // success
                 });
