@@ -349,25 +349,10 @@
 
         function removeDiv(DivId)
         {
-            setTimeout('$(\'#' + DivId + '\').find(' + 'div:jqmData(role="content")' + ').empty();', opts.DivRemovalDelay);
+            $('#' + DivId).find('div:jqmData(role="content")').empty();
         }
 
         function reloadViews()
-        {
-            if ( $.mobile.activePage === $viewsdiv)
-            {
-                setTimeout(function () { 
-                        $viewsdiv = continueReloadViews();
-                    }, 
-                    opts.DivRemovalDelay);
-            } else
-            {
-                $viewsdiv = continueReloadViews();
-            }
-            return $viewsdiv;
-        }
-
-        function continueReloadViews()
         {
             if($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
             var params = {
