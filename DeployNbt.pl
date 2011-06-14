@@ -138,6 +138,10 @@ foreach my $component (@components)
 
 &runCommand( "net stop \"NbtSchedService\"");
 
+&runCommand( "net stop \"NbtSchedService\"");
+
+&runCommand( "net stop \"NbtSchedService\"");
+
 &runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
 
 &runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
