@@ -295,20 +295,10 @@ namespace ChemSW.Nbt.WebServices
 			if( EditMode == NodeEditMode.AddInPopup )
 			{
 				Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+				_CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
 			}
 			else
 			{
-				//CswPrimaryKey NodePk = new CswPrimaryKey();
-				//NodePk.FromString( NodePkString );
-				//if( !string.IsNullOrEmpty( NodeKey ) )
-				//{
-				//    NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-				//    if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-				//    {
-				//        Node = _CswNbtResources.Nodes[NbtNodeKey];
-				//    }
-				//}
-
 				Node = _getNode( NodeId, NodeKey );
 			}
 
@@ -317,7 +307,6 @@ namespace ChemSW.Nbt.WebServices
 				  _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) ) ||
 				_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Node.NodeType, Node, null ) )
 			{
-                _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
                 foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
 				{
                     _applyPropXml( Node, PropNode );
