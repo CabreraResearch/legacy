@@ -202,31 +202,32 @@
 		{
             return ($table.CswAttrDom('removemode') === "true");
 		}
-	    function setRemoveMode($table, mode)
-        {
-            $table.CswAttrDom('removemode', mode);
-        }
-
         function isConfigMode($table)
         {
             return ($table.CswAttrDom('configmode') === "true");
         }
+
 	    function setConfigMode($table, mode)
         {
             $table.CswAttrDom('configmode', mode);
         }
+
 		function _toggleRemove($table, $rembtn)
 		{
 			if(isRemoveMode($table))
 			{
-				setRemoveMode($table, 'false');
-				$rembtn.removeClass('CswLayoutTable_removeEnabled');
+	            _removeOff($table, $rembtn);
 			}
 			else
 			{
-				setRemoveMode($table, 'true');
+	            $table.CswAttrDom('removemode', 'true');
 				$rembtn.addClass('CswLayoutTable_removeEnabled');
 			}
+		}
+		function _removeOff($table, $rembtn)
+		{
+			$table.CswAttrDom('removemode', 'false');
+			$rembtn.removeClass('CswLayoutTable_removeEnabled');
 		}
         function _toggleConfig($table, $buttontable)
         {
@@ -241,7 +242,8 @@
 		function _configOff($table, $buttontable)
 		{
 			$buttontable.find('#' + $table.CswAttrDom('id') + 'addbtn').hide();
-			$buttontable.find('#' + $table.CswAttrDom('id') + 'rembtn').hide();
+			var $rembtn = $buttontable.find('#' + $table.CswAttrDom('id') + 'rembtn');
+			$rembtn.hide();
 			$buttontable.find('#' + $table.CswAttrDom('id') + 'addcolumnbtn').hide();
 			$buttontable.find('#' + $table.CswAttrDom('id') + 'addrowbtn').hide();
 
@@ -252,6 +254,7 @@
 
             setConfigMode($table, 'false');
             $table.trigger($table.CswAttrDom('id') + 'CswLayoutTable_onConfigOff', $buttontable);
+			_removeOff($table, $rembtn);
         } // _configOff()
 		
 		function _configOn($table, $buttontable)
