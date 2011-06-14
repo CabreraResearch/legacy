@@ -314,8 +314,8 @@ namespace ChemSW.Nbt.WebServices
 
 			if( Node != null &&
 				( EditMode == NodeEditMode.AddInPopup &&
-				  _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeTypeId ) ) ||
-				_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeId, Node, null ) )
+				  _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) ) ||
+				_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Node.NodeType, Node, null ) )
 			{
                 _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
                 foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
