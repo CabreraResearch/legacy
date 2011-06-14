@@ -249,7 +249,7 @@ function _handleAuthenticationStatus(options)
 	{
 		case 'Authenticated': o.success(); break;
 		case 'Deauthenticated': o.success(); break;  // yes, o.success() is intentional here.
-		case 'Failed': txt = "Login Failed"; break;
+		case 'Failed': txt = "Invalid login."; break;
 		case 'Locked': txt = "Your account is locked.  Please see your account administrator."; break;
 		case 'Deactivated': txt = "Your account is deactivated.  Please see your account administrator."; break;
 		case 'TooManyUsers': txt = "Too many users are currently connected.  Try again later."; break;
