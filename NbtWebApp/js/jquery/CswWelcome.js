@@ -285,7 +285,7 @@
         var $textcell = $(r.cellset[2][1]);
         if($textcell.length > 0)
         {
-            var welcomeid = $textcell.children('input').CswAttrDom('welcomeid');
+            var welcomeid = $textcell.find('input').CswAttrDom('welcomeid');
 		    
             var dataJson = {
                 RoleId: '', 
