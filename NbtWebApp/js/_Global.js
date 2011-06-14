@@ -115,7 +115,8 @@ function CswAjaxJSON(options)
                     failure: o.onloginfail,
                     usernodeid: result.nodeid,
                     usernodekey: result.cswnbtnodekey,
-                    passwordpropid: result.passwordpropid
+                    passwordpropid: result.passwordpropid,
+                    ForMobile: o.formobile
                 });
             }
         }, // success{}
@@ -196,7 +197,8 @@ function CswAjaxXml(options)
     					failure: o.onloginfail,
     					usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
     					usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
-    					passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), '')
+    					passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), ''),
+                        ForMobile: o.formobile
     				});
     			}
 
@@ -236,11 +238,13 @@ function _handleAuthenticationStatus(options)
 		failure: function () { },
 		usernodeid: '',
 		usernodekey: '',
-		passwordpropid: ''
+		passwordpropid: '',
+        ForMobile: false,
 	};
 	if(options) $.extend(o, options);
 
 	var txt = '';
+    var GoodEnoughForMobile = false; //Ignore password expirery and license accept for Mobile for now
 	switch (o.status)
 	{
 		case 'Authenticated': o.success(); break;
@@ -254,25 +258,37 @@ function _handleAuthenticationStatus(options)
 		case 'Unknown': txt = "An Unknown Error Occurred"; break;
 		case 'TimedOut': txt = "Your session has timed out.  Please login again."; break;
 		case 'ExpiredPassword':
-			$.CswDialog('EditNodeDialog', {
-				'nodeid': o.usernodeid,
-				'cswnbtnodekey': o.usernodekey,
-				'filterToPropId': o.passwordpropid,
-				'title': 'Your password has expired.  Please change it now:',
-				'onEditNode': function (nodeid, nodekey) { o.success(); }
-			});
+			if( o.ForMobile ) {
+                GoodEnoughForMobile = true;
+                o.success();
+            }
+            else {
+                $.CswDialog('EditNodeDialog', {
+				    'nodeid': o.usernodeid,
+				    'cswnbtnodekey': o.usernodekey,
+				    'filterToPropId': o.passwordpropid,
+				    'title': 'Your password has expired.  Please change it now:',
+				    'onEditNode': function (nodeid, nodekey) { o.success(); }
+			    });
+            }
 			break;
 		case 'ShowLicense':
-			$.CswDialog('ShowLicenseDialog', {
-				'onAccept': function () { o.success(); },
-				'onDecline': function () { o.failure('You must accept the license agreement to use this application'); }
-			});
+			if( o.ForMobile ) {
+                GoodEnoughForMobile = true;
+                o.success();
+            }
+            else {
+                $.CswDialog('ShowLicenseDialog', {
+				    'onAccept': function () { o.success(); },
+				    'onDecline': function () { o.failure('You must accept the license agreement to use this application'); }
+			    });
+            }
 			break;
 	}
 
-	if (!isNullOrEmpty(txt) && o.status !== 'Authenticated')
+	if (!isNullOrEmpty(txt) && ( o.status !== 'Authenticated' || GoodEnoughForMobile ))
 	{
-		o.failure(txt);
+		o.failure(txt,o.status);
 	}
 } // _handleAuthenticationStatus()
 
