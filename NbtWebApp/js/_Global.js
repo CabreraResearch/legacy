@@ -253,7 +253,7 @@ function _handleAuthenticationStatus(options)
 		case 'Locked': txt = "Your account is locked.  Please see your account administrator."; break;
 		case 'Deactivated': txt = "Your account is deactivated.  Please see your account administrator."; break;
 		case 'TooManyUsers': txt = "Too many users are currently connected.  Try again later."; break;
-		case 'NonExistentAccessId': txt = "One or more of the supplied parameters was invalid or missing."; break;
+		case 'NonExistentAccessId': txt = "Invalid login."; break;
 		case 'NonExistentSession': txt = "Your session has timed out.  Please login again."; break;
 		case 'Unknown': txt = "An Unknown Error Occurred"; break;
 		case 'TimedOut': txt = "Your session has timed out.  Please login again."; break;
