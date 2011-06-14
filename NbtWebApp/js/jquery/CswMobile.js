@@ -222,7 +222,9 @@
         var rootid;
 
         var UserName = localStorage["username"];
+        if( !localStorage["sessionid"] ) _clearStorage();
         var SessionId = localStorage["sessionid"];
+        
         var $currentViewXml;
 
         var storedViews = '';
@@ -1796,17 +1798,18 @@
         {
             if (_checkNoPendingChanges())
             {
-//                _dropDb(function ()
-//                {
-//                  
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    // reloading browser window is the easiest way to reset
-                    if( reloadWindow ) {
-                        window.location.href = window.location.pathname;
-                    }
-//                });
+                _clearStorage();
+                // reloading browser window is the easiest way to reset
+                if( reloadWindow ) {
+                    window.location.href = window.location.pathname;
+                }
             }
+        }
+
+        function _clearStorage()
+        {
+            sessionStorage.clear();
+            localStorage.clear();
         }
 
         function onRefresh()
@@ -2045,7 +2048,8 @@
         function _getModifiedView(onSuccess)
         {
             var modified = false;
-            var storedViews = localStorage['storedviews'];   
+            var storedViews = JSON.parse( localStorage['storedviews'] );   
+         
             for( var i=0; i < storedViews.length; i++ )
             {
                 stored = storedViews[i];
@@ -2055,7 +2059,6 @@
                     if( view.wasmodified )
                     {
                         modified = true;
-                        _resetPendingChanges(true, true);
                         var rootid = stored.rootid;
                         var viewxml = view.xml;
                         if( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
@@ -2180,6 +2183,7 @@
                                 if (debug) log('On Success ' + opts.UpdateUrl, true);
                                 var $xml = data.xml;
                                 _updateStoredViewXml(rootid, $xml, '0');
+                                _resetPendingChanges(false, true);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
