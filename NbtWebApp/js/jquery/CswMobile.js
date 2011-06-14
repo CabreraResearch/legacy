@@ -234,7 +234,7 @@
         var $viewsdiv = _loadViewsDiv();
         var $syncstatus = _makeSynchStatusDiv();
         var $helpdiv = _makeHelpDiv();
-        var $sorrycharliediv = _loadSorryCharlieDiv(false);
+        var $sorrycharliediv = _loadSorryCharlieDiv();
 
 		// case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
@@ -292,10 +292,14 @@
                     HideBackButton: true,
                     dataRel: 'dialog'
             });
-            $('#loginsubmit').click(onLoginSubmit);
+            $('#loginsubmit').bind('click', function() {
+                $.mobile.pageLoading();
+                onLoginSubmit(); 
+            });
             $('#login_customerid').clickOnEnter($('#loginsubmit'));
             $('#login_username').clickOnEnter($('#loginsubmit'));
             $('#login_password').clickOnEnter($('#loginsubmit'));
+           
             return $retDiv;
 		}
 
@@ -329,20 +333,30 @@
             return $retDiv;
 		}
 
-		function _loadSorryCharlieDiv()
+		function _loadSorryCharlieDiv(params)
         {
-            $retDiv = _addPageDivToBody({
+            var p = {
                 DivId: 'sorrycharliediv',
                 HeaderText: 'Sorry Charlie!',
-                HideSearchButton: true,
-                HideOnlineButton: false,
-                HideRefreshButton: true,
-                HideLogoutButton: true,
                 HideHelpButton: false,
                 HideCloseButton: true,
+                HideOnlineButton: false,
+                content: 'You must have internet connectivity to login.'
+            };
+            if(params) $.extend(p,params);
+
+            $retDiv = _addPageDivToBody({
+                DivId: p.DivId,
+                HeaderText: p.HeaderText,
+                HideSearchButton: true,
+                HideOnlineButton: p.HideOnlineButton,
+                HideRefreshButton: true,
+                HideLogoutButton: true,
+                HideHelpButton: p.HideHelpButton,
+                HideCloseButton: p.HideCloseButton,
                 HideBackButton: true,
                 dataRel: 'dialog',
-                $content: $('<p>You must have internet connectivity to login.</p>')                
+                $content: $('<p>' + p.content + '</p>')                
             });
             return $retDiv;
         }
@@ -523,7 +537,7 @@
                 //async: false,   // required so that the link will wait for the content before navigating
                 url: p.url,
                 data: dataXml,
-                onloginfail: function() { Logout(); },
+                onloginfail: function(text) { onLoginFail(text); },
                 success: function ($xml)
                 {
                     if (debug) log('On Success ' + opts.ViewUrl, true);
@@ -1720,20 +1734,14 @@
         // Events
         // ------------------------------------------------------------------------------------
 
-        function onLoginSubmit(eventObj)
+        function onLoginSubmit()
         {
-            $.mobile.pageLoading();
-            // authenticate here
-            UserName = $('#login_username').val();
-            var Password = $('#login_password').val();
-            var CustomerId = $('#login_customerid').val();
-
             if (!amOffline())
             {
                 var ajaxData = {
-                    'AccessId': CustomerId, //We're displaying "Customer ID" but processing "AccessID"
-                    'UserName': UserName, 
-                    'Password': Password
+                    'AccessId': $('#login_customerid').val(), //We're displaying "Customer ID" but processing "AccessID"
+                    'UserName': $('#login_username').val(), 
+                    'Password': $('#login_password').val()
                 };
 
                 //clearPath();
@@ -1742,7 +1750,9 @@
                     async: false,
                     url: opts.AuthenticateUrl,
                     data: ajaxData,
-                    onloginfail: function () { Logout(); },
+                    onloginfail: function (text) { 
+                        onLoginFail(text);
+                    },
                     success: function (data)
                     {
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
@@ -1751,30 +1761,50 @@
                         $viewsdiv.doChangePage();
                         //restorePath();
                     },
-                    error: function()
+                    error: function(XMLHttpRequest, textStatus, errorThrown)
                     {
-                        //restorePath();
+                        $.mobile.pageLoading(true);
                     }
                 });
             }
 
         } //onLoginSubmit() 
 
-        function onLogout(DivId, eventObj)
+        function onLoginFail(text)
         {
-            Logout();
+            Logout(false); 
+            $.mobile.pageLoading(true);
+            var p = {
+                DivId: 'loginfaileddiv',
+                HeaderText: 'Login Failed',
+                HideHelpButton: true,
+                HideCloseButton: false,
+                HideOnlineButton: true,
+                content: text
+            };
+
+            var $failDiv = _loadSorryCharlieDiv(p);
+            $failDiv.doChangePage();
         }
 
-        function Logout()
+        function onLogout()
+        {
+            Logout(true);
+        }
+
+        function Logout(reloadWindow)
         {
             if (_checkNoPendingChanges())
             {
 //                _dropDb(function ()
 //                {
-//                    // reloading browser window is the easiest way to reset
+//                  
                     sessionStorage.clear();
                     localStorage.clear();
-                    window.location.href = window.location.pathname;
+                    // reloading browser window is the easiest way to reset
+                    if( reloadWindow ) {
+                        window.location.href = window.location.pathname;
+                    }
 //                });
             }
         }
@@ -1810,7 +1840,7 @@
                     url: opts.ViewUrl,
                     data: dataXml,
                     stringify: false,
-                    onloginfail: function() { Logout(); },
+                    onloginfail: function(text) { onLoginFail(text); },
                     success: function ($xml)
                     {
                         if (debug) log('On Success ' + opts.ViewUrl, true);
@@ -2091,7 +2121,7 @@
                 url: url,
                 data: {},
                 stringify: false,
-                onloginfail: function() { Logout(); },
+                onloginfail: function(text) { onLoginFail(text); },
                 success: function ($xml)
                 {
                     setOnline();
@@ -2136,14 +2166,14 @@
                             url: opts.UpdateUrl,
                             data: dataJson,
                             stringify: true,
-                            onloginfail: function() 
+                            onloginfail: function(text) 
                             { 
                                 if(debug) log('_processChanges onloginfail()' + opts.UpdateUrl,true);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
                                 }
-                                //restorePath(); 
+                                onLoginFail(text);
                             },
                             success: function (data)
                             {
@@ -2154,7 +2184,6 @@
                                 {
                                     _waitForData();
                                 }
-                                //restorePath();
                             },
                             error: function (data)
                             {

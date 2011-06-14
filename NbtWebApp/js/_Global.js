@@ -86,46 +86,46 @@ function CswAjaxJSON(options)
     if (options) $.extend(o, options);
     //var starttime = new Date();
     $.ajax({
-    	type: 'POST',
-	    async: o.async,
-    	url: o.url,
-    	dataType: "json",
-    	contentType: 'application/json; charset=utf-8',
-    	data: JSON.stringify(o.data),
-    	success: function (data, textStatus, XMLHttpRequest)
-    	{
-    		//var endtime = new Date();
-    		//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+        type: 'POST',
+        async: o.async,
+        url: o.url,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(o.data),
+        success: function (data, textStatus, XMLHttpRequest)
+        {
+            //var endtime = new Date();
+            //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+            var result = $.parseJSON(data.d);
 
-    		var result = $.parseJSON(data.d);
+            if (result.error !== undefined)
+            {
+                _handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
+                o.error(XMLHttpRequest, textStatus, errorThrown);
+            }
+            else
+            {
 
-    		if (result.error !== undefined)
-    		{
-    			_handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
-    			o.error();
-    		}
-    		else
-    		{
-    			var auth = tryParseString(result.AuthenticationStatus, 'Unknown');
-    			timeout = tryParseString(result.timeout, '');
+                var auth = tryParseString(result.AuthenticationStatus, 'Unknown');
+                timeout = tryParseString(result.timeout, '');
 
-    			_handleAuthenticationStatus({
-    				status: auth,
-    				success: function () { o.success(result); },
-    				failure: o.onloginfail,
-    				usernodeid: result.nodeid,
-    				usernodekey: result.cswnbtnodekey,
-    				passwordpropid: result.passwordpropid
-    			});
-    		}
-    	}, // success{}
-    	error: function (XMLHttpRequest, textStatus, errorThrown)
-    	{
-    		//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-    		log("Webservice Request (" + o.url + ") Failed: " + textStatus);
-    		o.error();
-    	}
-    });         // $.ajax({
+                _handleAuthenticationStatus({
+                    status: auth,
+                    success: function () { o.success(result); },
+                    failure: o.onloginfail,
+                    usernodeid: result.nodeid,
+                    usernodekey: result.cswnbtnodekey,
+                    passwordpropid: result.passwordpropid
+                });
+            }
+        }, // success{}
+        error: function (XMLHttpRequest, textStatus, errorThrown)
+        {
+            //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+            log("Webservice Request (" + o.url + ") Failed: " + textStatus);
+            o.error(XMLHttpRequest, textStatus, errorThrown);
+        }
+    });           // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options)
@@ -249,7 +249,7 @@ function _handleAuthenticationStatus(options)
 		case 'Locked': txt = "Your account is locked.  Please see your account administrator."; break;
 		case 'Deactivated': txt = "Your account is deactivated.  Please see your account administrator."; break;
 		case 'TooManyUsers': txt = "Too many users are currently connected.  Try again later."; break;
-		case 'NonExistentAccessId': txt = "Login Failed"; break;
+		case 'NonExistentAccessId': txt = "Invalid Customer ID"; break;
 		case 'NonExistentSession': txt = "Your session has timed out.  Please login again."; break;
 		case 'Unknown': txt = "An Unknown Error Occurred"; break;
 		case 'TimedOut': txt = "Your session has timed out.  Please login again."; break;

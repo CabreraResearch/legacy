@@ -204,10 +204,19 @@ namespace ChemSW.Nbt.WebServices
 			{
 				_initResources();
 
+			    AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
+
 				try
 				{
 				    string ParsedAccessId = AccessId.ToLower().Trim();
-                    _CswSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
+                    if( !string.IsNullOrEmpty( ParsedAccessId ) )
+                    {
+                        _CswSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
+                    }
+                    else
+                    {
+                        throw new CswDniException( "There is no configuration information for this AccessId", "AccessId is null or empty." );
+                    }
 				}
 				catch( CswDniException ex )
 				{
@@ -215,9 +224,14 @@ namespace ChemSW.Nbt.WebServices
                     {
                         throw ex;
                     }
+                    else
+                    {
+                        AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
+                    }
 				}
 
-				AuthenticationStatus AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
+                if(AuthenticationStatus == AuthenticationStatus.Unknown )
+				    AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
 
 				// case 21211
 				if( AuthenticationStatus == AuthenticationStatus.Authenticated )
