@@ -141,6 +141,9 @@
 				$.each(instances[instance_id]._get_settings().plugins, function (i, val) { if(plugins[val]) { plugins[val].__init.apply(instances[instance_id]); } });
 				// initialize the instance
 				instances[instance_id].init();
+
+				// added by sds of chemsw
+				$(this).trigger('init_done.jstree');
 			});
 		}
 		// return the jquery selection (or if it was a method call that returned a value - the returned value)
@@ -398,12 +401,13 @@
 						done = false;
 					}
 				}
-				if(done) { 
-					// TODO: find a more elegant approach to syncronizing returning requests
-					if(this.data.core.reopen) { clearTimeout(this.data.core.reopen); }
-					this.data.core.reopen = setTimeout(function () { _this.__callback({}, _this); }, 50);
-					this.data.core.refreshing = false;
-				}
+				// removed by sds of ChemSW
+//				if(done) { 
+//					// TODO: find a more elegant approach to syncronizing returning requests
+//					if(this.data.core.reopen) { clearTimeout(this.data.core.reopen); }
+//					this.data.core.reopen = setTimeout(function () { _this.__callback({}, _this); }, 50);
+//					this.data.core.refreshing = false;
+//				}
 			},
 			refresh : function (obj) {
 				var _this = this;

@@ -160,23 +160,40 @@
 							$treexml.children().each(function() { treehtmlstring += _treeXmlToHtml($(this)); });
 							treehtmlstring += '</ul>';
 
-							$treediv.jstree({
-//								"xml_data": 
-//									{
-//										"data": treexmlstring,
-//										"xsl": "nest",
-//										"ajax":
-//											{
-//												"type": 'POST',
-//												"url": url,
-//												"dataType": "xml",
-//												"data": function($nodeOpening) 
-//													{
-//														var nodekey = $nodeOpening.CswAttrXml('cswnbtnodekey');
-//														return 'UsePaging=' + o.UsePaging + '&ViewNum=' + o.viewid + '&IDPrefix=' + IDPrefix + '&IsFirstLoad=false&ParentNodeKey=' + nodekey + '&IncludeNodeRequired=false&IncludeNodeKey=';
-//													}
-//											}
-//									},
+							$treediv.bind('init_done.jstree', function(event, data) { 
+
+								// initially_open and initially_select cause multiple event triggers and race conditions.
+								// So we'll do it ourselves instead.
+
+								// Open
+								$selecteditem = $xml.find('item[id="'+ selectid + '"]');
+								var $itemparents = $selecteditem.parents('item').andSelf();
+								var initiallyOpen = new Array();
+								var i = 0;
+								$itemparents.each(function() { 
+									$treediv.jstree('open_node', '#' + $(this).CswAttrXml('id') );
+								});
+
+								// Select
+								$treediv.jstree('select_node', '#' + selectid);
+
+							}).bind('load_node.jstree', function(e, data) {
+								$('.'+ IDPrefix +'check').unbind('click');
+								$('.'+ IDPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
+
+							}).bind('select_node.jstree', function(e, data) { return _firstSelectNode({
+									e: e, 
+									data: data, 
+									url: url,
+									$treediv: $treediv, 
+									IDPrefix: IDPrefix, 
+									onSelectNode: o.onSelectNode,
+									onInitialSelectNode: o.onInitialSelectNode,
+									viewid: o.viewid,
+									UsePaging: o.UsePaging,
+									forsearch: o.forsearch
+								});
+							}).jstree({
 								"html_data":
 									{
 										"data": treehtmlstring,
@@ -215,12 +232,12 @@
 											}
 									},
 								"ui": {
-									"select_limit": 1,
-									"initially_select": selectid
+									"select_limit": 1//,
+									//"initially_select": selectid
 								},
 								"themes": treeThemes,
 								"core": {
-									"initially_open": initiallyOpen
+									//"initially_open": initiallyOpen
 								},
 								"types": {
 									"types": jsonTypes,
@@ -228,21 +245,6 @@
 									"max_depth": -2
 								},
 								"plugins": treePlugins
-							}).bind('load_node.jstree', function(e, data) {
-								$('.'+ IDPrefix +'check').unbind('click');
-								$('.'+ IDPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
-							}).bind('select_node.jstree', function(e, data) { return _firstSelectNode({
-									e: e, 
-									data: data, 
-									url: url,
-									$treediv: $treediv, 
-									IDPrefix: IDPrefix, 
-									onSelectNode: o.onSelectNode,
-									onInitialSelectNode: o.onInitialSelectNode,
-									viewid: o.viewid,
-									UsePaging: o.UsePaging,
-									forsearch: o.forsearch
-								}); 
 							});
 
 							// DO NOT define an onSuccess() function here that interacts with the tree.
@@ -300,12 +302,11 @@
 		if(myoptions) $.extend(m, myoptions);
 		
 		// case 21715 - don't trigger onSelectNode event on first event
-		m.onSelectNode = m.onInitialSelectNode;
-		_handleSelectNode(m);
+		var m2 = {};
+		$.extend(m2, m);
+		m2.onSelectNode = m.onInitialSelectNode;
+		_handleSelectNode(m2);
 
-		// reset
-		if(myoptions) $.extend(m, myoptions);
-		
 		// rebind event for next select
 		m.$treediv.unbind('select_node.jstree');
 		m.$treediv.bind('select_node.jstree', function(e, data) { return _handleSelectNode(m); });
