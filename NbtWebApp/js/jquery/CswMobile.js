@@ -1745,9 +1745,12 @@
         {
             if (!amOffline())
             {
+                var UserName = $('#login_username').val();
+                var AccessId = $('#login_customerid').val();
+                
                 var ajaxData = {
-                    'AccessId': $('#login_customerid').val(), //We're displaying "Customer ID" but processing "AccessID"
-                    'UserName': $('#login_username').val(), 
+                    'AccessId': AccessId, //We're displaying "Customer ID" but processing "AccessID"
+                    'UserName': UserName, 
                     'Password': $('#login_password').val()
                 };
 
@@ -2032,29 +2035,32 @@
         function _getModifiedView(onSuccess)
         {
             var modified = false;
-            var storedViews = JSON.parse( localStorage['storedviews'] );   
-         
-            for( var i=0; i < storedViews.length; i++ )
+            if( !isNullOrEmpty(localStorage['storedviews']) )
             {
-                stored = storedViews[i];
-                if( !isNullOrEmpty(localStorage[stored.rootid]) )
+                var storedViews = JSON.parse( localStorage['storedviews'] );   
+         
+                for( var i=0; i < storedViews.length; i++ )
                 {
-                    var view = JSON.parse( localStorage[stored.rootid] );
-                    if( view.wasmodified )
+                    stored = storedViews[i];
+                    if( !isNullOrEmpty(localStorage[stored.rootid]) )
                     {
-                        modified = true;
-                        var rootid = stored.rootid;
-                        var viewxml = view.xml;
-                        if( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
+                        var view = JSON.parse( localStorage[stored.rootid] );
+                        if( view.wasmodified )
                         {
-                            onSuccess(rootid, viewxml);
+                            modified = true;
+                            var rootid = stored.rootid;
+                            var viewxml = view.xml;
+                            if( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
+                            {
+                                onSuccess(rootid, viewxml);
+                            }
                         }
                     }
                 }
-            }
-            if( !modified ) {
-                _resetPendingChanges(false, true);
-                onSuccess();
+                if( !modified ) {
+                    _resetPendingChanges(false, true);
+                    onSuccess();
+                }
             }
         }
 
