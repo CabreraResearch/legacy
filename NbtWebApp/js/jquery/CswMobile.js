@@ -1583,6 +1583,13 @@
             return $('#' + DivId).find('div:jqmData(role="header") h1').text();
         }
 
+        function _addToDivHeaderText($div,text)
+        {
+            $div.find('div:jqmData(role="header") h1').append( $('<p style="color: yellow;">' + text + '</p>'));
+            $.mobile.loadPage($div);
+            return $div;
+        }
+
         function _getDivParentId(DivId)
         {
             var ret = '';
@@ -1776,17 +1783,7 @@
         {
             Logout(false); 
             $.mobile.pageLoading(true);
-            var p = {
-                DivId: 'loginfaileddiv',
-                HeaderText: 'Login Failed',
-                HideHelpButton: true,
-                HideCloseButton: false,
-                HideOnlineButton: true,
-                content: text
-            };
-
-            var $failDiv = _loadSorryCharlieDiv(p);
-            $failDiv.doChangePage();
+            _addToDivHeaderText( $logindiv, text);
         }
 
         function onLogout()
