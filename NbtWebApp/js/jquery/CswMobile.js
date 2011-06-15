@@ -234,7 +234,7 @@
 
         var $logindiv = _loadLoginDiv();
         var $viewsdiv = _loadViewsDiv();
-        var $syncstatus = _makeSynchStatusDiv();
+        var $syncstatus = _makeSyncStatusDiv();
         var $helpdiv = _makeHelpDiv();
         var $sorrycharliediv = _loadSorryCharlieDiv();
 
@@ -1385,7 +1385,7 @@
             var $pageDiv = $('#' + p.DivId);
 
             var $searchBtn = $('#' + p.DivId + '_searchopen');
-            var $synchstatusBtn = $('#' + p.DivId + '_gosynchstatus');
+            var $syncstatusBtn = $('#' + p.DivId + '_gosyncstatus');
             var $refreshBtn = $('#' + p.DivId + '_refresh');
             var $logoutBtn = $('#' + p.DivId + '_logout');
             var $helpBtn = $('#' + p.DivId + '_help');
@@ -1475,12 +1475,12 @@
                 var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
                 var onlineValue = (amOffline()) ? 'Offline' : 'Online';
 
-                $synchstatusBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
-                                                    ID: p.DivId + '_gosynchstatus', 
+                $syncstatusBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
+                                                    ID: p.DivId + '_gosyncstatus', 
                                                     cssclass: onlineClass + ' ui-btn-left',  
                                                     value: onlineValue })
-                                    .CswAttrXml({'data-identity': p.DivId + '_gosynchstatus', 
-                                                'data-url': p.DivId + '_gosynchstatus', 
+                                    .CswAttrXml({'data-identity': p.DivId + '_gosyncstatus', 
+                                                'data-url': p.DivId + '_gosyncstatus', 
                                                 'data-transition': 'pop',
                                                 'data-role': 'button',
                                                 'data-rel': 'dialog' 
@@ -1525,10 +1525,10 @@
             }
 
             if ( p.HideOnlineButton ) { 
-                $synchstatusBtn.hide(); 
+                $syncstatusBtn.hide(); 
             }
             else {
-                $synchstatusBtn.show()
+                $syncstatusBtn.show()
                                .css('display',''); 
             }
             if ( p.HideHelpButton ) {
@@ -1608,8 +1608,8 @@
             $div.find('#' + DivId + '_searchopen')
                 .click(function () { onSearchOpen(DivId); })
                 .end()
-                .find('#' + DivId + '_gosynchstatus')
-                .click(function () { onSynchStatusOpen(DivId); })
+                .find('#' + DivId + '_gosyncstatus')
+                .click(function () { onSyncStatusOpen(DivId); })
                 .end()
                 .find('#' + DivId + '_refresh')
                 .click(function (e) { return onRefresh(DivId); })
@@ -1629,21 +1629,21 @@
         }
 
         // ------------------------------------------------------------------------------------
-        // Synch Status Div
+        // Sync Status Div
         // ------------------------------------------------------------------------------------
 
-        function _makeSynchStatusDiv()
+        function _makeSyncStatusDiv()
         {
             var content = '';
-            content += '<p>Pending Unsynched Changes: <span id="ss_pendingchangecnt">No</span></p>';
-            content += '<p>Last synch: <span id="ss_lastsynch"></span></p>';
-            content += '<a id="ss_forcesynch" data-identity="ss_forcesynch" data-url="ss_forcesynch" href="javascript:void(0)" data-role="button">Force Synch Now</a>';
+            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">No</span></p>';
+            content += '<p>Last sync: <span id="ss_lastsync"></span></p>';
+            content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
             content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
             
 
             var $retDiv = _addPageDivToBody({
-                    DivId: 'synchstatus',
-                    HeaderText: 'Synch Status',
+                    DivId: 'syncstatus',
+                    HeaderText: 'Sync Status',
                     $content: $(content),
                     dataRel: 'dialog',
                     HideSearchButton: true,
@@ -1655,7 +1655,7 @@
                     HideBackButton: true
             });
 
-            $retDiv.find('#ss_forcesynch')
+            $retDiv.find('#ss_forcesync')
                     .click(function () { _processChanges(false); } ) 
                     .end()
                     .find('#ss_gooffline')
@@ -1681,7 +1681,7 @@
             }
         }
 
-        function _resetPendingChanges(val, setlastsynchnow)
+        function _resetPendingChanges(val, setlastsyncnow)
         {
             if (val)
             {
@@ -1693,10 +1693,10 @@
                 $('#ss_pendingchangecnt').text('No');
                 $('.onlineStatus').removeClass('pendingchanges');
             }
-            if (setlastsynchnow)
+            if (setlastsyncnow)
             {
                 var d = new Date();
-                $('#ss_lastsynch').text(d.toLocaleDateString() + ' ' + d.toLocaleTimeString());
+                $('#ss_lastsync').text(d.toLocaleDateString() + ' ' + d.toLocaleTimeString());
             }
         }
 
@@ -1871,13 +1871,13 @@
             }
         }
 
-        function onSynchStatusOpen(DivId)
+        function onSyncStatusOpen(DivId)
         {
-            $('#synchstatus_back').CswAttrDom({'href': 'javascript:void(0)' })
+            $('#syncstatus_back').CswAttrDom({'href': 'javascript:void(0)' })
                                   .CswAttrXml({'data-identity': DivId, 
                                                'data-url': DivId });
             
-            $('#synchstatus_back').css('visibility', '');
+            $('#syncstatus_back').css('visibility', '');
 
             $syncstatus.doChangePage();
         }
