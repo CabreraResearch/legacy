@@ -1045,12 +1045,12 @@
                             if($cor.val() === '') 
                             { 
                                   $('#' + IdStr + '_li div').addClass('OOC'); 
-                                  $('#' + IdStr + '_propname').addClass('OOC');
+                                  $('#' + IdStr + '_label').addClass('OOC');
                             } 
                             else 
                             {
-                              $('#' + IdStr + '_li div').removeClass('OOC'); 
-                              $('#' + IdStr + '_propname').removeClass('OOC'); 
+                                  $('#' + IdStr + '_li div').removeClass('OOC'); 
+                                  $('#' + IdStr + '_label').removeClass('OOC'); 
                             }
                         });
 
