@@ -36,31 +36,85 @@ function CswArray()
     return ctor;
 }
 CswArray.prototype = new Array;
-CswArray.prototype.last = function ()
-{
-    return this[this.length - 1];
+CswArray.prototype = {
+    last: function ()
+    {
+        return this[this.length - 1];
+    },
+    contains: function (key)
+    {
+        this.indexOf(key) !== -1
+    }
 };
 
 //#endregion CswArray
 
 //#region CswLocalStorage
-//function CswLocalStorage()
-//{
-//    localStorage.clear();
-//    var ctor = localStorage;
-//    ctor.__proto__ = CswLocalStorage.prototype;
-//    return ctor;
-//}
+function CswStorage(nativeStorage) //, serializer)
+{
+    //abstracts localStorage or sessionStorage
+    //should GSerializer prove a bust, restore serializer parameter and feed JSON
+    this.storage = nativeStorage;
+    this.serializer = new ONEGEEK.GSerializer();
+    this.keys = new Array;
+}
 
-//CswLocalStorage.prototype.parseArray = function (name, arr)
-//{
-//    log(name, true);
-//    log(arr, true);
-//    if (arguments.length === 2)
-//    {
-//        this[name] = JSON.stringify(arr);
-//    }
+CswStorage.prototype = {
 
-//    return JSON.parse(this[name]);
-//};
+    clear: function ()
+    {
+        //only clear the storage consumed by this instance
+        for (var key in this.keys)
+        {
+            var keyName = this.keys[key];
+            this.storage.removeItem(keyName);
+        }
+        return (this);
+    },
+    purgeAllStorage: function ()
+    {
+        //nuke the entire storage collection
+        this.storage.clear();
+        return this;
+    },
+    getItem: function (key, defaultValue)
+    {
+        var ret;
+        var value = this.storage.getItem(key);
+        if ( isNullOrEmpty(value) )
+        {
+            ret = (!isNullOrEmpty(defaultValue)) ? defaultValue : null;
+        }
+        else
+        {
+            ret = this.serializer.deserialize(value);
+        }
+        return ret;
+    },
+    getKeys: function ()
+    {
+        var ret = this.keys;
+        return ret;
+    },
+    hasItem: function (key)
+    {
+        ret = ( !isNullOrEmpty( this.storage.getItem(key) ) );
+        return ret;
+    },
+    removeItem: function (key)
+    {
+        this.storage.removeItem(key);
+        return (this);
+    },
+    setItem: function (key, value)
+    {
+        if (this.keys.indexOf(key) === -1)
+        {
+            this.keys.push(key);
+        }
+        this.storage.setItem(key, this.serializer.serialize(value));
+        return (this);
+    }
+    //TODO: space evaluation, storage event handlers
+};
 //#endregion CswLocalStorage

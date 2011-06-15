@@ -222,7 +222,9 @@
         var rootid;
 
         var UserName = localStorage["username"];
-        if( !localStorage["sessionid"] ) _clearStorage();
+        if( !localStorage["sessionid"] ) {
+            Logout();
+        }
         var SessionId = localStorage["sessionid"];
         
         var $currentViewXml;
@@ -234,7 +236,7 @@
 
         var $logindiv = _loadLoginDiv();
         var $viewsdiv = _loadViewsDiv();
-        var $syncstatus = _makeSynchStatusDiv();
+        var $syncstatus = _makeSyncStatusDiv();
         var $helpdiv = _makeHelpDiv();
         var $sorrycharliediv = _loadSorryCharlieDiv();
 
@@ -405,12 +407,15 @@
 
         function setOffline()
         {
+            localStorage['online'] = false;
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('online'))
             {
                 $onlineStatus.removeClass('online')
                              .addClass('offline')
-                             .text('Offline');
+                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                             .text('Offline')
+                             .end();
                 $('.refresh').css('visibility', 'hidden');
 
                 $viewsdiv = reloadViews(); //no changePage
@@ -422,12 +427,15 @@
         }
         function setOnline()
         {
+            localStorage['online'] = true;
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('offline'))
             {
                 $onlineStatus.removeClass('offline')
                              .addClass('online')
-                             .text('Online');
+                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                             .text('Online')
+                             .end();
 
                 $('.refresh').css('visibility', '');
                 $viewsdiv =  reloadViews(); //no changePage
@@ -439,7 +447,8 @@
         }
         function amOffline()
         {
-            return $('.onlineStatus').hasClass('offline');
+            var isOffline = !isTrue( localStorage['online'] );
+            return isOffline;
         }
 
 
@@ -647,21 +656,18 @@
             var previd = p.$xmlitem.prev().CswAttrXml('id');
             
             // add a div for editing the property directly
-            var $toolbar = $('<div data-role="controlgroup" data-type="horizontal"></div>');
+            var $toolbar = $('<div data-role="controlgroup" data-type="horizontal" class="ui-bar"></div>');
             if ( !isNullOrEmpty(previd) )
             {
                 $toolbar.CswLink('init',{href:'javascript:void(0);', value: 'Previous'})
                         .CswAttrXml({'data-identity': previd,
                                      'data-url': previd,
-                                     'data-role': 'button',
                                      'data-icon': 'arrow-u',
-                                     'data-inline': true,
-                                     'data-transition': 'slideup',
-                                     'data-direction': 'reverse'
+                                     'data-inline': true
                         })
                         .bind('click', function() { 
                             var $prev = $('#' + previd);
-                            $prev.doChangePage({changeHash: false});
+                            $prev.doChangePage({transition:'slideup', reverse: true, changeHash: false});
                         });
             }
             if ( !isNullOrEmpty(nextid) )
@@ -669,14 +675,12 @@
                 $toolbar.CswLink('init',{href:'javascript:void(0);', value: 'Next'})
                         .CswAttrXml({'data-identity': nextid,
                                      'data-url': nextid,
-                                     'data-role': 'button',
                                      'data-icon': 'arrow-d',
-                                     'data-inline': true,
-                                     'data-transition': 'slidedown'
+                                     'data-inline': true
                         })
                         .bind('click', function() { 
                             var $next = $('#' + nextid);
-                            $next.doChangePage({changeHash: false});
+                            $next.doChangePage({transition:'slidedown', changeHash: false});
                         });
 
             }
@@ -1029,18 +1033,18 @@
                         {
                             $corAction.css('display','none');
                         }
-                        $corAction.change( function()
+                        $corAction.bind('change', function()
                         {
                             var $cor = $(this);
                             if($cor.val() === '') 
                             { 
                                   $('#' + IdStr + '_li div').addClass('OOC'); 
-                                  $('#' + IdStr + '_propname').addClass('OOC');
+                                  $('#' + IdStr + '_label').addClass('OOC');
                             } 
                             else 
                             {
-                              $('#' + IdStr + '_li div').removeClass('OOC'); 
-                              $('#' + IdStr + '_propname').removeClass('OOC'); 
+                                  $('#' + IdStr + '_li div').removeClass('OOC'); 
+                                  $('#' + IdStr + '_label').removeClass('OOC'); 
                             }
                         });
 
@@ -1179,8 +1183,7 @@
                 }
                 
                 var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]});
-                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i]})
-                                .CswAttrXml('data-role','button');
+                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i]});
                                 
                 var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
                                 .appendTo($fieldset);
@@ -1245,8 +1248,7 @@
             for (var i = 0; i < answers.length; i++)
             {
 				var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                var $answer = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: answerName, ID: answerid, value: answers[i] })
-								.CswAttrXml('data-role','button');
+                var $answer = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: answerName, ID: answerid, value: answers[i] });
 				var $label = $('<label for="' + answerid + '">' + answers[i] + '</label>')
 								.appendTo($fieldset);
                 if (Answer === answers[i])
@@ -1366,6 +1368,7 @@
                 HideHelpButton: false,
                 HideCloseButton: true,
                 HideBackButton: false,
+                HideHeaderOnlineButton: true,
                 dataRel: 'page', 
                 backicon: undefined,
                 backtransition: undefined
@@ -1381,12 +1384,13 @@
             var $pageDiv = $('#' + p.DivId);
 
             var $searchBtn = $('#' + p.DivId + '_searchopen');
-            var $synchstatusBtn = $('#' + p.DivId + '_gosynchstatus');
+            var $syncstatusBtn = $('#' + p.DivId + '_gosyncstatus');
             var $refreshBtn = $('#' + p.DivId + '_refresh');
             var $logoutBtn = $('#' + p.DivId + '_logout');
             var $helpBtn = $('#' + p.DivId + '_help');
             var $closeBtn = $('#' + p.DivId + '_close');
             var $backlink = $('#' + p.DivId + '_back');
+            var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
 
             if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
             {
@@ -1450,8 +1454,13 @@
                                       .CswAttrXml({'data-identity': p.DivId + '_searchopen', 
                                                    'data-url': p.DivId + '_searchopen', 
                                                    'data-transition': 'pop',
-                                                   'data-role': 'button',
                                                    'data-rel': 'dialog' });
+
+                $headerOnlineBtn = $header.CswLink('init',{ ID: p.DivId + '_headeronline',
+                                                            cssclass: 'ui-btn-right onlineStatus online',
+                                                            value: 'Online' })
+                                          .CswAttrDom({'disabled':'disabled'})
+                                          .hide();
 
                 $header.CswDiv('init',{cssclass: 'toolbar'})
                        .append(p.$toolbar)
@@ -1466,19 +1475,18 @@
                                                    'data-position':'fixed',
                                                    'data-id': 'csw_footer' });
 
-                var $footerCtn = $('<div data-role="controlgroup" data-type="horizontal">')
+                var $footerCtn = $('<div data-role="controlgroup" data-type="horizontal" class="ui-bar">')
                                     .appendTo($footer);
                 var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
                 var onlineValue = (amOffline()) ? 'Offline' : 'Online';
 
-                $synchstatusBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
-                                                    ID: p.DivId + '_gosynchstatus', 
+                $syncstatusBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
+                                                    ID: p.DivId + '_gosyncstatus', 
                                                     cssclass: onlineClass + ' ui-btn-left',  
                                                     value: onlineValue })
-                                    .CswAttrXml({'data-identity': p.DivId + '_gosynchstatus', 
-                                                'data-url': p.DivId + '_gosynchstatus', 
+                                    .CswAttrXml({'data-identity': p.DivId + '_gosyncstatus', 
+                                                'data-url': p.DivId + '_gosyncstatus', 
                                                 'data-transition': 'pop',
-                                                'data-role': 'button',
                                                 'data-rel': 'dialog' 
                                                 })
                                                 .css('display','');
@@ -1488,8 +1496,7 @@
                                                        value:'Refresh', 
                                                        cssclass: 'refresh ui-btn-left'})
                                       .CswAttrXml({'data-identity': p.DivId + '_refresh', 
-                                                   'data-url': p.DivId + '_refresh',
-                                                   'data-role': 'button'
+                                                   'data-url': p.DivId + '_refresh'
                                                    })
                                                    .css('display','');
 
@@ -1499,13 +1506,12 @@
                                                     cssclass: 'ui-btn-left' })
                                    .CswAttrXml({'data-identity': p.DivId + '_logout', 
                                                 'data-url': p.DivId + '_logout', 
-                                                'data-transition': 'flip',
-                                                'data-role': 'button' })
+                                                'data-transition': 'flip' })
                                                 .css('display','');
                 
             
                 var $mainBtn = $footerCtn.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'})
-                                      .CswAttrXml({'data-transition':'pop','data-role': 'button'});
+                                      .CswAttrXml({'data-transition':'pop'});
 
 
                 $helpBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
@@ -1515,16 +1521,15 @@
                                      .CswAttrXml({'data-identity': p.DivId + '_help', 
                                                 'data-url': p.DivId + '_help', 
                                                 'data-transition': 'pop',
-                                                'data-rel': 'dialog',
-                                                'data-role': 'button' })
+                                                'data-rel': 'dialog'})
                                      .css('display','');
             }
 
             if ( p.HideOnlineButton ) { 
-                $synchstatusBtn.hide(); 
+                $syncstatusBtn.hide(); 
             }
             else {
-                $synchstatusBtn.show()
+                $syncstatusBtn.show()
                                .css('display',''); 
             }
             if ( p.HideHelpButton ) {
@@ -1555,6 +1560,13 @@
                 $searchBtn.show()
                           .css('display',''); 
             }
+            if( p.HideHeaderOnlineButton ) {
+                $headerOnlineBtn.hide();
+            }
+            else {
+                $headerOnlineBtn.show()
+                                .css('display','');
+            }
             if ( p.dataRel === 'dialog' && !p.HideCloseButton ) {
                 $closeBtn.show()
                          .css('display',''); 
@@ -1583,6 +1595,13 @@
             return $('#' + DivId).find('div:jqmData(role="header") h1').text();
         }
 
+        function _addToDivHeaderText($div,text)
+        {
+            $div.find('div:jqmData(role="header") h1').append( $('<p style="color: yellow;">' + text + '</p>'));
+            $.mobile.loadPage($div);
+            return $div;
+        }
+
         function _getDivParentId(DivId)
         {
             var ret = '';
@@ -1595,50 +1614,63 @@
         function _bindPageEvents(DivId, ParentId, level, $div)
         {
             $div.find('#' + DivId + '_searchopen')
-                .click(function (eventObj) { onSearchOpen(DivId, eventObj); })
+                .bind('tap',function () { 
+						onSearchOpen(DivId); 
+						return false;
+					})
                 .end()
-                .find('#' + DivId + '_gosynchstatus')
-                .click(function (eventObj) { onSynchStatusOpen(DivId, eventObj); })
+                .find('#' + DivId + '_gosyncstatus')
+                .bind('tap', function () { 
+						onSyncStatusOpen(DivId); 
+						return false;
+					})
                 .end()
                 .find('#' + DivId + '_refresh')
-                .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onRefresh(DivId); })
+                .bind('tap', function () { 
+						onRefresh($(this).CswAttrDom('id'));
+						return false;
+					})
                 .end()
                 .find('#' + DivId + '_logout')
-                .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onLogout(DivId, e); })
+                .bind('tap', function (e) { 
+						onLogout(DivId, e); 
+						return false;
+					})
                 .end()
-//                .find('#' + DivId + '_back')
-//                .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
-//                .end()
                 .find('#' + DivId + '_help')
-                .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
+                .bind('tap', function () { 
+						onHelp(DivId, ParentId); 
+						return false;
+					})
                 .end()
-//                .find('input')
-//                .change(function (eventObj) {  onPropertyChange(DivId, eventObj); })
-//                .end()
                 .find('textarea')
-                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .bind('change', function (eventObj) { 
+						onPropertyChange(DivId, eventObj); 
+					})
                 .end()
                 .find('select')
-                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .bind('change', function (eventObj) { 
+						onPropertyChange(DivId, eventObj); 
+					})
                 .end();
         }
 
         // ------------------------------------------------------------------------------------
-        // Synch Status Div
+        // Sync Status Div
         // ------------------------------------------------------------------------------------
 
-        function _makeSynchStatusDiv()
+        function _makeSyncStatusDiv()
         {
             var content = '';
-            content += '<p>Pending Unsynched Changes: <span id="ss_pendingchangecnt">No</span></p>';
-            content += '<p>Last synch: <span id="ss_lastsynch"></span></p>';
-            content += '<a id="ss_forcesynch" data-identity="ss_forcesynch" data-url="ss_forcesynch" href="javascript:void(0)" data-role="button">Force Synch Now</a>';
+            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">No</span></p>';
+            content += '<p>Last sync: <span id="ss_lastsync"></span></p>';
+            content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
             content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
             
 
             var $retDiv = _addPageDivToBody({
-                    DivId: 'synchstatus',
-                    HeaderText: 'Synch Status',
+                    DivId: 'syncstatus',
+                    HeaderText: 'Sync Status',
                     $content: $(content),
                     dataRel: 'dialog',
                     HideSearchButton: true,
@@ -1647,21 +1679,28 @@
                     HideLogoutButton: false,
                     HideHelpButton: false,
                     HideCloseButton: false,
-                    HideBackButton: true
+                    HideBackButton: true,
+                    HideHeaderOnlineButton: false
             });
 
-            $retDiv.find('#ss_forcesynch')
-                    .click(function (eventObj) { _processChanges(false); } ) //eventObj.preventDefault(); })
+            $retDiv.find('#ss_forcesync')
+                    .bind('tap', function () { 
+                            _processChanges(false); 
+                            return false;
+                        }) 
                     .end()
                     .find('#ss_gooffline')
-                    .click(function (eventObj) { _toggleOffline(eventObj); });
+                    .bind('tap', function () { 
+                            _toggleOffline(); 
+                            return false;
+                        });
 
             return $retDiv;
         }
 
-        function _toggleOffline(eventObj)
+        function _toggleOffline()
         {
-            eventObj.preventDefault();
+            //eventObj.preventDefault();
             if (amOffline())
             {
                 _clearWaitForData();
@@ -1676,7 +1715,7 @@
             }
         }
 
-        function _resetPendingChanges(val, setlastsynchnow)
+        function _resetPendingChanges(val, setlastsyncnow)
         {
             if (val)
             {
@@ -1688,10 +1727,10 @@
                 $('#ss_pendingchangecnt').text('No');
                 $('.onlineStatus').removeClass('pendingchanges');
             }
-            if (setlastsynchnow)
+            if (setlastsyncnow)
             {
                 var d = new Date();
-                $('#ss_lastsynch').text(d.toLocaleDateString() + ' ' + d.toLocaleTimeString());
+                $('#ss_lastsync').text(d.toLocaleDateString() + ' ' + d.toLocaleTimeString());
             }
         }
 
@@ -1740,9 +1779,12 @@
         {
             if (!amOffline())
             {
+                var UserName = $('#login_username').val();
+                var AccessId = $('#login_customerid').val();
+                
                 var ajaxData = {
-                    'AccessId': $('#login_customerid').val(), //We're displaying "Customer ID" but processing "AccessID"
-                    'UserName': $('#login_username').val(), 
+                    'AccessId': AccessId, //We're displaying "Customer ID" but processing "AccessID"
+                    'UserName': UserName, 
                     'Password': $('#login_password').val()
                 };
 
@@ -1776,17 +1818,7 @@
         {
             Logout(false); 
             $.mobile.pageLoading(true);
-            var p = {
-                DivId: 'loginfaileddiv',
-                HeaderText: 'Login Failed',
-                HideHelpButton: true,
-                HideCloseButton: false,
-                HideOnlineButton: true,
-                content: text
-            };
-
-            var $failDiv = _loadSorryCharlieDiv(p);
-            $failDiv.doChangePage();
+            _addToDivHeaderText( $logindiv, text);
         }
 
         function onLogout()
@@ -1812,20 +1844,20 @@
             localStorage.clear();
         }
 
-        function onRefresh()
+        function onRefresh(refreshBtnId)
         {
             if (!amOffline())
             {
                 if (_checkNoPendingChanges())
                 {
                     $.mobile.pageLoading();
-                    continueRefresh(); 
+                    continueRefresh(refreshBtnId); 
                 }
             }
             return false;
         }
 
-        function continueRefresh()
+        function continueRefresh(refreshBtnId)
         {
             var DivId = localStorage['currentviewid'];
             if( !isNullOrEmpty(DivId) )
@@ -1866,39 +1898,26 @@
                          
                         var $thisDiv = _loadDivContents(params);
                         //$thisDiv.bindJqmEvents(params);
-                        $thisDiv.doChangePage();
+                        $.mobile.loadPage(DivId);
+
                         $.mobile.pageLoading(true);
-                    } // success
+                    }, // success
+                    error: function(txt) {
+                        if(debug) log(txt);
+                    }
                 });
             }
         }
 
-//        function onBack(DivId, DestinationId, eventObj)
-//        {
-//            if (DivId !== 'synchstatus' && DivId.indexOf('prop_') !== 0)
-//            {
-//                // case 20367 - remove all matching DivId.  Doing it immediately causes bugs.
-//                //setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
-//            }
-//            return true;
-//        }
-
-
-        function onSynchStatusOpen(DivId, eventObj)
+        function onSyncStatusOpen(DivId)
         {
-            $('#synchstatus_back').CswAttrDom({'href': 'javascript:void(0)' })
-                                  .CswAttrXml({'data-identity': DivId, 
-                                               'data-url': DivId });
-            
-            $('#synchstatus_back').css('visibility', '');
-
-            $syncstatus.doChangePage();
+            $syncstatus.doChangePage({transition:'slideup'});
         }
 
-        function onHelp(DivId, eventObj)
+        function onHelp(DivId)
         {
             $help = _makeHelpDiv();
-            $help.doChangePage();
+            $help.doChangePage({transition:'slideup'});
         }
 
         function onPropertyChange(DivId, eventObj)
@@ -1921,7 +1940,7 @@
             }
         } // onPropertyChange()
 
-        function onSearchOpen(DivId, eventObj)
+        function onSearchOpen(DivId)
         {
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
@@ -1932,7 +1951,8 @@
                 var $fieldCtn = $('<div data-role="fieldcontain"></div>')
                                     .appendTo($wrapper);
                 var $select =  $('<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">')
-                                    .appendTo($fieldCtn);
+                                    .appendTo($fieldCtn)
+                                    .CswAttrXml({'data-native-menu': 'false'});
 
                 $xmlstr.children('search').each(function ()
                 {
@@ -1948,9 +1968,7 @@
                                                 'data-placeholder': 'Search'
                                             });
                 var $goBtn = $wrapper.CswLink('init',{type:'button', ID: DivId + '_searchgo', value:'Go', href: 'javascript:void(0)'})
-                                        .CswAttrXml({'data-inline': 'true',
-                                            'data-role': 'button'
-                                        })
+                                        .CswAttrXml({'data-inline': 'true'})
                                         .bind('click', function () { 
                                             onSearchSubmit(DivId); 
                                         });
@@ -1969,7 +1987,7 @@
                     HideCloseButton: true,
                     HideBackButton: false
                 });
-                $searchDiv.doChangePage("slideup", {changeHash: false});
+                $searchDiv.doChangePage({transition:'slideup', changeHash: false});
             }
         }
 
@@ -2018,6 +2036,7 @@
         // ------------------------------------------------------------------------------------
         function _cacheSession(sessionid, username)
         {
+            localStorage['online'] = true;
             localStorage['username'] = username;
             localStorage['sessionid'] = sessionid;
         } //_cacheSession()
@@ -2048,29 +2067,32 @@
         function _getModifiedView(onSuccess)
         {
             var modified = false;
-            var storedViews = JSON.parse( localStorage['storedviews'] );   
-         
-            for( var i=0; i < storedViews.length; i++ )
+            if( !isNullOrEmpty(localStorage['storedviews']) )
             {
-                stored = storedViews[i];
-                if( !isNullOrEmpty(localStorage[stored.rootid]) )
+                var storedViews = JSON.parse( localStorage['storedviews'] );   
+         
+                for( var i=0; i < storedViews.length; i++ )
                 {
-                    var view = JSON.parse( localStorage[stored.rootid] );
-                    if( view.wasmodified )
+                    stored = storedViews[i];
+                    if( !isNullOrEmpty(localStorage[stored.rootid]) )
                     {
-                        modified = true;
-                        var rootid = stored.rootid;
-                        var viewxml = view.xml;
-                        if( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
+                        var view = JSON.parse( localStorage[stored.rootid] );
+                        if( view.wasmodified )
                         {
-                            onSuccess(rootid, viewxml);
+                            modified = true;
+                            var rootid = stored.rootid;
+                            var viewxml = view.xml;
+                            if( !isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml) )
+                            {
+                                onSuccess(rootid, viewxml);
+                            }
                         }
                     }
                 }
-            }
-            if( !modified ) {
-                _resetPendingChanges(false, true);
-                onSuccess();
+                if( !modified ) {
+                    _resetPendingChanges(false, true);
+                    onSuccess();
+                }
             }
         }
 
