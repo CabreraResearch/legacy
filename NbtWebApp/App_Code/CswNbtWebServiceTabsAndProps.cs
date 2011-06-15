@@ -317,12 +317,6 @@ namespace ChemSW.Nbt.WebServices
 
 				Node.postChanges( false );
 
-				// case 21267 
-				if( Node.NodeId == _CswNbtResources.CurrentNbtUser.UserNode.NodeId )
-				{
-					_CswNbtResources.CurrentUser = CswNbtNodeCaster.AsUser( Node );
-				}
-
 				if( NbtNodeKey == null && View != null)
 				{
 					// Get the nodekey of this node in the current view
@@ -351,7 +345,6 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return ret;
 		} // saveProps()
-
 
 		public bool copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] PropIds )
 		{

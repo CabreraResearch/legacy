@@ -447,11 +447,11 @@ namespace ChemSW.Nbt.Schema
             return ( ReturnVal );
         }//restoreView() 
 
-        public void ClearCache()
-        {
-            _CswNbtResources.ClearCache();
-            _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
-        }
+		//public void ClearCache()
+		//{
+		//    _CswNbtResources.ClearCache();
+		//    _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
+		//}
 
         //public CswNbtView getTreeViewOfNodeType( Int32 NodeTypeId ) { return _CswNbtResources.Trees.getTreeViewOfNodeType( NodeTypeId ); }
         //public CswNbtView getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass ) { return _CswNbtResources.Trees.getTreeViewOfObjectClass( ObjectClass ); }
