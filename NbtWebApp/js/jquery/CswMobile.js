@@ -1033,7 +1033,7 @@
                         {
                             $corAction.css('display','none');
                         }
-                        $corAction.change( function()
+                        $corAction.bind('change', function()
                         {
                             var $cor = $(this);
                             if($cor.val() === '') 
