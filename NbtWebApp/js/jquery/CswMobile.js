@@ -1374,6 +1374,7 @@
                 HideHelpButton: false,
                 HideCloseButton: true,
                 HideBackButton: false,
+                HideHeaderOnlineButton: true,
                 dataRel: 'page', 
                 backicon: undefined,
                 backtransition: undefined
@@ -1395,6 +1396,7 @@
             var $helpBtn = $('#' + p.DivId + '_help');
             var $closeBtn = $('#' + p.DivId + '_close');
             var $backlink = $('#' + p.DivId + '_back');
+            var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
 
             if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
             {
@@ -1460,6 +1462,13 @@
                                                    'data-transition': 'pop',
                                                    'data-role': 'button',
                                                    'data-rel': 'dialog' });
+
+                $headerOnlineBtn = $header.CswLink('init',{ ID: p.DivId + '_headeronline',
+                                                            cssclass: 'ui-btn-right onlineStatus online',
+                                                            value: 'Online' })
+                                          .CswAttrXml({'data-role': 'button'})
+                                          .CswAttrDom({'disabled':'disabled'})
+                                          .hide();
 
                 $header.CswDiv('init',{cssclass: 'toolbar'})
                        .append(p.$toolbar)
@@ -1563,6 +1572,13 @@
                 $searchBtn.show()
                           .css('display',''); 
             }
+            if( p.HideHeaderOnlineButton ) {
+                $headerOnlineBtn.hide();
+            }
+            else {
+                $headerOnlineBtn.show()
+                                .css('display','');
+            }
             if ( p.dataRel === 'dialog' && !p.HideCloseButton ) {
                 $closeBtn.show()
                          .css('display',''); 
@@ -1657,7 +1673,7 @@
                     HideHelpButton: false,
                     HideCloseButton: false,
                     HideBackButton: true,
-                    HideOnlineHeader: false
+                    HideHeaderOnlineButton: false
             });
 
             $retDiv.find('#ss_forcesync')
