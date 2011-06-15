@@ -256,13 +256,13 @@ function _handleAuthenticationStatus(options)
 		case 'NonExistentAccessId': txt = "Invalid login."; break;
 		case 'NonExistentSession': txt = "Your session has timed out.  Please login again."; break;
 		case 'Unknown': txt = "An Unknown Error Occurred"; break;
-		case 'TimedOut': txt = "Your session has timed out.  Please login again."; break;
+		case 'TimedOut': 
+            GoodEnoughForMobile = true;
+            txt = "Your session has timed out.  Please login again."; 
+            break;
 		case 'ExpiredPassword':
-			if( o.ForMobile ) {
-                GoodEnoughForMobile = true;
-                o.success();
-            }
-            else {
+            GoodEnoughForMobile = true;
+            if( !o.ForMobile ) {
                 $.CswDialog('EditNodeDialog', {
 				    'nodeid': o.usernodeid,
 				    'cswnbtnodekey': o.usernodekey,
@@ -273,11 +273,8 @@ function _handleAuthenticationStatus(options)
             }
 			break;
 		case 'ShowLicense':
-			if( o.ForMobile ) {
-                GoodEnoughForMobile = true;
-                o.success();
-            }
-            else {
+            GoodEnoughForMobile = true;
+            if( !o.ForMobile ) {
                 $.CswDialog('ShowLicenseDialog', {
 				    'onAccept': function () { o.success(); },
 				    'onDecline': function () { o.failure('You must accept the license agreement to use this application'); }
@@ -286,7 +283,11 @@ function _handleAuthenticationStatus(options)
 			break;
 	}
 
-	if (!isNullOrEmpty(txt) && ( o.status !== 'Authenticated' || GoodEnoughForMobile ))
+    if( o.ForMobile &&   
+        ( o.status !== 'Authenticated' && GoodEnoughForMobile ) ) {
+        o.status();
+    }
+    else if (!isNullOrEmpty(txt) && o.status !== 'Authenticated' ))
 	{
 		o.failure(txt,o.status);
 	}
