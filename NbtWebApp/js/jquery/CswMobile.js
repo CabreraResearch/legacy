@@ -410,7 +410,9 @@
             {
                 $onlineStatus.removeClass('online')
                              .addClass('offline')
-                             .text('Offline');
+                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                             .text('Offline')
+                             .end();
                 if(disableButton) {
                     $onlineStatus.CswAttrDom('disabled','disabled');
                 }
@@ -430,7 +432,9 @@
             {
                 $onlineStatus.removeClass('offline')
                              .addClass('online')
+                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
                              .text('Online')
+                             .end()
                              .removeAttr('disabled');
 
                 $('.refresh').css('visibility', '');
@@ -1652,7 +1656,8 @@
                     HideLogoutButton: false,
                     HideHelpButton: false,
                     HideCloseButton: false,
-                    HideBackButton: true
+                    HideBackButton: true,
+                    HideOnlineHeader: false
             });
 
             $retDiv.find('#ss_forcesync')
@@ -1873,12 +1878,6 @@
 
         function onSyncStatusOpen(DivId)
         {
-            $('#syncstatus_back').CswAttrDom({'href': 'javascript:void(0)' })
-                                  .CswAttrXml({'data-identity': DivId, 
-                                               'data-url': DivId });
-            
-            $('#syncstatus_back').css('visibility', '');
-
             $syncstatus.doChangePage();
         }
 
