@@ -222,7 +222,9 @@
         var rootid;
 
         var UserName = localStorage["username"];
-        if( !localStorage["sessionid"] ) _clearStorage();
+        if( !localStorage["sessionid"] ) {
+            Logout();
+        }
         var SessionId = localStorage["sessionid"];
         
         var $currentViewXml;
