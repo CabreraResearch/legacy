@@ -52,7 +52,8 @@ CswArray.prototype = {
 //#region CswLocalStorage
 function CswStorage(nativeStorage) //, serializer)
 {
-    //abstracts storage of 
+    //abstracts localStorage or sessionStorage
+    //should GSerializer prove a bust, restore serializer parameter and feed JSON
     this.storage = nativeStorage;
     this.serializer = new ONEGEEK.GSerializer();
     this.keys = new Array;
@@ -114,5 +115,6 @@ CswStorage.prototype = {
         this.storage.setItem(key, this.serializer.serialize(value));
         return (this);
     }
+    //TODO: space evaluation, storage event handlers
 };
 //#endregion CswLocalStorage
