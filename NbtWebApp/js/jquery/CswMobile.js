@@ -405,7 +405,7 @@
         // Online indicator
         // ------------------------------------------------------------------------------------
 
-        function setOffline(disableButton)
+        function setOffline()
         {
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('online'))
@@ -415,9 +415,6 @@
                              .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
                              .text('Offline')
                              .end();
-                if(disableButton) {
-                    $onlineStatus.CswAttrDom('disabled','disabled');
-                }
                 $('.refresh').css('visibility', 'hidden');
 
                 $viewsdiv = reloadViews(); //no changePage
@@ -436,8 +433,7 @@
                              .addClass('online')
                              .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
                              .text('Online')
-                             .end()
-                             .removeAttr('disabled');
+                             .end();
 
                 $('.refresh').css('visibility', '');
                 $viewsdiv =  reloadViews(); //no changePage
@@ -1682,12 +1678,12 @@
                     .click(function () { _processChanges(false); } ) 
                     .end()
                     .find('#ss_gooffline')
-                    .click(function () { _toggleOffline(false); });
+                    .click(function () { _toggleOffline(); });
 
             return $retDiv;
         }
 
-        function _toggleOffline(disableButton)
+        function _toggleOffline()
         {
             //eventObj.preventDefault();
             if (amOffline())
@@ -1699,7 +1695,7 @@
             } else
             {
                 _clearWaitForData();
-                setOffline(disableButton);
+                setOffline();
                 $('#ss_gooffline span').text('Go Online');
             }
         }
