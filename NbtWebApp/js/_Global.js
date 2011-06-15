@@ -285,7 +285,7 @@ function _handleAuthenticationStatus(options)
 
     if( o.ForMobile &&   
         ( o.status !== 'Authenticated' && GoodEnoughForMobile ) ) {
-        o.status();
+        o.success();
     }
     else if (!isNullOrEmpty(txt) && o.status !== 'Authenticated' ))
 	{
