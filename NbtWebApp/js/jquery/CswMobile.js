@@ -407,6 +407,7 @@
 
         function setOffline()
         {
+            localStorage['online'] = false;
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('online'))
             {
@@ -426,6 +427,7 @@
         }
         function setOnline()
         {
+            localStorage['online'] = true;
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('offline'))
             {
@@ -445,7 +447,8 @@
         }
         function amOffline()
         {
-            return $('.onlineStatus').hasClass('offline');
+            var isOffline = !isTrue( localStorage['online'] );
+            return isOffline;
         }
 
 
@@ -653,21 +656,18 @@
             var previd = p.$xmlitem.prev().CswAttrXml('id');
             
             // add a div for editing the property directly
-            var $toolbar = $('<div data-role="controlgroup" data-type="horizontal"></div>');
+            var $toolbar = $('<div data-role="controlgroup" data-type="horizontal" class="ui-bar"></div>');
             if ( !isNullOrEmpty(previd) )
             {
                 $toolbar.CswLink('init',{href:'javascript:void(0);', value: 'Previous'})
                         .CswAttrXml({'data-identity': previd,
                                      'data-url': previd,
-                                     'data-role': 'button',
                                      'data-icon': 'arrow-u',
-                                     'data-inline': true,
-                                     'data-transition': 'slideup',
-                                     'data-direction': 'reverse'
+                                     'data-inline': true
                         })
                         .bind('click', function() { 
                             var $prev = $('#' + previd);
-                            $prev.doChangePage({changeHash: false});
+                            $prev.doChangePage({transition:'slideup', reverse: true, changeHash: false});
                         });
             }
             if ( !isNullOrEmpty(nextid) )
@@ -675,14 +675,12 @@
                 $toolbar.CswLink('init',{href:'javascript:void(0);', value: 'Next'})
                         .CswAttrXml({'data-identity': nextid,
                                      'data-url': nextid,
-                                     'data-role': 'button',
                                      'data-icon': 'arrow-d',
-                                     'data-inline': true,
-                                     'data-transition': 'slidedown'
+                                     'data-inline': true
                         })
                         .bind('click', function() { 
                             var $next = $('#' + nextid);
-                            $next.doChangePage({changeHash: false});
+                            $next.doChangePage({transition:'slidedown', changeHash: false});
                         });
 
             }
@@ -1185,8 +1183,7 @@
                 }
                 
                 var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i]});
-                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i]})
-                                .CswAttrXml('data-role','button');
+                var $input = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i]});
                                 
                 var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
                                 .appendTo($fieldset);
@@ -1251,8 +1248,7 @@
             for (var i = 0; i < answers.length; i++)
             {
 				var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                var $answer = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: answerName, ID: answerid, value: answers[i] })
-								.CswAttrXml('data-role','button');
+                var $answer = $fieldset.CswInput('init',{type: CswInput_Types.radio, name: answerName, ID: answerid, value: answers[i] });
 				var $label = $('<label for="' + answerid + '">' + answers[i] + '</label>')
 								.appendTo($fieldset);
                 if (Answer === answers[i])
@@ -1458,13 +1454,11 @@
                                       .CswAttrXml({'data-identity': p.DivId + '_searchopen', 
                                                    'data-url': p.DivId + '_searchopen', 
                                                    'data-transition': 'pop',
-                                                   'data-role': 'button',
                                                    'data-rel': 'dialog' });
 
                 $headerOnlineBtn = $header.CswLink('init',{ ID: p.DivId + '_headeronline',
                                                             cssclass: 'ui-btn-right onlineStatus online',
                                                             value: 'Online' })
-                                          .CswAttrXml({'data-role': 'button'})
                                           .CswAttrDom({'disabled':'disabled'})
                                           .hide();
 
@@ -1481,7 +1475,7 @@
                                                    'data-position':'fixed',
                                                    'data-id': 'csw_footer' });
 
-                var $footerCtn = $('<div data-role="controlgroup" data-type="horizontal">')
+                var $footerCtn = $('<div data-role="controlgroup" data-type="horizontal" class="ui-bar">')
                                     .appendTo($footer);
                 var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
                 var onlineValue = (amOffline()) ? 'Offline' : 'Online';
@@ -1493,7 +1487,6 @@
                                     .CswAttrXml({'data-identity': p.DivId + '_gosyncstatus', 
                                                 'data-url': p.DivId + '_gosyncstatus', 
                                                 'data-transition': 'pop',
-                                                'data-role': 'button',
                                                 'data-rel': 'dialog' 
                                                 })
                                                 .css('display','');
@@ -1503,8 +1496,7 @@
                                                        value:'Refresh', 
                                                        cssclass: 'refresh ui-btn-left'})
                                       .CswAttrXml({'data-identity': p.DivId + '_refresh', 
-                                                   'data-url': p.DivId + '_refresh',
-                                                   'data-role': 'button'
+                                                   'data-url': p.DivId + '_refresh'
                                                    })
                                                    .css('display','');
 
@@ -1514,13 +1506,12 @@
                                                     cssclass: 'ui-btn-left' })
                                    .CswAttrXml({'data-identity': p.DivId + '_logout', 
                                                 'data-url': p.DivId + '_logout', 
-                                                'data-transition': 'flip',
-                                                'data-role': 'button' })
+                                                'data-transition': 'flip' })
                                                 .css('display','');
                 
             
                 var $mainBtn = $footerCtn.CswLink('init',{href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site'})
-                                      .CswAttrXml({'data-transition':'pop','data-role': 'button'});
+                                      .CswAttrXml({'data-transition':'pop'});
 
 
                 $helpBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
@@ -1530,8 +1521,7 @@
                                      .CswAttrXml({'data-identity': p.DivId + '_help', 
                                                 'data-url': p.DivId + '_help', 
                                                 'data-transition': 'pop',
-                                                'data-rel': 'dialog',
-                                                'data-role': 'button' })
+                                                'data-rel': 'dialog'})
                                      .css('display','');
             }
 
@@ -1624,25 +1614,44 @@
         function _bindPageEvents(DivId, ParentId, level, $div)
         {
             $div.find('#' + DivId + '_searchopen')
-                .click(function () { onSearchOpen(DivId); })
+                .bind('tap',function () { 
+						onSearchOpen(DivId); 
+						return false;
+					})
                 .end()
                 .find('#' + DivId + '_gosyncstatus')
-                .click(function () { onSyncStatusOpen(DivId); })
+                .bind('tap', function () { 
+						onSyncStatusOpen(DivId); 
+						return false;
+					})
                 .end()
                 .find('#' + DivId + '_refresh')
-                .click(function (e) { return onRefresh(DivId); })
+                .bind('tap', function () { 
+						onRefresh($(this).CswAttrDom('id'));
+						return false;
+					})
                 .end()
                 .find('#' + DivId + '_logout')
-                .click(function (e) { return onLogout(DivId, e); })
+                .bind('tap', function (e) { 
+						onLogout(DivId, e); 
+						return false;
+					})
                 .end()
                 .find('#' + DivId + '_help')
-                .click(function () { return onHelp(DivId, ParentId); })
+                .bind('tap', function () { 
+						onHelp(DivId, ParentId); 
+						return false;
+					})
                 .end()
                 .find('textarea')
-                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .bind('change', function (eventObj) { 
+						onPropertyChange(DivId, eventObj); 
+					})
                 .end()
                 .find('select')
-                .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
+                .bind('change', function (eventObj) { 
+						onPropertyChange(DivId, eventObj); 
+					})
                 .end();
         }
 
@@ -1675,10 +1684,16 @@
             });
 
             $retDiv.find('#ss_forcesync')
-                    .click(function () { _processChanges(false); } ) 
+                    .bind('tap', function () { 
+                            _processChanges(false); 
+                            return false;
+                        }) 
                     .end()
                     .find('#ss_gooffline')
-                    .click(function () { _toggleOffline(); });
+                    .bind('tap', function () { 
+                            _toggleOffline(); 
+                            return false;
+                        });
 
             return $retDiv;
         }
@@ -1829,20 +1844,20 @@
             localStorage.clear();
         }
 
-        function onRefresh()
+        function onRefresh(refreshBtnId)
         {
             if (!amOffline())
             {
                 if (_checkNoPendingChanges())
                 {
                     $.mobile.pageLoading();
-                    continueRefresh(); 
+                    continueRefresh(refreshBtnId); 
                 }
             }
             return false;
         }
 
-        function continueRefresh()
+        function continueRefresh(refreshBtnId)
         {
             var DivId = localStorage['currentviewid'];
             if( !isNullOrEmpty(DivId) )
@@ -1883,22 +1898,26 @@
                          
                         var $thisDiv = _loadDivContents(params);
                         //$thisDiv.bindJqmEvents(params);
-                        $thisDiv.doChangePage();
+                        $.mobile.loadPage(DivId);
+
                         $.mobile.pageLoading(true);
-                    } // success
+                    }, // success
+                    error: function(txt) {
+                        if(debug) log(txt);
+                    }
                 });
             }
         }
 
         function onSyncStatusOpen(DivId)
         {
-            $syncstatus.doChangePage();
+            $syncstatus.doChangePage({transition:'slideup'});
         }
 
         function onHelp(DivId)
         {
             $help = _makeHelpDiv();
-            $help.doChangePage();
+            $help.doChangePage({transition:'slideup'});
         }
 
         function onPropertyChange(DivId, eventObj)
@@ -1949,9 +1968,7 @@
                                                 'data-placeholder': 'Search'
                                             });
                 var $goBtn = $wrapper.CswLink('init',{type:'button', ID: DivId + '_searchgo', value:'Go', href: 'javascript:void(0)'})
-                                        .CswAttrXml({'data-inline': 'true',
-                                            'data-role': 'button'
-                                        })
+                                        .CswAttrXml({'data-inline': 'true'})
                                         .bind('click', function () { 
                                             onSearchSubmit(DivId); 
                                         });
@@ -1970,7 +1987,7 @@
                     HideCloseButton: true,
                     HideBackButton: false
                 });
-                $searchDiv.doChangePage("slideup", {changeHash: false});
+                $searchDiv.doChangePage({transition:'slideup', changeHash: false});
             }
         }
 
@@ -2019,6 +2036,7 @@
         // ------------------------------------------------------------------------------------
         function _cacheSession(sessionid, username)
         {
+            localStorage['online'] = true;
             localStorage['username'] = username;
             localStorage['sessionid'] = sessionid;
         } //_cacheSession()
