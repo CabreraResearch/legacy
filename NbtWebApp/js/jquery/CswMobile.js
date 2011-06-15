@@ -403,7 +403,7 @@
         // Online indicator
         // ------------------------------------------------------------------------------------
 
-        function setOffline()
+        function setOffline(disableButton)
         {
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('online'))
@@ -411,6 +411,9 @@
                 $onlineStatus.removeClass('online')
                              .addClass('offline')
                              .text('Offline');
+                if(disableButton) {
+                    $onlineStatus.CswAttrDom('disabled','disabled');
+                }
                 $('.refresh').css('visibility', 'hidden');
 
                 $viewsdiv = reloadViews(); //no changePage
@@ -427,7 +430,8 @@
             {
                 $onlineStatus.removeClass('offline')
                              .addClass('online')
-                             .text('Online');
+                             .text('Online')
+                             .removeAttr('disabled');
 
                 $('.refresh').css('visibility', '');
                 $viewsdiv =  reloadViews(); //no changePage
@@ -1602,26 +1606,20 @@
         function _bindPageEvents(DivId, ParentId, level, $div)
         {
             $div.find('#' + DivId + '_searchopen')
-                .click(function (eventObj) { onSearchOpen(DivId, eventObj); })
+                .click(function () { onSearchOpen(DivId); })
                 .end()
                 .find('#' + DivId + '_gosynchstatus')
-                .click(function (eventObj) { onSynchStatusOpen(DivId, eventObj); })
+                .click(function () { onSynchStatusOpen(DivId); })
                 .end()
                 .find('#' + DivId + '_refresh')
-                .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onRefresh(DivId); })
+                .click(function (e) { return onRefresh(DivId); })
                 .end()
                 .find('#' + DivId + '_logout')
-                .click(function (e) { /*e.stopPropagation(); e.preventDefault();*/ return onLogout(DivId, e); })
+                .click(function (e) { return onLogout(DivId, e); })
                 .end()
-//                .find('#' + DivId + '_back')
-//                .click(function (eventObj) { return onBack(DivId, ParentId, eventObj); })
-//                .end()
                 .find('#' + DivId + '_help')
-                .click(function (eventObj) { return onHelp(DivId, ParentId, eventObj); })
+                .click(function () { return onHelp(DivId, ParentId); })
                 .end()
-//                .find('input')
-//                .change(function (eventObj) {  onPropertyChange(DivId, eventObj); })
-//                .end()
                 .find('textarea')
                 .change(function (eventObj) { onPropertyChange(DivId, eventObj); })
                 .end()
@@ -1658,17 +1656,17 @@
             });
 
             $retDiv.find('#ss_forcesynch')
-                    .click(function (eventObj) { _processChanges(false); } ) //eventObj.preventDefault(); })
+                    .click(function () { _processChanges(false); } ) 
                     .end()
                     .find('#ss_gooffline')
-                    .click(function (eventObj) { _toggleOffline(eventObj); });
+                    .click(function () { _toggleOffline(false); });
 
             return $retDiv;
         }
 
-        function _toggleOffline(eventObj)
+        function _toggleOffline(disableButton)
         {
-            eventObj.preventDefault();
+            //eventObj.preventDefault();
             if (amOffline())
             {
                 _clearWaitForData();
@@ -1678,7 +1676,7 @@
             } else
             {
                 _clearWaitForData();
-                setOffline();
+                setOffline(disableButton);
                 $('#ss_gooffline span').text('Go Online');
             }
         }
@@ -1870,18 +1868,7 @@
             }
         }
 
-//        function onBack(DivId, DestinationId, eventObj)
-//        {
-//            if (DivId !== 'synchstatus' && DivId.indexOf('prop_') !== 0)
-//            {
-//                // case 20367 - remove all matching DivId.  Doing it immediately causes bugs.
-//                //setTimeout('$(\'div[id*="' + DivId + '"]\').remove();', opts.DivRemovalDelay);
-//            }
-//            return true;
-//        }
-
-
-        function onSynchStatusOpen(DivId, eventObj)
+        function onSynchStatusOpen(DivId)
         {
             $('#synchstatus_back').CswAttrDom({'href': 'javascript:void(0)' })
                                   .CswAttrXml({'data-identity': DivId, 
@@ -1892,7 +1879,7 @@
             $syncstatus.doChangePage();
         }
 
-        function onHelp(DivId, eventObj)
+        function onHelp(DivId)
         {
             $help = _makeHelpDiv();
             $help.doChangePage();
@@ -1918,7 +1905,7 @@
             }
         } // onPropertyChange()
 
-        function onSearchOpen(DivId, eventObj)
+        function onSearchOpen(DivId)
         {
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
