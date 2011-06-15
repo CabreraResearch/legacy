@@ -193,6 +193,11 @@ namespace ChemSW.Nbt
                 Species = TheSpecies;
             }
 
+			public override string ToString()
+			{
+				return Species.ToString() + ' ' + NodeId.ToString();
+			}
+
             #region IEquatable
 
             public static bool operator ==( NodeHashKey key1, NodeHashKey key2 )
@@ -273,8 +278,11 @@ namespace ChemSW.Nbt
             Node.fill();
             if( Node.Filled )
             {
-                NodeHash.Add( HashKey, Node );
-                _CswNbtResources.logTimerResult( "CswNbtNodeCollection.makeNode on NodeId (" + HashKey.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
+				if( !NodeHash.ContainsKey( HashKey ) )
+				{
+					NodeHash.Add( HashKey, Node );
+				}
+				_CswNbtResources.logTimerResult( "CswNbtNodeCollection.makeNode on NodeId (" + HashKey.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
 
                 Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
                 Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
