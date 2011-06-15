@@ -1934,7 +1934,8 @@
                 var $fieldCtn = $('<div data-role="fieldcontain"></div>')
                                     .appendTo($wrapper);
                 var $select =  $('<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">')
-                                    .appendTo($fieldCtn);
+                                    .appendTo($fieldCtn)
+                                    .CswAttrXml({'data-native-menu': 'false'});
 
                 $xmlstr.children('search').each(function ()
                 {
