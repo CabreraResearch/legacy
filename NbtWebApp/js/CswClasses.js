@@ -98,7 +98,7 @@ CswStorage.prototype = {
     },
     hasItem: function (key)
     {
-        ret = ( !isNullOrEmpty( this.storage.getItem(key) );
+        ret = ( !isNullOrEmpty( this.storage.getItem(key) ) );
         return ret;
     },
     removeItem: function (key)
