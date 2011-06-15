@@ -184,24 +184,29 @@ namespace ChemSW.Nbt.PropTypes
             set { _User = value; }
         }
 
-        /// <summary>
+		private Collection<CswNbtView> _Views = null;
+		/// <summary>
         /// Collection of Views to select
         /// </summary>
         public Collection<CswNbtView> Views
         {
             get
             {
-                Collection<CswNbtView> Views = new Collection<CswNbtView>();
-                //CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "ViewsSelect", "getVisibleViewInfo" );
-                //ViewsSelect.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );
-                if( NodeId != null )
-                {
-                    // Use the User's visible views
-                    Views = _CswNbtResources.ViewSelect.getVisibleViews( User, false );
-                }
-                // else // Creating a new user, don't pick a default view (BZ 7055)
-
-                return Views;
+				if( _Views == null )
+				{
+					if( NodeId != null )
+					{
+						// Use the User's visible views
+						_Views = _CswNbtResources.ViewSelect.getVisibleViews( User, false );
+					}
+					else
+					{
+						// else 
+						// Creating a new user, don't pick a default view (BZ 7055)
+						_Views = new Collection<CswNbtView>();
+					}
+				}
+                return _Views;
             }
         }
 
