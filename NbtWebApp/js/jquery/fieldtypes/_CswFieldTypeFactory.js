@@ -5,6 +5,7 @@ $.CswFieldTypeFactory = function (method)
         nodeid: '',
         fieldtype: '',
         '$propdiv': '',
+		'$savebtn': '',
         '$propxml': '',
         onchange: function () { },
         onReload: function () { },    // if a control needs to reload the tab
@@ -238,4 +239,4 @@ $.CswFieldTypeFactory = function (method)
     {
         $.error('Method ' + method + ' does not exist on ' + PluginName);
     }
-}         // $.CswFieldTypeFactory
+} // $.CswFieldTypeFactory

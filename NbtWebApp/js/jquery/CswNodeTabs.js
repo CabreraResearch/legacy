@@ -146,6 +146,7 @@
                     if(o.title !== '')
                         $form.append(o.title);
 
+					var $savetab;
                     var $layouttable = $form.CswLayoutTable('init', {
                         'ID': o.ID + '_props',
                         'OddCellRightAlign': true,
@@ -182,10 +183,10 @@
 										'cswnbtnodekey': o.cswnbtnodekey
 									};
                                 
-                                    _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, true);
+                                    _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, true, $savetab);
                                 }
-                            });
-                        },
+                            }); // each()
+                        }, // onConfigOn
                         'onConfigOff': function($buttontable) { 
                             $xml.children().each(function ()
                             {
@@ -209,25 +210,25 @@
 										'cswnbtnodekey': o.cswnbtnodekey
 									};
 
-                                    _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false);
+                                    _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false, $savetab);
                                 }
-                            });
-                        }
+                            }); // each()
+                        } // onConfigOff
 
-                    });
+                    }); // CswLayoutTable()
 
                     var i = 0;
 
-                    _handleProps($layouttable, $xml, $tabcontentdiv, tabid);
-
                     if(o.EditMode !== 'PrintReport')
                     {
-                        var $savetab = $form.CswButton({ID: 'SaveTab', 
+                        $savetab = $form.CswButton({ID: 'SaveTab', 
                                                 enabledText: 'Save Changes', 
                                                 disabledText: 'Saving...', 
                                                 onclick: function () { Save($form, $layouttable, $xml, $savetab); }
                                                 });
                     }
+                    _handleProps($layouttable, $xml, $tabcontentdiv, tabid, false, $savetab);
+
 
                     // Validation
                     $form.validate({
@@ -249,7 +250,7 @@
                         }
                     });
                 } // success{}
-            });
+            }); // ajax
         } // getProps()
 
         function onSwap(onSwapData)
@@ -291,7 +292,7 @@
             return $cellset[1][2].children('div');
         }
 
-        function _handleProps($layouttable, $xml, $tabcontentdiv, tabid, ConfigMode)
+        function _handleProps($layouttable, $xml, $tabcontentdiv, tabid, ConfigMode, $savebtn)
         {
             $xml.children().each(function ()
             {
@@ -330,12 +331,12 @@
                 var $propcell = _getPropertyCell($cellset);
                 $propcell.addClass('propertyvaluecell');
 
-                _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode);
+                _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode, $savebtn);
 
             });
         } // _handleProps()
 
-        function _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode)
+        function _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode, $savebtn)
         {
             $propcell.empty();
             if (($propxml.CswAttrXml('display') !== 'false' || ConfigMode ) &&
@@ -347,6 +348,7 @@
                     'relatednodeid': o.relatednodeid,
                     'propid': $propxml.CswAttrXml('id'),
                     '$propdiv': $('<div/>').appendTo($propcell),
+					'$savebtn': $savebtn,
                     '$propxml': $propxml,
                     'onchange': function() { },
                     'onReload': function() { getProps($tabcontentdiv, tabid); },
@@ -364,7 +366,7 @@
                 {
                     fieldOpt.onchange = function ()
                     {
-                        _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false);
+                        _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false, $savebtn);
                         o.onPropertyChange(fieldOpt.propid, $propxml.CswAttrXml('name'));
                     };
                 } // if ($propxml.CswAttrXml('hassubprops') === "true")
@@ -391,7 +393,7 @@
 
                 if (($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0) || ConfigMode)
                 {
-                    _handleProps($subtable, $subprops, $tabcontentdiv, tabid, ConfigMode);
+                    _handleProps($subtable, $subprops, $tabcontentdiv, tabid, ConfigMode, $savebtn);
                     if(ConfigMode) {
                         $subtable.CswLayoutTable('ConfigOn');
                     } else {
@@ -401,7 +403,7 @@
             } // if ($propxml.CswAttrXml('display') != 'false' || ConfigMode )
         } // _makeProp()
 
-        function _updateSubProps(fieldOpt, SinglePropUrl, EditMode, cswnbtnodekey, PropId, nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, ConfigMode)
+        function _updateSubProps(fieldOpt, SinglePropUrl, EditMode, cswnbtnodekey, PropId, nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, ConfigMode, $savebtn)
         {
 			// do a fake 'save' to update the xml with the current value
 			$.CswFieldTypeFactory('save', fieldOpt);
@@ -422,7 +424,7 @@
 				stringify: true,
 				success: function ($xml)
 				{
-					_makeProp($propcell, $xml.children().first(), $tabcontentdiv, tabid, ConfigMode);
+					_makeProp($propcell, $xml.children().first(), $tabcontentdiv, tabid, ConfigMode, $savebtn );
 				}
 			});
         } // _updateSubProps()
