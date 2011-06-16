@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.Sched
                 catch( Exception Exception )
                 {
 
-                    _CompletionMessage = "Csw3ETasks::GetUpdatedItems() exception: " + Exception.Message;
+                    _CompletionMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
                     _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
 
