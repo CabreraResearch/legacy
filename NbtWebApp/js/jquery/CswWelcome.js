@@ -81,41 +81,24 @@
 
 							if($item.CswAttrXml('buttonicon') !== undefined && $item.CswAttrXml('buttonicon') !== '')
 								$imagecell.append( $('<a href=""><img border="0" src="'+ $item.CswAttrXml('buttonicon') +'"/></a>') );
-					
-							var optSelect = {
-								type: $item.CswAttrXml('type'),
-								viewmode: $item.CswAttrXml('viewmode'),
-								itemid: $item.CswAttrXml('itemid'), 
-								text: $item.CswAttrXml('text'), 
-								iconurl: $item.CswAttrXml('iconurl'),
-								viewid: $item.CswAttrXml('viewid'),
-								actionid: $item.CswAttrXml('actionid'),
-								reportid: $item.CswAttrXml('reportid'),
-								//nodetypeid: $item.CswAttrXml('nodetypeid'),
-								linktype: $item.CswAttrXml('linktype')
-							};
 
-							switch( optSelect.linktype.toLowerCase() )
+							var clickopts = {
+								'$item': $item,
+								'$table': $table,
+								'onAddClick': o.onAddClick,
+								'onLinkClick': o.onLinkClick,
+								'onSearchClick': o.onSearchClick
+							};
+							
+							if( $item.CswAttrXml('linktype').toLowerCase() === 'text' )
 							{
-								case 'link':
-									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
-									$textcell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
-									$imagecell.find('a').click(function() { o.onLinkClick(optSelect); return false; });
-									break;
-								case 'search': 
-									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
-									$textcell.find('a').click(function() { o.onSearchClick(optSelect); return false; });
-									$imagecell.find('a').click(function() { o.onSearchClick(optSelect); return false; });
-									break;
-								case 'text':
-									$textcell.append('<span>' + optSelect.text + '</span>');
-									break;
-								case 'add': 
-									$textcell.append( $('<a href="">' + optSelect.text + '</a>') );
-									$textcell.find('a').click(function() { o.onAddClick($item.CswAttrXml('nodetypeid')); return false; }); 
-									$imagecell.find('a').click(function() { o.onAddClick($item.CswAttrXml('nodetypeid')); return false; });
-									break;
+								$textcell.append('<span>' + $item.CswAttrXml('text') + '</span>');
+							} else {
+								$textcell.append( $('<a href="">' + $item.CswAttrXml('text') + '</a>') );
+								$textcell.find('a').click(function() { _clickItem(clickopts); return false; });
+								$imagecell.find('a').click(function() { _clickItem(clickopts); return false; });
 							}
+
                             var $welcomehidden = $textcell.CswInput('init',{ID: $item.CswAttrXml('welcomeid'),
                                                                             type: CswInput_Types.hidden
                                                                      });
@@ -269,6 +252,49 @@
 		}    
   
 	};
+
+	function _clickItem(clickopts)
+	{
+		var c = {
+			$item: '',
+			$table: '',
+			onAddClick: function() {},
+			onLinkClick: function() {},
+			onSearchClick: function() {}
+		};
+		if(clickopts) $.extend(c, clickopts);
+
+		var optSelect = {
+			type: c.$item.CswAttrXml('type'),
+			viewmode: c.$item.CswAttrXml('viewmode'),
+			itemid: c.$item.CswAttrXml('itemid'), 
+			text: c.$item.CswAttrXml('text'), 
+			iconurl: c.$item.CswAttrXml('iconurl'),
+			viewid: c.$item.CswAttrXml('viewid'),
+			actionid: c.$item.CswAttrXml('actionid'),
+			reportid: c.$item.CswAttrXml('reportid'),
+			//nodetypeid: c.$item.CswAttrXml('nodetypeid'),
+			linktype: c.$item.CswAttrXml('linktype')
+		};
+
+		if(c.$table.CswLayoutTable('isConfig') === false)   // case 22288
+		{
+			switch( optSelect.linktype.toLowerCase() )
+			{
+				case 'add': 
+					c.onAddClick(c.$item.CswAttrXml('nodetypeid'));
+					break;
+				case 'link':
+					c.onLinkClick(optSelect);
+					break;
+				case 'search': 
+					c.onSearchClick(optSelect);
+					break;
+				case 'text':
+					break;
+			}
+		}
+	} // _clickItem()
 
 	function _removeItem(removedata)
 	{
