@@ -521,7 +521,7 @@
                 if (propOpt.$propxml.CswAttrXml('hassubprops') === "true")
                 {
                     var $subprops = propOpt.$propxml.children('subprops');
-                    if ($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0)
+                    if ($subprops.length > 0 ) //&& $subprops.children('[display != "false"]').length > 0)
                     {
                         var $subtable = propOpt.$propcell.children('#' + propOpt.$propxml.CswAttrXml('id') + '_subproptable').first();
                         if($subtable.length > 0)
