@@ -149,7 +149,6 @@ foreach my $component (@components)
 
 &runCommand( "net start \"ChemSW Log Service\"");
 
-&runCommand( "net start \"NbtSchedService\"");
 
 #---------------------------------------------------------------------------------
 # 4. back up existing schemata
@@ -177,7 +176,15 @@ my $masterpassword = $schemata{$masterschema};
 &runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/Release/NbtUpdt.exe -all");
 
 #---------------------------------------------------------------------------------
-# 7. tags
+
+#---------------------------------------------------------------------------------
+# 7. start schedule service
+
+&runCommand( "net start \"NbtSchedService\"");
+
+#---------------------------------------------------------------------------------
+
+# 8. tags
 
 foreach my $component (@components)
 {
