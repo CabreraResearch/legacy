@@ -430,7 +430,6 @@ namespace ChemSW.Nbt.WebServices
                 //Must depart the nest immediately
                 _SearcharbleView.ViewId = new CswNbtViewId( Int32.MinValue );
                 _SearcharbleView.clearSessionViewId();
-                _SearcharbleView.SaveToCache( true );
             }
 
             // Sanity check: we have a SearchView
@@ -441,6 +440,7 @@ namespace ChemSW.Nbt.WebServices
                 if( ViewMode == NbtViewRenderingMode.Unknown ) ViewMode = _SearcharbleView.ViewMode;
                 // If we're coming from the Welcome page, this will be true
                 if( null == _ParentView ) _ParentView = _SearcharbleView;
+                _SearcharbleView.SaveToCache( true, true );
             }
 
             // In case we have neither Search nor Parent views 
