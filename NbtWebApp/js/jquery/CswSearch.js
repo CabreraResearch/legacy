@@ -43,7 +43,8 @@ var CswSearch_CssClasses = {
             '$nodeTypesSelect': '',
 
             'onSearchSubmit': function (view) {},
-            'onClearSubmit': function(parentviewid) {}, 
+            'onClearSubmit': function(parentviewid) {},
+            'onSearchClose': function() {}, 
 
             //For submit
             'selectedPropVal': '',
@@ -110,7 +111,7 @@ var CswSearch_CssClasses = {
         function renderViewBasedSearchContent()
         {
             //skip cell 1,1
-            var andRow = 2;
+            var andRow = 3; //2
             while(andRow <= o.propsCount) //eventually this will be configurable: and/or, or, and/not, etc
             {
                 //Row i, Column 1: and
@@ -121,7 +122,7 @@ var CswSearch_CssClasses = {
                 andRow++;
             }
         
-            var propRow = 1;
+            var propRow = 2; //1
             o.$propsXml.children('property').each( function() {
                     var $thisProp = $(this);
                     var $nodeTypeCell = o.$searchTable.CswTable('cell', propRow, 2);
@@ -158,7 +159,7 @@ var CswSearch_CssClasses = {
         {
             //Row 1, Column 1: empty (contains 'and' for View search)
             //Row 1, Column 2: nodetypeselect picklist
-            var $typeSelectCell = o.$searchTable.CswTable('cell', 1, 2)
+            var $typeSelectCell = o.$searchTable.CswTable('cell', 2, 2) //1
                                                 .empty();
             var nodeTypeSelectId = makeId({ID: 'nodetype_select',prefix: o.ID});
             var $nodeTypesSelect = $(xmlToString(o.$nodeTypesXml.children('select')))
@@ -185,7 +186,7 @@ var CswSearch_CssClasses = {
             }
             $typeSelectCell.append($nodeTypesSelect);
         
-            var propRow = 1;
+            var propRow = 2; //1
             //Row propRow, Column 3: properties 
             var $propSelectCell = o.$searchTable.CswTable('cell', propRow, 3)
                                     .empty();
@@ -234,7 +235,7 @@ var CswSearch_CssClasses = {
                                                 'advancedIsHidden': o.advancedIsHidden
                                             });
             
-            o.bottomRow = (o.propsCount + 1);
+            o.bottomRow = (o.propsCount + 2); //1
             o.bottomCell = 2;
             o.searchtype = 'nodetypesearch';
             renderSearchButtons();
@@ -289,7 +290,7 @@ var CswSearch_CssClasses = {
                 $clearPosition = $splitCellTable;
                 clearCellNumber = 1;
                 advancedCellNumber = 2;
-                cellRow = 1;
+                cellRow = 2;
             }
             
             //Row i, Column 1 (1/1): clear button
@@ -383,6 +384,19 @@ var CswSearch_CssClasses = {
                                     align: 'center',
 									TableCssClass: 'CswSearch_Table'
                                     });
+                    
+                    var $closeBtn = o.$searchTable.CswTable('cell',1,10)
+                                     .css('align','right')
+                                     .CswImageButton({
+		                                    ButtonType: CswImageButton_ButtonType.Delete,
+                                            AlternateText: 'Close',
+                                            ID: makeId({ 'prefix': o.ID, 'id': 'closebtn' }),
+                                            onClick: function () { 
+				                                o.onSearchClose();
+				                                return CswImageButton_ButtonType.None; 
+			                                }
+		                                });
+                    
                     switch(o.searchtype)
                     {
                         case 'nodetypesearch':

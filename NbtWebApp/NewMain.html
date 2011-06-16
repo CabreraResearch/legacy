@@ -462,13 +462,18 @@
                 });
             }
         }
+        var onSearchClose = function ()
+        {
+            clear({ centertop: true });
+        }
         var $search = $('#CenterTopDiv').CswSearch({
                                     'parentviewid': o.viewid,
                                     'cswnbtnodekey': o.cswnbtnodekey,
                                     'nodetypeid': o.nodetypeid,
                                     'ID': o.ID,
                                     'onSearchSubmit': onSearchSubmit,
-                                    'onClearSubmit': onClearSubmit
+                                    'onClearSubmit': onClearSubmit,
+                                    'onSearchClose': onSearchClose
                                 });
         return $search;
     }

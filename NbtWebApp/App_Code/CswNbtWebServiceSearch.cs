@@ -414,33 +414,37 @@ namespace ChemSW.Nbt.WebServices
             }
             
             // If this is the 2nd search, try to recycle the SessionView
-            CswNbtView _SearcharbleView = null;
+            CswNbtView _SearchableView = null;
             if( _ParentViewKey != _SearchViewKey && // true if we're coming from a non-view, like Welcome
                 !string.IsNullOrEmpty( _SearchViewKey ) )
             {
                 CswNbtSessionDataId _SessionViewId = new CswNbtSessionDataId( _SearchViewKey );
-                _SearcharbleView = _CswNbtResources.ViewSelect.getSessionView( _SessionViewId );
+                _SearchableView = _CswNbtResources.ViewSelect.getSessionView( _SessionViewId );
             }
             // This is the 1st search, spin off ParenView into a SessionView
             else if( null != _ParentView )
             {
-                _SearcharbleView = new CswNbtView( _CswNbtResources );
-                _SearcharbleView.LoadXml( _ParentView.ToXml() );
-                _SearcharbleView.ViewName = _makeSearchViewName( _SearcharbleView.ViewName );
+                _SearchableView = new CswNbtView( _CswNbtResources );
+                _SearchableView.LoadXml( _ParentView.ToXml() );
+                _SearchableView.ViewName = _makeSearchViewName( _SearchableView.ViewName );
                 //Must depart the nest immediately
-                _SearcharbleView.ViewId = new CswNbtViewId( Int32.MinValue );
-                _SearcharbleView.clearSessionViewId();
-                _SearcharbleView.SaveToCache( true );
+                _SearchableView.ViewId = new CswNbtViewId( Int32.MinValue );
+                _SearchableView.clearSessionViewId();
             }
 
             // Sanity check: we have a SearchView
-            if( null != _SearcharbleView )
+            if( null != _SearchableView )
             {
-                SearchView = _SearcharbleView;
-                SearchViewId = _SearcharbleView.SessionViewId.ToString();
-                if( ViewMode == NbtViewRenderingMode.Unknown ) ViewMode = _SearcharbleView.ViewMode;
+                _SearchableView.SaveToCache( true, true );
+                SearchView = _SearchableView;
+                SearchViewId = _SearchableView.SessionViewId.ToString();
+                if( ViewMode == NbtViewRenderingMode.Unknown ) ViewMode = _SearchableView.ViewMode;
                 // If we're coming from the Welcome page, this will be true
-                if( null == _ParentView ) _ParentView = _SearcharbleView;
+                if( null == _ParentView )
+                {
+                    _ParentView = _SearchableView;
+                    _ParentView.SaveToCache( false );
+                }
             }
 
             // In case we have neither Search nor Parent views 
