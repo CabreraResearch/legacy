@@ -435,12 +435,16 @@ namespace ChemSW.Nbt.WebServices
             // Sanity check: we have a SearchView
             if( null != _SearchableView )
             {
+                _SearchableView.SaveToCache( true, true );
                 SearchView = _SearchableView;
                 SearchViewId = _SearchableView.SessionViewId.ToString();
                 if( ViewMode == NbtViewRenderingMode.Unknown ) ViewMode = _SearchableView.ViewMode;
                 // If we're coming from the Welcome page, this will be true
-                if( null == _ParentView ) _ParentView = _SearchableView;
-                _SearchableView.SaveToCache( true, true );
+                if( null == _ParentView )
+                {
+                    _ParentView = _SearchableView;
+                    _ParentView.SaveToCache( false );
+                }
             }
 
             // In case we have neither Search nor Parent views 
