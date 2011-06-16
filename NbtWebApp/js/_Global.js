@@ -239,7 +239,7 @@ function _handleAuthenticationStatus(options)
 		usernodeid: '',
 		usernodekey: '',
 		passwordpropid: '',
-        ForMobile: false,
+        ForMobile: false
 	};
 	if(options) $.extend(o, options);
 
