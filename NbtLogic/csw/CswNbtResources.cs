@@ -531,7 +531,11 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Puts the database resources back into the resource pool
         /// </summary>
-        public void releaseDbResources() { _CswResources.releaseDbResources(); }
+        public void releaseDbResources() 
+        { 
+            _CswResources.releaseDbResources();
+            ClearCache(); 
+        }
 
 
 

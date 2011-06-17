@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Text;
+using System.Diagnostics;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
@@ -16,38 +17,32 @@ using ChemSW.Log;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_026_01 : ICswUpdateSchemaTo
+    public class CswTestCase_027_05 : ICswUpdateSchemaTo
     {
 
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_026.Purpose, "turn on auditing" ) ); } }
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_027.Purpose, "clean up tables" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
-        private CswTstCaseRsrc_026 _CswTstCaseRsrc_026 = null;
+        private CswTstCaseRsrc_027 _CswTstCaseRsrc_027 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_026_01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public CswTestCase_027_05( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
         {
             _CswSchemaVersion = CswSchemaVersion;
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_026 = (CswTstCaseRsrc_026) CswTstCaseRsrc;
+            _CswTstCaseRsrc_027 = (CswTstCaseRsrc_027) CswTstCaseRsrc;
 
         }//ctor
 
 
         public void update()
         {
-
-            for( int idx = 0; idx < 11; idx++ )
-            {
-
-                _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "test log message # " + idx.ToString() );
-                Thread.Sleep( 10 );
-            }
+            _CswTstCaseRsrc_027.dropArbitraryTables(); 
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
