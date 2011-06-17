@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.SchedService
 {
     public partial class MainService : ServiceBase
     {
-        CswNbtSchdItemRunner _CswNbtSchdItemRunner = null;
+        CswScheduleService _CswScheduleService = null;
 
         public MainService()
         {
@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.SchedService
 
         protected override void OnStart( string[] args )
         {
-            CswScheduleService _CswScheduleService = new CswScheduleService( new CswScheduleLogicFactoryNbt(), new CswScheduleResourceFactoryNbt(), new CswScheduleLogicDetailPersistenceFactoryNbt() );
+            _CswScheduleService = new CswScheduleService( new CswScheduleLogicFactoryNbt(), new CswScheduleResourceFactoryNbt(), new CswScheduleLogicDetailPersistenceFactoryNbt() );
             _CswScheduleService.start();
 
 
@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.SchedService
 
         protected override void OnStop()
         {
-            _CswNbtSchdItemRunner.stop();
+            _CswScheduleService.stop();
 
         }//OnStop()
 

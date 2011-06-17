@@ -60,8 +60,8 @@ namespace CswMailRptService
 			// 
 			// serviceInstaller1
 			// 
-			this.serviceInstaller1.ServiceName = "NbtSchedService";
-            this.serviceInstaller1.Description = "ChemSW NBT Scheduler";
+			this.serviceInstaller1.ServiceName = "ChemSW NBT Schedule Service";
+            this.serviceInstaller1.Description = "Schedule service for ChemSW NBT applications. Copyright ChemSW, Inc., 2001.";
 			// 
 			// ProjectInstaller
 			// 
