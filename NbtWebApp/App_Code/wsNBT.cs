@@ -2166,8 +2166,47 @@ namespace ChemSW.Nbt.WebServices
 		}
 		#endregion Connectivity
 
-		#region Mobile
-		[WebMethod( EnableSession = false )]
+        #region Logging
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string collectClientLogInfo( string Context, string UserName, string CustomerId, string LogInfo )
+        {
+            JObject ReturnVal = new JObject();
+            //This could be Mobile, we don't care about Authentication for now
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Authenticated;
+            try
+            {
+                _initResources();
+
+                if( !string.IsNullOrEmpty( UserName ) &&
+                    !string.IsNullOrEmpty( CustomerId ) &&
+                    !string.IsNullOrEmpty( LogInfo ) )
+                {
+                    string LogMessage = @"Application context '" + Context + "' requested logging for username '" + UserName + "' on AccessId '" + CustomerId + "'." 
+                                        + " log message = '" + LogInfo + "'";
+                    _CswNbtResources.CswLogger.reportAppState( LogMessage );
+
+                    ReturnVal.Add( new JProperty( "success", true ) );
+                }
+                _deInitResources();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // UpdateProperties()
+
+        #endregion Logging
+
+        #region Mobile
+        [WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string UpdateProperties( string SessionId, string ParentId, string UpdatedViewXml, bool ForMobile )
 		{
