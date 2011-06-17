@@ -10,7 +10,14 @@
 //var profiler = $createProfiler();
 //if (!debug) profiler.disable();
 
-; (function ($) { /// <param name="$" type="jQuery" />
+CswMobile_LoggingLevel = {
+    none: { id: 'none', display: 'No Logging' },
+    debg: { id: 'debg', display: 'Debugging' },
+    info: { id: 'info', display: 'Information' },
+    verb: { id: 'verb', display: 'Verbose' }
+};
+
+;    (function ($) { /// <param name="$" type="jQuery" />
     
     $.fn.makeUL = function(id, params)
     {
@@ -73,7 +80,7 @@
             //$div.cachePage(); //not yet, but we'll want to update the cache with the latest version of content
             var $page = $.mobile.activePage;
             var id = ( isNullOrEmpty($page) ) ? 'no ID' : $page.CswAttrDom('id');
-            if(debug) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
+            if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
 
             if( id !== $div.CswAttrDom('id') ) ret = $.mobile.changePage( $div.CswAttrXml('data-url'), o);
         }
@@ -86,7 +93,7 @@
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
-            if(debug) log('doPage on ' + $div.CswAttrDom('id'),true);
+            if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('doPage on ' + $div.CswAttrDom('id'),true);
             //ret = $.mobile.loadPage( $div.CswAttrXml('data-url'));
             ret = $div.page(); //cachePage() //not yet, but we'll want to update the cache with the latest version of content
         }
@@ -210,7 +217,8 @@
             Theme: 'a',
             PollingInterval: 30000,
             DivRemovalDelay: 1,
-            RandomConnectionFailure: false
+            RandomConnectionFailure: false,
+            MobileLogLevel: CswMobile_LoggingLevel.none
         };
         
         if (options)
@@ -226,7 +234,6 @@
             Logout();
         }
         var SessionId = localStorage["sessionid"];
-        
         var $currentViewXml;
 
         var storedViews = '';
@@ -242,14 +249,12 @@
 
 		// case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
-        if ( !isNullOrEmpty(SessionId) )
-        {
-            var potentialtempdivid = window.location.hash.substr(1);
-            if ($('#' + potentialtempdivid).length === 0 && potentialtempdivid !== 'viewsdiv' && potentialtempdivid !== 'logindiv')
-            {
-                $.mobile.path.set('#viewsdiv'); // we can use restorePages() to eliminate this later.
-            }
+        if ( !isNullOrEmpty(SessionId) ) {
+            $.mobile.path.set('#viewsdiv'); // we can use restorePages() to eliminate this later.
         }
+        else {
+            $.mobile.path.set('#logindiv');
+        }    
 
         if ( !isNullOrEmpty(SessionId) )
         {
@@ -390,9 +395,9 @@
 //        function clearPath()
 //        {
 //            currentMobilePath = tryParseString( $.mobile.path.get(), '');
-//            if(debug) log('pre set path = ' + currentMobilePath, true);
+//            if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('pre set path = ' + currentMobilePath, true);
 //            if( currentMobilePath !== '') $.mobile.path.set('');
-//            if(debug) log('post set path = ' + $.mobile.path.get());
+//            if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('post set path = ' + $.mobile.path.get());
 //        }
 
 //        function restorePath()
@@ -551,7 +556,7 @@
                 onloginfail: function(text) { onLoginFail(text); },
                 success: function ($xml)
                 {
-                    if (debug) log('On Success ' + opts.ViewUrl, true);
+                    if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('On Success ' + opts.ViewUrl, true);
                     $currentViewXml = $xml;
                     p.$xml = $currentViewXml;
                     if (params.level === 1)
@@ -563,7 +568,7 @@
                 },
                 error: function(xml)
                 {
-                    if(debug) log(xml, true);
+                    if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log(xml, true);
                     //restorePath();
                 }
             });
@@ -1752,8 +1757,21 @@
         
         function _makeHelpDiv()
         {
-            var $help = $('<p>Help</p>');
-            
+            var $help = $('<p>Help</p>')
+                            .append('</br></br></br>');
+            var $logLevelDiv = $help.CswDiv('init')
+                                    .CswAttrXml({'data-role':'fieldcontain','data-native-menu':false});
+            var $logLevelLabel = $('<label for="mobile_log_level" class="select">Enable Logging</label>')
+                                    .appendTo($logLevelDiv);
+            var $logLevelSelect = $logLevelDiv.CswSelect('init',{ID: 'mobile_log_level',
+                                                                 selected: opts.MobileLogLevel.id,
+                                                                 values: [{value: CswMobile_LoggingLevel.none.id, display: CswMobile_LoggingLevel.none.display},
+                                                                          {value: CswMobile_LoggingLevel.info.id, display: CswMobile_LoggingLevel.info.display}],
+                                                                 onChange: function () {
+
+                                                                 }
+                                                          });                                        
+
             var $retDiv = _addPageDivToBody({
                     DivId: 'help',
                     HeaderText: 'Help',
@@ -1903,7 +1921,7 @@
                         $.mobile.pageLoading(true);
                     }, // success
                     error: function(txt) {
-                        if(debug) log(txt);
+                        if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log(txt);
                     }
                 });
             }
@@ -2193,7 +2211,7 @@
                             stringify: true,
                             onloginfail: function(text) 
                             { 
-                                if(debug) log('_processChanges onloginfail()' + opts.UpdateUrl,true);
+                                if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('_processChanges onloginfail()' + opts.UpdateUrl,true);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
@@ -2213,7 +2231,7 @@
                             },
                             error: function (data)
                             {
-                                if(debug) log('_processChanges error()' + opts.UpdateUrl,true);
+                                if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('_processChanges error()' + opts.UpdateUrl,true);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();

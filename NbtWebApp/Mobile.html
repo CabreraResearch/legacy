@@ -47,7 +47,6 @@
 <body id="CswMobile_Body">
 	<script type="text/javascript">
 		
-        var debug = false;
         try {
             if(Modernizr.localstorage) {
             
@@ -61,6 +60,7 @@
 
                 $('body').CswMobile({
 			        'Theme': 'b',
+                    'MobileLogLevel': CswMobile_LoggingLevel.none
 			        });
             }
             else {
