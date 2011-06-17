@@ -33,7 +33,7 @@
 							var o = {
 								'ID': 'addviewdialog',
 								'onAddView': function (newviewid) { },
-								'makeVisibilitySelect': function($table, rownum, label) { }
+								'viewid': ''
 							};
 							if (options) $.extend(o, options);
 
@@ -46,27 +46,25 @@
                                                                                type: CswInput_Types.text,
                                                                                cssclass: 'textinput'
                                                                        });
+							var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />');
+							if(isNullOrEmpty(o.viewid))
+							{
+								$table.CswTable('cell', 2, 1).append('Display Mode:');
+								$displaymodeselect.append('<option value="List">List</option>');
+								$displaymodeselect.append('<option value="Tree">Tree</option>');
+								$displaymodeselect.append('<option value="Grid">Grid</option>');
+								$displaymodeselect.appendTo($table.CswTable('cell', 2, 2));
+							}
 
-							$table.CswTable('cell', 2, 1).append('Display Mode:');
-							var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />')
-														.appendTo($table.CswTable('cell', 2, 2));
-							$displaymodeselect.append('<option value="List">List</option>');
-							$displaymodeselect.append('<option value="Tree">Tree</option>');
-							$displaymodeselect.append('<option value="Grid">Grid</option>');
-
-							var v = o.makeVisibilitySelect($table, 3, 'Available to:');
-
+							var v = makeViewVisibilitySelect($table, 3, 'Available to:');
 							var $savebtn = $div.CswButton({ID: o.ID + '_submit', 
                                                                     enabledText: 'Create View', 
                                                                     disabledText: 'Creating View', 
                                                                     onclick: function() {
-									                                        
-																			var createData = {};
-																			createData.ViewName = $nametextbox.val();
-																			createData.ViewMode = $displaymodeselect.val();
-																			createData.Visibility = v.getvisibilityselect().val();
-																			createData.VisibilityRoleId = v.getvisroleselect().val();
-																			createData.VisibilityUserId = v.getvisuserselect().val();
+									                                        																			var createData = {};																			createData.ViewName = $nametextbox.val();																			createData.ViewMode = $displaymodeselect.val();																			createData.ViewId = o.viewid;
+																			if(!isNullOrEmpty(v.getvisibilityselect()))																			{																				createData.Visibility = v.getvisibilityselect().val();																				createData.VisibilityRoleId = v.getvisroleselect().val();																				createData.VisibilityUserId = v.getvisuserselect().val();
+																			}
+
 																			CswAjaxJSON({
 																				url: '/NbtWebApp/wsNBT.asmx/createView',
 																				data: createData,

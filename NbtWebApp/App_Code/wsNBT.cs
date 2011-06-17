@@ -912,7 +912,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string createView( string ViewName, string ViewMode, string Visibility, string VisibilityRoleId, string VisibilityUserId )
+		public string createView( string ViewName, string ViewMode, string Visibility, string VisibilityRoleId, string VisibilityUserId, string ViewId )
 		{
 			JObject ReturnVal = new JObject();
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -921,14 +921,12 @@ namespace ChemSW.Nbt.WebServices
 
 				_initResources();
 				AuthenticationStatus = _CswSessionResources.attemptRefresh();
-
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
 
-					NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
-					Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
 					NbtViewVisibility RealVisibility = NbtViewVisibility.Unknown;
 					Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
+					
 					CswPrimaryKey RealVisibilityRoleId = null;
 					CswPrimaryKey RealVisibilityUserId = null;
 					if( RealVisibility == NbtViewVisibility.Role )
@@ -942,9 +940,24 @@ namespace ChemSW.Nbt.WebServices
 						RealVisibilityUserId.FromString( VisibilityUserId );
 					}
 
-					CswNbtView NewView = new CswNbtView( _CswNbtResources );
+					CswNbtView NewView = null;
+					if( ViewId != string.Empty )
+					{
+						NewView = _getView( ViewId );
+					}
+					else
+					{
+						NewView = new CswNbtView( _CswNbtResources );
+					}
 					NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, null );
-					NewView.ViewMode = RealViewMode;
+
+					if(ViewMode != string.Empty)
+					{
+						NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
+						Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
+						NewView.ViewMode = RealViewMode;
+					}
+
 					NewView.save();
 					ReturnVal.Add( new JProperty( "newviewid", NewView.ViewId.ToString() ) );
 				}
