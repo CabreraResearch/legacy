@@ -12,7 +12,8 @@ using ChemSW.DB;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Audit;
-
+using ChemSW.Log;
+using ChemSW.Nbt.Actions;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
@@ -41,6 +42,8 @@ namespace ChemSW.Nbt.Schema
             _CswDdl = new CswDDL( _CswNbtResources );
             //            _CswNbtSequenceManager = new CswNbtSequenceManager( _CswNbtResources );
         }//ctor
+
+        public ICswLogger CswLogger { get { return ( _CswNbtResources.CswLogger ); } }
 
         //private bool _ManageConstraints = true;
         //public bool ManageConstraints
@@ -367,7 +370,7 @@ namespace ChemSW.Nbt.Schema
 
             if( _CswNbtResources.CswResources.isTableDefined( AuditTableName ) )
             {
-                dropTable( AuditTableName ); 
+                dropTable( AuditTableName );
             }//if the audit table does not yet exist
 
 
@@ -992,6 +995,9 @@ namespace ChemSW.Nbt.Schema
         {
             return ( _CswNbtResources.getConfigVariableValue( VariableName ) );
         }
+
+
+        public CswNbtActUpdatePropertyValue getCswNbtActUpdatePropertyValue() { return ( new CswNbtActUpdatePropertyValue( _CswNbtResources ) ); }
     }//class CswNbtSchemaModTrnsctn
 
 }//ChemSW.Nbt.Schema
