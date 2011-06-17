@@ -16,7 +16,7 @@
                 'selected': '',
                 'values': [{value: '', display: ''}],
                 'cssclass': '',
-                'onChange': function () {}
+                'onChange': function ($select) {}
             };
             if (options) $.extend(o, options);
 
@@ -31,18 +31,21 @@
             if( !isNullOrEmpty( o.cssclass ) ) $select.addClass(o.cssclass);
             if( !isNullOrEmpty( o.value ) ) $select.text( o.value );
 
-            for(var opt in o.values)
+            for(var key in o.values)
             {
-                var $opt = $('<option value="' + opt.value + '">' + opt.display + '</option>')
+                var value = o.values[key].value;
+                var display = o.values[key].display;
+                var $opt = $('<option value="' + value + '">' + display + '</option>')
                                 .appendTo($select);
-                if( opt.value === o.selected) {
+                if( value === o.selected) {
                     $opt.CswAttrDom('selected','selected');
                 } 
             }
             
             if( !isNullOrEmpty( o.onChange ) ) {
                  $select.bind('change', function () {
-                    o.onChange();
+                    var $select = $(this);
+                    o.onChange($select);
                  });
             }
             

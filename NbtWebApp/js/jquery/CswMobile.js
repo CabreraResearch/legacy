@@ -10,7 +10,7 @@
 //var profiler = $createProfiler();
 //if (!debug) profiler.disable();
 
-CswMobile_LoggingLevel = {
+var CswMobile_LoggingLevel = {
     none: { id: 'none', display: 'No Logging' },
     debg: { id: 'debg', display: 'Debugging' },
     info: { id: 'info', display: 'Information' },
@@ -80,7 +80,7 @@ CswMobile_LoggingLevel = {
             //$div.cachePage(); //not yet, but we'll want to update the cache with the latest version of content
             var $page = $.mobile.activePage;
             var id = ( isNullOrEmpty($page) ) ? 'no ID' : $page.CswAttrDom('id');
-            if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
+            //if(debug !== CswMobile_LoggingLevel.none) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
 
             if( id !== $div.CswAttrDom('id') ) ret = $.mobile.changePage( $div.CswAttrXml('data-url'), o);
         }
@@ -93,7 +93,7 @@ CswMobile_LoggingLevel = {
         var ret = false;
         if( !isNullOrEmpty($div) )
         {
-            if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('doPage on ' + $div.CswAttrDom('id'),true);
+            //if(debug !== CswMobile_LoggingLevel.none) log('doPage on ' + $div.CswAttrDom('id'),true);
             //ret = $.mobile.loadPage( $div.CswAttrXml('data-url'));
             ret = $div.page(); //cachePage() //not yet, but we'll want to update the cache with the latest version of content
         }
@@ -217,8 +217,7 @@ CswMobile_LoggingLevel = {
             Theme: 'a',
             PollingInterval: 30000,
             DivRemovalDelay: 1,
-            RandomConnectionFailure: false,
-            MobileLogLevel: CswMobile_LoggingLevel.none
+            RandomConnectionFailure: false
         };
         
         if (options)
@@ -251,10 +250,7 @@ CswMobile_LoggingLevel = {
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
         if ( !isNullOrEmpty(SessionId) ) {
             $.mobile.path.set('#viewsdiv'); // we can use restorePages() to eliminate this later.
-        }
-        else {
-            $.mobile.path.set('#logindiv');
-        }    
+        }        
 
         if ( !isNullOrEmpty(SessionId) )
         {
@@ -395,9 +391,9 @@ CswMobile_LoggingLevel = {
 //        function clearPath()
 //        {
 //            currentMobilePath = tryParseString( $.mobile.path.get(), '');
-//            if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('pre set path = ' + currentMobilePath, true);
+//            if(debug !== CswMobile_LoggingLevel.none) log('pre set path = ' + currentMobilePath, true);
 //            if( currentMobilePath !== '') $.mobile.path.set('');
-//            if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('post set path = ' + $.mobile.path.get());
+//            if(debug !== CswMobile_LoggingLevel.none) log('post set path = ' + $.mobile.path.get());
 //        }
 
 //        function restorePath()
@@ -456,6 +452,36 @@ CswMobile_LoggingLevel = {
             return isOffline;
         }
 
+        // ------------------------------------------------------------------------------------
+        // Logging Button
+        // ------------------------------------------------------------------------------------
+
+        function setStartLogging()
+        {
+            localStorage['logging'] = true;
+            var $loggingBtn = $('.debug');
+            if ($loggingBtn.hasClass('debug-off'))
+            {
+                $loggingBtn.removeClass('debug-off')
+                            .addClass('debug-on')
+                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                            .text('Start Log')
+                            .end();
+            }
+        }
+        function setStopLogging()
+        {
+            localStorage['logging'] = false;
+            var $loggingBtn = $('.debug');
+            if ($loggingBtn.hasClass('debug-on'))
+            {
+                $loggingBtn.removeClass('debug-on')
+                            .addClass('debug-off')
+                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                            .text('Stop Log')
+                            .end();
+            }
+        }
 
         // ------------------------------------------------------------------------------------
         // List items fetching
@@ -556,7 +582,7 @@ CswMobile_LoggingLevel = {
                 onloginfail: function(text) { onLoginFail(text); },
                 success: function ($xml)
                 {
-                    if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('On Success ' + opts.ViewUrl, true);
+                    if(debug !== CswMobile_LoggingLevel.none) log('On Success ' + opts.ViewUrl, true);
                     $currentViewXml = $xml;
                     p.$xml = $currentViewXml;
                     if (params.level === 1)
@@ -568,7 +594,7 @@ CswMobile_LoggingLevel = {
                 },
                 error: function(xml)
                 {
-                    if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log(xml, true);
+                    if(debug !== CswMobile_LoggingLevel.none) log(xml, true);
                     //restorePath();
                 }
             });
@@ -1396,6 +1422,7 @@ CswMobile_LoggingLevel = {
             var $closeBtn = $('#' + p.DivId + '_close');
             var $backlink = $('#' + p.DivId + '_back');
             var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
+            var $loggingBtn = $('#' + p.DivId + '_log');
 
             if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
             {
@@ -1528,8 +1555,19 @@ CswMobile_LoggingLevel = {
                                                 'data-transition': 'pop',
                                                 'data-rel': 'dialog'})
                                      .css('display','');
+                
+                $loggingBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
+                                                   ID: p.DivId + '_log', 
+                                                   value: 'Start Log',
+                                                   cssclass: 'ui-btn-left debug debug-off' })
+                                         .CswAttrXml({'data-identity': p.DivId + '_log',
+                                                      'data-url': p.DivId + '_log', 
+                                                      'data-transition': 'pop',
+                                                      'data-rel': 'dialog'})
+                                         .css({'display':''});
+                                         
             }
-
+            $loggingBtn.hide();
             if ( p.HideOnlineButton ) { 
                 $syncstatusBtn.hide(); 
             }
@@ -1760,17 +1798,40 @@ CswMobile_LoggingLevel = {
             var $help = $('<p>Help</p>')
                             .append('</br></br></br>');
             var $logLevelDiv = $help.CswDiv('init')
-                                    .CswAttrXml({'data-role':'fieldcontain','data-native-menu':false});
+                                    .CswAttrXml({'data-role':'fieldcontain'});
             var $logLevelLabel = $('<label for="mobile_log_level" class="select">Enable Logging</label>')
                                     .appendTo($logLevelDiv);
             var $logLevelSelect = $logLevelDiv.CswSelect('init',{ID: 'mobile_log_level',
-                                                                 selected: opts.MobileLogLevel.id,
+                                                                 selected: debug.id,
                                                                  values: [{value: CswMobile_LoggingLevel.none.id, display: CswMobile_LoggingLevel.none.display},
+                                                                          {value: CswMobile_LoggingLevel.debg.id, display: CswMobile_LoggingLevel.debg.display},
                                                                           {value: CswMobile_LoggingLevel.info.id, display: CswMobile_LoggingLevel.info.display}],
-                                                                 onChange: function () {
-
+                                                                 onChange: function ($select) {
+                                                                    var $loggingBtn = $('.debug');
+                                                                    switch( $select.val() )
+                                                                    {
+                                                                        case CswMobile_LoggingLevel.debg.id:
+                                                                        {
+                                                                            $loggingBtn.show();
+                                                                            //debug = CswMobile_LoggingLevel.debg;
+                                                                            break;
+                                                                        }
+                                                                        case CswMobile_LoggingLevel.info.id:
+                                                                        {
+                                                                            $loggingBtn.show();
+                                                                            //debug = CswMobile_LoggingLevel.info;
+                                                                            break;
+                                                                        }
+                                                                        default:
+                                                                        {
+                                                                            $loggingBtn.hide();
+                                                                            debug = CswMobile_LoggingLevel.none;
+                                                                            break;
+                                                                        }
+                                                                    }
                                                                  }
-                                                          });                                        
+                                                })
+                                                .CswAttrXml({'data-native-menu': 'false'});
 
             var $retDiv = _addPageDivToBody({
                     DivId: 'help',
@@ -1921,7 +1982,7 @@ CswMobile_LoggingLevel = {
                         $.mobile.pageLoading(true);
                     }, // success
                     error: function(txt) {
-                        if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log(txt);
+                        if(debug !== CswMobile_LoggingLevel.none) log(txt);
                     }
                 });
             }
@@ -2211,7 +2272,7 @@ CswMobile_LoggingLevel = {
                             stringify: true,
                             onloginfail: function(text) 
                             { 
-                                if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('_processChanges onloginfail()' + opts.UpdateUrl,true);
+                                if(debug !== CswMobile_LoggingLevel.none) log('_processChanges onloginfail()' + opts.UpdateUrl,true);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
@@ -2231,7 +2292,7 @@ CswMobile_LoggingLevel = {
                             },
                             error: function (data)
                             {
-                                if(opts.MobileLogLevel !== CswMobile_LoggingLevel.none) log('_processChanges error()' + opts.UpdateUrl,true);
+                                if(debug !== CswMobile_LoggingLevel.none) log('_processChanges error()' + opts.UpdateUrl,true);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();

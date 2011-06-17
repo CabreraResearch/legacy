@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html manifest="Mobile.manifest">
+<html> <!--manifest="Mobile.manifest"> Not ready yet-->
 <head>
     <meta name="viewport" content="user-scalable=yes, width=device-width" />
     <title>Main</title>
@@ -46,21 +46,16 @@
 
 <body id="CswMobile_Body">
 	<script type="text/javascript">
-		
+	    
+        var debug = CswMobile_LoggingLevel.none;
         try {
             if(Modernizr.localstorage) {
             
-                $(document).bind("mobileinit", function(){
-                     //$.mobile.hashListeningEnabled = false; 
-                     //$.mobile.path.get = function( newPath ){  return ''; };
-                });
-
 		        // override value in _Globals.js
 		        homeUrl = "Mobile.html";
 
                 $('body').CswMobile({
-			        'Theme': 'b',
-                    'MobileLogLevel': CswMobile_LoggingLevel.none
+			            'Theme': 'b',
 			        });
             }
             else {
@@ -68,7 +63,7 @@
             }
         }
         catch(e) {
-            if(debug) {
+            if(debug !== CswMobile_LoggingLevel.none) {
                 errorHandler(e,true,true);
             }
             else {
