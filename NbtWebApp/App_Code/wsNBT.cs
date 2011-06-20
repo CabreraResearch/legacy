@@ -2005,10 +2005,13 @@ namespace ChemSW.Nbt.WebServices
 					if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
 						UseRoleId = RoleId;
 					CswNbtWebServiceWelcomeItems.WelcomeComponentType ComponentType = (CswNbtWebServiceWelcomeItems.WelcomeComponentType) Enum.Parse( typeof( CswNbtWebServiceWelcomeItems.WelcomeComponentType ), Type );
-					CswViewListTree.ViewType RealViewType = (CswViewListTree.ViewType) Enum.Parse(typeof(CswViewListTree.ViewType), ViewType, true);
+					CswViewListTree.ViewType RealViewType = CswViewListTree.ViewType.Unknown;
+					if( ViewType != string.Empty )
+					{
+						RealViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), ViewType, true );
+					}
 					ws.AddWelcomeItem( ComponentType, RealViewType, ViewValue, CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
 					ReturnVal.Add( new JProperty( "Succeeded", true ) );
-					//ReturnVal = "{ \"Succeeded\": \"true\" }";
 				}
 
 				_deInitResources();
