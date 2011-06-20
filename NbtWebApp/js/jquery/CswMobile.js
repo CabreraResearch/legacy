@@ -446,7 +446,6 @@ var CswMobile_LoggingLevel = {
         function _toggleLogging()
         {
             var $loggingBtn = $('.debug');
-            var statusChanged = doDebug;
             if ($loggingBtn.hasClass('debug-off'))
             {
                 doDebug = true;
@@ -484,7 +483,6 @@ var CswMobile_LoggingLevel = {
                     }
                 });
             }
-            return (statusChanged === doDebug);
         }
 
         // ------------------------------------------------------------------------------------
@@ -1425,7 +1423,7 @@ var CswMobile_LoggingLevel = {
             var $closeBtn = $('#' + p.DivId + '_close');
             var $backlink = $('#' + p.DivId + '_back');
             var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
-            var $loggingBtn = $('#' + p.DivId + '_log');
+            var $loggingBtn = $('#' + p.DivId + '_debuglog');
 
             if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
             {
@@ -1560,13 +1558,9 @@ var CswMobile_LoggingLevel = {
                                      .css('display','');
                 
                 $loggingBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
-                                                   ID: p.DivId + '_log', 
+                                                   ID: p.DivId + '_debuglog', 
                                                    value: 'Start Log',
-                                                   cssclass: 'debug debug-off' })
-                                         .CswAttrXml({'data-identity': p.DivId + '_log',
-                                                      'data-url': p.DivId + '_log', 
-                                                      'data-transition': 'pop',
-                                                      'data-rel': 'dialog'});
+                                                   cssclass: 'debug debug-off' });
             }
 
             if ( p.HideOnlineButton ) { 
@@ -1657,47 +1651,55 @@ var CswMobile_LoggingLevel = {
         function _bindPageEvents(DivId, ParentId, level, $div)
         {
             $div.find('#' + DivId + '_searchopen')
+                .unbind('tap')
                 .bind('tap',function () { 
 						onSearchOpen(DivId); 
 						return false;
 					})
                 .end()
                 .find('#' + DivId + '_gosyncstatus')
+                .unbind('tap')
                 .bind('tap', function () { 
 						onSyncStatusOpen(DivId); 
 						return false;
 					})
                 .end()
                 .find('#' + DivId + '_refresh')
+                .unbind('tap')
                 .bind('tap', function () { 
 						onRefresh($(this).CswAttrDom('id'));
 						return false;
 					})
                 .end()
                 .find('#' + DivId + '_logout')
+                .unbind('tap')
                 .bind('tap', function (e) { 
 						onLogout(DivId, e); 
 						return false;
 					})
                 .end()
                 .find('#' + DivId + '_help')
+                .unbind('tap')
                 .bind('tap', function () { 
 						onHelp(DivId, ParentId); 
 						return false;
 					})
                 .end()
-                .find('#' + DivId + '_log')
-                .bind('tap', function () { 
-					    _toggleLogging();
-						//return false;
+                .find('#' + DivId + '_debuglog')
+                .die('tap')
+                .live('tap', function () { 
+						_toggleLogging();
+						return false;
 					})
                 .end()
                 .find('textarea')
+                .unbind('change')
                 .bind('change', function (eventObj) { 
 						onPropertyChange(DivId, eventObj); 
 					})
                 .end()
                 .find('select')
+                .unbind('change')
                 .bind('change', function (eventObj) { 
 						onPropertyChange(DivId, eventObj); 
 					})
@@ -1740,7 +1742,7 @@ var CswMobile_LoggingLevel = {
                     .end()
                     .find('#ss_gooffline')
                     .bind('tap', function () { 
-                            _toggleOffline(); 
+							_toggleOffline(); 
                             return false;
                         });
 
