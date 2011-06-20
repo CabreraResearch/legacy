@@ -904,6 +904,20 @@ namespace ChemSW.Nbt.MetaData
                 _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew(NewPropRow, NodeTypeProp.PropId);
             }
 
+			// Fix Conditional Props (case 22328)
+			Collection<CswNbtMetaDataNodeTypeProp> NewProps = new Collection<CswNbtMetaDataNodeTypeProp>();
+			foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NewNodeType.NodeTypeProps )
+				NewProps.Add( NodeTypeProp );
+			foreach( CswNbtMetaDataNodeTypeProp NewProp in NewProps )
+			{
+				if( NewProp.FilterNodeTypePropId != Int32.MinValue )
+				{
+					CswNbtMetaDataNodeTypeProp OldFilter = OldNodeType.getNodeTypeProp(NewProp.FilterNodeTypePropId);
+					CswNbtMetaDataNodeTypeProp NewFilter = NewNodeType.getNodeTypeProp(OldFilter.PropName);
+					NewProp.setFilter( NewFilter.PropId, NewProp.getFilterString() );
+				}
+			}
+
             // Fix the name template
             NewNodeType.NameTemplateText = OldNodeType.NameTemplateText;
 
