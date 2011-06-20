@@ -2185,7 +2185,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     string LogMessage = @"Application context '" + Context + "' requested logging for username '" + UserName + "' on AccessId '" + CustomerId + "'." 
                                         + " log message = '" + LogInfo + "'";
-                    _CswNbtResources.CswLogger.reportAppState( LogMessage );
+                    _CswNbtResources.logMessage( LogMessage );
 
                     ReturnVal.Add( new JProperty( "success", true ) );
                 }
