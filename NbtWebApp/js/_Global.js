@@ -3,6 +3,7 @@
 /// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../js/thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
+/// <reference path="CswClasses.js" />
 
 // ------------------------------------------------------------------------------------
 // Enums
@@ -1218,7 +1219,7 @@ function iterate(obj)
 }
 
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
-function log(s, includeCallStack)
+function log(s, includeCallStack, toCswStorage)
 {
     /// <summary>Outputs a message to the console log(Webkit,FF) or an alert(IE)</summary>
     /// <param name="s" type="String"> String to output </param>
@@ -1231,8 +1232,18 @@ function log(s, includeCallStack)
 
     try
     {
-        console.log(s);
-        if (!isNullOrEmpty(extendedLog)) console.log(extendedLog);
+        if (toCswStorage && Modernizr.sessionstorage)
+        {
+            var logStorage = new CswStorage(sessionStorage);
+            var log = logStorage.getItem('debuglog');
+            log += s;
+            if (!isNullOrEmpty(extendedLog)) log += ',' + extendedLog;
+            logStorage.setItem('debuglog', log);
+        }
+        else
+        {
+            console.log(s, extendedLog);
+        }
     } catch (e)
     {
         alert(s);
@@ -1258,10 +1269,10 @@ function getCallStack()
     return stack;
 }
 
-function errorHandler(error, includeCallStack, includeLocalStorage)
+function errorHandler(error, includeCallStack, includeLocalStorage, toCswStorage)
 {
     if(Modernizr.localstorage && includeLocalStorage) log(localStorage);
-    log('localStorage Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack);
+    log('localStorage Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack, toCswStorage);
 }
 
 // ------------------------------------------------------------------------------------
