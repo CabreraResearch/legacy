@@ -175,8 +175,7 @@ var CswViewEditor_WizardSteps = {
 					},
 					'onClose': function() {
 						$newviewbtn.CswButton('enable');
-					},
-					'makeVisibilitySelect': _makeVisibilitySelect
+					}
 				}); // CswDialog
 			} // onclick
 		})
@@ -207,7 +206,7 @@ var CswViewEditor_WizardSteps = {
 		// so checking startingStep will have to suffice
 		if(o.startingStep === 1)
 		{
-			v = _makeVisibilitySelect($table2, 3, 'View Visibility:');
+			v = makeViewVisibilitySelect($table2, 3, 'View Visibility:');
 		}
 
 		$table2.CswTable('cell', 4, 1).append('For Mobile:');
@@ -340,20 +339,21 @@ var CswViewEditor_WizardSteps = {
                 if( v.getvisibilityselect() !== undefined )
 				{
                     $currentviewxml.CswAttrXml('visibility', v.getvisibilityselect().val());
+
+					// temporary workaround
+					var rolenodeid = v.getvisroleselect().val();
+					if(!isNullOrEmpty(rolenodeid))
+					{
+						rolenodeid = rolenodeid.substr('nodes_'.length)
+					}
+					var usernodeid = v.getvisuserselect().val();
+					if(!isNullOrEmpty(usernodeid))
+					{
+						usernodeid = usernodeid.substr('nodes_'.length)
+					}
+					$currentviewxml.CswAttrXml('visibilityroleid', rolenodeid);
+					$currentviewxml.CswAttrXml('visibilityuserid', usernodeid);
 				}
-				// temporary workaround
-				var rolenodeid = v.getvisroleselect().val();
-				if(!isNullOrEmpty(rolenodeid))
-				{
-					rolenodeid = rolenodeid.substr('nodes_'.length)
-				}
-				var usernodeid = v.getvisuserselect().val();
-				if(!isNullOrEmpty(usernodeid))
-				{
-					usernodeid = usernodeid.substr('nodes_'.length)
-				}
-				$currentviewxml.CswAttrXml('visibilityroleid', rolenodeid);
-				$currentviewxml.CswAttrXml('visibilityuserid', usernodeid);
 			}
             var formobile = ($formobilecheckbox.is(':checked') ? 'true' : 'false');
 			$currentviewxml.CswAttrXml('formobile', formobile );
@@ -538,61 +538,6 @@ var CswViewEditor_WizardSteps = {
 			}
 			return rowid;
 		}
-
-		function _makeVisibilitySelect($table, rownum, label)
-		{
-			var $visibilityselect;
-			var $visroleselect;
-			var $visuserselect;
-			IsAdministrator({
-				'Yes': function() {
-						
-						$table.CswTable('cell', rownum, 1).append(label);
-						var $parent = $table.CswTable('cell', rownum, 2);
-						var id = $table.CswAttrDom('id');
-
-						$visibilityselect = $('<select id="' + id + '_vissel" />')
-													.appendTo($parent);
-						$visibilityselect.append('<option value="User">User:</option>');
-						$visibilityselect.append('<option value="Role">Role:</option>');
-						$visibilityselect.append('<option value="Global">Global</option>');
-
-						$visroleselect = $parent.CswNodeSelect('init', {
-																			'ID': id + '_visrolesel', 
-																			'objectclass': 'RoleClass'
-																		}).hide();
-						$visuserselect = $parent.CswNodeSelect('init', {
-																			'ID': id + '_visusersel', 
-																			'objectclass': 'UserClass'
-																		})
-
-						$visibilityselect.change(function() {
-							var val = $visibilityselect.val();
-							if(val === 'Role')
-							{
-								$visroleselect.show();
-								$visuserselect.hide();
-							}
-							else if(val === 'User')
-							{
-								$visroleselect.hide();
-								$visuserselect.show();
-							}
-							else
-							{
-								$visroleselect.hide();
-								$visuserselect.hide();
-							}
-						}); // change
-					} // yes
-			}); // IsAdministrator
-
-			return {
-				'getvisibilityselect': function() { return $visibilityselect; },
-				'getvisroleselect': function() { return $visroleselect; },
-				'getvisuserselect': function() { return $visuserselect; }
-			}
-		} // _makeVisibilitySelect()
 
 		
 		function _makeViewTree(stepno, $div)

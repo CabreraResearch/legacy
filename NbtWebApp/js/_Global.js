@@ -546,24 +546,9 @@ function IsAdministrator(options)
         'Yes': function () { },
         'No': function () { }
     };
-    if (options)
-    {
-        $.extend(o, options);
-    }
+    if (options) $.extend(o, options);
 
-    CswAjaxJSON({
-        url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
-        success: function (data)
-        {
-            if (data.Administrator === "true")
-            {
-                o.Yes();
-            } else
-            {
-                o.No();
-            }
-        }
-    });
+	CswAjaxJSON({		url: '/NbtWebApp/wsNBT.asmx/isAdministrator',		success: function (data)			{				if (data.Administrator === "true")				{					o.Yes();				} else				{					o.No();				}			}	});
 } // IsAdministrator()
 
 // ------------------------------------------------------------------------------------
@@ -795,8 +780,18 @@ function HandleMenuItem(options)
                 break;
 
             case 'multiedit':
-                $a.click(o.onMultiEdit);
-                break;
+               	$a.click(o.onMultiEdit);
+               	break;
+            
+			case 'SaveViewAs':
+				$a.click(function ()
+				{
+					$.CswDialog('AddViewDialog', {
+						'viewid': o.$itemxml.CswAttrXml('viewid')
+					});
+					return false;
+				});
+				break;
 
         }
     }
@@ -807,6 +802,70 @@ function HandleMenuItem(options)
     }
     return $li;
 }
+
+
+
+
+// Used by CswDialog and CswViewEditor
+function makeViewVisibilitySelect($table, rownum, label)
+{
+	var $visibilityselect;
+	var $visroleselect;
+	var $visuserselect;
+
+	IsAdministrator({
+		'Yes': function ()
+		{
+
+			$table.CswTable('cell', rownum, 1).append(label);
+			var $parent = $table.CswTable('cell', rownum, 2);
+			var id = $table.CswAttrDom('id');
+
+			$visibilityselect = $('<select id="' + id + '_vissel" />')
+													.appendTo($parent);
+			$visibilityselect.append('<option value="User">User:</option>');
+			$visibilityselect.append('<option value="Role">Role:</option>');
+			$visibilityselect.append('<option value="Global">Global</option>');
+
+			$visroleselect = $parent.CswNodeSelect('init', {
+				'ID': id + '_visrolesel',
+				'objectclass': 'RoleClass'
+			}).hide();
+			$visuserselect = $parent.CswNodeSelect('init', {
+				'ID': id + '_visusersel',
+				'objectclass': 'UserClass'
+			})
+
+			$visibilityselect.change(function ()
+			{
+				var val = $visibilityselect.val();
+				if (val === 'Role')
+				{
+					$visroleselect.show();
+					$visuserselect.hide();
+				}
+				else if (val === 'User')
+				{
+					$visroleselect.hide();
+					$visuserselect.show();
+				}
+				else
+				{
+					$visroleselect.hide();
+					$visuserselect.hide();
+				}
+			}); // change
+		} // yes
+	}); // IsAdministrator
+
+	return {
+		'getvisibilityselect': function () { return $visibilityselect; },
+		'getvisroleselect': function () { return $visroleselect; },
+		'getvisuserselect': function () { return $visuserselect; }
+	};
+
+} // makeViewVisibilitySelect()
+
 
 
 // ------------------------------------------------------------------------------------
