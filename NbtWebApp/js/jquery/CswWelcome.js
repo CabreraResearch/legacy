@@ -174,20 +174,26 @@
                                                         enabledText: 'Add', 
                                                         disabledText: 'Adding', 
                                                         onclick: function() { 
-										                        var viewid = '';
+										                        var viewtype = '';
+										                        var viewvalue = '';
                                                                 if( !$viewselect.is(':hidden') )
                                                                 {
-                                                                    viewid = $viewselect.CswViewSelect('value');
+																	var selectedView = $viewselect.CswViewSelect('value');
+																	viewtype = selectedView.type;
+																	viewvalue = selectedView.value;
                                                                 }
                                                                 else if( !$searchviewselect.is(':hidden') )
                                                                 {
-                                                                    viewid = $searchviewselect.CswViewSelect('value');
+																	var selectedView = $searchviewselect.CswViewSelect('value');
+																	viewtype = selectedView.type;
+																	viewvalue = selectedView.value;
                                                                 }
                                                                 
                                                                 _addItem({ 
 													                    'AddWelcomeItemUrl': o.AddWelcomeItemUrl,
 													                    'type': $typeselect.val(),
-													                    'welcomepkval': viewid,
+													                    'viewtype': viewtype,
+													                    'viewvalue': viewvalue,
 													                    'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
 													                    'text': $welcometext.val(),
 													                    'iconfilename': $buttonsel.val(),
@@ -335,7 +341,8 @@
 		var a = {
 			'AddWelcomeItemUrl': '', 
 			'type': '',
-			'welcomepkval': '',
+			'viewtype': '',
+			'viewvalue': '',
 			'nodetypeid': '',
 			'text': '',
 			'iconfilename': '',
@@ -349,7 +356,8 @@
         var dataJson = { 
             RoleId: '', 
             Type: a.type,
-            WelcomePkVal: a.welcomepkval, 
+            ViewType: a.viewtype, 
+            ViewValue: a.viewvalue, 
             NodeTypeId: a.nodetypeid, 
             Text: a.text, 
             IconFileName: a.iconfilename

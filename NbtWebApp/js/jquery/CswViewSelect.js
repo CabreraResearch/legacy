@@ -44,6 +44,7 @@
 													_onTreeSelect({
 																	'ID': o.ID,
 																	'ClickDelay': o.ClickDelay,
+																	'$item': optSelect.$item,
 																	'iconurl': optSelect.iconurl,
 																	'type': optSelect.type,
 																	'viewid': optSelect.viewid,
@@ -66,7 +67,10 @@
 		'value': function() 
 			{
 				var $selectdiv = $(this);
-				return $selectdiv.CswAttrDom('selectedValue');
+				return {
+					'type': $selectdiv.CswAttrXml('selectedType'),
+					'value': $selectdiv.CswAttrXml('selectedValue')
+				};
 			}
 	};
 	
@@ -88,6 +92,7 @@
 		var x = {
 				ID: '',
 				ClickDelay: 300,
+				$item: '',
 				iconurl: '',
 				type: '',
 				viewid: '',
@@ -115,7 +120,20 @@
 		$cell2.append(x.viewname);
 
 		x.$selectdiv.CswComboBox( 'TopContent', $newTopContent );
-		x.$selectdiv.CswAttrDom('selectedValue', x.viewid);
+		x.$selectdiv.CswAttrXml('selectedType', x.type);
+		switch(x.type.toLowerCase())
+		{
+			case 'view':
+				x.$selectdiv.CswAttrXml('selectedValue', x.viewid);
+				break;
+			case 'action':
+				x.$selectdiv.CswAttrXml('selectedValue', x.actionid);
+				break;
+			case 'report':
+				x.$selectdiv.CswAttrXml('selectedValue', x.reportid);
+				break;
+		}
+
 		setTimeout(function() { x.$selectdiv.CswComboBox( 'toggle'); }, x.ClickDelay);
 		x.onSelect({
 					iconurl: x.iconurl,

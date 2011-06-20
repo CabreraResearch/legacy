@@ -251,25 +251,25 @@ namespace ChemSW.Nbt.WebServices
 
 			// Equipment
 			if( FindEquipmentViewId.isSet() )
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Search, CswViewListTree.ViewType.View, FindEquipmentViewId.get(), Int32.MinValue, string.Empty, 1, 1, "magglass.gif", RoleId );
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Search, CswViewListTree.ViewType.View, FindEquipmentViewId.ToString(), Int32.MinValue, string.Empty, 1, 1, "magglass.gif", RoleId );
 			if( EquipmentNodeTypeId != Int32.MinValue )
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, Int32.MinValue, EquipmentNodeTypeId, string.Empty, 5, 1, "", RoleId );
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, string.Empty, EquipmentNodeTypeId, string.Empty, 5, 1, "", RoleId );
 			if( EquipmentByTypeViewId.isSet() )
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, EquipmentByTypeViewId.get(), Int32.MinValue, "All Equipment", 7, 1, "", RoleId );
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, EquipmentByTypeViewId.ToString(), Int32.MinValue, "All Equipment", 7, 1, "", RoleId );
 
 			// Problems
 			if( ProblemsOpenViewId.isSet())
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, ProblemsOpenViewId.get(), Int32.MinValue, "Problems", 1, 3, "warning.gif", RoleId );
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, ProblemsOpenViewId.ToString(), Int32.MinValue, "Problems", 1, 3, "warning.gif", RoleId );
 			if( ProblemNodeTypeId != Int32.MinValue )
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, Int32.MinValue, ProblemNodeTypeId, "Add New Problem", 5, 3, "", RoleId );
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, string.Empty, ProblemNodeTypeId, "Add New Problem", 5, 3, "", RoleId );
 
 			// Schedules and Tasks
 			if( TasksOpenViewId.isSet())
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, TasksOpenViewId.get(), Int32.MinValue, "Tasks", 1, 5, "clipboard.gif", RoleId );
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, TasksOpenViewId.ToString(), Int32.MinValue, "Tasks", 1, 5, "clipboard.gif", RoleId );
 			if( TaskNodeTypeId != Int32.MinValue )
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, Int32.MinValue, TaskNodeTypeId, "Add New Task", 5, 5, "", RoleId );
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, string.Empty, TaskNodeTypeId, "Add New Task", 5, 5, "", RoleId );
 			if( ScheduleNodeTypeId != Int32.MinValue )
-				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, Int32.MinValue, ScheduleNodeTypeId, "Scheduling", 7, 5, "", RoleId );
+				_AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, string.Empty, ScheduleNodeTypeId, "Scheduling", 7, 5, "", RoleId );
 
 			WelcomeUpdate.update( WelcomeTable );
 		} // ResetWelcomeItems()
@@ -277,7 +277,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Adds a welcome component to the welcome page
 		/// </summary>
-		public void AddWelcomeItem( WelcomeComponentType ComponentType, CswViewListTree.ViewType ViewType, Int32 PkValue,
+		public void AddWelcomeItem( WelcomeComponentType ComponentType, CswViewListTree.ViewType ViewType, string PkValue,
 									Int32 NodeTypeId, string DisplayText, Int32 Row, Int32 Column, string ButtonIcon, string strRoleId )
 		{
 			CswPrimaryKey RolePk = new CswPrimaryKey();
@@ -292,7 +292,7 @@ namespace ChemSW.Nbt.WebServices
 			WelcomeUpdate.update( WelcomeTable );
 		} // AddWelcomeItem()
 
-		private void _AddWelcomeItem( DataTable WelcomeTable, WelcomeComponentType ComponentType, CswViewListTree.ViewType ViewType, Int32 PkValue,
+		private void _AddWelcomeItem( DataTable WelcomeTable, WelcomeComponentType ComponentType, CswViewListTree.ViewType ViewType, string PkValue,
 									  Int32 NodeTypeId, string DisplayText, Int32 Row, Int32 Column, string ButtonIcon, Int32 RoleId )
 		{
 			if( Row == Int32.MinValue )
@@ -333,13 +333,13 @@ namespace ChemSW.Nbt.WebServices
 					switch( ViewType )
 					{
 						case CswViewListTree.ViewType.View:
-							NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( PkValue );
+							NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( new CswNbtViewId( PkValue ).get() );
 							break;
 						case CswViewListTree.ViewType.Action:
-							NewWelcomeRow["actionid"] = CswConvert.ToDbVal( PkValue );
+							NewWelcomeRow["actionid"] = CswConvert.ToDbVal( CswConvert.ToInt32( PkValue ) );
 							break;
 						case CswViewListTree.ViewType.Report:
-							NewWelcomeRow["reportid"] = CswConvert.ToDbVal( PkValue );
+							NewWelcomeRow["reportid"] = CswConvert.ToDbVal( CswConvert.ToInt32( PkValue ) );
 							break;
 						default:
 							throw new CswDniException( "You must select a view", "No view was selected for new Welcome Page Component" );
@@ -350,7 +350,7 @@ namespace ChemSW.Nbt.WebServices
 				case WelcomeComponentType.Search:
 					if( ViewType == CswViewListTree.ViewType.View )
 					{
-						NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( PkValue );
+						NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( new CswNbtViewId( PkValue ).get() );
 						NewWelcomeRow["buttonicon"] = ButtonIcon;
 						NewWelcomeRow["displaytext"] = DisplayText;
 					}
