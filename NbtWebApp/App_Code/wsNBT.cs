@@ -9,6 +9,7 @@ using System.Web.Services;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using ChemSW.Core;
 using ChemSW.Config;
+using ChemSW.Log;
 using ChemSW.Nbt.Security;
 using ChemSW.NbtWebControls;
 using ChemSW.Security;
@@ -2170,11 +2171,8 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string collectClientLogInfo( string Context, string UserName, string CustomerId, string LogInfo )
+        public void collectClientLogInfo( string Context, string UserName, string CustomerId, string LogInfo )
         {
-            JObject ReturnVal = new JObject();
-            //This could be Mobile, we don't care about Authentication for now
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Authenticated;
             try
             {
                 _initResources();
@@ -2185,22 +2183,15 @@ namespace ChemSW.Nbt.WebServices
                 {
                     string LogMessage = @"Application context '" + Context + "' requested logging for username '" + UserName + "' on AccessId '" + CustomerId + "'." 
                                         + " log message = '" + LogInfo + "'";
-                    _CswNbtResources.logMessage( LogMessage );
-
-                    ReturnVal.Add( new JProperty( "success", true ) );
+                    throw new CswDniException( "Client logging", LogMessage );
                 }
                 _deInitResources();
             }
 
             catch( Exception ex )
             {
-                ReturnVal = jError( ex );
+                _CswNbtResources.CswLogger.reportError( ex );
             }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
         } // UpdateProperties()
 
         #endregion Logging
