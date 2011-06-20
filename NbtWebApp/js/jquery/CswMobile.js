@@ -437,26 +437,46 @@
 
         function _toggleLogging()
         {
-            var $loggingBtn = $('.debug');
-            if ($loggingBtn.hasClass('debug-off'))
-            {
-                doLogging(true);
-                $loggingBtn.removeClass('debug-off')
-                            .addClass('debug-on')
-                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                            .text('Stop Log')
-                            .end();
+            var logging = !doLogging();            
+            doLogging(logging);
+            if(logging) {
+                setStartLog();
+            } 
+            else {
+                setStopLog();
             }
-            else if ($loggingBtn.hasClass('debug-on'))
+
+        }
+
+        function setStartLog()
+        {
+            if( doLogging() )
             {
-                doLogging(false);
+                var now = new Date();
+                cacheLogInfo('Log started ' + now.toDateString() );
+                var $loggingBtn = $('.debug');
+                $loggingBtn.removeClass('debug-off')
+                           .addClass('debug-on')
+                           .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                           .text('Sync Log')
+                           .end();
+            }
+        }
+
+        function setStopLog()
+        {
+            if( !doLogging() )
+            {
+                var $loggingBtn = $('.debug');
+                var now = new Date();
+                cacheLogInfo('Log ended ' + now.toDateString() );
                 var dataJson = {
-                    Context: 'CswMobile',
-                    UserName: UserName,
-                    CustomerId: localStorage['customerid'],
-                    LogInfo: sessionStorage['debuglog']
+                    'Context': 'CswMobile',
+                    'UserName': localStorage['username'],
+                    'CustomerId': localStorage['customerid'],
+                    'LogInfo': sessionStorage['debuglog']
                 };
-                
+              
                 CswAjaxJSON({
                     url: opts.SendLogUrl,
                     data: dataJson,
@@ -1547,8 +1567,9 @@
                 
                 $loggingBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
                                                    ID: p.DivId + '_debuglog', 
-                                                   value: 'Start Log',
-                                                   cssclass: 'debug debug-off' });
+                                                   value: doLogging() ? 'Sync Log' : 'Start Log',
+                                                   cssclass: 'debug' })
+                                         .addClass( doLogging() ? 'debug-on' : 'debug-off');
             }
 
             if ( p.HideOnlineButton ) { 
@@ -1816,7 +1837,6 @@
                                                                  }
                                                 })
                                                 .CswAttrXml({'data-role': 'slider'});
-                                                
 
             var $retDiv = _addPageDivToBody({
                     DivId: 'help',
