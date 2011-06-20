@@ -1060,6 +1060,7 @@ var CswMobile_LoggingLevel = {
 
                         var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
                                             .appendTo($prop);
+                     
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
                         {
                             $corAction.css('display','none');
@@ -1158,7 +1159,7 @@ var CswMobile_LoggingLevel = {
                 case "Password": break;
                 case "Quantity": if (name.contains( IdStr )) $sftomodify = $sf_value; break;
                 case "Question":
-                    if (name.contains( makeSafeId({ID: IdStr, suffix: 'com'}) ))
+                    if (name.contains( makeSafeId({ID: IdStr, suffix: 'input'}) ))
                     {
                         $sftomodify = $sf_comments;
                     }
