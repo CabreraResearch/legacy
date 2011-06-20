@@ -961,9 +961,14 @@ var CswMobile_LoggingLevel = {
                                 .appendTo($retHtml);
 
             //var Html = '<div id="' + IdStr + '_propname"';
-            if (FieldType === "Question" && !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
+            if (FieldType === "Question" && 
+                !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) && 
+                isNullOrEmpty(sf_correctiveaction) )
             {
                 $propNameDiv.addClass('OOC');
+            }
+            else {
+                $propNameDiv.removeClass('OOC');
             }
             //$retHtml.append('<br/>');
 
