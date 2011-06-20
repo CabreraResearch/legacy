@@ -9,14 +9,9 @@
 <body id="CswMobile_Body">
 	<script type="text/javascript">
 	    
-        var debugLevel;
-        var doDebug;
-        
         try {
-            if(Modernizr.localstorage) {
+            if( hasWebStorage() ) {
 
-                debugLevel = localStorage['debuglevel'];
-                doDebug = isTrue( localStorage['dodebug'] );            
 		        // override value in _Globals.js
 		        homeUrl = "Mobile.html";
 
@@ -29,7 +24,7 @@
             }
         }
         catch(e) {
-            if(doDebug) {
+            if( doLogging() ) {
                 errorHandler(e,true,true);
             }
             else {

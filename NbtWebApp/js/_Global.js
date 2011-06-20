@@ -1219,7 +1219,7 @@ function iterate(obj)
 }
 
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
-function log(s, includeCallStack, toCswStorage)
+function log(s, includeCallStack)
 {
     /// <summary>Outputs a message to the console log(Webkit,FF) or an alert(IE)</summary>
     /// <param name="s" type="String"> String to output </param>
@@ -1232,18 +1232,7 @@ function log(s, includeCallStack, toCswStorage)
 
     try
     {
-        if (toCswStorage && Modernizr.sessionstorage)
-        {
-            var logStorage = new CswStorage(sessionStorage);
-            var log = logStorage.getItem('debuglog');
-            log += s;
-            if (!isNullOrEmpty(extendedLog)) log += ',' + extendedLog;
-            logStorage.setItem('debuglog', log);
-        }
-        else
-        {
-            console.log(s, extendedLog);
-        }
+        console.log(s, extendedLog);
     } catch (e)
     {
         alert(s);
@@ -1271,9 +1260,72 @@ function getCallStack()
 
 function errorHandler(error, includeCallStack, includeLocalStorage, toCswStorage)
 {
-    if(Modernizr.localstorage && includeLocalStorage) log(localStorage);
+    if( hasWebStorage() && includeLocalStorage) log(localStorage);
     log('localStorage Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack, toCswStorage);
 }
+
+//#region Persistent Logging
+
+function doLogging(value)
+{
+    var ret = undefined;
+    if (hasWebStorage())
+    {
+        if (arguments.length === 1)
+        {
+            localStorage['doLogging'] = isTrue(value);
+        }
+        var ret = isTrue(localStorage['doLogging']);
+    }
+    return ret;
+}
+
+function debugOn(value)
+{
+    var ret = undefined;
+    if (hasWebStorage())
+    {
+        if (arguments.length === 1)
+        {
+            localStorage['debugOn'] = isTrue(value);
+        }
+        var ret = isTrue(localStorage['debugOn']);
+    }
+    return ret;
+}
+
+function cacheLogInfo(debugStr, includeCallStack)
+{
+    if ( doLogging() )
+    {
+        if (hasWebStorage())
+        {
+            var logStorage = new CswStorage(sessionStorage);
+            var log = logStorage.getItem('debuglog');
+            log += debugStr;
+
+            var extendedLog = '';
+            if (isTrue(includeCallStack)) {
+                extendedLog = getCallStack();
+            }
+            if (!isNullOrEmpty(extendedLog)) {
+                log += ',' + extendedLog;
+            }
+            logStorage.setItem('debuglog', log);
+        }
+    }
+}
+
+function purgeLogInfo()
+{
+    if (hasWebStorage())
+    {
+        var logStorage = new CswStorage(sessionStorage);
+        logStorage.removeItem('debuglog');
+    }
+}
+
+//#endregion Persistent Logging
 
 // ------------------------------------------------------------------------------------
 // Browser Compatibility
@@ -1286,4 +1338,10 @@ if (typeof String.prototype.trim !== 'function')
     {
         return this.replace(/^\s+|\s+$/g, '');
     }
+}
+
+function hasWebStorage(localOnly)
+{
+    var ret = (Modernizr.localstorage && (localOnly || Modernizr.sessionstorage)); 
+    return ret;
 }
