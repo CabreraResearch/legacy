@@ -1,1 +1,1 @@
-Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Debug\nbtupdt -all -mode test -ignore 006,007,014
+C:\Kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\nbtupdt -all -mode test -ignore 006,007,014

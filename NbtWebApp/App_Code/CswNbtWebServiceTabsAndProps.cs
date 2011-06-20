@@ -295,40 +295,27 @@ namespace ChemSW.Nbt.WebServices
 			if( EditMode == NodeEditMode.AddInPopup )
 			{
 				Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+				_CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
 			}
 			else
 			{
-				//CswPrimaryKey NodePk = new CswPrimaryKey();
-				//NodePk.FromString( NodePkString );
-				//if( !string.IsNullOrEmpty( NodeKey ) )
-				//{
-				//    NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-				//    if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-				//    {
-				//        Node = _CswNbtResources.Nodes[NbtNodeKey];
-				//    }
-				//}
-
 				Node = _getNode( NodeId, NodeKey );
 			}
 
-			if( Node != null )
+			if( Node != null &&
+				( EditMode == NodeEditMode.AddInPopup &&
+				  _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) ) ||
+				_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Node.NodeType, Node, null ) )
 			{
-				foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
+                foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
 				{
-					_applyPropXml( Node, PropNode );
+                    _applyPropXml( Node, PropNode );
 				}
 
 				// BZ 8517 - this sets sequences that have setvalonadd = 0
 				_CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( Node );
 
 				Node.postChanges( false );
-
-				// case 21267 
-				if( Node.NodeId == _CswNbtResources.CurrentNbtUser.UserNode.NodeId )
-				{
-					_CswNbtResources.CurrentUser = CswNbtNodeCaster.AsUser( Node );
-				}
 
 				if( NbtNodeKey == null && View != null)
 				{
@@ -359,9 +346,9 @@ namespace ChemSW.Nbt.WebServices
 			return ret;
 		} // saveProps()
 
-
 		public bool copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] PropIds )
 		{
+			bool ret = true;
 			CswNbtNodeKey SourceNodeKey = new CswNbtNodeKey( _CswNbtResources, SourceNodeKeyStr );
 			if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
 			{
@@ -373,42 +360,45 @@ namespace ChemSW.Nbt.WebServices
 						CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
 						CopyToNodePk.FromString( NodeIdStr );
 						CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
-						if( CopyToNode != null )
+						if( CopyToNode != null &&
+							_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.NodeType, CopyToNode, null ) )
 						{
-							foreach( string PropIdAttr in PropIds )
+							foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
+																					   .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
 							{
-								CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
-								CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
 								CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
-							} // foreach( string PropIdAttr in PropIds )
+							}
 
 							CopyToNode.postChanges( false );
 						} // if( CopyToNode != null )
+						else
+						{
+							ret = false;
+						}
 					} // foreach( string NodeIdStr in CopyNodeIds )
 				} // if(SourceNode != null)
 			} // if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
-			return true;
+			return ret;
 		} // copyPropValues()
 
-		private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
-		{
-			CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropNode.Attributes["id"].Value );
+        private void _applyPropXml( CswNbtNode Node, XmlNode PropNode )
+        {
+            CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropNode.Attributes["id"].Value );
 
-			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
-			Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
+            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
+            Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
 
-			// Recurse on sub-props
-			XmlNode SubPropsNode = CswXmlDocument.ChildXmlNode( PropNode, "subprops" );
-			if( SubPropsNode != null )
-			{
-				foreach( XmlNode ChildPropNode in SubPropsNode.ChildNodes )
-				{
-					_applyPropXml( Node, ChildPropNode );
-				}
-			}
+            // Recurse on sub-props
+            XmlNode SubPropsNode = CswXmlDocument.ChildXmlNode( PropNode, "subprops" );
+            if( SubPropsNode != null )
+            {
+                foreach( XmlNode ChildPropNode in SubPropsNode.ChildNodes )
+                {
+                    _applyPropXml( Node, ChildPropNode );
+                }
+            }
 
-		} // _applyPropXml
-
+        } // _applyPropXml
 
 		public bool ClearPropValue( string PropIdAttr, bool IncludeBlob )
 		{

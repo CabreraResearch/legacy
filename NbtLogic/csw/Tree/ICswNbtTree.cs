@@ -150,6 +150,8 @@ namespace ChemSW.Nbt
         /// </summary>
         string ViewName { get; }
 
+		bool IsFullyPopulated { get; }
+
 
         /// <summary>
         /// Returns a CswNbtNode indexed by a CswNbtNodeKey

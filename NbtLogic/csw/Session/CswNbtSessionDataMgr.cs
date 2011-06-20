@@ -62,24 +62,18 @@ namespace ChemSW.Nbt
             CswTableSelect SessionDataSelect = _CswNbtResources.makeCswTableSelect( "getQuickLaunchXml_select", "session_data" );
             Collection<OrderByClause> OrderBy = new Collection<OrderByClause>();
             OrderBy.Add( new OrderByClause( SessionDataColumn_PrimaryKey, OrderByType.Descending ) );
-            DataTable SessionDataTable = SessionDataSelect.getTable( "where " + SessionDataColumn_SessionId + "='" + _CswNbtResources.Session.SessionId + "' and " + SessionDataColumn_QuickLaunch + " = '" + CswConvert.ToDbVal( true ).ToString() + "' and ( " + SessionDataColumn_ViewId + " is not null or " + SessionDataColumn_ActionId + " is not null )", OrderBy );
+            DataTable SessionDataTable = SessionDataSelect.getTable( "where " + SessionDataColumn_SessionId + "='" + _CswNbtResources.Session.SessionId + "' and " + SessionDataColumn_QuickLaunch + " = '" + CswConvert.ToDbVal( true ).ToString() + "'", OrderBy );
             foreach( DataRow Row in SessionDataTable.Rows )
             {
                 XElement ThisItem = new XElement( "item" );
                 ThisItem.SetAttributeValue( "launchtype", Row[SessionDataColumn_SessionDataType].ToString() );
                 ThisItem.SetAttributeValue( "text", Row[SessionDataColumn_Name].ToString() );
                 ThisItem.SetAttributeValue( "viewmode", Row[SessionDataColumn_ViewMode].ToString() );
+                ThisItem.SetAttributeValue( "itemid", new CswNbtSessionDataId( CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] ) ).ToString() );
 
                 Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
-                Int32 ViewId = CswConvert.ToInt32( Row[SessionDataColumn_ViewId] );
-                if( Int32.MinValue != ViewId )
+                if( ActionId != Int32.MinValue )
                 {
-                    ThisItem.SetAttributeValue( "itemid", new CswNbtViewId( ViewId ).ToString() );
-                    ThisItem.SetAttributeValue( "url", "" );
-                }
-                else if( ActionId != Int32.MinValue )
-                {
-                    ThisItem.SetAttributeValue( "itemid", new CswNbtSessionDataId( CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] ) ).ToString() );
                     ThisItem.SetAttributeValue( "url", _CswNbtResources.Actions[ActionId].Url );
                 }
                 Root.Add( ThisItem );

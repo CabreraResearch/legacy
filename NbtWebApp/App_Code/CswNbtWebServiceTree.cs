@@ -210,6 +210,7 @@ namespace ChemSW.Nbt.WebServices
 					CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
 					ThisNodeId = IDPrefix + ThisNode.NodeId.ToString();
 					ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
+	
 				}
 				else if( ThisNodeKey.NodeSpecies == NodeSpecies.Group )
 				{
@@ -218,8 +219,11 @@ namespace ChemSW.Nbt.WebServices
 				}
 
 				string ThisNodeState = "closed";
-				if( ThisNodeKey.NodeSpecies == NodeSpecies.More )
+				if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
+					( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) )
+				{
 					ThisNodeState = "leaf";
+				}
 
 				var ParentNode = ( new XElement( "item",
 										new XAttribute( "id", ThisNodeId ),

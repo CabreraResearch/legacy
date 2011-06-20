@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtObjClassEquipmentType TypeNodeAsType = CswNbtNodeCaster.AsEquipmentType( TypeNode );                    
                     CswDelimitedString PartsString = new CswDelimitedString( '\n' );
-                    PartsString.FromString( TypeNodeAsType.Parts.Text );
+					PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
                     this.Parts.YValues = PartsString;
                 }
             }

@@ -14,7 +14,7 @@ using ChemSW.Nbt.Schema;
 using ChemSW.Nbt;
 using ChemSW.DB;
 using ChemSW.Nbt.Security;
-
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.Schema.CmdLn
 {
@@ -138,9 +138,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         private void _makeResources( string AccessId )
         {
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ), false, false );
-            _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
-            _CswConsoleOutput = new CswConsoleOutput( _CswNbtResources.CswLogger );
+            //_CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
+			_CswNbtResources.InitCurrentUser = InitUser;
 
 
             if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
@@ -160,6 +159,10 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         }//_makeResources()
 
+		public ICswUser InitUser( ICswResources Resources )
+		{
+			return new CswNbtSystemUser( Resources, "_SchemaUpdaterUser" );
+		}
 
         private ICswSchemaScripts _CswSchemaScripts = null;
         private Int32 _StartAtTestCase = 0;
@@ -172,6 +175,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
             {
 
                 _convertArgsToDictionary( args );
+                _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ), false, false );
+                _CswConsoleOutput = new CswConsoleOutput( _CswNbtResources.CswLogger );
 
                 if( _UserArgs.ContainsKey( _ArgKey_StartAtTestCase ) )
                 {

@@ -138,6 +138,10 @@ foreach my $component (@components)
 
 &runCommand( "net stop \"NbtSchedService\"");
 
+&runCommand( "net stop \"NbtSchedService\"");
+
+&runCommand( "net stop \"NbtSchedService\"");
+
 &runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
 
 &runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
@@ -145,7 +149,6 @@ foreach my $component (@components)
 
 &runCommand( "net start \"ChemSW Log Service\"");
 
-&runCommand( "net start \"NbtSchedService\"");
 
 #---------------------------------------------------------------------------------
 # 4. back up existing schemata
@@ -168,16 +171,19 @@ my $masterpassword = $schemata{$masterschema};
 &runCommand( "echo exit | sqlplus ". $masterschema ."/". $masterpassword ."\@". $orclserver ." \@". $repopaths{"Nbt"} ."/Schema/nbt_finalize_ora.sql" );
 
 #---------------------------------------------------------------------------------
-# 6. run command line schema update tester
-
-&runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/TestUpdtCurrent.bat");
-
-#---------------------------------------------------------------------------------
-# 7. run command line schema updater
+# 6. run command line schema updater
 
 &runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/Release/NbtUpdt.exe -all");
 
 #---------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------
+# 7. start schedule service
+
+&runCommand( "net start \"NbtSchedService\"");
+
+#---------------------------------------------------------------------------------
+
 # 8. tags
 
 foreach my $component (@components)

@@ -251,15 +251,15 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Delegate, when a new nodetype is created
         /// </summary>
-        public delegate void NewNodeTypeEventHandler( CswNbtMetaDataNodeType NewNodeType );
+        public delegate void NewNodeTypeEventHandler( CswNbtMetaDataNodeType NewNodeType, bool IsCopy );
         /// <summary>
         /// Event, when a new nodetype is created
         /// </summary>
         public event NewNodeTypeEventHandler OnMakeNewNodeType = null;
-        void _CswNbtMetaData_OnMakeNewNodeType( CswNbtMetaDataNodeType NewNodeType )
+        void _CswNbtMetaData_OnMakeNewNodeType( CswNbtMetaDataNodeType NewNodeType, bool IsCopy )
         {
             if( OnMakeNewNodeType != null )
-                OnMakeNewNodeType( NewNodeType );
+				OnMakeNewNodeType( NewNodeType, IsCopy );
         }
 
         /// <summary>
@@ -435,7 +435,7 @@ namespace ChemSW.Nbt
             _CswResources.ClearCache();
 
             initModules();
-            _initNotifications( true );
+            //_initNotifications( true );
             _ActionCollection = new CswNbtActionCollection( this );
         }
         /// <summary>
@@ -710,14 +710,18 @@ namespace ChemSW.Nbt
         /// The collection of variables and values in the configuration_variables table
         /// </summary>
         public ICollection ConfigVariables { get { return _CswResources.ConfigVariables; } }
-        /// <summary>
-        /// Information associated with the currently logged in user, Nbt-specific.
-        /// </summary>
-        public ICswNbtUser CurrentNbtUser { get { return _CswResources.CurrentUser as ICswNbtUser; } set { _CswResources.CurrentUser = (ICswNbtUser) value; } }
-        /// <summary>
+		/// <summary>
+		/// Information associated with the currently logged in user, Nbt-specific.
+		/// </summary>
+		public ICswNbtUser CurrentNbtUser { get { return _CswResources.CurrentUser as ICswNbtUser; } } //set { _CswResources.CurrentUser = (ICswNbtUser) value; } }
+		/// <summary>
+		/// Information associated with the currently logged in user, Nbt-specific.
+		/// </summary>
+		public InitCurrentUserHandler InitCurrentUser { get { return _CswResources.InitCurrentUser; } set { _CswResources.InitCurrentUser = value; } }
+		/// <summary>
         /// Information associated with the currently logged in user, application-independent.
         /// </summary>
-        public ICswUser CurrentUser { get { return _CswResources.CurrentUser as ICswUser; } set { _CswResources.CurrentUser = (ICswUser) value; } }
+		public ICswUser CurrentUser { get { return _CswResources.CurrentUser as ICswUser; } } //set { _CswResources.CurrentUser = (ICswUser) value; } }
         /// <summary>
         /// The SMTP interface
         /// </summary>

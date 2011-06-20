@@ -17,6 +17,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
+using ChemSW.Security;
 using ChemSW.Config;
 using ChemSW.DB;
 
@@ -274,8 +275,10 @@ namespace ChemSW.Nbt.Sched
             _CswNbtResources.AccessId = AccessId;
             _CswNbtResources.refreshDataDictionary();
             //_CswNbtResources.CurrentUser = CswNbtNodeCaster.AsUser( _CswNbtResources.Nodes.makeUserNodeFromUsername( "ScheduleRunner" ) );
-            _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchedItemRunnerUser" );
-            _CswNbtResources.MetaData.refreshAll();
+            //_CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchedItemRunnerUser" );
+			_CswNbtResources.InitCurrentUser = InitUser;
+
+			_CswNbtResources.MetaData.refreshAll();
 
             //**** objects configuration
             _CswNbtSchdItemFactory = new CswNbtSchdItemFactory( _CswNbtResources );
@@ -285,6 +288,11 @@ namespace ChemSW.Nbt.Sched
 
 
         }//_initCycleResources()
+
+		public ICswUser InitUser( ICswResources Resources )
+		{
+			return new CswNbtSystemUser( _CswNbtResources, "_SchedItemRunnerUser" );
+		}
 
         public void start()
         {

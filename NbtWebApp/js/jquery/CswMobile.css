@@ -1,0 +1,10 @@
+﻿.ui-li .ui-btn-text a.ui-link-inherit .ui-li-desc .ui-btn-inner
+{
+    color: Red;
+    white-space: normal;
+}
+
+.csw-li
+{
+   white-space: normal;
+}

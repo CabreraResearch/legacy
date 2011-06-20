@@ -110,8 +110,6 @@
 					'onSelect': handleItemSelect
 				}); // CswViewSelect
 
-				refreshQuickLaunch();
-
 				if (view.viewid === '')
 				{
 					refreshWelcome();
@@ -120,13 +118,13 @@
 					handleItemSelect({ 'viewid': view.viewid, viewmode: view.viewmode });
 				}
 			} // onAuthenticate
-		});     // CswLogin
+		});      // CswLogin
 
 	} // initAll()
 
 	function refreshQuickLaunch()
 	{
-		$('#QuickLaunch').contents().remove();
+		$('#QuickLaunch').empty();
 
 		$('#QuickLaunch').CswQuickLaunch({
 			'onLinkClick': handleItemSelect
@@ -199,7 +197,8 @@
             'onAddComponent': refreshWelcome
         });
         refreshMainMenu();
-	} // refreshWelcome()
+        refreshQuickLaunch();
+    } // refreshWelcome()
 
 	function handleItemSelect(options)
 	{
@@ -463,13 +462,18 @@
                 });
             }
         }
+        var onSearchClose = function ()
+        {
+            clear({ centertop: true });
+        }
         var $search = $('#CenterTopDiv').CswSearch({
                                     'parentviewid': o.viewid,
                                     'cswnbtnodekey': o.cswnbtnodekey,
                                     'nodetypeid': o.nodetypeid,
                                     'ID': o.ID,
                                     'onSearchSubmit': onSearchSubmit,
-                                    'onClearSubmit': onClearSubmit
+                                    'onClearSubmit': onClearSubmit,
+                                    'onSearchClose': onSearchClose
                                 });
         return $search;
     }

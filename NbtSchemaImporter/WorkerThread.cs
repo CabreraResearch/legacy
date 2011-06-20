@@ -87,9 +87,14 @@ namespace ChemSW.Nbt.Schema
 
             _CswLogger = _CswNbtResources.CswLogger;
 
-            _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaImporterUser" );
+            //_CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaImporterUser" );
+			_CswNbtResources.InitCurrentUser = InitUser;
         }//constructor
 
+		public ICswUser InitUser( ICswResources Resources )
+		{
+			return new CswNbtSystemUser( Resources, "_SchemaImporterUser" );
+		}
 
         public CswDataTable getDbInstances()
         {

@@ -646,150 +646,86 @@ namespace ChemSW.Nbt.WebServices
     #region CswViewBuilderProp Class
     public class CswViewBuilderProp
     {
-        private Int32 _MetaDataPropId = Int32.MinValue;
-        public Int32 MetaDataPropId
-        {
-            get { return _MetaDataPropId; }
-        }
-
-        private CswNbtViewProperty _ViewProp = null;
-        public CswNbtViewProperty ViewProp
-        {
-            get { return _ViewProp; }
-        }
-
-        private string _MetaDataPropName = string.Empty;
-        public string MetaDataPropName
-        {
-            get { return _MetaDataPropName; }
-        }
-
-        private string _MetaDataPropNameWithQuestionNo = string.Empty;
-        public string MetaDataPropNameWithQuestionNo
-        {
-            get { return _MetaDataPropNameWithQuestionNo; }
-        }
-
-        private string _MetaDataTypeName = string.Empty;
-        public string MetaDataTypeName
-        {
-            get { return _MetaDataTypeName; }
-        }
-
-        private CswNbtMetaDataFieldType _FieldType;
-        public CswNbtMetaDataFieldType FieldType
-        {
-            get { return _FieldType; }
-        }
-
-        private ICswNbtFieldTypeRule _FieldTypeRule = null;
-        public ICswNbtFieldTypeRule FieldTypeRule
-        {
-            get { return _FieldTypeRule; }
-        }
-           
-        private CswCommaDelimitedString _ListOptions = new CswCommaDelimitedString();
-        public CswCommaDelimitedString ListOptions
-        {
-            get { return _ListOptions; }
-        }
-
-        private CswNbtViewProperty.CswNbtPropType _Type = CswNbtViewProperty.CswNbtPropType.Unknown;
-        public CswNbtViewProperty.CswNbtPropType Type
-        {
-            get { return _Type; }
-        }
-
-        private CswNbtViewRelationship.RelatedIdType _RelatedIdType = CswNbtViewRelationship.RelatedIdType.Unknown;
-        public CswNbtViewRelationship.RelatedIdType RelatedIdType
-        {
-            get { return _RelatedIdType; }
-        }
-        private ArrayList _Filters = new ArrayList();
-        public ArrayList Filters
-        {
-            get { return _Filters; }
-        }
-
-        private bool _SortBy = false;
-        public bool SortBy
-        {
-            get { return _SortBy; }
-        }
-
-        private CswNbtViewProperty.PropertySortMethod _SortMethod = CswNbtViewProperty.PropertySortMethod.Ascending;
-        public CswNbtViewProperty.PropertySortMethod SortMethod
-        {
-            get { return _SortMethod; }
-        }
-
-        private Int32 _Width = Int32.MinValue;
-        public Int32 Width
-        {
-            get { return _Width; }
-        }
+        //private Int32 _MetaDataPropId = Int32.MinValue;
+        public readonly Int32 MetaDataPropId = Int32.MinValue;
+        public readonly CswNbtViewProperty ViewProp = null;
+        public readonly string MetaDataPropName = string.Empty;
+        public readonly string MetaDataPropNameWithQuestionNo = string.Empty;
+        public readonly string MetaDataTypeName = string.Empty;
+        public readonly CswNbtMetaDataFieldType FieldType;
+        public readonly ICswNbtFieldTypeRule FieldTypeRule = null;
+        public readonly CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
+        public readonly CswNbtViewProperty.CswNbtPropType Type = CswNbtViewProperty.CswNbtPropType.Unknown;
+        public readonly CswNbtViewRelationship.RelatedIdType RelatedIdType = CswNbtViewRelationship.RelatedIdType.Unknown;
+        public readonly ArrayList Filters = new ArrayList();
+        public readonly bool SortBy = false;
+        public readonly CswNbtViewProperty.PropertySortMethod SortMethod = CswNbtViewProperty.PropertySortMethod.Ascending;
+        public readonly Int32 Width = Int32.MinValue;
+        public readonly string PropName = string.Empty;
 
         public CswViewBuilderProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
-            _FieldType = NodeTypeProp.FieldType;
-            _ListOptions.FromString( NodeTypeProp.ListOptions );
-            _RelatedIdType = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
-            _MetaDataPropNameWithQuestionNo = NodeTypeProp.PropNameWithQuestionNo;
-            _MetaDataPropId = NodeTypeProp.FirstPropVersionId;
-            _MetaDataPropName = NodeTypeProp.PropName;
-            _MetaDataTypeName = NodeTypeProp.NodeType.NodeTypeName;
-            _FieldTypeRule = NodeTypeProp.FieldTypeRule;
-            _Type = CswNbtViewProperty.CswNbtPropType.NodeTypePropId;
+            FieldType = NodeTypeProp.FieldType;
+            ListOptions.FromString( NodeTypeProp.ListOptions );
+            RelatedIdType = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
+            MetaDataPropNameWithQuestionNo = NodeTypeProp.PropNameWithQuestionNo;
+            MetaDataPropId = NodeTypeProp.FirstPropVersionId;
+            MetaDataPropName = NodeTypeProp.PropName;
+            MetaDataTypeName = NodeTypeProp.NodeType.NodeTypeName;
+            FieldTypeRule = NodeTypeProp.FieldTypeRule;
+            Type = CswNbtViewProperty.CswNbtPropType.NodeTypePropId;
+            PropName = MetaDataPropName;
         } //ctor Ntp
 
         public CswViewBuilderProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
         {
-            _FieldType = ObjectClassProp.FieldType;
-            _ListOptions.FromString( ObjectClassProp.ListOptions );
-            _RelatedIdType = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
-            _MetaDataPropNameWithQuestionNo = ObjectClassProp.PropNameWithQuestionNo;
-            _MetaDataPropId = ObjectClassProp.ObjectClassPropId;
-            _MetaDataPropName = ObjectClassProp.PropName;
-            _MetaDataTypeName = ObjectClassProp.ObjectClass.ObjectClass.ToString();
-            _FieldTypeRule = ObjectClassProp.FieldTypeRule;
-            _Type = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId;
+            FieldType = ObjectClassProp.FieldType;
+            ListOptions.FromString( ObjectClassProp.ListOptions );
+            RelatedIdType = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
+            MetaDataPropNameWithQuestionNo = ObjectClassProp.PropNameWithQuestionNo;
+            MetaDataPropId = ObjectClassProp.ObjectClassPropId;
+            MetaDataPropName = ObjectClassProp.PropName;
+            MetaDataTypeName = ObjectClassProp.ObjectClass.ObjectClass.ToString();
+            FieldTypeRule = ObjectClassProp.FieldTypeRule;
+            Type = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId;
+            PropName = MetaDataPropName;
         } //ctor Ntp
 
-        public CswViewBuilderProp( CswNbtViewProperty ViewProp )
+        public CswViewBuilderProp( CswNbtViewProperty ViewProperty )
         {
-            if( ViewProp.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId && 
-                null != ViewProp.NodeTypeProp)
+            if( ViewProperty.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId && 
+                null != ViewProperty.NodeTypeProp)
             {
-                _FieldType = ViewProp.NodeTypeProp.FieldType;
-                _ListOptions.FromString( ViewProp.NodeTypeProp.ListOptions );
-                _RelatedIdType = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
-                _MetaDataPropNameWithQuestionNo = ViewProp.NodeTypeProp.PropNameWithQuestionNo;
-                _MetaDataPropId = ViewProp.NodeTypeProp.FirstPropVersionId;
-                _MetaDataPropName = ViewProp.NodeTypeProp.PropName;
-                _MetaDataTypeName = ViewProp.NodeTypeProp.NodeType.NodeTypeName;
-                _FieldTypeRule = ViewProp.NodeTypeProp.FieldTypeRule;
+                FieldType = ViewProperty.NodeTypeProp.FieldType;
+                ListOptions.FromString( ViewProperty.NodeTypeProp.ListOptions );
+                RelatedIdType = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
+                MetaDataPropNameWithQuestionNo = ViewProperty.NodeTypeProp.PropNameWithQuestionNo;
+                MetaDataPropId = ViewProperty.NodeTypeProp.FirstPropVersionId;
+                MetaDataPropName = ViewProperty.NodeTypeProp.PropName;
+                MetaDataTypeName = ViewProperty.NodeTypeProp.NodeType.NodeTypeName;
+                FieldTypeRule = ViewProperty.NodeTypeProp.FieldTypeRule;
             }
-            else if( ViewProp.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId &&
-                null != ViewProp.ObjectClassProp )
+            else if( ViewProperty.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId &&
+                null != ViewProperty.ObjectClassProp )
             {
-                _FieldType = ViewProp.ObjectClassProp.FieldType;
-                _ListOptions.FromString( ViewProp.ObjectClassProp.ListOptions );
-                _RelatedIdType = CswNbtViewRelationship.RelatedIdType.ObjectClassId;
-                _MetaDataPropNameWithQuestionNo = ViewProp.ObjectClassProp.PropNameWithQuestionNo;
-                _MetaDataPropId = ViewProp.ObjectClassProp.ObjectClassPropId;
-                _MetaDataPropName = ViewProp.ObjectClassProp.PropName;
-                _MetaDataTypeName = ViewProp.ObjectClassProp.ObjectClass.ObjectClass.ToString().Replace( "Class", "" );
-                _FieldTypeRule = ViewProp.ObjectClassProp.FieldTypeRule;
+                FieldType = ViewProperty.ObjectClassProp.FieldType;
+                ListOptions.FromString( ViewProperty.ObjectClassProp.ListOptions );
+                RelatedIdType = CswNbtViewRelationship.RelatedIdType.ObjectClassId;
+                MetaDataPropNameWithQuestionNo = ViewProperty.ObjectClassProp.PropNameWithQuestionNo;
+                MetaDataPropId = ViewProperty.ObjectClassProp.ObjectClassPropId;
+                MetaDataPropName = ViewProperty.ObjectClassProp.PropName;
+                MetaDataTypeName = ViewProperty.ObjectClassProp.ObjectClass.ObjectClass.ToString().Replace( "Class", "" );
+                FieldTypeRule = ViewProperty.ObjectClassProp.FieldTypeRule;
             }
-            _ViewProp = ViewProp;
-            _FieldType = ViewProp.FieldType;
-            _Filters = ViewProp.Filters;
-            _Type = ViewProp.Type;
-            _Width = ViewProp.Width;
-            _SortBy = ViewProp.SortBy;
-            _SortMethod = ViewProp.SortMethod;
+            ViewProp = ViewProperty;
+            FieldType = ViewProperty.FieldType;
+            Filters = ViewProperty.Filters;
+            Type = ViewProperty.Type;
+            Width = ViewProperty.Width;
+            SortBy = ViewProperty.SortBy;
+            SortMethod = ViewProperty.SortMethod;
+            PropName = ViewProperty.Name ?? MetaDataPropName;
         } //ctor Vp
-
 
     }// CswViewBuilderProp
     #endregion CswViewBuilderProp Class

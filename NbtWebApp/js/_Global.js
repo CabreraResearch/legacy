@@ -1,9 +1,48 @@
-﻿/// <reference path="../jquery/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../jquery/jquery.mobile/jquery.mobile.2011.5.17.js" />
-/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
+﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../js/thirdparty/jquery/core/jquery.mobile/jquery.mobile.2011.5.17.js" />
+/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="../js/thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
 
+// ------------------------------------------------------------------------------------
+// Enums
+// ------------------------------------------------------------------------------------
+
+var EditMode = {
+    Edit: {name: 'Edit'},
+    AddInPopup: { name: 'AddInPopup' },
+    EditInPopup: { name: 'EditInPopup' },
+    Demo: { name: 'Demo' },
+    PrintReport: { name: 'PrintReport' },
+    DefaultValue: { name: 'DefaultValue' }
+};
+
+// for CswInput
+var CswInput_Types = {
+    button: { id: 0, name: 'button', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' },
+    checkbox: { id: 1, name: 'checkbox', placeholder: false, autocomplete: false, value: { required: true, allowed: true }, defaultwidth: '' },
+    color: { id: 2, name: 'color', placeholder: false, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '' },
+    date: { id: 3, name: 'date', placeholder: false, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '200px' },
+    datetime: { id: 4, name: 'datetime', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '200px' },
+    'datetime-local': { value: 5, name: 'datetime-local', placeholder: false, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '200px' },
+    email: { id: 6, name: 'email', placeholder: true, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '200px' },
+    file: { id: 7, name: 'file', placeholder: false, autocomplete: false, value: { required: false, allowed: false }, defaultwidth: '' },
+    hidden: { id: 8, name: 'hidden', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' },
+    image: { id: 9, name: 'image', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' },
+    month: { id: 10, name: 'month', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' },
+    number: { id: 11, name: 'number', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '200px' },
+    password: { id: 12, name: 'password', placeholder: true, value: { required: false, allowed: true }, defaultwidth: '200px' },
+    radio: { id: 13, name: 'radio', placeholder: false, autocomplete: false, value: { required: true, allowed: true }, defaultwidth: '' },
+    range: { id: 14, name: 'range', placeholder: false, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '' },
+    reset: { id: 15, name: 'reset', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' },
+    search: { id: 16, name: 'search', placeholder: true, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '' },
+    submit: { id: 17, name: 'submit', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' },
+    tel: { id: 18, name: 'button', placeholder: true, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '' },
+    text: { id: 19, name: 'text', placeholder: true, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '200px' },
+    time: { id: 20, name: 'time', placeholder: false, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '200px' },
+    url: { id: 21, name: 'url', placeholder: true, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '200px' },
+    week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' }
+};
 
 // ------------------------------------------------------------------------------------
 // Globals (yuck)
@@ -47,46 +86,47 @@ function CswAjaxJSON(options)
     if (options) $.extend(o, options);
     //var starttime = new Date();
     $.ajax({
-    	type: 'POST',
-	    async: o.async,
-    	url: o.url,
-    	dataType: "json",
-    	contentType: 'application/json; charset=utf-8',
-    	data: JSON.stringify(o.data),
-    	success: function (data, textStatus, XMLHttpRequest)
-    	{
-    		//var endtime = new Date();
-    		//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+        type: 'POST',
+        async: o.async,
+        url: o.url,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(o.data),
+        success: function (data, textStatus, XMLHttpRequest)
+        {
+            //var endtime = new Date();
+            //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+            var result = $.parseJSON(data.d);
 
-    		var result = $.parseJSON(data.d);
+            if (result.error !== undefined)
+            {
+                _handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
+                o.error(XMLHttpRequest, textStatus, errorThrown);
+            }
+            else
+            {
 
-    		if (result.error !== undefined)
-    		{
-    			_handleAjaxError(XMLHttpRequest, { 'message': result.error.message, 'detail': result.error.detail }, '');
-    			o.error();
-    		}
-    		else
-    		{
-    			var auth = tryParseString(result.AuthenticationStatus, 'Unknown');
-    			timeout = tryParseString(result.timeout, '');
+                var auth = tryParseString(result.AuthenticationStatus, 'Unknown');
+                timeout = tryParseString(result.timeout, '');
 
-    			_handleAuthenticationStatus({
-    				status: auth,
-    				success: function () { o.success(result); },
-    				failure: o.onloginfail,
-    				usernodeid: result.nodeid,
-    				usernodekey: result.cswnbtnodekey,
-    				passwordpropid: result.passwordpropid
-    			});
-    		}
-    	}, // success{}
-    	error: function (XMLHttpRequest, textStatus, errorThrown)
-    	{
-    		//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-    		log("Webservice Request (" + o.url + ") Failed: " + textStatus);
-    		o.error();
-    	}
-    });         // $.ajax({
+                _handleAuthenticationStatus({
+                    status: auth,
+                    success: function () { o.success(result); },
+                    failure: o.onloginfail,
+                    usernodeid: result.nodeid,
+                    usernodekey: result.cswnbtnodekey,
+                    passwordpropid: result.passwordpropid,
+                    ForMobile: o.formobile
+                });
+            }
+        }, // success{}
+        error: function (XMLHttpRequest, textStatus, errorThrown)
+        {
+            //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+            log("Webservice Request (" + o.url + ") Failed: " + textStatus);
+            o.error(XMLHttpRequest, textStatus, errorThrown);
+        }
+    });           // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options)
@@ -115,14 +155,14 @@ function CswAjaxXml(options)
 	};
 
     if (options) $.extend(o, options);
-
+    
     if (!isNullOrEmpty(o.url))
     {
     	$.ajax({
     		type: 'POST',
     		async: o.async,
     		url: o.url,
-    		dataType: "xml",
+    		dataType: "text",
     		//contentType: 'application/json; charset=utf-8',
     		data: $.param(o.data),     // should be 'field1=value&field2=value'
     		success: function (data, textStatus, XMLHttpRequest)
@@ -130,9 +170,16 @@ function CswAjaxXml(options)
     			//var endtime = new Date();
     			//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-    			// this is IE compliant
-    			var $xml = $(XMLHttpRequest.responseXML);
-    			var $realxml = $xml.children().first();
+    			var $realxml;
+    			if ($.browser.msie)
+    			{
+    				// We have to use third-party jquery.xml.js for Internet Explorer to handle non-DOM XML content
+    				$realxml = $.xml(data);
+    			}
+    			else
+    			{
+					$realxml = $(XMLHttpRequest.responseXML).children().first();    			
+				}
 
     			if ($realxml.first().get(0).nodeName === "error")
     			{
@@ -150,7 +197,8 @@ function CswAjaxXml(options)
     					failure: o.onloginfail,
     					usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
     					usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
-    					passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), '')
+    					passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), ''),
+                        ForMobile: o.formobile
     				});
     			}
 
@@ -158,10 +206,10 @@ function CswAjaxXml(options)
     		error: function (XMLHttpRequest, textStatus, errorThrown)
     		{
     			//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-    			log("Webservice Request ("+ o.url +") Failed: " + textStatus);
+    			log("Webservice Request (" + o.url + ") Failed: " + textStatus);
     			o.error();
     		}
-    	});               // $.ajax({
+    	});                             // $.ajax({
     } // if(o.url != '')
 } // CswAjaxXml()
 
@@ -190,43 +238,58 @@ function _handleAuthenticationStatus(options)
 		failure: function () { },
 		usernodeid: '',
 		usernodekey: '',
-		passwordpropid: ''
+		passwordpropid: '',
+        ForMobile: false
 	};
 	if(options) $.extend(o, options);
 
 	var txt = '';
+    var GoodEnoughForMobile = false; //Ignore password expirery and license accept for Mobile for now
 	switch (o.status)
 	{
 		case 'Authenticated': o.success(); break;
 		case 'Deauthenticated': o.success(); break;  // yes, o.success() is intentional here.
-		case 'Failed': txt = "Login Failed"; break;
+		case 'Failed': txt = "Invalid login."; break;
 		case 'Locked': txt = "Your account is locked.  Please see your account administrator."; break;
 		case 'Deactivated': txt = "Your account is deactivated.  Please see your account administrator."; break;
 		case 'TooManyUsers': txt = "Too many users are currently connected.  Try again later."; break;
-		case 'NonExistentAccessId': txt = "Login Failed"; break;
+		case 'NonExistentAccessId': txt = "Invalid login."; break;
 		case 'NonExistentSession': txt = "Your session has timed out.  Please login again."; break;
 		case 'Unknown': txt = "An Unknown Error Occurred"; break;
-		case 'TimedOut': txt = "Your session has timed out.  Please login again."; break;
+		case 'TimedOut': 
+            GoodEnoughForMobile = true;
+            txt = "Your session has timed out.  Please login again."; 
+            break;
 		case 'ExpiredPassword':
-			$.CswDialog('EditNodeDialog', {
-				'nodeid': o.usernodeid,
-				'cswnbtnodekey': o.usernodekey,
-				'filterToPropId': o.passwordpropid,
-				'title': 'Your password has expired.  Please change it now:',
-				'onEditNode': function (nodeid, nodekey) { o.success(); }
-			});
+            GoodEnoughForMobile = true;
+            if( !o.ForMobile ) {
+                $.CswDialog('EditNodeDialog', {
+				    'nodeid': o.usernodeid,
+				    'cswnbtnodekey': o.usernodekey,
+				    'filterToPropId': o.passwordpropid,
+				    'title': 'Your password has expired.  Please change it now:',
+				    'onEditNode': function (nodeid, nodekey) { o.success(); }
+			    });
+            }
 			break;
 		case 'ShowLicense':
-			$.CswDialog('ShowLicenseDialog', {
-				'onAccept': function () { o.success(); },
-				'onDecline': function () { o.failure('You must accept the license agreement to use this application'); }
-			});
+            GoodEnoughForMobile = true;
+            if( !o.ForMobile ) {
+                $.CswDialog('ShowLicenseDialog', {
+				    'onAccept': function () { o.success(); },
+				    'onDecline': function () { o.failure('You must accept the license agreement to use this application'); }
+			    });
+            }
 			break;
 	}
 
-	if (!isNullOrEmpty(txt) && o.status !== 'Authenticated')
+    if( o.ForMobile &&   
+        ( o.status !== 'Authenticated' && GoodEnoughForMobile ) ) {
+        o.success();
+    }
+    else if (!isNullOrEmpty(txt) && o.status !== 'Authenticated' )
 	{
-		o.failure(txt);
+		o.failure(txt,o.status);
 	}
 } // _handleAuthenticationStatus()
 
@@ -959,7 +1022,7 @@ function isNullOrEmpty(obj)
     var ret = false;
     if (!isFunction(obj))
     {
-        ret = $.isEmptyObject(obj);
+    	ret = $.isPlainObject(obj) && $.isEmptyObject(obj);
         if (!ret && isGeneric(obj))
         {
             ret = (trim(obj) === '');
@@ -1106,19 +1169,25 @@ function tryParseElement(elementId, $context)
     /// <param name="$context" type="jQuery"> Optional context to limit the search </param>
     /// <returns type="jQuery">jQuery object, empty if no match found.</returns>
     var $ret = $('');
-    if (!isNullOrEmpty(elementId)) {
-        if (arguments.length == 2 && !isNullOrEmpty($context) ) {
+    if (!isNullOrEmpty(elementId))
+    {
+        if (arguments.length == 2 && !isNullOrEmpty($context))
+        {
             $ret = $('#' + elementId, $context);
         }
-        else {
+        else
+        {
             $ret = $('#' + elementId);
         }
-    }
-    if ($ret.length === 0) {
-        $ret = $(document.getElementById(elementId));
-    }
-    if ($ret.length === 0) {
-        $ret = $(document.getElementsByName(elementId));
+
+        if ($ret.length === 0)
+        {
+            $ret = $(document.getElementById(elementId));
+        }
+        if ($ret.length === 0)
+        {
+            $ret = $(document.getElementsByName(elementId));
+        }
     }
     return $ret;
 }
@@ -1189,6 +1258,12 @@ function getCallStack()
     return stack;
 }
 
+function errorHandler(error, includeCallStack, includeLocalStorage)
+{
+    if(Modernizr.localstorage && includeLocalStorage) log(localStorage);
+    log('localStorage Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack);
+}
+
 // ------------------------------------------------------------------------------------
 // Browser Compatibility
 // ------------------------------------------------------------------------------------
@@ -1201,21 +1276,3 @@ if (typeof String.prototype.trim !== 'function')
         return this.replace(/^\s+|\s+$/g, '');
     }
 }
-
-
-// Validation Hack
-// This is a workaround to a problem introduced by using jquery.validation with jquery 1.5
-// http://stackoverflow.com/questions/5068822/ajax-parseerror-on-verrorsfoundtrue-vmessagelogin-failed
-// http://blog.m0sa.net/2011/02/jqueryvalidation-breaks-jquery-15-ajax.html
-
-//$(function () {
-//	$.ajaxSettings.cache = false;
-//	$.ajaxSettings.jsonp = undefined;
-//	$.ajaxSettings.jsonpCallback = undefined;
-//})
-
-
-
-// ------------------------------------------------------------------------------------
-// Cookiedelia
-// ------------------------------------------------------------------------------------

@@ -76,13 +76,19 @@ namespace ChemSW.Nbt.Schema
                 _CswSchemaScriptsProd = new CswSchemaScriptsProd( _CswNbtResources );
                 _CswLogger = _CswNbtResources.CswLogger;
 
-                _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
+                //_CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
+				_CswNbtResources.InitCurrentUser = InitUser;
             }
             catch( Exception ex )
             {
                 SetStatus( "ERROR: " + ex.Message );
             }
         }//_InitSessionResources()
+
+		public ICswUser InitUser(ICswResources Resources)
+		{
+			return new CswNbtSystemUser( Resources, "_SchemaUpdaterUser" );
+		}
 
         private void _CloseSessionResources()
         {
