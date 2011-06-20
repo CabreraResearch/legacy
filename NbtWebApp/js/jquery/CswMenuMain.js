@@ -28,6 +28,7 @@
 			onMultiEdit: function() { },
             onSearch: { onViewSearch: function() {}, onGenericSearch: function() {} },
 			onEditView: function(viewid) { },
+			onSaveView: function(newviewid) { },
 			Multi: false,
 			NodeCheckTreeId: ''
 		};
@@ -58,8 +59,9 @@
 							'$ul': $ul, 
 							'$itemxml': $this, 
 							'onAlterNode': o.onAddNode, 
-							'onMultiEdit': o.onMultiEdit, 
+							'onMultiEdit': o.onMultiEdit,
 							'onEditView': o.onEditView,
+							'onSaveView': o.onSaveView,
 							'onSearch': o.onSearch,
 							'Multi': o.Multi, 
 							'NodeCheckTreeId': o.NodeCheckTreeId 

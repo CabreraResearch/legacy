@@ -548,7 +548,19 @@ function IsAdministrator(options)
     };
     if (options) $.extend(o, options);
 
-	CswAjaxJSON({		url: '/NbtWebApp/wsNBT.asmx/isAdministrator',		success: function (data)			{				if (data.Administrator === "true")				{					o.Yes();				} else				{					o.No();				}			}	});
+	CswAjaxJSON({
+		url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
+		success: function (data)
+			{
+				if (data.Administrator === "true")
+				{
+					o.Yes();
+				} else
+				{
+					o.No();
+				}
+			}
+	});
 } // IsAdministrator()
 
 // ------------------------------------------------------------------------------------
@@ -655,6 +667,7 @@ function HandleMenuItem(options)
         'onSearch': { onViewSearch: function () { }, onGenericSearch: function () { } },
         'onMultiEdit': function () { },
         'onEditView': function (viewid) { },
+        'onSaveView': function (newviewid) { },
         'Multi': false,
         'NodeCheckTreeId': ''
     };
@@ -787,7 +800,8 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('AddViewDialog', {
-						'viewid': o.$itemxml.CswAttrXml('viewid')
+						'viewid': o.$itemxml.CswAttrXml('viewid'),
+						'onAddView': o.onSaveView
 					});
 					return false;
 				});

@@ -353,6 +353,10 @@
 					}
 				});
 			},
+			'onSaveView': function (newviewid)
+			{
+				handleItemSelect({ 'viewid': newviewid, 'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode) });
+			},
 			'Multi': multi,
 			'NodeCheckTreeId': MainTreeId
 		});

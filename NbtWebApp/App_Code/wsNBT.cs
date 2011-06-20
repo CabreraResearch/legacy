@@ -940,16 +940,14 @@ namespace ChemSW.Nbt.WebServices
 						RealVisibilityUserId.FromString( VisibilityUserId );
 					}
 
-					CswNbtView NewView = null;
+					CswNbtView CopyView = null;
 					if( ViewId != string.Empty )
 					{
-						NewView = _getView( ViewId );
+						CopyView = _getView( ViewId );
 					}
-					else
-					{
-						NewView = new CswNbtView( _CswNbtResources );
-					}
-					NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, null );
+
+					CswNbtView NewView = new CswNbtView( _CswNbtResources );
+					NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, CopyView );
 
 					if(ViewMode != string.Empty)
 					{

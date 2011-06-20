@@ -61,8 +61,16 @@
                                                                     enabledText: 'Create View', 
                                                                     disabledText: 'Creating View', 
                                                                     onclick: function() {
-									                                        																			var createData = {};																			createData.ViewName = $nametextbox.val();																			createData.ViewMode = $displaymodeselect.val();																			createData.ViewId = o.viewid;
-																			if(!isNullOrEmpty(v.getvisibilityselect()))																			{																				createData.Visibility = v.getvisibilityselect().val();																				createData.VisibilityRoleId = v.getvisroleselect().val();																				createData.VisibilityUserId = v.getvisuserselect().val();
+									                                        
+																			var createData = {};
+																			createData.ViewName = $nametextbox.val();
+																			createData.ViewMode = $displaymodeselect.val();
+																			createData.ViewId = o.viewid;
+																			if(!isNullOrEmpty(v.getvisibilityselect()))
+																			{
+																				createData.Visibility = v.getvisibilityselect().val();
+																				createData.VisibilityRoleId = v.getvisroleselect().val();
+																				createData.VisibilityUserId = v.getvisuserselect().val();
 																			}
 
 																			CswAjaxJSON({
