@@ -2132,8 +2132,16 @@ namespace ChemSW.Nbt.WebPages
                             CswNbtSubField SubField = SelectedNodeTypeProp.FieldTypeRule.SubFields.Default;
                             CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
                             string FilterValue = null;
+							CswNbtMetaDataNodeTypeProp FilterProp = Master.CswNbtResources.MetaData.getNodeTypeProp( SelectedNodeTypeProp.FilterNodeTypePropId );
                             SelectedNodeTypeProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
-                            _ConditionalFilter = new CswPropertyFilter( Master.CswNbtResources, Master.AjaxManager, SelectedNodeType.FirstVersionNodeTypeId, SelectedNodeTypeProp.PropName, SubField.Column.ToString(), FilterMode, FilterValue, false, true, false, false );
+                            _ConditionalFilter = new CswPropertyFilter( Master.CswNbtResources, 
+																		Master.AjaxManager, 
+																		SelectedNodeType.FirstVersionNodeTypeId,
+																		FilterProp.PropName, 
+																		SubField.Column.ToString(), 
+																		FilterMode, 
+																		FilterValue, 
+																		false, true, false, false );
                             _ConditionalFilter.ShowSubFieldAndMode = true;
                         }
                         else
