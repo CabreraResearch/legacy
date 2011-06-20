@@ -1,0 +1,102 @@
+﻿using System;
+using System.Threading;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Text;
+using System.Diagnostics;
+using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Exceptions;
+using ChemSW.DB;
+using ChemSW.Nbt.Schema;
+using ChemSW.Core;
+using ChemSW.Log;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ObjClasses;
+
+
+namespace ChemSW.Nbt.Schema
+{
+
+    public class CswTestCase_027_04 : ICswUpdateSchemaTo
+    {
+
+
+        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+
+        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_027.Purpose, "CswNbtActUpdatePropertyValue: " + TotalIterations.ToString() + " iterations"  ) ); } }
+
+        private CswTestCaseRsrc _CswTstCaseRsrc = null;
+        private CswTstCaseRsrc_027 _CswTstCaseRsrc_027 = null;
+
+        private CswSchemaVersion _CswSchemaVersion = null;
+        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_027_04( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        {
+            _CswSchemaVersion = CswSchemaVersion;
+            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_027 = (CswTstCaseRsrc_027) CswTstCaseRsrc;
+
+        }//ctor
+
+        public Int32 TotalIterations = 100; 
+        public void update()
+        {
+            // Find which nodes are out of date
+            CswStaticSelect OutOfDateNodesQuerySelect = _CswNbtSchemaModTrnsctn.makeCswStaticSelect( "OutOfDateNodes_select", "ValuesToUpdate" );
+            DataTable OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, 25 );
+
+            if( OutOfDateNodes.Rows.Count > 0 )
+            {
+                // Update one of them at random (which will keep us from encountering errors which gum up the queue)
+                for( Int32 idx = 0; idx < TotalIterations; idx++ )
+                {
+
+                    Int32 TestEveryNth = 10;
+                    bool DoMemoryTest = ( 0 == ( idx % TestEveryNth ) );
+
+                    if( DoMemoryTest )
+                    {
+                        _CswTstCaseRsrc_027.memoryTestBegin();
+                    }
+
+                    Random rand = new Random();
+                    Int32 index = rand.Next( 0, OutOfDateNodes.Rows.Count );
+                    CswPrimaryKey nodeid = new CswPrimaryKey( "nodes", CswConvert.ToInt32( OutOfDateNodes.Rows[index]["nodeid"].ToString() ) );
+                    //Int32 propid = CswConvert.ToInt32(OutOfDateNodes.Rows[index]["nodetypepropid"].ToString());
+                    //Int32 jctnodepropid = CswConvert.ToInt32(OutOfDateNodes.Rows[index]["jctnodepropid"].ToString());
+                    CswNbtNode Node = _CswNbtSchemaModTrnsctn.Nodes[nodeid];
+                    if( Node == null )
+                        throw new CswDniException( "Node not found (" + nodeid.ToString() + ")" );
+                    // Don't update nodes of disabled nodetypes
+                    if( Node.NodeType != null )
+                    {
+                        CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = _CswNbtSchemaModTrnsctn.getCswNbtActUpdatePropertyValue();
+                        CswNbtActUpdatePropertyValue.UpdateNode( Node, false );
+                        Node.postChanges( false );
+                    }
+
+                    if( DoMemoryTest )
+                    {
+                        _CswTstCaseRsrc_027.memoryTestEnd();
+                        _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( Description + ": Total Process Memory after " + idx.ToString() + "iterations: " + _CswTstCaseRsrc_027.TotalProcessMemory );
+                        _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( Description + ": Total GC Memory after: " + idx.ToString() + "iterations: " + _CswTstCaseRsrc_027.TotalGCMemorySansCollection );
+                        _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( Description + ": ProcessMemory Delta after: " + idx.ToString() + "iterations:  " + _CswTstCaseRsrc_027.ProcessMemoryDelta );
+                        _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( Description + ": GCMemory Delta: after " + _CswTstCaseRsrc_027.GCMemoryDelta );
+                    }
+
+                    Thread.Sleep( 100 ); 
+
+                }//iterate 
+
+            }//if there were out of date nodes
+
+
+        }//runTest()
+
+    }//CswSchemaUpdaterTestCaseDropColumnRollback
+
+}//ChemSW.Nbt.Schema
