@@ -49,6 +49,12 @@ foreach my $component (@components)
 	}
 }
 
+
+#---------------------------------------------------------------------------------
+
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+printf "%4d-%02d-%02d %02d:%02d:%02d\n", $year+1900, $mon+1, $mday, $hour, $min, $sec;
+
 #---------------------------------------------------------------------------------
 # 1. pull from Main
 
@@ -60,7 +66,6 @@ foreach my $component (@components)
 #---------------------------------------------------------------------------------
 # 2. update versions
 
-my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 my $datestr = ($year + 1900).".". ($mon + 1) .".$mday";
 
 open( ASSEMBLYFILE, "< ". $repopaths{"Nbt"} ."/NbtWebApp/_Assembly.txt" ) 
