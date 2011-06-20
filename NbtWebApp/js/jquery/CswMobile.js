@@ -973,7 +973,7 @@
                         break;
 
                     case "List":
-                        var $prop = $('<select name="' + propId + '" id="' + propId + '"></select>')
+                        var $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
                                         .appendTo($retHtml)
                                         .selectmenu();
                         var selectedvalue = sf_value;
@@ -1686,7 +1686,7 @@
 						onPropertyChange(DivId, eventObj); 
 					})
                 .end()
-                .find('select')
+                .find('.csw_prop_select')
                 .unbind('change')
                 .bind('change', function (eventObj) { 
 						onPropertyChange(DivId, eventObj); 
@@ -1801,10 +1801,20 @@
             var $logLevelSelect = $logLevelDiv.CswSelect('init',{ID: 'mobile_log_level',
                                                                  selected: debugOn() ? 'on' : 'off',
                                                                  values: [{value: 'off', display: 'Logging Disabled'},
-                                                                          {value: 'on', display: 'Logging Enabled'}]
-                                                                 //onChange: 
+                                                                          {value: 'on', display: 'Logging Enabled'}],
+                                                                 onChange: function ($select) {
+                                                                    var $loggingBtn = $('.debug');
+
+                                                                    if( $select.val() === 'on' ) {
+                                                                        debugOn(true);
+                                                                        $loggingBtn.css('display','');
+                                                                    }
+                                                                    else {
+                                                                        debugOn(false);
+                                                                        $loggingBtn.css('diplay', 'none');
+                                                                    }
+                                                                 }
                                                 })
-                                                .change(function() {log(1);})
                                                 .CswAttrXml({'data-role': 'slider'});
                                                 
 
@@ -2003,7 +2013,7 @@
                 var $wrapper = $('<div></div>');
                 var $fieldCtn = $('<div data-role="fieldcontain"></div>')
                                     .appendTo($wrapper);
-                var $select =  $('<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">')
+                var $select =  $('<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop" class="csw_prop_select">')
                                     .appendTo($fieldCtn)
                                     .CswAttrXml({'data-native-menu': 'false'});
 
