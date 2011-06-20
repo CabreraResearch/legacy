@@ -214,6 +214,7 @@ var CswMobile_LoggingLevel = {
             UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
             MainPageUrl: '/NbtWebApp/Mobile.html',
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
+            SendLogUrl: '/NbtWebApp/wsNBT.asmx/collectClientLogInfo',
             Theme: 'a',
             PollingInterval: 30000,
             DivRemovalDelay: 1,
@@ -388,20 +389,6 @@ var CswMobile_LoggingLevel = {
             return $viewsdiv;
         }
 
-//        function clearPath()
-//        {
-//            currentMobilePath = tryParseString( $.mobile.path.get(), '');
-//            if(debug !== CswMobile_LoggingLevel.none) log('pre set path = ' + currentMobilePath, true);
-//            if( currentMobilePath !== '') $.mobile.path.set('');
-//            if(debug !== CswMobile_LoggingLevel.none) log('post set path = ' + $.mobile.path.get());
-//        }
-
-//        function restorePath()
-//        {
-//            currentMobilePath = tryParseString( currentMobilePath, '');
-//            $.mobile.path.set(currentMobilePath);
-//        }
-
         // ------------------------------------------------------------------------------------
         // Online indicator
         // ------------------------------------------------------------------------------------
@@ -456,33 +443,48 @@ var CswMobile_LoggingLevel = {
         // Logging Button
         // ------------------------------------------------------------------------------------
 
-        function setStartLogging()
+        function _toggleLogging()
         {
-            localStorage['logging'] = true;
-            localStorage['loglevel'] = debug.id;
             var $loggingBtn = $('.debug');
+            var statusChanged = doDebug;
             if ($loggingBtn.hasClass('debug-off'))
             {
+                doDebug = true;
+                localStorage['dodebug'] = doDebug;
                 $loggingBtn.removeClass('debug-off')
                             .addClass('debug-on')
-                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                            .text('Start Log')
-                            .end();
-            }
-        }
-        function setStopLogging()
-        {
-            localStorage['logging'] = false;
-            localStorage['loglevel'] = debug.id;
-            var $loggingBtn = $('.debug');
-            if ($loggingBtn.hasClass('debug-on'))
-            {
-                $loggingBtn.removeClass('debug-on')
-                            .addClass('debug-off')
                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
                             .text('Stop Log')
                             .end();
             }
+            else if ($loggingBtn.hasClass('debug-on'))
+            {
+                doDebug = false;
+                localStorage['dodebug'] = doDebug;
+                var dataJson = {
+                    Context: 'CswMobile',
+                    UserName: UserName,
+                    CustomerId: localStorage['customerid'],
+                    LogInfo: sessionStorage['debuglog']
+                };
+                
+                CswAjaxJSON({
+                    url: opts.SendLogUrl,
+                    data: dataJson,
+                    success: function (data)
+                    {
+                        if(data)
+                        {
+                            $loggingBtn.removeClass('debug-on')
+                                       .addClass('debug-off')
+                                       .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                                       .text('Start Log')
+                                       .end();
+                        }    
+                    }
+                });
+            }
+            return (statusChanged === doDebug);
         }
 
         // ------------------------------------------------------------------------------------
@@ -584,7 +586,8 @@ var CswMobile_LoggingLevel = {
                 onloginfail: function(text) { onLoginFail(text); },
                 success: function ($xml)
                 {
-                    if(debug !== CswMobile_LoggingLevel.none) log('On Success ' + opts.ViewUrl, true);
+                    _cacheDebugInfo('On Success ' + opts.ViewUrl);
+
                     $currentViewXml = $xml;
                     p.$xml = $currentViewXml;
                     if (params.level === 1)
@@ -592,12 +595,10 @@ var CswMobile_LoggingLevel = {
                         _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                     }
                     $retDiv = _loadDivContentsXml(p);    
-                    //restorePath();
                 },
                 error: function(xml)
                 {
-                    if(debug !== CswMobile_LoggingLevel.none) log(xml, true);
-                    //restorePath();
+                    _cacheDebugInfo(xml);
                 }
             });
 
@@ -1565,12 +1566,9 @@ var CswMobile_LoggingLevel = {
                                          .CswAttrXml({'data-identity': p.DivId + '_log',
                                                       'data-url': p.DivId + '_log', 
                                                       'data-transition': 'pop',
-                                                      'data-rel': 'dialog'})
-                                         .css({'display':'none'});
-                                         
-                                         
+                                                      'data-rel': 'dialog'});
             }
-            $loggingBtn
+
             if ( p.HideOnlineButton ) { 
                 $syncstatusBtn.css('display','none'); 
             }
@@ -1619,6 +1617,12 @@ var CswMobile_LoggingLevel = {
             } 
             else {
                 $backlink.css('display','none');
+            }
+            if( debugLevel !== CswMobile_LoggingLevel.none.id ) {
+                $loggingBtn.css({'display':''});
+            }
+            else {
+                $loggingBtn.css({'display':'none'});
             }
             
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
@@ -1680,6 +1684,12 @@ var CswMobile_LoggingLevel = {
                 .bind('tap', function () { 
 						onHelp(DivId, ParentId); 
 						return false;
+					})
+                .end()
+                .find('#' + DivId + '_log')
+                .bind('tap', function () { 
+					    _toggleLogging();
+						//return false;
 					})
                 .end()
                 .find('textarea')
@@ -1798,7 +1808,7 @@ var CswMobile_LoggingLevel = {
             var $logLevelLabel = $('<label for="mobile_log_level" class="select">Enable Logging</label>')
                                     .appendTo($logLevelDiv);
             var $logLevelSelect = $logLevelDiv.CswSelect('init',{ID: 'mobile_log_level',
-                                                                 selected: debug.id,
+                                                                 selected: debugLevel,
                                                                  values: [{value: CswMobile_LoggingLevel.none.id, display: CswMobile_LoggingLevel.none.display},
                                                                           {value: CswMobile_LoggingLevel.debg.id, display: CswMobile_LoggingLevel.debg.display},
                                                                           {value: CswMobile_LoggingLevel.info.id, display: CswMobile_LoggingLevel.info.display}],
@@ -1808,23 +1818,24 @@ var CswMobile_LoggingLevel = {
                                                                     {
                                                                         case CswMobile_LoggingLevel.debg.id:
                                                                         {
+                                                                            debugLevel = CswMobile_LoggingLevel.debg.id;
                                                                             $loggingBtn.css('display','');
-                                                                            //debug = CswMobile_LoggingLevel.debg;
                                                                             break;
                                                                         }
                                                                         case CswMobile_LoggingLevel.info.id:
                                                                         {
+                                                                            debugLevel = CswMobile_LoggingLevel.info.id;
                                                                             $loggingBtn.css('display','');
-                                                                            //debug = CswMobile_LoggingLevel.info;
                                                                             break;
                                                                         }
                                                                         default:
                                                                         {
+                                                                            debugLevel = CswMobile_LoggingLevel.none.id;
                                                                             $loggingBtn.css('diplay', 'none');
-                                                                            debug = CswMobile_LoggingLevel.none;
                                                                             break;
                                                                         }
                                                                     }
+                                                                    localStorage['debuglevel'] = debugLevel;
                                                                  }
                                                 })
                                                 .CswAttrXml({'data-native-menu': 'false'});
@@ -1875,7 +1886,7 @@ var CswMobile_LoggingLevel = {
                     success: function (data)
                     {
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
-						_cacheSession(SessionId, UserName);
+						_cacheSession(SessionId, UserName, AccessId);
                         $viewsdiv = reloadViews();
                         $viewsdiv.doChangePage();
                         //restorePath();
@@ -1953,8 +1964,7 @@ var CswMobile_LoggingLevel = {
                     onloginfail: function(text) { onLoginFail(text); },
                     success: function ($xml)
                     {
-                        if (debug) log('On Success ' + opts.ViewUrl, true);
-
+                        _cacheDebugInfo('On Success ' + opts.ViewUrl);
                         $currentViewXml = $xml;
                         _updateStoredViewXml(DivId, $currentViewXml, '0');
 
@@ -1978,7 +1988,7 @@ var CswMobile_LoggingLevel = {
                         $.mobile.pageLoading(true);
                     }, // success
                     error: function(txt) {
-                        if(debug !== CswMobile_LoggingLevel.none) log(txt);
+                        _cacheDebugInfo(txt);
                     }
                 });
             }
@@ -2109,10 +2119,11 @@ var CswMobile_LoggingLevel = {
         // ------------------------------------------------------------------------------------
         // Persistance functions
         // ------------------------------------------------------------------------------------
-        function _cacheSession(sessionid, username)
+        function _cacheSession(sessionid, username, customerid)
         {
             localStorage['online'] = true;
             localStorage['username'] = username;
+            localStorage['customerid'] = customerid;
             localStorage['sessionid'] = sessionid;
         } //_cacheSession()
 
@@ -2193,7 +2204,22 @@ var CswMobile_LoggingLevel = {
             return $(ret);
         }
 
-
+        function _cacheDebugInfo(debugStr,infoStr,includeCallStack)
+        {
+            var ret = false;
+            if(doDebug) 
+            {
+                switch(debugLevel)
+                {
+                    case CswMobile_LoggingLevel.debg.id:
+                        log(debugStr,includeCallStack,true);
+                    case CswMobile_LoggingLevel.info.id:
+                        log(infoStr,includeCallStack,true);
+                        break;
+                }
+            }
+            return ret;
+        }
         // ------------------------------------------------------------------------------------
         // Synchronization
         // ------------------------------------------------------------------------------------
@@ -2268,7 +2294,7 @@ var CswMobile_LoggingLevel = {
                             stringify: true,
                             onloginfail: function(text) 
                             { 
-                                if(debug !== CswMobile_LoggingLevel.none) log('_processChanges onloginfail()' + opts.UpdateUrl,true);
+                                _cacheDebugInfo('_processChanges onloginfail()' + opts.UpdateUrl)
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
@@ -2277,7 +2303,7 @@ var CswMobile_LoggingLevel = {
                             },
                             success: function (data)
                             {
-                                if (debug) log('On Success ' + opts.UpdateUrl, true);
+                                _cacheDebugInfo('On Success ' + opts.UpdateUrl);
                                 var $xml = data.xml;
                                 _updateStoredViewXml(rootid, $xml, '0');
                                 _resetPendingChanges(false, true);
@@ -2288,7 +2314,7 @@ var CswMobile_LoggingLevel = {
                             },
                             error: function (data)
                             {
-                                if(debug !== CswMobile_LoggingLevel.none) log('_processChanges error()' + opts.UpdateUrl,true);
+                                _cacheDebugInfo('_processChanges error()' + opts.UpdateUrl);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
