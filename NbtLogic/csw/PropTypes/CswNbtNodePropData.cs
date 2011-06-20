@@ -57,12 +57,12 @@ namespace ChemSW.Nbt.PropTypes
                 _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
                 _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
 
-                if( !( _PropRow[column.ToString()].Equals( dbval ) ) )
-                {
-                    WasModified = true;
-                    _PropRow[column.ToString()] = CswConvert.ToDbVal( value );
-                    ret = true;
-                }
+				if( !( CswConvert.ToDbVal( _PropRow[column.ToString()] ).Equals( dbval ) ) )
+				{
+					WasModified = true;
+					_PropRow[column.ToString()] = CswConvert.ToDbVal( value );
+					ret = true;
+				}
             }
             // Don't just return WasModified, or else changes to one subfield 
             // will look like changes to another subfield
