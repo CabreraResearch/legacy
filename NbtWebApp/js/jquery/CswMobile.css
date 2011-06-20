@@ -8,3 +8,47 @@
 {
    white-space: normal;
 }
+
+.onlineStatus
+{
+}
+.offline
+{
+	color: #ff0000;
+}
+.online
+{
+	color: #00ff00;
+}
+.pendingchanges 
+{
+	color: #ffff00;
+}
+		
+.OOC
+{
+	background-color: #ffff00;
+	color: #000000;
+}
+.csw_fieldset label
+{
+	width: 60px;
+}
+.csw_fieldset span
+{
+	position: relative;
+	left: -5px;
+}
+.lisubstitute
+{
+	padding-left: 12px;
+	padding-bottom: 8px;
+}
+.debug-on
+{
+	color: #ff0000;
+}
+.debug-off
+{
+	color: #00ff00;
+}
