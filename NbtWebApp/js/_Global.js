@@ -1261,7 +1261,7 @@ function getCallStack()
 function errorHandler(error, includeCallStack, includeLocalStorage, toCswStorage)
 {
     if( hasWebStorage() && includeLocalStorage) log(localStorage);
-    log('localStorage Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack, toCswStorage);
+    log('Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack, toCswStorage);
 }
 
 //#region Persistent Logging
