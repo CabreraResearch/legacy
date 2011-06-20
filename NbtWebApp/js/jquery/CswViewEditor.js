@@ -338,20 +338,29 @@ var CswViewEditor_WizardSteps = {
 			{
                 if( v.getvisibilityselect() !== undefined )
 				{
-                    $currentviewxml.CswAttrXml('visibility', v.getvisibilityselect().val());
+                    var visibility = v.getvisibilityselect().val();
+					$currentviewxml.CswAttrXml('visibility', visibility);
 
-					// temporary workaround
-					var rolenodeid = v.getvisroleselect().val();
-					if(!isNullOrEmpty(rolenodeid))
+					var rolenodeid = '';
+					if(visibility === 'Role')
 					{
-						rolenodeid = rolenodeid.substr('nodes_'.length)
-					}
-					var usernodeid = v.getvisuserselect().val();
-					if(!isNullOrEmpty(usernodeid))
-					{
-						usernodeid = usernodeid.substr('nodes_'.length)
+						rolenodeid = v.getvisroleselect().val();
+						if(!isNullOrEmpty(rolenodeid))
+						{
+							rolenodeid = rolenodeid.substr('nodes_'.length)
+						}
 					}
 					$currentviewxml.CswAttrXml('visibilityroleid', rolenodeid);
+					
+					var usernodeid = '';
+					if(visibility === 'User')
+					{
+						usernodeid = v.getvisuserselect().val();
+						if(!isNullOrEmpty(usernodeid))
+						{
+							usernodeid = usernodeid.substr('nodes_'.length)
+						}
+					}
 					$currentviewxml.CswAttrXml('visibilityuserid', usernodeid);
 				}
 			}
