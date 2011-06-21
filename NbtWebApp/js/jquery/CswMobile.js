@@ -1576,7 +1576,7 @@
                 
                 $loggingBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
                                                    ID: p.DivId + '_debuglog', 
-                                                   value: doLogging() ? 'Sync Log' : 'Start Log',
+                                                   value: doLogging() ?  'Start Log' : 'Sync Log',
                                                    cssclass: 'debug' })
                                          .addClass( doLogging() ? 'debug-on' : 'debug-off');
             }
@@ -1833,15 +1833,13 @@
                                                                  values: [{value: 'off', display: 'Logging Disabled'},
                                                                           {value: 'on', display: 'Logging Enabled'}],
                                                                  onChange: function ($select) {
-                                                                    var $loggingBtn = $('.debug');
-
-                                                                    if( $select.val() === 'on' ) {
+                                                                     if( $select.val() === 'on' ) {
                                                                         debugOn(true);
-                                                                        $loggingBtn.css('display','');
+                                                                        $('.debug').css('display','').show();
                                                                     }
                                                                     else {
                                                                         debugOn(false);
-                                                                        $loggingBtn.css('diplay', 'none');
+                                                                        $('.debug').css('diplay', 'none').hide();
                                                                     }
                                                                  }
                                                 })
