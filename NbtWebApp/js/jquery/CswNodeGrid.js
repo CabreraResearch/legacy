@@ -62,7 +62,7 @@
 						var jqGridOptions = {
                             autoencode: true,
                             //autowidth: true,
-                            altRows: true,
+                            altRows: false,
                             caption: '',
                             datatype: 'local', 
 				            emptyrecords: 'No Results',
