@@ -22,8 +22,9 @@ my @components = (
 	"CswConfigUI", 
 	"CswWebControls", 
 	"CswLogService", 
-	"Nbt"
-	"NbtImport"
+	"Nbt",
+	"NbtImport",
+	"NbtHelp"
 );
 
 my $orclserver = "madeye";
@@ -44,7 +45,11 @@ my $masterschema = "nbt_master";
 my %repopaths;
 foreach my $component (@components)
 {
-	if($component eq "Nbt" || $component eq "NbtImport")
+	if($component eq "NbtHelp")
+	{
+		$repopaths{$component} = "c:/kiln/Nbt/NbtWebApp/help";
+	}
+	elsif($component eq "Nbt" || $component eq "NbtImport")
 	{
 		$repopaths{$component} = "c:/kiln/Nbt/$component";
 	} else {
@@ -131,7 +136,11 @@ foreach my $component (@components)
 		{
 			$file = $repopaths{$component} ."/CswLogService/Properties/AssemblyInfo.cs";
 		}
-		elsif($component ne "NbtImport")
+		elsif($component eq "NbtImport" || $component eq "NbtHelp")
+		{
+			# no file to update
+		}
+		else
 		{
 			$file = $repopaths{$component} ."/Properties/AssemblyInfo.cs";
 		}
