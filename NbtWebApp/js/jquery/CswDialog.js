@@ -480,8 +480,7 @@
 							var $dialogdiv = $('<div id="' + id + '"></div>');
 							$dialogdiv.load(url,
 											function (responseText, textStatus, XMLHttpRequest) {
-												$dialogdiv.appendTo('body')
-														  .dialog();
+												_openDiv($dialogdiv, 600, 400);
 											});
 						},
 		'CloseDialog': function (id) {
