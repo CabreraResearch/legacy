@@ -1,10 +1,10 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="http://code.jquery.com/mobile/latest/jquery.mobile.js" />
-/// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+﻿/// <reference path="../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../thirdparty/jquery/core/jquery.mobile/jquery.mobile.2011.5.27.js" />
+/// <reference path="../thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
+/// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../_Global.js" />
-/// <reference path="CswClasses.js" />
+/// <reference path="../CswClasses.js" />
 /// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
 
 //var profiler = $createProfiler();
@@ -17,7 +17,7 @@ var CswMobile_LoggingLevel = {
     verb: { id: 'verb', display: 'Verbose' }
 };
 
-;    (function ($) { /// <param name="$" type="jQuery" />
+; (function ($) { /// <param name="$" type="jQuery" />
     
     $.fn.makeUL = function(id, params)
     {
@@ -44,22 +44,22 @@ var CswMobile_LoggingLevel = {
     {
         var $li = $(this);
         var $ret = undefined;
-        if( !isNullOrEmpty($li) )
+        if (!isNullOrEmpty($li))
         {
             $li.unbind('click');
-            $ret = $li.find('li a').bind('click', function ()
-            {
+            $ret = $li.find('li a').bind('click', function()
+                {
                 var dataurl = $(this).CswAttrXml('data-url');
                 var $thisPage = $('#' + dataurl);
                 $thisPage.doChangePage();
             });
-            
+
         }
         return $ret;
-    }
+    };
 
-    $.fn.doChangePage = function (options)
-	{
+    $.fn.doChangePage = function(options)
+    {
         var o = {
             transition: $.mobile.defaultPageTransition,
             reverse: false,
@@ -71,82 +71,82 @@ var CswMobile_LoggingLevel = {
             reloadPage: false,
             showLoadMsg: true
         };
-        if(options) $.extend(o,options);
+        if (options) $.extend(o, options);
 
         var $div = $(this);
         var ret = false;
-        if( !isNullOrEmpty($div) )
+        if (!isNullOrEmpty($div))
         {
             //$div.cachePage(); //not yet, but we'll want to update the cache with the latest version of content
             var $page = $.mobile.activePage;
-            var id = ( isNullOrEmpty($page) ) ? 'no ID' : $page.CswAttrDom('id');
+            var id = (isNullOrEmpty($page)) ? 'no ID' : $page.CswAttrDom('id');
             //if(debug !== CswMobile_LoggingLevel.none) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
 
-            if( id !== $div.CswAttrDom('id') ) ret = $.mobile.changePage( $div.CswAttrXml('data-url'), o);
+            if (id !== $div.CswAttrDom('id')) ret = $.mobile.changePage($div.CswAttrXml('data-url'), o);
         }
         return ret;
-	}
+    };
 
-    $.fn.doPage = function ()
+    $.fn.doPage = function()
     {
         var $div = $(this);
         var ret = false;
-        if( !isNullOrEmpty($div) )
+        if (!isNullOrEmpty($div))
         {
             //if(debug !== CswMobile_LoggingLevel.none) log('doPage on ' + $div.CswAttrDom('id'),true);
             //ret = $.mobile.loadPage( $div.CswAttrXml('data-url'));
             ret = $div.page(); //cachePage() //not yet, but we'll want to update the cache with the latest version of content
         }
         return ret;
-    }
-    
+    };
+
     $.fn.cachePage = function()
     {
         // we have the technology, we can persist the DOM
         var $div = $(this);
         var divid = $div.CswAttrDom('id');
         var storedPages = [];
-        if( !isNullOrEmpty( sessionStorage.storedPages ) )
+        if (!isNullOrEmpty(sessionStorage.storedPages))
         {
             storedPages = sessionStorage.storedPages.split(',');
         }
-        if( storedPages.indexOf(divid) === -1 )
+        if (storedPages.indexOf(divid) === -1)
         {
-            storedPages.push( divid );
+            storedPages.push(divid);
         }
         sessionStorage.storedPages = storedPages.toString();
-        sessionStorage[divid] = xmlToString( $div );
+        sessionStorage[divid] = xmlToString($div);
         return $div;
-    }
+    };
 
     $.fn.restorePages = function(params)
     {
         //this also needs to bindJqmEvents, but let's not inject this now.
         var $parent = $(this);
-        if( !isNullOrEmpty( sessionStorage.storedPages ) )
+        if (!isNullOrEmpty(sessionStorage.storedPages))
         {
             var storedPages = sessionStorage.storedPages.split(',');
-            for( var i=0; i < storedPages.length; i++ )
+            for (var i = 0; i < storedPages.length; i++)
             {
                 var divid = storedPages[i];
-                if( !isNullOrEmpty( sessionStorage[divid] ) )
+                if (!isNullOrEmpty(sessionStorage[divid]))
                 {
                     var $page = $(sessionStorage[divid])
-                                    .bindJqmEvents(params)
-                                    .appendTo( $parent )
-                                    .page();
+                                                    .bindJqmEvents(params)
+                                                    .appendTo($parent)
+                        .page();
                 }
 
             }
         }
         return $parent;
-    }
+    };
 
     $.fn.bindJqmEvents = function(params)
     {
         var $div = $(this);
         var $ret = false;
-        if( !isNullOrEmpty($div) )
+        if (!isNullOrEmpty($div))
         {
             var p = {
                 ParentId: '',
@@ -160,20 +160,21 @@ var CswMobile_LoggingLevel = {
                 persistBindEvent: false,
                 onPageShow: function(p) {},
                 onSuccess: function() { $.mobile.pageLoading(true); }
-            }
-            
-            if(params) $.extend(p,params);
-            p.level = (p.parentlevel === p.level ) ? p.parentlevel+1 : p.level;
+            };
+
+            if (params) $.extend(p, params);
+            p.level = (p.parentlevel === p.level) ? p.parentlevel + 1 : p.level;
 
             $div.unbind('pageshow');
-            $ret = $div.bind('pageshow', function() 
-            {
+            $ret = $div.bind('pageshow', function()
+                {
                 $.mobile.pageLoading();
-                if(p.level === 1) localStorage['currentviewid'] = p.DivId;
+
+                if (p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
-                if( !p.persistBindEvent ) {
+                if (!p.persistBindEvent) {
                     // If the page is constructed entirely from cache, we only do this once.
-                    $(this).unbind('pageshow'); 
+                    $(this).unbind('pageshow');
                 }
             });
 
@@ -192,7 +193,7 @@ var CswMobile_LoggingLevel = {
 //            });
         }
         return $ret;
-    }
+    };
 
     $.fn.CswMobile = function (options) {
         /// <summary>
