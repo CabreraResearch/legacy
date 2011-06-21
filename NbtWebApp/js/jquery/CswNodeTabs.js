@@ -485,6 +485,7 @@
                             }
                         } // if(o.ShowCheckboxes)
                         if( doSave ) o.onSave(data.nodeid, data.cswnbtnodekey);
+						$savebtn.CswButton('enable');
                     }, // success
                     error: function()
                     {
