@@ -453,7 +453,8 @@
         {
             if( doLogging() )
             {
-                cacheLogInfo('Log started ' + Date() );
+                var logger = new profileMethod('setStartLog');
+                cacheLogInfo(logger);
                 var $loggingBtn = $('.debug');
                 $loggingBtn.removeClass('debug-off')
                            .addClass('debug-on')
@@ -468,7 +469,8 @@
             if( !doLogging() )
             {
                 var $loggingBtn = $('.debug');
-                cacheLogInfo('Log end signal sent ' + Date() );
+                var logger = new profileMethod('setStopLog');
+                cacheLogInfo(logger);
                 var dataJson = {
                     'Context': 'CswMobile',
                     'UserName': localStorage['username'],
@@ -498,7 +500,7 @@
 
         function _loadDivContents(params)
         {
-            cacheLogInfo('_loadDivContents started ' + Date() );
+            var logger = new profileMethod('_loadDivContents');
             var p = {
                 ParentId: '',
                 level: 1,
@@ -559,7 +561,8 @@
                     }
                 }
             }
-            cacheLogInfo('_loadDivContents started ' + Date() ); 
+            logger.ended(Date());
+            cacheLogInfo(logger); 
             return $retDiv;
         } // _loadDivContents()
 
@@ -592,8 +595,6 @@
                 onloginfail: function(text) { onLoginFail(text); },
                 success: function ($xml)
                 {
-                    cacheLogInfo('On Success ' + opts.ViewUrl);
-
                     $currentViewXml = $xml;
                     p.$xml = $currentViewXml;
                     if (params.level === 1)
@@ -604,7 +605,6 @@
                 },
                 error: function(xml)
                 {
-                    cacheLogInfo(xml);
                 }
             });
 
@@ -615,7 +615,7 @@
         var onAfterAddDiv;
         function _processViewXml(params)
         {
-            cacheLogInfo('_processViewXml started ' + Date() );
+            var logger = new profileMethod('_processViewXml');
             var p = {
                 ParentId: '',
                 DivId: '',
@@ -668,13 +668,13 @@
             onAfterAddDiv($retDiv);
             
             p.onSuccess();
-            cacheLogInfo('_processViewXml ended ' + Date() );
+            logger.ended(Date());
+            cacheLogInfo(logger);
             return $retDiv;
         } // _processViewXml()
 
         function _makeListItemFromXml ($list, params)
         {
-            cacheLogInfo('_makeListItemFromXml started ' + Date() );
             var p = {
                 ParentId: '',
                 DivId: '',
@@ -864,7 +864,6 @@
                         break;
                     } // default:
             }
-            cacheLogInfo('_makeListItemFromXml ended ' + Date() );
             return $retLI;
         } // _makeListItemFromXml()
 
@@ -949,7 +948,6 @@
 
         function _FieldTypeXmlToHtml($xmlitem, ParentId, SiblingId)
         {
-            cacheLogInfo('_FieldTypeXmlToHtml started ' + Date() );
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
@@ -1136,13 +1134,11 @@
             {
                 $retHtml.append( $('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>') );
             }
-            cacheLogInfo('_FieldTypeXmlToHtml ended ' + Date() );
             return $retHtml;
         }
 
         function _FieldTypeHtmlToXml($xmlitem, id, value)
         {
-            cacheLogInfo('_FieldTypeHtmlToXml started ' + Date() );
             var name = new CswString(id);
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var fieldtype = $xmlitem.CswAttrXml('fieldtype');
@@ -1202,7 +1198,6 @@
                 $sftomodify.text(value);
                 $xmlitem.CswAttrXml('wasmodified', '1');
             }
-            cacheLogInfo('_FieldTypeHtmlToXml ended ' + Date() );
         } // _FieldTypeHtmlToXml()
 
         function _makeLogicalFieldSet(ParentId, IdStr, Suffix, OtherSuffix, Checked, Required)
@@ -1975,7 +1970,6 @@
                     onloginfail: function(text) { onLoginFail(text); },
                     success: function ($xml)
                     {
-                        cacheLogInfo('On Success ' + opts.ViewUrl);
                         $currentViewXml = $xml;
                         _updateStoredViewXml(DivId, $currentViewXml, '0');
 
@@ -1999,7 +1993,6 @@
                         $.mobile.pageLoading(true);
                     }, // success
                     error: function(txt) {
-                        cacheLogInfo(txt);
                     }
                 });
             }
@@ -2018,7 +2011,7 @@
 
         function onPropertyChange(DivId, eventObj)
         {
-            cacheLogInfo('onPropertyChange started ' + Date() );
+            var logger = new profileMethod('onPropertyChange');
             var $elm = $(eventObj.target);
             var name = $elm.CswAttrDom('name');
             var value = $elm.val();
@@ -2035,7 +2028,8 @@
                 _updateStoredViewXml(rootid, $currentViewXml, '1');
                 _resetPendingChanges(true, false);
             }
-            cacheLogInfo('onPropertyChange ended ' + Date() );
+            logger.ended(Date());
+            cacheLogInfo(logger);
         } // onPropertyChange()
 
         function onSearchOpen(DivId)
@@ -2270,7 +2264,7 @@
 
         function _processChanges(perpetuateTimer)
         {
-            cacheLogInfo('_processChanges started ' + Date() );
+            var logger = new profileMethod('_processChanges');
             if ( !isNullOrEmpty(SessionId) )
             {
                 _getModifiedView(function (rootid, viewxml)
@@ -2292,7 +2286,6 @@
                             stringify: true,
                             onloginfail: function(text) 
                             { 
-                                cacheLogInfo('_processChanges AJAX onloginfail ' + Date() );
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
@@ -2301,7 +2294,7 @@
                             },
                             success: function (data)
                             {
-                                cacheLogInfo('_processChanges AJAX success ' + Date() );
+                                logger.ajaxSuccess(Date());
                                 var $xml = data.xml;
                                 _updateStoredViewXml(rootid, $xml, '0');
                                 _resetPendingChanges(false, true);
@@ -2312,7 +2305,6 @@
                             },
                             error: function (data)
                             {
-                                cacheLogInfo('_processChanges error()' + opts.UpdateUrl);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
@@ -2334,7 +2326,8 @@
                 if (perpetuateTimer)
                     _waitForData();
             } // if(SessionId != '') 
-            cacheLogInfo('_processChanges ended ' + Date() );
+            logger.ended(Date());
+            cacheLogInfo(logger);
         } //_processChanges()
 
         // For proper chaining support

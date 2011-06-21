@@ -1294,7 +1294,7 @@ function debugOn(value)
     return ret;
 }
 
-function cacheLogInfo(debugStr, includeCallStack)
+function cacheLogInfo(logger, includeCallStack)
 {
     if ( doLogging() )
     {
@@ -1302,7 +1302,7 @@ function cacheLogInfo(debugStr, includeCallStack)
         {
             var logStorage = new CswStorage(sessionStorage);
             var log = logStorage.getItem('debuglog');
-            log += debugStr;
+            log += logger;
 
             var extendedLog = '';
             if (isTrue(includeCallStack)) {
@@ -1315,6 +1315,46 @@ function cacheLogInfo(debugStr, includeCallStack)
         }
     }
 }
+
+function profileMethod(methodName) {
+    this.name = methodName;
+    this.started = Date();
+}
+profileMethod.prototype.ajaxSuccess = function (value)
+{
+    var succeeded;
+    if (arguments.length === 1)
+    {
+        succeeded = value;
+    }
+    else if (!succeeded)
+    {
+        succeeded = Date();
+    }
+    return succeeded;
+};
+profileMethod.prototype.ended = function (value)
+{
+    var ended;
+    if (arguments.length === 1)
+    {
+        ended = value;
+    }
+    else if (!ended)
+    {
+        ended = Date();
+    }
+    return ended;
+};
+profileMethod.prototype.toString = function()
+{
+    var $stats = $('<' + this.name + '></' + this.name + '>');
+    $stats.append('<started>' + this.started + '</started>');
+    $stats.append('<ajaxsuccess>' + this.ajaxSuccess() + '</ajaxsuccess>');
+    $stats.append('<ended>' + this.ended() + '</ended>');
+    return xmlToString($stats);
+};
+
 
 function purgeLogInfo()
 {
