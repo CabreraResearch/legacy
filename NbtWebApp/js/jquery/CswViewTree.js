@@ -13,6 +13,7 @@
             usesession: true,
 			onSelect: function (optSelect) { 
 							var o = {
+								$item: '',
 								iconurl: '',
 								type: '',
 								viewid: '',
@@ -67,6 +68,7 @@
 								function (e, data) {
 									var Selected = jsTreeGetSelected($viewsdiv); 
 									var optSelect = {
+												$item: Selected.$item,
 												iconurl: Selected.iconurl,
 												type: Selected.$item.CswAttrXml('viewtype'),
 												viewid: Selected.$item.CswAttrXml('viewid'),

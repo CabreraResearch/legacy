@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.Schema
 
         } // update()
 
-    }//class CswUpdateSchemaTo01H45
+    }//class CswUpdateSchemaTo01H49
 
 }//namespace ChemSW.Nbt.Schema
 

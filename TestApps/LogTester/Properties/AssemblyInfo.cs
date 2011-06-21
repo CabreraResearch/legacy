@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "NbtSchemaUpdater" )]
+[assembly: AssemblyTitle( "LogTester" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "" )]
-[assembly: AssemblyProduct( "NbtSchemaUpdater" )]
-[assembly: AssemblyCopyright( "Copyright © ChemSW, Inc. 2005-2009" )]
+[assembly: AssemblyCompany( "Microsoft" )]
+[assembly: AssemblyProduct( "LogTester" )]
+[assembly: AssemblyCopyright( "Copyright © Microsoft 2011" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible( false )]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "ae4e9396-8279-4214-b167-d63ce232eee0" )]
+[assembly: Guid( "06cc849f-984c-4064-9b63-ada511c4a82b" )]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion( "2011.6.21.1" )]
-[assembly: AssemblyFileVersion( "2011.6.21.1" )]
+[assembly: AssemblyVersion( "1.0.0.0" )]
+[assembly: AssemblyFileVersion( "1.0.0.0" )]

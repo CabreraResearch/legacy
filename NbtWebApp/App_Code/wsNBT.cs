@@ -913,7 +913,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string createView( string ViewName, string ViewMode, string Visibility, string VisibilityRoleId, string VisibilityUserId )
+		public string createView( string ViewName, string ViewMode, string Visibility, string VisibilityRoleId, string VisibilityUserId, string ViewId )
 		{
 			JObject ReturnVal = new JObject();
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -922,14 +922,12 @@ namespace ChemSW.Nbt.WebServices
 
 				_initResources();
 				AuthenticationStatus = _CswSessionResources.attemptRefresh();
-
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
 
-					NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
-					Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
 					NbtViewVisibility RealVisibility = NbtViewVisibility.Unknown;
 					Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
+					
 					CswPrimaryKey RealVisibilityRoleId = null;
 					CswPrimaryKey RealVisibilityUserId = null;
 					if( RealVisibility == NbtViewVisibility.Role )
@@ -943,9 +941,22 @@ namespace ChemSW.Nbt.WebServices
 						RealVisibilityUserId.FromString( VisibilityUserId );
 					}
 
+					CswNbtView CopyView = null;
+					if( ViewId != string.Empty )
+					{
+						CopyView = _getView( ViewId );
+					}
+
 					CswNbtView NewView = new CswNbtView( _CswNbtResources );
-					NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, null );
-					NewView.ViewMode = RealViewMode;
+					NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, CopyView );
+
+					if(ViewMode != string.Empty)
+					{
+						NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
+						Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
+						NewView.ViewMode = RealViewMode;
+					}
+
 					NewView.save();
 					ReturnVal.Add( new JProperty( "newviewid", NewView.ViewId.ToString() ) );
 				}
@@ -1977,7 +1988,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string addWelcomeItem( string RoleId, string Type, string WelcomePkVal, string NodeTypeId, string Text, string IconFileName )
+		public string addWelcomeItem( string RoleId, string Type, string ViewType, string ViewValue, string NodeTypeId, string Text, string IconFileName )
 		{
 			JObject ReturnVal = new JObject();
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1995,9 +2006,13 @@ namespace ChemSW.Nbt.WebServices
 					if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
 						UseRoleId = RoleId;
 					CswNbtWebServiceWelcomeItems.WelcomeComponentType ComponentType = (CswNbtWebServiceWelcomeItems.WelcomeComponentType) Enum.Parse( typeof( CswNbtWebServiceWelcomeItems.WelcomeComponentType ), Type );
-					ws.AddWelcomeItem( ComponentType, NbtWebControls.CswViewListTree.ViewType.View, CswConvert.ToInt32( WelcomePkVal ), CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
+					CswViewListTree.ViewType RealViewType = CswViewListTree.ViewType.Unknown;
+					if( ViewType != string.Empty )
+					{
+						RealViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), ViewType, true );
+					}
+					ws.AddWelcomeItem( ComponentType, RealViewType, ViewValue, CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
 					ReturnVal.Add( new JProperty( "Succeeded", true ) );
-					//ReturnVal = "{ \"Succeeded\": \"true\" }";
 				}
 
 				_deInitResources();

@@ -140,13 +140,14 @@ namespace ChemSW.Nbt.WebServices
 			    }
 
 			    // SAVE VIEW AS
-			    if( !View.ViewId.isSet() )
-			    {
-					View.SaveToCache(false);
+				if( !View.ViewId.isSet() && _CswNbtResources.Permit.can( _CswNbtResources.Actions[CswNbtActionName.Edit_View] ) )
+				{
+					View.SaveToCache( false );
 					MenuNode.Add( new XElement( "item",
-			                                    new XAttribute( "text", "SaveViewAs" ),
-			                                    new XAttribute( "popup", "Popup_NewView.aspx?sessionviewid=" + View.SessionViewId.ToString() ) ) );
-			    }
+												new XAttribute( "text", "Save View As" ),
+												new XAttribute( "viewid", View.SessionViewId.ToString() ),
+												new XAttribute( "action", "SaveViewAs" ) ) );
+				}
 
 			    // PRINT LABEL
 			    if( !string.IsNullOrEmpty( NodeKey ) && null != Node && Node.NodeType != null )
