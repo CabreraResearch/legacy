@@ -962,9 +962,14 @@ var CswMobile_LoggingLevel = {
                                 .appendTo($retHtml);
 
             //var Html = '<div id="' + IdStr + '_propname"';
-            if (FieldType === "Question" && !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
+            if (FieldType === "Question" && 
+                !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) && 
+                isNullOrEmpty(sf_correctiveaction) )
             {
                 $propNameDiv.addClass('OOC');
+            }
+            else {
+                $propNameDiv.removeClass('OOC');
             }
             //$retHtml.append('<br/>');
 
@@ -1061,6 +1066,7 @@ var CswMobile_LoggingLevel = {
 
                         var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
                                             .appendTo($prop);
+                     
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
                         {
                             $corAction.css('display','none');
@@ -1159,7 +1165,7 @@ var CswMobile_LoggingLevel = {
                 case "Password": break;
                 case "Quantity": if (name.contains( IdStr )) $sftomodify = $sf_value; break;
                 case "Question":
-                    if (name.contains( makeSafeId({ID: IdStr, suffix: 'com'}) ))
+                    if (name.contains( makeSafeId({ID: IdStr, suffix: 'input'}) ))
                     {
                         $sftomodify = $sf_comments;
                     }

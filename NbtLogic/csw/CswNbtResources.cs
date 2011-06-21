@@ -426,14 +426,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public void ClearCache()
         {
-			//if( Trees != null )
-			//    Trees.clear();
-            if( Nodes != null )
-                Nodes.Clear();
-            _CswNbtMetaData = null;
-
-            _CswResources.ClearCache();
-
+            _clear(); 
             initModules();
             //_initNotifications( true );
             _ActionCollection = new CswNbtActionCollection( this );
@@ -531,10 +524,25 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Puts the database resources back into the resource pool
         /// </summary>
-        public void releaseDbResources() { _CswResources.releaseDbResources(); }
+        public void releaseDbResources() 
+        { 
+            _CswResources.releaseDbResources();
+            _clear();
+        }
 
 
+        private void _clear()
+        {
+            if( Nodes != null )
+            {
+                Nodes.Clear();
+            }
 
+            _CswNbtMetaData = null;
+
+            _CswResources.ClearCache();
+
+        }//clear() 
 
         /// <summary>
         /// Sets whether the transaction is atomistic
