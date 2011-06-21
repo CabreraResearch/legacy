@@ -2171,27 +2171,32 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public void collectClientLogInfo( string Context, string UserName, string CustomerId, string LogInfo )
+        public string collectClientLogInfo( string Context, string UserName, string CustomerId, string LogInfo )
         {
             try
             {
                 _initResources();
 
                 if( !string.IsNullOrEmpty( UserName ) &&
-                    !string.IsNullOrEmpty( CustomerId ) &&
-                    !string.IsNullOrEmpty( LogInfo ) )
+                    !string.IsNullOrEmpty( CustomerId ) )
                 {
-                    string LogMessage = @"Application context '" + Context + "' requested logging for username '" + UserName + "' on AccessId '" + CustomerId + "'." 
-                                        + " log message = '" + LogInfo + "'";
-                    throw new CswDniException( "Client logging", LogMessage );
+                    string LogMessage = @"Application context '" + Context + "' requested logging for username '" + UserName + "' on AccessId '" + CustomerId + "'."; 
+
+                    _CswNbtResources.logMessage(LogMessage);
+                }
+                if( !string.IsNullOrEmpty(LogInfo))
+                {
+                    _CswNbtResources.logMessage( LogInfo );
                 }
                 _deInitResources();
             }
 
             catch( Exception ex )
             {
-                _CswNbtResources.CswLogger.reportError( ex );
+                //nada
             }
+
+            return new JObject( new JProperty( "succeeded", "true" ) ).ToString();
         } // UpdateProperties()
 
         #endregion Logging

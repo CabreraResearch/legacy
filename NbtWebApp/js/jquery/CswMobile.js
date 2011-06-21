@@ -471,6 +471,7 @@
                 var $loggingBtn = $('.debug');
                 var logger = new profileMethod('setStopLog');
                 cacheLogInfo(logger);
+
                 var dataJson = {
                     'Context': 'CswMobile',
                     'UserName': localStorage['username'],
@@ -500,7 +501,7 @@
 
         function _loadDivContents(params)
         {
-            var logger = new profileMethod('_loadDivContents');
+            var logger = new profileMethod('loadDivContents');
             var p = {
                 ParentId: '',
                 level: 1,
@@ -615,7 +616,7 @@
         var onAfterAddDiv;
         function _processViewXml(params)
         {
-            var logger = new profileMethod('_processViewXml');
+            var logger = new profileMethod('processViewXml');
             var p = {
                 ParentId: '',
                 DivId: '',
@@ -2264,7 +2265,7 @@
 
         function _processChanges(perpetuateTimer)
         {
-            var logger = new profileMethod('_processChanges');
+            var logger = new profileMethod('processChanges');
             if ( !isNullOrEmpty(SessionId) )
             {
                 _getModifiedView(function (rootid, viewxml)

@@ -1300,7 +1300,7 @@ function cacheLogInfo(logger, includeCallStack)
     {
         if (hasWebStorage())
         {
-            var logStorage = new CswStorage(sessionStorage);
+            var logStorage = new CswStorage(sessionStorage,JSON,true);
             var log = logStorage.getItem('debuglog');
             log += logger;
 
@@ -1360,8 +1360,7 @@ function purgeLogInfo()
 {
     if (hasWebStorage())
     {
-        var logStorage = new CswStorage(sessionStorage);
-        logStorage.removeItem('debuglog');
+        window.sessionStorage.clear();
     }
 }
 
