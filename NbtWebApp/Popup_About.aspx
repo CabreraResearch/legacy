@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Popup_About.aspx.cs" Inherits="ChemSW.Nbt.WebPages.Popup_About"  MasterPageFile="~/PopupLayout.master" Title="About" %>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="ChemSW.Nbt.WebPages.Popup_About"  MasterPageFile="~/PopupLayout.master" Title="About" Codebehind="Popup_About.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PopupLayout.master" %>
 

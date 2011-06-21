@@ -1,11 +1,10 @@
 <%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="Popup_DeleteNode.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.Popup_DeleteNode" 
          MasterPageFile="~/PopupLayout.master" 
          Title="Delete"
          validateRequest="false"
- Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" %>
+ Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" Codebehind="Popup_DeleteNode.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PopupLayout.master" %>
 

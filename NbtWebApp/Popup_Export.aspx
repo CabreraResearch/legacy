@@ -1,11 +1,10 @@
 <%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="Popup_Export.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.Popup_Export" 
          MasterPageFile="~/PrintableLayout.master" 
          Title="Export"
          validateRequest="false"
- Culture="auto" UICulture="auto" %>
+ Culture="auto" UICulture="auto" Codebehind="Popup_Export.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PrintableLayout.master" %>
 

@@ -1,8 +1,7 @@
 <%@ Master Language="C#" 
            AutoEventWireup="true" 
-           CodeFile="Standard.master.cs" 
            Inherits="ChemSW.Nbt.WebPages.Standard" 
-           MasterPageFile="~/Base.master" %>
+           MasterPageFile="~/Base.master" Codebehind="Standard.master.cs" %>
 
 <%@ MasterType VirtualPath="~/Base.master" %>
 

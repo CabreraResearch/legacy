@@ -1,9 +1,8 @@
 <%@ Page Language="C#" 
          AutoEventWireup="true" 
-         CodeFile="Popup_DesignDelete.aspx.cs" 
          Inherits="ChemSW.Nbt.WebPages.Popup_DesignDelete"  
          MasterPageFile="~/PopupLayout.master" 
-         Title="Design - Delete" %>
+         Title="Design - Delete" Codebehind="Popup_DesignDelete.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PopupLayout.master" %>
 

@@ -1,11 +1,10 @@
 <%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="EditView.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.EditView" 
          MasterPageFile="~/MainLayout.master" 
          Title="Edit View"
          validateRequest="false"
- Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" %>
+ Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" Codebehind="EditView.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

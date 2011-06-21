@@ -1,8 +1,7 @@
 <%@ Master Language="C#" 
            AutoEventWireup="true" 
-           CodeFile="MainLayout.master.cs" 
            Inherits="ChemSW.Nbt.WebPages.MainLayout" 
-           MasterPageFile="~/Standard.master" %>
+           MasterPageFile="~/Standard.master" Codebehind="MainLayout.master.cs" %>
 
 <%@ MasterType VirtualPath="~/Standard.master" %>
 

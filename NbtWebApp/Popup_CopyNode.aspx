@@ -1,9 +1,8 @@
 <%@ Page Language="C#" 
          AutoEventWireup="true" 
-         CodeFile="Popup_CopyNode.aspx.cs" 
          Inherits="ChemSW.Nbt.WebPages.Popup_CopyNode"  
          MasterPageFile="~/PopupLayout.master" 
-         Title="Copy" %>
+         Title="Copy" Codebehind="Popup_CopyNode.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PopupLayout.master" %>
 

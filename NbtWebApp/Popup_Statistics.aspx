@@ -1,11 +1,10 @@
 ﻿<%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="Popup_Statistics.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.Popup_Statistics" 
          MasterPageFile="~/PopupLayout.master" 
          Title="Statistics"
          validateRequest="false"
- Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" %>
+ Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" Codebehind="Popup_Statistics.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PopupLayout.master" %>
 

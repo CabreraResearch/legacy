@@ -1,10 +1,9 @@
 ﻿<%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="Notifications.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.Notifications" 
          MasterPageFile="~/MainLayout.master" 
          Title="Notifications"
-%>
+ Codebehind="Notifications.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

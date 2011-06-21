@@ -1,9 +1,8 @@
 <%@ Page Language="C#" 
          AutoEventWireup="true" 
-         CodeFile="Popup_DesignAdd.aspx.cs" 
          Inherits="ChemSW.Nbt.WebPages.Popup_DesignAdd"  
          MasterPageFile="~/PopupLayout.master" 
-         Title="Design - Add" %>
+         Title="Design - Add" Codebehind="Popup_DesignAdd.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PopupLayout.master" %>
 

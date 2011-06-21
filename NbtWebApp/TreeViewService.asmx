@@ -1,1 +1,1 @@
-<%@ WebService Language="C#" CodeBehind="~/App_Code/TreeViewService.cs" Class="TreeViewService" %>
+<%@ WebService Language="C#" CodeBehind="TreeViewService.cs" Class="TreeViewService" %>

@@ -1,5 +1,5 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Act_Receiving.aspx.cs"
-    Inherits="ChemSW.Nbt.WebPages.Act_Receiving" MasterPageFile="~/MainLayout.master"%>
+﻿<%@ Page Language="C#" AutoEventWireup="true"
+    Inherits="ChemSW.Nbt.WebPages.Act_Receiving" MasterPageFile="~/MainLayout.master" Codebehind="Act_Receiving.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

@@ -1,11 +1,10 @@
 <%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="Popup_EditNode.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.Popup_EditNode" 
          MasterPageFile="~/PopupLayout.master" 
          Title="Edit"
          validateRequest="false"
- Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" %>
+ Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" Codebehind="Popup_EditNode.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PopupLayout.master" %>
 

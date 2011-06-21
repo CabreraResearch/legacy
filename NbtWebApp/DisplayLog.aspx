@@ -1,5 +1,5 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="DisplayLog.aspx.cs" Inherits="ChemSW.Nbt.WebPages.DisplayLog"
-    MasterPageFile="~/MainLayout.master" Title="Display Log" %>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="ChemSW.Nbt.WebPages.DisplayLog"
+    MasterPageFile="~/MainLayout.master" Title="Display Log" Codebehind="DisplayLog.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

@@ -1,10 +1,9 @@
 <%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="ConfigVars.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.ConfigVars" 
          MasterPageFile="~/MainLayout.master" 
          Title="Edit Config Vars"
-%>
+ Codebehind="ConfigVars.aspx.cs" %>
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 
 

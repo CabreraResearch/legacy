@@ -1,5 +1,5 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Main.aspx.cs" Inherits="ChemSW.Nbt.WebPages.Main"
-    MasterPageFile="~/MainLayout.master" Title="Main" %>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="ChemSW.Nbt.WebPages.Main"
+    MasterPageFile="~/MainLayout.master" Title="Main" Codebehind="Main.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="Server">

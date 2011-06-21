@@ -1,5 +1,5 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Act_AssignInspection.aspx.cs"
-    Inherits="ChemSW.Nbt.WebPages.Act_AssignInspection" MasterPageFile="~/MainLayout.master"%>
+﻿<%@ Page Language="C#" AutoEventWireup="true"
+    Inherits="ChemSW.Nbt.WebPages.Act_AssignInspection" MasterPageFile="~/MainLayout.master" Codebehind="Act_AssignInspection.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

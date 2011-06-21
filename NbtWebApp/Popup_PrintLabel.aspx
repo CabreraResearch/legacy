@@ -1,10 +1,9 @@
 <%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="Popup_PrintLabel.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.Popup_PrintLabel" 
          MasterPageFile="~/PopupLayout.master" 
          Title="Print Label"
-         validateRequest="false" %>
+         validateRequest="false" Codebehind="Popup_PrintLabel.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PopupLayout.master" %>
 
