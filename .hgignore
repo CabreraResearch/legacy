@@ -16,3 +16,4 @@ relre:{*}
 relre:.orig
 relre:.gitignore
 glob:PrecompiledWeb
+glob:Nbt.sln.docstates
