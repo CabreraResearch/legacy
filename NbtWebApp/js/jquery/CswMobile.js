@@ -772,14 +772,14 @@
                         if( !ReadOnly ) {
                             $link.CswAttrXml({'data-identity': id, 'data-url': id });
                         }
-
+                        var $div;
                         switch (fieldtype.toLowerCase())
                         {
                             case 'logical':
                                 var sf_checked = tryParseString( p.$xmlitem.children('checked').text(), '');
                                 var sf_required = tryParseString( p.$xmlitem.children('required').text(), '');
 
-                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"></div>')
+                                $div = $('<div class="lisubstitute ui-li ui-btn-up-c"></div>')
                                                 .appendTo($list);
                                 var $logical = _makeLogicalFieldSet(p.DivId, id, 'ans', 'ans2', sf_checked, sf_required)
                                                 .appendTo($div);
@@ -791,7 +791,7 @@
                                 var sf_compliantanswers = tryParseString( p.$xmlitem.children('compliantanswers').text(), '');
                                 var sf_correctiveaction = tryParseString( p.$xmlitem.children('correctiveaction').text(), '');
 
-                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"><div>')
+                                $div = $('<div class="lisubstitute ui-li ui-btn-up-c"><div>')
                                                 .appendTo($list);
                                 var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'label', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                                 .appendTo($div);
@@ -822,7 +822,7 @@
                             $toolbar.append($count);
                         }
 
-                        var $newDiv = _addPageDivToBody({
+                        _addPageDivToBody({
                                             ParentId: p.DivId,
                                             level: p.parentlevel,
                                             DivId: id,
@@ -1001,7 +1001,7 @@
                         break;
 
                     case "List":
-                        var $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
+                        $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
                                         .appendTo($retHtml)
                                         .selectmenu();
                         var selectedvalue = sf_value;
