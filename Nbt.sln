@@ -46,6 +46,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "NbtWebApp", "NbtWebApp\", "
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "3308"
+		StartServerOnDebug = "false"
 	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "NbtSetup", "NbtSetup\NbtSetup.vdproj", "{1498EA88-9350-4DA7-B3AE-3723FC87D908}"
