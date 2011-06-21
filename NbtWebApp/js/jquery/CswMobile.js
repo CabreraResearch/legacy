@@ -18,7 +18,7 @@ var CswMobile_LoggingLevel = {
 };
 
 ; (function ($) { /// <param name="$" type="jQuery" />
-    
+
     $.fn.makeUL = function(id, params)
     {
         var p = {
@@ -26,19 +26,19 @@ var CswMobile_LoggingLevel = {
             'data-role': 'listview',
             'data-inset': true
         };
-        if(params) $.extend(p,params);
+        if (params) $.extend(p, params);
 
         var $div = $(this);
         var $ret = undefined;
-        if( !isNullOrEmpty($div) )
+        if (!isNullOrEmpty($div))
         {
-            $ret = $('<ul id="' + tryParseString(id,'') + '"></ul>')
-                            .appendTo($div)
-                            .CswAttrXml(p);
+            $ret = $('<ul id="' + tryParseString(id, '') + '"></ul>')
+                                            .appendTo($div)
+                                            .CswAttrXml(p);
             $ret.listview();
         }
         return $ret;
-    }
+    };
 
     $.fn.bindLI = function()
     {
