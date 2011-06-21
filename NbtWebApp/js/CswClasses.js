@@ -37,14 +37,14 @@ function CswArray()
 }
 CswArray.prototype = new Array;
 CswArray.prototype = {
-    last: function ()
-    {
-        return this[this.length - 1];
-    },
-    contains: function (key)
-    {
-        return this.indexOf(key) !== -1
-    }
+	last: function ()
+	{
+		return this[this.length - 1];
+	},
+	contains: function (key)
+	{
+		return (this.indexOf(key) !== -1);
+	}
 };
 
 //#endregion CswArray

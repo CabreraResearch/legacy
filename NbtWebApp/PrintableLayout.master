@@ -1,4 +1,4 @@
-<%@ Master Language="C#" AutoEventWireup="true" CodeFile="PrintableLayout.master.cs" Inherits="ChemSW.Nbt.WebPages.PrintableLayout" MasterPageFile="~/Standard.master" %>
+<%@ Master Language="C#" AutoEventWireup="true" Inherits="ChemSW.Nbt.WebPages.PrintableLayout" MasterPageFile="~/Standard.master" Codebehind="PrintableLayout.master.cs" %>
 
 <%@ MasterType VirtualPath="~/Standard.master" %>
 

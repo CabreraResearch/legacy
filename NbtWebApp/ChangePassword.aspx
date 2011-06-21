@@ -1,10 +1,9 @@
 ﻿<%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="ChangePassword.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.ChangePassword" 
          MasterPageFile="~/MainLayout.master" 
          Title="Change Password"
-%>
+ Codebehind="ChangePassword.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

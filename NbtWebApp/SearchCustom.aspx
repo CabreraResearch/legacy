@@ -1,10 +1,9 @@
 ﻿<%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="SearchCustom.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.SearchCustom" 
          MasterPageFile="~/MainLayout.master" 
          Title="Custom Search"
-%>
+ Codebehind="SearchCustom.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

@@ -1,11 +1,10 @@
 <%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="Popup_WelcomeAdd.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.Popup_WelcomeAdd" 
          MasterPageFile="~/PopupLayout.master" 
          Title="Welcome - Add"
          validateRequest="false"
- Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" %>
+ Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" Codebehind="Popup_WelcomeAdd.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PopupLayout.master" %>
 

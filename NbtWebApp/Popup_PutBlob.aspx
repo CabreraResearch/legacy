@@ -1,10 +1,9 @@
 <%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="Popup_PutBlob.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.Popup_PutBlob" 
          MasterPageFile="~/PopupLayout.master" 
          Title="Upload"
-%>
+ Codebehind="Popup_PutBlob.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PopupLayout.master" %>
 

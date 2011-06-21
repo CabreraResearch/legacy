@@ -1,10 +1,9 @@
 <%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="Login.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.Login" 
          MasterPageFile="~/MainLayout.master" 
          Title="Login"
-%>
+ Codebehind="Login.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

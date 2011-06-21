@@ -23,6 +23,7 @@ my @components = (
 	"CswWebControls", 
 	"CswLogService", 
 	"Nbt"
+	"NbtImport"
 );
 
 my $orclserver = "madeye";
@@ -31,9 +32,11 @@ my $masterdumpdir = "NBTDUMPS";
 
 my %schemata;  
 # $schemata{name} = password
-$schemata{"nbt_master"} = "nbt";
-$schemata{"nbt_schema1"} = "nbt";
-$schemata{"nbt_schema2"} = "nbt";
+$schemata{"nbt_master"} = "nbt";   # master
+$schemata{"nbt_schema1"} = "nbt";  # 1
+$schemata{"nbt_schema2"} = "nbt";  # 2
+$schemata{"nbt_schema3"} = "nbt";  # sales
+$schemata{"nbt_schema4"} = "nbt";  # import
 
 # this one will always be reset to the master
 my $masterschema = "nbt_master";
@@ -41,9 +44,9 @@ my $masterschema = "nbt_master";
 my %repopaths;
 foreach my $component (@components)
 {
-	if($component eq "Nbt")
+	if($component eq "Nbt" || $component eq "NbtImport")
 	{
-		$repopaths{$component} = "c:/kiln/$component/$component";
+		$repopaths{$component} = "c:/kiln/Nbt/$component";
 	} else {
 		$repopaths{$component} = "c:/kiln/Common/$component";
 	}
@@ -128,7 +131,7 @@ foreach my $component (@components)
 		{
 			$file = $repopaths{$component} ."/CswLogService/Properties/AssemblyInfo.cs";
 		}
-		else
+		elsif($component ne "NbtImport")
 		{
 			$file = $repopaths{$component} ."/Properties/AssemblyInfo.cs";
 		}
@@ -145,7 +148,7 @@ foreach my $component (@components)
 
 &runCommand( "net stop \"NbtSchedService\"");
 
-&runCommand( "net stop \"NbtSchedService\"");
+&runCommand( "net stop \"NbtSchedService\"");   # we mean it!
 
 &runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
 

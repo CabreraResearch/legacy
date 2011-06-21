@@ -1,11 +1,10 @@
 ﻿<%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="Subscriptions.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.Subscriptions" 
          MasterPageFile="~/MainLayout.master" 
          Title="Subscriptions"
          validateRequest="false"
- Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" %>
+ Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" Codebehind="Subscriptions.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

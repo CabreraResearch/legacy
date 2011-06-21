@@ -1,5 +1,5 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Statistics.aspx.cs" Inherits="ChemSW.Nbt.WebPages.Statistics" 
-         MasterPageFile="~/MainLayout.master" Title="Statistics" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="ChemSW.Nbt.WebPages.Statistics" 
+         MasterPageFile="~/MainLayout.master" Title="Statistics" Codebehind="Statistics.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

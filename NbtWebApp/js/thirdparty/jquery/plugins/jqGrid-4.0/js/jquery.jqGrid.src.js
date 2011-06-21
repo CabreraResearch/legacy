@@ -2479,14 +2479,19 @@ $.jgrid.extend({
 			}
 			if(!$t.p.multiselect) {
 				if(pt.className !== "ui-subgrid") {
-					if( $t.p.selrow != pt.id) {
-						$($t.rows.namedItem($t.p.selrow)).removeClass("ui-state-highlight").attr({"aria-selected":"false", "tabindex" : "-1"});
+					// edited by sds of chemsw
+					$($t.rows.namedItem($t.p.selrow)).removeClass("ui-state-highlight").attr({ "aria-selected": "false", "tabindex": "-1" });
+					if ($t.p.selrow != pt.id)
+					{
 						$(pt).addClass("ui-state-highlight").attr({"aria-selected":true, "tabindex" : "0"});//.focus();
 						stat = true;
-					} else {
+						$t.p.selrow = pt.id;
+					} else
+					{
+						$t.p.selrow = null;
 						stat = false;
 					}
-					$t.p.selrow = pt.id;
+					//$t.p.selrow = pt.id;
 					if( $t.p.onSelectRow && onsr) { $t.p.onSelectRow.call($t, pt.id, stat); }
 				}
 			} else {

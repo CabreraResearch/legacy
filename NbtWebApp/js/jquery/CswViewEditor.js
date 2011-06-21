@@ -470,14 +470,16 @@ var CswViewEditor_WizardSteps = {
 							{
 								$copyviewbtn.CswButton('enable');
 								$deleteviewbtn.CswButton('enable');
+								$selview_span.text(_getSelectedViewName($viewgrid));
+								$wizard.CswWizard('button', 'next', 'enable');
 							}
 							else 
 							{
 								$copyviewbtn.CswButton('disable');
 								$deleteviewbtn.CswButton('disable');
+								$selview_span.text("");
+								$wizard.CswWizard('button', 'next', 'disable');
 							}
-							$selview_span.text(_getSelectedViewName($viewgrid));
-							$wizard.CswWizard('button', 'next', 'enable');
 						},
 						'pager': $gridPager
 					};

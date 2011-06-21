@@ -1,10 +1,9 @@
 ﻿<%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="NodeReport.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.NodeReport" 
          MasterPageFile="~/PrintableLayout.master" 
          Title="Report"
-%>
+ Codebehind="NodeReport.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/PrintableLayout.master" %>
 

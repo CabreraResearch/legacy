@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="TermsOfUse.aspx.cs" Inherits="ChemSW.Nbt.WebPages.TermsOfUse" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="ChemSW.Nbt.WebPages.TermsOfUse" Codebehind="TermsOfUse.aspx.cs" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 

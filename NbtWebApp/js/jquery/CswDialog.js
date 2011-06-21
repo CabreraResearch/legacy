@@ -142,8 +142,17 @@
 								'title': o.title,
 								'onSave': function (nodeid, nodekey)
 								{
-									$div.dialog('close');
+									unsetChanged();
+									//$div.dialog('close');
 									o.onEditNode(nodeid, nodekey);
+								},
+								'onBeforeTabSelect': function (tabid)
+								{
+									return manuallyCheckChanges();
+								},
+								'onPropertyChange': function (propid, propname)
+								{
+									setChanged();
 								}
 							});
 							if(o.filterToPropId !== '')

@@ -1,11 +1,10 @@
 ﻿<%@ Page Language="C#" 
-         AutoEventWireup="true"  
-         CodeFile="License.aspx.cs" 
+         AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.License" 
          MasterPageFile="~/MainLayout.master" 
          Title="License"
          validateRequest="false"
- Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" %>
+ Culture="auto" meta:resourcekey="PageResource1" UICulture="auto" Codebehind="License.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 
