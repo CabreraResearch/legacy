@@ -128,3 +128,33 @@ CswStorage.prototype = {
     //TODO: space evaluation, storage event handlers
 };
 //#endregion CswLocalStorage
+
+//#region profileMethod
+function profileMethod(methodName)
+{
+    this.name = methodName;
+    this.started = Date();
+    this.ended = Date();
+    this.ajaxSuccess = Date();
+}
+profileMethod.prototype = {
+    setAjaxSuccess: function()
+    {
+        this.ajaxSuccess = Date();
+        return this;
+    },
+    setEnded: function()
+    {
+        this.ended = Date();
+        return this;
+    },
+    toString: function()
+    {
+        var $stats = $('<' + this.name + '></' + this.name + '>');
+        $stats.append('<started>' + this.started + '</started>');
+        $stats.append('<ajaxsuccess>' + this.ajaxSuccess + '</ajaxsuccess>');
+        $stats.append('<ended>' + this.ended + '</ended>');
+        return xmlToString($stats);
+    }
+};
+//#endregion profileMethod

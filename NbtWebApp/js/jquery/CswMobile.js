@@ -562,7 +562,7 @@
                     }
                 }
             }
-            logger.ended(Date());
+            logger.setEnded();
             cacheLogInfo(logger); 
             return $retDiv;
         } // _loadDivContents()
@@ -669,7 +669,7 @@
             onAfterAddDiv($retDiv);
             
             p.onSuccess();
-            logger.ended(Date());
+            logger.setEnded();
             cacheLogInfo(logger);
             return $retDiv;
         } // _processViewXml()
@@ -2029,7 +2029,7 @@
                 _updateStoredViewXml(rootid, $currentViewXml, '1');
                 _resetPendingChanges(true, false);
             }
-            logger.ended(Date());
+            logger.setEnded();
             cacheLogInfo(logger);
         } // onPropertyChange()
 
@@ -2295,7 +2295,7 @@
                             },
                             success: function (data)
                             {
-                                logger.ajaxSuccess(Date());
+                                logger.setAjaxSuccess();
                                 var $xml = data.xml;
                                 _updateStoredViewXml(rootid, $xml, '0');
                                 _resetPendingChanges(false, true);
@@ -2327,7 +2327,7 @@
                 if (perpetuateTimer)
                     _waitForData();
             } // if(SessionId != '') 
-            logger.ended(Date());
+            logger.setEnded();
             cacheLogInfo(logger);
         } //_processChanges()
 
