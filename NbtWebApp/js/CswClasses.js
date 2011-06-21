@@ -50,12 +50,21 @@ CswArray.prototype = {
 //#endregion CswArray
 
 //#region CswLocalStorage
-function CswStorage(nativeStorage) //, serializer)
+function CswStorage(nativeStorage, serializer, useJSON)
 {
     //abstracts localStorage or sessionStorage
-    //should GSerializer prove a bust, restore serializer parameter and feed JSON
     this.storage = nativeStorage;
-    this.serializer = new ONEGEEK.GSerializer();
+    this.useJSON = useJSON;
+    this.serializer = serializer;
+    if (useJSON) {
+        this.serialize = this.serializer.stringify;
+        this.deserialize = this.serializer.parse;
+    }
+    else {
+        this.serialize = this.serializer.serialize;
+        this.deserialize = this.serializer.deserialize;
+    }
+    
     this.keys = new Array;
 }
 
@@ -81,13 +90,13 @@ CswStorage.prototype = {
     {
         var ret;
         var value = this.storage.getItem(key);
-        if ( isNullOrEmpty(value) )
+        if (isNullOrEmpty(value))
         {
             ret = (!isNullOrEmpty(defaultValue)) ? defaultValue : null;
         }
         else
         {
-            ret = this.serializer.deserialize(value);
+            ret = this.deserialize(value);
         }
         return ret;
     },
@@ -98,7 +107,7 @@ CswStorage.prototype = {
     },
     hasItem: function (key)
     {
-        ret = ( !isNullOrEmpty( this.storage.getItem(key) ) );
+        ret = (!isNullOrEmpty(this.storage.getItem(key)));
         return ret;
     },
     removeItem: function (key)
@@ -112,9 +121,40 @@ CswStorage.prototype = {
         {
             this.keys.push(key);
         }
-        this.storage.setItem(key, this.serializer.serialize(value));
+        var val = this.serialize(value);
+        this.storage.setItem(key, val);
         return (this);
     }
     //TODO: space evaluation, storage event handlers
 };
 //#endregion CswLocalStorage
+
+//#region profileMethod
+function profileMethod(methodName)
+{
+    this.name = methodName;
+    this.started = Date();
+    this.ended = Date();
+    this.ajaxSuccess = Date();
+}
+profileMethod.prototype = {
+    setAjaxSuccess: function()
+    {
+        this.ajaxSuccess = Date();
+        return this;
+    },
+    setEnded: function()
+    {
+        this.ended = Date();
+        return this;
+    },
+    toString: function()
+    {
+        var $stats = $('<' + this.name + '></' + this.name + '>');
+        $stats.append('<started>' + this.started + '</started>');
+        $stats.append('<ajaxsuccess>' + this.ajaxSuccess + '</ajaxsuccess>');
+        $stats.append('<ended>' + this.ended + '</ended>');
+        return xmlToString($stats);
+    }
+};
+//#endregion profileMethod

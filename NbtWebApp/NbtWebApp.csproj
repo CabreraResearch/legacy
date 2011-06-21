@@ -13,6 +13,7 @@
     <RootNamespace>NbtWebApp</RootNamespace>
     <AssemblyName>NbtWebApp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,10 +58,6 @@
     </Reference>
     <Reference Include="FarPoint.Web.Spread.Extender">
       <HintPath>..\..\..\ThirdParty\FarPoint\Spread.ASP.4.dotNet35\v4.0.3505\Bin\FarPoint.Web.Spread.Extender.dll</HintPath>
-    </Reference>
-    <Reference Include="FiftyOne.Foundation, Version=0.1.11.10, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ThirdParty\51Degrees\51degrees.mobi_Enhance_0.1.11.10\Detector Web Site\bin\FiftyOne.Foundation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=4.0.2.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -1155,8 +1152,7 @@
     <Content Include="Main.aspx" />
     <Content Include="Main.js" />
     <Content Include="Mobile.html" />
-    <Content Include="MobileIncludes_Dev.html" />
-    <Content Include="MobileIncludes_Production.html" />
+    <Content Include="Mobile_Includes.html" />
     <Content Include="MobileTest.html" />
     <Content Include="NewFooter.html" />
     <Content Include="NewHeader.html" />

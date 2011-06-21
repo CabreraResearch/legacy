@@ -3,6 +3,7 @@
 /// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../js/thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
+/// <reference path="CswClasses.js" />
 
 // ------------------------------------------------------------------------------------
 // Enums
@@ -1304,8 +1305,7 @@ function log(s, includeCallStack)
 
     try
     {
-        console.log(s);
-        if (!isNullOrEmpty(extendedLog)) console.log(extendedLog);
+        console.log(s, extendedLog);
     } catch (e)
     {
         alert(s);
@@ -1331,11 +1331,73 @@ function getCallStack()
     return stack;
 }
 
-function errorHandler(error, includeCallStack, includeLocalStorage)
+function errorHandler(error, includeCallStack, includeLocalStorage, toCswStorage)
 {
-    if(Modernizr.localstorage && includeLocalStorage) log(localStorage);
-    log('localStorage Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack);
+    if( hasWebStorage() && includeLocalStorage) log(localStorage);
+    log('Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack, toCswStorage);
 }
+
+//#region Persistent Logging
+
+function doLogging(value)
+{
+    var ret = undefined;
+    if (hasWebStorage())
+    {
+        if (arguments.length === 1)
+        {
+            localStorage['doLogging'] = isTrue(value);
+        }
+        var ret = isTrue(localStorage['doLogging']);
+    }
+    return ret;
+}
+
+function debugOn(value)
+{
+    var ret = undefined;
+    if (hasWebStorage())
+    {
+        if (arguments.length === 1)
+        {
+            localStorage['debugOn'] = isTrue(value);
+        }
+        var ret = isTrue(localStorage['debugOn']);
+    }
+    return ret;
+}
+
+function cacheLogInfo(logger, includeCallStack)
+{
+    if ( doLogging() )
+    {
+        if (hasWebStorage())
+        {
+            var logStorage = new CswStorage(sessionStorage,JSON,true);
+            var log = logStorage.getItem('debuglog');
+            log += logger;
+
+            var extendedLog = '';
+            if (isTrue(includeCallStack)) {
+                extendedLog = getCallStack();
+            }
+            if (!isNullOrEmpty(extendedLog)) {
+                log += ',' + extendedLog;
+            }
+            logStorage.setItem('debuglog', log);
+        }
+    }
+}
+
+function purgeLogInfo()
+{
+    if (hasWebStorage())
+    {
+        window.sessionStorage.clear();
+    }
+}
+
+//#endregion Persistent Logging
 
 // ------------------------------------------------------------------------------------
 // Browser Compatibility
@@ -1348,4 +1410,10 @@ if (typeof String.prototype.trim !== 'function')
     {
         return this.replace(/^\s+|\s+$/g, '');
     }
+}
+
+function hasWebStorage(localOnly)
+{
+    var ret = (Modernizr.localstorage && (localOnly || Modernizr.sessionstorage)); 
+    return ret;
 }

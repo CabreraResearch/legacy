@@ -9,6 +9,7 @@ using System.Web.Services;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using ChemSW.Core;
 using ChemSW.Config;
+using ChemSW.Log;
 using ChemSW.Nbt.Security;
 using ChemSW.NbtWebControls;
 using ChemSW.Security;
@@ -2181,8 +2182,42 @@ namespace ChemSW.Nbt.WebServices
 		}
 		#endregion Connectivity
 
-		#region Mobile
-		[WebMethod( EnableSession = false )]
+        #region Logging
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string collectClientLogInfo( string Context, string UserName, string CustomerId, string LogInfo )
+        {
+            try
+            {
+                _initResources();
+
+                if( !string.IsNullOrEmpty( UserName ) &&
+                    !string.IsNullOrEmpty( CustomerId ) )
+                {
+                    string LogMessage = @"Application context '" + Context + "' requested logging for username '" + UserName + "' on AccessId '" + CustomerId + "'."; 
+
+                    _CswNbtResources.logMessage(LogMessage);
+                }
+                if( !string.IsNullOrEmpty(LogInfo))
+                {
+                    _CswNbtResources.logMessage( LogInfo );
+                }
+                _deInitResources();
+            }
+
+            catch( Exception ex )
+            {
+                //nada
+            }
+
+            return new JObject( new JProperty( "succeeded", "true" ) ).ToString();
+        } // UpdateProperties()
+
+        #endregion Logging
+
+        #region Mobile
+        [WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string UpdateProperties( string SessionId, string ParentId, string UpdatedViewXml, bool ForMobile )
 		{

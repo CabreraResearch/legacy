@@ -1,17 +1,16 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="http://code.jquery.com/mobile/latest/jquery.mobile.js" />
-/// <reference path="../jquery/jquery-validate-1.8/jquery.validate.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+﻿/// <reference path="../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../thirdparty/jquery/core/jquery.mobile/jquery.mobile.2011.5.27.js" />
+/// <reference path="../thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
+/// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../_Global.js" />
-/// <reference path="CswClasses.js" />
+/// <reference path="../CswClasses.js" />
 /// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
 
 //var profiler = $createProfiler();
-//if (!debug) profiler.disable();
 
 ; (function ($) { /// <param name="$" type="jQuery" />
-    
+
     $.fn.makeUL = function(id, params)
     {
         var p = {
@@ -19,40 +18,40 @@
             'data-role': 'listview',
             'data-inset': true
         };
-        if(params) $.extend(p,params);
+        if (params) $.extend(p, params);
 
         var $div = $(this);
         var $ret = undefined;
-        if( !isNullOrEmpty($div) )
+        if (!isNullOrEmpty($div))
         {
-            $ret = $('<ul id="' + tryParseString(id,'') + '"></ul>')
-                            .appendTo($div)
-                            .CswAttrXml(p);
+            $ret = $('<ul id="' + tryParseString(id, '') + '"></ul>')
+                                            .appendTo($div)
+                                            .CswAttrXml(p);
             $ret.listview();
         }
         return $ret;
-    }
+    };
 
     $.fn.bindLI = function()
     {
         var $li = $(this);
         var $ret = undefined;
-        if( !isNullOrEmpty($li) )
+        if (!isNullOrEmpty($li))
         {
             $li.unbind('click');
-            $ret = $li.find('li a').bind('click', function ()
-            {
+            $ret = $li.find('li a').bind('click', function()
+                {
                 var dataurl = $(this).CswAttrXml('data-url');
                 var $thisPage = $('#' + dataurl);
                 $thisPage.doChangePage();
             });
-            
+
         }
         return $ret;
-    }
+    };
 
-    $.fn.doChangePage = function (options)
-	{
+    $.fn.doChangePage = function(options)
+    {
         var o = {
             transition: $.mobile.defaultPageTransition,
             reverse: false,
@@ -64,82 +63,82 @@
             reloadPage: false,
             showLoadMsg: true
         };
-        if(options) $.extend(o,options);
+        if (options) $.extend(o, options);
 
         var $div = $(this);
         var ret = false;
-        if( !isNullOrEmpty($div) )
+        if (!isNullOrEmpty($div))
         {
             //$div.cachePage(); //not yet, but we'll want to update the cache with the latest version of content
             var $page = $.mobile.activePage;
-            var id = ( isNullOrEmpty($page) ) ? 'no ID' : $page.CswAttrDom('id');
-            if(debug) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
+            var id = (isNullOrEmpty($page)) ? 'no ID' : $page.CswAttrDom('id');
+            //if(doLogging()) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
 
-            if( id !== $div.CswAttrDom('id') ) ret = $.mobile.changePage( $div.CswAttrXml('data-url'), o);
+            if (id !== $div.CswAttrDom('id')) ret = $.mobile.changePage($div.CswAttrXml('data-url'), o);
         }
         return ret;
-	}
+    };
 
-    $.fn.doPage = function ()
+    $.fn.doPage = function()
     {
         var $div = $(this);
         var ret = false;
-        if( !isNullOrEmpty($div) )
+        if (!isNullOrEmpty($div))
         {
-            if(debug) log('doPage on ' + $div.CswAttrDom('id'),true);
+            //if(doLogging()) log('doPage on ' + $div.CswAttrDom('id'),true);
             //ret = $.mobile.loadPage( $div.CswAttrXml('data-url'));
             ret = $div.page(); //cachePage() //not yet, but we'll want to update the cache with the latest version of content
         }
         return ret;
-    }
-    
+    };
+
     $.fn.cachePage = function()
     {
         // we have the technology, we can persist the DOM
         var $div = $(this);
         var divid = $div.CswAttrDom('id');
         var storedPages = [];
-        if( !isNullOrEmpty( sessionStorage.storedPages ) )
+        if (!isNullOrEmpty(sessionStorage.storedPages))
         {
             storedPages = sessionStorage.storedPages.split(',');
         }
-        if( storedPages.indexOf(divid) === -1 )
+        if (storedPages.indexOf(divid) === -1)
         {
-            storedPages.push( divid );
+            storedPages.push(divid);
         }
         sessionStorage.storedPages = storedPages.toString();
-        sessionStorage[divid] = xmlToString( $div );
+        sessionStorage[divid] = xmlToString($div);
         return $div;
-    }
+    };
 
     $.fn.restorePages = function(params)
     {
         //this also needs to bindJqmEvents, but let's not inject this now.
         var $parent = $(this);
-        if( !isNullOrEmpty( sessionStorage.storedPages ) )
+        if (!isNullOrEmpty(sessionStorage.storedPages))
         {
             var storedPages = sessionStorage.storedPages.split(',');
-            for( var i=0; i < storedPages.length; i++ )
+            for (var i = 0; i < storedPages.length; i++)
             {
                 var divid = storedPages[i];
-                if( !isNullOrEmpty( sessionStorage[divid] ) )
+                if (!isNullOrEmpty(sessionStorage[divid]))
                 {
                     var $page = $(sessionStorage[divid])
-                                    .bindJqmEvents(params)
-                                    .appendTo( $parent )
-                                    .page();
+                                                    .bindJqmEvents(params)
+                                                    .appendTo($parent)
+                        .page();
                 }
 
             }
         }
         return $parent;
-    }
+    };
 
     $.fn.bindJqmEvents = function(params)
     {
         var $div = $(this);
         var $ret = false;
-        if( !isNullOrEmpty($div) )
+        if (!isNullOrEmpty($div))
         {
             var p = {
                 ParentId: '',
@@ -153,20 +152,21 @@
                 persistBindEvent: false,
                 onPageShow: function(p) {},
                 onSuccess: function() { $.mobile.pageLoading(true); }
-            }
-            
-            if(params) $.extend(p,params);
-            p.level = (p.parentlevel === p.level ) ? p.parentlevel+1 : p.level;
+            };
+
+            if (params) $.extend(p, params);
+            p.level = (p.parentlevel === p.level) ? p.parentlevel + 1 : p.level;
 
             $div.unbind('pageshow');
-            $ret = $div.bind('pageshow', function() 
-            {
+            $ret = $div.bind('pageshow', function()
+                {
                 $.mobile.pageLoading();
-                if(p.level === 1) localStorage['currentviewid'] = p.DivId;
+
+                if (p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
-                if( !p.persistBindEvent ) {
+                if (!p.persistBindEvent) {
                     // If the page is constructed entirely from cache, we only do this once.
-                    $(this).unbind('pageshow'); 
+                    $(this).unbind('pageshow');
                 }
             });
 
@@ -185,7 +185,7 @@
 //            });
         }
         return $ret;
-    }
+    };
 
     $.fn.CswMobile = function (options) {
         /// <summary>
@@ -207,6 +207,7 @@
             UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
             MainPageUrl: '/NbtWebApp/Mobile.html',
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
+            SendLogUrl: '/NbtWebApp/wsNBT.asmx/collectClientLogInfo',
             Theme: 'a',
             PollingInterval: 30000,
             DivRemovalDelay: 1,
@@ -226,7 +227,6 @@
             Logout();
         }
         var SessionId = localStorage["sessionid"];
-        
         var $currentViewXml;
 
         var storedViews = '';
@@ -242,14 +242,9 @@
 
 		// case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
-        if ( !isNullOrEmpty(SessionId) )
-        {
-            var potentialtempdivid = window.location.hash.substr(1);
-            if ($('#' + potentialtempdivid).length === 0 && potentialtempdivid !== 'viewsdiv' && potentialtempdivid !== 'logindiv')
-            {
-                $.mobile.path.set('#viewsdiv'); // we can use restorePages() to eliminate this later.
-            }
-        }
+        if ( !isNullOrEmpty(SessionId) ) {
+            $.mobile.path.set('#viewsdiv'); // we can use restorePages() to eliminate this later.
+        }        
 
         if ( !isNullOrEmpty(SessionId) )
         {
@@ -387,20 +382,6 @@
             return $viewsdiv;
         }
 
-//        function clearPath()
-//        {
-//            currentMobilePath = tryParseString( $.mobile.path.get(), '');
-//            if(debug) log('pre set path = ' + currentMobilePath, true);
-//            if( currentMobilePath !== '') $.mobile.path.set('');
-//            if(debug) log('post set path = ' + $.mobile.path.get());
-//        }
-
-//        function restorePath()
-//        {
-//            currentMobilePath = tryParseString( currentMobilePath, '');
-//            $.mobile.path.set(currentMobilePath);
-//        }
-
         // ------------------------------------------------------------------------------------
         // Online indicator
         // ------------------------------------------------------------------------------------
@@ -451,6 +432,68 @@
             return isOffline;
         }
 
+        // ------------------------------------------------------------------------------------
+        // Logging Button
+        // ------------------------------------------------------------------------------------
+
+        function _toggleLogging()
+        {
+            var logging = !doLogging();            
+            doLogging(logging);
+            if(logging) {
+                setStartLog();
+            } 
+            else {
+                setStopLog();
+            }
+
+        }
+
+        function setStartLog()
+        {
+            if( doLogging() )
+            {
+                var logger = new profileMethod('setStartLog');
+                cacheLogInfo(logger);
+                var $loggingBtn = $('.debug');
+                $loggingBtn.removeClass('debug-off')
+                           .addClass('debug-on')
+                           .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                           .text('Sync Log')
+                           .end();
+            }
+        }
+
+        function setStopLog()
+        {
+            if( !doLogging() )
+            {
+                var $loggingBtn = $('.debug');
+                var logger = new profileMethod('setStopLog');
+                cacheLogInfo(logger);
+
+                var dataJson = {
+                    'Context': 'CswMobile',
+                    'UserName': localStorage['username'],
+                    'CustomerId': localStorage['customerid'],
+                    'LogInfo': sessionStorage['debuglog']
+                };
+              
+                CswAjaxJSON({
+                    url: opts.SendLogUrl,
+                    data: dataJson,
+                    success: function ()
+                    {
+                        $loggingBtn.removeClass('debug-on')
+                                    .addClass('debug-off')
+                                    .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                                    .text('Start Log')
+                                    .end();
+                        purgeLogInfo();
+                    }
+                });
+            }
+        }
 
         // ------------------------------------------------------------------------------------
         // List items fetching
@@ -458,6 +501,7 @@
 
         function _loadDivContents(params)
         {
+            var logger = new profileMethod('loadDivContents');
             var p = {
                 ParentId: '',
                 level: 1,
@@ -518,7 +562,8 @@
                     }
                 }
             }
-             
+            logger.setEnded();
+            cacheLogInfo(logger); 
             return $retDiv;
         } // _loadDivContents()
 
@@ -551,7 +596,6 @@
                 onloginfail: function(text) { onLoginFail(text); },
                 success: function ($xml)
                 {
-                    if (debug) log('On Success ' + opts.ViewUrl, true);
                     $currentViewXml = $xml;
                     p.$xml = $currentViewXml;
                     if (params.level === 1)
@@ -559,12 +603,9 @@
                         _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                     }
                     $retDiv = _loadDivContentsXml(p);    
-                    //restorePath();
                 },
                 error: function(xml)
                 {
-                    if(debug) log(xml, true);
-                    //restorePath();
                 }
             });
 
@@ -575,6 +616,7 @@
         var onAfterAddDiv;
         function _processViewXml(params)
         {
+            var logger = new profileMethod('processViewXml');
             var p = {
                 ParentId: '',
                 DivId: '',
@@ -627,7 +669,8 @@
             onAfterAddDiv($retDiv);
             
             p.onSuccess();
-
+            logger.setEnded();
+            cacheLogInfo(logger);
             return $retDiv;
         } // _processViewXml()
 
@@ -729,14 +772,14 @@
                         if( !ReadOnly ) {
                             $link.CswAttrXml({'data-identity': id, 'data-url': id });
                         }
-
+                        var $div;
                         switch (fieldtype.toLowerCase())
                         {
                             case 'logical':
                                 var sf_checked = tryParseString( p.$xmlitem.children('checked').text(), '');
                                 var sf_required = tryParseString( p.$xmlitem.children('required').text(), '');
 
-                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"></div>')
+                                $div = $('<div class="lisubstitute ui-li ui-btn-up-c"></div>')
                                                 .appendTo($list);
                                 var $logical = _makeLogicalFieldSet(p.DivId, id, 'ans', 'ans2', sf_checked, sf_required)
                                                 .appendTo($div);
@@ -748,7 +791,7 @@
                                 var sf_compliantanswers = tryParseString( p.$xmlitem.children('compliantanswers').text(), '');
                                 var sf_correctiveaction = tryParseString( p.$xmlitem.children('correctiveaction').text(), '');
 
-                                var $div = $('<div class="lisubstitute ui-li ui-btn-up-c"><div>')
+                                $div = $('<div class="lisubstitute ui-li ui-btn-up-c"><div>')
                                                 .appendTo($list);
                                 var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'ans', 'ans2', 'cor', 'li', 'label', sf_allowedanswers, sf_answer, sf_compliantanswers)
                                                 .appendTo($div);
@@ -779,7 +822,7 @@
                             $toolbar.append($count);
                         }
 
-                        var $newDiv = _addPageDivToBody({
+                        _addPageDivToBody({
                                             ParentId: p.DivId,
                                             level: p.parentlevel,
                                             DivId: id,
@@ -930,9 +973,14 @@
                                 .appendTo($retHtml);
 
             //var Html = '<div id="' + IdStr + '_propname"';
-            if (FieldType === "Question" && !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0))
+            if (FieldType === "Question" && 
+                !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) && 
+                isNullOrEmpty(sf_correctiveaction) )
             {
                 $propNameDiv.addClass('OOC');
+            }
+            else {
+                $propNameDiv.removeClass('OOC');
             }
             //$retHtml.append('<br/>');
 
@@ -953,7 +1001,7 @@
                         break;
 
                     case "List":
-                        var $prop = $('<select name="' + propId + '" id="' + propId + '"></select>')
+                        $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
                                         .appendTo($retHtml)
                                         .selectmenu();
                         var selectedvalue = sf_value;
@@ -1029,6 +1077,7 @@
 
                         var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
                                             .appendTo($prop);
+                     
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0)
                         {
                             $corAction.css('display','none');
@@ -1127,7 +1176,7 @@
                 case "Password": break;
                 case "Quantity": if (name.contains( IdStr )) $sftomodify = $sf_value; break;
                 case "Question":
-                    if (name.contains( makeSafeId({ID: IdStr, suffix: 'com'}) ))
+                    if (name.contains( makeSafeId({ID: IdStr, suffix: 'input'}) ))
                     {
                         $sftomodify = $sf_comments;
                     }
@@ -1391,6 +1440,7 @@
             var $closeBtn = $('#' + p.DivId + '_close');
             var $backlink = $('#' + p.DivId + '_back');
             var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
+            var $loggingBtn = $('#' + p.DivId + '_debuglog');
 
             if( isNullOrEmpty($pageDiv) || $pageDiv.length === 0 )
             {
@@ -1475,14 +1525,14 @@
                                                    'data-position':'fixed',
                                                    'data-id': 'csw_footer' });
 
-                var $footerCtn = $('<div data-role="controlgroup" data-type="horizontal" class="ui-bar">')
+                var $footerCtn = $('<div data-role="navbar">')
                                     .appendTo($footer);
                 var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
                 var onlineValue = (amOffline()) ? 'Offline' : 'Online';
 
                 $syncstatusBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
                                                     ID: p.DivId + '_gosyncstatus', 
-                                                    cssclass: onlineClass + ' ui-btn-left',  
+                                                    cssclass: onlineClass, // + ' ui-btn-left',  
                                                     value: onlineValue })
                                     .CswAttrXml({'data-identity': p.DivId + '_gosyncstatus', 
                                                 'data-url': p.DivId + '_gosyncstatus', 
@@ -1494,7 +1544,7 @@
                 $refreshBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
                                                        ID: p.DivId + '_refresh', 
                                                        value:'Refresh', 
-                                                       cssclass: 'refresh ui-btn-left'})
+                                                       cssclass: 'refresh'}) //, ui-btn-left'})
                                       .CswAttrXml({'data-identity': p.DivId + '_refresh', 
                                                    'data-url': p.DivId + '_refresh'
                                                    })
@@ -1502,8 +1552,8 @@
 
                 $logoutBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
                                                     ID: p.DivId + '_logout', 
-                                                    value: 'Logout',
-                                                    cssclass: 'ui-btn-left' })
+                                                    value: 'Logout' })
+                                                    //, cssclass: 'ui-btn-left' })
                                    .CswAttrXml({'data-identity': p.DivId + '_logout', 
                                                 'data-url': p.DivId + '_logout', 
                                                 'data-transition': 'flip' })
@@ -1516,70 +1566,75 @@
 
                 $helpBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
                                                    ID: p.DivId + '_help', 
-                                                   value: 'Help',
-                                                   cssclass: 'ui-btn-left' })
+                                                   value: 'Help' })
+                                                   //, cssclass: 'ui-btn-left' })
                                      .CswAttrXml({'data-identity': p.DivId + '_help', 
                                                 'data-url': p.DivId + '_help', 
                                                 'data-transition': 'pop',
                                                 'data-rel': 'dialog'})
                                      .css('display','');
+                
+                $loggingBtn = $footerCtn.CswLink('init',{'href': 'javascript:void(0)', 
+                                                   ID: p.DivId + '_debuglog', 
+                                                   value: doLogging() ?  'Start Log' : 'Sync Log',
+                                                   cssclass: 'debug' })
+                                         .addClass( doLogging() ? 'debug-on' : 'debug-off');
             }
 
             if ( p.HideOnlineButton ) { 
-                $syncstatusBtn.hide(); 
+                $syncstatusBtn.css('display','none'); 
             }
             else {
-                $syncstatusBtn.show()
-                               .css('display',''); 
+                $syncstatusBtn.css('display',''); 
             }
             if ( p.HideHelpButton ) {
-                $helpBtn.hide();
+                $helpBtn.css('display','none');
             }
             else {
-                $helpBtn.show()
-                        .css('display',''); 
+                $helpBtn.css('display',''); 
             }
             if ( p.HideLogoutButton ) {
-                $logoutBtn.hide();
+                $logoutBtn.css('display','none');
             }
             else {
-                $logoutBtn.show()
-                          .css('display',''); 
+                $logoutBtn.css('display',''); 
             }
             if ( p.HideRefreshButton ) {
-                $refreshBtn.hide();
+                $refreshBtn.css('display','none');
             }
             else {
-                $refreshBtn.show()
-                           .css('display',''); 
+                $refreshBtn.css('display',''); 
             }
             if ( p.HideSearchButton ) {
-                $searchBtn.hide();
+                $searchBtn.css('display','none');
             }
             else {
-                $searchBtn.show()
-                          .css('display',''); 
+                $searchBtn.css('display',''); 
             }
             if( p.HideHeaderOnlineButton ) {
-                $headerOnlineBtn.hide();
+                $headerOnlineBtn.css('display','none');
             }
             else {
                 $headerOnlineBtn.show()
                                 .css('display','');
             }
             if ( p.dataRel === 'dialog' && !p.HideCloseButton ) {
-                $closeBtn.show()
-                         .css('display',''); 
+                $closeBtn.css('display',''); 
             }
             else {
-                $closeBtn.hide();
+                $closeBtn.css('display','none');
             }
             if( !p.HideBackButton ) {
-                $backlink.show()
-                         .css('display',''); 
+                $backlink.css('display',''); 
             } 
             else {
-                $backlink.hide();
+                $backlink.css('display','none');
+            }
+            if( debugOn() ) {
+                $loggingBtn.css({'display':''});
+            }
+            else {
+                $loggingBtn.css({'display':'none'});
             }
             
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
@@ -1614,41 +1669,55 @@
         function _bindPageEvents(DivId, ParentId, level, $div)
         {
             $div.find('#' + DivId + '_searchopen')
+                .unbind('tap')
                 .bind('tap',function () { 
 						onSearchOpen(DivId); 
 						return false;
 					})
                 .end()
                 .find('#' + DivId + '_gosyncstatus')
+                .unbind('tap')
                 .bind('tap', function () { 
 						onSyncStatusOpen(DivId); 
 						return false;
 					})
                 .end()
                 .find('#' + DivId + '_refresh')
+                .unbind('tap')
                 .bind('tap', function () { 
 						onRefresh($(this).CswAttrDom('id'));
 						return false;
 					})
                 .end()
                 .find('#' + DivId + '_logout')
+                .unbind('tap')
                 .bind('tap', function (e) { 
 						onLogout(DivId, e); 
 						return false;
 					})
                 .end()
                 .find('#' + DivId + '_help')
+                .unbind('tap')
                 .bind('tap', function () { 
 						onHelp(DivId, ParentId); 
 						return false;
 					})
                 .end()
+                .find('#' + DivId + '_debuglog')
+                .die('tap')
+                .live('tap', function () { 
+						_toggleLogging();
+						return false;
+					})
+                .end()
                 .find('textarea')
+                .unbind('change')
                 .bind('change', function (eventObj) { 
 						onPropertyChange(DivId, eventObj); 
 					})
                 .end()
-                .find('select')
+                .find('.csw_prop_select')
+                .unbind('change')
                 .bind('change', function (eventObj) { 
 						onPropertyChange(DivId, eventObj); 
 					})
@@ -1691,7 +1760,7 @@
                     .end()
                     .find('#ss_gooffline')
                     .bind('tap', function () { 
-                            _toggleOffline(); 
+							_toggleOffline(); 
                             return false;
                         });
 
@@ -1752,8 +1821,30 @@
         
         function _makeHelpDiv()
         {
-            var $help = $('<p>Help</p>');
-            
+            var $help = $('<p>Help</p>')
+                            .append('</br></br></br>');
+            var $logLevelDiv = $help.CswDiv('init')
+                                    .CswAttrXml({'data-role':'fieldcontain'});
+            var $logLevelLabel = $('<label for="mobile_log_level">Logging</label>')
+                                    .appendTo($logLevelDiv);
+
+            var $logLevelSelect = $logLevelDiv.CswSelect('init',{ID: 'mobile_log_level',
+                                                                 selected: debugOn() ? 'on' : 'off',
+                                                                 values: [{value: 'off', display: 'Logging Disabled'},
+                                                                          {value: 'on', display: 'Logging Enabled'}],
+                                                                 onChange: function ($select) {
+                                                                     if( $select.val() === 'on' ) {
+                                                                        debugOn(true);
+                                                                        $('.debug').css('display','').show();
+                                                                    }
+                                                                    else {
+                                                                        debugOn(false);
+                                                                        $('.debug').css('diplay', 'none').hide();
+                                                                    }
+                                                                 }
+                                                })
+                                                .CswAttrXml({'data-role': 'slider'});
+
             var $retDiv = _addPageDivToBody({
                     DivId: 'help',
                     HeaderText: 'Help',
@@ -1800,7 +1891,7 @@
                     success: function (data)
                     {
                         SessionId = $.CswCookie('get', CswCookieName.SessionId);
-						_cacheSession(SessionId, UserName);
+						_cacheSession(SessionId, UserName, AccessId);
                         $viewsdiv = reloadViews();
                         $viewsdiv.doChangePage();
                         //restorePath();
@@ -1878,8 +1969,6 @@
                     onloginfail: function(text) { onLoginFail(text); },
                     success: function ($xml)
                     {
-                        if (debug) log('On Success ' + opts.ViewUrl, true);
-
                         $currentViewXml = $xml;
                         _updateStoredViewXml(DivId, $currentViewXml, '0');
 
@@ -1903,7 +1992,6 @@
                         $.mobile.pageLoading(true);
                     }, // success
                     error: function(txt) {
-                        if(debug) log(txt);
                     }
                 });
             }
@@ -1922,6 +2010,7 @@
 
         function onPropertyChange(DivId, eventObj)
         {
+            var logger = new profileMethod('onPropertyChange');
             var $elm = $(eventObj.target);
             var name = $elm.CswAttrDom('name');
             var value = $elm.val();
@@ -1938,6 +2027,8 @@
                 _updateStoredViewXml(rootid, $currentViewXml, '1');
                 _resetPendingChanges(true, false);
             }
+            logger.setEnded();
+            cacheLogInfo(logger);
         } // onPropertyChange()
 
         function onSearchOpen(DivId)
@@ -1950,7 +2041,7 @@
                 var $wrapper = $('<div></div>');
                 var $fieldCtn = $('<div data-role="fieldcontain"></div>')
                                     .appendTo($wrapper);
-                var $select =  $('<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop">')
+                var $select =  $('<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop" class="csw_prop_select">')
                                     .appendTo($fieldCtn)
                                     .CswAttrXml({'data-native-menu': 'false'});
 
@@ -2034,10 +2125,11 @@
         // ------------------------------------------------------------------------------------
         // Persistance functions
         // ------------------------------------------------------------------------------------
-        function _cacheSession(sessionid, username)
+        function _cacheSession(sessionid, username, customerid)
         {
             localStorage['online'] = true;
             localStorage['username'] = username;
+            localStorage['customerid'] = customerid;
             localStorage['sessionid'] = sessionid;
         } //_cacheSession()
 
@@ -2117,8 +2209,7 @@
             }
             return $(ret);
         }
-
-
+        
         // ------------------------------------------------------------------------------------
         // Synchronization
         // ------------------------------------------------------------------------------------
@@ -2172,6 +2263,7 @@
 
         function _processChanges(perpetuateTimer)
         {
+            var logger = new profileMethod('processChanges');
             if ( !isNullOrEmpty(SessionId) )
             {
                 _getModifiedView(function (rootid, viewxml)
@@ -2193,7 +2285,6 @@
                             stringify: true,
                             onloginfail: function(text) 
                             { 
-                                if(debug) log('_processChanges onloginfail()' + opts.UpdateUrl,true);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
@@ -2202,7 +2293,7 @@
                             },
                             success: function (data)
                             {
-                                if (debug) log('On Success ' + opts.UpdateUrl, true);
+                                logger.setAjaxSuccess();
                                 var $xml = data.xml;
                                 _updateStoredViewXml(rootid, $xml, '0');
                                 _resetPendingChanges(false, true);
@@ -2213,7 +2304,6 @@
                             },
                             error: function (data)
                             {
-                                if(debug) log('_processChanges error()' + opts.UpdateUrl,true);
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
@@ -2235,6 +2325,8 @@
                 if (perpetuateTimer)
                     _waitForData();
             } // if(SessionId != '') 
+            logger.setEnded();
+            cacheLogInfo(logger);
         } //_processChanges()
 
         // For proper chaining support
