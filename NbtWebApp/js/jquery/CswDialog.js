@@ -479,7 +479,6 @@
 		'OpenDialog': function (id, url) {
 							var $dialogdiv = $('<div id="' + id + '"></div>');
 							$dialogdiv.load(url,
-											{},
 											function (responseText, textStatus, XMLHttpRequest) {
 												$dialogdiv.appendTo('body')
 														  .dialog();
