@@ -453,8 +453,7 @@
         {
             if( doLogging() )
             {
-                var now = new Date();
-                cacheLogInfo('Log started ' + now.toDateString() );
+                cacheLogInfo('Log started ' + Date() );
                 var $loggingBtn = $('.debug');
                 $loggingBtn.removeClass('debug-off')
                            .addClass('debug-on')
@@ -469,8 +468,7 @@
             if( !doLogging() )
             {
                 var $loggingBtn = $('.debug');
-                var now = new Date();
-                cacheLogInfo('Log ended ' + now.toDateString() );
+                cacheLogInfo('Log end signal sent ' + Date() );
                 var dataJson = {
                     'Context': 'CswMobile',
                     'UserName': localStorage['username'],
@@ -481,7 +479,7 @@
                 CswAjaxJSON({
                     url: opts.SendLogUrl,
                     data: dataJson,
-                    success: function (data)
+                    success: function ()
                     {
                         $loggingBtn.removeClass('debug-on')
                                     .addClass('debug-off')
@@ -500,6 +498,7 @@
 
         function _loadDivContents(params)
         {
+            cacheLogInfo('_loadDivContents started ' + Date() );
             var p = {
                 ParentId: '',
                 level: 1,
@@ -560,7 +559,7 @@
                     }
                 }
             }
-             
+            cacheLogInfo('_loadDivContents started ' + Date() ); 
             return $retDiv;
         } // _loadDivContents()
 
@@ -616,6 +615,7 @@
         var onAfterAddDiv;
         function _processViewXml(params)
         {
+            cacheLogInfo('_processViewXml started ' + Date() );
             var p = {
                 ParentId: '',
                 DivId: '',
@@ -668,12 +668,13 @@
             onAfterAddDiv($retDiv);
             
             p.onSuccess();
-
+            cacheLogInfo('_processViewXml ended ' + Date() );
             return $retDiv;
         } // _processViewXml()
 
         function _makeListItemFromXml ($list, params)
         {
+            cacheLogInfo('_makeListItemFromXml started ' + Date() );
             var p = {
                 ParentId: '',
                 DivId: '',
@@ -863,6 +864,7 @@
                         break;
                     } // default:
             }
+            cacheLogInfo('_makeListItemFromXml ended ' + Date() );
             return $retLI;
         } // _makeListItemFromXml()
 
@@ -947,6 +949,7 @@
 
         function _FieldTypeXmlToHtml($xmlitem, ParentId, SiblingId)
         {
+            cacheLogInfo('_FieldTypeXmlToHtml started ' + Date() );
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
@@ -1133,11 +1136,13 @@
             {
                 $retHtml.append( $('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>') );
             }
+            cacheLogInfo('_FieldTypeXmlToHtml ended ' + Date() );
             return $retHtml;
         }
 
         function _FieldTypeHtmlToXml($xmlitem, id, value)
         {
+            cacheLogInfo('_FieldTypeHtmlToXml started ' + Date() );
             var name = new CswString(id);
             var IdStr = makeSafeId({ID: $xmlitem.CswAttrXml('id') });
             var fieldtype = $xmlitem.CswAttrXml('fieldtype');
@@ -1197,6 +1202,7 @@
                 $sftomodify.text(value);
                 $xmlitem.CswAttrXml('wasmodified', '1');
             }
+            cacheLogInfo('_FieldTypeHtmlToXml ended ' + Date() );
         } // _FieldTypeHtmlToXml()
 
         function _makeLogicalFieldSet(ParentId, IdStr, Suffix, OtherSuffix, Checked, Required)
@@ -2012,6 +2018,7 @@
 
         function onPropertyChange(DivId, eventObj)
         {
+            cacheLogInfo('onPropertyChange started ' + Date() );
             var $elm = $(eventObj.target);
             var name = $elm.CswAttrDom('name');
             var value = $elm.val();
@@ -2028,6 +2035,7 @@
                 _updateStoredViewXml(rootid, $currentViewXml, '1');
                 _resetPendingChanges(true, false);
             }
+            cacheLogInfo('onPropertyChange ended ' + Date() );
         } // onPropertyChange()
 
         function onSearchOpen(DivId)
@@ -2262,6 +2270,7 @@
 
         function _processChanges(perpetuateTimer)
         {
+            cacheLogInfo('_processChanges started ' + Date() );
             if ( !isNullOrEmpty(SessionId) )
             {
                 _getModifiedView(function (rootid, viewxml)
@@ -2283,7 +2292,7 @@
                             stringify: true,
                             onloginfail: function(text) 
                             { 
-                                cacheLogInfo('_processChanges onloginfail()' + opts.UpdateUrl)
+                                cacheLogInfo('_processChanges AJAX onloginfail ' + Date() );
                                 if (perpetuateTimer)
                                 {
                                     _waitForData();
@@ -2292,7 +2301,7 @@
                             },
                             success: function (data)
                             {
-                                cacheLogInfo('On Success ' + opts.UpdateUrl);
+                                cacheLogInfo('_processChanges AJAX success ' + Date() );
                                 var $xml = data.xml;
                                 _updateStoredViewXml(rootid, $xml, '0');
                                 _resetPendingChanges(false, true);
@@ -2325,6 +2334,7 @@
                 if (perpetuateTimer)
                     _waitForData();
             } // if(SessionId != '') 
+            cacheLogInfo('_processChanges ended ' + Date() );
         } //_processChanges()
 
         // For proper chaining support
