@@ -266,7 +266,7 @@ namespace ChemSW.Nbt.WebServices
                     ViewsTable.Columns.Add( "category" );
                     ViewsTable.Columns.Add( "rolename" );
                     ViewsTable.Columns.Add( "username" );
-                    foreach( CswNbtView View in Views.OrderBy( Name => Name.ViewName ))
+                    foreach( CswNbtView View in Views)
                     {
                         string RoleName = string.Empty;
                         CswNbtNode Role = _CswNbtResources.Nodes.GetNode( View.VisibilityRoleId );
