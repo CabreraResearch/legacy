@@ -43,7 +43,7 @@ CswArray.prototype = {
     },
     contains: function (key)
     {
-        this.indexOf(key) !== -1
+        return this.indexOf(key) !== -1
     }
 };
 
