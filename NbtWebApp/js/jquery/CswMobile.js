@@ -69,7 +69,7 @@
             var id = (isNullOrEmpty($page)) ? 'no ID' : $page.CswAttrDom('id');
             //if(doLogging()) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
 
-            if (id !== $div.CswAttrDom('id')) ret = $.mobile.changePage($div.CswAttrXml('data-url'), o);
+            if (id !== $div.CswAttrDom('id')) ret = $.mobile.changePage($div, o);
         }
         return ret;
     };
