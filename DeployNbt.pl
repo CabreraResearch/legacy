@@ -47,7 +47,7 @@ foreach my $component (@components)
 {
 	if($component eq "NbtHelp")
 	{
-		$repopaths{$component} = "c:/kiln/Nbt/NbtWebApp/help";
+		$repopaths{$component} = "c:/kiln/Nbt/Nbt/NbtWebApp/help";
 	}
 	elsif($component eq "Nbt" || $component eq "NbtImport")
 	{
@@ -89,62 +89,65 @@ foreach my $component (@components)
 	printf("Setting $component to $datestr.$increment\n");
 	
 	my $file;
-	if($component eq "Nbt")
+	if($component eq "NbtImport" || $component eq "NbtHelp")
 	{
-		# get NBT sub-components:
-		my $dir = $repopaths{$component};
-		opendir(my $dh, $dir) || die "can't opendir $dir: $!";
-		my @subdirs = grep { -d "$dir/$_" } readdir($dh);
-		foreach my $subdir (@subdirs)
+		# no file to update
+	}
+	else 
+	{
+		if($component eq "Nbt")
 		{
-			if( ! ($subdir eq "." || 
-				   $subdir eq ".." ||
-				   $subdir eq ".hg" ||
-				   $subdir eq "NbtSetup" ||
-				   $subdir eq "Schema" ||
-				   $subdir eq "TestApps"))
+			# get NBT sub-components:
+			my $dir = $repopaths{$component};
+			opendir(my $dh, $dir) || die "can't opendir $dir: $!";
+			my @subdirs = grep { -d "$dir/$_" } readdir($dh);
+			foreach my $subdir (@subdirs)
 			{
-				if($subdir eq "NbtWebApp")   # special case
+				if( ! ($subdir eq "." || 
+					   $subdir eq ".." ||
+					   $subdir eq ".hg" ||
+					   $subdir eq "NbtSetup" ||
+					   $subdir eq "Schema" ||
+					   $subdir eq "TestApps"))
 				{
-					$file = $repopaths{$component} ."/NbtWebApp/_Version.txt";
-					if(open( FOUT, "> $file" ) )
+					if($subdir eq "NbtWebApp")   # special case
 					{
-						printf( FOUT "$component $datestr.$increment" );
-						close( FOUT );
+						$file = $repopaths{$component} ."/NbtWebApp/_Version.txt";
+						if(open( FOUT, "> $file" ) )
+						{
+							printf( FOUT "$component $datestr.$increment" );
+							close( FOUT );
+						} else {
+							printf("ERROR: Could not open $file \n");
+						}
+						$file = $repopaths{$component} ."/NbtWebApp/_Assembly.txt";
+						if(open( FOUT, "> $file" ) )
+						{
+							printf( FOUT "$assemblyno" );
+							close( FOUT );
+						} else {
+							printf("ERROR: Could not open $file \n");
+						}
 					} else {
-						printf("ERROR: Could not open $file \n");
+						$file = $repopaths{$component} ."/$subdir/Properties/AssemblyInfo.cs";
+						&setversion($file, "$datestr.$increment");
 					}
-					$file = $repopaths{$component} ."/NbtWebApp/_Assembly.txt";
-					if(open( FOUT, "> $file" ) )
-					{
-						printf( FOUT "$assemblyno" );
-						close( FOUT );
-					} else {
-						printf("ERROR: Could not open $file \n");
-					}
-				} else {
-					$file = $repopaths{$component} ."/$subdir/Properties/AssemblyInfo.cs";
-					&setversion($file, "$datestr.$increment");
 				}
 			}
-		}
-		closedir $dh;
-	}
-	else
-	{
-		if($component eq "CswLogService")  # special case
-		{
-			$file = $repopaths{$component} ."/CswLogService/Properties/AssemblyInfo.cs";
-		}
-		elsif($component eq "NbtImport" || $component eq "NbtHelp")
-		{
-			# no file to update
+			closedir $dh;
 		}
 		else
 		{
-			$file = $repopaths{$component} ."/Properties/AssemblyInfo.cs";
+			if($component eq "CswLogService")  # special case
+			{
+				$file = $repopaths{$component} ."/CswLogService/Properties/AssemblyInfo.cs";
+			}
+			else
+			{
+				$file = $repopaths{$component} ."/Properties/AssemblyInfo.cs";
+			}
+			&setversion($file, "$datestr.$increment");
 		}
-		&setversion($file, "$datestr.$increment");
 	}
 }  # foreach my $component (@components)
 
