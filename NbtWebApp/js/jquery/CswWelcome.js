@@ -278,6 +278,7 @@
 			iconurl: c.$item.CswAttrXml('iconurl'),
 			viewid: c.$item.CswAttrXml('viewid'),
 			actionid: c.$item.CswAttrXml('actionid'),
+			actionurl: c.$item.CswAttrXml('actionurl'),
 			reportid: c.$item.CswAttrXml('reportid'),
 			//nodetypeid: c.$item.CswAttrXml('nodetypeid'),
 			linktype: c.$item.CswAttrXml('linktype')
