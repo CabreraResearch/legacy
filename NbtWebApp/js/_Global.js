@@ -684,13 +684,14 @@ function HandleMenuItem(options)
     }
     else if (o.$itemxml.CswAttrXml('popup') !== undefined && o.$itemxml.CswAttrXml('popup') !== '')
     {
-        $li = $('<li class="headermenu_dialog"><a href="#">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
+        $li = $('<li class="headermenu_dialog"><a href="' + o.$itemxml.CswAttrXml('popup') + '" target="_blank">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
 						.appendTo(o.$ul)
-						.click(function ()
-						{
-						    $.CswDialog('OpenDialog', o.$itemxml.CswAttrXml('text'), o.$itemxml.CswAttrXml('popup'));
-						    return false;
-						});
+//						.click(function ()
+//						{
+//						    $.CswDialog('OpenDialog', o.$itemxml.CswAttrXml('text'), o.$itemxml.CswAttrXml('popup'));
+//						    return false;
+//						})
+						;
     }
     else if (o.$itemxml.CswAttrXml('action') !== undefined && o.$itemxml.CswAttrXml('action') !== '')
     {
