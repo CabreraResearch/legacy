@@ -1150,7 +1150,7 @@
                     $input.CswAttrDom('checked', 'checked');
                 }
                 $input.data('thisI', i);
-                $input.bind('change', function(eventObj) {
+                $input.bind('vclick', function(eventObj) {
                     var i = $(this).data('thisI');
                     for (var k = 0; k < answers.length; k++) {
                         var input1Id = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
@@ -1205,7 +1205,7 @@
                 }
                 $answer.data('thisI', i);
 
-                $answer.bind('change', function(eventObj) {
+                $answer.bind('vclick', function(eventObj) {
                     var thisI = $(this).data('thisI');
 
                     for (var k = 0; k < answers.length; k++) {
@@ -1568,42 +1568,42 @@
         function _bindPageEvents(DivId, ParentId, level, $div) {
             $div.find('#' + DivId + '_searchopen')
                         .unbind('v')
-                        .bind('tap', function() {
+                        .bind('vclick', function() {
                             onSearchOpen(DivId);
                             return false;
                         })
                         .end()
                         .find('#' + DivId + '_gosyncstatus')
-                        .unbind('tap')
-                        .bind('tap', function() {
+                        .unbind('vclick')
+                        .bind('vclick', function() {
                             onSyncStatusOpen(DivId);
                             return false;
                         })
                         .end()
                         .find('#' + DivId + '_refresh')
-                        .unbind('tap')
-                        .bind('tap', function() {
+                        .unbind('vclick')
+                        .bind('vclick', function() {
                             onRefresh($(this).CswAttrDom('id'));
                             return false;
                         })
                         .end()
                         .find('#' + DivId + '_logout')
-                        .unbind('tap')
-                        .bind('tap', function(e) {
+                        .unbind('vclick')
+                        .bind('vclick', function(e) {
                             onLogout(DivId, e);
                             return false;
                         })
                         .end()
                         .find('#' + DivId + '_help')
-                        .unbind('tap')
-                        .bind('tap', function() {
+                        .unbind('vclick')
+                        .bind('vclick', function() {
                             onHelp(DivId, ParentId);
                             return false;
                         })
                         .end()
                         .find('#' + DivId + '_debuglog')
-                        .die('tap')
-                        .live('tap', function() {
+                        .die('vclick')
+                        .live('vclick', function() {
                             _toggleLogging();
                             return false;
                         })
@@ -1650,13 +1650,13 @@
                 });
 
             $retDiv.find('#ss_forcesync')
-                            .bind('tap', function() {
+                            .bind('vclick', function() {
                                 _processChanges(false);
                                 return false;
                             })
                             .end()
                             .find('#ss_gooffline')
-                            .bind('tap', function() {
+                            .bind('vclick', function() {
                                 _toggleOffline();
                                 return false;
                             });
