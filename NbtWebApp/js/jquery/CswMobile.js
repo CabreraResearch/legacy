@@ -15,7 +15,7 @@
 
     $.fn.makeUL = function(id, params) {
         var p = {
-            'data-filter': true,
+            'data-filter': false,
             'data-role': 'listview',
             'data-inset': true
         };
