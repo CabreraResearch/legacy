@@ -7,7 +7,7 @@
 
             var $Div = $(this);
 
-			$Div.CswNumberTextBox({
+			var $NumberTextBox = $Div.CswNumberTextBox({
 				'ID': o.ID,
 				'Value': o.$propxml.children('value').text().trim(),
 				'MinValue': o.$propxml.children('value').CswAttrXml('minvalue'),
@@ -18,6 +18,10 @@
 				'onchange': o.onchange
 			});
 
+			if($NumberTextBox.length > 0)
+			{
+				$NumberTextBox.clickOnEnter(o.$savebtn);
+			}
         },
         save: function(o) { //$propdiv, $xml
 				o.$propxml.children('value').text(o.$propdiv.CswNumberTextBox('value'));

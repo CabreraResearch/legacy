@@ -8,7 +8,7 @@
             var $Div = $(this);
             $Div.contents().remove();
             
-			$Div.CswNumberTextBox({
+			var $NumberTextBox = $Div.CswNumberTextBox({
 				'ID': o.ID + '_qty',
 				'Value': o.$propxml.children('value').text().trim(),
 				'MinValue': o.$propxml.children('value').CswAttrXml('minvalue'),
@@ -19,6 +19,11 @@
 				'onchange': o.onchange
 			});
 			
+			if($NumberTextBox.length > 0)
+			{
+				$NumberTextBox.clickOnEnter(o.$savebtn);
+			}
+
 			var selectedUnit = o.$propxml.children('units').contents().first().text();
 			var $unitsel = $('<select id="'+ o.ID + '_units" />')
 							.appendTo($Div)

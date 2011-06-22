@@ -74,6 +74,7 @@
 				{
 					$TextBox.addClass("required");
 				}
+				return $TextBox;
 			}
 		},
 		value: function ()
