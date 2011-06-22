@@ -803,6 +803,7 @@ function HandleMenuItem(options)
 				{
 					$.CswDialog('AddViewDialog', {
 						'viewid': o.$itemxml.CswAttrXml('viewid'),
+						'viewmode': o.$itemxml.CswAttrXml('viewmode'),
 						'onAddView': o.onSaveView
 					});
 					return false;

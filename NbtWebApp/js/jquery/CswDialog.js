@@ -33,7 +33,8 @@
 							var o = {
 								'ID': 'addviewdialog',
 								'onAddView': function (newviewid) { },
-								'viewid': ''
+								'viewid': '',
+								'viewmode': ''
 							};
 							if (options) $.extend(o, options);
 
@@ -64,8 +65,13 @@
 									                                        
 																			var createData = {};
 																			createData.ViewName = $nametextbox.val();
-																			createData.ViewMode = $displaymodeselect.val();
 																			createData.ViewId = o.viewid;
+																			if(isNullOrEmpty(o.viewmode))
+																			{
+																				createData.ViewMode = $displaymodeselect.val();
+																			} else {
+																				createData.ViewMode = o.viewmode;
+																			}
 																			if(!isNullOrEmpty(v.getvisibilityselect()))
 																			{
 																				createData.Visibility = v.getvisibilityselect().val();
