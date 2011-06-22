@@ -750,6 +750,8 @@
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0a4.1.js" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0a4.1.min.css" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0a4.1.min.js" />
+    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.css" />
+    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.js" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile.2011.5.17.css" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile.2011.5.17.js" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile.2011.5.23.css" />
