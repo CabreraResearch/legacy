@@ -741,6 +741,28 @@
                                 old_onAfterAddDiv($divhtml);
                             };
                         }
+
+                        var $prop = $div.CswDiv('init').CswAttrXml({'data-role':'collapsible','data-collapsed':'true'});
+                        var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
+                                                    .appendTo($prop);
+
+                        if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
+                            $corAction.css('display', 'none');
+                        }
+                        $corAction.bind('change', function() {
+                            var $cor = $(this);
+                            if ($cor.val() === '') {
+                                $('#' + IdStr + '_li div').addClass('OOC');
+                                $('#' + IdStr + '_label').addClass('OOC');
+                            } else {
+                                $('#' + IdStr + '_li div').removeClass('OOC');
+                                $('#' + IdStr + '_label').removeClass('OOC');
+                            }
+                        });
+
+                        var $comments = $('<textarea name="' + propId + '" id="' + propId + '" placeholder="Comments">' + sf_comments + '</textarea>')
+                                                        .appendTo($prop);
+                        
                         break;
                     default:
                         var $gestalt = $('<div><p>' + gestalt + '</p></div>')
@@ -871,165 +893,165 @@
             return $retHtml;
         }
 
-        function _FieldTypeXmlToHtml($xmlitem, ParentId, SiblingId) {
-            var IdStr = makeSafeId({ ID: $xmlitem.CswAttrXml('id') });
-            var FieldType = $xmlitem.CswAttrXml('fieldtype');
-            var PropName = $xmlitem.CswAttrXml('name');
-            var ReadOnly = (isTrue($xmlitem.CswAttrXml('isreadonly')));
+//        function _FieldTypeXmlToHtml($xmlitem, ParentId, SiblingId) {
+//            var IdStr = makeSafeId({ ID: $xmlitem.CswAttrXml('id') });
+//            var FieldType = $xmlitem.CswAttrXml('fieldtype');
+//            var PropName = $xmlitem.CswAttrXml('name');
+//            var ReadOnly = (isTrue($xmlitem.CswAttrXml('isreadonly')));
 
-            // Subfield values
-            var sf_text = tryParseString($xmlitem.children('text').text(), '');
-            var sf_value = tryParseString($xmlitem.children('value').text(), '');
-            var sf_href = tryParseString($xmlitem.children('href').text(), '');
-            var sf_checked = tryParseString($xmlitem.children('checked').text(), '');
-            var sf_required = tryParseString($xmlitem.children('required').text(), '');
-            var sf_units = tryParseString($xmlitem.children('units').text(), '');
-            var sf_answer = tryParseString($xmlitem.children('answer').text(), '');
-            var sf_allowedanswers = tryParseString($xmlitem.children('allowedanswers').text(), '');
-            var sf_correctiveaction = tryParseString($xmlitem.children('correctiveaction').text(), '');
-            var sf_comments = tryParseString($xmlitem.children('comments').text(), '');
-            var sf_compliantanswers = tryParseString($xmlitem.children('compliantanswers').text(), '');
-            var sf_options = tryParseString($xmlitem.children('options').text(), '');
+//            // Subfield values
+//            var sf_text = tryParseString($xmlitem.children('text').text(), '');
+//            var sf_value = tryParseString($xmlitem.children('value').text(), '');
+//            var sf_href = tryParseString($xmlitem.children('href').text(), '');
+//            var sf_checked = tryParseString($xmlitem.children('checked').text(), '');
+//            var sf_required = tryParseString($xmlitem.children('required').text(), '');
+//            var sf_units = tryParseString($xmlitem.children('units').text(), '');
+//            var sf_answer = tryParseString($xmlitem.children('answer').text(), '');
+//            var sf_allowedanswers = tryParseString($xmlitem.children('allowedanswers').text(), '');
+//            var sf_correctiveaction = tryParseString($xmlitem.children('correctiveaction').text(), '');
+//            var sf_comments = tryParseString($xmlitem.children('comments').text(), '');
+//            var sf_compliantanswers = tryParseString($xmlitem.children('compliantanswers').text(), '');
+//            var sf_options = tryParseString($xmlitem.children('options').text(), '');
 
-            var $retHtml = $('<div data-role="fieldcontain" id="' + IdStr + '_fieldcontain"></div>');
-            var $propNameDiv = $('<label for="' + IdStr + '_input" id="' + IdStr + '_label">' + PropName + '</label>')
-                                        .appendTo($retHtml);
+//            var $retHtml = $('<div data-role="fieldcontain" id="' + IdStr + '_fieldcontain"></div>');
+//            var $propNameDiv = $('<label for="' + IdStr + '_input" id="' + IdStr + '_label">' + PropName + '</label>')
+//                                        .appendTo($retHtml);
 
-            //var Html = '<div id="' + IdStr + '_propname"';
-            if (FieldType === "Question" &&
-                !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
-                    isNullOrEmpty(sf_correctiveaction)) {
-                $propNameDiv.addClass('OOC');
-            } else {
-                $propNameDiv.removeClass('OOC');
-            }
-            //$retHtml.append('<br/>');
+//            //var Html = '<div id="' + IdStr + '_propname"';
+//            if (FieldType === "Question" &&
+//                !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
+//                    isNullOrEmpty(sf_correctiveaction)) {
+//                $propNameDiv.addClass('OOC');
+//            } else {
+//                $propNameDiv.removeClass('OOC');
+//            }
+//            //$retHtml.append('<br/>');
 
-            if (!ReadOnly) {
-                var addChangeHandler = true;
-                var $prop;
-                var propId = IdStr + '_input';
+//            if (!ReadOnly) {
+//                var addChangeHandler = true;
+//                var $prop;
+//                var propId = IdStr + '_input';
 
-                switch (FieldType) {
-                case "Date":
-                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
-                    break;
-                case "Link":
-                    $prop = $retHtml.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text });
-                    break;
-                case "List":
-                    $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
-                                                .appendTo($retHtml)
-                        .selectmenu();
-                    var selectedvalue = sf_value;
-                    var optionsstr = sf_options;
-                    var options = optionsstr.split(',');
-                    for (var i = 0; i < options.length; i++) {
-                        var $option = $('<option value="' + options[i] + '"></option>')
-                                                    .appendTo($prop);
-                        if (selectedvalue === options[i]) {
-                            $option.CswAttrDom('selected', 'selected');
-                        }
+//                switch (FieldType) {
+//                case "Date":
+//                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
+//                    break;
+//                case "Link":
+//                    $prop = $retHtml.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text });
+//                    break;
+//                case "List":
+//                    $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
+//                                                .appendTo($retHtml)
+//                        .selectmenu();
+//                    var selectedvalue = sf_value;
+//                    var optionsstr = sf_options;
+//                    var options = optionsstr.split(',');
+//                    for (var i = 0; i < options.length; i++) {
+//                        var $option = $('<option value="' + options[i] + '"></option>')
+//                                                    .appendTo($prop);
+//                        if (selectedvalue === options[i]) {
+//                            $option.CswAttrDom('selected', 'selected');
+//                        }
 
-                        if (!isNullOrEmpty(options[i])) {
-                            $option.val(options[i]);
-                        } else {
-                            $option.valueOf('[blank]');
-                        }
-                    }
-                    $prop.selectmenu('refresh');
-                    break;
-                case "Logical":
-                    addChangeHandler = false; //_makeLogicalFieldSet() does this for us
-                    $prop = _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
-                                                    .appendTo($retHtml);
-                    break;
-                case "Memo":
-                    $prop = $('<textarea name="' + propId + '">' + sf_text + '</textarea>')
-                                                    .appendTo($retHtml);
-                    break;
-                case "Number":
-                    sf_value = tryParseNumber(sf_value, '');
-                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.number, ID: propId, value: sf_value });
+//                        if (!isNullOrEmpty(options[i])) {
+//                            $option.val(options[i]);
+//                        } else {
+//                            $option.valueOf('[blank]');
+//                        }
+//                    }
+//                    $prop.selectmenu('refresh');
+//                    break;
+//                case "Logical":
+//                    addChangeHandler = false; //_makeLogicalFieldSet() does this for us
+//                    $prop = _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
+//                                                    .appendTo($retHtml);
+//                    break;
+//                case "Memo":
+//                    $prop = $('<textarea name="' + propId + '">' + sf_text + '</textarea>')
+//                                                    .appendTo($retHtml);
+//                    break;
+//                case "Number":
+//                    sf_value = tryParseNumber(sf_value, '');
+//                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.number, ID: propId, value: sf_value });
 
-                        // if (Prop.MinValue != Int32.MinValue)
-                        //     Html += "min = \"" + Prop.MinValue + "\"";
-                        // if (Prop.MaxValue != Int32.MinValue)
-                        //     Html += "max = \"" + Prop.MaxValue + "\"";
-                    break;
-                case "Password":
-                        //nada
-                    break;
-                case "Quantity":
-                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value })
-                                                .append(sf_units);
-                        // Html += "<select name=\"" + IdStr + "_units\">";
-                        // string SelectedUnit = PropWrapper.AsQuantity.Units;
-                        // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
-                        // {
-                        //     string ThisUnitText = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
-                        //     Html += "<option value=\"" + UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text + "\"";
-                        //     if( ThisUnitText == SelectedUnit )
-                        //         Html += " selected";
-                        //     Html += ">" + ThisUnitText + "</option>";
-                        // }
-                        // Html += "</select>";
+//                        // if (Prop.MinValue != Int32.MinValue)
+//                        //     Html += "min = \"" + Prop.MinValue + "\"";
+//                        // if (Prop.MaxValue != Int32.MinValue)
+//                        //     Html += "max = \"" + Prop.MaxValue + "\"";
+//                    break;
+//                case "Password":
+//                        //nada
+//                    break;
+//                case "Quantity":
+//                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value })
+//                                                .append(sf_units);
+//                        // Html += "<select name=\"" + IdStr + "_units\">";
+//                        // string SelectedUnit = PropWrapper.AsQuantity.Units;
+//                        // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
+//                        // {
+//                        //     string ThisUnitText = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
+//                        //     Html += "<option value=\"" + UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text + "\"";
+//                        //     if( ThisUnitText == SelectedUnit )
+//                        //         Html += " selected";
+//                        //     Html += ">" + ThisUnitText + "</option>";
+//                        // }
+//                        // Html += "</select>";
 
-                    break;
-                case "Question":
-                    addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
-                    $prop = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'cor', 'li', 'label', sf_allowedanswers, sf_answer, sf_compliantanswers)
-                                                    .appendTo($retHtml);
+//                    break;
+//                case "Question":
+//                    addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
+//                    $prop = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'cor', 'li', 'label', sf_allowedanswers, sf_answer, sf_compliantanswers)
+//                                                    .appendTo($retHtml);
 
-                    var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
-                                                    .appendTo($prop);
+//                    var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
+//                                                    .appendTo($prop);
 
-                    if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
-                        $corAction.css('display', 'none');
-                    }
-                    $corAction.bind('change', function() {
-                        var $cor = $(this);
-                        if ($cor.val() === '') {
-                            $('#' + IdStr + '_li div').addClass('OOC');
-                            $('#' + IdStr + '_label').addClass('OOC');
-                        } else {
-                            $('#' + IdStr + '_li div').removeClass('OOC');
-                            $('#' + IdStr + '_label').removeClass('OOC');
-                        }
-                    });
+//                    if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
+//                        $corAction.css('display', 'none');
+//                    }
+//                    $corAction.bind('change', function() {
+//                        var $cor = $(this);
+//                        if ($cor.val() === '') {
+//                            $('#' + IdStr + '_li div').addClass('OOC');
+//                            $('#' + IdStr + '_label').addClass('OOC');
+//                        } else {
+//                            $('#' + IdStr + '_li div').removeClass('OOC');
+//                            $('#' + IdStr + '_label').removeClass('OOC');
+//                        }
+//                    });
 
-                    var $comments = $('<textarea name="' + propId + '" id="' + propId + '" placeholder="Comments">' + sf_comments + '</textarea>')
-                                                    .appendTo($prop);
-                    break;
-                case "Static":
-                    $retHtml.append($('<p id="' + propId + '">' + sf_text + '</p>'));
-                    break;
-                case "Text":
-                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
-                    break;
-                case "Time":
-                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
-                    break;
-                default:
-                    $retHtml.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
-                    break;
-                } // switch (FieldType)
+//                    var $comments = $('<textarea name="' + propId + '" id="' + propId + '" placeholder="Comments">' + sf_comments + '</textarea>')
+//                                                    .appendTo($prop);
+//                    break;
+//                case "Static":
+//                    $retHtml.append($('<p id="' + propId + '">' + sf_text + '</p>'));
+//                    break;
+//                case "Text":
+//                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
+//                    break;
+//                case "Time":
+//                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
+//                    break;
+//                default:
+//                    $retHtml.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+//                    break;
+//                } // switch (FieldType)
 
-                if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
-                    $prop.bind('change', function(eventObj) {
-                        var $this = $(this);
-                        var $sibling = $('#' + SiblingId);
-                        if (!isNullOrEmpty($sibling) && $sibling.length !== 0) {
-                            $sibling.children('div').children('p').text($this.val());
-                        }
-                        onPropertyChange(ParentId, eventObj);
-                    });
-                }
-            } else {
-                $retHtml.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
-            }
-            return $retHtml;
-        }
+//                if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
+//                    $prop.bind('change', function(eventObj) {
+//                        var $this = $(this);
+//                        var $sibling = $('#' + SiblingId);
+//                        if (!isNullOrEmpty($sibling) && $sibling.length !== 0) {
+//                            $sibling.children('div').children('p').text($this.val());
+//                        }
+//                        onPropertyChange(ParentId, eventObj);
+//                    });
+//                }
+//            } else {
+//                $retHtml.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+//            }
+//            return $retHtml;
+//        }
 
         function _FieldTypeHtmlToXml($xmlitem, id, value) {
             var name = new CswString(id);
