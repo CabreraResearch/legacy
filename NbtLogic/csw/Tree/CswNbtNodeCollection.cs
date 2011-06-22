@@ -377,7 +377,8 @@ namespace ChemSW.Nbt
 
             if( Op == MakeNodeOperation.WriteNode )
             {
-                Node.postChanges( true );
+				_CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
+				Node.postChanges( true );
             }
             else if( Op == MakeNodeOperation.JustSetPk )
             {
