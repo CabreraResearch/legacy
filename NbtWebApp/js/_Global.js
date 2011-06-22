@@ -1348,7 +1348,7 @@ function doLogging(value)
         {
             localStorage['doLogging'] = isTrue(value);
         }
-        var ret = isTrue(localStorage['doLogging']);
+        ret = isTrue(localStorage['doLogging']);
     }
     return ret;
 }
@@ -1362,7 +1362,7 @@ function debugOn(value)
         {
             localStorage['debugOn'] = isTrue(value);
         }
-        var ret = isTrue(localStorage['debugOn']);
+        ret = isTrue(localStorage['debugOn']);
     }
     return ret;
 }
