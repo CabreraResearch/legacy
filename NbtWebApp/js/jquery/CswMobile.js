@@ -792,11 +792,17 @@
             var sf_compliantanswers = tryParseString($xmlitem.children('compliantanswers').text(), '');
             var sf_options = tryParseString($xmlitem.children('options').text(), '');
 
-            var $retLi = $('<li data-role="fieldcontain" id="' + IdStr + '_li"></li>')
+            var $retLi = $('<li id="' + IdStr + '_li"></li>')
                                 .CswAttrXml('data-icon', false);
-            var $label = $('<label for="' + IdStr + '_input" id="' + IdStr + '_label">' + PropName + '</label>')
-                                        .appendTo($retLi);
+            var $fieldcontain = $('<div class="csw_fieldset" data-role="fieldcontain"></div>')
+                                    .appendTo($retLi);
 
+            var $labelDiv = $('<div></div>').appendTo($fieldcontain);
+            var $propDiv = $('<div></div>').appendTo($fieldcontain);
+            
+            var $label = $('<label for="' + IdStr + '_input" id="' + IdStr + '_label">' + PropName + '</label>')
+                                    .appendTo($labelDiv);
+            
             if (FieldType === "Question" &&
                 !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
                     isNullOrEmpty(sf_correctiveaction)) {
@@ -804,23 +810,31 @@
             } else {
                 $label.removeClass('OOC');
             }
-
+            
+            if( FieldType !== 'Question' && FieldType !== 'Logical') {
+                $retLi.css('height','75px');
+                $fieldcontain.addClass('ui-grid-a');
+                $labelDiv.addClass('ui-block-a');
+                $propDiv.addClass('ui-block-b');
+            }
+            
+            var $prop;
+            var propId = IdStr + '_input';
+            
             if (!ReadOnly) {
                 var addChangeHandler = true;
-                var $prop;
-                var propId = IdStr + '_input';
-
+                
                 switch (FieldType) {
                 case "Date":
-                    $prop = $retLi.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
+                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
                     break;
                 case "Link":
-                    $prop = $retLi.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text });
+                    $prop = $propDiv.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text});
                     break;
                 case "List":
                     $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
-                                                .appendTo($retLi)
-                        .selectmenu();
+                                                .appendTo($propDiv)
+                                                .selectmenu();
                     var selectedvalue = sf_value;
                     var optionsstr = sf_options;
                     var options = optionsstr.split(',');
@@ -842,27 +856,27 @@
                 case "Logical":
                     addChangeHandler = false; //_makeLogicalFieldSet() does this for us
                     $prop = _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
-                                                    .appendTo($retLi);
+                                                    .appendTo($fieldcontain);
                     break;
                 case "Memo":
                     $prop = $('<textarea name="' + propId + '">' + sf_text + '</textarea>')
-                                                    .appendTo($retLi);
+                                                    .appendTo($propDiv);
                     break;
                 case "Number":
                     sf_value = tryParseNumber(sf_value, '');
-                    $prop = $retLi.CswInput('init', { type: CswInput_Types.number, ID: propId, value: sf_value });
+                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.number, ID: propId, value: sf_value });
                     break;
                 case "Password":
                         //nada
                     break;
                 case "Quantity":
-                    $prop = $retLi.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value })
+                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value })
                                                 .append(sf_units);
                     break;
                 case "Question":
                     addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
                     var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, sf_allowedanswers, sf_answer, sf_compliantanswers)
-                                                    .appendTo($retLi);
+                                                    .appendTo($fieldcontain);
                     var hideComments = true;
                     if (!isNullOrEmpty(sf_answer) && 
                         (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && 
@@ -893,16 +907,16 @@
                                                     .appendTo($prop);
                     break;
                 case "Static":
-                    $retLi.append($('<p id="' + propId + '">' + sf_text + '</p>'));
+                    $propDiv.append($('<p id="' + propId + '">' + sf_text + '</p>'));
                     break;
                 case "Text":
-                    $prop = $retLi.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
+                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
                     break;
                 case "Time":
-                    $prop = $retLi.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
+                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
                     break;
                 default:
-                    $retLi.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+                    $propDiv.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
                     break;
                 } // switch (FieldType)
 
@@ -912,7 +926,7 @@
                     });
                 }
             } else {
-                $retLi.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+                $propDiv.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
             }
             return $retLi;
         }
@@ -991,9 +1005,7 @@
 
         function _makeLogicalFieldSet(ParentId, IdStr, Checked, Required) {
             var Suffix = 'ans';
-            var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
             var $fieldset = $('<fieldset></fieldset>')
-                                         .appendTo($retHtml)
                                          .CswAttrDom({
                                          'class': 'csw_fieldset',
                                          'id': IdStr + '_fieldset'
@@ -1001,8 +1013,8 @@
                                          .CswAttrXml({
                                          'data-role': 'controlgroup',
                                          'data-type': 'horizontal'
-                                     })
-                                         .addClass('csw_fieldset');
+                                     });
+                                        
             var answers = ['Null', 'True', 'False'];
             if (isTrue(Required)) {
                 answers = ['True', 'False'];
@@ -1042,34 +1054,25 @@
                         var input1Id = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
                         var $input1 = $('#' + input1Id);
 
-//                        var input2Id = makeSafeId({ prefix: IdStr, ID: OtherSuffix, suffix: answers[k] });
-//                        var $input2 = $('#' + input2Id);
-
                         if (answers[k] === answers[i]) {
                             $input1.CswAttrDom('checked', 'checked');
-//                            $input2.CswAttrDom('checked', 'checked');
                         } else {
                             $input1.removeAttr('checked');
-//                            $input2.removeAttr('checked');
                         }
 
                         $input1.checkboxradio('refresh');
-//                        $input2.checkboxradio('refresh');
 
                     } // for (var k = 0; k < answers.length; k++)
                     onPropertyChange(ParentId, eventObj);
                 });
             } // for (var i = 0; i < answers.length; i++)
-            $retHtml.find('input[type="radio"]').checkboxradio();
-            return $retHtml;
+//            $retHtml.find('input[type="radio"]').checkboxradio();
+            return $fieldset;
         }// _makeLogicalFieldSet()
 
         function _makeQuestionAnswerFieldSet(ParentId, IdStr, Options, Answer, CompliantAnswers) {
             var Suffix = 'ans';
-            
-            var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
             var $fieldset = $('<fieldset class="csw_fieldset"></fieldset>')
-    								    .appendTo($retHtml)
     								    .CswAttrDom({
 								        'id': IdStr + '_fieldset'
 								    })
@@ -1091,8 +1094,8 @@
                 //$retHtml.data('thisI', i);
             } // for (var i = 0; i < answers.length; i++)
             
-            $retHtml.unbind('click');
-            $retHtml.bind('click', function(eventObj) {
+            $fieldset.unbind('click');
+            $fieldset.bind('click', function(eventObj) {
                 var thisAnswer = eventObj.srcElement.innerText;
                 var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
                 var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
@@ -1115,18 +1118,18 @@
                 }
                 if (!isNullOrEmpty(Answer)) {
                     // update unanswered count when this question is answered
-                    var $fieldset = $('#' + IdStr + '_fieldset');
-                    if ($fieldset.CswAttrDom('answered')) {
+                    var $parentfieldset = $('#' + IdStr + '_fieldset');
+                    if ($parentfieldset.CswAttrDom('answered')) {
                         var $cntspan = $('#' + ParentId + '_unansweredcnt');
                         $cntspan.text(parseInt($cntspan.text()) - 1);
-                        $fieldset.CswAttrDom('answered', 'true');
+                        $parentfieldset.CswAttrDom('answered', 'true');
                     }
                 }
                 onPropertyChange(ParentId, eventObj);
             }); //click()
             
-            $retHtml.find('input[type="radio"]').checkboxradio();
-            return $retHtml;
+//            $retHtml.find('input[type="radio"]').checkboxradio();
+            return $fieldset;
         } // _makeQuestionAnswerFieldSet()
 
         function _preFormNextLevelPages(params) {
