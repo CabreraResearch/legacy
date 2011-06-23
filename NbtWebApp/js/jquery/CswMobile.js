@@ -1083,15 +1083,16 @@
                 if (Answer === answers[i]) {
                     $answer.CswAttrDom('checked', 'checked');
                 }
-                //$retHtml.data('thisI', i);
-            } // for (var i = 0; i < answers.length; i++)
+                
+                $answer.bind('tap', function () { alert('tap'); });
             
-            $fieldset.unbind('click');
-            $fieldset.bind('click', function(eventObj) {
-
-                var $target = $(eventObj.target);
-                if( !$target.hasClass('csw_fieldset') ) {
-                    var thisAnswer = eventObj.srcElement.innerText;
+                $answer.bind('click', function () { alert('click'); });
+                
+                $answer.unbind('vclick');
+                $answer.bind('vclick', function(eventObj) {
+                    alert('vclick');
+                    var $this = $(this);
+                    //var thisAnswer = eventObj.srcElement.innerText;
 
                     var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
                     var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
@@ -1121,9 +1122,13 @@
                             $parentfieldset.CswAttrDom('answered', 'true');
                         }
                     }
-                    onPropertyChange(ParentId, eventObj, thisAnswer, answerName);
-                }
-            }); //click()
+                    onPropertyChange(ParentId, eventObj, $this.val(), answerName);
+                });
+                //$retHtml.data('thisI', i);
+            } // for (var i = 0; i < answers.length; i++)
+            
+            
+          
             
 //            $retHtml.find('input[type="radio"]').checkboxradio();
             return $fieldset;
