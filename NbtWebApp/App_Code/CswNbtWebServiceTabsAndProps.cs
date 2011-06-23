@@ -295,7 +295,7 @@ namespace ChemSW.Nbt.WebServices
 			if( EditMode == NodeEditMode.AddInPopup )
 			{
 				Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-				_CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
+				//_CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
 			}
 			else
 			{

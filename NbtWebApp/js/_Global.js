@@ -684,13 +684,14 @@ function HandleMenuItem(options)
     }
     else if (o.$itemxml.CswAttrXml('popup') !== undefined && o.$itemxml.CswAttrXml('popup') !== '')
     {
-        $li = $('<li class="headermenu_dialog"><a href="#">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
+        $li = $('<li class="headermenu_dialog"><a href="' + o.$itemxml.CswAttrXml('popup') + '" target="_blank">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
 						.appendTo(o.$ul)
-						.click(function ()
-						{
-						    $.CswDialog('OpenDialog', o.$itemxml.CswAttrXml('text'), o.$itemxml.CswAttrXml('popup'));
-						    return false;
-						});
+//						.click(function ()
+//						{
+//						    $.CswDialog('OpenDialog', o.$itemxml.CswAttrXml('text'), o.$itemxml.CswAttrXml('popup'));
+//						    return false;
+//						})
+						;
     }
     else if (o.$itemxml.CswAttrXml('action') !== undefined && o.$itemxml.CswAttrXml('action') !== '')
     {
@@ -802,6 +803,7 @@ function HandleMenuItem(options)
 				{
 					$.CswDialog('AddViewDialog', {
 						'viewid': o.$itemxml.CswAttrXml('viewid'),
+						'viewmode': o.$itemxml.CswAttrXml('viewmode'),
 						'onAddView': o.onSaveView
 					});
 					return false;
@@ -1348,7 +1350,7 @@ function doLogging(value)
         {
             localStorage['doLogging'] = isTrue(value);
         }
-        var ret = isTrue(localStorage['doLogging']);
+        ret = isTrue(localStorage['doLogging']);
     }
     return ret;
 }
@@ -1362,7 +1364,7 @@ function debugOn(value)
         {
             localStorage['debugOn'] = isTrue(value);
         }
-        var ret = isTrue(localStorage['debugOn']);
+        ret = isTrue(localStorage['debugOn']);
     }
     return ret;
 }

@@ -143,6 +143,7 @@ namespace ChemSW.Nbt.WebServices
 									LinkText = ThisAction.Name.ToString();
 							}
 							CswXmlDocument.AppendXmlAttribute( ItemNode, "actionid", WelcomeRow["actionid"].ToString() );
+							CswXmlDocument.AppendXmlAttribute( ItemNode, "actionurl", ThisAction.Url );
 							CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "action" );
 						}
 						if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )

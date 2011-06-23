@@ -8,9 +8,10 @@
 ; (function ($) { /// <param name="$" type="jQuery" />
     $.fn.listenForEnter = function ()
     {
-        var $element = this;
-        return $element.each(function ()
+        var $elements = this;
+        return $elements.each(function ()
         {
+	        var $element = $(this);
             $element.focus(function ()
             {
                 $element.data('safeEnter_InAutocomplete', false);
@@ -50,9 +51,10 @@
 
     $.fn.clickOnEnter = function ($target)
     {
-        var $parent = this;
-        return $parent.each(function ()
+        var $parents = this;
+        return $parents.each(function ()
         {
+			var $parent = $(this);
             $parent.listenForEnter()
 				    .bind('pressedEnter', function ()
 				    {

@@ -500,6 +500,7 @@
     <Content Include="js\jquery\CswQuickLaunch.js" />
     <Content Include="js\jquery\CswSearch.css" />
     <Content Include="js\jquery\CswSearch.js" />
+    <Content Include="js\jquery\CswSelect.js" />
     <Content Include="js\jquery\CswSpan.js" />
     <Content Include="js\jquery\CswTable.js" />
     <Content Include="js\jquery\CswTools.js" />

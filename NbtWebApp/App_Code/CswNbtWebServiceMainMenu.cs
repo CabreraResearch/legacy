@@ -146,6 +146,7 @@ namespace ChemSW.Nbt.WebServices
 					MenuNode.Add( new XElement( "item",
 												new XAttribute( "text", "Save View As" ),
 												new XAttribute( "viewid", View.SessionViewId.ToString() ),
+												new XAttribute( "viewmode", View.ViewMode.ToString() ),
 												new XAttribute( "action", "SaveViewAs" ) ) );
 				}
 

@@ -325,8 +325,24 @@ namespace ChemSW.Nbt.ObjClasses
             }//else if ( _Finished )
 
             this.Finished.Checked = CswConvert.ToTristate( FinishedCheck );
-            _CswNbtObjClassDefault.beforeWriteNode();
-        }//beforeWriteNode()
+
+			if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
+				this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
+				this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
+				this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
+			{
+				foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+				{
+					Prop.ReadOnly = true;
+				}
+				CswNbtNodePropWrapper FinishedProp = this.Node.Properties[FinishedPropertyName];
+				FinishedProp.AsLogical.ReadOnly = true;
+				CswNbtNodePropWrapper CancelledProp = this.Node.Properties[CancelledPropertyName];
+				CancelledProp.AsLogical.ReadOnly = true;
+			}
+		
+			_CswNbtObjClassDefault.beforeWriteNode();
+		}//beforeWriteNode()
 
         /// <summary>
         /// Update Parent Status (OK,OOC) if Inspection is submitted
@@ -344,25 +360,6 @@ namespace ChemSW.Nbt.ObjClasses
                     ParentNode.postChanges( false );
                 }
             }
-
-            // Probably should be in beforeWriteNode(), but it works for now
-            if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
-                this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
-                this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
-                this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
-            {
-                CswNbtMetaDataFieldType QuestionFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Question );
-                CswNbtPropEnmrtrFiltered QuestionsFltr = this.Node.Properties[QuestionFT];
-                foreach( CswNbtNodePropWrapper Prop in QuestionsFltr )
-                {
-                    Prop.ReadOnly = true;
-                }
-                CswNbtNodePropWrapper FinishedProp = this.Node.Properties[FinishedPropertyName];
-                FinishedProp.AsLogical.ReadOnly = true;
-                CswNbtNodePropWrapper CancelledProp = this.Node.Properties[CancelledPropertyName];
-                CancelledProp.AsLogical.ReadOnly = true;
-            }
-
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 

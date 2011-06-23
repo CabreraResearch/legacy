@@ -36,6 +36,7 @@
                 {
                     $TextBox.addClass("required");
                 }
+				$TextBox.clickOnEnter(o.$savebtn);
             }
         },
         save: function(o) {

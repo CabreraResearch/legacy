@@ -65,6 +65,8 @@
 					$edittext.addClass("required");
 					$edithref.addClass("required");
                 }
+				$edittext.clickOnEnter(o.$savebtn);
+				$edithref.clickOnEnter(o.$savebtn);
             }
         },
         save: function(o) { 
