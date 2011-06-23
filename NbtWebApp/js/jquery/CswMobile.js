@@ -136,7 +136,7 @@
                 persistBindEvent: false,
                 onPageShow: function(p) {
                 },
-                onSuccess: function() { $.mobile.pageLoading(true); }
+                onSuccess: function() { $.mobile.hidePageLoadingMsg(); }
             };
 
             if (params) $.extend(p, params);
@@ -144,7 +144,7 @@
 
             $div.unbind('pageshow');
             $ret = $div.bind('pageshow', function() {
-                $.mobile.pageLoading();
+                $.mobile.showPageLoadingMsg();
 
                 if (p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
@@ -269,7 +269,7 @@
                     dataRel: 'dialog'
                 });
             $('#loginsubmit').bind('click', function() {
-                $.mobile.pageLoading();
+                $.mobile.showPageLoadingMsg();
                 onLoginSubmit();
             });
             $('#login_customerid').clickOnEnter($('#loginsubmit'));
@@ -1784,7 +1784,7 @@
                             //restorePath();
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown) {
-                            $.mobile.pageLoading(true);
+                            $.mobile.hidePageLoadingMsg();
                         }
                     });
             }
@@ -1795,7 +1795,7 @@
 
         function onLoginFail(text) {
             Logout(false);
-            $.mobile.pageLoading(true);
+            $.mobile.hidePageLoadingMsg();
             _addToDivHeaderText($logindiv, text);
         }
 
@@ -1821,7 +1821,7 @@
         function onRefresh(refreshBtnId) {
             if (!amOffline()) {
                 if (_checkNoPendingChanges()) {
-                    $.mobile.pageLoading();
+                    $.mobile.showPageLoadingMsg();
                     continueRefresh(refreshBtnId);
                 }
             }
@@ -1866,7 +1866,7 @@
                             //$thisDiv.bindJqmEvents(params);
                             $.mobile.loadPage(DivId);
 
-                            $.mobile.pageLoading(true);
+                            $.mobile.hidePageLoadingMsg();
                         }, // success
                         error: function(txt) {
                         }
