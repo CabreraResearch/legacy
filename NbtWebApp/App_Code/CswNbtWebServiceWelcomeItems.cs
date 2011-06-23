@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.WebServices
 	/// <summary>
 	/// Webservice for the table of components on the Welcome page
 	/// </summary>
-	public class CswNbtWebServiceWelcomeItems : CompositeControl
+	public class CswNbtWebServiceWelcomeItems
 	{
 		private CswNbtResources _CswNbtResources;
 
