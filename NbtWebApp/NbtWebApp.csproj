@@ -543,6 +543,8 @@
     <Content Include="js\jquery\fieldtypes\CswFieldTypeViewReference.js" />
     <Content Include="js\jquery\fieldtypes\_CswFieldTypeFactory.js" />
     <Content Include="js\jquery\fieldtypes\_CswFieldTypes.css" />
+    <Content Include="js\jquery\mobile\CswMobileFieldType.js" />
+    <Content Include="js\jquery\mobile\CswMobileQuestion.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-1.6.1.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-1.6.1.min.js" />
