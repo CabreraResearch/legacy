@@ -1434,6 +1434,7 @@
     <Compile Include="Act_SplitSamples.aspx.designer.cs">
       <DependentUpon>Act_SplitSamples.aspx</DependentUpon>
     </Compile>
+    <Content Include="App_Code\CswNbtWebServiceInspections.cs" />
     <Compile Include="Base.master.designer.cs">
       <DependentUpon>Base.master</DependentUpon>
     </Compile>
