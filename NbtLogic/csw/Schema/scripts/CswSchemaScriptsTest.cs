@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
         private string _getCaseNumberFromTestCaseTypeName( string TypeName ) { return ( TypeName.Substring( 12, 3 ) ); }
         //        private string _getCaseNumberFromResourceTypeName( string TypeName ) { return ( TypeName.Substring( 12, 3 ) ); }
 
-        public CswSchemaScriptsTest( CswNbtResources CswNbtResources, int StartAtTestCase, List<string> IgnoreCases )
+        public CswSchemaScriptsTest( CswNbtResources CswNbtResources, int StartAtTestCase, int EndAtTestCase, List<string> IgnoreCases )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
@@ -68,11 +68,15 @@ namespace ChemSW.Nbt.Schema
 
             List<Type> TestCaseTypes = new List<Type>();
             TestCaseTypeNames.Sort();
+            if( 0 == EndAtTestCase )
+            {
+                EndAtTestCase = TestCaseTypeNames.Count;
+            }
             foreach( string CurrentTypeName in TestCaseTypeNames )
             {
                 string TestCaseNumberSegment = _getCaseNumberFromTestCaseTypeName( CurrentTypeName );
                 Int32 TestCaseNumber = CswConvert.ToInt32( TestCaseNumberSegment );
-                if( TestCaseNumber >= StartAtTestCase )
+                if( TestCaseNumber >= StartAtTestCase && TestCaseNumber <= EndAtTestCase )
                 {
                     TestCaseTypes.Add( TestCaseTypesByName[CurrentTypeName] );
                 }
