@@ -57,12 +57,12 @@ namespace ChemSW.Nbt.PropTypes
                 _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
                 _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
 
-                if( !( _PropRow[column.ToString()].Equals( dbval ) ) )
-                {
-                    WasModified = true;
-                    _PropRow[column.ToString()] = CswConvert.ToDbVal( value );
-                    ret = true;
-                }
+				if( false == ( CswConvert.ToDbVal( _PropRow[column.ToString()] ).Equals( dbval ) ) )
+				{
+					WasModified = true;
+					_PropRow[column.ToString()] = CswConvert.ToDbVal( value );
+					ret = true;
+				}
             }
             // Don't just return WasModified, or else changes to one subfield 
             // will look like changes to another subfield
@@ -426,20 +426,19 @@ namespace ChemSW.Nbt.PropTypes
             }
             else
             {
-                this.Field1_Fk = Source.Field1_Fk;
+				SetPropRowValue( CswNbtSubField.PropColumn.Field1_FK, Source.Field1_Fk );
             }
 
-            this.Field1 = Source.Field1;
-            this.Field2 = Source.Field2;
-            this.Field3 = Source.Field3;
-            this.Field4 = Source.Field4;
-            this.Field5 = Source.Field5;
-            this.Field1_Date = Source.Field1_Date;
-            this.Field2_Date = Source.Field2_Date;
-            this.Field1_Numeric = Source.Field1_Numeric;
-            this.Gestalt = Source.Gestalt;
-            this.ClobData = Source.ClobData;
-            WasModified = true;
+			SetPropRowValue( CswNbtSubField.PropColumn.Field1, Source.Field1 );
+			SetPropRowValue( CswNbtSubField.PropColumn.Field2, Source.Field2 );
+			SetPropRowValue( CswNbtSubField.PropColumn.Field3, Source.Field3 );
+			SetPropRowValue( CswNbtSubField.PropColumn.Field4, Source.Field4 );
+			SetPropRowValue( CswNbtSubField.PropColumn.Field5, Source.Field5 );
+			SetPropRowValue( CswNbtSubField.PropColumn.Field1_Date, Source.Field1_Date );
+			SetPropRowValue( CswNbtSubField.PropColumn.Field2_Date, Source.Field2_Date );
+			SetPropRowValue( CswNbtSubField.PropColumn.Field1_Numeric, Source.Field1_Numeric );
+			SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Source.Gestalt );
+			SetPropRowValue( CswNbtSubField.PropColumn.ClobData, Source.ClobData );
         }
 
         public void ClearValue()
