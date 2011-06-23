@@ -47,6 +47,7 @@ namespace ChemSW.Nbt.Schema
 				{
 					CswNbtObjClassLocation BuildingNodeAsLocation = CswNbtNodeCaster.AsLocation( BuildingNode );
 					BuildingNodeAsLocation.Location.SelectedNodeId = SiteNode.NodeId;
+					BuildingNodeAsLocation.Location.RefreshNodeName();
 					BuildingNode.postChanges( false );
 				}
 			}
