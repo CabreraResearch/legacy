@@ -1307,7 +1307,10 @@ function log(s, includeCallStack)
 
     try
     {
-        console.log(s, extendedLog);
+    	if (!isNullOrEmpty(extendedLog))
+    		console.log(s, extendedLog);
+    	else
+    		console.log(s);
     } catch (e)
     {
         alert(s);
