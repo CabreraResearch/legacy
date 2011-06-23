@@ -608,7 +608,8 @@
                                     .appendTo($list);
             });
             $list.listview('refresh')
-                .bindLI();
+                 .bindLI();
+            $('.csw_collapsible').page();
             //.find('input[type="radio"]').checkboxradio('refresh',true);
             onAfterAddDiv($retDiv);
 
@@ -637,39 +638,6 @@
             var IsDiv = (!isNullOrEmpty(id));
             var PageType = tryParseString(p.$xmlitem.get(0).nodeName, '').toLowerCase();
 
-//            var nextid = p.$xmlitem.next().CswAttrXml('id');
-//            var previd = p.$xmlitem.prev().CswAttrXml('id');
-
-//            // add a div for editing the property directly
-//            var $toolbar = $('<div data-role="controlgroup" data-type="horizontal" class="ui-bar"></div>');
-//            if (!isNullOrEmpty(previd)) {
-//                $toolbar.CswLink('init', { href: 'javascript:void(0);', value: 'Previous' })
-//                                .CswAttrXml({
-//                                'data-identity': previd,
-//                                'data-url': previd,
-//                                'data-icon': 'arrow-u',
-//                                'data-inline': true
-//                            })
-//                                .bind('click', function() {
-//                                    var $prev = $('#' + previd);
-//                                    $prev.doChangePage({ transition: 'slideup', reverse: true, changeHash: false });
-//                                });
-//            }
-//            if (!isNullOrEmpty(nextid)) {
-//                $toolbar.CswLink('init', { href: 'javascript:void(0);', value: 'Next' })
-//                                .CswAttrXml({
-//                                'data-identity': nextid,
-//                                'data-url': nextid,
-//                                'data-icon': 'arrow-d',
-//                                'data-inline': true
-//                            })
-//                                .bind('click', function() {
-//                                    var $next = $('#' + nextid);
-//                                    $next.doChangePage({ transition: 'slidedown', changeHash: false });
-//                                });
-
-//            }
-
             var $retLI = $('');
 
             switch (PageType) {
@@ -689,9 +657,6 @@
                     var ReadOnly = (isTrue(p.$xmlitem.CswAttrXml('isreadonly')));
                     if (gestalt === 'NaN') gestalt = '';
 
-//                    var currentNo = p.$xmlitem.prevAll('[fieldtype="' + fieldtype + '"]').andSelf().length;
-//                    var totalCnt = p.$xmlitem.siblings('[fieldtype="' + fieldtype + '"]').andSelf().length;
-
                     if (currenttab !== tab) {
 //                            if ( !isNullOrEmpty(currenttab) )
 //                            {    
@@ -707,11 +672,6 @@
                                                 .appendTo($list);
                     var $label = $('<label for="' + id + '" id="' + id + '_label">' + text + '</label>')
                                         .appendTo($lItem);
-//                    var $link = $lItem.CswLink('init', { ID: id + '_href', href: 'javascript:void(0)', value: text })
-//                                                  .css('white-space', 'normal');
-//                    if (!ReadOnly) {
-//                        $link.CswAttrXml({ 'data-identity': id, 'data-url': id });
-//                    }
                     var $div;
                     switch (fieldtype.toLowerCase()) {
                     case 'logical':
@@ -745,31 +705,28 @@
                             };
                         }
 
-                        var $prop = $('<div data-role="collapsible" class="ui-collapsible-contain" data-collapsed="true"></div>')
+                        var $prop = $('<div data-role="collapsible" class="csw_collapsible" data-collapsed="true"></div>')
                                         .appendTo($lItem)
                                         .append( $('<h3>Comments</h3>') )
-                                        .append( $('<p>Comment Text</p>'));
                         
-//                        var $corAction = $('<textarea id="' + id + '_cor" name="' + id + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
-//                                                    .appendTo($prop);
+                        var $corAction = $('<textarea id="' + id + '_cor" name="' + id + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
+                                                    .appendTo($prop);
 
-//                        if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
-//                            $corAction.css('display', 'none');
-//                        }
-//                        $corAction.bind('change', function() {
-//                            var $cor = $(this);
-//                            if ($cor.val() === '') {
-//                                $('#' + IdStr + '_li div').addClass('OOC');
-//                                $('#' + IdStr + '_label').addClass('OOC');
-//                            } else {
-//                                $('#' + IdStr + '_li div').removeClass('OOC');
-//                                $('#' + IdStr + '_label').removeClass('OOC');
-//                            }
-//                        });
+                        if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
+                            $corAction.css('display', 'none');
+                        }
+                        $corAction.bind('change', function() {
+                            var $cor = $(this);
+                            if ($cor.val() === '') {
+                                $label.addClass('OOC');
+                            } else {
+                                $label.removeClass('OOC');
+                            }
+                        });
 
-//                        var $comments = $('<textarea name="' + id + '" id="' + id + '" placeholder="Comments">' + sf_comments + '</textarea>')
-//                                                        .appendTo($prop);
-//                        
+                        var $comments = $('<textarea name="' + id + '" id="' + id + '" placeholder="Comments">' + sf_comments + '</textarea>')
+                                                        .appendTo($prop);
+                        
                         break;
                     default:
                         var $gestalt = $('<div><p>' + gestalt + '</p></div>')
