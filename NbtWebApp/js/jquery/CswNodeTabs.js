@@ -23,7 +23,7 @@
             filterToPropId: '',       
             title: '',
             EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
-            onSave: function (nodeid, cswnbtnodekey) { },
+            onSave: function (nodeid, cswnbtnodekey, tabcount) { },
             onBeforeTabSelect: function (tabid) { return true; },
             onTabSelect: function (tabid) { },
             onPropertyChange: function(propid, propname) { },
@@ -40,6 +40,8 @@
 
         var $outertabdiv = $('<div id="' + o.ID + '_tabdiv" />')
                         .appendTo($parent);
+		
+		var tabcnt = 0;
 
         getTabs(o);
 
@@ -94,6 +96,8 @@
                         }
                         tabno++;
                     });  // $xml.children().each(function ()
+
+					tabcnt = tabno;
 
                     for(var t in tabdivs)
                     {
@@ -484,7 +488,7 @@
                                 alert('You have not selected any properties to save.');
                             }
                         } // if(o.ShowCheckboxes)
-                        if( doSave ) o.onSave(data.nodeid, data.cswnbtnodekey);
+                        if( doSave ) o.onSave(data.nodeid, data.cswnbtnodekey, tabcnt);
 						$savebtn.CswButton('enable');
                     }, // success
                     error: function()
