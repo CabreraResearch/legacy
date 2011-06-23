@@ -49,15 +49,15 @@
 
     $.fn.doChangePage = function(options) {
         var o = {
-            transition: $.mobile.defaultPageTransition,
-            reverse: false,
-            changeHash: true,
-            role: 'page',
-            pageContainer: $.mobile.pageContainer,
-            type: 'get',
-            data: undefined,
-            reloadPage: false,
-            showLoadMsg: true
+            //transition: $.mobile.defaultPageTransition,
+            //reverse: false,
+            //changeHash: true,
+            //role: 'page',
+            //pageContainer: $.mobile.pageContainer,
+            //type: 'get',
+            //data: undefined,
+            //reloadPage: false,
+            //showLoadMsg: true
         };
         if (options) $.extend(o, options);
 
@@ -1780,7 +1780,7 @@
                             SessionId = $.CswCookie('get', CswCookieName.SessionId);
                             _cacheSession(SessionId, UserName, AccessId);
                             $viewsdiv = reloadViews();
-                            $viewsdiv.doChangePage();
+                            $viewsdiv.doChangePage({changeHash: false});
                             //restorePath();
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown) {
