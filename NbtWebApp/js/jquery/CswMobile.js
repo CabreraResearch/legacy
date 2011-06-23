@@ -610,6 +610,8 @@
             $list.listview('refresh')
                  .bindLI();
             $('.csw_collapsible').page();
+            $('.csw_fieldset').page();
+            
             //.find('input[type="radio"]').checkboxradio('refresh',true);
             onAfterAddDiv($retDiv);
 
@@ -652,104 +654,17 @@
                 {
                     var $tab;
                     var tab = p.$xmlitem.CswAttrXml('tab');
-                    var fieldtype = tryParseString(p.$xmlitem.CswAttrXml('fieldtype'), '');
-                    var gestalt = p.$xmlitem.CswAttrXml('gestalt');
-                    var ReadOnly = (isTrue(p.$xmlitem.CswAttrXml('isreadonly')));
-                    if (gestalt === 'NaN') gestalt = '';
 
                     if (currenttab !== tab) {
-//                            if ( !isNullOrEmpty(currenttab) )
-//                            {    
-//                                lihtml += _endUL() + _makeUL();
-//                            }
+                        //should be separate ULs eventually
                         $tab = $('<li data-role="list-divider">' + tab + '</li>')
                                                 .appendTo($list);
                         currenttab = tab;
                     }
 
-                    var $lItem = $('<li data-role="fieldcontain" id="' + id + '_li"></li>')
-                                                .CswAttrXml('data-icon', false)
-                                                .appendTo($list);
-                    var $label = $('<label for="' + id + '" id="' + id + '_label">' + text + '</label>')
-                                        .appendTo($lItem);
-                    var $div;
-                    switch (fieldtype.toLowerCase()) {
-                    case 'logical':
-                        var sf_checked = tryParseString(p.$xmlitem.children('checked').text(), '');
-                        var sf_required = tryParseString(p.$xmlitem.children('required').text(), '');
-
-                        $div = $('<div id="' + id + '"></div>')
-                                                        .appendTo($lItem);
-                        var $logical = _makeLogicalFieldSet(p.DivId, id, sf_checked, sf_required)
-                                                        .appendTo($div);
-                        break;
-                    case 'question':
-                        var sf_answer = tryParseString(p.$xmlitem.children('answer').text(), '');
-                        var sf_allowedanswers = tryParseString(p.$xmlitem.children('allowedanswers').text(), '');
-                        var sf_compliantanswers = tryParseString(p.$xmlitem.children('compliantanswers').text(), '');
-                        var sf_correctiveaction = tryParseString(p.$xmlitem.children('correctiveaction').text(), '');
-                        var sf_comments = tryParseString(p.$xmlitem.children('comments').text(), '');
-
-                        $div = $('<div id="'+ id +'"><div>')
-                                                        .appendTo($lItem);
-                        var $question = _makeQuestionAnswerFieldSet(p.DivId, id, 'cor', 'li', 'label', sf_allowedanswers, sf_answer, sf_compliantanswers)
-                                                        .appendTo($div).find('input[type="radio"]').checkboxradio('refresh');
-
-                        if (!isNullOrEmpty(sf_answer) && (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && isNullOrEmpty(sf_correctiveaction)) {
-                            // mark the li div OOC after it is created
-                            var old_onAfterAddDiv = onAfterAddDiv;
-                            onAfterAddDiv = function($divhtml) {
-                                $divhtml.find('#' + id + '_li div')
-                                                        .addClass('OOC');
-                                old_onAfterAddDiv($divhtml);
-                            };
-                        }
-
-                        var $prop = $('<div data-role="collapsible" class="csw_collapsible" data-collapsed="true"></div>')
-                                        .appendTo($lItem)
-                                        .append( $('<h3>Comments</h3>') )
-                        
-                        var $corAction = $('<textarea id="' + id + '_cor" name="' + id + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
-                                                    .appendTo($prop);
-
-                        if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
-                            $corAction.css('display', 'none');
-                        }
-                        $corAction.bind('change', function() {
-                            var $cor = $(this);
-                            if ($cor.val() === '') {
-                                $label.addClass('OOC');
-                            } else {
-                                $label.removeClass('OOC');
-                            }
-                        });
-
-                        var $comments = $('<textarea name="' + id + '" id="' + id + '" placeholder="Comments">' + sf_comments + '</textarea>')
-                                                        .appendTo($prop);
-                        
-                        break;
-                    default:
-                        var $gestalt = $('<div><p>' + gestalt + '</p></div>')
-                                                            .appendTo($lItem);
-                        break;
-                    }
-
-//                    if (fieldtype.toLowerCase() === "question") {
-//                        var $count = $('<span>' + currentNo + '&nbsp;of&nbsp;' + totalCnt + '</span>')
-//                                                 .addClass('ui-btn-right');
-//                        $toolbar.append($count);
-//                    }
-
-//                    _addPageDivToBody({
-//                                        ParentId: p.DivId,
-//                                        level: p.parentlevel,
-//                                        DivId: id,
-//                                        HeaderText: text,
-//                                        $toolbar: $toolbar,
-//                                        $content: _FieldTypeXmlToHtml(p.$xmlitem, p.DivId, id + '_href')
-//                                    })
-//                                    .addClass('CswNbtNodeProp');
-                    break;
+                    var $prop = _FieldTypeXmlToHtml(p.$xmlitem, id)
+                                    .appendTo($list);
+                    break;   
                 } // case 'prop':
             default:
                 {
@@ -857,165 +772,150 @@
             return $retHtml;
         }
 
-//        function _FieldTypeXmlToHtml($xmlitem, ParentId, SiblingId) {
-//            var IdStr = makeSafeId({ ID: $xmlitem.CswAttrXml('id') });
-//            var FieldType = $xmlitem.CswAttrXml('fieldtype');
-//            var PropName = $xmlitem.CswAttrXml('name');
-//            var ReadOnly = (isTrue($xmlitem.CswAttrXml('isreadonly')));
+        function _FieldTypeXmlToHtml($xmlitem, ParentId) {
+            var IdStr = makeSafeId({ ID: $xmlitem.CswAttrXml('id') });
+            var FieldType = $xmlitem.CswAttrXml('fieldtype');
+            var PropName = $xmlitem.CswAttrXml('name');
+            var ReadOnly = (isTrue($xmlitem.CswAttrXml('isreadonly')));
 
-//            // Subfield values
-//            var sf_text = tryParseString($xmlitem.children('text').text(), '');
-//            var sf_value = tryParseString($xmlitem.children('value').text(), '');
-//            var sf_href = tryParseString($xmlitem.children('href').text(), '');
-//            var sf_checked = tryParseString($xmlitem.children('checked').text(), '');
-//            var sf_required = tryParseString($xmlitem.children('required').text(), '');
-//            var sf_units = tryParseString($xmlitem.children('units').text(), '');
-//            var sf_answer = tryParseString($xmlitem.children('answer').text(), '');
-//            var sf_allowedanswers = tryParseString($xmlitem.children('allowedanswers').text(), '');
-//            var sf_correctiveaction = tryParseString($xmlitem.children('correctiveaction').text(), '');
-//            var sf_comments = tryParseString($xmlitem.children('comments').text(), '');
-//            var sf_compliantanswers = tryParseString($xmlitem.children('compliantanswers').text(), '');
-//            var sf_options = tryParseString($xmlitem.children('options').text(), '');
+            // Subfield values
+            var sf_text = tryParseString($xmlitem.children('text').text(), '');
+            var sf_value = tryParseString($xmlitem.children('value').text(), '');
+            var sf_href = tryParseString($xmlitem.children('href').text(), '');
+            var sf_checked = tryParseString($xmlitem.children('checked').text(), '');
+            var sf_required = tryParseString($xmlitem.children('required').text(), '');
+            var sf_units = tryParseString($xmlitem.children('units').text(), '');
+            var sf_answer = tryParseString($xmlitem.children('answer').text(), '');
+            var sf_allowedanswers = tryParseString($xmlitem.children('allowedanswers').text(), '');
+            var sf_correctiveaction = tryParseString($xmlitem.children('correctiveaction').text(), '');
+            var sf_comments = tryParseString($xmlitem.children('comments').text(), '');
+            var sf_compliantanswers = tryParseString($xmlitem.children('compliantanswers').text(), '');
+            var sf_options = tryParseString($xmlitem.children('options').text(), '');
 
-//            var $retHtml = $('<div data-role="fieldcontain" id="' + IdStr + '_fieldcontain"></div>');
-//            var $propNameDiv = $('<label for="' + IdStr + '_input" id="' + IdStr + '_label">' + PropName + '</label>')
-//                                        .appendTo($retHtml);
+            var $retLi = $('<li data-role="fieldcontain" id="' + IdStr + '_li"></li>')
+                                .CswAttrXml('data-icon', false);
+            var $label = $('<label for="' + IdStr + '_input" id="' + IdStr + '_label">' + PropName + '</label>')
+                                        .appendTo($retLi);
 
-//            //var Html = '<div id="' + IdStr + '_propname"';
-//            if (FieldType === "Question" &&
-//                !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
-//                    isNullOrEmpty(sf_correctiveaction)) {
-//                $propNameDiv.addClass('OOC');
-//            } else {
-//                $propNameDiv.removeClass('OOC');
-//            }
-//            //$retHtml.append('<br/>');
+            if (FieldType === "Question" &&
+                !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
+                    isNullOrEmpty(sf_correctiveaction)) {
+                $label.addClass('OOC');
+            } else {
+                $label.removeClass('OOC');
+            }
 
-//            if (!ReadOnly) {
-//                var addChangeHandler = true;
-//                var $prop;
-//                var propId = IdStr + '_input';
+            if (!ReadOnly) {
+                var addChangeHandler = true;
+                var $prop;
+                var propId = IdStr + '_input';
 
-//                switch (FieldType) {
-//                case "Date":
-//                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
-//                    break;
-//                case "Link":
-//                    $prop = $retHtml.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text });
-//                    break;
-//                case "List":
-//                    $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
-//                                                .appendTo($retHtml)
-//                        .selectmenu();
-//                    var selectedvalue = sf_value;
-//                    var optionsstr = sf_options;
-//                    var options = optionsstr.split(',');
-//                    for (var i = 0; i < options.length; i++) {
-//                        var $option = $('<option value="' + options[i] + '"></option>')
-//                                                    .appendTo($prop);
-//                        if (selectedvalue === options[i]) {
-//                            $option.CswAttrDom('selected', 'selected');
-//                        }
+                switch (FieldType) {
+                case "Date":
+                    $prop = $retLi.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
+                    break;
+                case "Link":
+                    $prop = $retLi.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text });
+                    break;
+                case "List":
+                    $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
+                                                .appendTo($retLi)
+                        .selectmenu();
+                    var selectedvalue = sf_value;
+                    var optionsstr = sf_options;
+                    var options = optionsstr.split(',');
+                    for (var i = 0; i < options.length; i++) {
+                        var $option = $('<option value="' + options[i] + '"></option>')
+                                                    .appendTo($prop);
+                        if (selectedvalue === options[i]) {
+                            $option.CswAttrDom('selected', 'selected');
+                        }
 
-//                        if (!isNullOrEmpty(options[i])) {
-//                            $option.val(options[i]);
-//                        } else {
-//                            $option.valueOf('[blank]');
-//                        }
-//                    }
-//                    $prop.selectmenu('refresh');
-//                    break;
-//                case "Logical":
-//                    addChangeHandler = false; //_makeLogicalFieldSet() does this for us
-//                    $prop = _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
-//                                                    .appendTo($retHtml);
-//                    break;
-//                case "Memo":
-//                    $prop = $('<textarea name="' + propId + '">' + sf_text + '</textarea>')
-//                                                    .appendTo($retHtml);
-//                    break;
-//                case "Number":
-//                    sf_value = tryParseNumber(sf_value, '');
-//                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.number, ID: propId, value: sf_value });
+                        if (!isNullOrEmpty(options[i])) {
+                            $option.val(options[i]);
+                        } else {
+                            $option.valueOf('[blank]');
+                        }
+                    }
+                    $prop.selectmenu('refresh');
+                    break;
+                case "Logical":
+                    addChangeHandler = false; //_makeLogicalFieldSet() does this for us
+                    $prop = _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
+                                                    .appendTo($retLi);
+                    break;
+                case "Memo":
+                    $prop = $('<textarea name="' + propId + '">' + sf_text + '</textarea>')
+                                                    .appendTo($retLi);
+                    break;
+                case "Number":
+                    sf_value = tryParseNumber(sf_value, '');
+                    $prop = $retLi.CswInput('init', { type: CswInput_Types.number, ID: propId, value: sf_value });
+                    break;
+                case "Password":
+                        //nada
+                    break;
+                case "Quantity":
+                    $prop = $retLi.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value })
+                                                .append(sf_units);
+                    break;
+                case "Question":
+                    addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
+                    var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, sf_allowedanswers, sf_answer, sf_compliantanswers)
+                                                    .appendTo($retLi);
+                    var hideComments = true;
+                    if (!isNullOrEmpty(sf_answer) && 
+                        (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && 
+                        isNullOrEmpty(sf_correctiveaction)) {
+                        $label.addClass('OOC');
+                        hideComments = false;
+                    }
 
-//                        // if (Prop.MinValue != Int32.MinValue)
-//                        //     Html += "min = \"" + Prop.MinValue + "\"";
-//                        // if (Prop.MaxValue != Int32.MinValue)
-//                        //     Html += "max = \"" + Prop.MaxValue + "\"";
-//                    break;
-//                case "Password":
-//                        //nada
-//                    break;
-//                case "Quantity":
-//                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value })
-//                                                .append(sf_units);
-//                        // Html += "<select name=\"" + IdStr + "_units\">";
-//                        // string SelectedUnit = PropWrapper.AsQuantity.Units;
-//                        // foreach( CswNbtNode UnitNode in PropWrapper.AsQuantity.UnitNodes )
-//                        // {
-//                        //     string ThisUnitText = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
-//                        //     Html += "<option value=\"" + UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text + "\"";
-//                        //     if( ThisUnitText == SelectedUnit )
-//                        //         Html += " selected";
-//                        //     Html += ">" + ThisUnitText + "</option>";
-//                        // }
-//                        // Html += "</select>";
+                    $prop = $('<div data-role="collapsible" class="csw_collapsible" data-collapsed="' + hideComments + '"><h3>Comments</h3></div>')
+                                                    .appendTo($retLi);
+                        
+                    var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
+                                                .appendTo($prop);
 
-//                    break;
-//                case "Question":
-//                    addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
-//                    $prop = _makeQuestionAnswerFieldSet(ParentId, IdStr, 'cor', 'li', 'label', sf_allowedanswers, sf_answer, sf_compliantanswers)
-//                                                    .appendTo($retHtml);
+                    if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
+                        $corAction.css('display', 'none');
+                    }
+                    $corAction.bind('change', function() {
+                        var $cor = $(this);
+                        if ($cor.val() === '') {
+                            $label.addClass('OOC');
+                        } else {
+                            $label.removeClass('OOC');
+                        }
+                    });
 
-//                    var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
-//                                                    .appendTo($prop);
+                    var $comments = $('<textarea name="' + IdStr + '" id="' + IdStr + '" placeholder="Comments">' + sf_comments + '</textarea>')
+                                                    .appendTo($prop);
+                    break;
+                case "Static":
+                    $retLi.append($('<p id="' + propId + '">' + sf_text + '</p>'));
+                    break;
+                case "Text":
+                    $prop = $retLi.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
+                    break;
+                case "Time":
+                    $prop = $retLi.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
+                    break;
+                default:
+                    $retLi.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+                    break;
+                } // switch (FieldType)
 
-//                    if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
-//                        $corAction.css('display', 'none');
-//                    }
-//                    $corAction.bind('change', function() {
-//                        var $cor = $(this);
-//                        if ($cor.val() === '') {
-//                            $('#' + IdStr + '_li div').addClass('OOC');
-//                            $('#' + IdStr + '_label').addClass('OOC');
-//                        } else {
-//                            $('#' + IdStr + '_li div').removeClass('OOC');
-//                            $('#' + IdStr + '_label').removeClass('OOC');
-//                        }
-//                    });
-
-//                    var $comments = $('<textarea name="' + propId + '" id="' + propId + '" placeholder="Comments">' + sf_comments + '</textarea>')
-//                                                    .appendTo($prop);
-//                    break;
-//                case "Static":
-//                    $retHtml.append($('<p id="' + propId + '">' + sf_text + '</p>'));
-//                    break;
-//                case "Text":
-//                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
-//                    break;
-//                case "Time":
-//                    $prop = $retHtml.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
-//                    break;
-//                default:
-//                    $retHtml.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
-//                    break;
-//                } // switch (FieldType)
-
-//                if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
-//                    $prop.bind('change', function(eventObj) {
-//                        var $this = $(this);
-//                        var $sibling = $('#' + SiblingId);
-//                        if (!isNullOrEmpty($sibling) && $sibling.length !== 0) {
-//                            $sibling.children('div').children('p').text($this.val());
-//                        }
-//                        onPropertyChange(ParentId, eventObj);
-//                    });
-//                }
-//            } else {
-//                $retHtml.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
-//            }
-//            return $retHtml;
-//        }
+                if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
+                    $prop.bind('change', function(eventObj) {
+                        onPropertyChange(ParentId, eventObj);
+                    });
+                }
+            } else {
+                $retLi.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+            }
+            return $retLi;
+        }
 
         function _FieldTypeHtmlToXml($xmlitem, id, value) {
             var name = new CswString(id);
@@ -1091,7 +991,7 @@
 
         function _makeLogicalFieldSet(ParentId, IdStr, Checked, Required) {
             var Suffix = 'ans';
-            var $retHtml = $('<div class="csw_fieldset ui-field-contain ui-body ui-br" data-role="fieldcontain"></div>');
+            var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
             var $fieldset = $('<fieldset></fieldset>')
                                          .appendTo($retHtml)
                                          .CswAttrDom({
@@ -1102,7 +1002,7 @@
                                          'data-role': 'controlgroup',
                                          'data-type': 'horizontal'
                                      })
-                                         .addClass('csw_fieldset toolbar ui-corner-all ui-controlgroup ui-controlgroup-horizontal');
+                                         .addClass('csw_fieldset');
             var answers = ['Null', 'True', 'False'];
             if (isTrue(Required)) {
                 answers = ['True', 'False'];
@@ -1164,10 +1064,11 @@
             return $retHtml;
         }// _makeLogicalFieldSet()
 
-        function _makeQuestionAnswerFieldSet(ParentId, IdStr, CorrectiveActionSuffix, LiSuffix, PropNameSuffix, Options, Answer, CompliantAnswers) {
+        function _makeQuestionAnswerFieldSet(ParentId, IdStr, Options, Answer, CompliantAnswers) {
             var Suffix = 'ans';
-            var $retHtml = $('<div data-role="fieldcontain"></div>');
-            var $fieldset = $('<fieldset class="ui-controlgroup-horizontal"></fieldset>')
+            
+            var $retHtml = $('<div class="csw_fieldset" data-role="fieldcontain"></div>');
+            var $fieldset = $('<fieldset class="csw_fieldset"></fieldset>')
     								    .appendTo($retHtml)
     								    .CswAttrDom({
 								        'id': IdStr + '_fieldset'
@@ -1193,7 +1094,7 @@
             $retHtml.unbind('click');
             $retHtml.bind('click', function(eventObj) {
                 var thisAnswer = eventObj.srcElement.innerText;
-                var correctiveActionId = makeSafeId({ prefix: IdStr, ID: CorrectiveActionSuffix });
+                var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
                 var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
 
                 var $cor = $('#' + correctiveActionId);
