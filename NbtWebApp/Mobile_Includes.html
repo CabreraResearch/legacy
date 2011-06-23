@@ -13,4 +13,25 @@
 
 <!-- ChemSW -->
 <link type="text/css" rel="stylesheet" href="js/jquery/CswMobile.css" />
-<script type="text/javascript" src="js/CswAll.min.js"></script>
+
+<script type="text/javascript">
+    var debug = false;
+    if(debug) {
+        document.write('<script type="text/javascript" src="js/jquery/CswMobile.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/_Global.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/CswClasses.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/jquery/CswAttr.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/jquery/CswButton.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/jquery/CswCookie.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/jquery/CswDiv.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/jquery/CswInput.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/jquery/CswLink.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/jquery/CswSpan.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/jquery/CswTools.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/jquery/CswSelect.js"><\/script>');    
+    }
+    else {
+        document.write('<script type="text/javascript" src="js/CswAll.min.js"><\/script>');    
+    }
+    
+</script>
