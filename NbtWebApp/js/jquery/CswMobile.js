@@ -894,17 +894,22 @@
                     if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
                         $corAction.css('display', 'none');
                     }
-                    $corAction.bind('change', function() {
+                    $corAction.bind('change', function(eventObj) {
                         var $cor = $(this);
                         if ($cor.val() === '') {
                             $label.addClass('OOC');
                         } else {
                             $label.removeClass('OOC');
                         }
+                        onPropertyChange(ParentId, eventObj, $cor.val(), IdStr + '_cor');
                     });
 
-                    var $comments = $('<textarea name="' + IdStr + '" id="' + IdStr + '" placeholder="Comments">' + sf_comments + '</textarea>')
-                                                                    .appendTo($prop);
+                    var $comments = $('<textarea name="' + IdStr + '_input" id="' + IdStr + '_input" placeholder="Comments">' + sf_comments + '</textarea>')
+                                                .appendTo($prop)
+                                                .bind('change',function (eventObj) {
+                                                    var $com = $(this);
+                                                    onPropertyChange(ParentId, eventObj, $com.val(), IdStr + '_com');
+                                                });
                     break;
                 case "Static":
                     $propDiv.append($('<p id="' + propId + '">' + sf_text + '</p>'));
@@ -922,7 +927,8 @@
 
                 if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
                     $prop.bind('change', function(eventObj) {
-                        onPropertyChange(ParentId, eventObj);
+                        var $this = $(this);
+                        onPropertyChange(ParentId, eventObj, $this.val(), propId);
                     });
                 }
             } else {
@@ -978,7 +984,7 @@
                 if (name.contains(IdStr)) $sftomodify = $sf_value;
                 break;
             case "Question":
-                if (name.contains(makeSafeId({ ID: IdStr, suffix: 'input' }))) {
+                if (name.contains(makeSafeId({ ID: IdStr, suffix: 'com' }))) {
                     $sftomodify = $sf_comments;
                 } else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'ans' }))) {
                     $sftomodify = $sf_answer;
@@ -1071,7 +1077,7 @@
 
             for (var i = 0; i < answers.length; i++) {
                 var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                var $answer = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: answerName, ID: answerid, value: answers[i] });
+                var $answer = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: answerName, ID: answerid, value: answers[i], cssclass: 'csw_answer' });
                 var $label = $('<label for="' + answerid + '">' + answers[i] + '</label>')
     								    .appendTo($fieldset);
                 if (Answer === answers[i]) {
@@ -1082,37 +1088,41 @@
             
             $fieldset.unbind('click');
             $fieldset.bind('click', function(eventObj) {
-                var thisAnswer = eventObj.srcElement.innerText;
-                
-                var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
-                var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
 
-                var $cor = $('#' + correctiveActionId);
-                var $li = $('#' + liSuffixId);
-  
-                if ((',' + CompliantAnswers + ',').indexOf(',' + thisAnswer + ',') >= 0) {
-                    $cor.css('display', 'none');
-                    $li.removeClass('OOC');
+                var $target = $(eventObj.target);
+                if( !$target.hasClass('csw_fieldset') ) {
+                    var thisAnswer = eventObj.srcElement.innerText;
 
-                } else {
-                    $cor.css('display', '');
+                    var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
+                    var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
 
-                    if (isNullOrEmpty($cor.val())) {
-                        $li.addClass('OOC');
-                    } else {
+                    var $cor = $('#' + correctiveActionId);
+                    var $li = $('#' + liSuffixId);
+
+                    if ((',' + CompliantAnswers + ',').indexOf(',' + thisAnswer + ',') >= 0) {
+                        $cor.css('display', 'none');
                         $li.removeClass('OOC');
+
+                    } else {
+                        $cor.css('display', '');
+
+                        if (isNullOrEmpty($cor.val())) {
+                            $li.addClass('OOC');
+                        } else {
+                            $li.removeClass('OOC');
+                        }
                     }
-                }
-                if (!isNullOrEmpty(Answer)) {
-                    // update unanswered count when this question is answered
-                    var $parentfieldset = $('#' + IdStr + '_fieldset');
-                    if ($parentfieldset.CswAttrDom('answered')) {
-                        var $cntspan = $('#' + ParentId + '_unansweredcnt');
-                        $cntspan.text(parseInt($cntspan.text()) - 1);
-                        $parentfieldset.CswAttrDom('answered', 'true');
+                    if (!isNullOrEmpty(Answer)) {
+                        // update unanswered count when this question is answered
+                        var $parentfieldset = $('#' + IdStr + '_fieldset');
+                        if ($parentfieldset.CswAttrDom('answered')) {
+                            var $cntspan = $('#' + ParentId + '_unansweredcnt');
+                            $cntspan.text(parseInt($cntspan.text()) - 1);
+                            $parentfieldset.CswAttrDom('answered', 'true');
+                        }
                     }
+                    onPropertyChange(ParentId, eventObj, thisAnswer, answerName);
                 }
-                onPropertyChange(ParentId, eventObj, thisAnswer, answerName );
             }); //click()
             
 //            $retHtml.find('input[type="radio"]').checkboxradio();
@@ -1409,14 +1419,6 @@
             return $div;
         }
 
-        function _getDivParentId(DivId) {
-            var ret = '';
-            var $back = $('#' + DivId).find('div:jqmData(role="header") #' + DivId + '_back');
-            if ($back.length > 0)
-                ret = $back.CswAttrXml('data-identity');
-            return ret;
-        }
-
         function _bindPageEvents(DivId, ParentId, level, $div) {
             $div.find('#' + DivId + '_searchopen')
                         .unbind('vclick')
@@ -1461,13 +1463,17 @@
                         })
                         .end()
                         .find('textarea')
+                        .unbind('change')
                         .bind('change', function(eventObj) {
-                            onPropertyChange(DivId, eventObj);
+                            var $this = $(this);
+                            onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
                         })
                         .end()
                         .find('.csw_prop_select')
+                        .unbind('change')
                         .bind('change', function(eventObj) {
-                            onPropertyChange(DivId, eventObj);
+                            var $this = $(this);
+                            onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
                         })
                 .end();
         }
@@ -1732,7 +1738,7 @@
         function onPropertyChange(DivId, eventObj, inputVal, inputId) {
             var logger = new profileMethod('onPropertyChange');
             var $elm = $(eventObj.target);
-            
+
             var name = tryParseString(inputId,$elm.CswAttrDom('id'))
             var value = tryParseString(inputVal, eventObj.target.innerText);
        
