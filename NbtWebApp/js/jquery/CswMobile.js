@@ -904,7 +904,7 @@
                     });
 
                     var $comments = $('<textarea name="' + IdStr + '" id="' + IdStr + '" placeholder="Comments">' + sf_comments + '</textarea>')
-                                                    .appendTo($prop);
+                                                                    .appendTo($prop);
                     break;
                 case "Static":
                     $propDiv.append($('<p id="' + propId + '">' + sf_text + '</p>'));
@@ -1047,23 +1047,9 @@
                         (Checked === '' && answers[i] === 'Null')) {
                     $input.CswAttrDom('checked', 'checked');
                 }
-                $input.data('thisI', i);
-                $input.bind('vclick', function(eventObj) {
-                    var i = $(this).data('thisI');
-                    for (var k = 0; k < answers.length; k++) {
-                        var input1Id = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[k] });
-                        var $input1 = $('#' + input1Id);
-
-                        if (answers[k] === answers[i]) {
-                            $input1.CswAttrDom('checked', 'checked');
-                        } else {
-                            $input1.removeAttr('checked');
-                        }
-
-                        $input1.checkboxradio('refresh');
-
-                    } // for (var k = 0; k < answers.length; k++)
-                    onPropertyChange(ParentId, eventObj);
+                $input.bind('click', function(eventObj) {
+                    var thisInput = eventObj.srcElement.innerText;
+                    onPropertyChange(ParentId, eventObj, thisInput, inputId);
                 });
             } // for (var i = 0; i < answers.length; i++)
 //            $retHtml.find('input[type="radio"]').checkboxradio();
@@ -1097,6 +1083,7 @@
             $fieldset.unbind('click');
             $fieldset.bind('click', function(eventObj) {
                 var thisAnswer = eventObj.srcElement.innerText;
+                
                 var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
                 var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
 
@@ -1125,7 +1112,7 @@
                         $parentfieldset.CswAttrDom('answered', 'true');
                     }
                 }
-                onPropertyChange(ParentId, eventObj);
+                onPropertyChange(ParentId, eventObj, thisAnswer, answerName );
             }); //click()
             
 //            $retHtml.find('input[type="radio"]').checkboxradio();
@@ -1432,7 +1419,7 @@
 
         function _bindPageEvents(DivId, ParentId, level, $div) {
             $div.find('#' + DivId + '_searchopen')
-                        .unbind('v')
+                        .unbind('vclick')
                         .bind('vclick', function() {
                             onSearchOpen(DivId);
                             return false;
@@ -1474,13 +1461,11 @@
                         })
                         .end()
                         .find('textarea')
-                        .unbind('change')
                         .bind('change', function(eventObj) {
                             onPropertyChange(DivId, eventObj);
                         })
                         .end()
                         .find('.csw_prop_select')
-                        .unbind('change')
                         .bind('change', function(eventObj) {
                             onPropertyChange(DivId, eventObj);
                         })
@@ -1744,11 +1729,13 @@
             $help.doChangePage({ transition: 'slideup' });
         }
 
-        function onPropertyChange(DivId, eventObj) {
+        function onPropertyChange(DivId, eventObj, inputVal, inputId) {
             var logger = new profileMethod('onPropertyChange');
             var $elm = $(eventObj.target);
-            var name = $elm.CswAttrDom('name');
-            var value = $elm.val();
+            
+            var name = tryParseString(inputId,$elm.CswAttrDom('id'))
+            var value = tryParseString(inputVal, eventObj.target.innerText);
+       
             // update the xml and store it
             if (!isNullOrEmpty($currentViewXml)) {
                 var $divxml = $currentViewXml.find('#' + DivId);
@@ -1762,9 +1749,7 @@
             }
             logger.setEnded();
             cacheLogInfo(logger);
-        }
-
-// onPropertyChange()
+        } // onPropertyChange()
 
         function onSearchOpen(DivId) {
             var searchprop = $('#' + DivId + '_searchprop').val();
