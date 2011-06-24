@@ -1025,63 +1025,78 @@
 								    });
             var answers = Options.split(',');
             var answerName = makeSafeId({ prefix: IdStr, ID: Suffix }); //Name needs to be non-unqiue and shared
-            var values = [];
+
             for (var i = 0; i < answers.length; i++) {
-                values.push({ value: answers[i], display: answers[i] });
-            }
-            var answerid = makeSafeId({ prefix: IdStr, ID: Suffix }); //, suffix: answers[i] });
-
-            var $answer = $fieldset.CswSelect('init', {
-                            ID: answerid,
-                            selected: Answer,
-                            values: values })
-                            .CswAttrXml({ 'data-native-menu': 'false' })
-                            .unbind('change')
-                            .bind('change', function(eventObj) {
-                                var $this = $(this);
-                                var thisAnswer = $this.val();
-
-                                var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
-                                var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
-
-                                var $cor = $('#' + correctiveActionId);
-                                var $li = $('#' + liSuffixId);
-
-                                if ((',' + CompliantAnswers + ',').indexOf(',' + thisAnswer + ',') >= 0) {
-                                    $cor.css('display', 'none');
-                                    $li.removeClass('OOC');
-
-                                } else {
-                                    $cor.css('display', '');
-
-                                    if (isNullOrEmpty($cor.val())) {
-                                        $li.addClass('OOC');
-                                    } else {
-                                        $li.removeClass('OOC');
-                                    }
-                                }
-                                
-                                $this.select('refresh');
-                                onPropertyChange(ParentId, eventObj, $this.val(), answerName);
-                                return true;
-                            });
-            
+                var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
                 
-            //var $answer = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: answerName, ID: answerid, value: answers[i], cssclass: 'csw_answer' });
-//                var $label = $('<label for="' + answerid + '">' + answers[i] + '</label>')
-//    								    .appendTo($fieldset);
-//                if (Answer === answers[i]) {
-//                    $answer.CswAttrDom('checked', 'checked');
-//                }
+                var $answer = $fieldset.CswLink('init', {
+                         href: 'javascript:void(0)', 
+                         name: answerName, 
+                         ID: answerid, 
+                         value: answers[i], 
+                         cssclass: 'csw_answer'
+                    })
+                    .CswAttrXml({'data-role': 'button' });
                 
+                if (Answer === answers[i]) {
+                    $answer.CswAttrXml({ 'data-theme': 'b' });
+                }
+                else {
+                    $answer.CswAttrXml({ 'data-theme': 'c' });
+                }
                 
-                
-                
+                $answer.unbind('vclick');
+                $answer.bind('vclick', function(eventObj) {
+
+                    var $this = $(this);
+                    var thisAnswer = eventObj.srcElement.innerText;
+
+                    for (var i = 0; i < answers.length; i++) {
+                        var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
+                        var $ansBtn = $('#' + answerid);
+
+                        if($ansBtn.text() === thisAnswer ) {
+                            $ansBtn.CswAttrXml({ 'data-theme': 'b' });
+                            $ansBtn.removeClass('ui-btn-hover-c ui-btn-up-c');
+                        }
+                        else {
+                            $ansBtn.CswAttrXml({ 'data-theme': 'c' });
+                            $ansBtn.removeClass('ui-btn-hover-b ui-btn-up-b');
+                        }
+                    }
+
+                    var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
+                    var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
+
+                    var $cor = $('#' + correctiveActionId);
+                    var $li = $('#' + liSuffixId);
+
+                    if ((',' + CompliantAnswers + ',').indexOf(',' + thisAnswer + ',') >= 0) {
+                        $cor.css('display', 'none');
+                        $li.removeClass('OOC');
+
+                    } else {
+                        $cor.css('display', '');
+
+                        if (isNullOrEmpty($cor.val())) {
+                            $li.addClass('OOC');
+                        } else {
+                            $li.removeClass('OOC');
+                        }
+                    }
+                    if (!isNullOrEmpty(Answer)) {
+                        // update unanswered count when this question is answered
+                        var $parentfieldset = $('#' + IdStr + '_fieldset');
+                        if ($parentfieldset.CswAttrDom('answered')) {
+                            var $cntspan = $('#' + ParentId + '_unansweredcnt');
+                            $cntspan.text(parseInt($cntspan.text()) - 1);
+                            $parentfieldset.CswAttrDom('answered', 'true');
+                        }
+                    }
+                    onPropertyChange(ParentId, eventObj, $this.text(), answerName);
+                });
                 //$retHtml.data('thisI', i);
-           // } // for (var i = 0; i < answers.length; i++)
-            
-            
-          
+            } // for (var i = 0; i < answers.length; i++)
             
 //            $retHtml.find('input[type="radio"]').checkboxradio();
             return $fieldset;
