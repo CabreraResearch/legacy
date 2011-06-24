@@ -73,13 +73,13 @@ namespace ChemSW.Nbt.Schema
 			// case 22176
 
 			//New Inspection Status action
-			_CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Inspection_Status, true, "", "Inspections" );
+			_CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.OOC_Inspections, true, "", "Inspections" );
 
 			// Add permissions
 			CswNbtObjClassRole AdministratorRoleNode = CswNbtNodeCaster.AsRole( _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" ) );
 			CswNbtObjClassRole ChemSWAdministratorRoleNode = CswNbtNodeCaster.AsRole( _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" ) );
-			_CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Inspection_Status, AdministratorRoleNode, true );
-			_CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Inspection_Status, ChemSWAdministratorRoleNode, true );
+			_CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.OOC_Inspections, AdministratorRoleNode, true );
+			_CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.OOC_Inspections, ChemSWAdministratorRoleNode, true );
 
 		} // update()
 

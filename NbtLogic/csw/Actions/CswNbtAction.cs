@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Actions
         Assign_Inspection,
         Receiving,
         Import_Fire_Extinguisher_Data,
-		Inspection_Status
+		OOC_Inspections
     }
 
     public class CswNbtAction
