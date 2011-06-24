@@ -1029,14 +1029,8 @@
             for (var i = 0; i < answers.length; i++) {
                 var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
                 
-                var $answer = $fieldset.CswLink('init', {
-                         href: 'javascript:void(0)', 
-                         name: answerName, 
-                         ID: answerid, 
-                         value: answers[i], 
-                         cssclass: 'csw_answer'
-                    })
-                    .CswAttrXml({'data-role': 'button' });
+                var $answer = $('<button name="' + answerName + '" id="' + answerid + '" class="csw_answer">' + answers[i] + '</button>')
+                                .appendTo($fieldset);
                 
                 if (Answer === answers[i]) {
                     $answer.CswAttrXml({ 'data-theme': 'b' });
@@ -1045,8 +1039,8 @@
                     $answer.CswAttrXml({ 'data-theme': 'c' });
                 }
                 
-                $answer.unbind('vclick');
-                $answer.bind('vclick', function(eventObj) {
+                $answer.unbind('tap');
+                $answer.bind('tap', function(eventObj) {
 
                     var $this = $(this);
                     var thisAnswer = eventObj.srcElement.innerText;
@@ -1056,13 +1050,12 @@
                         var $ansBtn = $('#' + answerid);
 
                         if($ansBtn.text() === thisAnswer ) {
-                            $ansBtn.CswAttrXml({ 'data-theme': 'b' });
-                            $ansBtn.removeClass('ui-btn-hover-c ui-btn-up-c');
+                            $ansBtn = toggleButton($ansBtn, true);
                         }
                         else {
-                            $ansBtn.CswAttrXml({ 'data-theme': 'c' });
-                            $ansBtn.removeClass('ui-btn-hover-b ui-btn-up-b');
+                            $ansBtn = toggleButton($ansBtn, false);
                         }
+                        $('.csw_fieldset').page();
                     }
 
                     var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
@@ -1094,6 +1087,7 @@
                         }
                     }
                     onPropertyChange(ParentId, eventObj, $this.text(), answerName);
+                    return false;
                 });
                 //$retHtml.data('thisI', i);
             } // for (var i = 0; i < answers.length; i++)
@@ -1102,6 +1096,27 @@
             return $fieldset;
         } // _makeQuestionAnswerFieldSet()
 
+        function toggleButton($button,on) {
+            if(on) {
+                $button.CswAttrXml({ 'data-theme': 'b' })
+                       .removeClass('ui-btn-hover-c ui-btn-up-c')
+                       .parent('div')
+                       .removeClass('ui-btn-hover-c ui-btn-up-c')
+                       .addClass('ui-btn-up-b')
+                       .CswAttrXml({ 'data-theme': 'b' });
+            }
+            else {
+                $button.CswAttrXml({ 'data-theme': 'c' })
+                       .removeClass('ui-btn-hover-b ui-btn-up-b')
+                       .parent('div')
+                       .removeClass('ui-btn-hover-b ui-btn-up-b')
+                       .addClass('ui-btn-up-c')
+                       .CswAttrXml({ 'data-theme': 'c' });
+            }
+            
+            return $button;
+        }
+        
         function _preFormNextLevelPages(params) {
             var $retDiv = undefined;
             var p = {
