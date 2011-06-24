@@ -81,6 +81,13 @@ namespace ChemSW.Nbt.Schema
 			_CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.OOC_Inspections, AdministratorRoleNode, true );
 			_CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.OOC_Inspections, ChemSWAdministratorRoleNode, true );
 
+			// Delete existing OOC Inspections view
+			CswNbtView OOCInspView = _CswNbtSchemaModTrnsctn.restoreView( "OOC Inspections" );
+			if( OOCInspView != null )
+			{
+				OOCInspView.Delete();
+			}
+
 		} // update()
 
 
