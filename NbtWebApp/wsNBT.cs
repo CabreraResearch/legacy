@@ -1,31 +1,22 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Web.Script.Serialization;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Web.Services;
 using System.Web.Script.Services;   // supports ScriptService attribute
-using ChemSW.Core;
+using System.Web.Services;
+using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Config;
-using ChemSW.Log;
+using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.Statistics;
 using ChemSW.NbtWebControls;
 using ChemSW.Security;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.Statistics;
-using ChemSW.Exceptions;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Formatting = Newtonsoft.Json.Formatting;
-using System.Xml.Linq;
-using System.Collections.Generic;
-using ChemSW.Security;
-using ChemSW.Nbt;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -198,7 +189,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string authenticate( string AccessId, string UserName, string Password )
+        public string authenticate( string AccessId, string UserName, string Password, string ForMobile )
         {
             JObject ReturnVal = new JObject();
             try
@@ -230,9 +221,9 @@ namespace ChemSW.Nbt.WebServices
                         AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
                     }
                 }
-
+                bool IsMobile = CswConvert.ToBoolean( ForMobile );
                 if( AuthenticationStatus == AuthenticationStatus.Unknown )
-                    AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), false );
+                    AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), IsMobile );
 
                 // case 21211
                 if( AuthenticationStatus == AuthenticationStatus.Authenticated )
@@ -941,14 +932,14 @@ namespace ChemSW.Nbt.WebServices
                         RealVisibilityUserId.FromString( VisibilityUserId );
                     }
 
-					CswNbtView CopyView = null;
+                    CswNbtView CopyView = null;
                     if( ViewId != string.Empty )
                     {
-						CopyView = _getView( ViewId );
+                        CopyView = _getView( ViewId );
                     }
 
-					CswNbtView NewView = new CswNbtView( _CswNbtResources );
-					NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, CopyView );
+                    CswNbtView NewView = new CswNbtView( _CswNbtResources );
+                    NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, CopyView );
 
                     if( ViewMode != string.Empty )
                     {
@@ -1988,7 +1979,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string addWelcomeItem( string RoleId, string Type, string ViewType, string ViewValue, string NodeTypeId, string Text, string IconFileName )
+        public string addWelcomeItem( string RoleId, string Type, string ViewType, string ViewValue, string NodeTypeId, string Text, string IconFileName )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2006,12 +1997,12 @@ namespace ChemSW.Nbt.WebServices
                     if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                         UseRoleId = RoleId;
                     CswNbtWebServiceWelcomeItems.WelcomeComponentType ComponentType = (CswNbtWebServiceWelcomeItems.WelcomeComponentType) Enum.Parse( typeof( CswNbtWebServiceWelcomeItems.WelcomeComponentType ), Type );
-					CswViewListTree.ViewType RealViewType = CswViewListTree.ViewType.Unknown;
-					if( ViewType != string.Empty )
-					{
-						RealViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), ViewType, true );
-					}
-					ws.AddWelcomeItem( ComponentType, RealViewType, ViewValue, CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
+                    CswViewListTree.ViewType RealViewType = CswViewListTree.ViewType.Unknown;
+                    if( ViewType != string.Empty )
+                    {
+                        RealViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), ViewType, true );
+                    }
+                    ws.AddWelcomeItem( ComponentType, RealViewType, ViewValue, CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
                     ReturnVal.Add( new JProperty( "Succeeded", true ) );
                 }
 
@@ -2195,11 +2186,11 @@ namespace ChemSW.Nbt.WebServices
                 if( !string.IsNullOrEmpty( UserName ) &&
                     !string.IsNullOrEmpty( CustomerId ) )
                 {
-                    string LogMessage = @"Application context '" + Context + "' requested logging for username '" + UserName + "' on AccessId '" + CustomerId + "'."; 
+                    string LogMessage = @"Application context '" + Context + "' requested logging for username '" + UserName + "' on AccessId '" + CustomerId + "'.";
 
-                    _CswNbtResources.logMessage(LogMessage);
+                    _CswNbtResources.logMessage( LogMessage );
                 }
-                if( !string.IsNullOrEmpty(LogInfo))
+                if( !string.IsNullOrEmpty( LogInfo ) )
                 {
                     _CswNbtResources.logMessage( LogInfo );
                 }

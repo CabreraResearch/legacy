@@ -1631,7 +1631,8 @@
                 var ajaxData = {
                     'AccessId': AccessId, //We're displaying "Customer ID" but processing "AccessID"
                     'UserName': UserName,
-                    'Password': $('#login_password').val()
+                    'Password': $('#login_password').val(),
+                    ForMobile: ForMobile
                 };
 
                 //clearPath();
