@@ -85,41 +85,6 @@
         return ret;
     };
 
-    $.fn.cachePage = function() {
-        // we have the technology, we can persist the DOM
-        var $div = $(this);
-        var divid = $div.CswAttrDom('id');
-        var storedPages = [];
-        if (!isNullOrEmpty(sessionStorage.storedPages)) {
-            storedPages = sessionStorage.storedPages.split(',');
-        }
-        if (storedPages.indexOf(divid) === -1) {
-            storedPages.push(divid);
-        }
-        sessionStorage.storedPages = storedPages.toString();
-        sessionStorage[divid] = xmlToString($div);
-        return $div;
-    };
-
-    $.fn.restorePages = function(params) {
-        //this also needs to bindJqmEvents, but let's not inject this now.
-        var $parent = $(this);
-        if (!isNullOrEmpty(sessionStorage.storedPages)) {
-            var storedPages = sessionStorage.storedPages.split(',');
-            for (var i = 0; i < storedPages.length; i++) {
-                var divid = storedPages[i];
-                if (!isNullOrEmpty(sessionStorage[divid])) {
-                    var $page = $(sessionStorage[divid])
-                                                            .bindJqmEvents(params)
-                                                            .appendTo($parent)
-                        .page();
-                }
-
-            }
-        }
-        return $parent;
-    };
-
     $.fn.bindJqmEvents = function(params) {
         var $div = $(this);
         var $ret = false;
@@ -154,19 +119,6 @@
                 }
             });
 
-//            $div.unbind('pagebeforecreate');
-//            $div.bind('pagebeforecreate', function()
-//            {
-//                //$div.find('input[type="radio"]').checkboxradio();
-//                //$div.find('input[type="checkbox"]').checkboxradio();
-//            });
-
-//            $div.unbind('pagecreate');
-//            $div.bind('pagecreate', function()
-//            {
-//                //$div.find('input[type="radio"]').checkboxradio('refresh',true);
-//                //$div.find('input[type="checkbox"]').checkboxradio('refresh',true);
-//            });
         }
         return $ret;
     };
@@ -1058,7 +1010,6 @@
                     onPropertyChange(ParentId, eventObj, thisInput, inputId);
                 });
             } // for (var i = 0; i < answers.length; i++)
-//            $retHtml.find('input[type="radio"]').checkboxradio();
             return $fieldset;
         }// _makeLogicalFieldSet()
 
@@ -1074,58 +1025,60 @@
 								    });
             var answers = Options.split(',');
             var answerName = makeSafeId({ prefix: IdStr, ID: Suffix }); //Name needs to be non-unqiue and shared
-
+            var values = [];
             for (var i = 0; i < answers.length; i++) {
-                var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                var $answer = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: answerName, ID: answerid, value: answers[i], cssclass: 'csw_answer' });
-                var $label = $('<label for="' + answerid + '">' + answers[i] + '</label>')
-    								    .appendTo($fieldset);
-                if (Answer === answers[i]) {
-                    $answer.CswAttrDom('checked', 'checked');
-                }
-                
-                $answer.bind('tap', function () { alert('tap'); });
+                values.push({ value: answers[i], display: answers[i] });
+            }
+            var answerid = makeSafeId({ prefix: IdStr, ID: Suffix }); //, suffix: answers[i] });
+
+            var $answer = $fieldset.CswSelect('init', {
+                            ID: answerid,
+                            selected: Answer,
+                            values: values })
+                            .CswAttrXml({ 'data-native-menu': 'false' })
+                            .unbind('change')
+                            .bind('change', function(eventObj) {
+                                var $this = $(this);
+                                var thisAnswer = $this.val();
+
+                                var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
+                                var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
+
+                                var $cor = $('#' + correctiveActionId);
+                                var $li = $('#' + liSuffixId);
+
+                                if ((',' + CompliantAnswers + ',').indexOf(',' + thisAnswer + ',') >= 0) {
+                                    $cor.css('display', 'none');
+                                    $li.removeClass('OOC');
+
+                                } else {
+                                    $cor.css('display', '');
+
+                                    if (isNullOrEmpty($cor.val())) {
+                                        $li.addClass('OOC');
+                                    } else {
+                                        $li.removeClass('OOC');
+                                    }
+                                }
+                                
+                                $this.select('refresh');
+                                onPropertyChange(ParentId, eventObj, $this.val(), answerName);
+                                return true;
+                            });
             
-                $answer.bind('click', function () { alert('click'); });
                 
-                $answer.unbind('vclick');
-                $answer.bind('vclick', function(eventObj) {
-                    alert('vclick');
-                    var $this = $(this);
-                    //var thisAnswer = eventObj.srcElement.innerText;
-
-                    var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
-                    var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
-
-                    var $cor = $('#' + correctiveActionId);
-                    var $li = $('#' + liSuffixId);
-
-                    if ((',' + CompliantAnswers + ',').indexOf(',' + thisAnswer + ',') >= 0) {
-                        $cor.css('display', 'none');
-                        $li.removeClass('OOC');
-
-                    } else {
-                        $cor.css('display', '');
-
-                        if (isNullOrEmpty($cor.val())) {
-                            $li.addClass('OOC');
-                        } else {
-                            $li.removeClass('OOC');
-                        }
-                    }
-                    if (!isNullOrEmpty(Answer)) {
-                        // update unanswered count when this question is answered
-                        var $parentfieldset = $('#' + IdStr + '_fieldset');
-                        if ($parentfieldset.CswAttrDom('answered')) {
-                            var $cntspan = $('#' + ParentId + '_unansweredcnt');
-                            $cntspan.text(parseInt($cntspan.text()) - 1);
-                            $parentfieldset.CswAttrDom('answered', 'true');
-                        }
-                    }
-                    onPropertyChange(ParentId, eventObj, $this.val(), answerName);
-                });
+            //var $answer = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: answerName, ID: answerid, value: answers[i], cssclass: 'csw_answer' });
+//                var $label = $('<label for="' + answerid + '">' + answers[i] + '</label>')
+//    								    .appendTo($fieldset);
+//                if (Answer === answers[i]) {
+//                    $answer.CswAttrDom('checked', 'checked');
+//                }
+                
+                
+                
+                
                 //$retHtml.data('thisI', i);
-            } // for (var i = 0; i < answers.length; i++)
+           // } // for (var i = 0; i < answers.length; i++)
             
             
           
