@@ -80,6 +80,19 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw ( new CswDniException( "You can not delete your own role account.", "Current user (" + _CswNbtResources.CurrentUser.Username + ") can not delete own RoleClass node." ) );
             }
+			
+			// case 22424
+			// Prevent deleting roles in use
+			CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+			foreach( CswNbtNode UserNode in UserOC.getNodes( false, true ) )
+			{
+				CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+				if( UserNodeAsUser.Role.RelatedNodeId == _CswNbtNode.NodeId )
+				{
+					throw ( new CswDniException( "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username, 
+												 "Current user (" + _CswNbtResources.CurrentUser.Username + ") tried to delete a role that is in use (" + _CswNbtNode.NodeName + ") by user: " + UserNodeAsUser.Username ) );
+				}
+			}
 
             ////prevent user from deleting ScheduleRunner
             //if (Name.Text.ToLower() == "schedulerunner")
