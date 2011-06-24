@@ -60,6 +60,15 @@ namespace ChemSW.Nbt.Schema
 				LocationsView.save();
 			} // if( LocationsView != null )
 
+			// fix category of 'Inspection Points by Location' view
+
+			CswNbtView InspPointsByLocView = _CswNbtSchemaModTrnsctn.restoreView( "Inspection Points by Location" );
+			if( InspPointsByLocView != null )
+			{
+				InspPointsByLocView.Category = "Inspections";
+				InspPointsByLocView.save();
+			}
+
 
 			// case 22176
 
