@@ -959,7 +959,7 @@
 
         function _makeLogicalFieldSet(ParentId, IdStr, Checked, Required) {
             var Suffix = 'ans';
-            var $fieldset = $('<fieldset></fieldset>')
+            var $fieldset = $('<fieldset class="csw_fieldset"></fieldset>')
                                          .CswAttrDom({
                                          'class': 'csw_fieldset',
                                          'id': IdStr + '_fieldset'
@@ -990,20 +990,51 @@
                 }
 
                 var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                var $input = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i] });
-
-                var $label = $('<label for="' + inputId + '">' + answertext + '</label>')
-                                        .appendTo($fieldset);
+                //var $input = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i] });
+                var $input = $('<button name="' + inputName + '" id="' + inputId + '" class="csw_logical">' + answertext + '</button>')
+                                .appendTo($fieldset);
+                
 
                 // Checked is a Tristate, so isTrue() is not useful here
                 if ((Checked === 'false' && answers[i] === 'False') ||
                     (Checked === 'true' && answers[i] === 'True') ||
                         (Checked === '' && answers[i] === 'Null')) {
-                    $input.CswAttrDom('checked', 'checked');
+                    $input.CswAttrXml({ 'data-theme': 'b' });
                 }
-                $input.bind('click', function(eventObj) {
+                else {
+                    $input.CswAttrXml({ 'data-theme': 'c' });
+                }
+                
+                $input.bind('vclick', function(eventObj) {
+                    var $this = $(this);
                     var thisInput = eventObj.srcElement.innerText;
-                    onPropertyChange(ParentId, eventObj, thisInput, inputId);
+                    var realVal = '';
+                    switch(thisInput) {
+                        case '?':
+                            realVal = 'null';
+                            break;
+                        case 'Yes':
+                            realVal = 'true';
+                            break;
+                        case 'No':
+                            realVal = 'false';
+                            break;
+                    }
+                    
+                    for (var i = 0; i < answers.length; i++) {
+                        var inpId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
+                        var $inpBtn = $('#' + inpId);
+
+                        if($inpBtn.text() === thisInput ) {
+                            $inpBtn = toggleButton($inpBtn, true);
+                        }
+                        else {
+                            $inpBtn = toggleButton($inpBtn, false);
+                        }
+                        $('.csw_fieldset').page();
+                    }
+                    onPropertyChange(ParentId, eventObj, realVal, inputId);
+                    return false;
                 });
             } // for (var i = 0; i < answers.length; i++)
             return $fieldset;
