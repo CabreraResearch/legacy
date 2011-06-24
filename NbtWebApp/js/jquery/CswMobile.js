@@ -564,7 +564,6 @@
             $('.csw_collapsible').page();
             $('.csw_fieldset').page();
             
-            //.find('input[type="radio"]').checkboxradio('refresh',true);
             onAfterAddDiv($retDiv);
 
             p.onSuccess();
@@ -1007,6 +1006,7 @@
                     $input.CswAttrXml({ 'data-theme': 'c' });
                 }
                 
+                $input.unbind('vclick');
                 $input.bind('vclick', function(eventObj) {
                     var $this = $(this);
                     var thisInput = eventObj.srcElement.innerText;
@@ -1033,7 +1033,6 @@
                         else {
                             $inpBtn = toggleButton($inpBtn, false);
                         }
-                        $('.csw_fieldset').page();
                     }
                     onPropertyChange(ParentId, eventObj, realVal, inputId);
                     return false;
@@ -1068,8 +1067,8 @@
                     $answer.CswAttrXml({ 'data-theme': 'c' });
                 }
                 
-                $answer.unbind('tap');
-                $answer.bind('tap', function(eventObj) {
+                $answer.unbind('vclick');
+                $answer.bind('vclick', function(eventObj) {
 
                     var $this = $(this);
                     var thisAnswer = eventObj.srcElement.innerText;
@@ -1084,7 +1083,6 @@
                         else {
                             $ansBtn = toggleButton($ansBtn, false);
                         }
-                        $('.csw_fieldset').page();
                     }
 
                     var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
