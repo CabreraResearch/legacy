@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     // When a property changes, we need to:
                     // 1. mark composite property values which include changed properties on this node as pending update
-                    foreach( CswNbtNodePropWrapper CompositeProp in _CswNbtNode.Properties[_CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Composite )] )
+                    foreach( CswNbtNodePropWrapper CompositeProp in _CswNbtNode.Properties[CswNbtMetaDataFieldType.NbtFieldType.Composite] )
                     {
                         if( CompositeProp.AsComposite.TemplateValue.Contains( CswNbtMetaData.MakeTemplateEntry( CurrentProp.NodeTypePropId.ToString() ) ) )
                         {
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.ObjClasses
                     // 2. mark property references attached to relationships whose values changed as pending update
                     if( CurrentProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                     {
-                        foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[_CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.PropertyReference )] )
+                        foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[CswNbtMetaDataFieldType.NbtFieldType.PropertyReference] )
                         {
                             CswNbtNodePropPropertyReference PropRefProp = PropRefPropWrapper.AsPropertyReference;
                             if( ( PropRefProp.RelationshipType == CswNbtViewRelationship.PropIdType.NodeTypePropId &&

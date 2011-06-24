@@ -9,7 +9,7 @@ namespace ChemSW.Nbt
 {
     public class CswNbtPropEnmrtrFiltered : IEnumerator
     {
-        CswNbtMetaDataFieldType _FieldType = null;
+		CswNbtMetaDataFieldType.NbtFieldType _FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
         private ArrayList _PropList;
         int _Position = -1;
 
@@ -20,7 +20,7 @@ namespace ChemSW.Nbt
             return( this );
         }
 
-        public CswNbtPropEnmrtrFiltered(ArrayList PropList, CswNbtMetaDataFieldType FieldType)
+        public CswNbtPropEnmrtrFiltered(ArrayList PropList, CswNbtMetaDataFieldType.NbtFieldType FieldType)
         {
             _FieldType = FieldType;
             _PropList = PropList;
@@ -41,14 +41,12 @@ namespace ChemSW.Nbt
                 else
                 {
                     CswNbtMetaDataFieldType CurrentFieldType = ((CswNbtNodePropWrapper)_PropList[_Position]).FieldType;
-                    if( CurrentFieldType == _FieldType )
+                    if( CurrentFieldType.FieldType == _FieldType )
                     {
                         FoundProp = true;
-                    }//
-                }//
-
-                
-            }//
+                    }
+                }
+            }
 
             return ( ! ReachedEnd );
 
