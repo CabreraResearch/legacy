@@ -3,10 +3,11 @@
 /// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../_Global.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($)
+{ /// <param name="$" type="jQuery" />
 
 	var PluginName = "CswButton";
-    
+
 	var methods = {
 		'init': function (options)
 		{
@@ -50,8 +51,15 @@
 			$button.button(buttonOpt)
 					.click(function ()
 					{
-						if (o.disableOnClick) _disable($button);
-						o.onclick();
+						if (!ajaxInProgress())
+						{
+							if (o.disableOnClick) _disable($button);
+							o.onclick();
+						} 
+						else
+						{
+							return false;
+						}
 					});
 			$parent.append($button);
 			return $button;
@@ -81,7 +89,8 @@
 	}
 
 	// Method calling logic
-	$.fn.CswButton = function (method) { /// <param name="$" type="jQuery" />
+	$.fn.CswButton = function (method)
+	{ /// <param name="$" type="jQuery" />
 
 		if (methods[method])
 		{

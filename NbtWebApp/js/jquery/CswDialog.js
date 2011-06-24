@@ -146,10 +146,13 @@
 								'filterToPropId': o.filterToPropId,
 								'EditMode': 'EditInPopup',
 								'title': o.title,
-								'onSave': function (nodeid, nodekey)
+								'onSave': function (nodeid, nodekey, tabcount)
 								{
 									unsetChanged();
-									//$div.dialog('close');
+									if(tabcount === 1)
+									{
+										$div.dialog('close');
+									}
 									o.onEditNode(nodeid, nodekey);
 								},
 								'onBeforeTabSelect': function (tabid)

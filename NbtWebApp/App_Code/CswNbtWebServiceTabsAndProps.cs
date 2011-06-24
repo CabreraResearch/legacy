@@ -108,13 +108,14 @@ namespace ChemSW.Nbt.WebServices
 				CswNbtNode Node = _getNode( NodeId, NodeKey );
 				if( Node != null )
 				{
-					// case 21209
-					if( Node.NodeSpecies == NodeSpecies.Plain )
-					{
-						CswNbtActUpdatePropertyValue PropUpdater = new CswNbtActUpdatePropertyValue( _CswNbtResources );
-						PropUpdater.UpdateNode( Node, true );
-						Node.postChanges( false );
-					}
+					// removed for case 21695
+					//// case 21209
+					//if( Node.NodeSpecies == NodeSpecies.Plain )
+					//{
+					//    CswNbtActUpdatePropertyValue PropUpdater = new CswNbtActUpdatePropertyValue( _CswNbtResources );
+					//    PropUpdater.UpdateNode( Node, true );
+					//    Node.postChanges( false );
+					//}
 
 					CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
 					foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder
@@ -159,13 +160,14 @@ namespace ChemSW.Nbt.WebServices
 
 			if( Node != null )
 			{
-				// case 21209
-				if( Node.NodeSpecies == NodeSpecies.Plain )
-				{
-					CswNbtActUpdatePropertyValue PropUpdater = new Actions.CswNbtActUpdatePropertyValue( _CswNbtResources );
-					PropUpdater.UpdateNode( Node, true );
-					Node.postChanges( false );
-				}
+				// removed for case 21695
+				//// case 21209
+				//if( Node.NodeSpecies == NodeSpecies.Plain )
+				//{
+				//    CswNbtActUpdatePropertyValue PropUpdater = new Actions.CswNbtActUpdatePropertyValue( _CswNbtResources );
+				//    PropUpdater.UpdateNode( Node, true );
+				//    Node.postChanges( false );
+				//}
 
 				if( NewPropXml != string.Empty )
 				{

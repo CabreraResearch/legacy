@@ -61,6 +61,11 @@ function getTimeout()
 // Ajax
 // ------------------------------------------------------------------------------------
 
+var _ajaxCount = 0;
+function ajaxInProgress()
+{
+	return (_ajaxCount > 0);
+}
 
 function CswAjaxJSON(options)
 { /// <param name="$" type="jQuery" />
@@ -86,6 +91,7 @@ function CswAjaxJSON(options)
 
     if (options) $.extend(o, options);
     //var starttime = new Date();
+    _ajaxCount++;
     $.ajax({
         type: 'POST',
         async: o.async,
@@ -95,7 +101,8 @@ function CswAjaxJSON(options)
         data: JSON.stringify(o.data),
         success: function (data, textStatus, XMLHttpRequest)
         {
-            //var endtime = new Date();
+        	_ajaxCount--;
+        	//var endtime = new Date();
             //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
             var result = $.parseJSON(data.d);
 
@@ -123,7 +130,8 @@ function CswAjaxJSON(options)
         }, // success{}
         error: function (XMLHttpRequest, textStatus, errorThrown)
         {
-            //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+        	_ajaxCount--;
+        	//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
             log("Webservice Request (" + o.url + ") Failed: " + textStatus);
             o.error(XMLHttpRequest, textStatus, errorThrown);
         }
@@ -159,6 +167,7 @@ function CswAjaxXml(options)
     
     if (!isNullOrEmpty(o.url))
     {
+    	_ajaxCount++;
     	$.ajax({
     		type: 'POST',
     		async: o.async,
@@ -168,6 +177,7 @@ function CswAjaxXml(options)
     		data: $.param(o.data),     // should be 'field1=value&field2=value'
     		success: function (data, textStatus, XMLHttpRequest)
     		{
+    			_ajaxCount--;
     			//var endtime = new Date();
     			//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
@@ -206,6 +216,7 @@ function CswAjaxXml(options)
     		}, // success{}
     		error: function (XMLHttpRequest, textStatus, errorThrown)
     		{
+    			_ajaxCount--;
     			//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
     			log("Webservice Request (" + o.url + ") Failed: " + textStatus);
     			o.error();
@@ -1307,7 +1318,10 @@ function log(s, includeCallStack)
 
     try
     {
-        console.log(s, extendedLog);
+    	if (!isNullOrEmpty(extendedLog))
+    		console.log(s, extendedLog);
+    	else
+    		console.log(s);
     } catch (e)
     {
         alert(s);

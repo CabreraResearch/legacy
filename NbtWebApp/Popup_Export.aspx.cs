@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.WebPages
                     else if( Request.QueryString["sessionviewid"] != null )
                     {
                         //CswNbtView AView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) );
-						CswNbtView AView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) ) );
+						CswNbtView AView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( Request.QueryString["sessionviewid"] ) );
                         _NodesGrid.View = AView;
                     }
                     else
