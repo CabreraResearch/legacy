@@ -104,6 +104,7 @@
     <Content Include="Act_ImportFireExtinguisher.aspx" />
     <Content Include="Act_Receiving.aspx" />
     <Content Include="Act_SplitSamples.aspx" />
+    <Compile Include="App_Code\CswNbtWebServiceInspections.cs" />
     <Content Include="App_Data\Log.txt" />
     <Content Include="App_Data\web_browsers_patch.xml" />
     <Content Include="App_Data\wurfl.xml" />
@@ -1437,7 +1438,6 @@
     <Compile Include="Act_SplitSamples.aspx.designer.cs">
       <DependentUpon>Act_SplitSamples.aspx</DependentUpon>
     </Compile>
-    <Content Include="App_Code\CswNbtWebServiceInspections.cs" />
     <Compile Include="Base.master.designer.cs">
       <DependentUpon>Base.master</DependentUpon>
     </Compile>

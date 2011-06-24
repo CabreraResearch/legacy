@@ -8,6 +8,7 @@
 	$.fn.CswInspectionStatus = function (options) 
 	{
 		var o = {
+			Url: '/NbtWebApp/wsNBT.asmx/getInspectionStatusGrid'
 		};
 		if(options) $.extend(o, options);
 
@@ -15,7 +16,33 @@
 		var $div = $('<div></div>')
 					.appendTo($parent);
 
-		$div.text('This is Inspection Status');
+		
+		CswAjaxJSON({
+			'url': o.Url,
+			'data': {},
+			'success': function(gridJson) 
+				{
+					$div.empty();
+					var $gridPager = $('<div id="' + o.ID + '_gp" style="width:100%; height:20px;" />')
+										.appendTo($div);
+					var $grid = $('<table id="'+ o.ID + '_gt" />')
+										.appendTo($div);
+
+					var mygridopts = {
+						'autowidth': true,
+						'height': 180,
+						'pager': $gridPager
+					};
+					$.extend(gridJson, mygridopts);
+
+					$grid.jqGrid(gridJson)
+						.hideCol('NODEIDSTR');
+
+				}, // success
+			'error': function() 
+				{
+				}
+		});
 
 		return $div;
 
