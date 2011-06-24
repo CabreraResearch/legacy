@@ -744,19 +744,21 @@
             var sf_compliantanswers = tryParseString($xmlitem.children('compliantanswers').text(), '');
             var sf_options = tryParseString($xmlitem.children('options').text(), '');
 
-            var $retLi = $('<li id="' + IdStr + '_li">'+ PropName +'</li>')
+            var $retLi = $('<li id="' + IdStr + '_li"></li>')
                                 .CswAttrXml('data-icon', false);
+            var $label = $('<h2 id="' + IdStr + '_label" style="white-space:normal;" class="csw_prop_label">' + PropName + '</h2>')
+                            .appendTo(($retLi));
+            
             var $fieldcontain = $('<div class="csw_fieldset" data-role="fieldcontain"></div>')
                                     .appendTo($retLi);
-
             var $propDiv;
             
             if (FieldType === "Question" &&
                 !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
                     isNullOrEmpty(sf_correctiveaction)) {
-                $retLi.addClass('OOC');
+                $label.addClass('OOC');
             } else {
-                $retLi.removeClass('OOC');
+                $label.removeClass('OOC');
             }
             
             if( FieldType !== 'Question' && FieldType !== 'Logical') {
