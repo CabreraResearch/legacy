@@ -140,9 +140,10 @@ namespace ChemSW.Nbt.WebServices
 								if( WelcomeRow["displaytext"].ToString() != string.Empty )
 									LinkText = WelcomeRow["displaytext"].ToString();
 								else
-									LinkText = ThisAction.Name.ToString();
+									LinkText = CswNbtAction.ActionNameEnumToString( ThisAction.Name );
 							}
 							CswXmlDocument.AppendXmlAttribute( ItemNode, "actionid", WelcomeRow["actionid"].ToString() );
+							CswXmlDocument.AppendXmlAttribute( ItemNode, "actionname", ThisAction.Name.ToString() );      // not using CswNbtAction.ActionNameEnumToString here
 							CswXmlDocument.AppendXmlAttribute( ItemNode, "actionurl", ThisAction.Url );
 							CswXmlDocument.AppendXmlAttribute( ItemNode, "type", "action" );
 						}

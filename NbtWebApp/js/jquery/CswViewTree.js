@@ -20,6 +20,7 @@
 								viewname: '',
 								viewmode: '',
 								actionid: '',
+								actionname: '',
 								actionurl: '',
 								reportid: ''
 								};
@@ -75,6 +76,7 @@
 												viewname: Selected.text,
 												viewmode: Selected.$item.CswAttrXml('viewmode'),
 												actionid: Selected.$item.CswAttrXml('actionid'),
+												actionname: Selected.$item.CswAttrXml('actionname'),
 												actionurl: Selected.$item.CswAttrXml('actionurl'),
 												reportid: Selected.$item.CswAttrXml('reportid')
 											};

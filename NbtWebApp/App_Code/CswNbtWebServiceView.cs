@@ -97,6 +97,7 @@ namespace ChemSW.Nbt.WebServices
 					{
 						XmlNode ActionNode = _makeViewTreeNode( DocRoot, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );
 						CswXmlDocument.AppendXmlAttribute( ActionNode, "actionurl", Action.Url.ToString() );
+						CswXmlDocument.AppendXmlAttribute( ActionNode, "actionname", Action.Name.ToString() );   // not using CswNbtAction.ActionNameEnumToString here
 					}
 				}
 

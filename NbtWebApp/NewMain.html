@@ -212,6 +212,7 @@
 				viewmode: 'tree', // Grid, Tree, List
 				linktype: 'link', // WelcomeComponentType: Link, Search, Text, Add
                 viewid: '',
+				actionname: '',
 				actionurl: '',
 				reportid: '',
 				nodeid: '',
@@ -257,7 +258,10 @@
 			    {
 			    	case 'action':
 			    		{
-			    			window.location = o.actionurl;
+							_handleAction({
+								'actionname': o.actionname,
+								'actionurl': o.actionurl
+							});
 			    			break;
 			    		}
 			    	case 'report':
@@ -725,20 +729,21 @@
 	{
 		var o = {
 			'actionname': '',
+			'actionurl': '',
 			'ActionOptions': {}
 		};
 		if(options) $.extend(o, options);
 
 		switch (o.actionname)
 		{
-			case 'Assign_Inspection':
-				break;
-			case 'Assign_Tests':
-				break;
-			case 'Create_Inspection':
-				break;
-			case 'Design':
-				break;
+//			case 'Assign_Inspection':
+//				break;
+//			case 'Assign_Tests':
+//				break;
+//			case 'Create_Inspection':
+//				break;
+//			case 'Design':
+//				break;
 			case 'Edit_View':
 				
 				clear({ 'all': true });
@@ -765,23 +770,34 @@
 				$('#CenterTopDiv').CswViewEditor(EditViewOptions);
 
 				break;
-			case 'Enter_Results':
-				break;
-			case 'Future_Scheduling':
-				break;
-			case 'Import_Fire_Extinguisher_Data':
-				break;
-			case 'Inspection_Design':
-				break;
+//			case 'Enter_Results':
+//				break;
+//			case 'Future_Scheduling':
+//				break;
+//			case 'Import_Fire_Extinguisher_Data':
+//				break;
+//			case 'Inspection_Design':
+//				break;
 			case 'Inspection_Status':
+
+				clear({ 'all': true });
+
+				$('#CenterTopDiv').CswInspectionStatus();
+				
 				break;
-			case 'Load_Mobile_Data':
-				break;
-			case 'Receiving':
-				break;
-			case 'Split_Samples':
-				break;
-			case 'View_By_Location':
+//			case 'Load_Mobile_Data':
+//				break;
+//			case 'Receiving':
+//				break;
+//			case 'Split_Samples':
+//				break;
+//			case 'View_By_Location':
+//				break;
+			default:
+				if(!isNullOrEmpty(o.actionurl))
+				{
+					window.location = o.actionurl;
+				}
 				break;
 		}
 	} // _handleAction()
