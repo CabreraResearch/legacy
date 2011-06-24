@@ -1452,8 +1452,8 @@
                         .find('#' + DivId + '_refresh')
                         .unbind('vclick')
                         .bind('vclick', function() {
-                            onRefresh($(this).CswAttrDom('id'));
-                            return false;
+                            $.mobile.showPageLoadingMsg();
+                            return onRefresh();
                         })
                         .end()
                         .find('#' + DivId + '_logout')
@@ -1685,17 +1685,16 @@
             localStorage.clear();
         }
 
-        function onRefresh(refreshBtnId) {
+        function onRefresh() {
             if (!amOffline()) {
                 if (_checkNoPendingChanges()) {
-                    $.mobile.showPageLoadingMsg();
-                    continueRefresh(refreshBtnId);
+                    continueRefresh();
                 }
             }
             return false;
         }
 
-        function continueRefresh(refreshBtnId) {
+        function continueRefresh() {
             var DivId = localStorage['currentviewid'];
             if (!isNullOrEmpty(DivId)) {
                 var HeaderText = _getDivHeaderText(DivId);
@@ -1731,7 +1730,7 @@
 
                             var $thisDiv = _loadDivContents(params);
                             //$thisDiv.bindJqmEvents(params);
-                            $.mobile.loadPage(DivId);
+                            $thisDiv.doChangePage();
 
                             $.mobile.hidePageLoadingMsg();
                         }, // success
