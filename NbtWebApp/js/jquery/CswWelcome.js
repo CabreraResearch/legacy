@@ -176,15 +176,16 @@
                                                         onclick: function() { 
 										                        var viewtype = '';
 										                        var viewvalue = '';
+																var selectedView = '';
                                                                 if( !$viewselect.is(':hidden') )
                                                                 {
-																	var selectedView = $viewselect.CswViewSelect('value');
+																	selectedView = $viewselect.CswViewSelect('value');
 																	viewtype = selectedView.type;
 																	viewvalue = selectedView.value;
                                                                 }
                                                                 else if( !$searchviewselect.is(':hidden') )
                                                                 {
-																	var selectedView = $searchviewselect.CswViewSelect('value');
+																	selectedView = $searchviewselect.CswViewSelect('value');
 																	viewtype = selectedView.type;
 																	viewvalue = selectedView.value;
                                                                 }
@@ -278,6 +279,7 @@
 			iconurl: c.$item.CswAttrXml('iconurl'),
 			viewid: c.$item.CswAttrXml('viewid'),
 			actionid: c.$item.CswAttrXml('actionid'),
+			actionname: c.$item.CswAttrXml('actionname'),
 			actionurl: c.$item.CswAttrXml('actionurl'),
 			reportid: c.$item.CswAttrXml('reportid'),
 			//nodetypeid: c.$item.CswAttrXml('nodetypeid'),

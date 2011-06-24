@@ -659,8 +659,7 @@ namespace ChemSW.Nbt.ImportExport
                 if( i % 100 == 1 )
                     _StatusUpdate( "Processing Node: " + i.ToString() + " of " + ImportedNodes.Count.ToString() );
 
-                CswNbtMetaDataFieldType ViewPickListFieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewPickList );
-                foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[ViewPickListFieldType] )
+				foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.ViewPickList] )
                 {
                     CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
                     Collection<int> SelectedViewIds = ViewProp.AsViewPickList.SelectedViewIds.ToIntCollection();
@@ -671,7 +670,7 @@ namespace ChemSW.Nbt.ImportExport
                     }
                     ViewProp.AsViewPickList.SelectedViewIds = NewSelectedViewIds;
                     ViewProp.AsViewPickList.PendingUpdate = true;
-                } // foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[ViewPickListFieldType] )
+				} // foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[ViewPickList] )
                 Node.postChanges( false );
             } // foreach( CswNbtNode Node in ImportedNodes )
 

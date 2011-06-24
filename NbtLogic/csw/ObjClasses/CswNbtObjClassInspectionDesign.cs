@@ -290,8 +290,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void beforeWriteNode()
         {
-            CswNbtMetaDataFieldType QuestionFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Question );
-            CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[QuestionFT];
+			CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
             _Finished = ( Tristate.True == this.Finished.Checked );
             _Cancelled = ( Tristate.True == this.Cancelled.Checked );
             bool FinishedCheck = false;

@@ -212,6 +212,7 @@
 				viewmode: 'tree', // Grid, Tree, List
 				linktype: 'link', // WelcomeComponentType: Link, Search, Text, Add
                 viewid: '',
+				actionname: '',
 				actionurl: '',
 				reportid: '',
 				nodeid: '',
@@ -257,7 +258,10 @@
 			    {
 			    	case 'action':
 			    		{
-			    			window.location = o.actionurl;
+							_handleAction({
+								'actionname': o.actionname,
+								'actionurl': o.actionurl
+							});
 			    			break;
 			    		}
 			    	case 'report':
@@ -337,19 +341,11 @@
                 },
 			'onEditView': function (viewid)
 			{
-				clear({ 'all': true });
-				$('#CenterTopDiv').CswViewEditor({
-					'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
-					'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
-					'onCancel': function ()
-					{
-						clear({ 'all': true });
-						refreshSelected();
-					},
-					'onFinish': function (viewid, viewmode)
-					{
-						clear({ 'all': true });
-						handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+				_handleAction({ 
+					'actionname': 'Edit_View', 
+					'ActionOptions': {
+						'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
+						'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode)
 					}
 				});
 			},
@@ -604,23 +600,15 @@
             },
             'onEditView': function (viewid)
             {
-                clear({ 'all': true });
-                $('#CenterTopDiv').CswViewEditor({
-                	'viewid': viewid,
-					'viewmode': 'Grid',
-                    'onCancel': function ()
-                    {
-                        clear({ 'all': true });
-                        refreshSelected();
-                    },
-                    'onFinish': function (viewid, viewmode)
-                    {
-                        // ignore incoming viewid and viewmode, restore previous instead
-						clear({ 'all': true });
-						refreshSelected();
-					},
-                    'startingStep': 2
-                });
+				_handleAction({ 
+					'actionname': 'Edit_View', 
+					'ActionOptions': {
+						'viewid': viewid,
+						'viewmode': 'Grid',
+						'startingStep': 2,
+						'IgnoreReturn': true,
+					}
+				});
             },
 			'ShowCheckboxes': multi,
 			'NodeCheckTreeId': MainTreeId
@@ -735,6 +723,85 @@
 											'ShowCheckboxes': multi
 										}); // CswNodesTree
 	} // refreshNodesTree()
+
+
+	function _handleAction(options)
+	{
+		var o = {
+			'actionname': '',
+			'actionurl': '',
+			'ActionOptions': {}
+		};
+		if(options) $.extend(o, options);
+
+		switch (o.actionname)
+		{
+//			case 'Assign_Inspection':
+//				break;
+//			case 'Assign_Tests':
+//				break;
+//			case 'Create_Inspection':
+//				break;
+//			case 'Design':
+//				break;
+			case 'Edit_View':
+				
+				clear({ 'all': true });
+
+				var EditViewOptions = {
+					'viewid': o.ActionOptions.viewid,
+					'viewmode': o.ActionOptions.viewmode,
+					'onCancel': function ()
+					{
+						clear({ 'all': true });
+						refreshSelected();
+					},
+					'onFinish': function (viewid, viewmode)
+					{
+						clear({ 'all': true });
+						if(IsTrue(o.ActionOptions.IgnoreReturn))
+							refreshSelected();
+						else
+							handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+					},
+					'startingStep': o.ActionOptions.startingStep
+				};
+
+				$('#CenterTopDiv').CswViewEditor(EditViewOptions);
+
+				break;
+//			case 'Enter_Results':
+//				break;
+//			case 'Future_Scheduling':
+//				break;
+//			case 'Import_Fire_Extinguisher_Data':
+//				break;
+//			case 'Inspection_Design':
+//				break;
+			case 'OOC_Inspections':
+
+				clear({ 'all': true });
+
+				$('#CenterTopDiv').CswInspectionStatus();
+				
+				break;
+//			case 'Load_Mobile_Data':
+//				break;
+//			case 'Receiving':
+//				break;
+//			case 'Split_Samples':
+//				break;
+//			case 'View_By_Location':
+//				break;
+			default:
+				if(!isNullOrEmpty(o.actionurl))
+				{
+					window.location = o.actionurl;
+				}
+				break;
+		}
+	} // _handleAction()
+
 
 </script>
 

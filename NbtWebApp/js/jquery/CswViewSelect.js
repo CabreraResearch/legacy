@@ -16,6 +16,7 @@
 									viewname: '',
 									viewmode: '',
 									actionid: '',
+									actionname: '',
 									actionurl: '',
 									reportid: ''
 								};
@@ -51,6 +52,7 @@
 																	'viewname': optSelect.viewname,
 																	'viewmode': optSelect.viewmode,
 																	'actionid': optSelect.actionid,
+																	'actionname': optSelect.actionname,
 																	'actionurl': optSelect.actionurl,
 																	'reportid': optSelect.reportid,
 																	'onSelect': o.onSelect,
@@ -99,6 +101,7 @@
 				viewname: '',
 				viewmode: '',
 				actionid: '',
+				actionname: '',
 				actionurl: '',
 				reportid: '',
 				onSelect: function() { },
@@ -142,6 +145,7 @@
 					viewname: x.viewname,
 					viewmode: x.viewmode,
 					actionid: x.actionid,
+					actionname: x.actionname,
 					actionurl: x.actionurl,
 					reportid: x.reportid
 					});

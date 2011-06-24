@@ -2207,8 +2207,40 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Logging
 
-        #region Mobile
+		#region Actions
+
         [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getInspectionStatusGrid()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _CswSessionResources.attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+					CswNbtWebServiceInspections ws = new CswNbtWebServiceInspections( _CswNbtResources );
+					ReturnVal = ws.getInspectionStatusGrid();
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getInspectionStatusGrid()
+
+		#endregion Actions
+
+		#region Mobile
+		[WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string UpdateProperties( string SessionId, string ParentId, string UpdatedViewXml, bool ForMobile )
         {

@@ -395,7 +395,7 @@ namespace ChemSW.Nbt
 
         }//this[NodeTypeProp]
 
-        public CswNbtPropEnmrtrFiltered this[CswNbtMetaDataFieldType FieldType]
+        public CswNbtPropEnmrtrFiltered this[CswNbtMetaDataFieldType.NbtFieldType FieldType]
         {
             get
             {
