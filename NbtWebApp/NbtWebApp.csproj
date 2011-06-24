@@ -104,9 +104,6 @@
     <Content Include="Act_ImportFireExtinguisher.aspx" />
     <Content Include="Act_Receiving.aspx" />
     <Content Include="Act_SplitSamples.aspx" />
-    <Content Include="App_Data\Log.txt" />
-    <Content Include="App_Data\web_browsers_patch.xml" />
-    <Content Include="App_Data\wurfl.xml" />
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
@@ -1846,9 +1843,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\51Degrees.mobi.config" />
-    <None Include="App_Data\Devices.dat" />
-    <None Include="App_Data\wurfl.xml.gz" />
     <None Include="etc\CswNbtData.xsd">
       <SubType>Designer</SubType>
     </None>
