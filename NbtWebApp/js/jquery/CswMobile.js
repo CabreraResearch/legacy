@@ -312,7 +312,7 @@
         // ------------------------------------------------------------------------------------
 
         function setOffline() {
-            localStorage['online'] = false;
+            amOnline(false);
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('online')) {
                 $onlineStatus.removeClass('online')
@@ -327,10 +327,11 @@
             if ($.mobile.activePage === $logindiv) {
                 $sorrycharliediv.doPage(); // doChangePage();
             }
+            $.mobile.hidePageLoadingMsg();
         }
 
         function setOnline() {
-            localStorage['online'] = true;
+            amOnline(true);
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('offline')) {
                 $onlineStatus.removeClass('offline')
@@ -347,9 +348,12 @@
             }
         }
 
-        function amOffline() {
-            var isOffline = !isTrue(localStorage['online']);
-            return isOffline;
+        function amOnline(amOnline) {
+            if(arguments.length === 1 ) {
+                localStorage['online'] = isTrue(amOnline);
+            }
+            var ret = isTrue(localStorage['online']);
+            return ret;
         }
 
         // ------------------------------------------------------------------------------------
@@ -435,7 +439,7 @@
 
             if (isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1) {
                 if (p.level === 0) {
-                    if (amOffline()) {
+                    if (!amOnline()) {
                         p.$xml = _fetchCachedRootXml();
                         $retDiv = _loadDivContentsXml(p);
                     } else {
@@ -449,7 +453,7 @@
                         $currentViewXml = $xmlstr;
                         p.$xml = $currentViewXml;
                         $retDiv = _loadDivContentsXml(p);
-                    } else if (!amOffline()) {
+                    } else if (amOnline()) {
                         p.url = opts.ViewUrl;
                         $retDiv = _getDivXml(p);
                     }
@@ -1299,8 +1303,8 @@
 
                 var $footerCtn = $('<div data-role="navbar">')
                                             .appendTo($footer);
-                var onlineClass = (amOffline()) ? 'onlineStatus offline' : 'onlineStatus online';
-                var onlineValue = (amOffline()) ? 'Offline' : 'Online';
+                var onlineClass = (!amOnline()) ? 'onlineStatus offline' : 'onlineStatus online';
+                var onlineValue = (!amOnline()) ? 'Offline' : 'Online';
 
                 $syncstatusBtn = $footerCtn.CswLink('init', {
                                                         'href': 'javascript:void(0)',
@@ -1537,7 +1541,7 @@
 
         function _toggleOffline() {
             //eventObj.preventDefault();
-            if (amOffline()) {
+            if (!amOnline()) {
                 _clearWaitForData();
                 _waitForData();
                 setOnline();
@@ -1624,7 +1628,7 @@
         // ------------------------------------------------------------------------------------
 
         function onLoginSubmit() {
-            if (!amOffline()) {
+            if (amOnline()) {
                 var UserName = $('#login_username').val();
                 var AccessId = $('#login_customerid').val();
 
@@ -1687,7 +1691,7 @@
         }
 
         function onRefresh() {
-            if (!amOffline()) {
+            if (amOnline()) {
                 if (_checkNoPendingChanges()) {
                     continueRefresh();
                 }
@@ -1970,6 +1974,7 @@
                         //restorePath();
                     },
                     error: function(xml) {
+                        setOffline();
                         var $xml = $(xml);
                         if (!isNullOrEmpty(onFailure)) {
                             onFailure($xml);
