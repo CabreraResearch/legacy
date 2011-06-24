@@ -17,7 +17,7 @@
         var p = {
             'data-filter': false,
             'data-role': 'listview',
-            'data-inset': true
+            'data-inset': false
         };
         if (params) $.extend(p, params);
 
@@ -744,30 +744,26 @@
             var sf_compliantanswers = tryParseString($xmlitem.children('compliantanswers').text(), '');
             var sf_options = tryParseString($xmlitem.children('options').text(), '');
 
-            var $retLi = $('<li id="' + IdStr + '_li"></li>')
+            var $retLi = $('<li id="' + IdStr + '_li">'+ PropName +'</li>')
                                 .CswAttrXml('data-icon', false);
             var $fieldcontain = $('<div class="csw_fieldset" data-role="fieldcontain"></div>')
                                     .appendTo($retLi);
 
-            var $labelDiv = $('<div></div>').appendTo($fieldcontain);
-            var $propDiv = $('<div></div>').appendTo($fieldcontain);
-            
-            var $label = $('<label for="' + IdStr + '_input" id="' + IdStr + '_label">' + PropName + '</label>')
-                                    .appendTo($labelDiv);
+            var $propDiv;
             
             if (FieldType === "Question" &&
                 !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
                     isNullOrEmpty(sf_correctiveaction)) {
-                $label.addClass('OOC');
+                $retLi.addClass('OOC');
             } else {
-                $label.removeClass('OOC');
+                $retLi.removeClass('OOC');
             }
             
             if( FieldType !== 'Question' && FieldType !== 'Logical') {
-                $retLi.css('height','75px');
+                $retLi.css('height',(FieldType === 'Memo') ? '100px' : '75px');
                 $fieldcontain.addClass('ui-grid-a');
-                $labelDiv.addClass('ui-block-a');
-                $propDiv.addClass('ui-block-b');
+                $propDiv = $('<div class="ui-block-b"></div>')
+                                .appendTo($fieldcontain);
             }
             
             var $prop;
