@@ -111,6 +111,7 @@
 
                 if (p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
+                if($('#logindiv')) $('#logindiv').remove();
 //                if (!p.persistBindEvent) {
 //                    // If the page is constructed entirely from cache, we only do this once.
 //                    $(this).unbind('pageshow');
@@ -239,22 +240,13 @@
                 level: 0,
                 HideRefreshButton: true,
                 HideSearchButton: true,
-                HideBackButton: true,
-                onPageShow: function(p) { return _loadDivContents(p); }
+                HideBackButton: true
             };
-            var $retDiv = _addPageDivToBody({
-                    DivId: 'viewsdiv',
-                    HeaderText: 'Views',
-                    HideRefreshButton: false,
-                    HideSearchButton: true,
-                    HideOnlineButton: false,
-                    HideLogoutButton: false,
-                    HideHelpButton: false,
-                    HideCloseButton: true,
-                    HideBackButton: true,
-                    onPageShow: function(p) { return _loadDivContents(p); }
-                });
+            params.onPageShow = function(p) { return _loadDivContents(p); };
+            
+            var $retDiv = _addPageDivToBody(params);
             $retDiv.bindJqmEvents(params);
+            
             return $retDiv;
         }
 
@@ -265,23 +257,15 @@
                 HideHelpButton: false,
                 HideCloseButton: true,
                 HideOnlineButton: false,
-                content: 'You must have internet connectivity to login.'
+                HideBackButton: true,
+                HideRefreshButton: true,
+                HideLogoutButton: true,
+                HideSearchButton: true,
+                dataRel: 'dialog',
+                $content: 'You must have internet connectivity to login.'
             };
             if (params) $.extend(p, params);
-
-            $retDiv = _addPageDivToBody({
-                    DivId: p.DivId,
-                    HeaderText: p.HeaderText,
-                    HideSearchButton: true,
-                    HideOnlineButton: p.HideOnlineButton,
-                    HideRefreshButton: true,
-                    HideLogoutButton: true,
-                    HideHelpButton: p.HideHelpButton,
-                    HideCloseButton: p.HideCloseButton,
-                    HideBackButton: true,
-                    dataRel: 'dialog',
-                    $content: $('<p>' + p.content + '</p>')
-                });
+            var $retDiv = _addPageDivToBody(p);
             return $retDiv;
         }
 
@@ -1181,7 +1165,8 @@
                                         'data-role': 'page',
                                         'data-url': p.DivId,
                                         'data-title': p.HeaderText,
-                                        'data-rel': p.dataRel
+                                        'data-rel': p.dataRel,
+                                        'data-add-back-btn': !isTrue(p.HideBackButton)              
                                     });
 
                 var $header = $pageDiv.CswDiv('init', { ID: p.DivId + '_header' })
@@ -1202,7 +1187,7 @@
                                                      //'data-url': p.DivId + '_back',
                                                 'data-rel': 'back',
                                                 'data-direction': 'reverse'
-                                            });
+                                            })
 
                 $closeBtn = $header.CswLink('init', {
                                                href: 'javascript:void(0)',
@@ -1221,10 +1206,6 @@
                 if (!isNullOrEmpty(p.backtransition)) {
                     $backlink.CswAttrXml('data-transition', p.backtransition);
                 }
-//                if ( isNullOrEmpty(p.ParentId) )
-//                {
-//                    $backlink.css('visibility','hidden');
-//                }
 
                 if (!isNullOrEmpty(p.backicon)) {
                     $backlink.CswAttrXml('data-icon', p.backicon);
@@ -1621,7 +1602,7 @@
                             SessionId = $.CswCookie('get', CswCookieName.SessionId);
                             _cacheSession(SessionId, UserName, AccessId);
                             $viewsdiv = reloadViews();
-                            $viewsdiv.doChangePage({changeHash: false});
+                            $viewsdiv.doChangePage();
                             //restorePath();
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown) {
