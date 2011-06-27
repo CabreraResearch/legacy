@@ -8,7 +8,8 @@
 	$.fn.CswInspectionStatus = function (options) 
 	{
 		var o = {
-			Url: '/NbtWebApp/wsNBT.asmx/getInspectionStatusGrid'
+			Url: '/NbtWebApp/wsNBT.asmx/getInspectionStatusGrid',
+			onEditNode: function() {}
 		};
 		if(options) $.extend(o, options);
 
@@ -30,11 +31,46 @@
 
 					var mygridopts = {
 						'autowidth': true,
+                        'datatype': 'local', 
 						'height': 180,
-						'pager': $gridPager
+						'pager': $gridPager,
+				        'emptyrecords': 'No Results',
+                        'loadtext': 'Loading...',
+				        'multiselect': false,
+						'rowList': [10,25,50],  
+				        'rowNum': 10
+					} 
+					
+					var optNav = {
+						'add': false,
+						'view': false,
+						'del': false,
+						'refresh': false,
+
+						'edit': true,
+						'edittext': "",
+						'edittitle': "Edit row",
+						'editfunc': function(rowid) 
+							{
+								var editOpt = {
+									nodeid: '',
+									onEditNode: o.onEditNode
+								};
+								if (rowid !== null) 
+								{
+									editOpt.nodeid = $grid.jqGrid('getCell', rowid, 'NODEIDSTR');
+									$.CswDialog('EditNodeDialog', editOpt);
+								}
+								else
+								{
+									alert('Please select a row to edit');
+								}
+							}
 					};
 					$.extend(gridJson, mygridopts);
 
+                    $grid.jqGrid(gridJson)
+						 .navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, {}, {} ); 
 					$grid.jqGrid(gridJson)
 						.hideCol('NODEIDSTR');
 

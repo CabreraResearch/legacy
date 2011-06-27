@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.WebServices
 			InspectionData.Columns.Add( "nodeid" );
 			InspectionData.Columns.Add( "nodeidstr" );
 			InspectionData.Columns.Add( "Inspection" );
+			InspectionData.Columns.Add( "Inspection Point" );
 			InspectionData.Columns.Add( "Due" );
 			InspectionData.Columns.Add( "Status" );
 			InspectionData.Columns.Add( "OOC Question" );
@@ -75,11 +76,12 @@ namespace ChemSW.Nbt.WebServices
 						Row["nodeid"] = CswConvert.ToDbVal( InspectionNode.NodeId.PrimaryKey );
 						Row["nodeidstr"] = InspectionNode.NodeId.ToString();
 						Row["Inspection"] = InspectionNode.NodeName;
-						Row["Due"] = CswConvert.ToDbVal( NodeAsInspection.Date.DateValue );
+						Row["Inspection Point"] = NodeAsInspection.Target.CachedNodeName;
+						Row["Due"] = NodeAsInspection.Date.DateValue.ToShortDateString();
 						Row["Status"] = NodeAsInspection.Status.Value;
 						Row["OOC Question"] = QuestionProp.NodeTypeProp.PropNameWithQuestionNo;
 						Row["OOC Answer"] = QuestionProp.AsQuestion.Answer;
-						Row["Date Answered"] = CswConvert.ToDbVal( QuestionProp.AsQuestion.DateAnswered );
+						Row["Date Answered"] = QuestionProp.AsQuestion.DateAnswered.ToShortDateString();
 						Row["Comments"] = QuestionProp.AsQuestion.Comments;
 						InspectionData.Rows.Add( Row );
 
