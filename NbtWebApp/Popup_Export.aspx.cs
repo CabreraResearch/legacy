@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.WebPages
                 }
                 else if( Request.QueryString["sessionviewid"] != null )
                 {
-					CswNbtView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) ) );
+					CswNbtView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( Request.QueryString["sessionviewid"] ) );
                 }
                 else
                 {
