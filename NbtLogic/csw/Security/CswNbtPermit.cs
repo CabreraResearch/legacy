@@ -125,7 +125,6 @@ namespace ChemSW.Nbt.Security
 						// Base case
 						ret = Role.NodeTypePermissions.CheckValue( Permission.ToString(), NodeType.FirstVersionNodeTypeId.ToString() );
 
-
 						// Only Administrators can edit Roles
 						if( ret &&
 							NodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
@@ -298,14 +297,23 @@ namespace ChemSW.Nbt.Security
 			bool ret = false;
 			if( User != null )
 			{
-				CswNbtObjClassRole Role = User.RoleNode;
-				if( Role != null )
-				{
-					ret = Role.ActionPermissions.CheckValue( CswNbtAction.PermissionXValue, CswNbtAction.ActionNameEnumToString( ActionName ) );
-				}
+				ret = can( ActionName, User.RoleNode );
 			}
 			return ret;
 		} // can( CswNbtActionName ActionName, ICswNbtUser User )
+
+		/// <summary>
+		/// Returns true if the user has the appropriate permissions for the Action
+		/// </summary>
+		public bool can( CswNbtActionName ActionName, CswNbtObjClassRole Role )
+		{
+			bool ret = false;
+			if( Role != null )
+			{
+				ret = Role.ActionPermissions.CheckValue( CswNbtAction.PermissionXValue, CswNbtAction.ActionNameEnumToString( ActionName ) );
+			}
+			return ret;
+		} // can( CswNbtActionName ActionName, CswNbtObjClassRole Role )
 
 		/// <summary>
 		/// Sets access for the given Action for the user
