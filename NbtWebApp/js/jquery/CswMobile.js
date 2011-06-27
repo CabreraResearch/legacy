@@ -462,7 +462,6 @@
                     }
                 }
             }
-            logger.setEnded();
             cacheLogInfo(logger);
             return $retDiv;
         } // _loadDivContents()
@@ -555,13 +554,12 @@
                     .appendTo($list);
             });
             
-            //$list.bindLI(); //listview('refresh')
             try {
                 $('.csw_collapsible').page();
                 $('.csw_fieldset').page();
                 $('.csw_listview').page();
             }
-            catch(e)
+            catch(e) //this is hackadelic, but it works. 
             {
                 $('.csw_collapsible').page();
                 $('.csw_fieldset').page();
@@ -571,7 +569,6 @@
 
             $.mobile.hidePageLoadingMsg();
             
-            logger.setEnded();
             cacheLogInfo(logger);
             return $retDiv;
         } // _processViewXml()
@@ -1786,7 +1783,6 @@
                 _updateStoredViewXml(rootid, $currentViewXml, '1');
                 _resetPendingChanges(true, false);
             }
-            logger.setEnded();
             cacheLogInfo(logger);
         } // onPropertyChange()
 
@@ -2051,7 +2047,6 @@
                 if (perpetuateTimer)
                     _waitForData();
             } // if(SessionId != '') 
-            logger.setEnded();
             cacheLogInfo(logger);
         }
 
