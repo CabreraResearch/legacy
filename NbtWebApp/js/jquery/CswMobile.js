@@ -24,10 +24,9 @@
         var $div = $(this);
         var $ret = undefined;
         if (!isNullOrEmpty($div)) {
-            $ret = $('<ul id="' + tryParseString(id, '') + '"></ul>')
+            $ret = $('<ul class="csw_listview" id="' + tryParseString(id, '') + '"></ul>')
                                                     .appendTo($div)
                                                     .CswAttrXml(p);
-            $ret.listview();
         }
         return $ret;
     };
@@ -98,7 +97,7 @@
                 level: 1,
                 HideRefreshButton: false,
                 HideSearchButton: false,
-                persistBindEvent: false,
+                persistBindEvent: true,
                 onPageShow: function(p) {
                 },
                 onSuccess: function() { $.mobile.hidePageLoadingMsg(); }
@@ -551,6 +550,7 @@
                 });
 
             var $content = $retDiv.find('div:jqmData(role="content")').empty();
+
             var $list = $content.makeUL();
             currenttab = '';
 
@@ -562,14 +562,32 @@
                 var $li = _makeListItemFromXml($list, p)
                                     .CswAttrXml('data-icon', false)
                                     .appendTo($list);
+                try {
+                    $li.page();
+                    $li.listview();
+                } catch(e) {
+                    $li.page();
+                    $li.listview();
+                } 
             });
-            $list.listview('refresh')
-                 .bindLI();
-            $('.csw_collapsible').page();
-            $('.csw_fieldset').page();
             
+            //$list.bindLI(); //listview('refresh')
+            try {
+                $('.csw_collapsible').page();
+                $('.csw_fieldset').page();
+                $('.csw_listview').page();
+                $list.listview();
+            }
+            catch(e)
+            {
+                $('.csw_collapsible').page();
+                $('.csw_fieldset').page();
+                $('.csw_listview').page();
+                $list.listview();
+            }
+            $content.page();
             onAfterAddDiv($retDiv);
-
+            
             p.onSuccess();
             logger.setEnded();
             cacheLogInfo(logger);
@@ -635,18 +653,31 @@
                         $retLI.val(text);
                     }
                     if (p.parentlevel === 0) {
-                        var $newDiv = _preFormNextLevelPages({
-                                ParentId: p.DivId,
+//                        var $newDiv = _preFormNextLevelPages({
+//                                ParentId: p.DivId,
+//                                parentlevel: p.parentlevel,
+//                                level: p.parentlevel + 1,
+//                                DivId: id,
+//                                // Case 22211: IDC content is not cached. We need to reconstruct nodes on each page load.
+//                                persistBindEvent: true,
+//                                HeaderText: text
+//                                //,$toolbar: $toolbar
+//                            });
+//                        $newDiv.addClass('CswNbtView')
+//                                           .doPage($newDiv.CswAttrXml('data-url'));
+                        $retLI.bind('vclick', function() {
+                            var par = {ParentId: p.DivId,
                                 parentlevel: p.parentlevel,
                                 level: p.parentlevel + 1,
                                 DivId: id,
-                                // Case 22211: IDC content is not cached. We need to reconstruct nodes on each page load.
                                 persistBindEvent: true,
-                                HeaderText: text
-                                //,$toolbar: $toolbar
-                            });
-                        $newDiv.addClass('CswNbtView')
-                                           .doPage($newDiv.CswAttrXml('data-url'));
+                                HeaderText: text  };
+                            var $div = _addPageDivToBody(par);
+                            par.onPageShow = function() { _loadDivContents(par); };
+                            $div.bindJqmEvents(par);
+                            //$div.doPage();
+                            $div.doChangePage({reloadPage: true});
+                        });
                     }
                     break;
                 }// default:
@@ -714,16 +745,17 @@
                 break;
             }
 
-            var $newDiv = _preFormNextLevelPages({
-                                  ParentId: p.DivId,
-                                  parentlevel: p.parentlevel,
-                                  level: p.parentlevel + 1,
-                                  DivId: id,
-                                  HeaderText: NodeName
-                              })
-                                  .addClass('CswNbtNode');
+//            var $newDiv = _preFormNextLevelPages({
+//                                  ParentId: p.DivId,
+//                                  parentlevel: p.parentlevel,
+//                                  level: p.parentlevel + 1,
+//                                  DivId: id,
+//                                  HeaderText: NodeName
+//                              })
+//                                  .addClass('CswNbtNode');
 
             $retHtml = $(Html); //.listview('refresh');
+            
             return $retHtml;
         }
 
