@@ -19,16 +19,23 @@
             }
             else 
             {
-                var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+                var $table = $Div.CswTable('init', { 
+					ID: o.ID + '_tbl', 
+					'OddCellRightAlign': true 
+				});
                 var $cell11 = $table.CswTable('cell', 1, 1);
+                var $cell12 = $table.CswTable('cell', 1, 2);
                 var $cell21 = $table.CswTable('cell', 2, 1);
+                var $cell22 = $table.CswTable('cell', 2, 2);
 
-                var $TextBox1 = $cell11.CswInput('init',{ID: o.ID + '_pwd1',
+                $cell11.append('Set New');
+				var $TextBox1 = $cell12.CswInput('init',{ID: o.ID + '_pwd1',
                                                          type: CswInput_Types.password,
                                                          cssclass: 'textinput',
                                                          onChange: o.onchange
                                                  }); 
-                var $TextBox2 = $cell21.CswInput('init',{ID: o.ID + '_pwd2',
+                $cell21.append('Confirm');
+                var $TextBox2 = $cell22.CswInput('init',{ID: o.ID + '_pwd2',
                                                          type: CswInput_Types.password,
                                                          cssclass: 'textinput password2',
                                                          onChange: o.onchange
