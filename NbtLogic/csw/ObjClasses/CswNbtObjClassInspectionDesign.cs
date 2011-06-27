@@ -301,7 +301,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else if( _Finished )
             {
-                foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+				QuestionsFlt.Reset();
+				foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                 {
                     CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
                     _OOC = ( _OOC || !QuestionProp.IsCompliant );
@@ -330,6 +331,7 @@ namespace ChemSW.Nbt.ObjClasses
 				this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
 				this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
 			{
+				QuestionsFlt.Reset();
 				foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
 				{
 					Prop.ReadOnly = true;
