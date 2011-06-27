@@ -99,8 +99,7 @@
                 HideSearchButton: false,
 //                persistBindEvent: true,
                 onPageShow: function(p) {
-                },
-                onSuccess: function() { $.mobile.hidePageLoadingMsg(); }
+                }
             };
 
             if (params) $.extend(p, params);
@@ -425,9 +424,7 @@
                 HideRefreshButton: false,
                 HideSearchButton: false,
                 $xml: '',
-                SessionId: SessionId,
-                onSuccess: function() {
-                }
+                SessionId: SessionId
             };
             if (params) $.extend(p, params);
 
@@ -528,9 +525,7 @@
                 HideLogoutButton: false,
                 HideHelpButton: false,
                 HideCloseButton: true,
-                HideBackButton: false,
-                onSuccess: function() {
-                }
+                HideBackButton: false
             };
             if (params) $.extend(p, params);
 
@@ -583,8 +578,8 @@
             }
             $content.page();
 
-            p.onSuccess();
-
+            $.mobile.hidePageLoadingMsg();
+            
             logger.setEnded();
             cacheLogInfo(logger);
             return $retDiv;
