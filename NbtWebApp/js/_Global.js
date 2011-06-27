@@ -1385,14 +1385,14 @@ function debugOn(value)
 
 function cacheLogInfo(logger, includeCallStack)
 {
-    if ( doLogging() )
+    if ( doLogging() || debug )
     {
         if (hasWebStorage())
         {
             if (undefined !== logger.setEnded) logger.setEnded();
             var logStorage = new CswStorage(sessionStorage,JSON,true);
             var log = logStorage.getItem('debuglog');
-            log += logger;
+            log += logger.toHtml();
 
             var extendedLog = '';
             if (isTrue(includeCallStack)) {

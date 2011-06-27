@@ -41,7 +41,6 @@
                 var $thisPage = $('#' + dataurl);
                 $thisPage.doChangePage();
             });
-
         }
         return $ret;
     };
@@ -108,7 +107,6 @@
                 p.onPageShow(p);
                 if($('#logindiv')) $('#logindiv').remove();
             });
-
         }
         return $ret;
     };
@@ -341,18 +339,27 @@
             if (doLogging()) {
                 var logger = new profileMethod('setStartLog');
                 cacheLogInfo(logger);
-                var $loggingBtn = $('.debug');
-                $loggingBtn.removeClass('debug-off')
-                                   .addClass('debug-on')
-                                   .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                   .text('Sync Log')
-                    .end();
+                var $loggingBtn = $('.debug')
+                                       .removeClass('debug-off')
+                                       .addClass('debug-on')
+                                       .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                                       .text('Sync Log')
+                                       .addClass('debug-on')
+                                       .removeClass('debug-off')
+                                       .end();
             }
         }
 
         function setStopLog() {
             if (!doLogging()) {
-                var $loggingBtn = $('.debug');
+                var $loggingBtn = $('.debug')
+                                       .removeClass('debug-on')
+                                       .addClass('debug-off')
+                                       .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                                       .text('Sync Log')
+                                       .addClass('debug-off')
+                                       .removeClass('debug-on')
+                                       .end();
                 var logger = new profileMethod('setStopLog');
                 cacheLogInfo(logger);
 
@@ -363,18 +370,36 @@
                     'LogInfo': sessionStorage['debuglog']
                 };
 
-                CswAjaxJSON({
-                        url: opts.SendLogUrl,
-                        data: dataJson,
-                        success: function() {
-                            $loggingBtn.removeClass('debug-on')
-                                            .addClass('debug-off')
-                                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                            .text('Start Log')
-                                .end();
-                            purgeLogInfo();
-                        }
-                    });
+//                CswAjaxJSON({
+//                        url: opts.SendLogUrl,
+//                        data: dataJson,
+//                        success: function() {
+//                            $loggingBtn.removeClass('debug-on')
+//                                            .addClass('debug-off')
+//                                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+//                                            .text('Start Log')
+//                                .end();
+//                            purgeLogInfo();
+//                        }
+//                    });
+
+                var params = {
+                    DivId: 'loginfodiv',
+                    HeaderText: 'Log Info',
+                    HideHelpButton: false,
+                    HideCloseButton: true,
+                    HideOnlineButton: false,
+                    HideBackButton: false,
+                    HideRefreshButton: true,
+                    HideLogoutButton: true,
+                    HideSearchButton: true,
+                    dataRel: 'dialog',
+                    $content: $( JSON.parse(sessionStorage['debuglog']))
+                };
+                var $logDiv = _addPageDivToBody(params);
+                $logDiv.bindJqmEvents(params);
+                $logDiv.doChangePage();
+                $.mobile.hidePageLoadingMsg();
             }
         }
 
@@ -384,6 +409,8 @@
 
         function _loadDivContents(params) {
             var logger = new profileMethod('loadDivContents');
+           // $.mobile.showPageLoadingMsg();
+            
             var p = {
                 ParentId: '',
                 level: 1,
@@ -441,6 +468,7 @@
         }
 
         function _getDivXml(params) {
+            var logger = new profileMethod('getDivXml');
             var $retDiv = undefined;
 
             var p = {
@@ -459,17 +487,16 @@
                     data: dataXml,
                     onloginfail: function(text) { onLoginFail(text); },
                     success: function($xml) {
+                        logger.setAjaxSuccess();
                         $currentViewXml = $xml;
                         p.$xml = $currentViewXml;
                         if (params.level === 1) {
                             _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                         }
                         $retDiv = _loadDivContentsXml(p);
-                    },
-                    error: function(xml) {
                     }
                 });
-
+            cacheLogInfo(logger);
             return $retDiv;
         }
 
@@ -1249,7 +1276,7 @@
                                                         'data-transition': 'pop',
                                                         'data-rel': 'dialog'
                                                     })
-                                                        .css('display', '');
+                                                    .css('display', '');
 
                 $refreshBtn = $footerCtn.CswLink('init', {
                                                            'href': 'javascript:void(0)',
@@ -1261,7 +1288,7 @@
                                                            'data-identity': p.DivId + '_refresh',
                                                            'data-url': p.DivId + '_refresh'
                                                        })
-                                                           .css('display', '');
+                                                       .css('display', '');
 
                 $logoutBtn = $footerCtn.CswLink('init', {
                                                         'href': 'javascript:void(0)',
@@ -1296,7 +1323,7 @@
                 $loggingBtn = $footerCtn.CswLink('init', {
                                                  'href': 'javascript:void(0)',
                                                  ID: p.DivId + '_debuglog',
-                                                 value: doLogging() ? 'Start Log' : 'Sync Log',
+                                                 value: doLogging() ? 'Sync Log' : 'Start Log',
                                                  cssclass: 'debug'
                                              })
                                                  .addClass(doLogging() ? 'debug-on' : 'debug-off');
@@ -1790,6 +1817,7 @@
         } //_cacheSession()
 
         function _storeViewXml(rootid, rootname, $viewxml) {
+            var logger = new profileMethod('storeViewXml');
             if (isNullOrEmpty(storedViews)) {
                 storedViews = [{ rootid: rootid, name: rootname }];
             } else if (storedViews.indexOf(rootid) === -1) {
@@ -1797,6 +1825,7 @@
             }
             localStorage["storedviews"] = JSON.stringify(storedViews);
             localStorage[rootid] = JSON.stringify({ name: rootname, xml: xmlToString($viewxml), wasmodified: false });
+            cacheLogInfo(logger);
         }
 
         function _updateStoredViewXml(rootid, $viewxml, wasmodified) {
