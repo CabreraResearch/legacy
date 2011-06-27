@@ -550,16 +550,9 @@
 
             p.$xml.children().each(function() {
                 p.$xmlitem = $(this);
-                var $li = _makeListItemFromXml($list, p)
-                                    .CswAttrXml('data-icon', false)
-                                    .appendTo($list);
-                try {
-                    $li.page();
-                    $li.listview();
-                } catch(e) {
-                    $li.page();
-                    $li.listview();
-                } 
+                _makeListItemFromXml($list, p)
+                    .CswAttrXml('data-icon', false)
+                    .appendTo($list);
             });
             
             //$list.bindLI(); //listview('refresh')
@@ -567,14 +560,12 @@
                 $('.csw_collapsible').page();
                 $('.csw_fieldset').page();
                 $('.csw_listview').page();
-                $list.listview();
             }
             catch(e)
             {
                 $('.csw_collapsible').page();
                 $('.csw_fieldset').page();
                 $('.csw_listview').page();
-                $list.listview();
             }
             $content.page();
 
