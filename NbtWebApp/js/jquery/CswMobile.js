@@ -511,7 +511,6 @@
         }
 
         var currenttab;
-        var onAfterAddDiv;
 
         function _processViewXml(params) {
             var logger = new profileMethod('processViewXml');
@@ -554,9 +553,6 @@
             var $list = $content.makeUL();
             currenttab = '';
 
-            onAfterAddDiv = function($retDiv) {
-            };
-
             p.$xml.children().each(function() {
                 p.$xmlitem = $(this);
                 var $li = _makeListItemFromXml($list, p)
@@ -586,9 +582,9 @@
                 $list.listview();
             }
             $content.page();
-            onAfterAddDiv($retDiv);
-            
+
             p.onSuccess();
+
             logger.setEnded();
             cacheLogInfo(logger);
             return $retDiv;
