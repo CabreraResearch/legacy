@@ -40,11 +40,11 @@
                                                          cssclass: 'textinput password2',
                                                          onChange: o.onchange
                                                  }); 
-                
-//                    if(o.Required)
-//                    {
-//                        $TextBox.addClass("required");
-//                    }
+
+                if(o.Required && isNullOrEmpty(o.$propxml.children('password').text()))
+                {
+                    $TextBox1.addClass("required");
+                }
 
                 jQuery.validator.addMethod( "password2", function(value, element) { 
                             var pwd1 = $('#' + o.ID + '_pwd1').val();
