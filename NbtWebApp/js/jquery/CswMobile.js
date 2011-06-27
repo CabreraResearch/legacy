@@ -631,21 +631,6 @@
                     } else {
                         $retLI.val(text);
                     }
-                    if (p.parentlevel === 0) {
-//                        var $newDiv = _preFormNextLevelPages({
-//                                ParentId: p.DivId,
-//                                parentlevel: p.parentlevel,
-//                                level: p.parentlevel + 1,
-//                                DivId: id,
-//                                // Case 22211: IDC content is not cached. We need to reconstruct nodes on each page load.
-//                                persistBindEvent: true,
-//                                HeaderText: text
-//                                //,$toolbar: $toolbar
-//                            });
-//                        $newDiv.addClass('CswNbtView')
-//                                           .doPage($newDiv.CswAttrXml('data-url'));
-                        
-                    }
                     break;
                 }// default:
             }
@@ -726,16 +711,7 @@
                 break;
             }
 
-//            var $newDiv = _preFormNextLevelPages({
-//                                  ParentId: p.DivId,
-//                                  parentlevel: p.parentlevel,
-//                                  level: p.parentlevel + 1,
-//                                  DivId: id,
-//                                  HeaderText: NodeName
-//                              })
-//                                  .addClass('CswNbtNode');
-
-            $retHtml = $(Html); //.listview('refresh');
+            $retHtml = $(Html);
             
             return $retHtml;
         }
@@ -1135,8 +1111,7 @@
                 });
                 //$retHtml.data('thisI', i);
             } // for (var i = 0; i < answers.length; i++)
-            
-//            $retHtml.find('input[type="radio"]').checkboxradio();
+
             return $fieldset;
         } // _makeQuestionAnswerFieldSet()
 
@@ -1161,25 +1136,6 @@
             return $button;
         }
         
-        function _preFormNextLevelPages(params) {
-            var $retDiv = undefined;
-            var p = {
-                ParentId: '',
-                parentlevel: 0,
-                level: 1,
-                DivId: '',
-                HeaderText: '',
-                $toolbar: '',
-                persistBindEvent: false,
-                onPageShow: function(p) { return _loadDivContents(p); }
-            };
-            if (params) $.extend(p, params);
-
-            $retDiv = _addPageDivToBody(p);
-            $retDiv.bindJqmEvents(p);
-            return $retDiv;
-        }
-
         function _addPageDivToBody(params) {
             var p = {
                 ParentId: undefined,
