@@ -644,23 +644,25 @@
 //                            });
 //                        $newDiv.addClass('CswNbtView')
 //                                           .doPage($newDiv.CswAttrXml('data-url'));
-                        $retLI.bind('vclick', function() {
-                            var par = {ParentId: p.DivId,
-                                parentlevel: p.parentlevel,
-                                level: p.parentlevel + 1,
-                                DivId: id,
-                                persistBindEvent: true,
-                                HeaderText: text  };
-                            var $div = _addPageDivToBody(par);
-                            par.onPageShow = function() { _loadDivContents(par); };
-                            $div.bindJqmEvents(par);
-                            //$div.doPage();
-                            $div.doChangePage({reloadPage: true});
-                        });
+                        
                     }
                     break;
                 }// default:
             }
+            
+            $retLI.bind('vclick', function() {
+                var par = {ParentId: p.DivId,
+                    parentlevel: p.parentlevel,
+                    level: p.parentlevel + 1,
+                    DivId: id,
+                    persistBindEvent: true,
+                    HeaderText: text  };
+                var $div = _addPageDivToBody(par);
+                par.onPageShow = function() { _loadDivContents(par); };
+                $div.bindJqmEvents(par);
+                $div.doChangePage({reloadPage: true});
+            });
+            
             return $retLI;
         }// _makeListItemFromXml()
 
