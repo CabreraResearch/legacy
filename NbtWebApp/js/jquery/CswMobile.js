@@ -63,10 +63,8 @@
         var $div = $(this);
         var ret = false;
         if (!isNullOrEmpty($div)) {
-            //$div.cachePage(); //not yet, but we'll want to update the cache with the latest version of content
             var $page = $.mobile.activePage;
             var id = (isNullOrEmpty($page)) ? 'no ID' : $page.CswAttrDom('id');
-            //if(doLogging()) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
 
             if (id !== $div.CswAttrDom('id')) ret = $.mobile.changePage($div, o);
         }
@@ -77,9 +75,7 @@
         var $div = $(this);
         var ret = false;
         if (!isNullOrEmpty($div)) {
-            //if(doLogging()) log('doPage on ' + $div.CswAttrDom('id'),true);
-            //ret = $.mobile.loadPage( $div.CswAttrXml('data-url'));
-            ret = $div.page(); //cachePage() //not yet, but we'll want to update the cache with the latest version of content
+            ret = $div.page(); 
         }
         return ret;
     };
@@ -97,7 +93,6 @@
                 level: 1,
                 HideRefreshButton: false,
                 HideSearchButton: false,
-//                persistBindEvent: true,
                 onPageShow: function(p) {
                 }
             };
@@ -112,10 +107,6 @@
                 if (p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
                 if($('#logindiv')) $('#logindiv').remove();
-//                if (!p.persistBindEvent) {
-//                    // If the page is constructed entirely from cache, we only do this once.
-//                    $(this).unbind('pageshow');
-//                }
             });
 
         }
@@ -134,7 +125,6 @@
             DBVersion: '1.0',
             DBDisplayName: 'Mobile.html',
             DBMaxSize: 65536,
-            //ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
             ViewsListUrl: '/NbtWebApp/wsNBT.asmx/GetViewsList',
             ViewUrl: '/NbtWebApp/wsNBT.asmx/GetView',
             ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
@@ -166,8 +156,6 @@
         var storedViews = '';
         if (localStorage.storedViews) storedViews = JSON.parse(localStorage['storedviews']); // {name: '', rootid: ''}
 
-        //$body.restorePages(); //not yet. someday.
-
         var $logindiv = _loadLoginDiv();
         var $viewsdiv = _loadViewsDiv();
         var $syncstatus = _makeSyncStatusDiv();
@@ -177,15 +165,15 @@
         // case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
         if (!isNullOrEmpty(SessionId)) {
-            $.mobile.path.set('#viewsdiv'); // we can use restorePages() to eliminate this later.
+            $.mobile.path.set('#viewsdiv'); 
         }
 
         if (!isNullOrEmpty(SessionId)) {
             $viewsdiv = reloadViews();
             $viewsdiv.page();
-            //$viewsdiv.doChangePage(); //JQM will do this for us.
             _waitForData();
-        } else {
+        } 
+        else {
             // this will trigger _waitForData(), but we don't want to wait here
             _handleDataCheckTimer(
                 function() {
@@ -199,7 +187,7 @@
                     $sorrycharliediv.doChangePage();
                 }
             ); // _handleDataCheckTimer();
-        } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
+        } 
 
         function _loadLoginDiv() {
             var LoginContent = '<input type="textbox" id="login_customerid" placeholder="Customer Id"/><br>';
@@ -267,10 +255,6 @@
             if (params) $.extend(p, params);
             var $retDiv = _addPageDivToBody(p);
             return $retDiv;
-        }
-
-        function removeDiv(DivId) {
-            $('#' + DivId).find('div:jqmData(role="content")').empty();
         }
 
         function reloadViews() {
@@ -469,7 +453,6 @@
                 ParentId: p.DivId,
                 formobile: ForMobile
             };
-            //clearPath();
             CswAjaxXml({
                     //async: false,   // required so that the link will wait for the content before navigating
                     url: p.url,
@@ -1093,7 +1076,6 @@
                     onPropertyChange(ParentId, eventObj, $this.text(), answerName);
                     return false;
                 });
-                //$retHtml.data('thisI', i);
             } // for (var i = 0; i < answers.length; i++)
 
             return $fieldset;
@@ -1184,7 +1166,6 @@
                                             })
                                                 .CswAttrXml({
                                                 'data-identity': p.DivId + '_back', 
-                                                     //'data-url': p.DivId + '_back',
                                                 'data-rel': 'back',
                                                 'data-direction': 'reverse'
                                             })
@@ -1259,7 +1240,7 @@
                 $syncstatusBtn = $footerCtn.CswLink('init', {
                                                         'href': 'javascript:void(0)',
                                                         ID: p.DivId + '_gosyncstatus',
-                                                        cssclass: onlineClass, // + ' ui-btn-left',  
+                                                        cssclass: onlineClass, 
                                                         value: onlineValue
                                                     })
                                                         .CswAttrXml({
@@ -1275,7 +1256,7 @@
                                                            ID: p.DivId + '_refresh',
                                                            value: 'Refresh',
                                                            cssclass: 'refresh'
-                                                       }) //, ui-btn-left'})
+                                                       }) 
                                                            .CswAttrXml({
                                                            'data-identity': p.DivId + '_refresh',
                                                            'data-url': p.DivId + '_refresh'
@@ -1287,7 +1268,6 @@
                                                         ID: p.DivId + '_logout',
                                                         value: 'Logout'
                                                     })
-                    //, cssclass: 'ui-btn-left' })
                                                         .CswAttrXml({
                                                         'data-identity': p.DivId + '_logout',
                                                         'data-url': p.DivId + '_logout',
@@ -1305,7 +1285,6 @@
                                              ID: p.DivId + '_help',
                                              value: 'Help'
                                          })
-                    //, cssclass: 'ui-btn-left' })
                                              .CswAttrXml({
                                              'data-identity': p.DivId + '_help',
                                              'data-url': p.DivId + '_help',
@@ -1352,7 +1331,7 @@
                 $headerOnlineBtn.css('display', 'none');
             } else {
                 $headerOnlineBtn.show()
-                                        .css('display', '');
+                                .css('display', '');
             }
             if (p.dataRel === 'dialog' && !p.HideCloseButton) {
                 $closeBtn.css('display', '');
@@ -1372,8 +1351,6 @@
 
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
-            //$pageDiv.cachePage(); //not yet
-
             return $pageDiv;
 
         }// _addPageDivToBody()
@@ -1390,60 +1367,60 @@
 
         function _bindPageEvents(DivId, ParentId, level, $div) {
             $div.find('#' + DivId + '_searchopen')
-                        .unbind('vclick')
-                        .bind('vclick', function() {
-                            onSearchOpen(DivId);
-                            return false;
-                        })
-                        .end()
-                        .find('#' + DivId + '_gosyncstatus')
-                        .unbind('vclick')
-                        .bind('vclick', function() {
-                            onSyncStatusOpen(DivId);
-                            return false;
-                        })
-                        .end()
-                        .find('#' + DivId + '_refresh')
-                        .unbind('vclick')
-                        .bind('vclick', function() {
-                            $.mobile.showPageLoadingMsg();
-                            return onRefresh();
-                        })
-                        .end()
-                        .find('#' + DivId + '_logout')
-                        .unbind('vclick')
-                        .bind('vclick', function(e) {
-                            onLogout(DivId, e);
-                            return false;
-                        })
-                        .end()
-                        .find('#' + DivId + '_help')
-                        .unbind('vclick')
-                        .bind('vclick', function() {
-                            onHelp(DivId, ParentId);
-                            return false;
-                        })
-                        .end()
-                        .find('#' + DivId + '_debuglog')
-                        .die('vclick')
-                        .live('vclick', function() {
-                            _toggleLogging();
-                            return false;
-                        })
-                        .end()
-                        .find('textarea')
-                        .unbind('change')
-                        .bind('change', function(eventObj) {
-                            var $this = $(this);
-                            onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
-                        })
-                        .end()
-                        .find('.csw_prop_select')
-                        .unbind('change')
-                        .bind('change', function(eventObj) {
-                            var $this = $(this);
-                            onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
-                        })
+                .unbind('vclick')
+                .bind('vclick', function() {
+                    onSearchOpen(DivId);
+                    return false;
+                })
+                .end()
+                .find('#' + DivId + '_gosyncstatus')
+                .unbind('vclick')
+                .bind('vclick', function() {
+                    onSyncStatusOpen(DivId);
+                    return false;
+                })
+                .end()
+                .find('#' + DivId + '_refresh')
+                .unbind('vclick')
+                .bind('vclick', function() {
+                    $.mobile.showPageLoadingMsg();
+                    return onRefresh();
+                })
+                .end()
+                .find('#' + DivId + '_logout')
+                .unbind('vclick')
+                .bind('vclick', function(e) {
+                    onLogout(DivId, e);
+                    return false;
+                })
+                .end()
+                .find('#' + DivId + '_help')
+                .unbind('vclick')
+                .bind('vclick', function() {
+                    onHelp(DivId, ParentId);
+                    return false;
+                })
+                .end()
+                .find('#' + DivId + '_debuglog')
+                .die('vclick')
+                .live('vclick', function() {
+                    _toggleLogging();
+                    return false;
+                })
+                .end()
+                .find('textarea')
+                .unbind('change')
+                .bind('change', function(eventObj) {
+                    var $this = $(this);
+                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
+                })
+                .end()
+                .find('.csw_prop_select')
+                .unbind('change')
+                .bind('change', function(eventObj) {
+                    var $this = $(this);
+                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
+                })
                 .end();
         }
 
@@ -1490,7 +1467,6 @@
         }
 
         function _toggleOffline() {
-            //eventObj.preventDefault();
             if (!amOnline()) {
                 _clearWaitForData();
                 _waitForData();
@@ -1589,7 +1565,6 @@
                     ForMobile: ForMobile
                 };
 
-                //clearPath();
                 CswAjaxJSON({
                         formobile: ForMobile,
                         async: false,
@@ -1603,7 +1578,6 @@
                             _cacheSession(SessionId, UserName, AccessId);
                             $viewsdiv = reloadViews();
                             $viewsdiv.doChangePage();
-                            //restorePath();
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown) {
                             $.mobile.hidePageLoadingMsg();
@@ -1611,9 +1585,7 @@
                     });
             }
 
-        }
-
-//onLoginSubmit() 
+        } //onLoginSubmit() 
 
         function onLoginFail(text) {
             Logout(false);
@@ -1684,13 +1656,10 @@
                             };
 
                             var $thisDiv = _loadDivContents(params);
-                            //$thisDiv.bindJqmEvents(params);
                             $thisDiv.doChangePage();
 
                             $.mobile.hidePageLoadingMsg();
-                        }, // success
-                        error: function(txt) {
-                        }
+                        } // success
                     });
             }
         }
@@ -1807,9 +1776,7 @@
                 }
                 $content.listview('refresh');
             }
-        }
-
-// onSearchSubmit()
+        } // onSearchSubmit()
 
         // ------------------------------------------------------------------------------------
         // Persistance functions
@@ -1820,9 +1787,7 @@
             localStorage['username'] = username;
             localStorage['customerid'] = customerid;
             localStorage['sessionid'] = sessionid;
-        }
-
-//_cacheSession()
+        } //_cacheSession()
 
         function _storeViewXml(rootid, rootname, $viewxml) {
             if (isNullOrEmpty(storedViews)) {
@@ -1907,7 +1872,6 @@
             if (opts.RandomConnectionFailure) {
                 url = opts.ConnectTestRandomFailUrl;
             }
-            //clearPath();
             CswAjaxXml({
                     formobile: ForMobile,
                     url: url,
@@ -1920,7 +1884,6 @@
                         if (!isNullOrEmpty(onSuccess)) {
                             onSuccess($xml);
                         }
-                        //restorePath();
                     },
                     error: function(xml) {
                         setOffline();
@@ -1929,12 +1892,9 @@
                             onFailure($xml);
                         }
                         _waitForData();
-                        //restorePath();
                     }
                 });
-        }
-
-//_handleDataCheckTimer()
+        } //_handleDataCheckTimer()
 
         function _processChanges(perpetuateTimer) {
             var logger = new profileMethod('processChanges');
@@ -1948,7 +1908,6 @@
                             ForMobile: ForMobile
                         };
 
-                        //clearPath();
                         CswAjaxJSON({
                                 formobile: ForMobile,
                                 url: opts.UpdateUrl,
@@ -1973,7 +1932,6 @@
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
-                                    //restorePath();
                                 }
                             });
                     } else {
@@ -1987,9 +1945,7 @@
                     _waitForData();
             } // if(SessionId != '') 
             cacheLogInfo(logger);
-        }
-
-//_processChanges()
+        } //_processChanges()
 
         // For proper chaining support
         return this;
