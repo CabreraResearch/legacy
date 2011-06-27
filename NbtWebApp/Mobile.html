@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html> <!-- manifest="Mobile.manifest"> Still not ready for primetime-->
+<html> <!-- manifest="Mobile.manifest"> <!--Still not ready for primetime-->
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Main</title>
@@ -12,11 +12,6 @@
         try {
             if( hasWebStorage() ) {
 
-                $(document).bind("mobileinit", function ()
-                {
-                    $.mobile.page.prototype.options.addBackBtn = true;
-                });
-                
                 // override value in _Globals.js
 		        homeUrl = "Mobile.html";
 
