@@ -97,7 +97,7 @@
                 level: 1,
                 HideRefreshButton: false,
                 HideSearchButton: false,
-                persistBindEvent: true,
+//                persistBindEvent: true,
                 onPageShow: function(p) {
                 },
                 onSuccess: function() { $.mobile.hidePageLoadingMsg(); }
@@ -112,10 +112,10 @@
 
                 if (p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
-                if (!p.persistBindEvent) {
-                    // If the page is constructed entirely from cache, we only do this once.
-                    $(this).unbind('pageshow');
-                }
+//                if (!p.persistBindEvent) {
+//                    // If the page is constructed entirely from cache, we only do this once.
+//                    $(this).unbind('pageshow');
+//                }
             });
 
         }
