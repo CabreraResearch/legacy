@@ -1751,9 +1751,10 @@
                                                     'data-placeholder': 'Search'
                                                 });
                 var $goBtn = $wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
-                                                .CswAttrXml({ 'data-inline': 'true' })
-                                                .bind('click', function() {
+                                                .CswAttrXml({ 'data-inline': 'true', 'data-role': 'button' })
+                                                .bind('vclick', function() {
                                                     onSearchSubmit(DivId);
+                                                    return false;
                                                 });
                 var $results = $wrapper.CswDiv('init', { ID: DivId + '_searchresults' });
 
