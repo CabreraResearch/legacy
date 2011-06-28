@@ -295,7 +295,11 @@ namespace ChemSW.Nbt.Security
 		public bool can( CswNbtActionName ActionName, ICswNbtUser User )
 		{
 			bool ret = false;
-			if( User != null )
+			if( User is CswNbtSystemUser )
+			{
+				ret = true;
+			}
+			else if( User != null )
 			{
 				ret = can( ActionName, User.RoleNode );
 			}
