@@ -1726,8 +1726,6 @@
         } // onPropertyChange()
 
         function onSearchOpen(DivId) {
-            var searchprop = $('#' + DivId + '_searchprop').val();
-            var searchfor = $('#' + DivId + '_searchfor').val();
             var $xmlstr = _fetchCachedViewXml(rootid);
             if (!isNullOrEmpty($xmlstr)) {
                 var $wrapper = $('<div></div>');
@@ -1739,24 +1737,24 @@
 
                 $xmlstr.children('search').each(function() {
                     var $search = $(this);
-                    var $option = $('<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>')
+                    $('<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>')
                                             .appendTo($select);
                 });
 
                 var $searchCtn = $('<div data-role="fieldcontain"></div>')
                                             .appendTo($wrapper);
-                var $searchBox = $searchCtn.CswInput('init', { type: CswInput_Types.search, ID: DivId + '_searchfor' })
+                $searchCtn.CswInput('init', { type: CswInput_Types.search, ID: DivId + '_searchfor' })
                                                     .CswAttrXml({
                                                     'placeholder': 'Search',
                                                     'data-placeholder': 'Search'
                                                 });
-                var $goBtn = $wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
-                                                .CswAttrXml({ 'data-inline': 'true', 'data-role': 'button' })
+                $wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)',  })
+                                                .CswAttrXml({ 'data-role': 'button' })
                                                 .bind('vclick', function() {
                                                     onSearchSubmit(DivId);
                                                     return false;
                                                 });
-                var $results = $wrapper.CswDiv('init', { ID: DivId + '_searchresults' });
+                $wrapper.CswDiv('init', { ID: DivId + '_searchresults' });
 
                 var $searchDiv = _addPageDivToBody({
                         ParentId: DivId,
@@ -1791,22 +1789,22 @@
                     if (!isNullOrEmpty($node.CswAttrXml(searchprop))) {
                         if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0) {
                             hitcount++;
-                            $content.append(_makeListItemFromXml($content, {
-                                    ParentId: DivId + '_searchresults',
-                                    DivId: DivId + '_searchresultslist',
-                                    HeaderText: 'Results',
-                                    $xmlitem: $node,
-                                    parentlevel: 1
-                                })
-                                            );
-                            $content.bindLI();
+                            $content.append(
+                                        _makeListItemFromXml($content, {
+                                                ParentId: DivId + '_searchresults',
+                                                DivId: DivId + '_searchresultslist',
+                                                HeaderText: 'Results',
+                                                $xmlitem: $node,
+                                                parentlevel: 1 }
+                                        )
+                                    );
                         }
                     }
                 });
                 if (hitcount === 0) {
                     $content.append($('<li>No Results</li>'));
                 }
-                $content.listview('refresh');
+                $content.page();
             }
         } // onSearchSubmit()
 
