@@ -54,6 +54,18 @@ namespace ChemSW.Nbt.Schema
 			}
 
 
+			// case 22177
+			CswNbtMetaDataObjectClass ReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
+			foreach( CswNbtMetaDataNodeType ReportNT in ReportOC.NodeTypes )
+			{
+				CswNbtMetaDataNodeTypeProp RPTFileNTP = ReportNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassReport.RPTFilePropertyName );
+				CswNbtMetaDataNodeTypeProp ViewNTP = ReportNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassReport.ViewPropertyName );
+
+				RPTFileNTP.IsRequired = false;
+				RPTFileNTP.SetValueOnAdd = false;
+				ViewNTP.IsRequired = false;
+				ViewNTP.SetValueOnAdd = false;
+			}
 
 		} // update()
 
