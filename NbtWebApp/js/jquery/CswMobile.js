@@ -449,6 +449,7 @@
                 }
             }
             cacheLogInfo(logger);
+            _toggleOffline(false);
             return $retDiv;
         } // _loadDivContents()
 
@@ -478,6 +479,7 @@
                     data: dataXml,
                     onloginfail: function(text) { onLoginFail(text); },
                     success: function($xml) {
+                        setOnline();
                         logger.setAjaxSuccess();
                         $currentViewXml = $xml;
                         p.$xml = $currentViewXml;
@@ -1046,7 +1048,7 @@
                 $answer.unbind('vclick');
                 $answer.bind('vclick', function(eventObj) {
                     var logger = new profileMethod('questionClick');
-
+                    
                     var thisAnswer = eventObj.srcElement.innerText;
 
                     for (var i = 0; i < answers.length; i++) {
@@ -1471,21 +1473,25 @@
                             .end()
                             .find('#ss_gooffline')
                             .bind('vclick', function() {
-                                _toggleOffline();
+                                _toggleOffline(true);
                                 return false;
                             });
 
             return $retDiv;
         }
 
-        function _toggleOffline() {
-            if (!amOnline()) {
-                _clearWaitForData();
-                _waitForData();
+        function _toggleOffline(doWaitForData) {
+            if (amOnline()) {
+                if(doWaitForData) {
+                    _clearWaitForData();
+                    _waitForData();
+                }
                 setOnline();
                 $('#ss_gooffline span').text('Go Offline');
             } else {
-                _clearWaitForData();
+                if( doWaitForData) {
+                    _clearWaitForData();
+                }
                 setOffline();
                 $('#ss_gooffline span').text('Go Online');
             }
@@ -1652,6 +1658,7 @@
                         stringify: false,
                         onloginfail: function(text) { onLoginFail(text); },
                         success: function($xml) {
+                            setOnline();
                             $currentViewXml = $xml;
                             _updateStoredViewXml(DivId, $currentViewXml, '0');
 
@@ -1669,13 +1676,16 @@
                             };
 
                             _loadDivContents(params);
-                        } // success
+                        }, // success
+                        error: function () {
+                            setOffline();
+                        }
                     });
             }
             $.mobile.hidePageLoadingMsg();
         }
 
-        function onSyncStatusOpen(DivId) {
+        function onSyncStatusOpen() {
             $syncstatus.doChangePage({ transition: 'slideup' });
         }
 
@@ -1793,7 +1803,7 @@
         // ------------------------------------------------------------------------------------
 
         function _cacheSession(sessionid, username, customerid) {
-            localStorage['online'] = true;
+            setOnline();
             localStorage['username'] = username;
             localStorage['customerid'] = customerid;
             localStorage['sessionid'] = sessionid;
@@ -1808,6 +1818,7 @@
             }
             localStorage["storedviews"] = JSON.stringify(storedViews);
             localStorage[rootid] = JSON.stringify({ name: rootname, xml: xmlToString($viewxml), wasmodified: false });
+            
             cacheLogInfo(logger);
         }
 
@@ -1926,6 +1937,7 @@
                                 data: dataJson,
                                 stringify: true,
                                 onloginfail: function(text) {
+                                    setOnline();
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
@@ -1933,6 +1945,7 @@
                                 },
                                 success: function(data) {
                                     logger.setAjaxSuccess();
+                                    setOnline();
                                     var $xml = data.xml;
                                     _updateStoredViewXml(rootid, $xml, '0');
                                     _resetPendingChanges(false, true);
@@ -1941,6 +1954,7 @@
                                     }
                                 },
                                 error: function(data) {
+                                    setOffline();
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
