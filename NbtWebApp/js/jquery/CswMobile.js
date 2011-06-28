@@ -1769,7 +1769,7 @@
                         HideCloseButton: true,
                         HideBackButton: false
                     });
-                $searchDiv.doChangePage({ transition: 'slideup', changeHash: false });
+                $searchDiv.doChangePage({ transition: 'slideup' });
             }
         }
 
