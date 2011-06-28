@@ -327,9 +327,14 @@ namespace ChemSW.Nbt.WebServices
 			switch( ComponentType )
 			{
 				case WelcomeComponentType.Add:
-					NewWelcomeRow["nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
-					NewWelcomeRow["buttonicon"] = ButtonIcon;
-					NewWelcomeRow["displaytext"] = DisplayText;
+					if( NodeTypeId != Int32.MinValue )
+					{
+						NewWelcomeRow["nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
+						NewWelcomeRow["buttonicon"] = ButtonIcon;
+						NewWelcomeRow["displaytext"] = DisplayText;
+					}
+					else
+						throw new CswDniException( "You must select something to add", "No nodetype selected for new Add Welcome Page Component" );
 					break;
 				case WelcomeComponentType.Link:
 					switch( ViewType )
@@ -344,7 +349,7 @@ namespace ChemSW.Nbt.WebServices
 							NewWelcomeRow["reportid"] = CswConvert.ToDbVal( CswConvert.ToInt32( PkValue ) );
 							break;
 						default:
-							throw new CswDniException( "You must select a view", "No view was selected for new Welcome Page Component" );
+							throw new CswDniException( "You must select a view", "No view was selected for new Link Welcome Page Component" );
 					}
 					NewWelcomeRow["buttonicon"] = ButtonIcon;
 					NewWelcomeRow["displaytext"] = DisplayText;
@@ -357,10 +362,15 @@ namespace ChemSW.Nbt.WebServices
 						NewWelcomeRow["displaytext"] = DisplayText;
 					}
 					else
-						throw new CswDniException( "You must select a view", "No view was selected for new Welcome Page Component" );
+						throw new CswDniException( "You must select a view", "No view was selected for new Search Welcome Page Component" );
 					break;
 				case WelcomeComponentType.Text:
-					NewWelcomeRow["displaytext"] = DisplayText;
+					if( DisplayText != string.Empty )
+					{
+						NewWelcomeRow["displaytext"] = DisplayText;
+					}
+					else
+						throw new CswDniException( "You must enter text to display", "No text entered for new Text Welcome Page Component" );
 					break;
 			}
 			WelcomeTable.Rows.Add( NewWelcomeRow );

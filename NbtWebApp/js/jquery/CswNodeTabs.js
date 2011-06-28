@@ -28,6 +28,7 @@
             onTabSelect: function (tabid) { },
             onPropertyChange: function(propid, propname) { },
             ShowCheckboxes: false,
+			ShowAsReport: true,
             NodeCheckTreeId: '',
             'onEditView': function(viewid) { }
         };
@@ -49,10 +50,15 @@
         {
             var $linkdiv = $('<div id="' + o.ID + '_linkdiv" align="right"/>')
                             .appendTo($parent);
-            var $AsReportLink = $('<a href="#">As Report</a>')
-                            .appendTo($linkdiv)
-                            .click(function() { openPopup('NewNodeReport.html?nodeid=' + o.nodeid + '&cswnbtnodekey=' + o.cswnbtnodekey, 600, 800); });
-        }
+            if(o.ShowAsReport)
+			{
+				var $AsReportLink = $('<a href="#">As Report</a>')
+					            .appendTo($linkdiv)
+						        .click(function() { 
+									openPopup('NewNodeReport.html?nodeid=' + o.nodeid + '&cswnbtnodekey=' + o.cswnbtnodekey, 600, 800); 
+								});
+			}
+		}
 
         function clearTabs()
         {
@@ -314,7 +320,7 @@
                     $labelcell.addClass('propertylabel');
                     if($propxml.CswAttrXml('helptext') !== '')
                     {
-                        $('<a href="#" title="'+ $propxml.CswAttrXml('helptext') + '" onclick="return false;">'+ $propxml.CswAttrXml('name') +'</a>')
+                        $('<a href="#" class="cswprop_helplink" title="'+ $propxml.CswAttrXml('helptext') + '" onclick="return false;">'+ $propxml.CswAttrXml('name') +'</a>')
                             .appendTo($labelcell);
                     }
                     else

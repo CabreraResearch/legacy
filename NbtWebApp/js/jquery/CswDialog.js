@@ -123,7 +123,8 @@
 								'onSave': function (nodeid, cswnbtnodekey) {
 									$div.dialog('close');
 									o.onAddNode(nodeid, cswnbtnodekey);
-								}
+								},
+								'ShowAsReport': false
 							});
 
 							_openDiv($div, 800, 600);

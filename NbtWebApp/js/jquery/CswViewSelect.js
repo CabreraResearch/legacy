@@ -116,8 +116,8 @@
 		var $cell1 = $table.CswTable('cell', 1, 1);
 		var $icondiv = $('<div />').appendTo($cell1);
 		$icondiv.css('background-image', x.iconurl);
-		$icondiv.css('width', '18px');
-		$icondiv.css('height' ,'18px');
+		$icondiv.css('width', '16px');
+		$icondiv.css('height' ,'16px');
 
 		var $cell2 = $table.CswTable('cell', 1, 2);
 		$cell2.append(x.viewname);

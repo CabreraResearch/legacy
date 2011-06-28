@@ -3,6 +3,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -59,6 +60,14 @@ namespace ChemSW.Nbt.ObjClasses
                 _CswNbtNode.Properties.clearModifiedFlag();  // prevents multiple error messages from appearing if we attempt to write() again
                 throw new CswDniException( "You may not change your own administrator status", "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the Administrator property of their own Role" );
             }
+
+			// case 22512
+			if( this.Name.Text == "chemsw_admin_role" &&
+				_CswNbtResources.CurrentNbtUser.Username != "chemsw_admin" &&
+				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
+			{
+				throw new CswDniException( "The 'chemsw_admin_role' role cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the 'chemsw_admin_role' role." );
+			}
 
 			// case 22437
 			if( ActionPermissions.WasModified )
