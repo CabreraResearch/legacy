@@ -280,10 +280,12 @@
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('online')) {
                 $onlineStatus.removeClass('online')
-                                     .addClass('offline')
-                                     .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                     .text('Offline')
-                    .end();
+                             .addClass('offline')
+                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                             .text('Offline')
+                             .removeClass('online')
+                             .addClass('offline')
+                             .end();
                 $('.refresh').css('visibility', 'hidden');
 
                 $viewsdiv = reloadViews(); //no changePage
@@ -299,10 +301,12 @@
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('offline')) {
                 $onlineStatus.removeClass('offline')
-                                     .addClass('online')
-                                     .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                     .text('Online')
-                    .end();
+                             .addClass('online')
+                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                             .text('Online')
+                             .removeClass('offline')
+                             .addClass('online')
+                             .end();
 
                 $('.refresh').css('visibility', '');
                 $viewsdiv = reloadViews(); //no changePage
@@ -1505,10 +1509,14 @@
         function _resetPendingChanges(val, setlastsyncnow) {
             if (val) {
                 $('#ss_pendingchangecnt').text('Yes');
-                $('.onlineStatus').addClass('pendingchanges');
+                $('.onlineStatus').addClass('pendingchanges')
+                                  .find('span.ui-btn-text')
+                                  .addClass('pendingchanges');
             } else {
                 $('#ss_pendingchangecnt').text('No');
-                $('.onlineStatus').removeClass('pendingchanges');
+                $('.onlineStatus').removeClass('pendingchanges')
+                                  .find('span.ui-btn-text')
+                                  .removeClass('pendingchanges');
             }
             if (setlastsyncnow) {
                 var d = new Date();
@@ -1705,14 +1713,14 @@
        
             // update the xml and store it
             if (!isNullOrEmpty($currentViewXml)) {
+                _resetPendingChanges(true, false);
+                
                 var $divxml = $currentViewXml.find('#' + DivId);
                 $divxml.andSelf().find('prop').each(function() {
                     var $fieldtype = $(this);
                     _FieldTypeHtmlToXml($fieldtype, name, value);
                 });
-
                 _updateStoredViewXml(rootid, $currentViewXml, '1');
-                _resetPendingChanges(true, false);
             }
             cacheLogInfo(logger);
         } // onPropertyChange()
