@@ -320,7 +320,7 @@
                     $labelcell.addClass('propertylabel');
                     if($propxml.CswAttrXml('helptext') !== '')
                     {
-                        $('<a href="#" title="'+ $propxml.CswAttrXml('helptext') + '" onclick="return false;">'+ $propxml.CswAttrXml('name') +'</a>')
+                        $('<a href="#" class="cswprop_helplink" title="'+ $propxml.CswAttrXml('helptext') + '" onclick="return false;">'+ $propxml.CswAttrXml('name') +'</a>')
                             .appendTo($labelcell);
                     }
                     else
