@@ -206,21 +206,21 @@ namespace ChemSW.Nbt.WebServices
 			    }
 			    MenuNode.Add( ExportNode );
 
-			    // MOBILE
-			    if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
-			    {
-			        string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
-			                       ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
-			        XElement MobileNode = new XElement( "item",
-			                                            new XAttribute( "text", "Mobile" ) );
-			        MobileNode.Add( new XElement( "item",
-			                                      new XAttribute( "text", "Export Mobile XML" ),
-			                                      new XAttribute( "popup", PopUp ) ) );
-			        MobileNode.Add( new XElement( "item",
-			                                      new XAttribute( "text", "Import Mobile XML" ),
-			                                      new XAttribute( "href", _CswNbtResources.Actions[CswNbtActionName.Load_Mobile_Data].Url ) ) );
-			        MenuNode.Add( MobileNode );
-			    }
+				//// MOBILE
+				//if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+				//{
+				//    string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
+				//                   ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+				//    XElement MobileNode = new XElement( "item",
+				//                                        new XAttribute( "text", "Mobile" ) );
+				//    MobileNode.Add( new XElement( "item",
+				//                                  new XAttribute( "text", "Export Mobile XML" ),
+				//                                  new XAttribute( "popup", PopUp ) ) );
+				//    MobileNode.Add( new XElement( "item",
+				//                                  new XAttribute( "text", "Import Mobile XML" ),
+				//                                  new XAttribute( "href", _CswNbtResources.Actions[CswNbtActionName.Load_Mobile_Data].Url ) ) );
+				//    MenuNode.Add( MobileNode );
+				//}
 
 			    //// SWITCH VIEW
 			    //ret += "<item text=\"Switch View\" popup=\"Popup_ChangeView.aspx\"/>";
