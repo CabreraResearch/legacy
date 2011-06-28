@@ -24,10 +24,9 @@
         var $div = $(this);
         var $ret = undefined;
         if (!isNullOrEmpty($div)) {
-            $ret = $('<ul id="' + tryParseString(id, '') + '"></ul>')
+            $ret = $('<ul class="csw_listview" id="' + tryParseString(id, '') + '"></ul>')
                                                     .appendTo($div)
                                                     .CswAttrXml(p);
-            $ret.listview();
         }
         return $ret;
     };
@@ -42,7 +41,6 @@
                 var $thisPage = $('#' + dataurl);
                 $thisPage.doChangePage();
             });
-
         }
         return $ret;
     };
@@ -64,10 +62,8 @@
         var $div = $(this);
         var ret = false;
         if (!isNullOrEmpty($div)) {
-            //$div.cachePage(); //not yet, but we'll want to update the cache with the latest version of content
             var $page = $.mobile.activePage;
             var id = (isNullOrEmpty($page)) ? 'no ID' : $page.CswAttrDom('id');
-            //if(doLogging()) log('doChangePage from: ' + id + ' to: ' + $div.CswAttrDom('id'),true);
 
             if (id !== $div.CswAttrDom('id')) ret = $.mobile.changePage($div, o);
         }
@@ -78,9 +74,7 @@
         var $div = $(this);
         var ret = false;
         if (!isNullOrEmpty($div)) {
-            //if(doLogging()) log('doPage on ' + $div.CswAttrDom('id'),true);
-            //ret = $.mobile.loadPage( $div.CswAttrXml('data-url'));
-            ret = $div.page(); //cachePage() //not yet, but we'll want to update the cache with the latest version of content
+            ret = $div.page(); 
         }
         return ret;
     };
@@ -98,10 +92,8 @@
                 level: 1,
                 HideRefreshButton: false,
                 HideSearchButton: false,
-                persistBindEvent: false,
                 onPageShow: function(p) {
-                },
-                onSuccess: function() { $.mobile.hidePageLoadingMsg(); }
+                }
             };
 
             if (params) $.extend(p, params);
@@ -113,12 +105,8 @@
 
                 if (p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
-                if (!p.persistBindEvent) {
-                    // If the page is constructed entirely from cache, we only do this once.
-                    $(this).unbind('pageshow');
-                }
+                if($('#logindiv')) $('#logindiv').remove();
             });
-
         }
         return $ret;
     };
@@ -135,7 +123,6 @@
             DBVersion: '1.0',
             DBDisplayName: 'Mobile.html',
             DBMaxSize: 65536,
-            //ViewUrl: '/NbtWebApp/wsNBT.asmx/RunView',
             ViewsListUrl: '/NbtWebApp/wsNBT.asmx/GetViewsList',
             ViewUrl: '/NbtWebApp/wsNBT.asmx/GetView',
             ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
@@ -167,8 +154,6 @@
         var storedViews = '';
         if (localStorage.storedViews) storedViews = JSON.parse(localStorage['storedviews']); // {name: '', rootid: ''}
 
-        //$body.restorePages(); //not yet. someday.
-
         var $logindiv = _loadLoginDiv();
         var $viewsdiv = _loadViewsDiv();
         var $syncstatus = _makeSyncStatusDiv();
@@ -178,15 +163,18 @@
         // case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
         if (!isNullOrEmpty(SessionId)) {
-            $.mobile.path.set('#viewsdiv'); // we can use restorePages() to eliminate this later.
+            $.mobile.path.set('#viewsdiv'); 
+        }
+        else {
+            $.mobile.path.set('#logindiv'); 
         }
 
         if (!isNullOrEmpty(SessionId)) {
             $viewsdiv = reloadViews();
             $viewsdiv.page();
-            //$viewsdiv.doChangePage(); //JQM will do this for us.
             _waitForData();
-        } else {
+        } 
+        else {
             // this will trigger _waitForData(), but we don't want to wait here
             _handleDataCheckTimer(
                 function() {
@@ -200,7 +188,7 @@
                     $sorrycharliediv.doChangePage();
                 }
             ); // _handleDataCheckTimer();
-        } // if-else (configvar_sessionid != '' && configvar_sessionid != undefined)
+        } 
 
         function _loadLoginDiv() {
             var LoginContent = '<input type="textbox" id="login_customerid" placeholder="Customer Id"/><br>';
@@ -241,22 +229,13 @@
                 level: 0,
                 HideRefreshButton: true,
                 HideSearchButton: true,
-                HideBackButton: true,
-                onPageShow: function(p) { return _loadDivContents(p); }
+                HideBackButton: true
             };
-            var $retDiv = _addPageDivToBody({
-                    DivId: 'viewsdiv',
-                    HeaderText: 'Views',
-                    HideRefreshButton: false,
-                    HideSearchButton: true,
-                    HideOnlineButton: false,
-                    HideLogoutButton: false,
-                    HideHelpButton: false,
-                    HideCloseButton: true,
-                    HideBackButton: true,
-                    onPageShow: function(p) { return _loadDivContents(p); }
-                });
+            params.onPageShow = function(p) { return _loadDivContents(p); };
+            
+            var $retDiv = _addPageDivToBody(params);
             $retDiv.bindJqmEvents(params);
+            
             return $retDiv;
         }
 
@@ -267,28 +246,16 @@
                 HideHelpButton: false,
                 HideCloseButton: true,
                 HideOnlineButton: false,
-                content: 'You must have internet connectivity to login.'
+                HideBackButton: true,
+                HideRefreshButton: true,
+                HideLogoutButton: true,
+                HideSearchButton: true,
+                dataRel: 'dialog',
+                $content: 'You must have internet connectivity to login.'
             };
             if (params) $.extend(p, params);
-
-            $retDiv = _addPageDivToBody({
-                    DivId: p.DivId,
-                    HeaderText: p.HeaderText,
-                    HideSearchButton: true,
-                    HideOnlineButton: p.HideOnlineButton,
-                    HideRefreshButton: true,
-                    HideLogoutButton: true,
-                    HideHelpButton: p.HideHelpButton,
-                    HideCloseButton: p.HideCloseButton,
-                    HideBackButton: true,
-                    dataRel: 'dialog',
-                    $content: $('<p>' + p.content + '</p>')
-                });
+            var $retDiv = _addPageDivToBody(p);
             return $retDiv;
-        }
-
-        function removeDiv(DivId) {
-            $('#' + DivId).find('div:jqmData(role="content")').empty();
         }
 
         function reloadViews() {
@@ -316,10 +283,12 @@
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('online')) {
                 $onlineStatus.removeClass('online')
-                                     .addClass('offline')
-                                     .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                     .text('Offline')
-                    .end();
+                             .addClass('offline')
+                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                             .text('Offline')
+                             .removeClass('online')
+                             .addClass('offline')
+                             .end();
                 $('.refresh').css('visibility', 'hidden');
 
                 $viewsdiv = reloadViews(); //no changePage
@@ -335,10 +304,12 @@
             var $onlineStatus = $('.onlineStatus');
             if ($onlineStatus.hasClass('offline')) {
                 $onlineStatus.removeClass('offline')
-                                     .addClass('online')
-                                     .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                     .text('Online')
-                    .end();
+                             .addClass('online')
+                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                             .text('Online')
+                             .removeClass('offline')
+                             .addClass('online')
+                             .end();
 
                 $('.refresh').css('visibility', '');
                 $viewsdiv = reloadViews(); //no changePage
@@ -375,18 +346,27 @@
             if (doLogging()) {
                 var logger = new profileMethod('setStartLog');
                 cacheLogInfo(logger);
-                var $loggingBtn = $('.debug');
-                $loggingBtn.removeClass('debug-off')
-                                   .addClass('debug-on')
-                                   .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                   .text('Sync Log')
-                    .end();
+                var $loggingBtn = $('.debug')
+                                       .removeClass('debug-off')
+                                       .addClass('debug-on')
+                                       .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                                       .text('Sync Log')
+                                       .addClass('debug-on')
+                                       .removeClass('debug-off')
+                                       .end();
             }
         }
 
         function setStopLog() {
             if (!doLogging()) {
-                var $loggingBtn = $('.debug');
+                var $loggingBtn = $('.debug')
+                                       .removeClass('debug-on')
+                                       .addClass('debug-off')
+                                       .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                                       .text('Sync Log')
+                                       .addClass('debug-off')
+                                       .removeClass('debug-on')
+                                       .end();
                 var logger = new profileMethod('setStopLog');
                 cacheLogInfo(logger);
 
@@ -397,18 +377,36 @@
                     'LogInfo': sessionStorage['debuglog']
                 };
 
-                CswAjaxJSON({
-                        url: opts.SendLogUrl,
-                        data: dataJson,
-                        success: function() {
-                            $loggingBtn.removeClass('debug-on')
-                                            .addClass('debug-off')
-                                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                            .text('Start Log')
-                                .end();
-                            purgeLogInfo();
-                        }
-                    });
+//                CswAjaxJSON({
+//                        url: opts.SendLogUrl,
+//                        data: dataJson,
+//                        success: function() {
+//                            $loggingBtn.removeClass('debug-on')
+//                                            .addClass('debug-off')
+//                                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+//                                            .text('Start Log')
+//                                .end();
+//                            purgeLogInfo();
+//                        }
+//                    });
+
+                var params = {
+                    DivId: 'loginfodiv',
+                    HeaderText: 'Log Info',
+                    HideHelpButton: false,
+                    HideCloseButton: true,
+                    HideOnlineButton: false,
+                    HideBackButton: false,
+                    HideRefreshButton: true,
+                    HideLogoutButton: true,
+                    HideSearchButton: true,
+                    dataRel: 'dialog',
+                    $content: $( JSON.parse(sessionStorage['debuglog']))
+                };
+                var $logDiv = _addPageDivToBody(params);
+                $logDiv.bindJqmEvents(params);
+                $logDiv.doChangePage();
+                $.mobile.hidePageLoadingMsg();
             }
         }
 
@@ -418,6 +416,8 @@
 
         function _loadDivContents(params) {
             var logger = new profileMethod('loadDivContents');
+           // $.mobile.showPageLoadingMsg();
+            
             var p = {
                 ParentId: '',
                 level: 1,
@@ -426,9 +426,7 @@
                 HideRefreshButton: false,
                 HideSearchButton: false,
                 $xml: '',
-                SessionId: SessionId,
-                onSuccess: function() {
-                }
+                SessionId: SessionId
             };
             if (params) $.extend(p, params);
 
@@ -466,7 +464,6 @@
                     }
                 }
             }
-            logger.setEnded();
             cacheLogInfo(logger);
             return $retDiv;
         } // _loadDivContents()
@@ -478,6 +475,7 @@
         }
 
         function _getDivXml(params) {
+            var logger = new profileMethod('getDivXml');
             var $retDiv = undefined;
 
             var p = {
@@ -490,29 +488,26 @@
                 ParentId: p.DivId,
                 formobile: ForMobile
             };
-            //clearPath();
             CswAjaxXml({
                     //async: false,   // required so that the link will wait for the content before navigating
                     url: p.url,
                     data: dataXml,
                     onloginfail: function(text) { onLoginFail(text); },
                     success: function($xml) {
+                        logger.setAjaxSuccess();
                         $currentViewXml = $xml;
                         p.$xml = $currentViewXml;
                         if (params.level === 1) {
                             _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                         }
                         $retDiv = _loadDivContentsXml(p);
-                    },
-                    error: function(xml) {
                     }
                 });
-
+            cacheLogInfo(logger);
             return $retDiv;
         }
 
         var currenttab;
-        var onAfterAddDiv;
 
         function _processViewXml(params) {
             var logger = new profileMethod('processViewXml');
@@ -530,9 +525,7 @@
                 HideLogoutButton: false,
                 HideHelpButton: false,
                 HideCloseButton: true,
-                HideBackButton: false,
-                onSuccess: function() {
-                }
+                HideBackButton: false
             };
             if (params) $.extend(p, params);
 
@@ -551,27 +544,32 @@
                 });
 
             var $content = $retDiv.find('div:jqmData(role="content")').empty();
+
             var $list = $content.makeUL();
             currenttab = '';
 
-            onAfterAddDiv = function($retDiv) {
-            };
-
             p.$xml.children().each(function() {
                 p.$xmlitem = $(this);
-                var $li = _makeListItemFromXml($list, p)
-                                    .CswAttrXml('data-icon', false)
-                                    .appendTo($list);
+                _makeListItemFromXml($list, p)
+                    .CswAttrXml('data-icon', false)
+                    .appendTo($list);
             });
-            $list.listview('refresh')
-                 .bindLI();
-            $('.csw_collapsible').page();
-            $('.csw_fieldset').page();
-            
-            onAfterAddDiv($retDiv);
+            logger.setAjaxSuccess();
+            try {
+                $('.csw_collapsible').page();
+                $('.csw_fieldset').page();
+                $('.csw_listview').page();
+            }
+            catch(e) //this is hackadelic, but it works. 
+            {
+                $('.csw_collapsible').page();
+                $('.csw_fieldset').page();
+                $('.csw_listview').page();
+            }
+            $content.page();
 
-            p.onSuccess();
-            logger.setEnded();
+            $.mobile.hidePageLoadingMsg();
+            
             cacheLogInfo(logger);
             return $retDiv;
         } // _processViewXml()
@@ -634,23 +632,23 @@
                     } else {
                         $retLI.val(text);
                     }
-                    if (p.parentlevel === 0) {
-                        var $newDiv = _preFormNextLevelPages({
-                                ParentId: p.DivId,
-                                parentlevel: p.parentlevel,
-                                level: p.parentlevel + 1,
-                                DivId: id,
-                                // Case 22211: IDC content is not cached. We need to reconstruct nodes on each page load.
-                                persistBindEvent: true,
-                                HeaderText: text
-                                //,$toolbar: $toolbar
-                            });
-                        $newDiv.addClass('CswNbtView')
-                                           .doPage($newDiv.CswAttrXml('data-url'));
-                    }
                     break;
                 }// default:
             }
+            
+            $retLI.bind('vclick', function() {
+                var par = {ParentId: p.DivId,
+                    parentlevel: p.parentlevel,
+                    level: p.parentlevel + 1,
+                    DivId: id,
+                    persistBindEvent: true,
+                    HeaderText: text  };
+                var $div = _addPageDivToBody(par);
+                par.onPageShow = function() { _loadDivContents(par); };
+                $div.bindJqmEvents(par);
+                $div.doChangePage({reloadPage: true});
+            });
+            
             return $retLI;
         }// _makeListItemFromXml()
 
@@ -692,9 +690,9 @@
                 });
 
                 Html += '<li>';
+                Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">';
                 if (!isNullOrEmpty(icon))
                     Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">';
                 Html += '<h2>' + NodeName + '</h2>';
                 Html += '<p>' + Location + '</p>';
                 Html += '<p>' + MountPoint + '</p>';
@@ -714,16 +712,8 @@
                 break;
             }
 
-            var $newDiv = _preFormNextLevelPages({
-                                  ParentId: p.DivId,
-                                  parentlevel: p.parentlevel,
-                                  level: p.parentlevel + 1,
-                                  DivId: id,
-                                  HeaderText: NodeName
-                              })
-                                  .addClass('CswNbtNode');
-
-            $retHtml = $(Html); //.listview('refresh');
+            $retHtml = $(Html);
+            
             return $retHtml;
         }
 
@@ -765,9 +755,7 @@
             }
             
             if( FieldType !== 'Question' && FieldType !== 'Logical') {
-                $retLi.css('height',(FieldType === 'Memo') ? '100px' : '75px');
-                $fieldcontain.addClass('ui-grid-a');
-                $propDiv = $('<div class="ui-block-b"></div>')
+                $propDiv = $('<div></div>')
                                 .appendTo($fieldcontain);
             }
             
@@ -1073,20 +1061,14 @@
                 
                 $answer.unbind('vclick');
                 $answer.bind('vclick', function(eventObj) {
+                    var logger = new profileMethod('questionClick');
 
-                    var $this = $(this);
                     var thisAnswer = eventObj.srcElement.innerText;
 
                     for (var i = 0; i < answers.length; i++) {
                         var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
                         var $ansBtn = $('#' + answerid);
-
-                        if($ansBtn.text() === thisAnswer ) {
-                            $ansBtn = toggleButton($ansBtn, true);
-                        }
-                        else {
-                            $ansBtn = toggleButton($ansBtn, false);
-                        }
+                        toggleButton($ansBtn, ($ansBtn.text() === thisAnswer));
                     }
 
                     var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
@@ -1117,13 +1099,13 @@
                             $parentfieldset.CswAttrDom('answered', 'true');
                         }
                     }
-                    onPropertyChange(ParentId, eventObj, $this.text(), answerName);
+                    logger.setAjaxSuccess();
+                    setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName); }, 10);
+                    cacheLogInfo(logger);
                     return false;
                 });
-                //$retHtml.data('thisI', i);
             } // for (var i = 0; i < answers.length; i++)
-            
-//            $retHtml.find('input[type="radio"]').checkboxradio();
+
             return $fieldset;
         } // _makeQuestionAnswerFieldSet()
 
@@ -1148,25 +1130,6 @@
             return $button;
         }
         
-        function _preFormNextLevelPages(params) {
-            var $retDiv = undefined;
-            var p = {
-                ParentId: '',
-                parentlevel: 0,
-                level: 1,
-                DivId: '',
-                HeaderText: '',
-                $toolbar: '',
-                persistBindEvent: false,
-                onPageShow: function(p) { return _loadDivContents(p); }
-            };
-            if (params) $.extend(p, params);
-
-            $retDiv = _addPageDivToBody(p);
-            $retDiv.bindJqmEvents(p);
-            return $retDiv;
-        }
-
         function _addPageDivToBody(params) {
             var p = {
                 ParentId: undefined,
@@ -1212,7 +1175,8 @@
                                         'data-role': 'page',
                                         'data-url': p.DivId,
                                         'data-title': p.HeaderText,
-                                        'data-rel': p.dataRel
+                                        'data-rel': p.dataRel,
+                                        'data-add-back-btn': !isTrue(p.HideBackButton)              
                                     });
 
                 var $header = $pageDiv.CswDiv('init', { ID: p.DivId + '_header' })
@@ -1230,10 +1194,9 @@
                                             })
                                                 .CswAttrXml({
                                                 'data-identity': p.DivId + '_back', 
-                                                     //'data-url': p.DivId + '_back',
                                                 'data-rel': 'back',
                                                 'data-direction': 'reverse'
-                                            });
+                                            })
 
                 $closeBtn = $header.CswLink('init', {
                                                href: 'javascript:void(0)',
@@ -1252,10 +1215,6 @@
                 if (!isNullOrEmpty(p.backtransition)) {
                     $backlink.CswAttrXml('data-transition', p.backtransition);
                 }
-//                if ( isNullOrEmpty(p.ParentId) )
-//                {
-//                    $backlink.css('visibility','hidden');
-//                }
 
                 if (!isNullOrEmpty(p.backicon)) {
                     $backlink.CswAttrXml('data-icon', p.backicon);
@@ -1309,7 +1268,7 @@
                 $syncstatusBtn = $footerCtn.CswLink('init', {
                                                         'href': 'javascript:void(0)',
                                                         ID: p.DivId + '_gosyncstatus',
-                                                        cssclass: onlineClass, // + ' ui-btn-left',  
+                                                        cssclass: onlineClass, 
                                                         value: onlineValue
                                                     })
                                                         .CswAttrXml({
@@ -1318,26 +1277,25 @@
                                                         'data-transition': 'pop',
                                                         'data-rel': 'dialog'
                                                     })
-                                                        .css('display', '');
+                                                    .css('display', '');
 
                 $refreshBtn = $footerCtn.CswLink('init', {
                                                            'href': 'javascript:void(0)',
                                                            ID: p.DivId + '_refresh',
                                                            value: 'Refresh',
                                                            cssclass: 'refresh'
-                                                       }) //, ui-btn-left'})
+                                                       }) 
                                                            .CswAttrXml({
                                                            'data-identity': p.DivId + '_refresh',
                                                            'data-url': p.DivId + '_refresh'
                                                        })
-                                                           .css('display', '');
+                                                       .css('display', '');
 
                 $logoutBtn = $footerCtn.CswLink('init', {
                                                         'href': 'javascript:void(0)',
                                                         ID: p.DivId + '_logout',
                                                         value: 'Logout'
                                                     })
-                    //, cssclass: 'ui-btn-left' })
                                                         .CswAttrXml({
                                                         'data-identity': p.DivId + '_logout',
                                                         'data-url': p.DivId + '_logout',
@@ -1355,7 +1313,6 @@
                                              ID: p.DivId + '_help',
                                              value: 'Help'
                                          })
-                    //, cssclass: 'ui-btn-left' })
                                              .CswAttrXml({
                                              'data-identity': p.DivId + '_help',
                                              'data-url': p.DivId + '_help',
@@ -1367,7 +1324,7 @@
                 $loggingBtn = $footerCtn.CswLink('init', {
                                                  'href': 'javascript:void(0)',
                                                  ID: p.DivId + '_debuglog',
-                                                 value: doLogging() ? 'Start Log' : 'Sync Log',
+                                                 value: doLogging() ? 'Sync Log' : 'Start Log',
                                                  cssclass: 'debug'
                                              })
                                                  .addClass(doLogging() ? 'debug-on' : 'debug-off');
@@ -1402,7 +1359,7 @@
                 $headerOnlineBtn.css('display', 'none');
             } else {
                 $headerOnlineBtn.show()
-                                        .css('display', '');
+                                .css('display', '');
             }
             if (p.dataRel === 'dialog' && !p.HideCloseButton) {
                 $closeBtn.css('display', '');
@@ -1422,8 +1379,6 @@
 
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
 
-            //$pageDiv.cachePage(); //not yet
-
             return $pageDiv;
 
         }// _addPageDivToBody()
@@ -1440,60 +1395,60 @@
 
         function _bindPageEvents(DivId, ParentId, level, $div) {
             $div.find('#' + DivId + '_searchopen')
-                        .unbind('vclick')
-                        .bind('vclick', function() {
-                            onSearchOpen(DivId);
-                            return false;
-                        })
-                        .end()
-                        .find('#' + DivId + '_gosyncstatus')
-                        .unbind('vclick')
-                        .bind('vclick', function() {
-                            onSyncStatusOpen(DivId);
-                            return false;
-                        })
-                        .end()
-                        .find('#' + DivId + '_refresh')
-                        .unbind('vclick')
-                        .bind('vclick', function() {
-                            $.mobile.showPageLoadingMsg();
-                            return onRefresh();
-                        })
-                        .end()
-                        .find('#' + DivId + '_logout')
-                        .unbind('vclick')
-                        .bind('vclick', function(e) {
-                            onLogout(DivId, e);
-                            return false;
-                        })
-                        .end()
-                        .find('#' + DivId + '_help')
-                        .unbind('vclick')
-                        .bind('vclick', function() {
-                            onHelp(DivId, ParentId);
-                            return false;
-                        })
-                        .end()
-                        .find('#' + DivId + '_debuglog')
-                        .die('vclick')
-                        .live('vclick', function() {
-                            _toggleLogging();
-                            return false;
-                        })
-                        .end()
-                        .find('textarea')
-                        .unbind('change')
-                        .bind('change', function(eventObj) {
-                            var $this = $(this);
-                            onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
-                        })
-                        .end()
-                        .find('.csw_prop_select')
-                        .unbind('change')
-                        .bind('change', function(eventObj) {
-                            var $this = $(this);
-                            onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
-                        })
+                .unbind('vclick')
+                .bind('vclick', function() {
+                    onSearchOpen(DivId);
+                    return false;
+                })
+                .end()
+                .find('#' + DivId + '_gosyncstatus')
+                .unbind('vclick')
+                .bind('vclick', function() {
+                    onSyncStatusOpen(DivId);
+                    return false;
+                })
+                .end()
+                .find('#' + DivId + '_refresh')
+                .unbind('vclick')
+                .bind('vclick', function() {
+                    onRefresh();
+                    return false;
+                })
+                .end()
+                .find('#' + DivId + '_logout')
+                .unbind('vclick')
+                .bind('vclick', function(e) {
+                    onLogout(DivId, e);
+                    return false;
+                })
+                .end()
+                .find('#' + DivId + '_help')
+                .unbind('vclick')
+                .bind('vclick', function() {
+                    onHelp(DivId, ParentId);
+                    return false;
+                })
+                .end()
+                .find('#' + DivId + '_debuglog')
+                .die('vclick')
+                .live('vclick', function() {
+                    _toggleLogging();
+                    return false;
+                })
+                .end()
+                .find('textarea')
+                .unbind('change')
+                .bind('change', function(eventObj) {
+                    var $this = $(this);
+                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
+                })
+                .end()
+                .find('.csw_prop_select')
+                .unbind('change')
+                .bind('change', function(eventObj) {
+                    var $this = $(this);
+                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
+                })
                 .end();
         }
 
@@ -1540,7 +1495,6 @@
         }
 
         function _toggleOffline() {
-            //eventObj.preventDefault();
             if (!amOnline()) {
                 _clearWaitForData();
                 _waitForData();
@@ -1556,10 +1510,14 @@
         function _resetPendingChanges(val, setlastsyncnow) {
             if (val) {
                 $('#ss_pendingchangecnt').text('Yes');
-                $('.onlineStatus').addClass('pendingchanges');
+                $('.onlineStatus').addClass('pendingchanges')
+                                  .find('span.ui-btn-text')
+                                  .addClass('pendingchanges');
             } else {
                 $('#ss_pendingchangecnt').text('No');
-                $('.onlineStatus').removeClass('pendingchanges');
+                $('.onlineStatus').removeClass('pendingchanges')
+                                  .find('span.ui-btn-text')
+                                  .removeClass('pendingchanges');
             }
             if (setlastsyncnow) {
                 var d = new Date();
@@ -1569,8 +1527,10 @@
 
         // returns true if no pending changes or user is willing to lose them
         function _checkNoPendingChanges() {
-            return (!_pendingChanges() ||
+            var pendingChanges = (!_pendingChanges() ||
                 confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
+            $.mobile.hidePageLoadingMsg();
+            return pendingChanges;
         }
 
         function _pendingChanges() {
@@ -1639,7 +1599,6 @@
                     ForMobile: ForMobile
                 };
 
-                //clearPath();
                 CswAjaxJSON({
                         formobile: ForMobile,
                         async: false,
@@ -1652,8 +1611,7 @@
                             SessionId = $.CswCookie('get', CswCookieName.SessionId);
                             _cacheSession(SessionId, UserName, AccessId);
                             $viewsdiv = reloadViews();
-                            $viewsdiv.doChangePage({changeHash: false});
-                            //restorePath();
+                            $viewsdiv.doChangePage();
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown) {
                             $.mobile.hidePageLoadingMsg();
@@ -1661,9 +1619,7 @@
                     });
             }
 
-        }
-
-//onLoginSubmit() 
+        } //onLoginSubmit() 
 
         function onLoginFail(text) {
             Logout(false);
@@ -1691,17 +1647,12 @@
         }
 
         function onRefresh() {
-            if (amOnline()) {
-                if (_checkNoPendingChanges()) {
-                    continueRefresh();
-                }
-            }
-            return false;
-        }
-
-        function continueRefresh() {
+            $.mobile.showPageLoadingMsg();
             var DivId = localStorage['currentviewid'];
-            if (!isNullOrEmpty(DivId)) {
+            if (amOnline() && 
+                _checkNoPendingChanges() &&
+                !isNullOrEmpty(DivId) ) {
+                
                 var HeaderText = _getDivHeaderText(DivId);
                 var dataXml = {
                     SessionId: SessionId,
@@ -1733,16 +1684,11 @@
                                 onPageShow: function(p) { return _loadDivContents(p); }
                             };
 
-                            var $thisDiv = _loadDivContents(params);
-                            //$thisDiv.bindJqmEvents(params);
-                            $thisDiv.doChangePage();
-
-                            $.mobile.hidePageLoadingMsg();
-                        }, // success
-                        error: function(txt) {
-                        }
+                            _loadDivContents(params);
+                        } // success
                     });
             }
+            $.mobile.hidePageLoadingMsg();
         }
 
         function onSyncStatusOpen(DivId) {
@@ -1763,22 +1709,19 @@
        
             // update the xml and store it
             if (!isNullOrEmpty($currentViewXml)) {
+                _resetPendingChanges(true, false);
+                
                 var $divxml = $currentViewXml.find('#' + DivId);
                 $divxml.andSelf().find('prop').each(function() {
                     var $fieldtype = $(this);
                     _FieldTypeHtmlToXml($fieldtype, name, value);
                 });
-
                 _updateStoredViewXml(rootid, $currentViewXml, '1');
-                _resetPendingChanges(true, false);
             }
-            logger.setEnded();
             cacheLogInfo(logger);
         } // onPropertyChange()
 
         function onSearchOpen(DivId) {
-            var searchprop = $('#' + DivId + '_searchprop').val();
-            var searchfor = $('#' + DivId + '_searchfor').val();
             var $xmlstr = _fetchCachedViewXml(rootid);
             if (!isNullOrEmpty($xmlstr)) {
                 var $wrapper = $('<div></div>');
@@ -1790,27 +1733,28 @@
 
                 $xmlstr.children('search').each(function() {
                     var $search = $(this);
-                    var $option = $('<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>')
+                    $('<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>')
                                             .appendTo($select);
                 });
 
                 var $searchCtn = $('<div data-role="fieldcontain"></div>')
                                             .appendTo($wrapper);
-                var $searchBox = $searchCtn.CswInput('init', { type: CswInput_Types.search, ID: DivId + '_searchfor' })
+                $searchCtn.CswInput('init', { type: CswInput_Types.search, ID: DivId + '_searchfor' })
                                                     .CswAttrXml({
                                                     'placeholder': 'Search',
                                                     'data-placeholder': 'Search'
                                                 });
-                var $goBtn = $wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
-                                                .CswAttrXml({ 'data-inline': 'true' })
-                                                .bind('click', function() {
+                $wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
+                                                .CswAttrXml({ 'data-role': 'button' })
+                                                .bind('vclick', function() {
                                                     onSearchSubmit(DivId);
+                                                    return false;
                                                 });
-                var $results = $wrapper.CswDiv('init', { ID: DivId + '_searchresults' });
+                $wrapper.CswDiv('init', { ID: DivId + '_searchresults' });
 
                 var $searchDiv = _addPageDivToBody({
                         ParentId: DivId,
-                        DivId: 'CswMobile_SearchDiv',
+                        DivId: 'CswMobile_SearchDiv' + rootid,
                         HeaderText: 'Search',
                         $content: $wrapper,
                         HideSearchButton: true,
@@ -1821,7 +1765,7 @@
                         HideCloseButton: true,
                         HideBackButton: false
                     });
-                $searchDiv.doChangePage({ transition: 'slideup', changeHash: false });
+                $searchDiv.doChangePage({ transition: 'slideup' });
             }
         }
 
@@ -1841,26 +1785,24 @@
                     if (!isNullOrEmpty($node.CswAttrXml(searchprop))) {
                         if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0) {
                             hitcount++;
-                            $content.append(_makeListItemFromXml($content, {
-                                    ParentId: DivId + '_searchresults',
-                                    DivId: DivId + '_searchresultslist',
-                                    HeaderText: 'Results',
-                                    $xmlitem: $node,
-                                    parentlevel: 1
-                                })
-                                            );
-                            $content.bindLI();
+                            $content.append(
+                                        _makeListItemFromXml($content, {
+                                                ParentId: DivId + '_searchresults',
+                                                DivId: DivId + '_searchresultslist',
+                                                HeaderText: 'Results',
+                                                $xmlitem: $node,
+                                                parentlevel: 1 }
+                                        )
+                                    );
                         }
                     }
                 });
                 if (hitcount === 0) {
                     $content.append($('<li>No Results</li>'));
                 }
-                $content.listview('refresh');
+                $content.page();
             }
-        }
-
-// onSearchSubmit()
+        } // onSearchSubmit()
 
         // ------------------------------------------------------------------------------------
         // Persistance functions
@@ -1871,11 +1813,10 @@
             localStorage['username'] = username;
             localStorage['customerid'] = customerid;
             localStorage['sessionid'] = sessionid;
-        }
-
-//_cacheSession()
+        } //_cacheSession()
 
         function _storeViewXml(rootid, rootname, $viewxml) {
+            var logger = new profileMethod('storeViewXml');
             if (isNullOrEmpty(storedViews)) {
                 storedViews = [{ rootid: rootid, name: rootname }];
             } else if (storedViews.indexOf(rootid) === -1) {
@@ -1883,6 +1824,7 @@
             }
             localStorage["storedviews"] = JSON.stringify(storedViews);
             localStorage[rootid] = JSON.stringify({ name: rootname, xml: xmlToString($viewxml), wasmodified: false });
+            cacheLogInfo(logger);
         }
 
         function _updateStoredViewXml(rootid, $viewxml, wasmodified) {
@@ -1958,7 +1900,6 @@
             if (opts.RandomConnectionFailure) {
                 url = opts.ConnectTestRandomFailUrl;
             }
-            //clearPath();
             CswAjaxXml({
                     formobile: ForMobile,
                     url: url,
@@ -1971,7 +1912,6 @@
                         if (!isNullOrEmpty(onSuccess)) {
                             onSuccess($xml);
                         }
-                        //restorePath();
                     },
                     error: function(xml) {
                         setOffline();
@@ -1980,12 +1920,9 @@
                             onFailure($xml);
                         }
                         _waitForData();
-                        //restorePath();
                     }
                 });
-        }
-
-//_handleDataCheckTimer()
+        } //_handleDataCheckTimer()
 
         function _processChanges(perpetuateTimer) {
             var logger = new profileMethod('processChanges');
@@ -1999,7 +1936,6 @@
                             ForMobile: ForMobile
                         };
 
-                        //clearPath();
                         CswAjaxJSON({
                                 formobile: ForMobile,
                                 url: opts.UpdateUrl,
@@ -2024,7 +1960,6 @@
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
-                                    //restorePath();
                                 }
                             });
                     } else {
@@ -2037,11 +1972,8 @@
                 if (perpetuateTimer)
                     _waitForData();
             } // if(SessionId != '') 
-            logger.setEnded();
             cacheLogInfo(logger);
-        }
-
-//_processChanges()
+        } //_processChanges()
 
         // For proper chaining support
         return this;
