@@ -1074,17 +1074,17 @@
                             $li.removeClass('OOC');
                         }
                     }
-                    if (!isNullOrEmpty(Answer)) {
-                        // update unanswered count when this question is answered
-                        var $parentfieldset = $('#' + IdStr + '_fieldset');
-                        if ($parentfieldset.CswAttrDom('answered')) {
-                            var $cntspan = $('#' + ParentId + '_unansweredcnt');
-                            $cntspan.text(parseInt($cntspan.text()) - 1);
-                            $parentfieldset.CswAttrDom('answered', 'true');
-                        }
-                    }
+//                    if (!isNullOrEmpty(Answer)) {
+//                        // update unanswered count when this question is answered
+//                        var $parentfieldset = $('#' + IdStr + '_fieldset');
+//                        if ($parentfieldset.CswAttrDom('answered')) {
+//                            var $cntspan = $('#' + ParentId + '_unansweredcnt');
+//                            $cntspan.text(parseInt($cntspan.text()) - 1);
+//                            $parentfieldset.CswAttrDom('answered', 'true');
+//                        }
+//                    }
                     logger.setAjaxSuccess();
-                    setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName); }, 10);
+                    setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName); }, 1);
                     cacheLogInfo(logger);
                     return false;
                 });
