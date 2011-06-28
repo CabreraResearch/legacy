@@ -155,7 +155,7 @@
         if (localStorage.storedViews) storedViews = JSON.parse(localStorage['storedviews']); // {name: '', rootid: ''}
 
         var $logindiv = _loadLoginDiv();
-        var $viewsdiv = _loadViewsDiv();
+        var $viewsdiv = reloadViews();
         var $syncstatus = _makeSyncStatusDiv();
         var $helpdiv = _makeHelpDiv();
         var $sorrycharliediv = _loadSorryCharlieDiv();
@@ -171,7 +171,6 @@
 
         if (!isNullOrEmpty(SessionId)) {
             $viewsdiv = reloadViews();
-            $viewsdiv.page();
             _waitForData();
         } 
         else {
@@ -219,26 +218,25 @@
             return $retDiv;
         }
 
-        function _loadViewsDiv() {
+        function reloadViews() {
             var params = {
-                ParentId: '',
-                DivId: 'viewsdiv',
-                HeaderText: 'Views',
-                $xml: '',
                 parentlevel: -1,
                 level: 0,
+                DivId: 'viewsdiv',
+                HeaderText: 'Views',
                 HideRefreshButton: true,
                 HideSearchButton: true,
                 HideBackButton: true
             };
-            params.onPageShow = function(p) { return _loadDivContents(p); };
-            
-            var $retDiv = _addPageDivToBody(params);
-            $retDiv.bindJqmEvents(params);
-            
-            return $retDiv;
+            if (!$viewsdiv) {
+                $viewsdiv = _addPageDivToBody(params);
+            }
+            params.onPageShow = function() { return _loadDivContents(params); };
+            $viewsdiv.doPage();
+            $viewsdiv.bindJqmEvents(params);
+            return $viewsdiv;
         }
-
+        
         function _loadSorryCharlieDiv(params) {
             var p = {
                 DivId: 'sorrycharliediv',
@@ -258,21 +256,7 @@
             return $retDiv;
         }
 
-        function reloadViews() {
-            if ($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
-            var params = {
-                parentlevel: -1,
-                level: 0,
-                DivId: 'viewsdiv',
-                HeaderText: 'Views',
-                HideRefreshButton: true,
-                HideSearchButton: true,
-                HideBackButton: true
-            };
-            params.onPageShow = function() { return _loadDivContents(params); };
-            $viewsdiv.bindJqmEvents(params);
-            return $viewsdiv;
-        }
+       
 
         // ------------------------------------------------------------------------------------
         // Online indicator
