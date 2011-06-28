@@ -264,19 +264,19 @@
 
         function setOffline() {
             amOnline(false);
-            var $onlineStatus = $('.onlineStatus');
-            if ($onlineStatus.hasClass('online')) {
-                $onlineStatus.removeClass('online')
-                             .addClass('offline')
-                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                             .text('Offline')
-                             .removeClass('online')
-                             .addClass('offline')
-                             .end();
-                $('.refresh').css('visibility', 'hidden');
+            
+            $('.onlineStatus').removeClass('online')
+                              .addClass('offline')
+                              .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                              .text('Offline')
+                              .removeClass('online')
+                              .addClass('offline')
+                              .end();
+            
+            $('.refresh').css('visibility', 'hidden');
 
-                $viewsdiv = reloadViews(); //no changePage
-            }
+            $viewsdiv = reloadViews(); //no changePage
+            
             if ($.mobile.activePage === $logindiv) {
                 $sorrycharliediv.doPage(); // doChangePage();
             }
@@ -285,22 +285,19 @@
 
         function setOnline() {
             amOnline(true);
-            var $onlineStatus = $('.onlineStatus');
-            if ($onlineStatus.hasClass('offline')) {
-                $onlineStatus.removeClass('offline')
-                             .addClass('online')
-                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                             .text('Online')
-                             .removeClass('offline')
-                             .addClass('online')
-                             .end();
-
+            
+            $('.onlineStatus').removeClass('offline')
+                              .addClass('online')
+                              .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                              .text('Online')
+                              .removeClass('offline')
+                              .addClass('online')
+                              .end();
                 $('.refresh').css('visibility', '');
                 $viewsdiv = reloadViews(); //no changePage
             }
             if ($.mobile.activePage === $sorrycharliediv) {
                 $logindiv.doPage(); //doChangePage();;
-            }
         }
 
         function amOnline(amOnline) {
@@ -449,7 +446,6 @@
                 }
             }
             cacheLogInfo(logger);
-            _toggleOffline(false);
             return $retDiv;
         } // _loadDivContents()
 
@@ -555,7 +551,8 @@
             $content.page();
 
             $.mobile.hidePageLoadingMsg();
-            
+            _toggleOffline(false);
+
             cacheLogInfo(logger);
             return $retDiv;
         } // _processViewXml()
@@ -1364,7 +1361,6 @@
             }
 
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
-
             return $pageDiv;
 
         }// _addPageDivToBody()
@@ -1481,19 +1477,20 @@
         }
 
         function _toggleOffline(doWaitForData) {
+            
             if (amOnline()) {
+                setOnline();
                 if(doWaitForData) {
                     _clearWaitForData();
                     _waitForData();
+                    $('#ss_gooffline span').text('Go Offline');
                 }
-                setOnline();
-                $('#ss_gooffline span').text('Go Offline');
             } else {
+                setOffline();
                 if( doWaitForData) {
                     _clearWaitForData();
+                    $('#ss_gooffline span').text('Go Online');
                 }
-                setOffline();
-                $('#ss_gooffline span').text('Go Online');
             }
         }
 
