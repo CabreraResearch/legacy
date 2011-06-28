@@ -180,7 +180,8 @@ namespace ChemSW.Nbt.WebPages
 
                         //bz # 6141. See notes in bz # 6521 
                         //string ViewXml = NodesView.ToString();
-                        Master.setSessionViewId( NodesView.SessionViewId, true );
+						NodesView.SaveToCache( true );
+						Master.setSessionViewId( NodesView.SessionViewId, true );
                     }
                     else
                     {
