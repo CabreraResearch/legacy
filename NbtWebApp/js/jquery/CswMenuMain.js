@@ -24,6 +24,7 @@
 			viewid: '',
 			nodeid: '',
 			cswnbtnodekey: '',
+			propid: '',
 			onAddNode: function(nodeid, cswnbtnodekey) { },
 			onMultiEdit: function() { },
             onSearch: { onViewSearch: function() {}, onGenericSearch: function() {} },
@@ -38,7 +39,8 @@
 
         var dataXml = {
             ViewId: o.viewid,
-            SafeNodeKey: o.cswnbtnodekey
+            SafeNodeKey: o.cswnbtnodekey,
+			PropIdAttr: o.propid
         };
 
 		CswAjaxXml({
