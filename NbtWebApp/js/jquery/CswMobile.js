@@ -165,6 +165,9 @@
         if (!isNullOrEmpty(SessionId)) {
             $.mobile.path.set('#viewsdiv'); 
         }
+        else {
+            $.mobile.path.set('#logindiv'); 
+        }
 
         if (!isNullOrEmpty(SessionId)) {
             $viewsdiv = reloadViews();
@@ -1408,8 +1411,8 @@
                 .find('#' + DivId + '_refresh')
                 .unbind('vclick')
                 .bind('vclick', function() {
-                    $.mobile.showPageLoadingMsg();
-                    return onRefresh();
+                    onRefresh();
+                    return false;
                 })
                 .end()
                 .find('#' + DivId + '_logout')
@@ -1644,17 +1647,12 @@
         }
 
         function onRefresh() {
-            if (amOnline()) {
-                if (_checkNoPendingChanges()) {
-                    continueRefresh();
-                }
-            }
-            return false;
-        }
-
-        function continueRefresh() {
+            $.mobile.showPageLoadingMsg();
             var DivId = localStorage['currentviewid'];
-            if (!isNullOrEmpty(DivId)) {
+            if (amOnline() && 
+                _checkNoPendingChanges() &&
+                !isNullOrEmpty(DivId) ) {
+                
                 var HeaderText = _getDivHeaderText(DivId);
                 var dataXml = {
                     SessionId: SessionId,
@@ -1686,13 +1684,11 @@
                                 onPageShow: function(p) { return _loadDivContents(p); }
                             };
 
-                            var $thisDiv = _loadDivContents(params);
-                            $thisDiv.doChangePage();
-
-                            $.mobile.hidePageLoadingMsg();
+                            _loadDivContents(params);
                         } // success
                     });
             }
+            $.mobile.hidePageLoadingMsg();
         }
 
         function onSyncStatusOpen(DivId) {
