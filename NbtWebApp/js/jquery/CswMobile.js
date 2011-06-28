@@ -1748,7 +1748,7 @@
                                                     'placeholder': 'Search',
                                                     'data-placeholder': 'Search'
                                                 });
-                $wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)',  })
+                $wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
                                                 .CswAttrXml({ 'data-role': 'button' })
                                                 .bind('vclick', function() {
                                                     onSearchSubmit(DivId);
