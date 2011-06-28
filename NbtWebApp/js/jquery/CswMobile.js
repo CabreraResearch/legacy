@@ -547,7 +547,7 @@
                     .CswAttrXml('data-icon', false)
                     .appendTo($list);
             });
-            
+            logger.setAjaxSuccess();
             try {
                 $('.csw_collapsible').page();
                 $('.csw_fieldset').page();
@@ -1056,20 +1056,14 @@
                 
                 $answer.unbind('vclick');
                 $answer.bind('vclick', function(eventObj) {
+                    var logger = new profileMethod('questionClick');
 
-                    var $this = $(this);
                     var thisAnswer = eventObj.srcElement.innerText;
 
                     for (var i = 0; i < answers.length; i++) {
                         var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
                         var $ansBtn = $('#' + answerid);
-
-                        if($ansBtn.text() === thisAnswer ) {
-                            $ansBtn = toggleButton($ansBtn, true);
-                        }
-                        else {
-                            $ansBtn = toggleButton($ansBtn, false);
-                        }
+                        toggleButton($ansBtn, ($ansBtn.text() === thisAnswer));
                     }
 
                     var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
@@ -1100,7 +1094,9 @@
                             $parentfieldset.CswAttrDom('answered', 'true');
                         }
                     }
-                    onPropertyChange(ParentId, eventObj, $this.text(), answerName);
+                    logger.setAjaxSuccess();
+                    setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName); }, 10);
+                    cacheLogInfo(logger);
                     return false;
                 });
             } // for (var i = 0; i < answers.length; i++)
