@@ -57,8 +57,31 @@ namespace ChemSW.Nbt.ObjClasses
             if( Administrator.WasModified && _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
             {
                 _CswNbtNode.Properties.clearModifiedFlag();  // prevents multiple error messages from appearing if we attempt to write() again
-                throw new CswDniException( "Users may not change their own administrator status", "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the Administrator property of their own Role" );
+                throw new CswDniException( "You may not change your own administrator status", "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the Administrator property of their own Role" );
             }
+
+			// case 22437
+			if( ActionPermissions.WasModified )
+			{
+				// You can never grant your own action permissions
+				if( _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
+				{
+					throw new CswDniException( "You may not grant access to actions for which you have no permissions",
+						"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit their own action permissions on role: " + _CswNbtNode.NodeName );
+				}
+				// You can only grant action permissions on other roles to which you have access
+				foreach( string ActionNameString in ActionPermissions.YValues )
+				{
+					CswNbtActionName ActionName = CswNbtAction.ActionNameStringToEnum( ActionNameString );
+					if( true == _CswNbtResources.Permit.can( ActionName, this ) &&
+						false == _CswNbtResources.Permit.can( ActionName, _CswNbtResources.CurrentNbtUser ) )
+					{
+						throw new CswDniException( "You may not grant access to actions for which you have no permissions",
+							"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + CswNbtAction.ActionNameEnumToString( ActionName ) + " to role " + _CswNbtNode.NodeName );
+					}
+				} // foreach( string ActionNameString in ActionPermissions.YValues )
+			} // if( ActionPermissions.WasModified )
+
             _CswNbtObjClassDefault.beforeWriteNode();
         }//beforeWriteNode()
 

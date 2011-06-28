@@ -54,7 +54,7 @@ namespace ChemSW.Nbt
 
         public void Reset()
         {
-            _Position = 0;
+            _Position = -1;
         }//Reset*(
 
         public object Current

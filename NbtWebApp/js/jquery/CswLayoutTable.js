@@ -103,7 +103,7 @@
                         							ID: o.ID + 'rembtn',
                         							onClick: function ($ImageDiv)
                         							{
-														_toggleRemove($table, $(this));
+														_toggleRemove($table, $ImageDiv);
 														return CswImageButton_ButtonType.None;
                         							}
 												}).hide();
