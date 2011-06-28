@@ -752,9 +752,7 @@
             }
             
             if( FieldType !== 'Question' && FieldType !== 'Logical') {
-                $retLi.css('height',(FieldType === 'Memo') ? '100px' : '75px');
-                $fieldcontain.addClass('ui-grid-a');
-                $propDiv = $('<div class="ui-block-b"></div>')
+                $propDiv = $('<div></div>')
                                 .appendTo($fieldcontain);
             }
             
@@ -1526,8 +1524,10 @@
 
         // returns true if no pending changes or user is willing to lose them
         function _checkNoPendingChanges() {
-            return (!_pendingChanges() ||
+            var pendingChanges = (!_pendingChanges() ||
                 confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
+            $.mobile.hidePageLoadingMsg();
+            return pendingChanges;
         }
 
         function _pendingChanges() {
