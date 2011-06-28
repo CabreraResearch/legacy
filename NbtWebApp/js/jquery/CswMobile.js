@@ -267,9 +267,9 @@
                 HeaderText: 'Views',
                 HideRefreshButton: true,
                 HideSearchButton: true,
-                HideBackButton: true,
-                onPageShow: function(p) { return _loadDivContents(p); }
+                HideBackButton: true
             };
+            params.onPageShow = function() { return _loadDivContents(params); };
             $viewsdiv.bindJqmEvents(params);
             return $viewsdiv;
         }
@@ -1474,8 +1474,8 @@
                     HideRefreshButton: false,
                     HideLogoutButton: false,
                     HideHelpButton: false,
-                    HideCloseButton: false,
-                    HideBackButton: true,
+                    HideCloseButton: true,
+                    HideBackButton: false,
                     HideHeaderOnlineButton: false
                 });
 
