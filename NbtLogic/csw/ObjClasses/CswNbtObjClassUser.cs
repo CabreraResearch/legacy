@@ -108,12 +108,29 @@ namespace ChemSW.Nbt.ObjClasses
             // BZ 5906
             UsernameProperty.ReadOnly = true;
 
-            if( ( Role.WasModified && !( _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) )
-            {
-                throw new CswDniException( "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
-            }
+			if( Role.WasModified )
+			{
+				if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+				{
+					throw new CswDniException( "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
+				}
+				if( this.Username != "chemsw_admin" &&
+					CswNbtNodeCaster.AsRole(_CswNbtResources.Nodes[Role.RelatedNodeId]).Name.Text == "chemsw_admin_role" )
+				{
+					throw new CswDniException( "New users may not be assigned to the 'chemsw_admin_role' role", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to assign a new user to the 'chemsw_admin_role' role." );
+				}
+			}
 
-        }//beforeWriteNode()
+			// case 22512
+			if( this.Username == "chemsw_admin" &&
+				_CswNbtResources.CurrentNbtUser != null &&
+				_CswNbtResources.CurrentNbtUser.Username != "chemsw_admin" &&
+				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
+			{
+				throw new CswDniException( "The 'chemsw_admin' user cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the 'chemsw_admin' user account." );
+			}
+
+		}//beforeWriteNode()
 
         public override void afterWriteNode()
         {
