@@ -1758,7 +1758,7 @@
 
                 var $searchDiv = _addPageDivToBody({
                         ParentId: DivId,
-                        DivId: 'CswMobile_SearchDiv',
+                        DivId: 'CswMobile_SearchDiv' + rootid,
                         HeaderText: 'Search',
                         $content: $wrapper,
                         HideSearchButton: true,
