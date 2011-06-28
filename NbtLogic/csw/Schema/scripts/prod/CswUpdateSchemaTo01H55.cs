@@ -67,6 +67,31 @@ namespace ChemSW.Nbt.Schema
 				ViewNTP.SetValueOnAdd = false;
 			}
 
+
+			// case 22508
+			// clean up welcome table again
+
+			CswTableUpdate WelcomeUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01H51_Welcome_Update", "welcome" );
+			DataTable WelcomeTable = WelcomeUpdate.getTable();
+			foreach( DataRow WelcomeRow in WelcomeTable.Rows )
+			{
+				if( WelcomeRow["nodeviewid"].ToString() == string.Empty &&
+					WelcomeRow["nodetypeid"].ToString() == string.Empty &&
+					WelcomeRow["reportid"].ToString() == string.Empty &&
+					WelcomeRow["actionid"].ToString() == string.Empty &&
+					WelcomeRow["componenttype"].ToString() != "Text" )
+				{
+					WelcomeRow.Delete();
+				}
+
+				if( WelcomeRow["displaytext"].ToString() == string.Empty &&
+					WelcomeRow["componenttype"].ToString() == "Text" )
+				{
+					WelcomeRow.Delete();
+				}
+			} // foreach( DataRow WelcomeRow in WelcomeTable.Rows )
+			WelcomeUpdate.update( WelcomeTable );
+
 		} // update()
 
 
