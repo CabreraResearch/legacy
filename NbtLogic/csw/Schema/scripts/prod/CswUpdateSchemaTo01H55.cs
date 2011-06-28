@@ -45,6 +45,16 @@ namespace ChemSW.Nbt.Schema
 			SRUpdate.update(SRTable);
 
 
+
+			// case 22010
+			CswNbtMetaDataNodeType InspSchedNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType("Physical Inspection Schedule");
+			if( InspSchedNT != null )
+			{
+				InspSchedNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( "Inspection Group" ) + " " + CswNbtMetaData.MakeTemplateEntry( "Summary" );
+			}
+
+
+
 		} // update()
 
 
