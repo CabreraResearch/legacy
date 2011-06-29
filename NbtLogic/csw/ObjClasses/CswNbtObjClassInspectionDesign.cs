@@ -331,15 +331,16 @@ namespace ChemSW.Nbt.ObjClasses
 				this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
 				this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
 			{
-				QuestionsFlt.Reset();
-				foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
-				{
-					Prop.ReadOnly = true;
-				}
-				CswNbtNodePropWrapper FinishedProp = this.Node.Properties[FinishedPropertyName];
-				FinishedProp.AsLogical.ReadOnly = true;
-				CswNbtNodePropWrapper CancelledProp = this.Node.Properties[CancelledPropertyName];
-				CancelledProp.AsLogical.ReadOnly = true;
+				//QuestionsFlt.Reset();
+				//foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+				//{
+				//    Prop.ReadOnly = true;
+				//}
+				//CswNbtNodePropWrapper FinishedProp = this.Node.Properties[FinishedPropertyName];
+				//FinishedProp.AsLogical.ReadOnly = true;
+				//CswNbtNodePropWrapper CancelledProp = this.Node.Properties[CancelledPropertyName];
+				//CancelledProp.AsLogical.ReadOnly = true;
+				_CswNbtNode.ReadOnly = true;
 			}
 		
 			_CswNbtObjClassDefault.beforeWriteNode();
