@@ -21,7 +21,7 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }//ctor
 
-        public bool fetchNodeInfo( CswNbtNode CswNbtNode )
+        public bool fetchNodeInfo( CswNbtNode CswNbtNode, DateTime Date )
         {
             bool ReturnVal = false;
 

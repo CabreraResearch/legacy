@@ -137,7 +137,8 @@
 								'cswnbtnodekey': '',
 								'filterToPropId': '',
 								'title': '',
-								'onEditNode': function (nodeid, nodekey) { }
+								'onEditNode': function (nodeid, nodekey) { },
+								'date': ''     // viewing audit records
 							};
 							if (options) $.extend(o, options);
 							var $div = $('<div></div>');
@@ -154,6 +155,7 @@
 									'EditMode': 'EditInPopup',
 									'title': o.title,
 									'tabid': $.CswCookie('get', CswCookieName.CurrentTabId),
+									'date': o.date,
 									'onSave': function (nodeid, nodekey, tabcount)
 									{
 										unsetChanged();

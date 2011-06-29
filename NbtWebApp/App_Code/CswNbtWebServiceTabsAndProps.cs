@@ -24,30 +24,32 @@ namespace ChemSW.Nbt.WebServices
 		private readonly CswNbtResources _CswNbtResources;
 	    private readonly ICswNbtUser _ThisUser;
 
+		private string HistoryTabPrefix = "history_";
+
         public CswNbtWebServiceTabsAndProps( CswNbtResources CswNbtResources )
 		{
 			_CswNbtResources = CswNbtResources;
             _ThisUser = _CswNbtResources.CurrentNbtUser;
 		}
 
-		private CswNbtNode _getNode( string NodeId, string NodeKey )
+		private CswNbtNode _getNode( string NodeId, string NodeKey, DateTime Date )
 		{
 			CswNbtNode Node = null;
 			if( !string.IsNullOrEmpty( NodeKey ) )
 			{
 				CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-				Node = _CswNbtResources.Nodes[RealNodeKey];
+				Node = _CswNbtResources.getNode(RealNodeKey, Date);
 			}
 			else if( !string.IsNullOrEmpty( NodeId ) )
 			{
 				CswPrimaryKey RealNodeId = new CswPrimaryKey();
 				RealNodeId.FromString( NodeId );
-				Node = _CswNbtResources.Nodes[RealNodeId];
+				Node = _CswNbtResources.getNode( RealNodeId, Date );
 			}
 			return Node;
 		} // _getNode()
 
-		public XElement getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId )
+		public XElement getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId, DateTime Date )
 		{
 			XElement TabsNode = new XElement( "tabs" );
 			if( EditMode == NodeEditMode.AddInPopup && NodeTypeId != Int32.MinValue )
@@ -59,7 +61,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			else
 			{
-				CswNbtNode Node = _getNode( NodeId, NodeKey );
+				CswNbtNode Node = _getNode( NodeId, NodeKey, Date );
 				if( Node != null )
 				{
 					foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
@@ -67,6 +69,15 @@ namespace ChemSW.Nbt.WebServices
 						TabsNode.Add( new XElement( "tab",
 											new XAttribute( "id", Tab.TabId ),
 											new XAttribute( "name", Tab.TabName ) ) );
+					}
+
+					// History tab
+					if( Date == DateTime.MinValue && 
+						CswConvert.ToBoolean( _CswNbtResources.getConfigVariableValue( "auditing" ) ) )
+					{
+						TabsNode.Add( new XElement( "tab",
+											new XAttribute( "id", HistoryTabPrefix + NodeId ),
+											new XAttribute( "name", "History" ) ) );
 					}
 				} // if( Node != null )
 			} // if-else( EditMode == NodeEditMode.AddInPopup )
@@ -77,56 +88,56 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Returns XML for all properties in a given tab
 		/// </summary>
-		public XmlDocument getProps( NodeEditMode EditMode, string NodeId, string NodeKey, string TabId, Int32 NodeTypeId )
+		public XmlDocument getProps( NodeEditMode EditMode, string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, DateTime Date )
 		{
 			XmlDocument PropXmlDoc = new XmlDocument();
 			XElement PropsElement = new XElement( "props" );
 			CswXmlDocument.SetDocumentElement( PropXmlDoc, "props" );
 
-			if( EditMode == NodeEditMode.AddInPopup )
+			if( TabId.StartsWith( HistoryTabPrefix ) )
 			{
-			    CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-
-			    foreach( CswNbtMetaDataNodeTypeProp Prop in Node.NodeType.NodeTypeProps
-                                                                         .Cast<CswNbtMetaDataNodeTypeProp>()
-                                                                         .Where( Prop => Prop.EditProp( Node, _ThisUser, true ) ) )
-			    {
-			        _addProp( PropXmlDoc, EditMode, Node, Prop );
-			    }
+				CswNbtNode Node = _getNode( NodeId, NodeKey, Date );
+				_getAuditHistoryGrid( PropXmlDoc.DocumentElement, Node );
 			}
 			else
 			{
-				//CswPrimaryKey NodePk = new CswPrimaryKey();
-				//NodePk.FromString( NodePkString );
-				//if( !string.IsNullOrEmpty( NodeKey ) )
-				//{
-				//    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-				//    if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-				//    {
-				//        CswNbtNode Node = _CswNbtResources.Nodes[NbtNodeKey];
-
-				CswNbtNode Node = _getNode( NodeId, NodeKey );
-				if( Node != null )
+				if( EditMode == NodeEditMode.AddInPopup )
 				{
-					// removed for case 21695
-					//// case 21209
-					//if( Node.NodeSpecies == NodeSpecies.Plain )
-					//{
-					//    CswNbtActUpdatePropertyValue PropUpdater = new CswNbtActUpdatePropertyValue( _CswNbtResources );
-					//    PropUpdater.UpdateNode( Node, true );
-					//    Node.postChanges( false );
-					//}
+					CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
 
-					CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
-					foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder
-                                                                   .Cast<CswNbtMetaDataNodeTypeProp>()
-                                                                   .Where( Prop => Prop.ShowProp( Node, _ThisUser ) ) )
+					foreach( CswNbtMetaDataNodeTypeProp Prop in Node.NodeType.NodeTypeProps
+																			 .Cast<CswNbtMetaDataNodeTypeProp>()
+																			 .Where( Prop => Prop.EditProp( Node, _ThisUser, true ) ) )
 					{
-					    _addProp( PropXmlDoc, EditMode, Node, Prop );
+						_addProp( PropXmlDoc, EditMode, Node, Prop );
 					}
 				}
-				//}
-			} // if-else( EditMode == NodeEditMode.AddInPopup )
+				else
+				{
+					
+					CswNbtNode Node = _getNode( NodeId, NodeKey, Date );
+					if( Node != null )
+					{
+						// removed for case 21695
+						//// case 21209
+						//if( Node.NodeSpecies == NodeSpecies.Plain )
+						//{
+						//    CswNbtActUpdatePropertyValue PropUpdater = new CswNbtActUpdatePropertyValue( _CswNbtResources );
+						//    PropUpdater.UpdateNode( Node, true );
+						//    Node.postChanges( false );
+						//}
+
+						CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
+						foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder
+																	   .Cast<CswNbtMetaDataNodeTypeProp>()
+																	   .Where( Prop => Prop.ShowProp( Node, _ThisUser ) ) )
+						{
+							_addProp( PropXmlDoc, EditMode, Node, Prop );
+						}
+					}
+					//}
+				} // if-else( EditMode == NodeEditMode.AddInPopup )
+			} // if( TabId.StartsWith( HistoryTabPrefix ) )
 			return PropXmlDoc;
 		} // getProps()
 
@@ -145,17 +156,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			else
 			{
-				//CswPrimaryKey NodePk = new CswPrimaryKey();
-				//NodePk.FromString( NodePkString );
-				//if( !string.IsNullOrEmpty( NodeKey ) )
-				//{
-				//    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-				//    if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-				//    {
-				//        Node = _CswNbtResources.Nodes[NbtNodeKey];
-				//    }
-				//}
-				Node = _getNode( NodeId, NodeKey );
+				Node = _getNode( NodeId, NodeKey, DateTime.MinValue );
 			}
 
 			if( Node != null )
@@ -265,6 +266,37 @@ namespace ChemSW.Nbt.WebServices
 			return PropXmlNode;
 		} // _makePropXml()
 
+
+		public void _getAuditHistoryGrid( XmlNode ParentXmlNode, CswNbtNode Node )
+		{
+			XmlNode PropXmlNode = CswXmlDocument.AppendXmlNode( ParentXmlNode, "prop" );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "name", "Audit History" );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "helptext", string.Empty );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "fieldtype", "AuditHistoryGrid" );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displayrow", "1" );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displaycol", "1" );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "required", "0" );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", "0" );
+
+			string SQL = @"select na.recordcreated as ChangeDate, na.auditeventtype as EventType
+from nodes n
+join nodes_audit na on n.nodeid = na.nodeid
+where n.nodeid = " + Node.NodeId.PrimaryKey.ToString() + @"
+UNION
+select ja.recordcreated as ChangeDate, ja.auditeventtype as EventType
+from nodes n
+join jct_nodes_props j on n.nodeid = j.nodeid
+join jct_nodes_props_audit ja on j.jctnodepropid = ja.jctnodepropid
+where n.nodeid = " + Node.NodeId.PrimaryKey.ToString();
+
+			CswArbitrarySelect HistorySelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceAuditing_getAuditHistory_select", SQL );
+			DataTable HistoryTable = HistorySelect.getTable();
+
+			CswGridData g = new CswGridData( _CswNbtResources );
+			PropXmlNode.InnerText = g.DataTableToJSON( HistoryTable ).ToString();
+
+		} // _getAuditHistoryGrid()
+
 		public bool moveProp( string PropIdAttr, Int32 NewRow, Int32 NewColumn, NodeEditMode EditMode )
 		{
 			bool ret = false;
@@ -303,7 +335,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			else
 			{
-				Node = _getNode( NodeId, NodeKey );
+				Node = _getNode( NodeId, NodeKey, DateTime.MinValue );
 			}
 
 			if( Node != null &&

@@ -68,7 +68,7 @@ namespace ChemSW.Nbt
         }
 
 
-        private ICswNbtNodePropCollData getPropCollData( string TableName )
+        private ICswNbtNodePropCollData getPropCollData( string TableName, DateTime Date )
         {
             ICswNbtNodePropCollData ReturnVal = null;
 
@@ -78,8 +78,9 @@ namespace ChemSW.Nbt
                 {
                     _CswNbtNodePropCollDataNative = new CswNbtNodePropCollDataNative( _CswNbtResources );
                     _CswNbtNodePropCollDataNative.NodePk = _NodePk;
-                    _CswNbtNodePropCollDataNative.NodeTypeId = _NodeTypeId;
-                }
+					_CswNbtNodePropCollDataNative.NodeTypeId = _NodeTypeId;
+					_CswNbtNodePropCollDataNative.Date = Date;
+				}
                 ReturnVal = _CswNbtNodePropCollDataNative;
             }
             else
@@ -182,7 +183,7 @@ namespace ChemSW.Nbt
 
 
 
-        public void fillFromNodePk( CswPrimaryKey NodePk, Int32 NodeTypeId )
+        public void fillFromNodePk( CswPrimaryKey NodePk, Int32 NodeTypeId, DateTime Date )
         {
             _NodePk = NodePk;
             _NodeTypeId = NodeTypeId;
@@ -192,7 +193,7 @@ namespace ChemSW.Nbt
 
             if( NodePk != null )
             {
-                if( getPropCollData( NodePk.TableName ).IsTableEmpty )
+                if( getPropCollData( NodePk.TableName, Date ).IsTableEmpty )
                 {
                     _populateProps();
                 }
@@ -258,7 +259,7 @@ namespace ChemSW.Nbt
             //**************** END KLUDGE ALERT
 
             //this[ NodePk ].NodeTypeId = NodeTypeId;
-            ICswNbtNodePropCollData PropCollData = getPropCollData( _CswNbtResources.MetaData.getNodeType( NodeTypeId ).TableName );
+            ICswNbtNodePropCollData PropCollData = getPropCollData( _CswNbtResources.MetaData.getNodeType( NodeTypeId ).TableName, DateTime.MinValue );
 
             _populateProps(); // null, NodeTypeId );
 
@@ -272,7 +273,7 @@ namespace ChemSW.Nbt
             foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.NodeTypeProps )
             {
                 DataRow PropRow = null;
-                ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName );
+                ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName, DateTime.MinValue );
                 foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
                 {
                     if( CurrentRow["nodetypepropid"].ToString() == MetaDataProp.PropId.ToString() )
@@ -312,7 +313,7 @@ namespace ChemSW.Nbt
         private void _refreshProps()// CswPrimaryKey NodePk, Int32 NodeTypeId )
         {
             CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( _NodeTypeId );
-            ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName );
+            ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName, DateTime.MinValue );
             PropCollData.refreshTable();
 
             foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
@@ -332,7 +333,7 @@ namespace ChemSW.Nbt
             {
                 // Do BeforeUpdateNodePropRow on each row
 
-                ICswNbtNodePropCollData PropCollData = getPropCollData( _NodeType.TableName );
+                ICswNbtNodePropCollData PropCollData = getPropCollData( _NodeType.TableName, DateTime.MinValue );
                 foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
                 {
                     if( CurrentRow.IsNull( "nodetypepropid" ) )

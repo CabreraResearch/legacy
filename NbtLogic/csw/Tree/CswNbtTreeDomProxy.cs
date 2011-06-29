@@ -304,7 +304,7 @@ namespace ChemSW.Nbt
         /// <param name="CswNbtNodeKey">NodeKey index</param>
         public CswNbtNode getNode( CswNbtNodeKey CswNbtNodeKey )
         {
-            return _CswNbtNodeCollection.GetNode( CswNbtNodeKey.NodeId, CswNbtNodeKey.NodeTypeId, CswNbtNodeKey.NodeSpecies );
+            return _CswNbtNodeCollection.GetNode( CswNbtNodeKey.NodeId, CswNbtNodeKey.NodeTypeId, CswNbtNodeKey.NodeSpecies, DateTime.MinValue );
         }//getNode()
 
         /// <summary>

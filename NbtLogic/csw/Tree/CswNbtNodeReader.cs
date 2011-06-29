@@ -97,7 +97,7 @@ namespace ChemSW.Nbt
         }//_extractCol()
 
         //bz # 7816: Don't throw if you cannot find the node data
-        public void completeNodeData( CswNbtNode CswNbtNode )
+        public void completeNodeData( CswNbtNode CswNbtNode, DateTime Date )
         {
             if ( CswNbtNode.NodeSpecies == NodeSpecies.Plain )
             {
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt
                 if ( CswNbtNode.NodeId != null && ( CswNbtNode.NodeTypeId <= 0 || CswNbtNode.NodeName == String.Empty ) )
                 {
 
-                    if ( this[ CswNbtNode.NodeId ].fetchNodeInfo( CswNbtNode ) )
+					if( this[CswNbtNode.NodeId].fetchNodeInfo( CswNbtNode, Date ) )
                     {
                         CswTimer Timer = new CswTimer();
                         //this[ CswNbtNode.NodeId ].fillFromNodeTypeId( CswNbtNode, CswNbtNode.NodeTypeId );
@@ -113,7 +113,7 @@ namespace ChemSW.Nbt
                         fillFromNodeTypeId( CswNbtNode, CswNbtNode.NodeTypeId );
                         _CswNbtResources.logTimerResult( "completeNodeData called fillFromNodeTypeId(), finished on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString ); 
                         if(CswNbtNode.NodeType != null)
-                            CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, CswNbtNode.NodeTypeId );
+							CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, CswNbtNode.NodeTypeId, Date );
                         _CswNbtResources.logTimerResult( "Filled in node property data for node (" + CswNbtNode.NodeId.ToString() + "): " + CswNbtNode.NodeName, Timer.ElapsedDurationInSecondsAsString );
                     }
                     // BZ 8117 - This is actually possibly expected behavior now when we delete a node
@@ -128,8 +128,8 @@ namespace ChemSW.Nbt
 
         public void fillFromNodeTypeIdWithProps( CswNbtNode CswNbtNode, Int32 NodeTypeId )
         {
-            CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, NodeTypeId );
-            CswNbtNode.Properties.fillFromNodeTypeId( CswNbtNode.NodeTypeId );
+            CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, NodeTypeId, DateTime.MinValue );
+			CswNbtNode.Properties.fillFromNodeTypeId( CswNbtNode.NodeTypeId );
 
         }//_fillFromNodeTypeId()
 
