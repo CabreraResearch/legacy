@@ -158,9 +158,7 @@ foreach my $component (@components)
 
 &runCommand( "net stop \"NbtSchedService\"");
 
-&runCommand( "net stop \"NbtSchedService\"");
-
-&runCommand( "net stop \"NbtSchedService\"");   # we mean it!
+&runCommand( "taskkill /F /IM NbtSchedService.exe");  # force kill outstanding threads
 
 #&runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
 
