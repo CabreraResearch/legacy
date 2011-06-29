@@ -137,34 +137,50 @@
 								'cswnbtnodekey': '',
 								'filterToPropId': '',
 								'title': '',
-								'onEditNode': function (nodeid, nodekey) { }
+								'onEditNode': function (nodeid, nodekey) { },
+								'date': ''     // viewing audit records
 							};
 							if (options) $.extend(o, options);
 							var $div = $('<div></div>');
-							$div.CswNodeTabs({
-								'nodeid': o.nodeid,
-								'cswnbtnodekey': o.cswnbtnodekey,
-								'filterToPropId': o.filterToPropId,
-								'EditMode': 'EditInPopup',
-								'title': o.title,
-								'onSave': function (nodeid, nodekey, tabcount)
-								{
-									unsetChanged();
-									if(tabcount === 1)
+							
+							_setupTabs();
+
+							function _setupTabs()
+							{
+								$div.empty();
+								$div.CswNodeTabs({
+									'nodeid': o.nodeid,
+									'cswnbtnodekey': o.cswnbtnodekey,
+									'filterToPropId': o.filterToPropId,
+									'EditMode': 'EditInPopup',
+									'title': o.title,
+									'tabid': $.CswCookie('get', CswCookieName.CurrentTabId),
+									'date': o.date,
+									'onSave': function (nodeid, nodekey, tabcount)
 									{
-										$div.dialog('close');
+										unsetChanged();
+										if(tabcount === 1)
+										{
+											$div.dialog('close');
+										}
+										_setupTabs();
+										o.onEditNode(nodeid, nodekey);
+									},
+									'onBeforeTabSelect': function (tabid)
+									{
+										return manuallyCheckChanges();
+									},
+									'onTabSelect': function (tabid)
+									{
+										$.CswCookie('set', CswCookieName.CurrentTabId, tabid);
+									},
+									'onPropertyChange': function (propid, propname)
+									{
+										setChanged();
 									}
-									o.onEditNode(nodeid, nodekey);
-								},
-								'onBeforeTabSelect': function (tabid)
-								{
-									return manuallyCheckChanges();
-								},
-								'onPropertyChange': function (propid, propname)
-								{
-									setChanged();
-								}
-							});
+								});
+							} // _setupTabs()
+
 							if(o.filterToPropId !== '')
 								_openDiv($div, 600, 400);
 							else

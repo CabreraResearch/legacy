@@ -122,6 +122,9 @@ namespace ChemSW.Nbt.PropTypes
         //public bool IsNodeReference( XmlNode PropertyValueNode ) { return _CswNbtNodeProp.IsNodeReference( PropertyValueNode ); }
         //public bool IsNodeTypeReference( XmlNode PropertyValueNode ) { return _CswNbtNodeProp.IsNodeTypeReference( PropertyValueNode ); }
 
+		public bool AuditChanged { get { return _CswNbtNodePropData.AuditChanged; } }
+
+
         /// <summary>
         /// Returns defined Field Type attributes/subfields as XmlDocument class XmlNode
         /// </summary>

@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.ObjClasses
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
         public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy );
         public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );
-        public delegate void OnRequestFillHandler( CswNbtNode Node );
+        public delegate void OnRequestFillHandler( CswNbtNode Node, DateTime Date );
         public delegate void OnRequestFillFromNodeTypeIdHandler( CswNbtNode Node, Int32 NodeTypeId );
         public event OnSetNodeIdHandler OnAfterSetNodeId = null;
         public event OnRequestWriteNodeHandler OnRequestWriteNode = null;
@@ -152,6 +152,13 @@ namespace ChemSW.Nbt.ObjClasses
             }//get
 
         }//ModificationState
+
+		private bool _ReadOnly = false;
+		public bool ReadOnly
+		{
+			get { return _ReadOnly; }
+			set { _ReadOnly = value; }
+		}
 
 
         //bz # 5943
@@ -526,12 +533,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         //bz # 5943
 
-        public void fill()
+        public void fill(DateTime Date)
         {
             if( null == OnRequestFill )
                 throw ( new CswDniException( "There is no fill handler" ) );
 
-            OnRequestFill( this );
+            OnRequestFill( this, Date );
 
             _NodeModificationState = NodeModificationState.Unchanged;
 

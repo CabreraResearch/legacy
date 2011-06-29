@@ -158,11 +158,9 @@ foreach my $component (@components)
 
 &runCommand( "net stop \"NbtSchedService\"");
 
-&runCommand( "net stop \"NbtSchedService\"");
+&runCommand( "taskkill /F /IM NbtSchedService.exe");  # force kill outstanding threads
 
-&runCommand( "net stop \"NbtSchedService\"");   # we mean it!
-
-&runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
+#&runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
 
 &runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
             "devenv ". $repopaths{"Nbt"} ."/Nbt.sln /Build \"Release\"");
@@ -195,7 +193,6 @@ my $masterpassword = $schemata{$masterschema};
 
 &runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/Release/NbtUpdt.exe -all");
 
-#---------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
 # 7. start schedule service
@@ -203,7 +200,6 @@ my $masterpassword = $schemata{$masterschema};
 &runCommand( "net start \"NbtSchedService\"");
 
 #---------------------------------------------------------------------------------
-
 # 8. tags
 
 foreach my $component (@components)

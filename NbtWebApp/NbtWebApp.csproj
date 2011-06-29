@@ -512,6 +512,7 @@
     <Content Include="js\jquery\CswWelcome.js" />
     <Content Include="js\jquery\CswWizard.css" />
     <Content Include="js\jquery\CswWizard.js" />
+    <Content Include="js\jquery\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeBarcode.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeComposite.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeDate.js" />

@@ -158,6 +158,15 @@ namespace ChemSW.Nbt
             get { return _CswNbtNodeCollection; }
         }
 
+		public CswNbtNode getNode( CswNbtNodeKey NodeKey, DateTime Date )
+		{
+			return _CswNbtNodeCollection.GetNode( NodeKey.NodeId, Date );
+		}
+		public CswNbtNode getNode( CswPrimaryKey NodePk, DateTime Date )
+		{
+			return _CswNbtNodeCollection.GetNode( NodePk, Date );
+		}
+
         #endregion Nodes and Trees
 
 

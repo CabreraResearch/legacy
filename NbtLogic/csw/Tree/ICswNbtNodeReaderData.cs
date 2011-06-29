@@ -13,7 +13,7 @@ namespace ChemSW.Nbt
 
     public interface ICswNbtNodeReaderData
     {
-        bool fetchNodeInfo( CswNbtNode CswNbtNode );
+        bool fetchNodeInfo( CswNbtNode CswNbtNode, DateTime Date );
 
     }//CswNbtNodeReader
 
