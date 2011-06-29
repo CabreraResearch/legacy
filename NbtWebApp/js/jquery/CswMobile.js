@@ -440,7 +440,9 @@
                 {
                     if (!isNullOrEmpty($currentViewXml)) {
                         p.$xml = $currentViewXml.find('#' + p.DivId)
-                                                        .children('subitems').first();
+                                                .children('subitems')
+                                                .first()
+                                                .clone();
                         $retDiv = _loadDivContentsXml(p);
                     }
                 }
@@ -531,7 +533,7 @@
             currenttab = '';
 
             p.$xml.children().each(function() {
-                p.$xmlitem = $(this);
+                p.$xmlitem = $(this).clone();
                 _makeListItemFromXml($list, p)
                     .CswAttrXml('data-icon', false)
                     .appendTo($list);
@@ -666,7 +668,7 @@
                 var UnansweredCnt = 0;
 
                 p.$xmlitem.find('prop[fieldtype="Question"]').each(function() {
-                    var $question = $(this);
+                    var $question = $(this).clone();
                     if (isNullOrEmpty($question.children('Answer').text())) {
                         UnansweredCnt++;
                     }
@@ -1654,9 +1656,9 @@
                         data: dataXml,
                         stringify: false,
                         onloginfail: function(text) { onLoginFail(text); },
-                        success: function($xml) {
+                        success: function(xml) {
                             setOnline();
-                            $currentViewXml = $xml;
+                            $currentViewXml = $(xml);
                             _updateStoredViewXml(DivId, $currentViewXml, '0');
 
                             var params = {
@@ -1702,11 +1704,13 @@
             if (!isNullOrEmpty($currentViewXml)) {
                 _resetPendingChanges(true, false);
                 
-                var $divxml = $currentViewXml.find('#' + DivId);
-                $divxml.andSelf().find('prop').each(function() {
+                var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
+                var $nodeXml = $( localStorage[nodeId] );
+                $nodeXml.children(DivId).andSelf().find('prop').each(function() {
                     var $fieldtype = $(this);
                     _FieldTypeHtmlToXml($fieldtype, name, value);
                 });
+                $currentViewXml.find('#' + nodeId).html($nodeXml);
                 _updateStoredViewXml(rootid, $currentViewXml, '1');
             }
             cacheLogInfo(logger);
@@ -1723,7 +1727,7 @@
                                             .CswAttrXml({ 'data-native-menu': 'false' });
 
                 $xmlstr.children('search').each(function() {
-                    var $search = $(this);
+                    var $search = $(this).clone();
                     $('<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>')
                                             .appendTo($select);
                 });
@@ -1772,7 +1776,7 @@
 
                 var hitcount = 0;
                 $xmlstr.find('node').each(function() {
-                    var $node = $(this);
+                    var $node = $(this).clone();
                     if (!isNullOrEmpty($node.CswAttrXml(searchprop))) {
                         if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0) {
                             hitcount++;
@@ -1816,15 +1820,29 @@
             localStorage["storedviews"] = JSON.stringify(storedViews);
             localStorage[rootid] = JSON.stringify({ name: rootname, xml: xmlToString($viewxml), wasmodified: false });
             
+            $viewxml.andSelf().find('node').each(function() {
+                var $nodeXml = $(this).clone();
+                var nodeId = $nodeXml.CswAttrXml('id');
+                var nodeStr = xmlToString($nodeXml);
+                localStorage[nodeId] = nodeStr;
+            });
+            
             cacheLogInfo(logger);
         }
 
         function _updateStoredViewXml(rootid, $viewxml, wasmodified) {
-            if (!isNullOrEmpty(localStorage[rootid])) {
+            if (!isNullOrEmpty(localStorage[rootid]) && !isNullOrEmpty($viewxml)) {
                 var view = JSON.parse(localStorage[rootid]);
                 var update = { xml: xmlToString($viewxml), wasmodified: wasmodified };
                 if (view) $.extend(view, update);
                 localStorage[rootid] = JSON.stringify(view);
+                
+                $viewxml.andSelf().find('node').each(function() {
+                    var $nodeXml = $(this).clone();
+                    var nodeId = $nodeXml.CswAttrXml('id');
+                    var nodeStr = xmlToString($nodeXml);
+                    localStorage[nodeId] = nodeStr;
+                });
             }
         }
 
@@ -1943,7 +1961,7 @@
                                 success: function(data) {
                                     logger.setAjaxSuccess();
                                     setOnline();
-                                    var $xml = data.xml;
+                                    var $xml = $(data.xml);
                                     _updateStoredViewXml(rootid, $xml, '0');
                                     _resetPendingChanges(false, true);
                                     if (perpetuateTimer) {
