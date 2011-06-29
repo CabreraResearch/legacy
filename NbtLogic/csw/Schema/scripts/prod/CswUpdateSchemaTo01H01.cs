@@ -115,6 +115,11 @@ namespace ChemSW.Nbt.Schema
             // 21364 (see 01H-26)
             _CswNbtSchemaModTrnsctn.addStringColumn( "node_views", "viewmode", "Tree, List, or Grid", false, false, 10 );
 
+			// case 22525
+			if( !_CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "readonly" ) )
+			{
+				_CswNbtSchemaModTrnsctn.addBooleanColumn( "nodes", "readonly", "Whether the node and all of its properties are read only", false, false );
+			}
         }//Update()
 
     }//class CswUpdateSchemaTo01H01
