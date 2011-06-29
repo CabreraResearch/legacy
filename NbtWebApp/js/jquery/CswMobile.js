@@ -155,7 +155,7 @@
         if (localStorage.storedViews) storedViews = JSON.parse(localStorage['storedviews']); // {name: '', rootid: ''}
 
         var $logindiv = _loadLoginDiv();
-        var $viewsdiv = _loadViewsDiv();
+        var $viewsdiv = reloadViews();
         var $syncstatus = _makeSyncStatusDiv();
         var $helpdiv = _makeHelpDiv();
         var $sorrycharliediv = _loadSorryCharlieDiv();
@@ -171,7 +171,6 @@
 
         if (!isNullOrEmpty(SessionId)) {
             $viewsdiv = reloadViews();
-            $viewsdiv.page();
             _waitForData();
         } 
         else {
@@ -219,26 +218,25 @@
             return $retDiv;
         }
 
-        function _loadViewsDiv() {
+        function reloadViews() {
             var params = {
-                ParentId: '',
-                DivId: 'viewsdiv',
-                HeaderText: 'Views',
-                $xml: '',
                 parentlevel: -1,
                 level: 0,
+                DivId: 'viewsdiv',
+                HeaderText: 'Views',
                 HideRefreshButton: true,
                 HideSearchButton: true,
                 HideBackButton: true
             };
-            params.onPageShow = function(p) { return _loadDivContents(p); };
-            
-            var $retDiv = _addPageDivToBody(params);
-            $retDiv.bindJqmEvents(params);
-            
-            return $retDiv;
+            if (!$viewsdiv) {
+                $viewsdiv = _addPageDivToBody(params);
+            }
+            params.onPageShow = function() { return _loadDivContents(params); };
+            $viewsdiv.doPage();
+            $viewsdiv.bindJqmEvents(params);
+            return $viewsdiv;
         }
-
+        
         function _loadSorryCharlieDiv(params) {
             var p = {
                 DivId: 'sorrycharliediv',
@@ -258,21 +256,7 @@
             return $retDiv;
         }
 
-        function reloadViews() {
-            if ($viewsdiv) $viewsdiv.find('div:jqmData(role="content")').empty();
-            var params = {
-                parentlevel: -1,
-                level: 0,
-                DivId: 'viewsdiv',
-                HeaderText: 'Views',
-                HideRefreshButton: true,
-                HideSearchButton: true,
-                HideBackButton: true,
-                onPageShow: function(p) { return _loadDivContents(p); }
-            };
-            $viewsdiv.bindJqmEvents(params);
-            return $viewsdiv;
-        }
+       
 
         // ------------------------------------------------------------------------------------
         // Online indicator
@@ -280,19 +264,19 @@
 
         function setOffline() {
             amOnline(false);
-            var $onlineStatus = $('.onlineStatus');
-            if ($onlineStatus.hasClass('online')) {
-                $onlineStatus.removeClass('online')
-                             .addClass('offline')
-                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                             .text('Offline')
-                             .removeClass('online')
-                             .addClass('offline')
-                             .end();
-                $('.refresh').css('visibility', 'hidden');
+            
+            $('.onlineStatus').removeClass('online')
+                              .addClass('offline')
+                              .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                              .text('Offline')
+                              .removeClass('online')
+                              .addClass('offline')
+                              .end();
+            
+            $('.refresh').css('visibility', 'hidden');
 
-                $viewsdiv = reloadViews(); //no changePage
-            }
+            $viewsdiv = reloadViews(); //no changePage
+            
             if ($.mobile.activePage === $logindiv) {
                 $sorrycharliediv.doPage(); // doChangePage();
             }
@@ -301,22 +285,19 @@
 
         function setOnline() {
             amOnline(true);
-            var $onlineStatus = $('.onlineStatus');
-            if ($onlineStatus.hasClass('offline')) {
-                $onlineStatus.removeClass('offline')
-                             .addClass('online')
-                             .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                             .text('Online')
-                             .removeClass('offline')
-                             .addClass('online')
-                             .end();
-
+            
+            $('.onlineStatus').removeClass('offline')
+                              .addClass('online')
+                              .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                              .text('Online')
+                              .removeClass('offline')
+                              .addClass('online')
+                              .end();
                 $('.refresh').css('visibility', '');
                 $viewsdiv = reloadViews(); //no changePage
             }
             if ($.mobile.activePage === $sorrycharliediv) {
                 $logindiv.doPage(); //doChangePage();;
-            }
         }
 
         function amOnline(amOnline) {
@@ -494,6 +475,7 @@
                     data: dataXml,
                     onloginfail: function(text) { onLoginFail(text); },
                     success: function($xml) {
+                        setOnline();
                         logger.setAjaxSuccess();
                         $currentViewXml = $xml;
                         p.$xml = $currentViewXml;
@@ -569,7 +551,8 @@
             $content.page();
 
             $.mobile.hidePageLoadingMsg();
-            
+            _toggleOffline(false);
+
             cacheLogInfo(logger);
             return $retDiv;
         } // _processViewXml()
@@ -1062,7 +1045,7 @@
                 $answer.unbind('vclick');
                 $answer.bind('vclick', function(eventObj) {
                     var logger = new profileMethod('questionClick');
-
+                    
                     var thisAnswer = eventObj.srcElement.innerText;
 
                     for (var i = 0; i < answers.length; i++) {
@@ -1090,17 +1073,17 @@
                             $li.removeClass('OOC');
                         }
                     }
-                    if (!isNullOrEmpty(Answer)) {
-                        // update unanswered count when this question is answered
-                        var $parentfieldset = $('#' + IdStr + '_fieldset');
-                        if ($parentfieldset.CswAttrDom('answered')) {
-                            var $cntspan = $('#' + ParentId + '_unansweredcnt');
-                            $cntspan.text(parseInt($cntspan.text()) - 1);
-                            $parentfieldset.CswAttrDom('answered', 'true');
-                        }
-                    }
+//                    if (!isNullOrEmpty(Answer)) {
+//                        // update unanswered count when this question is answered
+//                        var $parentfieldset = $('#' + IdStr + '_fieldset');
+//                        if ($parentfieldset.CswAttrDom('answered')) {
+//                            var $cntspan = $('#' + ParentId + '_unansweredcnt');
+//                            $cntspan.text(parseInt($cntspan.text()) - 1);
+//                            $parentfieldset.CswAttrDom('answered', 'true');
+//                        }
+//                    }
                     logger.setAjaxSuccess();
-                    setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName); }, 10);
+                    setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName); }, 1);
                     cacheLogInfo(logger);
                     return false;
                 });
@@ -1378,7 +1361,6 @@
             }
 
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
-
             return $pageDiv;
 
         }// _addPageDivToBody()
@@ -1474,8 +1456,8 @@
                     HideRefreshButton: false,
                     HideLogoutButton: false,
                     HideHelpButton: false,
-                    HideCloseButton: false,
-                    HideBackButton: true,
+                    HideCloseButton: true,
+                    HideBackButton: false,
                     HideHeaderOnlineButton: false
                 });
 
@@ -1487,23 +1469,28 @@
                             .end()
                             .find('#ss_gooffline')
                             .bind('vclick', function() {
-                                _toggleOffline();
+                                _toggleOffline(true);
                                 return false;
                             });
 
             return $retDiv;
         }
 
-        function _toggleOffline() {
-            if (!amOnline()) {
-                _clearWaitForData();
-                _waitForData();
+        function _toggleOffline(doWaitForData) {
+            
+            if (amOnline()) {
                 setOnline();
-                $('#ss_gooffline span').text('Go Offline');
+                if(doWaitForData) {
+                    _clearWaitForData();
+                    _waitForData();
+                    $('#ss_gooffline span').text('Go Offline');
+                }
             } else {
-                _clearWaitForData();
                 setOffline();
-                $('#ss_gooffline span').text('Go Online');
+                if( doWaitForData) {
+                    _clearWaitForData();
+                    $('#ss_gooffline span').text('Go Online');
+                }
             }
         }
 
@@ -1668,6 +1655,7 @@
                         stringify: false,
                         onloginfail: function(text) { onLoginFail(text); },
                         success: function($xml) {
+                            setOnline();
                             $currentViewXml = $xml;
                             _updateStoredViewXml(DivId, $currentViewXml, '0');
 
@@ -1685,13 +1673,16 @@
                             };
 
                             _loadDivContents(params);
-                        } // success
+                        }, // success
+                        error: function () {
+                            setOffline();
+                        }
                     });
             }
             $.mobile.hidePageLoadingMsg();
         }
 
-        function onSyncStatusOpen(DivId) {
+        function onSyncStatusOpen() {
             $syncstatus.doChangePage({ transition: 'slideup' });
         }
 
@@ -1809,7 +1800,7 @@
         // ------------------------------------------------------------------------------------
 
         function _cacheSession(sessionid, username, customerid) {
-            localStorage['online'] = true;
+            setOnline();
             localStorage['username'] = username;
             localStorage['customerid'] = customerid;
             localStorage['sessionid'] = sessionid;
@@ -1824,6 +1815,7 @@
             }
             localStorage["storedviews"] = JSON.stringify(storedViews);
             localStorage[rootid] = JSON.stringify({ name: rootname, xml: xmlToString($viewxml), wasmodified: false });
+            
             cacheLogInfo(logger);
         }
 
@@ -1942,6 +1934,7 @@
                                 data: dataJson,
                                 stringify: true,
                                 onloginfail: function(text) {
+                                    setOnline();
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
@@ -1949,6 +1942,7 @@
                                 },
                                 success: function(data) {
                                     logger.setAjaxSuccess();
+                                    setOnline();
                                     var $xml = data.xml;
                                     _updateStoredViewXml(rootid, $xml, '0');
                                     _resetPendingChanges(false, true);
@@ -1957,6 +1951,7 @@
                                     }
                                 },
                                 error: function(data) {
+                                    setOffline();
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
