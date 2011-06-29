@@ -31,7 +31,7 @@ namespace ChemSW.Nbt
 			{
 				NodesTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNodeReaderDataNative.fetchNodeInfo_audit", "nodes_audit" );
 				OrderByClause OrderBy = new OrderByClause( "recordcreated", OrderByType.Descending );
-				NodesTable = NodesTableSelect.getTable( null, "nodeid", CswNbtNode.NodeId.PrimaryKey, "where recordcreated <= '" + _CswNbtResources.getDbNativeDate( Date ) + "'", false, new Collection<OrderByClause>() { OrderBy } );
+				NodesTable = NodesTableSelect.getTable( null, "nodeid", CswNbtNode.NodeId.PrimaryKey, "where recordcreated <= " + _CswNbtResources.getDbNativeDate( Date ), false, new Collection<OrderByClause>() { OrderBy } );
             }
 			// there may be no audit records, so fail into finding the most current record
 			if( NodesTable == null || NodesTable.Rows.Count == 0 )

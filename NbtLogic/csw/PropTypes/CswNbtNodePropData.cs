@@ -280,6 +280,21 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool TemporarilyRequired = false;
 
+		/// <summary>
+		/// If the property value comes from an audit record (rather than new)
+		/// </summary>
+		public bool AuditChanged
+		{
+			get
+			{
+				bool ret = false;
+				if( _PropRow.Table.Columns.Contains( "auditchanged" ) )
+				{
+					ret = CswConvert.ToBoolean( _PropRow["auditchanged"] );
+				}
+				return ret;
+			}
+		}
 
         public string GetPropRowValue( CswNbtSubField.PropColumn Column )
         {

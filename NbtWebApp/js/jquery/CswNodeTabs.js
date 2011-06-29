@@ -320,7 +320,13 @@
                 {
                     var $labelcell = _getLabelCell($cellset);
                     $labelcell.addClass('propertylabel');
-                    if($propxml.CswAttrXml('helptext') !== '')
+
+					if(isTrue($propxml.CswAttrXml('highlight')))
+                    {
+						$labelcell.addClass('ui-state-highlight');
+                    }
+
+					if($propxml.CswAttrXml('helptext') !== '')
                     {
                         $('<a href="#" class="cswprop_helplink" title="'+ $propxml.CswAttrXml('helptext') + '" onclick="return false;">'+ $propxml.CswAttrXml('name') +'</a>')
                             .appendTo($labelcell);
@@ -343,6 +349,10 @@
                 var $propcell = _getPropertyCell($cellset);
                 $propcell.addClass('propertyvaluecell');
 
+				if(isTrue($propxml.CswAttrXml('highlight')))
+                {
+					$propcell.addClass('ui-state-highlight');
+                }
                 _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode, $savebtn);
 
             });

@@ -260,6 +260,7 @@ namespace ChemSW.Nbt.WebServices
             CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", IsReadOnly.ToString().ToLower() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "gestalt", PropWrapper.Gestalt.Replace( "\"", "&quot;" ) );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "copyable", Prop.IsCopyable().ToString().ToLower() );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "highlight", PropWrapper.AuditChanged.ToString().ToLower() );
 
 			PropWrapper.ToXml( PropXmlNode );
 
@@ -279,15 +280,16 @@ namespace ChemSW.Nbt.WebServices
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", "0" );
 
 			string SQL = @"select na.recordcreated as ChangeDate, na.auditeventtype as EventType
-from nodes n
-join nodes_audit na on n.nodeid = na.nodeid
-where n.nodeid = " + Node.NodeId.PrimaryKey.ToString() + @"
-UNION
-select ja.recordcreated as ChangeDate, ja.auditeventtype as EventType
-from nodes n
-join jct_nodes_props j on n.nodeid = j.nodeid
-join jct_nodes_props_audit ja on j.jctnodepropid = ja.jctnodepropid
-where n.nodeid = " + Node.NodeId.PrimaryKey.ToString();
+ from nodes n
+ join nodes_audit na on n.nodeid = na.nodeid
+ where n.nodeid = " + Node.NodeId.PrimaryKey.ToString() + @"
+ UNION
+ select ja.recordcreated as ChangeDate, ja.auditeventtype as EventType
+ from nodes n
+ join jct_nodes_props j on n.nodeid = j.nodeid
+ join jct_nodes_props_audit ja on j.jctnodepropid = ja.jctnodepropid
+ where n.nodeid = " + Node.NodeId.PrimaryKey.ToString() + @" 
+ order by ChangeDate desc";
 
 			CswArbitrarySelect HistorySelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceAuditing_getAuditHistory_select", SQL );
 			DataTable HistoryTable = HistorySelect.getTable();

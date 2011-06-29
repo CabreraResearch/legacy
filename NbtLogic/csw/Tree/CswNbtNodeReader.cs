@@ -115,6 +115,11 @@ namespace ChemSW.Nbt
                         if(CswNbtNode.NodeType != null)
 							CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, CswNbtNode.NodeTypeId, Date );
                         _CswNbtResources.logTimerResult( "Filled in node property data for node (" + CswNbtNode.NodeId.ToString() + "): " + CswNbtNode.NodeName, Timer.ElapsedDurationInSecondsAsString );
+
+						if( Date != DateTime.MinValue )
+						{
+							CswNbtNode.ReadOnly = true;
+						}
                     }
                     // BZ 8117 - This is actually possibly expected behavior now when we delete a node
                     //else
