@@ -144,6 +144,8 @@
         var ForMobile = true;
         var rootid;
 
+        var mobileStorage = new CswMobileStorage();
+        
         var UserName = localStorage["username"];
         if (!localStorage["sessionid"]) {
             Logout();
@@ -1442,7 +1444,8 @@
         function _makeSyncStatusDiv() {
             var content = '';
             content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">No</span></p>';
-            content += '<p>Last sync: <span id="ss_lastsync"></span></p>';
+            content += '<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess + '</span></p>';
+            content += '<p>Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt + '</span></p>';
             content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
             content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
 
@@ -1484,13 +1487,13 @@
                 if(doWaitForData) {
                     _clearWaitForData();
                     _waitForData();
-                    $('#ss_gooffline span').text('Go Offline');
+                    $('#ss_gooffline span').find('span.ui-btn-text').text('Go Offline');
                 }
             } else {
                 setOffline();
                 if( doWaitForData) {
                     _clearWaitForData();
-                    $('#ss_gooffline span').text('Go Online');
+                    $('#ss_gooffline span').find('span.ui-btn-text').text('Go Online');
                 }
             }
         }
@@ -1508,8 +1511,10 @@
                                   .removeClass('pendingchanges');
             }
             if (setlastsyncnow) {
-                var d = new Date();
-                $('#ss_lastsync').text(d.toLocaleDateString() + ' ' + d.toLocaleTimeString());
+                $('#ss_lastsync_success').text( mobileStorage.lastSyncSuccess() );
+            }
+            else {
+                $('#ss_lastsync_attempt').text( mobileStorage.lastSyncAttempt() );
             }
         }
 
@@ -1809,6 +1814,35 @@
             localStorage['sessionid'] = sessionid;
         } //_cacheSession()
 
+        function CswMobileStorage() {
+            this.lastSyncSuccess = function() {
+                var now = new Date();
+                var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                localStorage['lastSyncSuccess'] = ret;
+                return ret;
+            };
+            this.lastSyncSuccess.prototype.toString = function() {
+                return localStorage['lastSyncSuccess'];
+            };
+            this.lastSyncAttempt = function() {
+                var now = new Date();
+                var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                localStorage['lastSyncAttempt'] = ret;
+                return ret;
+            };
+            this.lastSyncAttempt.prototype.toString = function() {
+                var last = localStorage['lastSyncAttempt'];
+                var ret;
+                if(isNullOrEmpty(last)) {
+                    ret = localStorage['lastSyncSuccess'];
+                }
+                else {
+                    ret = last;
+                }
+                return ret;
+            };
+        }
+        
         function _storeViewXml(rootid, rootname, $viewxml) {
             var logger = new profileMethod('storeViewXml');
             if (isNullOrEmpty(storedViews)) {
