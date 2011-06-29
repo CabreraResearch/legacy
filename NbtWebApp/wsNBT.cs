@@ -429,7 +429,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getMainMenu( string ViewId, string SafeNodeKey )
+        public XElement getMainMenu( string ViewId, string SafeNodeKey, string PropIdAttr )
         {
             XElement ReturnVal = new XElement( "menu" );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -443,7 +443,7 @@ namespace ChemSW.Nbt.WebServices
 
                     var ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.getMenu( View, SafeNodeKey );
+                    ReturnVal = ws.getMenu( View, SafeNodeKey, PropIdAttr );
                 }
 
                 _deInitResources();

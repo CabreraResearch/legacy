@@ -155,6 +155,14 @@ profileMethod.prototype = {
         $stats.append('<ajaxsuccess>' + this.ajaxSuccess + '</ajaxsuccess>');
         $stats.append('<ended>' + this.ended + '</ended>');
         return xmlToString($stats);
+    },
+    toHtml: function()
+    {
+        var $stats = $('<div>' + this.name + '</div>');
+        $stats.append('<p>started: ' + this.started + '</p>');
+        $stats.append('<p>ajaxsuccess: ' + this.ajaxSuccess + '</p>');
+        $stats.append('<p>ended: ' + this.ended + '</p>');
+        return xmlToString($stats);
     }
 };
 //#endregion profileMethod

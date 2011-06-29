@@ -65,6 +65,7 @@
 			            'viewid': viewid,
 			            'nodeid': o.nodeid,
 			            'cswnbtnodekey': o.cswnbtnodekey,
+						'propid': o.ID,
 			            'onAddNode': function (nodeid, cswnbtnodekey)
 			            {
                             refreshGrid(gridOpts);

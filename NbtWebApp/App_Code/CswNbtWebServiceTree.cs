@@ -68,11 +68,11 @@ namespace ChemSW.Nbt.WebServices
                                             new XElement( "content",
                                                         new XElement( "name", View.ViewName ) ) );
                         RootNode.Add( RootItemNode );
-                        _runTreeNodesRecursive( Tree, IDPrefix, RootItemNode );
+                        _runTreeNodesRecursive( View, Tree, IDPrefix, RootItemNode );
                     }
                     else // List, or non-top level of Tree
                     {
-                        _runTreeNodesRecursive( Tree, IDPrefix, RootNode );
+						_runTreeNodesRecursive( View, Tree, IDPrefix, RootNode );
                     }
 
                     if( IsFirstLoad )
@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.WebServices
 		/// <summary>
 		/// Recursively iterate the tree and add child nodes according to parent hierarchy
 		/// </summary>
-		private void _runTreeNodesRecursive( ICswNbtTree Tree, string IDPrefix, XElement GrandParentNode )
+		private void _runTreeNodesRecursive( CswNbtView View, ICswNbtTree Tree, string IDPrefix, XElement GrandParentNode )
 		{
 			for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
 			{
@@ -220,6 +220,7 @@ namespace ChemSW.Nbt.WebServices
 
 				string ThisNodeState = "closed";
 				if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
+					View.ViewMode == NbtViewRenderingMode.List ||
 					( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) )
 				{
 					ThisNodeState = "leaf";
@@ -239,7 +240,7 @@ namespace ChemSW.Nbt.WebServices
 				if( Tree.getChildNodeCount() > 0 )
 				{
 					// XElement ChildNode = _runTreeNodesRecursive()
-					_runTreeNodesRecursive( Tree, IDPrefix, ParentNode );
+					_runTreeNodesRecursive( View, Tree, IDPrefix, ParentNode );
 				}
 
 				GrandParentNode.Add( ParentNode );
