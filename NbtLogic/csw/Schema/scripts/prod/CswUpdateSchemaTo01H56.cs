@@ -34,6 +34,10 @@ namespace ChemSW.Nbt.Schema
 			{
 				_CswNbtSchemaModTrnsctn.addBooleanColumn( "nodes", "readonly", "Whether the node and all of its properties are read only", false, false );
 			}
+			if( !_CswNbtSchemaModTrnsctn.isColumnDefined( "nodes_audit", "readonly" ) )
+			{
+				_CswNbtSchemaModTrnsctn.addBooleanColumn( "nodes_audit", "readonly", "Whether the node and all of its properties are read only", false, false );
+			}
 
 		} // update()
 
