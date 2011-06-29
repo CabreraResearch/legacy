@@ -1831,17 +1831,11 @@
                 return ret;
             };
             this.lastSyncAttempt.prototype.toString = function() {
-                var last = localStorage['lastSyncAttempt'];
-                var ret;
-                if(isNullOrEmpty(last)) {
-                    ret = localStorage['lastSyncSuccess'];
-                }
-                else {
-                    ret = last;
-                }
-                return ret;
+                return localStorage['lastSyncAttempt'];
             };
         }
+        if(isNullOrEmpty(localStorage['lastSyncSuccess']) ) mobileStorage.lastSyncSuccess();
+        if(isNullOrEmpty(localStorage['lastSyncAttempt']) ) mobileStorage.lastSyncAttempt();
         
         function _storeViewXml(rootid, rootname, $viewxml) {
             var logger = new profileMethod('storeViewXml');
