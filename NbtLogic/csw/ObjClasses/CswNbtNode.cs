@@ -153,6 +153,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//ModificationState
 
+		private bool _ReadOnly = false;
+		public bool ReadOnly
+		{
+			get { return _ReadOnly; }
+			set { _ReadOnly = value; }
+		}
+
 
         //bz # 5943
         //private bool _Modified = false;

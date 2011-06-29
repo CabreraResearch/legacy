@@ -137,6 +137,8 @@ namespace ChemSW.Nbt.Schema
 			_UpdateDrivers.Add( Schema01H54Driver.SchemaVersion, Schema01H54Driver );
 			CswSchemaUpdateDriver Schema01H55Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H55( _CswNbtSchemaModTrnsctn ) );
 			_UpdateDrivers.Add( Schema01H55Driver.SchemaVersion, Schema01H55Driver );
+			CswSchemaUpdateDriver Schema01H56Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H56( _CswNbtSchemaModTrnsctn ) );
+			_UpdateDrivers.Add( Schema01H56Driver.SchemaVersion, Schema01H56Driver );
 
             // This automatically detects the latest version
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == null ||
