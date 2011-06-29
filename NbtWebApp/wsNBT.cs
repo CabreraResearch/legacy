@@ -2349,36 +2349,36 @@ namespace ChemSW.Nbt.WebServices
 
 		#region Auditing
 
-		[WebMethod( EnableSession = false )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string getAuditHistory( string NodeId )
-		{
-			JObject ReturnVal = new JObject();
-			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-			try
-			{
-				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					CswPrimaryKey RealNodeId = new CswPrimaryKey();
-					RealNodeId.FromString( NodeId );
-					CswNbtNode Node = _CswNbtResources.Nodes[RealNodeId];
-					CswNbtWebServiceAuditing ws = new CswNbtWebServiceAuditing( _CswNbtResources );
-					ReturnVal = ws.getAuditHistory( Node );
-				}
-				_deInitResources();
-			}
-			catch( Exception Ex )
-			{
-				ReturnVal = jError( Ex );
-			}
+		//[WebMethod( EnableSession = false )]
+		//[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		//public string getAuditHistory( string NodeId )
+		//{
+		//    JObject ReturnVal = new JObject();
+		//    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+		//    try
+		//    {
+		//        _initResources();
+		//        AuthenticationStatus = _CswSessionResources.attemptRefresh();
+		//        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+		//        {
+		//            CswPrimaryKey RealNodeId = new CswPrimaryKey();
+		//            RealNodeId.FromString( NodeId );
+		//            CswNbtNode Node = _CswNbtResources.Nodes[RealNodeId];
+		//            CswNbtWebServiceAuditing ws = new CswNbtWebServiceAuditing( _CswNbtResources );
+		//            ReturnVal = ws.getAuditHistory( Node );
+		//        }
+		//        _deInitResources();
+		//    }
+		//    catch( Exception Ex )
+		//    {
+		//        ReturnVal = jError( Ex );
+		//    }
 
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+		//    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-			return ReturnVal.ToString();
+		//    return ReturnVal.ToString();
 
-		} // getAuditHistory()
+		//} // getAuditHistory()
 
 		#endregion Auditing
 
