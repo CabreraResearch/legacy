@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Xml;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Web;
-using System.Web.Services;
+using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Config;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Session;
-using ChemSW.NbtWebControls;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -31,27 +23,36 @@ namespace ChemSW.Nbt.WebServices
 
         public XElement Run( string ParentId, string UpdatedViewXml )
         {
-            XmlDocument XmlDoc = new XmlDocument();
-            XmlDoc.LoadXml( UpdatedViewXml );
-
-            XmlNodeList PropNodes = XmlDoc.SelectNodes( "//prop[@wasmodified='1']" );
+            string ViewXml = UpdatedViewXml.Replace( @"xmlns=""http://www.w3.org/1999/xhtml""", string.Empty );
+            XElement AllProps = XElement.Parse( ViewXml );
+            IEnumerable<XElement> Props = ( from Element in AllProps.Descendants().Elements( "prop" )
+                                            where ( null != Element.Attribute( "wasmodified" ) &&
+                                                   Element.Attribute( "wasmodified" ).Value == "1" )
+                                            select Element );
 
             // post changes once per node, not once per prop            
             Collection<CswNbtNode> NodesToPost = new Collection<CswNbtNode>();
 
-            foreach( XmlNode PropNode in PropNodes )
+            foreach( XElement Prop in Props )
             {
-                string NodePropId = PropNode.Attributes["id"].Value;
-                string[] SplitNodePropId = NodePropId.Split( '_' );
-                Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[1] );
-                CswPrimaryKey NodePk = new CswPrimaryKey( SplitNodePropId[3], CswConvert.ToInt32( SplitNodePropId[4] ) );
+                if( null != Prop.Attribute( "id" ) )
+                {
+                    string NodePropId = Prop.Attribute( "id" ).Value;
+                    string[] SplitNodePropId = NodePropId.Split( '_' );
+                    Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[1] );
+                    CswPrimaryKey NodePk = new CswPrimaryKey( SplitNodePropId[3], CswConvert.ToInt32( SplitNodePropId[4] ) );
 
-                CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
-                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
+                    CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
+                    CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
-                if( !NodesToPost.Contains( Node ) )
-                    NodesToPost.Add( Node );
+                    XmlDocument Doc = new XmlDocument();
+                    XmlNode PropNode = Doc.ReadNode( Prop.CreateReader() );
+
+                    Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
+
+                    if( !NodesToPost.Contains( Node ) )
+                        NodesToPost.Add( Node );
+                }
             }
 
             foreach( CswNbtNode Node in NodesToPost )
