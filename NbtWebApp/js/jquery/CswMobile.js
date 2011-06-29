@@ -47,7 +47,7 @@
 
     $.fn.doChangePage = function(options) {
         var o = {
-            //transition: $.mobile.defaultPageTransition,
+            transition: 'fade'
             //reverse: false,
             //changeHash: true,
             //role: 'page',
@@ -64,7 +64,7 @@
         if (!isNullOrEmpty($div)) {
             var $page = $.mobile.activePage;
             var id = (isNullOrEmpty($page)) ? 'no ID' : $page.CswAttrDom('id');
-
+            if(debugOn()) log('changePage from ' + $page.CswAttrDom('id') + ' to ' + $div.CswAttrDom('id'), true);
             if (id !== $div.CswAttrDom('id')) ret = $.mobile.changePage($div, o);
         }
         return ret;
@@ -320,7 +320,6 @@
             } else {
                 setStopLog();
             }
-
         }
 
         function setStartLog() {
