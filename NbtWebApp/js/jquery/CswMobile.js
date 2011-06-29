@@ -1821,7 +1821,7 @@
                 localStorage['lastSyncSuccess'] = ret;
                 return ret;
             };
-            this.lastSyncSuccess.prototype.toString = function() {
+            this.lastSyncSuccess.toString = function() {
                 return localStorage['lastSyncSuccess'];
             };
             this.lastSyncAttempt = function() {
@@ -1830,12 +1830,10 @@
                 localStorage['lastSyncAttempt'] = ret;
                 return ret;
             };
-            this.lastSyncAttempt.prototype.toString = function() {
+            this.lastSyncAttempt.toString = function() {
                 return localStorage['lastSyncAttempt'];
             };
         }
-        if(isNullOrEmpty(localStorage['lastSyncSuccess']) ) mobileStorage.lastSyncSuccess();
-        if(isNullOrEmpty(localStorage['lastSyncAttempt']) ) mobileStorage.lastSyncAttempt();
         
         function _storeViewXml(rootid, rootname, $viewxml) {
             var logger = new profileMethod('storeViewXml');

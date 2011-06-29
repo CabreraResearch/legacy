@@ -1898,6 +1898,7 @@
     <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\jQueryEnumerableFrom.snippet" />
     <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\jQueryEnumerableRange.snippet" />
     <None Include="js\_compile.pl" />
+    <None Include="Mobile.manifest" />
     <None Include="SkinPrint\Calendar\Thumbs.db" />
     <None Include="SkinPrint\ComboBox\Thumbs.db" />
     <None Include="SkinPrint\Grid\Thumbs.db" />
