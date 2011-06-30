@@ -141,6 +141,8 @@
             $.extend(opts, options);
         }
 
+        debugOn(debug);
+        
         var ForMobile = true;
         var rootid;
 
@@ -209,6 +211,11 @@
                     HideBackButton: true,
                     dataRel: 'dialog'
                 });
+            
+            if( !isNullOrEmpty(localStorage['loginFailure']) ) {
+                _addToDivHeaderText($retDiv, localStorage['loginFailure']);
+            }
+            
             $('#loginsubmit').bind('click', function() {
                 $.mobile.showPageLoadingMsg();
                 onLoginSubmit();
@@ -265,6 +272,7 @@
         // ------------------------------------------------------------------------------------
 
         function setOffline() {
+            
             amOnline(false);
             
             $('.onlineStatus').removeClass('online')
@@ -286,7 +294,9 @@
         }
 
         function setOnline() {
+            
             amOnline(true);
+            localStorage.removeItem('loginFailure');
             
             $('.onlineStatus').removeClass('offline')
                               .addClass('online')
@@ -297,14 +307,18 @@
                               .end();
                 $('.refresh').css('visibility', '');
                 $viewsdiv = reloadViews(); //no changePage
-            }
+            
             if ($.mobile.activePage === $sorrycharliediv) {
-                $logindiv.doPage(); //doChangePage();;
+                $logindiv.doPage(); //doChangePage();
+            }
         }
 
-        function amOnline(amOnline) {
-            if(arguments.length === 1 ) {
+        function amOnline(amOnline,loginFailure) {
+            if(arguments.length > 0 ) {
                 localStorage['online'] = isTrue(amOnline);
+            }
+            if(loginFailure) {
+                localStorage['loginFailure'] = loginFailure;
             }
             var ret = isTrue(localStorage['online']);
             return ret;
@@ -486,6 +500,9 @@
                             _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                         }
                         $retDiv = _loadDivContentsXml(p);
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        onError(XMLHttpRequest, textStatus, errorThrown);
                     }
                 });
             cacheLogInfo(logger);
@@ -1372,12 +1389,8 @@
             return $('#' + DivId).find('div:jqmData(role="header") h1').text();
         }
 
-        function _addToDivHeaderText($div, text) {
-            $div.find('div:jqmData(role="header") h1').append($('<p style="color: yellow;">' + text + '</p>'));
-            $.mobile.loadPage($div);
-            return $div;
-        }
-
+        function _addToDivHeaderText($div, text) {            $div.find('div:jqmData(role="header") h1').append($('<p style="color: yellow; white-space: normal;">' + text + '</p>'));            $.mobile.loadPage($div);            return $div;        }
+        
         function _bindPageEvents(DivId, ParentId, level, $div) {
             $div.find('#' + DivId + '_searchopen')
                 .unbind('vclick')
@@ -1607,7 +1620,7 @@
                             $viewsdiv.doChangePage();
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown) {
-                            $.mobile.hidePageLoadingMsg();
+                            onError(XMLHttpRequest, textStatus, errorThrown);
                         }
                     });
             }
@@ -1615,23 +1628,33 @@
         } //onLoginSubmit() 
 
         function onLoginFail(text) {
-            Logout(false);
-            $.mobile.hidePageLoadingMsg();
-            _addToDivHeaderText($logindiv, text);
+            Logout(false);            $.mobile.hidePageLoadingMsg();            _addToDivHeaderText($logindiv, text);
+            localStorage['loginFailure'] = text;
         }
 
         function onLogout() {
             Logout(true);
         }
 
+        function onError(XMLHttpRequest, textStatus, errorThrown) {
+            $.mobile.hidePageLoadingMsg();
+        }
+        
         function Logout(reloadWindow) {
-            if (_checkNoPendingChanges()) {
+            if ( _checkNoPendingChanges() ) {
+                
+                var loginFailure = tryParseString(localStorage['loginFailure'], '');
+                var onlineStatus = amOnline();
+                
                 _clearStorage();
+                
+                amOnline(onlineStatus,loginFailure);
                 // reloading browser window is the easiest way to reset
                 if (reloadWindow) {
                     window.location.href = window.location.pathname;
                 }
             }
+            $.mobile.hidePageLoadingMsg();
         }
 
         function _clearStorage() {
@@ -1680,8 +1703,8 @@
 
                             _loadDivContents(params);
                         }, // success
-                        error: function () {
-                            setOffline();
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            onError(XMLHttpRequest, textStatus, errorThrown); //setOffline();
                         }
                     });
             }
