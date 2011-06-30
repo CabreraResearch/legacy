@@ -26,6 +26,7 @@
             }
         }
         catch(e) {
+            window.location.href = window.location.pathname;
             if( doLogging() ) {
                 errorHandler(e,true,true);
             }
