@@ -119,7 +119,7 @@
 							$div.CswNodeTabs({
 								'nodetypeid': o.nodetypeid,
                                 'relatednodeid': o.relatednodeid,
-								'EditMode': 'AddInPopup',
+								'EditMode': EditMode.AddInPopup.name,
 								'onSave': function (nodeid, cswnbtnodekey) {
 									$div.dialog('close');
 									o.onAddNode(nodeid, cswnbtnodekey);
@@ -143,9 +143,11 @@
 							if (options) $.extend(o, options);
 							var $div = $('<div></div>');
 							
+							var myEditMode = EditMode.EditInPopup.name;
 							var $table = $div.CswTable();
 							if(!isNullOrEmpty(o.date))
 							{
+								myEditMode = EditMode.AuditHistoryInPopup.name;
 								$table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
 									'ID': o.nodeid + '_history',
 									'nodeid': o.nodeid,
@@ -167,7 +169,7 @@
 									'nodeid': o.nodeid,
 									'cswnbtnodekey': o.cswnbtnodekey,
 									'filterToPropId': o.filterToPropId,
-									'EditMode': 'EditInPopup',
+									'EditMode': myEditMode,
 									'title': o.title,
 									'tabid': $.CswCookie('get', CswCookieName.CurrentTabId),
 									'date': date,
@@ -178,7 +180,7 @@
 										{
 											$div.dialog('close');
 										}
-										_setupTabs();
+										_setupTabs(date);
 										o.onEditNode(nodeid, nodekey);
 									},
 									'onBeforeTabSelect': function (tabid)

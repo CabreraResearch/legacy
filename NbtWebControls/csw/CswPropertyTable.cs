@@ -18,7 +18,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.NbtWebControls
 {
-    public enum NodeEditMode { Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue };
+    public enum NodeEditMode { Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, AuditHistoryInPopup };
 
     public class CswPropertyTable : CompositeControl
     {

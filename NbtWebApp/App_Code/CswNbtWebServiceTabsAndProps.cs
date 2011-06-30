@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.WebServices
 {
 	public class CswNbtWebServiceTabsAndProps
 	{
-		public enum NodeEditMode { Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue };
+		public enum NodeEditMode { Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, AuditHistoryInPopup };
 
 		private readonly CswNbtResources _CswNbtResources;
 	    private readonly ICswNbtUser _ThisUser;
