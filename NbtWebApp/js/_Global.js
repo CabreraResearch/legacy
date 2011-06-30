@@ -592,7 +592,8 @@ function copyNode(options)
     }
 
     var dataJson = {
-        NodePk: o.nodeid
+        NodePk: o.nodeid,
+        ViewId: $.CswCookie('get', CswCookieName.CurrentViewId)
     };
 
     CswAjaxJSON({
@@ -621,7 +622,8 @@ function deleteNodes(options)
 
     var jData = {
         NodePks: o.nodeids,
-        NodeKeys: o.nodekeys
+        NodeKeys: o.nodekeys,
+        ViewId: $.CswCookie('get', CswCookieName.CurrentViewId)
     };
 
     CswAjaxJSON({

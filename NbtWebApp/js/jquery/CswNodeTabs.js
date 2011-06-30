@@ -482,7 +482,8 @@
                                 var dataJson = {
                                     SourceNodeKey: o.cswnbtnodekey,
                                     CopyNodeIds: [],
-                                    PropIds: []
+                                    PropIds: [],
+									ViewId: $.CswCookie('get', CswCookieName.CurrentViewId)
                                 };
                                 
                                 $nodechecks.each(function() { 

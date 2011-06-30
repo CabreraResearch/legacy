@@ -66,7 +66,8 @@
 											{
 												var dataJson = {
                                                     PropId: o.$propxml.CswAttrXml('id'), 
-                                                    IncludeBlob: true
+                                                    IncludeBlob: true,
+													ViewId: $.CswCookie('get', CswCookieName.CurrentViewId)
                                                 };
                                                 
                                                 CswAjaxJSON({
