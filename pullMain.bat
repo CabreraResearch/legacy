@@ -4,7 +4,7 @@ hg pull -R /kiln/Common/CswWebControls -u main
 hg pull -R /kiln/Common/CswLogService -u main
 hg pull -R /kiln/nbt/nbt -u main
 hg pull -R /kiln/nbt/NbtImport -u main
-hg pull -R /kiln/nbt/nbt/NbtWebApp/help
+hg pull -R /kiln/nbt/nbt/NbtWebApp/help -u
 
 echo "Pull from Main Complete"
 
