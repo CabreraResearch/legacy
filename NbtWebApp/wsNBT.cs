@@ -1213,16 +1213,13 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_CswNbtResources.AuditContext = ViewId;
+					CswNbtView View = _getView( ViewId );
+					_setAuditContext( View );
 					
 					string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-					//if( !string.IsNullOrEmpty( ParsedNodeKey ) )
-					//{
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					CswNbtView View = _getView( ViewId );
 					ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ), View );
-					//}
 				}
 
 				_deInitResources();
@@ -1254,7 +1251,7 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_CswNbtResources.AuditContext = ViewId;
+					_setAuditContext( _getView( ViewId ) );
 		
 					string ParsedSourceNodeKey = wsTools.FromSafeJavaScriptParam( SourceNodeKey );
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
@@ -1740,7 +1737,7 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_CswNbtResources.AuditContext = ViewId;
+					_setAuditContext( _getView( ViewId ) );
 
 					if( NodeKeys.Length > 0 )
 					{
@@ -1809,7 +1806,7 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_CswNbtResources.AuditContext = ViewId;
+					_setAuditContext( _getView( ViewId ) );
 
 					CswPrimaryKey RealNodePk = new CswPrimaryKey();
 					RealNodePk.FromString( NodePk );
@@ -1887,7 +1884,7 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_CswNbtResources.AuditContext = ViewId;
+					_setAuditContext( _getView( ViewId ) );
 
 					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					bool ret = ws.ClearPropValue( PropId, IncludeBlob );
@@ -2384,6 +2381,10 @@ namespace ChemSW.Nbt.WebServices
 			return View;
 		} // _getView()
 
+		private void _setAuditContext( CswNbtView View )
+		{
+			_CswNbtResources.AuditContext = View.ViewName + " (" + View.ViewId.ToString() + ")";
+		}
 
 	}//wsNBT
 
