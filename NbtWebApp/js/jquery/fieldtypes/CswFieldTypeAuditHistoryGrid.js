@@ -9,64 +9,20 @@
 
     var methods = {
         init: function(o) {
-
+			
 			var $Div = $(this);
-			$Div.contents().remove();
 
-			var gridJson = $.parseJSON(o.$propxml.text());
-
-			var $gridPager = $('<div id="' + o.ID + '_gp" style="width:100%; height:20px;" />')
-								.appendTo($Div);
-			var $grid = $('<table id="'+ o.ID + '_gt" />')
-								.appendTo($Div);
-
-			var mygridopts = {
-				'autowidth': false,
-                'datatype': 'local', 
-				'height': 180,
-				'width': 400,
-				'pager': $gridPager,
-				'emptyrecords': 'No Results',
-                'loadtext': 'Loading...',
-				'multiselect': false,
-				'rowList': [10,25,50],  
-				'rowNum': 10
-			} 
-					
-			var optNav = {
-				'add': false,
-				'view': false,
-				'del': false,
-				'refresh': false,
-
-				'edit': true,
-				'edittext': "",
-				'edittitle': "Edit row",
-				'editfunc': function(rowid) 
-					{
-						var editOpt = {
-							nodeid: o.nodeid,
-							onEditNode: o.onEditNode
-						};
-						if (rowid !== null) 
-						{
-							editOpt.date = $grid.jqGrid('getCell', rowid, 'CHANGEDATE');
-							$.CswDialog('EditNodeDialog', editOpt);
-						}
-						else
-						{
-							alert('Please select a row to edit');
-						}
-					}
-			};
-			$.extend(gridJson, mygridopts);
-
-            $grid.jqGrid(gridJson)
-					.navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, {}, {} ); 
-			$grid.jqGrid(gridJson);
-				//.hideCol('NODEIDSTR');
-
-
+			return $Div.CswAuditHistoryGrid({ 
+				'ID': o.ID,
+				'nodeid': o.nodeid,
+				'onEditRow': function(date) {
+								$.CswDialog('EditNodeDialog', {
+									'nodeid': o.nodeid,
+									'onEditNode': o.onEditNode,
+									'date': date
+								});
+							}
+			});
         },
         save: function(o) {
                 

@@ -237,7 +237,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 		{
 			if( !Control.ReadOnly )
 			{
-				Control.ReadOnly = ( ( EditMode == NodeEditMode.PrintReport ) ||
+				Control.ReadOnly = ( ( EditMode == NodeEditMode.PrintReport || EditMode == NodeEditMode.AuditHistoryInPopup ) ||
 									 ( PropWrapper != null &&
 									   ( PropWrapper.ReadOnly ||
 										 PropWrapper.NodeTypeProp.ServerManaged ||

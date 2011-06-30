@@ -288,7 +288,7 @@ namespace ChemSW.Nbt.PropTypes
 			get
 			{
 				bool ret = false;
-				if( _PropRow.Table.Columns.Contains( "auditchanged" ) )
+				if( _PropRow != null && _PropRow.Table.Columns.Contains( "auditchanged" ) )
 				{
 					ret = CswConvert.ToBoolean( _PropRow["auditchanged"] );
 				}
@@ -339,6 +339,11 @@ namespace ChemSW.Nbt.PropTypes
             }
             return ret;
         }
+
+		public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
+		{
+			return _PropRow[Column.ToString(), DataRowVersion.Original].ToString();
+		}
 
         public string Field1
         {

@@ -23,7 +23,7 @@
             filterToPropId: '',       
             title: '',
             date: '',      // for audit records
-			EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
+			EditMode: EditMode.Edit.name, // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
             onSave: function (nodeid, cswnbtnodekey, tabcount) { },
             onBeforeTabSelect: function (tabid) { return true; },
             onTabSelect: function (tabid) { },
@@ -482,7 +482,8 @@
                                 var dataJson = {
                                     SourceNodeKey: o.cswnbtnodekey,
                                     CopyNodeIds: [],
-                                    PropIds: []
+                                    PropIds: [],
+									ViewId: $.CswCookie('get', CswCookieName.CurrentViewId)
                                 };
                                 
                                 $nodechecks.each(function() { 

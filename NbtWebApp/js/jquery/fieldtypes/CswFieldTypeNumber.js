@@ -18,7 +18,7 @@
 				'onchange': o.onchange
 			});
 
-			if($NumberTextBox.length > 0)
+			if(!isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0)
 			{
 				$NumberTextBox.clickOnEnter(o.$savebtn);
 			}

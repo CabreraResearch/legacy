@@ -62,7 +62,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
 			// case 22512
-			if( this.Name.Text == "chemsw_admin_role" &&
+			// also case 22557 - use the original name, not the new one
+			CswNbtNodePropWrapper NamePropWrapper = Node.Properties[NamePropertyName];
+			if( NamePropWrapper.GetOriginalPropRowValue( NamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == "chemsw_admin_role" &&
 				_CswNbtResources.CurrentNbtUser.Username != "chemsw_admin" &&
 				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
 			{

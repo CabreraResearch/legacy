@@ -10,12 +10,13 @@
 // ------------------------------------------------------------------------------------
 
 var EditMode = {
-    Edit: {name: 'Edit'},
-    AddInPopup: { name: 'AddInPopup' },
-    EditInPopup: { name: 'EditInPopup' },
-    Demo: { name: 'Demo' },
-    PrintReport: { name: 'PrintReport' },
-    DefaultValue: { name: 'DefaultValue' }
+	Edit: { name: 'Edit' },
+	AddInPopup: { name: 'AddInPopup' },
+	EditInPopup: { name: 'EditInPopup' },
+	Demo: { name: 'Demo' },
+	PrintReport: { name: 'PrintReport' },
+	DefaultValue: { name: 'DefaultValue' },
+	AuditHistoryInPopup: { name: 'AuditHistoryInPopup' }
 };
 
 // for CswInput
@@ -592,7 +593,8 @@ function copyNode(options)
     }
 
     var dataJson = {
-        NodePk: o.nodeid
+        NodePk: o.nodeid,
+        ViewId: $.CswCookie('get', CswCookieName.CurrentViewId)
     };
 
     CswAjaxJSON({
@@ -621,7 +623,8 @@ function deleteNodes(options)
 
     var jData = {
         NodePks: o.nodeids,
-        NodeKeys: o.nodekeys
+        NodeKeys: o.nodekeys,
+        ViewId: $.CswCookie('get', CswCookieName.CurrentViewId)
     };
 
     CswAjaxJSON({
