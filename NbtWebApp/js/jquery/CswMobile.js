@@ -1822,7 +1822,7 @@
                 return ret;
             };
             this.lastSyncSuccess.toString = function() {
-                return localStorage['lastSyncSuccess'];
+                return tryParseString(localStorage['lastSyncSuccess'],'');
             };
             this.lastSyncAttempt = function() {
                 var now = new Date();
@@ -1831,7 +1831,7 @@
                 return ret;
             };
             this.lastSyncAttempt.toString = function() {
-                return localStorage['lastSyncAttempt'];
+                return tryParseString(localStorage['lastSyncAttempt'], '');
             };
         }
         
