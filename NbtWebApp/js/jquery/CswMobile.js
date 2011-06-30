@@ -17,7 +17,7 @@
         var p = {
             'data-filter': false,
             'data-role': 'listview',
-            'data-inset': false
+            'data-inset': true
         };
         if (params) $.extend(p, params);
 
@@ -683,14 +683,15 @@
                 var Location = p.$xmlitem.find('prop[ocpname="Location"]').CswAttrXml('gestalt');
                 var MountPoint = p.$xmlitem.find('prop[ocpname="Target"]').CswAttrXml('gestalt');
                 var Status = p.$xmlitem.find('prop[ocpname="Status"]').CswAttrXml('gestalt');
+//Case 22579: just remove for now
                 var UnansweredCnt = 0;
 
-                p.$xmlitem.find('prop[fieldtype="Question"]').each(function() {
-                    var $question = $(this).clone();
-                    if (isNullOrEmpty($question.children('Answer').text())) {
-                        UnansweredCnt++;
-                    }
-                });
+//                p.$xmlitem.find('prop[fieldtype="Question"]').each(function() {
+//                    var $question = $(this).clone();
+//                    if (isNullOrEmpty($question.children('Answer').text())) {
+//                        UnansweredCnt++;
+//                    }
+//                });
 
                 Html += '<li>';
                 Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">';
@@ -745,7 +746,7 @@
             var $label = $('<h2 id="' + IdStr + '_label" style="white-space:normal;" class="csw_prop_label">' + PropName + '</h2>')
                             .appendTo(($retLi));
             
-            var $fieldcontain = $('<div class="csw_fieldset" data-role="fieldcontain"></div>')
+            var $fieldcontain = $('<div class="csw_fieldset" ></div>')
                                     .appendTo($retLi);
             var $propDiv;
             
