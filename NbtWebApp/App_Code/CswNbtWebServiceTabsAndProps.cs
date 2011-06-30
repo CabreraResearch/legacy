@@ -279,13 +279,20 @@ namespace ChemSW.Nbt.WebServices
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "required", "0" );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", "0" );
 
-			string SQL = @"select na.recordcreated as ChangeDate, na.auditeventtype as EventType, x.transactionusername as Username
+			string SQL = @"
+ select na.recordcreated as ChangeDate, 
+        x.transactionusername as Username,
+        na.auditeventtype as EventType, 
+        x.auditeventname as Context
  from nodes n
  join nodes_audit na on n.nodeid = na.nodeid
  join audit_transactions x on na.audittransactionid = x.audittransactionid
  where n.nodeid = " + Node.NodeId.PrimaryKey.ToString() + @"
  UNION
- select ja.recordcreated as ChangeDate, ja.auditeventtype as EventType, x.transactionusername as Username
+ select ja.recordcreated as ChangeDate, 
+        x.transactionusername as Username,
+        ja.auditeventtype as EventType, 
+        x.auditeventname as Context
  from nodes n
  join jct_nodes_props j on n.nodeid = j.nodeid
  join jct_nodes_props_audit ja on j.jctnodepropid = ja.jctnodepropid

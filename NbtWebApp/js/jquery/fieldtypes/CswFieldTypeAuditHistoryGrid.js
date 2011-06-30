@@ -24,7 +24,7 @@
 				'autowidth': false,
                 'datatype': 'local', 
 				'height': 180,
-				'width': 400,
+				'width': '100%',
 				'pager': $gridPager,
 				'emptyrecords': 'No Results',
                 'loadtext': 'Loading...',
