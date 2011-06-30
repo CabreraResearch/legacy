@@ -840,6 +840,10 @@ namespace ChemSW.Nbt
         /// Provides meta data information about tables and columns, from data_dictionary
         /// </summary>
         public ICswDataDictionaryReader DataDictionary { get { return _CswResources.DataDictionary; } }
+		/// <summary>
+		/// Set the context information for this audit transaction
+		/// </summary>
+		public string AuditContext { set { _CswResources.AuditContext = value; } }
 
         #endregion Pass-thru to CswResources
 

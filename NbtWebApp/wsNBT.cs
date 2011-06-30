@@ -1213,6 +1213,8 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
+					_CswNbtResources.AuditContext = ViewId;
+					
 					string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
 					//if( !string.IsNullOrEmpty( ParsedNodeKey ) )
 					//{
@@ -1239,7 +1241,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string copyPropValues( string SourceNodeKey, string[] CopyNodeIds, string[] PropIds )
+		public string copyPropValues( string SourceNodeKey, string[] CopyNodeIds, string[] PropIds, string ViewId )
 		{
 			JObject ReturnVal = new JObject();
 
@@ -1252,6 +1254,8 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
+					_CswNbtResources.AuditContext = ViewId;
+		
 					string ParsedSourceNodeKey = wsTools.FromSafeJavaScriptParam( SourceNodeKey );
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					bool ret = ws.copyPropValues( ParsedSourceNodeKey, CopyNodeIds, PropIds );
@@ -1720,9 +1724,10 @@ namespace ChemSW.Nbt.WebServices
 		#endregion Search
 
 		#region Node DML
+
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string DeleteNodes( string[] NodePks, string[] NodeKeys )
+		public string DeleteNodes( string[] NodePks, string[] NodeKeys, string ViewId )
 		{
 			JObject ReturnVal = new JObject();
 			List<CswPrimaryKey> NodePrimaryKeys = new List<CswPrimaryKey>();
@@ -1735,6 +1740,8 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
+					_CswNbtResources.AuditContext = ViewId;
+
 					if( NodeKeys.Length > 0 )
 					{
 						foreach( string NodeKey in NodeKeys )
@@ -1791,7 +1798,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string CopyNode( string NodePk )
+		public string CopyNode( string NodePk, string ViewId )
 		{
 			JObject ReturnVal = new JObject();
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1802,6 +1809,7 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
+					_CswNbtResources.AuditContext = ViewId;
 
 					CswPrimaryKey RealNodePk = new CswPrimaryKey();
 					RealNodePk.FromString( NodePk );
@@ -1868,7 +1876,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string clearProp( string PropId, bool IncludeBlob )
+		public string clearProp( string PropId, bool IncludeBlob, string ViewId )
 		{
 			JObject ReturnVal = new JObject( new JProperty( "Succeeded", false.ToString().ToLower() ) );
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1879,6 +1887,7 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
+					_CswNbtResources.AuditContext = ViewId;
 
 					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					bool ret = ws.ClearPropValue( PropId, IncludeBlob );
@@ -2347,41 +2356,6 @@ namespace ChemSW.Nbt.WebServices
 
 		#endregion Mobile
 
-		#region Auditing
-
-		//[WebMethod( EnableSession = false )]
-		//[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		//public string getAuditHistory( string NodeId )
-		//{
-		//    JObject ReturnVal = new JObject();
-		//    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-		//    try
-		//    {
-		//        _initResources();
-		//        AuthenticationStatus = _CswSessionResources.attemptRefresh();
-		//        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-		//        {
-		//            CswPrimaryKey RealNodeId = new CswPrimaryKey();
-		//            RealNodeId.FromString( NodeId );
-		//            CswNbtNode Node = _CswNbtResources.Nodes[RealNodeId];
-		//            CswNbtWebServiceAuditing ws = new CswNbtWebServiceAuditing( _CswNbtResources );
-		//            ReturnVal = ws.getAuditHistory( Node );
-		//        }
-		//        _deInitResources();
-		//    }
-		//    catch( Exception Ex )
-		//    {
-		//        ReturnVal = jError( Ex );
-		//    }
-
-		//    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-		//    return ReturnVal.ToString();
-
-		//} // getAuditHistory()
-
-		#endregion Auditing
-
 		#region test
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -2391,6 +2365,7 @@ namespace ChemSW.Nbt.WebServices
 			return ( RetJson.ToString() );
 		} // RunView()
 		#endregion test
+
 		#endregion Web Methods
 
 		private CswNbtView _getView( string ViewId )
