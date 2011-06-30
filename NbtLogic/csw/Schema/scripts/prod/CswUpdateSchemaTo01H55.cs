@@ -82,10 +82,9 @@ namespace ChemSW.Nbt.Schema
 					WelcomeRow["componenttype"].ToString() != "Text" )
 				{
 					WelcomeRow.Delete();
-				}
-
-				if( WelcomeRow["displaytext"].ToString() == string.Empty &&
-					WelcomeRow["componenttype"].ToString() == "Text" )
+				} 
+				else if( WelcomeRow["displaytext"].ToString() == string.Empty &&
+						 WelcomeRow["componenttype"].ToString() == "Text" )
 				{
 					WelcomeRow.Delete();
 				}
