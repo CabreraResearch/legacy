@@ -613,7 +613,7 @@
 
                     if (currenttab !== tab) {
                         //should be separate ULs eventually
-                        $tab = $('<li data-role="list-divider">' + tab + '</li>')
+                        $tab = $('</ul><li data-role="list-divider">' + tab + '</li><ul>')
                                                 .appendTo($list);
                         currenttab = tab;
                     }
@@ -770,7 +770,7 @@
                 
                 switch (FieldType) {
                 case "Date":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
+                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.date, ID: propId, value: sf_value });
                     break;
                 case "Link":
                     $prop = $propDiv.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text});
@@ -856,16 +856,16 @@
                                                 });
                     break;
                 case "Static":
-                    $propDiv.append($('<p id="' + propId + '">' + sf_text + '</p>'));
+                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + sf_text + '</p>'));
                     break;
                 case "Text":
                     $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
                     break;
                 case "Time":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
+                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.time, ID: propId, value: sf_value });
                     break;
                 default:
-                    $propDiv.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
                     break;
                 } // switch (FieldType)
 
@@ -876,7 +876,7 @@
                     });
                 }
             } else {
-                $propDiv.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+                $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
             }
             return $retLi;
         }
