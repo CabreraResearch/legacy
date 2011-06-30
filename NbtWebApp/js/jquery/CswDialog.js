@@ -143,19 +143,34 @@
 							if (options) $.extend(o, options);
 							var $div = $('<div></div>');
 							
-							_setupTabs();
-
-							function _setupTabs()
+							var $table = $div.CswTable();
+							if(!isNullOrEmpty(o.date))
 							{
-								$div.empty();
-								$div.CswNodeTabs({
+								$table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
+									'ID': o.nodeid + '_history',
+									'nodeid': o.nodeid,
+									'onEditNode': o.onEditNode,
+									'JustDateColumn': true,
+									'selectedDate': o.date,
+									'onSelectRow': function(date) { _setupTabs(date); },
+									'allowEditRow': false
+								});
+							}
+							var $tabcell = $table.CswTable('cell', 1, 2);
+
+							_setupTabs(o.date);
+
+							function _setupTabs(date)
+							{
+								$tabcell.empty();
+								$tabcell.CswNodeTabs({
 									'nodeid': o.nodeid,
 									'cswnbtnodekey': o.cswnbtnodekey,
 									'filterToPropId': o.filterToPropId,
 									'EditMode': 'EditInPopup',
 									'title': o.title,
 									'tabid': $.CswCookie('get', CswCookieName.CurrentTabId),
-									'date': o.date,
+									'date': date,
 									'onSave': function (nodeid, nodekey, tabcount)
 									{
 										unsetChanged();

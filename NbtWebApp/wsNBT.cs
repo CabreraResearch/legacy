@@ -2353,6 +2353,41 @@ namespace ChemSW.Nbt.WebServices
 
 		#endregion Mobile
 
+		#region Auditing
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getAuditHistoryGrid( string NodeId, string JustDateColumn )
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					CswNbtWebServiceAuditing ws = new CswNbtWebServiceAuditing( _CswNbtResources );
+					CswPrimaryKey RealNodeId = new CswPrimaryKey();
+					RealNodeId.FromString( NodeId );
+					ReturnVal = ws.getAuditHistoryGrid( _CswNbtResources.Nodes[RealNodeId], CswConvert.ToBoolean( JustDateColumn ) );
+				}
+				_deInitResources();
+			}
+			catch( Exception Ex )
+			{
+				ReturnVal = jError( Ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+
+		} // getInspectionStatusGrid()
+
+
+		#endregion Auditing
+
 		#region test
 		[WebMethod( EnableSession = true )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]

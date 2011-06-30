@@ -104,6 +104,7 @@
     <Content Include="Act_ImportFireExtinguisher.aspx" />
     <Content Include="Act_Receiving.aspx" />
     <Content Include="Act_SplitSamples.aspx" />
+    <Compile Include="App_Code\CswNbtWebServiceAuditing.cs" />
     <Compile Include="App_Code\CswNbtWebServiceInspections.cs" />
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
@@ -465,6 +466,7 @@
     <Content Include="jmol\JmolApplet.jar" />
     <Content Include="js\CswAll.min.js" />
     <Content Include="js\CswClasses.js" />
+    <Content Include="js\jquery\CswAuditHistoryGrid.js" />
     <Content Include="js\jquery\CswInspectionStatus.js" />
     <Content Include="js\jquery\CswAttr.js" />
     <Content Include="js\jquery\CswButton.js" />
