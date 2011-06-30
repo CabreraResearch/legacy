@@ -340,6 +340,11 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
+		public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
+		{
+			return _PropRow[Column.ToString(), DataRowVersion.Original].ToString();
+		}
+
         public string Field1
         {
             get { return ( _getRowStringVal( CswNbtSubField.PropColumn.Field1 ) ); }
