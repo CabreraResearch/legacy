@@ -560,12 +560,14 @@
             try {
                 $('.csw_collapsible').page();
                 $('.csw_fieldset').page();
+//                $('.csw_answer').page();
                 $('.csw_listview').page();
             }
             catch(e) //this is hackadelic, but it works. 
             {
                 $('.csw_collapsible').page();
                 $('.csw_fieldset').page();
+//                $('.csw_answer').page();
                 $('.csw_listview').page();
             }
             $content.page();
@@ -987,50 +989,22 @@
                 }
 
                 var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                //var $input = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i] });
-                var $input = $('<button name="' + inputName + '" id="' + inputId + '" class="csw_logical">' + answertext + '</button>')
-                                .appendTo($fieldset);
-                
+
+                $fieldset.append('<label for="' + inputId + '">' + answertext + '</label>');
+                var $input = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i] })
 
                 // Checked is a Tristate, so isTrue() is not useful here
                 if ((Checked === 'false' && answers[i] === 'False') ||
                     (Checked === 'true' && answers[i] === 'True') ||
                         (Checked === '' && answers[i] === 'Null')) {
-                    $input.CswAttrXml({ 'data-theme': 'b' });
-                }
-                else {
-                    $input.CswAttrXml({ 'data-theme': 'c' });
+                    $input.CswAttrXml({ 'checked': 'checked' });
                 }
                 
-                $input.unbind('vclick');
-                $input.bind('vclick', function(eventObj) {
+                $input.unbind('change');
+                $input.bind('change', function(eventObj) {
                     var $this = $(this);
-                    var thisInput = eventObj.srcElement.innerText;
-                    var realVal = '';
-                    switch(thisInput) {
-                        case '?':
-                            realVal = 'null';
-                            break;
-                        case 'Yes':
-                            realVal = 'true';
-                            break;
-                        case 'No':
-                            realVal = 'false';
-                            break;
-                    }
-                    
-                    for (var i = 0; i < answers.length; i++) {
-                        var inpId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                        var $inpBtn = $('#' + inpId);
-
-                        if($inpBtn.text() === thisInput ) {
-                            $inpBtn = toggleButton($inpBtn, true);
-                        }
-                        else {
-                            $inpBtn = toggleButton($inpBtn, false);
-                        }
-                    }
-                    onPropertyChange(ParentId, eventObj, realVal, inputId);
+                    var thisInput = $this.val();
+                    onPropertyChange(ParentId, eventObj, thisInput, inputId);
                     return false;
                 });
             } // for (var i = 0; i < answers.length; i++)
@@ -1045,35 +1019,27 @@
 								    })
     								    .CswAttrXml({
 								        'data-role': 'controlgroup',
-								        'data-type': 'horizontal'
+								        'data-type': 'horizontal',
+    								    'data-theme': 'b'
 								    });
             var answers = Options.split(',');
             var answerName = makeSafeId({ prefix: IdStr, ID: Suffix }); //Name needs to be non-unqiue and shared
 
             for (var i = 0; i < answers.length; i++) {
                 var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                
-                var $answer = $('<button name="' + answerName + '" id="' + answerid + '" class="csw_answer">' + answers[i] + '</button>')
+
+                $fieldset.append('<label for="' + answerid + '" id="' + answerid + '_lab">' + answers[i] + '</label');
+                var $answer = $('<input type="radio" name="' + answerName + '" id="' + answerid + '" class="csw_answer" value="' + answers[i] + '" />')
                                 .appendTo($fieldset);
                 
                 if (Answer === answers[i]) {
-                    $answer.CswAttrXml({ 'data-theme': 'b' });
-                }
-                else {
-                    $answer.CswAttrXml({ 'data-theme': 'c' });
+                     $answer.CswAttrDom('checked', 'checked');
                 }
                 
-                $answer.unbind('vclick');
-                $answer.bind('vclick', function(eventObj) {
-                    var logger = new profileMethod('questionClick');
-                    
-                    var thisAnswer = eventObj.srcElement.innerText;
+                $answer.unbind('change');
+                $answer.bind('change', function(eventObj) {
 
-                    for (var i = 0; i < answers.length; i++) {
-                        var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                        var $ansBtn = $('#' + answerid);
-                        toggleButton($ansBtn, ($ansBtn.text() === thisAnswer));
-                    }
+                    var thisAnswer = $(this).val();
 
                     var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
                     var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
@@ -1094,45 +1060,15 @@
                             $li.removeClass('OOC');
                         }
                     }
-//                    if (!isNullOrEmpty(Answer)) {
-//                        // update unanswered count when this question is answered
-//                        var $parentfieldset = $('#' + IdStr + '_fieldset');
-//                        if ($parentfieldset.CswAttrDom('answered')) {
-//                            var $cntspan = $('#' + ParentId + '_unansweredcnt');
-//                            $cntspan.text(parseInt($cntspan.text()) - 1);
-//                            $parentfieldset.CswAttrDom('answered', 'true');
-//                        }
-//                    }
-                    logger.setAjaxSuccess();
+
                     setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName); }, 1);
-                    cacheLogInfo(logger);
+
                     return false;
                 });
             } // for (var i = 0; i < answers.length; i++)
 
             return $fieldset;
         } // _makeQuestionAnswerFieldSet()
-
-        function toggleButton($button,on) {
-            if(on) {
-                $button.CswAttrXml({ 'data-theme': 'b' })
-                       .removeClass('ui-btn-hover-c ui-btn-up-c')
-                       .parent('div')
-                       .removeClass('ui-btn-hover-c ui-btn-up-c')
-                       .addClass('ui-btn-up-b')
-                       .CswAttrXml({ 'data-theme': 'b' });
-            }
-            else {
-                $button.CswAttrXml({ 'data-theme': 'c' })
-                       .removeClass('ui-btn-hover-b ui-btn-up-b')
-                       .parent('div')
-                       .removeClass('ui-btn-hover-b ui-btn-up-b')
-                       .addClass('ui-btn-up-c')
-                       .CswAttrXml({ 'data-theme': 'c' });
-            }
-            
-            return $button;
-        }
         
         function _addPageDivToBody(params) {
             var p = {
