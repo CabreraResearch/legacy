@@ -66,6 +66,10 @@ printf "%4d-%02d-%02d %02d:%02d:%02d\n", $year+1900, $mon+1, $mday, $hour, $min,
 #---------------------------------------------------------------------------------
 # 1. pull from Main
 
+&runCommand( "net stop \"ChemSW Log Service\"");
+
+&runCommand( "net stop \"NbtSchedService\"");
+
 foreach my $component (@components)
 {
 	&runCommand("hg pull -u -R ". $repopaths{$component});
@@ -154,9 +158,6 @@ foreach my $component (@components)
 #---------------------------------------------------------------------------------
 # 3. compile
 
-&runCommand( "net stop \"ChemSW Log Service\"");
-
-&runCommand( "net stop \"NbtSchedService\"");
 
 &runCommand( "taskkill /F /IM NbtSchedService.exe");  # force kill outstanding threads
 
