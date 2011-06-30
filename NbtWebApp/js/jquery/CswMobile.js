@@ -684,7 +684,7 @@
                 var MountPoint = p.$xmlitem.find('prop[ocpname="Target"]').CswAttrXml('gestalt');
                 var Status = p.$xmlitem.find('prop[ocpname="Status"]').CswAttrXml('gestalt');
 //Case 22579: just remove for now
-                var UnansweredCnt = 0;
+//                var UnansweredCnt = 0;
 
 //                p.$xmlitem.find('prop[fieldtype="Question"]').each(function() {
 //                    var $question = $(this).clone();
@@ -703,7 +703,7 @@
                 Html += '<p>';
                 if (!isNullOrEmpty(Status)) Html += Status + ', ';
                 Html += 'Due: ' + DueDate + '</p>';
-                Html += '<span id="' + makeSafeId({ prefix: id, ID: 'unansweredcnt' }) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
+//                Html += '<span id="' + makeSafeId({ prefix: id, ID: 'unansweredcnt' }) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
                 Html += '</a>';
                 Html += '</li>';
                 break;
