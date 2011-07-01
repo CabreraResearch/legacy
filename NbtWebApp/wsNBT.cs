@@ -1202,7 +1202,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string NewPropsXml, string NodeTypeId, string ViewId )
+		public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string NewPropsXml, string NodeTypeId )
 		{
 			JObject ReturnVal = new JObject();
 
@@ -1214,9 +1214,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					CswNbtView View = _getView( ViewId );
-					_setAuditContext( View );
-					
 					string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
@@ -1239,7 +1236,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string copyPropValues( string SourceNodeKey, string[] CopyNodeIds, string[] PropIds, string ViewId )
+		public string copyPropValues( string SourceNodeKey, string[] CopyNodeIds, string[] PropIds )
 		{
 			JObject ReturnVal = new JObject();
 
@@ -1252,8 +1249,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_setAuditContext( _getView( ViewId ) );
-		
 					string ParsedSourceNodeKey = wsTools.FromSafeJavaScriptParam( SourceNodeKey );
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					bool ret = ws.copyPropValues( ParsedSourceNodeKey, CopyNodeIds, PropIds );
@@ -1725,7 +1720,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string DeleteNodes( string[] NodePks, string[] NodeKeys, string ViewId )
+		public string DeleteNodes( string[] NodePks, string[] NodeKeys )
 		{
 			JObject ReturnVal = new JObject();
 			List<CswPrimaryKey> NodePrimaryKeys = new List<CswPrimaryKey>();
@@ -1738,8 +1733,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_setAuditContext( _getView( ViewId ) );
-
 					if( NodeKeys.Length > 0 )
 					{
 						foreach( string NodeKey in NodeKeys )
@@ -1796,7 +1789,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string CopyNode( string NodePk, string ViewId )
+		public string CopyNode( string NodePk )
 		{
 			JObject ReturnVal = new JObject();
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1807,8 +1800,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_setAuditContext( _getView( ViewId ) );
-
 					CswPrimaryKey RealNodePk = new CswPrimaryKey();
 					RealNodePk.FromString( NodePk );
 					if( RealNodePk.PrimaryKey != Int32.MinValue )
@@ -1874,7 +1865,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string clearProp( string PropId, bool IncludeBlob, string ViewId )
+		public string clearProp( string PropId, bool IncludeBlob )
 		{
 			JObject ReturnVal = new JObject( new JProperty( "Succeeded", false.ToString().ToLower() ) );
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1885,8 +1876,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_setAuditContext( _getView( ViewId ) );
-
 					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					bool ret = ws.ClearPropValue( PropId, IncludeBlob );
 					ReturnVal = new JObject( new JProperty( "Succeeded", ret.ToString().ToLower() ) );

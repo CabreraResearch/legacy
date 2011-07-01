@@ -476,7 +476,6 @@
                     'NodeId': o.nodeid,
                     'SafeNodeKey': o.cswnbtnodekey,
                     'NodeTypeId': o.nodetypeid,
-                    'ViewId': $.CswCookie('get', CswCookieName.CurrentViewId),
                     'NewPropsXml': xmlToString($propsxml)
                 };
 
@@ -497,8 +496,7 @@
                                 var dataJson = {
                                     SourceNodeKey: o.cswnbtnodekey,
                                     CopyNodeIds: [],
-                                    PropIds: [],
-									ViewId: $.CswCookie('get', CswCookieName.CurrentViewId)
+                                    PropIds: []
                                 };
                                 
                                 $nodechecks.each(function() { 
