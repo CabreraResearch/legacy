@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.WebServices
 			return Node;
 		} // _getNode()
 
-		public XElement getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId, DateTime Date )
+		public XElement getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId, DateTime Date, string filterToPropId )
 		{
 			XElement TabsNode = new XElement( "tabs" );
 			
@@ -62,7 +62,16 @@ namespace ChemSW.Nbt.WebServices
 											new XAttribute( "name", "Add New " + NodeType.NodeTypeName ),
 											new XAttribute( "canEditLayout", "false" ) ) );
 			}
-			else
+			else if(filterToPropId != string.Empty)
+			{
+				CswPropIdAttr PropId = new CswPropIdAttr( filterToPropId );
+				CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
+				TabsNode.Add( new XElement( "tab",
+											new XAttribute( "id", Prop.NodeTypeTab.TabId ),
+											new XAttribute( "name", Prop.NodeTypeTab.TabName ),
+											new XAttribute( "canEditLayout", "false" ) ) );
+			}
+			else 
 			{
 				CswNbtNode Node = _getNode( NodeId, NodeKey, Date );
 				if( Node != null )

@@ -73,7 +73,8 @@
                 NodeId: o.nodeid,
                 SafeNodeKey: o.cswnbtnodekey,
                 NodeTypeId: o.nodetypeid,
-				Date: o.date
+				Date: o.date,
+				filterToPropId: o.filterToPropId
             };
             CswAjaxXml({
                 url: o.TabsUrl,

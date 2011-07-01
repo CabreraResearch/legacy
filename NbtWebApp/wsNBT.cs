@@ -1065,7 +1065,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId, string Date )
+		public XElement getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId, string Date, string filterToPropId )
 		{
 			XElement ReturnVal = new XElement( "tabs" );
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1081,7 +1081,7 @@ namespace ChemSW.Nbt.WebServices
 					//{
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					ReturnVal = ws.getTabs( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToDateTime( Date ) );
+					ReturnVal = ws.getTabs( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToDateTime( Date ), filterToPropId );
 					//}
 				}
 
