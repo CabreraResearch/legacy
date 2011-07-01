@@ -53,8 +53,16 @@ namespace ChemSW.Nbt.WebServices
 
 			_CswNbtResources.logMessage( "WebServices: Session Started (_initResources called)" );
 
-			string ContextViewId = Context.Request.Cookies["csw_currentviewid"].Value;
-			string ContextActionName = Context.Request.Cookies["csw_currentactionname"].Value;
+			string ContextViewId = string.Empty;
+			string ContextActionName = string.Empty;
+			if( Context.Request.Cookies["csw_currentviewid"] != null )
+			{
+				ContextViewId = Context.Request.Cookies["csw_currentviewid"].Value;
+			}
+			if( Context.Request.Cookies["csw_currentactionname"] != null )
+			{
+				ContextActionName = Context.Request.Cookies["csw_currentactionname"].Value;
+			}
 
 			if( ContextViewId != string.Empty )
 			{
