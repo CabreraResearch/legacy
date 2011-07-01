@@ -780,10 +780,19 @@
 //				break;
 			case 'OOC_Inspections':
 
-				clear({ 'all': true });
+				_setupOOCInspections();
 
-				$('#CenterTopDiv').CswInspectionStatus();
-				
+				function _setupOOCInspections() 
+				{
+					clear({ 'all': true });
+
+					$('#CenterTopDiv').CswInspectionStatus({
+						'onEditNode': function() { 
+							_setupOOCInspections();
+						}
+					});
+				}
+
 				break;
 //			case 'Load_Mobile_Data':
 //				break;
