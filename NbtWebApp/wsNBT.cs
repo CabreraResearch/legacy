@@ -2418,7 +2418,10 @@ namespace ChemSW.Nbt.WebServices
 
 		private void _setAuditContext( CswNbtView View )
 		{
-			_CswNbtResources.AuditContext = View.ViewName + " (" + View.ViewId.ToString() + ")";
+			if( View != null )
+			{
+				_CswNbtResources.AuditContext = View.ViewName + " (" + View.ViewId.ToString() + ")";
+			}
 		}
 
 	}//wsNBT
