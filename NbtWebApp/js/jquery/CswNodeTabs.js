@@ -179,7 +179,7 @@
                             {
                                 var $propxml = $(this);
                                 var $subtable = $layouttable.find('#' + $propxml.CswAttrXml('id') + '_subproptable');
-								var $parentcell = $subtable.parent();
+								var $parentcell = $subtable.parent().parent();
                                 var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
                                 var $propcell = _getPropertyCell($cellset);
 
@@ -206,7 +206,7 @@
                             {
                                 var $propxml = $(this);
                                 var $subtable = $layouttable.find('#' + $propxml.CswAttrXml('id') + '_subproptable');
-								var $parentcell = $subtable.parent();
+								var $parentcell = $subtable.parent().parent();
                                 var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
                                 var $propcell = _getPropertyCell($cellset);
 
