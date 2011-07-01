@@ -96,7 +96,9 @@
                         }
                         var $tabdiv = tabdivs[tabdivs.length - 1];
                         $tabdiv.children('ul').append('<li><a href="#' + $tab.CswAttrXml('id') + '">' + $tab.CswAttrXml('name') + '</a></li>');
-                        $tabdiv.append('<div id="' + $tab.CswAttrXml('id') + '"><form onsubmit="return false;" id="' + $tab.CswAttrXml('id') + '_form" /></div>');
+                        var $tabcontentdiv = $('<div id="' + $tab.CswAttrXml('id') + '"><form onsubmit="return false;" id="' + $tab.CswAttrXml('id') + '_form" /></div>')
+												.appendTo($tabdiv);
+						$tabcontentdiv.data( 'canEditLayout',  $tab.CswAttrXml('canEditLayout') );
                         if($tab.CswAttrXml('id') === o.tabid)
                         {
                             selectedtabno = tabno;
@@ -171,7 +173,7 @@
                         {
                             onSwap(onSwapData);
                         },
-                        'showConfigButton': (o.filterToPropId === ''),
+                        'showConfigButton': (o.filterToPropId === '' && isTrue($tabcontentdiv.data('canEditLayout'))),
                         'onConfigOn': function($buttontable) { 
                             $xml.children().each(function ()
                             {
@@ -301,7 +303,7 @@
         }
         function _getPropertyCell($cellset)
         {
-            return $cellset[1][2].children('div');
+			return $cellset[1][2].children('div');
         }
 
         function _handleProps($layouttable, $xml, $tabcontentdiv, tabid, ConfigMode, $savebtn)
