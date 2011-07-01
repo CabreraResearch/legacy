@@ -136,7 +136,8 @@
 		$('#QuickLaunch').empty();
 
 		$('#QuickLaunch').CswQuickLaunch({
-			'onLinkClick': handleItemSelect
+			'onViewClick': function(viewid, viewmode) { handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode }); },
+			'onActionClick': function(actionname, actionurl) { handleItemSelect({ 'type': 'action', 'actionname': actionname, 'actionurl': actionurl }); }
 		}); // CswQuickLaunch
 	}
 
@@ -743,6 +744,11 @@
 		if(options) $.extend(o, options);
 
 		setCurrentAction(o.actionname, o.actionurl);
+
+		CswAjaxJSON({
+			'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
+			'data': { 'ActionName': o.actionname }
+		});
 
 		switch (o.actionname)
 		{

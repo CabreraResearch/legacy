@@ -74,8 +74,9 @@ namespace ChemSW.Nbt
                 Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
                 if( ActionId != Int32.MinValue )
                 {
-                    ThisItem.SetAttributeValue( "url", _CswNbtResources.Actions[ActionId].Url );
-                }
+					ThisItem.SetAttributeValue( "actionname", _CswNbtResources.Actions[ActionId].Name.ToString() );
+					ThisItem.SetAttributeValue( "actionurl", _CswNbtResources.Actions[ActionId].Url );
+				}
                 Root.Add( ThisItem );
             }
             return Root;

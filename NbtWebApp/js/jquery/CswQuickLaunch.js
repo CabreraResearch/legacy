@@ -3,7 +3,8 @@
 
 		var o = {
 			Url: '/NbtWebApp/wsNBT.asmx/getQuickLaunchItems',
-			onLinkClick: function(optSelect) { },
+			onViewClick: function(viewid, viewmode) { },
+			onActionClick: function(actionname, actionurl) { },
 			onSuccess: function() { }
 		};
 
@@ -26,28 +27,28 @@
 				var $list = $QuickLaunchDiv.children();
 				$xml.children("items").children("item").each(function() {
 					var $item = $(this);
-					var optSelect = {
-							launchtype: $item.CswAttrXml('launchtype'),
-							viewmode: $item.CswAttrXml('viewmode'),
-							text: $item.CswAttrXml('text'), 
-							url: $item.CswAttrXml('url'),
-							viewid: $item.CswAttrXml('itemid') //actions provide their own links. itemid will only be used as viewid.
-					};
+
+					var launchtype = $item.CswAttrXml('launchtype');
+					var viewmode = $item.CswAttrXml('viewmode');
+					var text = $item.CswAttrXml('text'); 
+					var viewid = $item.CswAttrXml('itemid'); //actions provide their own links. itemid will only be used as viewid.
+					var actionname = $item.CswAttrXml('actionname');
+					var actionurl = $item.CswAttrXml('actionurl');
 							
-					switch(optSelect.launchtype) //webservice converts to lower case
-					{
-						case 'View':
-                        case 'view':
-						
-							$('<li><a href="#' + optSelect.text + '_' + optSelect.type + '_' + optSelect.viewmode + '_' + optSelect.viewid +'">' + optSelect.text + '</a></li>')
-								 .appendTo($list) 
-								 .children('a')
-								 .click(function() { o.onLinkClick(optSelect); return false; });
-							break;
-                        case 'Action':
-						case 'action': 
-							$('<li><a href=' + optSelect.url + '>' + optSelect.text + '</a></li>') 
+					var $li = $('<li></li>')
 								.appendTo($list);
+
+					switch(launchtype.toLowerCase()) //webservice converts to lower case
+					{
+                        case 'view':
+							$('<a href="#' + text + '_' + type + '_' + viewmode + '_' + viewid +'">' + text + '</a>')
+								 .appendTo($li) 
+								 .click(function() { o.onViewClick(viewid, viewmode); return false; });
+							break;
+						case 'action': 
+							$('<a href="#">' + text + '</a>') 
+								.appendTo($li)
+								.click(function() { o.onActionClick(actionname, actionurl); return false; });
 							break;
 					}
 				});
