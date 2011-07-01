@@ -476,8 +476,9 @@
                     'NodeId': o.nodeid,
                     'SafeNodeKey': o.cswnbtnodekey,
                     'NodeTypeId': o.nodetypeid,
-                    'NewPropsXml': xmlToString($propsxml)
-                };
+                    'NewPropsXml': xmlToString($propsxml),
+                    'ViewId': $.CswCookie('get', CswCookieName.CurrentViewId)
+                   };
 
                 CswAjaxJSON({
                     url: o.SavePropUrl,
