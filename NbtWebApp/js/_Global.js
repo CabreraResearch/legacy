@@ -58,6 +58,43 @@ function getTimeout()
 	return timeout;
 }
 
+
+// ------------------------------------------------------------------------------------
+// Current State
+// ------------------------------------------------------------------------------------
+
+function setCurrentView(viewid, viewmode)
+{
+	clearCurrent();
+	$.CswCookie('set', CswCookieName.CurrentViewId, viewid);
+	$.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
+}
+
+function setCurrentAction(actionname, actionurl)
+{
+	clearCurrent();
+	$.CswCookie('set', CswCookieName.CurrentActionName, actionname);
+	$.CswCookie('set', CswCookieName.CurrentActionUrl, actionurl);
+}
+
+function clearCurrent()
+{
+	$.CswCookie('clear', CswCookieName.CurrentViewId);
+	$.CswCookie('clear', CswCookieName.CurrentViewMode);
+	$.CswCookie('clear', CswCookieName.CurrentActionName);
+	$.CswCookie('clear', CswCookieName.CurrentActionUrl);
+}
+
+function getCurrent()
+{
+	return {
+		'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
+		'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
+		'actionname': $.CswCookie('get', CswCookieName.CurrentActionName),
+		'actionurl': $.CswCookie('get', CswCookieName.CurrentActionUrl)
+	};
+}
+
 // ------------------------------------------------------------------------------------
 // Ajax
 // ------------------------------------------------------------------------------------
@@ -667,9 +704,8 @@ function jsTreeGetSelected($treediv)
 
 function GoHome()
 { /// <param name="$" type="jQuery" />
-    $.CswCookie('clear', CswCookieName.CurrentViewId);
-    $.CswCookie('clear', CswCookieName.CurrentViewMode);
-    window.location = homeUrl;
+	clearCurrent();
+	window.location = homeUrl;
 }
 
 function HandleMenuItem(options)

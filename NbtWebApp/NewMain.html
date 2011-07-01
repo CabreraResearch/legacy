@@ -72,9 +72,8 @@
 	if (!isNullOrEmpty(qs.viewid))
 	{
 		// set the view
-		var viewmode = tryParseString(qs.viewmode, 'tree');
-		$.CswCookie('set', CswCookieName.CurrentViewId, qs.viewid),
-		$.CswCookie('set', CswCookieName.CurrentViewMode, viewmode)
+		setCurrentView(qs.viewid, tryParseString(qs.viewmode, 'tree'));
+
 		// clear the querystring
 		window.location = "NewMain.html";
 	} else
@@ -90,10 +89,6 @@
 		$('#CenterBottomDiv').CswLogin('login', {
 			'onAuthenticate': function (u)
 			{
-				var view = {
-					'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
-					'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode)
-				};
 				$('#header_username').text(u)
 				 					 .hover(function () { $(this).CswAttrDom('title', getTimeout()); });
 				$('#header_dashboard').CswDashboard();
@@ -110,12 +105,26 @@
 					'onSelect': handleItemSelect
 				}); // CswViewSelect
 
-				if (view.viewid === '')
+				var current = getCurrent();
+				if (false === isNullOrEmpty(current.viewid))
+				{
+					handleItemSelect({ 
+						'type': 'view', 
+						'viewid': current.viewid, 
+						'viewmode': current.viewmode 
+					});
+				}
+				else if (false === isNullOrEmpty(current.actionname))
+				{
+					handleItemSelect({ 
+						'type': 'action', 
+						'actionname': current.actionname,
+						'actionurl': current.actionurl 
+					});
+				}
+				else
 				{
 					refreshWelcome();
-				} else
-				{
-					handleItemSelect({ 'viewid': view.viewid, viewmode: view.viewmode });
 				}
 			} // onAuthenticate
 		});      // CswLogin
@@ -222,8 +231,7 @@
 
 			if ( !isNullOrEmpty( o.viewid ) )
 			{
-			    $.CswCookie('set', CswCookieName.CurrentViewId, o.viewid);
-			    $.CswCookie('set', CswCookieName.CurrentViewMode, o.viewmode);
+			    setCurrentView(o.viewid, o.viewmode);
 
 			    var linkOpt = {
                     'showempty': false,
@@ -410,10 +418,10 @@
         var onSearchSubmit = function (searchviewid, searchviewmode)
         {
             clear({ right: true, centerbottom: true });
-            $.CswCookie('set', CswCookieName.CurrentViewId, searchviewid);
             var viewMode = searchviewmode;
             if (viewMode === 'list') viewMode = 'tree';
-            $.CswCookie('set', CswCookieName.CurrentViewMode, viewMode);
+			setCurrentView(searchviewid, viewMode);
+
             refreshSelected({
                 viewmode: viewMode,
                 viewid: searchviewid,
@@ -435,7 +443,6 @@
             else
             {
                 viewid = parentviewid;
-                $.CswCookie('set', CswCookieName.CurrentViewId, viewid);
             }
 
             if (!isNullOrEmpty(viewid))
@@ -449,10 +456,11 @@
                 else
                 {
                     viewmode = (parentviewmode === 'list') ? 'tree' : parentviewmode;
-                    $.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
                 }
 
-                refreshSelected({
+                setCurrentView(viewid, viewmode); 
+
+				refreshSelected({
                     viewmode: viewmode,
                     viewid: viewid,
                     forsearch: true,
@@ -708,9 +716,9 @@
 											'showempty': getEmptyTree,
                                             'forsearch': o.forsearch,
 											'IncludeNodeRequired': o.IncludeNodeRequired,
-											'onViewChange': function (newviewid)
+											'onViewChange': function (newviewid, newviewmode)
 												{
-													$.CswCookie('set', CswCookieName.CurrentViewId, newviewid);
+													setCurrentView(newviewid, newviewmode);
 												},
 											'onSelectNode': function (optSelect)
 												{
@@ -733,6 +741,8 @@
 			'ActionOptions': {}
 		};
 		if(options) $.extend(o, options);
+
+		setCurrentAction(o.actionname, o.actionurl);
 
 		switch (o.actionname)
 		{
