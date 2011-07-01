@@ -120,7 +120,19 @@ namespace ChemSW.Nbt.WebPages
                 {
 					CswNbtView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( Request.QueryString["sessionviewid"] ) );
                 }
-                else
+				else if( Request.QueryString["nodeid"] != null &&
+						 Request.QueryString["propid"] != null &&
+						 CswTools.IsInteger( Request.QueryString["propid"].ToString() ) )
+				{
+					CswNbtMetaDataNodeTypeProp MetaDataProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( Request.QueryString["propid"].ToString() ) );
+					CswPrimaryKey NodeId = new CswPrimaryKey();
+					NodeId.FromString( Request.QueryString["nodeid"] );
+					CswNbtNode Node = Master.CswNbtResources.Nodes[NodeId];
+					CswNbtNodePropWrapper Prop = Node.Properties[MetaDataProp];
+					CswNbtView = Prop.AsGrid.View;
+					CswNbtView.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
+				}				
+				else
                 {
                     CswNbtView = View;
                 }
