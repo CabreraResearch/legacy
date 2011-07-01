@@ -1,13 +1,16 @@
 ﻿<!DOCTYPE html>
 <html> <!-- manifest="Mobile.manifest"> <!--Still not ready for primetime-->
 <head>
+    <base href="Mobile.html"/>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Main</title>
-    <!--#include file="Mobile_Includes.html" -->
+    
 </head>
 
 <body id="CswMobile_Body">
-	<script type="text/javascript">
+    <!--#include file="Mobile_Includes.html" -->
+    <script type="text/javascript">
 	    
         try {
             if( hasWebStorage() ) {
@@ -24,6 +27,7 @@
             }
         }
         catch(e) {
+            window.location.href = window.location.pathname;
             if( doLogging() ) {
                 errorHandler(e,true,true);
             }

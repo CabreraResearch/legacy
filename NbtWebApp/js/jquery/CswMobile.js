@@ -17,7 +17,7 @@
         var p = {
             'data-filter': false,
             'data-role': 'listview',
-            'data-inset': false
+            'data-inset': true
         };
         if (params) $.extend(p, params);
 
@@ -141,6 +141,8 @@
             $.extend(opts, options);
         }
 
+        debugOn(debug);
+        
         var ForMobile = true;
         var rootid;
 
@@ -209,6 +211,11 @@
                     HideBackButton: true,
                     dataRel: 'dialog'
                 });
+            
+            if( !isNullOrEmpty(localStorage['loginFailure']) ) {
+                _addToDivHeaderText($retDiv, localStorage['loginFailure']);
+            }
+            
             $('#loginsubmit').bind('click', function() {
                 $.mobile.showPageLoadingMsg();
                 onLoginSubmit();
@@ -265,6 +272,7 @@
         // ------------------------------------------------------------------------------------
 
         function setOffline() {
+            
             amOnline(false);
             
             $('.onlineStatus').removeClass('online')
@@ -286,7 +294,9 @@
         }
 
         function setOnline() {
+            
             amOnline(true);
+            localStorage.removeItem('loginFailure');
             
             $('.onlineStatus').removeClass('offline')
                               .addClass('online')
@@ -297,14 +307,18 @@
                               .end();
                 $('.refresh').css('visibility', '');
                 $viewsdiv = reloadViews(); //no changePage
-            }
+            
             if ($.mobile.activePage === $sorrycharliediv) {
-                $logindiv.doPage(); //doChangePage();;
+                $logindiv.doPage(); //doChangePage();
+            }
         }
 
-        function amOnline(amOnline) {
-            if(arguments.length === 1 ) {
+        function amOnline(amOnline,loginFailure) {
+            if(arguments.length > 0 ) {
                 localStorage['online'] = isTrue(amOnline);
+            }
+            if(loginFailure) {
+                localStorage['loginFailure'] = loginFailure;
             }
             var ret = isTrue(localStorage['online']);
             return ret;
@@ -486,6 +500,9 @@
                             _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
                         }
                         $retDiv = _loadDivContentsXml(p);
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        onError(XMLHttpRequest, textStatus, errorThrown);
                     }
                 });
             cacheLogInfo(logger);
@@ -543,12 +560,14 @@
             try {
                 $('.csw_collapsible').page();
                 $('.csw_fieldset').page();
+//                $('.csw_answer').page();
                 $('.csw_listview').page();
             }
             catch(e) //this is hackadelic, but it works. 
             {
                 $('.csw_collapsible').page();
                 $('.csw_fieldset').page();
+//                $('.csw_answer').page();
                 $('.csw_listview').page();
             }
             $content.page();
@@ -596,7 +615,7 @@
 
                     if (currenttab !== tab) {
                         //should be separate ULs eventually
-                        $tab = $('<li data-role="list-divider">' + tab + '</li>')
+                        $tab = $('</ul><li data-role="list-divider">' + tab + '</li><ul>')
                                                 .appendTo($list);
                         currenttab = tab;
                     }
@@ -666,14 +685,15 @@
                 var Location = p.$xmlitem.find('prop[ocpname="Location"]').CswAttrXml('gestalt');
                 var MountPoint = p.$xmlitem.find('prop[ocpname="Target"]').CswAttrXml('gestalt');
                 var Status = p.$xmlitem.find('prop[ocpname="Status"]').CswAttrXml('gestalt');
-                var UnansweredCnt = 0;
+//Case 22579: just remove for now
+//                var UnansweredCnt = 0;
 
-                p.$xmlitem.find('prop[fieldtype="Question"]').each(function() {
-                    var $question = $(this).clone();
-                    if (isNullOrEmpty($question.children('Answer').text())) {
-                        UnansweredCnt++;
-                    }
-                });
+//                p.$xmlitem.find('prop[fieldtype="Question"]').each(function() {
+//                    var $question = $(this).clone();
+//                    if (isNullOrEmpty($question.children('Answer').text())) {
+//                        UnansweredCnt++;
+//                    }
+//                });
 
                 Html += '<li>';
                 Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">';
@@ -685,7 +705,7 @@
                 Html += '<p>';
                 if (!isNullOrEmpty(Status)) Html += Status + ', ';
                 Html += 'Due: ' + DueDate + '</p>';
-                Html += '<span id="' + makeSafeId({ prefix: id, ID: 'unansweredcnt' }) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
+//                Html += '<span id="' + makeSafeId({ prefix: id, ID: 'unansweredcnt' }) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
                 Html += '</a>';
                 Html += '</li>';
                 break;
@@ -728,7 +748,7 @@
             var $label = $('<h2 id="' + IdStr + '_label" style="white-space:normal;" class="csw_prop_label">' + PropName + '</h2>')
                             .appendTo(($retLi));
             
-            var $fieldcontain = $('<div class="csw_fieldset" data-role="fieldcontain"></div>')
+            var $fieldcontain = $('<div class="csw_fieldset" ></div>')
                                     .appendTo($retLi);
             var $propDiv;
             
@@ -753,7 +773,7 @@
                 
                 switch (FieldType) {
                 case "Date":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
+                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.date, ID: propId, value: sf_value });
                     break;
                 case "Link":
                     $prop = $propDiv.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text});
@@ -839,16 +859,16 @@
                                                 });
                     break;
                 case "Static":
-                    $propDiv.append($('<p id="' + propId + '">' + sf_text + '</p>'));
+                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + sf_text + '</p>'));
                     break;
                 case "Text":
                     $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
                     break;
                 case "Time":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value });
+                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.time, ID: propId, value: sf_value });
                     break;
                 default:
-                    $propDiv.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
                     break;
                 } // switch (FieldType)
 
@@ -859,7 +879,7 @@
                     });
                 }
             } else {
-                $propDiv.append($('<p id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+                $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
             }
             return $retLi;
         }
@@ -969,50 +989,22 @@
                 }
 
                 var inputId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                //var $input = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i] });
-                var $input = $('<button name="' + inputName + '" id="' + inputId + '" class="csw_logical">' + answertext + '</button>')
-                                .appendTo($fieldset);
-                
+
+                $fieldset.append('<label for="' + inputId + '">' + answertext + '</label>');
+                var $input = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i] })
 
                 // Checked is a Tristate, so isTrue() is not useful here
                 if ((Checked === 'false' && answers[i] === 'False') ||
                     (Checked === 'true' && answers[i] === 'True') ||
                         (Checked === '' && answers[i] === 'Null')) {
-                    $input.CswAttrXml({ 'data-theme': 'b' });
-                }
-                else {
-                    $input.CswAttrXml({ 'data-theme': 'c' });
+                    $input.CswAttrXml({ 'checked': 'checked' });
                 }
                 
-                $input.unbind('vclick');
-                $input.bind('vclick', function(eventObj) {
+                $input.unbind('change');
+                $input.bind('change', function(eventObj) {
                     var $this = $(this);
-                    var thisInput = eventObj.srcElement.innerText;
-                    var realVal = '';
-                    switch(thisInput) {
-                        case '?':
-                            realVal = 'null';
-                            break;
-                        case 'Yes':
-                            realVal = 'true';
-                            break;
-                        case 'No':
-                            realVal = 'false';
-                            break;
-                    }
-                    
-                    for (var i = 0; i < answers.length; i++) {
-                        var inpId = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                        var $inpBtn = $('#' + inpId);
-
-                        if($inpBtn.text() === thisInput ) {
-                            $inpBtn = toggleButton($inpBtn, true);
-                        }
-                        else {
-                            $inpBtn = toggleButton($inpBtn, false);
-                        }
-                    }
-                    onPropertyChange(ParentId, eventObj, realVal, inputId);
+                    var thisInput = $this.val();
+                    onPropertyChange(ParentId, eventObj, thisInput, inputId);
                     return false;
                 });
             } // for (var i = 0; i < answers.length; i++)
@@ -1027,35 +1019,27 @@
 								    })
     								    .CswAttrXml({
 								        'data-role': 'controlgroup',
-								        'data-type': 'horizontal'
+								        'data-type': 'horizontal',
+    								    'data-theme': 'b'
 								    });
             var answers = Options.split(',');
             var answerName = makeSafeId({ prefix: IdStr, ID: Suffix }); //Name needs to be non-unqiue and shared
 
             for (var i = 0; i < answers.length; i++) {
                 var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                
-                var $answer = $('<button name="' + answerName + '" id="' + answerid + '" class="csw_answer">' + answers[i] + '</button>')
+
+                $fieldset.append('<label for="' + answerid + '" id="' + answerid + '_lab">' + answers[i] + '</label');
+                var $answer = $('<input type="radio" name="' + answerName + '" id="' + answerid + '" class="csw_answer" value="' + answers[i] + '" />')
                                 .appendTo($fieldset);
                 
                 if (Answer === answers[i]) {
-                    $answer.CswAttrXml({ 'data-theme': 'b' });
-                }
-                else {
-                    $answer.CswAttrXml({ 'data-theme': 'c' });
+                     $answer.CswAttrDom('checked', 'checked');
                 }
                 
-                $answer.unbind('vclick');
-                $answer.bind('vclick', function(eventObj) {
-                    var logger = new profileMethod('questionClick');
-                    
-                    var thisAnswer = eventObj.srcElement.innerText;
+                $answer.unbind('change');
+                $answer.bind('change', function(eventObj) {
 
-                    for (var i = 0; i < answers.length; i++) {
-                        var answerid = makeSafeId({ prefix: IdStr, ID: Suffix, suffix: answers[i] });
-                        var $ansBtn = $('#' + answerid);
-                        toggleButton($ansBtn, ($ansBtn.text() === thisAnswer));
-                    }
+                    var thisAnswer = $(this).val();
 
                     var correctiveActionId = makeSafeId({ prefix: IdStr, ID: 'cor' });
                     var liSuffixId = makeSafeId({ prefix: IdStr, ID: 'label' });
@@ -1076,45 +1060,15 @@
                             $li.removeClass('OOC');
                         }
                     }
-//                    if (!isNullOrEmpty(Answer)) {
-//                        // update unanswered count when this question is answered
-//                        var $parentfieldset = $('#' + IdStr + '_fieldset');
-//                        if ($parentfieldset.CswAttrDom('answered')) {
-//                            var $cntspan = $('#' + ParentId + '_unansweredcnt');
-//                            $cntspan.text(parseInt($cntspan.text()) - 1);
-//                            $parentfieldset.CswAttrDom('answered', 'true');
-//                        }
-//                    }
-                    logger.setAjaxSuccess();
+
                     setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName); }, 1);
-                    cacheLogInfo(logger);
+
                     return false;
                 });
             } // for (var i = 0; i < answers.length; i++)
 
             return $fieldset;
         } // _makeQuestionAnswerFieldSet()
-
-        function toggleButton($button,on) {
-            if(on) {
-                $button.CswAttrXml({ 'data-theme': 'b' })
-                       .removeClass('ui-btn-hover-c ui-btn-up-c')
-                       .parent('div')
-                       .removeClass('ui-btn-hover-c ui-btn-up-c')
-                       .addClass('ui-btn-up-b')
-                       .CswAttrXml({ 'data-theme': 'b' });
-            }
-            else {
-                $button.CswAttrXml({ 'data-theme': 'c' })
-                       .removeClass('ui-btn-hover-b ui-btn-up-b')
-                       .parent('div')
-                       .removeClass('ui-btn-hover-b ui-btn-up-b')
-                       .addClass('ui-btn-up-c')
-                       .CswAttrXml({ 'data-theme': 'c' });
-            }
-            
-            return $button;
-        }
         
         function _addPageDivToBody(params) {
             var p = {
@@ -1372,12 +1326,8 @@
             return $('#' + DivId).find('div:jqmData(role="header") h1').text();
         }
 
-        function _addToDivHeaderText($div, text) {
-            $div.find('div:jqmData(role="header") h1').append($('<p style="color: yellow;">' + text + '</p>'));
-            $.mobile.loadPage($div);
-            return $div;
-        }
-
+        function _addToDivHeaderText($div, text) {            $div.find('div:jqmData(role="header") h1').append($('<p style="color: yellow; white-space: normal;">' + text + '</p>'));            $.mobile.loadPage($div);            return $div;        }
+        
         function _bindPageEvents(DivId, ParentId, level, $div) {
             $div.find('#' + DivId + '_searchopen')
                 .unbind('vclick')
@@ -1607,7 +1557,7 @@
                             $viewsdiv.doChangePage();
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown) {
-                            $.mobile.hidePageLoadingMsg();
+                            onError(XMLHttpRequest, textStatus, errorThrown);
                         }
                     });
             }
@@ -1615,23 +1565,33 @@
         } //onLoginSubmit() 
 
         function onLoginFail(text) {
-            Logout(false);
-            $.mobile.hidePageLoadingMsg();
-            _addToDivHeaderText($logindiv, text);
+            Logout(false);            $.mobile.hidePageLoadingMsg();            _addToDivHeaderText($logindiv, text);
+            localStorage['loginFailure'] = text;
         }
 
         function onLogout() {
             Logout(true);
         }
 
+        function onError(XMLHttpRequest, textStatus, errorThrown) {
+            $.mobile.hidePageLoadingMsg();
+        }
+        
         function Logout(reloadWindow) {
-            if (_checkNoPendingChanges()) {
+            if ( _checkNoPendingChanges() ) {
+                
+                var loginFailure = tryParseString(localStorage['loginFailure'], '');
+                var onlineStatus = amOnline();
+                
                 _clearStorage();
+                
+                amOnline(onlineStatus,loginFailure);
                 // reloading browser window is the easiest way to reset
                 if (reloadWindow) {
                     window.location.href = window.location.pathname;
                 }
             }
+            $.mobile.hidePageLoadingMsg();
         }
 
         function _clearStorage() {
@@ -1680,8 +1640,8 @@
 
                             _loadDivContents(params);
                         }, // success
-                        error: function () {
-                            setOffline();
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            onError(XMLHttpRequest, textStatus, errorThrown); //setOffline();
                         }
                     });
             }
@@ -1822,7 +1782,7 @@
                 return ret;
             };
             this.lastSyncSuccess.toString = function() {
-                return localStorage['lastSyncSuccess'];
+                return tryParseString(localStorage['lastSyncSuccess'],'');
             };
             this.lastSyncAttempt = function() {
                 var now = new Date();
@@ -1831,7 +1791,7 @@
                 return ret;
             };
             this.lastSyncAttempt.toString = function() {
-                return localStorage['lastSyncAttempt'];
+                return tryParseString(localStorage['lastSyncAttempt'], '');
             };
         }
         
