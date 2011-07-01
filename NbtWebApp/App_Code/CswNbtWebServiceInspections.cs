@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.WebServices
 			CswNbtMetaDataObjectClassProp InspectionStatusOCP = InspectionOC.getObjectClassProp( CswNbtObjClassInspectionDesign.StatusPropertyName );
 
 			DataTable InspectionData = new DataTable();
+			InspectionData.Columns.Add( "rownum" );
 			InspectionData.Columns.Add( "nodeid" );
 			InspectionData.Columns.Add( "nodeidstr" );
 			InspectionData.Columns.Add( "Inspection" );
@@ -73,6 +74,7 @@ namespace ChemSW.Nbt.WebServices
 					if( !QuestionProp.AsQuestion.IsCompliant )
 					{
 						DataRow Row = InspectionData.NewRow();
+						Row["rownum"] = CswConvert.ToDbVal( InspectionData.Rows.Count + 1 );
 						Row["nodeid"] = CswConvert.ToDbVal( InspectionNode.NodeId.PrimaryKey );
 						Row["nodeidstr"] = InspectionNode.NodeId.ToString();
 						Row["Inspection"] = InspectionNode.NodeName;
@@ -92,7 +94,7 @@ namespace ChemSW.Nbt.WebServices
 			} // for( Int32 i = 0; i < OOCTree.getChildNodeCount(); i++ )
 
 			CswGridData gd = new CswGridData( _CswNbtResources );
-			gd.PkColumn = "nodeid";
+			gd.PkColumn = "rownum";
 			return gd.DataTableToJSON( InspectionData );
 
 		} // getInspectionStatusGrid

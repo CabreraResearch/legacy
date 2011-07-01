@@ -72,6 +72,7 @@
                     $grid.jqGrid(gridJson)
 						 .navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, {}, {} ); 
 					$grid.jqGrid(gridJson)
+						.hideCol('NODEID')
 						.hideCol('NODEIDSTR');
 
 				}, // success
