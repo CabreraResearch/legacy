@@ -52,7 +52,28 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources.beginTransaction();
 
 			_CswNbtResources.logMessage( "WebServices: Session Started (_initResources called)" );
-		}//start() 
+
+			string ContextViewId = Context.Request.Cookies["csw_currentviewid"].Value;
+			string ContextActionName = Context.Request.Cookies["csw_currentactionname"].Value;
+
+			if( ContextViewId != string.Empty )
+			{
+				CswNbtView ContextView = _getView( ContextViewId );
+				if( ContextView != null )
+				{
+					_CswNbtResources.AuditContext = ContextView.ViewName + " (" + ContextView.ViewId.ToString() + ")";
+				}
+			}
+			else if( ContextActionName != string.Empty )
+			{
+				CswNbtAction ContextAction = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ContextActionName )];
+				if( ContextAction != null )
+				{
+					_CswNbtResources.AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name );
+				}
+			}
+
+		}//_initResources() 
 
 		private void _deInitResources()
 		{
@@ -64,7 +85,7 @@ namespace ChemSW.Nbt.WebServices
 				_CswNbtResources.finalize();
 				_CswNbtResources.release();
 			}
-		}
+		} // _deInitResources()
 
 		#endregion Session and Resource Management
 
@@ -1202,7 +1223,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string NewPropsXml, string NodeTypeId )
+		public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string NewPropsXml, string NodeTypeId, string ViewId )
 		{
 			JObject ReturnVal = new JObject();
 
@@ -1217,6 +1238,7 @@ namespace ChemSW.Nbt.WebServices
 					string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+					CswNbtView View = _getView( ViewId );
 					ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ), View );
 				}
 
@@ -2432,14 +2454,6 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return View;
 		} // _getView()
-
-		private void _setAuditContext( CswNbtView View )
-		{
-			if( View != null )
-			{
-				_CswNbtResources.AuditContext = View.ViewName + " (" + View.ViewId.ToString() + ")";
-			}
-		}
 
 	}//wsNBT
 
