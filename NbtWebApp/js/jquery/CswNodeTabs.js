@@ -308,6 +308,7 @@
 
         function _handleProps($layouttable, $xml, $tabcontentdiv, tabid, ConfigMode, $savebtn)
         {
+			var AtLeastOneSaveable = false;
             $xml.children().each(function ()
             {
                 var $propxml = $(this);
@@ -337,15 +338,20 @@
                     {
                         $labelcell.append($propxml.CswAttrXml('name'));
                     }
-                    if(o.ShowCheckboxes && $propxml.CswAttrXml('copyable') === "true" && $propxml.CswAttrXml('readonly') === "false")
-                    {
-                        var $propcheck = $labelcell.CswInput('init',{ID: 'check_'+ propid,
-                                                                        type: CswInput_Types.checkbox,
-                                                                        value: false, // Value --not defined?,
-                                                                        cssclass: o.ID +'_check'                                                                   
-                                                                    }); 
-                        $propcheck.CswAttrDom('propid',propid);	
-                    }
+		
+					if(false === isTrue($propxml.CswAttrXml('readonly')))
+					{
+						AtLeastOneSaveable = true;
+	                    if(o.ShowCheckboxes && $propxml.CswAttrXml('copyable') === "true")
+						{
+							var $propcheck = $labelcell.CswInput('init',{ID: 'check_'+ propid,
+																			type: CswInput_Types.checkbox,
+																			value: false, // Value --not defined?,
+																			cssclass: o.ID +'_check'                                                                   
+																		}); 
+							$propcheck.CswAttrDom('propid',propid);	
+						}
+					}
                 }
 
                 var $propcell = _getPropertyCell($cellset);
@@ -358,6 +364,13 @@
                 _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode, $savebtn);
 
             });
+
+			if(AtLeastOneSaveable === false)
+			{
+				$savebtn.hide();
+			} else {
+				$savebtn.show();
+			}
         } // _handleProps()
 
         function _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode, $savebtn)

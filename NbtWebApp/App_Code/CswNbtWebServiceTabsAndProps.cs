@@ -281,8 +281,8 @@ namespace ChemSW.Nbt.WebServices
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "fieldtype", "AuditHistoryGrid" );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displayrow", "1" );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "displaycol", "1" );
-			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "required", "0" );
-			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", "0" );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "required", "false" );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", "true" );
 
 			//CswNbtWebServiceAuditing wsAuditing = new CswNbtWebServiceAuditing(_CswNbtResources);
 			//PropXmlNode.InnerText = wsAuditing.getAuditHistoryGrid( Node ).ToString();
