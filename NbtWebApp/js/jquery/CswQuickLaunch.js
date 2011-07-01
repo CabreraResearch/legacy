@@ -41,7 +41,7 @@
 					switch(launchtype.toLowerCase()) //webservice converts to lower case
 					{
                         case 'view':
-							$('<a href="#' + text + '_' + type + '_' + viewmode + '_' + viewid +'">' + text + '</a>')
+							$('<a href="#' + text + '_' + launchtype + '_' + viewmode + '_' + viewid +'">' + text + '</a>')
 								 .appendTo($li) 
 								 .click(function() { o.onViewClick(viewid, viewmode); return false; });
 							break;
