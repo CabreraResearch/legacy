@@ -167,8 +167,15 @@ CswAppMode.mode = 'mobile';
 
         // case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
+        if (!isNullOrEmpty(SessionId)) {
+            $.mobile.path.set('#viewsdiv');
+            localStorage['refreshPage'] = 'viewsdiv';
+        } else {
+            $.mobile.path.set('#logindiv');
+            localStorage['refreshPage'] = 'logindiv';
+        }
+              
         window.onload = function() {
-
             if (!isNullOrEmpty(SessionId)) {
                 $.mobile.path.set('#viewsdiv');
                 $viewsdiv = reloadViews();

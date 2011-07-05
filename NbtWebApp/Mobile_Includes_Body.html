@@ -1,9 +1,5 @@
-﻿<link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.min.css" />
-<link type="text/css" rel="stylesheet" href="js/jquery/CswMobile.css" />
-<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.1.min.js"></script>
-
-<script type="text/javascript">
-    var debug = false;
+﻿<script type="text/javascript">
+    var debug = true;
 
     $(document).bind("mobileinit", function ()
     {
@@ -11,9 +7,6 @@
     });
     
     document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.min.js"><\/script>');
-    document.write('<script type="text/javascript" src="js/thirdparty/js/modernizr-2.0.3.js"><\/script>');
-    document.write('<script type="text/javascript" src="js/thirdparty/js/gserializer.js"><\/script>');
-    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.min.js"><\/script>');
     
     if(debug) {
         document.write('<script type="text/javascript" src="js/_Global.js"><\/script>');
@@ -32,6 +25,4 @@
     else {
         document.write('<script type="text/javascript" src="js/CswAll.min.js"><\/script>');
     }
-    
-    
 </script>
