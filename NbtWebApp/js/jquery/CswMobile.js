@@ -641,7 +641,7 @@
                 }// default:
             }
             
-            $retLI.bind('vclick', function() {
+            $retLI.bind('click', function() {
                 var par = {ParentId: p.DivId,
                     parentlevel: p.parentlevel,
                     level: p.parentlevel + 1,
@@ -1334,43 +1334,43 @@
         
         function _bindPageEvents(DivId, ParentId, level, $div) {
             $div.find('#' + DivId + '_searchopen')
-                .unbind('vclick')
-                .bind('vclick', function() {
+                .unbind('click')
+                .bind('click', function() {
                     onSearchOpen(DivId);
                     return false;
                 })
                 .end()
                 .find('#' + DivId + '_gosyncstatus')
-                .unbind('vclick')
-                .bind('vclick', function() {
+                .unbind('click')
+                .bind('click', function() {
                     onSyncStatusOpen(DivId);
                     return false;
                 })
                 .end()
                 .find('#' + DivId + '_refresh')
-                .unbind('vclick')
-                .bind('vclick', function() {
+                .unbind('click')
+                .bind('click', function() {
                     onRefresh();
                     return false;
                 })
                 .end()
                 .find('#' + DivId + '_logout')
-                .unbind('vclick')
-                .bind('vclick', function(e) {
+                .unbind('click')
+                .bind('click', function(e) {
                     onLogout(DivId, e);
                     return false;
                 })
                 .end()
                 .find('#' + DivId + '_help')
-                .unbind('vclick')
-                .bind('vclick', function() {
+                .unbind('click')
+                .bind('click', function() {
                     onHelp(DivId, ParentId);
                     return false;
                 })
                 .end()
                 .find('#' + DivId + '_debuglog')
-                .die('vclick')
-                .live('vclick', function() {
+                .die('click')
+                .live('click', function() {
                     _toggleLogging();
                     return false;
                 })
@@ -1420,13 +1420,13 @@
                 });
                    
             $retDiv.find('#ss_forcesync')
-                            .bind('vclick', function() {
+                            .bind('click', function() {
                                 _processChanges(false);
                                 return false;
                             })
                             .end()
                             .find('#ss_gooffline')
-                            .bind('vclick', function() {
+                            .bind('click', function() {
                                 _toggleOffline(true);
                                 return false;
                             });
@@ -1711,7 +1711,7 @@
                                                 });
                 $wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
                                                 .CswAttrXml({ 'data-role': 'button' })
-                                                .bind('vclick', function() {
+                                                .bind('click', function() {
                                                     onSearchSubmit(DivId);
                                                     return false;
                                                 });
