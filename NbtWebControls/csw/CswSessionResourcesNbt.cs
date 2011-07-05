@@ -58,9 +58,9 @@ namespace ChemSW.Nbt
 
         public void purgeExpiredSessions() { CswSessionManager.SessionsList.purgeExpiredSessions(); }
 
-        public void OnDeauthenticate()
+        public void OnDeauthenticate(string SessionId)
         {
-
+			CswNbtResources.SessionDataMgr.removeAllSessionData( SessionId );
 		}//OnDeauthenticate()
 
 	}//CswSessionResourcesNbt
