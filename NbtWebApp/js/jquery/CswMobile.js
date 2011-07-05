@@ -1894,7 +1894,10 @@ CswAppMode.mode = 'mobile';
         var _waitForData_TimeoutId;
 
         function _waitForData() {
-            _waitForData_TimeoutId = setTimeout( _handleDataCheckTimer, opts.PollingInterval);
+            _waitForData_TimeoutId = setTimeout( function() {
+                                        _handleDataCheckTimer();
+                                     }, 
+                                     opts.PollingInterval);
         }
 
         function _clearWaitForData() {
