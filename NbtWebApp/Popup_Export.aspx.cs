@@ -118,9 +118,21 @@ namespace ChemSW.Nbt.WebPages
                 }
                 else if( Request.QueryString["sessionviewid"] != null )
                 {
-					CswNbtView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) ) );
+					CswNbtView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( Request.QueryString["sessionviewid"] ) );
                 }
-                else
+				else if( Request.QueryString["nodeid"] != null &&
+						 Request.QueryString["propid"] != null &&
+						 CswTools.IsInteger( Request.QueryString["propid"].ToString() ) )
+				{
+					CswNbtMetaDataNodeTypeProp MetaDataProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( Request.QueryString["propid"].ToString() ) );
+					CswPrimaryKey NodeId = new CswPrimaryKey();
+					NodeId.FromString( Request.QueryString["nodeid"] );
+					CswNbtNode Node = Master.CswNbtResources.Nodes[NodeId];
+					CswNbtNodePropWrapper Prop = Node.Properties[MetaDataProp];
+					CswNbtView = Prop.AsGrid.View;
+					CswNbtView.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
+				}				
+				else
                 {
                     CswNbtView = View;
                 }
@@ -206,11 +218,12 @@ namespace ChemSW.Nbt.WebPages
                         CswNbtNodePropWrapper Prop = Node.Properties[MetaDataProp];
                         CswNbtView GridView = Prop.AsGrid.View;
                         _NodesGrid.View = GridView;
+						_NodesGrid.ParentNodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, string.Empty, NodeId, Node.NodeSpecies, Node.NodeTypeId, Node.ObjectClassId, string.Empty, string.Empty );
                     }
                     else if( Request.QueryString["sessionviewid"] != null )
                     {
                         //CswNbtView AView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) );
-						CswNbtView AView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( CswConvert.ToInt32( Request.QueryString["sessionviewid"] ) ) );
+						CswNbtView AView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( Request.QueryString["sessionviewid"] ) );
                         _NodesGrid.View = AView;
                     }
                     else

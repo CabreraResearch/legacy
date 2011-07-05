@@ -47,7 +47,7 @@ foreach my $component (@components)
 {
 	if($component eq "NbtHelp")
 	{
-		$repopaths{$component} = "c:/kiln/Nbt/NbtWebApp/help";
+		$repopaths{$component} = "c:/kiln/Nbt/Nbt/NbtWebApp/help";
 	}
 	elsif($component eq "Nbt" || $component eq "NbtImport")
 	{
@@ -65,6 +65,10 @@ printf "%4d-%02d-%02d %02d:%02d:%02d\n", $year+1900, $mon+1, $mday, $hour, $min,
 
 #---------------------------------------------------------------------------------
 # 1. pull from Main
+
+&runCommand( "net stop \"ChemSW Log Service\"");
+
+&runCommand( "net stop \"NbtSchedService\"");
 
 foreach my $component (@components)
 {
@@ -89,77 +93,75 @@ foreach my $component (@components)
 	printf("Setting $component to $datestr.$increment\n");
 	
 	my $file;
-	if($component eq "Nbt")
+	if($component eq "NbtImport" || $component eq "NbtHelp")
 	{
-		# get NBT sub-components:
-		my $dir = $repopaths{$component};
-		opendir(my $dh, $dir) || die "can't opendir $dir: $!";
-		my @subdirs = grep { -d "$dir/$_" } readdir($dh);
-		foreach my $subdir (@subdirs)
+		# no file to update
+	}
+	else 
+	{
+		if($component eq "Nbt")
 		{
-			if( ! ($subdir eq "." || 
-				   $subdir eq ".." ||
-				   $subdir eq ".hg" ||
-				   $subdir eq "NbtSetup" ||
-				   $subdir eq "Schema" ||
-				   $subdir eq "TestApps"))
+			# get NBT sub-components:
+			my $dir = $repopaths{$component};
+			opendir(my $dh, $dir) || die "can't opendir $dir: $!";
+			my @subdirs = grep { -d "$dir/$_" } readdir($dh);
+			foreach my $subdir (@subdirs)
 			{
-				if($subdir eq "NbtWebApp")   # special case
+				if( ! ($subdir eq "." || 
+					   $subdir eq ".." ||
+					   $subdir eq ".hg" ||
+					   $subdir eq "NbtSetup" ||
+					   $subdir eq "Schema" ||
+					   $subdir eq "TestApps"))
 				{
-					$file = $repopaths{$component} ."/NbtWebApp/_Version.txt";
-					if(open( FOUT, "> $file" ) )
+					if($subdir eq "NbtWebApp")   # special case
 					{
-						printf( FOUT "$component $datestr.$increment" );
-						close( FOUT );
+						$file = $repopaths{$component} ."/NbtWebApp/_Version.txt";
+						if(open( FOUT, "> $file" ) )
+						{
+							printf( FOUT "$component $datestr.$increment" );
+							close( FOUT );
+						} else {
+							printf("ERROR: Could not open $file \n");
+						}
+						$file = $repopaths{$component} ."/NbtWebApp/_Assembly.txt";
+						if(open( FOUT, "> $file" ) )
+						{
+							printf( FOUT "$assemblyno" );
+							close( FOUT );
+						} else {
+							printf("ERROR: Could not open $file \n");
+						}
 					} else {
-						printf("ERROR: Could not open $file \n");
+						$file = $repopaths{$component} ."/$subdir/Properties/AssemblyInfo.cs";
+						&setversion($file, "$datestr.$increment");
 					}
-					$file = $repopaths{$component} ."/NbtWebApp/_Assembly.txt";
-					if(open( FOUT, "> $file" ) )
-					{
-						printf( FOUT "$assemblyno" );
-						close( FOUT );
-					} else {
-						printf("ERROR: Could not open $file \n");
-					}
-				} else {
-					$file = $repopaths{$component} ."/$subdir/Properties/AssemblyInfo.cs";
-					&setversion($file, "$datestr.$increment");
 				}
 			}
-		}
-		closedir $dh;
-	}
-	else
-	{
-		if($component eq "CswLogService")  # special case
-		{
-			$file = $repopaths{$component} ."/CswLogService/Properties/AssemblyInfo.cs";
-		}
-		elsif($component eq "NbtImport" || $component eq "NbtHelp")
-		{
-			# no file to update
+			closedir $dh;
 		}
 		else
 		{
-			$file = $repopaths{$component} ."/Properties/AssemblyInfo.cs";
+			if($component eq "CswLogService")  # special case
+			{
+				$file = $repopaths{$component} ."/CswLogService/Properties/AssemblyInfo.cs";
+			}
+			else
+			{
+				$file = $repopaths{$component} ."/Properties/AssemblyInfo.cs";
+			}
+			&setversion($file, "$datestr.$increment");
 		}
-		&setversion($file, "$datestr.$increment");
 	}
 }  # foreach my $component (@components)
 
 #---------------------------------------------------------------------------------
 # 3. compile
 
-&runCommand( "net stop \"ChemSW Log Service\"");
 
-&runCommand( "net stop \"NbtSchedService\"");
+&runCommand( "taskkill /F /IM NbtSchedService.exe");  # force kill outstanding threads
 
-&runCommand( "net stop \"NbtSchedService\"");
-
-&runCommand( "net stop \"NbtSchedService\"");   # we mean it!
-
-&runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
+#&runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
 
 &runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
             "devenv ". $repopaths{"Nbt"} ."/Nbt.sln /Build \"Release\"");
@@ -192,7 +194,6 @@ my $masterpassword = $schemata{$masterschema};
 
 &runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/Release/NbtUpdt.exe -all");
 
-#---------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
 # 7. start schedule service
@@ -200,7 +201,6 @@ my $masterpassword = $schemata{$masterschema};
 &runCommand( "net start \"NbtSchedService\"");
 
 #---------------------------------------------------------------------------------
-
 # 8. tags
 
 foreach my $component (@components)

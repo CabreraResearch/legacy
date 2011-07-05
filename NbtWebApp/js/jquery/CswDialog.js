@@ -33,7 +33,8 @@
 							var o = {
 								'ID': 'addviewdialog',
 								'onAddView': function (newviewid) { },
-								'viewid': ''
+								'viewid': '',
+								'viewmode': ''
 							};
 							if (options) $.extend(o, options);
 
@@ -64,8 +65,13 @@
 									                                        
 																			var createData = {};
 																			createData.ViewName = $nametextbox.val();
-																			createData.ViewMode = $displaymodeselect.val();
 																			createData.ViewId = o.viewid;
+																			if(isNullOrEmpty(o.viewmode))
+																			{
+																				createData.ViewMode = $displaymodeselect.val();
+																			} else {
+																				createData.ViewMode = o.viewmode;
+																			}
 																			if(!isNullOrEmpty(v.getvisibilityselect()))
 																			{
 																				createData.Visibility = v.getvisibilityselect().val();
@@ -113,11 +119,12 @@
 							$div.CswNodeTabs({
 								'nodetypeid': o.nodetypeid,
                                 'relatednodeid': o.relatednodeid,
-								'EditMode': 'AddInPopup',
+								'EditMode': EditMode.AddInPopup.name,
 								'onSave': function (nodeid, cswnbtnodekey) {
 									$div.dialog('close');
 									o.onAddNode(nodeid, cswnbtnodekey);
-								}
+								},
+								'ShowAsReport': false
 							});
 
 							_openDiv($div, 800, 600);
@@ -130,31 +137,67 @@
 								'cswnbtnodekey': '',
 								'filterToPropId': '',
 								'title': '',
-								'onEditNode': function (nodeid, nodekey) { }
+								'onEditNode': function (nodeid, nodekey) { },
+								'date': ''     // viewing audit records
 							};
 							if (options) $.extend(o, options);
 							var $div = $('<div></div>');
-							$div.CswNodeTabs({
-								'nodeid': o.nodeid,
-								'cswnbtnodekey': o.cswnbtnodekey,
-								'filterToPropId': o.filterToPropId,
-								'EditMode': 'EditInPopup',
-								'title': o.title,
-								'onSave': function (nodeid, nodekey)
-								{
-									unsetChanged();
-									//$div.dialog('close');
-									o.onEditNode(nodeid, nodekey);
-								},
-								'onBeforeTabSelect': function (tabid)
-								{
-									return manuallyCheckChanges();
-								},
-								'onPropertyChange': function (propid, propname)
-								{
-									setChanged();
-								}
-							});
+							
+							var myEditMode = EditMode.EditInPopup.name;
+							var $table = $div.CswTable();
+							if(!isNullOrEmpty(o.date))
+							{
+								myEditMode = EditMode.AuditHistoryInPopup.name;
+								$table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
+									'ID': o.nodeid + '_history',
+									'nodeid': o.nodeid,
+									'onEditNode': o.onEditNode,
+									'JustDateColumn': true,
+									'selectedDate': o.date,
+									'onSelectRow': function(date) { _setupTabs(date); },
+									'allowEditRow': false
+								});
+							}
+							var $tabcell = $table.CswTable('cell', 1, 2);
+
+							_setupTabs(o.date);
+
+							function _setupTabs(date)
+							{
+								$tabcell.empty();
+								$tabcell.CswNodeTabs({
+									'nodeid': o.nodeid,
+									'cswnbtnodekey': o.cswnbtnodekey,
+									'filterToPropId': o.filterToPropId,
+									'EditMode': myEditMode,
+									'title': o.title,
+									'tabid': $.CswCookie('get', CswCookieName.CurrentTabId),
+									'date': date,
+									'onSave': function (nodeid, nodekey, tabcount)
+									{
+										unsetChanged();
+										if(tabcount === 1)
+										{
+											$div.dialog('close');
+										}
+										_setupTabs(date);
+										o.onEditNode(nodeid, nodekey);
+									},
+									'onBeforeTabSelect': function (tabid)
+									{
+										return manuallyCheckChanges();
+									},
+									'onTabSelect': function (tabid)
+									{
+										$.CswCookie('set', CswCookieName.CurrentTabId, tabid);
+									},
+									'onPropertyChange': function (propid, propname)
+									{
+										setChanged();
+									}
+								});
+							} // _setupTabs()
+
 							if(o.filterToPropId !== '')
 								_openDiv($div, 600, 400);
 							else

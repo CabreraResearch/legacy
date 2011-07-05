@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources = CswNbtResources;
 		}
 
-		public XElement getMenu( CswNbtView View, string SafeNodeKey )
+		public XElement getMenu( CswNbtView View, string SafeNodeKey, string PropIdAttr )
 		{
 			XElement MenuNode = new XElement( "menu" );
 
@@ -146,6 +146,7 @@ namespace ChemSW.Nbt.WebServices
 					MenuNode.Add( new XElement( "item",
 												new XAttribute( "text", "Save View As" ),
 												new XAttribute( "viewid", View.SessionViewId.ToString() ),
+												new XAttribute( "viewmode", View.ViewMode.ToString() ),
 												new XAttribute( "action", "SaveViewAs" ) ) );
 				}
 
@@ -178,13 +179,22 @@ namespace ChemSW.Nbt.WebServices
 
 			    if( NbtViewRenderingMode.Grid == View.ViewMode )
 			    {
-
-			        foreach( XElement ExportType in from ExportOutputFormat FormatType
+					string Url = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString();
+					if( View.Visibility == NbtViewVisibility.Property &&
+						null != Node &&
+						string.Empty != PropIdAttr )
+					{
+						// Grid Property is a special case
+						CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+						Url = "Popup_Export.aspx?nodeid=" + Node.NodeId.ToString() + "&propid=" + PropId.NodeTypePropId;
+					}
+					
+					foreach( XElement ExportType in from ExportOutputFormat FormatType
 			                                            in Enum.GetValues( typeof (ExportOutputFormat) )
 			                                        where ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile )
 			                                        select new XElement( "item",
 			                                                             new XAttribute( "text", FormatType ),
-			                                                             new XAttribute( "popup", "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode ) ) )
+			                                                             new XAttribute( "popup", Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode ) ) )
 			        {
 			            ExportNode.Add( ExportType );
 			        }
@@ -205,21 +215,21 @@ namespace ChemSW.Nbt.WebServices
 			    }
 			    MenuNode.Add( ExportNode );
 
-			    // MOBILE
-			    if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
-			    {
-			        string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
-			                       ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
-			        XElement MobileNode = new XElement( "item",
-			                                            new XAttribute( "text", "Mobile" ) );
-			        MobileNode.Add( new XElement( "item",
-			                                      new XAttribute( "text", "Export Mobile XML" ),
-			                                      new XAttribute( "popup", PopUp ) ) );
-			        MobileNode.Add( new XElement( "item",
-			                                      new XAttribute( "text", "Import Mobile XML" ),
-			                                      new XAttribute( "href", _CswNbtResources.Actions[CswNbtActionName.Load_Mobile_Data].Url ) ) );
-			        MenuNode.Add( MobileNode );
-			    }
+				//// MOBILE
+				//if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+				//{
+				//    string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
+				//                   ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+				//    XElement MobileNode = new XElement( "item",
+				//                                        new XAttribute( "text", "Mobile" ) );
+				//    MobileNode.Add( new XElement( "item",
+				//                                  new XAttribute( "text", "Export Mobile XML" ),
+				//                                  new XAttribute( "popup", PopUp ) ) );
+				//    MobileNode.Add( new XElement( "item",
+				//                                  new XAttribute( "text", "Import Mobile XML" ),
+				//                                  new XAttribute( "href", _CswNbtResources.Actions[CswNbtActionName.Load_Mobile_Data].Url ) ) );
+				//    MenuNode.Add( MobileNode );
+				//}
 
 			    //// SWITCH VIEW
 			    //ret += "<item text=\"Switch View\" popup=\"Popup_ChangeView.aspx\"/>";

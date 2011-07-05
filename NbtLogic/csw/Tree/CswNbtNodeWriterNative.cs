@@ -46,13 +46,14 @@ namespace ChemSW.Nbt
         {
             DataTable NewNodeTable = CswTableUpdateNodes.getEmptyTable();
             DataRow NewNodeRow = NewNodeTable.NewRow();
-            NewNodeRow[ "nodename" ] = Node.NodeName;
-            NewNodeRow[ "nodetypeid" ] = Node.NodeTypeId;
-            NewNodeRow[ "pendingupdate" ] = "0";
-            NewNodeRow[ "issystem" ] = "0";
+			NewNodeRow["nodename"] = Node.NodeName;
+			NewNodeRow["nodetypeid"] = CswConvert.ToDbVal( Node.NodeTypeId );
+			NewNodeRow["pendingupdate"] = CswConvert.ToDbVal( false );
+			NewNodeRow["readonly"] = CswConvert.ToDbVal( false );
+			NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
             NewNodeTable.Rows.Add( NewNodeRow );
 
-            Node.NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NewNodeTable.Rows[ 0 ][ "nodeid" ] ) );
+			Node.NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NewNodeTable.Rows[0]["nodeid"] ) );
 
             if( PostToDatabase )
                 CswTableUpdateNodes.update( NewNodeTable );
@@ -61,7 +62,6 @@ namespace ChemSW.Nbt
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy )
         {
-
             // save nodename and pendingupdate
             if ( Node.NodeId.TableName != "nodes" )
                 throw new CswDniException( "Internal data error", "CswNbtNodeWriterNative attempted to write a node in table: " + Node.NodeId.TableName );
@@ -69,8 +69,10 @@ namespace ChemSW.Nbt
             DataTable NodesTable = CswTableUpdateNodes.getTable( "nodeid", Node.NodeId.PrimaryKey );
             if ( 1 != NodesTable.Rows.Count )
                 throw ( new CswDniException( "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.NodeId.ToString() + ")" ) );
-            NodesTable.Rows[ 0 ][ "nodename" ] = Node.NodeName;
-            NodesTable.Rows[ 0 ][ "pendingupdate" ] = CswConvert.ToDbVal( Node.PendingUpdate );
+
+			NodesTable.Rows[0]["nodename"] = Node.NodeName;
+			NodesTable.Rows[0]["pendingupdate"] = CswConvert.ToDbVal( Node.PendingUpdate );
+			NodesTable.Rows[0]["readonly"] = CswConvert.ToDbVal( Node.ReadOnly );
             CswTableUpdateNodes.update( NodesTable );
 
         }//write()

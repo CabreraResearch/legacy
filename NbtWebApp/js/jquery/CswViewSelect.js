@@ -16,6 +16,7 @@
 									viewname: '',
 									viewmode: '',
 									actionid: '',
+									actionname: '',
 									actionurl: '',
 									reportid: ''
 								};
@@ -51,6 +52,7 @@
 																	'viewname': optSelect.viewname,
 																	'viewmode': optSelect.viewmode,
 																	'actionid': optSelect.actionid,
+																	'actionname': optSelect.actionname,
 																	'actionurl': optSelect.actionurl,
 																	'reportid': optSelect.reportid,
 																	'onSelect': o.onSelect,
@@ -99,6 +101,7 @@
 				viewname: '',
 				viewmode: '',
 				actionid: '',
+				actionname: '',
 				actionurl: '',
 				reportid: '',
 				onSelect: function() { },
@@ -113,8 +116,8 @@
 		var $cell1 = $table.CswTable('cell', 1, 1);
 		var $icondiv = $('<div />').appendTo($cell1);
 		$icondiv.css('background-image', x.iconurl);
-		$icondiv.css('width', '18px');
-		$icondiv.css('height' ,'18px');
+		$icondiv.css('width', '16px');
+		$icondiv.css('height' ,'16px');
 
 		var $cell2 = $table.CswTable('cell', 1, 2);
 		$cell2.append(x.viewname);
@@ -142,6 +145,7 @@
 					viewname: x.viewname,
 					viewmode: x.viewmode,
 					actionid: x.actionid,
+					actionname: x.actionname,
 					actionurl: x.actionurl,
 					reportid: x.reportid
 					});

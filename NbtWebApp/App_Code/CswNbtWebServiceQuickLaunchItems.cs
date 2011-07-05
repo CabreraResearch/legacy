@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.WebServices
 	/// <summary>
 	/// Webservice for the list of Quick Launch links
 	/// </summary>
-	public class CswNbtWebServiceQuickLaunchItems : CompositeControl
+	public class CswNbtWebServiceQuickLaunchItems
 	{
 		private readonly CswNbtResources _CswNbtResources;
 

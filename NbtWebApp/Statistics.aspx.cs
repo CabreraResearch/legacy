@@ -398,12 +398,12 @@ namespace ChemSW.Nbt.WebPages
             if( StartDate > DateTime.MinValue )
             {
                 if( WhereClause != string.Empty ) WhereClause += " and ";
-                WhereClause += "logoutdate >= '" + Master.CswNbtResources.getDbNativeDate( StartDate ) + "'";
+                WhereClause += "logoutdate >= " + Master.CswNbtResources.getDbNativeDate( StartDate );
             }
             if( EndDate > DateTime.MinValue )
             {
                 if( WhereClause != string.Empty ) WhereClause += " and ";
-                WhereClause += "logoutdate <= '" + Master.CswNbtResources.getDbNativeDate( EndDate ) + "'";
+                WhereClause += "logoutdate <= " + Master.CswNbtResources.getDbNativeDate( EndDate );
             }
             if( WhereClause != string.Empty )
                 WhereClause = " where " + WhereClause;

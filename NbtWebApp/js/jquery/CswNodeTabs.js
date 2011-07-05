@@ -22,12 +22,14 @@
             nodetypeid: '',           
             filterToPropId: '',       
             title: '',
-            EditMode: 'Edit', // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
-            onSave: function (nodeid, cswnbtnodekey) { },
+            date: '',      // for audit records
+			EditMode: EditMode.Edit.name, // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
+            onSave: function (nodeid, cswnbtnodekey, tabcount) { },
             onBeforeTabSelect: function (tabid) { return true; },
             onTabSelect: function (tabid) { },
             onPropertyChange: function(propid, propname) { },
             ShowCheckboxes: false,
+			ShowAsReport: true,
             NodeCheckTreeId: '',
             'onEditView': function(viewid) { }
         };
@@ -40,6 +42,8 @@
 
         var $outertabdiv = $('<div id="' + o.ID + '_tabdiv" />')
                         .appendTo($parent);
+		
+		var tabcnt = 0;
 
         getTabs(o);
 
@@ -47,10 +51,15 @@
         {
             var $linkdiv = $('<div id="' + o.ID + '_linkdiv" align="right"/>')
                             .appendTo($parent);
-            var $AsReportLink = $('<a href="#">As Report</a>')
-                            .appendTo($linkdiv)
-                            .click(function() { openPopup('NewNodeReport.html?nodeid=' + o.nodeid + '&cswnbtnodekey=' + o.cswnbtnodekey, 600, 800); });
-        }
+            if(o.ShowAsReport)
+			{
+				var $AsReportLink = $('<a href="#">As Report</a>')
+					            .appendTo($linkdiv)
+						        .click(function() { 
+									openPopup('NewNodeReport.html?nodeid=' + o.nodeid + '&cswnbtnodekey=' + o.cswnbtnodekey, 600, 800); 
+								});
+			}
+		}
 
         function clearTabs()
         {
@@ -63,9 +72,10 @@
                 EditMode: o.EditMode,
                 NodeId: o.nodeid,
                 SafeNodeKey: o.cswnbtnodekey,
-                NodeTypeId: o.nodetypeid
+                NodeTypeId: o.nodetypeid,
+				Date: o.date,
+				filterToPropId: o.filterToPropId
             };
-
             CswAjaxXml({
                 url: o.TabsUrl,
                 data: dataXml,
@@ -87,13 +97,17 @@
                         }
                         var $tabdiv = tabdivs[tabdivs.length - 1];
                         $tabdiv.children('ul').append('<li><a href="#' + $tab.CswAttrXml('id') + '">' + $tab.CswAttrXml('name') + '</a></li>');
-                        $tabdiv.append('<div id="' + $tab.CswAttrXml('id') + '"><form id="' + $tab.CswAttrXml('id') + '_form" /></div>');
+                        var $tabcontentdiv = $('<div id="' + $tab.CswAttrXml('id') + '"><form onsubmit="return false;" id="' + $tab.CswAttrXml('id') + '_form" /></div>')
+												.appendTo($tabdiv);
+						$tabcontentdiv.data( 'canEditLayout',  $tab.CswAttrXml('canEditLayout') );
                         if($tab.CswAttrXml('id') === o.tabid)
                         {
                             selectedtabno = tabno;
                         }
                         tabno++;
                     });  // $xml.children().each(function ()
+
+					tabcnt = tabno;
 
                     for(var t in tabdivs)
                     {
@@ -131,7 +145,8 @@
                 NodeId: o.nodeid,
                 TabId: tabid, 
                 SafeNodeKey: o.cswnbtnodekey,
-                NodeTypeId: o.nodetypeid
+                NodeTypeId: o.nodetypeid,
+				Date: o.date
             };
 
             CswAjaxXml({
@@ -159,13 +174,13 @@
                         {
                             onSwap(onSwapData);
                         },
-                        'showConfigButton': (o.filterToPropId === ''),
+                        'showConfigButton': (o.filterToPropId === '' && isTrue($tabcontentdiv.data('canEditLayout'))),
                         'onConfigOn': function($buttontable) { 
                             $xml.children().each(function ()
                             {
                                 var $propxml = $(this);
                                 var $subtable = $layouttable.find('#' + $propxml.CswAttrXml('id') + '_subproptable');
-								var $parentcell = $subtable.parent();
+								var $parentcell = $subtable.parent().parent();
                                 var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
                                 var $propcell = _getPropertyCell($cellset);
 
@@ -192,7 +207,7 @@
                             {
                                 var $propxml = $(this);
                                 var $subtable = $layouttable.find('#' + $propxml.CswAttrXml('id') + '_subproptable');
-								var $parentcell = $subtable.parent();
+								var $parentcell = $subtable.parent().parent();
                                 var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
                                 var $propcell = _getPropertyCell($cellset);
 
@@ -289,11 +304,12 @@
         }
         function _getPropertyCell($cellset)
         {
-            return $cellset[1][2].children('div');
+			return $cellset[1][2].children('div');
         }
 
         function _handleProps($layouttable, $xml, $tabcontentdiv, tabid, ConfigMode, $savebtn)
         {
+			var AtLeastOneSaveable = false;
             $xml.children().each(function ()
             {
                 var $propxml = $(this);
@@ -308,32 +324,54 @@
                 {
                     var $labelcell = _getLabelCell($cellset);
                     $labelcell.addClass('propertylabel');
-                    if($propxml.CswAttrXml('helptext') !== '')
+
+					if(isTrue($propxml.CswAttrXml('highlight')))
                     {
-                        $('<a href="#" title="'+ $propxml.CswAttrXml('helptext') + '" onclick="return false;">'+ $propxml.CswAttrXml('name') +'</a>')
+						$labelcell.addClass('ui-state-highlight');
+                    }
+
+					if($propxml.CswAttrXml('helptext') !== '')
+                    {
+                        $('<a href="#" class="cswprop_helplink" title="'+ $propxml.CswAttrXml('helptext') + '" onclick="return false;">'+ $propxml.CswAttrXml('name') +'</a>')
                             .appendTo($labelcell);
                     }
                     else
                     {
                         $labelcell.append($propxml.CswAttrXml('name'));
                     }
-                    if(o.ShowCheckboxes && $propxml.CswAttrXml('copyable') === "true" && $propxml.CswAttrXml('readonly') === "false")
-                    {
-                        var $propcheck = $labelcell.CswInput('init',{ID: 'check_'+ propid,
-                                                                        type: CswInput_Types.checkbox,
-                                                                        value: false, // Value --not defined?,
-                                                                        cssclass: o.ID +'_check'                                                                   
-                                                                    }); 
-                        $propcheck.CswAttrDom('propid',propid);	
-                    }
+		
+					if(false === isTrue($propxml.CswAttrXml('readonly')))
+					{
+						AtLeastOneSaveable = true;
+	                    if(o.ShowCheckboxes && $propxml.CswAttrXml('copyable') === "true")
+						{
+							var $propcheck = $labelcell.CswInput('init',{ID: 'check_'+ propid,
+																			type: CswInput_Types.checkbox,
+																			value: false, // Value --not defined?,
+																			cssclass: o.ID +'_check'                                                                   
+																		}); 
+							$propcheck.CswAttrDom('propid',propid);	
+						}
+					}
                 }
 
                 var $propcell = _getPropertyCell($cellset);
                 $propcell.addClass('propertyvaluecell');
 
+				if(isTrue($propxml.CswAttrXml('highlight')))
+                {
+					$propcell.addClass('ui-state-highlight');
+                }
                 _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode, $savebtn);
 
             });
+
+			if(AtLeastOneSaveable === false)
+			{
+				$savebtn.hide();
+			} else {
+				$savebtn.show();
+			}
         } // _handleProps()
 
         function _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode, $savebtn)
@@ -439,9 +477,9 @@
                     'NodeId': o.nodeid,
                     'SafeNodeKey': o.cswnbtnodekey,
                     'NodeTypeId': o.nodetypeid,
-                    'ViewId': $.CswCookie('get', CswCookieName.CurrentViewId),
-                    'NewPropsXml': xmlToString($propsxml)
-                };
+                    'NewPropsXml': xmlToString($propsxml),
+                    'ViewId': $.CswCookie('get', CswCookieName.CurrentViewId)
+                   };
 
                 CswAjaxJSON({
                     url: o.SavePropUrl,
@@ -484,7 +522,7 @@
                                 alert('You have not selected any properties to save.');
                             }
                         } // if(o.ShowCheckboxes)
-                        if( doSave ) o.onSave(data.nodeid, data.cswnbtnodekey);
+                        if( doSave ) o.onSave(data.nodeid, data.cswnbtnodekey, tabcnt);
 						$savebtn.CswButton('enable');
                     }, // success
                     error: function()

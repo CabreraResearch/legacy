@@ -104,9 +104,8 @@
     <Content Include="Act_ImportFireExtinguisher.aspx" />
     <Content Include="Act_Receiving.aspx" />
     <Content Include="Act_SplitSamples.aspx" />
-    <Content Include="App_Data\Log.txt" />
-    <Content Include="App_Data\web_browsers_patch.xml" />
-    <Content Include="App_Data\wurfl.xml" />
+    <Compile Include="App_Code\CswNbtWebServiceAuditing.cs" />
+    <Compile Include="App_Code\CswNbtWebServiceInspections.cs" />
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
@@ -467,6 +466,8 @@
     <Content Include="jmol\JmolApplet.jar" />
     <Content Include="js\CswAll.min.js" />
     <Content Include="js\CswClasses.js" />
+    <Content Include="js\jquery\CswAuditHistoryGrid.js" />
+    <Content Include="js\jquery\CswInspectionStatus.js" />
     <Content Include="js\jquery\CswAttr.js" />
     <Content Include="js\jquery\CswButton.js" />
     <Content Include="js\jquery\CswCheckBoxArray.js" />
@@ -500,6 +501,7 @@
     <Content Include="js\jquery\CswQuickLaunch.js" />
     <Content Include="js\jquery\CswSearch.css" />
     <Content Include="js\jquery\CswSearch.js" />
+    <Content Include="js\jquery\CswSelect.js" />
     <Content Include="js\jquery\CswSpan.js" />
     <Content Include="js\jquery\CswTable.js" />
     <Content Include="js\jquery\CswTools.js" />
@@ -512,6 +514,7 @@
     <Content Include="js\jquery\CswWelcome.js" />
     <Content Include="js\jquery\CswWizard.css" />
     <Content Include="js\jquery\CswWizard.js" />
+    <Content Include="js\jquery\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeBarcode.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeComposite.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeDate.js" />
@@ -1158,8 +1161,7 @@
     <Content Include="MobileTest.html" />
     <Content Include="NewFooter.html" />
     <Content Include="NewHeader.html" />
-    <Content Include="NewIncludes_Dev.html" />
-    <Content Include="NewIncludes_Production.html" />
+    <Content Include="NewIncludes.html" />
     <Content Include="NewMain.html" />
     <Content Include="NewNodeReport.html" />
     <Content Include="NodeReport.aspx" />
@@ -1845,9 +1847,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\51Degrees.mobi.config" />
-    <None Include="App_Data\Devices.dat" />
-    <None Include="App_Data\wurfl.xml.gz" />
     <None Include="etc\CswNbtData.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -1901,6 +1900,7 @@
     <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\jQueryEnumerableFrom.snippet" />
     <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\jQueryEnumerableRange.snippet" />
     <None Include="js\_compile.pl" />
+    <None Include="Mobile.manifest" />
     <None Include="SkinPrint\Calendar\Thumbs.db" />
     <None Include="SkinPrint\ComboBox\Thumbs.db" />
     <None Include="SkinPrint\Grid\Thumbs.db" />
@@ -1948,12 +1948,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>10627</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>
-          </IISUrl>
+          <IISUrl>http://localhost/NbtWebApp</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

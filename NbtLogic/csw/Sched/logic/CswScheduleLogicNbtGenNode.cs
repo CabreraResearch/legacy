@@ -18,6 +18,7 @@ namespace ChemSW.Nbt.Sched
 
     public class CswScheduleLogicNbtGenNode : ICswScheduleLogic
     {
+		private Int32 _GeneratorLimit = 1;
 
         public string RuleName
         {
@@ -74,7 +75,7 @@ namespace ChemSW.Nbt.Sched
 
                     List<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
 
-                    for( Int32 idx = 0; ( idx < ObjectGenerators.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
+                    for( Int32 idx = 0; ( idx < ObjectGenerators.Count && idx < _GeneratorLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
 
                         CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
@@ -105,10 +106,11 @@ namespace ChemSW.Nbt.Sched
                                     ( DateTime.Now >= ThisDueDateValue ) )
                                 {
                                     CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
-                                    if( CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node ) )
-                                    {
-                                        _CswScheduleNodeUpdater.update( CurrentGenerator.Node, "Created node from generator " + CurrentGenerator.Node.NodeName  );
-                                    }
+									bool NodesCreated = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
+									string Message = "No node created for generator " + CurrentGenerator.Node.NodeName;
+									if( NodesCreated )
+										Message = "Created node from generator " + CurrentGenerator.Node.NodeName;
+									_CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
                                 }
                             } // if( ThisDueDateValue != DateTime.MinValue )
 

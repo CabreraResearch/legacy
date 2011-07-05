@@ -1,31 +1,23 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Web.Script.Serialization;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Web.Services;
 using System.Web.Script.Services;   // supports ScriptService attribute
-using ChemSW.Core;
+using System.Web.Services;
+using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Config;
-using ChemSW.Log;
+using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.Statistics;
+using ChemSW.Nbt.Actions;
 using ChemSW.NbtWebControls;
 using ChemSW.Security;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.Statistics;
-using ChemSW.Exceptions;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Formatting = Newtonsoft.Json.Formatting;
-using System.Xml.Linq;
-using System.Collections.Generic;
-using ChemSW.Security;
-using ChemSW.Nbt;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -57,10 +49,39 @@ namespace ChemSW.Nbt.WebServices
 			_CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
 			_CswNbtResources = _CswSessionResources.CswNbtResources;
 			_CswNbtStatisticsEvents = _CswSessionResources.CswNbtStatisticsEvents;
-            _CswNbtResources.beginTransaction(); 
+			_CswNbtResources.beginTransaction();
 
 			_CswNbtResources.logMessage( "WebServices: Session Started (_initResources called)" );
-		}//start() 
+
+			string ContextViewId = string.Empty;
+			string ContextActionName = string.Empty;
+			if( Context.Request.Cookies["csw_currentviewid"] != null )
+			{
+				ContextViewId = Context.Request.Cookies["csw_currentviewid"].Value;
+			}
+			if( Context.Request.Cookies["csw_currentactionname"] != null )
+			{
+				ContextActionName = Context.Request.Cookies["csw_currentactionname"].Value;
+			}
+
+			if( ContextViewId != string.Empty )
+			{
+				CswNbtView ContextView = _getView( ContextViewId );
+				if( ContextView != null )
+				{
+					_CswNbtResources.AuditContext = ContextView.ViewName + " (" + ContextView.ViewId.ToString() + ")";
+				}
+			}
+			else if( ContextActionName != string.Empty )
+			{
+				CswNbtAction ContextAction = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ContextActionName )];
+				if( ContextAction != null )
+				{
+					_CswNbtResources.AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name ) + " (Action_" + ContextAction.ActionId.ToString() + ")";
+				}
+			}
+
+		}//_initResources() 
 
 		private void _deInitResources()
 		{
@@ -72,7 +93,7 @@ namespace ChemSW.Nbt.WebServices
 				_CswNbtResources.finalize();
 				_CswNbtResources.release();
 			}
-		}
+		} // _deInitResources()
 
 		#endregion Session and Resource Management
 
@@ -198,41 +219,41 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string authenticate( string AccessId, string UserName, string Password )
+		public string authenticate( string AccessId, string UserName, string Password, string ForMobile )
 		{
 			JObject ReturnVal = new JObject();
 			try
 			{
 				_initResources();
 
-			    AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
+				AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
 
 				try
 				{
-				    string ParsedAccessId = AccessId.ToLower().Trim();
-                    if( !string.IsNullOrEmpty( ParsedAccessId ) )
-                    {
-                        _CswSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
-                    }
-                    else
-                    {
-                        throw new CswDniException( "There is no configuration information for this AccessId", "AccessId is null or empty." );
-                    }
+					string ParsedAccessId = AccessId.ToLower().Trim();
+					if( !string.IsNullOrEmpty( ParsedAccessId ) )
+					{
+						_CswSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
+					}
+					else
+					{
+						throw new CswDniException( "There is no configuration information for this AccessId", "AccessId is null or empty." );
+					}
 				}
 				catch( CswDniException ex )
 				{
-                    if( !ex.Message.Contains( "There is no configuration information for this AccessId" ) )
-                    {
-                        throw ex;
-                    }
-                    else
-                    {
-                        AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
-                    }
+					if( !ex.Message.Contains( "There is no configuration information for this AccessId" ) )
+					{
+						throw ex;
+					}
+					else
+					{
+						AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
+					}
 				}
-
-                if(AuthenticationStatus == AuthenticationStatus.Unknown )
-				    AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
+				bool IsMobile = CswConvert.ToBoolean( ForMobile );
+				if( AuthenticationStatus == AuthenticationStatus.Unknown )
+					AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), IsMobile );
 
 				// case 21211
 				if( AuthenticationStatus == AuthenticationStatus.Authenticated )
@@ -438,7 +459,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getMainMenu( string ViewId, string SafeNodeKey )
+		public XElement getMainMenu( string ViewId, string SafeNodeKey, string PropIdAttr )
 		{
 			XElement ReturnVal = new XElement( "menu" );
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -452,7 +473,7 @@ namespace ChemSW.Nbt.WebServices
 
 					var ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
 					CswNbtView View = _getView( ViewId );
-					ReturnVal = ws.getMenu( View, SafeNodeKey );
+					ReturnVal = ws.getMenu( View, SafeNodeKey, PropIdAttr );
 				}
 
 				_deInitResources();
@@ -709,8 +730,8 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( Ex );
 			}
 
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus ); 
-			
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
 			return ReturnVal.ToString();
 
 		} // getViewGrid()
@@ -871,7 +892,7 @@ namespace ChemSW.Nbt.WebServices
 				ReturnVal = jError( Ex );
 			}
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 			return ReturnVal.ToString();
 
 		} // copyView()
@@ -927,7 +948,7 @@ namespace ChemSW.Nbt.WebServices
 
 					NbtViewVisibility RealVisibility = NbtViewVisibility.Unknown;
 					Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
-					
+
 					CswPrimaryKey RealVisibilityRoleId = null;
 					CswPrimaryKey RealVisibilityUserId = null;
 					if( RealVisibility == NbtViewVisibility.Role )
@@ -950,7 +971,7 @@ namespace ChemSW.Nbt.WebServices
 					CswNbtView NewView = new CswNbtView( _CswNbtResources );
 					NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, CopyView );
 
-					if(ViewMode != string.Empty)
+					if( ViewMode != string.Empty )
 					{
 						NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
 						Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
@@ -1044,7 +1065,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId )
+		public XElement getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId, string Date, string filterToPropId )
 		{
 			XElement ReturnVal = new XElement( "tabs" );
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1060,7 +1081,7 @@ namespace ChemSW.Nbt.WebServices
 					//{
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					ReturnVal = ws.getTabs( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( NodeTypeId ) );
+					ReturnVal = ws.getTabs( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToDateTime( Date ), filterToPropId );
 					//}
 				}
 
@@ -1080,7 +1101,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XmlDocument getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId )
+		public XmlDocument getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date )
 		{
 			XmlDocument ReturnVal = new XmlDocument();
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1096,7 +1117,7 @@ namespace ChemSW.Nbt.WebServices
 					//{
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					ReturnVal = ws.getProps( RealEditMode, NodeId, ParsedNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ) );
+					ReturnVal = ws.getProps( RealEditMode, NodeId, ParsedNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToDateTime(Date) );
 					//}
 				}
 
@@ -1223,13 +1244,10 @@ namespace ChemSW.Nbt.WebServices
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
 					string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-					//if( !string.IsNullOrEmpty( ParsedNodeKey ) )
-					//{
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
 					CswNbtView View = _getView( ViewId );
 					ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ), View );
-					//}
 				}
 
 				_deInitResources();
@@ -1664,19 +1682,19 @@ namespace ChemSW.Nbt.WebServices
 				_initResources();
 				AuthenticationStatus = _CswSessionResources.attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-                    CswNbtViewSearchPair SearchPair = ws.doViewBasedSearch( SearchJson );
-                    if( null != SearchPair )
-                    {
-                        ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
-                        ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
-                        ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
-                    }
-                }
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+					CswNbtViewSearchPair SearchPair = ws.doViewBasedSearch( SearchJson );
+					if( null != SearchPair )
+					{
+						ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
+						ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
+						ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
+					}
+				}
 
-			    _deInitResources();
+				_deInitResources();
 			}
 
 			catch( Exception ex )
@@ -1701,19 +1719,19 @@ namespace ChemSW.Nbt.WebServices
 				_initResources();
 				AuthenticationStatus = _CswSessionResources.attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-                    CswNbtViewSearchPair SearchPair = ws.doNodesSearch( SearchJson );
-                    if( null != SearchPair )
-                    {
-                        ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
-                        ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
-                        ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
-                    }
-                }
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+					CswNbtViewSearchPair SearchPair = ws.doNodesSearch( SearchJson );
+					if( null != SearchPair )
+					{
+						ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
+						ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
+						ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
+					}
+				}
 
-			    _deInitResources();
+				_deInitResources();
 			}
 			catch( Exception ex )
 			{
@@ -1729,6 +1747,7 @@ namespace ChemSW.Nbt.WebServices
 		#endregion Search
 
 		#region Node DML
+
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string DeleteNodes( string[] NodePks, string[] NodeKeys )
@@ -1811,7 +1830,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-
 					CswPrimaryKey RealNodePk = new CswPrimaryKey();
 					RealNodePk.FromString( NodePk );
 					if( RealNodePk.PrimaryKey != Int32.MinValue )
@@ -1888,7 +1906,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-
 					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					bool ret = ws.ClearPropValue( PropId, IncludeBlob );
 					ReturnVal = new JObject( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
@@ -2182,42 +2199,101 @@ namespace ChemSW.Nbt.WebServices
 		}
 		#endregion Connectivity
 
-        #region Logging
+		#region Logging
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string collectClientLogInfo( string Context, string UserName, string CustomerId, string LogInfo )
-        {
-            try
-            {
-                _initResources();
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string collectClientLogInfo( string Context, string UserName, string CustomerId, string LogInfo )
+		{
+			try
+			{
+				_initResources();
 
-                if( !string.IsNullOrEmpty( UserName ) &&
-                    !string.IsNullOrEmpty( CustomerId ) )
-                {
-                    string LogMessage = @"Application context '" + Context + "' requested logging for username '" + UserName + "' on AccessId '" + CustomerId + "'."; 
+				if( !string.IsNullOrEmpty( UserName ) &&
+					!string.IsNullOrEmpty( CustomerId ) )
+				{
+					string LogMessage = @"Application context '" + Context + "' requested logging for username '" + UserName + "' on AccessId '" + CustomerId + "'.";
 
-                    _CswNbtResources.logMessage(LogMessage);
-                }
-                if( !string.IsNullOrEmpty(LogInfo))
-                {
-                    _CswNbtResources.logMessage( LogInfo );
-                }
-                _deInitResources();
-            }
+					_CswNbtResources.logMessage( LogMessage );
+				}
+				if( !string.IsNullOrEmpty( LogInfo ) )
+				{
+					_CswNbtResources.logMessage( LogInfo );
+				}
+				_deInitResources();
+			}
 
-            catch( Exception ex )
-            {
-                //nada
-            }
+			catch( Exception ex )
+			{
+				//nada
+			}
 
-            return new JObject( new JProperty( "succeeded", "true" ) ).ToString();
-        } // UpdateProperties()
+			return new JObject( new JProperty( "succeeded", "true" ) ).ToString();
+		} // UpdateProperties()
 
-        #endregion Logging
+		#endregion Logging
 
-        #region Mobile
-        [WebMethod( EnableSession = false )]
+		#region Actions
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string SaveActionToQuickLaunch(string ActionName)
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					_CswNbtResources.SessionDataMgr.saveSessionData( _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum(ActionName)], true );
+					ReturnVal = new JObject( new JProperty( "succeeded", "true" ) );
+				}
+				_deInitResources();
+			}
+			catch( Exception Ex )
+			{
+				ReturnVal = jError( Ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+		} // SaveActionToQuickLaunch()
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getInspectionStatusGrid()
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					CswNbtWebServiceInspections ws = new CswNbtWebServiceInspections( _CswNbtResources );
+					ReturnVal = ws.getInspectionStatusGrid();
+				}
+				_deInitResources();
+			}
+			catch( Exception Ex )
+			{
+				ReturnVal = jError( Ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+
+		} // getInspectionStatusGrid()
+
+		#endregion Actions
+
+		#region Mobile
+		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string UpdateProperties( string SessionId, string ParentId, string UpdatedViewXml, bool ForMobile )
 		{
@@ -2287,53 +2363,89 @@ namespace ChemSW.Nbt.WebServices
 			return ReturnVal;
 		} // GetViews()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement GetView( string SessionId, string ParentId, bool ForMobile )
-        {
-            XElement ReturnVal = new XElement( "views" );
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _CswSessionResources.attemptRefresh();
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
+		public XElement GetView( string SessionId, string ParentId, bool ForMobile )
+		{
+			XElement ReturnVal = new XElement( "views" );
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _CswSessionResources.attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
 
-                    ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
-                    if( null != CurrentUser )
-                    {
-                        CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtResources, ForMobile );
-                        ReturnVal = wsView.getView( ParentId, CurrentUser );
-                    }
+					ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
+					if( null != CurrentUser )
+					{
+						CswNbtWebServiceMobileView wsView = new CswNbtWebServiceMobileView( _CswNbtResources, ForMobile );
+						ReturnVal = wsView.getView( ParentId, CurrentUser );
+					}
 
-                }
+				}
 
-                _deInitResources();
-            }
+				_deInitResources();
+			}
 
-            catch( Exception ex )
-            {
-                ReturnVal = _xError( ex );
-            }
+			catch( Exception ex )
+			{
+				ReturnVal = _xError( ex );
+			}
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-            return ReturnVal;
-        } // GetViews()
+			_xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+			return ReturnVal;
+		} // GetViews()
 
 		#endregion Mobile
 
-        #region test
-        [WebMethod( EnableSession = true )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string GetTestData()
-        {
-            JObject RetJson = new JObject( new JProperty( "A", "Static Page 1" ), new JProperty( "B", "Static Page 2" ), new JProperty("C", "Dynamic Page A" ), new JProperty( "D", "Dynamic Page B" ) );
-            return ( RetJson.ToString() );
-        } // RunView()
-        #endregion test
-				#endregion Web Methods
+		#region Auditing
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getAuditHistoryGrid( string NodeId, string JustDateColumn )
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					CswNbtWebServiceAuditing ws = new CswNbtWebServiceAuditing( _CswNbtResources );
+					CswPrimaryKey RealNodeId = new CswPrimaryKey();
+					RealNodeId.FromString( NodeId );
+					ReturnVal = ws.getAuditHistoryGrid( _CswNbtResources.Nodes[RealNodeId], CswConvert.ToBoolean( JustDateColumn ) );
+				}
+				_deInitResources();
+			}
+			catch( Exception Ex )
+			{
+				ReturnVal = jError( Ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+
+		} // getInspectionStatusGrid()
+
+
+		#endregion Auditing
+
+		#region test
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string GetTestData()
+		{
+			JObject RetJson = new JObject( new JProperty( "A", "Static Page 1" ), new JProperty( "B", "Static Page 2" ), new JProperty( "C", "Dynamic Page A" ), new JProperty( "D", "Dynamic Page B" ) );
+			return ( RetJson.ToString() );
+		} // RunView()
+		#endregion test
+
+		#endregion Web Methods
 
 		private CswNbtView _getView( string ViewId )
 		{
@@ -2350,7 +2462,6 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return View;
 		} // _getView()
-
 
 	}//wsNBT
 

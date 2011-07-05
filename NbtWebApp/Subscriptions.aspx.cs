@@ -29,8 +29,8 @@ namespace ChemSW.Nbt.WebPages
         private CswCheckBoxArray _MailReportCBArray;
         private CswDataTable _NotifData;
         private CswDataTable _MailReportData;
-        private ICswNbtTree _NotifTree;
-        private ICswNbtTree _MailReportTree;
+        //private ICswNbtTree _NotifTree;
+        //private ICswNbtTree _MailReportTree;
         private Button SaveButton;
         private CswPrimaryKey _ThisUser;
 
@@ -155,11 +155,14 @@ namespace ChemSW.Nbt.WebPages
                     // Save Notifications
                     Collection<Int32> CheckedNotifIds = _NotifCBArray.GetCheckedValues( "Subscribe" ).ToIntCollection();
                     
-                    for( Int32 n = 0; n < _NotifTree.getChildNodeCount(); n++ )
-                    {
-                        _NotifTree.goToNthChild( n );
+					//for( Int32 n = 0; n < _NotifTree.getChildNodeCount(); n++ )
+					//{
+					//    _NotifTree.goToNthChild( n );
 
-                        CswNbtNode ThisNode = _NotifTree.getNodeForCurrentPosition();
+					CswNbtMetaDataObjectClass NotificationOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+					foreach( CswNbtNode ThisNode in NotificationOC.getNodes( false, false ) )
+					{
+                        //CswNbtNode ThisNode = _NotifTree.getNodeForCurrentPosition();
                         CswNbtObjClassNotification NotifNode = CswNbtNodeCaster.AsNotification( ThisNode );
                         if( CheckedNotifIds.Contains( NotifNode.NodeId.PrimaryKey ) )
                         {
@@ -172,18 +175,22 @@ namespace ChemSW.Nbt.WebPages
                             NotifNode.SubscribedUsers.RemoveUser( _ThisUser );
                         }
                         NotifNode.postChanges( true );
-                        _NotifTree.goToParentNode();
+                        //_NotifTree.goToParentNode();
                     }
 
                     // Save Mail Reports
                     Collection<Int32> CheckedMailReportIds = _MailReportCBArray.GetCheckedValues( "Subscribe" ).ToIntCollection();
 
-                    for( Int32 n = 0; n < _MailReportTree.getChildNodeCount(); n++ )
-                    {
-                        _MailReportTree.goToNthChild( n );
+					//for( Int32 n = 0; n < _MailReportTree.getChildNodeCount(); n++ )
+					//{
+					//    _MailReportTree.goToNthChild( n );
 
-                        CswNbtNode ThisNode = _MailReportTree.getNodeForCurrentPosition();
-                        CswNbtObjClassMailReport MailReportNode = CswNbtNodeCaster.AsMailReport( ThisNode );
+					//    CswNbtNode ThisNode = _MailReportTree.getNodeForCurrentPosition();
+
+					CswNbtMetaDataObjectClass MailReportOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+					foreach( CswNbtNode ThisNode in MailReportOC.getNodes( false, false ) )
+					{
+						CswNbtObjClassMailReport MailReportNode = CswNbtNodeCaster.AsMailReport( ThisNode );
                         if( CheckedMailReportIds.Contains( MailReportNode.NodeId.PrimaryKey ) )
                         {
                             // subscribe!  (this will do nothing if we're already subscribed)
@@ -195,7 +202,7 @@ namespace ChemSW.Nbt.WebPages
                             MailReportNode.Recipients.RemoveUser( _ThisUser );
                         }
                         MailReportNode.postChanges( true );
-                        _MailReportTree.goToParentNode();
+                        //_MailReportTree.goToParentNode();
                     }
                 }
 

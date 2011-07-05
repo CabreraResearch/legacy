@@ -33,7 +33,7 @@
 											return o;
 									},
 					onInitialSelectNode: undefined,
-					onViewChange: function(newviewid) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
+					onViewChange: function(newviewid, newviewmode) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
 					SelectFirstChild: true,
 					ShowCheckboxes: false,
 					IncludeInQuickLaunch: true
@@ -85,7 +85,7 @@
 						var newviewid = $xml.children('viewid').text();
 						if(o.viewid !== newviewid )
 						{
-							o.onViewChange(newviewid);
+							o.onViewChange(newviewid, 'tree');
 							o.viewid = newviewid;
 						}
 

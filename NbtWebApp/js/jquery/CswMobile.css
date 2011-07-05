@@ -54,3 +54,7 @@
 {
 	color: #00ff00;
 }
+
+.ui-li .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li {
+    padding: .7em 15px .7em 15px;
+}

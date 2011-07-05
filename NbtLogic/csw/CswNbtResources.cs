@@ -158,6 +158,15 @@ namespace ChemSW.Nbt
             get { return _CswNbtNodeCollection; }
         }
 
+		public CswNbtNode getNode( CswNbtNodeKey NodeKey, DateTime Date )
+		{
+			return _CswNbtNodeCollection.GetNode( NodeKey.NodeId, Date );
+		}
+		public CswNbtNode getNode( CswPrimaryKey NodePk, DateTime Date )
+		{
+			return _CswNbtNodeCollection.GetNode( NodePk, Date );
+		}
+
         #endregion Nodes and Trees
 
 
@@ -831,6 +840,10 @@ namespace ChemSW.Nbt
         /// Provides meta data information about tables and columns, from data_dictionary
         /// </summary>
         public ICswDataDictionaryReader DataDictionary { get { return _CswResources.DataDictionary; } }
+		/// <summary>
+		/// Set the context information for this audit transaction
+		/// </summary>
+		public string AuditContext { set { _CswResources.AuditContext = value; } }
 
         #endregion Pass-thru to CswResources
 

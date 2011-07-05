@@ -35,22 +35,22 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 switch( CswNbtViewPropertyFilterIn.FilterMode )
                 {
                     case CswNbtPropFilterSql.PropertyFilterMode.Equals:
-                        ReturnVal = ValueColumn + " = '" + FilterValueString + "'";
+                        ReturnVal = ValueColumn + " = " + FilterValueString;
                         break;
                     case CswNbtPropFilterSql.PropertyFilterMode.GreaterThan:
-                        ReturnVal = ValueColumn + " > '" + FilterValueString + "'";
+                        ReturnVal = ValueColumn + " > " + FilterValueString;
                         break;
                     case CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals:
-                        ReturnVal = ValueColumn + " >= '" + FilterValueString + "'";
+                        ReturnVal = ValueColumn + " >= " + FilterValueString;
                         break;
                     case CswNbtPropFilterSql.PropertyFilterMode.LessThan:
-                        ReturnVal = ValueColumn + " < '" + FilterValueString + "'";
+                        ReturnVal = ValueColumn + " < " + FilterValueString;
                         break;
                     case CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals:
-                        ReturnVal = ValueColumn + " <= '" + FilterValueString + "'";
+                        ReturnVal = ValueColumn + " <= " + FilterValueString;
                         break;
                     case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                        ReturnVal = ValueColumn + " <> '" + FilterValueString + "'";
+                        ReturnVal = ValueColumn + " <> " + FilterValueString;
                         break;
                     case CswNbtPropFilterSql.PropertyFilterMode.NotNull:
                         ReturnVal = ValueColumn + " is not null";

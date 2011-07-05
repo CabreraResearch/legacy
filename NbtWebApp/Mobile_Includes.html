@@ -1,24 +1,23 @@
-﻿<!--#include file="NewIncludes_Production.html" -->
-
-<!-- JQuery -->
-     
-<!-- <link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile.min.2011.5.23.css" />  -->
-<link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.min.css" />
-<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.1.min.js"></script>
-<!-- <script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile.min.2011.5.23.js"></script> -->
-<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.min.js"></script>
-<script type="text/javascript" src="js/thirdparty/js/modernizr-2.0.3.js"></script>
-<script type="text/javascript" src="js/thirdparty/js/gserializer.js"></script>
-<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.min.js"></script>
-
-<!-- ChemSW -->
+﻿<link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.min.css" />
 <link type="text/css" rel="stylesheet" href="js/jquery/CswMobile.css" />
+<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.1.min.js"></script>
 
 <script type="text/javascript">
     var debug = false;
+
+    $(document).bind("mobileinit", function ()
+    {
+        $.mobile.page.prototype.options.addBackBtn = true;
+    });
+    
+    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.min.js"><\/script>');
+    document.write('<script type="text/javascript" src="js/thirdparty/js/modernizr-2.0.3.js"><\/script>');
+    document.write('<script type="text/javascript" src="js/thirdparty/js/gserializer.js"><\/script>');
+    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.min.js"><\/script>');
+    
     if(debug) {
-        document.write('<script type="text/javascript" src="js/jquery/CswMobile.js"><\/script>');
         document.write('<script type="text/javascript" src="js/_Global.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/jquery/CswMobile.js"><\/script>');
         document.write('<script type="text/javascript" src="js/CswClasses.js"><\/script>');
         document.write('<script type="text/javascript" src="js/jquery/CswAttr.js"><\/script>');
         document.write('<script type="text/javascript" src="js/jquery/CswButton.js"><\/script>');
@@ -31,7 +30,8 @@
         document.write('<script type="text/javascript" src="js/jquery/CswSelect.js"><\/script>');    
     }
     else {
-        document.write('<script type="text/javascript" src="js/CswAll.min.js"><\/script>');    
+        document.write('<script type="text/javascript" src="js/CswAll.min.js"><\/script>');
     }
+    
     
 </script>

@@ -83,7 +83,8 @@
                                                             var dataJson = {
                                                                 AccessId: AccessId, 
                                                                 UserName: UserName, 
-                                                                Password: Password
+                                                                Password: Password,
+                                                                ForMobile: false
                                                             };
 
 															CswAjaxJSON({

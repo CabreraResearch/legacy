@@ -27,6 +27,13 @@ namespace ChemSW.Nbt.Schema
 
 		public void update()
 		{
+
+			// case 22525
+			if( !_CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "readonly" ) )
+			{
+				_CswNbtSchemaModTrnsctn.addBooleanColumn( "nodes", "readonly", "Whether the node and all of its properties are read only", false, false );
+			}
+
 			// case 21250
 			_CswNbtSchemaModTrnsctn.setConfigVariableValue( "treeview_resultlimit", "1000" );
 

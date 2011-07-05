@@ -10,12 +10,13 @@
 // ------------------------------------------------------------------------------------
 
 var EditMode = {
-    Edit: {name: 'Edit'},
-    AddInPopup: { name: 'AddInPopup' },
-    EditInPopup: { name: 'EditInPopup' },
-    Demo: { name: 'Demo' },
-    PrintReport: { name: 'PrintReport' },
-    DefaultValue: { name: 'DefaultValue' }
+	Edit: { name: 'Edit' },
+	AddInPopup: { name: 'AddInPopup' },
+	EditInPopup: { name: 'EditInPopup' },
+	Demo: { name: 'Demo' },
+	PrintReport: { name: 'PrintReport' },
+	DefaultValue: { name: 'DefaultValue' },
+	AuditHistoryInPopup: { name: 'AuditHistoryInPopup' }
 };
 
 // for CswInput
@@ -57,10 +58,52 @@ function getTimeout()
 	return timeout;
 }
 
+
+// ------------------------------------------------------------------------------------
+// Current State
+// ------------------------------------------------------------------------------------
+
+function setCurrentView(viewid, viewmode)
+{
+	clearCurrent();
+	$.CswCookie('set', CswCookieName.CurrentViewId, viewid);
+	$.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
+}
+
+function setCurrentAction(actionname, actionurl)
+{
+	clearCurrent();
+	$.CswCookie('set', CswCookieName.CurrentActionName, actionname);
+	$.CswCookie('set', CswCookieName.CurrentActionUrl, actionurl);
+}
+
+function clearCurrent()
+{
+	$.CswCookie('clear', CswCookieName.CurrentViewId);
+	$.CswCookie('clear', CswCookieName.CurrentViewMode);
+	$.CswCookie('clear', CswCookieName.CurrentActionName);
+	$.CswCookie('clear', CswCookieName.CurrentActionUrl);
+}
+
+function getCurrent()
+{
+	return {
+		'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
+		'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
+		'actionname': $.CswCookie('get', CswCookieName.CurrentActionName),
+		'actionurl': $.CswCookie('get', CswCookieName.CurrentActionUrl)
+	};
+}
+
 // ------------------------------------------------------------------------------------
 // Ajax
 // ------------------------------------------------------------------------------------
 
+var _ajaxCount = 0;
+function ajaxInProgress()
+{
+	return (_ajaxCount > 0);
+}
 
 function CswAjaxJSON(options)
 { /// <param name="$" type="jQuery" />
@@ -86,6 +129,7 @@ function CswAjaxJSON(options)
 
     if (options) $.extend(o, options);
     //var starttime = new Date();
+    _ajaxCount++;
     $.ajax({
         type: 'POST',
         async: o.async,
@@ -95,7 +139,8 @@ function CswAjaxJSON(options)
         data: JSON.stringify(o.data),
         success: function (data, textStatus, XMLHttpRequest)
         {
-            //var endtime = new Date();
+        	_ajaxCount--;
+        	//var endtime = new Date();
             //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
             var result = $.parseJSON(data.d);
 
@@ -123,7 +168,8 @@ function CswAjaxJSON(options)
         }, // success{}
         error: function (XMLHttpRequest, textStatus, errorThrown)
         {
-            //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+        	_ajaxCount--;
+        	//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
             log("Webservice Request (" + o.url + ") Failed: " + textStatus);
             o.error(XMLHttpRequest, textStatus, errorThrown);
         }
@@ -159,6 +205,7 @@ function CswAjaxXml(options)
     
     if (!isNullOrEmpty(o.url))
     {
+    	_ajaxCount++;
     	$.ajax({
     		type: 'POST',
     		async: o.async,
@@ -168,6 +215,7 @@ function CswAjaxXml(options)
     		data: $.param(o.data),     // should be 'field1=value&field2=value'
     		success: function (data, textStatus, XMLHttpRequest)
     		{
+    			_ajaxCount--;
     			//var endtime = new Date();
     			//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
@@ -206,6 +254,7 @@ function CswAjaxXml(options)
     		}, // success{}
     		error: function (XMLHttpRequest, textStatus, errorThrown)
     		{
+    			_ajaxCount--;
     			//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
     			log("Webservice Request (" + o.url + ") Failed: " + textStatus);
     			o.error();
@@ -653,9 +702,8 @@ function jsTreeGetSelected($treediv)
 
 function GoHome()
 { /// <param name="$" type="jQuery" />
-    $.CswCookie('clear', CswCookieName.CurrentViewId);
-    $.CswCookie('clear', CswCookieName.CurrentViewMode);
-    window.location = homeUrl;
+	clearCurrent();
+	window.location = homeUrl;
 }
 
 function HandleMenuItem(options)
@@ -684,13 +732,14 @@ function HandleMenuItem(options)
     }
     else if (o.$itemxml.CswAttrXml('popup') !== undefined && o.$itemxml.CswAttrXml('popup') !== '')
     {
-        $li = $('<li class="headermenu_dialog"><a href="#">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
+        $li = $('<li class="headermenu_dialog"><a href="' + o.$itemxml.CswAttrXml('popup') + '" target="_blank">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
 						.appendTo(o.$ul)
-						.click(function ()
-						{
-						    $.CswDialog('OpenDialog', o.$itemxml.CswAttrXml('text'), o.$itemxml.CswAttrXml('popup'));
-						    return false;
-						});
+//						.click(function ()
+//						{
+//						    $.CswDialog('OpenDialog', o.$itemxml.CswAttrXml('text'), o.$itemxml.CswAttrXml('popup'));
+//						    return false;
+//						})
+						;
     }
     else if (o.$itemxml.CswAttrXml('action') !== undefined && o.$itemxml.CswAttrXml('action') !== '')
     {
@@ -802,6 +851,7 @@ function HandleMenuItem(options)
 				{
 					$.CswDialog('AddViewDialog', {
 						'viewid': o.$itemxml.CswAttrXml('viewid'),
+						'viewmode': o.$itemxml.CswAttrXml('viewmode'),
 						'onAddView': o.onSaveView
 					});
 					return false;
@@ -1305,7 +1355,10 @@ function log(s, includeCallStack)
 
     try
     {
-        console.log(s, extendedLog);
+    	if (!isNullOrEmpty(extendedLog))
+    		console.log(s, extendedLog);
+    	else
+    		console.log(s);
     } catch (e)
     {
         alert(s);
@@ -1348,7 +1401,7 @@ function doLogging(value)
         {
             localStorage['doLogging'] = isTrue(value);
         }
-        var ret = isTrue(localStorage['doLogging']);
+        ret = isTrue(localStorage['doLogging']);
     }
     return ret;
 }
@@ -1362,20 +1415,21 @@ function debugOn(value)
         {
             localStorage['debugOn'] = isTrue(value);
         }
-        var ret = isTrue(localStorage['debugOn']);
+        ret = isTrue(localStorage['debugOn']);
     }
     return ret;
 }
 
 function cacheLogInfo(logger, includeCallStack)
 {
-    if ( doLogging() )
+    if ( doLogging() || debug )
     {
         if (hasWebStorage())
         {
+            if (undefined !== logger.setEnded) logger.setEnded();
             var logStorage = new CswStorage(sessionStorage,JSON,true);
             var log = logStorage.getItem('debuglog');
-            log += logger;
+            log += logger.toHtml();
 
             var extendedLog = '';
             if (isTrue(includeCallStack)) {

@@ -86,8 +86,9 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtMetaDataFieldType FieldType { get { return ( _CswNbtNodeProp.FieldType ); } }
         public CswNbtMetaDataNodeTypeProp NodeTypeProp { get { return ( _CswNbtNodeProp.NodeTypeProp ); } }
 
-        public string GetPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
-        public void SetPropRowValue( CswNbtSubField.PropColumn Column, object value ) { _CswNbtNodePropData.SetPropRowValue( Column, value ); }
+		public string GetPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
+		public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetOriginalPropRowValue( Column ); }
+		public void SetPropRowValue( CswNbtSubField.PropColumn Column, object value ) { _CswNbtNodePropData.SetPropRowValue( Column, value ); }
 
         public string PropName { get { return ( _CswNbtNodeProp.PropName ); } }
         public Int32 JctNodePropId { get { return ( _CswNbtNodeProp.JctNodePropId ); } }
@@ -121,6 +122,9 @@ namespace ChemSW.Nbt.PropTypes
 
         //public bool IsNodeReference( XmlNode PropertyValueNode ) { return _CswNbtNodeProp.IsNodeReference( PropertyValueNode ); }
         //public bool IsNodeTypeReference( XmlNode PropertyValueNode ) { return _CswNbtNodeProp.IsNodeTypeReference( PropertyValueNode ); }
+
+		public bool AuditChanged { get { return _CswNbtNodePropData.AuditChanged; } }
+
 
         /// <summary>
         /// Returns defined Field Type attributes/subfields as XmlDocument class XmlNode

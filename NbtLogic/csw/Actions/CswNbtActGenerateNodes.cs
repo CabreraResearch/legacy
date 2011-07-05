@@ -107,25 +107,26 @@ namespace ChemSW.Nbt.Actions
                 DueDate = GeneratorNode.DueDateInterval.getStartDate();
 
             Collection<CswPrimaryKey> Parents = new Collection<CswPrimaryKey>();
-            if( null == GeneratorNode.ParentView )
-                Parents.Add( GeneratorNode.Owner.RelatedNodeId );
-            else
-            {
+			if( GeneratorNode.ParentView.ViewId.isSet() )
+			{
 				CswNbtView ParentsView = _CswNbtResources.ViewSelect.restoreView( GeneratorNode.ParentView.ViewId );
-                // Case 20482
-                if( ParentsView.Root.ChildRelationships.Count > 0 )
-                {
-                    ( (CswNbtViewRelationship) ParentsView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( GeneratorNode.NodeId );
-                    ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( ParentsView, false, true, false, true );
-                    if( GeneratorNode.ParentType.SelectMode == PropertySelectMode.Single )
-                    {
-                        Int32 ParentNtId = CswConvert.ToInt32( GeneratorNode.ParentType.SelectedNodeTypeIds.ToString() );
-                        Parents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
-                    }
-                }
-                else if( String.Empty == GeneratorNode.ParentType.SelectedNodeTypeIds.ToString() )
-                    Parents.Add( GeneratorNode.Owner.RelatedNodeId );
-            }
+				// Case 20482
+				if( ParentsView.Root.ChildRelationships.Count > 0 )
+				{
+					( (CswNbtViewRelationship) ParentsView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( GeneratorNode.NodeId );
+					ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( ParentsView, false, true, false, true );
+					if( GeneratorNode.ParentType.SelectMode == PropertySelectMode.Single )
+					{
+						Int32 ParentNtId = CswConvert.ToInt32( GeneratorNode.ParentType.SelectedNodeTypeIds.ToString() );
+						Parents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
+					}
+				}
+			}
+			if( Parents.Count == 0 && string.Empty == GeneratorNode.ParentType.SelectedNodeTypeIds.ToString() )
+			{
+				Parents.Add( GeneratorNode.Owner.RelatedNodeId );
+			}			
+
 
             foreach ( CswPrimaryKey NewParentPK in Parents )
             {
