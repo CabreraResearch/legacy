@@ -1477,7 +1477,8 @@ CswAppMode.mode = 'mobile';
         }
 
         function _resetPendingChanges(val, setlastsyncnow) {
-            $('#ss_pendingchangecnt').text( mobileStorage.addUnsyncedChange() );
+
+            $('#ss_pendingchangecnt').text( tryParseString(localStorage.unSyncedChanges,'0') );
             if (val) {
                 $('.onlineStatus').addClass('pendingchanges')
                                   .find('span.ui-btn-text')
@@ -1695,6 +1696,7 @@ CswAppMode.mode = 'mobile';
        
             // update the xml and store it
             if (!isNullOrEmpty($currentViewXml)) {
+                mobileStorage.addUnsyncedChange();
                 _resetPendingChanges(true, false);
                 
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
@@ -1810,6 +1812,7 @@ CswAppMode.mode = 'mobile';
                 var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
                 localStorage['lastSyncSuccess'] = ret;
                 localStorage['lastSyncAttempt'] = ''; //clear last failed on next success
+                localStorage['lastSyncTime'] = now;
                 return ret;
             };
             this.lastSyncSuccess.toString = function() {
@@ -1819,11 +1822,13 @@ CswAppMode.mode = 'mobile';
                 var now = new Date();
                 var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
                 localStorage['lastSyncAttempt'] = ret;
+                localStorage['lastSyncTime'] = now;
                 return ret;
             };
             this.lastSyncAttempt.toString = function() {
                 return tryParseString(localStorage['lastSyncAttempt'], '');
             };
+            this.lastSyncTime = tryParseString(localStorage['lastSyncTime'], '');
             this.addUnsyncedChange = function() {
                 var unSyncedChanges = tryParseNumber(localStorage['unSyncedChanges'], '0');
                 unSyncedChanges++;
@@ -1831,9 +1836,9 @@ CswAppMode.mode = 'mobile';
                 return unSyncedChanges;
             };
             this.clearUnsyncedChanges = function() {
-                localStorage['unSyncedChanges'] = 0;
+                localStorage['unSyncedChanges'] = '0';
             };
-            this.pendingUnsyncedChanges = tryParseString(localStorage['unSyncedChanges'], '0');
+            this.pendingUnsyncedChanges = tryParseString(localStorage['unSyncedChanges'],'0');
             this.stayOffline = function(value) {
                 if(arguments.length === 1) {
                     localStorage['stayOffline'] = isTrue(value);
@@ -1942,10 +1947,11 @@ CswAppMode.mode = 'mobile';
         }
 
         function kickStartAutoSync() {
-            if( !isNullOrEmpty(mobileStorage.lastSyncAttempt()) ||
-                !_waitForData_TimeoutId ||
-                _waitForData_TimeoutId > 90000 //90 seconds
-                ) {
+            var now = new Date().getTime();
+            var last = new Date(mobileStorage.lastSyncTime).getTime();
+            var lastSync = now - last;
+            
+            if( lastSync > opts.PollingInterval * 3 ) {//90 seconds
                 _clearWaitForData();
                 _waitForData();
             }
@@ -2009,11 +2015,12 @@ CswAppMode.mode = 'mobile';
                                     setOnline(false);
                                     var $xml = $(data.xml);
                                     _updateStoredViewXml(rootid, $xml, '0');
+                                    mobileStorage.clearUnsyncedChanges();
                                     _resetPendingChanges(false, true);
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
-                                    mobileStorage.clearUnsyncedChanges();
+                                    
                                 },
                                 error: function(data) {
                                     setOffline();
