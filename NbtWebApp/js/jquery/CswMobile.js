@@ -460,7 +460,7 @@ CswAppMode.mode = 'mobile';
                 } else if (p.level === 1) {
                     // case 20354 - try cached first
                     var $xmlstr = _fetchCachedViewXml(rootid);
-log($xmlstr);
+
                     if (!isNullOrEmpty($xmlstr)) {
                         $currentViewXml = $xmlstr;
                         p.$xml = $currentViewXml;
@@ -1464,15 +1464,15 @@ log($xmlstr);
                 if (doWaitForData) {
                     _clearWaitForData();
                     _waitForData();
-                    $onlineBtn.text('Go Offline');
                 }
+                $onlineBtn.text('Go Offline');
             }
             else {
                 setOffline();
                 if (doWaitForData) {
                     _clearWaitForData();
-                    $onlineBtn.text('Go Online');
                 }
+                $onlineBtn.text('Go Online');
             }
         }
 
