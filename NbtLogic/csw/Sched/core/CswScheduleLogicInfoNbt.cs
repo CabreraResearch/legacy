@@ -126,7 +126,7 @@ namespace ChemSW.Cis.Sched
         }
 
 
-        public Int32 TotalRoqueCount
+		public Int32 TotalRogueCount
         {
             set
             {
