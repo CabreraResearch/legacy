@@ -425,7 +425,9 @@ CswAppMode.mode = 'mobile';
 
         function _loadDivContents(params) {
             var logger = new profileMethod('loadDivContents');
-           // $.mobile.showPageLoadingMsg();
+            //$.mobile.showPageLoadingMsg();
+
+            kickStartAutoSynch();
             
             var p = {
                 ParentId: '',
@@ -946,9 +948,11 @@ CswAppMode.mode = 'mobile';
             case "Question":
                 if (name.contains(makeSafeId({ ID: IdStr, suffix: 'com' }))) {
                     $sftomodify = $sf_comments;
-                } else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'ans' }))) {
+                } 
+                else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'ans' }))) {
                     $sftomodify = $sf_answer;
-                } else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'cor' }))) {
+                } 
+                else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'cor' }))) {
                     $sftomodify = $sf_correctiveaction;
                 }
                 break;
@@ -1410,12 +1414,11 @@ CswAppMode.mode = 'mobile';
 
         function _makeSyncStatusDiv() {
             var content = '';
-            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">No</span></p>';
+            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + mobileStorage.pendingUnsyncedChanges + '</span></p>';
             content += '<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess + '</span></p>';
             content += '<p>Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt + '</span></p>';
             content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
             content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
-
 
             var $retDiv = _addPageDivToBody({
                     DivId: 'syncstatus',
@@ -1466,13 +1469,12 @@ CswAppMode.mode = 'mobile';
         }
 
         function _resetPendingChanges(val, setlastsyncnow) {
+            $('#ss_pendingchangecnt').text( mobileStorage.addUnsyncedChange() );
             if (val) {
-                $('#ss_pendingchangecnt').text('Yes');
                 $('.onlineStatus').addClass('pendingchanges')
                                   .find('span.ui-btn-text')
                                   .addClass('pendingchanges');
             } else {
-                $('#ss_pendingchangecnt').text('No');
                 $('.onlineStatus').removeClass('pendingchanges')
                                   .find('span.ui-btn-text')
                                   .removeClass('pendingchanges');
@@ -1696,6 +1698,7 @@ CswAppMode.mode = 'mobile';
                 $currentViewXml.find('#' + nodeId).html($nodeXml);
                 _updateStoredViewXml(rootid, $currentViewXml, '1');
             }
+            kickStartAutoSynch();
             cacheLogInfo(logger);
         } // onPropertyChange()
 
@@ -1812,6 +1815,15 @@ CswAppMode.mode = 'mobile';
             this.lastSyncAttempt.toString = function() {
                 return tryParseString(localStorage['lastSyncAttempt'], '');
             };
+            this.addUnsyncedChange = function() {
+                var unSyncedChanges = tryParseNumber(localStorage['unSyncedChanges'], '0');
+                unSyncedChanges++;
+                localStorage['unSyncedChanges'] = unSyncedChanges;
+                return unSyncedChanges;
+            };
+            this.clearUnsyncedChanges = function() {
+                localStorage['unSyncedChanges'] = 0;
+            };
         }
         
         function _storeViewXml(rootid, rootname, $viewxml) {
@@ -1912,6 +1924,16 @@ CswAppMode.mode = 'mobile';
             clearTimeout(_waitForData_TimeoutId);
         }
 
+        function kickStartAutoSynch() {
+            if( !isNullOrEmpty(mobileStorage.lastSyncAttempt()) ||
+                !_waitForData_TimeoutId ||
+                _waitForData_TimeoutId > 1500
+                ) {
+                _clearWaitForData();
+                _waitForData();
+            }
+        }
+        
         function _handleDataCheckTimer(onSuccess, onFailure) {
             var url = opts.ConnectTestUrl;
             if (opts.RandomConnectionFailure) {
@@ -1974,6 +1996,7 @@ CswAppMode.mode = 'mobile';
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
+                                    mobileStorage.clearUnsyncedChanges();
                                 },
                                 error: function(data) {
                                     setOffline();
