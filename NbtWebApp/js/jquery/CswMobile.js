@@ -305,7 +305,7 @@ CswAppMode.mode = 'mobile';
             $.mobile.hidePageLoadingMsg();
         }
 
-        function setOnline() {
+        function setOnline(reloadViewsPage) {
             
             amOnline(true);
             localStorage.removeItem('loginFailure');
@@ -318,8 +318,9 @@ CswAppMode.mode = 'mobile';
                               .addClass('online')
                               .end();
                 $('.refresh').css('visibility', '');
-                $viewsdiv = reloadViews(); //no changePage
-            
+                if( reloadViewsPage ) {
+                    $viewsdiv = reloadViews(); //no changePage
+                }
             if ($.mobile.activePage === $sorrycharliediv) {
                 $logindiv.doPage(); //doChangePage();
             }
@@ -504,7 +505,7 @@ CswAppMode.mode = 'mobile';
                     data: dataXml,
                     onloginfail: function(text) { onLoginFail(text); },
                     success: function($xml) {
-                        setOnline();
+                        setOnline(false);
                         logger.setAjaxSuccess();
                         $currentViewXml = $xml;
                         p.$xml = $currentViewXml;
@@ -1449,7 +1450,7 @@ CswAppMode.mode = 'mobile';
         function _toggleOffline(doWaitForData) {
             
             if (amOnline()) {
-                setOnline();
+                setOnline(false);
                 if(doWaitForData) {
                     _clearWaitForData();
                     _waitForData();
@@ -1639,7 +1640,7 @@ CswAppMode.mode = 'mobile';
                         stringify: false,
                         onloginfail: function(text) { onLoginFail(text); },
                         success: function(xml) {
-                            setOnline();
+                            setOnline(false);
                             $currentViewXml = $(xml);
                             _updateStoredViewXml(DivId, $currentViewXml, '0');
 
@@ -1786,7 +1787,7 @@ CswAppMode.mode = 'mobile';
         // ------------------------------------------------------------------------------------
 
         function _cacheSession(sessionid, username, customerid) {
-            setOnline();
+            setOnline(false);
             localStorage['username'] = username;
             localStorage['customerid'] = customerid;
             localStorage['sessionid'] = sessionid;
@@ -1923,7 +1924,7 @@ CswAppMode.mode = 'mobile';
                     stringify: false,
                     onloginfail: function(text) { onLoginFail(text); },
                     success: function($xml) {
-                        setOnline();
+                        setOnline(false);
                         _processChanges(true);
                         if (!isNullOrEmpty(onSuccess)) {
                             onSuccess($xml);
@@ -1958,7 +1959,7 @@ CswAppMode.mode = 'mobile';
                                 data: dataJson,
                                 stringify: true,
                                 onloginfail: function(text) {
-                                    setOnline();
+                                    setOnline(false);
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
@@ -1966,7 +1967,7 @@ CswAppMode.mode = 'mobile';
                                 },
                                 success: function(data) {
                                     logger.setAjaxSuccess();
-                                    setOnline();
+                                    setOnline(false);
                                     var $xml = $(data.xml);
                                     _updateStoredViewXml(rootid, $xml, '0');
                                     _resetPendingChanges(false, true);
