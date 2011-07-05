@@ -72,9 +72,8 @@
 	if (!isNullOrEmpty(qs.viewid))
 	{
 		// set the view
-		var viewmode = tryParseString(qs.viewmode, 'tree');
-		$.CswCookie('set', CswCookieName.CurrentViewId, qs.viewid),
-		$.CswCookie('set', CswCookieName.CurrentViewMode, viewmode)
+		setCurrentView(qs.viewid, tryParseString(qs.viewmode, 'tree'));
+
 		// clear the querystring
 		window.location = "NewMain.html";
 	} else
@@ -90,10 +89,6 @@
 		$('#CenterBottomDiv').CswLogin('login', {
 			'onAuthenticate': function (u)
 			{
-				var view = {
-					'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
-					'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode)
-				};
 				$('#header_username').text(u)
 				 					 .hover(function () { $(this).CswAttrDom('title', getTimeout()); });
 				$('#header_dashboard').CswDashboard();
@@ -110,12 +105,26 @@
 					'onSelect': handleItemSelect
 				}); // CswViewSelect
 
-				if (view.viewid === '')
+				var current = getCurrent();
+				if (false === isNullOrEmpty(current.viewid))
+				{
+					handleItemSelect({ 
+						'type': 'view', 
+						'viewid': current.viewid, 
+						'viewmode': current.viewmode 
+					});
+				}
+				else if (false === isNullOrEmpty(current.actionname))
+				{
+					handleItemSelect({ 
+						'type': 'action', 
+						'actionname': current.actionname,
+						'actionurl': current.actionurl 
+					});
+				}
+				else
 				{
 					refreshWelcome();
-				} else
-				{
-					handleItemSelect({ 'viewid': view.viewid, viewmode: view.viewmode });
 				}
 			} // onAuthenticate
 		});      // CswLogin
@@ -127,7 +136,8 @@
 		$('#QuickLaunch').empty();
 
 		$('#QuickLaunch').CswQuickLaunch({
-			'onLinkClick': handleItemSelect
+			'onViewClick': function(viewid, viewmode) { handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode }); },
+			'onActionClick': function(actionname, actionurl) { handleItemSelect({ 'type': 'action', 'actionname': actionname, 'actionurl': actionurl }); }
 		}); // CswQuickLaunch
 	}
 
@@ -222,8 +232,7 @@
 
 			if ( !isNullOrEmpty( o.viewid ) )
 			{
-			    $.CswCookie('set', CswCookieName.CurrentViewId, o.viewid);
-			    $.CswCookie('set', CswCookieName.CurrentViewMode, o.viewmode);
+			    setCurrentView(o.viewid, o.viewmode);
 
 			    var linkOpt = {
                     'showempty': false,
@@ -410,10 +419,10 @@
         var onSearchSubmit = function (searchviewid, searchviewmode)
         {
             clear({ right: true, centerbottom: true });
-            $.CswCookie('set', CswCookieName.CurrentViewId, searchviewid);
             var viewMode = searchviewmode;
             if (viewMode === 'list') viewMode = 'tree';
-            $.CswCookie('set', CswCookieName.CurrentViewMode, viewMode);
+			setCurrentView(searchviewid, viewMode);
+
             refreshSelected({
                 viewmode: viewMode,
                 viewid: searchviewid,
@@ -435,7 +444,6 @@
             else
             {
                 viewid = parentviewid;
-                $.CswCookie('set', CswCookieName.CurrentViewId, viewid);
             }
 
             if (!isNullOrEmpty(viewid))
@@ -449,10 +457,11 @@
                 else
                 {
                     viewmode = (parentviewmode === 'list') ? 'tree' : parentviewmode;
-                    $.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
                 }
 
-                refreshSelected({
+                setCurrentView(viewid, viewmode); 
+
+				refreshSelected({
                     viewmode: viewmode,
                     viewid: viewid,
                     forsearch: true,
@@ -708,9 +717,9 @@
 											'showempty': getEmptyTree,
                                             'forsearch': o.forsearch,
 											'IncludeNodeRequired': o.IncludeNodeRequired,
-											'onViewChange': function (newviewid)
+											'onViewChange': function (newviewid, newviewmode)
 												{
-													$.CswCookie('set', CswCookieName.CurrentViewId, newviewid);
+													setCurrentView(newviewid, newviewmode);
 												},
 											'onSelectNode': function (optSelect)
 												{
@@ -733,6 +742,13 @@
 			'ActionOptions': {}
 		};
 		if(options) $.extend(o, options);
+
+		setCurrentAction(o.actionname, o.actionurl);
+
+		CswAjaxJSON({
+			'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
+			'data': { 'ActionName': o.actionname }
+		});
 
 		switch (o.actionname)
 		{
@@ -780,10 +796,19 @@
 //				break;
 			case 'OOC_Inspections':
 
-				clear({ 'all': true });
+				_setupOOCInspections();
 
-				$('#CenterTopDiv').CswInspectionStatus();
-				
+				function _setupOOCInspections() 
+				{
+					clear({ 'all': true });
+
+					$('#CenterTopDiv').CswInspectionStatus({
+						'onEditNode': function() { 
+							_setupOOCInspections();
+						}
+					});
+				}
+
 				break;
 //			case 'Load_Mobile_Data':
 //				break;

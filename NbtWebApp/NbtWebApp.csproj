@@ -1161,7 +1161,6 @@
     <Content Include="MobileTest.html" />
     <Content Include="NewFooter.html" />
     <Content Include="NewHeader.html" />
-    <Content Include="NewIncludes_Dev.html" />
     <Content Include="NewIncludes.html" />
     <Content Include="NewMain.html" />
     <Content Include="NewNodeReport.html" />

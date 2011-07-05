@@ -73,7 +73,8 @@
                 NodeId: o.nodeid,
                 SafeNodeKey: o.cswnbtnodekey,
                 NodeTypeId: o.nodetypeid,
-				Date: o.date
+				Date: o.date,
+				filterToPropId: o.filterToPropId
             };
             CswAjaxXml({
                 url: o.TabsUrl,
@@ -96,7 +97,9 @@
                         }
                         var $tabdiv = tabdivs[tabdivs.length - 1];
                         $tabdiv.children('ul').append('<li><a href="#' + $tab.CswAttrXml('id') + '">' + $tab.CswAttrXml('name') + '</a></li>');
-                        $tabdiv.append('<div id="' + $tab.CswAttrXml('id') + '"><form onsubmit="return false;" id="' + $tab.CswAttrXml('id') + '_form" /></div>');
+                        var $tabcontentdiv = $('<div id="' + $tab.CswAttrXml('id') + '"><form onsubmit="return false;" id="' + $tab.CswAttrXml('id') + '_form" /></div>')
+												.appendTo($tabdiv);
+						$tabcontentdiv.data( 'canEditLayout',  $tab.CswAttrXml('canEditLayout') );
                         if($tab.CswAttrXml('id') === o.tabid)
                         {
                             selectedtabno = tabno;
@@ -171,13 +174,13 @@
                         {
                             onSwap(onSwapData);
                         },
-                        'showConfigButton': (o.filterToPropId === ''),
+                        'showConfigButton': (o.filterToPropId === '' && isTrue($tabcontentdiv.data('canEditLayout'))),
                         'onConfigOn': function($buttontable) { 
                             $xml.children().each(function ()
                             {
                                 var $propxml = $(this);
                                 var $subtable = $layouttable.find('#' + $propxml.CswAttrXml('id') + '_subproptable');
-								var $parentcell = $subtable.parent();
+								var $parentcell = $subtable.parent().parent();
                                 var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
                                 var $propcell = _getPropertyCell($cellset);
 
@@ -204,7 +207,7 @@
                             {
                                 var $propxml = $(this);
                                 var $subtable = $layouttable.find('#' + $propxml.CswAttrXml('id') + '_subproptable');
-								var $parentcell = $subtable.parent();
+								var $parentcell = $subtable.parent().parent();
                                 var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
                                 var $propcell = _getPropertyCell($cellset);
 
@@ -301,11 +304,12 @@
         }
         function _getPropertyCell($cellset)
         {
-            return $cellset[1][2].children('div');
+			return $cellset[1][2].children('div');
         }
 
         function _handleProps($layouttable, $xml, $tabcontentdiv, tabid, ConfigMode, $savebtn)
         {
+			var AtLeastOneSaveable = false;
             $xml.children().each(function ()
             {
                 var $propxml = $(this);
@@ -335,15 +339,20 @@
                     {
                         $labelcell.append($propxml.CswAttrXml('name'));
                     }
-                    if(o.ShowCheckboxes && $propxml.CswAttrXml('copyable') === "true" && $propxml.CswAttrXml('readonly') === "false")
-                    {
-                        var $propcheck = $labelcell.CswInput('init',{ID: 'check_'+ propid,
-                                                                        type: CswInput_Types.checkbox,
-                                                                        value: false, // Value --not defined?,
-                                                                        cssclass: o.ID +'_check'                                                                   
-                                                                    }); 
-                        $propcheck.CswAttrDom('propid',propid);	
-                    }
+		
+					if(false === isTrue($propxml.CswAttrXml('readonly')))
+					{
+						AtLeastOneSaveable = true;
+	                    if(o.ShowCheckboxes && $propxml.CswAttrXml('copyable') === "true")
+						{
+							var $propcheck = $labelcell.CswInput('init',{ID: 'check_'+ propid,
+																			type: CswInput_Types.checkbox,
+																			value: false, // Value --not defined?,
+																			cssclass: o.ID +'_check'                                                                   
+																		}); 
+							$propcheck.CswAttrDom('propid',propid);	
+						}
+					}
                 }
 
                 var $propcell = _getPropertyCell($cellset);
@@ -356,6 +365,13 @@
                 _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode, $savebtn);
 
             });
+
+			if(AtLeastOneSaveable === false)
+			{
+				$savebtn.hide();
+			} else {
+				$savebtn.show();
+			}
         } // _handleProps()
 
         function _makeProp($propcell, $propxml, $tabcontentdiv, tabid, ConfigMode, $savebtn)
@@ -461,9 +477,9 @@
                     'NodeId': o.nodeid,
                     'SafeNodeKey': o.cswnbtnodekey,
                     'NodeTypeId': o.nodetypeid,
-                    'ViewId': $.CswCookie('get', CswCookieName.CurrentViewId),
-                    'NewPropsXml': xmlToString($propsxml)
-                };
+                    'NewPropsXml': xmlToString($propsxml),
+                    'ViewId': $.CswCookie('get', CswCookieName.CurrentViewId)
+                   };
 
                 CswAjaxJSON({
                     url: o.SavePropUrl,
@@ -482,8 +498,7 @@
                                 var dataJson = {
                                     SourceNodeKey: o.cswnbtnodekey,
                                     CopyNodeIds: [],
-                                    PropIds: [],
-									ViewId: $.CswCookie('get', CswCookieName.CurrentViewId)
+                                    PropIds: []
                                 };
                                 
                                 $nodechecks.each(function() { 

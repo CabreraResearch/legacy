@@ -342,7 +342,17 @@ namespace ChemSW.Nbt.PropTypes
 
 		public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
 		{
-			return _PropRow[Column.ToString(), DataRowVersion.Original].ToString();
+			// see case 22613
+			string ret = string.Empty;
+			try
+			{
+				ret = _PropRow[Column.ToString(), DataRowVersion.Original].ToString();
+			}
+			catch( System.Data.VersionNotFoundException ex )
+			{
+				ret = _PropRow[Column.ToString()].ToString();
+			}
+			return ret;
 		}
 
         public string Field1

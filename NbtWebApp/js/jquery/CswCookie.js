@@ -6,6 +6,8 @@
 var CswCookieName = {
 	SessionId: 'CswSessionId',
 	Username: 'csw_username',
+	CurrentActionName: 'csw_currentactionname',
+	CurrentActionUrl: 'csw_currentactionurl',
 	CurrentViewId: 'csw_currentviewid',
 	CurrentViewMode: 'csw_currentviewmode',
 	CurrentNodeId: 'csw_currentnodeid',

@@ -14,6 +14,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
+using ChemSW.Nbt.Actions;
 using ChemSW.NbtWebControls;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
@@ -51,7 +52,36 @@ namespace ChemSW.Nbt.WebServices
 			_CswNbtResources.beginTransaction();
 
 			_CswNbtResources.logMessage( "WebServices: Session Started (_initResources called)" );
-		}//start() 
+
+			string ContextViewId = string.Empty;
+			string ContextActionName = string.Empty;
+			if( Context.Request.Cookies["csw_currentviewid"] != null )
+			{
+				ContextViewId = Context.Request.Cookies["csw_currentviewid"].Value;
+			}
+			if( Context.Request.Cookies["csw_currentactionname"] != null )
+			{
+				ContextActionName = Context.Request.Cookies["csw_currentactionname"].Value;
+			}
+
+			if( ContextViewId != string.Empty )
+			{
+				CswNbtView ContextView = _getView( ContextViewId );
+				if( ContextView != null )
+				{
+					_CswNbtResources.AuditContext = ContextView.ViewName + " (" + ContextView.ViewId.ToString() + ")";
+				}
+			}
+			else if( ContextActionName != string.Empty )
+			{
+				CswNbtAction ContextAction = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ContextActionName )];
+				if( ContextAction != null )
+				{
+					_CswNbtResources.AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name ) + " (Action_" + ContextAction.ActionId.ToString() + ")";
+				}
+			}
+
+		}//_initResources() 
 
 		private void _deInitResources()
 		{
@@ -63,7 +93,7 @@ namespace ChemSW.Nbt.WebServices
 				_CswNbtResources.finalize();
 				_CswNbtResources.release();
 			}
-		}
+		} // _deInitResources()
 
 		#endregion Session and Resource Management
 
@@ -1035,7 +1065,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-		public XElement getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId, string Date )
+		public XElement getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId, string Date, string filterToPropId )
 		{
 			XElement ReturnVal = new XElement( "tabs" );
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1051,7 +1081,7 @@ namespace ChemSW.Nbt.WebServices
 					//{
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					ReturnVal = ws.getTabs( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToDateTime( Date ) );
+					ReturnVal = ws.getTabs( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToDateTime( Date ), filterToPropId );
 					//}
 				}
 
@@ -1213,12 +1243,10 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					CswNbtView View = _getView( ViewId );
-					_setAuditContext( View );
-					
 					string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+					CswNbtView View = _getView( ViewId );
 					ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ), View );
 				}
 
@@ -1238,7 +1266,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string copyPropValues( string SourceNodeKey, string[] CopyNodeIds, string[] PropIds, string ViewId )
+		public string copyPropValues( string SourceNodeKey, string[] CopyNodeIds, string[] PropIds )
 		{
 			JObject ReturnVal = new JObject();
 
@@ -1251,8 +1279,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_setAuditContext( _getView( ViewId ) );
-		
 					string ParsedSourceNodeKey = wsTools.FromSafeJavaScriptParam( SourceNodeKey );
 					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					bool ret = ws.copyPropValues( ParsedSourceNodeKey, CopyNodeIds, PropIds );
@@ -1724,7 +1750,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string DeleteNodes( string[] NodePks, string[] NodeKeys, string ViewId )
+		public string DeleteNodes( string[] NodePks, string[] NodeKeys )
 		{
 			JObject ReturnVal = new JObject();
 			List<CswPrimaryKey> NodePrimaryKeys = new List<CswPrimaryKey>();
@@ -1737,8 +1763,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_setAuditContext( _getView( ViewId ) );
-
 					if( NodeKeys.Length > 0 )
 					{
 						foreach( string NodeKey in NodeKeys )
@@ -1795,7 +1819,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string CopyNode( string NodePk, string ViewId )
+		public string CopyNode( string NodePk )
 		{
 			JObject ReturnVal = new JObject();
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1806,8 +1830,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_setAuditContext( _getView( ViewId ) );
-
 					CswPrimaryKey RealNodePk = new CswPrimaryKey();
 					RealNodePk.FromString( NodePk );
 					if( RealNodePk.PrimaryKey != Int32.MinValue )
@@ -1873,7 +1895,7 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string clearProp( string PropId, bool IncludeBlob, string ViewId )
+		public string clearProp( string PropId, bool IncludeBlob )
 		{
 			JObject ReturnVal = new JObject( new JProperty( "Succeeded", false.ToString().ToLower() ) );
 			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1884,8 +1906,6 @@ namespace ChemSW.Nbt.WebServices
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
-					_setAuditContext( _getView( ViewId ) );
-
 					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
 					bool ret = ws.ClearPropValue( PropId, IncludeBlob );
 					ReturnVal = new JObject( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
@@ -2217,6 +2237,33 @@ namespace ChemSW.Nbt.WebServices
 
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string SaveActionToQuickLaunch(string ActionName)
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					_CswNbtResources.SessionDataMgr.saveSessionData( _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum(ActionName)], true );
+					ReturnVal = new JObject( new JProperty( "succeeded", "true" ) );
+				}
+				_deInitResources();
+			}
+			catch( Exception Ex )
+			{
+				ReturnVal = jError( Ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+		} // SaveActionToQuickLaunch()
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string getInspectionStatusGrid()
 		{
 			JObject ReturnVal = new JObject();
@@ -2389,7 +2436,7 @@ namespace ChemSW.Nbt.WebServices
 		#endregion Auditing
 
 		#region test
-		[WebMethod( EnableSession = true )]
+		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 		public string GetTestData()
 		{
@@ -2415,11 +2462,6 @@ namespace ChemSW.Nbt.WebServices
 			}
 			return View;
 		} // _getView()
-
-		private void _setAuditContext( CswNbtView View )
-		{
-			_CswNbtResources.AuditContext = View.ViewName + " (" + View.ViewId.ToString() + ")";
-		}
 
 	}//wsNBT
 

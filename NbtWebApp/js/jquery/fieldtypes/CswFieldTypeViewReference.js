@@ -22,8 +22,7 @@
 						'AlternateText': 'View',
 						'Required': o.Required,
 						'onClick': function ($ImageDiv) {
-							$.CswCookie('set', CswCookieName.CurrentViewId, ViewId);
-							$.CswCookie('set', CswCookieName.CurrentViewMode, ViewMode);
+							setCurrentView(ViewId, ViewMode);
 						
 							// case 20958 - so that it doesn't treat the view as a Grid Property view
 							$.CswCookie('clear', CswCookieName.CurrentNodeId);
