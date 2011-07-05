@@ -46,6 +46,10 @@ var CswInput_Types = {
     week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' }
 };
 
+var CswAppMode = {
+    mode: 'full'     
+};
+
 // ------------------------------------------------------------------------------------
 // Globals (yuck)
 // ------------------------------------------------------------------------------------
@@ -576,14 +580,16 @@ function initCheckChanges()
     //	}
 }
 
-if (!isNullOrEmpty(window.onload))
+if (CswAppMode.mode === 'full')
 {
-    window.onload = new Function('initCheckChanges(); var f=' + window.onload + '; return f();');
-} else
-{
-    window.onload = function () { initCheckChanges(); };
+    if (!isNullOrEmpty(window.onload))
+    {
+        window.onload = new Function('initCheckChanges(); var f=' + window.onload + '; return f();');
+    } else
+    {
+        window.onload = function() { initCheckChanges(); };
+    }
 }
-
 
 
 // ------------------------------------------------------------------------------------

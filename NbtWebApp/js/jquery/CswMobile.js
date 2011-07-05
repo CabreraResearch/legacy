@@ -9,8 +9,9 @@
 
 //var profiler = $createProfiler();
 
-;
-(function($) {
+CswAppMode.mode = 'mobile';
+
+;(function($) {
     /// <param name="$" type="jQuery" />
 
     $.fn.makeUL = function(id, params) {
@@ -166,33 +167,37 @@
 
         // case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
-        if (!isNullOrEmpty(SessionId)) {
-            $.mobile.path.set('#viewsdiv'); 
-        }
-        else {
-            $.mobile.path.set('#logindiv'); 
-        }
+        window.onload = function() {
 
-        if (!isNullOrEmpty(SessionId)) {
-            $viewsdiv = reloadViews();
-            _waitForData();
-        } 
-        else {
-            // this will trigger _waitForData(), but we don't want to wait here
-            _handleDataCheckTimer(
-                function() {
-                    // online
-                    $logindiv.doPage();
-                    $logindiv.doChangePage();
-                },
-                function() {
-                    // offline
-                    $sorrycharliediv.doPage();
-                    $sorrycharliediv.doChangePage();
-                }
-            ); // _handleDataCheckTimer();
-        } 
-
+            if (!isNullOrEmpty(SessionId)) {
+                $.mobile.path.set('#viewsdiv');
+                $viewsdiv = reloadViews();
+                _waitForData();
+            }
+            else {
+                $.mobile.path.set('#logindiv');
+                // this will trigger _waitForData(), but we don't want to wait here
+                _handleDataCheckTimer(
+                    function() {
+                        // online
+                        if( !$logindiv || $logindiv.length === 0 ) {
+                            $logindiv = _loadLoginDiv();
+                        }
+                        $logindiv.doPage();
+                        $logindiv.doChangePage();
+                    },
+                    function() {
+                        // offline
+                        if( !$sorrycharliediv || $sorrycharliediv.length === 0 ) {
+                            $sorrycharliediv = _loadSorryCharlieDiv();
+                        }
+                        $sorrycharliediv.doPage();
+                        $sorrycharliediv.doChangePage();
+                    }
+                );
+            }
+        };
+        
         function _loadLoginDiv() {
             var LoginContent = '<input type="textbox" id="login_customerid" placeholder="Customer Id"/><br>';
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
@@ -1889,7 +1894,7 @@
         var _waitForData_TimeoutId;
 
         function _waitForData() {
-            _waitForData_TimeoutId = setTimeout(_handleDataCheckTimer, opts.PollingInterval);
+            _waitForData_TimeoutId = setTimeout( _handleDataCheckTimer, opts.PollingInterval);
         }
 
         function _clearWaitForData() {
