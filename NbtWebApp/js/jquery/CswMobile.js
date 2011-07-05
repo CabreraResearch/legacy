@@ -1414,7 +1414,7 @@ CswAppMode.mode = 'mobile';
 
         function _makeSyncStatusDiv() {
             var content = '';
-            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + localStorage['unSyncedChanges'] + '</span></p>';
+            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + mobileStorage.pendingUnsyncedChanges + '</span></p>';
             content += '<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess + '</span></p>';
             content += '<p>Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt + '</span></p>';
             content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
@@ -1824,6 +1824,7 @@ CswAppMode.mode = 'mobile';
             this.clearUnsyncedChanges = function() {
                 localStorage['unSyncedChanges'] = 0;
             };
+            this.pendingUnsyncedChanges = tryParseString(localStorage['unSyncedChanges'], '0');
         }
         
         function _storeViewXml(rootid, rootname, $viewxml) {
