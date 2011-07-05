@@ -138,7 +138,8 @@ namespace ChemSW.Nbt.WebServices
 		{
             ColumnNameArray.AddFirst( new JValue( "nodename" ) ); //better to use int for jqGrid key
             ColumnNameArray.AddFirst( new JValue( "cswnbtnodekey" ) ); //we'll want CswNbtNodeKey for add/edit/delete
-            ColumnNameArray.AddFirst( new JValue( "nodeid" ) ); //better to use int for jqGrid key
+			ColumnNameArray.AddFirst( new JValue( "nodeid" ) ); //better to use int for jqGrid key
+			ColumnNameArray.AddFirst( new JValue( "nodeidstr" ) ); 
 
 		} // _AddHiddenColumnNames()
 
@@ -162,11 +163,18 @@ namespace ChemSW.Nbt.WebServices
 								) );
 
 			//better to use int for jqGrid key
-            ColumnDefArray.AddFirst( new JObject(
+			ColumnDefArray.AddFirst( new JObject(
 								new JProperty( "name", "nodeid" ),
 								new JProperty( "index", "nodeid" ),
 								new JProperty( "key", true ),
-                                new JProperty( "hidden", true )                                
+								new JProperty( "hidden", true )
+								) );
+
+			ColumnDefArray.AddFirst( new JObject(
+								new JProperty( "name", "nodeidstr" ),
+								new JProperty( "index", "nodeidstr" ),
+								new JProperty( "key", true ),
+								new JProperty( "hidden", true )
 								) );
 
 		} // _AddHiddenColumnDefiniton()
