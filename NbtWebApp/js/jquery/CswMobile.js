@@ -427,7 +427,7 @@ CswAppMode.mode = 'mobile';
             var logger = new profileMethod('loadDivContents');
             //$.mobile.showPageLoadingMsg();
 
-            kickStartAutoSynch();
+            kickStartAutoSync();
             
             var p = {
                 ParentId: '',
@@ -1698,7 +1698,7 @@ CswAppMode.mode = 'mobile';
                 $currentViewXml.find('#' + nodeId).html($nodeXml);
                 _updateStoredViewXml(rootid, $currentViewXml, '1');
             }
-            kickStartAutoSynch();
+            kickStartAutoSync();
             cacheLogInfo(logger);
         } // onPropertyChange()
 
@@ -1924,7 +1924,7 @@ CswAppMode.mode = 'mobile';
             clearTimeout(_waitForData_TimeoutId);
         }
 
-        function kickStartAutoSynch() {
+        function kickStartAutoSync() {
             if( !isNullOrEmpty(mobileStorage.lastSyncAttempt()) ||
                 !_waitForData_TimeoutId ||
                 _waitForData_TimeoutId > 1500
