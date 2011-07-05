@@ -1801,6 +1801,7 @@ CswAppMode.mode = 'mobile';
                 var now = new Date();
                 var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
                 localStorage['lastSyncSuccess'] = ret;
+                localStorage['lastSyncAttempt'] = ''; //clear last failed on next success
                 return ret;
             };
             this.lastSyncSuccess.toString = function() {
