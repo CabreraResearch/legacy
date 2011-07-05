@@ -309,18 +309,20 @@ CswAppMode.mode = 'mobile';
             
             amOnline(true);
             localStorage.removeItem('loginFailure');
-            
-            $('.onlineStatus').removeClass('offline')
-                              .addClass('online')
-                              .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                              .text('Online')
-                              .removeClass('offline')
-                              .addClass('online')
-                              .end();
+            if( !mobileStorage.stayOffline() )
+            {
+                $('.onlineStatus').removeClass('offline')
+                                    .addClass('online')
+                                    .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                                    .text('Online')
+                                    .removeClass('offline')
+                                    .addClass('online')
+                                    .end();
                 $('.refresh').css('visibility', '');
-                if( reloadViewsPage ) {
+                if (reloadViewsPage) {
                     $viewsdiv = reloadViews(); //no changePage
                 }
+            }
             if ($.mobile.activePage === $sorrycharliediv) {
                 $logindiv.doPage(); //doChangePage();
             }
@@ -333,7 +335,7 @@ CswAppMode.mode = 'mobile';
             if(loginFailure) {
                 localStorage['loginFailure'] = loginFailure;
             }
-            var ret = isTrue(localStorage['online']);
+            var ret = ( isTrue(localStorage['online']) && !mobileStorage.stayOffline());
             return ret;
         }
 
@@ -458,6 +460,7 @@ CswAppMode.mode = 'mobile';
                 } else if (p.level === 1) {
                     // case 20354 - try cached first
                     var $xmlstr = _fetchCachedViewXml(rootid);
+log($xmlstr);
                     if (!isNullOrEmpty($xmlstr)) {
                         $currentViewXml = $xmlstr;
                         p.$xml = $currentViewXml;
@@ -588,8 +591,9 @@ CswAppMode.mode = 'mobile';
             $content.page();
 
             $.mobile.hidePageLoadingMsg();
-            _toggleOffline(false);
-
+            if(!mobileStorage.stayOffline()) {
+                _toggleOffline(false);
+            }
             cacheLogInfo(logger);
             return $retDiv;
         } // _processViewXml()
@@ -1443,6 +1447,8 @@ CswAppMode.mode = 'mobile';
                             .end()
                             .find('#ss_gooffline')
                             .bind('click', function() {
+                                var stayOffline = !mobileStorage.stayOffline();
+                                mobileStorage.stayOffline(stayOffline);
                                 _toggleOffline(true);
                                 return false;
                             });
@@ -1451,19 +1457,21 @@ CswAppMode.mode = 'mobile';
         }
 
         function _toggleOffline(doWaitForData) {
-            
-            if (amOnline()) {
+
+            var $onlineBtn = $('#ss_gooffline span').find('span.ui-btn-text');
+            if (amOnline() || $onlineBtn.text() === 'Go Online') {
                 setOnline(false);
-                if(doWaitForData) {
+                if (doWaitForData) {
                     _clearWaitForData();
                     _waitForData();
-                    $('#ss_gooffline span').find('span.ui-btn-text').text('Go Offline');
+                    $onlineBtn.text('Go Offline');
                 }
-            } else {
+            }
+            else {
                 setOffline();
-                if( doWaitForData) {
+                if (doWaitForData) {
                     _clearWaitForData();
-                    $('#ss_gooffline span').find('span.ui-btn-text').text('Go Online');
+                    $onlineBtn.text('Go Online');
                 }
             }
         }
@@ -1826,6 +1834,13 @@ CswAppMode.mode = 'mobile';
                 localStorage['unSyncedChanges'] = 0;
             };
             this.pendingUnsyncedChanges = tryParseString(localStorage['unSyncedChanges'], '0');
+            this.stayOffline = function(value) {
+                if(arguments.length === 1) {
+                    localStorage['stayOffline'] = isTrue(value);
+                }
+                var ret = isTrue(localStorage['stayOffline']);
+                return ret;
+            };
         }
         
         function _storeViewXml(rootid, rootname, $viewxml) {
