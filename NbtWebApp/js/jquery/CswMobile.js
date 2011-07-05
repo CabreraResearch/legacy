@@ -1918,7 +1918,7 @@ CswAppMode.mode = 'mobile';
             _waitForData_TimeoutId = setTimeout( function() {
                                         _handleDataCheckTimer();
                                      }, 
-                                     opts.PollingInterval);
+                                     opts.PollingInterval); //30 seconds
         }
 
         function _clearWaitForData() {
@@ -1928,7 +1928,7 @@ CswAppMode.mode = 'mobile';
         function kickStartAutoSync() {
             if( !isNullOrEmpty(mobileStorage.lastSyncAttempt()) ||
                 !_waitForData_TimeoutId ||
-                _waitForData_TimeoutId > 1500
+                _waitForData_TimeoutId > 90000 //90 seconds
                 ) {
                 _clearWaitForData();
                 _waitForData();
