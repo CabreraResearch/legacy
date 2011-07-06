@@ -1869,7 +1869,7 @@ CswAppMode.mode = 'mobile';
                     var $this = $(this);
                     var viewid = $this.CswAttrXml('id');
                     var viewname = $this.CswAttrXml('name');
-                    if (storedViews.indexOf(viewid) === -1) {
+                    if (localStorage["storedviews"].indexOf(viewid) === -1) {
                         storedViews.push({ rootid: viewid, name: viewname });
                     }
                 });
