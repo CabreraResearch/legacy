@@ -646,18 +646,19 @@ namespace ChemSW.Nbt.WebPages
                     break;
                 }
             }
-            if( ThisNode == null )
-            {
-                ThisNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( LocationNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                CswNbtObjClassLocation ThisNodeAsLocation = CswNbtNodeCaster.AsLocation( ThisNode );
-                ThisNodeAsLocation.Name.Text = LocationName;
-                if( ParentNode != null )
-                {
-                    ThisNodeAsLocation.Location.SelectedNodeId = ParentNode.NodeId;
-                    ThisNodeAsLocation.Location.RefreshNodeName();
-                }
-                ThisNode.postChanges( false );
-            }
+			if( ThisNode == null )
+			{
+				ThisNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( LocationNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+				CswNbtObjClassLocation ThisNodeAsLocation = CswNbtNodeCaster.AsLocation( ThisNode );
+				ThisNodeAsLocation.Name.Text = LocationName;
+				if( ParentNode != null )
+				{
+					ThisNodeAsLocation.Location.SelectedNodeId = ParentNode.NodeId;
+					ThisNodeAsLocation.Location.RefreshNodeName();
+				}
+				Master.CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( ThisNode );
+				ThisNode.postChanges( false );
+			}
             return ThisNode;
         }
 

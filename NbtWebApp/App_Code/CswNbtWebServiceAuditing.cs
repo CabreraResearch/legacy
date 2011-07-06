@@ -35,9 +35,9 @@ namespace ChemSW.Nbt.WebServices
 				if( !JustDateColumn )
 				{
 					SQL += @", 
-								  x.transactionusername as Username,
-								  na.auditeventtype as EventType, 
-								  x.auditeventname as Context";
+								  x.transactionusername as Username, ";
+								  // na.auditeventtype as EventType,     case 22590
+					SQL += @"     x.auditeventname as Context";
 				}
 				SQL += @"		 from nodes n
 							 join nodes_audit na on n.nodeid = na.nodeid
@@ -47,10 +47,10 @@ namespace ChemSW.Nbt.WebServices
 						   select ja.recordcreated as ChangeDate";
 				if( !JustDateColumn )
 				{
-					SQL += @",
-								  x.transactionusername as Username,
-								  ja.auditeventtype as EventType, 
-								  x.auditeventname as Context";
+					SQL += @", 
+								  x.transactionusername as Username, ";
+								  // ja.auditeventtype as EventType,     case 22590
+					SQL += @"     x.auditeventname as Context";
 				}
 				SQL += @"		 from nodes n
 							 join jct_nodes_props j on n.nodeid = j.nodeid

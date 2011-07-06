@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Sched
 
             if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.TotalRogueCount.ToString() ) )
             {
-                ReturnVal.TotalRoqueCount = CswConvert.ToInt32( DataRowScheduledRules[NbtScheduledRuleColumns.TotalRogueCount.ToString()] );
+                ReturnVal.TotalRogueCount = CswConvert.ToInt32( DataRowScheduledRules[NbtScheduledRuleColumns.TotalRogueCount.ToString()] );
             }
 
             if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.FailedCount.ToString() ) )
@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.Sched
                     DataRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = CswScheduleLogicDetail.MaxRunTimeMs;
                     DataRowScheduledRules[NbtScheduledRuleColumns.ThreadId.ToString()] = CswScheduleLogicDetail.ThreadId;
                     DataRowScheduledRules[NbtScheduledRuleColumns.Reprobate.ToString()] = CswConvert.ToDbVal( CswScheduleLogicDetail.Reprobate );
-                    DataRowScheduledRules[NbtScheduledRuleColumns.TotalRogueCount.ToString()] = CswScheduleLogicDetail.TotalRoqueCount;
+                    DataRowScheduledRules[NbtScheduledRuleColumns.TotalRogueCount.ToString()] = CswScheduleLogicDetail.TotalRogueCount;
                     DataRowScheduledRules[NbtScheduledRuleColumns.StatusMessage.ToString()] = CswScheduleLogicDetail.StatusMessage;
                     DataRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = CswScheduleLogicDetail.Recurrance.ToString();
                     DataRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = CswScheduleLogicDetail.Interval;

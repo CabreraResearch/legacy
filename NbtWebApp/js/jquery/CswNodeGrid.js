@@ -118,6 +118,7 @@
 									if (rowid !== null) 
 									{
 										editOpt.cswnbtnodekey = $gridTable.jqGrid('getCell', rowid, 'cswnbtnodekey');
+										editOpt.nodeid = $gridTable.jqGrid('getCell', rowid, 'nodeidstr');
 										$.CswDialog('EditNodeDialog', editOpt);
 									}
 									else
