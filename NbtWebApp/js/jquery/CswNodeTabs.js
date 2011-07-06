@@ -174,7 +174,7 @@
                         {
                             onSwap(onSwapData);
                         },
-                        'showConfigButton': (o.filterToPropId === '' && isTrue($tabcontentdiv.data('canEditLayout'))),
+                        'showConfigButton': (isNullOrEmpty(o.date) && o.filterToPropId === '' && isTrue($tabcontentdiv.data('canEditLayout'))),
                         'onConfigOn': function($buttontable) { 
                             $xml.children().each(function ()
                             {
