@@ -1973,33 +1973,38 @@ CswAppMode.mode = 'mobile';
             if (opts.RandomConnectionFailure) {
                 url = opts.ConnectTestRandomFailUrl;
             }
-            CswAjaxXml({
-                    formobile: ForMobile,
-                    url: url,
-                    data: {  },
-                    stringify: false,
-                    onloginfail: function(text) { onLoginFail(text); },
-                    success: function($xml) {
-                        setOnline(false);
-                        _processChanges(true);
-                        if (!isNullOrEmpty(onSuccess)) {
-                            onSuccess($xml);
+            if( !mobileStorage.stayOffline() ) {
+                CswAjaxXml({
+                        formobile: ForMobile,
+                        url: url,
+                        data: {  },
+                        stringify: false,
+                        onloginfail: function(text) { onLoginFail(text); },
+                        success: function($xml) {
+                            setOnline(false);
+                            _processChanges(true);
+                            if (!isNullOrEmpty(onSuccess)) {
+                                onSuccess($xml);
+                            }
+                        },
+                        error: function(xml) {
+                            setOffline();
+                            var $xml = $(xml);
+                            if (!isNullOrEmpty(onFailure)) {
+                                onFailure($xml);
+                            }
+                            _waitForData();
                         }
-                    },
-                    error: function(xml) {
-                        setOffline();
-                        var $xml = $(xml);
-                        if (!isNullOrEmpty(onFailure)) {
-                            onFailure($xml);
-                        }
-                        _waitForData();
-                    }
-                });
+                    });
+            } // if(amOnline())
+            else {
+                _waitForData();
+            }
         } //_handleDataCheckTimer()
 
         function _processChanges(perpetuateTimer) {
             var logger = new profileMethod('processChanges');
-            if (!isNullOrEmpty(SessionId)) {
+            if (!isNullOrEmpty(SessionId) && !mobileStorage.stayOffline() ) {
                 _getModifiedView(function(rootid, viewxml) {
                     if (!isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml)) {
                         var dataJson = {
