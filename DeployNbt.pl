@@ -38,6 +38,12 @@ $schemata{"nbt_schema1"} = "nbt";  # 1
 $schemata{"nbt_schema2"} = "nbt";  # 2
 $schemata{"nbt_schema3"} = "nbt";  # sales
 $schemata{"nbt_schema4"} = "nbt";  # import
+$schemata{"muehlhan"} = "nbt";  # Muehlhan
+$schemata{"crfireline"} = "nbt";  # CRFireline
+$schemata{"clorox"} = "nbt";  # Clorox
+$schemata{"mcmaster"} = "nbt";  # McMaster
+$schemata{"riverside"} = "nbt";  # riverside
+$schemata{"marshfield"} = "nbt";  # Marshfield
 
 # this one will always be reset to the master
 my $masterschema = "nbt_master";
