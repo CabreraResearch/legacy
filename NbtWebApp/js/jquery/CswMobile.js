@@ -156,7 +156,7 @@ CswAppMode.mode = 'mobile';
         var SessionId = localStorage["sessionid"];
         var $currentViewXml;
 
-        var storedViews = '';
+        var storedViews = [];
         if (localStorage.storedViews) storedViews = JSON.parse(localStorage['storedviews']); // {name: '', rootid: ''}
 
         var $logindiv = _loadLoginDiv();
@@ -451,7 +451,8 @@ CswAppMode.mode = 'mobile';
             if (isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1) {
                 if (p.level === 0) {
                     if (!amOnline()) {
-                        p.$xml = _fetchCachedRootXml();
+                        p.$xml = _fetchCachedViewXml(p.DivId);
+                        $currentViewXml = p.$xml;
                         $retDiv = _loadDivContentsXml(p);
                     } else {
                         p.url = opts.ViewsListUrl;
@@ -514,8 +515,9 @@ CswAppMode.mode = 'mobile';
                         logger.setAjaxSuccess();
                         $currentViewXml = $xml;
                         p.$xml = $currentViewXml;
-                        if (params.level === 1) {
-                            _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
+                        
+                        if( params.level < 2) {
+                            _storeViewXml(p.DivId, p.HeaderText, $currentViewXml, params.level);
                         }
                         $retDiv = _loadDivContentsXml(p);
                     },
@@ -1848,14 +1850,20 @@ CswAppMode.mode = 'mobile';
             };
         }
         
-        function _storeViewXml(rootid, rootname, $viewxml) {
+        function _storeViewXml(rootid, rootname, $viewxml, level) {
             var logger = new profileMethod('storeViewXml');
-            if (isNullOrEmpty(storedViews)) {
-                storedViews = [{ rootid: rootid, name: rootname }];
-            } else if (storedViews.indexOf(rootid) === -1) {
-                storedViews.push({ rootid: rootid, name: rootname });
+            if(level === 0)
+            {
+                $viewxml.children('view').each(function() {
+                    var $this = $(this);
+                    var viewid = $this.CswAttrXml('id');
+                    var viewname = $this.CswAttrXml('name');
+                    if (storedViews.indexOf(viewid) === -1) {
+                        storedViews.push({ rootid: viewid, name: viewname });
+                    }
+                });
+                localStorage["storedviews"] = JSON.stringify(storedViews);
             }
-            localStorage["storedviews"] = JSON.stringify(storedViews);
             localStorage[rootid] = JSON.stringify({ name: rootname, xml: xmlToString($viewxml), wasmodified: false });
             
             $viewxml.andSelf().find('node').each(function() {
@@ -1920,15 +1928,7 @@ CswAppMode.mode = 'mobile';
             }
             return $view;
         }
-
-        function _fetchCachedRootXml() {
-            var ret = '';
-            for (var view in storedViews) {
-                ret += "<view id=\"" + view.rootid + "\" name=\"" + view.name + "\" />";
-            }
-            return $(ret);
-        }
-
+        
         // ------------------------------------------------------------------------------------
         // Synchronization
         // ------------------------------------------------------------------------------------
