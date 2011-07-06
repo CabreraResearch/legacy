@@ -1865,11 +1865,12 @@ CswAppMode.mode = 'mobile';
             var logger = new profileMethod('storeViewXml');
             if(level === 0)
             {
+                var viewsCache = tryParseString(localStorage["storedviews"], '');
                 $viewxml.children('view').each(function() {
                     var $this = $(this);
                     var viewid = $this.CswAttrXml('id');
                     var viewname = $this.CswAttrXml('name');
-                    if (localStorage["storedviews"].indexOf('"rootid":"' + viewid + '"') === -1) {
+                    if (viewsCache.indexOf('"rootid":"' + viewid + '"') === -1) {
                         storedViews.push({ rootid: viewid, name: viewname });
                     }
                 });
