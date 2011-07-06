@@ -202,7 +202,9 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                //this.EnableViewState = false;
+				Master.CswNbtResources.AuditContext = "Design";
+				
+				//this.EnableViewState = false;
 
                 if( Request.QueryString[QueryStringVarName_Mode] != null )
                 {

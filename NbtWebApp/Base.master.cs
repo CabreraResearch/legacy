@@ -151,7 +151,7 @@ namespace ChemSW.Nbt.WebPages
 
                 _CswSessionManager = CswSessionResourcesNbt.CswSessionManager;
                 _CswNbtStatisticsEvents = CswSessionResourcesNbt.CswNbtStatisticsEvents;
-
+				CswNbtResources.beginTransaction();
 
                 // Setup statistics events
                 OnEndOfPageLifeCycle += new EndOfPageLifeCycleHandler( _CswNbtStatisticsEvents.OnEndOfPageLifeCycle );

@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
+				Master.CswNbtResources.AuditContext = "Import Fire Extinguisher Data";
                 EnsureChildControls();
             }
             catch( Exception ex )
