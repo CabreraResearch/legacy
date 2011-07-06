@@ -71,12 +71,15 @@
 	var qs = $.CswQueryString();
 	if (!isNullOrEmpty(qs.viewid))
 	{
-		// set the view
 		setCurrentView(qs.viewid, tryParseString(qs.viewmode, 'tree'));
-
-		// clear the querystring
 		window.location = "NewMain.html";
-	} else
+	}
+	else if(!isNullOrEmpty(qs.clear))
+	{
+		clearCurrent();
+		window.location = "NewMain.html";
+	}
+	else
 	{
 		initAll();
 	}
