@@ -1,5 +1,5 @@
 /// <reference path="../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../thirdparty/jquery/core/jquery.mobile/jquery.mobile.2011.5.27.js" />
+/// <reference path="../thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.js" />
 /// <reference path="../thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
 /// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
@@ -38,6 +38,7 @@ CswAppMode.mode = 'mobile';
         if (!isNullOrEmpty($li)) {
             $li.unbind('click');
             $ret = $li.find('li a').bind('click', function() {
+                $.mobile.hidePageLoadingMsg();
                 var dataurl = $(this).CswAttrXml('data-url');
                 var $thisPage = $('#' + dataurl);
                 $thisPage.doChangePage();
@@ -103,7 +104,6 @@ CswAppMode.mode = 'mobile';
             $div.unbind('pageshow');
             $ret = $div.bind('pageshow', function() {
                 $.mobile.showPageLoadingMsg();
-
                 if (p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
                 if($('#logindiv')) $('#logindiv').remove();
@@ -156,7 +156,7 @@ CswAppMode.mode = 'mobile';
         var SessionId = localStorage["sessionid"];
         var $currentViewXml;
 
-        var storedViews = '';
+        var storedViews = [];
         if (localStorage.storedViews) storedViews = JSON.parse(localStorage['storedviews']); // {name: '', rootid: ''}
 
         var $logindiv = _loadLoginDiv();
@@ -427,7 +427,7 @@ CswAppMode.mode = 'mobile';
 
         function _loadDivContents(params) {
             var logger = new profileMethod('loadDivContents');
-            //$.mobile.showPageLoadingMsg();
+            $.mobile.showPageLoadingMsg();
 
             kickStartAutoSync();
             
@@ -451,7 +451,8 @@ CswAppMode.mode = 'mobile';
             if (isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1) {
                 if (p.level === 0) {
                     if (!amOnline()) {
-                        p.$xml = _fetchCachedRootXml();
+                        p.$xml = _fetchCachedViewXml(p.DivId);
+                        $currentViewXml = p.$xml;
                         $retDiv = _loadDivContentsXml(p);
                     } else {
                         p.url = opts.ViewsListUrl;
@@ -471,11 +472,18 @@ CswAppMode.mode = 'mobile';
                     }
                 } else  // Level 2 and up
                 {
-                    if (!isNullOrEmpty($currentViewXml)) {
+                    var $xml = $(localStorage[p.DivId]);
+                    if( !isNullOrEmpty($xml) && $xml.length > 0 ) {
+                        p.$xml = $xml.children('subitems')
+                                     .first();
+                    }
+                    else if (!isNullOrEmpty($currentViewXml)) {
                         p.$xml = $currentViewXml.find('#' + p.DivId)
                                                 .children('subitems')
                                                 .first()
                                                 .clone();
+                    }
+                    if (!isNullOrEmpty(p.$xml)) {
                         $retDiv = _loadDivContentsXml(p);
                     }
                 }
@@ -514,8 +522,9 @@ CswAppMode.mode = 'mobile';
                         logger.setAjaxSuccess();
                         $currentViewXml = $xml;
                         p.$xml = $currentViewXml;
-                        if (params.level === 1) {
-                            _storeViewXml(p.DivId, p.HeaderText, $currentViewXml);
+                        
+                        if( params.level < 2) {
+                            _storeViewXml(p.DivId, p.HeaderText, $currentViewXml, params.level);
                         }
                         $retDiv = _loadDivContentsXml(p);
                     },
@@ -590,6 +599,8 @@ CswAppMode.mode = 'mobile';
             }
             $content.page();
 
+            _resetPendingChanges();
+            
             $.mobile.hidePageLoadingMsg();
             if(!mobileStorage.stayOffline()) {
                 _toggleOffline(false);
@@ -661,6 +672,7 @@ CswAppMode.mode = 'mobile';
             }
             
             $retLI.bind('click', function() {
+                $.mobile.showPageLoadingMsg();
                 var par = {ParentId: p.DivId,
                     parentlevel: p.parentlevel,
                     level: p.parentlevel + 1,
@@ -746,7 +758,7 @@ CswAppMode.mode = 'mobile';
             var IdStr = makeSafeId({ ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
-            var ReadOnly = (isTrue($xmlitem.CswAttrXml('isreadonly')));
+            var ReadOnly = isTrue($xmlitem.CswAttrXml('isreadonly'));
 
             // Subfield values
             var sf_text = tryParseString($xmlitem.children('text').text(), '');
@@ -769,7 +781,8 @@ CswAppMode.mode = 'mobile';
             
             var $fieldcontain = $('<div class="csw_fieldset" ></div>')
                                     .appendTo($retLi);
-            var $propDiv;
+
+            var $propDiv = $('<div></div>');
             
             if (FieldType === "Question" &&
                 !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
@@ -777,11 +790,6 @@ CswAppMode.mode = 'mobile';
                 $label.addClass('OOC');
             } else {
                 $label.removeClass('OOC');
-            }
-            
-            if( FieldType !== 'Question' && FieldType !== 'Logical') {
-                $propDiv = $('<div></div>')
-                                .appendTo($fieldcontain);
             }
             
             var $prop;
@@ -900,6 +908,10 @@ CswAppMode.mode = 'mobile';
             } else {
                 $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
             }
+            if($propDiv.children().length > 0) {
+                $fieldcontain.append($propDiv);
+            }
+            
             return $retLi;
         }
 
@@ -1129,7 +1141,7 @@ CswAppMode.mode = 'mobile';
             var $backlink = $('#' + p.DivId + '_back');
             var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
             var $loggingBtn = $('#' + p.DivId + '_debuglog');
-
+            var $headerTitle = $('#' + p.DivId + '_header_title');
             if (isNullOrEmpty($pageDiv) || $pageDiv.length === 0) {
                 $pageDiv = $body.CswDiv('init', { ID: p.DivId })
                                         .CswAttrXml({
@@ -1183,7 +1195,7 @@ CswAppMode.mode = 'mobile';
                     $backlink.CswAttrXml('data-icon', 'arrow-l');
                 }
 
-                $header.append($('<h1>' + p.HeaderText + '</h1>'));
+                $headerTitle = $('<h1 id="' + p.DivId + '_header_title"></h1>').appendTo($header);                
 
                 $searchBtn = $header.CswLink('init', {
                                               'href': 'javascript:void(0)',
@@ -1210,7 +1222,7 @@ CswAppMode.mode = 'mobile';
                                .append(p.$toolbar)
                                .CswAttrXml({ 'data-role': 'header', 'data-type': 'horizontal', 'data-theme': opts.Theme });
 
-                var $content = $pageDiv.CswDiv('init', { ID: p.DivId + '_content' })
+                $pageDiv.CswDiv('init', { ID: p.DivId + '_content' })
                                                .CswAttrXml({ 'data-role': 'content', 'data-theme': opts.Theme })
                                                .append(p.$content);
                 var $footer = $pageDiv.CswDiv('init', { ID: p.DivId + '_footer' })
@@ -1223,13 +1235,12 @@ CswAppMode.mode = 'mobile';
 
                 var $footerCtn = $('<div data-role="navbar">')
                                             .appendTo($footer);
-                var onlineClass = (!amOnline()) ? 'onlineStatus offline' : 'onlineStatus online';
                 var onlineValue = (!amOnline()) ? 'Offline' : 'Online';
 
                 $syncstatusBtn = $footerCtn.CswLink('init', {
                                                         'href': 'javascript:void(0)',
                                                         ID: p.DivId + '_gosyncstatus',
-                                                        cssclass: onlineClass, 
+                                                        cssclass: 'onlineStatus ' + onlineValue.toLowerCase(), 
                                                         value: onlineValue
                                                     })
                                                         .CswAttrXml({
@@ -1265,77 +1276,86 @@ CswAppMode.mode = 'mobile';
                                                         .css('display', '');
 
 
-                var $mainBtn = $footerCtn.CswLink('init', { href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site' })
-                                              .CswAttrXml({ 'data-transition': 'pop' });
+                $footerCtn.CswLink('init', { href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site' })
+                          .CswAttrXml({ 'data-transition': 'pop' });
 
 
                 $helpBtn = $footerCtn.CswLink('init', {
                                              'href': 'javascript:void(0)',
                                              ID: p.DivId + '_help',
                                              value: 'Help'
-                                         })
-                                             .CswAttrXml({
+                                      })
+                                      .CswAttrXml({
                                              'data-identity': p.DivId + '_help',
                                              'data-url': p.DivId + '_help',
                                              'data-transition': 'pop',
                                              'data-rel': 'dialog'
-                                         })
-                                             .css('display', '');
+                                      })
+                                      .css('display', '');
 
-                $loggingBtn = $footerCtn.CswLink('init', {
-                                                 'href': 'javascript:void(0)',
-                                                 ID: p.DivId + '_debuglog',
-                                                 value: doLogging() ? 'Sync Log' : 'Start Log',
-                                                 cssclass: 'debug'
-                                             })
-                                                 .addClass(doLogging() ? 'debug-on' : 'debug-off');
+                if( debugOn() )
+                {
+                    $loggingBtn = $footerCtn.CswLink('init', {
+                                                         'href': 'javascript:void(0)',
+                                                         ID: p.DivId + '_debuglog',
+                                                         value: doLogging() ? 'Sync Log' : 'Start Log',
+                                                         cssclass: 'debug'
+                                                     })
+                                                     .addClass(doLogging() ? 'debug-on' : 'debug-off');
+                }
             }
 
+            //case 22323
+            $headerTitle.text(p.HeaderText);
+            
             if (p.HideOnlineButton) {
-                $syncstatusBtn.css('display', 'none');
+                $syncstatusBtn.css('display', 'none').hide();
             } else {
-                $syncstatusBtn.css('display', '');
+                $syncstatusBtn.css('display', '').show();
+            }
+            if( _pendingChanges() ) {
+                $syncstatusBtn.addClass('pendingchanges');
+            }
+            else {
+                $syncstatusBtn.removeClass('pendingchanges');
             }
             if (p.HideHelpButton) {
-                $helpBtn.css('display', 'none');
+                $helpBtn.css('display', 'none').hide();
             } else {
-                $helpBtn.css('display', '');
+                $helpBtn.css('display', '').show();
             }
             if (p.HideLogoutButton) {
-                $logoutBtn.css('display', 'none');
+                $logoutBtn.css('display', 'none').hide();
             } else {
-                $logoutBtn.css('display', '');
+                $logoutBtn.css('display', '').show();
             }
-            if (p.HideRefreshButton) {
-                $refreshBtn.css('display', 'none');
+            if (p.HideRefreshButton || !amOnline() ) {
+                $refreshBtn.css('display', 'none').hide();
             } else {
-                $refreshBtn.css('display', '');
+                $refreshBtn.css('display', '').show();
             }
             if (p.HideSearchButton) {
-                $searchBtn.css('display', 'none');
+                $searchBtn.css('display', 'none').hide();
             } else {
-                $searchBtn.css('display', '');
+                $searchBtn.css('display', '').show();
             }
             if (p.HideHeaderOnlineButton) {
-                $headerOnlineBtn.css('display', 'none');
+                $headerOnlineBtn.css('display', 'none').hide();
             } else {
-                $headerOnlineBtn.show()
-                                .css('display', '');
+                $headerOnlineBtn.css('display', '').show();
             }
             if (p.dataRel === 'dialog' && !p.HideCloseButton) {
-                $closeBtn.css('display', '');
+                $closeBtn.css('display', '').show();
             } else {
-                $closeBtn.css('display', 'none');
+                $closeBtn.css('display', 'none').hide();
             }
             if (!p.HideBackButton) {
-                $backlink.css('display', '');
+                $backlink.css('display', '').show();
             } else {
-                $backlink.css('display', 'none');
+                $backlink.css('display', 'none').hide();
             }
             if (debugOn()) {
-                $loggingBtn.css({ 'display': '' });
-            } else {
-                $loggingBtn.css({ 'display': 'none' });
+                $loggingBtn.css({ 'display': '' }).show();
             }
 
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
@@ -1357,6 +1377,7 @@ CswAppMode.mode = 'mobile';
             $div.find('#' + DivId + '_searchopen')
                 .unbind('click')
                 .bind('click', function() {
+                    $.mobile.showPageLoadingMsg();
                     onSearchOpen(DivId);
                     return false;
                 })
@@ -1364,6 +1385,7 @@ CswAppMode.mode = 'mobile';
                 .find('#' + DivId + '_gosyncstatus')
                 .unbind('click')
                 .bind('click', function() {
+                    $.mobile.showPageLoadingMsg();
                     onSyncStatusOpen(DivId);
                     return false;
                 })
@@ -1371,6 +1393,7 @@ CswAppMode.mode = 'mobile';
                 .find('#' + DivId + '_refresh')
                 .unbind('click')
                 .bind('click', function() {
+                    $.mobile.showPageLoadingMsg();
                     onRefresh();
                     return false;
                 })
@@ -1378,6 +1401,7 @@ CswAppMode.mode = 'mobile';
                 .find('#' + DivId + '_logout')
                 .unbind('click')
                 .bind('click', function(e) {
+                    $.mobile.showPageLoadingMsg();
                     onLogout(DivId, e);
                     return false;
                 })
@@ -1385,6 +1409,7 @@ CswAppMode.mode = 'mobile';
                 .find('#' + DivId + '_help')
                 .unbind('click')
                 .bind('click', function() {
+                    $.mobile.showPageLoadingMsg();
                     onHelp(DivId, ParentId);
                     return false;
                 })
@@ -1418,7 +1443,7 @@ CswAppMode.mode = 'mobile';
 
         function _makeSyncStatusDiv() {
             var content = '';
-            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + mobileStorage.pendingUnsyncedChanges + '</span></p>';
+            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + tryParseString(localStorage.unSyncedChanges,'0') + '</span></p>';
             content += '<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess + '</span></p>';
             content += '<p>Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt + '</span></p>';
             content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
@@ -1441,6 +1466,7 @@ CswAppMode.mode = 'mobile';
                    
             $retDiv.find('#ss_forcesync')
                             .bind('click', function() {
+                                $.mobile.showPageLoadingMsg();
                                 _processChanges(false);
                                 return false;
                             })
@@ -1466,6 +1492,10 @@ CswAppMode.mode = 'mobile';
                     _waitForData();
                 }
                 $onlineBtn.text('Go Offline');
+                $('.refresh').each(function(){
+                    var $this = $(this);
+                    $this.css({'display': ''}).show();
+                });
             }
             else {
                 setOffline();
@@ -1473,13 +1503,17 @@ CswAppMode.mode = 'mobile';
                     _clearWaitForData();
                 }
                 $onlineBtn.text('Go Online');
+                $('.refresh').each(function(){
+                    var $this = $(this);
+                    $this.css({'display': 'none'}).hide();
+                });
             }
         }
 
-        function _resetPendingChanges(val, setlastsyncnow) {
+        function _resetPendingChanges(setlastsyncnow) {
 
             $('#ss_pendingchangecnt').text( tryParseString(localStorage.unSyncedChanges,'0') );
-            if (val) {
+            if ( _pendingChanges() ) {
                 $('.onlineStatus').addClass('pendingchanges')
                                   .find('span.ui-btn-text')
                                   .addClass('pendingchanges');
@@ -1488,11 +1522,14 @@ CswAppMode.mode = 'mobile';
                                   .find('span.ui-btn-text')
                                   .removeClass('pendingchanges');
             }
-            if (setlastsyncnow) {
-                $('#ss_lastsync_success').text( mobileStorage.lastSyncSuccess() );
-            }
-            else {
-                $('#ss_lastsync_attempt').text( mobileStorage.lastSyncAttempt() );
+            
+            if(arguments.length === 1) {
+                if (setlastsyncnow) {
+                    $('#ss_lastsync_success').text(mobileStorage.lastSyncSuccess());
+                }
+                else {
+                    $('#ss_lastsync_attempt').text(mobileStorage.lastSyncAttempt());
+                }
             }
         }
 
@@ -1505,7 +1542,8 @@ CswAppMode.mode = 'mobile';
         }
 
         function _pendingChanges() {
-            return ($('#ss_pendingchangecnt').text() === 'Yes');
+            var changes = new Number(tryParseString(localStorage.unSyncedChanges,'0'))
+            return (changes > 0);
         }
 
         // ------------------------------------------------------------------------------------
@@ -1513,30 +1551,34 @@ CswAppMode.mode = 'mobile';
         // ------------------------------------------------------------------------------------
 
         function _makeHelpDiv() {
-            var $help = $('<p>Help</p>')
-                                    .append('</br></br></br>');
-            var $logLevelDiv = $help.CswDiv('init')
-                                            .CswAttrXml({ 'data-role': 'fieldcontain' });
-            var $logLevelLabel = $('<label for="mobile_log_level">Logging</label>')
-                                            .appendTo($logLevelDiv);
+            var $help = $('<p>Help</p>');
 
-            var $logLevelSelect = $logLevelDiv.CswSelect('init', {
-                                                        ID: 'mobile_log_level',
-                                                        selected: debugOn() ? 'on' : 'off',
-                                                        values: [{ value: 'off', display: 'Logging Disabled' },
-                                                            { value: 'on', display: 'Logging Enabled' }],
-                                                        onChange: function($select) {
-                                                            if ($select.val() === 'on') {
-                                                                debugOn(true);
-                                                                $('.debug').css('display', '').show();
-                                                            } else {
-                                                                debugOn(false);
-                                                                $('.debug').css('diplay', 'none').hide();
-                                                            }
-                                                        }
-                                                    })
-                                                        .CswAttrXml({ 'data-role': 'slider' });
+            if (debugOn()) //this is set onLoad based on the includes variable 'debug'
+            {
+                $help.append('</br></br></br>');
+                var $logLevelDiv = $help.CswDiv('init')
+                                        .CswAttrXml({ 'data-role': 'fieldcontain' });
+                $('<label for="mobile_log_level">Logging</label>')
+                                        .appendTo($logLevelDiv);
 
+                $logLevelDiv.CswSelect('init', {
+                                                ID: 'mobile_log_level',
+                                                selected: debugOn() ? 'on' : 'off',
+                                                values: [{ value: 'off', display: 'Logging Disabled' },
+                                                    { value: 'on', display: 'Logging Enabled' }],
+                                                onChange: function($select) {
+                                                    if ($select.val() === 'on') {
+                                                        debugOn(true);
+                                                        $('.debug').css('display', '').show();
+                                                    } else {
+                                                        debugOn(false);
+                                                        $('.debug').css('diplay', 'none').hide();
+                                                    }
+                                                }
+                                            })
+                                            .CswAttrXml({ 'data-role': 'slider' });
+
+            }
             var $retDiv = _addPageDivToBody({
                     DivId: 'help',
                     HeaderText: 'Help',
@@ -1664,11 +1706,10 @@ CswAppMode.mode = 'mobile';
                                 level: 1,
                                 HideRefreshButton: false,
                                 HideSearchButton: false,
-                                HideBackButton: false,
-                                onPageShow: function(p) { return _loadDivContents(p); }
+                                HideBackButton: false
                             };
-
-                            _loadDivContents(params);
+                            params.onPageShow = function() { return _loadDivContents(params); }
+                            $.mobile.changePage( _loadDivContents(params) );
                         }, // success
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
                             onError(XMLHttpRequest, textStatus, errorThrown); //setOffline();
@@ -1697,7 +1738,7 @@ CswAppMode.mode = 'mobile';
             // update the xml and store it
             if (!isNullOrEmpty($currentViewXml)) {
                 mobileStorage.addUnsyncedChange();
-                _resetPendingChanges(true, false);
+                _resetPendingChanges(false);
                 
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
                 var $nodeXml = $( localStorage[nodeId] );
@@ -1761,6 +1802,7 @@ CswAppMode.mode = 'mobile';
         }
 
         function onSearchSubmit(DivId) {
+            $.mobile.showPageLoadingMsg();
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
             var $resultsDiv = $('#' + DivId + '_searchresults')
@@ -1793,6 +1835,7 @@ CswAppMode.mode = 'mobile';
                 }
                 $content.page();
             }
+            $.mobile.hidePageLoadingMsg();
         } // onSearchSubmit()
 
         // ------------------------------------------------------------------------------------
@@ -1838,7 +1881,6 @@ CswAppMode.mode = 'mobile';
             this.clearUnsyncedChanges = function() {
                 localStorage['unSyncedChanges'] = '0';
             };
-            this.pendingUnsyncedChanges = tryParseString(localStorage['unSyncedChanges'],'0');
             this.stayOffline = function(value) {
                 if(arguments.length === 1) {
                     localStorage['stayOffline'] = isTrue(value);
@@ -1848,14 +1890,21 @@ CswAppMode.mode = 'mobile';
             };
         }
         
-        function _storeViewXml(rootid, rootname, $viewxml) {
+        function _storeViewXml(rootid, rootname, $viewxml, level) {
             var logger = new profileMethod('storeViewXml');
-            if (isNullOrEmpty(storedViews)) {
-                storedViews = [{ rootid: rootid, name: rootname }];
-            } else if (storedViews.indexOf(rootid) === -1) {
-                storedViews.push({ rootid: rootid, name: rootname });
+            if(level === 0)
+            {
+                var viewsCache = tryParseString(localStorage["storedviews"], '');
+                $viewxml.children('view').each(function() {
+                    var $this = $(this);
+                    var viewid = $this.CswAttrXml('id');
+                    var viewname = $this.CswAttrXml('name');
+                    if (viewsCache.indexOf('"rootid":"' + viewid + '"') === -1) {
+                        storedViews.push({ rootid: viewid, name: viewname });
+                    }
+                });
+                localStorage["storedviews"] = JSON.stringify(storedViews);
             }
-            localStorage["storedviews"] = JSON.stringify(storedViews);
             localStorage[rootid] = JSON.stringify({ name: rootname, xml: xmlToString($viewxml), wasmodified: false });
             
             $viewxml.andSelf().find('node').each(function() {
@@ -1904,7 +1953,7 @@ CswAppMode.mode = 'mobile';
                     }
                 }
                 if (!modified) {
-                    _resetPendingChanges(false, true);
+                    _resetPendingChanges(true);
                     onSuccess();
                 }
             }
@@ -1920,15 +1969,7 @@ CswAppMode.mode = 'mobile';
             }
             return $view;
         }
-
-        function _fetchCachedRootXml() {
-            var ret = '';
-            for (var view in storedViews) {
-                ret += "<view id=\"" + view.rootid + "\" name=\"" + view.name + "\" />";
-            }
-            return $(ret);
-        }
-
+        
         // ------------------------------------------------------------------------------------
         // Synchronization
         // ------------------------------------------------------------------------------------
@@ -1962,33 +2003,38 @@ CswAppMode.mode = 'mobile';
             if (opts.RandomConnectionFailure) {
                 url = opts.ConnectTestRandomFailUrl;
             }
-            CswAjaxXml({
-                    formobile: ForMobile,
-                    url: url,
-                    data: {  },
-                    stringify: false,
-                    onloginfail: function(text) { onLoginFail(text); },
-                    success: function($xml) {
-                        setOnline(false);
-                        _processChanges(true);
-                        if (!isNullOrEmpty(onSuccess)) {
-                            onSuccess($xml);
+            if( !mobileStorage.stayOffline() ) {
+                CswAjaxXml({
+                        formobile: ForMobile,
+                        url: url,
+                        data: {  },
+                        stringify: false,
+                        onloginfail: function(text) { onLoginFail(text); },
+                        success: function($xml) {
+                            setOnline(false);
+                            _processChanges(true);
+                            if (!isNullOrEmpty(onSuccess)) {
+                                onSuccess($xml);
+                            }
+                        },
+                        error: function(xml) {
+                            setOffline();
+                            var $xml = $(xml);
+                            if (!isNullOrEmpty(onFailure)) {
+                                onFailure($xml);
+                            }
+                            _waitForData();
                         }
-                    },
-                    error: function(xml) {
-                        setOffline();
-                        var $xml = $(xml);
-                        if (!isNullOrEmpty(onFailure)) {
-                            onFailure($xml);
-                        }
-                        _waitForData();
-                    }
-                });
+                    });
+            } // if(amOnline())
+            else {
+                _waitForData();
+            }
         } //_handleDataCheckTimer()
 
         function _processChanges(perpetuateTimer) {
             var logger = new profileMethod('processChanges');
-            if (!isNullOrEmpty(SessionId)) {
+            if (!isNullOrEmpty(SessionId) && !mobileStorage.stayOffline() ) {
                 _getModifiedView(function(rootid, viewxml) {
                     if (!isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml)) {
                         var dataJson = {
@@ -2009,6 +2055,7 @@ CswAppMode.mode = 'mobile';
                                         _waitForData();
                                     }
                                     onLoginFail(text);
+                                    $.mobile.hidePageLoadingMsg();
                                 },
                                 success: function(data) {
                                     logger.setAjaxSuccess();
@@ -2016,28 +2063,32 @@ CswAppMode.mode = 'mobile';
                                     var $xml = $(data.xml);
                                     _updateStoredViewXml(rootid, $xml, '0');
                                     mobileStorage.clearUnsyncedChanges();
-                                    _resetPendingChanges(false, true);
+                                    _resetPendingChanges(true);
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
-                                    
+                                    $.mobile.hidePageLoadingMsg();
                                 },
                                 error: function(data) {
                                     setOffline();
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
+                                    $.mobile.hidePageLoadingMsg();
                                 }
                             });
                     } else {
                         if (perpetuateTimer) {
                             _waitForData();
                         }
+                        $.mobile.hidePageLoadingMsg();
                     }
                 }); // _getModifiedView();
             } else {
-                if (perpetuateTimer)
+                if (perpetuateTimer) {
                     _waitForData();
+                }
+                $.mobile.hidePageLoadingMsg();
             } // if(SessionId != '') 
             cacheLogInfo(logger);
         } //_processChanges()
