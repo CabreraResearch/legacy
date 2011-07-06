@@ -12,7 +12,7 @@
     <!--#include file="Mobile_Includes_Body.html" -->
     <script type="text/javascript">
 
-        function redirectOnError()
+        function redirectOnError(e)
         {
             var $refreshPage = $('#' + localStorage['refreshPage']);
             if ($refreshPage)
@@ -34,9 +34,9 @@
             }
         }
 
-        window.onerror = function()
+        window.onerror = function(e)
         {
-            redirectOnError();
+            redirectOnError(e);
         };
         
         try {
