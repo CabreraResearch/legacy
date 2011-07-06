@@ -8,6 +8,7 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using ChemSW.Audit;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -618,6 +619,23 @@ namespace ChemSW.Nbt.MetaData
         //    get { return _NodeTypePropRow["defaultvalue"].ToString(); }
         //    set { _setAttribute( "defaultvalue", value, false ); }
         //}
+
+		public AuditLevel AuditLevel
+		{
+			get
+			{
+				AuditLevel ret = AuditLevel.NoAudit;
+				if( false == Enum.TryParse<AuditLevel>( _NodeTypePropRow[NodeTypePropAttributes.auditlevel.ToString()].ToString(), out ret ) )
+				{
+					ret = AuditLevel.NoAudit;
+				}
+				return ret;
+			}
+			set
+			{
+				_setAttribute( NodeTypePropAttributes.auditlevel.ToString(), value.ToString(), false );
+			}
+		}
 
         private CswNbtNodePropWrapper _DefaultValue = null;
         private DataRow _DefaultValueRow = null;

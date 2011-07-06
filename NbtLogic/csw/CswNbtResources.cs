@@ -18,6 +18,7 @@ using ChemSW.Config;
 using ChemSW.Security;
 using ChemSW.TblDn;
 using ChemSW.Nbt.Actions;
+using ChemSW.Audit;
 
 namespace ChemSW.Nbt
 {
@@ -491,7 +492,24 @@ namespace ChemSW.Nbt
 
 			_CswNbtTreeBuilder = new CswNbtTreeBuilder( this, _CswNbtTreeFactory ); 
 			_CswResources.SetDbResources();
+
+			_CswResources.OnGetAuditLevel = new Audit.GetAuditLevelHandler( handleGetAuditLevel );
         }
+
+		private void handleGetAuditLevel( DataRow DataRow, ref AuditLevel ReturnVal )
+		{
+			// case 22542
+			// Override jct_nodes_props audit level with level set on nodetype prop
+			if( DataRow.Table.TableName == "jct_nodes_props" )
+			{
+				Int32 NodeTypePropId = CswConvert.ToInt32( DataRow["nodetypepropid"] );
+				if( NodeTypePropId != Int32.MinValue )
+				{
+					CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtMetaData.getNodeTypeProp( NodeTypePropId );
+					ReturnVal = NodeTypeProp.AuditLevel;
+				} // if( NodeTypePropId != Int32.MinValue )
+			} // if( DataRow.Table.TableName == "jct_nodes_props" )
+		} // handleGetAuditLevel()
 
         /// <summary>
         /// Commits all posted changes and closes out the transaction

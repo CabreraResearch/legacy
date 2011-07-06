@@ -19,6 +19,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.NbtWebControls.FieldTypes;
 using ChemSW.CswWebControls;
 using ChemSW.Nbt.Actions;
+using ChemSW.Audit;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -847,6 +848,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.HelpText = getPropAttributeValue( "EditProp_HelpText" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.IsQuickSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsQuickSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.Extended = getPropAttributeValue( "EditProp_ExtendedValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+					PropToSave.AuditLevel = (AuditLevel) Enum.Parse( typeof( AuditLevel ), getPropAttributeValue( "EditProp_AuditLevel" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ) );
 
 
                     // Default Value
@@ -2366,6 +2368,16 @@ namespace ChemSW.Nbt.WebPages
                         IsQuickSearchRow.Cells[1].Controls.Add( IsQuickSearchCheckBox );
                     }
 
+                    TableRow AuditLevelRow = makeEditPropTableRow( EditPropPlaceHolder );
+					( (Literal) AuditLevelRow.Cells[0].Controls[0] ).Text = "Audit Level";
+					DropDownList AuditLevelList = new DropDownList();
+					AuditLevelList.ID = "EditProp_AuditLevel" + SelectedNodeTypeProp.PropId.ToString();
+					AuditLevelList.CssClass = "selectinput";
+					AuditLevelList.Items.Add( new ListItem( "No Audit", AuditLevel.NoAudit.ToString() ) );
+					AuditLevelList.Items.Add( new ListItem( "Audit", AuditLevel.PlainAudit.ToString() ) );
+					AuditLevelList.SelectedValue = SelectedNodeTypeProp.AuditLevel.ToString();
+					AuditLevelRow.Cells[1].Controls.Add( AuditLevelList );
+				
                 } // if (NodeTypePropId > 0)
             } // if (_SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property)
 
