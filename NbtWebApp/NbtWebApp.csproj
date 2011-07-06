@@ -109,6 +109,7 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="Mobile_Includes_Head.html" />
     <Content Include="Design.aspx" />
     <Content Include="Design_Layout.aspx" />
     <Content Include="DisplayLog.aspx" />
@@ -1157,7 +1158,7 @@
     <Content Include="Main.aspx" />
     <Content Include="Main.js" />
     <Content Include="Mobile.html" />
-    <Content Include="Mobile_Includes.html" />
+    <Content Include="Mobile_Includes_Body.html" />
     <Content Include="MobileTest.html" />
     <Content Include="NewFooter.html" />
     <Content Include="NewHeader.html" />

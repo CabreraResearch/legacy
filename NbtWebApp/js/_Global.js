@@ -46,6 +46,10 @@ var CswInput_Types = {
     week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' }
 };
 
+var CswAppMode = {
+    mode: 'full'     
+};
+
 // ------------------------------------------------------------------------------------
 // Globals (yuck)
 // ------------------------------------------------------------------------------------
@@ -576,14 +580,16 @@ function initCheckChanges()
     //	}
 }
 
-if (!isNullOrEmpty(window.onload))
+if (CswAppMode.mode === 'full')
 {
-    window.onload = new Function('initCheckChanges(); var f=' + window.onload + '; return f();');
-} else
-{
-    window.onload = function () { initCheckChanges(); };
+    if (!isNullOrEmpty(window.onload))
+    {
+        window.onload = new Function('initCheckChanges(); var f=' + window.onload + '; return f();');
+    } else
+    {
+        window.onload = function() { initCheckChanges(); };
+    }
 }
-
 
 
 // ------------------------------------------------------------------------------------
@@ -1272,12 +1278,12 @@ function tryParseNumber(inputNum, defaultNum)
     /// <summary>
     ///   Returns the inputNum if !NaN, else returns the defaultNum
     /// </summary>
-    /// <param name="inputNum" type="String"> String to parse to number </param>
-    /// <param name="defaultNum" type="String"> Default value if not a number </param>
-    /// <returns type="String" />
+    /// <param name="inputNum" type="Number"> String to parse to number </param>
+    /// <param name="defaultNum" type="Number"> Default value if not a number </param>
+    /// <returns type="Number" />
     var ret = new Number(defaultNum);
     var tryRet = new Number(inputNum);
-    if (tryRet !== NaN && tryRet !== Int32MinVal)
+    if (tryRet.toString() !== "NaN" && tryRet !== Int32MinVal)
     {
         ret = tryRet;
     }

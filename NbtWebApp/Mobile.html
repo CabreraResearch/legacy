@@ -5,37 +5,63 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Main</title>
-    
+    <!--#include file="Mobile_Includes_Head.html" -->
 </head>
 
 <body id="CswMobile_Body">
-    <!--#include file="Mobile_Includes.html" -->
+    <!--#include file="Mobile_Includes_Body.html" -->
     <script type="text/javascript">
-	    
+
+        function redirectOnError()
+        {
+            var $refreshPage = $('#' + localStorage['refreshPage']);
+            if ($refreshPage)
+            {
+                $.mobile.changePage($refreshPage);
+            }
+            else
+            {
+                window.location.href = window.location.pathname;
+            }
+
+            if (debugOn())
+            {
+                errorHandler(e, true, true);
+            }
+            else
+            {
+                errorHandler(e);
+            }
+        }
+
+        window.onerror = function()
+        {
+            redirectOnError();
+        };
+        
         try {
             if( hasWebStorage() ) {
 
                 // override value in _Globals.js
 		        homeUrl = "Mobile.html";
 
-                $('body').CswMobile({
-			            'Theme': 'b'
-			        });
+                $(document).ready(function()
+                    {
+                    $('body').CswMobile({
+                            'Theme': 'b'
+                        });
+                });
             }
             else {
                 throw('This browser does not support localStorage.');
             }
         }
         catch(e) {
-            window.location.href = window.location.pathname;
-            if( doLogging() ) {
-                errorHandler(e,true,true);
-            }
-            else {
-                errorHandler(e);
-            }
+            redirectOnError();
         }
 
+
+        
     </script>
 </body>
 </html>
