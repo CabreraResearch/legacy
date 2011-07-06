@@ -750,7 +750,7 @@ CswAppMode.mode = 'mobile';
             var IdStr = makeSafeId({ ID: $xmlitem.CswAttrXml('id') });
             var FieldType = $xmlitem.CswAttrXml('fieldtype');
             var PropName = $xmlitem.CswAttrXml('name');
-            var ReadOnly = (isTrue($xmlitem.CswAttrXml('isreadonly')));
+            var ReadOnly = isTrue($xmlitem.CswAttrXml('isreadonly'));
 
             // Subfield values
             var sf_text = tryParseString($xmlitem.children('text').text(), '');
@@ -773,7 +773,8 @@ CswAppMode.mode = 'mobile';
             
             var $fieldcontain = $('<div class="csw_fieldset" ></div>')
                                     .appendTo($retLi);
-            var $propDiv;
+
+            var $propDiv = $('<div></div>');
             
             if (FieldType === "Question" &&
                 !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
@@ -781,11 +782,6 @@ CswAppMode.mode = 'mobile';
                 $label.addClass('OOC');
             } else {
                 $label.removeClass('OOC');
-            }
-            
-            if( FieldType !== 'Question' && FieldType !== 'Logical') {
-                $propDiv = $('<div></div>')
-                                .appendTo($fieldcontain);
             }
             
             var $prop;
@@ -904,6 +900,10 @@ CswAppMode.mode = 'mobile';
             } else {
                 $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
             }
+            if($propDiv.children().length > 0) {
+                $fieldcontain.append($propDiv);
+            }
+            
             return $retLi;
         }
 
