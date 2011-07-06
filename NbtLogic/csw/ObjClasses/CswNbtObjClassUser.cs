@@ -156,13 +156,14 @@ namespace ChemSW.Nbt.ObjClasses
                 throw ( new CswDniException( "You can not delete your own user account.", "Current user (" + _CswNbtResources.CurrentUser.Username + ") can not delete own UserClass node." ) );
             }
 
-            ////prevent user from deleting ScheduleRunner
-            //if (Username.ToLower() == "schedulerunner")
-            //{
-            //    throw new CswDniException("You cannot delete the ScheduleRunner user", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the ScheduleRunner user");
-            //}
-
-
+			// case 22635 - prevent deleting chemsw_admin user
+			CswNbtNodePropWrapper UsernamePropWrapper = Node.Properties[UsernamePropertyName];
+			if( UsernamePropWrapper.GetOriginalPropRowValue( UsernamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == "chemsw_admin" &&
+				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
+			{
+				throw new CswDniException( "The 'chemsw_admin' user cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the 'chemsw_admin' user." );
+			}
+			
             CswPrimaryKey RoleId = Role.RelatedNodeId;
             if( RoleId != null )
             {

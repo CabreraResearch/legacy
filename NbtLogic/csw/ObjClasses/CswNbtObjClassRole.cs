@@ -115,6 +115,14 @@ namespace ChemSW.Nbt.ObjClasses
                 throw ( new CswDniException( "You can not delete your own role account.", "Current user (" + _CswNbtResources.CurrentUser.Username + ") can not delete own RoleClass node." ) );
             }
 			
+			// case 22635 - prevent deleting chemsw_admin_role
+			CswNbtNodePropWrapper NamePropWrapper = Node.Properties[NamePropertyName];
+			if( NamePropWrapper.GetOriginalPropRowValue( NamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == "chemsw_admin_role" &&
+				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
+			{
+				throw new CswDniException( "The 'chemsw_admin_role' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the 'chemsw_admin_role' role." );
+			}
+
 			// case 22424
 			// Prevent deleting roles in use
 			CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
