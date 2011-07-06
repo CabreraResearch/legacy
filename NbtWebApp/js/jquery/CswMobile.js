@@ -104,7 +104,6 @@ CswAppMode.mode = 'mobile';
             $div.unbind('pageshow');
             $ret = $div.bind('pageshow', function() {
                 $.mobile.showPageLoadingMsg();
-
                 if (p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
                 if($('#logindiv')) $('#logindiv').remove();
@@ -473,11 +472,18 @@ CswAppMode.mode = 'mobile';
                     }
                 } else  // Level 2 and up
                 {
-                    if (!isNullOrEmpty($currentViewXml)) {
+                    var $xml = $(localStorage[p.DivId]);
+                    if( !isNullOrEmpty($xml) && $xml.length > 0 ) {
+                        p.$xml = $xml.children('subitems')
+                                     .first();
+                    }
+                    else if (!isNullOrEmpty($currentViewXml)) {
                         p.$xml = $currentViewXml.find('#' + p.DivId)
                                                 .children('subitems')
                                                 .first()
                                                 .clone();
+                    }
+                    if (!isNullOrEmpty(p.$xml)) {
                         $retDiv = _loadDivContentsXml(p);
                     }
                 }
@@ -1133,7 +1139,7 @@ CswAppMode.mode = 'mobile';
             var $backlink = $('#' + p.DivId + '_back');
             var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
             var $loggingBtn = $('#' + p.DivId + '_debuglog');
-
+            var $headerTitle = $('#' + p.DivId + '_header_title');
             if (isNullOrEmpty($pageDiv) || $pageDiv.length === 0) {
                 $pageDiv = $body.CswDiv('init', { ID: p.DivId })
                                         .CswAttrXml({
@@ -1187,7 +1193,7 @@ CswAppMode.mode = 'mobile';
                     $backlink.CswAttrXml('data-icon', 'arrow-l');
                 }
 
-                $header.append($('<h1>' + p.HeaderText + '</h1>'));
+                $headerTitle = $('<h1 id="' + p.DivId + '_header_title"></h1>').appendTo($header);                
 
                 $searchBtn = $header.CswLink('init', {
                                               'href': 'javascript:void(0)',
@@ -1214,7 +1220,7 @@ CswAppMode.mode = 'mobile';
                                .append(p.$toolbar)
                                .CswAttrXml({ 'data-role': 'header', 'data-type': 'horizontal', 'data-theme': opts.Theme });
 
-                var $content = $pageDiv.CswDiv('init', { ID: p.DivId + '_content' })
+                $pageDiv.CswDiv('init', { ID: p.DivId + '_content' })
                                                .CswAttrXml({ 'data-role': 'content', 'data-theme': opts.Theme })
                                                .append(p.$content);
                 var $footer = $pageDiv.CswDiv('init', { ID: p.DivId + '_footer' })
@@ -1269,22 +1275,22 @@ CswAppMode.mode = 'mobile';
                                                         .css('display', '');
 
 
-                var $mainBtn = $footerCtn.CswLink('init', { href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site' })
-                                              .CswAttrXml({ 'data-transition': 'pop' });
+                $footerCtn.CswLink('init', { href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site' })
+                          .CswAttrXml({ 'data-transition': 'pop' });
 
 
                 $helpBtn = $footerCtn.CswLink('init', {
                                              'href': 'javascript:void(0)',
                                              ID: p.DivId + '_help',
                                              value: 'Help'
-                                         })
-                                             .CswAttrXml({
+                                      })
+                                      .CswAttrXml({
                                              'data-identity': p.DivId + '_help',
                                              'data-url': p.DivId + '_help',
                                              'data-transition': 'pop',
                                              'data-rel': 'dialog'
-                                         })
-                                             .css('display', '');
+                                      })
+                                      .css('display', '');
 
                 $loggingBtn = $footerCtn.CswLink('init', {
                                                  'href': 'javascript:void(0)',
@@ -1292,9 +1298,12 @@ CswAppMode.mode = 'mobile';
                                                  value: doLogging() ? 'Sync Log' : 'Start Log',
                                                  cssclass: 'debug'
                                              })
-                                                 .addClass(doLogging() ? 'debug-on' : 'debug-off');
+                                         .addClass(doLogging() ? 'debug-on' : 'debug-off');
             }
 
+            //case 22323
+            $headerTitle.text(p.HeaderText);
+            
             if (p.HideOnlineButton) {
                 $syncstatusBtn.css('display', 'none').hide();
             } else {
@@ -1685,11 +1694,10 @@ CswAppMode.mode = 'mobile';
                                 level: 1,
                                 HideRefreshButton: false,
                                 HideSearchButton: false,
-                                HideBackButton: false,
-                                onPageShow: function(p) { return _loadDivContents(p); }
+                                HideBackButton: false
                             };
-
-                            _loadDivContents(params);
+                            params.onPageShow = function() { return _loadDivContents(params); }
+                            $.mobile.changePage( _loadDivContents(params) );
                         }, // success
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
                             onError(XMLHttpRequest, textStatus, errorThrown); //setOffline();
