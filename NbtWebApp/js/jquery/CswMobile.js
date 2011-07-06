@@ -1294,50 +1294,49 @@ CswAppMode.mode = 'mobile';
             }
 
             if (p.HideOnlineButton) {
-                $syncstatusBtn.css('display', 'none');
+                $syncstatusBtn.css('display', 'none').hide();
             } else {
-                $syncstatusBtn.css('display', '');
+                $syncstatusBtn.css('display', '').show();
             }
             if (p.HideHelpButton) {
-                $helpBtn.css('display', 'none');
+                $helpBtn.css('display', 'none').hide();
             } else {
-                $helpBtn.css('display', '');
+                $helpBtn.css('display', '').show();
             }
             if (p.HideLogoutButton) {
-                $logoutBtn.css('display', 'none');
+                $logoutBtn.css('display', 'none').hide();
             } else {
-                $logoutBtn.css('display', '');
+                $logoutBtn.css('display', '').show();
             }
-            if (p.HideRefreshButton) {
-                $refreshBtn.css('display', 'none');
+            if (p.HideRefreshButton || !amOnline() ) {
+                $refreshBtn.css('display', 'none').hide();
             } else {
-                $refreshBtn.css('display', '');
+                $refreshBtn.css('display', '').show();
             }
             if (p.HideSearchButton) {
-                $searchBtn.css('display', 'none');
+                $searchBtn.css('display', 'none').hide();
             } else {
-                $searchBtn.css('display', '');
+                $searchBtn.css('display', '').show();
             }
             if (p.HideHeaderOnlineButton) {
-                $headerOnlineBtn.css('display', 'none');
+                $headerOnlineBtn.css('display', 'none').hide();
             } else {
-                $headerOnlineBtn.show()
-                                .css('display', '');
+                $headerOnlineBtn.css('display', '').show();
             }
             if (p.dataRel === 'dialog' && !p.HideCloseButton) {
-                $closeBtn.css('display', '');
+                $closeBtn.css('display', '').show();
             } else {
-                $closeBtn.css('display', 'none');
+                $closeBtn.css('display', 'none').hide();
             }
             if (!p.HideBackButton) {
-                $backlink.css('display', '');
+                $backlink.css('display', '').show();
             } else {
-                $backlink.css('display', 'none');
+                $backlink.css('display', 'none').hide();
             }
             if (debugOn()) {
-                $loggingBtn.css({ 'display': '' });
+                $loggingBtn.css({ 'display': '' }).show();
             } else {
-                $loggingBtn.css({ 'display': 'none' });
+                $loggingBtn.css({ 'display': 'none' }).hide();
             }
 
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
@@ -1468,6 +1467,10 @@ CswAppMode.mode = 'mobile';
                     _waitForData();
                 }
                 $onlineBtn.text('Go Offline');
+                $('.refresh').each(function(){
+                    var $this = $(this);
+                    $this.css({'display': ''}).show();
+                });
             }
             else {
                 setOffline();
@@ -1475,6 +1478,10 @@ CswAppMode.mode = 'mobile';
                     _clearWaitForData();
                 }
                 $onlineBtn.text('Go Online');
+                $('.refresh').each(function(){
+                    var $this = $(this);
+                    $this.css({'display': 'none'}).hide();
+                });
             }
         }
 
