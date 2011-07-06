@@ -206,7 +206,7 @@ namespace ChemSW.Nbt.PropTypes
             Dictionary<CswPrimaryKey, string> Options = new Dictionary<CswPrimaryKey, string>();
             if( View != null )
             {
-                if( !Required )
+                if( !Required || this.RelatedNodeId == null )
                     Options.Add( new CswPrimaryKey(), "" );
 
                 ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false, false );
