@@ -1515,30 +1515,34 @@ CswAppMode.mode = 'mobile';
         // ------------------------------------------------------------------------------------
 
         function _makeHelpDiv() {
-            var $help = $('<p>Help</p>')
-                                    .append('</br></br></br>');
-            var $logLevelDiv = $help.CswDiv('init')
-                                            .CswAttrXml({ 'data-role': 'fieldcontain' });
-            var $logLevelLabel = $('<label for="mobile_log_level">Logging</label>')
-                                            .appendTo($logLevelDiv);
+            var $help = $('<p>Help</p>');
 
-            var $logLevelSelect = $logLevelDiv.CswSelect('init', {
-                                                        ID: 'mobile_log_level',
-                                                        selected: debugOn() ? 'on' : 'off',
-                                                        values: [{ value: 'off', display: 'Logging Disabled' },
-                                                            { value: 'on', display: 'Logging Enabled' }],
-                                                        onChange: function($select) {
-                                                            if ($select.val() === 'on') {
-                                                                debugOn(true);
-                                                                $('.debug').css('display', '').show();
-                                                            } else {
-                                                                debugOn(false);
-                                                                $('.debug').css('diplay', 'none').hide();
-                                                            }
-                                                        }
-                                                    })
-                                                        .CswAttrXml({ 'data-role': 'slider' });
+            if (debugOn()) //this is set onLoad based on the includes variable 'debug'
+            {
+                $help.append('</br></br></br>');
+                var $logLevelDiv = $help.CswDiv('init')
+                                        .CswAttrXml({ 'data-role': 'fieldcontain' });
+                $('<label for="mobile_log_level">Logging</label>')
+                                        .appendTo($logLevelDiv);
 
+                $logLevelDiv.CswSelect('init', {
+                                                ID: 'mobile_log_level',
+                                                selected: debugOn() ? 'on' : 'off',
+                                                values: [{ value: 'off', display: 'Logging Disabled' },
+                                                    { value: 'on', display: 'Logging Enabled' }],
+                                                onChange: function($select) {
+                                                    if ($select.val() === 'on') {
+                                                        debugOn(true);
+                                                        $('.debug').css('display', '').show();
+                                                    } else {
+                                                        debugOn(false);
+                                                        $('.debug').css('diplay', 'none').hide();
+                                                    }
+                                                }
+                                            })
+                                            .CswAttrXml({ 'data-role': 'slider' });
+
+            }
             var $retDiv = _addPageDivToBody({
                     DivId: 'help',
                     HeaderText: 'Help',
