@@ -599,6 +599,8 @@ CswAppMode.mode = 'mobile';
             }
             $content.page();
 
+            _resetPendingChanges();
+            
             $.mobile.hidePageLoadingMsg();
             if(!mobileStorage.stayOffline()) {
                 _toggleOffline(false);
@@ -1233,13 +1235,12 @@ CswAppMode.mode = 'mobile';
 
                 var $footerCtn = $('<div data-role="navbar">')
                                             .appendTo($footer);
-                var onlineClass = (!amOnline()) ? 'onlineStatus offline' : 'onlineStatus online';
                 var onlineValue = (!amOnline()) ? 'Offline' : 'Online';
 
                 $syncstatusBtn = $footerCtn.CswLink('init', {
                                                         'href': 'javascript:void(0)',
                                                         ID: p.DivId + '_gosyncstatus',
-                                                        cssclass: onlineClass, 
+                                                        cssclass: 'onlineStatus ' + onlineValue.toLowerCase(), 
                                                         value: onlineValue
                                                     })
                                                         .CswAttrXml({
@@ -1292,13 +1293,16 @@ CswAppMode.mode = 'mobile';
                                       })
                                       .css('display', '');
 
-                $loggingBtn = $footerCtn.CswLink('init', {
-                                                 'href': 'javascript:void(0)',
-                                                 ID: p.DivId + '_debuglog',
-                                                 value: doLogging() ? 'Sync Log' : 'Start Log',
-                                                 cssclass: 'debug'
-                                             })
-                                         .addClass(doLogging() ? 'debug-on' : 'debug-off');
+                if( debugOn() )
+                {
+                    $loggingBtn = $footerCtn.CswLink('init', {
+                                                         'href': 'javascript:void(0)',
+                                                         ID: p.DivId + '_debuglog',
+                                                         value: doLogging() ? 'Sync Log' : 'Start Log',
+                                                         cssclass: 'debug'
+                                                     })
+                                                     .addClass(doLogging() ? 'debug-on' : 'debug-off');
+                }
             }
 
             //case 22323
@@ -1308,6 +1312,12 @@ CswAppMode.mode = 'mobile';
                 $syncstatusBtn.css('display', 'none').hide();
             } else {
                 $syncstatusBtn.css('display', '').show();
+            }
+            if( _pendingChanges() ) {
+                $syncstatusBtn.addClass('pendingchanges');
+            }
+            else {
+                $syncstatusBtn.removeClass('pendingchanges');
             }
             if (p.HideHelpButton) {
                 $helpBtn.css('display', 'none').hide();
@@ -1346,8 +1356,6 @@ CswAppMode.mode = 'mobile';
             }
             if (debugOn()) {
                 $loggingBtn.css({ 'display': '' }).show();
-            } else {
-                $loggingBtn.css({ 'display': 'none' }).hide();
             }
 
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
@@ -1435,7 +1443,7 @@ CswAppMode.mode = 'mobile';
 
         function _makeSyncStatusDiv() {
             var content = '';
-            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + mobileStorage.pendingUnsyncedChanges + '</span></p>';
+            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + tryParseString(localStorage.unSyncedChanges,'0') + '</span></p>';
             content += '<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess + '</span></p>';
             content += '<p>Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt + '</span></p>';
             content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
@@ -1502,10 +1510,10 @@ CswAppMode.mode = 'mobile';
             }
         }
 
-        function _resetPendingChanges(val, setlastsyncnow) {
+        function _resetPendingChanges(setlastsyncnow) {
 
             $('#ss_pendingchangecnt').text( tryParseString(localStorage.unSyncedChanges,'0') );
-            if (val) {
+            if ( _pendingChanges() ) {
                 $('.onlineStatus').addClass('pendingchanges')
                                   .find('span.ui-btn-text')
                                   .addClass('pendingchanges');
@@ -1514,11 +1522,14 @@ CswAppMode.mode = 'mobile';
                                   .find('span.ui-btn-text')
                                   .removeClass('pendingchanges');
             }
-            if (setlastsyncnow) {
-                $('#ss_lastsync_success').text( mobileStorage.lastSyncSuccess() );
-            }
-            else {
-                $('#ss_lastsync_attempt').text( mobileStorage.lastSyncAttempt() );
+            
+            if(arguments.length === 1) {
+                if (setlastsyncnow) {
+                    $('#ss_lastsync_success').text(mobileStorage.lastSyncSuccess());
+                }
+                else {
+                    $('#ss_lastsync_attempt').text(mobileStorage.lastSyncAttempt());
+                }
             }
         }
 
@@ -1531,7 +1542,8 @@ CswAppMode.mode = 'mobile';
         }
 
         function _pendingChanges() {
-            return ($('#ss_pendingchangecnt').text() === 'Yes');
+            var changes = new Number(tryParseString(localStorage.unSyncedChanges,'0'))
+            return (changes > 0);
         }
 
         // ------------------------------------------------------------------------------------
@@ -1726,7 +1738,7 @@ CswAppMode.mode = 'mobile';
             // update the xml and store it
             if (!isNullOrEmpty($currentViewXml)) {
                 mobileStorage.addUnsyncedChange();
-                _resetPendingChanges(true, false);
+                _resetPendingChanges(false);
                 
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
                 var $nodeXml = $( localStorage[nodeId] );
@@ -1869,7 +1881,6 @@ CswAppMode.mode = 'mobile';
             this.clearUnsyncedChanges = function() {
                 localStorage['unSyncedChanges'] = '0';
             };
-            this.pendingUnsyncedChanges = tryParseString(localStorage['unSyncedChanges'],'0');
             this.stayOffline = function(value) {
                 if(arguments.length === 1) {
                     localStorage['stayOffline'] = isTrue(value);
@@ -1942,7 +1953,7 @@ CswAppMode.mode = 'mobile';
                     }
                 }
                 if (!modified) {
-                    _resetPendingChanges(false, true);
+                    _resetPendingChanges(true);
                     onSuccess();
                 }
             }
@@ -2052,7 +2063,7 @@ CswAppMode.mode = 'mobile';
                                     var $xml = $(data.xml);
                                     _updateStoredViewXml(rootid, $xml, '0');
                                     mobileStorage.clearUnsyncedChanges();
-                                    _resetPendingChanges(false, true);
+                                    _resetPendingChanges(true);
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
