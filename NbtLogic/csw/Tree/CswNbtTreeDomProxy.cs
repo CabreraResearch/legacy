@@ -18,7 +18,7 @@ namespace ChemSW.Nbt
     /// </summary>
     public class CswNbtTreeDomProxy : ICswNbtTree
     {
-        private CswNbtTreePermissions _CswNbtTreePermissions = null;
+        //private CswNbtTreePermissions _CswNbtTreePermissions = null;
         //        private CswNbtNodeCatalogue _CswNbtNodeCatalogue = new CswNbtNodeCatalogue();
         //        private CswNbtNodeFactory _CswNbtNodeFactory = null;
         private CswNbtTreeNodes _CswNbtTreeNodes = null;
@@ -102,7 +102,7 @@ namespace ChemSW.Nbt
             _CswNbtNodeWriter = CswNbtNodeWriter;
 
             _CswNbtResources = CswNbtResources;
-            _CswNbtTreePermissions = new CswNbtTreePermissions( _CswNbtResources );
+            //_CswNbtTreePermissions = new CswNbtTreePermissions( _CswNbtResources );
             //            _CswNbtNodeFactory = CswNbtResources.makeCswNbtNodeFactory();
 
             _XslFilePath = CswTools.getConfigurationFilePath( CswNbtResources.SetupVbls.SetupMode );
