@@ -11,28 +11,28 @@ namespace ChemSW.Nbt
 {
     enum TblRtrvlType { CreateNonExistent, ComplainAboutNonExistent };
     
-    /// <summary>
-    /// Audit Level definition
-    /// </summary>
-    public enum NbtAuditLevel
-    {
-        /// <summary>
-        /// No auditing
-        /// </summary>
-        None, 
-        /// <summary>
-        /// Records changes only
-        /// </summary>
-        Simple, 
-        /// <summary>
-        /// Records changes and a one-way encrypted hash of values
-        /// </summary>
-        Hashed, 
-        /// <summary>
-        /// Requires an electronic signature
-        /// </summary>
-        Esig
-    }
+	///// <summary>
+	///// Audit Level definition
+	///// </summary>
+	//public enum NbtAuditLevel
+	//{
+	//    /// <summary>
+	//    /// No auditing
+	//    /// </summary>
+	//    None, 
+	//    /// <summary>
+	//    /// Records changes only
+	//    /// </summary>
+	//    Simple, 
+	//    /// <summary>
+	//    /// Records changes and a one-way encrypted hash of values
+	//    /// </summary>
+	//    Hashed, 
+	//    /// <summary>
+	//    /// Requires an electronic signature
+	//    /// </summary>
+	//    Esig
+	//}
 
     /// <summary>
     /// Formats for Tree XML export
@@ -117,10 +117,10 @@ namespace ChemSW.Nbt
         /// </summary>
         void iterateTree();
 
-        /// <summary>
-        /// Audit Level for tree
-        /// </summary>
-        NbtAuditLevel NbtAuditLevel { get; set; }
+		///// <summary>
+		///// Audit Level for tree
+		///// </summary>
+		//NbtAuditLevel NbtAuditLevel { get; set; }
 
         /// <summary>
         /// View XML that was used to create this tree

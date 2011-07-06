@@ -194,22 +194,22 @@ namespace ChemSW.Nbt
         }//finalize()
          */
 
-        private NbtAuditLevel _NbtAuditLevel = NbtAuditLevel.None;
-        /// <summary>
-        /// Audit Level for tree
-        /// </summary>
-        public NbtAuditLevel NbtAuditLevel
-        {
-            set
-            {
-                _NbtAuditLevel = value;
-            }//
+		//private NbtAuditLevel _NbtAuditLevel = NbtAuditLevel.None;
+		///// <summary>
+		///// Audit Level for tree
+		///// </summary>
+		//public NbtAuditLevel NbtAuditLevel
+		//{
+		//    set
+		//    {
+		//        _NbtAuditLevel = value;
+		//    }//
 
-            get
-            {
-                return ( _NbtAuditLevel );
-            }//
-        }//NbtAuditLevel
+		//    get
+		//    {
+		//        return ( _NbtAuditLevel );
+		//    }//
+		//}//NbtAuditLevel
 
         private string _SourceViewXml = "";
         /// <summary>
