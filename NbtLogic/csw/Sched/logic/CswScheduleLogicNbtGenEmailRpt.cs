@@ -63,6 +63,7 @@ namespace ChemSW.Nbt.Sched
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
             _CswScheduleNodeUpdater = new CswScheduleNodeUpdater( _CswNbtResources );
+			_CswNbtResources.AuditContext = "Scheduler Task: Generate Email Reports";
         }//init() 
 
         public void threadCallBack()

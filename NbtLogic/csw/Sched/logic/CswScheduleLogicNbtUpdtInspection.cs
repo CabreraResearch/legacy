@@ -58,7 +58,8 @@ namespace ChemSW.Nbt.Sched
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-        }
+			_CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
+		}
 
         private CswNbtNode _CswNbtNodeGenerator;
         private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending );
