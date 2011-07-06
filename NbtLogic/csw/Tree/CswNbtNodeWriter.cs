@@ -49,7 +49,17 @@ namespace ChemSW.Nbt
         {
             getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, PostToDatabase );
             //setDefaultPropertyValues( Node );
-        }//makeNewNodeEntry()
+
+			// case 22591 - make empty rows for every property
+			if( PostToDatabase )
+			{
+				foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
+				{
+					PropWrapper.makePropRow();
+				}
+				Node.postChanges( true );
+			}
+		}//makeNewNodeEntry()
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy )
         {

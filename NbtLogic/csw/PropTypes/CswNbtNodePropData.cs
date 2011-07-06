@@ -18,6 +18,26 @@ namespace ChemSW.Nbt.PropTypes
         private Int32 _ObjectClassPropId = Int32.MinValue;
         private DataRow _PropRow = null;
 
+		/// <summary>
+		/// Creates a row in the database for this property
+		/// </summary>
+		public void makePropRow()
+		{
+			if( _PropRow == null ) //&& dbval != DBNull.Value )  case 22591
+			{
+				_PropRow = _PropsTable.NewRow();
+				if( _NodeId != null )
+				{
+					_PropRow["nodeid"] = CswConvert.ToDbVal( _NodeId.PrimaryKey );
+					_PropRow["nodeidtablename"] = _NodeId.TableName;
+				}
+				_PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
+				_PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
+				_PropRow["pendingupdate"] = CswConvert.ToDbVal( false );
+				_PropRow["readonly"] = CswConvert.ToDbVal( false );
+				_PropsTable.Rows.Add( _PropRow );
+			}
+		}
 
         /// <summary>
         /// Sets the value of a column for a property
@@ -31,20 +51,10 @@ namespace ChemSW.Nbt.PropTypes
             bool ret = false;
             object dbval = CswConvert.ToDbVal( value );
 
-            if( _PropRow == null && dbval != DBNull.Value )
+            if( _PropRow == null ) //&& dbval != DBNull.Value )  case 22591
             {
-                _PropRow = _PropsTable.NewRow();
-                if( _NodeId != null )
-                {
-                    _PropRow["nodeid"] = CswConvert.ToDbVal( _NodeId.PrimaryKey );
-                    _PropRow["nodeidtablename"] = _NodeId.TableName;
-                }
-                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
-                _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
-                _PropRow["pendingupdate"] = CswConvert.ToDbVal( false );
-                _PropRow["readonly"] = CswConvert.ToDbVal( false );
-                _PropsTable.Rows.Add( _PropRow );
-                ret = true;
+				makePropRow();
+				ret = true;
             }
 
             if( _PropRow != null )

@@ -4,6 +4,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Security;
@@ -61,6 +62,22 @@ namespace ChemSW.Nbt.Schema
 					CancelledNTP.DisplayColumn = 1;
 				} // if( ActionTab != null )
 			} // foreach( CswNbtMetaDataNodeType InspectionNT in InspectionOC.NodeTypes )
+
+
+			// case 22591
+			// Insert empty records in jct_nodes_props for all node properties
+			foreach( CswNbtMetaDataNodeType NodeType in _CswNbtSchemaModTrnsctn.MetaData.NodeTypes )
+			{
+				foreach( CswNbtNode Node in NodeType.getNodes( true, true ) )
+				{
+					foreach( CswNbtNodePropWrapper Prop in Node.Properties )
+					{
+						Prop.makePropRow();
+					}
+					Node.postChanges( true );
+
+				} // foreach(CswNbtNode Node in NodeType.getNodes(true, true)
+			} // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtSchemaModTrnsctn.MetaData.NodeTypes )
 
 		} // update()
 
