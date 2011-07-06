@@ -1,5 +1,5 @@
 /// <reference path="../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../thirdparty/jquery/core/jquery.mobile/jquery.mobile.2011.5.27.js" />
+/// <reference path="../thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.js" />
 /// <reference path="../thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
 /// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
 /// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
@@ -38,6 +38,7 @@ CswAppMode.mode = 'mobile';
         if (!isNullOrEmpty($li)) {
             $li.unbind('click');
             $ret = $li.find('li a').bind('click', function() {
+                $.mobile.hidePageLoadingMsg();
                 var dataurl = $(this).CswAttrXml('data-url');
                 var $thisPage = $('#' + dataurl);
                 $thisPage.doChangePage();
@@ -427,7 +428,7 @@ CswAppMode.mode = 'mobile';
 
         function _loadDivContents(params) {
             var logger = new profileMethod('loadDivContents');
-            //$.mobile.showPageLoadingMsg();
+            $.mobile.showPageLoadingMsg();
 
             kickStartAutoSync();
             
@@ -663,6 +664,7 @@ CswAppMode.mode = 'mobile';
             }
             
             $retLI.bind('click', function() {
+                $.mobile.showPageLoadingMsg();
                 var par = {ParentId: p.DivId,
                     parentlevel: p.parentlevel,
                     level: p.parentlevel + 1,
@@ -1358,6 +1360,7 @@ CswAppMode.mode = 'mobile';
             $div.find('#' + DivId + '_searchopen')
                 .unbind('click')
                 .bind('click', function() {
+                    $.mobile.showPageLoadingMsg();
                     onSearchOpen(DivId);
                     return false;
                 })
@@ -1365,6 +1368,7 @@ CswAppMode.mode = 'mobile';
                 .find('#' + DivId + '_gosyncstatus')
                 .unbind('click')
                 .bind('click', function() {
+                    $.mobile.showPageLoadingMsg();
                     onSyncStatusOpen(DivId);
                     return false;
                 })
@@ -1372,6 +1376,7 @@ CswAppMode.mode = 'mobile';
                 .find('#' + DivId + '_refresh')
                 .unbind('click')
                 .bind('click', function() {
+                    $.mobile.showPageLoadingMsg();
                     onRefresh();
                     return false;
                 })
@@ -1379,6 +1384,7 @@ CswAppMode.mode = 'mobile';
                 .find('#' + DivId + '_logout')
                 .unbind('click')
                 .bind('click', function(e) {
+                    $.mobile.showPageLoadingMsg();
                     onLogout(DivId, e);
                     return false;
                 })
@@ -1386,6 +1392,7 @@ CswAppMode.mode = 'mobile';
                 .find('#' + DivId + '_help')
                 .unbind('click')
                 .bind('click', function() {
+                    $.mobile.showPageLoadingMsg();
                     onHelp(DivId, ParentId);
                     return false;
                 })
@@ -1442,6 +1449,7 @@ CswAppMode.mode = 'mobile';
                    
             $retDiv.find('#ss_forcesync')
                             .bind('click', function() {
+                                $.mobile.showPageLoadingMsg();
                                 _processChanges(false);
                                 return false;
                             })
@@ -1774,6 +1782,7 @@ CswAppMode.mode = 'mobile';
         }
 
         function onSearchSubmit(DivId) {
+            $.mobile.showPageLoadingMsg();
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
             var $resultsDiv = $('#' + DivId + '_searchresults')
@@ -1806,6 +1815,7 @@ CswAppMode.mode = 'mobile';
                 }
                 $content.page();
             }
+            $.mobile.hidePageLoadingMsg();
         } // onSearchSubmit()
 
         // ------------------------------------------------------------------------------------
@@ -2026,6 +2036,7 @@ CswAppMode.mode = 'mobile';
                                         _waitForData();
                                     }
                                     onLoginFail(text);
+                                    $.mobile.hidePageLoadingMsg();
                                 },
                                 success: function(data) {
                                     logger.setAjaxSuccess();
@@ -2037,24 +2048,28 @@ CswAppMode.mode = 'mobile';
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
-                                    
+                                    $.mobile.hidePageLoadingMsg();
                                 },
                                 error: function(data) {
                                     setOffline();
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
+                                    $.mobile.hidePageLoadingMsg();
                                 }
                             });
                     } else {
                         if (perpetuateTimer) {
                             _waitForData();
                         }
+                        $.mobile.hidePageLoadingMsg();
                     }
                 }); // _getModifiedView();
             } else {
-                if (perpetuateTimer)
+                if (perpetuateTimer) {
                     _waitForData();
+                }
+                $.mobile.hidePageLoadingMsg();
             } // if(SessionId != '') 
             cacheLogInfo(logger);
         } //_processChanges()
