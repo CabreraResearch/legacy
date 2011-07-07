@@ -131,7 +131,7 @@ namespace ChemSW.NbtWebControls
             if( View != null )   // BZ 8551 #11
             {
                 if( ( View.ViewId.isSet() && !ViewsInQuickLaunch.ContainsKey( View.ViewId ) ) ||
-                    ( !View.ViewId.isSet() && View.SessionViewId.isSet() && !ViewsInQuickLaunch.ContainsKey( View.SessionViewId ) ) )
+					( !View.ViewId.isSet() && View.SessionViewId != null && View.SessionViewId.isSet() && !ViewsInQuickLaunch.ContainsKey( View.SessionViewId ) ) )
                 {
                     _AddQuickLaunchHeader();
 
