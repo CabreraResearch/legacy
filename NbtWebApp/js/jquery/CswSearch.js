@@ -163,6 +163,7 @@ var CswSearch_CssClasses = {
                                                 'nodetypeorobjectclassid': $thisSelect.val(),
                                                 'relatedidtype': $thisSelect.find(':selected').CswAttrDom('title'),
                                                 'cswnbtnodekey': '',
+                                                'optionId': $thisSelect.find(':selected').CswAttrDom('id'),
                                                 '$parent': o.$searchTable,
                                                 '$nodeTypesSelect': $thisSelect 
                                            };
@@ -170,10 +171,10 @@ var CswSearch_CssClasses = {
                                            getNewProps();  
                                     });
             o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrDom('title');
-
+            
             if(o.nodetypeorobjectclassid !== '' )
             {
-                o.$nodeTypesSelect.val(o.nodetypeorobjectclassid).CswAttrDom('selected',true);
+                o.$nodeTypesSelect.find('option[id="' + o.optionId + '"]').CswAttrDom('selected',true);
             }
             $typeSelectCell.append(o.$nodeTypesSelect);
         
