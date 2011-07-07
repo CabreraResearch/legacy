@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.WebServices
 
 		#region Error Handling
 
-		private void _error( Exception ex, out ErrorType Type, out string Message, out string Detail )
+		private void _error( Exception ex, out ErrorType Type, out string Message, out string Detail, out bool Display )
 		{
 			if( _CswNbtResources != null )
 			{
@@ -116,7 +116,14 @@ namespace ChemSW.Nbt.WebServices
 			{
 				newEx = new CswDniException( ex.Message, ex );
 			}
-
+			if( newEx.Type == ErrorType.Warning )
+			{
+				Display = ( _CswNbtResources.getConfigVariableValue( "displaywarningsinui" ) != "0" );
+			}
+			else
+			{
+				Display = ( _CswNbtResources.getConfigVariableValue( "displayerrorsinui" ) != "0" );
+			}
 			Type = newEx.Type;
 			Message = newEx.MsgFriendly;
 			Detail = newEx.MsgEscoteric + "; " + ex.StackTrace;
@@ -173,10 +180,12 @@ namespace ChemSW.Nbt.WebServices
 			string Message = string.Empty;
 			string Detail = string.Empty;
 			ErrorType Type = ErrorType.Error;
-			_error( ex, out Type, out Message, out Detail );
+			bool Display = true;
+			_error( ex, out Type, out Message, out Detail, out Display );
 
 			XmlDocument ErrorXmlDoc = new XmlDocument();
 			CswXmlDocument.SetDocumentElement( ErrorXmlDoc, "error" );
+			CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "display", Display.ToString().ToLower() );
 			CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "type", Type.ToString() );
 			CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "message", Message );
 			CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "detail", Detail );
@@ -191,9 +200,11 @@ namespace ChemSW.Nbt.WebServices
 			string Message = string.Empty;
 			string Detail = string.Empty;
 			ErrorType Type = ErrorType.Error;
-			_error( ex, out Type, out Message, out Detail );
+			bool Display = true;
+			_error( ex, out Type, out Message, out Detail, out Display );
 
 			return new XElement( "error",
+				new XAttribute( "display", Display.ToString().ToLower() ),
 				new XAttribute( "type", Type.ToString() ),
 				new XAttribute( "message", Message ),
 				new XAttribute( "detail", Detail ) );
@@ -207,11 +218,13 @@ namespace ChemSW.Nbt.WebServices
 			string Message = string.Empty;
 			string Detail = string.Empty;
 			ErrorType Type = ErrorType.Error;
-			_error( ex, out Type, out Message, out Detail );
+			bool Display = true;
+			_error( ex, out Type, out Message, out Detail, out Display );
 
 			return new JObject(
 				new JProperty( "error",
 						new JObject(
+							new JProperty( "display", Display.ToString().ToLower() ),
 							new JProperty( "type", Type.ToString() ),
 							new JProperty( "message", Message ),
 							new JProperty( "detail", Detail ) ) ) );

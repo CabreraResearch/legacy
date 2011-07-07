@@ -151,6 +151,7 @@ function CswAjaxJSON(options)
     		if (result.error !== undefined)
     		{
     			_handleAjaxError(XMLHttpRequest, {
+					'display': result.error.display,
     				'type': result.error.type,
     				'message': result.error.message,
     				'detail': result.error.detail
@@ -240,7 +241,8 @@ function CswAjaxXml(options)
 
     			if ($realxml.first().get(0).nodeName === "error")
     			{
-    				_handleAjaxError(XMLHttpRequest, { 
+    				_handleAjaxError(XMLHttpRequest, {
+    					'display': $realxml.CswAttrXml('display'),
 						'type': $realxml.CswAttrXml('type'),
 						'message': $realxml.CswAttrXml('message'),
 						'detail': $realxml.CswAttrXml('detail') 
@@ -283,7 +285,7 @@ function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
     //		ErrorMessage += "; Exception: " + errorThrown.toString()
     //	}
     var $errorsdiv = $('#ErrorDiv');
-    if ($errorsdiv.length > 0)
+    if ($errorsdiv.length > 0 && isTrue(errorJson.display))
     {
         $errorsdiv.CswErrorMessage({ 'type': errorJson.type, 'message': errorJson.message, 'detail': errorJson.detail });
     } else
