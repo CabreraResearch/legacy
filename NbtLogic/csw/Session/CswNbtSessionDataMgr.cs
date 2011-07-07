@@ -55,28 +55,50 @@ namespace ChemSW.Nbt
             return ret;
         }
 
-        public XElement getQuickLaunchXml()
+        public XElement getQuickLaunchXml( CswCommaDelimitedString UserQuickLaunchViews, CswCommaDelimitedString UserQuickLaunchActions )
         {
             XElement Root = new XElement( "items" );
 
             CswTableSelect SessionDataSelect = _CswNbtResources.makeCswTableSelect( "getQuickLaunchXml_select", "session_data" );
             Collection<OrderByClause> OrderBy = new Collection<OrderByClause>();
             OrderBy.Add( new OrderByClause( SessionDataColumn_PrimaryKey, OrderByType.Descending ) );
-            DataTable SessionDataTable = SessionDataSelect.getTable( "where " + SessionDataColumn_SessionId + "='" + _CswNbtResources.Session.SessionId + "' and " + SessionDataColumn_QuickLaunch + " = '" + CswConvert.ToDbVal( true ).ToString() + "'", OrderBy );
+
+            string WhereClause = @"where " + SessionDataColumn_SessionId + "='" + _CswNbtResources.Session.SessionId + "' and "
+                                 + SessionDataColumn_QuickLaunch + " = '" + CswConvert.ToDbVal( true ).ToString() + "'";
+            DataTable SessionDataTable = SessionDataSelect.getTable( WhereClause, OrderBy );
+
+            Collection<DataRow> RowsToProcess = new Collection<DataRow>();
+            Int32 RowCount = 0;
             foreach( DataRow Row in SessionDataTable.Rows )
             {
+                string ActionId = CswConvert.ToString( Row[SessionDataColumn_ActionId] );
+                string ViewId = CswConvert.ToString( Row[SessionDataColumn_ViewId] );
+                if( UserQuickLaunchViews.Contains( ViewId ) || UserQuickLaunchActions.Contains( ActionId ) )
+                {
+                    RowsToProcess.Add( Row );
+                }
+                else if( RowCount < 5 )
+                {
+                    RowsToProcess.Add( Row );
+                    RowCount++;
+                }
+            }
+
+            foreach( DataRow Row in RowsToProcess )
+            {
                 XElement ThisItem = new XElement( "item" );
+                Int32 ItemId = CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] );
                 ThisItem.SetAttributeValue( "launchtype", Row[SessionDataColumn_SessionDataType].ToString() );
                 ThisItem.SetAttributeValue( "text", Row[SessionDataColumn_Name].ToString() );
                 ThisItem.SetAttributeValue( "viewmode", Row[SessionDataColumn_ViewMode].ToString() );
-                ThisItem.SetAttributeValue( "itemid", new CswNbtSessionDataId( CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] ) ).ToString() );
+                ThisItem.SetAttributeValue( "itemid", new CswNbtSessionDataId( ItemId ).ToString() );
 
                 Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
                 if( ActionId != Int32.MinValue )
                 {
-					ThisItem.SetAttributeValue( "actionname", _CswNbtResources.Actions[ActionId].Name.ToString() );
-					ThisItem.SetAttributeValue( "actionurl", _CswNbtResources.Actions[ActionId].Url );
-				}
+                    ThisItem.SetAttributeValue( "actionname", _CswNbtResources.Actions[ActionId].Name.ToString() );
+                    ThisItem.SetAttributeValue( "actionurl", _CswNbtResources.Actions[ActionId].Url );
+                }
                 Root.Add( ThisItem );
             }
             return Root;
@@ -182,20 +204,20 @@ namespace ChemSW.Nbt
         /// </summary>
         public void removeAllSessionData( string SessionId )
         {
-			if( SessionId != string.Empty )
-			{
-				CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_update", SessionDataTableName );
-				DataTable SessionDataTable = SessionDataUpdate.getTable( "where " + SessionDataColumn_SessionId + " = '" + SessionId + "'" );
-				if( SessionDataTable.Rows.Count > 0 )
-				{
-					Collection<DataRow> DoomedRows = new Collection<DataRow>();
-					foreach( DataRow Row in SessionDataTable.Rows )
-						DoomedRows.Add( Row );
-					foreach( DataRow Row in DoomedRows )
-						Row.Delete();
-					SessionDataUpdate.update( SessionDataTable );
-				}
-			}
+            if( SessionId != string.Empty )
+            {
+                CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_update", SessionDataTableName );
+                DataTable SessionDataTable = SessionDataUpdate.getTable( "where " + SessionDataColumn_SessionId + " = '" + SessionId + "'" );
+                if( SessionDataTable.Rows.Count > 0 )
+                {
+                    Collection<DataRow> DoomedRows = new Collection<DataRow>();
+                    foreach( DataRow Row in SessionDataTable.Rows )
+                        DoomedRows.Add( Row );
+                    foreach( DataRow Row in DoomedRows )
+                        Row.Delete();
+                    SessionDataUpdate.update( SessionDataTable );
+                }
+            }
         } // removeSessionData()
 
 
