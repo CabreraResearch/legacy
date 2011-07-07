@@ -102,6 +102,7 @@ namespace ChemSW.Nbt.WebServices
                 Tree.goToNthChild( c );
 
                 CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
+                CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
                 string ThisNodeName = Tree.getNodeNameForCurrentPosition();
                 string ThisNodeId = ThisNode.NodeId.ToString();
 
@@ -113,18 +114,23 @@ namespace ChemSW.Nbt.WebServices
 
                 if( Tree.getNodeShowInTreeForCurrentPosition() )
                 {
-                    if( _ForMobile && Tree.getChildNodeCount() == 0 )   // is a leaf
+                    if( _ForMobile && Tree.getChildNodeCount() == 0 && NodeSpecies.More != ThisNodeKey.NodeSpecies )   // is a leaf
                     {
                         _runProperties( ThisNode, ref ThisSubItems );
                     }
 
                     if( _ForMobile )
                     {
+                        if( NodeSpecies.More == ThisNodeKey.NodeSpecies )
+                        {
+                            ThisNodeName = "Results Truncated at " + MobilePageSize;
+                        }
                         ThisXmlNode.SetAttributeValue( "id", NodeIdPrefix + ThisNodeId );
                         ThisXmlNode.SetAttributeValue( "name", CswTools.SafeJavascriptParam( ThisNodeName ) );
                         ThisXmlNode.SetAttributeValue( "nodetype", CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) );
                         ThisXmlNode.SetAttributeValue( "objectclass", CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) );
                         ThisXmlNode.SetAttributeValue( "iconfilename", CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) );
+                        ThisXmlNode.SetAttributeValue( "nodespecies", CswTools.SafeJavascriptParam( ThisNodeKey.NodeSpecies.ToString() ) );
                     }
 
                     // case 20083 - search values
