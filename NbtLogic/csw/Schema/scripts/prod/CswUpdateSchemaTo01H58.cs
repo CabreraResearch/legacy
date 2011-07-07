@@ -1,4 +1,6 @@
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -26,6 +28,14 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.deleteView( "Inspections Due This Week", true );
             CswNbtMetaDataObjectClass InspectionsOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
 
+            Collection<CswNbtMetaDataNodeType> InspectionNTs = new Collection<CswNbtMetaDataNodeType>();
+            foreach( CswNbtMetaDataNodeType InspectionNT in InspectionsOC.NodeTypes
+                                                                         .Cast<CswNbtMetaDataNodeType>()
+                                                                         .Where( InspectionNT => InspectionNT.IsLatestVersion ) )
+            {
+                InspectionNTs.Add( InspectionNT );
+            }
+
             CswNbtView InspectionsDueWithinSeven = _CswNbtSchemaModTrnsctn.makeView();
             InspectionsDueWithinSeven.makeNew( "Inspections Due Within 7 Days", NbtViewVisibility.Global, null, null, null );
             InspectionsDueWithinSeven.Category = "Inspections";
@@ -41,7 +51,7 @@ namespace ChemSW.Nbt.Schema
             InspectionsDueTomorrow.Category = "Inspections";
             InspectionsDueTomorrow.ForMobile = true;
 
-            foreach( CswNbtMetaDataNodeType InspectionNt in InspectionsOC.NodeTypes )
+            foreach( CswNbtMetaDataNodeType InspectionNt in InspectionNTs )
             {
                 CswNbtViewRelationship InspectionSevenRel = InspectionsDueWithinSeven.AddViewRelationship( InspectionNt, false );
                 CswNbtViewRelationship InspectionTodayRel = InspectionsDueToday.AddViewRelationship( InspectionNt, false );
