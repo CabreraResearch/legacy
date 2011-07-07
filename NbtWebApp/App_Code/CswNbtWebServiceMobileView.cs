@@ -15,15 +15,22 @@ namespace ChemSW.Nbt.WebServices
     {
         private readonly CswNbtResources _CswNbtResources;
         private readonly bool _ForMobile;
+        private readonly Int32 MobilePageSize = 30;
 
         public CswNbtWebServiceMobileView( CswNbtResources CswNbtResources, bool ForMobile )
         {
             _CswNbtResources = CswNbtResources;
             _ForMobile = ForMobile;
+            string PageSize = _CswNbtResources.getConfigVariableValue( CswNbtResources.ConfigurationVariables.mobileview_resultlimit.ToString() );
+            if( !string.IsNullOrEmpty( PageSize ) )
+            {
+                MobilePageSize = CswConvert.ToInt32( PageSize );
+            }
         }
 
         private const string PropIdPrefix = "prop_";
         private const string NodeIdPrefix = "nodeid_";
+
 
         public XElement getViewsList( string ParentId, ICswNbtUser CurrentUser )
         {
@@ -54,7 +61,7 @@ namespace ChemSW.Nbt.WebServices
                 RetXml = _getSearchNodes( View );
             }
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false, MobilePageSize );
 
             if( Tree.getChildNodeCount() > 0 )
             {
