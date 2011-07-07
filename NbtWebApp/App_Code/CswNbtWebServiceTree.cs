@@ -51,8 +51,11 @@ namespace ChemSW.Nbt.WebServices
 				if( IncludeNodeKey != null && IncludeNodeRequired && ( //IncludeNodeKey.TreeKey != Tree.Key || 
 																		Tree.getNodeKeyByNodeId( IncludeNodeKey.NodeId ) == null ) )
 				{
-					View = _CswNbtResources.MetaData.getNodeType( IncludeNodeKey.NodeTypeId ).CreateDefaultView();
+					CswNbtMetaDataNodeType IncludeKeyNodeType = _CswNbtResources.MetaData.getNodeType( IncludeNodeKey.NodeTypeId );
+					View = IncludeKeyNodeType.CreateDefaultView();
+					View.ViewName = "New " + IncludeKeyNodeType.NodeTypeName;
 					View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeKey.NodeId );
+					View.SaveToCache( true ); // case 22713
 					Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, null, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
 				}
 
