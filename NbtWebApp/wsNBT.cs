@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.WebServices
 
 		#region Error Handling
 
-		private string error( Exception ex, out string Message, out string Detail )
+		private void _error( Exception ex, out ErrorType Type, out string Message, out string Detail )
 		{
 			if( _CswNbtResources != null )
 			{
@@ -107,32 +107,20 @@ namespace ChemSW.Nbt.WebServices
 				_CswNbtResources.Rollback();
 			}
 
+			CswDniException newEx = null;
 			if( ex is CswDniException )
 			{
-				Message = ( (CswDniException) ex ).MsgFriendly;
-				Detail = ( (CswDniException) ex ).MsgEscoteric + "; " + ex.StackTrace;
+				newEx = (CswDniException) ex;
 			}
 			else
 			{
-				Message = "An internal error occurred";
-				Detail = ex.Message + "; " + ex.StackTrace;
+				newEx = new CswDniException( Message, ex );
 			}
-			return ex.Message;
-		}
 
-		/// <summary>
-		/// Returns error as XElement
-		/// </summary>
-		private XElement _xError( Exception ex )
-		{
-			string Message = string.Empty;
-			string Detail = string.Empty;
-			error( ex, out Message, out Detail );
-
-			return new XElement( "error",
-				new XAttribute( "message", Message ),
-				new XAttribute( "detail", Detail ) );
-		}
+			Type = newEx.Type;
+			Message = newEx.MsgFriendly;
+			Detail = newEx.MsgEscoteric + "; " + ex.StackTrace;
+		} // _error()
 
 
 
@@ -184,13 +172,31 @@ namespace ChemSW.Nbt.WebServices
 		{
 			string Message = string.Empty;
 			string Detail = string.Empty;
-			error( ex, out Message, out Detail );
+			ErrorType Type = ErrorType.Error;
+			_error( ex, out Type, out Message, out Detail );
 
 			XmlDocument ErrorXmlDoc = new XmlDocument();
 			CswXmlDocument.SetDocumentElement( ErrorXmlDoc, "error" );
+			CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "type", Type.ToString() );
 			CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "message", Message );
 			CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "detail", Detail );
 			return ErrorXmlDoc;
+		}
+
+		/// <summary>
+		/// Returns error as XElement
+		/// </summary>
+		private XElement _xError( Exception ex )
+		{
+			string Message = string.Empty;
+			string Detail = string.Empty;
+			ErrorType Type = ErrorType.Error;
+			_error( ex, out Type, out Message, out Detail );
+
+			return new XElement( "error",
+				new XAttribute( "type", Type.ToString() ),
+				new XAttribute( "message", Message ),
+				new XAttribute( "detail", Detail ) );
 		}
 
 		/// <summary>
@@ -200,11 +206,13 @@ namespace ChemSW.Nbt.WebServices
 		{
 			string Message = string.Empty;
 			string Detail = string.Empty;
-			error( ex, out Message, out Detail );
+			ErrorType Type = ErrorType.Error;
+			_error( ex, out Type, out Message, out Detail );
 
 			return new JObject(
 				new JProperty( "error",
 						new JObject(
+							new JProperty( "type", Type.ToString() ),
 							new JProperty( "message", Message ),
 							new JProperty( "detail", Detail ) ) ) );
 		}
@@ -237,7 +245,7 @@ namespace ChemSW.Nbt.WebServices
 					}
 					else
 					{
-						throw new CswDniException( "There is no configuration information for this AccessId", "AccessId is null or empty." );
+						throw new CswDniException( ErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
 					}
 				}
 				catch( CswDniException ex )
