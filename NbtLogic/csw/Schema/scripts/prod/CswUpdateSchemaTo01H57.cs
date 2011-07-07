@@ -54,9 +54,9 @@ namespace ChemSW.Nbt.Schema
 				CswNbtMetaDataNodeTypeTab ActionTab = InspectionNT.getNodeTypeTab( "Action" );
 				if( ActionTab != null )
 				{
-					StatusNTP.NodeTypeTab = ActionTab;
 					StatusNTP.DisplayRow = 1;
 					StatusNTP.DisplayColumn = 1;
+					StatusNTP.NodeTypeTab = StatusNTP.NodeType.getNodeTypeTab("Action");  // get it again because of versioning
 
 					FinishedNTP.DisplayRow = 2;
 					FinishedNTP.DisplayColumn = 1;

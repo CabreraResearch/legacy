@@ -912,9 +912,12 @@ namespace ChemSW.Nbt.MetaData
 			{
 				if( NewProp.FilterNodeTypePropId != Int32.MinValue )
 				{
-					CswNbtMetaDataNodeTypeProp OldFilter = OldNodeType.getNodeTypeProp(NewProp.FilterNodeTypePropId);
-					CswNbtMetaDataNodeTypeProp NewFilter = NewNodeType.getNodeTypeProp(OldFilter.PropName);
-					NewProp.setFilter( NewFilter.PropId, NewProp.getFilterString() );
+					CswNbtMetaDataNodeTypeProp OldFilter = OldNodeType.getNodeTypeProp( NewProp.FilterNodeTypePropId );
+					if( OldFilter != null )
+					{
+						CswNbtMetaDataNodeTypeProp NewFilter = NewNodeType.getNodeTypeProp( OldFilter.PropName );
+						NewProp.setFilter( NewFilter.PropId, NewProp.getFilterString() );
+					}
 				}
 			}
 
