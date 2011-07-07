@@ -1,24 +1,22 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Text;
-using System.Collections;
-using ChemSW.RscAdo;
+using ChemSW.Audit;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Mail;
-using ChemSW.Log;
 using ChemSW.Exceptions;
+using ChemSW.Log;
+using ChemSW.Mail;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using ChemSW.Config;
+using ChemSW.RscAdo;
 using ChemSW.Security;
 using ChemSW.TblDn;
-using ChemSW.Nbt.Actions;
-using ChemSW.Audit;
 
 namespace ChemSW.Nbt
 {
@@ -44,24 +42,24 @@ namespace ChemSW.Nbt
         private CswResources _CswResources;
         private CswNbtNodeCollection _CswNbtNodeCollection = null;
         private CswNbtActionCollection _ActionCollection;
-		public CswNbtPermit Permit = null;
+        public CswNbtPermit Permit = null;
         private ICswNbtTreeFactory _CswNbtTreeFactory;
         private bool _ExcludeDisabledModules = true;
 
-		/// <summary>
-		/// Provides a means to get lists of views
-		/// </summary>
-		public CswNbtViewSelect ViewSelect;
+        /// <summary>
+        /// Provides a means to get lists of views
+        /// </summary>
+        public CswNbtViewSelect ViewSelect;
 
-		/// <summary>
-		/// Provides a means to get session data
-		/// </summary>
-		public CswNbtSessionDataMgr SessionDataMgr;
+        /// <summary>
+        /// Provides a means to get session data
+        /// </summary>
+        public CswNbtSessionDataMgr SessionDataMgr;
 
-		///// <summary>
-		///// Stores all Views used in this session, indexed by SessionViewId
-		///// </summary>
-		//public CswNbtViewCache ViewCache;
+        ///// <summary>
+        ///// Stores all Views used in this session, indexed by SessionViewId
+        ///// </summary>
+        //public CswNbtViewCache ViewCache;
 
         /// <summary>
         /// This is for a select set of DB-aware classes ONLY.  Do not use for business logic.
@@ -87,16 +85,16 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtResources( AppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical )
         {
-			_CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical );
-	
-			_DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
-			logMessage( "CswNbtResources CREATED GUID: " + _DebugID );
+            _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical );
 
-			_ExcludeDisabledModules = ExcludeDisabledModules;
+            _DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
+            logMessage( "CswNbtResources CREATED GUID: " + _DebugID );
+
+            _ExcludeDisabledModules = ExcludeDisabledModules;
             //ViewCache = new CswNbtViewCache( this );
             ViewSelect = new CswNbtViewSelect( this );
-			SessionDataMgr = new CswNbtSessionDataMgr( this );
-			Permit = new CswNbtPermit( this );
+            SessionDataMgr = new CswNbtSessionDataMgr( this );
+            Permit = new CswNbtPermit( this );
         }
 
         public PooledConnectionState PooledConnectionState { set { _CswResources.PooledConnectionState = value; } }
@@ -130,26 +128,26 @@ namespace ChemSW.Nbt
                 return ret;
             }
         }
-		//private CswNbtTreeCache _CswNbtTreeCache = null;
-		///// <summary>
-		///// Access to all trees loaded during this session
-		///// </summary>
-		//public CswNbtTreeCache Trees
-		//{
-		//    get
-		//    {
-		//        return ( _CswNbtTreeCache );
-		//    }
-		//}
+        //private CswNbtTreeCache _CswNbtTreeCache = null;
+        ///// <summary>
+        ///// Access to all trees loaded during this session
+        ///// </summary>
+        //public CswNbtTreeCache Trees
+        //{
+        //    get
+        //    {
+        //        return ( _CswNbtTreeCache );
+        //    }
+        //}
 
         private CswNbtTreeBuilder _CswNbtTreeBuilder = null;
-		public CswNbtTreeBuilder Trees
-		{
-			get
-			{
-				return _CswNbtTreeBuilder;
-			}
-		}
+        public CswNbtTreeBuilder Trees
+        {
+            get
+            {
+                return _CswNbtTreeBuilder;
+            }
+        }
 
         /// <summary>
         /// Access to all nodes loaded during this session, and to create new nodes without trees or views
@@ -159,14 +157,14 @@ namespace ChemSW.Nbt
             get { return _CswNbtNodeCollection; }
         }
 
-		public CswNbtNode getNode( CswNbtNodeKey NodeKey, DateTime Date )
-		{
-			return _CswNbtNodeCollection.GetNode( NodeKey.NodeId, Date );
-		}
-		public CswNbtNode getNode( CswPrimaryKey NodePk, DateTime Date )
-		{
-			return _CswNbtNodeCollection.GetNode( NodePk, Date );
-		}
+        public CswNbtNode getNode( CswNbtNodeKey NodeKey, DateTime Date )
+        {
+            return _CswNbtNodeCollection.GetNode( NodeKey.NodeId, Date );
+        }
+        public CswNbtNode getNode( CswPrimaryKey NodePk, DateTime Date )
+        {
+            return _CswNbtNodeCollection.GetNode( NodePk, Date );
+        }
 
         #endregion Nodes and Trees
 
@@ -269,7 +267,7 @@ namespace ChemSW.Nbt
         void _CswNbtMetaData_OnMakeNewNodeType( CswNbtMetaDataNodeType NewNodeType, bool IsCopy )
         {
             if( OnMakeNewNodeType != null )
-				OnMakeNewNodeType( NewNodeType, IsCopy );
+                OnMakeNewNodeType( NewNodeType, IsCopy );
         }
 
         /// <summary>
@@ -436,7 +434,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public void ClearCache()
         {
-            _clear(); 
+            _clear();
             initModules();
             //_initNotifications( true );
             _ActionCollection = new CswNbtActionCollection( this );
@@ -490,26 +488,29 @@ namespace ChemSW.Nbt
             _CswNbtTreeFactory.CswNbtNodeCollection = _CswNbtNodeCollection;
             //_CswNbtTreeCache = new CswNbtTreeCache( this, _CswNbtTreeFactory );
 
-			_CswNbtTreeBuilder = new CswNbtTreeBuilder( this, _CswNbtTreeFactory ); 
-			_CswResources.SetDbResources();
+            _CswNbtTreeBuilder = new CswNbtTreeBuilder( this, _CswNbtTreeFactory );
+            _CswResources.SetDbResources();
 
-			_CswResources.OnGetAuditLevel = new Audit.GetAuditLevelHandler( handleGetAuditLevel );
+            _CswResources.OnGetAuditLevel = new Audit.GetAuditLevelHandler( handleGetAuditLevel );
         }
 
-		private void handleGetAuditLevel( DataRow DataRow, ref AuditLevel ReturnVal )
-		{
-			// case 22542
-			// Override jct_nodes_props audit level with level set on nodetype prop
-			if( DataRow.Table.TableName == "jct_nodes_props" )
-			{
-				Int32 NodeTypePropId = CswConvert.ToInt32( DataRow["nodetypepropid"] );
-				if( NodeTypePropId != Int32.MinValue )
-				{
-					CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtMetaData.getNodeTypeProp( NodeTypePropId );
-					ReturnVal = NodeTypeProp.AuditLevel;
-				} // if( NodeTypePropId != Int32.MinValue )
-			} // if( DataRow.Table.TableName == "jct_nodes_props" )
-		} // handleGetAuditLevel()
+        private void handleGetAuditLevel( DataRow DataRow, ref AuditLevel ReturnVal )
+        {
+            // case 22542
+            // Override jct_nodes_props audit level with level set on nodetype prop
+            if( DataRow.Table.TableName == "jct_nodes_props" )
+            {
+                Int32 NodeTypePropId = CswConvert.ToInt32( DataRow["nodetypepropid"] );
+                if( NodeTypePropId != Int32.MinValue )
+                {
+                    CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtMetaData.getNodeTypeProp( NodeTypePropId );
+                    if( null != NodeTypeProp )
+                    {
+                        ReturnVal = NodeTypeProp.AuditLevel;
+                    }
+                } // if( NodeTypePropId != Int32.MinValue )
+            } // if( DataRow.Table.TableName == "jct_nodes_props" )
+        } // handleGetAuditLevel()
 
         /// <summary>
         /// Commits all posted changes and closes out the transaction
@@ -551,8 +552,8 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Puts the database resources back into the resource pool
         /// </summary>
-        public void releaseDbResources() 
-        { 
+        public void releaseDbResources()
+        {
             _CswResources.releaseDbResources();
             _clear();
         }
@@ -596,25 +597,25 @@ namespace ChemSW.Nbt
             if( _Notifs == null || Reinit )
             {
                 _Notifs = new Dictionary<CswNbtNotificationKey, CswNbtObjClassNotification>();
-				//ICswNbtTree NotifTree = Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-				//for( int n = 0; n < NotifTree.getChildNodeCount(); n++ )
-				//{
-				//    NotifTree.goToNthChild( n );
+                //ICswNbtTree NotifTree = Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+                //for( int n = 0; n < NotifTree.getChildNodeCount(); n++ )
+                //{
+                //    NotifTree.goToNthChild( n );
 
-				//    CswNbtNode ThisNode = NotifTree.getNodeForCurrentPosition();
+                //    CswNbtNode ThisNode = NotifTree.getNodeForCurrentPosition();
 
-				CswNbtMetaDataObjectClass NotificationOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-				foreach( CswNbtNode ThisNode in NotificationOC.getNodes( true, false ) )
-				{
-					CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) CswNbtNodeCaster.AsNotification( ThisNode );
-					if( NotifNode.TargetNodeType != null )
-					{
-						CswNbtNotificationKey NKey = new CswNbtNotificationKey( NotifNode.TargetNodeType.NodeTypeId, NotifNode.SelectedEvent, NotifNode.Property.Value, NotifNode.Value.Text );
-						if( !_Notifs.ContainsKey( NKey ) )   // because we don't have compound unique rules yet
-							_Notifs.Add( NKey, NotifNode );  // this means that if we have redundant events, only one will be processed
-					}
-				}
-                    //NotifTree.goToParentNode();
+                CswNbtMetaDataObjectClass NotificationOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+                foreach( CswNbtNode ThisNode in NotificationOC.getNodes( true, false ) )
+                {
+                    CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) CswNbtNodeCaster.AsNotification( ThisNode );
+                    if( NotifNode.TargetNodeType != null )
+                    {
+                        CswNbtNotificationKey NKey = new CswNbtNotificationKey( NotifNode.TargetNodeType.NodeTypeId, NotifNode.SelectedEvent, NotifNode.Property.Value, NotifNode.Value.Text );
+                        if( !_Notifs.ContainsKey( NKey ) )   // because we don't have compound unique rules yet
+                            _Notifs.Add( NKey, NotifNode );  // this means that if we have redundant events, only one will be processed
+                    }
+                }
+                //NotifTree.goToParentNode();
                 //}
             }
         }
@@ -745,18 +746,18 @@ namespace ChemSW.Nbt
         /// The collection of variables and values in the configuration_variables table
         /// </summary>
         public ICollection ConfigVariables { get { return _CswResources.ConfigVariables; } }
-		/// <summary>
-		/// Information associated with the currently logged in user, Nbt-specific.
-		/// </summary>
-		public ICswNbtUser CurrentNbtUser { get { return _CswResources.CurrentUser as ICswNbtUser; } } //set { _CswResources.CurrentUser = (ICswNbtUser) value; } }
-		/// <summary>
-		/// Information associated with the currently logged in user, Nbt-specific.
-		/// </summary>
-		public InitCurrentUserHandler InitCurrentUser { get { return _CswResources.InitCurrentUser; } set { _CswResources.InitCurrentUser = value; } }
-		/// <summary>
+        /// <summary>
+        /// Information associated with the currently logged in user, Nbt-specific.
+        /// </summary>
+        public ICswNbtUser CurrentNbtUser { get { return _CswResources.CurrentUser as ICswNbtUser; } } //set { _CswResources.CurrentUser = (ICswNbtUser) value; } }
+        /// <summary>
+        /// Information associated with the currently logged in user, Nbt-specific.
+        /// </summary>
+        public InitCurrentUserHandler InitCurrentUser { get { return _CswResources.InitCurrentUser; } set { _CswResources.InitCurrentUser = value; } }
+        /// <summary>
         /// Information associated with the currently logged in user, application-independent.
         /// </summary>
-		public ICswUser CurrentUser { get { return _CswResources.CurrentUser as ICswUser; } } //set { _CswResources.CurrentUser = (ICswUser) value; } }
+        public ICswUser CurrentUser { get { return _CswResources.CurrentUser as ICswUser; } } //set { _CswResources.CurrentUser = (ICswUser) value; } }
         /// <summary>
         /// The SMTP interface
         /// </summary>
@@ -780,23 +781,23 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Appends a message to the log
         /// </summary>
-		public void logMessage( string Msg ) { _CswResources.logMessage( "(" + _DebugID + ")\t" + Msg ); }
+        public void logMessage( string Msg ) { _CswResources.logMessage( "(" + _DebugID + ")\t" + Msg ); }
         /// <summary>
         /// Appends a message to the log
         /// </summary>
-		public void logMessage( string Msg, string Filter ) { _CswResources.logMessage( "(" + _DebugID + ")\t" + Msg, Filter ); }
-		/// <summary>
-		/// Appends a timer result message to the log
-		/// </summary>
-		public void logTimerResult( string Msg, string TimerResult ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, TimerResult ); }
-		/// <summary>
-		/// Appends a timer result message to the log
-		/// </summary>
-		public void logTimerResult( string Msg, CswTimer Timer ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, Timer ); }
-		/// <summary>
+        public void logMessage( string Msg, string Filter ) { _CswResources.logMessage( "(" + _DebugID + ")\t" + Msg, Filter ); }
+        /// <summary>
         /// Appends a timer result message to the log
         /// </summary>
-		public void logTimerResult( string Msg, string TimerResult, string Filter ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, TimerResult, Filter ); }
+        public void logTimerResult( string Msg, string TimerResult ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, TimerResult ); }
+        /// <summary>
+        /// Appends a timer result message to the log
+        /// </summary>
+        public void logTimerResult( string Msg, CswTimer Timer ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, Timer ); }
+        /// <summary>
+        /// Appends a timer result message to the log
+        /// </summary>
+        public void logTimerResult( string Msg, string TimerResult, string Filter ) { _CswResources.logTimerResult( "(" + _DebugID + ")\t" + Msg, TimerResult, Filter ); }
         /// <summary>
         /// Appends an exception to the log
         /// </summary>
@@ -858,10 +859,10 @@ namespace ChemSW.Nbt
         /// Provides meta data information about tables and columns, from data_dictionary
         /// </summary>
         public ICswDataDictionaryReader DataDictionary { get { return _CswResources.DataDictionary; } }
-		/// <summary>
-		/// Set the context information for this audit transaction
-		/// </summary>
-		public string AuditContext { set { _CswResources.AuditContext = value; } }
+        /// <summary>
+        /// Set the context information for this audit transaction
+        /// </summary>
+        public string AuditContext { set { _CswResources.AuditContext = value; } }
 
         #endregion Pass-thru to CswResources
 
