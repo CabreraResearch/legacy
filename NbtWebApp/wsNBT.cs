@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			else
 			{
-				newEx = new CswDniException( Message, ex );
+				newEx = new CswDniException( ex.Message, ex );
 			}
 
 			Type = newEx.Type;
