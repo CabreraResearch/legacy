@@ -96,9 +96,9 @@ namespace ChemSW.Nbt
             get
             {
                 if( NodeKey == null )
-                    throw new CswDniException( "Invalid Node", "CswNbtNodeCollection received a null NodeKey" );
+					throw new CswDniException( ErrorType.Error, "Invalid Node", "CswNbtNodeCollection received a null NodeKey" );
                 if( NodeKey.NodeSpecies != NodeSpecies.Plain )
-                    throw new CswDniException( "Invalid Node", "CswNbtNodeCollection cannot fetch Node of species " + NodeKey.NodeSpecies.ToString() );
+					throw new CswDniException( ErrorType.Error, "Invalid Node", "CswNbtNodeCollection cannot fetch Node of species " + NodeKey.NodeSpecies.ToString() );
                 return GetNode( NodeKey.NodeId, NodeKey.NodeTypeId, NodeKey.NodeSpecies, DateTime.MinValue );
             }
         }

@@ -90,10 +90,10 @@ namespace ChemSW.Nbt
         public Int32 makeSequence( CswSequenceName SequenceName, string Prepend, string Append, Int32 Pad, Int32 InitialValueIn )
         {
             if(SequenceName.DisplayName == string.Empty)
-                throw ( new CswDniException( "Sequence Name is Required", "To create a new Sequence, the Sequence Name is Required" ) );
+				throw ( new CswDniException( ErrorType.Warning, "Sequence Name is Required", "To create a new Sequence, the Sequence Name is Required" ) );
 
             if( doesSequenceExist( SequenceName ) )
-                throw ( new CswDniException( "Sequence Error", "A sequence named " + SequenceName.DisplayName + " is already defined" ) );
+				throw ( new CswDniException( ErrorType.Warning, "Sequence Error", "A sequence named " + SequenceName.DisplayName + " is already defined" ) );
 
             Int32 InitialValue = ( Int32.MinValue != InitialValueIn ) ? InitialValueIn : 1;
             makeDbSequence( SequenceName, InitialValue );
@@ -131,7 +131,7 @@ namespace ChemSW.Nbt
             }
             else
             {
-                throw ( new CswDniException( "Sequence Error", "Sequence with SequenceId " + SequenceId.ToString() + " is not defined" ) );
+				throw ( new CswDniException( ErrorType.Error, "Sequence Error", "Sequence with SequenceId " + SequenceId.ToString() + " is not defined" ) );
             }
 
         } // editSequence()
@@ -158,7 +158,7 @@ namespace ChemSW.Nbt
             }
             else
             {
-                throw new CswDniException( "Invalid Sequence", "User attempted to assign a non-existant sequence name: " + SequenceName.DisplayName );
+				throw new CswDniException( ErrorType.Error, "Invalid Sequence", "User attempted to assign a non-existant sequence name: " + SequenceName.DisplayName );
             }
         }//assignSequence()
 

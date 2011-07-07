@@ -64,11 +64,11 @@ namespace ChemSW.Nbt
         {
             // save nodename and pendingupdate
             if ( Node.NodeId.TableName != "nodes" )
-                throw new CswDniException( "Internal data error", "CswNbtNodeWriterNative attempted to write a node in table: " + Node.NodeId.TableName );
+				throw new CswDniException( ErrorType.Error, "Internal data error", "CswNbtNodeWriterNative attempted to write a node in table: " + Node.NodeId.TableName );
 
             DataTable NodesTable = CswTableUpdateNodes.getTable( "nodeid", Node.NodeId.PrimaryKey );
             if ( 1 != NodesTable.Rows.Count )
-                throw ( new CswDniException( "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.NodeId.ToString() + ")" ) );
+				throw ( new CswDniException( ErrorType.Error, "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.NodeId.ToString() + ")" ) );
 
 			NodesTable.Rows[0]["nodename"] = Node.NodeName;
 			NodesTable.Rows[0]["pendingupdate"] = CswConvert.ToDbVal( Node.PendingUpdate );
@@ -80,7 +80,7 @@ namespace ChemSW.Nbt
         public void updateRelationsToThisNode( CswNbtNode Node )
         {
             if( Node.NodeId.TableName != "nodes" )
-                throw new CswDniException( "Internal System Error", "CswNbtNodeWriterNative.updateRelationsToThisNode() called on a non-native node" );
+				throw new CswDniException( ErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.updateRelationsToThisNode() called on a non-native node" );
 
             CswStaticSelect RelatedsQuerySelect = _CswNbtResources.makeCswStaticSelect( "updateRelationsToThisNode_select", "getRelationshipsToNode" );
             RelatedsQuerySelect.S4Parameters.Add( "getnodeid", Node.NodeId.PrimaryKey.ToString() );
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt
 
                 // Delete property values of relationships to this node
                 if( CswNbtNode.NodeId.TableName != "nodes" )
-                    throw new CswDniException( "Internal System Error", "CswNbtNodeWriterNative.delete() called on a non-native node" );
+					throw new CswDniException( ErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.delete() called on a non-native node" );
 
                 CswStaticSelect RelationshipsSelect = _CswNbtResources.makeCswStaticSelect( "deletenode_select", "getRelationshipsToNode" );
                 RelationshipsSelect.S4Parameters.Add( "getnodeid", CswNbtNode.NodeId.PrimaryKey.ToString() );

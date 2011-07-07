@@ -53,7 +53,7 @@ namespace ChemSW.Nbt
             CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodeWriterRelationalDb.getDataTable_update", TableName );
             NodesTable = CswTableUpdate.getTable( PkColumnName, Node.NodeId.PrimaryKey );
             if( 1 != NodesTable.Rows.Count )
-                throw ( new CswDniException( "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.NodeId.ToString() + ")" ) );
+				throw ( new CswDniException( ErrorType.Error, "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.NodeId.ToString() + ")" ) );
 
             //return ( NodesTable );
         }//_getDataTable()

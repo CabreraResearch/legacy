@@ -50,7 +50,7 @@ namespace ChemSW.Nbt
                 }
             }
             else
-                throw new CswDniException( "Invalid ViewNode", "CswNbtViewNode.makeViewNode() got an invalid ViewNodeString: " + ViewNodeString.ToString() );
+				throw new CswDniException( ErrorType.Error, "Invalid ViewNode", "CswNbtViewNode.makeViewNode() got an invalid ViewNodeString: " + ViewNodeString.ToString() );
 
             return newNode;
         }
@@ -113,7 +113,7 @@ namespace ChemSW.Nbt
             }
 
             if( bError )
-                throw new CswDniException( "Invalid Operation", "CswNbtViewNode.RemoveChild attempted to perform an invalid RemoveChild" );
+				throw new CswDniException( ErrorType.Error, "Invalid Operation", "CswNbtViewNode.RemoveChild attempted to perform an invalid RemoveChild" );
         }
 
 
@@ -152,7 +152,7 @@ namespace ChemSW.Nbt
             }
 
             if( bError )
-                throw new CswDniException( "Invalid Operation", "CswNbtViewNode attempted to perform an invalid AddChild" );
+				throw new CswDniException( ErrorType.Error, "Invalid Operation", "CswNbtViewNode attempted to perform an invalid AddChild" );
         }
 
 
@@ -185,7 +185,7 @@ namespace ChemSW.Nbt
             }
 
             if( bError )
-                throw new CswDniException( "Invalid Operation", "CswNbtViewNode attempted to perform an invalid GetChildrenOfType with parameter: " + ChildrenViewNodeType.ToString() + " on ViewNode: " + this.ToString() );
+				throw new CswDniException( ErrorType.Error, "Invalid Operation", "CswNbtViewNode attempted to perform an invalid GetChildrenOfType with parameter: " + ChildrenViewNodeType.ToString() + " on ViewNode: " + this.ToString() );
 
             return ret;
         }

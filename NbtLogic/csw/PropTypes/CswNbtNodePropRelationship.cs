@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     if( value.TableName != TargetTableName )
                     {
-                        throw new CswDniException( "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
+						throw new CswDniException( ErrorType.Error, "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
                     }
                     if( RelatedNodeId != value )
                     {

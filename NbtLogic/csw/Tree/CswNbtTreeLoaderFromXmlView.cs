@@ -375,7 +375,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( "Invalid View", "_getProperties() attempted to run invalid SQL: " + Sql, ex );
+				throw new CswDniException( ErrorType.Error, "Invalid View", "_getProperties() attempted to run invalid SQL: " + Sql, ex );
             }
 
             ResultTable.Columns.Add( new DataColumn( "nodetypepropid" ) );
@@ -413,7 +413,7 @@ namespace ChemSW.Nbt
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( "Invalid View", "_getProperties() attempted to run invalid SQL: " + Sql, ex );
+					throw new CswDniException( ErrorType.Error, "Invalid View", "_getProperties() attempted to run invalid SQL: " + Sql, ex );
                 }
 
                 DataRow ResultRow = ResultTable.NewRow();
@@ -696,7 +696,7 @@ namespace ChemSW.Nbt
                         if( Relationship.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
                         {
                             if( Key.NodeId.TableName != RelationshipSubField.RelationalTable )
-                                throw new CswDniException( "Invalid Key", "The Key's Table does not match the Relationship Property's Table" );
+								throw new CswDniException( ErrorType.Error, "Invalid Key", "The Key's Table does not match the Relationship Property's Table" );
 
                             Where += @"and n." + TargetPkColumnName + @" in (
                                         select jnp." + RelationshipSubField.RelationalColumn + @"
@@ -726,7 +726,7 @@ namespace ChemSW.Nbt
             }
             else
             {
-                throw new CswDniException( "Invalid Key", "CswNbtTreeLoaderFromXmlView._getNodes() was given a key with an unhandled NodeSpecies: " + Key.NodeSpecies.ToString() );
+				throw new CswDniException( ErrorType.Error, "Invalid Key", "CswNbtTreeLoaderFromXmlView._getNodes() was given a key with an unhandled NodeSpecies: " + Key.NodeSpecies.ToString() );
             }
 
             // Property Filters
@@ -953,7 +953,7 @@ namespace ChemSW.Nbt
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
+					throw new CswDniException( ErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
                 }
 
                 if( SqlTimer.ElapsedDurationInSeconds > 2 )

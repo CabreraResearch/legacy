@@ -45,14 +45,14 @@ namespace ChemSW.Nbt.WebPages
                 }
                 else
                 {
-                    throw new CswDniException( "Invalid parameters for Print Label", "NodeId and PropId are required for Popup_PrintLabel.aspx" );
+					throw new CswDniException( ErrorType.Error, "Invalid parameters for Print Label", "NodeId and PropId are required for Popup_PrintLabel.aspx" );
                 }
 
                 EnsureChildControls();
 
                 CswNbtMetaDataNodeTypeProp MetaDataProp = Master.CswNbtResources.MetaData.getNodeTypeProp(PropId);
                 if (MetaDataProp == null)
-                    throw new CswDniException("Invalid PropID parameter for Print Label", "Invalid PropID parameter for Print Label: " + PropId);
+					throw new CswDniException( ErrorType.Error, "Invalid PropID parameter for Print Label", "Invalid PropID parameter for Print Label: " + PropId );
 
                 _NodeNameValueLiteral.Text = _Node.NodeName;
                 _PropNameValueLiteral.Text = _Node.Properties[MetaDataProp].PropName;

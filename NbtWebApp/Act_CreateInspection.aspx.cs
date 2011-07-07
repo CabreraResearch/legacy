@@ -384,7 +384,7 @@ namespace ChemSW.Nbt.WebPages
 
                 // Setup Sections
                 if(Sheet1.Cells[0, SectionNameColumn].Text == string.Empty)
-                    throw new CswDniException( "The first row must have a Section Name", "User must supply a Section Name in the first row" );
+					throw new CswDniException( ErrorType.Warning, "The first row must have a Section Name", "User must supply a Section Name in the first row" );
 
                 Int32 CurrentTabOrder = 1;
                 for( Int32 r = 0; r < Sheet1.Rows.Count; r++ )

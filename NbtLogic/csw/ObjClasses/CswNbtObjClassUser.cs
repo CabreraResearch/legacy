@@ -112,12 +112,12 @@ namespace ChemSW.Nbt.ObjClasses
 			{
 				if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
 				{
-					throw new CswDniException( "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
+					throw new CswDniException( ErrorType.Warning, "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
 				}
 				if( this.Username != "chemsw_admin" &&
 					CswNbtNodeCaster.AsRole(_CswNbtResources.Nodes[Role.RelatedNodeId]).Name.Text == "chemsw_admin_role" )
 				{
-					throw new CswDniException( "New users may not be assigned to the 'chemsw_admin_role' role", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to assign a new user to the 'chemsw_admin_role' role." );
+					throw new CswDniException( ErrorType.Warning, "New users may not be assigned to the 'chemsw_admin_role' role", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to assign a new user to the 'chemsw_admin_role' role." );
 				}
 			}
 
@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.ObjClasses
 				_CswNbtResources.CurrentNbtUser.Username != "chemsw_admin" &&
 				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
 			{
-				throw new CswDniException( "The 'chemsw_admin' user cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the 'chemsw_admin' user account." );
+				throw new CswDniException( ErrorType.Warning, "The 'chemsw_admin' user cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the 'chemsw_admin' user account." );
 			}
 
 		}//beforeWriteNode()
@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.ObjClasses
             //prevent user from deleting their own user
             if( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.UserId )
             {
-                throw ( new CswDniException( "You can not delete your own user account.", "Current user (" + _CswNbtResources.CurrentUser.Username + ") can not delete own UserClass node." ) );
+				throw ( new CswDniException( ErrorType.Warning, "You can not delete your own user account.", "Current user (" + _CswNbtResources.CurrentUser.Username + ") can not delete own UserClass node." ) );
             }
 
 			// case 22635 - prevent deleting chemsw_admin user
@@ -161,7 +161,7 @@ namespace ChemSW.Nbt.ObjClasses
 			if( UsernamePropWrapper.GetOriginalPropRowValue( UsernamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == "chemsw_admin" &&
 				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
 			{
-				throw new CswDniException( "The 'chemsw_admin' user cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the 'chemsw_admin' user." );
+				throw new CswDniException( ErrorType.Warning, "The 'chemsw_admin' user cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the 'chemsw_admin' user." );
 			}
 			
             CswPrimaryKey RoleId = Role.RelatedNodeId;
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //prevent user from deleting admin if they are not an admin
                 if( _RoleNodeObjClass.Administrator.Checked == Tristate.True && _CswNbtResources.CurrentNbtUser.IsAdministrator() != true )
                 {
-                    throw ( new CswDniException( "You can not delete administrator accounts because you are not an administrator.", "Block user account delete because login user (" + _CswNbtResources.CurrentUser.Username + ") is not an administrator." ) );
+					throw ( new CswDniException( ErrorType.Warning, "You can not delete administrator accounts because you are not an administrator.", "Block user account delete because login user (" + _CswNbtResources.CurrentUser.Username + ") is not an administrator." ) );
                 }
             }
         }//beforeDeleteNode()

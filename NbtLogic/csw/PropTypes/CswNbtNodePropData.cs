@@ -345,7 +345,7 @@ namespace ChemSW.Nbt.PropTypes
                     ret = ClobData;
                     break;
                 default:
-                    throw new CswDniException( "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
+					throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
             }
             return ret;
         }

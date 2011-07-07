@@ -404,7 +404,7 @@ namespace ChemSW.Nbt.WebPages
                 } // else if( _ExcelFileUpload.HasFile )
                 else
                 {
-                    throw new CswDniException( "Select a file to import", "The FileUpload control could not detect a file to upload" );
+					throw new CswDniException( ErrorType.Warning, "Select a file to import", "The FileUpload control could not detect a file to upload" );
                 }
             }
             catch( Exception ex )

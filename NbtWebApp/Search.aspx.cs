@@ -258,7 +258,7 @@ namespace ChemSW.Nbt.WebPages
                     if( DoomedView.Visibility == NbtViewVisibility.User )
                         DoomedView.Delete();
                     else
-                        throw new CswDniException( "Cannot Delete View: " + DoomedView.ViewName, "User attempted to delete a non-User view: " + DoomedView.ViewId.ToString() );
+						throw new CswDniException( ErrorType.Warning, "Cannot Delete View: " + DoomedView.ViewName, "User attempted to delete a non-User view: " + DoomedView.ViewId.ToString() );
                     _initLoadSearch();
                 }
             }

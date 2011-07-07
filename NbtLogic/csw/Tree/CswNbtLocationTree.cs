@@ -123,7 +123,7 @@ namespace ChemSW.Nbt
                     }
                     catch( Exception ex )
                     {
-                        throw new CswDniException( "Invalid View", "getLocationXml() attempted to run invalid SQL: " + PropSql, ex );
+						throw new CswDniException( ErrorType.Error, "Invalid View", "getLocationXml() attempted to run invalid SQL: " + PropSql, ex );
                     }
 
                     foreach( DataRow PropRow in PropTable.Rows )
@@ -287,7 +287,7 @@ select n.nodeid, n.nodename, o.objectclass, t.iconfilename
             }
             catch( Exception ex )
             {
-                throw new CswDniException( "Invalid View", "getLocationXmlRecursive() attempted to run invalid SQL: " + ChildLocationsSql, ex );
+				throw new CswDniException( ErrorType.Error, "Invalid View", "getLocationXmlRecursive() attempted to run invalid SQL: " + ChildLocationsSql, ex );
             }
 
             if( ChildLocationsTable.Rows.Count > 0 )

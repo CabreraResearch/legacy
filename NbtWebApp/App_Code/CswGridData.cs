@@ -380,7 +380,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( null != ReturnObj.Property( ThisPropAttribute.Name ) )
                 {
-                    throw new CswDniException( "Error attempting to add duplicate property to collection", "Property: " + ThisPropAttribute + " already exists in the JObject: " + ReturnObj.ToString() );
+					throw new CswDniException( ErrorType.Error, "Error attempting to add duplicate property to collection", "Property: " + ThisPropAttribute + " already exists in the JObject: " + ReturnObj.ToString() );
                 }
                 ReturnObj.Add( ThisPropAttribute );
             }

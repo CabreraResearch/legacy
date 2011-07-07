@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Administrator.WasModified && _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
             {
                 _CswNbtNode.Properties.clearModifiedFlag();  // prevents multiple error messages from appearing if we attempt to write() again
-                throw new CswDniException( "You may not change your own administrator status", "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the Administrator property of their own Role" );
+				throw new CswDniException( ErrorType.Warning, "You may not change your own administrator status", "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the Administrator property of their own Role" );
             }
 
 			// case 22512
@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.ObjClasses
 				_CswNbtResources.CurrentNbtUser.Username != "chemsw_admin" &&
 				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
 			{
-				throw new CswDniException( "The 'chemsw_admin_role' role cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the 'chemsw_admin_role' role." );
+				throw new CswDniException( ErrorType.Warning, "The 'chemsw_admin_role' role cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the 'chemsw_admin_role' role." );
 			}
 
 			// case 22437
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.ObjClasses
 				// You can never grant your own action permissions
 				if( _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
 				{
-					throw new CswDniException( "You may not grant access to actions for which you have no permissions",
+					throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
 						"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit their own action permissions on role: " + _CswNbtNode.NodeName );
 				}
 				// You can only grant action permissions on other roles to which you have access
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.ObjClasses
 					if( true == _CswNbtResources.Permit.can( ActionName, this ) &&
 						false == _CswNbtResources.Permit.can( ActionName, _CswNbtResources.CurrentNbtUser ) )
 					{
-						throw new CswDniException( "You may not grant access to actions for which you have no permissions",
+						throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
 							"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + CswNbtAction.ActionNameEnumToString( ActionName ) + " to role " + _CswNbtNode.NodeName );
 					}
 				} // foreach( string ActionNameString in ActionPermissions.YValues )
@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
             // Prevent deleting your own role
             if( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.RoleId )
             {
-                throw ( new CswDniException( "You can not delete your own role account.", "Current user (" + _CswNbtResources.CurrentUser.Username + ") can not delete own RoleClass node." ) );
+				throw ( new CswDniException( ErrorType.Warning, "You can not delete your own role account.", "Current user (" + _CswNbtResources.CurrentUser.Username + ") can not delete own RoleClass node." ) );
             }
 			
 			// case 22635 - prevent deleting chemsw_admin_role
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.ObjClasses
 			if( NamePropWrapper.GetOriginalPropRowValue( NamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == "chemsw_admin_role" &&
 				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
 			{
-				throw new CswDniException( "The 'chemsw_admin_role' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the 'chemsw_admin_role' role." );
+				throw new CswDniException( ErrorType.Warning, "The 'chemsw_admin_role' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the 'chemsw_admin_role' role." );
 			}
 
 			// case 22424
@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
 				CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
 				if( UserNodeAsUser.Role.RelatedNodeId == _CswNbtNode.NodeId )
 				{
-					throw ( new CswDniException( "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username, 
+					throw ( new CswDniException( ErrorType.Warning, "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username, 
 												 "Current user (" + _CswNbtResources.CurrentUser.Username + ") tried to delete a role that is in use (" + _CswNbtNode.NodeName + ") by user: " + UserNodeAsUser.Username ) );
 				}
 			}

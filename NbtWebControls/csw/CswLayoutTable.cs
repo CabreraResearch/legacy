@@ -33,9 +33,9 @@ namespace ChemSW.NbtWebControls
             {
                 // This prevents IIS from dying when very small or very large numbers are used.
                 if( inDisplayRow < 0 || inDisplayRow > 200 )
-                    throw new CswDniException( "Invalid Row", "LayoutComponent got an invalid row:" + inDisplayRow.ToString() );
+					throw new CswDniException( ErrorType.Error, "Invalid Row", "LayoutComponent got an invalid row:" + inDisplayRow.ToString() );
                 if( inDisplayColumn < 0 || inDisplayColumn > 200 )
-                    throw new CswDniException( "Invalid Column", "LayoutComponent got an invalid column:" + inDisplayColumn.ToString() );
+					throw new CswDniException( ErrorType.Error, "Invalid Column", "LayoutComponent got an invalid column:" + inDisplayColumn.ToString() );
 
                 LayoutComponentId = inLayoutComponentId;
                 DisplayRow = inDisplayRow;

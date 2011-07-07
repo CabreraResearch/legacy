@@ -325,7 +325,7 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeType makeNewNodeType(Int32 ObjectClassId, string NodeTypeName, string Category)
         {
             if (NodeTypeName == string.Empty)
-                throw new CswDniException("Node Type Name is required", "Attempted to create a new nodetype with a null nodetypename");
+				throw new CswDniException( ErrorType.Warning, "Node Type Name is required", "Attempted to create a new nodetype with a null nodetypename" );
 
             // Only new versions of the same nodetype can reuse the name
             // Temporarily override
@@ -449,12 +449,12 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeTypeTab makeNewTab(CswNbtMetaDataNodeType NodeType, string TabName, Int32 TabOrder)
         {
             if (TabName == "")
-                throw new CswDniException("New Tabs must have a non-blank name",
+				throw new CswDniException( ErrorType.Warning, "New Tabs must have a non-blank name",
                                           "Attempted to create a new nodetype_tabset record with a null tabname field");
 
             // Only new versions of the same nodetype can reuse the name
             if (NodeType.getNodeTypeTab(TabName) != null)
-                throw new CswDniException("Tab Name must be unique (per NodeType)", "Attempted to create a new nodetypetab with the same name as an existing nodetypetab on the same nodetype");
+				throw new CswDniException( ErrorType.Warning, "Tab Name must be unique (per NodeType)", "Attempted to create a new nodetypetab with the same name as an existing nodetypetab on the same nodetype" );
 
             // Version, if necessary
             NodeType = CheckVersioning(NodeType);
@@ -495,7 +495,7 @@ namespace ChemSW.Nbt.MetaData
             else
                 CswNbtMetaDataNodeTypeTab = NodeType.getNodeTypeTab(NodeTypeTabName);
             if (null == CswNbtMetaDataNodeTypeTab)
-                throw (new CswDniException("No such Nodetype Tab: " + NodeTypeTabName, "NodeType " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") does not contain a tab with name: " + NodeTypeTabName));
+				throw ( new CswDniException( ErrorType.Error, "No such Nodetype Tab: " + NodeTypeTabName, "NodeType " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") does not contain a tab with name: " + NodeTypeTabName ) );
 
             return makeNewProp(NodeType, null, FieldTypeId, PropName, CswNbtMetaDataNodeTypeTab.TabId, false, null);
         }
@@ -556,12 +556,12 @@ namespace ChemSW.Nbt.MetaData
             //ICswNbtFieldTypeRule CswNbtFieldTypeRule = FieldType.FieldTypeRule;
 
             if (PropName == string.Empty)
-                throw new CswDniException("Property Name is required", "Attempted to create a new nodetype prop with a null propname");
+				throw new CswDniException( ErrorType.Warning, "Property Name is required", "Attempted to create a new nodetype prop with a null propname" );
 
             // Make sure propname is unique for this nodetype
             //bz # 6157: Calculate displayrowadd
             if (NodeType.getNodeTypeProp(PropName) != null)
-                throw new CswDniException("Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype");
+				throw new CswDniException( ErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
 
             // Version, if necessary
             string OriginalTabName;
@@ -724,7 +724,7 @@ namespace ChemSW.Nbt.MetaData
                     }
                     else
                     {
-                        throw new CswDniException("Cannot modify locked nodetype", "Nodetype " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") cannot be modified because it is locked");
+						throw new CswDniException( ErrorType.Warning, "Cannot modify locked nodetype", "Nodetype " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") cannot be modified because it is locked" );
                     }
                 }
             }
@@ -742,7 +742,7 @@ namespace ChemSW.Nbt.MetaData
             if (OriginalObjectClassId != NewObjectClass.ObjectClassId)
             {
                 if (getObjectClass(OriginalObjectClassId).ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass)
-                    throw new CswDniException("Cannot convert this nodetype", "Nodetype " + NodeType.NodeTypeName + " cannot be converted because it is not Generic");
+					throw new CswDniException( ErrorType.Warning, "Cannot convert this nodetype", "Nodetype " + NodeType.NodeTypeName + " cannot be converted because it is not Generic" );
 
                 NodeType = CheckVersioning(NodeType);
 
@@ -805,7 +805,7 @@ namespace ChemSW.Nbt.MetaData
                 NewNodeTypeName = "Copy Of " + NodeType.NodeTypeName;
 
             if (!IsVersioning && getNodeType(NewNodeTypeName) != null)
-                throw new CswDniException("Copy failed: Name is already in use", "User tried to copy nodetype: " + NodeType.NodeTypeName + " to name: " + NewNodeTypeName + ", which is already in use");
+				throw new CswDniException( ErrorType.Warning, "Copy failed: Name is already in use", "User tried to copy nodetype: " + NodeType.NodeTypeName + " to name: " + NewNodeTypeName + ", which is already in use" );
 
             // Copy nodetype info
             DataTable NewNodeTypeTable = _CswNbtMetaDataResources.NodeTypeTableUpdate.getEmptyTable();
@@ -931,7 +931,7 @@ namespace ChemSW.Nbt.MetaData
         protected void CopyNodeTypePropFromObjectClassProp(CswNbtMetaDataObjectClassProp ObjectClassProp, DataRow NodeTypePropRow) //, CswNbtMetaDataNodeTypeProp NodeTypeProp)
         {
             if (CswConvert.ToInt32(NodeTypePropRow["fieldtypeid"]) != ObjectClassProp.FieldType.FieldTypeId)
-                throw new CswDniException("Illegal property assignment", "Attempting to assign an ObjectClassProperty (" + ObjectClassProp.PropId.ToString() + ") to a NodeTypeProperty (" + NodeTypePropRow["nodetypepropid"].ToString() + ") where their fieldtypes do not match");
+				throw new CswDniException( ErrorType.Error, "Illegal property assignment", "Attempting to assign an ObjectClassProperty (" + ObjectClassProp.PropId.ToString() + ") to a NodeTypeProperty (" + NodeTypePropRow["nodetypepropid"].ToString() + ") where their fieldtypes do not match" );
 
             ObjectClassProp.CopyPropToNewPropRow(NodeTypePropRow);
 
@@ -977,7 +977,7 @@ namespace ChemSW.Nbt.MetaData
             // If the nodetype is a prior version, prevent delete
             if (!NodeType.IsLatestVersion)
             {
-                throw new CswDniException("This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version");
+				throw new CswDniException( ErrorType.Warning, "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
             }
 
             // Delete Props
@@ -1071,7 +1071,7 @@ namespace ChemSW.Nbt.MetaData
             if (!Internal)
             {
                 if (!NodeTypeProp.IsDeletable())
-                    throw new CswDniException("Cannot delete property", "Property is not allowed to be deleted: PropId = " + NodeTypeProp.PropId);
+					throw new CswDniException( ErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: PropId = " + NodeTypeProp.PropId );
 
                 string OriginalPropName = NodeTypeProp.PropName;
                 CswNbtMetaDataNodeType NodeType = CheckVersioning(NodeTypeProp.NodeType);

@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.TreeEvents
             get
             {
                 if (_CswNbtNodeCollection == null)
-                    throw new CswDniException("Internal error", "CswNbtTreeFactory.CswNbtNodeCollection is null");
+					throw new CswDniException( "CswNbtTreeFactory.CswNbtNodeCollection is null" );
                 return _CswNbtNodeCollection;
             }
             set { _CswNbtNodeCollection = value; }

@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.WebPages
                     Action = "modify";
                     break;
                 default:
-                    throw new CswDniException( "Invalid Mode: " + ShowMode, "Popup_Statistics encountered an unhandled ShowMode: " + ShowMode );
+					throw new CswDniException( ErrorType.Error, "Invalid Mode: " + ShowMode, "Popup_Statistics encountered an unhandled ShowMode: " + ShowMode );
             }
             if(UserId != null)
                 Title += " for User " + UserNode.NodeName;

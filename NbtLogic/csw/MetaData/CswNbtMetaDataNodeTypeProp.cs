@@ -197,7 +197,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-                throw new CswDniException( "Unrecognized attribute type", "CswNbtMetaDataNodeTypeProp._setAttribute encountered an unrecognized attribute type" );
+				throw new CswDniException( ErrorType.Error, "Unrecognized attribute type", "CswNbtMetaDataNodeTypeProp._setAttribute encountered an unrecognized attribute type" );
             }
             return ret;
         } // _setAttribute()
@@ -227,7 +227,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 // BZ 5492: Make sure this is unique for this nodetype
                 if( _NodeTypePropRow["propname"].ToString() != value && this.NodeType.getNodeTypeProp( value ) != null )
-                    throw new CswDniException( "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
+					throw new CswDniException( ErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
 
                 _setAttribute( "propname", value, true );
 
@@ -445,14 +445,14 @@ namespace ChemSW.Nbt.MetaData
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( inFKValue );
                         if( TargetNodeType.ObjectClass.ObjectClassId != ObjectClassProp.FKValue )
-                            throw new CswDniException( "Invalid Target", "The property is bound to an object class property, and so its FKValue must be consistent" );
+							throw new CswDniException( ErrorType.Error, "Invalid Target", "The property is bound to an object class property, and so its FKValue must be consistent" );
 
                     }
                     else if( inFKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
                     {
                         CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( inFKValue );
                         if( TargetObjectClass.ObjectClassId != ObjectClassProp.FKValue )
-                            throw new CswDniException( "Invalid Target", "The property is bound to an object class property, and so its FKValue must be consistent" );
+							throw new CswDniException( ErrorType.Error, "Invalid Target", "The property is bound to an object class property, and so its FKValue must be consistent" );
                     }
                 }
 
@@ -884,9 +884,9 @@ namespace ChemSW.Nbt.MetaData
             set
             {
                 if( IsRequired && !value && this.DefaultValue.Empty )
-                    throw new CswDniException( "Required properties must have 'set value on add' enabled unless a default value is present", "User attempted to set SetValueOnAdd = false on a required property with an empty default value" );
+					throw new CswDniException( ErrorType.Warning, "Required properties must have 'set value on add' enabled unless a default value is present", "User attempted to set SetValueOnAdd = false on a required property with an empty default value" );
                 if( hasFilter() && value )
-                    throw new CswDniException( "Conditional properties cannot have 'set value on add' enabled", "User attempted to set SetValueOnAdd = true on a conditional property" );
+					throw new CswDniException( ErrorType.Warning, "Conditional properties cannot have 'set value on add' enabled", "User attempted to set SetValueOnAdd = true on a conditional property" );
 
                 _setAttribute( "setvalonadd", value, true );
             }
@@ -916,7 +916,7 @@ namespace ChemSW.Nbt.MetaData
         public void setFilter( Int32 FilterNodeTypePropId, string FilterString )
         {
             if( IsRequired )
-                throw new CswDniException( "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
+				throw new CswDniException( ErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
 
             bool changed = false;
             CswNbtMetaDataNodeTypeProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
@@ -997,7 +997,7 @@ namespace ChemSW.Nbt.MetaData
                 }
                 else
                 {
-                    throw new CswDniException( "Invalid filter condition", "CswNbtMetaDataNodeTypeProp only supports 'Checked Equality' filters on Logical properties" );
+					throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswNbtMetaDataNodeTypeProp only supports 'Checked Equality' filters on Logical properties" );
                 }
             }
             else
@@ -1013,7 +1013,7 @@ namespace ChemSW.Nbt.MetaData
                         ValueToCompare = FilterProp.AsText.Text;
                         break;
                     default:
-                        throw new CswDniException( "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.FieldType.FieldType.ToString() );
+						throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.FieldType.FieldType.ToString() );
                 } // switch( FilterMetaDataProp.FieldType.FieldType )
 
                 switch( FilterMode )
@@ -1031,7 +1031,7 @@ namespace ChemSW.Nbt.MetaData
                         FilterMatches = ( ValueToCompare != string.Empty );
                         break;
                     default:
-                        throw new CswDniException( "Invalid filter condition", "CswPropertyTable does not support filter mode: " + FilterMode.ToString() );
+						throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode: " + FilterMode.ToString() );
                 } // switch( FilterMode )
 
             } // if-else( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )

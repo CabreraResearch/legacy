@@ -79,7 +79,7 @@ namespace ChemSW.Nbt
 
             catch( Exception ex )
             {
-                throw new CswDniException( "Misconfigured CswViewPropertyFilterValue",
+				throw new CswDniException( ErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
                                           "CswViewPropertyFilterValue.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }//catch

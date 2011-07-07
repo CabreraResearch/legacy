@@ -239,7 +239,7 @@ namespace ChemSW.Nbt.WebPages
             else if( _IsNodeTypeSelected() )
                 PropsCollection = _getNodeTypePropsCollection( _SelectedValue );
             else
-                throw new CswDniException( "A Data Misconfiguration has occurred", "SearchCustom.aspx.cs::initPropDataTable() has a selected value which is neither a NodeType nor an ObjectClass" );
+				throw new CswDniException( ErrorType.Error, "A Data Misconfiguration has occurred", "SearchCustom.aspx.cs::initPropDataTable() has a selected value which is neither a NodeType nor an ObjectClass" );
 
             foreach( CswNbtMetaDataNodeTypeProp ThisProp in PropsCollection )
             {

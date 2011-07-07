@@ -132,7 +132,7 @@ namespace ChemSW.Nbt
         public string makeExample( Int32 ExampleValue )
         {
             if( null == _CurrentSequenceRow )
-                throw ( new CswDniException( "Internal error", "There is no current row; you must set the NodeTypePropId or SequenceId property" ) );
+				throw ( new CswDniException( ErrorType.Error, "Internal error", "There is no current row; you must set the NodeTypePropId or SequenceId property" ) );
 
             return ( formatSequence( ExampleValue ) );
         }

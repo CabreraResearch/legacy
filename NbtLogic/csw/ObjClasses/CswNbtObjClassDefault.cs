@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( CurrentProp.NodeId.TableName == "nodes" )
                         PropRefsSelect.S4Parameters.Add( "getnodeid", CurrentProp.NodeId.PrimaryKey );
                     else
-                        throw new CswDniException( "Record could not be updated.", "Error updating property reference on node in " + CurrentProp.NodeId.TableName + " table." );
+						throw new CswDniException( ErrorType.Error, "Record could not be updated.", "Error updating property reference on node in " + CurrentProp.NodeId.TableName + " table." );
                     PropRefsSelect.S4Parameters.Add( "getnodetypepropid", CurrentProp.NodeTypePropId );
                     PropRefsSelect.S4Parameters.Add( "getobjectclasspropid", CurrentProp.ObjectClassPropId );
                     DataTable PropRefsTable = PropRefsSelect.getTable();

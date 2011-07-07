@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.Sched
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( "Configuration Error", "SchedulerPollMSecs is non-numeric", ex );
+					throw new CswDniException( ErrorType.Error, "Configuration Error", "SchedulerPollMSecs is non-numeric", ex );
                 }
 
                 if( LoopDelay < 1 )
@@ -312,7 +312,7 @@ namespace ChemSW.Nbt.Sched
                 if( null != _CswNbtResources )
                 {
                     _CswNbtResources.CswLogger.reportError( ex );
-                    throw ( new CswDniException( "Error initializing NBT scheduler", "Error initializing NBT scheduler; consult the NBT scheduler log file located in " + _CswNbtResources.SetupVbls.readSetting( "LogFileLocation" ), ex ) );
+					throw ( new CswDniException( ErrorType.Error, "Error initializing NBT scheduler", "Error initializing NBT scheduler; consult the NBT scheduler log file located in " + _CswNbtResources.SetupVbls.readSetting( "LogFileLocation" ), ex ) );
                 }
                 else
                 {

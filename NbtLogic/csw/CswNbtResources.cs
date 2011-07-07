@@ -355,7 +355,7 @@ namespace ChemSW.Nbt
                     }
                     catch( Exception ex )
                     {
-                        throw new CswDniException( "Invalid Module", "An invalid module was detected in the Modules table: " + ModuleRow["name"].ToString(), ex );
+						throw new CswDniException( ErrorType.Error, "Invalid Module", "An invalid module was detected in the Modules table: " + ModuleRow["name"].ToString(), ex );
                     }
                 }
             } // if( _CswResources.IsInitializedForDbAccess )

@@ -478,7 +478,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 			if( !_CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, this.NodeType ) )
 			{
-				throw ( new CswDniException( "You do not have permission to delete this " + this.NodeType.NodeTypeName, "User attempted to delete a " + this.NodeType.NodeTypeName + " without Delete permissions" ) );
+				throw ( new CswDniException( ErrorType.Warning, "You do not have permission to delete this " + this.NodeType.NodeTypeName, "User attempted to delete a " + this.NodeType.NodeTypeName + " without Delete permissions" ) );
 			}
 
             if( null != _CswNbtObjClass )

@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
 					if( null != UserNode && 
 						!_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, UserNode, NodeTypeProp ) )
                     {
-						throw new CswDniException( "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + UserNode.NodeName + "'." );
+						throw new CswDniException( ErrorType.Warning, "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + UserNode.NodeName + "'." );
 					}
                 }
                 

@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.LocationContents )
             {
-                throw ( new CswDniException( "A data consistency problem occurred",
+				throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
                                             "CswNbtNodePropLocationContents() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
             }
         }//CswNbtNodePropLocationContents()

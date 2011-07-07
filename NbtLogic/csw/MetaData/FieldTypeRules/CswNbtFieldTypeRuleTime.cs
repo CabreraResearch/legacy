@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = ValueColumn + " is null";
                     break;
                 default:
-                    throw new CswDniException( "Invalid filter", "An invalid FilterMode was encountered in CswNbtNodeProp.GetFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+					throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtNodeProp.GetFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
             }
 
             return ( ReturnVal );

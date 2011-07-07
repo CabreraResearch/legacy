@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-                throw new CswDniException( "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
+				throw new CswDniException( ErrorType.Warning, "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
             }
 
             if( _ByObjectClass.ContainsKey( NodeType.ObjectClass.ObjectClassId ) )

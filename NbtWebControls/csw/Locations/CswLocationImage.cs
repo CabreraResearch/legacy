@@ -59,7 +59,7 @@ namespace ChemSW.NbtWebControls
                     }
                     catch (Exception e)
                     {
-                        throw new CswDniException("An internal error occurred", "Invalid LocationType: " + Type.ToString(), e);
+						throw new CswDniException( ErrorType.Error, "An internal error occurred", "Invalid LocationType: " + Type.ToString(), e );
                     }
                 }
             }

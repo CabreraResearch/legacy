@@ -385,11 +385,11 @@ namespace ChemSW.Nbt
             get
             {
                 if( NodeTypeProp == null )
-                    throw new CswDniException( "Invalid Property", "CswNbtNodePropColl[] was passed a null CswNbtMetaDataNodeTypeProp object" );
+					throw new CswDniException( ErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] was passed a null CswNbtMetaDataNodeTypeProp object" );
                 if( NodeTypeProp.NodeType.FirstVersionNodeTypeId != _NodeType.FirstVersionNodeTypeId )
-                    throw new CswDniException( "Invalid Property", "CswNbtNodePropColl[] on nodetype " + _NodeType.NodeTypeName + " (" + _NodeType.NodeTypeId + ") was passed a CswNbtMetaDataNodeTypeProp of the wrong nodetype: " + NodeTypeProp.NodeType.NodeTypeName + " (" + NodeTypeProp.NodeType.NodeTypeId + ")" );
+					throw new CswDniException( ErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] on nodetype " + _NodeType.NodeTypeName + " (" + _NodeType.NodeTypeId + ") was passed a CswNbtMetaDataNodeTypeProp of the wrong nodetype: " + NodeTypeProp.NodeType.NodeTypeName + " (" + NodeTypeProp.NodeType.NodeTypeId + ")" );
                 if( !_PropsIndexByFirstVersionPropId.Contains( NodeTypeProp.FirstPropVersionId ) )
-                    throw new CswDniException( "Invalid Property", "There is no property with this firstpropversionid " + NodeTypeProp.FirstPropVersionId.ToString() + " on nodetypeid " + _NodeTypeId.ToString() );
+					throw new CswDniException( ErrorType.Error, "Invalid Property", "There is no property with this firstpropversionid " + NodeTypeProp.FirstPropVersionId.ToString() + " on nodetypeid " + _NodeTypeId.ToString() );
 
                 return ( _Props[CswConvert.ToInt32( _PropsIndexByFirstVersionPropId[NodeTypeProp.FirstPropVersionId] )] as CswNbtNodePropWrapper );
             }//get

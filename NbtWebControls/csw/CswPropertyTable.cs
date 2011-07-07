@@ -246,7 +246,7 @@ namespace ChemSW.NbtWebControls
             try
             {
 				if( !_CswNbtResources.Permit.can( CswNbtActionName.Design ) )
-					throw new CswDniException( "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
+					throw new CswDniException( ErrorType.Warning, "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
 
                 // LayoutComponentId == PropId (set in addPropertyToTable below)
                 CswNbtMetaDataNodeTypeProp DoomedProp = _CswNbtResources.MetaData.getNodeTypeProp( LayoutComponentId );
@@ -265,7 +265,7 @@ namespace ChemSW.NbtWebControls
             try
             {
 				if( !_CswNbtResources.Permit.can( CswNbtActionName.Design ) )
-					throw new CswDniException( "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
+					throw new CswDniException( ErrorType.Warning, "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
 
                 // LayoutComponentId == PropId (set in addPropertyToTable below)
                 CswNbtMetaDataNodeTypeProp MovedProp = _CswNbtResources.MetaData.getNodeTypeProp( LayoutComponentId );
@@ -426,7 +426,7 @@ namespace ChemSW.NbtWebControls
                         }
                         else
                         {
-                            throw new CswDniException( "Invalid filter condition", "CswPropertyTable only supports 'Checked Equals' filters on Logical properties" );
+							throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable only supports 'Checked Equals' filters on Logical properties" );
                         }
                     }
                     else
@@ -442,7 +442,7 @@ namespace ChemSW.NbtWebControls
                                 ValueToCompare = ( (CswText) FilterControl ).Text;
                                 break;
                             default:
-                                throw new CswDniException( "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.FieldType.FieldType.ToString() );
+								throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.FieldType.FieldType.ToString() );
                         } // switch( FilterMetaDataProp.FieldType.FieldType )
 
                         switch( FilterMode )
@@ -460,7 +460,7 @@ namespace ChemSW.NbtWebControls
                                 FilterMatches = ( ValueToCompare != string.Empty );
                                 break;
                             default:
-                                throw new CswDniException( "Invalid filter condition", "CswPropertyTable does not support filter mode: " + FilterMode.ToString() );
+								throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode: " + FilterMode.ToString() );
                         } // switch( FilterMode )
 
                     } // if-else( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
@@ -792,7 +792,7 @@ namespace ChemSW.NbtWebControls
                     PropControl = CswFieldTypeWebControlFactory.makeControl( CswNbtResources, LayoutTable.Controls, string.Empty, PropWrapper, EditMode, HandleError );
                 }
                 else
-                    throw new CswDniException( "Invalid Property", "CswPropertyTable.addPropertyToTable requires either a valid NodeKey or a valid PropWrapper" );
+					throw new CswDniException( ErrorType.Error, "Invalid Property", "CswPropertyTable.addPropertyToTable requires either a valid NodeKey or a valid PropWrapper" );
 
                 CswLayoutTable.LayoutComponent ThisComponent = null;
                 if( EditMode == NodeEditMode.AddInPopup )

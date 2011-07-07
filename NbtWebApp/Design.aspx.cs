@@ -469,7 +469,7 @@ namespace ChemSW.Nbt.WebPages
                             _SelectedNodeTypeProp.IsRequired &&
                             _SelectedNodeTypeProp.DefaultValue.Empty )
                         {
-                            throw new CswDniException( "Required properties must have a default value if not Set Value on Add", "Default value was empty, with required true and setvalonadd false" );
+							throw new CswDniException( ErrorType.Warning, "Required properties must have a default value if not Set Value on Add", "Default value was empty, with required true and setvalonadd false" );
                         }
                     } //if( _RequiredValue != null )
 
@@ -799,7 +799,7 @@ namespace ChemSW.Nbt.WebPages
                     if( PropToSave.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                         String.Empty == ValueOptionsString )
                     {
-                        throw new CswDniException( "Compliant Answer is a required field", "Value option string is null" );
+						throw new CswDniException( ErrorType.Warning, "Compliant Answer is a required field", "Value option string is null" );
                     }
 
 					// case 21178 - trim options

@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
             else
             {
-                throw new CswDniException( "Invalid filter", "An invalid FilterMode was encountered in CswNbtFieldTypeRuleLogical.renderViewPropFilter()" );
+				throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtFieldTypeRuleLogical.renderViewPropFilter()" );
             }
 
             return ( ReturnVal );

@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.WebPages
                 _NodeKey = new CswNbtNodeKey( Master.CswNbtResources, Request.QueryString["nodekey"].ToString() );
 
                 if( _NodeKey.NodeSpecies != NodeSpecies.Plain )
-                    throw new CswDniException( "Invalid Node", "Cannot delete node of species: " + _NodeKey.NodeSpecies );
+					throw new CswDniException( ErrorType.Error, "Invalid Node", "Cannot delete node of species: " + _NodeKey.NodeSpecies );
 
                 _Node = Master.CswNbtResources.Nodes[_NodeKey];
                 bool canDelete = true;

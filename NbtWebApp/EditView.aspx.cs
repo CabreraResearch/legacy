@@ -1221,7 +1221,7 @@ namespace ChemSW.NbtWebControls
                                     _GroupByDropDown.SelectedValue = CurrentRelationship.GroupByPropId.ToString();
                             }
                             else
-                                throw new CswDniException( "A Data Misconfiguration has occurred", "CswViewEditor2._initNextOptions() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
+								throw new CswDniException( ErrorType.Error, "A Data Misconfiguration has occurred", "CswViewEditor2._initNextOptions() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
 
                             foreach( CswNbtViewRelationship R in Relationships )
                             {
@@ -2042,7 +2042,7 @@ namespace ChemSW.NbtWebControls
                     }
                     else
                     {
-                        throw new CswDniException( "Could not find view node to remove", "_HiddenRemoveButton_Click could not find match for: " + _HiddenNodeToRemoveField.Value + " in the current view." );
+						throw new CswDniException( ErrorType.Error, "Could not find view node to remove", "_HiddenRemoveButton_Click could not find match for: " + _HiddenNodeToRemoveField.Value + " in the current view." );
                     }
                 }
             }
@@ -2201,7 +2201,7 @@ namespace ChemSW.NbtWebControls
                         }
                         else
                         {
-                            throw new CswDniException( "An unexpected data condition has occurred", "CswDataSourceNodeType.getRelatedNodeTypesAndObjectClasses found a relationship which did not match the original nodetypeid" );
+							throw new CswDniException( ErrorType.Error, "An unexpected data condition has occurred", "CswDataSourceNodeType.getRelatedNodeTypesAndObjectClasses found a relationship which did not match the original nodetypeid" );
                         }
                         if( R != null )
                             R.overrideFirst( FirstVersionNodeType );
@@ -2299,7 +2299,7 @@ namespace ChemSW.NbtWebControls
                         }
                         else
                         {
-                            throw new CswDniException( "An unexpected data condition has occurred", "CswDataSourceObjectClass.getRelatedNodeTypesAndObjectClasses found a relationship which did not match the original objectclassid" );
+							throw new CswDniException( ErrorType.Error, "An unexpected data condition has occurred", "CswDataSourceObjectClass.getRelatedNodeTypesAndObjectClasses found a relationship which did not match the original objectclassid" );
                         }
                     }
                 }
@@ -2333,7 +2333,7 @@ namespace ChemSW.NbtWebControls
                 }
                 else
                 {
-                    throw new CswDniException( "A Data Misconfiguration has occurred", "CswViewEditor.initPropDataTable() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
+					throw new CswDniException( ErrorType.Error, "A Data Misconfiguration has occurred", "CswViewEditor.initPropDataTable() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
                 }
 
                 foreach( CswNbtMetaDataNodeTypeProp ThisProp in PropsCollection )

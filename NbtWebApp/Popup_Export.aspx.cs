@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.WebPages
                             _NodesGrid.Grid.MasterTableView.ExportToWord();
                             break;
                         default:
-                            throw new CswDniException( "Unknown Export Format", "The export format " + Request.QueryString["format"].ToString() + " is not supported." );
+							throw new CswDniException( ErrorType.Error, "Unknown Export Format", "The export format " + Request.QueryString["format"].ToString() + " is not supported." );
                     }
 
                 } // if( NbtViewRenderingMode.Grid == NbtViewRenderingMode )

@@ -567,7 +567,7 @@ namespace ChemSW.Nbt.WebPages
                     Master.Redirect( "Report.aspx?reportid=" + Pk.ToString() );
                     break;
                 default:
-                    throw new CswDniException( "Invalid Selection", "MainLayout.master.cs::ChangeMainView() got an invalid ViewType: " + ViewType.ToString() );
+					throw new CswDniException( ErrorType.Error, "Invalid Selection", "MainLayout.master.cs::ChangeMainView() got an invalid ViewType: " + ViewType.ToString() );
             } // switch( SelectedViewType )
         } // ChangeMainView()
 

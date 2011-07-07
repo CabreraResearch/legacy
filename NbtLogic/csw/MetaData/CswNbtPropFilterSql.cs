@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.MetaData
                             ReturnVal = NumericValueColumn + " <> " + CswNbtViewPropertyFilterIn.Value;
                             break;
                         default:
-                            throw new CswDniException( "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+							throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
                     }  //switch
                 }
                 else
@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.MetaData
 										" or " + NonNumericValueColumn + " is null )";   // case 21623
                             break;
                         default:
-                            throw new CswDniException( "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+							throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
                     }  //switch
 
                 }//if-else UserNumericHack
@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.MetaData
                         ReturnVal = NullValueColumn + " is null";
                         break;
                     default:
-                        throw new CswDniException( "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+						throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
                 }  //switch
 
             }//if-else filter mode is not null or not-null

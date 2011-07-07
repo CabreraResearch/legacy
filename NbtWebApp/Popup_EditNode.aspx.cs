@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.WebPages
                     else
                     {
                         string Errormsg = MetaDataNodeType.NodeTypeName + " has a unique and required property (" + MultiEditErrorPropName + "), and cannot be multi-added.";
-                        throw new CswDniException( Errormsg, Errormsg );
+						throw new CswDniException( ErrorType.Warning, Errormsg, Errormsg );
                     }
 
                     // BZ 8338
@@ -208,7 +208,7 @@ namespace ChemSW.Nbt.WebPages
                 }
                 else
                 {
-                    throw new CswDniException( "NodeId, NodeKey, or NodeTypeId is required", "Popup_EditNode.aspx requires a valid NodeKey, NodeId, or NodeTypeId" );
+					throw new CswDniException( ErrorType.Error, "NodeId, NodeKey, or NodeTypeId is required", "Popup_EditNode.aspx requires a valid NodeKey, NodeId, or NodeTypeId" );
                 }
                 
                 TitleContentLiteral.Text = TitleBar;

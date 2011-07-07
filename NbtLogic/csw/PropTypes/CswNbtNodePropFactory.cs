@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.PropTypes
                     InnerProperty = new CswNbtNodePropViewReference( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;
                 default:
-                    throw new CswDniException( "Internal System Error", "There is no CswNbtNodeProp Object for Field Type: " + CswNbtMetaDataNodeTypeProp.FieldType.FieldType.ToString() );
+					throw new CswDniException( ErrorType.Error, "Internal System Error", "There is no CswNbtNodeProp Object for Field Type: " + CswNbtMetaDataNodeTypeProp.FieldType.FieldType.ToString() );
             }
 
             ReturnVal = new CswNbtNodePropWrapper( InnerProperty, CswNbtNodePropData );

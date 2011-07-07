@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static CswNbtObjClass makeObjClass( CswNbtResources CswNbtResources, CswNbtMetaDataObjectClass ObjectClass, CswNbtNode Node )
         {
             if( Node == null )
-                throw new CswDniException( "Invalid Node", "Wrong function used in CswNbtObjClassFactory.  If Node should be null, do not provide one." );
+				throw new CswDniException( ErrorType.Error, "Invalid Node", "Wrong function used in CswNbtObjClassFactory.  If Node should be null, do not provide one." );
 
             CswNbtObjClass ReturnVal = null;
 

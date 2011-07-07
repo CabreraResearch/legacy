@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.WebPages
                 // Get the Report Data
 				CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( ReportNode.View.ViewId );
                 if( View == null )
-                    throw new CswDniException( "Report has invalid View", "Report received a null view" );
+					throw new CswDniException( ErrorType.Warning, "Report has invalid View", "Report received a null view" );
 
                 ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
                 Tree.goToRoot();
@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.WebPages
                                     BWriter.Write( BlobData );
                                 }
                                 else
-                                    throw new CswDniException( "Report is missing RPT file", "Report's RPTFile blobdata is null" );
+									throw new CswDniException( ErrorType.Warning, "Report is missing RPT file", "Report's RPTFile blobdata is null" );
                             }
                         }
 

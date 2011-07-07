@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.MetaData
             set
             {
                 if( value == string.Empty )
-                    throw new CswDniException( "Tab name cannot be empty", "User attempted to save a null tabname for tabid " + TabId );
+					throw new CswDniException( ErrorType.Warning, "Tab name cannot be empty", "User attempted to save a null tabname for tabid " + TabId );
 
                 if( _NodeTypeTabRow["tabname"].ToString() != value )
                 {

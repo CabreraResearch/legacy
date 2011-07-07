@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.Actions
 					PreviousDateOfNextOccurance = DateOfNextOccurance;
 					DateOfNextOccurance = NextDueDateTimeInterval.getNextOccuranceAfter( DateOfNextOccurance );
 					if( DateOfNextOccurance == PreviousDateOfNextOccurance )
-						throw new CswDniException( "Invalid Rate Interval", "While generating future tasks for Generator: " + CswNbtNodeGenerator.NodeId + ", the next calculated date was equal to the previous calculated date" );
+						throw new CswDniException( ErrorType.Error, "Invalid Rate Interval", "While generating future tasks for Generator: " + CswNbtNodeGenerator.NodeId + ", the next calculated date was equal to the previous calculated date" );
 
 				}//create nodes until we hit either the future date or the final date
 

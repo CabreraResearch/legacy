@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.WebPages
                 _ThisUser = Master.CswNbtResources.CurrentNbtUser.UserId;
 
                 if( ( Master.CswNbtResources.CurrentNbtUser.UserNode ).EmailProperty.Empty )
-                    throw new CswDniException( "Email address required for subscriptions", "Current user has no email address defined" );
+					throw new CswDniException( ErrorType.Warning, "Email address required for subscriptions", "Current user has no email address defined" );
 
                 CswCenteredDiv Div = new CswCenteredDiv();
                 ph.Controls.Add( Div );

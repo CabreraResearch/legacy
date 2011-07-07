@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.WebPages
                     if( JctTable.Rows.Count > 0 )
                     {
                         if( JctTable.Rows.Count > 1 )
-                            throw new CswDniException( "Invalid Data Condition", "Popup_PutBlob.aspx.cs found more than 1 record for nodeid (" + NodeId.ToString() + ") and propid: " + PropId.ToString() );
+							throw new CswDniException( ErrorType.Error, "Invalid Data Condition", "Popup_PutBlob.aspx.cs found more than 1 record for nodeid (" + NodeId.ToString() + ") and propid: " + PropId.ToString() );
                         JctNodePropId = CswConvert.ToInt32( JctTable.Rows[0]["jctnodepropid"].ToString() );
                     }
 

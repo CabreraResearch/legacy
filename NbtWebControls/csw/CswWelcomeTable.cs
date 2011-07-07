@@ -562,7 +562,7 @@ namespace ChemSW.NbtWebControls
                             NewWelcomeRow["reportid"] = CswConvert.ToDbVal( ViewValue );
                             break;
                         default:
-                            throw new CswDniException( "You must select a view", "No view was selected for new Welcome Page Component" );
+							throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Welcome Page Component" );
                     }
                     NewWelcomeRow["buttonicon"] = ButtonIcon;
                     NewWelcomeRow["displaytext"] = DisplayText;
@@ -575,7 +575,7 @@ namespace ChemSW.NbtWebControls
                         NewWelcomeRow["displaytext"] = DisplayText;
                     }
                     else
-                        throw new CswDniException( "You must select a view", "No view was selected for new Welcome Page Component" );
+						throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Welcome Page Component" );
                     break;
                 case CswWelcomeTable.WelcomeComponentType.Text:
                     NewWelcomeRow["displaytext"] = DisplayText;

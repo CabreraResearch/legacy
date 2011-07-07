@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.Schema
                     }
                     catch( Exception ex )
                     {
-                        throw new CswDniException( "Before records from the " + TableName + " table can be deleted, child records must be deleted first.", "Oracle threw an " + ex + " exception." );
+						throw new CswDniException( ErrorType.Error, "Before records from the " + TableName + " table can be deleted, child records must be deleted first.", "Oracle threw an " + ex + " exception." );
                     }
                 }
                 
@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.Schema
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( "Before records from the nodes/statistics table(s) can be deleted, child records must be deleted first.", "Oracle threw an " + ex + " exception." );
+					throw new CswDniException( ErrorType.Error, "Before records from the nodes/statistics table(s) can be deleted, child records must be deleted first.", "Oracle threw an " + ex + " exception." );
                 }
 
                 _CswNbtResources.setConfigVariableValue( "is_demo", "0" );

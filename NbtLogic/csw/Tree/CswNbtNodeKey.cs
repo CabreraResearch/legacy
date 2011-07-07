@@ -75,7 +75,7 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
 
             if( StringKey == string.Empty )
-                throw new CswDniException( "Misconfigured Tree", "CswNbtNodeKey.constructor(string) encountered a null StringKey" );
+				throw new CswDniException( ErrorType.Error, "Misconfigured Tree", "CswNbtNodeKey.constructor(string) encountered a null StringKey" );
 
             _DelimitedString.FromString( StringKey );
         }//CswNbtNodeKey()
