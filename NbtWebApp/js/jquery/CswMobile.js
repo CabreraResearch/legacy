@@ -703,19 +703,22 @@ CswAppMode.mode = 'mobile';
             var $retHtml;
             var Html = '';
             var id = makeSafeId({ ID: p.$xmlitem.CswAttrXml('id') });
+            var nodeSpecies = p.$xmlitem.CswAttrXml('nodespecies');
             var NodeName = p.$xmlitem.CswAttrXml('name');
             var icon = '';
             if (!isNullOrEmpty(p.$xmlitem.CswAttrXml('iconfilename'))) {
                 icon = 'images/icons/' + p.$xmlitem.CswAttrXml('iconfilename');
             }
             var ObjectClass = p.$xmlitem.CswAttrXml('objectclass');
-
-            switch (ObjectClass) {
-            case "InspectionDesignClass":
-                var DueDate = p.$xmlitem.find('prop[ocpname="Due Date"]').CswAttrXml('gestalt');
-                var Location = p.$xmlitem.find('prop[ocpname="Location"]').CswAttrXml('gestalt');
-                var MountPoint = p.$xmlitem.find('prop[ocpname="Target"]').CswAttrXml('gestalt');
-                var Status = p.$xmlitem.find('prop[ocpname="Status"]').CswAttrXml('gestalt');
+            debugger;
+            if( nodeSpecies !== 'More' )
+            {
+                switch (ObjectClass) {
+                case "InspectionDesignClass":
+                    var DueDate = p.$xmlitem.find('prop[ocpname="Due Date"]').CswAttrXml('gestalt');
+                    var Location = p.$xmlitem.find('prop[ocpname="Location"]').CswAttrXml('gestalt');
+                    var MountPoint = p.$xmlitem.find('prop[ocpname="Target"]').CswAttrXml('gestalt');
+                    var Status = p.$xmlitem.find('prop[ocpname="Status"]').CswAttrXml('gestalt');
 //Case 22579: just remove for now
 //                var UnansweredCnt = 0;
 
@@ -726,29 +729,34 @@ CswAppMode.mode = 'mobile';
 //                    }
 //                });
 
-                Html += '<li>';
-                Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">';
-                if (!isNullOrEmpty(icon))
-                    Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                Html += '<h2>' + NodeName + '</h2>';
-                Html += '<p>' + Location + '</p>';
-                Html += '<p>' + MountPoint + '</p>';
-                Html += '<p>';
-                if (!isNullOrEmpty(Status)) Html += Status + ', ';
-                Html += 'Due: ' + DueDate + '</p>';
+                    Html += '<li>';
+                    Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">';
+                    if (!isNullOrEmpty(icon))
+                        Html += '<img src="' + icon + '" class="ui-li-icon"/>';
+                    Html += '<h2>' + NodeName + '</h2>';
+                    Html += '<p>' + Location + '</p>';
+                    Html += '<p>' + MountPoint + '</p>';
+                    Html += '<p>';
+                    if (!isNullOrEmpty(Status)) Html += Status + ', ';
+                    Html += 'Due: ' + DueDate + '</p>';
 //                Html += '<span id="' + makeSafeId({ prefix: id, ID: 'unansweredcnt' }) + '" class="ui-li-count">' + UnansweredCnt + '</span>';
-                Html += '</a>';
-                Html += '</li>';
-                break;
-            default:
+                    Html += '</a>';
+                    Html += '</li>';
+                    break;
+                default:
+                    Html += '<li>';
+                    if (!isNullOrEmpty(icon))
+                        Html += '<img src="' + icon + '" class="ui-li-icon"/>';
+                    Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + NodeName + '</a>';
+                    Html += '</li>';
+                    break;
+                }
+            } //if( nodeSpecies !== 'More' )
+            else {
                 Html += '<li>';
-                if (!isNullOrEmpty(icon))
-                    Html += '<img src="' + icon + '" class="ui-li-icon"/>';
-                Html += '<a data-identity="' + id + '" data-url="' + id + '" href="javascript:void(0);">' + NodeName + '</a>';
+                Html += '<h2 id="' + id + '">' + NodeName + '</h2>';
                 Html += '</li>';
-                break;
             }
-
             $retHtml = $(Html);
             
             return $retHtml;

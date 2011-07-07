@@ -15,15 +15,22 @@ namespace ChemSW.Nbt.WebServices
     {
         private readonly CswNbtResources _CswNbtResources;
         private readonly bool _ForMobile;
+        private readonly Int32 MobilePageSize = 30;
 
         public CswNbtWebServiceMobileView( CswNbtResources CswNbtResources, bool ForMobile )
         {
             _CswNbtResources = CswNbtResources;
             _ForMobile = ForMobile;
+            string PageSize = _CswNbtResources.getConfigVariableValue( CswNbtResources.ConfigurationVariables.mobileview_resultlimit.ToString() );
+            if( CswTools.IsInteger( PageSize ) )
+            {
+                MobilePageSize = CswConvert.ToInt32( PageSize );
+            }
         }
 
         private const string PropIdPrefix = "prop_";
         private const string NodeIdPrefix = "nodeid_";
+
 
         public XElement getViewsList( string ParentId, ICswNbtUser CurrentUser )
         {
@@ -54,7 +61,7 @@ namespace ChemSW.Nbt.WebServices
                 RetXml = _getSearchNodes( View );
             }
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false, MobilePageSize );
 
             if( Tree.getChildNodeCount() > 0 )
             {
@@ -95,6 +102,7 @@ namespace ChemSW.Nbt.WebServices
                 Tree.goToNthChild( c );
 
                 CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
+                CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
                 string ThisNodeName = Tree.getNodeNameForCurrentPosition();
                 string ThisNodeId = ThisNode.NodeId.ToString();
 
@@ -106,18 +114,23 @@ namespace ChemSW.Nbt.WebServices
 
                 if( Tree.getNodeShowInTreeForCurrentPosition() )
                 {
-                    if( _ForMobile && Tree.getChildNodeCount() == 0 )   // is a leaf
+                    if( _ForMobile && Tree.getChildNodeCount() == 0 && NodeSpecies.More != ThisNodeKey.NodeSpecies )   // is a leaf
                     {
                         _runProperties( ThisNode, ref ThisSubItems );
                     }
 
                     if( _ForMobile )
                     {
+                        if( NodeSpecies.More == ThisNodeKey.NodeSpecies )
+                        {
+                            ThisNodeName = "Results Truncated at " + MobilePageSize;
+                        }
                         ThisXmlNode.SetAttributeValue( "id", NodeIdPrefix + ThisNodeId );
                         ThisXmlNode.SetAttributeValue( "name", CswTools.SafeJavascriptParam( ThisNodeName ) );
                         ThisXmlNode.SetAttributeValue( "nodetype", CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) );
                         ThisXmlNode.SetAttributeValue( "objectclass", CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) );
                         ThisXmlNode.SetAttributeValue( "iconfilename", CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) );
+                        ThisXmlNode.SetAttributeValue( "nodespecies", CswTools.SafeJavascriptParam( ThisNodeKey.NodeSpecies.ToString() ) );
                     }
 
                     // case 20083 - search values

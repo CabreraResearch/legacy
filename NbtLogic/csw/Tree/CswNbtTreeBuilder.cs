@@ -150,10 +150,10 @@ namespace ChemSW.Nbt
 
 
 
-		public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes )
+		public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes, Int32 PageSize = Int32.MinValue )
 		{
 			CswNbtNodeKey ParentNodeKey = null;
-			return getTreeFromView( View, ForceReInit, ref ParentNodeKey, null, Int32.MinValue, FetchAllPrior, SingleLevelOnly, null, IncludeSystemNodes );
+			return getTreeFromView( View, ForceReInit, ref ParentNodeKey, null, PageSize, FetchAllPrior, SingleLevelOnly, null, IncludeSystemNodes );
 		}
 
 		public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes, bool RequireViewPermissions )
