@@ -528,8 +528,8 @@ CswAppMode.mode = 'mobile';
                         }
                         $retDiv = _loadDivContentsXml(p);
                     },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        onError(XMLHttpRequest, textStatus, errorThrown);
+                    error: function() {
+                        onError();
                     }
                 });
             cacheLogInfo(logger);
@@ -1626,8 +1626,8 @@ CswAppMode.mode = 'mobile';
                             $viewsdiv = reloadViews();
                             $viewsdiv.doChangePage();
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {
-                            onError(XMLHttpRequest, textStatus, errorThrown);
+                        error: function() {
+                            onError();
                         }
                     });
             }
@@ -1645,7 +1645,7 @@ CswAppMode.mode = 'mobile';
             Logout(true);
         }
 
-        function onError(XMLHttpRequest, textStatus, errorThrown) {
+        function onError() {
             $.mobile.hidePageLoadingMsg();
         }
         
@@ -1711,8 +1711,8 @@ CswAppMode.mode = 'mobile';
                             params.onPageShow = function() { return _loadDivContents(params); }
                             $.mobile.changePage( _loadDivContents(params) );
                         }, // success
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            onError(XMLHttpRequest, textStatus, errorThrown); //setOffline();
+                        error: function () {
+                            onError(); //setOffline();
                         }
                     });
             }

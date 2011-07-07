@@ -2,6 +2,7 @@
 	$.fn.CswErrorMessage = function (options) {
 
 		var o = {
+			type: '',   // Warning, Error 
 			message: '',
 			detail: ''
 		};
@@ -16,7 +17,13 @@
 		var $errordiv = $('<div />')
 						.appendTo($parentdiv)
 						.CswAttrDom('id', id)
-						.addClass('CswErrorMessage_ErrorMessage');
+						.addClass('CswErrorMessage_Message');
+		if(o.type.toLowerCase() === "warning")
+		{
+			$errordiv.addClass('CswErrorMessage_Warning');
+		} else {
+			$errordiv.addClass('CswErrorMessage_Error');
+		}
 
 	 	var $tbl = $errordiv.CswTable('init', {
 												'id': makeId({ 

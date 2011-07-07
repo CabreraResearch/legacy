@@ -1,6 +1,13 @@
-﻿.CswErrorMessage_ErrorMessage
+﻿.CswErrorMessage_Message
 {
 	padding: 3px;
-	background-color: #ffff00;
 	border: 1px solid #ffaa00;
+}
+.CswErrorMessage_Error
+{
+	background-color: #ff0000;
+}
+.CswErrorMessage_Warning
+{
+	background-color: #ffff00;
 }
