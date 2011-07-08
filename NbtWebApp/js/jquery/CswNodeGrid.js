@@ -68,7 +68,7 @@
 				            emptyrecords: 'No Results',
                             height: '300',
                             loadtext: 'Loading...',
-				            multiselect: false,
+				            //multiselect: false,
 							pager: $gridPager, 
 							rowList:[10,25,50],  
 				            rowNum:10, 
@@ -181,7 +181,7 @@
 
                             if( canEdit ) $.extend(optNav,optNavEdit);
                             if( canDelete ) $.extend(optNav,optNavDelete);
-                            if( canEdit || canDelete ) jqGridOptions.multiselect = true;
+                            //if( canEdit || canDelete ) jqGridOptions.multiselect = true;
 
                             $gridTable.jqGrid(jqGridOptions)
 										 .navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, optSearch, {} ); 
