@@ -67,14 +67,14 @@
 
     function onClick($ImageDiv, Required)
 	{
-		var currentValue = $ImageDiv.CswAttrDom('alt');
+        var currentValue = $ImageDiv.CswAttrDom('alt');
 		var newValue = CswImageButton_ButtonType.CheckboxNull;
 		var newAltText = "null";
 		if (currentValue === "null") {
 			newValue = CswImageButton_ButtonType.CheckboxTrue;
 			newAltText = "true";
-		} else if (currentValue === "false") {
-			if (Required === "true") {
+		} else if ( currentValue === "false") {
+			if ( isTrue(Required) ) {
 				newValue = CswImageButton_ButtonType.CheckboxTrue;
 				newAltText = "true";
 			} else {

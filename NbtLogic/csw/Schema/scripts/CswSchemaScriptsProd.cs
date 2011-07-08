@@ -125,26 +125,28 @@ namespace ChemSW.Nbt.Schema
             _UpdateDrivers.Add( Schema01H48Driver.SchemaVersion, Schema01H48Driver );
             CswSchemaUpdateDriver Schema01H49Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H49( _CswNbtSchemaModTrnsctn ) );
             _UpdateDrivers.Add( Schema01H49Driver.SchemaVersion, Schema01H49Driver );
-			CswSchemaUpdateDriver Schema01H50Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H50( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H50Driver.SchemaVersion, Schema01H50Driver );
-			CswSchemaUpdateDriver Schema01H51Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H51( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H51Driver.SchemaVersion, Schema01H51Driver );
-			CswSchemaUpdateDriver Schema01H52Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H52( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H52Driver.SchemaVersion, Schema01H52Driver );
-			CswSchemaUpdateDriver Schema01H53Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H53( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H53Driver.SchemaVersion, Schema01H53Driver );
-			CswSchemaUpdateDriver Schema01H54Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H54( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H54Driver.SchemaVersion, Schema01H54Driver );
-			CswSchemaUpdateDriver Schema01H55Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H55( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H55Driver.SchemaVersion, Schema01H55Driver );
-			CswSchemaUpdateDriver Schema01H56Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H56( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H56Driver.SchemaVersion, Schema01H56Driver );
-			CswSchemaUpdateDriver Schema01H57Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H57( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H57Driver.SchemaVersion, Schema01H57Driver );
-			CswSchemaUpdateDriver Schema01H58Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H58( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H58Driver.SchemaVersion, Schema01H58Driver );
-			CswSchemaUpdateDriver Schema01H59Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H59( _CswNbtSchemaModTrnsctn ) );
-			_UpdateDrivers.Add( Schema01H59Driver.SchemaVersion, Schema01H59Driver );
+            CswSchemaUpdateDriver Schema01H50Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H50( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H50Driver.SchemaVersion, Schema01H50Driver );
+            CswSchemaUpdateDriver Schema01H51Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H51( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H51Driver.SchemaVersion, Schema01H51Driver );
+            CswSchemaUpdateDriver Schema01H52Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H52( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H52Driver.SchemaVersion, Schema01H52Driver );
+            CswSchemaUpdateDriver Schema01H53Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H53( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H53Driver.SchemaVersion, Schema01H53Driver );
+            CswSchemaUpdateDriver Schema01H54Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H54( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H54Driver.SchemaVersion, Schema01H54Driver );
+            CswSchemaUpdateDriver Schema01H55Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H55( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H55Driver.SchemaVersion, Schema01H55Driver );
+            CswSchemaUpdateDriver Schema01H56Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H56( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H56Driver.SchemaVersion, Schema01H56Driver );
+            CswSchemaUpdateDriver Schema01H57Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H57( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H57Driver.SchemaVersion, Schema01H57Driver );
+            CswSchemaUpdateDriver Schema01H58Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H58( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H58Driver.SchemaVersion, Schema01H58Driver );
+            CswSchemaUpdateDriver Schema01H59Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H59( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H59Driver.SchemaVersion, Schema01H59Driver );
+            CswSchemaUpdateDriver Schema01H60Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01H60( _CswNbtSchemaModTrnsctn ) );
+            _UpdateDrivers.Add( Schema01H60Driver.SchemaVersion, Schema01H60Driver );
 
             // This automatically detects the latest version
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == null ||

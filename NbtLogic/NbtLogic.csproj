@@ -225,6 +225,7 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H60.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H59.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H58.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01H57.cs" />
