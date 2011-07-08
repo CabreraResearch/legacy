@@ -173,7 +173,6 @@ namespace ChemSW.Nbt.WebServices
 			ColumnDefArray.AddFirst( new JObject(
 								new JProperty( "name", "nodeidstr" ),
 								new JProperty( "index", "nodeidstr" ),
-								new JProperty( "key", true ),
 								new JProperty( "hidden", true )
 								) );
 
