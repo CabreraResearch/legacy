@@ -19,15 +19,26 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             string ReturnVal = string.Empty;
 
             DateTime FilterValue = DateTime.MinValue;
-            if( CswNbtViewPropertyFilterIn.Value.Substring( 0, "today".Length ) == "today" )
-            {
-                Int32 PlusDays = CswConvert.ToInt32( CswNbtViewPropertyFilterIn.Value.Substring( "today+".Length ) );
-                FilterValue = DateTime.Now.AddDays( PlusDays );
-            }
-            else
-            {
-                FilterValue = Convert.ToDateTime( CswNbtViewPropertyFilterIn.Value ).Date;
-            }
+			if( CswNbtViewPropertyFilterIn.Value.Substring( 0, "today".Length ) == "today" )
+			{
+				Int32 PlusDays = 0;
+				if( CswNbtViewPropertyFilterIn.Value.Length > "today".Length )
+				{
+					string Operator = CswNbtViewPropertyFilterIn.Value.Substring( "today".Length, 1 );
+					string Operand = CswNbtViewPropertyFilterIn.Value.Substring( "today".Length + 1 );
+					if( CswTools.IsInteger( Operand ) )
+					{
+						PlusDays = CswConvert.ToInt32( Operand );
+						if( Operator == "-" )
+							PlusDays = PlusDays * -1;
+					}
+				}
+				FilterValue = DateTime.Now.AddDays( PlusDays );
+			}
+			else
+			{
+				FilterValue = Convert.ToDateTime( CswNbtViewPropertyFilterIn.Value ).Date;
+			}
 
             if( FilterValue != DateTime.MinValue )
             {
