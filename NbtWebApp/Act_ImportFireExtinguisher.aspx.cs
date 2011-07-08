@@ -593,7 +593,7 @@ namespace ChemSW.Nbt.WebPages
                     NewNodesView.SaveToCache(true);
 					//Master.setSessionViewId( NewNodesView.SessionViewId );
 					//Master.GoMain();
-					Master.Redirect( "NewMain.html?viewid=" + NewNodesView.SessionViewId );
+					Master.Redirect( "Main.html?viewid=" + NewNodesView.SessionViewId );
 
                 } // if nodetypes exist
             }

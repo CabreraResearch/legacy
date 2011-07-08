@@ -28,7 +28,7 @@
 							$.CswCookie('clear', CswCookieName.CurrentNodeId);
 							$.CswCookie('clear', CswCookieName.CurrentNodeKey);
 						
-							window.location = "NewMain.html";
+							window.location = "Main.html";
 							return CswImageButton_ButtonType.None; 
 						}
 					});
@@ -40,7 +40,7 @@
 							'AlternateText': 'Edit',
 							'Required': o.Required,
 							'onClick': function ($ImageDiv) {
-								window.location = "EditView.aspx?step=2&return=NewMain.html&viewid=" + ViewId;
+								window.location = "EditView.aspx?step=2&return=Main.html&viewid=" + ViewId;
 								return CswImageButton_ButtonType.None; 
 							}
 						});

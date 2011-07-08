@@ -656,7 +656,7 @@ namespace ChemSW.Nbt.WebPages
         public void ReleaseAll() { Master.ReleaseAll(); }
         public void Redirect( string url ) { Master.Redirect( url ); }
         //public void GoHome() { Master.GoHome(); }
-		public void GoHome() { Master.Redirect( "NewMain.html?clear=y" ); }
+		public void GoHome() { Master.Redirect( "Main.html?clear=y" ); }
         public void GoMain() { Master.GoMain(); }
         public void LogMessage( string Message ) { Master.LogMessage( Message ); }
         public void LogTimerResult( string Message, string TimerResult ) { Master.LogTimerResult( Message, TimerResult ); }

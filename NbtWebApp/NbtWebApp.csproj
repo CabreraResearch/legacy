@@ -109,6 +109,7 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="NewMain.html" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.js" />
     <Content Include="Mobile_Includes_Head.html" />
@@ -1145,12 +1146,11 @@
     <Content Include="Main.js" />
     <Content Include="Mobile.html" />
     <Content Include="Mobile_Includes_Body.html" />
-    <Content Include="MobileTest.html" />
-    <Content Include="NewFooter.html" />
-    <Content Include="NewHeader.html" />
-    <Content Include="NewIncludes.html" />
-    <Content Include="NewMain.html" />
-    <Content Include="NewNodeReport.html" />
+    <Content Include="MainFooter.html" />
+    <Content Include="MainHeader.html" />
+    <Content Include="MainIncludes.html" />
+    <Content Include="Main.html" />
+    <Content Include="NodeReport.html" />
     <Content Include="NodeReport.aspx" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Notifications.aspx" />
@@ -1336,7 +1336,6 @@
     <Content Include="style_print.css" />
     <Content Include="Subscriptions.aspx" />
     <Content Include="TermsOfUse.aspx" />
-    <Content Include="TEST.html" />
     <Content Include="TimeIntervalTest.aspx" />
     <Content Include="TreeViewService.asmx" />
     <Content Include="UserList.aspx" />
@@ -1349,7 +1348,6 @@
     </Content>
     <Content Include="Welcome.aspx" />
     <Content Include="wsNBT.asmx" />
-    <Content Include="wsTEST.asmx" />
     <Content Include="_Assembly.txt" />
     <Content Include="_Version.txt" />
   </ItemGroup>
@@ -1797,10 +1795,6 @@
     </Compile>
     <Compile Include="wsNBT.cs">
       <DependentUpon>wsNBT.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="wsTEST.cs">
-      <DependentUpon>wsTEST.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>

@@ -1284,7 +1284,7 @@ CswAppMode.mode = 'mobile';
                                                         .css('display', '');
 
 
-                $footerCtn.CswLink('init', { href: 'NewMain.html', rel: 'external', ID: p.DivId + '_newmain', value: 'Full Site' })
+                $footerCtn.CswLink('init', { href: 'Main.html', rel: 'external', ID: p.DivId + '_main', value: 'Full Site' })
                           .CswAttrXml({ 'data-transition': 'pop' });
 
 
