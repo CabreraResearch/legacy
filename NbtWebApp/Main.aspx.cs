@@ -151,7 +151,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-				Master.Redirect( "NewMain.html?clear=y" );
+				Master.Redirect( "Main.html?clear=y" );
 
 				EnsureChildControls();
             }

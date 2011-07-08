@@ -56,7 +56,7 @@
 				var $AsReportLink = $('<a href="#">As Report</a>')
 					            .appendTo($linkdiv)
 						        .click(function() { 
-									openPopup('NewNodeReport.html?nodeid=' + o.nodeid + '&cswnbtnodekey=' + o.cswnbtnodekey, 600, 800); 
+									openPopup('NodeReport.html?nodeid=' + o.nodeid + '&cswnbtnodekey=' + o.cswnbtnodekey, 600, 800); 
 								});
 			}
 		}

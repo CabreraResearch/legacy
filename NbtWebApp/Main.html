@@ -1,0 +1,836 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--#include file="MainHeader.html" -->
+
+					<tr>
+						<td id="Td5" class="PageTable_LeftColumn" rowspan="6">
+							<img src="Images/pagelayout/blank.gif" alt="X" width="1" height="450"/>
+						</td>
+
+						<td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2">
+							<table cellpadding="0" cellspacing="0">
+								<tr>
+									<td><img id="headerblank4" src="Images/pagelayout/blank.gif" alt="X" width="1" height="30"/></td>
+									<td><div id="MainMenuDiv"></div></td>
+								</tr>
+                                <tr>
+                                    <td></td>
+                                    <td><div id="ViewSelectDiv"></div></td>
+                                </tr>
+							</table>
+						</td>
+
+						<td id="Td6" class="PageTable_RightColumn" rowspan="6"></td>
+					</tr>
+
+					<tr>
+						<td colspan="2">
+							<div id="ErrorDiv" style="display: none;"></div>
+						</td>
+					</tr>
+
+                    <tr>
+                        <td id="Td7" class="PageTable_CenterCell" colspan="2" valign="top">
+                            <div id="CenterTopDiv"></div>
+                        </td>
+                    </tr>
+		  
+					<tr>
+						<td id="Td8" class="PageTable_LeftCell" valign="top">
+							
+							<div id="LeftDiv"></div>
+						</td>
+						<td id="Td9" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
+							<div id="RightDiv"></div>
+						</td>
+					</tr>
+                    
+                    <tr>
+                        <td id="Td10" class="PageTable_CenterCell" colspan="2" valign="top">
+                            <div id="CenterBottomDiv"></div>
+                        </td>
+                    </tr>
+
+					<tr>
+						<td id="Td11" class="PageTable_CenterCell" colspan="2" valign="top">
+							<div id="QuickLaunch"></div>
+						</td>
+					</tr>
+
+
+<script type="text/javascript">
+
+	var debug = false;
+
+	var MainTreeId = 'main';
+	var MainGridId = 'CswNodeGrid';
+	var MainSearchId = 'CswSearchForm';
+
+
+	// handle querystring arguments
+	var qs = $.CswQueryString();
+	if (!isNullOrEmpty(qs.viewid))
+	{
+		setCurrentView(qs.viewid, tryParseString(qs.viewmode, 'tree'));
+		window.location = "Main.html";
+	}
+	else if(!isNullOrEmpty(qs.clear))
+	{
+		clearCurrent();
+		window.location = "Main.html";
+	}
+	else
+	{
+		initAll();
+	}
+
+
+	function initAll()
+	{
+		if (debug) log('Main.initAll()');
+
+		$('#CenterBottomDiv').CswLogin('login', {
+			'onAuthenticate': function (u)
+			{
+				$('#header_username').text(u)
+				 					 .hover(function () { $(this).CswAttrDom('title', getTimeout()); });
+				$('#header_dashboard').CswDashboard();
+
+				$('#header_menu').CswMenuHeader({
+					'onLogout': function ()
+					{
+						Logout();
+					} // onLogout
+				}); // CswMenuHeader
+
+				$('#ViewSelectDiv').CswViewSelect({
+					'ID': 'mainviewselect',
+					'onSelect': handleItemSelect
+				}); // CswViewSelect
+
+				var current = getCurrent();
+				if (false === isNullOrEmpty(current.viewid))
+				{
+					handleItemSelect({ 
+						'type': 'view', 
+						'viewid': current.viewid, 
+						'viewmode': current.viewmode 
+					});
+				}
+				else if (false === isNullOrEmpty(current.actionname))
+				{
+					handleItemSelect({ 
+						'type': 'action', 
+						'actionname': current.actionname,
+						'actionurl': current.actionurl 
+					});
+				}
+				else
+				{
+					refreshWelcome();
+				}
+			} // onAuthenticate
+		});      // CswLogin
+
+	} // initAll()
+
+	function refreshQuickLaunch()
+	{
+		$('#QuickLaunch').empty();
+
+		$('#QuickLaunch').CswQuickLaunch({
+			'onViewClick': function(viewid, viewmode) { handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode }); },
+			'onActionClick': function(actionname, actionurl) { handleItemSelect({ 'type': 'action', 'actionname': actionname, 'actionurl': actionurl }); }
+		}); // CswQuickLaunch
+	}
+
+
+	function clear(options)
+	{
+		if (debug) log('Main.clear()');
+
+		var o = {
+			left: false, 
+			right: false, 
+			centertop: false,
+            centerbottom: false,
+			all: false
+		};
+		if(options) {
+			$.extend(o,options);
+		}
+
+		if (o.all || o.left)
+		{
+			$('#LeftDiv').empty();
+		}
+		if (o.all || o.right)
+		{
+			$('#RightDiv').empty();
+		}
+		if (o.all || o.centertop)
+		{
+            $('#CenterTopDiv').empty();
+		}
+        	if (o.all || o.centerbottom)
+		{
+    		$('#CenterBottomDiv').empty();
+		}
+		if (o.all)
+		{
+			$('#MainMenuDiv').empty();
+		}
+	}
+
+	function refreshWelcome()
+	{
+		if (debug) log('Main.refreshWelcome()');
+        clear({ all: true });
+
+        $('#CenterBottomDiv').CswWelcome('initTable', {
+            'onLinkClick': handleItemSelect,
+            'onSearchClick': function (view)
+            {
+                var viewid = view.viewid;
+                var viewmode = view.viewmode;
+                handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode, 'linktype': 'search' });
+                refreshSearchPanel({ 'viewid': viewid, 'searchType': 'view' });
+            },
+            'onAddClick': function (nodetypeid)
+            {
+                $.CswDialog('AddNodeDialog', {
+                    'nodetypeid': nodetypeid,
+                    'onAddNode': function (nodeid, cswnbtnodekey)
+                    {
+                        clear({ all: true });
+                        refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+                    }
+                });
+            },
+            'onAddComponent': refreshWelcome
+        });
+        refreshMainMenu();
+        refreshQuickLaunch();
+    } // refreshWelcome()
+
+	function handleItemSelect(options)
+	{
+		if (debug) log('Main.handleItemSelect()');
+
+		if (manuallyCheckChanges())
+		{
+			clear({ all: true });
+			var o = {
+				type: 'view', // Action, Report, View
+				viewmode: 'tree', // Grid, Tree, List
+				linktype: 'link', // WelcomeComponentType: Link, Search, Text, Add
+                viewid: '',
+				actionname: '',
+				actionurl: '',
+				reportid: '',
+				nodeid: '',
+				cswnbtnodekey: ''
+			};
+			if (options) $.extend(o, options);
+
+			if ( !isNullOrEmpty( o.viewid ) )
+			{
+			    setCurrentView(o.viewid, o.viewmode);
+
+			    var linkOpt = {
+                    'showempty': false,
+                    'forsearch': false
+			    };
+
+			    switch (o.linktype.toLowerCase())
+			    {
+			        case 'search':
+			            linkOpt.showempty = true;
+			            linkOpt.forsearch = true;
+			            break;
+			    }
+
+			    switch ( o.viewmode.toLowerCase() )
+			    {
+			    	case 'grid':
+			    	    {
+			    	        getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+			                break;
+			            }
+			        default:
+			            {
+			                refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+			                break;
+			            }
+			    }
+			}
+			else if (!isNullOrEmpty(o.type))
+			{
+			    switch ( o.type.toLowerCase() )
+			    {
+			    	case 'action':
+			    		{
+							_handleAction({
+								'actionname': o.actionname,
+								'actionurl': o.actionurl
+							});
+			    			break;
+			    		}
+			    	case 'report':
+			    		{
+			    			window.location = "Report.aspx?reportid=" + o.reportid;
+			    			break;
+			    		}
+			        default:
+			            {
+			                alert('Handling for link type ' + o.type + ' is not implemented yet.');
+			                break;
+			            }
+			    }
+			}
+			else
+			{
+			    alert('Handling for this action is not yet implemented');
+			}
+
+			refreshQuickLaunch();
+
+		} // if (manuallyCheckChanges())
+	} // handleItemSelect()
+
+	function refreshMainMenu(options) 
+	{
+		if (debug) log('Main.refreshMainMenu()');
+
+		var o = {
+			viewid: '',
+			nodeid: '',
+			cswnbtnodekey: '',
+            prefix: 'csw'
+		};
+
+		if (options)
+		{
+			$.extend(o, options);
+		}
+
+		$('#MainMenuDiv').CswMenuMain({
+			'viewid': o.viewid,
+			'nodeid': o.nodeid,
+			'cswnbtnodekey': o.cswnbtnodekey,
+			'onAddNode': function (nodeid, cswnbtnodekey)
+			{
+				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+			},
+			'onMultiEdit': function ()
+			{
+				multi = !multi;
+				refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			},
+			'onSearch':
+                {
+                	'onViewSearch': function ()
+                	{
+                		var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
+                		var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
+                		var $searchForm = refreshSearchPanel({ 'genericSearchId': genericSearchId,
+                			'viewSearchId': viewSearchId,
+                			'searchType': 'view',
+                			'cswnbtnodekey': o.cswnbtnodekey,
+                			'viewid': o.viewid
+                		});
+                	},
+                	'onGenericSearch': function ()
+                	{
+                		var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
+                		var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
+                		var $searchForm = refreshSearchPanel({ 'genericSearchId': genericSearchId,
+                			'viewSearchId': viewSearchId,
+                			'searchType': 'generic',
+                			'cswnbtnodekey': o.cswnbtnodekey
+                		});
+                	}
+                },
+			'onEditView': function (viewid)
+			{
+				_handleAction({ 
+					'actionname': 'Edit_View', 
+					'ActionOptions': {
+						'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
+						'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode)
+					}
+				});
+			},
+			'onSaveView': function (newviewid)
+			{
+				handleItemSelect({ 'viewid': newviewid, 'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode) });
+			},
+			'Multi': multi,
+			'NodeCheckTreeId': MainTreeId
+		});
+	}
+
+	function refreshSearchPanel(options)
+	{
+	    if (debug) log('Main.refreshSearchPanel()');
+	    
+        var o = {
+	        viewid: '',
+	        nodetypeid: '',
+	        cswnbtnodekey: '',
+	        viewSearchId: '',
+	        genericSearchId: '',
+            searchType: 'generic'
+	    };
+        
+	    if (options) $.extend(o, options);
+	    
+	    var $viewSearch = $('#CenterTopDiv').children('#' + o.viewSearchId)
+                            .empty();
+	    var $genericSearch = $('#CenterTopDiv').children('#' + o.genericSearchId)
+                                .empty();
+        var $thisSearchForm;
+
+	    switch ( o.searchType.toLowerCase() )
+	    {
+	        case 'generic':
+	            {
+	                $thisSearchForm = makeSearchForm({ 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.genericSearchId });
+	                break;
+	            }
+	        case 'view':
+	            {
+	                $thisSearchForm = makeSearchForm({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.viewSearchId });
+	                break;
+	            }
+	    }
+        return $thisSearchForm;
+    }
+
+    function makeSearchForm(options)
+    {
+        var o = {
+            viewid: '',
+            nodetypeid: '',
+            cswnbtnodekey: '',
+            ID: ''
+        }
+        if (options) $.extend(o, options);
+
+        clear({ centertop: true });
+
+        var onSearchSubmit = function (searchviewid, searchviewmode)
+        {
+            clear({ right: true, centerbottom: true });
+            var viewMode = searchviewmode;
+            if (viewMode === 'list') viewMode = 'tree';
+			setCurrentView(searchviewid, viewMode);
+
+            refreshSelected({
+                viewmode: viewMode,
+                viewid: searchviewid,
+                forsearch: true,
+                showempty: false,
+                cswnbtnodekey: '', //do not want a view of only this node
+                nodeid: ''
+            });
+        };
+        var onClearSubmit = function (parentviewid, parentviewmode)
+        {
+            clear({ centertop: true }); //clear Search first
+
+            var viewid;
+            if (isNullOrEmpty(parentviewid))
+            {
+                viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
+            }
+            else
+            {
+                viewid = parentviewid;
+            }
+
+            if (!isNullOrEmpty(viewid))
+            {
+                clear({ right: true, centerbottom: true }); //wait to clear rest until we have a valid viewid
+                var viewmode = 'tree';
+                if (isNullOrEmpty(parentviewmode))
+                {
+                    viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
+                }
+                else
+                {
+                    viewmode = (parentviewmode === 'list') ? 'tree' : parentviewmode;
+                }
+
+                setCurrentView(viewid, viewmode); 
+
+				refreshSelected({
+                    viewmode: viewmode,
+                    viewid: viewid,
+                    forsearch: true,
+                    showempty: false,
+                    cswnbtnodekey: '', //do not want a view of only this node
+                    nodeid: ''
+                });
+            }
+        }
+        var onSearchClose = function ()
+        {
+            clear({ centertop: true });
+        }
+        var $search = $('#CenterTopDiv').CswSearch({
+                                    'parentviewid': o.viewid,
+                                    'cswnbtnodekey': o.cswnbtnodekey,
+                                    'nodetypeid': o.nodetypeid,
+                                    'ID': o.ID,
+                                    'onSearchSubmit': onSearchSubmit,
+                                    'onClearSubmit': onClearSubmit,
+                                    'onSearchClose': onSearchClose
+                                });
+        return $search;
+    }
+
+	function getViewGrid(options)
+	{
+		if (debug) log('Main.getViewGrid()');
+
+		var o = {
+			viewid: '',
+			nodeid: '',
+            showempty: false,
+			cswnbtnodekey: '',
+            doMenuRefresh: true,
+            onAddNode: '',
+            onEditNode: '',
+            onDeleteNode: ''
+		};
+		if (options) $.extend(o, options);
+
+		// Defaults
+		var getEmptyGrid = (isTrue(o.showempty));
+        if ( isNullOrEmpty( o.nodeid ) )
+			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNodeId);
+		if ( isNullOrEmpty(o.cswnbtnodekey) )
+			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNodeKey);
+		if ( !isNullOrEmpty(o.viewid) )
+			$.CswCookie('get', CswCookieName.CurrentViewId);
+
+//		o.onAddNode = function (nodeid, cswnbtnodekey)
+//			{
+//				var ocopy = o;
+//				var x = { 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey };
+//				$.extend(ocopy, x);
+//				getViewGrid(ocopy);
+//			};
+        o.onEditNode = function() { getViewGrid(o); };
+        o.onDeleteNode = function() { getViewGrid(o); };
+        
+        clear({ centerbottom: true});
+        
+        $('#CenterBottomDiv').CswNodeGrid({ 
+                                'viewid': o.viewid, 
+                                'nodeid': o.nodeid,
+                                'cswnbtnodekey': o.cswnbtnodekey, 
+                                'showempty': getEmptyGrid,
+                                'ID': MainGridId, 
+                                //'onAddNode': o.onAddNode,
+                                'onEditNode': o.onEditNode,
+                                'onDeleteNode': o.onDeleteNode });
+        if(o.doMenuRefresh) refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+	}
+
+	function onSelectTreeNode(options)
+	{
+		if (debug) log('Main.onSelectTreeNode()');
+
+		if (manuallyCheckChanges())
+		{
+			var o = {
+				viewid: '',
+				nodeid: '',
+				nodename: '',
+				iconurl: '',
+				cswnbtnodekey: ''
+			};
+			if (options)
+			{
+				$.extend(o, options);
+			}
+
+			$.CswCookie('set', CswCookieName.CurrentNodeId, o.nodeid);
+			$.CswCookie('set', CswCookieName.CurrentNodeKey, o.cswnbtnodekey);
+
+			if (o.nodeid !== '' && o.nodeid !== 'root')
+			{
+				getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+				refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			} 
+			else
+			{
+				clear({ 'right': true });
+				refreshMainMenu({ 'viewid': o.viewid, 'nodeid': '', 'cswnbtnodekey': '' });
+			}
+		}
+	} // onSelectTreeNode()
+
+	function getTabs(options)
+	{
+		if (debug) log('Main.getTabs()');
+
+		var o = {
+			nodeid: '',
+			cswnbtnodekey: ''
+		};
+		if (options)
+		{
+			$.extend(o, options);
+		}
+
+		clear({ right: true });
+		$('#RightDiv').CswNodeTabs({
+			'ID': 'nodetabs',
+			'nodeid': o.nodeid,
+			'cswnbtnodekey': o.cswnbtnodekey,
+			'onSave': function (nodeid, cswnbtnodekey)
+			{
+				unsetChanged();
+				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+			},
+			'tabid': $.CswCookie('get', CswCookieName.CurrentTabId),
+			'onBeforeTabSelect': function (tabid)
+			{
+				return manuallyCheckChanges();
+			},
+			'onTabSelect': function (tabid)
+			{
+				$.CswCookie('set', CswCookieName.CurrentTabId, tabid);
+			},
+			'onPropertyChange': function (propid, propname)
+			{
+				//if(debug) log('Property Changed: propid = ' + propid + ', propname = ' + propname);
+				setChanged();
+            },
+            'onEditView': function (viewid)
+            {
+				_handleAction({ 
+					'actionname': 'Edit_View', 
+					'ActionOptions': {
+						'viewid': viewid,
+						'viewmode': 'Grid',
+						'startingStep': 2,
+						'IgnoreReturn': true,
+					}
+				});
+            },
+			'ShowCheckboxes': multi,
+			'NodeCheckTreeId': MainTreeId
+		});
+	}
+
+	function refreshSelected(options)
+	{
+		if (debug) log('Main.refreshSelected()');
+		
+		if (manuallyCheckChanges())
+		{
+			var o = {
+				nodeid: '',
+				cswnbtnodekey: '',
+				nodename: '',
+				iconurl: '',
+                viewid: '',
+                viewmode: '',
+                showempty: false,
+                forsearch: false,
+				IncludeNodeRequired: false
+			};
+			if (options) $.extend(o, options);
+
+			if (isNullOrEmpty(o.viewid))
+				o.viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
+			if (isNullOrEmpty(o.viewmode))
+				o.viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
+
+			switch (o.viewmode)
+			{
+				case 'grid':
+					{
+						getViewGrid({
+                            'viewid': o.viewid,
+			                'nodeid': o.nodeid,
+			                'cswnbtnodekey': o.cswnbtnodekey,
+                            'showempty': o.showempty,
+                            'forsearch': o.forsearch
+                        });
+						break;
+					}
+				default: //tree
+					{
+						refreshNodesTree({
+							'nodeid': o.nodeid,
+							'cswnbtnodekey': o.cswnbtnodekey,
+							'nodename': o.nodename,
+                            'viewid': o.viewid,
+                            'viewmode': o.viewmode,
+                            'showempty': o.showempty,
+                            'forsearch': o.forsearch,
+                            'IncludeNodeRequired': o.IncludeNodeRequired
+						});
+						break;
+					}
+			} // switch
+		} // if (manuallyCheckChanges())
+	} // refreshSelected()
+
+	var multi = false;
+
+	function refreshNodesTree(options)
+	{
+		if (debug) log('Main.refreshNodesTree()');
+
+		var o = {
+			'nodeid': '',
+			'cswnbtnodekey': '',
+			'nodename': '',
+            'showempty': false,
+			'forsearch': false,
+			'iconurl': '',
+			'viewid': '',
+			'viewmode': 'tree',
+			'IncludeNodeRequired': false
+		};		
+		if (options) $.extend(o, options);
+
+		var getEmptyTree = (isTrue(o.showempty));
+		if (isNullOrEmpty(o.nodeid))
+			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNodeId);
+		if (isNullOrEmpty(o.cswnbtnodekey))
+			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNodeKey);
+		if (isNullOrEmpty(o.viewid))
+			o.viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
+
+		clear({ left: true });
+
+		$('#LeftDiv').CswNodeTree('init', { 'ID': MainTreeId,
+											'viewid': o.viewid,
+											'viewmode': o.viewmode,
+											'nodeid': o.nodeid, 
+											'cswnbtnodekey': o.cswnbtnodekey,
+											'nodename': o.nodename,
+											'showempty': getEmptyTree,
+                                            'forsearch': o.forsearch,
+											'IncludeNodeRequired': o.IncludeNodeRequired,
+											'onViewChange': function (newviewid, newviewmode)
+												{
+													setCurrentView(newviewid, newviewmode);
+												},
+											'onSelectNode': function (optSelect)
+												{
+										   			onSelectTreeNode({
+																		'viewid': optSelect.viewid,
+																		'nodeid': optSelect.nodeid,
+																		'cswnbtnodekey': optSelect.cswnbtnodekey
+																	});
+												},
+											'ShowCheckboxes': multi
+										}); // CswNodesTree
+	} // refreshNodesTree()
+
+
+	function _handleAction(options)
+	{
+		var o = {
+			'actionname': '',
+			'actionurl': '',
+			'ActionOptions': {}
+		};
+		if(options) $.extend(o, options);
+
+		setCurrentAction(o.actionname, o.actionurl);
+
+		CswAjaxJSON({
+			'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
+			'data': { 'ActionName': o.actionname }
+		});
+
+		switch (o.actionname)
+		{
+//			case 'Assign_Inspection':
+//				break;
+//			case 'Assign_Tests':
+//				break;
+//			case 'Create_Inspection':
+//				break;
+//			case 'Design':
+//				break;
+			case 'Edit_View':
+				
+				clear({ 'all': true });
+
+				var EditViewOptions = {
+					'viewid': o.ActionOptions.viewid,
+					'viewmode': o.ActionOptions.viewmode,
+					'onCancel': function ()
+					{
+						clear({ 'all': true });
+						refreshSelected();
+					},
+					'onFinish': function (viewid, viewmode)
+					{
+						clear({ 'all': true });
+						if(isTrue(o.ActionOptions.IgnoreReturn))
+							refreshSelected();
+						else
+							handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+					},
+					'startingStep': o.ActionOptions.startingStep
+				};
+
+				$('#CenterTopDiv').CswViewEditor(EditViewOptions);
+
+				break;
+//			case 'Enter_Results':
+//				break;
+//			case 'Future_Scheduling':
+//				break;
+//			case 'Import_Fire_Extinguisher_Data':
+//				break;
+//			case 'Inspection_Design':
+//				break;
+			case 'OOC_Inspections':
+
+				function _setupOOCInspections() 
+				{
+					clear({ 'all': true });
+
+					$('#CenterTopDiv').CswInspectionStatus({
+						'onEditNode': function() { 
+							_setupOOCInspections();
+						}
+					});
+				}
+
+				_setupOOCInspections();
+
+				break;
+//			case 'Load_Mobile_Data':
+//				break;
+//			case 'Receiving':
+//				break;
+//			case 'Split_Samples':
+//				break;
+//			case 'View_By_Location':
+//				break;
+			default:
+				if(!isNullOrEmpty(o.actionurl))
+				{
+					window.location = o.actionurl;
+				}
+				break;
+		}
+	} // _handleAction()
+
+
+</script>
+
+<!--#include file="MainFooter.html" -->

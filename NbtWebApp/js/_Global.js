@@ -54,7 +54,7 @@ var CswAppMode = {
 // Globals (yuck)
 // ------------------------------------------------------------------------------------
 
-var homeUrl = 'NewMain.html';
+var homeUrl = 'Main.html';
 
 var timeout = '';
 function getTimeout()
