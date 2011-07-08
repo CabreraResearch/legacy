@@ -11,16 +11,17 @@
             var Text = o.$propxml.children('text').text().trim();
             var Href = o.$propxml.children('href').text().trim();
 
+            var $Link = $('<a href="'+ Href +'" target="_blank">'+ Text +'</a>&nbsp;&nbsp;' )
+
             if(o.ReadOnly)
             {
-                $Div.append(Value);
+                $Div.append($Link);
             }
             else 
             {
                 var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
-                var $Link = $('<a href="'+ Href +'" target="_blank">'+ Text +'</a>&nbsp;&nbsp;' )
-                                .appendTo($table.CswTable('cell', 1, 1));
+				$Link.appendTo($table.CswTable('cell', 1, 1));
 
                 var $EditButton = $('<div/>')
                                 .appendTo($table.CswTable('cell', 1, 2))
