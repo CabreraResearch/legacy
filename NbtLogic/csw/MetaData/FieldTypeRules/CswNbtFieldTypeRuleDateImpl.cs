@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
             else
             {
-                FilterValue = Convert.ToDateTime( CswNbtViewPropertyFilterIn.Value ).Date;
+                DateTime.TryParse( CswNbtViewPropertyFilterIn.Value, out FilterValue );
             }
 
             if( FilterValue != DateTime.MinValue )
