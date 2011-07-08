@@ -53,35 +53,45 @@ namespace ChemSW.Nbt.WebServices
 
 			_CswNbtResources.logMessage( "WebServices: Session Started (_initResources called)" );
 
-			string ContextViewId = string.Empty;
-			string ContextActionName = string.Empty;
-			if( Context.Request.Cookies["csw_currentviewid"] != null )
-			{
-				ContextViewId = Context.Request.Cookies["csw_currentviewid"].Value;
-			}
-			if( Context.Request.Cookies["csw_currentactionname"] != null )
-			{
-				ContextActionName = Context.Request.Cookies["csw_currentactionname"].Value;
-			}
-
-			if( ContextViewId != string.Empty )
-			{
-				CswNbtView ContextView = _getView( ContextViewId );
-				if( ContextView != null )
-				{
-					_CswNbtResources.AuditContext = ContextView.ViewName + " (" + ContextView.ViewId.ToString() + ")";
-				}
-			}
-			else if( ContextActionName != string.Empty )
-			{
-				CswNbtAction ContextAction = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ContextActionName )];
-				if( ContextAction != null )
-				{
-					_CswNbtResources.AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name ) + " (Action_" + ContextAction.ActionId.ToString() + ")";
-				}
-			}
-
 		}//_initResources() 
+
+		private AuthenticationStatus _attemptRefresh()
+		{
+			AuthenticationStatus ret = _CswSessionResources.attemptRefresh();
+
+			if( ret == AuthenticationStatus.Authenticated )
+			{
+				// Set audit context
+				string ContextViewId = string.Empty;
+				string ContextActionName = string.Empty;
+				if( Context.Request.Cookies["csw_currentviewid"] != null )
+				{
+					ContextViewId = Context.Request.Cookies["csw_currentviewid"].Value;
+				}
+				if( Context.Request.Cookies["csw_currentactionname"] != null )
+				{
+					ContextActionName = Context.Request.Cookies["csw_currentactionname"].Value;
+				}
+
+				if( ContextViewId != string.Empty )
+				{
+					CswNbtView ContextView = _getView( ContextViewId );
+					if( ContextView != null )
+					{
+						_CswNbtResources.AuditContext = ContextView.ViewName + " (" + ContextView.ViewId.ToString() + ")";
+					}
+				}
+				else if( ContextActionName != string.Empty )
+				{
+					CswNbtAction ContextAction = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ContextActionName )];
+					if( ContextAction != null )
+					{
+						_CswNbtResources.AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name ) + " (Action_" + ContextAction.ActionId.ToString() + ")";
+					}
+				}
+			}
+			return ret;
+		} // _attemptRefresh()
 
 		private void _deInitResources()
 		{
@@ -360,7 +370,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -394,7 +404,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -424,7 +434,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -456,7 +466,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -487,7 +497,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -522,7 +532,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -569,7 +579,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -622,7 +632,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -667,7 +677,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -731,7 +741,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
 					CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
@@ -766,7 +776,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -799,7 +809,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -845,7 +855,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -878,7 +888,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -928,7 +938,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -963,7 +973,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
 
@@ -1025,7 +1035,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1056,7 +1066,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1093,7 +1103,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1129,7 +1139,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1165,7 +1175,7 @@ namespace ChemSW.Nbt.WebServices
 			{
 				_initResources();
 
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1200,7 +1210,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1260,7 +1270,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1296,7 +1306,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1334,7 +1344,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1365,7 +1375,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1397,7 +1407,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1427,7 +1437,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1458,7 +1468,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1533,7 +1543,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1565,7 +1575,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1602,7 +1612,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1635,7 +1645,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1667,7 +1677,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1701,7 +1711,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1738,7 +1748,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1780,7 +1790,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1847,7 +1857,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1891,7 +1901,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1923,7 +1933,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -1959,7 +1969,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -2001,7 +2011,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -2033,7 +2043,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -2076,7 +2086,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -2116,7 +2126,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -2156,7 +2166,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -2265,7 +2275,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
 					_CswNbtResources.SessionDataMgr.saveSessionData( _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum(ActionName)], true );
@@ -2292,7 +2302,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
 					CswNbtWebServiceInspections ws = new CswNbtWebServiceInspections( _CswNbtResources );
@@ -2323,7 +2333,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -2358,7 +2368,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -2393,7 +2403,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
@@ -2432,7 +2442,7 @@ namespace ChemSW.Nbt.WebServices
 			try
 			{
 				_initResources();
-				AuthenticationStatus = _CswSessionResources.attemptRefresh();
+				AuthenticationStatus = _attemptRefresh();
 				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
 				{
 					CswNbtWebServiceAuditing ws = new CswNbtWebServiceAuditing( _CswNbtResources );

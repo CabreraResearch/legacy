@@ -578,8 +578,17 @@ namespace ChemSW.Nbt
             // Override jct_nodes_props audit level with level set on nodetype prop
             if( DataRow.Table.TableName == "jct_nodes_props" )
             {
-                Int32 NodeTypePropId = CswConvert.ToInt32( DataRow["nodetypepropid"] );
-                if( NodeTypePropId != Int32.MinValue )
+				Int32 NodeTypePropId = Int32.MinValue;
+				if( DataRowState.Deleted != DataRow.RowState )
+				{
+					NodeTypePropId = CswConvert.ToInt32( DataRow["nodetypepropid"] );
+				}
+				else
+				{
+					NodeTypePropId = CswConvert.ToInt32( DataRow["nodetypepropid", DataRowVersion.Original] );
+				}
+
+				if( NodeTypePropId != Int32.MinValue )
                 {
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtMetaData.getNodeTypeProp( NodeTypePropId );
                     if( null != NodeTypeProp )
