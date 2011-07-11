@@ -109,6 +109,9 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="js\jquery\CswMobile.js" />
+    <Content Include="js\jquery\CswMobileNoJqm.js" />
+    <Content Include="MobilePerf.html" />
     <Content Include="NewMain.html" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.js" />
@@ -494,7 +497,6 @@
     <Content Include="js\jquery\CswMenuHeader.js" />
     <Content Include="js\jquery\CswMenuMain.js" />
     <Content Include="js\jquery\CswMobile.css" />
-    <Content Include="js\jquery\CswMobile.js" />
     <Content Include="js\jquery\CswNodeGrid.js" />
     <Content Include="js\jquery\CswNodeSelect.js" />
     <Content Include="js\jquery\CswNodeTabs.js" />

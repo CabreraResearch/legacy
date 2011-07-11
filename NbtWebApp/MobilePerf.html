@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html> <!-- manifest="Mobile.manifest"> <!--Still not ready for primetime-->
+<head>
+    <base href="Mobile.html"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Main</title>
+    <!--#include file="Mobile_Includes_Head.html" -->
+</head>
+
+<body id="CswMobile_Body">
+    <script type="text/javascript" src="js/CswAll.min.js"></script>
+    <script type="text/javascript">
+
+        function redirectOnError(e)
+        {
+            if (debugOn())
+            {
+                errorHandler(e, true, true);
+            }
+            else
+            {
+                errorHandler(e);
+            }
+        }
+
+        window.onerror = function(e)
+        {
+            redirectOnError(e);
+        };
+        
+        try {
+            if( hasWebStorage() ) {
+
+                // override value in _Globals.js
+		        homeUrl = "Mobile.html";
+
+                $(document).ready(function()
+                    {
+                    $('body').CswMobileNoJqm({
+                            'Theme': 'b'
+                        });
+                });
+            }
+            else {
+                throw('This browser does not support localStorage.');
+            }
+        }
+        catch(e) {
+            redirectOnError();
+        }
+
+
+        
+    </script>
+</body>
+</html>
