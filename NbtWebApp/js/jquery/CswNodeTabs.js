@@ -47,7 +47,7 @@
 
         getTabs(o);
 
-        if(o.EditMode !== 'PrintReport')
+        if(o.EditMode !== EditMode.PrintReport.name)
         {
             var $linkdiv = $('<div id="' + o.ID + '_linkdiv" align="right"/>')
                             .appendTo($parent);
@@ -234,7 +234,7 @@
 
                     var i = 0;
 
-                    if(o.EditMode !== 'PrintReport')
+                    if(o.EditMode !== EditMode.PrintReport.Name)
                     {
                         $savetab = $form.CswButton({ID: 'SaveTab', 
                                                 enabledText: 'Save Changes', 
@@ -366,7 +366,7 @@
 
             });
 
-			if(AtLeastOneSaveable === false)
+			if(AtLeastOneSaveable === false && o.EditMode != EditMode.AddInPopup.name)
 			{
 				$savebtn.hide();
 			} else {
