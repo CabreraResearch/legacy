@@ -155,7 +155,7 @@ CswAppMode.mode = 'mobile';
             $.extend(opts, options);
         }
 
-        debugOn(debug);
+        debugOn(false);
         
         var ForMobile = true;
         var rootid;
