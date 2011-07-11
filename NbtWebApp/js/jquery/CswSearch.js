@@ -283,8 +283,8 @@ var CswSearch_CssClasses = {
             var clearButtonId = makeId({ID: 'clear_button', prefix: o.ID});
             //clear btn
             $clearButtonCell.CswButton({ID: clearButtonId,
-                                        enabledText: 'Clear', 
-                                        disabledText: 'Clear',
+                                        enabledText: 'Reset', //case 22756: this is more accurate name-to-behavior.
+                                        disabledText: 'Reset',
                                         disableOnClick: false, 
                                         onclick: function() 
                                         {
