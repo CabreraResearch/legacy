@@ -206,17 +206,20 @@ namespace ChemSW.Nbt
         {
             if( SessionId != string.Empty )
             {
-                CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_update", SessionDataTableName );
-                DataTable SessionDataTable = SessionDataUpdate.getTable( "where " + SessionDataColumn_SessionId + " = '" + SessionId + "'" );
-                if( SessionDataTable.Rows.Count > 0 )
-                {
-                    Collection<DataRow> DoomedRows = new Collection<DataRow>();
-                    foreach( DataRow Row in SessionDataTable.Rows )
-                        DoomedRows.Add( Row );
-                    foreach( DataRow Row in DoomedRows )
-                        Row.Delete();
-                    SessionDataUpdate.update( SessionDataTable );
-                }
+				if( _CswNbtResources.IsInitializedForDbAccess )
+				{
+					CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_update", SessionDataTableName );
+					DataTable SessionDataTable = SessionDataUpdate.getTable( "where " + SessionDataColumn_SessionId + " = '" + SessionId + "'" );
+					if( SessionDataTable.Rows.Count > 0 )
+					{
+						Collection<DataRow> DoomedRows = new Collection<DataRow>();
+						foreach( DataRow Row in SessionDataTable.Rows )
+							DoomedRows.Add( Row );
+						foreach( DataRow Row in DoomedRows )
+							Row.Delete();
+						SessionDataUpdate.update( SessionDataTable );
+					}
+				}
             }
         } // removeSessionData()
 
