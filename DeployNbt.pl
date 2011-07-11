@@ -36,8 +36,8 @@ my %schemata;
 $schemata{"nbt_master"} = "nbt";   # master
 $schemata{"nbt_schema1"} = "nbt";  # 1
 $schemata{"nbt_schema2"} = "nbt";  # 2
-$schemata{"nbt_schema3"} = "nbt";  # sales
-$schemata{"nbt_schema4"} = "nbt";  # import
+$schemata{"sales"} = "nbt";  # sales
+$schemata{"import"} = "nbt";  # import
 $schemata{"muehlhan"} = "nbt";  # Muehlhan
 $schemata{"crfireline"} = "nbt";  # CRFireline
 $schemata{"clorox"} = "nbt";  # Clorox
