@@ -27,7 +27,7 @@ my @components = (
 	"NbtHelp"
 );
 
-my $orclserver = "madeye";
+my $orclserver = "golem";
 my $orcldumpdir = "MADEYE_DUMPS";
 my $masterdumpdir = "NBTDUMPS";
 
