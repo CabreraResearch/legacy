@@ -6,6 +6,7 @@
 /// <reference path="../_Global.js" />
 /// <reference path="../CswClasses.js" />
 /// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
+/// <reference path="../thirdparty/jquery/plugins/jquery.xml.js" />
 
 //var profiler = $createProfiler();
 
@@ -522,7 +523,7 @@ CswAppMode.mode = 'mobile';
                         logger.setAjaxSuccess();
                         $currentViewXml = $xml;
                         p.$xml = $currentViewXml;
-                        
+
                         if( params.level < 2) {
                             _storeViewXml(p.DivId, p.HeaderText, $currentViewXml, params.level);
                         }
@@ -710,7 +711,7 @@ CswAppMode.mode = 'mobile';
                 icon = 'images/icons/' + p.$xmlitem.CswAttrXml('iconfilename');
             }
             var ObjectClass = p.$xmlitem.CswAttrXml('objectclass');
-            debugger;
+
             if( nodeSpecies !== 'More' )
             {
                 switch (ObjectClass) {
