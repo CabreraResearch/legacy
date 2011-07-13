@@ -111,6 +111,7 @@
     <Content Include="ConfigVars.aspx" />
     <Content Include="js\jquery\CswMobile.js" />
     <Content Include="js\thirdparty\jquery\plugins\x2j.js" />
+    <Content Include="js\thirdparty\js\xml2json.js" />
     <Content Include="MobilePerf.html" />
     <Content Include="NewMain.html" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css" />
