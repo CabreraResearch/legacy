@@ -5,8 +5,6 @@
 /// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../_Global.js" />
 /// <reference path="../CswClasses.js" />
-/// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
-/// <reference path="../thirdparty/js/xml2json.js" />
 
 //var profiler = $createProfiler();
 
@@ -90,7 +88,7 @@ CswAppMode.mode = 'mobile';
                 ParentId: '',
                 DivId: '',
                 HeaderText: '',
-                $xml: '',
+                json: '',
                 parentlevel: 0,
                 level: 1,
                 HideRefreshButton: false,
@@ -155,7 +153,38 @@ CswAppMode.mode = 'mobile';
             Logout();
         }
         var SessionId = localStorage["sessionid"];
-        var $currentViewXml;
+        function currentViewJson(json,level) {
+            var ret = { };
+            if(json && arguments.length >= 1) {
+                if( !isNullOrEmpty(level) ) {
+                    switch(level) {
+                        case 0:
+                            {
+                                ret = json.views.view;
+                                break;
+                            }
+                        default:
+                            {
+                                ret = json.searches.node;
+                                break;
+                            }
+                    }
+                }
+                else {
+                    ret = json;
+                }
+                if(ret) {
+                    localStorage.currentViewJson = JSON.stringify(ret);
+                }
+            }
+            if( ( !ret || ret.length === 0) && 
+                localStorage.currentViewJson && 
+                'undefined' !== localStorage.currentViewJson ) {
+                ret = JSON.parse(localStorage.currentViewJson);
+            }
+            return ret;
+        }
+        
 
         var storedViews = [];
         if (localStorage.storedViews) storedViews = JSON.parse(localStorage['storedviews']); // {name: '', rootid: ''}
@@ -439,8 +468,9 @@ CswAppMode.mode = 'mobile';
                 HeaderText: '',
                 HideRefreshButton: false,
                 HideSearchButton: false,
-                $xml: '',
-                SessionId: SessionId
+                json: '',
+                SessionId: SessionId,
+                PageType: 'search'
             };
             if (params) $.extend(p, params);
 
@@ -451,41 +481,38 @@ CswAppMode.mode = 'mobile';
 
             if (isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1) {
                 if (p.level === 0) {
+                    p.PageType = 'view';
                     if (!amOnline()) {
-                        p.$xml = _fetchCachedViewXml(p.DivId);
-                        $currentViewXml = p.$xml;
-                        $retDiv = _loadDivContentsXml(p);
+                        p.json = currentViewJson( _fetchCachedViewJson(p.DivId), p.level );
+                        $retDiv = _loadDivContentsJson(p);
                     } else {
                         p.url = opts.ViewsListUrl;
-                        $retDiv = _getDivXml(p);
+                        $retDiv = _getDivJson(p);
                     }
                 } else if (p.level === 1) {
                     // case 20354 - try cached first
-                    var $xmlstr = _fetchCachedViewXml(rootid);
-
-                    if (!isNullOrEmpty($xmlstr)) {
-                        $currentViewXml = $xmlstr;
-                        p.$xml = $currentViewXml;
-                        $retDiv = _loadDivContentsXml(p);
+                    var cachedJson = _fetchCachedViewJson(rootid);
+                    p.PageType = 'node';
+                    if (!isNullOrEmpty(cachedJson)) {
+                        p.json = currentViewJson(cachedJson);
+                        $retDiv = _loadDivContentsJson(p);
                     } else if (amOnline()) {
                         p.url = opts.ViewUrl;
-                        $retDiv = _getDivXml(p);
+                        $retDiv = _getDivJson(p);
                     }
                 } else  // Level 2 and up
                 {
-                    var $xml = $(localStorage[p.DivId]);
-                    if( !isNullOrEmpty($xml) && $xml.length > 0 ) {
-                        p.$xml = $xml.children('subitems')
-                                     .first();
+                    var cachedJson = _fetchCachedNodeJson(p.ParentId, p.DivId);
+                    p.PageType = 'prop';
+                    if( isNullOrEmpty(cachedJson) || cachedJson.length === 0 ) {
+                        cachedJson = currentViewJson();
                     }
-                    else if (!isNullOrEmpty($currentViewXml)) {
-                        p.$xml = $currentViewXml.find('#' + p.DivId)
-                                                .children('subitems')
-                                                .first()
-                                                .clone();
-                    }
-                    if (!isNullOrEmpty(p.$xml)) {
-                        $retDiv = _loadDivContentsXml(p);
+                    if( !isNullOrEmpty(cachedJson) ) {
+                        p.json = cachedJson.subitems.prop;
+
+                        if (!isNullOrEmpty(p.json)) {
+                            $retDiv = _loadDivContentsJson(p);
+                        }
                     }
                 }
             }
@@ -493,14 +520,14 @@ CswAppMode.mode = 'mobile';
             return $retDiv;
         } // _loadDivContents()
 
-        function _loadDivContentsXml(params) {
+        function _loadDivContentsJson(params) {
             params.parentlevel = params.level;
-            var $retDiv = _processViewXml(params);
+            var $retDiv = _processViewJson(params);
             return $retDiv;
         }
 
-        function _getDivXml(params) {
-            var logger = new profileMethod('getDivXml');
+        function _getDivJson(params) {
+            var logger = new profileMethod('getDivJson');
             var $retDiv = undefined;
 
             var p = {
@@ -508,26 +535,26 @@ CswAppMode.mode = 'mobile';
             };
             $.extend(p, params);
 
-            var dataXml = {
+            var jsonData = {
                 SessionId: p.SessionId,
                 ParentId: p.DivId,
-                formobile: ForMobile
+                ForMobile: ForMobile
             };
-            CswAjaxXml({
+            CswAjaxJSON({
                     //async: false,   // required so that the link will wait for the content before navigating
                     url: p.url,
-                    data: dataXml,
+                    data: jsonData,
                     onloginfail: function(text) { onLoginFail(text); },
-                    success: function($xml) {
+                    success: function(data) {
                         setOnline(false);
                         logger.setAjaxSuccess();
-                        $currentViewXml = $xml;
-                        p.$xml = $currentViewXml;
 
+                        p.json = currentViewJson( data, params.level );    
+                        
                         if( params.level < 2) {
-                            _storeViewXml(p.DivId, p.HeaderText, $currentViewXml, params.level);
+                            _storeViewJson(p.DivId, p.HeaderText, p.json, params.level);
                         }
-                        $retDiv = _loadDivContentsXml(p);
+                        $retDiv = _loadDivContentsJson(p);
                     },
                     error: function() {
                         onError();
@@ -539,14 +566,13 @@ CswAppMode.mode = 'mobile';
 
         var currenttab;
 
-        function _processViewXml(params) {
-            var logger = new profileMethod('processViewXml');
+        function _processViewJson(params) {
+            var logger = new profileMethod('processViewJson');
             var p = {
                 ParentId: '',
                 DivId: '',
                 HeaderText: '',
-                $xml: '',
-                $xmlitem: '',
+                json: '',
                 parentlevel: '',
                 level: '',
                 HideSearchButton: false,
@@ -578,12 +604,17 @@ CswAppMode.mode = 'mobile';
             var $list = $content.makeUL();
             currenttab = '';
 
-            p.$xml.children().each(function() {
-                p.$xmlitem = $(this).clone();
-                _makeListItemFromXml($list, p)
-                    .CswAttrXml('data-icon', false)
+            for(var i=0; i< p.json.length; i++)
+            {
+                var item = { };
+                $.extend(item, p);
+                item.json = p.json[i];
+
+                _makeListItemFromJson($list, item)
+                    //.CswAttrXml('data-icon', false)
                     .appendTo($list);
-            });
+            }
+
             logger.setAjaxSuccess();
             try {
                 $('.csw_collapsible').page();
@@ -608,14 +639,15 @@ CswAppMode.mode = 'mobile';
             }
             cacheLogInfo(logger);
             return $retDiv;
-        } // _processViewXml()
+        } // _processViewJson()
 
-        function _makeListItemFromXml($list, params) {
+        function _makeListItemFromJson($list, params) {
             var p = {
                 ParentId: '',
                 DivId: '',
                 HeaderText: '',
-                $xmlitem: '',
+                json: '',
+                PageType: '',
                 parentlevel: '',
                 level: '',
                 HideRefreshButton: false,
@@ -623,15 +655,14 @@ CswAppMode.mode = 'mobile';
             };
             if (params) $.extend(p, params);
 
-            var id = makeSafeId({ ID: p.$xmlitem.CswAttrXml('id') });
-            var text = p.$xmlitem.CswAttrXml('name');
+            var id = makeSafeId({ ID: p.json['@id'] });
+            var text = p.json['@name'];
 
             var IsDiv = (!isNullOrEmpty(id));
-            var PageType = tryParseString(p.$xmlitem.get(0).nodeName, '').toLowerCase();
 
             var $retLI = $('');
 
-            switch (PageType) {
+            switch (p.PageType) {
             case "search":
                     // ignore this
                 break;
@@ -642,7 +673,7 @@ CswAppMode.mode = 'mobile';
             case "prop":
                 {
                     var $tab;
-                    var tab = p.$xmlitem.CswAttrXml('tab');
+                    var tab = p.json['@tab'];
 
                     if (currenttab !== tab) {
                         //should be separate ULs eventually
@@ -651,7 +682,7 @@ CswAppMode.mode = 'mobile';
                         currenttab = tab;
                     }
 
-                    var $prop = _FieldTypeXmlToHtml(p.$xmlitem, id)
+                    var $prop = _FieldTypeJsonToHtml(p.json, id)
                                     .appendTo($list);
                     break;   
                 } // case 'prop':
@@ -687,14 +718,14 @@ CswAppMode.mode = 'mobile';
             });
             
             return $retLI;
-        }// _makeListItemFromXml()
+        }// _makeListItemFromJson()
 
         function _makeObjectClassContent(params) {
             var p = {
                 ParentId: '',
                 DivId: '',
                 HeaderText: '',
-                $xmlitem: '',
+                json: '',
                 parentlevel: '',
                 HideRefreshButton: false,
                 HideSearchButton: false
@@ -703,23 +734,40 @@ CswAppMode.mode = 'mobile';
 
             var $retHtml;
             var Html = '';
-            var id = makeSafeId({ ID: p.$xmlitem.CswAttrXml('id') });
-            var nodeSpecies = p.$xmlitem.CswAttrXml('nodespecies');
-            var NodeName = p.$xmlitem.CswAttrXml('name');
+            var id = makeSafeId({ ID: p.json['@id'] });
+            var nodeSpecies = p.json['@nodespecies'];
+            var NodeName = p.json['@name'];
             var icon = '';
-            if (!isNullOrEmpty(p.$xmlitem.CswAttrXml('iconfilename'))) {
-                icon = 'images/icons/' + p.$xmlitem.CswAttrXml('iconfilename');
+            if (!isNullOrEmpty(p.json['@iconfilename'])) {
+                icon = 'images/icons/' + p.json['@iconfilename'];
             }
-            var ObjectClass = p.$xmlitem.CswAttrXml('objectclass');
+            var ObjectClass = p.json['@objectclass'];
 
             if( nodeSpecies !== 'More' )
             {
                 switch (ObjectClass) {
                 case "InspectionDesignClass":
-                    var DueDate = p.$xmlitem.find('prop[ocpname="Due Date"]').CswAttrXml('gestalt');
-                    var Location = p.$xmlitem.find('prop[ocpname="Location"]').CswAttrXml('gestalt');
-                    var MountPoint = p.$xmlitem.find('prop[ocpname="Target"]').CswAttrXml('gestalt');
-                    var Status = p.$xmlitem.find('prop[ocpname="Status"]').CswAttrXml('gestalt');
+                    var DueDate = '';
+                    var Location = '';
+                    var MountPoint = '';
+                    var Status = '';
+                    for(var i=0; i<p.json.subitems.prop.length; i++) {
+                        var prop = p.json.subitems.prop[i];
+                        switch(prop['@ocpname']) {
+                            case 'Location':
+                                Location = prop['@gestalt'];
+                                break;
+                            case 'Target':
+                                MountPoint = prop['@gestalt'];
+                                break;
+                            case 'Due Date':
+                                DueDate = prop['@gestalt'];
+                                break;
+                            case 'Status':
+                                Status = prop['@gestalt'];
+                                break;
+                        }
+                    }
 //Case 22579: just remove for now
 //                var UnansweredCnt = 0;
 
@@ -763,25 +811,26 @@ CswAppMode.mode = 'mobile';
             return $retHtml;
         }
 
-        function _FieldTypeXmlToHtml($xmlitem, ParentId) {
-            var IdStr = makeSafeId({ ID: $xmlitem.CswAttrXml('id') });
-            var FieldType = $xmlitem.CswAttrXml('fieldtype');
-            var PropName = $xmlitem.CswAttrXml('name');
-            var ReadOnly = isTrue($xmlitem.CswAttrXml('isreadonly'));
+        function _FieldTypeJsonToHtml(json, ParentId) {
+log(json);            
+            var IdStr = makeSafeId({ ID: json['@id'] });
+            var FieldType = json['@fieldtype'];
+            var PropName = json['@name'];
+            var ReadOnly = isTrue(json['@isreadonly']);
 
             // Subfield values
-            var sf_text = tryParseString($xmlitem.children('text').text(), '');
-            var sf_value = tryParseString($xmlitem.children('value').text(), '');
-            var sf_href = tryParseString($xmlitem.children('href').text(), '');
-            var sf_checked = tryParseString($xmlitem.children('checked').text(), '');
-            var sf_required = tryParseString($xmlitem.children('required').text(), '');
-            var sf_units = tryParseString($xmlitem.children('units').text(), '');
-            var sf_answer = tryParseString($xmlitem.children('answer').text(), '');
-            var sf_allowedanswers = tryParseString($xmlitem.children('allowedanswers').text(), '');
-            var sf_correctiveaction = tryParseString($xmlitem.children('correctiveaction').text(), '');
-            var sf_comments = tryParseString($xmlitem.children('comments').text(), '');
-            var sf_compliantanswers = tryParseString($xmlitem.children('compliantanswers').text(), '');
-            var sf_options = tryParseString($xmlitem.children('options').text(), '');
+            var sf_text = tryParseString(json['text'], '');
+            var sf_value = tryParseString(json['value'], '');
+            var sf_href = tryParseString(json['href'], '');
+            var sf_checked = tryParseString(json['checked'], '');
+            var sf_required = tryParseString(json['required'], '');
+            var sf_units = tryParseString(json['units'], '');
+            var sf_answer = tryParseString(json['answer'], '');
+            var sf_allowedanswers = tryParseString(json['allowedanswers'], '');
+            var sf_correctiveaction = tryParseString(json['correctiveaction'], '');
+            var sf_comments = tryParseString(json['comments'], '');
+            var sf_compliantanswers = tryParseString(json['compliantanswers'], '');
+            var sf_options = tryParseString(json['options'], '');
 
             var $retLi = $('<li id="' + IdStr + '_li"></li>')
                                 .CswAttrXml('data-icon', false);
@@ -904,7 +953,7 @@ CswAppMode.mode = 'mobile';
                     $prop = $propDiv.CswInput('init', { type: CswInput_Types.time, ID: propId, value: sf_value });
                     break;
                 default:
-                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['@gestalt'] + '</p>'));
                     break;
                 } // switch (FieldType)
 
@@ -915,7 +964,7 @@ CswAppMode.mode = 'mobile';
                     });
                 }
             } else {
-                $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+                $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['@gestalt'] + '</p>'));
             }
             if($propDiv.children().length > 0) {
                 $fieldcontain.append($propDiv);
@@ -924,25 +973,25 @@ CswAppMode.mode = 'mobile';
             return $retLi;
         }
 
-        function _FieldTypeHtmlToXml($xmlitem, id, value) {
+        function _FieldTypeHtmlToJson(json, id, value) {
             var name = new CswString(id);
-            var IdStr = makeSafeId({ ID: $xmlitem.CswAttrXml('id') });
-            var fieldtype = $xmlitem.CswAttrXml('fieldtype');
-            var propname = $xmlitem.CswAttrXml('name');
+            var IdStr = makeSafeId({ ID: json['@id'] });
+            var fieldtype = json['@fieldtype'];
+            //var propname = json.name;
 
             // subfield nodes
-            var $sf_text = $xmlitem.children('text');
-            var $sf_value = $xmlitem.children('value');
-            var $sf_href = $xmlitem.children('href');
-            var $sf_options = $xmlitem.children('options');
-            var $sf_checked = $xmlitem.children('checked');
-            var $sf_required = $xmlitem.children('required');
-            var $sf_units = $xmlitem.children('units');
-            var $sf_answer = $xmlitem.children('answer');
-            var $sf_allowedanswers = $xmlitem.children('allowedanswers');
-            var $sf_correctiveaction = $xmlitem.children('correctiveaction');
-            var $sf_comments = $xmlitem.children('comments');
-            var $sf_compliantanswers = $xmlitem.children('compliantanswers');
+            var $sf_text = json['@text'];
+            var $sf_value = json['@value'];
+            //var $sf_href = json.href;
+            //var $sf_options = json.options;
+            var $sf_checked = json['@checked'];
+            //var $sf_required = json.required;
+            //var $sf_units = json.units;
+            var $sf_answer = json['@answer'];
+            //var $sf_allowedanswers = json.allowedanswers;
+            var $sf_correctiveaction = json['@correctiveaction'];
+            var $sf_comments = json['@comments'];
+            //var $sf_compliantanswers = json.compliantanswers;
 
             var $sftomodify = null;
             switch (fieldtype) {
@@ -994,9 +1043,9 @@ CswAppMode.mode = 'mobile';
             }
             if (!isNullOrEmpty($sftomodify)) {
                 $sftomodify.text(value);
-                $xmlitem.CswAttrXml('wasmodified', '1');
+                json['@wasmodified'] = '1';
             }
-        }// _FieldTypeHtmlToXml()
+        }// _FieldTypeHtmlToJson()
 
         function _makeLogicalFieldSet(ParentId, IdStr, Checked, Required) {
             var Suffix = 'ans';
@@ -1017,7 +1066,7 @@ CswAppMode.mode = 'mobile';
             var inputName = makeSafeId({ prefix: IdStr, ID: Suffix }); //Name needs to be non-unique and shared
 
             for (var i = 0; i < answers.length; i++) {
-                var answertext;
+                var answertext = '';
                 switch (answers[i]) {
                 case 'Null':
                     answertext = '?';
@@ -1178,7 +1227,7 @@ CswAppMode.mode = 'mobile';
                                                 'data-identity': p.DivId + '_back', 
                                                 'data-rel': 'back',
                                                 'data-direction': 'reverse'
-                                            })
+                                            });
 
                 $closeBtn = $header.CswLink('init', {
                                                href: 'javascript:void(0)',
@@ -1688,36 +1737,33 @@ CswAppMode.mode = 'mobile';
                 !isNullOrEmpty(DivId) ) {
                 
                 var HeaderText = _getDivHeaderText(DivId);
-                var dataXml = {
+                var jsonData = {
                     SessionId: SessionId,
                     ParentId: DivId,
                     ForMobile: ForMobile
                 };
 
-                CswAjaxXml({
-                        async: false,   // required so that the link will wait for the content before navigating
+                CswAjaxJSON({
                         formobile: ForMobile,
                         url: opts.ViewUrl,
-                        data: dataXml,
+                        data: jsonData,
                         stringify: false,
                         onloginfail: function(text) { onLoginFail(text); },
-                        success: function(xml) {
+                        success: function(data) {
                             setOnline(false);
-                            $currentViewXml = $(xml);
-                            _updateStoredViewXml(DivId, $currentViewXml, '0');
-
+log(data);                            
                             var params = {
                                 ParentId: 'viewsdiv',
                                 DivId: DivId,
                                 HeaderText: HeaderText,
-                                '$xml': $currentViewXml,
+                                json: _updateStoredViewJson(DivId, currentViewJson(data, 0)),
                                 parentlevel: 0,
                                 level: 1,
                                 HideRefreshButton: false,
                                 HideSearchButton: false,
                                 HideBackButton: false
                             };
-                            params.onPageShow = function() { return _loadDivContents(params); }
+                            params.onPageShow = function() { return _loadDivContents(params); };
                             $.mobile.changePage( _loadDivContents(params) );
                         }, // success
                         error: function () {
@@ -1732,7 +1778,7 @@ CswAppMode.mode = 'mobile';
             $syncstatus.doChangePage({ transition: 'slideup' });
         }
 
-        function onHelp(DivId) {
+        function onHelp() {
             $help = _makeHelpDiv();
             $help.doChangePage({ transition: 'slideup' });
         }
@@ -1745,26 +1791,27 @@ CswAppMode.mode = 'mobile';
             var value = tryParseString(inputVal, eventObj.target.innerText);
        
             // update the xml and store it
-            if (!isNullOrEmpty($currentViewXml)) {
+            if (!isNullOrEmpty(currentViewJson())) {
                 mobileStorage.addUnsyncedChange();
                 _resetPendingChanges(false);
                 
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
-                var $nodeXml = $( localStorage[nodeId] );
-                $nodeXml.children(DivId).andSelf().find('prop').each(function() {
-                    var $fieldtype = $(this);
-                    _FieldTypeHtmlToXml($fieldtype, name, value);
-                });
-                $currentViewXml.find('#' + nodeId).html($nodeXml);
-                _updateStoredViewXml(rootid, $currentViewXml, '1');
+                var nodeJson = _fetchCachedNodeJson(DivId, nodeId);
+                
+                for(var i=0; i<nodeJson.subitems.prop.length; i++)
+                {
+                    var prop = nodeJson.subitems.prop[i];
+                    _FieldTypeHtmlToJson(prop, name, value);
+                }
+                _updateStoredViewJson(rootid, currentViewJson(), '1');
             }
             kickStartAutoSync();
             cacheLogInfo(logger);
         } // onPropertyChange()
 
         function onSearchOpen(DivId) {
-            var $xmlstr = _fetchCachedViewXml(rootid);
-            if (!isNullOrEmpty($xmlstr)) {
+            var searchJson = _fetchCachedViewJson(rootid);
+            if (!isNullOrEmpty(searchJson)) {
                 var $wrapper = $('<div></div>');
                 var $fieldCtn = $('<div data-role="fieldcontain"></div>')
                                             .appendTo($wrapper);
@@ -1772,12 +1819,11 @@ CswAppMode.mode = 'mobile';
                                             .appendTo($fieldCtn)
                                             .CswAttrXml({ 'data-native-menu': 'false' });
 
-                $xmlstr.children('search').each(function() {
-                    var $search = $(this).clone();
-                    $('<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>')
-                                            .appendTo($select);
-                });
-
+                for(var i=0; i < searchJson.length; i++ ) {
+                    var search = searchJson[i];
+                    $('<option value="' + search.id + '">' + search.name + '</option>')
+                        .appendTo($select);
+                }
                 var $searchCtn = $('<div data-role="fieldcontain"></div>')
                                             .appendTo($wrapper);
                 $searchCtn.CswInput('init', { type: CswInput_Types.search, ID: DivId + '_searchfor' })
@@ -1816,29 +1862,30 @@ CswAppMode.mode = 'mobile';
             var searchfor = $('#' + DivId + '_searchfor').val();
             var $resultsDiv = $('#' + DivId + '_searchresults')
                 .empty();
-            var $xmlstr = _fetchCachedViewXml(rootid);
-            if (!isNullOrEmpty($xmlstr)) {
+            var search = _fetchCachedViewJson(rootid);
+            if (!isNullOrEmpty(search)) {
                 var $content = $resultsDiv.makeUL(DivId + '_searchresultslist', { 'data-filter': false })
                                                     .append($('<li data-role="list divider">Results</li>'));
 
                 var hitcount = 0;
-                $xmlstr.find('node').each(function() {
-                    var $node = $(this).clone();
-                    if (!isNullOrEmpty($node.CswAttrXml(searchprop))) {
-                        if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0) {
+                for(var i=0; i<search.length; i++ )
+                {
+                    var node = search[i].node;
+                    if (!isNullOrEmpty(node[searchprop])) {
+                        if (node[searchprop].toLowerCase().indexOf(searchfor.toLowerCase()) >= 0) {
                             hitcount++;
                             $content.append(
-                                        _makeListItemFromXml($content, {
-                                                ParentId: DivId + '_searchresults',
-                                                DivId: DivId + '_searchresultslist',
-                                                HeaderText: 'Results',
-                                                $xmlitem: $node,
-                                                parentlevel: 1 }
-                                        )
-                                    );
+                                _makeListItemFromJson($content, {
+                                    ParentId: DivId + '_searchresults',
+                                    DivId: DivId + '_searchresultslist',
+                                    HeaderText: 'Results',
+                                    json: node,
+                                    parentlevel: 1 }
+                                    )
+                                );
                         }
                     }
-                });
+                }
                 if (hitcount === 0) {
                     $content.append($('<li>No Results</li>'));
                 }
@@ -1899,47 +1946,50 @@ CswAppMode.mode = 'mobile';
             };
         }
         
-        function _storeViewXml(rootid, rootname, $viewxml, level) {
-            var logger = new profileMethod('storeViewXml');
+        function _storeViewJson(rootid, rootname, viewJson, level) {
+            var logger = new profileMethod('storeViewJson');
             if(level === 0)
             {
-                var viewsCache = tryParseString(localStorage["storedviews"], '');
-                $viewxml.children('view').each(function() {
-                    var $this = $(this);
-                    var viewid = $this.CswAttrXml('id');
-                    var viewname = $this.CswAttrXml('name');
+                var viewsCache = [tryParseString(localStorage["storedviews"], '')];
+
+                for(var i=0; i< viewJson.length; i++)
+                {
+                    var thisView = viewJson[i];
+                    var viewid = thisView['@id'];
+                    var viewname = thisView['@name'];
                     if (viewsCache.indexOf('"rootid":"' + viewid + '"') === -1) {
                         storedViews.push({ rootid: viewid, name: viewname });
                     }
-                });
+                }
                 localStorage["storedviews"] = JSON.stringify(storedViews);
             }
-            localStorage[rootid] = JSON.stringify({ name: rootname, xml: xmlToString($viewxml), wasmodified: false });
+            localStorage[rootid] = JSON.stringify({ name: rootname, json: viewJson, wasmodified: false });
             
-            $viewxml.andSelf().find('node').each(function() {
-                var $nodeXml = $(this).clone();
-                var nodeId = $nodeXml.CswAttrXml('id');
-                var nodeStr = xmlToString($nodeXml);
-                localStorage[nodeId] = nodeStr;
-            });
+//            $viewxml.andSelf().find('node').each(function() {
+//                var $nodeXml = $(this).clone();
+//                var nodeId = $nodeXml.CswAttrXml('id');
+//                var nodeStr = xmlToString($nodeXml);
+//                localStorage[nodeId] = nodeStr;
+//            });
             
             cacheLogInfo(logger);
         }
 
-        function _updateStoredViewXml(rootid, $viewxml, wasmodified) {
-            if (!isNullOrEmpty(localStorage[rootid]) && !isNullOrEmpty($viewxml)) {
+        function _updateStoredViewJson(rootid, viewJson, wasmodified) {
+            if (!isNullOrEmpty(localStorage[rootid]) && !isNullOrEmpty(viewJson)) {
                 var view = JSON.parse(localStorage[rootid]);
-                var update = { xml: xmlToString($viewxml), wasmodified: wasmodified };
+                var update = { json: viewJson, wasmodified: wasmodified };
                 if (view) $.extend(view, update);
                 localStorage[rootid] = JSON.stringify(view);
                 
-                $viewxml.andSelf().find('node').each(function() {
-                    var $nodeXml = $(this).clone();
-                    var nodeId = $nodeXml.CswAttrXml('id');
-                    var nodeStr = xmlToString($nodeXml);
-                    localStorage[nodeId] = nodeStr;
-                });
+//                $viewxml.andSelf().find('node').each(function() {
+//                    var $nodeXml = $(this).clone();
+//                    var nodeId = $nodeXml.CswAttrXml('id');
+//                    var nodeStr = xmlToString($nodeXml);
+//                    localStorage[nodeId] = nodeStr;
+//                });
             }
+            return viewJson;
         }
 
         function _getModifiedView(onSuccess) {
@@ -1954,9 +2004,9 @@ CswAppMode.mode = 'mobile';
                         if (view.wasmodified) {
                             modified = true;
                             var rootid = stored.rootid;
-                            var viewxml = view.xml;
-                            if (!isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml)) {
-                                onSuccess(rootid, viewxml);
+                            var viewJson = view.json;
+                            if (!isNullOrEmpty(rootid) && !isNullOrEmpty(viewJson)) {
+                                onSuccess(rootid, viewJson);
                             }
                         }
                     }
@@ -1968,16 +2018,35 @@ CswAppMode.mode = 'mobile';
             }
         }
 
-        function _fetchCachedViewXml(rootid) {
-            var $view;
+        function _fetchCachedViewJson(rootid) {
+            var ret = {};
             if (!isNullOrEmpty(localStorage[rootid])) {
-                //View is JSON: {name: '', xml: '', wasmodified: ''}
+                //View is JSON: {name: '', json: '', wasmodified: ''}
                 var rootObj = JSON.parse(localStorage[rootid]);
-                var rootXml = rootObj.xml;
-                $view = $(rootXml);
+                ret = rootObj.json;
             }
-            return $view;
+            return ret;
         }
+        
+        function _fetchCachedNodeJson(rootid,nodeid) {
+            var ret = {};
+            if (!isNullOrEmpty(localStorage[rootid])) {
+                //View is JSON: {name: '', json: '', wasmodified: ''}
+                var rootObj = JSON.parse(localStorage[rootid]);
+                var viewJson = currentViewJson( rootObj.json );
+                var i = 0;
+                
+                while( isNullOrEmpty(ret) && i < viewJson.length ) {
+                    var node = viewJson[i];
+                    if(node['@id'] === nodeid) {
+                        ret = node;
+                    }
+                    i++;
+                }
+            }
+            return ret;
+        }
+        
         
         // ------------------------------------------------------------------------------------
         // Synchronization
@@ -2013,24 +2082,24 @@ CswAppMode.mode = 'mobile';
                 url = opts.ConnectTestRandomFailUrl;
             }
             if( !mobileStorage.stayOffline() ) {
-                CswAjaxXml({
+                CswAjaxJSON({
                         formobile: ForMobile,
                         url: url,
                         data: {  },
                         stringify: false,
                         onloginfail: function(text) { onLoginFail(text); },
-                        success: function($xml) {
+                        success: function(data) {
                             setOnline(false);
                             _processChanges(true);
                             if (!isNullOrEmpty(onSuccess)) {
-                                onSuccess($xml);
+                                onSuccess(currentViewJson( data ));
                             }
                         },
-                        error: function(xml) {
-                            setOffline();
-                            var $xml = $(xml);
+                        error: function(data) {
+                            //setOffline();
+                            
                             if (!isNullOrEmpty(onFailure)) {
-                                onFailure($xml);
+                                onFailure(currentViewJson( data ));
                             }
                             _waitForData();
                         }
@@ -2044,12 +2113,12 @@ CswAppMode.mode = 'mobile';
         function _processChanges(perpetuateTimer) {
             var logger = new profileMethod('processChanges');
             if (!isNullOrEmpty(SessionId) && !mobileStorage.stayOffline() ) {
-                _getModifiedView(function(rootid, viewxml) {
-                    if (!isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml)) {
+                _getModifiedView(function(rootid, viewJson) {
+                    if (!isNullOrEmpty(rootid) && !isNullOrEmpty(viewJson)) {
                         var dataJson = {
                             SessionId: SessionId,
                             ParentId: rootid,
-                            UpdatedViewXml: viewxml,
+                            UpdatedViewJson: viewJson,
                             ForMobile: ForMobile
                         };
 
@@ -2057,7 +2126,6 @@ CswAppMode.mode = 'mobile';
                                 formobile: ForMobile,
                                 url: opts.UpdateUrl,
                                 data: dataJson,
-                                stringify: true,
                                 onloginfail: function(text) {
                                     setOnline(false);
                                     if (perpetuateTimer) {
@@ -2069,8 +2137,8 @@ CswAppMode.mode = 'mobile';
                                 success: function(data) {
                                     logger.setAjaxSuccess();
                                     setOnline(false);
-                                    var $xml = $(data.xml);
-                                    _updateStoredViewXml(rootid, $xml, '0');
+                                    var json = data;
+                                    _updateStoredViewJson(rootid, json, '0');
                                     mobileStorage.clearUnsyncedChanges();
                                     _resetPendingChanges(true);
                                     if (perpetuateTimer) {
@@ -2079,7 +2147,7 @@ CswAppMode.mode = 'mobile';
                                     $.mobile.hidePageLoadingMsg();
                                 },
                                 error: function(data) {
-                                    setOffline();
+                                    //setOffline();
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
