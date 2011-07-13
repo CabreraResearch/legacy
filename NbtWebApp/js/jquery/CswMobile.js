@@ -812,7 +812,7 @@ CswAppMode.mode = 'mobile';
         }
 
         function _FieldTypeJsonToHtml(json, ParentId) {
-log(json);            
+
             var IdStr = makeSafeId({ ID: json['@id'] });
             var FieldType = json['@fieldtype'];
             var PropName = json['@name'];
@@ -1751,7 +1751,7 @@ log(json);
                         onloginfail: function(text) { onLoginFail(text); },
                         success: function(data) {
                             setOnline(false);
-log(data);                            
+                           
                             var params = {
                                 ParentId: 'viewsdiv',
                                 DivId: DivId,
