@@ -126,14 +126,20 @@ namespace ChemSW.Nbt.WebServices
             {
                 newEx = new CswDniException( ex.Message, ex );
             }
-            if( newEx.Type == ErrorType.Warning )
-            {
-                Display = ( _CswNbtResources.getConfigVariableValue( "displaywarningsinui" ) != "0" );
-            }
-            else
-            {
-                Display = ( _CswNbtResources.getConfigVariableValue( "displayerrorsinui" ) != "0" );
-            }
+
+			Display = true;
+			if( _CswNbtResources != null )
+			{
+			if( newEx.Type == ErrorType.Warning )
+			{
+				Display = ( _CswNbtResources.getConfigVariableValue( "displaywarningsinui" ) != "0" );
+			}
+			else
+			{
+				Display = ( _CswNbtResources.getConfigVariableValue( "displayerrorsinui" ) != "0" );
+			}
+			}
+
             Type = newEx.Type;
             Message = newEx.MsgFriendly;
             Detail = newEx.MsgEscoteric + "; " + ex.StackTrace;
