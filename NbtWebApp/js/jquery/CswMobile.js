@@ -6,7 +6,7 @@
 /// <reference path="../_Global.js" />
 /// <reference path="../CswClasses.js" />
 /// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
-/// <reference path="../thirdparty/jquery/plugins/jquery.xml.js" />
+/// <reference path="../thirdparty/js/xml2json.js" />
 
 //var profiler = $createProfiler();
 
