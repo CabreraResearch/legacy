@@ -31,14 +31,14 @@ namespace ChemSW.Nbt.Schema
 			//_UpdateDrivers.Add( Schema01I01Driver.SchemaVersion, Schema01I01Driver );
 
             // This automatically detects the latest version
-            foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == null ||
-                                                                                        ( _LatestVersion.CycleIteration == Version.CycleIteration &&
-                                                                                          _LatestVersion.ReleaseIdentifier == Version.ReleaseIdentifier &&
-                                                                                          _LatestVersion.ReleaseIteration < Version.ReleaseIteration ) ) )
-            {
-                _LatestVersion = Version;
-            }
-
+			_LatestVersion = _MinimumVersion;
+			foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
+																						( _LatestVersion.CycleIteration == Version.CycleIteration &&
+																							_LatestVersion.ReleaseIdentifier == Version.ReleaseIdentifier &&
+																							_LatestVersion.ReleaseIteration < Version.ReleaseIteration ) ) )
+			{
+				_LatestVersion = Version;
+			}
 
         }//ctor
 
