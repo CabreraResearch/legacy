@@ -110,7 +110,6 @@
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
     <Content Include="js\jquery\CswMobile.js" />
-    <Content Include="js\thirdparty\jquery\plugins\x2j.js" />
     <Content Include="js\thirdparty\js\xml2json.js" />
     <Content Include="MobilePerf.html" />
     <Content Include="NewMain.html" />
