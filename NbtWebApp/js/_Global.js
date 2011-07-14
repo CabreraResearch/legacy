@@ -10,13 +10,13 @@
 // ------------------------------------------------------------------------------------
 
 var EditMode = {
-	Edit: { name: 'Edit' },
-	AddInPopup: { name: 'AddInPopup' },
-	EditInPopup: { name: 'EditInPopup' },
-	Demo: { name: 'Demo' },
-	PrintReport: { name: 'PrintReport' },
-	DefaultValue: { name: 'DefaultValue' },
-	AuditHistoryInPopup: { name: 'AuditHistoryInPopup' }
+    Edit: { name: 'Edit' },
+    AddInPopup: { name: 'AddInPopup' },
+    EditInPopup: { name: 'EditInPopup' },
+    Demo: { name: 'Demo' },
+    PrintReport: { name: 'PrintReport' },
+    DefaultValue: { name: 'DefaultValue' },
+    AuditHistoryInPopup: { name: 'AuditHistoryInPopup' }
 };
 
 // for CswInput
@@ -135,54 +135,57 @@ function CswAjaxJSON(options)
     //var starttime = new Date();
     _ajaxCount++;
     $.ajax({
-    	type: 'POST',
-    	async: o.async,
-    	url: o.url,
-    	dataType: "json",
-    	contentType: 'application/json; charset=utf-8',
-    	data: JSON.stringify(o.data),
-    	success: function (data, textStatus, XMLHttpRequest)
-    	{
-    		_ajaxCount--;
-    		//var endtime = new Date();
-    		//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
-    		var result = $.parseJSON(data.d);
+        type: 'POST',
+        async: o.async,
+        url: o.url,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(o.data),
+        success: function (data, textStatus, XMLHttpRequest)
+        {
+            _ajaxCount--;
+            //var endtime = new Date();
+            //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+            var result = $.parseJSON(data.d);
 
-    		if (result.error !== undefined)
-    		{
-    			_handleAjaxError(XMLHttpRequest, {
-					'display': result.error.display,
-    				'type': result.error.type,
-    				'message': result.error.message,
-    				'detail': result.error.detail
-    			}, '');
-    			o.error();
-    		}
-    		else
-    		{
+            if (result.error !== undefined)
+            {
+                _handleAjaxError(XMLHttpRequest, {
+                    'display': result.error.display,
+                    'type': result.error.type,
+                    'message': result.error.message,
+                    'detail': result.error.detail
+                }, '');
+                o.error();
+            }
+            else
+            {
 
-    			var auth = tryParseString(result.AuthenticationStatus, 'Unknown');
-    			timeout = tryParseString(result.timeout, '');
+                var auth = tryParseString(result['AuthenticationStatus'], 'Unknown');
+                timeout = tryParseString(result['timeout'], '');
 
-    			_handleAuthenticationStatus({
-    				status: auth,
-    				success: function () { o.success(result); },
-    				failure: o.onloginfail,
-    				usernodeid: result.nodeid,
-    				usernodekey: result.cswnbtnodekey,
-    				passwordpropid: result.passwordpropid,
-    				ForMobile: o.formobile
-    			});
-    		}
-    	}, // success{}
-    	error: function (XMLHttpRequest, textStatus, errorThrown)
-    	{
-    		_ajaxCount--;
-    		//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-    		log("Webservice Request (" + o.url + ") Failed: " + textStatus);
-    		o.error();
-    	}
-    });            // $.ajax({
+                delete result['AuthenticationStatus'];
+                delete result['timeout'];
+
+                _handleAuthenticationStatus({
+                    status: auth,
+                    success: function () { o.success(result); },
+                    failure: o.onloginfail,
+                    usernodeid: result.nodeid,
+                    usernodekey: result.cswnbtnodekey,
+                    passwordpropid: result.passwordpropid,
+                    ForMobile: o.formobile
+                });
+            }
+        }, // success{}
+        error: function (XMLHttpRequest, textStatus, errorThrown)
+        {
+            _ajaxCount--;
+            //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+            log("Webservice Request (" + o.url + ") Failed: " + textStatus);
+            o.error();
+        }
+    });                // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options)
