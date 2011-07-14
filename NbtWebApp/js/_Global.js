@@ -56,10 +56,56 @@ var CswAppMode = {
 
 var homeUrl = 'Main.html';
 
-var timeout = '';
-function getTimeout()
+
+// ------------------------------------------------------------------------------------
+// Session Expiration
+// ------------------------------------------------------------------------------------
+
+var expiretime = '';
+var expiretime_interval;
+var expired_interval;
+
+function getExpireTime()
 {
-	return timeout;
+	return expiretime;
+}
+function setExpireTime(value)
+{
+	expiretime = value;
+	setExpireTimeInterval();
+}
+function setExpireTimeInterval()
+{
+	clearInterval(expiretime_interval);
+	clearInterval(expired_interval);
+	expiretime_interval = setInterval(function () { checkExpireTime(); }, 60000);
+	expired_interval = setInterval(function () { checkExpired(); }, 60000);
+}
+function checkExpired()
+{
+	var now = new Date();
+	if (Date.parse(expiretime) - Date.parse(now) < 0)
+	{
+		clearInterval(expired_interval);
+		Logout();
+	}
+}
+function checkExpireTime()
+{
+	var now = new Date();
+	if (Date.parse(expiretime) - Date.parse(now) < 180000)     	// 3 minutes until timeout
+	{
+		clearInterval(expiretime_interval);
+		$.CswDialog('ExpireDialog', {
+			'onYes': function ()
+			{
+				CswAjaxJSON({
+					'url': '/NbtWebApp/wsNBT.asmx/RenewSession',
+					'success': function () { }
+				});
+			}
+		});
+	}
 }
 
 
@@ -151,7 +197,7 @@ function CswAjaxJSON(options)
     		if (result.error !== undefined)
     		{
     			_handleAjaxError(XMLHttpRequest, {
-					'display': result.error.display,
+    				'display': result.error.display,
     				'type': result.error.type,
     				'message': result.error.message,
     				'detail': result.error.detail
@@ -162,7 +208,7 @@ function CswAjaxJSON(options)
     		{
 
     			var auth = tryParseString(result.AuthenticationStatus, 'Unknown');
-    			timeout = tryParseString(result.timeout, '');
+    			setExpireTime(tryParseString(result.timeout, ''));
 
     			_handleAuthenticationStatus({
     				status: auth,
@@ -182,7 +228,7 @@ function CswAjaxJSON(options)
     		log("Webservice Request (" + o.url + ") Failed: " + textStatus);
     		o.error();
     	}
-    });            // $.ajax({
+    });             // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options)
@@ -236,23 +282,23 @@ function CswAjaxXml(options)
     			}
     			else
     			{
-					$realxml = $(XMLHttpRequest.responseXML).children().first();    			
-				}
+    				$realxml = $(XMLHttpRequest.responseXML).children().first();
+    			}
 
     			if ($realxml.first().get(0).nodeName === "error")
     			{
     				_handleAjaxError(XMLHttpRequest, {
     					'display': $realxml.CswAttrXml('display'),
-						'type': $realxml.CswAttrXml('type'),
-						'message': $realxml.CswAttrXml('message'),
-						'detail': $realxml.CswAttrXml('detail') 
-					}, '');
+    					'type': $realxml.CswAttrXml('type'),
+    					'message': $realxml.CswAttrXml('message'),
+    					'detail': $realxml.CswAttrXml('detail')
+    				}, '');
     				o.error();
     			}
     			else
     			{
     				var auth = tryParseString($realxml.CswAttrXml('authenticationstatus'), 'Unknown');
-    				timeout = $realxml.CswAttrXml('timeout');
+    				setExpireTime($realxml.CswAttrXml('timeout'));
 
     				_handleAuthenticationStatus({
     					status: auth,
@@ -261,7 +307,7 @@ function CswAjaxXml(options)
     					usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
     					usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
     					passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), ''),
-                        ForMobile: o.formobile
+    					ForMobile: o.formobile
     				});
     			}
 
@@ -273,7 +319,7 @@ function CswAjaxXml(options)
     			log("Webservice Request (" + o.url + ") Failed: " + textStatus);
     			o.error();
     		}
-    	});                             // $.ajax({
+    	});                              // $.ajax({
     } // if(o.url != '')
 } // CswAjaxXml()
 

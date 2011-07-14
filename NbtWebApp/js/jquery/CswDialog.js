@@ -11,14 +11,33 @@
 
 		// Specialized
 
+		'ExpireDialog': function(options) {
+							var o = {
+								'onYes': function() { }
+								};
+
+							if (options) $.extend(o, options);
+
+							var $div = $('<div></div>');
+							
+							$div.append('<p>Your session is about to time out.  Would you like to continue working?</p>');
+
+							$div.CswButton({
+								'ID': 'renew_btn',
+								'enabledText': 'Yes',
+								'onclick': function() { $div.dialog('close'); o.onYes(); }
+							});
+
+							_openDiv($div, 300, 300);
+
+						}, // ExpireDialog
+
 		'AddWelcomeItemDialog': function(options) {
 							var o = {
 								'onAdd': function() { }
 								};
 
-							if (options) {
-								$.extend(o, options);
-							}
+							if (options) $.extend(o, options);
 
 							var $div = $('<div></div>');
 							

@@ -54,7 +54,7 @@ namespace ChemSW.Nbt
 
 
         public AuthenticationStatus attemptRefresh() { return ( CswSessionManager.attemptRefresh() ); }
-        public void endSession() { CswSessionManager.updateLastAccess(); }
+        public void endSession() { CswSessionManager.updateLastAccess(false); }
 
         public void purgeExpiredSessions() { CswSessionManager.SessionsList.purgeExpiredSessions(); }
 
