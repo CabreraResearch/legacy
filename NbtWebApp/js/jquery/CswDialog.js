@@ -28,7 +28,7 @@
 								'onclick': function() { $div.dialog('close'); o.onYes(); }
 							});
 
-							_openDiv($div, 300, 300);
+							_openDiv($div, 300, 250);
 
 						}, // ExpireDialog
 
