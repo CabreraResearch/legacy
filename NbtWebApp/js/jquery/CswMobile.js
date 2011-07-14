@@ -148,24 +148,24 @@ CswAppMode.mode = 'mobile';
 
         var mobileStorage = new CswMobileStorage();
         
-        var UserName = localStorage["username"];
         if (!localStorage["sessionid"]) {
             Logout();
         }
         var SessionId = localStorage["sessionid"];
         function currentViewJson(json,level) {
+
             var ret = { };
             if(json && arguments.length >= 1) {
                 if( !isNullOrEmpty(level) ) {
                     switch(level) {
                         case 0:
                             {
-                                ret = json.views.view;
+                                ret = json;
                                 break;
                             }
                         default:
                             {
-                                ret = json.searches.node;
+                                ret = json.nodes;
                                 break;
                             }
                     }
@@ -604,12 +604,11 @@ CswAppMode.mode = 'mobile';
             var $list = $content.makeUL();
             currenttab = '';
 
-            for(var i=0; i< p.json.length; i++)
+            for(var key in p.json)
             {
                 var item = { };
                 $.extend(item, p);
-                item.json = p.json[i];
-
+                item.json = { id: key, value: p.json[key]};
                 _makeListItemFromJson($list, item)
                     //.CswAttrXml('data-icon', false)
                     .appendTo($list);
@@ -655,8 +654,8 @@ CswAppMode.mode = 'mobile';
             };
             if (params) $.extend(p, params);
 
-            var id = makeSafeId({ ID: p.json['@id'] });
-            var text = p.json['@name'];
+            var id = makeSafeId({ ID: p.json['id'] });
+            var text = p.json['value'];
 
             var IsDiv = (!isNullOrEmpty(id));
 
@@ -673,7 +672,7 @@ CswAppMode.mode = 'mobile';
             case "prop":
                 {
                     var $tab;
-                    var tab = p.json['@tab'];
+                    var tab = p.json['tab'];
 
                     if (currenttab !== tab) {
                         //should be separate ULs eventually
@@ -734,14 +733,14 @@ CswAppMode.mode = 'mobile';
 
             var $retHtml;
             var Html = '';
-            var id = makeSafeId({ ID: p.json['@id'] });
-            var nodeSpecies = p.json['@nodespecies'];
-            var NodeName = p.json['@name'];
+            var id = makeSafeId({ ID: p.json['id'] });
+            var nodeSpecies = p.json['nodespecies'];
+            var NodeName = p.json['name'];
             var icon = '';
-            if (!isNullOrEmpty(p.json['@iconfilename'])) {
-                icon = 'images/icons/' + p.json['@iconfilename'];
+            if (!isNullOrEmpty(p.json['iconfilename'])) {
+                icon = 'images/icons/' + p.json['iconfilename'];
             }
-            var ObjectClass = p.json['@objectclass'];
+            var ObjectClass = p.json['objectclass'];
 
             if( nodeSpecies !== 'More' )
             {
@@ -753,18 +752,18 @@ CswAppMode.mode = 'mobile';
                     var Status = '';
                     for(var i=0; i<p.json.subitems.prop.length; i++) {
                         var prop = p.json.subitems.prop[i];
-                        switch(prop['@ocpname']) {
+                        switch(prop['ocpname']) {
                             case 'Location':
-                                Location = prop['@gestalt'];
+                                Location = prop['gestalt'];
                                 break;
                             case 'Target':
-                                MountPoint = prop['@gestalt'];
+                                MountPoint = prop['gestalt'];
                                 break;
                             case 'Due Date':
-                                DueDate = prop['@gestalt'];
+                                DueDate = prop['gestalt'];
                                 break;
                             case 'Status':
-                                Status = prop['@gestalt'];
+                                Status = prop['gestalt'];
                                 break;
                         }
                     }
@@ -813,10 +812,10 @@ CswAppMode.mode = 'mobile';
 
         function _FieldTypeJsonToHtml(json, ParentId) {
 
-            var IdStr = makeSafeId({ ID: json['@id'] });
-            var FieldType = json['@fieldtype'];
-            var PropName = json['@name'];
-            var ReadOnly = isTrue(json['@isreadonly']);
+            var IdStr = makeSafeId({ ID: json['id'] });
+            var FieldType = json['fieldtype'];
+            var PropName = json['name'];
+            var ReadOnly = isTrue(json['isreadonly']);
 
             // Subfield values
             var sf_text = tryParseString(json['text'], '');
@@ -953,7 +952,7 @@ CswAppMode.mode = 'mobile';
                     $prop = $propDiv.CswInput('init', { type: CswInput_Types.time, ID: propId, value: sf_value });
                     break;
                 default:
-                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['@gestalt'] + '</p>'));
+                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['gestalt'] + '</p>'));
                     break;
                 } // switch (FieldType)
 
@@ -964,7 +963,7 @@ CswAppMode.mode = 'mobile';
                     });
                 }
             } else {
-                $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['@gestalt'] + '</p>'));
+                $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['gestalt'] + '</p>'));
             }
             if($propDiv.children().length > 0) {
                 $fieldcontain.append($propDiv);
@@ -975,22 +974,22 @@ CswAppMode.mode = 'mobile';
 
         function _FieldTypeHtmlToJson(json, id, value) {
             var name = new CswString(id);
-            var IdStr = makeSafeId({ ID: json['@id'] });
-            var fieldtype = json['@fieldtype'];
+            var IdStr = makeSafeId({ ID: json['id'] });
+            var fieldtype = json['fieldtype'];
             //var propname = json.name;
 
             // subfield nodes
-            var $sf_text = json['@text'];
-            var $sf_value = json['@value'];
+            var $sf_text = json['text'];
+            var $sf_value = json['value'];
             //var $sf_href = json.href;
             //var $sf_options = json.options;
-            var $sf_checked = json['@checked'];
+            var $sf_checked = json['checked'];
             //var $sf_required = json.required;
             //var $sf_units = json.units;
-            var $sf_answer = json['@answer'];
+            var $sf_answer = json['answer'];
             //var $sf_allowedanswers = json.allowedanswers;
-            var $sf_correctiveaction = json['@correctiveaction'];
-            var $sf_comments = json['@comments'];
+            var $sf_correctiveaction = json['correctiveaction'];
+            var $sf_comments = json['comments'];
             //var $sf_compliantanswers = json.compliantanswers;
 
             var $sftomodify = null;
@@ -1043,7 +1042,7 @@ CswAppMode.mode = 'mobile';
             }
             if (!isNullOrEmpty($sftomodify)) {
                 $sftomodify.text(value);
-                json['@wasmodified'] = '1';
+                json['wasmodified'] = '1';
             }
         }// _FieldTypeHtmlToJson()
 
@@ -1751,7 +1750,7 @@ CswAppMode.mode = 'mobile';
                         onloginfail: function(text) { onLoginFail(text); },
                         success: function(data) {
                             setOnline(false);
-                           
+                       
                             var params = {
                                 ParentId: 'viewsdiv',
                                 DivId: DivId,
@@ -1950,21 +1949,19 @@ CswAppMode.mode = 'mobile';
             var logger = new profileMethod('storeViewJson');
             if(level === 0)
             {
-                var viewsCache = [tryParseString(localStorage["storedviews"], '')];
-
-                for(var i=0; i< viewJson.length; i++)
+                for(var view in viewJson)
                 {
-                    var thisView = viewJson[i];
-                    var viewid = thisView['@id'];
-                    var viewname = thisView['@name'];
-                    if (viewsCache.indexOf('"rootid":"' + viewid + '"') === -1) {
-                        storedViews.push({ rootid: viewid, name: viewname });
-                    }
+                    var viewid = view;
+                    var viewname = viewJson[view];
+                    delete storedViews[viewid]; //the viewname may have changed. delete to be sure.
+                    storedViews.push({ viewid: viewname });
                 }
                 localStorage["storedviews"] = JSON.stringify(storedViews);
             }
-            localStorage[rootid] = JSON.stringify({ name: rootname, json: viewJson, wasmodified: false });
-            
+            else {
+                //no need to cache the viewsdiv
+                localStorage[rootid] = JSON.stringify({ name: rootname, json: viewJson, wasmodified: false });
+            }
 //            $viewxml.andSelf().find('node').each(function() {
 //                var $nodeXml = $(this).clone();
 //                var nodeId = $nodeXml.CswAttrXml('id');
@@ -2038,7 +2035,7 @@ CswAppMode.mode = 'mobile';
                 
                 while( isNullOrEmpty(ret) && i < viewJson.length ) {
                     var node = viewJson[i];
-                    if(node['@id'] === nodeid) {
+                    if(node['id'] === nodeid) {
                         ret = node;
                     }
                     i++;
