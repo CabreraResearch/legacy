@@ -10,6 +10,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -62,14 +63,14 @@ namespace ChemSW.Nbt.PropTypes
                 if( this.ObjectClassPropId == UserPassword.ObjectClassPropId )
                 {
                     CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( this.NodeId );
-					if( null != UserNode && 
-						!_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, UserNode, NodeTypeProp ) )
+                    if( null != UserNode &&
+                        !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, UserNode, NodeTypeProp ) )
                     {
-						throw new CswDniException( ErrorType.Warning, "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + UserNode.NodeName + "'." );
-					}
+                        throw new CswDniException( ErrorType.Warning, "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + UserNode.NodeName + "'." );
+                    }
                 }
-                
-				_CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value );
+
+                _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value );
                 _CswNbtNodePropData.Gestalt = value;
                 ChangedDate = DateTime.Now;
             }
@@ -105,28 +106,41 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode EncryptedPWNode = CswXmlDocument.AppendXmlNode( ParentNode, _EncryptedPasswordSubField.ToXmlNodeName(), EncryptedPassword.ToString() );
+            CswXmlDocument.AppendXmlNode( ParentNode, _EncryptedPasswordSubField.ToXmlNodeName(), EncryptedPassword );
 
             // We don't provide the raw password, but we do provide a node in which someone can set a new password for saving
-            XmlNode RawPWNode = CswXmlDocument.AppendXmlNode( ParentNode, "newpassword", "" );
+            CswXmlDocument.AppendXmlNode( ParentNode, "newpassword", "" );
+        }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _EncryptedPasswordSubField.ToXmlNodeName(), EncryptedPassword ),
+                new XElement( "newpassword" ) );
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject.Add( new JProperty( _EncryptedPasswordSubField.ToXmlNodeName(), EncryptedPassword ) );
+            ParentObject.Add( new JProperty( "newpassword" ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             EncryptedPassword = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _EncryptedPasswordSubField.ToXmlNodeName() );
-            string NewPw = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" );
-            if( NewPw != string.Empty )
-                Password = NewPw;
-        }
+            _saveProp( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" ) );
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
         }
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _EncryptedPasswordSubField.ToXmlNodeName() ) )
+            {
+                EncryptedPassword = XmlNode.Element( _EncryptedPasswordSubField.ToXmlNodeName() ).Value;
+            }
+            if( null != XmlNode.Element( "newpassword" ) )
+            {
+                _saveProp( XmlNode.Element( "newpassword" ).Value );
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -134,6 +148,25 @@ namespace ChemSW.Nbt.PropTypes
             EncryptedPassword = CswTools.XmlRealAttributeName( PropRow[_EncryptedPasswordSubField.ToXmlNodeName()].ToString() );
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName() ) )
+            {
+                EncryptedPassword = (string) JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName() ).Value;
+            }
+            if( null != JObject.Property( "newpassword" ) )
+            {
+                _saveProp( (string) JObject.Property( "newpassword" ).Value );
+            }
+        }
+
+        private void _saveProp( string NewPassword )
+        {
+            if( NewPassword != string.Empty )
+            {
+                Password = NewPassword;
+            }
+        }
     }//CswNbtNodePropPassword
 
 }//namespace ChemSW.Nbt.PropTypes

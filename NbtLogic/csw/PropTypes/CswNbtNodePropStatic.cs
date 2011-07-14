@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -98,19 +99,31 @@ namespace ChemSW.Nbt.PropTypes
             CswXmlDocument.AppendXmlAttribute( TextNode, "columns", Columns.ToString() );
         }
 
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName(), StaticText,
+                new XAttribute( "rows", Rows.ToString() ),
+                new XAttribute( "columns", Columns.ToString() ) ) );
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject.Add( new JProperty( _TextSubField.ToXmlNodeName(), StaticText ) );
+            ParentObject.Add( new JProperty( "rows", Rows.ToString() ) );
+            ParentObject.Add( new JProperty( "columns", Columns.ToString() ) );
+        }
+
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             StaticText = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _TextSubField.ToXmlNodeName() );
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName() ) )
+            {
+                StaticText = XmlNode.Element( _TextSubField.ToXmlNodeName() ).Value;
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -118,6 +131,13 @@ namespace ChemSW.Nbt.PropTypes
             StaticText = CswTools.XmlRealAttributeName( PropRow[_TextSubField.ToXmlNodeName()].ToString() );
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _TextSubField.ToXmlNodeName() ) )
+            {
+                StaticText = (string) JObject.Property( _TextSubField.ToXmlNodeName() ).Value;
+            }
+        }
     }//CswNbtNodePropStatic
 
 }//namespace ChemSW.Nbt.PropTypes

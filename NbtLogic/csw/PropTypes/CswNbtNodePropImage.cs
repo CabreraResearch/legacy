@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -120,8 +121,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode FileNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _FileNameSubField.ToXmlNodeName(), FileName );
-            XmlNode ContentTypeNode = CswXmlDocument.AppendXmlNode( ParentNode, _ContentTypeSubField.ToXmlNodeName(), ContentType );
+            CswXmlDocument.AppendXmlNode( ParentNode, _FileNameSubField.ToXmlNodeName(), FileName );
+            CswXmlDocument.AppendXmlNode( ParentNode, _ContentTypeSubField.ToXmlNodeName(), ContentType );
             XmlNode ImageUrlNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.Href.ToString(), ImageUrl );
             CswXmlDocument.AppendXmlAttribute( ImageUrlNode, "width", Width.ToString() );
             CswXmlDocument.AppendXmlAttribute( ImageUrlNode, "height", Height.ToString() );
@@ -145,20 +146,41 @@ namespace ChemSW.Nbt.PropTypes
             //    fs.Close();
             //}
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _FileNameSubField.ToXmlNodeName(), FileName ),
+                            new XElement( _ContentTypeSubField.ToXmlNodeName(), ContentType ),
+                            new XElement( CswNbtSubField.SubFieldName.Href.ToString(), ImageUrl,
+                                new XElement( "width", Width.ToString() ),
+                                new XElement( "height", Height.ToString() ) ) );
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject.Add( new JProperty( _FileNameSubField.ToXmlNodeName(), FileName ) );
+            ParentObject.Add( new JProperty( _ContentTypeSubField.ToXmlNodeName(), ContentType ) );
+            ParentObject.Add( new JProperty( CswNbtSubField.SubFieldName.Href.ToString(), ImageUrl,
+                new JProperty( "width", Width.ToString() ),
+                new JProperty( "height", Height.ToString() ) ) );
+        }
+
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             ContentType = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ContentTypeSubField.ToXmlNodeName() );
             FileName = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _FileNameSubField.ToXmlNodeName() );
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _ContentTypeSubField.ToXmlNodeName() ) )
+            {
+                ContentType = XmlNode.Element( _ContentTypeSubField.ToXmlNodeName() ).Value;
+            }
+            if( null != XmlNode.Element( _FileNameSubField.ToXmlNodeName() ) )
+            {
+                FileName = XmlNode.Element( _FileNameSubField.ToXmlNodeName() ).Value;
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -167,6 +189,17 @@ namespace ChemSW.Nbt.PropTypes
             FileName = CswTools.XmlRealAttributeName( PropRow[_FileNameSubField.ToXmlNodeName()].ToString() );
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _ContentTypeSubField.ToXmlNodeName() ) )
+            {
+                ContentType = (string) JObject.Property( _ContentTypeSubField.ToXmlNodeName() ).Value;
+            }
+            if( null != JObject.Property( _FileNameSubField.ToXmlNodeName() ) )
+            {
+                FileName = (string) JObject.Property( _FileNameSubField.ToXmlNodeName() ).Value;
+            }
+        }
     }
 
 }//namespace ChemSW.Nbt.PropTypes

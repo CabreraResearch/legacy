@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -20,7 +21,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Barcode )
             {
-				throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
                                             "CswNbtNodePropBarcode() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
             }
 
@@ -106,7 +107,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Barcode )
             {
-				throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
                                             "CswNbtNodePropBarcode.onBeforeUpdateNodePropRow() was called on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType.ToString() ) );
             }
 
@@ -142,10 +143,10 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             string ProspectiveBarcode = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() );
-			if( ProspectiveBarcode != string.Empty )
-			{
-				setBarcodeValueOverride( ProspectiveBarcode, false );
-			}
+            if( ProspectiveBarcode != string.Empty )
+            {
+                setBarcodeValueOverride( ProspectiveBarcode, false );
+            }
         } // ReadXml()
 
         public override void ToXElement( XElement ParentNode )
@@ -154,18 +155,40 @@ namespace ChemSW.Nbt.PropTypes
                             new XElement( _SequenceNumberSubField.ToXmlNodeName(), SequenceNumber ) );
         }
 
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject.Add( new JProperty( _SequenceNumberSubField.ToXmlNodeName(), SequenceNumber ) );
+            ParentObject.Add( new JProperty( _BarcodeSubField.ToXmlNodeName(), Barcode ) );
+        }
+
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _BarcodeSubField.ToXmlNodeName() ) )
+            {
+                _setPropVals( XmlNode.Element( _BarcodeSubField.ToXmlNodeName() ).Value );
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            string ProspectiveBarcode = CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.ToXmlNodeName()].ToString() );
-            if( ProspectiveBarcode != string.Empty )
-                setBarcodeValueOverride( ProspectiveBarcode, false );
+            _setPropVals( CswTools.XmlRealAttributeName( PropRow[_BarcodeSubField.ToXmlNodeName()].ToString() ) );
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _BarcodeSubField.ToXmlNodeName() ) )
+            {
+                _setPropVals( (string) JObject.Property( _BarcodeSubField.ToXmlNodeName() ).Value );
+            }
+        }
+
+        private void _setPropVals( string ProspectiveBarcode )
+        {
+            if( ProspectiveBarcode != string.Empty )
+            {
+                setBarcodeValueOverride( ProspectiveBarcode, false );
+            }
+        }
     }//CswNbtNodePropQuantity
 
 }//namespace 

@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -81,7 +82,17 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode DateNode = CswXmlDocument.AppendXmlNode( ParentNode, _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToShortDateString() );
+            CswXmlDocument.AppendXmlNode( ParentNode, _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToShortDateString() );
+        }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToShortDateString() ) );
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject.Add( new JProperty( _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToShortDateString() ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -89,14 +100,12 @@ namespace ChemSW.Nbt.PropTypes
             DateValue = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateValueSubField.ToXmlNodeName() );
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _DateValueSubField.ToXmlNodeName() ) )
+            {
+                DateValue = CswConvert.ToDateTime( XmlNode.Element( _DateValueSubField.ToXmlNodeName() ).Value );
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -106,6 +115,13 @@ namespace ChemSW.Nbt.PropTypes
                 DateValue = Convert.ToDateTime( Val );
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _DateValueSubField.ToXmlNodeName() ) )
+            {
+                DateValue = CswConvert.ToDateTime( JObject.Property( _DateValueSubField.ToXmlNodeName() ).Value );
+            }
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

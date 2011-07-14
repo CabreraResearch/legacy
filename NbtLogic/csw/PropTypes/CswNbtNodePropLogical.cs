@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -64,8 +65,20 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode CheckedNode = CswXmlDocument.AppendXmlNode( ParentNode, _CheckedSubField.ToXmlNodeName(), Checked.ToString().ToLower() );
-            XmlNode RequiredNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.Required.ToString(), Required.ToString().ToLower() );
+            CswXmlDocument.AppendXmlNode( ParentNode, _CheckedSubField.ToXmlNodeName(), Checked.ToString().ToLower() );
+            CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.Required.ToString(), Required.ToString().ToLower() );
+        }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _CheckedSubField.ToXmlNodeName(), Checked.ToString().ToLower() ),
+                new XElement( CswNbtSubField.SubFieldName.Required.ToString(), Required.ToString().ToLower() ) );
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject.Add( new JProperty( _CheckedSubField.ToXmlNodeName(), Checked.ToString().ToLower() ) );
+            ParentObject.Add( new JProperty( CswNbtSubField.SubFieldName.Required.ToString(), Required.ToString().ToLower() ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -73,14 +86,12 @@ namespace ChemSW.Nbt.PropTypes
             Checked = CswConvert.ToTristate( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CheckedSubField.ToXmlNodeName() ) );
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _CheckedSubField.ToXmlNodeName() ) )
+            {
+                Checked = CswConvert.ToTristate( XmlNode.Element( _CheckedSubField.ToXmlNodeName() ).Value );
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -88,6 +99,13 @@ namespace ChemSW.Nbt.PropTypes
             Checked = CswConvert.ToTristate( PropRow[_CheckedSubField.ToXmlNodeName()] );
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _CheckedSubField.ToXmlNodeName() ) )
+            {
+                Checked = CswConvert.ToTristate( JObject.Property( _CheckedSubField.ToXmlNodeName() ).Value );
+            }
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes
