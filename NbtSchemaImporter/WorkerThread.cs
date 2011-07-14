@@ -32,8 +32,8 @@ namespace ChemSW.Nbt.Schema
         private CswSetupVblsNbt _CswSetupVblsNbt = null;
         private ICswLogger _CswLogger = null;
         private CswNbtResources _CswNbtResources = null;
-        private CswNbtObjClassFactory _CswNbtObjClassFactory;
-        private CswNbtMetaDataEvents _CswNbtMetaDataEvents = null;
+        //private CswNbtObjClassFactory _CswNbtObjClassFactory;
+        //private CswNbtMetaDataEvents _CswNbtMetaDataEvents = null;
 
         public static string ColName_AccessId = "AccessId";
         public static string ColName_ServerType = "Server Type";

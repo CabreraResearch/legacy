@@ -23,7 +23,7 @@ namespace ChemSW.NbtWebControls
     public class CswPropertyTable : CompositeControl
     {
         private CswNbtResources _CswNbtResources;
-        private CswFieldTypeWebControlFactory _CswFieldTypeWebControlFactory;
+        //private CswFieldTypeWebControlFactory _CswFieldTypeWebControlFactory;
         private Dictionary<Int32, PropertyControlSet> _PropertyControlSetHash;
 
         public bool BatchMode = false;

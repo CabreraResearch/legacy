@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            Int32 MaterialsPk = Int32.MinValue;
+            //Int32 MaterialsPk = Int32.MinValue;
 
 
             //SETUP: BEGIN *****************************************

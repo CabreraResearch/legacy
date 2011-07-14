@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
                 default:
                     throw( new CswDniException( "There is no field rule class for field type " + MetaDataProp.FieldType.FieldType.ToString() ) );
-                    break;
+                    //break;
             }//switch
 
 

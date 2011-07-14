@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.PropTypes
 
 
 
-        private string _ElemName_Rateinterval = "Rateinterval";
+        //private string _ElemName_Rateinterval = "Rateinterval";
 
         public override void ToXml( XmlNode ParentNode )
         {

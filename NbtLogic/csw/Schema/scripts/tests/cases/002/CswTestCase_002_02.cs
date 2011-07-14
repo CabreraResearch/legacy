@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
 
         private string _TestColumnName = "test_column";
         private string _TestTableName = "DATA_DICTIONARY";
-        private string _TestValStem = "Test val ";
+        //private string _TestValStem = "Test val ";
 
         public void update()
         {

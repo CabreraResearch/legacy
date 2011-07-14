@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.GenEmailRpt.ToString() ); }
         }
 
-        CswNbtNode _CswNbtNodeMailReport = null;
+        //CswNbtNode _CswNbtNodeMailReport = null;
         public bool doesItemRunNow()
         {
 

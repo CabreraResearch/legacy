@@ -256,7 +256,7 @@ namespace ChemSW.Nbt.Sched
 
         }//_setNbtResources()
 
-        CswNbtObjClassFactory _CswNbtObjClassFactory = null;
+        //CswNbtObjClassFactory _CswNbtObjClassFactory = null;
         private void _initCycleResources( string AccessId )
         {
             //_CswNbtResources.CswResources.clearUpdates();

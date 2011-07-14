@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtObjClassRole _RoleNodeObjClass = null;
         private CswNbtNode _RoleNode = null;
-        private CswNbtNode _UserNode = null;
+        //private CswNbtNode _UserNode = null;
 
         public CswNbtObjClassUser( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//ctor()
 
-        public void postChanges( bool ForceUpdate ) //bz# 5446
+        public new void postChanges( bool ForceUpdate ) //bz# 5446
         {
             _CswNbtNode.postChanges( ForceUpdate );
             _RoleNodeObjClass.postChanges( ForceUpdate );

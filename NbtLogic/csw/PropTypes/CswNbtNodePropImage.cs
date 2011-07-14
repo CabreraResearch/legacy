@@ -76,14 +76,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public Int32 JctNodePropId
-        {
-            get
-            {
-                return _CswNbtNodePropData.JctNodePropId;
-            }
-        }
-
         public Int32 Height
         {
             get

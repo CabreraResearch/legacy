@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
-        private string _ElemName_Value = "Value";
+        //private string _ElemName_Value = "Value";
 
         public override void ToXml( XmlNode ParentNode )
         {

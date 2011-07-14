@@ -366,7 +366,7 @@ namespace ChemSW.NbtWebControls
         /// True if the menu is used in Design Mode (which changes the Add menu)
         /// </summary>
         public bool IsDesignMode = false;
-        public NbtDesignMode DesignMode = NbtDesignMode.Standard;
+        public new NbtDesignMode DesignMode = NbtDesignMode.Standard;
 
         /// <summary>
         /// Type of node selected, for Design Mode

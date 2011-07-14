@@ -10,7 +10,6 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 using ChemSW.DB;
-using ChemSW.Core;
 using ChemSW.Nbt.Schema;
 using ChemSW.Audit;
 using ChemSW.Nbt.ObjClasses;

@@ -40,7 +40,7 @@
             this.historygrid = new System.Windows.Forms.DataGridView();
             this.FetchButton = new System.Windows.Forms.Button();
             this.StatusTextBox = new System.Windows.Forms.TextBox();
-            this.CancelButton = new System.Windows.Forms.Button();
+            this.MyCancelButton = new System.Windows.Forms.Button();
             this.ClipBoardLink = new System.Windows.Forms.LinkLabel();
             ( (System.ComponentModel.ISupportInitialize) ( this.historygrid ) ).BeginInit();
             this.SuspendLayout();
@@ -163,13 +163,13 @@
             // 
             // CancelButton
             // 
-            this.CancelButton.Location = new System.Drawing.Point( 273, 80 );
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size( 75, 23 );
-            this.CancelButton.TabIndex = 12;
-            this.CancelButton.Text = "Stop";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler( this.CancelButton_Click );
+            this.MyCancelButton.Location = new System.Drawing.Point( 273, 80 );
+            this.MyCancelButton.Name = "CancelButton";
+            this.MyCancelButton.Size = new System.Drawing.Size( 75, 23 );
+            this.MyCancelButton.TabIndex = 12;
+            this.MyCancelButton.Text = "Stop";
+            this.MyCancelButton.UseVisualStyleBackColor = true;
+            this.MyCancelButton.Click += new System.EventHandler( this.CancelButton_Click );
             // 
             // ClipBoardLink
             // 
@@ -190,7 +190,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size( 360, 384 );
             this.Controls.Add( this.ClipBoardLink );
-            this.Controls.Add( this.CancelButton );
+            this.Controls.Add( this.MyCancelButton );
             this.Controls.Add( this.StatusTextBox );
             this.Controls.Add( this.FetchButton );
             this.Controls.Add( this.historygrid );
@@ -225,7 +225,7 @@
         private System.Windows.Forms.DataGridView historygrid;
         private System.Windows.Forms.Button FetchButton;
         private System.Windows.Forms.TextBox StatusTextBox;
-        private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button MyCancelButton;
         private System.Windows.Forms.LinkLabel ClipBoardLink;
     }
 }

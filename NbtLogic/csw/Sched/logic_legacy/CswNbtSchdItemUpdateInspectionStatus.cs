@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Sched
     public class CswNbtSchdItemUpdateInspectionStatus : CswNbtSchdItem
     {
         private CswNbtResources _CswNbtResources = null;
-        private CswNbtNode _CswNbtNodeGenerator;
+        //private CswNbtNode _CswNbtNodeGenerator;
         private CswNbtObjClassInspectionDesign _InspectionNode;
         private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending );
         private string _Overdue = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Overdue );
