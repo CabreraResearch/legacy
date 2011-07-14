@@ -96,7 +96,7 @@
 																			},
 																		onloginfail: function(txt) 
 																			{
-																				$('#loginmsg').CswErrorMessage({'message': txt });
+																				$('#loginmsg').CswErrorMessage({'type': 'Warning', 'message': txt });
 																				$('#login_password').val('');   // case 21303
 																				$loginbutton.CswButton('enable');
 																			},
