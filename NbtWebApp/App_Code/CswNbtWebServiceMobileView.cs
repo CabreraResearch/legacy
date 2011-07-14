@@ -2,12 +2,13 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -32,24 +33,22 @@ namespace ChemSW.Nbt.WebServices
         private const string NodeIdPrefix = "nodeid_";
 
 
-        public XElement getViewsList( string ParentId, ICswNbtUser CurrentUser )
+        public JObject getViewsList( string ParentId, ICswNbtUser CurrentUser )
         {
             // All Views
-            XElement RetXml = new XElement( "views" );
+            JObject RetJson = new JObject();
             Collection<CswNbtView> MobileViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, CurrentUser, false, _ForMobile, false, NbtViewRenderingMode.Any );
             foreach( CswNbtView MobileView in MobileViews )
             {
-                RetXml.Add( new XElement( "view",
-                        new XAttribute( "id", MobileView.ViewId ),
-                        new XAttribute( "name", MobileView.ViewName ) ) );
+                RetJson.Add( new JProperty( MobileView.ViewId.ToString(), MobileView.ViewName ) );
             }
 
-            return RetXml;
+            return RetJson;
         } // Run()
 
-        public XElement getView( string ViewId, ICswNbtUser CurrentUser )
+        public JObject getView( string ViewId, ICswNbtUser CurrentUser )
         {
-            XElement RetXml = new XElement( "node" );
+            JObject RetJson = new JObject();
 
             // Get the full XML for the entire view
             CswNbtViewId NbtViewId = new CswNbtViewId( ViewId );
@@ -58,44 +57,45 @@ namespace ChemSW.Nbt.WebServices
             // case 20083
             if( _ForMobile )
             {
-                RetXml = _getSearchNodes( View );
+                RetJson.Add( _getSearchNodes( View ) );
             }
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false, MobilePageSize );
 
             if( Tree.getChildNodeCount() > 0 )
             {
-                _runTreeNodesRecursive( Tree, ref RetXml );
+                JProperty ParentNode = new JProperty( "nodes" );
+                JObject Nodes = new JObject();
+                ParentNode.Value = Nodes;
+                _runTreeNodesRecursive( Tree, ref Nodes );
+                RetJson.Add( ParentNode );
             }
             else
             {
-                RetXml = new XElement( "node",
-                            new XAttribute( "id", NodeIdPrefix + Int32.MinValue ),
-                            new XAttribute( "name", "No Results" )
-                        );
+                RetJson.Add( new JProperty( "nodes",
+                                new JObject(
+                                    new JProperty( NodeIdPrefix + Int32.MinValue, "No Results" ) ) ) );
             }
 
-            return RetXml;
+            return RetJson;
         } // Run()
 
         // case 20083 - search options
-        private XElement _getSearchNodes( CswNbtView View )
+        private JProperty _getSearchNodes( CswNbtView View )
         {
-            XElement Searches = new XElement( "searches" );
-            foreach( XElement Search in from CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes
-                                        where View.ContainsNodeType( NodeType )
-                                        from CswNbtMetaDataNodeTypeProp MetaDataProp in NodeType.NodeTypeProps
-                                        where MetaDataProp.MobileSearch
-                                        let PropId = ( MetaDataProp.ObjectClassProp != null ) ? "search_ocp_" + MetaDataProp.ObjectClassPropId : "search_ntp_" + MetaDataProp.PropId
-                                        select new XElement( "search", new XAttribute( "name", CswTools.SafeJavascriptParam( MetaDataProp.PropNameWithQuestionNo ) ), new XAttribute( "id", PropId ) ) )
-            {
-                Searches.Add( Search );
-            }
-            return Searches;
+            JProperty ReturnJson = new JProperty( "searches",
+                new JObject(
+                    from CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes
+                    where View.ContainsNodeType( NodeType )
+                    from CswNbtMetaDataNodeTypeProp MetaDataProp in NodeType.NodeTypeProps
+                    where MetaDataProp.MobileSearch
+                    let PropId = ( MetaDataProp.ObjectClassProp != null ) ? "search_ocp_" + MetaDataProp.ObjectClassPropId : "search_ntp_" + MetaDataProp.PropId
+                    select new JProperty( PropId, CswTools.SafeJavascriptParam( MetaDataProp.PropNameWithQuestionNo ) ) ) );
+            return ReturnJson;
         } // _getSearchNodes
 
 
-        private void _runTreeNodesRecursive( ICswNbtTree Tree, ref XElement ParentXmlNode )
+        private void _runTreeNodesRecursive( ICswNbtTree Tree, ref JObject ParentJsonO )
         {
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
@@ -106,9 +106,9 @@ namespace ChemSW.Nbt.WebServices
                 string ThisNodeName = Tree.getNodeNameForCurrentPosition();
                 string ThisNodeId = ThisNode.NodeId.ToString();
 
-                XElement ThisXmlNode = new XElement( "node" );
-                XElement ThisSubItems = new XElement( "subitems" );
-                ThisXmlNode.Add( ThisSubItems );
+                JProperty ThisJProp = new JProperty( "subitems" );
+                JObject ThisSubItems = new JObject();
+                ThisJProp.Value = ThisSubItems;
 
                 _runTreeNodesRecursive( Tree, ref ThisSubItems );
 
@@ -119,94 +119,86 @@ namespace ChemSW.Nbt.WebServices
                         _runProperties( ThisNode, ref ThisSubItems );
                     }
 
+                    JProperty NodeWrap = null;
+                    JObject NodeProps = null;
                     if( _ForMobile )
                     {
                         if( NodeSpecies.More == ThisNodeKey.NodeSpecies )
                         {
                             ThisNodeName = "Results Truncated at " + MobilePageSize;
                         }
-                        ThisXmlNode.SetAttributeValue( "id", NodeIdPrefix + ThisNodeId );
-                        ThisXmlNode.SetAttributeValue( "name", CswTools.SafeJavascriptParam( ThisNodeName ) );
-                        ThisXmlNode.SetAttributeValue( "nodetype", CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) );
-                        ThisXmlNode.SetAttributeValue( "objectclass", CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) );
-                        ThisXmlNode.SetAttributeValue( "iconfilename", CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) );
-                        ThisXmlNode.SetAttributeValue( "nodespecies", CswTools.SafeJavascriptParam( ThisNodeKey.NodeSpecies.ToString() ) );
+                        NodeWrap = new JProperty( NodeIdPrefix + ThisNodeId );
+                        NodeProps = new JObject(
+                            new JProperty( "name", CswTools.SafeJavascriptParam( ThisNodeName ) ),
+                            new JProperty( "nodetype", CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) ),
+                            new JProperty( "objectclass", CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) ),
+                            new JProperty( "iconfilename", CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) ),
+                            new JProperty( "nodespecies", CswTools.SafeJavascriptParam( ThisNodeKey.NodeSpecies.ToString() ) ),
+                            ThisJProp);
+                        NodeWrap.Value = NodeProps;
                     }
 
                     // case 20083 - search values
-                    foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps.Cast<CswNbtMetaDataNodeTypeProp>().Where( MetaDataProp => MetaDataProp.MobileSearch ) )
+                    if( null != NodeProps )
                     {
-                        if( MetaDataProp.ObjectClassProp != null )
+                        foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps.Cast<CswNbtMetaDataNodeTypeProp>().Where( MetaDataProp => MetaDataProp.MobileSearch ) )
                         {
-                            //ret += " search_ocp_" + MetaDataProp.ObjectClassPropId.ToString() + "=\"" + CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) + "\"";
-                            ThisXmlNode.SetAttributeValue( "search_ocp_" + MetaDataProp.ObjectClassPropId.ToString(), CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) );
-                        }
-                        else
-                        {
-                            //ret += " search_ntp_" + MetaDataProp.PropId.ToString() + "=\"" + CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) + "\"";
-                            ThisXmlNode.SetAttributeValue( "search_ntp_" + MetaDataProp.PropId.ToString(), CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) );
+                            NodeProps.Add( ( MetaDataProp.ObjectClassProp != null ) ?
+                                    new JProperty( "search_ocp_" + MetaDataProp.ObjectClassPropId,
+                                        CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) ) :
+                                    new JProperty( "search_ntp_" + MetaDataProp.PropId,
+                                        CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) ) );
                         }
                     }
-
-                    //if( _ForMobile )
-                    //{
-                    //    ret += "><subitems>" + ThisSubItems + "</subitems>";
-                    //    ret += "</node>";
-                    //}
-                    //else
-                    //{
-                    //    ret += ThisSubItems;
-                    //    ret += "</item>";
-                    //}
-                    ParentXmlNode.Add( ThisXmlNode );
+                    ParentJsonO.Add( NodeWrap );
                 } // if( Tree.getNodeShowInTreeForCurrentPosition() )
                 else
                 {
-                    //ret += ThisSubItems;
-                    ParentXmlNode.Add( ThisSubItems );
+                    ParentJsonO.Add( ThisSubItems );
                 }
                 Tree.goToParentNode();
             }
-            //return ret;
         } // _runTreeNodesRecursive()
 
-
-        private static void _runProperties( CswNbtNode Node, ref XElement SubItemsXmlNode )
+        private static void _runProperties( CswNbtNode Node, ref JObject SubItemsJProp )
         {
-            foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
+            //JArray PropArray = new JArray();
+            foreach( CswNbtMetaDataNodeTypeProp Prop in from CswNbtMetaDataNodeTypeTab Tab
+                                                            in Node.NodeType.NodeTypeTabs
+                                                        from CswNbtMetaDataNodeTypeProp Prop
+                                                            in Tab.NodeTypePropsByDisplayOrder
+                                                        where !Prop.HideInMobile &&
+                                                            Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
+                                                            Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid
+                                                        select Prop )
             {
-                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
+                CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
+                XmlDocument XmlDoc = new XmlDocument();
+                CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
+                PropWrapper.ToXml( XmlDoc.DocumentElement );
+                string ReadOnly = ( Node.ReadOnly || Prop.ReadOnly ) ? "true" : "false";
+                JProperty ThisProp = new JProperty( PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() );
+                JObject ThisPropAttr = new JObject(
+                                            new JProperty( "name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
+                                            new JProperty( "tab", CswTools.SafeJavascriptParam( Prop.NodeTypeTab.TabName ) ),
+                                            new JProperty( "isreadonly", ReadOnly ),
+                                            new JProperty( "fieldtype", Prop.FieldType.FieldType.ToString() ),
+                                            new JProperty( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
+                                            new JProperty( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) )
+                                        );
+                foreach( string JChild in from XmlNode ChildXElement
+                                              in XmlDoc.DocumentElement.ChildNodes
+                                          select JsonConvert.SerializeXmlNode( ChildXElement ) )
                 {
-                    if( !Prop.HideInMobile &&
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) // Case 20772
-                    {
-                        CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-                        XmlDocument XmlDoc = new XmlDocument();
-                        CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
-                        PropWrapper.ToXml( XmlDoc.DocumentElement );
-                        string ReadOnly = ( Node.ReadOnly || Prop.ReadOnly ) ? "true" : "false";
-                        XElement PropXElement = new XElement( "prop",
-                                            new XAttribute( "id", PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() ),
-                                            new XAttribute( "name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
-                                            new XAttribute( "tab", CswTools.SafeJavascriptParam( Tab.TabName ) ),
-                                            new XAttribute( "isreadonly", ReadOnly ),
-                                            new XAttribute( "fieldtype", Prop.FieldType.FieldType.ToString() ),
-                                            new XAttribute( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
-                                            new XAttribute( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) ) );
-                        SubItemsXmlNode.Add( PropXElement );
-                        if( null != XmlDoc.DocumentElement )
-                            foreach( XElement ChildXElement in from XmlNode PropValueChildNode
-                                                                   in XmlDoc.DocumentElement.ChildNodes
-                                                               select XElement.Parse( PropValueChildNode.OuterXml ) )
-                            {
-                                PropXElement.Add( ChildXElement );
-                            }
-                    }
-                } //foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
-            } // foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
+                    //UGH. Parse() returns a JObject. We need the first (and hopefully only) JProperty.
+                    ThisPropAttr.Add( JToken.Parse( JChild ).First );
+                }
+                ThisProp.Value = ThisPropAttr;
+                SubItemsJProp.Add( ThisProp );
+            }
+        }
 
-        } // _runProperties()
+        // _runProperties()
 
 
     } // class CswNbtWebServiceMobileView

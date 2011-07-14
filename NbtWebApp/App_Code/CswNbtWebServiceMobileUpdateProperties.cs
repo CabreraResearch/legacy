@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -21,7 +22,7 @@ namespace ChemSW.Nbt.WebServices
             _ForMobile = ForMobile;
         }
 
-        public XElement Run( string ParentId, string UpdatedViewXml )
+        public JObject Run( string ParentId, string UpdatedViewXml )
         {
             string ViewXml = UpdatedViewXml.Replace( @"xmlns=""http://www.w3.org/1999/xhtml""", string.Empty );
             XElement AllProps = XElement.Parse( ViewXml );
