@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
@@ -311,14 +312,10 @@ namespace ChemSW.Nbt.PropTypes
             OptionsNode.Value = OptionsNodeObj;
 
             Dictionary<CswPrimaryKey, string> Options = getOptions();
-            foreach( CswPrimaryKey NodePk in Options.Keys )
+            foreach( CswPrimaryKey NodePk in Options.Keys.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
             {
-                OptionsNodeObj.Add( new JProperty( "option",
-                                                   new JObject(
-                                                       new JProperty( "id", ( NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) ?
-                                                                                NodePk.PrimaryKey.ToString() : "" ),
-                                                       new JProperty( "value", ( NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) ?
-                                                                                    Options[NodePk] : "" ) ) ) );
+                // options: { id: value, id: value }
+                OptionsNodeObj.Add( new JProperty( NodePk.PrimaryKey.ToString(), Options[NodePk] ) );
             }
         }
 
