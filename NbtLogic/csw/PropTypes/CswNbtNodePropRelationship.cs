@@ -262,9 +262,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _NodeIDSubField.ToXmlNodeName(), ( RelatedNodeId != null ) ?
+            ParentNode.Add( new XElement( _NodeIDSubField.ToXmlNodeName( true ), ( RelatedNodeId != null ) ?
                 RelatedNodeId.PrimaryKey.ToString() : string.Empty ),
-                            new XElement( _NameSubField.ToXmlNodeName(), CachedNodeName ) );
+                            new XElement( _NameSubField.ToXmlNodeName( true ), CachedNodeName ) );
 
             if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
             {
@@ -291,9 +291,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _NodeIDSubField.ToXmlNodeName(), ( RelatedNodeId != null ) ?
+            ParentObject.Add( new JProperty( _NodeIDSubField.ToXmlNodeName( true ), ( RelatedNodeId != null ) ?
                                 RelatedNodeId.PrimaryKey.ToString() : string.Empty ) );
-            ParentObject.Add( new JProperty( _NameSubField.ToXmlNodeName(), CachedNodeName ) );
+            ParentObject.Add( new JProperty( _NameSubField.ToXmlNodeName( true ), CachedNodeName ) );
 
             if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
             {
@@ -314,10 +314,11 @@ namespace ChemSW.Nbt.PropTypes
             foreach( CswPrimaryKey NodePk in Options.Keys )
             {
                 OptionsNodeObj.Add( new JProperty( "option",
-                                               new JProperty( "id", ( NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) ?
-                                                   NodePk.PrimaryKey.ToString() : "" ),
-                                               new JProperty( "value", ( NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) ?
-                                                   Options[NodePk] : "" ) ) );
+                                                   new JObject(
+                                                       new JProperty( "id", ( NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) ?
+                                                                                NodePk.PrimaryKey.ToString() : "" ),
+                                                       new JProperty( "value", ( NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) ?
+                                                                                    Options[NodePk] : "" ) ) ) );
             }
         }
 
@@ -342,9 +343,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _NodeIDSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _NodeIDSubField.ToXmlNodeName( true ) ) )
             {
-                Int32 NodeId = CswConvert.ToInt32( XmlNode.Element( _NodeIDSubField.ToXmlNodeName() ).Value );
+                Int32 NodeId = CswConvert.ToInt32( XmlNode.Element( _NodeIDSubField.ToXmlNodeName( true ) ).Value );
                 if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
                 {
                     NodeId = NodeMap[NodeId];
@@ -380,9 +381,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _NodeIDSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _NodeIDSubField.ToXmlNodeName( true ) ) )
             {
-                Int32 NodeId = CswConvert.ToInt32( JObject.Property( _NodeIDSubField.ToXmlNodeName() ).Value );
+                Int32 NodeId = CswConvert.ToInt32( JObject.Property( _NodeIDSubField.ToXmlNodeName( true ) ).Value );
                 if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
                 {
                     NodeId = NodeMap[NodeId];

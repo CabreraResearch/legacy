@@ -82,13 +82,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _TimeValueSubField.ToXmlNodeName(), ( TimeValue != DateTime.MinValue ) ?
+            ParentNode.Add( new XElement( _TimeValueSubField.ToXmlNodeName(true), ( TimeValue != DateTime.MinValue ) ?
                 TimeValue.ToShortTimeString() : string.Empty ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _TimeValueSubField.ToXmlNodeName(), ( TimeValue != DateTime.MinValue ) ?
+            ParentObject.Add( new JProperty( _TimeValueSubField.ToXmlNodeName(true), ( TimeValue != DateTime.MinValue ) ?
                 TimeValue.ToShortTimeString() : string.Empty ) );
         }
 
@@ -99,9 +99,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _TimeValueSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _TimeValueSubField.ToXmlNodeName(true) ) )
             {
-                TimeValue = CswConvert.ToDateTime( XmlNode.Element( _TimeValueSubField.ToXmlNodeName() ).Value );
+                TimeValue = CswConvert.ToDateTime( XmlNode.Element( _TimeValueSubField.ToXmlNodeName(true) ).Value );
             }
         }
 
@@ -114,9 +114,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _TimeValueSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _TimeValueSubField.ToXmlNodeName(true) ) )
             {
-                TimeValue = CswConvert.ToDateTime( JObject.Property( _TimeValueSubField.ToXmlNodeName() ).Value );
+                TimeValue = CswConvert.ToDateTime( JObject.Property( _TimeValueSubField.ToXmlNodeName(true) ).Value );
             }
         }
     }//CswNbtNodeProp

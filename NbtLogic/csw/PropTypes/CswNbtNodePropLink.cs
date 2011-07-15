@@ -74,14 +74,14 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName(), Text ),
-                new XElement( _HrefSubField.ToXmlNodeName(), Href ) );
+            ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName(true), Text ),
+                new XElement( _HrefSubField.ToXmlNodeName(true), Href ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _HrefSubField.ToXmlNodeName(), Href ) );
-            ParentObject.Add( new JProperty( _TextSubField.ToXmlNodeName(), Text ) );
+            ParentObject.Add( new JProperty( _HrefSubField.ToXmlNodeName(true), Href ) );
+            ParentObject.Add( new JProperty( _TextSubField.ToXmlNodeName(true), Text ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -92,13 +92,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName(true) ) )
             {
-                Text = XmlNode.Element( _TextSubField.ToXmlNodeName() ).Value;
+                Text = XmlNode.Element( _TextSubField.ToXmlNodeName(true) ).Value;
             }
-            if( null != XmlNode.Element( _HrefSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _HrefSubField.ToXmlNodeName(true) ) )
             {
-                Href = XmlNode.Element( _HrefSubField.ToXmlNodeName() ).Value;
+                Href = XmlNode.Element( _HrefSubField.ToXmlNodeName(true) ).Value;
             }
         }
 
@@ -110,13 +110,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _HrefSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _HrefSubField.ToXmlNodeName(true) ) )
             {
-                Href = (string) JObject.Property( _HrefSubField.ToXmlNodeName() ).Value;
+                Href = (string) JObject.Property( _HrefSubField.ToXmlNodeName(true) ).Value;
             }
-            if( null != JObject.Property( _TextSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _TextSubField.ToXmlNodeName(true) ) )
             {
-                Text = (string) JObject.Property( _TextSubField.ToXmlNodeName() ).Value;
+                Text = (string) JObject.Property( _TextSubField.ToXmlNodeName(true) ).Value;
             }
         }
     }//CswNbtNodeProp

@@ -130,14 +130,14 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _SequenceSubField.ToXmlNodeName(), Sequence ),
-                new XElement( _SequenceNumberSubField.ToXmlNodeName(), SequenceNumber ) );
+            ParentNode.Add( new XElement( _SequenceSubField.ToXmlNodeName(true), Sequence ),
+                new XElement( _SequenceNumberSubField.ToXmlNodeName(true), SequenceNumber ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _SequenceSubField.ToXmlNodeName(), Sequence ) );
-            ParentObject.Add( new JProperty( _SequenceNumberSubField.ToXmlNodeName(), SequenceNumber ) );
+            ParentObject.Add( new JProperty( _SequenceSubField.ToXmlNodeName(true), Sequence ) );
+            ParentObject.Add( new JProperty( _SequenceNumberSubField.ToXmlNodeName(true), SequenceNumber ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -147,9 +147,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _SequenceSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _SequenceSubField.ToXmlNodeName(true) ) )
             {
-                _saveProp( XmlNode.Element( _SequenceSubField.ToXmlNodeName() ).Value );
+                _saveProp( XmlNode.Element( _SequenceSubField.ToXmlNodeName(true) ).Value );
             }
         }
 
@@ -162,9 +162,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _SequenceSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _SequenceSubField.ToXmlNodeName(true) ) )
             {
-                _saveProp( (string) JObject.Property( _SequenceSubField.ToXmlNodeName() ).Value );
+                _saveProp( (string) JObject.Property( _SequenceSubField.ToXmlNodeName(true) ).Value );
             }
         }
 

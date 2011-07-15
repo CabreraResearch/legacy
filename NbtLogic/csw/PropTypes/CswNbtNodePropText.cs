@@ -78,13 +78,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName(), Text,
+            ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName(true), Text,
                 new XAttribute( "length", Length.ToString() ) ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _TextSubField.ToXmlNodeName(), Text ) );
+            ParentObject.Add( new JProperty( _TextSubField.ToXmlNodeName(true), Text ) );
             ParentObject.Add( new JProperty( "length", Length.ToString() ) );
         }
 
@@ -95,9 +95,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName(true) ) )
             {
-                Text = XmlNode.Element( _TextSubField.ToXmlNodeName() ).Value;
+                Text = XmlNode.Element( _TextSubField.ToXmlNodeName(true) ).Value;
             }
         }
 
@@ -108,9 +108,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _TextSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _TextSubField.ToXmlNodeName(true) ) )
             {
-                Text = (string) JObject.Property( _TextSubField.ToXmlNodeName() ).Value;
+                Text = (string) JObject.Property( _TextSubField.ToXmlNodeName(true) ).Value;
             }
         }
     }//CswNbtNodePropText

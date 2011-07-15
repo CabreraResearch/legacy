@@ -151,21 +151,21 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _BarcodeSubField.ToXmlNodeName(), Barcode ),
-                            new XElement( _SequenceNumberSubField.ToXmlNodeName(), SequenceNumber ) );
+            ParentNode.Add( new XElement( _BarcodeSubField.ToXmlNodeName( true ), Barcode ),
+                            new XElement( _SequenceNumberSubField.ToXmlNodeName( true ), SequenceNumber ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _SequenceNumberSubField.ToXmlNodeName(), SequenceNumber ) );
-            ParentObject.Add( new JProperty( _BarcodeSubField.ToXmlNodeName(), Barcode ) );
+            ParentObject.Add( new JProperty( _SequenceNumberSubField.ToXmlNodeName( true ), SequenceNumber ) );
+            ParentObject.Add( new JProperty( _BarcodeSubField.ToXmlNodeName( true ), Barcode ) );
         }
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _BarcodeSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _BarcodeSubField.ToXmlNodeName( true ) ) )
             {
-                _setPropVals( XmlNode.Element( _BarcodeSubField.ToXmlNodeName() ).Value );
+                _setPropVals( XmlNode.Element( _BarcodeSubField.ToXmlNodeName( true ) ).Value );
             }
         }
 
@@ -176,9 +176,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _BarcodeSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _BarcodeSubField.ToXmlNodeName( true ) ) )
             {
-                _setPropVals( (string) JObject.Property( _BarcodeSubField.ToXmlNodeName() ).Value );
+                _setPropVals( (string) JObject.Property( _BarcodeSubField.ToXmlNodeName( true ) ).Value );
             }
         }
 

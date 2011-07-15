@@ -253,12 +253,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _NodeIdSubField.ToXmlNodeName(), ( SelectedNodeId != null ) ? SelectedNodeId.ToString() : string.Empty ),
-                    new XElement( _ColumnSubField.ToXmlNodeName(), ( SelectedColumn != Int32.MinValue ) ? SelectedColumn.ToString() : string.Empty ),
-                    new XElement( _RowSubField.ToXmlNodeName(), ( SelectedRow != Int32.MinValue ) ? SelectedRow.ToString() : string.Empty ),
-                    new XElement( _NameSubField.ToXmlNodeName(), CachedNodeName ),
-                    new XElement( _PathSubField.ToXmlNodeName(), CachedPath ),
-                    new XElement( _BarcodeSubField.ToXmlNodeName(), CachedBarcode ),
+            ParentNode.Add( new XElement( _NodeIdSubField.ToXmlNodeName(true), ( SelectedNodeId != null ) ? SelectedNodeId.ToString() : string.Empty ),
+                    new XElement( _ColumnSubField.ToXmlNodeName(true), ( SelectedColumn != Int32.MinValue ) ? SelectedColumn.ToString() : string.Empty ),
+                    new XElement( _RowSubField.ToXmlNodeName(true), ( SelectedRow != Int32.MinValue ) ? SelectedRow.ToString() : string.Empty ),
+                    new XElement( _NameSubField.ToXmlNodeName(true), CachedNodeName ),
+                    new XElement( _PathSubField.ToXmlNodeName(true), CachedPath ),
+                    new XElement( _BarcodeSubField.ToXmlNodeName(true), CachedBarcode ),
                     new XElement( "viewid", View.SessionViewId.ToString() )
                 );
 
@@ -276,12 +276,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _NodeIdSubField.ToXmlNodeName(), ( SelectedNodeId != null ) ? SelectedNodeId.ToString() : string.Empty ) );
-            ParentObject.Add( new JProperty( _ColumnSubField.ToXmlNodeName(), ( SelectedColumn != Int32.MinValue ) ? SelectedColumn.ToString() : string.Empty ) );
-            ParentObject.Add( new JProperty( _RowSubField.ToXmlNodeName(), ( SelectedRow != Int32.MinValue ) ? SelectedRow.ToString() : string.Empty ) );
-            ParentObject.Add( new JProperty( _NameSubField.ToXmlNodeName(), CachedNodeName ) );
-            ParentObject.Add( new JProperty( _PathSubField.ToXmlNodeName(), CachedPath ) );
-            ParentObject.Add( new JProperty( _BarcodeSubField.ToXmlNodeName(), CachedBarcode ) );
+            ParentObject.Add( new JProperty( _NodeIdSubField.ToXmlNodeName(true), ( SelectedNodeId != null ) ? SelectedNodeId.ToString() : string.Empty ) );
+            ParentObject.Add( new JProperty( _ColumnSubField.ToXmlNodeName(true), ( SelectedColumn != Int32.MinValue ) ? SelectedColumn.ToString() : string.Empty ) );
+            ParentObject.Add( new JProperty( _RowSubField.ToXmlNodeName(true), ( SelectedRow != Int32.MinValue ) ? SelectedRow.ToString() : string.Empty ) );
+            ParentObject.Add( new JProperty( _NameSubField.ToXmlNodeName(true), CachedNodeName ) );
+            ParentObject.Add( new JProperty( _PathSubField.ToXmlNodeName(true), CachedPath ) );
+            ParentObject.Add( new JProperty( _BarcodeSubField.ToXmlNodeName(true), CachedBarcode ) );
             ParentObject.Add( new JProperty( "viewid", View.SessionViewId.ToString() ) );
 
             View.SaveToCache( false );
@@ -316,18 +316,18 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _NodeIdSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _NodeIdSubField.ToXmlNodeName(true) ) )
             {
-                string LocationNodeIdStr = XmlNode.Element( _NodeIdSubField.ToXmlNodeName() ).Value;
-                if( null != XmlNode.Element( _BarcodeSubField.ToXmlNodeName() ) )
+                string LocationNodeIdStr = XmlNode.Element( _NodeIdSubField.ToXmlNodeName(true) ).Value;
+                if( null != XmlNode.Element( _BarcodeSubField.ToXmlNodeName(true) ) )
                 {
-                    string LocationBarcode = XmlNode.Element( _BarcodeSubField.ToXmlNodeName() ).Value;
-                    if( null != XmlNode.Element( _RowSubField.ToXmlNodeName() ) )
+                    string LocationBarcode = XmlNode.Element( _BarcodeSubField.ToXmlNodeName(true) ).Value;
+                    if( null != XmlNode.Element( _RowSubField.ToXmlNodeName(true) ) )
                     {
-                        Int32 Row = CswConvert.ToInt32( XmlNode.Element( _RowSubField.ToXmlNodeName() ).Value );
-                        if( null != XmlNode.Element( _ColumnSubField.ToXmlNodeName() ) )
+                        Int32 Row = CswConvert.ToInt32( XmlNode.Element( _RowSubField.ToXmlNodeName(true) ).Value );
+                        if( null != XmlNode.Element( _ColumnSubField.ToXmlNodeName(true) ) )
                         {
-                            Int32 Column = CswConvert.ToInt32( XmlNode.Element( _ColumnSubField.ToXmlNodeName() ).Value );
+                            Int32 Column = CswConvert.ToInt32( XmlNode.Element( _ColumnSubField.ToXmlNodeName(true) ).Value );
                             string SelectedNodeId = _saveProp( LocationNodeIdStr, LocationBarcode, NodeMap, Row, Column );
                             if( !string.IsNullOrEmpty( SelectedNodeId ) )
                             {
@@ -341,18 +341,18 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( ( _NodeIdSubField.ToXmlNodeName() ) ) )
+            if( null != JObject.Property( ( _NodeIdSubField.ToXmlNodeName(true) ) ) )
             {
-                string LocationNodeIdStr = (string) JObject.Property( _NodeIdSubField.ToXmlNodeName() ).Value;
-                if( null != JObject.Property( _BarcodeSubField.ToXmlNodeName() ) )
+                string LocationNodeIdStr = (string) JObject.Property( _NodeIdSubField.ToXmlNodeName(true) ).Value;
+                if( null != JObject.Property( _BarcodeSubField.ToXmlNodeName(true) ) )
                 {
-                    string LocationBarcode = (string) JObject.Property( _BarcodeSubField.ToXmlNodeName() ).Value;
-                    if( null != JObject.Property( _RowSubField.ToXmlNodeName() ) )
+                    string LocationBarcode = (string) JObject.Property( _BarcodeSubField.ToXmlNodeName(true) ).Value;
+                    if( null != JObject.Property( _RowSubField.ToXmlNodeName(true) ) )
                     {
-                        Int32 Row = CswConvert.ToInt32( JObject.Property( _RowSubField.ToXmlNodeName() ).Value );
-                        if( null != JObject.Property( _ColumnSubField.ToXmlNodeName() ) )
+                        Int32 Row = CswConvert.ToInt32( JObject.Property( _RowSubField.ToXmlNodeName(true) ).Value );
+                        if( null != JObject.Property( _ColumnSubField.ToXmlNodeName(true) ) )
                         {
-                            Int32 Column = CswConvert.ToInt32( JObject.Property( _ColumnSubField.ToXmlNodeName() ).Value );
+                            Int32 Column = CswConvert.ToInt32( JObject.Property( _ColumnSubField.ToXmlNodeName(true) ).Value );
                             string SelectedNodeId = _saveProp( LocationNodeIdStr, LocationBarcode, NodeMap, Row, Column );
                             if( !string.IsNullOrEmpty( SelectedNodeId ) )
                             {

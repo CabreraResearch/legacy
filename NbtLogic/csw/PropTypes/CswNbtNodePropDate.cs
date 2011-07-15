@@ -87,12 +87,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToShortDateString() ) );
+            ParentNode.Add( new XElement( _DateValueSubField.ToXmlNodeName(true), DateValue.Date.ToShortDateString() ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToShortDateString() ) );
+            ParentObject.Add( new JProperty( _DateValueSubField.ToXmlNodeName(true), DateValue.Date.ToShortDateString() ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -102,9 +102,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _DateValueSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _DateValueSubField.ToXmlNodeName(true) ) )
             {
-                DateValue = CswConvert.ToDateTime( XmlNode.Element( _DateValueSubField.ToXmlNodeName() ).Value );
+                DateValue = CswConvert.ToDateTime( XmlNode.Element( _DateValueSubField.ToXmlNodeName(true) ).Value );
             }
         }
 
@@ -117,9 +117,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _DateValueSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _DateValueSubField.ToXmlNodeName(true) ) )
             {
-                DateValue = CswConvert.ToDateTime( JObject.Property( _DateValueSubField.ToXmlNodeName() ).Value );
+                DateValue = CswConvert.ToDateTime( JObject.Property( _DateValueSubField.ToXmlNodeName(true) ).Value );
             }
         }
     }//CswNbtNodeProp

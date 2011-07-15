@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            XElement TextNode = new XElement( _TextSubField.ToXmlNodeName(),
+            XElement TextNode = new XElement( _TextSubField.ToXmlNodeName( true ),
                                               new XElement( "rows", Rows.ToString() ),
                                               new XElement( "columns", Columns.ToString() ) ) { Value = Text };
             ParentNode.Add( TextNode );
@@ -100,10 +100,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            JProperty TextNode = new JProperty( _TextSubField.ToXmlNodeName(),
-                                                new JProperty( "rows", Rows.ToString() ),
-                                                new JProperty( "columns", Columns.ToString() ) ) { Value = Text };
-            ParentObject.Add( TextNode );
+            ParentObject.Add( new JProperty( _TextSubField.ToXmlNodeName( true ), Text ) );
+            ParentObject.Add( new JProperty( "rows", Rows.ToString() ) );
+            ParentObject.Add( new JProperty( "columns", Columns.ToString() ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -113,9 +112,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ) )
             {
-                Text = XmlNode.Element( _TextSubField.ToXmlNodeName() ).Value;
+                Text = XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ).Value;
             }
         }
 
@@ -126,9 +125,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _TextSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _TextSubField.ToXmlNodeName( true ) ) )
             {
-                Text = (string) JObject.Property( _TextSubField.ToXmlNodeName() ).Value;
+                Text = (string) JObject.Property( _TextSubField.ToXmlNodeName( true ) ).Value;
             }
         }
     }//CswNbtNodePropMemo

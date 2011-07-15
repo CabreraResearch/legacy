@@ -73,12 +73,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _CachedValueSubField.ToXmlNodeName(), CachedValue ) );
+            ParentNode.Add( new XElement( _CachedValueSubField.ToXmlNodeName( true ), CachedValue ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _CachedValueSubField.ToXmlNodeName(), CachedValue ) );
+            ParentObject.Add( new JProperty( _CachedValueSubField.ToXmlNodeName( true ), CachedValue ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

@@ -317,7 +317,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            XElement LSXmlNode = new XElement( _ElemName_LogicalSetXml );
+            XElement LSXmlNode = new XElement( _ElemName_LogicalSetXml.ToLower() );
             ParentNode.Add( LSXmlNode );
 
             DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
@@ -336,7 +336,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            JProperty LSXmlNode = new JProperty( _ElemName_LogicalSetXml );
+            JProperty LSXmlNode = new JProperty( _ElemName_LogicalSetXml.ToLower() );
             ParentObject.Add( LSXmlNode );
 
             JObject LSXmlNodeObj = new JObject();

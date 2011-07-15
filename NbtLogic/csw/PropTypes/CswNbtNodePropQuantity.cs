@@ -175,12 +175,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _QuantitySubField.ToXmlNodeName(), ( !Double.IsNaN( Quantity ) ) ? Quantity.ToString() : string.Empty,
+            ParentNode.Add( new XElement( _QuantitySubField.ToXmlNodeName(true), ( !Double.IsNaN( Quantity ) ) ? Quantity.ToString() : string.Empty,
                 new XAttribute( "minvalue", MinValue.ToString() ),
                 new XAttribute( "maxvalue", MaxValue.ToString() ),
                 new XAttribute( "precision", Precision.ToString() ) ) );
 
-            XElement UnitsNode = new XElement( _UnitsSubField.ToXmlNodeName(), Units );
+            XElement UnitsNode = new XElement( _UnitsSubField.ToXmlNodeName(true), Units );
             ParentNode.Add( UnitsNode );
 
             foreach( CswNbtNode UnitNode in _UnitNodes )
@@ -192,13 +192,14 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _QuantitySubField.ToXmlNodeName(), ( !Double.IsNaN( Quantity ) ) ? Quantity.ToString() : string.Empty,
-                                             new JObject(
-                                                 new JProperty( "minvalue", MinValue.ToString() ),
-                                                 new JProperty( "maxvalue", MaxValue.ToString() ),
-                                                 new JProperty( "precision", Precision.ToString() ) ) ) );
+            ParentObject.Add( new JProperty( _QuantitySubField.ToXmlNodeName( true ), ( !Double.IsNaN( Quantity ) ) ?
+                Quantity.ToString() : string.Empty ) );
 
-            JProperty UnitsNode = new JProperty( _UnitsSubField.ToXmlNodeName(), Units );
+            ParentObject.Add( new JProperty( "minvalue", MinValue.ToString() ) );
+            ParentObject.Add( new JProperty( "maxvalue", MaxValue.ToString() ) );
+            ParentObject.Add( new JProperty( "precision", Precision.ToString() ) );  
+
+            JProperty UnitsNode = new JProperty( _UnitsSubField.ToXmlNodeName(true), Units );
             ParentObject.Add( UnitsNode );
 
             JObject UnitsNodeObj = new JObject();
@@ -206,8 +207,7 @@ namespace ChemSW.Nbt.PropTypes
 
             foreach( CswNbtNode UnitNode in _UnitNodes )
             {
-                UnitsNodeObj.Add( new JProperty( "option",
-                    new JProperty( "value", UnitNode.NodeName ) ) );
+                UnitsNodeObj.Add( new JProperty( "option", UnitNode.NodeName ) );
             }
         }
 
@@ -219,13 +219,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _QuantitySubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _QuantitySubField.ToXmlNodeName(true) ) )
             {
-                Quantity = CswConvert.ToDouble( XmlNode.Element( _QuantitySubField.ToXmlNodeName() ).Value );
+                Quantity = CswConvert.ToDouble( XmlNode.Element( _QuantitySubField.ToXmlNodeName(true) ).Value );
             }
-            if( null != XmlNode.Element( _UnitsSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _UnitsSubField.ToXmlNodeName(true) ) )
             {
-                Units = XmlNode.Element( _UnitsSubField.ToXmlNodeName() ).Value;
+                Units = XmlNode.Element( _UnitsSubField.ToXmlNodeName(true) ).Value;
             }
         }
 
@@ -239,13 +239,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _QuantitySubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _QuantitySubField.ToXmlNodeName(true) ) )
             {
-                Quantity = CswConvert.ToDouble( JObject.Property( _QuantitySubField.ToXmlNodeName() ).Value );
+                Quantity = CswConvert.ToDouble( JObject.Property( _QuantitySubField.ToXmlNodeName(true) ).Value );
             }
-            if( null != JObject.Property( _UnitsSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _UnitsSubField.ToXmlNodeName(true) ) )
             {
-                Units = (string) JObject.Property( _UnitsSubField.ToXmlNodeName() ).Value;
+                Units = (string) JObject.Property( _UnitsSubField.ToXmlNodeName(true) ).Value;
             }
         }
     }//CswNbtNodePropQuantity

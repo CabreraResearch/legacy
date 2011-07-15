@@ -59,12 +59,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _MolSubField.ToXmlNodeName(), Mol ) );
+            ParentNode.Add( new XElement( _MolSubField.ToXmlNodeName(true), Mol ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _MolSubField.ToXmlNodeName(), Mol ) );
+            ParentObject.Add( new JProperty( _MolSubField.ToXmlNodeName(true), Mol ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -74,9 +74,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _MolSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _MolSubField.ToXmlNodeName(true) ) )
             {
-                Mol = XmlNode.Element( _MolSubField.ToXmlNodeName() ).Value;
+                Mol = XmlNode.Element( _MolSubField.ToXmlNodeName(true) ).Value;
             }
         }
 
@@ -87,9 +87,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _MolSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _MolSubField.ToXmlNodeName(true) ) )
             {
-                Mol = (string) JObject.Property( _MolSubField.ToXmlNodeName() ).Value;
+                Mol = (string) JObject.Property( _MolSubField.ToXmlNodeName(true) ).Value;
             }
         }
     }//CswNbtNodePropMol

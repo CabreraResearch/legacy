@@ -93,14 +93,14 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _ValueSubField.ToXmlNodeName(), Value ),
-                new XElement( "Options", Options.ToString() ) );
+            ParentNode.Add( new XElement( _ValueSubField.ToXmlNodeName(true), Value ),
+                new XElement( "options", Options.ToString() ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _ValueSubField.ToXmlNodeName(), Value ) );
-            ParentObject.Add( new JProperty( "Options", Options.ToString() ) );
+            ParentObject.Add( new JProperty( _ValueSubField.ToXmlNodeName(true), Value ) );
+            ParentObject.Add( new JProperty( "options", Options.ToString() ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -110,9 +110,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _ValueSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _ValueSubField.ToXmlNodeName(true) ) )
             {
-                Value = XmlNode.Element( _ValueSubField.ToXmlNodeName() ).Value;
+                Value = XmlNode.Element( _ValueSubField.ToXmlNodeName(true) ).Value;
             }
         }
 
@@ -123,9 +123,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _ValueSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _ValueSubField.ToXmlNodeName(true) ) )
             {
-                Value = (string) JObject.Property( _ValueSubField.ToXmlNodeName() ).Value;
+                Value = (string) JObject.Property( _ValueSubField.ToXmlNodeName(true) ).Value;
             }
         }
     }//CswNbtNodeProp

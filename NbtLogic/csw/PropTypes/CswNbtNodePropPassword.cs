@@ -114,13 +114,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _EncryptedPasswordSubField.ToXmlNodeName(), EncryptedPassword ),
+            ParentNode.Add( new XElement( _EncryptedPasswordSubField.ToXmlNodeName(true), EncryptedPassword ),
                 new XElement( "newpassword" ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _EncryptedPasswordSubField.ToXmlNodeName(), EncryptedPassword ) );
+            ParentObject.Add( new JProperty( _EncryptedPasswordSubField.ToXmlNodeName(true), EncryptedPassword ) );
             ParentObject.Add( new JProperty( "newpassword" ) );
         }
 
@@ -133,9 +133,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _EncryptedPasswordSubField.ToXmlNodeName() ) )
+            if( null != XmlNode.Element( _EncryptedPasswordSubField.ToXmlNodeName(true) ) )
             {
-                EncryptedPassword = XmlNode.Element( _EncryptedPasswordSubField.ToXmlNodeName() ).Value;
+                EncryptedPassword = XmlNode.Element( _EncryptedPasswordSubField.ToXmlNodeName(true) ).Value;
             }
             if( null != XmlNode.Element( "newpassword" ) )
             {
@@ -150,9 +150,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName() ) )
+            if( null != JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName(true) ) )
             {
-                EncryptedPassword = (string) JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName() ).Value;
+                EncryptedPassword = (string) JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName(true) ).Value;
             }
             if( null != JObject.Property( "newpassword" ) )
             {
