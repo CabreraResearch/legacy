@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -22,23 +18,33 @@ namespace ChemSW.Nbt.WebServices
             _ForMobile = ForMobile;
         }
 
-        public JObject Run( string ParentId, string UpdatedViewXml )
+        public JObject Run( string ParentId, string UpdatedViewJson )
         {
-            string ViewXml = UpdatedViewXml.Replace( @"xmlns=""http://www.w3.org/1999/xhtml""", string.Empty );
-            XElement AllProps = XElement.Parse( ViewXml );
-            IEnumerable<XElement> Props = ( from Element in AllProps.Descendants().Elements( "prop" )
-                                            where ( null != Element.Attribute( "wasmodified" ) &&
-                                                   Element.Attribute( "wasmodified" ).Value == "1" )
-                                            select Element );
+            JObject UpdatedView = JObject.Parse( UpdatedViewJson );
+            Collection<JProperty> Props = new Collection<JProperty>();
+
+            foreach( JProperty JProp in UpdatedView.Properties() )
+            {
+                JObject NodeAttr = (JObject) JProp.Value;
+                JObject SubItems = (JObject) NodeAttr.Property( "subitems" ).Value;
+                foreach( JProperty NodeProp in SubItems.Properties() )
+                {
+                    JObject PropAttr = (JObject) NodeProp.Value;
+                    if( null != PropAttr.Property( "wasmodified" ) )
+                    {
+                        Props.Add( NodeProp );
+                    }
+                }
+            }
 
             // post changes once per node, not once per prop            
             Collection<CswNbtNode> NodesToPost = new Collection<CswNbtNode>();
 
-            foreach( XElement Prop in Props )
+            foreach( JProperty Prop in Props )
             {
-                if( null != Prop.Attribute( "id" ) )
+                if( null != Prop.Name )
                 {
-                    string NodePropId = Prop.Attribute( "id" ).Value;
+                    string NodePropId = Prop.Name; // ~ "prop_4019_nodeid_nodes_24709"
                     string[] SplitNodePropId = NodePropId.Split( '_' );
                     Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[1] );
                     CswPrimaryKey NodePk = new CswPrimaryKey( SplitNodePropId[3], CswConvert.ToInt32( SplitNodePropId[4] ) );
@@ -46,20 +52,23 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
                     CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
-                    XmlDocument Doc = new XmlDocument();
-                    XmlNode PropNode = Doc.ReadNode( Prop.CreateReader() );
-
-                    Node.Properties[MetaDataProp].ReadXml( PropNode, null, null );
+                    JObject PropObj = (JObject) Prop.Value;
+                   
+                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
 
                     if( !NodesToPost.Contains( Node ) )
+                    {
                         NodesToPost.Add( Node );
+                    }
                 }
             }
 
             foreach( CswNbtNode Node in NodesToPost )
+            {
                 Node.postChanges( false );
+            }
 
-            // return the refreshed view
+                // return the refreshed view
             CswNbtWebServiceMobileView ViewService = new CswNbtWebServiceMobileView( _CswNbtResources, _ForMobile );
             return ViewService.getView( ParentId, _CswNbtResources.CurrentNbtUser );
 
