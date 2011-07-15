@@ -1000,69 +1000,69 @@ CswAppMode.mode = 'mobile';
             //var propname = json.name;
 
             // subfield nodes
-            var $sf_text = json['text'];
-            var $sf_value = json['value'];
+            var sf_text = 'text';
+            var sf_value = 'value';
             //var $sf_href = json.href;
             //var $sf_options = json.options;
-            var $sf_checked = json['checked'];
+            var sf_checked = 'checked';
             //var $sf_required = json.required;
             //var $sf_units = json.units;
-            var $sf_answer = json['answer'];
+            var sf_answer = 'answer';
             //var $sf_allowedanswers = json.allowedanswers;
-            var $sf_correctiveaction = json['correctiveaction'];
-            var $sf_comments = json['comments'];
+            var sf_correctiveaction = 'correctiveaction';
+            var sf_comments = 'comments';
             //var $sf_compliantanswers = json.compliantanswers;
 
-            var $sftomodify = null;
+            var propToUpdate = '';
             switch (fieldtype) {
-            case "Date":
-                if (name.contains(IdStr)) $sftomodify = $sf_value;
-                break;
-            case "Link":
-                break;
-            case "List":
-                if (name.contains(IdStr)) $sftomodify = $sf_value;
-                break;
-            case "Logical":
-                if (name.contains(makeSafeId({ ID: IdStr, suffix: 'ans' }))) {
-                    $sftomodify = $sf_checked;
-                }
-                break;
-            case "Memo":
-                if (name.contains(IdStr)) $sftomodify = $sf_text;
-                break;
-            case "Number":
-                if (name.contains(IdStr)) $sftomodify = $sf_value;
-                break;
-            case "Password":
-                break;
-            case "Quantity":
-                if (name.contains(IdStr)) $sftomodify = $sf_value;
-                break;
-            case "Question":
-                if (name.contains(makeSafeId({ ID: IdStr, suffix: 'com' }))) {
-                    $sftomodify = $sf_comments;
-                } 
-                else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'ans' }))) {
-                    $sftomodify = $sf_answer;
-                } 
-                else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'cor' }))) {
-                    $sftomodify = $sf_correctiveaction;
-                }
-                break;
-            case "Static":
-                break;
-            case "Text":
-                if (name.contains(IdStr)) $sftomodify = $sf_text;
-                break;
-            case "Time":
-                if (name.contains(IdStr)) $sftomodify = $sf_value;
-                break;
-            default:
-                break;
+                case "Date":
+                    if (name.contains(IdStr)) propToUpdate = sf_value;
+                    break;
+                case "Link":
+                    break;
+                case "List":
+                    if (name.contains(IdStr)) propToUpdate = sf_value;
+                    break;
+                case "Logical":
+                    if (name.contains(makeSafeId({ ID: IdStr, suffix: 'ans' }))) {
+                        propToUpdate = sf_checked;
+                    }
+                    break;
+                case "Memo":
+                    if (name.contains(IdStr)) propToUpdate = sf_text;
+                    break;
+                case "Number":
+                    if (name.contains(IdStr)) propToUpdate = sf_value;
+                    break;
+                case "Password":
+                    break;
+                case "Quantity":
+                    if (name.contains(IdStr)) propToUpdate = sf_value;
+                    break;
+                case "Question":
+                    if (name.contains(makeSafeId({ ID: IdStr, suffix: 'com' }))) {
+                        propToUpdate = sf_comments;
+                    } 
+                    else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'ans' }))) {
+                        propToUpdate = sf_answer;
+                    } 
+                    else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'cor' }))) {
+                        propToUpdate = sf_correctiveaction;
+                    }
+                    break;
+                case "Static":
+                    break;
+                case "Text":
+                    if (name.contains(IdStr)) propToUpdate = sf_text;
+                    break;
+                case "Time":
+                    if (name.contains(IdStr)) propToUpdate = sf_value;
+                    break;
+                default:
+                    break;
             }
-            if (!isNullOrEmpty($sftomodify)) {
-                $sftomodify.text(value);
+            if (!isNullOrEmpty(propToUpdate)) {
+                json[propToUpdate] = value;
                 json['wasmodified'] = '1';
             }
         }// _FieldTypeHtmlToJson()
@@ -1817,7 +1817,7 @@ CswAppMode.mode = 'mobile';
                 
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
                 var nodeJson = _fetchCachedNodeJson(nodeId);
-               
+debugger;               
                 for(var key in nodeJson['subitems'])
                 {
                     var prop = nodeJson['subitems'][key];
@@ -2045,7 +2045,8 @@ CswAppMode.mode = 'mobile';
             var ret = {};
             if (!isNullOrEmpty(localStorage.currentviewid)) {
                 //View is JSON: {name: '', json: '', wasmodified: ''}
-                var currentView = JSON.parse(localStorage.currentviewid);
+                var currentViewId = localStorage.currentviewid;
+                var currentView = JSON.parse(localStorage[currentViewId]);
                 var viewJson = currentViewJson( currentView['json'] );
                 ret = viewJson[nodeid];
             }
