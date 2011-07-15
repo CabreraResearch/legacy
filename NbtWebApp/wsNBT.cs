@@ -2360,7 +2360,7 @@ namespace ChemSW.Nbt.WebServices
         #region Mobile
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string UpdateProperties( string SessionId, string ParentId, string UpdatedViewXml, bool ForMobile )
+        public string UpdateProperties( string SessionId, string ParentId, string UpdatedViewJson, bool ForMobile )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2373,7 +2373,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     CswNbtWebServiceMobileUpdateProperties wsUP = new CswNbtWebServiceMobileUpdateProperties( _CswNbtResources, ForMobile );
-                    string ViewXml = wsUP.Run( ParentId, UpdatedViewXml ).ToString();
+                    string ViewXml = wsUP.Run( ParentId, UpdatedViewJson ).ToString();
                     ReturnVal.Add( new JProperty( "xml", ViewXml ) );
                 }
 
