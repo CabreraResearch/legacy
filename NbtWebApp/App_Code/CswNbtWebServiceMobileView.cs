@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Xml;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -134,7 +132,7 @@ namespace ChemSW.Nbt.WebServices
                             new JProperty( "objectclass", CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) ),
                             new JProperty( "iconfilename", CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) ),
                             new JProperty( "nodespecies", CswTools.SafeJavascriptParam( ThisNodeKey.NodeSpecies.ToString() ) ),
-                            ThisJProp);
+                            ThisJProp );
                         NodeWrap.Value = NodeProps;
                     }
 
@@ -173,9 +171,6 @@ namespace ChemSW.Nbt.WebServices
                                                         select Prop )
             {
                 CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-                XmlDocument XmlDoc = new XmlDocument();
-                CswXmlDocument.SetDocumentElement( XmlDoc, "root" );
-                PropWrapper.ToXml( XmlDoc.DocumentElement );
                 string ReadOnly = ( Node.ReadOnly || Prop.ReadOnly ) ? "true" : "false";
                 JProperty ThisProp = new JProperty( PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() );
                 JObject ThisPropAttr = new JObject(
@@ -185,14 +180,9 @@ namespace ChemSW.Nbt.WebServices
                                             new JProperty( "fieldtype", Prop.FieldType.FieldType.ToString() ),
                                             new JProperty( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
                                             new JProperty( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) )
-                                        );
-                foreach( string JChild in from XmlNode ChildXElement
-                                              in XmlDoc.DocumentElement.ChildNodes
-                                          select JsonConvert.SerializeXmlNode( ChildXElement ) )
-                {
-                    //UGH. Parse() returns a JObject. We need the first (and hopefully only) JProperty.
-                    ThisPropAttr.Add( JToken.Parse( JChild ).First );
-                }
+                                       );
+
+                PropWrapper.ToJSON( ThisPropAttr );
                 ThisProp.Value = ThisPropAttr;
                 SubItemsJProp.Add( ThisProp );
             }
