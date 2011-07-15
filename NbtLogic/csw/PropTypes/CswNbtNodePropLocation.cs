@@ -318,51 +318,59 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
+            string LocationNodeIdStr = string.Empty;
+            string LocationBarcode = string.Empty;
+            Int32 Row = Int32.MinValue;
+            Int32 Column = Int32.MinValue;
             if( null != XmlNode.Element( _NodeIdSubField.ToXmlNodeName( true ) ) )
             {
-                string LocationNodeIdStr = XmlNode.Element( _NodeIdSubField.ToXmlNodeName( true ) ).Value;
-                if( null != XmlNode.Element( _BarcodeSubField.ToXmlNodeName( true ) ) )
-                {
-                    string LocationBarcode = XmlNode.Element( _BarcodeSubField.ToXmlNodeName( true ) ).Value;
-                    if( null != XmlNode.Element( _RowSubField.ToXmlNodeName( true ) ) )
-                    {
-                        Int32 Row = CswConvert.ToInt32( XmlNode.Element( _RowSubField.ToXmlNodeName( true ) ).Value );
-                        if( null != XmlNode.Element( _ColumnSubField.ToXmlNodeName( true ) ) )
-                        {
-                            Int32 Column = CswConvert.ToInt32( XmlNode.Element( _ColumnSubField.ToXmlNodeName( true ) ).Value );
-                            string SelectedNodeId = _saveProp( LocationNodeIdStr, LocationBarcode, NodeMap, Row, Column );
-                            if( !string.IsNullOrEmpty( SelectedNodeId ) )
-                            {
-                                XmlNode.Add( new XElement( "destnodeid", SelectedNodeId ) );
-                            }
-                        }
-                    }
-                }
+                LocationNodeIdStr = XmlNode.Element( _NodeIdSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != XmlNode.Element( _BarcodeSubField.ToXmlNodeName( true ) ) )
+            {
+                LocationBarcode = XmlNode.Element( _BarcodeSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != XmlNode.Element( _RowSubField.ToXmlNodeName( true ) ) )
+            {
+                Row = CswConvert.ToInt32( XmlNode.Element( _RowSubField.ToXmlNodeName( true ) ).Value );
+            }
+            if( null != XmlNode.Element( _ColumnSubField.ToXmlNodeName( true ) ) )
+            {
+                Column = CswConvert.ToInt32( XmlNode.Element( _ColumnSubField.ToXmlNodeName( true ) ).Value );
+            }
+            string SelectedNodeId = _saveProp( LocationNodeIdStr, LocationBarcode, NodeMap, Row, Column );
+            if( !string.IsNullOrEmpty( SelectedNodeId ) )
+            {
+                XmlNode.Add( new XElement( "destnodeid", SelectedNodeId ) );
             }
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
+            string LocationNodeIdStr = string.Empty;
+            string LocationBarcode = string.Empty;
+            Int32 Row = Int32.MinValue;
+            Int32 Column = Int32.MinValue;
             if( null != JObject.Property( ( _NodeIdSubField.ToXmlNodeName( true ) ) ) )
             {
-                string LocationNodeIdStr = (string) JObject.Property( _NodeIdSubField.ToXmlNodeName( true ) ).Value;
-                if( null != JObject.Property( _BarcodeSubField.ToXmlNodeName( true ) ) )
-                {
-                    string LocationBarcode = (string) JObject.Property( _BarcodeSubField.ToXmlNodeName( true ) ).Value;
-                    if( null != JObject.Property( _RowSubField.ToXmlNodeName( true ) ) )
-                    {
-                        Int32 Row = CswConvert.ToInt32( JObject.Property( _RowSubField.ToXmlNodeName( true ) ).Value );
-                        if( null != JObject.Property( _ColumnSubField.ToXmlNodeName( true ) ) )
-                        {
-                            Int32 Column = CswConvert.ToInt32( JObject.Property( _ColumnSubField.ToXmlNodeName( true ) ).Value );
-                            string SelectedNodeId = _saveProp( LocationNodeIdStr, LocationBarcode, NodeMap, Row, Column );
-                            if( !string.IsNullOrEmpty( SelectedNodeId ) )
-                            {
-                                JObject.Add( new JProperty( "destnodeid", SelectedNodeId ) );
-                            }
-                        }
-                    }
-                }
+                LocationNodeIdStr = (string) JObject.Property( _NodeIdSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != JObject.Property( _BarcodeSubField.ToXmlNodeName( true ) ) )
+            {
+                LocationBarcode = (string) JObject.Property( _BarcodeSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != JObject.Property( _RowSubField.ToXmlNodeName( true ) ) )
+            {
+                Row = CswConvert.ToInt32( JObject.Property( _RowSubField.ToXmlNodeName( true ) ).Value );
+            }
+            if( null != JObject.Property( _ColumnSubField.ToXmlNodeName( true ) ) )
+            {
+                Column = CswConvert.ToInt32( JObject.Property( _ColumnSubField.ToXmlNodeName( true ) ).Value );
+            }
+            string SelectedNodeId = _saveProp( LocationNodeIdStr, LocationBarcode, NodeMap, Row, Column );
+            if( !string.IsNullOrEmpty( SelectedNodeId ) )
+            {
+                JObject.Add( new JProperty( "destnodeid", SelectedNodeId ) );
             }
         }
 
