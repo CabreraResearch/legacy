@@ -142,11 +142,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            string ProspectiveBarcode = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() );
-            if( ProspectiveBarcode != string.Empty )
-            {
-                setBarcodeValueOverride( ProspectiveBarcode, false );
-            }
+            _setPropVals( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() ) );
         } // ReadXml()
 
         public override void ToXElement( XElement ParentNode )
