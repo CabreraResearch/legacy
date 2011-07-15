@@ -93,7 +93,7 @@
 			'onAuthenticate': function (u)
 			{
 				$('#header_username').text(u)
-				 					 .hover(function () { $(this).CswAttrDom('title', getTimeout()); });
+				 					 .hover(function () { $(this).CswAttrDom('title', getExpireTime()); });
 				$('#header_dashboard').CswDashboard();
 
 				$('#header_menu').CswMenuHeader({

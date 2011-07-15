@@ -8,8 +8,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswTimeInterval : CswFieldTypeWebControl
     {
-        private string WeeklyDayPickerRadioGroupName = "_weeklyday";
-        private string MonthlyDayPickerRadioGroupName = "_monthlyday";
+		//private string WeeklyDayPickerRadioGroupName = "_weeklyday";
+		//private string MonthlyDayPickerRadioGroupName = "_monthlyday";
 
         public CswTimeInterval( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
@@ -48,7 +48,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             throw new NotImplementedException();
         }
         
-        private Label _Label;
+        //private Label _Label;
         protected override void CreateChildControls()
         {
             _CswTimeIntervalSelector = new CswTimeIntervalSelector( true );

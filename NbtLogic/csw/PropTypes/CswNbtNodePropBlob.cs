@@ -77,21 +77,12 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public Int32 JctNodePropId
-        {
-            get
-            {
-                return _CswNbtNodePropData.JctNodePropId;
-            }
-        }
-
-
         public string Href
         {
             get
             {
                 string ret = string.Empty;
-                if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != null )
+				if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
                 {
                     ret = "GetBlob.Aspx?mode=doc&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.ToString() + "&propid=" + NodeTypePropId.ToString();
                 }

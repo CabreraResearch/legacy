@@ -293,7 +293,7 @@ namespace ChemSW.Nbt.PropTypes
 
         private string _NameColumn = "name";
         private string _KeyColumn = "key";
-        private string _TableName = "logicalsetitem";
+        //private string _TableName = "logicalsetitem";
 
         /// <summary>
         /// Convert this data to XML format, and add beneath the given parent node

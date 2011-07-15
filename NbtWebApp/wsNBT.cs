@@ -362,6 +362,34 @@ namespace ChemSW.Nbt.WebServices
 
         }//deAuthenticate()
 
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string RenewSession()
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					_CswSessionResources.CswSessionManager.updateLastAccess( true );
+					ReturnVal.Add( new JProperty( "Renew", "Succeeded" ) );
+				}
+				_deInitResources();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ( ReturnVal.ToString() );
+
+		}//RenewSession()
+
         #endregion Authentication
 
         #region Render Core UI

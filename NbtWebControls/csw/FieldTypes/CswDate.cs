@@ -91,7 +91,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             private CswNbtResources _CswNbtResources;
             private CswDatePicker _CswDatePicker;
-            private TextBox _DateBox;
+            //private TextBox _DateBox;
             private NodeEditMode _EditMode;
 
             public CswDateControl( CswNbtResources CswNbtResources, CswDatePicker.DateTimeMode DateTimeMode, NodeEditMode EditMode, string IDPrefix, Control ParentControl )

@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Schema
         {
             InitializeComponent();
             updatebutton.Visible = false;
-            CancelButton.Visible = false;
+            MyCancelButton.Visible = false;
 
             _UpdateThread = new UpdateThread();
             _UpdateThread.OnFetchSchemata += new UpdateThread.FetchSchemataEventHandler( _UpdateThread_OnFetchSchemata );
@@ -103,8 +103,8 @@ namespace ChemSW.Nbt.Schema
         {
             updatebutton.Enabled = false;
             updatebutton.Refresh();
-            CancelButton.Visible = true;
-            CancelButton.Enabled = true;
+            MyCancelButton.Visible = true;
+            MyCancelButton.Enabled = true;
             schemacombobox.Enabled = false;
 
             UpdateThread.DoUpdateInvoker dui = new UpdateThread.DoUpdateInvoker( _UpdateThread.DoUpdate );
@@ -115,8 +115,8 @@ namespace ChemSW.Nbt.Schema
         private void _ReadyForUpdate( UpdateThread.SchemaInfoEventArgs e )
         {
             _UpdateThread.Cancel = false;
-            CancelButton.Enabled = true;
-            CancelButton.Visible = false;
+            MyCancelButton.Enabled = true;
+            MyCancelButton.Visible = false;
             updatebutton.Enabled = true;
             schemacombobox.Enabled = true;
 
@@ -187,7 +187,7 @@ namespace ChemSW.Nbt.Schema
 
         private void CancelButton_Click( object sender, EventArgs e )
         {
-            CancelButton.Enabled = false;
+            MyCancelButton.Enabled = false;
             _UpdateThread.Cancel = true;
         }
 

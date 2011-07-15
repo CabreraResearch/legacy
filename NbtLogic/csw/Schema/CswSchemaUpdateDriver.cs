@@ -54,7 +54,6 @@ namespace ChemSW.Nbt.Schema
             catch( CswDniExceptionIgnoreDeliberately CswDniExceptionIgnoreDeliberately )
             {
                 _UpdateSucceeded = true;
-
                 try
                 {
                     _CswNbtSchemaModTrnsctn.rollbackTransaction();

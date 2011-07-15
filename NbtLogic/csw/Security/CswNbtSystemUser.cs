@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Security
 
 		public CswNbtSystemUser( ICswResources CswNbtResources, string Username )
         {
-            _Resources = _Resources;
+			_Resources = CswNbtResources;
             _Username = Username;
         }
 

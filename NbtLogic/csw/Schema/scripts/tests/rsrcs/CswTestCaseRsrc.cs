@@ -12,7 +12,6 @@ using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Nbt.Schema;
 using ChemSW.Audit;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -51,11 +50,11 @@ namespace ChemSW.Nbt.Schema
         CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
 
 
-        private string _ForeignKeyTableStem = "fk_Table_";
-        private string _PrimeKeyTableStem = "pk_Table_";
+        //private string _ForeignKeyTableStem = "fk_Table_";
+        //private string _PrimeKeyTableStem = "pk_Table_";
 
-        private string _ArbitraryValCol = "arbitraryvalue";
-        private string _TestValStem = "Test val ";
+        //private string _ArbitraryValCol = "arbitraryvalue";
+        //private string _TestValStem = "Test val ";
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
         public CswTestCaseRsrc( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )

@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
     {
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
-        private CswNbtPropFilterSql _CswNbtPropFilterSql = null;
+        //private CswNbtPropFilterSql _CswNbtPropFilterSql = null;
 
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
