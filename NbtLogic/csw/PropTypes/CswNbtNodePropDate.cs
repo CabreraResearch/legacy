@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode DateNode = CswXmlDocument.AppendXmlNode( ParentNode, _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToShortDateString() );
+			XmlNode DateNode = CswXmlDocument.AppendXmlNode( ParentNode, _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

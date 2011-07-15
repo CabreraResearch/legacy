@@ -225,6 +225,7 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I02.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswProdUpdtRsrc.cs" />
     <Compile Include="csw\Sched\runner\CswNbtSchdItemRunner.cs" />
     <Compile Include="csw\Sched\logic_legacy\CswNbtSchdItemUpdateInspectionStatus.cs" />
