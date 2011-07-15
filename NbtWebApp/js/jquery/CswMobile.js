@@ -656,7 +656,7 @@ CswAppMode.mode = 'mobile';
             if (params) $.extend(p, params);
 
             var id = makeSafeId({ ID: p.json['id'] });
-            var text = tryParseString(p.json['value']['name'], p.json['value']);
+            var text = tryParseString(p.json['value']['prop_name'], p.json['value']);
 
             var IsDiv = (!isNullOrEmpty(id));
 
@@ -735,7 +735,7 @@ CswAppMode.mode = 'mobile';
             var Html = '';
             var id = makeSafeId({ ID: p.json['id'] });
             var nodeSpecies = p.json['value']['nodespecies'];
-            var NodeName = p.json['value']['name'];
+            var NodeName = p.json['value']['node_name'];
             var icon = '';
             if (!isNullOrEmpty(p.json['value']['iconfilename'])) {
                 icon = 'images/icons/' + p.json['value']['iconfilename'];
@@ -813,7 +813,7 @@ CswAppMode.mode = 'mobile';
         function _FieldTypeJsonToHtml(json, ParentId) {
             var IdStr = makeSafeId({ ID: json['id'] });
             var FieldType = json['value']['fieldtype'];
-            var PropName = json['value']['name'];
+            var PropName = json['value']['prop_name'];
             var ReadOnly = isTrue(json['value']['isreadonly']);
 
             // Subfield values
@@ -821,6 +821,7 @@ CswAppMode.mode = 'mobile';
             var sf_value = tryParseString(json['value']['value'], '');
             var sf_href = tryParseString(json['value']['href'], '');
             var sf_checked = tryParseString(json['value']['checked'], '');
+            //var sf_relationship = tryParseString(json['value']['name'], '');
             var sf_required = tryParseString(json['value']['required'], '');
             var sf_units = tryParseString(json['value']['units'], '');
             var sf_answer = tryParseString(json['value']['answer'], '');

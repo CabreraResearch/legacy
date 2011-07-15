@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         NodeWrap = new JProperty( NodeIdPrefix + ThisNodeId );
                         NodeProps = new JObject(
-                            new JProperty( "name", CswTools.SafeJavascriptParam( ThisNodeName ) ),
+                            new JProperty( "node_name", CswTools.SafeJavascriptParam( ThisNodeName ) ),
                             new JProperty( "nodetype", CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) ),
                             new JProperty( "objectclass", CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) ),
                             new JProperty( "iconfilename", CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) ),
@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.WebServices
                 string ReadOnly = ( Node.ReadOnly || Prop.ReadOnly ) ? "true" : "false";
                 JProperty ThisProp = new JProperty( PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() );
                 JObject ThisPropAttr = new JObject(
-                                            new JProperty( "name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
+                                            new JProperty( "prop_name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
                                             new JProperty( "tab", CswTools.SafeJavascriptParam( Prop.NodeTypeTab.TabName ) ),
                                             new JProperty( "isreadonly", ReadOnly ),
                                             new JProperty( "fieldtype", Prop.FieldType.FieldType.ToString() ),
