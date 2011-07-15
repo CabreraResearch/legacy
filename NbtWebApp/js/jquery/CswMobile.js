@@ -1807,7 +1807,7 @@ CswAppMode.mode = 'mobile';
             var logger = new profileMethod('onPropertyChange');
             var $elm = $(eventObj.target);
 
-            var name = tryParseString(inputId,$elm.CswAttrDom('id'))
+            var name = tryParseString(inputId, $elm.CswAttrDom('id'));
             var value = tryParseString(inputVal, eventObj.target.innerText);
        
             // update the xml and store it
@@ -1816,14 +1816,15 @@ CswAppMode.mode = 'mobile';
                 _resetPendingChanges(false);
                 
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
-                var nodeJson = _fetchCachedNodeJson(DivId, nodeId);
-                
+                var nodeJson = _fetchCachedNodeJson(nodeId);
+               
                 for(var key in nodeJson['subitems'])
                 {
                     var prop = nodeJson['subitems'][key];
                     _FieldTypeHtmlToJson(prop, name, value);
                 }
-                _updateStoredViewJson(rootid, currentViewJson(), '1');
+                
+                _updateStoredNodeJson(nodeId, nodeJson, '1');
             }
             kickStartAutoSync();
             cacheLogInfo(logger);
@@ -1979,21 +1980,32 @@ CswAppMode.mode = 'mobile';
             }
             else {
                 //no need to cache the viewsdiv
-                localStorage[rootid] = JSON.stringify({ name: rootname, json: viewJson, wasmodified: false });
+                localStorage[rootid] = JSON.stringify({ name: rootname, json: viewJson });
             }
             cacheLogInfo(logger);
         }
 
-        function _updateStoredViewJson(rootid, viewJson, wasmodified) {
-            if (!isNullOrEmpty(localStorage[rootid]) && !isNullOrEmpty(viewJson)) {
-                var view = JSON.parse(localStorage[rootid]);
+        function _updateStoredViewJson(viewid, viewJson, wasmodified) {
+            if (!isNullOrEmpty(localStorage[viewid]) && !isNullOrEmpty(viewJson)) {
+                var view = JSON.parse(localStorage[viewid]);
                 var update = { json: viewJson, wasmodified: wasmodified };
                 if (view) $.extend(view, update);
-                localStorage[rootid] = JSON.stringify(view);
+                localStorage[viewid] = JSON.stringify(view);
             }
             return viewJson;
         }
 
+        function _updateStoredNodeJson(nodeid, viewJson, wasmodified) {
+            if (!isNullOrEmpty(localStorage.currentviewid) && !isNullOrEmpty(viewJson)) {
+                var view = JSON.parse(localStorage.currentviewid);
+                var update = { json: viewJson, wasmodified: wasmodified };
+                view[nodeid] = update;
+                localStorage.currentviewid = JSON.stringify(view);
+            }
+            return viewJson;
+        }
+        
+        
         function _getModifiedView(onSuccess) {
             var modified = false;
             if (isNullOrEmpty(storedViews)) {
@@ -2029,12 +2041,12 @@ CswAppMode.mode = 'mobile';
             return ret;
         }
         
-        function _fetchCachedNodeJson(rootid,nodeid) {
+        function _fetchCachedNodeJson(nodeid) {
             var ret = {};
-            if (!isNullOrEmpty(localStorage[rootid])) {
+            if (!isNullOrEmpty(localStorage.currentviewid)) {
                 //View is JSON: {name: '', json: '', wasmodified: ''}
-                var rootObj = JSON.parse(localStorage[rootid]);
-                var viewJson = currentViewJson( rootObj['json'] );
+                var currentView = JSON.parse(localStorage.currentviewid);
+                var viewJson = currentViewJson( currentView['json'] );
                 ret = viewJson[nodeid];
             }
             return ret;
@@ -2107,12 +2119,13 @@ CswAppMode.mode = 'mobile';
      
             var logger = new profileMethod('processChanges');
             if (!isNullOrEmpty(SessionId) && !mobileStorage.stayOffline() ) {
-                _getModifiedView(function(rootid, viewJson) {
-                    if (!isNullOrEmpty(rootid) && !isNullOrEmpty(viewJson)) {
+                _getModifiedView(function(viewid, viewJson) {
+                    if (!isNullOrEmpty(viewid) && !isNullOrEmpty(viewJson)) {
+                        
                         var dataJson = {
                             SessionId: SessionId,
-                            ParentId: rootid,
-                            UpdatedViewJson: viewJson,
+                            ParentId: viewid,
+                            UpdatedViewJson: JSON.stringify(viewJson),
                             ForMobile: ForMobile
                         };
 
@@ -2132,7 +2145,7 @@ CswAppMode.mode = 'mobile';
                                     logger.setAjaxSuccess();
                                     setOnline(false);
                                     var json = data;
-                                    _updateStoredViewJson(rootid, json, '0');
+                                    _updateStoredViewJson(viewid, json, '0');
                                     mobileStorage.clearUnsyncedChanges();
                                     _resetPendingChanges(true);
                                     if (perpetuateTimer) {
