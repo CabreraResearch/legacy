@@ -187,8 +187,10 @@ CswAppMode.mode = 'mobile';
         }
         
 
-        var storedViews = [];
-        if (localStorage.storedViews) storedViews = JSON.parse(localStorage['storedviews']); // {name: '', rootid: ''}
+        var storedViews = {};
+        if (localStorage.storedViews) {
+            storedViews = JSON.parse(localStorage['storedviews']);
+        }
 
         var $logindiv = _loadLoginDiv();
         var $viewsdiv = reloadViews();
@@ -271,6 +273,9 @@ CswAppMode.mode = 'mobile';
         }
 
         function reloadViews() {
+            /// <summary>
+            ///   Refreshes the viewsdiv
+            /// </summary>
             var params = {
                 parentlevel: -1,
                 level: 0,
@@ -315,7 +320,10 @@ CswAppMode.mode = 'mobile';
         // ------------------------------------------------------------------------------------
 
         function setOffline() {
-            
+            /// <summary>
+            ///   Sets 'Online' button style 'offline',
+            /// </summary>
+
             amOnline(false);
             
             $('.onlineStatus').removeClass('online')
@@ -506,7 +514,7 @@ CswAppMode.mode = 'mobile';
                     var cachedJson = _fetchCachedNodeJson(p.ParentId, p.DivId);
                     p.PageType = 'prop';
                     if( isNullOrEmpty(cachedJson) ) {
-                        cachedJson = currentViewJson();
+                        cachedJson = currentViewJson()[p.DivId];
                     }
                     if( !isNullOrEmpty(cachedJson) ) {
                         p.json = cachedJson['subitems'];
@@ -811,6 +819,12 @@ CswAppMode.mode = 'mobile';
         }
 
         function _FieldTypeJsonToHtml(json, ParentId) {
+            /// <summary>
+            ///   Converts JSON into DOM content
+            /// </summary>
+            /// <param name="json" type="Object">A JSON Object</param>
+            /// <param name="ParentId" type="String">The ElementID of the parent control (should be a node)</param>
+            
             var IdStr = makeSafeId({ ID: json['id'] });
             var FieldType = json['value']['fieldtype'];
             var PropName = json['value']['prop_name'];
@@ -973,6 +987,13 @@ CswAppMode.mode = 'mobile';
         }
 
         function _FieldTypeHtmlToJson(json, id, value) {
+            /// <summary>
+            ///   Converts DOM content back to JSON
+            /// </summary>
+            /// <param name="json" type="Object">A JSON Object</param>
+            /// <param name="id" type="String">The id of the parent object</param>
+            /// <param name="value" type="String">The stored value</param>
+            
             var name = new CswString(id);
             var IdStr = makeSafeId({ ID: json['id'] });
             var fieldtype = json['fieldtype'];
@@ -1797,9 +1818,9 @@ CswAppMode.mode = 'mobile';
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
                 var nodeJson = _fetchCachedNodeJson(DivId, nodeId);
                 
-                for(var i=0; i<nodeJson.subitems.prop.length; i++)
+                for(var key in nodeJson['subitems'])
                 {
-                    var prop = nodeJson.subitems.prop[i];
+                    var prop = nodeJson['subitems'][key];
                     _FieldTypeHtmlToJson(prop, name, value);
                 }
                 _updateStoredViewJson(rootid, currentViewJson(), '1');
@@ -1949,12 +1970,10 @@ CswAppMode.mode = 'mobile';
             var logger = new profileMethod('storeViewJson');
             if(level === 0)
             {
+                storedViews = {}; //the viewnames may have changed. clear to be sure.
                 for(var view in viewJson)
                 {
-                    var viewid = view;
-                    var viewname = viewJson[view];
-                    delete storedViews[viewid]; //the viewname may have changed. delete to be sure.
-                    storedViews.push({ viewid: viewname });
+                    storedViews[view] = viewJson[view]; 
                 }
                 localStorage["storedviews"] = JSON.stringify(storedViews);
             }
@@ -1977,19 +1996,18 @@ CswAppMode.mode = 'mobile';
 
         function _getModifiedView(onSuccess) {
             var modified = false;
-            if (!isNullOrEmpty(localStorage['storedviews'])) {
-                var storedViews = JSON.parse(localStorage['storedviews']);
-
-                for (var i = 0; i < storedViews.length; i++) {
-                    stored = storedViews[i];
-                    if (!isNullOrEmpty(localStorage[stored.rootid])) {
-                        var view = JSON.parse(localStorage[stored.rootid]);
+            if (isNullOrEmpty(storedViews)) {
+                storedViews = JSON.parse(localStorage['storedviews']);
+            }
+            if( !isNullOrEmpty(storedViews)) {
+                for (var viewid in storedViews) {
+                    if (!isNullOrEmpty(localStorage[viewid])) {
+                        var view = JSON.parse(localStorage[viewid]);
                         if (view.wasmodified) {
                             modified = true;
-                            var rootid = stored.rootid;
                             var viewJson = view.json;
-                            if (!isNullOrEmpty(rootid) && !isNullOrEmpty(viewJson)) {
-                                onSuccess(rootid, viewJson);
+                            if (!isNullOrEmpty(viewid) && !isNullOrEmpty(viewJson)) {
+                                onSuccess(viewid, viewJson);
                             }
                         }
                     }
@@ -2086,6 +2104,7 @@ CswAppMode.mode = 'mobile';
         } //_handleDataCheckTimer()
 
         function _processChanges(perpetuateTimer) {
+     
             var logger = new profileMethod('processChanges');
             if (!isNullOrEmpty(SessionId) && !mobileStorage.stayOffline() ) {
                 _getModifiedView(function(rootid, viewJson) {
