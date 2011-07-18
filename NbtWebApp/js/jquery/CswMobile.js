@@ -1602,7 +1602,6 @@ CswAppMode.mode = 'mobile';
         }
 
         function _resetPendingChanges(setlastsyncnow) {
-
             $('#ss_pendingchangecnt').text( tryParseString(localStorage.unSyncedChanges,'0') );
             if ( _pendingChanges() ) {
                 $('.onlineStatus').addClass('pendingchanges')
@@ -1616,6 +1615,7 @@ CswAppMode.mode = 'mobile';
             
             if(arguments.length === 1) {
                 if (setlastsyncnow) {
+                    mobileStorage.clearUnsyncedChanges();
                     $('#ss_lastsync_success').text(mobileStorage.lastSyncSuccess());
                 }
                 else {
@@ -1826,7 +1826,7 @@ CswAppMode.mode = 'mobile';
             // update the xml and store it
             if (!isNullOrEmpty(currentViewJson())) {
                 mobileStorage.addUnsyncedChange();
-                _resetPendingChanges(false);
+                _resetPendingChanges();
                 
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
                 var nodeJson = _fetchCachedNodeJson(nodeId);
@@ -2054,7 +2054,6 @@ CswAppMode.mode = 'mobile';
                     }
                 }
                 if (!modified) {
-                    _resetPendingChanges(true);
                     onSuccess();
                 }
             }
@@ -2173,10 +2172,12 @@ CswAppMode.mode = 'mobile';
                                 success: function(data) {
                                     logger.setAjaxSuccess();
                                     setOnline(false);
-                                    var json = data;
-                                    _updateStoredViewJson(viewid, json, '0');
-                                    mobileStorage.clearUnsyncedChanges();
+                                    
+                                    var json = currentViewJson(data,1);
+                                    _updateStoredViewJson(viewid, json, false);
+                                    
                                     _resetPendingChanges(true);
+                                    
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
@@ -2198,6 +2199,7 @@ CswAppMode.mode = 'mobile';
                     }
                 }); // _getModifiedView();
             } else {
+                _resetPendingChanges(true);
                 if (perpetuateTimer) {
                     _waitForData();
                 }
