@@ -2130,8 +2130,7 @@ CswAppMode.mode = 'mobile';
                             }
                         },
                         error: function(data) {
-                            //setOffline();
-                            
+                            setOffline();
                             if (!isNullOrEmpty(onFailure)) {
                                 onFailure(currentViewJson( data ));
                             }
