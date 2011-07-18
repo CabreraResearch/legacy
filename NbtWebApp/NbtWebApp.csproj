@@ -109,6 +109,7 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="Images\favicon.ico" />
     <Content Include="js\jquery\CswMobile.js" />
     <Content Include="NewMain.html" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css" />
@@ -126,7 +127,6 @@
     <Content Include="etc\TelerikRadGrid.xsl" />
     <Content Include="etc\TelerikRadGridProperty.xsl" />
     <Content Include="etc\TelerikRadTreeView.xsl" />
-    <Content Include="favicon.ico" />
     <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\button.htc" />
     <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\checkboxeditor.htc" />
     <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\checkboxrender.htc" />
@@ -1476,8 +1476,7 @@
     <Compile Include="App_Code\CswNbtWebServiceHeader.cs" />
     <Compile Include="App_Code\CswNbtWebServiceMainMenu.cs" />
     <Compile Include="App_Code\CswNbtWebServiceMetaData.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceMobileUpdateProperties.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceMobileView.cs" />
+    <Compile Include="App_Code\CswNbtWebServiceMobile.cs" />
     <Compile Include="App_Code\CswNbtWebServiceNode.cs" />
     <Compile Include="App_Code\CswNbtWebServicePrintLabels.cs" />
     <Compile Include="App_Code\CswNbtWebServiceQuickLaunchItems.cs" />

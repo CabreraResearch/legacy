@@ -10,22 +10,24 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
-    public class CswNbtWebServiceMobileView
+    public class CswNbtWebServiceMobile
     {
         private readonly CswNbtResources _CswNbtResources;
         private readonly bool _ForMobile;
-        private readonly Int32 MobilePageSize = 30;
+        private readonly Int32 _MobilePageSize = 30;
 
-        public CswNbtWebServiceMobileView( CswNbtResources CswNbtResources, bool ForMobile )
+        public CswNbtWebServiceMobile( CswNbtResources CswNbtResources, bool ForMobile )
         {
             _CswNbtResources = CswNbtResources;
             _ForMobile = ForMobile;
             string PageSize = _CswNbtResources.getConfigVariableValue( CswNbtResources.ConfigurationVariables.mobileview_resultlimit.ToString() );
             if( CswTools.IsInteger( PageSize ) )
             {
-                MobilePageSize = CswConvert.ToInt32( PageSize );
+                _MobilePageSize = CswConvert.ToInt32( PageSize );
             }
         }
+
+        #region Get
 
         private const string PropIdPrefix = "prop_";
         private const string NodeIdPrefix = "nodeid_";
@@ -58,7 +60,7 @@ namespace ChemSW.Nbt.WebServices
                 RetJson.Add( _getSearchNodes( View ) );
             }
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false, MobilePageSize );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false, _MobilePageSize );
 
             if( Tree.getChildNodeCount() > 0 )
             {
@@ -123,7 +125,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         if( NodeSpecies.More == ThisNodeKey.NodeSpecies )
                         {
-                            ThisNodeName = "Results Truncated at " + MobilePageSize;
+                            ThisNodeName = "Results Truncated at " + _MobilePageSize;
                         }
                         NodeWrap = new JProperty( NodeIdPrefix + ThisNodeId );
                         NodeProps = new JObject(
@@ -190,6 +192,90 @@ namespace ChemSW.Nbt.WebServices
 
         // _runProperties()
 
+        #endregion Get
+
+        #region Set
+
+        public bool updateViewProps( string UpdatedViewJson )
+        {
+            bool Ret = false;
+            JObject UpdatedView = JObject.Parse( UpdatedViewJson );
+            if( null != UpdatedView.Property( "nodes" ) )
+            {
+                JObject Nodes = (JObject) UpdatedView.Property( "nodes" ).Value;
+                Ret = _updateNodesProps( Nodes );
+            }
+            else // this is already a node collection
+            {
+                Ret = _updateNodesProps( UpdatedView );
+            }
+            return Ret;
+        }
+
+        public bool updateNodesProps( string UpdatedNodeJson )
+        {
+            JObject UpdatedNode = JObject.Parse( UpdatedNodeJson );
+            return _updateNodesProps( UpdatedNode );
+        } // Run()
+
+        private bool _updateNodesProps( JObject UpdatedNode )
+        {
+            bool Ret = false;
+            Collection<JProperty> Props = new Collection<JProperty>();
+
+            foreach( JProperty JProp in UpdatedNode.Properties() )
+            {
+                JObject NodeAttr = (JObject) JProp.Value;
+                if( null != NodeAttr.Property( "subitems" ) )
+                {
+                    JObject SubItems = (JObject) NodeAttr.Property( "subitems" ).Value;
+                    foreach( JProperty NodeProp in SubItems.Properties() )
+                    {
+                        JObject PropAttr = (JObject) NodeProp.Value;
+                        if( null != PropAttr.Property( "wasmodified" ) )
+                        {
+                            Props.Add( NodeProp );
+                        }
+                    }
+                }
+            }
+
+            // post changes once per node, not once per prop            
+            Collection<CswNbtNode> NodesToPost = new Collection<CswNbtNode>();
+
+            foreach( JProperty Prop in Props )
+            {
+                if( null != Prop.Name )
+                {
+                    string NodePropId = Prop.Name; // ~ "prop_4019_nodeid_nodes_24709"
+                    string[] SplitNodePropId = NodePropId.Split( '_' );
+                    Int32 NodeTypePropId = CswConvert.ToInt32( SplitNodePropId[1] );
+                    CswPrimaryKey NodePk = new CswPrimaryKey( SplitNodePropId[3], CswConvert.ToInt32( SplitNodePropId[4] ) );
+
+                    CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
+                    CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+
+                    JObject PropObj = (JObject) Prop.Value;
+
+                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
+
+                    if( !NodesToPost.Contains( Node ) )
+                    {
+                        NodesToPost.Add( Node );
+                    }
+                }
+            }
+
+            foreach( CswNbtNode Node in NodesToPost )
+            {
+                Node.postChanges( false );
+                Ret = true;
+            }
+
+            return Ret;
+        }
+
+        #endregion Set
 
     } // class CswNbtWebServiceMobileView
 
