@@ -1,8 +1,8 @@
 set /p username=
 set /p database=
 
-echo exit | sqlplus %username%/nbt@%database% @nbt_nuke.sql
+echo exit | sqlplus mcmaster/nbt@golem @nbt_nuke.sql
 
-impdp.exe %username%/nbt@%database% DUMPFILE=NBT_MASTER_11G.dmp DIRECTORY=NBTDUMPS REMAP_SCHEMA=nbt_master:%username%
+impdp.exe mcmaster/nbt@golem DUMPFILE=MARSHFIELD_2011.7.15.1.dmp DIRECTORY=MADEYE_DUMPS REMAP_SCHEMA=marshfield:mcmaster
 
-echo exit | sqlplus %username%/nbt@%database% @nbt_finalize_ora.sql
+echo exit | sqlplus mcmaster/nbt@golem @nbt_finalize_ora.sql
