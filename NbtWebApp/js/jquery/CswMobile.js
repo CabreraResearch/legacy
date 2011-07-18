@@ -1314,25 +1314,27 @@ CswAppMode.mode = 'mobile';
                                               'data-id': 'csw_footer'
                                           });
 
-                var $footerCtn = $('<div data-role="navbar">')
-                                            .appendTo($footer);
+                var $footerNav = $('<div data-role="navbar">').appendTo($footer);
+                var $footerCtn = $('<ul></ul>').appendTo($footerNav);
                 var onlineValue = (!amOnline()) ? 'Offline' : 'Online';
 
-                $syncstatusBtn = $footerCtn.CswLink('init', {
+                $syncstatusBtn = $('<li></li>').CswLink('init', {
                                                         'href': 'javascript:void(0)',
                                                         ID: p.DivId + '_gosyncstatus',
-                                                        cssclass: 'onlineStatus ' + onlineValue.toLowerCase(), 
+                                                        cssclass: 'ui-btn-active onlineStatus ' + onlineValue.toLowerCase(), 
                                                         value: onlineValue
                                                     })
                                                         .CswAttrXml({
                                                         'data-identity': p.DivId + '_gosyncstatus',
                                                         'data-url': p.DivId + '_gosyncstatus',
                                                         'data-transition': 'pop',
-                                                        'data-rel': 'dialog'
+                                                        'data-rel': 'dialog',
+                                                        'data-icon': 'gear'
                                                     })
-                                                    .css('display', '');
+                                                    .css('display', '')
+                                                    .appendTo($footerCtn);
 
-                $refreshBtn = $footerCtn.CswLink('init', {
+                $refreshBtn = $('<li></li>').CswLink('init', {
                                                            'href': 'javascript:void(0)',
                                                            ID: p.DivId + '_refresh',
                                                            value: 'Refresh',
@@ -1340,15 +1342,17 @@ CswAppMode.mode = 'mobile';
                                                        }) 
                                                            .CswAttrXml({
                                                            'data-identity': p.DivId + '_refresh',
-                                                           'data-url': p.DivId + '_refresh'
+                                                           'data-url': p.DivId + '_refresh',
+                                                           'data-icon': 'refresh'
                                                        })
-                                                       .css('display', '');
+                                                       .css('display', '')
+                                                       .appendTo($footerCtn);
 
-                $footerCtn.CswLink('init', { href: 'Main.html', rel: 'external', ID: p.DivId + '_main', value: 'Full Site' })
-                          .CswAttrXml({ 'data-transition': 'pop' });
+                $('<li></li>').CswLink('init', { href: 'Main.html', rel: 'external', ID: p.DivId + '_main', value: 'Full Site' })
+                              .CswAttrXml({ 'data-transition': 'pop', 'data-icon': 'home' })
+                              .appendTo($footerCtn);
 
-
-                $helpBtn = $footerCtn.CswLink('init', {
+                $helpBtn = $('<li></li>').CswLink('init', {
                                              'href': 'javascript:void(0)',
                                              ID: p.DivId + '_help',
                                              value: 'Help'
@@ -1357,9 +1361,11 @@ CswAppMode.mode = 'mobile';
                                              'data-identity': p.DivId + '_help',
                                              'data-url': p.DivId + '_help',
                                              'data-transition': 'pop',
-                                             'data-rel': 'dialog'
+                                             'data-rel': 'dialog',
+                                              'data-icon': 'info'
                                       })
-                                      .css('display', '');
+                                      .css('display', '')
+                                      .appendTo($footerCtn);
             }
 
             //case 22323
