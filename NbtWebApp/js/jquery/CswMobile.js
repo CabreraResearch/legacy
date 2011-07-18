@@ -127,7 +127,7 @@ CswAppMode.mode = 'mobile';
             ViewUrl: '/NbtWebApp/wsNBT.asmx/GetView',
             ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
             ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
-            UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
+            UpdateViewUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
             MainPageUrl: '/NbtWebApp/Mobile.html',
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             SendLogUrl: '/NbtWebApp/wsNBT.asmx/collectClientLogInfo',
@@ -946,14 +946,14 @@ CswAppMode.mode = 'mobile';
                         } else {
                             $label.removeClass('OOC');
                         }
-                        onPropertyChange(ParentId, eventObj, $cor.val(), IdStr + '_cor');
+                        onPropertyChange(ParentId, eventObj, $cor.val(), IdStr + '_cor', IdStr);
                     });
 
                     var $comments = $('<textarea name="' + IdStr + '_input" id="' + IdStr + '_input" placeholder="Comments">' + sf_comments + '</textarea>')
                                                 .appendTo($prop)
                                                 .bind('change',function (eventObj) {
                                                     var $com = $(this);
-                                                    onPropertyChange(ParentId, eventObj, $com.val(), IdStr + '_com');
+                                                    onPropertyChange(ParentId, eventObj, $com.val(), IdStr + '_com', IdStr);
                                                 });
                     break;
                 case "Static":
@@ -973,7 +973,7 @@ CswAppMode.mode = 'mobile';
                 if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
                     $prop.bind('change', function(eventObj) {
                         var $this = $(this);
-                        onPropertyChange(ParentId, eventObj, $this.val(), propId);
+                        onPropertyChange(ParentId, eventObj, $this.val(), propId, Id);
                     });
                 }
             } else {
@@ -986,16 +986,17 @@ CswAppMode.mode = 'mobile';
             return $retLi;
         }
 
-        function _FieldTypeHtmlToJson(json, id, value) {
+        function _FieldTypeHtmlToJson(json, elementId, propId, value) {
             /// <summary>
             ///   Converts DOM content back to JSON
             /// </summary>
             /// <param name="json" type="Object">A JSON Object</param>
-            /// <param name="id" type="String">The id of the parent object</param>
+            /// <param name="elementId" type="String">The id of the DOM element</param>
+            /// <param name="propId" type="String">The id of the property</param>
             /// <param name="value" type="String">The stored value</param>
             
-            var name = new CswString(id);
-            var IdStr = makeSafeId({ ID: json['id'] });
+            var elementName = new CswString(elementId);
+            var propName = tryParseString(makeSafeId({ ID: json['id'] }), propId);
             var fieldtype = json['fieldtype'];
             //var propname = json.name;
 
@@ -1016,47 +1017,59 @@ CswAppMode.mode = 'mobile';
             var propToUpdate = '';
             switch (fieldtype) {
                 case "Date":
-                    if (name.contains(IdStr)) propToUpdate = sf_value;
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_value;
+                    }
                     break;
                 case "Link":
                     break;
                 case "List":
-                    if (name.contains(IdStr)) propToUpdate = sf_value;
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_value;
+                    }
                     break;
                 case "Logical":
-                    if (name.contains(makeSafeId({ ID: IdStr, suffix: 'ans' }))) {
+                    if (elementName.contains(makeSafeId({ ID: propName, suffix: 'ans' }))) {
                         propToUpdate = sf_checked;
                     }
                     break;
                 case "Memo":
-                    if (name.contains(IdStr)) propToUpdate = sf_text;
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_text;
+                    }
                     break;
                 case "Number":
-                    if (name.contains(IdStr)) propToUpdate = sf_value;
+                    if (elementName.contains(propName)) propToUpdate = sf_value;
                     break;
                 case "Password":
                     break;
                 case "Quantity":
-                    if (name.contains(IdStr)) propToUpdate = sf_value;
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_value;
+                    }
                     break;
                 case "Question":
-                    if (name.contains(makeSafeId({ ID: IdStr, suffix: 'com' }))) {
+                    if (elementName.contains(makeSafeId({ ID: propName, suffix: 'com' }))) {
                         propToUpdate = sf_comments;
                     } 
-                    else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'ans' }))) {
+                    else if (elementName.contains(makeSafeId({ ID: propName, suffix: 'ans' }))) {
                         propToUpdate = sf_answer;
                     } 
-                    else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'cor' }))) {
+                    else if (elementName.contains(makeSafeId({ ID: propName, suffix: 'cor' }))) {
                         propToUpdate = sf_correctiveaction;
                     }
                     break;
                 case "Static":
                     break;
                 case "Text":
-                    if (name.contains(IdStr)) propToUpdate = sf_text;
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_text;
+                    }
                     break;
                 case "Time":
-                    if (name.contains(IdStr)) propToUpdate = sf_value;
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_value;
+                    }
                     break;
                 default:
                     break;
@@ -1115,7 +1128,7 @@ CswAppMode.mode = 'mobile';
                 $input.bind('change', function(eventObj) {
                     var $this = $(this);
                     var thisInput = $this.val();
-                    onPropertyChange(ParentId, eventObj, thisInput, inputId);
+                    onPropertyChange(ParentId, eventObj, thisInput, inputId, IdStr);
                     return false;
                 });
             } // for (var i = 0; i < answers.length; i++)
@@ -1172,7 +1185,7 @@ CswAppMode.mode = 'mobile';
                         }
                     }
 
-                    setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName); }, 1);
+                    setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName, IdStr); }, 1);
 
                     return false;
                 });
@@ -1803,7 +1816,7 @@ CswAppMode.mode = 'mobile';
             $help.doChangePage({ transition: 'slideup' });
         }
 
-        function onPropertyChange(DivId, eventObj, inputVal, inputId) {
+        function onPropertyChange(DivId, eventObj, inputVal, inputId, inputPropId) {
             var logger = new profileMethod('onPropertyChange');
             var $elm = $(eventObj.target);
 
@@ -1817,13 +1830,24 @@ CswAppMode.mode = 'mobile';
                 
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
                 var nodeJson = _fetchCachedNodeJson(nodeId);
-debugger;               
-                for(var key in nodeJson['subitems'])
-                {
-                    var prop = nodeJson['subitems'][key];
-                    _FieldTypeHtmlToJson(prop, name, value);
-                }
                 
+                //we're only updating one prop--don't iterate them all.
+                var prop;
+                if( !isNullOrEmpty(inputPropId) &&
+                    !isNullOrEmpty(nodeJson['subitems'][inputPropId]) ) {
+                    prop = nodeJson['subitems'][inputPropId];
+                    _FieldTypeHtmlToJson(prop, name, inputPropId, value);
+                }
+                else { //remove else as soon as we can verify we never need to enter here
+                    for (var key in nodeJson['subitems'])
+                    {
+                        if( key === inputPropId )
+                        {
+                            prop = nodeJson['subitems'][key];
+                            _FieldTypeHtmlToJson(prop, name, inputPropId, value);
+                        }
+                    }
+                }
                 _updateStoredNodeJson(nodeId, nodeJson, '1');
             }
             kickStartAutoSync();
@@ -1988,23 +2012,28 @@ debugger;
         function _updateStoredViewJson(viewid, viewJson, wasmodified) {
             if (!isNullOrEmpty(localStorage[viewid]) && !isNullOrEmpty(viewJson)) {
                 var view = JSON.parse(localStorage[viewid]);
-                var update = { json: viewJson, wasmodified: wasmodified };
-                if (view) $.extend(view, update);
+                view['json'] = viewJson;
+                if( wasmodified ) {
+                    view['wasmodified'] = true;
+                } else {
+                    delete view['wasmodified'];
+                }
                 localStorage[viewid] = JSON.stringify(view);
             }
             return viewJson;
         }
 
-        function _updateStoredNodeJson(nodeid, viewJson, wasmodified) {
-            if (!isNullOrEmpty(localStorage.currentviewid) && !isNullOrEmpty(viewJson)) {
-                var view = JSON.parse(localStorage.currentviewid);
-                var update = { json: viewJson, wasmodified: wasmodified };
-                view[nodeid] = update;
-                localStorage.currentviewid = JSON.stringify(view);
+        function _updateStoredNodeJson(nodeid, nodeJson, wasmodified) {
+            var currentViewId = localStorage.currentviewid;
+            if (!isNullOrEmpty(localStorage[currentViewId]) && !isNullOrEmpty(nodeJson)) {
+                var view = JSON.parse(localStorage[currentViewId]);
+                view['json'][nodeid] = nodeJson;
+                //view['json'][nodeid]['wasmodified'] = true; //one day we'll want to update in smaller pushes
+                view['wasmodified'] = wasmodified;
+                localStorage[currentViewId] = JSON.stringify(view);
             }
-            return viewJson;
+            return nodeJson;
         }
-        
         
         function _getModifiedView(onSuccess) {
             var modified = false;
@@ -2117,7 +2146,6 @@ debugger;
         } //_handleDataCheckTimer()
 
         function _processChanges(perpetuateTimer) {
-     
             var logger = new profileMethod('processChanges');
             if (!isNullOrEmpty(SessionId) && !mobileStorage.stayOffline() ) {
                 _getModifiedView(function(viewid, viewJson) {
@@ -2132,7 +2160,7 @@ debugger;
 
                         CswAjaxJSON({
                                 formobile: ForMobile,
-                                url: opts.UpdateUrl,
+                                url: opts.UpdateViewUrl,
                                 data: dataJson,
                                 onloginfail: function(text) {
                                     setOnline(false);
