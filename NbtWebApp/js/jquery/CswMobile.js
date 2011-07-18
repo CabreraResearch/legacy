@@ -250,7 +250,6 @@ CswAppMode.mode = 'mobile';
                     HideSearchButton: true,
                     HideOnlineButton: true,
                     HideRefreshButton: true,
-                    HideLogoutButton: true,
                     HideHelpButton: false,
                     HideCloseButton: true,
                     HideBackButton: true,
@@ -303,7 +302,6 @@ CswAppMode.mode = 'mobile';
                 HideOnlineButton: false,
                 HideBackButton: true,
                 HideRefreshButton: true,
-                HideLogoutButton: true,
                 HideSearchButton: true,
                 dataRel: 'dialog',
                 $content: 'You must have internet connectivity to login.'
@@ -396,27 +394,25 @@ CswAppMode.mode = 'mobile';
             if (doLogging()) {
                 var logger = new profileMethod('setStartLog');
                 cacheLogInfo(logger);
-                var $loggingBtn = $('.debug')
-                                       .removeClass('debug-off')
-                                       .addClass('debug-on')
-                                       .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                       .text('Sync Log')
-                                       .addClass('debug-on')
-                                       .removeClass('debug-off')
-                                       .end();
+                $('.debug').removeClass('debug-off')
+                            .addClass('debug-on')
+                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                            .text('Sync Log')
+                            .addClass('debug-on')
+                            .removeClass('debug-off')
+                            .end();
             }
         }
 
         function setStopLog() {
             if (!doLogging()) {
-                var $loggingBtn = $('.debug')
-                                       .removeClass('debug-on')
-                                       .addClass('debug-off')
-                                       .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                       .text('Sync Log')
-                                       .addClass('debug-off')
-                                       .removeClass('debug-on')
-                                       .end();
+                $('.debug').removeClass('debug-on')
+                            .addClass('debug-off')
+                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                            .text('Sync Log')
+                            .addClass('debug-off')
+                            .removeClass('debug-on')
+                            .end();
                 var logger = new profileMethod('setStopLog');
                 cacheLogInfo(logger);
 
@@ -448,7 +444,6 @@ CswAppMode.mode = 'mobile';
                     HideOnlineButton: false,
                     HideBackButton: false,
                     HideRefreshButton: true,
-                    HideLogoutButton: true,
                     HideSearchButton: true,
                     dataRel: 'dialog',
                     $content: $( JSON.parse(sessionStorage['debuglog']))
@@ -587,7 +582,6 @@ CswAppMode.mode = 'mobile';
                 HideSearchButton: false,
                 HideOnlineButton: false,
                 HideRefreshButton: false,
-                HideLogoutButton: false,
                 HideHelpButton: false,
                 HideCloseButton: true,
                 HideBackButton: false
@@ -602,7 +596,6 @@ CswAppMode.mode = 'mobile';
                     HideSearchButton: p.HideSearchButton,
                     HideOnlineButton: p.HideOnlineButton,
                     HideRefreshButton: p.HideRefreshButton,
-                    HideLogoutButton: p.HideLogoutButton,
                     HideHelpButton: p.HideHelpButton,
                     HideCloseButton: p.HideCloseButton,
                     HideBackButton: p.HideBackButton
@@ -1205,7 +1198,6 @@ CswAppMode.mode = 'mobile';
                 HideSearchButton: false,
                 HideOnlineButton: false,
                 HideRefreshButton: false,
-                HideLogoutButton: false,
                 HideHelpButton: false,
                 HideCloseButton: true,
                 HideBackButton: false,
@@ -1226,12 +1218,10 @@ CswAppMode.mode = 'mobile';
             var $searchBtn = $('#' + p.DivId + '_searchopen');
             var $syncstatusBtn = $('#' + p.DivId + '_gosyncstatus');
             var $refreshBtn = $('#' + p.DivId + '_refresh');
-            var $logoutBtn = $('#' + p.DivId + '_logout');
             var $helpBtn = $('#' + p.DivId + '_help');
             var $closeBtn = $('#' + p.DivId + '_close');
             var $backlink = $('#' + p.DivId + '_back');
             var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
-            var $loggingBtn = $('#' + p.DivId + '_debuglog');
             var $headerTitle = $('#' + p.DivId + '_header_title');
             if (isNullOrEmpty($pageDiv) || $pageDiv.length === 0) {
                 $pageDiv = $body.CswDiv('init', { ID: p.DivId })
@@ -1354,19 +1344,6 @@ CswAppMode.mode = 'mobile';
                                                        })
                                                        .css('display', '');
 
-                $logoutBtn = $footerCtn.CswLink('init', {
-                                                        'href': 'javascript:void(0)',
-                                                        ID: p.DivId + '_logout',
-                                                        value: 'Logout'
-                                                    })
-                                                        .CswAttrXml({
-                                                        'data-identity': p.DivId + '_logout',
-                                                        'data-url': p.DivId + '_logout',
-                                                        'data-transition': 'flip'
-                                                    })
-                                                        .css('display', '');
-
-
                 $footerCtn.CswLink('init', { href: 'Main.html', rel: 'external', ID: p.DivId + '_main', value: 'Full Site' })
                           .CswAttrXml({ 'data-transition': 'pop' });
 
@@ -1383,17 +1360,6 @@ CswAppMode.mode = 'mobile';
                                              'data-rel': 'dialog'
                                       })
                                       .css('display', '');
-
-                if( debugOn() )
-                {
-                    $loggingBtn = $footerCtn.CswLink('init', {
-                                                         'href': 'javascript:void(0)',
-                                                         ID: p.DivId + '_debuglog',
-                                                         value: doLogging() ? 'Sync Log' : 'Start Log',
-                                                         cssclass: 'debug'
-                                                     })
-                                                     .addClass(doLogging() ? 'debug-on' : 'debug-off');
-                }
             }
 
             //case 22323
@@ -1414,11 +1380,6 @@ CswAppMode.mode = 'mobile';
                 $helpBtn.css('display', 'none').hide();
             } else {
                 $helpBtn.css('display', '').show();
-            }
-            if (p.HideLogoutButton) {
-                $logoutBtn.css('display', 'none').hide();
-            } else {
-                $logoutBtn.css('display', '').show();
             }
             if (p.HideRefreshButton || !amOnline() ) {
                 $refreshBtn.css('display', 'none').hide();
@@ -1444,9 +1405,6 @@ CswAppMode.mode = 'mobile';
                 $backlink.css('display', '').show();
             } else {
                 $backlink.css('display', 'none').hide();
-            }
-            if (debugOn()) {
-                $loggingBtn.css({ 'display': '' }).show();
             }
 
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
@@ -1489,26 +1447,11 @@ CswAppMode.mode = 'mobile';
                     return false;
                 })
                 .end()
-                .find('#' + DivId + '_logout')
-                .unbind('click')
-                .bind('click', function(e) {
-                    $.mobile.showPageLoadingMsg();
-                    onLogout(DivId, e);
-                    return false;
-                })
-                .end()
                 .find('#' + DivId + '_help')
                 .unbind('click')
                 .bind('click', function() {
                     $.mobile.showPageLoadingMsg();
                     onHelp(DivId, ParentId);
-                    return false;
-                })
-                .end()
-                .find('#' + DivId + '_debuglog')
-                .die('click')
-                .live('click', function() {
-                    _toggleLogging();
                     return false;
                 })
                 .end()
@@ -1539,7 +1482,12 @@ CswAppMode.mode = 'mobile';
             content += '<p>Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt + '</span></p>';
             content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
             content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
-
+            content += '<br/><br/>';
+            content += '<a id="ss_logout" data-identity="ss_logout" data-url="ss_logout" href="javascript:void(0)" data-role="button">Logout</a>';
+            if( debugOn() ) {
+                content += '<a id="ss_debuglog" class="debug" data-identity="ss_debuglog" data-url="ss_debuglog" href="javascript:void(0)" data-role="button">Start Logging</a>';
+            }
+            
             var $retDiv = _addPageDivToBody({
                     DivId: 'syncstatus',
                     HeaderText: 'Sync Status',
@@ -1548,7 +1496,6 @@ CswAppMode.mode = 'mobile';
                     HideSearchButton: true,
                     HideOnlineButton: true,
                     HideRefreshButton: false,
-                    HideLogoutButton: false,
                     HideHelpButton: false,
                     HideCloseButton: true,
                     HideBackButton: false,
@@ -1556,19 +1503,34 @@ CswAppMode.mode = 'mobile';
                 });
                    
             $retDiv.find('#ss_forcesync')
-                            .bind('click', function() {
-                                $.mobile.showPageLoadingMsg();
-                                _processChanges(false);
-                                return false;
-                            })
-                            .end()
-                            .find('#ss_gooffline')
-                            .bind('click', function() {
-                                var stayOffline = !mobileStorage.stayOffline();
-                                mobileStorage.stayOffline(stayOffline);
-                                _toggleOffline(true);
-                                return false;
-                            });
+                    .bind('click', function() {
+                        $.mobile.showPageLoadingMsg();
+                        _processChanges(false);
+                        return false;
+                    })
+                    .end()
+                    .find('#ss_gooffline')
+                    .bind('click', function() {
+                        var stayOffline = !mobileStorage.stayOffline();
+                        mobileStorage.stayOffline(stayOffline);
+                        _toggleOffline(true);
+                        return false;
+                    })
+                    .end()
+                    .find('#ss_logout')
+                    .bind('click', function() {
+                        alert(1);
+                        $.mobile.showPageLoadingMsg();
+                        onLogout();
+                        return false;
+                    })
+                    .end()
+                    .find('#ss_debuglog')
+                    .bind('click', function() {
+                        _toggleLogging();
+                        return false;
+                    })
+                    .end();
 
             return $retDiv;
         }
@@ -1678,7 +1640,6 @@ CswAppMode.mode = 'mobile';
                     HideSearchButton: true,
                     HideOnlineButton: false,
                     HideRefreshButton: true,
-                    HideLogoutButton: false,
                     HideHelpButton: true,
                     HideCloseButton: false,
                     HideBackButton: true
@@ -1892,7 +1853,6 @@ CswAppMode.mode = 'mobile';
                         HideSearchButton: true,
                         HideOnlineButton: true,
                         HideRefreshButton: true,
-                        HideLogoutButton: false,
                         HideHelpButton: false,
                         HideCloseButton: true,
                         HideBackButton: false
