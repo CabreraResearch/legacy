@@ -1800,7 +1800,7 @@ CswAppMode.mode = 'mobile';
                             $.mobile.changePage( _loadDivContents(params) );
                         }, // success
                         error: function () {
-                            onError(); //setOffline();
+                            onError();
                         }
                     });
             }
@@ -2183,7 +2183,6 @@ CswAppMode.mode = 'mobile';
                                     $.mobile.hidePageLoadingMsg();
                                 },
                                 error: function(data) {
-                                    //setOffline();
                                     if (perpetuateTimer) {
                                         _waitForData();
                                     }
