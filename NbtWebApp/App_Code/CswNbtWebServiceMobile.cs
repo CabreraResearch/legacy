@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.WebServices
 
         public bool updateViewProps( string UpdatedViewJson )
         {
-            bool Ret = false;
+            bool Ret;
             JObject UpdatedView = JObject.Parse( UpdatedViewJson );
             if( null != UpdatedView.Property( "nodes" ) )
             {
@@ -223,21 +223,20 @@ namespace ChemSW.Nbt.WebServices
             bool Ret = false;
             Collection<JProperty> Props = new Collection<JProperty>();
 
-            foreach( JProperty JProp in UpdatedNode.Properties() )
+            foreach( JProperty NodeProp in from JProp
+                                               in UpdatedNode.Properties()
+                                           select (JObject) JProp.Value
+                                               into NodeAttr
+                                               where null != NodeAttr.Property( "subitems" )
+                                               select (JObject) NodeAttr.Property( "subitems" ).Value
+                                                   into SubItems
+                                                   from NodeProp
+                                                       in SubItems.Properties()
+                                                   let PropAttr = (JObject) NodeProp.Value
+                                                   where null != PropAttr.Property( "wasmodified" )
+                                                   select NodeProp )
             {
-                JObject NodeAttr = (JObject) JProp.Value;
-                if( null != NodeAttr.Property( "subitems" ) )
-                {
-                    JObject SubItems = (JObject) NodeAttr.Property( "subitems" ).Value;
-                    foreach( JProperty NodeProp in SubItems.Properties() )
-                    {
-                        JObject PropAttr = (JObject) NodeProp.Value;
-                        if( null != PropAttr.Property( "wasmodified" ) )
-                        {
-                            Props.Add( NodeProp );
-                        }
-                    }
-                }
+                Props.Add( NodeProp );
             }
 
             // post changes once per node, not once per prop            
